@@ -3,6 +3,7 @@
 // config.c: read Duel.dat, watermarks.csv, menus.txt, Rarity.dat
 
 #include <ctype.h>
+#include <strings.h>
 
 #include "drawcardlib.h"
 
@@ -27,7 +28,8 @@ const char* cfg_pic_names[CARDBK_MAX_FRAMEPART_FRAMESET + 1] =
   "Cardcounters",
   "dfc",
 
-  "CardBk_Colorless",	"CardBk_Artifact",	"CardBk_Land",	"CardBk_Gold",	"CardBk_Special",
+  "CardBk_Colorless",	"CardBk_Artifact",	"CardBk_Land",	"CardBk_Gold",
+  "CardBk_Special",		"CardBk_Trigger",//handled special
   "CardBk_Black",		"CardBk_Blue",		"CardBk_Green",	"CardBk_Red",	"CardBk_White",
 
   "CardOv_Colorless",		"CardOv_Artifact",		"CardOv_ColorlessLand",	"CardOv_LandBar",
@@ -188,7 +190,7 @@ HFONT fonts[MAX_FONTHANDLES + 1] = { 0 };
 char base_dir[MAX_PATH + 1] = {0};
 static char current_configfile_name[1000 + MAX_PATH + 1] = {0};
 
-static Rarity** rarities;
+static Rarities** rarities;
 static int raw_expansions = 0;
 static int rarities_read = 0;
 static int total_cards = 0;
@@ -204,6 +206,7 @@ static int expansions_latest_printing;
 static int expansions_priority[MAX_EXPCAT + 1];
 
 int watermark_size_x, watermark_size_y, watermarks_num_columns = 1, watermarks_num_rows = 1;
+double watermark_saturation_opacity = 5, watermark_saturation_darken = 0.75;
 static char* frames_pic_names[FRAME_MAX_LOADED + 2] = { 0 };	// +2, so there's a NULL at the end
 static int frames_dup_of[FRAME_MAX_LOADED + 1] = { [0 ... FRAME_MAX_LOADED] = -1 };	// gcc extension: sets all frames_dup_of[0] through [FRAME_MAX_LOADED] to -1
 
@@ -426,7 +429,7 @@ del_fonts_and_imgs(void)
 {
   int i;
   for (i = 0; i < MAX_PICHANDLES_PLUS_1; ++i)
-	if (frames_dup_of[i] >= 0)
+	if (i <= FRAME_MAX_LOADED && frames_dup_of[i] >= 0)
 	  pics[i] = NULL;	// just set null if this image is a shallow copy of another
 	else
 	  del_obj(&pics[i]);
@@ -524,15 +527,39 @@ prepare_fonts_and_imgs(void)
 			goto outer_continue;
 		  }
 
+	  int change_colors = frames_pic_names[i][0] == '>';
+	  const char* filename = frames_pic_names[i];
+	  if (change_colors)
+		++filename;
 	  snprintf(buf, 3 * MAX_PATH + 1, "%s\\CARDART\\%s",
 			   base_dir,
-			   frames_pic_names[i]);
+			   filename);
 	  if (!(pics[i] = LoadImage(buf, palette, 0, 0)))
 		{
 		  popup("drawcardlib.dll", "Could not load %s=\n\"%s\"", get_pichandlename(i, 0), buf);
 		  free(frames_pic_names[i]);
 		  frames_pic_names[i] = strdup("\1");	// so anything else pointing to it gets a popup instead of being identified as a duplicate
 		  any_failures = 1;
+		}
+
+	  if (change_colors)
+		{
+		  BITMAP bmp;
+		  GetObject(pics[i], sizeof(BITMAP), &bmp);
+
+		  unsigned char* bits = bmp.bmBits;
+		  int sz = bmp.bmWidth * bmp.bmHeight;
+		  int px;
+		  for (px = 0; px < sz; ++px)
+			{
+			  unsigned char r = bits[2];
+			  unsigned char g = bits[1];
+			  unsigned char b = bits[0];
+			  bits[0] = r;
+			  bits[1] = b;
+			  bits[2] = g;
+			  bits += 4;
+			}
 		}
 
 	  if (i == WATERMARKS)
@@ -810,7 +837,9 @@ read_cfg_file(Config* config)
 
   get_cfg_point(config, &config->fullcard_rounding, section, "Rounding", 12, 12);
 
-  get_cfg_colordef(config, &config->fullcard_border_color, section, "BorderColor", 28,28,28);
+  get_cfg_colordef(config, &config->fullcard_black_border_color, section, "BorderColor", 28,28,28);
+  get_cfg_colordef(config, &config->fullcard_silver_border_color, section, "SilverBorderColor", 128,128,128);
+  get_cfg_colordef(config, &config->fullcard_white_border_color, section, "WhiteBorderColor", 255,255,255);
   config->fullcard_outline_visible = get_cfg_colordef(config, &config->fullcard_outline_color, section, "OutlineColor", -1,-1,-1);
   config->fullcard_artoutline_visible = get_cfg_colordef(config, &config->fullcard_artoutline_color, section, "ArtOutlineColor", -1,-1,-1);
 
@@ -876,40 +905,48 @@ read_cfg_file(Config* config)
   for (i = 0; i < NUM_FRAMEPARTS_PER_FRAMESET; ++i)
 	{
 	  char filename[MAX_PATH + 1];
-	  get_cfg_str_raw(filename, MAX_PATH, section, cfg_pic_names[i + CARDBK_MIN_FRAMEPART],
-					  "%s%s",
-					  *default_image ? default_image : config == &configs[CFG_BASE] ? cfg_pic_names[i + CARDBK_MIN_FRAMEPART] : base_frame_pic_names[i],
-					  *default_image ? "" : config == &configs[CFG_BASE] ? ".pic" : "");
-
-	  if (frame_pic_name[i])
-		free(frame_pic_name[i]);
-
-	  if (config == &configs[CFG_BASE])
-		frame_pic_name[i] = strdup(filename);
+	  if (i + CARDBK_MIN_FRAMEPART == CARDBK_MODERN_TRIGGER)
+		{
+		  sprintf(filename, ">%s", frame_pic_name[i - 1]);
+		  frame_pic_name[i] = strdup(filename);
+		}
 	  else
-		{	// Add directory and canonicalize.
-		  char path[2 * MAX_PATH + 2];
-		  snprintf(path, 2 * MAX_PATH + 1, "%s\\%s", frame_base_dir, filename);
+		{
+		  get_cfg_str_raw(filename, MAX_PATH, section, cfg_pic_names[i + CARDBK_MIN_FRAMEPART],
+						  "%s%s",
+						  *default_image ? default_image : config == &configs[CFG_BASE] ? cfg_pic_names[i + CARDBK_MIN_FRAMEPART] : base_frame_pic_names[i],
+						  *default_image ? "" : config == &configs[CFG_BASE] ? ".pic" : "");
 
-		  // replace [/\\]+ with \\ - it's obscene that PathCanonicalize() can't deal with multiple backslashes, or any forward slashes
-		  char* p, *q;
-		  for (p = q = path; *q; ++p, ++q)
-			{
-			  if (*q == '/' || *q == '\\')
+		  if (frame_pic_name[i])
+			free(frame_pic_name[i]);
+
+		  if (config == &configs[CFG_BASE])
+			frame_pic_name[i] = strdup(filename);
+		  else
+			{	// Add directory and canonicalize.
+			  char path[2 * MAX_PATH + 2];
+			  snprintf(path, 2 * MAX_PATH + 1, "%s\\%s", frame_base_dir, filename);
+
+			  // replace [/\\]+ with \\ - it's obscene that PathCanonicalize() can't deal with multiple backslashes, or any forward slashes
+			  char* p, *q;
+			  for (p = q = path; *q; ++p, ++q)
 				{
-				  while (*(q + 1) == '/' || *(q + 1) == '\\')
-					++q;
-				  *p = '\\';
+				  if (*q == '/' || *q == '\\')
+					{
+					  while (*(q + 1) == '/' || *(q + 1) == '\\')
+						++q;
+					  *p = '\\';
+					}
+				  else
+					*p = *q;
 				}
-			  else
-				*p = *q;
+
+			  // simplify . and ..
+			  char canonicalized[MAX_PATH + 1];
+			  PathCanonicalize(canonicalized, path);
+
+			  frame_pic_name[i] = strdup(canonicalized);
 			}
-
-		  // simplify . and ..
-		  char canonicalized[MAX_PATH + 1];
-		  PathCanonicalize(canonicalized, path);
-
-		  frame_pic_name[i] = strdup(canonicalized);
 		}
 	}
 
@@ -929,6 +966,11 @@ read_watermark_section(int first_time)
   watermarks_num_columns = MAX(watermarks_num_columns, 1);
   watermarks_num_columns = MIN(watermarks_num_columns, 255);
 
+  int opacit = get_cfg_int_raw(WATERMARKSTXT, "SaturationOpacity", 500);
+  watermark_saturation_opacity = opacit / 100.0;
+  int darken = get_cfg_int_raw(WATERMARKSTXT, "SaturationDarken", 75);
+  watermark_saturation_darken = darken / 100.0;
+
   if (!first_time)
 	{
 	  BITMAP bmp;
@@ -940,9 +982,14 @@ read_watermark_section(int first_time)
   int i;
   for (i = 0; i < 255; ++i)
 	{
-	  if (!first_time && watermarks[i].name)
-		free(watermarks[i].name);
-	  watermarks[i].name = NULL;
+	  if (!first_time)
+		{
+		  if (watermarks[i].name)
+			free(watermarks[i].name);
+		  if (watermarks[i].disp)
+			free(watermarks[i].disp);
+		}
+	  watermarks[i].name = watermarks[i].disp = NULL;
 
 	  if (!first_time && watermarks[i].expansions && !watermarks[i].copied_expansions)
 		free(watermarks[i].expansions);
@@ -951,6 +998,7 @@ read_watermark_section(int first_time)
 	  watermarks[i].row = 0;
 	  watermarks[i].col = 0;
 	  watermarks[i].copied_expansions = 0;
+	  watermarks[i].saturation = 1;
 	}
 
   /* We need raw_expansions to be set, but it won't be yet.  And we can't just call read_rarities, since it calls read_watermarks_csv(), which needs this
@@ -989,6 +1037,9 @@ read_watermark_section(int first_time)
 	  if (col < 1 || col > watermarks_num_columns)
 		continue;
 
+	  sprintf(key, "Saturation%d", i);
+	  int saturation = get_cfg_int_raw(WATERMARKSTXT, key, 1);
+
 	  sprintf(key, "Name%d", i);
 	  char *name, *p;
 	  name = NULL;
@@ -1008,9 +1059,16 @@ read_watermark_section(int first_time)
 		  continue;
 		}
 
+	  sprintf(key, "Disp%d", i);
+	  char* disp;
+	  disp = NULL;
+	  get_cfg_str_dup(&disp, WATERMARKSTXT, key, "");
+
 	  watermarks[idx].name = name;
+	  watermarks[idx].disp = disp;
 	  watermarks[idx].row = row - 1;
 	  watermarks[idx].col = col - 1;
+	  watermarks[idx].saturation = saturation;
 
 	  sprintf(key, "Expansions%d", i);
 	  get_cfg_str_raw(expansions, 1000, WATERMARKSTXT, key, "");
@@ -1047,6 +1105,13 @@ read_watermark_section(int first_time)
 
 	  ++idx;
 	}
+}
+
+// returns &watermarks[0]
+const Watermark*
+get_watermarks(void)
+{
+  return &watermarks[0];
 }
 
 int
@@ -1101,6 +1166,10 @@ read_cfg(void)
   configs[CFG_PLANESWALKER_DFC_BACK].option_name = "PlaneswalkerDFCback";
   configs[CFG_PLANESWALKER_DFC_BACK].cardbk_base = CARDBK_PLANESWALKER_DFC_BACK_MIN;
   configs[CFG_PLANESWALKER_DFC_BACK].frame_base = FRAME_PLANESWALKER_DFC_BACK_MIN;
+
+  configs[CFG_VEHICLE].option_name = "Vehicle";
+  configs[CFG_VEHICLE].cardbk_base = CARDBK_VEHICLE_MIN;
+  configs[CFG_VEHICLE].frame_base = FRAME_VEHICLE_MIN;
 
   configs[CFG_TOKEN].option_name = "Token";
   configs[CFG_TOKEN].cardbk_base = CARDBK_TOKEN_MIN;
@@ -1343,7 +1412,7 @@ read_watermarks_csv(void)
 	  if (!(rarities && id >= 0 && id < total_cards))
 		BAIL("Unknown id %d in line #%d of watermarks.csv [%s]", id, linenum, line);
 
-	  Rarity* r = rarities[id];
+	  Rarities* r = rarities[id];
 
 	  ++semi;
 	  wmark = semi;
@@ -1400,6 +1469,16 @@ read_watermarks_csv(void)
 			  if (!strcmp(wmark, "xemrakul"))
 				{
 				  r->dfc_symbol = DFC_SYMBOL_EMRAKUL;
+				  continue;
+				}
+			  if (!strcmp(wmark, "xcompass"))
+				{
+				  r->dfc_symbol = DFC_SYMBOL_COMPASS;
+				  continue;
+				}
+			  if (!strcmp(wmark, "xland"))
+				{
+				  r->dfc_symbol = DFC_SYMBOL_LAND;
 				  continue;
 				}
 			}
@@ -1464,17 +1543,17 @@ read_rarities(void)
   if (fclose(rarity_dat))
 	BAIL("Could not close rarity.dat: %s", strerror(errno));
 
-  if (!(rarities = (Rarity**)malloc(total_cards * sizeof(Rarity**))))
-	BAIL("Could not malloc Rarity** %d", total_cards * sizeof(Rarity**));
+  if (!(rarities = (Rarities**)malloc(total_cards * sizeof(Rarities**))))
+	BAIL("Could not malloc Rarities** %d", total_cards * sizeof(Rarities**));
 
   int card;
   for (card = 0; card < total_cards; ++card)
 	{
-	  Rarity* r;
-	  if (!(r = (Rarity*)malloc(sizeof(Rarity) + raw_expansions + 2)))	// This is wider than it needs to be because of FAKE_EXPANSIONS, but that's ok.
+	  Rarities* r;
+	  if (!(r = (Rarities*)malloc(sizeof(Rarities) + raw_expansions + 2)))	// This is wider than it needs to be because of FAKE_EXPANSIONS, but that's ok.
 		{
 		  rarities = NULL;
-		  BAIL("Could not malloc Rarity* %d", sizeof(Rarity) + raw_expansions + 2);
+		  BAIL("Could not malloc Rarities* %d", sizeof(Rarities) + raw_expansions + 2);
 		}
 
 	  rarities[card] = r;
@@ -1502,7 +1581,7 @@ read_rarities(void)
 #undef BAIL
 }
 
-const Rarity*
+const Rarities*
 get_rarity(int csvid)
 {
   if (!rarities_read)
@@ -1512,15 +1591,62 @@ get_rarity(int csvid)
 	return NULL;
 
   if (rarities[csvid]->default_expansion == 0
-	  && csvid > 0
-	  && csvid < find_rules_engine_csvid()	// so not a token, vanguard avatar, etc.
-	  && csvid != CARD_ID_FACE_DOWN_CREATURE	// should never get a symbol
-	  && csvid != CARD_ID_SPAWN_OF_AZAR	// a misplaced token with a valid card (Arena) immediately preceding
-	  // Two special cards that shouldn't get expansion symbols, even though the previous card does
-	  && csvid != CARD_ID_ARCHENEMY
-	  && csvid != CARD_ID_HANDICAP_3_CARDS)
+	  && (csvid == CARD_ID_STALKING_STONES_ANIMATED
+		  || csvid == CARD_ID_HIDDEN_GUERRILLAS_ANIMATED
+		  || csvid == CARD_ID_HIDDEN_HERD_ANIMATED
+		  || csvid == CARD_ID_HIDDEN_PREDATORS_ANIMATED
+		  || csvid == CARD_ID_HIDDEN_SPIDER_ANIMATED
+		  || csvid == CARD_ID_HIDDEN_STAG_ANIMATED
+		  || csvid == CARD_ID_LURKING_EVIL_ANIMATED
+		  || csvid == CARD_ID_OPAL_ACROLITH_ANIMATED
+		  || csvid == CARD_ID_OPAL_ARCHANGEL_ANIMATED
+		  || csvid == CARD_ID_OPAL_CARYATID_ANIMATED
+		  || csvid == CARD_ID_OPAL_GARGOYLE_ANIMATED
+		  || csvid == CARD_ID_OPAL_TITAN_ANIMATED
+		  || csvid == CARD_ID_RAIN_OF_FILTH_EFFECT
+		  || csvid == CARD_ID_FAERIE_CONCLAVE_ANIMATED
+		  || csvid == CARD_ID_FORBIDDING_WATCHTOWER_ANIMATED
+		  || csvid == CARD_ID_GHITU_ENCAMPMENT_ANIMATED
+		  || csvid == CARD_ID_SPAWNING_POOL_ANIMATED
+		  || csvid == CARD_ID_TREETOP_VILLAGE_APE
+		  || csvid == CARD_ID_NANTUKO_MONASTERY_ANIMATED
+		  || csvid == CARD_ID_BLINKMOTH
+		  || csvid == CARD_ID_TOK_TOK_VOLCANO_BORN
+		  || csvid == CARD_ID_DOKAI_WEAVER_OF_LIFE
+		  || csvid == CARD_ID_KENZO_THE_HARDHEARTED
+		  || csvid == CARD_ID_GOKA_THE_UNJUST
+		  || csvid == CARD_ID_TOMOYA_THE_REVEALER
+		  || csvid == CARD_ID_AUTUMN_TAIL_KITSUNE_SAGE
+		  || csvid == CARD_ID_NIGHTEYES_THE_DESECRATOR
+		  || csvid == CARD_ID_STABWHISKER_THE_ODIOUS
+		  || csvid == CARD_ID_SHIDAKO_BROODMISTRESS
+		  || csvid == CARD_ID_TOBITA_MASTER_OF_WINDS
+		  || csvid == CARD_ID_ICHIGA_WHO_TOPPLES_OAKS
+		  || csvid == CARD_ID_JARAKU_THE_INTERLOPER
+		  || csvid == CARD_ID_AZAMUKI_TREACHERY_INCARNATE
+		  || csvid == CARD_ID_KAISO_MEMORY_OF_LOYALTY
+		  || csvid == CARD_ID_SCARMAKER
+		  || csvid == CARD_ID_ERAYOS_ESSENCE
+		  || csvid == CARD_ID_HOMURAS_ESSENCE
+		  || csvid == CARD_ID_KUONS_ESSENCE
+		  || csvid == CARD_ID_RUNE_TAILS_ESSENCE
+		  || csvid == CARD_ID_SASAYAS_ESSENCE
+		  || csvid == CARD_ID_SVOGTHOS_ANIMATED
+		  || csvid == CARD_ID_MUTAVAULT_ANIMATED
+		  || csvid == CARD_ID_CELESTIAL_COLONNADE_ANIMATED
+		  || csvid == CARD_ID_CREEPING_TAR_PIT_ANIMATED
+		  || csvid == CARD_ID_DREAD_STATUARY_ANIMATED
+		  || csvid == CARD_ID_LAVACLAW_REACHES_ANIMATED
+		  || csvid == CARD_ID_RAGING_RAVINE_ANIMATED
+		  || csvid == CARD_ID_STIRRING_WILDWOOD_ANIMATED
+		  || csvid == CARD_ID_GIDEON_JURA_ANIMATED
+		  || csvid == CARD_ID_INFECTIVE_BLINKMOTH
+		  || csvid == CARD_ID_CHANCELLOR_OF_THE_ANNEX_EFFECT
+		  || csvid == CARD_ID_EVIL_TWIN_EFFECT
+		  || csvid == CARD_ID_GIDEON_CHAMPION_ANIMATED
+		  || csvid == CARD_ID_SARKHAN_DRAGONSPEAKER_ANIMATED))
 	{
-	  int candidate = csvid == CARD_ID_ASSEMBLY_WORKER ? CARD_ID_MISHRAS_FACTORY : csvid - 1;
+	  int candidate = csvid - 1;
 	  if (rarities[candidate]->default_expansion != 0)
 		csvid = candidate;
 	}
@@ -1645,7 +1771,7 @@ assign_default_rarities(void)
   int card;
   for (card = 0; card < total_cards; ++card)
 	{
-	  Rarity* r = rarities[card];
+	  Rarities* r = rarities[card];
 
 	  r->default_expansion = 0;
 	  r->default_rarity = NONE;

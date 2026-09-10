@@ -14,7 +14,7 @@ static const char* has_only_1_target_and_could_legally_change_target(int who_cho
 }
 
 int card_deflection(int player, int card, event_t event){
-
+	// Used externally
 	target_definition_t td_spell;
 	counterspell_target_definition(player, card, &td_spell, TYPE_SPELL);	// Aura spells also target
 	td_spell.extra = (int32_t)has_only_1_target_and_could_legally_change_target;
@@ -114,14 +114,14 @@ int card_imps_michief(int player, int card, event_t event){
 
 int card_misdirection(int player, int card, event_t event){
 
-	al_pitchspell(player, card, event, COLOR_TEST_BLUE, 1);
+	al_pitchspell(player, card, event, COLOR_BLUE, 1);
 
 	if (event == EVENT_CAN_CAST ){
 		return card_deflection(player, card, event);
 	}
 
 	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( casting_al_pitchspell(player, card, event, COLOR_TEST_BLUE, 1) ){
+		if( casting_al_pitchspell(player, card, event, COLOR_BLUE, 1) ){
 			set_special_flags2(card_on_stack_controller, card_on_stack, SF2_MISDIRECTION);
 			card_deflection(player, card, event);
 			remove_special_flags2(card_on_stack_controller, card_on_stack, SF2_MISDIRECTION);

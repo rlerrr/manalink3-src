@@ -17,7 +17,9 @@
 #undef LoadImage
 
 #undef PACKED	// (unconditionally!) redefined within manalink.h
+#define DRAWCARDLIB 1
 #include "manalink.h"
+#include "../shandalar/export_to_drawcardlib.h"	// for INSTANCE_FLAG_ARTIFACT/INSTANCE_FLAG_ENCHANTMENT display in Shandalar.
 
 #include "gdiplus.h"
 
@@ -104,7 +106,8 @@ typedef enum
   DFC_SYMBOLS,
 
 #define FRAMEPARTS(frameset)																															\
-  CARDBK_##frameset##_COLORLESS,	CARDBK_##frameset##_ARTIFACT,	CARDBK_##frameset##_LAND,	CARDBK_##frameset##_GOLD,	CARDBK_##frameset##_SPECIAL,\
+  CARDBK_##frameset##_COLORLESS,	CARDBK_##frameset##_ARTIFACT,	CARDBK_##frameset##_LAND,	CARDBK_##frameset##_GOLD,								\
+  CARDBK_##frameset##_SPECIAL,		CARDBK_##frameset##_TRIGGER,																						\
   CARDBK_##frameset##_BLACK,		CARDBK_##frameset##_BLUE,		CARDBK_##frameset##_GREEN,	CARDBK_##frameset##_RED,	CARDBK_##frameset##_WHITE,	\
 																																						\
   CARDOV_##frameset##_COLORLESS,		CARDOV_##frameset##_ARTIFACT,		CARDOV_##frameset##_COLORLESS_LAND,	CARDOV_##frameset##_LAND_BAR,			\
@@ -132,6 +135,7 @@ typedef enum
   FRAMEPARTS(PLANESWALKER),
   FRAMEPARTS(PLANESWALKER_DFC_FRONT),
   FRAMEPARTS(PLANESWALKER_DFC_BACK),
+  FRAMEPARTS(VEHICLE),
   FRAMEPARTS(TOKEN),
   FRAMEPARTS(SCHEME),
   FRAMEPARTS(PLANE),
@@ -196,6 +200,8 @@ typedef enum
   FRAMESET(FRAME_PLANESWALKER_DFC_FRONT_NYX_),	// Fronts of planeswalker-framed dfc cards that are multitype enchantments
   FRAMESET(FRAME_PLANESWALKER_DFC_BACK_),		// Backs of planeswalker-framed dfc cards
   FRAMESET(FRAME_PLANESWALKER_DFC_BACK_NYX_),	// Backs of planeswalker-framed dfc cards that are multitype enchantments
+  FRAMESET(FRAME_VEHICLE_),			// Vehicle frames.
+  FRAMESET(FRAME_VEHICLE_NYX_),		// Vehicle frames with Theros-style Nyx for multitype enchantments
   FRAMESET(FRAME_TOKEN_),			// Token frames.
   FRAMESET(FRAME_TOKEN_NYX_),		// Token frames with Theros-style Nyx for multitype enchantments
   FRAMESET(FRAME_SCHEME_),			// Archenemy Scheme frames.
@@ -313,7 +319,8 @@ typedef struct
 #define FULLCARD_CURVE_MANA_MAX	13
   POINT fullcard_curve_mana[FULLCARD_CURVE_MANA_MAX];
   POINT fullcard_rounding;
-  ColorDef fullcard_border_color, fullcard_rulestext_color;
+  ColorDef fullcard_black_border_color, fullcard_silver_border_color, fullcard_white_border_color;
+  ColorDef fullcard_rulestext_color;
   COLORDEF_AND_VIS(fullcard_outline);
   COLORDEF_AND_VIS(fullcard_artoutline);
   TextWithShadow fullcard_title_txt;
@@ -359,21 +366,22 @@ typedef struct
 #define CFG_PLANESWALKER						6
 #define CFG_PLANESWALKER_DFC_FRONT				7
 #define CFG_PLANESWALKER_DFC_BACK				8
-#define CFG_TOKEN								9
-#define CFG_SCHEME								10
-#define CFG_PLANE								11
-#define CFG_VANGUARD							12
-#define CFG_CONSPIRACY							13
-#define CFG_INTERNAL							14
-#define CFG_MAGIC2015							15
-#define CFG_MAGIC2015_DFC_FRONT					16
-#define CFG_MAGIC2015_DFC_BACK					17
-#define CFG_MAGIC2015_HOLO						18
-#define CFG_MAGIC2015_HOLO_DFC_FRONT			19
-#define CFG_MAGIC2015_HOLO_DFC_BACK				20
-#define CFG_MAGIC2015_PLANESWALKER				21
-#define CFG_MAGIC2015_PLANESWALKER_DFC_FRONT	22
-#define CFG_MAGIC2015_PLANESWALKER_DFC_BACK		23
+#define CFG_VEHICLE								9
+#define CFG_TOKEN								10
+#define CFG_SCHEME								11
+#define CFG_PLANE								12
+#define CFG_VANGUARD							13
+#define CFG_CONSPIRACY							14
+#define CFG_INTERNAL							15
+#define CFG_MAGIC2015							16
+#define CFG_MAGIC2015_DFC_FRONT					17
+#define CFG_MAGIC2015_DFC_BACK					18
+#define CFG_MAGIC2015_HOLO						19
+#define CFG_MAGIC2015_HOLO_DFC_FRONT			20
+#define CFG_MAGIC2015_HOLO_DFC_BACK				21
+#define CFG_MAGIC2015_PLANESWALKER				22
+#define CFG_MAGIC2015_PLANESWALKER_DFC_FRONT	23
+#define CFG_MAGIC2015_PLANESWALKER_DFC_BACK		24
 #define MAX_FRAMESET		CFG_MAGIC2015_PLANESWALKER_DFC_BACK
 #define CFG_BASE			MAX_FRAMESET + 1	// must be greater than MAX_FRAMESET
 #define MAX_CFG				CFG_BASE
@@ -386,14 +394,6 @@ typedef enum
   FRAMES_TRANSLUCENT_COLORLESS_ENABLED = (1<<31)	// Used internally to simplify logic a bit.
 } FramesTranslucentColorless;
 
-typedef struct
-{
-  char* name;
-  uint8_t* expansions;	// May be NULL; else an array indexed by EXPANSION_t
-  uint8_t row;
-  uint8_t col;
-  uint8_t copied_expansions;	// if 1, expansions is a copy of another malloced pointer, and shouldn't be freed itself
-} Watermark;
 extern Watermark watermarks[256];	// Up to 255 may be defined, plus one as a sentinel
 
 extern Config configs[MAX_CFG + 1];
@@ -403,6 +403,7 @@ extern int cardback_renderer;
 extern int counters_num_rows, counters_num_columns, counters_renderer;
 extern int hack_power, hack_toughness;	// An ugly hack to make sure Theros enchantment-creatures show their power/toughness, even though the base cards are non-creature versions
 extern int watermark_size_x, watermark_size_y, watermarks_num_columns, watermarks_num_rows;
+extern double watermark_saturation_opacity, watermark_saturation_darken;
 extern int suppress_next_counters;
 
 typedef enum
@@ -437,12 +438,15 @@ int DrawFullCard(HDC hdc, const RECT* rect, const card_ptr_t* cp, int version, i
 int DrawManaText(HDC hdc, const RECT* dest_rect, const char* str, int drawflag);
 int DrawSmallCard(HDC hdc, const RECT* card_rect, const card_ptr_t* cp, int version, int mode, int player, int card);
 int DrawSmallCardTitle(HDC hdc, const RECT* dest_rect, const char* card_title, int color, int controlled_by_owner, const card_ptr_t* cp, int player, int card);	// last three arguments valid only if controlled_by_owner & 0x8
-const Rarity* get_rarity(int csvid);
+const Rarities* get_rarity(int csvid);
 ExpansionCategory expansion_category(int expansion);
 void initialize_for_shandalar(card_data_t* real_cards_data, card_ptr_t* real_cards_ptr);
 void draw_special_counters(HDC hdc, const RECT* rect, int player, int card);
 void get_special_counter_rect(RECT* rect_dest, const RECT* rect_src, int num);
 void draw_standard_counters(HDC hdc, const RECT* rect, int player, int card);
+int get_frame_type(const card_ptr_t* cp);	// Returns 0 for classic frame, 1 for modern, 2 for timeshift, 3 for futureshift, 4 for 2015, -1 for special.
+border_t get_border_color(uint32_t csvid);
+const Watermark* get_watermarks(void);	// returns &watermarks[0]
 
 /**************** In config.c ****************/
 void assign_default_rarities(void);
@@ -464,8 +468,7 @@ const char* get_pichandlename(PicHandleNames handle_name, int idx);
 int is_planeswalker_by_cp(const card_ptr_t* cp);
 int is_vanguard_by_cp(const card_ptr_t* cp);
 void popup(const char* title, const char* fmt, ...);
-PicHandleNames select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card);	// player and card should be -1,-1 when unknown or invalid
-int find_rules_engine_csvid(void);
+PicHandleNames select_frame(const card_ptr_t* cp, const Rarities* r, int player, int card);	// player and card should be -1,-1 when unknown or invalid
 void make_gpic_from_pic(PicHandleNames picnum);
 
 /**************** In drawfullcard.c ****************/
@@ -475,6 +478,9 @@ COLORREF get_title_text_override_color(PicHandleNames framenum, void* alpha_xfor
 									   int light_visible, COLORREF light_colorref,
 									   int white_black_visible, COLORREF white_black_colorref,
 									   int colorless_visible, COLORREF colorless_colorref);
+
+/**************** In drawfullcard.c ****************/
+void draw_counters_for_fullcard(HDC hdc, const RECT* rect, counter_t counter_type, int num);
 
 /**************** In drawmanacost.c ****************/
 int calc_draw_mana_text(HDC hdc, const RECT* rect, const char* str, int rules_text_flag, int no_additional_space, LoyaltyCost* loyalty);

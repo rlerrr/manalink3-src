@@ -2,6 +2,8 @@
 // Drawcardlib: display card and mana cost graphics.
 // drawfullcard.c: draw fullsize cards
 
+#include <math.h>
+
 #include "drawcardlib.h"
 
 Watermark watermarks[256];	// Up to 255 may be defined, plus one as a sentinel
@@ -9,7 +11,7 @@ Watermark watermarks[256];	// Up to 255 may be defined, plus one as a sentinel
 void
 blt_expansion_symbol(HDC hdc, const RECT* dest_rect, EXPANSION_t expansion, rarity_t rarity, int smallcard)
 {
-#define EXPANSIONS_WIDE	6	// Number of expansions wide (times four rarities)
+#define EXPANSIONS_WIDE	7	// Number of expansions wide (times four rarities)
 #define EXPANSIONS_TALL	25	// Number of expansions tall
 
   if (!hdc || !dest_rect || !pics[EXPANSION_SYMBOLS])
@@ -166,14 +168,14 @@ blt_powertoughness_box(HDC hdc, const RECT* dest_rect, PicHandleNames frame, GpI
 	PTY_COLORLESS,
 	PTY_GOLD,
 	PTY_ARTIFACT
-  } PowerToughnessY;
+  } PowerToughnessY __attribute__((unused));
 
   typedef enum
   {
 	PTX_NORMAL = 0,
 	PTX_GOLD,
 	PTX_DUAL_LAND
-  } PowerToughnessX;
+  } PowerToughnessX __attribute__((unused));
 
   int src_x = PTX_NORMAL, src_y, light = 0;
 
@@ -406,7 +408,7 @@ blt_type_icon(HDC hdc, const RECT* dest_rect, const card_ptr_t* cp, PicHandleNam
 	  case FRAME_MODERN_ARTIFACT_LAND_GOLD:
 
 	  case FRAME_MODERN_SPELL_HYBRID_WHITE_BLUE:		case FRAME_MODERN_SPELL_HYBRID_WHITE_BLACK:
-		// plus CARDOV_MODERN_COLORLESS and CARDOV_MODERN_SPECIAL
+		// plus CARDOV_MODERN_COLORLESS, CARDBK_MODERN_SPECIAL, CARDBK_MODERN_TRIGGER
 #endif
 		src_y = 0;
 		break;
@@ -425,7 +427,7 @@ blt_type_icon(HDC hdc, const RECT* dest_rect, const card_ptr_t* cp, PicHandleNam
 	ICON_TYPE_MULTIPLE,
 	ICON_TYPE_PLANESWALKER,
 	ICON_TYPE_SORCERY
-  } IconType;
+  } IconType __attribute__((unused));
 
   const card_data_t* cd;
 
@@ -763,6 +765,16 @@ strip_planeswalker_base_loyalty(char* srcdest)
   if (*p != ')')
 	return 0;
 
+  if (!strcmp(p - 2, "(X)"))
+	{
+	  p -= 3;
+	  if (*p == ' ')	// known to be >= srcdest: srcdest + (>4) - 1 - 3
+		{
+		  *p = 0;
+		  return -1;
+		}
+	}
+
   for (--p; p >= srcdest && *p >= '0' && *p <= '9'; --p)
 	{}
 
@@ -924,7 +936,6 @@ draw_art_first(HDC hdc, uint32_t csvid, int pic_version, PicHandleNames framenum
 			return TFM_COLORLESS_ALSO_NORMAL_FULLCARD_ART;
 		  else
 			return TFM_COLORLESS;
-			draw_fullcard_art(hdc, &cfg->fullcard_art, csvid, pic_version);
 		}
 	}
   else
@@ -953,7 +964,7 @@ draw_fullcard_frame(HDC hdc, PicHandleNames framenum, GpImageAttributes** alpha_
 }
 
 static COLORREF
-draw_fullcard_dfcsym_tombstone_title(HDC hdc, const card_ptr_t* cp, const Rarity* r, PicHandleNames framenum,
+draw_fullcard_dfcsym_tombstone_title(HDC hdc, const card_ptr_t* cp, const Rarities* r, PicHandleNames framenum,
 									 GpImageAttributes* alpha_xform)
 {
   RECT rect_title;
@@ -1021,7 +1032,8 @@ draw_fullcard_type(HDC hdc, const card_ptr_t* cp, COLORREF title_text_override_c
 {
   int loyalty = 0;
 
-  if (cp->card_type != (uint32_t)(-1) && cp->card_type != CP_TYPE_NONE)	// deliberately non-narrowed
+  if ((cp->card_type != (uint32_t)(-1) && cp->card_type != CP_TYPE_NONE)	// deliberately non-narrowed
+	  || parent == PARENT_SHANDALAR)
 	{
 	  char buf[100];	// longest observed: Jeska, Warrior Adept at 44
 
@@ -1058,8 +1070,81 @@ draw_fullcard_type(HDC hdc, const card_ptr_t* cp, COLORREF title_text_override_c
   return loyalty;
 }
 
+typedef struct
+{
+  double h;
+  double s;
+  double v;
+} Hsv;
+
 static void
-draw_fullcard_watermark(HDC hdc, const Rarity* r, const RECT* rect_rulestext)
+bgr_to_hsv(const uint8_t* bgr, Hsv* hsv)
+{
+  double r = bgr[2] / 255.0;
+  double g = bgr[1] / 255.0;
+  double b = bgr[0] / 255.0;
+
+  float k = 0.0;
+
+  if (g < b)
+    {
+	  double tmp = g;
+	  g = b;
+	  b = tmp;
+	  k = -1.0;
+    }
+
+  if (r < g)
+    {
+	  double tmp = g;
+	  g = r;
+	  r = tmp;
+	  k = -2.0 / 6.0 - k;
+    }
+
+  double chroma = r - MIN(g, b);
+  hsv->h = fabs(k + (g - b) / (6.0 * chroma + 1e-20f));
+  hsv->s = chroma / (r + 1e-20f);
+  hsv->v = r;
+}
+
+static void
+hsv_to_bgr(const Hsv* hsv, uint8_t* bgr)
+{
+  double h = 6 * hsv->h, s = hsv->s, v = hsv->v;
+
+  double fract = h - floor(h);
+
+  double p = v * (1 - s);
+  double q = v * (1 - s * fract);
+  double t = v * (1 - s * (1 - fract));
+
+  double r, g, b;
+
+  if      (0 <= h && h < 1)
+	{ r = v; g = t; b = p; }
+  else if (1 <= h && h < 2)
+	{ r = q; g = v; b = p; }
+  else if (2 <= h && h < 3)
+	{ r = p; g = v; b = t; }
+  else if (3 <= h && h < 4)
+	{ r = p; g = q; b = v; }
+  else if (4 <= h && h < 5)
+	{ r = t; g = p; b = v; }
+  else if (5 <= h && h < 6)
+	{ r = v; g = p; b = q; }
+  else
+	r = g = b = 0;
+
+  bgr[2] = r * 255 + 0.5;
+  bgr[1] = g * 255 + 0.5;
+  bgr[0] = b * 255 + 0.5;
+}
+
+void make_frame(PicHandleNames frame);
+
+static void
+draw_fullcard_watermark(HDC hdc, const Rarities* r, const RECT* rect_rulestext)
 {
   if (!r || r->watermark == 0xFF)
 	return;
@@ -1081,7 +1166,100 @@ draw_fullcard_watermark(HDC hdc, const Rarity* r, const RECT* rect_rulestext)
   int x, y;
   x = wmark->col * watermark_size_x;
   y = wmark->row * watermark_size_y;
-  gdip_blt(hdc, &rect_watermark, WATERMARKS, x, y, watermark_size_x, watermark_size_y, NULL);
+
+  if (!wmark->saturation)
+	{
+	  gdip_blt(hdc, &rect_watermark, WATERMARKS, x, y, watermark_size_x, watermark_size_y, NULL);
+	  return;
+	}
+
+  // Darken and saturate.  It's rather appalling how much effort it takes just to read back the data properly.
+
+  int width = rect_watermark.right - rect_watermark.left;
+  int height = rect_watermark.bottom - rect_watermark.top;
+
+  // Create a new bitmap to scale the watermark to
+  GpBitmap* bmp_wmark = NULL;
+  GdipCreateBitmapFromScan0(width, height, width * 4, PixelFormat32bppARGB, NULL, &bmp_wmark);
+  GpGraphics* gfx_wmark = NULL;
+  GdipGetImageGraphicsContext(bmp_wmark, &gfx_wmark);
+  GdipSetInterpolationMode(gfx_wmark, InterpolationModeHighQualityBicubic);
+  if (!gpics[WATERMARKS])
+	make_frame(WATERMARKS);
+  GdipDrawImageRectRectI(gfx_wmark, gpics[WATERMARKS],
+						 0, 0, width, height,
+						 x, y, watermark_size_x, watermark_size_y,
+						 UnitPixel, NULL, NULL, NULL);
+
+  // crop from existing image
+  HDC memdc = CreateCompatibleDC(hdc);
+  BITMAPINFO bmi;
+  bmi.bmiHeader.biSize = sizeof(bmi.bmiHeader);
+  bmi.bmiHeader.biWidth = width;
+  bmi.bmiHeader.biHeight = height;
+  bmi.bmiHeader.biPlanes = 1;
+  bmi.bmiHeader.biBitCount = 32;
+  bmi.bmiHeader.biCompression = BI_RGB;
+  bmi.bmiHeader.biSizeImage = width * height * 4;
+  bmi.bmiHeader.biClrUsed = 0;
+  bmi.bmiHeader.biClrImportant = 0;
+  uint8_t* bmbits;
+  HBITMAP hbmp = CreateDIBSection(memdc, &bmi, DIB_RGB_COLORS, (void**)(&bmbits), NULL, 0);
+  HANDLE oldbmp = SelectObject(memdc, hbmp);
+  BitBlt(memdc, 0, 0, width, height, hdc, rect_watermark.left, rect_watermark.top, SRCCOPY);
+
+  GpRect rect;
+  rect.X = rect.Y = 0;
+  rect.Width = width;
+  rect.Height = height;
+
+  BitmapData wmarkdata;
+  GdipBitmapLockBits(bmp_wmark, &rect, ImageLockModeRead, PixelFormat32bppARGB, &wmarkdata);
+
+  // wmarkdata now contains data from watermark.  We use its alpha, and modify rgb from the existing image.
+  INT wmark_stride = abs(wmarkdata.Stride);
+  uint8_t* prevbits = bmbits;
+  for (int yp = 0; yp < height; ++yp)
+	{
+	  uint8_t* wmarkbits = (uint8_t*)wmarkdata.Scan0 + yp * wmark_stride;
+	  for (int xp = 0; xp < width; ++xp, wmarkbits += 4, prevbits += 4)
+		if (wmarkbits[3])	// alpha
+		  {
+			int alpha = wmarkbits[3];
+			alpha *= watermark_saturation_opacity;
+			if (alpha < 0)
+			  alpha = 0;
+			else if (alpha > 255)
+			  alpha = 255;
+			wmarkbits[3] = alpha;
+
+			Hsv hsv;
+			bgr_to_hsv(prevbits, &hsv);
+			hsv.v *= watermark_saturation_darken;
+			if (hsv.v > 1.0)
+			  hsv.v = 1.0;
+			hsv.s = sqrt(sqrt(hsv.s));
+			hsv_to_bgr(&hsv, wmarkbits);
+		  }
+	  // else alpha == 0, so we don't care.
+	}
+
+  GdipBitmapUnlockBits(bmp_wmark, &wmarkdata);
+
+  // Now blit it back
+  GpGraphics* gfxhdc = NULL;
+  GdipCreateFromHDC(hdc, &gfxhdc);
+  GdipSetInterpolationMode(gfxhdc, InterpolationModeHighQualityBicubic);
+  GdipDrawImageRectI(gfxhdc, bmp_wmark,
+					 rect_watermark.left, rect_watermark.top,
+					 rect_watermark.right - rect_watermark.left, rect_watermark.bottom - rect_watermark.top);
+  GdipDeleteGraphics(gfxhdc);
+
+  GdipDeleteGraphics(gfx_wmark);
+  GdipDisposeImage(bmp_wmark);
+
+  SelectObject(memdc, oldbmp);
+  DeleteDC(memdc);
 }
 
 #define MAX_LOYALTY_MODS 5
@@ -1202,8 +1380,9 @@ draw_fullcard_loyalty_costs(HDC hdc, const RECT* rect_rulestext, LoyaltyCost* lo
 }
 
 static void
-draw_fullcard_textbox_contents(HDC hdc, const card_ptr_t* cp, RECT* rect_rulestext, char* rules_text, const Rarity* r,
-							   PicHandleNames framenum, GpImageAttributes* alpha_xform, int is_a_planeswalker)
+draw_fullcard_textbox_contents(HDC hdc, const card_ptr_t* cp, RECT* rect_rulestext, char* rules_text,
+							   const Rarities* r, PicHandleNames framenum, GpImageAttributes* alpha_xform,
+							   int is_a_planeswalker)
 {
   if (!*rules_text)	// i.e., not already computed
 	strip_hack_and_sleight_symbols(rules_text, cp->rules_text);
@@ -1255,15 +1434,28 @@ draw_fullcard_power_toughness(HDC hdc, PicHandleNames framenum, GpImageAttribute
   char buf[100];
   *buf = 0;
 
+  const char* star = "*";
+  const char* half = "\275";
+  const char* exp2 = "\262";
+
   // Power
   if (hack_power < 100)
 	sprintf(buf, "%d/", hack_power);
   else if (hack_power == 100)
-	strcpy(buf, "*/");
+	sprintf(buf, "%s/", star);
   else if (hack_power < 200)
-	sprintf(buf, "%d+*/", hack_power - 100);
-  else // hack_power >= 200
-	sprintf(buf, "%d-*/", hack_power - 200);
+	sprintf(buf, "%d+%s/", hack_power - 100, star);
+  else if (hack_power < 300)
+	sprintf(buf, "%d-%s" "/", hack_power - 200, star);
+  else if (hack_power < 400)
+	{
+	  if (hack_toughness == 300)
+		sprintf(buf, "%s/", half);
+	  else
+		sprintf(buf, "%d%s/", hack_power - 300, half);
+	}
+  else // hack_power == 500
+	sprintf(buf, "%s%s/", star, exp2);
 
   char* p = buf + strlen(buf);
 
@@ -1271,11 +1463,20 @@ draw_fullcard_power_toughness(HDC hdc, PicHandleNames framenum, GpImageAttribute
   if (hack_toughness < 100)
 	sprintf(p, "%d", hack_toughness);
   else if (hack_toughness == 100)
-	strcpy(p, "*");
+	sprintf(p, "%s", star);
   else if (hack_toughness < 200)
-	sprintf(p, "%d+*", hack_toughness - 100);
-  else // hack_toughness >= 200
-	sprintf(p, "%d-*", hack_toughness - 200);
+	sprintf(p, "%d+%s", hack_toughness - 100, star);
+  else if (hack_toughness < 300)
+	sprintf(p, "%d-%s", hack_toughness - 200, star);
+  else if (hack_toughness < 400)
+	{
+	  if (hack_toughness == 300)
+		sprintf(p, "%s", half);
+	  else
+		sprintf(p, "%d%s", hack_toughness - 300, half);
+	}
+  else // hack_toughness == 500
+	sprintf(p, "%s%s", star, exp2);
 
   int pos = (cfg->fullcard_powertoughness_center
 			 ? (cfg->fullcard_powertoughness.right + cfg->fullcard_powertoughness.left) / 2
@@ -1296,7 +1497,10 @@ draw_fullcard_base_loyalty(HDC hdc, int loyalty, GpImageAttributes* alpha_xform)
 
   SetTextAlign(hdc, TA_CENTER);
   char buf[10];
-  sprintf(buf, "%d", loyalty);
+  if (loyalty == -1)	// X
+	strcpy(buf, "X");
+  else
+	sprintf(buf, "%d", loyalty);
 
   draw_text_with_shadow_at_x(hdc, &cfg->fullcard_loyalty_base, pos, &cfg->fullcard_loyalty_txt, -1, buf, -1);
 }
@@ -1341,13 +1545,131 @@ draw_fullcard_vanguard(HDC hdc, const card_ptr_t* cp)
   draw_text_with_shadow_at_x(hdc, &cfg->fullcard_vanguard_life, pos, &tws, -1, buf, -1);
 }
 
-static void
-draw_fullcard_border_initial(HDC hdc)
+static border_t
+get_border_color_from_rarity(const Rarities* r, uint32_t csvid)
 {
-  /* This is done before drawing anything else, to ensure there's no transparent strips left over no matter how horribly Windows' drawing functions disagree on
-   * where the edges should be. */
+  switch (r->default_expansion)
+	{
+	  case EXPANSION_UNLIMITED_EDITION:
+	  case EXPANSION_REVISED_EDITION:
+	  case EXPANSION_FOURTH_EDITION:
+	  case EXPANSION_CHRONICLES:
+	  case EXPANSION_FIFTH_EDITION:
+	  case EXPANSION_CLASSIC_SIXTH_EDITION:
+	  case EXPANSION_PORTAL_THREE_KINGDOMS:
+	  case EXPANSION_BATTLE_ROYALE_BOX_SET:
+	  case EXPANSION_STARTER_2000:
+	  case EXPANSION_BEATDOWN_BOX_SET:
+	  case EXPANSION_SEVENTH_EDITION:
+	  case EXPANSION_EIGHTH_EDITION:
+	  case EXPANSION_NINTH_EDITION:
+		return BORDER_WHITE;
 
-  HBRUSH solid_brush = CreateSolidBrush(cfg->fullcard_border_color.colorref);
+	  case EXPANSION_UNGLUED:
+	  case EXPANSION_UNHINGED:
+	  case EXPANSION_UNSTABLE:
+		return BORDER_SILVER;
+
+	  case EXPANSION_PROMO:
+		// It's complicated.
+
+		// These are black-bordered.
+		switch (csvid)
+		  {
+			// book inserts, never reprinted
+			case CARD_ID_NALATHNI_DRAGON:
+			case CARD_ID_SEWERS_OF_ESTARK:
+			case CARD_ID_WINDSEEKER_CENTAUR:
+
+			// promo-only planes, not in Planechase or Planechase 2012
+			case CARD_ID_CELESTINE_REEF:
+			case CARD_ID_HORIZON_BOUGHS:
+			case CARD_ID_MIRRORED_DEPTHS:
+			case CARD_ID_TEMBER_CITY:
+
+			// promo-only schemes, not in Archenemy or Archenemy: Nicol Bolas
+			case CARD_ID_DRENCH_THE_SOIL_IN_THEIR_BLOOD:
+			case CARD_ID_IMPRISON_THIS_INSOLENT_WRETCH:
+			case CARD_ID_PERHAPS_YOUVE_MET_MY_COHORT:
+			case CARD_ID_PLOTS_THAT_SPAN_CENTURIES:
+			case CARD_ID_YOUR_INESCAPABLE_DOOM:
+
+			// Heroes of the Realm cards, though at least Dungeon Master should really have been silver.
+			case CARD_ID_CHANDRA_GREMLIN_WRANGLER:
+			case CARD_ID_DUNGEON_MASTER:
+			case CARD_ID_NIRA_HELLKITE_DUELIST:
+
+			// MTG:Arena New-Player-Experience cards, never printed on paper.
+			case CARD_ID_ANGELIC_REWARD:
+			case CARD_ID_BLINDING_RADIANCE:
+			case CARD_ID_CONFRONT_THE_ASSAULT:
+			case CARD_ID_CRUEL_CUT:
+			case CARD_ID_FERAL_ROAR:
+			case CARD_ID_GOBLIN_BRUISER:
+			case CARD_ID_GOBLIN_GANG_LEADER:
+			case CARD_ID_INSPIRING_COMMANDER:
+			case CARD_ID_NIMBLE_PILFERER:
+			case CARD_ID_OGRE_PAINBRINGER:
+			case CARD_ID_RIVERS_FAVOR:
+			case CARD_ID_SHORECOMBER_CRAB:
+			case CARD_ID_SHRINE_KEEPER:
+			case CARD_ID_SOULHUNTER_RAKSHASA:
+			case CARD_ID_TACTICAL_ADVANTAGE:
+			case CARD_ID_TITANIC_PELAGOSAUR:
+			case CARD_ID_TREETOP_WARDEN:
+			case CARD_ID_ZEPHYR_GULL:
+			  return BORDER_BLACK;
+		  }
+
+		// Otherwise, it's a Happy Holidays or Hascon card.
+		return BORDER_SILVER;
+
+	  default:	// everything else is black-bordered
+		return BORDER_BLACK;
+	}
+}
+
+border_t
+get_border_color(uint32_t csvid)
+{
+  return get_border_color_from_rarity(get_rarity(csvid), csvid);
+}
+
+static HBRUSH
+create_border_brush(int big_art_style, const Rarities* r, uint32_t csvid, int* was_black_border)
+{
+  COLORREF col;
+  if (big_art_style == 42)
+	col = RGB(241,217,39);
+  else
+	switch (get_border_color_from_rarity(r, csvid))
+	  {
+		case BORDER_WHITE:
+		  col = cfg->fullcard_white_border_color.colorref;
+		  break;
+
+		case BORDER_SILVER:
+		  col = cfg->fullcard_silver_border_color.colorref;
+		  break;
+
+		default:
+		  col = cfg->fullcard_black_border_color.colorref;
+		  if (was_black_border)
+			*was_black_border = 1;
+		  break;
+	  }
+
+  return CreateSolidBrush(col);
+}
+
+static int
+draw_fullcard_border_initial(HDC hdc, int big_art_style, const Rarities* r, uint32_t csvid)
+{
+  /* This is done before drawing anything else, to ensure there's no transparent strips left over no matter how
+   * horribly Windows' drawing functions disagree on where the edges should be. */
+
+  int was_black_border = 0;
+  HBRUSH solid_brush = create_border_brush(big_art_style, r, csvid, &was_black_border);
   SelectObject(hdc, solid_brush);
   SelectObject(hdc, GetStockObject(NULL_PEN));
 
@@ -1362,15 +1684,17 @@ draw_fullcard_border_initial(HDC hdc)
 
   if (solid_brush)
 	DeleteObject(solid_brush);
+
+  return was_black_border;
 }
 
 static void
-draw_fullcard_border(HDC hdc)
+draw_fullcard_border(HDC hdc, int big_art_style, const Rarities* r, uint32_t csvid)
 {
   // Make very, very sure that that the edges are even, even if there are multiple visible frame elements abutting one (as in the futureshifted frames)
   ExcludeClipRect(hdc, cfg->fullcard_frame.left+2, cfg->fullcard_frame.top+2, cfg->fullcard_frame.right-2, cfg->fullcard_frame.bottom-2);
 
-  HBRUSH solid_brush = CreateSolidBrush(cfg->fullcard_border_color.colorref);
+  HBRUSH solid_brush = create_border_brush(big_art_style, r, csvid, NULL);
   SelectObject(hdc, solid_brush);
   SelectObject(hdc, GetStockObject(NULL_PEN));
 
@@ -1380,17 +1704,153 @@ draw_fullcard_border(HDC hdc)
 	DeleteObject(solid_brush);
 }
 
-int
-DrawFullCard(HDC hdc, const RECT* dest_rect, const card_ptr_t* cp, int pic_version, int big_art_style, int expand_text_box, const char* illus)
+static void
+draw_card_back_no_crit(HDC hdc, const RECT* dest_rect)
 {
-  /* big_art_style is 0 or 2 in _BIGCARD_WNDPROC; 2 in _TENTATIVE_DIALOG_MULLIGAN and sub_4842A0; 17 in sub_43DBE0() and sub_43E620() and sub_470F80() and
-   * sub_4D1950() and sub_4D1BC0; 18 in DialogFunc() and sub_46A530() and sub_46B950() and sub_4AA090; varies in sub_4D1780 (second-last param, may be 17, 18,
-   * 0, or 2) */
-  (void)big_art_style;
-  (void)illus;
+  RECT pic_rect;
+  int borderx, bordery;
 
+  borderx = (dest_rect->right - dest_rect->left) * 3 / 100;
+  if (borderx < 1)
+	borderx = 1;
+
+  bordery = (dest_rect->bottom - dest_rect->top) / 50;
+  if (bordery < 1)
+	bordery = 1;
+
+  FillRect(hdc, dest_rect, GetStockObject(BLACK_BRUSH));
+
+  SetRect(&pic_rect,
+		  dest_rect->left + borderx, dest_rect->top + bordery,
+		  dest_rect->right - borderx, dest_rect->bottom - bordery);
+
+  if (cardback_renderer == RENDERER_GDIPLUS)
+	gdip_blt_whole(hdc, &pic_rect, CARDBACK, NULL);
+  else
+	{
+	  int savedc = SaveDC(hdc);
+	  SelectObject(*spare_hdc, pics[CARDBACK]);
+
+	  BITMAP bmp;
+	  GetObject(pics[CARDBACK], sizeof(BITMAP), &bmp);
+	  int src_width = bmp.bmWidth;
+	  int src_height = bmp.bmHeight;
+
+	  StretchBlt(hdc,
+				 dest_rect->left, dest_rect->top,
+				 dest_rect->right - dest_rect->left, dest_rect->bottom - dest_rect->top,
+				 *spare_hdc, 0, 0, src_width, src_height, SRCCOPY);
+
+	  RestoreDC(hdc, savedc);
+	}
+}
+
+int
+DrawCardBack(HDC hdc, const RECT* dest_rect,
+			 // An appalling hack to use this as an interface for other functions, but still safer than adding new imports.
+			 unsigned int mode, int arg1, int arg2, int arg3, int arg4)
+{
+  int rval;
+
+  if (!hdc || !dest_rect)
+	return 0;
+
+  EnterCriticalSection(critical_section_for_drawing);
+
+  if ((int)hdc == -1 && (int)dest_rect == -1 && (mode & 0xFFFFFF00) == 0x7D260A00)
+	{
+	  switch (mode & 0xFF)
+		{
+		  case 1:
+			draw_special_counters((HDC)arg1, (RECT*)arg2, arg3, arg4);
+			rval = 0;
+			break;
+
+		  case 2:
+			draw_standard_counters((HDC)arg1, (RECT*)arg2, arg3, arg4);
+			rval = 0;
+			break;
+
+		  case 3:
+			get_special_counter_rect((RECT*)arg1, (const RECT*)arg2, arg3);
+			rval = 0;
+			break;
+
+		  default:
+			rval = 0;
+			break;
+		}
+	}
+  else
+	{
+	  draw_card_back_no_crit(hdc, dest_rect);
+
+	  rval = 1;
+	}
+
+  LeaveCriticalSection(critical_section_for_drawing);
+  return rval;
+}
+
+int
+DrawFullCard(HDC hdc, const RECT* dest_rect, const card_ptr_t* cp, int pic_version, int big_art_style,
+			 int expand_text_box, const char* illus)
+{
+  /* big_art_style is variously 0, 2, 17, or 18 when called from magic.exe or shandalar.exe, depending on the calling
+   * function.
+   *
+   * When the low byte is set to 42, it's from Shandalar.dll's wndproc_GraveyardCards() and means to draw the border
+   * yellow instead of black.  When the low byte is 43, it's also from Shandalar.dll's wndproc_GraveyardCards(), but
+   * draw the border normally.  In both cases, BYTE2() is a counter_t, and BYTE3() is a number of counters. */
   if (!hdc || !dest_rect || !cp)
 	return 0;
+
+  (void)illus;
+
+  counter_t counter_type;
+  int counters;
+  if (BYTE0(big_art_style) >= 42
+	  && BYTE0(big_art_style) <= 44)
+	{
+	  counter_type = (counter_t)(BYTE2(big_art_style));
+	  counters = BYTE3(big_art_style);
+	  big_art_style = BYTE0(big_art_style);
+	  if (big_art_style == 44)	// Yet another special case - draw the card back, maybe with counters on it.  Sigh.
+		{
+		  EnterCriticalSection(critical_section_for_drawing);
+
+		  draw_card_back_no_crit(hdc, dest_rect);
+
+		  if (counters > 0)
+			{
+			  int savedc = SaveDC(hdc);
+			  SetMapMode(hdc, MM_ISOTROPIC);
+			  SetWindowExtEx(hdc, 800, 1200, NULL);
+
+			  SetViewportExtEx(hdc, dest_rect->right - dest_rect->left, dest_rect->bottom - dest_rect->top, NULL);
+			  SetWindowOrgEx(hdc, 400, 600, NULL);
+			  SetViewportOrgEx(hdc,
+							   (dest_rect->right + dest_rect->left) / 2, (dest_rect->bottom + dest_rect->top) / 2,
+							   NULL);
+			  RECT rc;
+			  rc.left = 0;
+			  rc.right = 800;
+			  rc.top = 0;
+			  rc.bottom = 1200;
+			  draw_counters_for_fullcard(hdc, &rc, counter_type, counters);
+
+			  RestoreDC(hdc, savedc);
+			}
+
+		  LeaveCriticalSection(critical_section_for_drawing);
+		  return 1;
+		}
+	}
+  else
+	{
+	  counter_type = COUNTER_invalid;
+	  counters = 0;
+	}
 
   EnterCriticalSection(critical_section_for_drawing);
 
@@ -1408,12 +1868,13 @@ DrawFullCard(HDC hdc, const RECT* dest_rect, const card_ptr_t* cp, int pic_versi
   SetWindowOrgEx(hdc, 400, 600, NULL);
   SetViewportOrgEx(hdc, (dest_rect->right + dest_rect->left) / 2, (dest_rect->bottom + dest_rect->top) / 2, NULL);
 
-  const Rarity* r = get_rarity(cp->id);
+  const Rarities* r = get_rarity(cp->id);
   PicHandleNames framenum = select_frame(cp, r, -1, -1);
 
   int is_a_creature = (hack_power || hack_toughness
-					   || (int8_t)cp->card_type == CP_TYPE_CREATURE || (int8_t)cp->card_type == CP_TYPE_TOKEN
-					   || ((int8_t)cp->card_type == CP_TYPE_ARTIFACT
+					   || (int8_t)cp->card_type == CP_TYPE_CREATURE
+					   || (((int8_t)cp->card_type == CP_TYPE_TOKEN
+							|| (int8_t)cp->card_type == CP_TYPE_ARTIFACT)
 						   && (cp->types[0] == SUBTYPE_CREATURE
 							   || cp->types[1] == SUBTYPE_CREATURE
 							   || cp->types[2] == SUBTYPE_CREATURE
@@ -1432,7 +1893,7 @@ DrawFullCard(HDC hdc, const RECT* dest_rect, const card_ptr_t* cp, int pic_versi
   SetBkMode(hdc, TRANSPARENT);
   SetTextAlign(hdc, TA_LEFT);
 
-  draw_fullcard_border_initial(hdc);
+  int was_black_border = draw_fullcard_border_initial(hdc, BYTE0(big_art_style), r, cp->id);
 
   RECT rect_rulestext, rect_rulesbox;
   CopyRect(&rect_rulestext, &cfg->fullcard_rulestext);
@@ -1450,7 +1911,7 @@ DrawFullCard(HDC hdc, const RECT* dest_rect, const card_ptr_t* cp, int pic_versi
 
   draw_fullcard_frame(hdc, framenum, &alpha_xform, translucent_frame);
 
-  if (cfg->fullcard_outline_visible)
+  if (cfg->fullcard_outline_visible && !was_black_border)
 	draw_rect_outline(hdc, &cfg->fullcard_frame, cfg->fullcard_outline_color.colorref);
 
   COLORREF title_text_override_color = draw_fullcard_dfcsym_tombstone_title(hdc, cp, r, framenum, alpha_xform);
@@ -1487,88 +1948,19 @@ DrawFullCard(HDC hdc, const RECT* dest_rect, const card_ptr_t* cp, int pic_versi
   if (cfg->fullcard_vanguard_visible && is_vanguard_by_cp(cp))
 	draw_fullcard_vanguard(hdc, cp);
 
-  draw_fullcard_border(hdc);
+  if (counters > 0)
+	{
+	  RECT rc;
+	  rc.left = 0;
+	  rc.right = 800;
+	  rc.top = 0;
+	  rc.bottom = 1200;
+	  draw_counters_for_fullcard(hdc, &rc, counter_type, counters);
+	}
+
+  draw_fullcard_border(hdc, BYTE0(big_art_style), r, cp->id);	// last - it sets clipping
 
   RestoreDC(hdc, savedc);
   LeaveCriticalSection(critical_section_for_drawing);
   return big_art_exists;
-}
-
-int
-DrawCardBack(HDC hdc, const RECT* dest_rect,
-			 // An appalling hack to use this as an interface for other functions, but still safer than adding new imports.
-			 unsigned int mode, int arg1, int arg2, int arg3, int arg4)
-{
-  int rval;
-  RECT pic_rect;
-  int borderx, bordery;
-
-  if (!hdc || !dest_rect)
-	return 0;
-
-  EnterCriticalSection(critical_section_for_drawing);
-
-  if ((int)hdc == -1 && (int)dest_rect == -1 && (mode & 0xFFFFFF00) == 0x7D260A00)
-	{
-	  switch (mode & 0xFF)
-		{
-		  case 1:
-			draw_special_counters((HDC)arg1, (RECT*)arg2, arg3, arg4);
-			rval = 0;
-			break;
-
-		  case 2:
-			draw_standard_counters((HDC)arg1, (RECT*)arg2, arg3, arg4);
-			rval = 0;
-			break;
-
-		  case 3:
-			get_special_counter_rect((RECT*)arg1, (const RECT*)arg2, arg3);
-			rval = 0;
-			break;
-
-		  default:
-			rval = 0;
-			break;
-		}
-	}
-  else
-	{
-	  borderx = (dest_rect->right - dest_rect->left) * 3 / 100;
-	  if (borderx < 1)
-		borderx = 1;
-
-	  bordery = (dest_rect->bottom - dest_rect->top) / 50;
-	  if (bordery < 1)
-		bordery = 1;
-
-	  FillRect(hdc, dest_rect, GetStockObject(BLACK_BRUSH));
-
-	  SetRect(&pic_rect,
-			  dest_rect->left + borderx, dest_rect->top + bordery,
-			  dest_rect->right - borderx, dest_rect->bottom - bordery);
-
-	  if (cardback_renderer == RENDERER_GDIPLUS)
-		gdip_blt_whole(hdc, &pic_rect, CARDBACK, NULL);
-	  else
-		{
-		  int savedc = SaveDC(hdc);
-		  SelectObject(*spare_hdc, pics[CARDBACK]);
-
-		  BITMAP bmp;
-		  GetObject(pics[CARDBACK], sizeof(BITMAP), &bmp);
-		  int src_width = bmp.bmWidth;
-		  int src_height = bmp.bmHeight;
-
-		  StretchBlt(hdc, dest_rect->left, dest_rect->top, dest_rect->right - dest_rect->left, dest_rect->bottom - dest_rect->top,
-					 *spare_hdc, 0, 0, src_width, src_height, SRCCOPY);
-
-		  RestoreDC(hdc, savedc);
-		}
-
-	  rval = 1;
-	}
-
-  LeaveCriticalSection(critical_section_for_drawing);
-  return rval;
 }

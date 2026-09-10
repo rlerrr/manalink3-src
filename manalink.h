@@ -12,10 +12,8 @@
 extern "C" {
 #endif
 
-/* WtF?! Camelbox gcc does not understand NULL. Isn't it supposed to be part of standard C? */
-#ifndef NULL
-#define NULL ((void *)0)
-#endif
+#include <stdlib.h>
+#include <stdio.h>
 
 #define opp (1-player)
 
@@ -224,6 +222,7 @@ void base_target_definition(int player, int card, target_definition_t *td, int t
 void default_target_definition(int player, int card, target_definition_t *td, int type);
 void counterspell_target_definition(int player, int card, target_definition_t *td, int type);
 void counter_activated_target_definition(int player, int card, target_definition_t* td, int type);
+void opponent_or_pw_target_definition(int player, int card, target_definition_t* td);	// Like default_target_definition_t, but sets TARGET_TYPE_PLANESWALKER, TARGET_ZONE_CREATURE_OR_PLAYER, and TARGET_SPECIAL_OPPONENT.
 int can_target(target_definition_t *td);
 int target_available(int player, int card, target_definition_t *td);
 extern const char* hack_prepend_prompt;	// Set this to a string to prepend it (and a colon and space) to all targeting prompts.  Set to NULL when done.
@@ -307,6 +306,7 @@ int islandhome(int, int, event_t);
 int is_legal_block(int blocking_player, int blocking_card, int blocked_player, int blocked_card);
 int is_tapped(int, int);
 void kill_card(int, int, kill_t);
+void kill_card_exe(int player, int card, kill_t kill_mode);
 void load_text(int, const char *);
 int mana_producer_fixed(int, int, event_t, int);
 void obliterate_top_card_of_stack(void);
@@ -316,7 +316,6 @@ void produce_mana(int, int, int);
 void real_lose_the_game(int);
 int real_put_into_play(int, int);
 int raw_put_iid_on_top_of_deck(int player, int iid);	// Put a newly-created card with internal_card_id iid on top of player's library.
-int sprintf(char *str, const char *format, ...);
 int rearrange_top_3(int, int, event_t);
 void redraw_libraries(void);
 int regenerate(int, int, event_t, int, int);
@@ -362,28 +361,29 @@ extern char byte_628C0C;
 
 /* Our own functions */
 int add_card_to_hand(int, int);
+int add_card_to_hand_exe(int player, int iid);
 static inline int affect_me(int player, int card)	{ return card == affected_card && player == affected_card_controller; }
 int boost_creature_type(int player, int card, event_t event, subtype_t subtype, int power, int toughness, int abilities, bct_t flags);
 void boost_subtype(int player, int card, event_t event, subtype_t subtype, int power, int toughness, int abilities, int sp_abilities, bct_t flags);	// Doesn't work for special keywords that need to be active other than during EVENT_ABILITIES.
-int call_card_fn(void* address, card_instance_t* instance, int player, int card, event_t event);	// Puts instance into esi, then calls address(player, card, event).
+int call_card_fn(CardFunction address, card_instance_t* instance, int player, int card, event_t event);	// Puts instance into esi, then calls address(player, card, event).
 int call_card_function_i(card_instance_t* instance, int player, int card, event_t event);	// A frontend for call_card_fn() where address should be computed from instance.
 int call_card_function(int player, int card, event_t event);	// A frontend for call_card_fn() where both address and instance should be computed from {player,card}.
 int count_graveyard(int);
 extern HackForceEffectChangeSource hack_force_effect_change_source;	// If an effect is created with source hack_force_effect_change_source.from, change it to be hack_force_effect_change_source.to before sending it to the exe.
 int create_legacy_effect_exe(int player, int card, int iid, int t_player, int t_card);
-int get_power(int, int);
-int get_toughness(int, int);
+int get_power(int player, int card);
+int get_toughness(int player, int card);
 card_instance_t* get_card_instance(int player, int card);
 int get_cmc(int player, int card);
 card_instance_t* get_displayed_card_instance(int player, int card);
 int has_creature_type(int, int, subtype_t);
 int has_threshold(int player);
 card_instance_t* in_play(int player, int card);	// Returns get_card_instance(player, card) if in play, else NULL.
-void protection_from_black(int, int, event_t);
-void protection_from_red(int, int, event_t);
-void protection_from_blue(int, int, event_t);
-void protection_from_green(int, int, event_t);
-void protection_from_white(int, int, event_t);
+int protection_from_black(int player, int card, event_t event);
+int protection_from_red(int player, int card, event_t event);
+int protection_from_blue(int player, int card, event_t event);
+int protection_from_green(int player, int card, event_t event);
+int protection_from_white(int player, int card, event_t event);
 void unblockable(int player, int card, event_t event);
 
 /* C functions */
@@ -519,6 +519,7 @@ void opponent_plays_card_in_your_hand_for_free(int player, int card);
 int play_card_in_deck_for_free(int player, int t_player, int deck_pos);
 int play_card_in_grave_for_free(int player, int t_player, int g_pos);
 int play_card_in_grave_for_free_and_exile_it(int player, int t_player, int g_pos);
+int fake_play_card_in_zone_for_free(int player, int t_player, int iid, int special_flags);//For special cases, see Talent of the Telepath from Origins
 int flashback_spell(int player, int g_pos);
 int play_card_in_exile_for_free(int player, int t_player, int csvid);
 int play_spell_for_free(int player, int csvid);
@@ -564,6 +565,7 @@ int bridge_from_below(int, int, event_t );
 int get_flashback(int player, int card);
 int fetchland(int player, int card, event_t event, subtype_t subtype1, subtype_t subtype2, int lifecost);
 int planeswalker(int, int, event_t, int);
+int planeswalker_its_attacking(int player, int card);	// Returns the card number of the planeswalker that creature {player,card} is currently attacking, -1 if it's attacking a player, or -2 if it was attacking a planeswalker that's no longer on the bf or has changed control.  Precondition: {player,card} is an attacking creature.
 int card_exploration(int, int, event_t );
 int card_dissipate(int , int, event_t);
 int basic_equipment(int, int, event_t, int);
@@ -575,8 +577,8 @@ int give_control(int effect_source_player, int effect_source_card, int tar_playe
 int give_control_until_eot(int effect_source_player, int effect_source_card, int tar_player, int tar_card);
 void give_control_of_self(int player, int card);
 int get_cmc_by_id(int);
-int landfall(int player, int card, event_t event);
-int landfall_mode(int player, int card, event_t event, resolve_trigger_t trigger_mode);
+void landfall(int player, int card, event_t event);
+void landfall_mode(int player, int card, event_t event, resolve_trigger_t trigger_mode);
 int get_momir(void);
 void set_challenge_round_to_0(void);
 const char* get_card_name_by_id(int csvid);
@@ -610,7 +612,7 @@ void rearrange_bottom_x(int t_player, int who_chooses, int number);
 int reanimate_permanent(int player, int card, int target_graveyard, int selected, reanimate_mode_t action);
 int reanimate_permanent_with_effect(int player, int card, int target_graveyard, int selected, reanimate_mode_t action, int (*effect_fn)(int, int, event_t));	// Just like reanimate_permanent(), but attach an effect with function effect_fn to the animated permanent before putting it into play.
 int reanimate_permanent_with_counter_and_effect(int player, int card, int target_graveyard, int selected, reanimate_mode_t action, counter_t counter_type, int (*effect_fn)(int, int, event_t));	// Just like reanimate_permanent_with_effect(), but also add a counter to it before putting it into play.
-int reanimate_permanent_with_function(int player, int card, int target_graveyard, int selected, reanimate_mode_t action, void (*before_etb)(int, int));	// Just like reanimate_permanent(), but call an artibtrary function on {player,card} just before it's put on the battlefield.
+int reanimate_permanent_with_function(int player, int card, int target_graveyard, int selected, reanimate_mode_t action, void (*before_etb)(int, int, int, int));
 int count_graveyard_by_subtype(int player, subtype_t subtype);
 int any_in_graveyard_by_subtype(int player, subtype_t subtype);
 void increase_trap_condition(int player, int, int);
@@ -668,7 +670,7 @@ int metalcraft(int player, int card);
 int dealt_damage_to_player(int player, int card, int parent_player, int parent_card, int event);
 //int autoselect_target(int, int , int, int ,int , int , int , int ,
 //    int , int , int , int ,int ,int ,int ,int ,int ,int ,int,int ,int ,int );
-int pump_subtype_until_eot(int player, int card, int, int, int, int, int, int);
+int pump_subtype_until_eot(int player, int card, int t_player, int subtype, int power, int toughness, int ability, int sp_ability);
 void pump_color_until_eot(int player, int card, int, int, int, int, int, int);
 int from_graveyard_to_deck(int player, int, int);
 void rampage(int player, int card, event_t event, int number);
@@ -692,11 +694,13 @@ int get_hacked_subtype(int player, int card, int);
 int get_storm_count(void);
 int get_specific_storm_count(int player);
 int get_stormcreature_count(int);
-int ally_trigger(int player, int card, event_t event, int trigger_mode /*accepts RESOLVE_TRIGGER_DUH*/);
+void ally_trigger(int player, int card, event_t event, int trigger_mode /*accepts RESOLVE_TRIGGER_DUH*/);
 subtype_t from_hardcodedsubtype_to_subtype(hardcoded_subtype_t hcs);	// Only needed for engine.c:effect_asterisk(), field ASTERISK_SUBTYPE_OF_INFO_SLOT.  I'm reasonably certain that only gets called from card_swarm_of_rats() at 0x4140f0, for HARDCODED_SUBTYPE_RAT; that happens to have the same value as SUBTYPE_RAT.  But no reason to risk it.
 int has_subtype_by_id(int, subtype_t subtype);
 int pick_card_from_graveyard(int player, int, const char *);
 void proliferate(int player, int card);
+void proliferate_manual_single_permanent_or_player(int player, int card, int p, int c, int add_untargettable);
+void proliferate_auto_single_permanent_or_player(int player, int card, int p, int c );
 int changeling_switcher(int player, int card, event_t event);
 int count_subtype_in_hand(int player, subtype_t);
 int count_untapped_subtype(int, int, int);
@@ -762,7 +766,7 @@ int player_reveals_x_and_discard(int, int, int, int, int, int, int, int, int, in
 void reshuffle_all_into_deck(int player, int);
 int has_phyrexian_mana(int player, int cless, int black, int blue, int green, int red, int white, int clred_artifact);
 int charge_phyrexian_mana(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white, int clred_artifact);
-void lobotomy_effect(int player, int t_player, int csvid, int must_find_all);
+int lobotomy_effect(int player, int t_player, int csvid, int flags);
 int is_mana_producer_land(int player, int card);
 int is_planeswalker(int player, int card);
 int check_battlefield_for_subtype(int player, int type, int subtype);
@@ -780,7 +784,7 @@ int get_most_common_cmc_nonland(int player);
 int get_most_common_cmc_in_hand(int player, type_t type);
 int get_highest_cmc(int player, type_t type);
 int get_highest_cmc_nonland(int player);
-int symbiotic_creature(int player, int card, event_t event, token_generation_t *token);
+void symbiotic_creature(int player, int card, event_t event, int token_type, int amount);
 void put_on_bottom_of_deck(int player, int card);
 int effect_act_of_treason(int player, int card, int, int);
 int global_tutor(int player, int targ_player, int search_location, int destination, int must_select, int ai_selection_mode, int type, int flag1, int subtype, int flag2, int color, int flag3, int id, int flag4, int cc, int flag5);
@@ -800,7 +804,7 @@ void multidamage(int player, int card, int, int, target_definition_t *td);
 void nobody_can_attack(int player, int card, event_t event, int t_player);
 void nobody_can_attack_until_eot(int player, int card, int t_player, int except_player, int except_card);	// Only except_player/except_card, and creatures not controlled by t_player, can attack this turn.  t_player can be 2 for anybody, and except_player/except_card can be -1 to not provide an exception.
 void nobody_can_attack_until_your_next_turn(int player, int card, int t_player);
-void target_player_skips_his_next_attack_step(int player, int card, int t_player, int this_turn_only);
+int target_player_skips_his_next_attack_step(int player, int card, int t_player, int this_turn_only);
 int count_planeswalkers(int player, int);
 int get_special_infos(int player, int card);
 int is_legendary(int player, int card);
@@ -809,6 +813,7 @@ int fog_special(int player, int card, int t_player, int flags);	// flags is a fo
 int fog_special2(int player, int card, int t_player, fog_special_flags_t flags, int param);	// param's meaning defined by which flags are set.
 // void agyrem_eot_effect(int player);
 void blink_effect(int player, int card, void (*before_etb)(int player, int card));	// Exiles {t_player,t_card} and then returns it to the battlefield under its owner's control.  If before_etb is non-null, call that function with the card just before it re-enters the battlefield.
+void blink_effect_controller(int player, int card, void (*before_etb)(int player, int card)); //like blink_effect but returns to the battlefield under it's controller control.
 void pandemonium_effect(int player, int card);
 void popup(const char* title, const char* fmt, ...);
 extern char always_prompt_for_color;	// If set to nonzero, then the color for a mana sources that can tap for more than one kind of color is always prompted for.
@@ -842,7 +847,7 @@ int get_colors_of_mana_land_could_produce_ignoring_costs(int player, int card);
 int get_color_of_mana_produced_by_id(int id, int info_slot, int player);
 int all_lands_are_basiclandtype(int player, int card, int event, int whose_lands, int land_color, int land_subtype);	// Stores last-hacked color_test in info_slot.  No avoiding it; it's needed for get_color_of_mana_produced_by_id(), which doesn't get a card ref.
 int put_into_play_a_card_from_deck(int player, int, int);
-int cursed_permanent(int player, int card, event_t event, int dmg, target_definition_t *td, const char *prompt);
+void damage_enchanted_permanent_controller_at_upkeep(int player, int card, event_t event, int dmg);
 int draw_some_cards_if_you_want(int player, int card, int who_draws, int howmany);
 int draw_up_to_n_cards(int player, int maximum);
 int vanguard_card(int player, int card, event_t event, int, int, int);
@@ -855,11 +860,12 @@ void force_a_subtype(int player, int card, subtype_t subtype);
 void add_a_subtype(int player, int card, subtype_t subtype);
 int has_forced_subtype(int player, int card);
 int has_added_subtype(int player, int card);
-void reset_subtypes(int player, int card, int);
+void reset_subtypes(int player, int card, reset_subtype_mode_t mode);
 int get_added_subtype(int player, int card);
 void negate_combat_damage_this_turn(int player, int card, int t_player, int t_card, int unused);
 card_instance_t* is_equipping(int player, int card);
 int check_for_equipment_targets(int player, int card);
+int check_for_equipment_targets_custom(int player, int card, target_definition_t *td);
 void play_land_sound_effect(int player, int card);
 void play_land_sound_effect_force_color(int player, int card, int colors);
 int m10_lands(int player, int card, event_t event, int, int);
@@ -914,7 +920,7 @@ void recalculate_rules_engine_and_deadbox(void);
 int get_deadbox_card(int player);
 int cip_damage_creature(int player, int card, event_t event, target_definition_t *td1, const char *prompt, int amount);
 int get_base_value(int player, int card);
-int target_and_divide_damage(int player, int card, target_definition_t* td /* if NULL, then defaults to any creature or player */, const char* prompt /* if NULL, defaults to "TARGET_CREATURE_OR_PLAYER" */, int total_damage);	// Selects total_damage targets, then deals 1 damage to each for each time it was targeted.  Returns number of different targets selected.
+int target_and_divide_damage(int player, int card, target_definition_t* td /* if NULL, then defaults to any target */, const char* prompt /* if NULL, defaults to "TARGET_ANY" */, int total_damage);	// Selects total_damage targets, then deals 1 damage to each for each time it was targeted.  Returns number of different targets selected.
 int divide_damage(int player, int card, target_definition_t* td /*optional*/);	// Deals 1 damage to each of {player,card}'s targets for each time it was damaged.  If td is non-null, validates.  Returns number of different valid targets.
 int check_playable_permanents(int player, int, int);
 int generic_shade(int player, int card, event_t event, int life_to_pay, int cless, int black, int blue, int green, int red, int white, int p_pump, int t_pump, int k_pump, int sp_key_pump);	// If p_pump >= 100, adds p_pump-100 +1/+1 counters, doesn't add power, and ignores t_pump.
@@ -957,6 +963,7 @@ int charge_mana_from_id(int player_to_charge, int card_to_charge_for/*optional; 
 void remove_id_from_grave(int player, int csvid, remove_id_from_grave_t mode);
 int make_test_in_play(int, int, int, int, int, int, int, int, int, int, int, int, int);
 void skaabs(int player, int card, event_t event, int);
+int gather_body_parts(int player, int card, int body_parts, int special);
 void unattach(int, int);
 int tutor_random_permanent_from_grave(int player, int card, int t_player, int tutor_type, int type, int amount, reanimate_mode_t reanimation_mode);
 void gain_life(int player, int amount);
@@ -1021,6 +1028,7 @@ int time_walk_effect(int player, int card);
 int get_updated_equip_cost(int player, int card, int);
 int can_activate_basic_equipment(int player, int card, event_t event, int equip_cost);
 int resolve_activation_basic_equipment(int player, int card);
+int resolve_activation_equipment(int player, int card, target_definition_t *td);
 int activate_basic_equipment(int player, int card, int equip_cost);
 int miracle(int player, int card, event_t event);
 int get_rules_engine_infos(int player);
@@ -1054,7 +1062,7 @@ int charge_mana_for_multi_x(int player, int color, int num_x);	// A generalizati
 int insurrection_effect(int player, int card);
 int cannot_regenerate_until_eot(int player, int card, int, int);
 int damage_dealt_by_me(int player, int card, event_t event, ddbm_flags_t mode);	// Overwrites instance->targets[8].player, instance->targets[16].player, and for some modes instance->targets[1].player.
-void check_damage(int player, int card, event_t event, ddbm_flags_t mode, int triggering_player, int triggering_card);
+void check_damage(int source_of_damage_player, int source_of_damage_card, event_t event, ddbm_flags_t mode, int triggering_player, int triggering_card);
 int resolve_damage_trigger(int player, int card, event_t event, ddbm_flags_t mode, int triggering_player, int triggering_card);
 int damage_dealt_by_me_arbitrary(int player, int card, event_t event, ddbm_flags_t mode, int triggering_player, int triggering_card);	// Just like damage_dealt_by_me(), except can specify a different triggering_player and triggering_card that highlights for the trigger and which gets its targets[1,8,16].player overwritten instead of player/card.
 void whenever_i_deal_damage_to_a_player_he_discards_a_card(int player, int card, int event, ddbm_flags_t mode, int discard_is_random);	// A common case.  Uses targets[1], [8], [16].player, as usual.  DDBM_MUST_DAMAGE_PLAYER and DDBM_TRACE_DAMAGED_PLAYERS are added to mode.
@@ -1119,7 +1127,6 @@ int count_creatures_by_toughness(int player, int, int);
 int ravnica_manachanger(int player, int card, event_t event, int, int, int, int, int);
 int charge_changed_mana(int player, int card, int, int, int, int, int);
 void exchange_control_of_target_permanents(int player, int card, int, int, int, int);
-int dredge(int player, int card, event_t event, int);
 int maze_of_ith_effect(int player, int card, int, int);
 int new_get_test_score(test_definition_t *this_test);
 void activate_oran_rief_pump(int player, int card, int color);
@@ -1130,9 +1137,11 @@ void descending_insertion_sort_on_player(int number, target_t* array);	// Simple
 int check_special_flags(int player, int card, int);
 void set_special_flags(int player, int card, int);
 void remove_special_flags(int player, int card, int);
+int get_special_flags2_by_instance(card_instance_t* instance);
 int check_special_flags2(int player, int card, int);
 void set_special_flags2(int player, int card, int);
 void remove_special_flags2(int player, int card, int);
+int get_special_flags3_by_instance(card_instance_t* instance);
 int check_special_flags3(int player, int card, int);
 void set_special_flags3(int player, int card, int);
 void remove_special_flags3(int player, int card, int);
@@ -1156,8 +1165,6 @@ int select_target_from_either_grave(int player, int card, select_grave_t mode, i
 int validate_target_from_grave(int player, int card, int whose_graveyard, int target_location);	// Checks to see if get_grave(whose_graveyard)[{player,card}->targets[target_location].player] is still {player,card}->targets[target_location].card.  This will fail if anything else removes a lower card in the graveyard in response, even if the selected card is still there.  Prefer select_target_from_grave_source()/select_target_from_either_grave() and validate_target_from_grave_source() in new code.
 int validate_target_from_grave_source(int player, int card, int whose_graveyard, int target_location);	// Similar to validate_target_from_grave(), but uses the values set in select_target_from_grave_source()/select_target_from_either_grave() to find the selected card even if it's moved within its graveyard.  Returns the position within whose_graveyard's graveyard if the card is still there, else -1.
 void add_spore_counters(int player, int card, event_t event);
-void saproling_from_fungus(int player, int card);
-int can_make_saproling_from_fungus(int player, int card);
 void from_grave_to_hand(int player, int grave_position, int unused);
 int from_grave_to_hand_multiple(int player, test_definition_t* test);	// Returns all cards matching test in player's graveyard to his hand.  Returns the number of matching cards.
 void from_grave_to_hand_triggers(int player, int card_added);	// Runs triggers specifically looking for a card moving from graveyard to hand, like Golgari Brownscale.  Avoid calling directly; use from_grave_to_hand(), from_grave_to_hand_multiple(), or new_global_tutor() instead.
@@ -1517,9 +1524,12 @@ void uthden_creature(int player, int card, event_t event, int land_color);
 int get_average_cmc(int player);
 int generic_animating_aura(int player, int card, event_t event, target_definition_t *td, const char *prompt, int pow, int tou, int key, int s_key);
 int generic_animating_aura_custom_prompt(int player, int card, event_t event, target_definition_t *td, const char *prompt, int pow, int tou, int key, int s_key);
+int generic_animating_aura_with_added_subtype(int player, int card, event_t event, target_definition_t *td, const char *prompt, int pow, int tou, int key, int s_key, subtype_t subtype);
 int attach_aura_to_target(int aura_player, int aura_card, event_t event, int t_player, int t_card);
 void volver(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white,
 			int colorless2, int black2, int blue2, int green2, int red2, int white2, int kicker1_priority, int kicker2_priority);
+void volver1(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white,
+			int colorless2, int black2, int blue2, int green2, int red2, int white2, int kicker1_priority, int kicker2_priority);	
 int generic_split_card(int player, int card, event_t event, int can_play_first_half, int priority_first_half,
 						int colorless2, int black2, int blue2, int green2, int red2, int white2, int can_play_second_half, int priority_second_half,
 						int can_be_fused, const char *name_first_half, const char *name_second_half);
@@ -1576,7 +1586,7 @@ void store_num_colors_paid_in_info_slot(int player, int card, event_t event);	//
 int whenever_a_player_sacrifices_a_permanent(int player, int card, event_t event, int who_sacs, type_t typ, resolve_trigger_t mode);	// Uses {player, card}->targets[11].player.
 card_instance_t* legacy_permanents_destroyed_this_way_accumulate(int src_player, int src_card, card_instance_t* previous_effect, int tgt_player, int tgt_card);	// Call once for each target.  previous_effect should be NULL on the first call, else the return value of the previous call to this function.  When the last target is destroyed (not counting ones that stop being destroyed for whatever reason), then the original card's function will be sent EVENT_RESOLVE_GENERAL_EFFECT, with player/card set to one of the effect cards created.  The number of targets that were destroyed will be in HIWORD(effect->eot_toughness).  The number of those that were controlled by player 0 will be in LOWORD(effect->targets[10].player), and the number that were controlled by player 1 will be in HIWORD(effect->targets[10].player).
 int recruiting(int player, int card, int subtype, int cards_to_look);
-void check_damage_test(int player, int card, event_t event, ddbm_flags_t mode, int triggering_player, int triggering_card, int type /*optional*/, test_definition_t *test/*optional*/);
+void check_damage_test(int source_of_damage_player, int source_of_damage_card, event_t event, ddbm_flags_t mode, int triggering_player, int triggering_card, int type /*optional*/, test_definition_t *test/*optional*/);
 int can_legally_play_card_in_hand(int player, int card);
 int upkeep_trigger_no_check(int player, int card, event_t event);
 int echoing_spell(int player, int card, event_t event, target_definition_t *td, const char *prompt, int effect);
@@ -1601,11 +1611,12 @@ int gain_control_permanently(int player, int t_player, int t_card);
 int gain_control_permanently_no_sound(int player, int t_player, int t_card);
 int disable_all_control_effects_attached_to_me(int player, int card);
 int re_enable_the_most_recent_control_effect_attached_to_me(int player, int card);
+int re_enable_the_other_most_recent_control_effect_attached_to_me(int player, int card, int legacy_p, int legacy_c);
 int mana_battery_generic(int player, int card, event_t event, color_t color, int colorless_cost);
 void if_a_creature_damaged_by_me_dies_do_something(int player, int card, event_t event, int mode);
 int destroy_attached_auras_and_obliterate_card(int player, int card);
 void reactivate_the_most_recent_pt_setting_effects_attached_to_me(int t_player, int t_card);
-int constellation(int player, int card, event_t event);
+void constellation(int player, int card, event_t event);
 int exile_top_x_card_you_may_play_them(int player, int card, int howmany, test_definition_t *test, int t_player, mpcfe_mode_t flags);
 int check_battlefield_for_name(int player, int type, int name);
 int charge_generic_mana_with_colorless_only(int player, int total_amount, int amount_of_colorless_only);
@@ -1637,6 +1648,87 @@ int card_instances_should_be_displayed_identically(card_instance_t* inst1, card_
 const char* get_card_or_subtype_name(int subtype_or_csvid);
 int delirium(int player);
 int when_attacks_pump_self(int player, int card, event_t event, int power, int toughness);
+int haste_and_remove_at_beginning_of_next_end_step(int player, int card, int t_player, int t_card, int kill_mode);
+void haste_and_sacrifice_token_at_end_of_next_turn(token_generation_t* token, int beast, int number);
+void haste_and_remove_token_at_end_of_next_turn(token_generation_t* token, int beast, int number);
+void add_energy(int player, int number_of_counters);
+void remove_energy(int player, int number_of_counters);
+void generate_custom_token_from_subtype(int player, int card, int subtype, int color, int pow, int tou, int amount);
+void exchange_life_totals(int player, int t_player);
+int is_suspend_only_card(int player, int card);
+void get_subtypes_by_csvid(int csvid, reported_subtypes_t *my_subtypes);
+void get_subtypes(int player, int card, reported_subtypes_t *my_subtypes);
+void ereboss_titan_effect(int player);
+int get_conspiracys_hidden_name(int player, int card);
+int get_conspiracys_hidden_name2(int player, int card);
+void store_conspiracys_hidden_name(int player, int card, int csvid);
+int you_may_spend_mana_as_though_it_were_mana_of_any_color_to_play_spell(int player, int card, event_t event, int type, test_definition_t *test);
+void true_return_from_oblivion(int player, int card);
+int will_of_the_council(int player, int card, char pos1_description[100], char pos2_description[100], int priorities[2]);
+void etb_ability(int player, int card, event_t event, resolve_trigger_t trigger_mode); //Same as "comes_into_play", but includes the Panharmonicon case
+void tragic_arrogance_effect(int player, int card, int who_chooses);
+int count_player_counters(int player, player_counter_names_t type);
+void add_player_counters(int player, player_counter_names_t, int amount);
+void remove_player_counters(int player, player_counter_names_t, int amount);
+int reveal_card_until_you_reveal_test(int player, int t_player, test_definition_t *test, int flags);
+int is_this_dying(int player, int card);
+void spiny_starfish_splitting_ability(int player, int card);
+int prevent_damage(int dc_player, int dc_card, int damage_to_prevent);
+void play_card_in_hand_for_free_miracle(int player, int card);
+int reanimate_csvids_at_eot_legacy(int player, int card, event_t event);
+int generic_activated_ability_with_sacrifice_as_cost(int player, int card, event_t event, generic_activated_ability_flags_t flags,
+													int cless, int black, int blue, int green, int red, int white, int gvc_costs,
+													target_definition_t *td, const char *prompt, type_t type, test_definition_t *test,
+													sacrifice_and_report_value_flags_t sac_flags);
+int generic_activated_ability_with_target_in_grave(int player, int card, event_t event, generic_activated_ability_flags_t flags,
+													int cless, int black, int blue, int green, int red, int white, int gvc_costs,
+													target_definition_t *td, const char *prompt, type_t type, test_definition_t *test,
+													int gs_flags_for_grave_recycler);
+int new_specific_cip_global(int player, event_t event, int trigger_mode, type_t type, test_definition_t *this_test, 
+							int triggering_player, int triggering_card );
+int whenever_i_deal_damage_to_a_player(int player, int card, int event, ddbm_flags_t mode);
+int ai_name_a_random_csvid(int player, int card, int t_player, type_t type, test_definition_t *test);
+void etb_ability_global(int controller_of_trigger, event_t event, int trigger_mode, type_t type, test_definition_t *test, 
+						int triggering_player, int triggering_card);
+void get_back_cards_stored_in_exiledby(int player, int exby_player, int exby_card, get_back_cards_stored_in_exiledby_mode flags);
+int whenever_a_player_plays_a_land(int player, int card, event_t event, int t_player, int trig_mode);
+int get_total_available_lands(int player);
+int ai_can_hack_card(int player, int card);
+int ai_can_sleight_card(int player, int card);
+int spell_puts_up_to_x_target_cards_from_graveyard_on_top_of_deck(int player, int card, event_t event, int t_player, int max_targets,
+																	test_definition_t *test, int draw_else_slowtrip);
+int aot_like_spell(int player, int card, event_t event, target_definition_t *td, const char *msg, int additional_flags);
+int new_card_from_list(int player, int mode, test_definition_t *test);
+void ai_modifier_for_act_of_treason(int player, int card);
+int generic_activated_ability_with_tapsubtype_as_cost(int player, int card, event_t event, generic_activated_ability_flags_t flags,
+													int cless, int black, int blue, int green, int red, int white, int gvc_costs,
+													target_definition_t *td, const char *prompt, target_definition_t *td_subtype,
+													int req_tap);
+void ai_modifier_for_targeted_card_drawing(int player, int card, int target_pos, int cards_to_draw);
+int reanimate_test_from_any_graveyard(int player, int card, test_definition_t *test, int targeted, reanimate_mode_t mode);
+void ai_modifier_for_haste_granting_effects(int player, int card);
+int teferis_puzzle_box_effect(int s_player, int s_card, int t_player);
+int create_legacy_name_with_rfg_check(int player, int card, int owner, int iid);
+void ai_modifier_for_land_untappers(int player, int card, int target_pos);
+int gift_ungiven_impl(int player, int card, event_t event, test_definition_t *test, int must_target_opponent);
+int select_permanent_to_disable(int player, int card, target_definition_t *td, const char *prompt, test_definition_t *test);
+void activated_abilities_disabler_enters_bf(int player, int card, int action);
+int activated_abilities_disabler(int player, int card, event_t event, int action);
+void ai_mod_for_tap_effects(int player, int card, int target_pos);
+int soul_foundry_impl(int player, int card, event_t event);
+int count_permanents_by_name(int player, type_t type, int csvid);
+int count_all_other_creatures_that_shares_a_creature_type_with_me(int player, int card, int t_player);
+void ai_mod_for_untap_effects(int player, int card, int target_pos, int total_mana_spent);
+int x_spell_with_x_targets(int player, int card, event_t event, target_definition_t *td, const char *msg, int additional_flags);
+void true_phyrexian_negator(int player, int card, event_t event);
+void return_cards_exiled_by_me_to_hand(int player, int card);
+void return_cards_exiled_by_me_to_play(int player, int card);
+int effect_yawgmoths_will(int player, int card, event_t event);
+void end_of_stealing_aura_effect(int player, int card);
+void make_servo(int player, int card, int amount);
+int vehicle(int player, int card, event_t event, int crew);
+void etb_energy(int player, int card, event_t event, int amount);
+int attack_trigger_with_energy(int player, int card, event_t event, int amount);
 
 /* Cards in already coded, for re-utilization purposes */
 int card_aladdin(int, int, event_t);
@@ -1657,7 +1749,7 @@ int card_drudge_skeletons(int, int, event_t);
 int card_evil_presence(int, int, event_t);
 int card_firebreathing(int, int, event_t);
 int card_fog(int, int, event_t);
-int card_glorious_anthem(int, int, event_t);
+int card_gust_skimmer(int player, int card, event_t event);
 int card_hurr_jackal(int, int, event_t);
 int card_hypnotic_specter(int, int, event_t);
 int card_jokulhaups(int, int, event_t);
@@ -1671,8 +1763,6 @@ int card_magical_hack(int, int, event_t);
 int card_magical_hack_exe(int, int, event_t);
 int card_mana_flare(int, int, event_t);
 int card_mana_leak(int, int, event_t);
-int card_manta_riders(int, int, event_t);
-int card_master_decoy(int, int, event_t);
 int card_memory_lapse(int, int, event_t);
 int card_nantuko_shade(int player, int card, event_t event);
 int card_orcish_oriflamme(int, int, event_t);
@@ -1689,16 +1779,16 @@ int card_rod_of_ruin(int, int, event_t);
 int card_ring_of_maruf(int, int, event_t);
 int card_samite_healer(int, int, event_t);
 int card_shivan_dragon(int, int, event_t);
-int card_shock(int, int, event_t);
+int card_shock2(int, int, event_t);
 int card_sleight_of_mind(int, int, event_t);
 int card_sleight_of_mind_exe(int, int, event_t);
+int card_squall_drifter(int player, int card, event_t event);
 int card_storm_seeker(int, int, event_t);
 int card_sylvan_scrying(int, int, event_t);
 int card_tawnoss_weaponry(int, int, event_t);
 int card_the_rack(int, int, event_t);
 int card_time_walk_exe(int, int, event_t);
 int card_unsummon(int, int, event_t);
-int card_volcanic_hammer(int, int, event_t);
 int card_warriors_honor(int, int, event_t);
 int card_wrath_of_god(int, int, event_t);
 int card_zombie_master_exe(int, int, event_t);
@@ -1714,7 +1804,6 @@ int card_animate_dead(int, int, event_t);
 int card_death_ward(int, int, event_t);
 int card_gilded_lotus(int, int, event_t);
 int card_guardian_angel_exe(int, int, event_t);
-int card_river_boa(int, int, event_t);
 int card_ghazban_ogre(int, int, event_t);
 int card_sol_ring(int, int, event_t);
 int card_icy_manipulator(int, int, event_t);
@@ -1722,7 +1811,6 @@ int card_mogg_fanatic(int, int, event_t);
 int card_rabid_wombat(int, int, event_t);
 int card_coastal_piracy(int, int, event_t);
 int card_strip_mine(int, int, event_t);
-int card_relic_bind(int, int, event_t);
 int card_confiscate(int, int, event_t);
 int card_flash_counter(int, int, event_t);
 int card_steal_artifact(int, int, event_t);
@@ -1777,7 +1865,6 @@ int card_no_mercy(int player, int card, event_t event);
 int card_nomads_en_kor(int player, int card, event_t event);
 int card_ogre_arsonist(int player, int card, event_t event);
 int card_orchard_spirit(int player, int card, event_t event );
-int true_phyrexian_negator(int player, int card, event_t event);
 int card_pillar_of_flame(int player, int card, event_t event);
 int card_quirion_ranger(int player, int card, event_t event);
 int card_saber_ants(int player, int card, event_t event);
@@ -1809,6 +1896,11 @@ int card_assassinate(int player, int card, event_t event);
 int card_act_of_treason(int player, int card, event_t event);
 int card_rakish_heir(int player, int card, event_t event);
 int card_clone(int player, int card, event_t event);
+int card_fervor(int player, int card, event_t event);
+int card_omniscience(int player, int card, event_t event);
+int card_static_orb(int player, int card, event_t event);
+int card_cloudshift(int player, int card, event_t event);
+int card_wall_of_brambles(int player, int card, event_t event);
 
 void backtrace_and_abort(const char* header);
 #define ASSERT(cond) do { if (!(cond)) backtrace_and_abort(__FILE__ ":" STRINGIZE(__LINE__) "\n" #cond); } while (0)
@@ -1927,6 +2019,7 @@ void backtrace_and_abort(const char* header);
 #define IS_AURA_EVENT(player, card, event)		(IS_CASTING(player, card, event) || event == EVENT_CHANGE_TARGET || event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CAN_MOVE_AURA || event == EVENT_MOVE_AURA || event == EVENT_RESOLVE_MOVING_AURA || event == EVENT_POWER || event == EVENT_TOUGHNESS || event == EVENT_CHANGE_TYPE || event == EVENT_ABILITIES || event == EVENT_SET_COLOR || event == EVENT_GET_SELECTED_CARD)
 #define IS_DDBM_EVENT(event)			(event == EVENT_DEAL_DAMAGE || trigger_condition == TRIGGER_DEAL_DAMAGE)
 #define IS_SHADE_EVENT(event)			(IS_ACTIVATING(event) || event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST)
+#define IS_GAB_EVENT(event)			(event == EVENT_GRAVEYARD_ABILITY || event == EVENT_PAY_FLASHBACK_COSTS || event == EVENT_RESOLVE_ACTIVATED_GRAVEYARD_ABILITY || event == EVENT_RETURN_TO_PLAY_FROM_GRAVE_MODIFIED)
 
 int vscnprintf(char *buf, size_t size, const char* fmt, va_list args);
 int scnprintf(char * buf, size_t size, const char* fmt, ...);

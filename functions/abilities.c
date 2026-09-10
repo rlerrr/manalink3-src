@@ -12,8 +12,18 @@
 
 int can_use_activated_abilities(int player, int card)
 {
-  card_instance_t* instance = get_card_instance(player, card);
-  return instance->targets[17].card <= 0 || !(instance->targets[17].card & 0xFFF);
+	if( is_what(player, card, TYPE_CREATURE) && 
+		(player_bits[player] & (PB_ACTIVATE_ABILITIES_OF_CREATURES_DISABLED | PB_NONMANA_ACTIVATE_ABILITIES_OF_CREATURES_DISABLED)) )
+	{
+		return 0;
+	}
+	if( is_what(player, card, TYPE_ARTIFACT) && 
+		(player_bits[player] & (PB_ACTIVATE_ABILITIES_OF_ARTIFACTS_DISABLED | PB_NONMANA_ACTIVATE_ABILITIES_OF_ARTIFACTS_DISABLED)) )
+	{
+		return 0;
+	}
+	card_instance_t* instance = get_card_instance(player, card);
+	return instance->targets[17].card <= 0 || !(instance->targets[17].card & 0xFFF);
 }
 
 int can_use_activated_abilities_by_instance(card_instance_t* instance)
@@ -23,6 +33,14 @@ int can_use_activated_abilities_by_instance(card_instance_t* instance)
 
 int can_produce_mana(int player, int card)
 {
+	if( is_what(player, card, TYPE_CREATURE) && (player_bits[player] & PB_ACTIVATE_ABILITIES_OF_CREATURES_DISABLED) )
+	{
+		return 0;
+	}
+	if( is_what(player, card, TYPE_ARTIFACT) && (player_bits[player] & PB_ACTIVATE_ABILITIES_OF_ARTIFACTS_DISABLED) )
+	{
+		return 0;
+	}
 	card_instance_t* instance = get_card_instance(player, card);
 	int result = 1;
 	if( instance->targets[17].card > 0 && (instance->targets[17].card & 0xFF0) ){ // Check for abilities disabled / "humiliation"
@@ -51,8 +69,6 @@ int is_humiliated(int player, int card)
 
 void disable_nonmana_activated_abilities(int player, int card, int mode)
 {
-  // mode = 0: Reactivate activated abilities.
-  // mode = 1: Disable activated abilities.
 
   card_instance_t* instance = get_card_instance(player, card);
 
@@ -61,12 +77,12 @@ void disable_nonmana_activated_abilities(int player, int card, int mode)
 
   uint32_t u = instance->targets[17].card & 0xF;
 
-  if (mode)
+  if (mode == NM_AB_DISABLE)
 	{
 	  if (u != 0xF)	// counter not maxed
 		u += 0x1;
 	}
-  else
+  if (mode == NM_AB_ENABLE)
 	{
 	  if (u != 0)	// any counters to remove
 		u -= 0x1;
@@ -78,8 +94,6 @@ void disable_nonmana_activated_abilities(int player, int card, int mode)
 
 void disable_all_activated_abilities(int player, int card, int mode)
 {
-  // mode = 0: Reactivate all activated abilities
-  // mode = 1: Shutdown all activated abilities
 
   card_instance_t* instance = get_card_instance(player, card);
 
@@ -88,12 +102,12 @@ void disable_all_activated_abilities(int player, int card, int mode)
 
   uint32_t u = instance->targets[17].card & 0xF0;
 
-  if (mode)
+  if (mode == ALL_AB_DISABLE)
 	{
 	  if (u != 0xF0)	// counter not maxed
 		u += 0x10;
 	}
-  else
+  if (mode == ALL_AB_ENABLE)
 	{
 	  if (u != 0)	// any counters to remove
 		u -= 0x10;
@@ -112,12 +126,12 @@ static void real_humiliation(int t_player, int t_card, int mode){
 
 	uint32_t u = instance->targets[17].card & 0xF00;
 
-	if (mode){
+	if (mode == HUMILIATE_ON){
 		if (u != 0xF00){	// counter not maxed
 			u += 0x100;
 		}
 	}
-	else{
+	if (mode == HUMILIATE_OFF){
 		if (u != 0){	// any counters to remove
 			u -= 0x100;
 		}
@@ -140,19 +154,27 @@ int set_pt_legacy(int player, int card, event_t event){
 	}
 
 	if( instance->targets[1].player > -1 ){
-		if( (instance->targets[1].player & 1) && event == EVENT_CLEANUP ){
-			reactivate_the_most_recent_pt_setting_effects_attached_to_me(instance->damage_target_player, instance->damage_target_card);
-			kill_card(player, card, KILL_REMOVE);
+		int mode = instance->targets[1].player > -1 ? instance->targets[1].player : 0;
+		int end_effect = 0;
+		if( (mode & SET_PT_END_AT_EOT) && event == EVENT_CLEANUP ){
+			end_effect = 1;
 		}
-		if( (instance->targets[1].player & 2) && instance->targets[2].player > -1 &&
-			leaves_play(instance->targets[2].player, instance->targets[2].card, event)
-		 ){
-			reactivate_the_most_recent_pt_setting_effects_attached_to_me(instance->damage_target_player, instance->damage_target_card);
-			kill_card(player, card, KILL_REMOVE);
+		if( (mode & SET_PT_END_IF_SOURCE_LEAVES_PLAY) && instance->targets[2].player > -1 &&
+			leaves_play(instance->targets[2].player, instance->targets[2].card, event) )
+		{
+			end_effect = 1;
 		}
-		if( (instance->targets[1].player & 4) && current_turn == instance->damage_target_player && upkeep_trigger(player, card, event) ){
+		if( (mode & SET_PT_END_AT_OWNERS_UPKEEP) && current_turn == instance->damage_target_player && 
+			upkeep_trigger(player, card, event) )
+		{
+			end_effect = 1;
+		}
+		if( end_effect ){
 			reactivate_the_most_recent_pt_setting_effects_attached_to_me(instance->damage_target_player, instance->damage_target_card);
-			kill_card(player, card, KILL_REMOVE);
+			if( (mode & SET_PT_RESET_SUBTYPES_AT_END) ){
+				reset_subtypes(instance->damage_target_player, instance->damage_target_card, 3);
+			}
+			kill_card(player, card, KILL_EXILE);
 		}
 	}
 	return 0;
@@ -319,7 +341,7 @@ int humility_legacy(int player, int card, event_t event){
 					reset_subtypes(p, c, 3);
 				}
 				real_humiliation(p, c, 0);
-				kill_card(player, card, KILL_REMOVE);
+				kill_card(player, card, KILL_EXILE);
 			}
 		}
 	}
@@ -524,7 +546,7 @@ int indestructible_until_eot(int player, int card, event_t event)
 	}
 
   if (event == EVENT_CLEANUP)
-	kill_card(player, card, KILL_REMOVE);
+	kill_card(player, card, KILL_EXILE);
 
   return 0;
 }
@@ -568,6 +590,14 @@ int regenerate_target(int player, int card){
 		card_instance_t *instance = get_card_instance( player, card );
 		if( instance->kill_code == KILL_DESTROY && ! (instance->token_status & STATUS_CANNOT_REGENERATE) ){
 			regenerate_target_exe(player, card);
+			if( get_id(player, card) == CARD_ID_SPINY_STARFISH && ! is_humiliated(player, card) ){
+				/*
+				10/1/2009: The second ability doesn’t care where the regeneration shields Spiny Starfish used that turn came from. 
+				If it regenerated due to a regeneration shield from Refresh, for example, the ability will still put a Starfish 
+				token onto the battlefield.
+				*/
+				spiny_starfish_splitting_ability(player, card);
+			}
 		}
 	}
 	return 0;
@@ -602,13 +632,13 @@ int regeneration_shield_legacy(int player, int card, event_t event){
 			&& !regeneration_from_shield_in_progress){
 			++regeneration_from_shield_in_progress;
 			regenerate_target(instance->targets[0].player, instance->targets[0].card);
-			kill_card(player, card, KILL_REMOVE);
+			kill_card(player, card, KILL_EXILE);
 			--regeneration_from_shield_in_progress;
 		}
 	}
 
 	if (event == EVENT_CLEANUP || event == EVENT_SHOULD_AI_PLAY){
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 	}
 
 	return 0;
@@ -629,7 +659,7 @@ static int legacy_cannot_regenerate_until_eot(int player, int card, event_t even
 
 	if( eot_trigger(player, card, event) ){
 		remove_status(instance->targets[0].player, instance->targets[0].card, STATUS_CANNOT_REGENERATE);
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 	}
 	return 0;
 }
@@ -852,7 +882,7 @@ static int target_must_block_me_legacy(int player, int card, event_t event)
 	}
 
   if (event == EVENT_CLEANUP && (get_card_instance(player, card)->targets[2].player & 1))
-	kill_card(player, card, KILL_REMOVE);
+	kill_card(player, card, KILL_EXILE);
 
   return 0;
 }
@@ -908,15 +938,19 @@ void granted_flanking(int s_player, int s_card, int t_player, int t_card, event_
 	}
 
   if (event == EVENT_DECLARE_BLOCKERS && is_attacking(t_player, t_card) &&
-	check_for_special_ability(t_player, t_card, SP_KEYWORD_FLANKING) )
+	check_for_special_ability(t_player, t_card, SP_KEYWORD_FLANKING))
 	{
+
 	  char marked[2][151] = {{0}};
 	  mark_each_creature_blocking_me(t_player, t_card, marked);
 	  int c;
 	  for (c = 0; c < active_cards_count[1-current_turn]; ++c)
 		if (marked[1-current_turn][c])
-		  alternate_legacy_text(1, s_player, pump_until_eot(s_player, s_card, 1-current_turn, c, -1, -1));
+			if( ! check_for_special_ability(1-current_turn, c, SP_KEYWORD_FLANKING) ){
+		          alternate_legacy_text(1, s_player, pump_until_eot(s_player, s_card, 1-current_turn, c, -1, -1));
+			}
 	}
+
 }
 
 void flanking(int player, int card, event_t event)
@@ -1108,7 +1142,7 @@ void set_special_abilities(int player, int card, int type, int value){
 
 int legacy_negate_ability_and_special_ability(int player, int card, event_t event){
 
-	if (event == EVENT_ABILITIES && check_status(player, card, STATUS_CONTROLLED) ){
+	if (event == EVENT_ABILITIES){
 		card_instance_t *instance = get_card_instance(player, card);
 		if( instance->damage_target_player > -1 ){
 			if (affect_me(instance->damage_target_player, instance->damage_target_card)){
@@ -1123,11 +1157,7 @@ int legacy_negate_ability_and_special_ability(int player, int card, event_t even
 	}
 
 	if( event == EVENT_CLEANUP ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->targets[1].player > -1 && (instance->targets[1].player & 1) ){
-			effect_on_all_negate_ability_and_special_ability_legacy_attached_to_me(instance->damage_target_player, instance->damage_target_card, 1);
-			kill_card(player, card, KILL_REMOVE);
-		}
+		kill_card(player, card, KILL_EXILE);
 	}
 
 	return 0;
@@ -1217,4 +1247,75 @@ int negate_ability_until_eot(int player, int card, int t_player, int t_card, key
 
 int negate_ability_and_special_ability_until_eot(int player, int card, int t_player, int t_card, keyword_t keyword, int s_keyword){
 	return negate_ability_and_special_ability_until_eot_impl(player, card, t_player, t_card, keyword, s_keyword);
+}
+
+/* A very slightly cleaned-up translation into C of the former generic_protection_from.asm, protection_from_black.asm,
+ * and the analogues for the other four colors.  (It took a color_t rather than a color_test_t, only dealt with one
+ * color at a time, and couldn't accept COLOR_ARTIFACT to represent KEYWORD_PROT_ARTIFACTS.)
+ *
+ * I don't advocate this approach; it should be done by the engine, not by individual cards; or at least it should be
+ * done by auras and equipment.  In any case, doing this in the function of the object with protection is plainly
+ * infeasible, despite it being MicroProse's original approach. */
+
+/* Though, I translated this particular function from the exe, since it made assumptions that are no longer safe
+ * (like, no card that could attach to another card without being an enchantment; that every card with
+ * TYPE_ENCHANTMENT is an enchanment; that burying the attached cards was indistinguishable from just putting them in
+ * the graveyard; that all attached cards should be buried instead of just being detached; and that no effect cards
+ * can be colored.)  I've made it handle a color_test_t and artifacts too, as above.  Also note that the exe function
+ * does the sleighting itself, and so generic_protection_from.asm's sleighting before calling it was incorrect.
+ *
+ * I haven't made the exe version point to this, or checked whether it's orphaned or not.  That still takes a color_t
+ * and sleights, in any case. */
+static void make_colored_attachments_fall_off(int player, int card, color_test_t cols){
+	int p, c;
+	for (p = 0; p <= 1; ++p){
+		for (c = 0; c < active_cards_count[p]; ++c){
+			card_instance_t* inst = get_card_instance(p, c);
+			if (inst
+				&& inst->damage_target_card == c && inst->damage_target_player == p
+				&& (((cols & COLOR_TEST_ARTIFACT) && is_what(p, c, COLOR_ARTIFACT))
+					|| (cols & COLOR_TEST_ANY_COLORED & get_color(p, c)))
+				&& !is_what(p, c, TYPE_EFFECT))
+			{
+				if (has_subtype(p, c, SUBTYPE_AURA)){
+					kill_card(p, c, KILL_STATE_BASED_ACTION);	// wrong for bestow, but no worse than before
+				} else if (has_subtype(p, c, SUBTYPE_EQUIPMENT)){
+					unattach(p, c);
+				} else {
+					inst->damage_target_player = inst->damage_target_card = -1;
+				}
+			}
+		}
+	}
+}
+
+int generic_protection_from(int player, int card, event_t event, color_test_t cols){
+	if (event == EVENT_ABILITIES && affect_me(player, card)){
+		int old_event_result = event_result;
+		cols = get_sleighted_color_test(player, card, cols & COLOR_TEST_ANY_COLORED) | (cols & COLOR_TEST_ARTIFACT);
+		make_colored_attachments_fall_off(player, card, cols);
+		event_result = old_event_result | (cols << 10);	// COLOR_TEST_BLACK => KEYWORD_PROT_BLACK, etc.
+	}
+
+	return 0;
+}
+
+int protection_from_black(int player, int card, event_t event){
+	return generic_protection_from(player, card, event, COLOR_TEST_BLACK);
+}
+
+int protection_from_red(int player, int card, event_t event){
+	return generic_protection_from(player, card, event, COLOR_TEST_RED);
+}
+
+int protection_from_blue(int player, int card, event_t event){
+	return generic_protection_from(player, card, event, COLOR_TEST_BLUE);
+}
+
+int protection_from_green(int player, int card, event_t event){
+	return generic_protection_from(player, card, event, COLOR_TEST_GREEN);
+}
+
+int protection_from_white(int player, int card, event_t event){
+	return generic_protection_from(player, card, event, COLOR_TEST_WHITE);
 }

@@ -5,7 +5,7 @@ include ../Makefile-common
 # Input files
 BASEDIR = ..
 SUBDIRS = src
-LIBS = gdiplus boost_filesystem-mgw46-s-1_45 boost_system-mgw46-s-1_45
+LIBS = gdiplus boost_filesystem-$(BOOST_SUFFIX) boost_system-$(BOOST_SUFFIX)
 
 # Output files
 OUTPUT = CardArtLib.dll

@@ -2,7 +2,7 @@
 
 #include "manalink.h"
 
-#define card_multiblocker	0x401010
+#define card_multiblocker	((CardFunction)(0x401010))
 
 static int is_multiblocker_card(int player, int card)
 {

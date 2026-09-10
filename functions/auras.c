@@ -1,3 +1,4 @@
+
 #include "manalink.h"
 
 int attach_aura_to_target(int aura_player, int aura_card, event_t event, int t_player, int t_card){
@@ -38,9 +39,9 @@ int aura_attached_to_me(int player, int card, event_t event, resolve_trigger_t t
 	return 0;
 }
 
-int generic_aura_impl(int player, int card, event_t event, target_definition_t *td, const char* prompt, int p_plus, int t_plus, int k_plus, int k_special,
-						int subtype, int clr, int flags
-  ){
+int generic_aura_impl(int player, int card, event_t event, target_definition_t *td, const char* prompt, int p_plus, int t_plus, int k_plus, 
+						int k_special, int subtype, int clr, int flags )
+{
 
 	card_instance_t* instance = get_card_instance(player, card);
 	int csvid = cards_data[instance->internal_card_id].id;
@@ -50,10 +51,10 @@ int generic_aura_impl(int player, int card, event_t event, target_definition_t *
 	}
 
 	if( csvid == CARD_ID_EMBLEM_OF_THE_WARMIND || csvid == CARD_ID_DYING_WISH ||
-		csvid == CARD_ID_MURDER_INVESTIGATION || csvid == CARD_ID_SPLINTER_TWIN || csvid == CARD_ID_FIRE_WHIP ||
-		csvid == CARD_ID_HERMETIC_STUDY || csvid == CARD_ID_QUICKSILVER_DAGGER ||
-		csvid == CARD_ID_RIME_TRANSFUSION || csvid == CARD_ID_FAITH_UNBROKEN
+		csvid == CARD_ID_MURDER_INVESTIGATION || csvid == CARD_ID_FAITH_UNBROKEN ||
+		csvid == CARD_ID_INFERNO_FIST
 	  ){
+		prompt = "TARGET_CREATURE_YOU_CONTROL";
 		td->allowed_controller = player;
 	}
 	if( csvid == CARD_ID_ROOTS){
@@ -86,6 +87,15 @@ int generic_aura_impl(int player, int card, event_t event, target_definition_t *
 			generic_spell(player, card, event, GS_CAN_TARGET | GS_AURA, td, prompt, 1, NULL);
 		}
 		if (player == AI && !(trace_mode & 2)){
+			// Discourage the AI to enchant a creature which cannot attack or block
+			if( p_plus || t_plus || k_plus || (k_special && k_special != SP_KEYWORD_CANNOT_BLOCK) ){
+				card_instance_t* tgt_inst = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+				if( (get_special_abilities_by_instance(tgt_inst) & SP_KEYWORD_CANNOT_BLOCK) &&
+					((tgt_inst->regen_status & KEYWORD_DEFENDER) && !(tgt_inst->token_status & STATUS_WALL_CAN_ATTACK)) )
+				{
+					ai_modifier -= 24;
+				}
+			}
 			ai_modifier += (instance->targets[0].player == td->preferred_controller) ? 24 : -24;
 		}
 
@@ -149,8 +159,20 @@ int generic_aura_impl(int player, int card, event_t event, target_definition_t *
 			event_result += t_plus;
 		}
 
-		if( event == EVENT_ABILITIES && affect_me(instance->damage_target_player, instance->damage_target_card) ){
-			event_result |= k_plus;
+		if( event == EVENT_ABILITIES ){
+			if( affect_me(instance->damage_target_player, instance->damage_target_card) ){
+				event_result |= k_plus;
+			}
+			if( affect_me(player, card) ){
+				int abils = get_abilities(instance->damage_target_player, instance->damage_target_card, event, -1);
+				int my_clr = get_color(player, card);
+				int i;
+				for(i=1; i<6; i++){
+					if( (abils & (1<<(10+i))) && (my_clr & (1<<i)) ){
+						kill_card(player, card, KILL_SACRIFICE);
+					}
+				}
+			}
 		}
 
 		if( event == EVENT_SET_COLOR && affect_me(instance->damage_target_player, instance->damage_target_card) ){
@@ -196,8 +218,10 @@ int generic_aura_impl(int player, int card, event_t event, target_definition_t *
 				td1->allowed_controller = instance->damage_target_player;
 				td1->preferred_controller = instance->damage_target_player;
 			}
-			if( check_special_flags2(player, card, SF2_ENCHANTMENT_ALTERATION) ){
-				td->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+			if( check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) || 
+				check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P1) )
+			{
+				td1->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
 			}
 			if( target_available(player, card, td1) > 1 ){
 				return 1;
@@ -218,8 +242,11 @@ int generic_aura_impl(int player, int card, event_t event, target_definition_t *
 				td1->allowed_controller = instance->damage_target_player;
 				td1->preferred_controller = instance->damage_target_player;
 			}
-			if( check_special_flags2(player, card, SF2_ENCHANTMENT_ALTERATION) ){
-				td->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+			if( check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) || 
+				check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P1) )
+			{
+				td1->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+				td1->who_chooses = check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) ? 0 : 1;
 			}
 			int result = new_pick_target(td1, prompt, 0, GS_LITERAL_PROMPT);
 			state_untargettable(instance->damage_target_player, instance->damage_target_card, 0);
@@ -236,8 +263,11 @@ int generic_aura_impl(int player, int card, event_t event, target_definition_t *
 				td1->allowed_controller = instance->damage_target_player;
 				td1->preferred_controller = instance->damage_target_player;
 			}
-			if( check_special_flags2(player, card, SF2_ENCHANTMENT_ALTERATION) ){
-				td->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+			if( check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) || 
+				check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P1) )
+			{
+				td1->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+				td1->who_chooses = check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) ? 0 : 1;
 			}
 			if( valid_target(td1) && attach_aura_to_target(player, card, event, instance->targets[0].player, instance->targets[0].card) ){
 				if( flags & GA_FORBID_NONMANA_ACTIVATED_ABILITIES ){
@@ -374,8 +404,10 @@ static int targeted_aura_impl(int player, int card, event_t event, target_defini
 					td1->allowed_controller = instance->damage_target_player;
 					td1->preferred_controller = instance->damage_target_player;
 				}
-				if( check_special_flags2(player, card, SF2_ENCHANTMENT_ALTERATION) ){
-					td->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+				if( check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) || 
+					check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P1) )
+				{
+					td1->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
 				}
 				if( target_available(player, card, td1) > 1 ){
 					return 1;
@@ -394,8 +426,11 @@ static int targeted_aura_impl(int player, int card, event_t event, target_defini
 					td1->allowed_controller = instance->damage_target_player;
 					td1->preferred_controller = instance->damage_target_player;
 				}
-				if( check_special_flags2(player, card, SF2_ENCHANTMENT_ALTERATION) ){
-					td->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+				if( check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) || 
+					check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P1) )
+				{
+					td1->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+					td1->who_chooses = check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) ? 0 : 1;
 				}
 				if( pick_target(td1, "TARGET_CREATURE") ){
 					return 1;
@@ -414,8 +449,11 @@ static int targeted_aura_impl(int player, int card, event_t event, target_defini
 					td1->allowed_controller = instance->damage_target_player;
 					td1->preferred_controller = instance->damage_target_player;
 				}
-				if( check_special_flags2(player, card, SF2_ENCHANTMENT_ALTERATION) ){
-					td->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+				if( check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) || 
+					check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P1) )
+				{
+					td1->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+					td1->who_chooses = check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) ? 0 : 1;
 				}
 				if( valid_target(td1) ){
 					if( disabling_mode == 1 ){
@@ -440,6 +478,18 @@ static int targeted_aura_impl(int player, int card, event_t event, target_defini
 					}
 				}
 			}
+			if( event == EVENT_ABILITIES ){
+				if( affect_me(player, card) ){
+					int abils = get_abilities(instance->damage_target_player, instance->damage_target_card, event, -1);
+					int my_clr = get_color(player, card);
+					int i;
+					for(i=1; i<6; i++){
+						if( (abils & (1<<(10+i))) && (my_clr & (1<<i)) ){
+							kill_card(player, card, KILL_SACRIFICE);
+						}
+					}
+				}
+			}
 	}
 
 	return 0;
@@ -454,7 +504,30 @@ int targeted_aura_custom_prompt(int player, int card, event_t event, target_defi
 }
 
 int disabling_targeted_aura(int player, int card, event_t event, target_definition_t* td, const char* prompt, int mode){
-	return targeted_aura_impl(player, card, event, td, prompt, 1, mode);
+
+	int rval = targeted_aura_impl(player, card, event, td, prompt, 1, mode);
+
+	if (event == EVENT_CAST_SPELL && affect_me(player, card) && cancel != 1)	// after vanilla_aura()
+	{
+		card_instance_t* instance = get_card_instance(player, card);
+		card_instance_t* tgt_inst = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+
+		if ((tgt_inst->regen_status & KEYWORD_DEFENDER) && !(tgt_inst->token_status & STATUS_WALL_CAN_ATTACK))
+			ai_modifier -= 48;
+
+		if (instance->damage_target_player < 0 && instance->damage_target_card < 0
+			&& another_copy_attached(player, card, get_card_instance(player, card)->internal_card_id))
+			ai_modifier -= 96;
+	}
+
+	if (event == EVENT_SHOULD_AI_PLAY)
+	{
+		card_instance_t* instance = get_card_instance(player, card);
+		if (instance->damage_target_player == HUMAN)
+			ai_modifier += get_card_instance(instance->damage_target_player, instance->damage_target_card)->attack_rating / 2;
+	}
+
+	return rval;
 }
 
 // An aura with enchant creature that does absolutely nothing itself.
@@ -469,30 +542,9 @@ int vanilla_aura(int player, int card, event_t event, int pref_controller){
 // A frontend to vanilla_aura() with AI settings for Pacifism-like auras.
 int disabling_aura(int player, int card, int event)
 {
-  card_instance_t* instance = get_card_instance(player, card);
-
-  int rval = vanilla_aura(player, card, event, 1-player);
-
-  if (event == EVENT_CAST_SPELL && affect_me(player, card) && cancel != 1)	// after vanilla_aura()
-	{
-	  card_instance_t* tgt_inst = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-
-	  if ((tgt_inst->regen_status & KEYWORD_DEFENDER) && !(tgt_inst->token_status & STATUS_WALL_CAN_ATTACK))
-		ai_modifier -= 48;
-
-	  if (instance->damage_target_player < 0 && instance->damage_target_card < 0
-		  && another_copy_attached(player, card, get_card_instance(player, card)->internal_card_id))
-		ai_modifier -= 96;
-	}
-
-  if (event == EVENT_SHOULD_AI_PLAY)
-	{
-	  instance = get_card_instance(player, card);
-	  if (instance->damage_target_player == HUMAN)
-		ai_modifier += get_card_instance(instance->damage_target_player, instance->damage_target_card)->attack_rating / 2;
-	}
-
-  return rval;
+	target_definition_t td;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+	return disabling_targeted_aura(player, card, event, &td, "Select target creature.", 0);
 }
 
 int aura_with_variable_pt_boost_depending_on_condition(int player, int card, event_t event, target_definition_t *td, test_definition_t *this_test, int pow, int tou, int pow2, int tou2){
@@ -642,6 +694,24 @@ static int is_enchanted_by_another_stealing_aura(int player, int card, int orig_
 	return 0;
 }
 
+void end_of_stealing_aura_effect(int player, int card){
+// Usually called when aura leaves play, but not only (See Frenzied Fugue in Commander 2016)
+	card_instance_t *instance = get_card_instance(player, card);
+	if( check_state(player, card, STATE_POWER_STRUGGLE) && in_play(instance->damage_target_player, instance->damage_target_card)){
+		if( ! check_special_flags3(instance->damage_target_player, instance->damage_target_card, SF3_IS_STEALING_AURA) ){
+			if( ! is_enchanted_by_another_stealing_aura(instance->damage_target_player, instance->damage_target_card, player, card) ){
+				re_enable_the_most_recent_control_effect_attached_to_me(instance->damage_target_player, instance->damage_target_card);
+			}
+			gain_control_permanently_no_sound(1-instance->damage_target_player, instance->damage_target_player, instance->damage_target_card);
+		}
+		else{
+			card_instance_t *aura = get_card_instance(instance->damage_target_player, instance->damage_target_card);
+			gain_control_permanently_no_sound(1-aura->damage_target_player, aura->damage_target_player, aura->damage_target_card);
+			gain_control_permanently_no_sound(1-instance->damage_target_player, instance->damage_target_player, instance->damage_target_card);
+		}
+	}
+}
+
 int generic_stealing_aura(int player, int card, event_t event, target_definition_t *td, const char *prompt){
 
 	if( player < 0 || card < 0 ){
@@ -670,77 +740,113 @@ int generic_stealing_aura(int player, int card, event_t event, target_definition
 	}
 
 	if( leaves_play(player, card, event) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( check_state(player, card, STATE_POWER_STRUGGLE) && in_play(instance->damage_target_player, instance->damage_target_card)){
-			if( ! check_special_flags3(instance->damage_target_player, instance->damage_target_card, SF3_IS_STEALING_AURA) ){
-				if( ! is_enchanted_by_another_stealing_aura(instance->damage_target_player, instance->damage_target_card, player, card) ){
-					re_enable_the_most_recent_control_effect_attached_to_me(instance->damage_target_player, instance->damage_target_card);
-				}
-				gain_control_permanently_no_sound(1-instance->damage_target_player, instance->damage_target_player, instance->damage_target_card);
-			}
-			else{
-				card_instance_t *aura = get_card_instance(instance->damage_target_player, instance->damage_target_card);
-				gain_control_permanently_no_sound(1-aura->damage_target_player, aura->damage_target_player, aura->damage_target_card);
-				gain_control_permanently_no_sound(1-instance->damage_target_player, instance->damage_target_player, instance->damage_target_card);
-			}
-		}
+		end_of_stealing_aura_effect(player, card);
 	}
 
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_AURA, td, prompt, 1, NULL);
 }
 
-static int generic_animating_aura_impl(int player, int card, event_t event, target_definition_t *td, const char *prompt, int pow, int tou, int key, int s_key, int custom_prompt){
+static int generic_animating_aura_impl(int player, int card, event_t event, target_definition_t *td, const char *prompt, int pow, int tou, int key, int s_key, int custom_prompt, subtype_t added_subtype){
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( instance->damage_target_player > -1 && ! is_humiliated(player, card) && in_play(player, card) ){
+	if( get_card_instance(player, card)->damage_target_player > -1 && in_play(player, card) && ! is_humiliated(player, card) ){
+		card_instance_t *instance = get_card_instance(player, card);
 		int p = instance->damage_target_player;
 		int c = instance->damage_target_card;
 
-		special_abilities(p, c, event, s_key, player, card);
-
-		if( event == EVENT_ABILITIES && affect_me(p, c) ){
-			event_result |= key;
-		}
-
-		// This block checks if the aura is moved : if so, disable the animation for the previous enchanted artifact
-		if( p != instance->targets[2].player || c != instance->targets[2].card ){
-			if( instance->targets[2].player == -1 || instance->targets[2].card == -1 ){
-				instance->targets[2] = instance->targets[0];
-			}
-			else{
-				if( in_play(instance->targets[2].player, instance->targets[2].card) ){
-					remove_status(instance->targets[2].player, instance->targets[2].card, STATUS_ANIMATED);
-				}
-				instance->dummy3 = -1;
-				instance->targets[2].player = p;
-				instance->targets[2].card = c;
-			}
-		}
-
-		// the animation part
-		if( ! is_what(-1, get_original_internal_card_id(p, c), TYPE_CREATURE) ){
-			if( event == EVENT_CHANGE_TYPE && affect_me(p, c) ){
-				if( instance->dummy3 < 1 ){
-					int newtype = create_a_card_type(event_result);
-					cards_at_7c7000[newtype]->type |= (cards_data[event_result].type | TYPE_CREATURE);
-					cards_at_7c7000[newtype]->power = pow == -1 ? get_cmc(p, c) : pow;
-					cards_at_7c7000[newtype]->toughness = tou == -1 ? get_cmc(p, c) : tou;
-					instance->dummy3 = newtype;
-					add_status(p, c, STATUS_ANIMATED);
-				}
-				event_result = instance->dummy3;
-			}
-		}
-		else{
-			if( event == EVENT_POWER && affect_me(p, c) ){
-				event_result += (pow - get_base_power(p, c));
-			}
-			if( event == EVENT_TOUGHNESS && affect_me(p, c) ){
-				event_result += (pow - get_base_toughness(p, c));
+		if( affect_me(p, c) ){
+			switch( event ){
+					case EVENT_ABILITIES:
+					{
+						event_result |= key;
+						special_abilities(p, c, event, s_key, player, card);
+						break;
+					}
+					case EVENT_POWER:
+					{
+						if( pow > -1 ){
+							event_result += (pow - get_base_power(p, c));
+						}
+						break;
+					}
+					case EVENT_TOUGHNESS:
+					{
+						if( tou > -1 ){
+							event_result += (tou - get_base_toughness(p, c));
+						}
+						break;
+					}
+					case EVENT_CHANGE_TYPE:
+					{
+						if( ! is_what(-1, event_result, TYPE_CREATURE) ){
+							if( instance->dummy3 < 1 ){
+								int newtype = create_a_card_type(event_result);
+								cards_at_7c7000[newtype]->type |= (cards_data[event_result].type | TYPE_CREATURE);
+								cards_at_7c7000[newtype]->power = (pow == -1 ? get_cmc(p, c) : pow);
+								cards_at_7c7000[newtype]->toughness = (tou == -1 ? get_cmc(p, c) : tou);
+								instance->dummy3 = newtype;
+								add_status(p, c, STATUS_ANIMATED);
+							}
+							event_result = instance->dummy3;
+						}
+						else{
+							remove_status(p, c, STATUS_ANIMATED);
+						}
+						break;
+					}
+					case EVENT_RESOLVE_MOVING_AURA:
+					{
+						target_definition_t *td1;
+						td1 = td;
+						if( ! check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET) ){
+							td1->illegal_abilities = 0;
+						}
+						if( check_special_flags(player, card, SF_MOVE_AURA_SAME_CONTROLLER) ){
+							td1->allowed_controller = instance->damage_target_player;
+							td1->preferred_controller = instance->damage_target_player;
+						}
+						if( check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) || 
+							check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P1) )
+						{
+							td1->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+							td1->who_chooses = check_special_flags3(player, card, SF3_ENCHANTMENT_ALTERATION_P0) ? 0 : 1;
+						}
+						if( valid_target(td1) ){
+							int prev_p = p;
+							int prev_c = c;
+							if( attach_aura_to_target(player, card, event, instance->targets[0].player, instance->targets[0].card) ){
+								instance->dummy3 = 0;
+								if( added_subtype ){
+									reset_subtypes(prev_p, prev_c, RS_RESET_ADDED);
+									add_a_subtype(instance->targets[0].player, instance->targets[0].card, added_subtype);
+								}
+							}
+						}
+						return 0; //Or it will fall through the default "targeted_aura"
+					}
+					default:
+						break;
 			}
 		}
 	}
+
+	if( event == EVENT_RESOLVE_SPELL ){
+		if( valid_target(td) ){
+			card_instance_t *instance = get_card_instance(player, card);
+			if( attach_aura_to_target(player, card, event, instance->targets[0].player, instance->targets[0].card) ){
+				if( added_subtype > 0 ){
+					add_a_subtype(instance->targets[0].player, instance->targets[0].card, added_subtype);
+				}
+			}
+			else{
+				kill_card(player, card, KILL_SACRIFICE);
+			}
+		}
+		else{
+			kill_card(player, card, KILL_SACRIFICE);
+		}
+		return 0;
+	}
+
 	if( custom_prompt ){
 		return targeted_aura_custom_prompt(player, card, event, td, prompt);
 	}
@@ -748,11 +854,15 @@ static int generic_animating_aura_impl(int player, int card, event_t event, targ
 }
 
 int generic_animating_aura(int player, int card, event_t event, target_definition_t *td, const char *prompt, int pow, int tou, int key, int s_key){
-	return generic_animating_aura_impl(player, card, event, td, prompt, pow, tou, key, s_key, 0);
+	return generic_animating_aura_impl(player, card, event, td, prompt, pow, tou, key, s_key, 0, 0);
 }
 
 int generic_animating_aura_custom_prompt(int player, int card, event_t event, target_definition_t *td, const char *prompt, int pow, int tou, int key, int s_key){
-	return generic_animating_aura_impl(player, card, event, td, prompt, pow, tou, key, s_key, 1);
+	return generic_animating_aura_impl(player, card, event, td, prompt, pow, tou, key, s_key, 1, 0);
+}
+
+int generic_animating_aura_with_added_subtype(int player, int card, event_t event, target_definition_t *td, const char *prompt, int pow, int tou, int key, int s_key, subtype_t subtype){
+	return generic_animating_aura_impl(player, card, event, td, prompt, pow, tou, key, s_key, 1, subtype);
 }
 
 static int when_enchanted_permanent_dies_return_aura_to_hand_legacy(int player, int card, event_t event){
@@ -761,7 +871,7 @@ static int when_enchanted_permanent_dies_return_aura_to_hand_legacy(int player, 
 
 	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
 		seek_grave_for_id_to_reanimate(player, card, instance->targets[0].player, cards_data[instance->targets[0].card].id, REANIMATE_RETURN_TO_HAND);
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 	}
 
 	return 0;
@@ -778,12 +888,12 @@ void when_enchanted_permanent_dies_return_aura_to_hand(int player, int card, eve
 		if( event == EVENT_GRAVEYARD_FROM_PLAY ){
 			if( affect_me(t_player, t_card) && in_play(t_player, t_card) ){
 				card_instance_t *land = get_card_instance(t_player, t_card);
-				if( land->kill_code > 0 && land->kill_code < KILL_REMOVE ){
+				if( land->kill_code > 0 && land->kill_code < KILL_EXILE ){
 					set_special_flags3(player, card, SF3_ENCHANTED_PERMANENT_DYING);
 				}
 			}
 			if( affect_me(player, card) && in_play(player, card) ){
-				if( instance->kill_code > 0 && instance->kill_code < KILL_REMOVE ){
+				if( instance->kill_code > 0 && instance->kill_code < KILL_EXILE ){
 					if( check_special_flags3(player, card, SF3_ENCHANTED_PERMANENT_DYING) ){
 						int legacy = create_legacy_effect(player, card, &when_enchanted_permanent_dies_return_aura_to_hand_legacy);
 						get_card_instance(player, legacy)->targets[0].player = get_owner(player, card);

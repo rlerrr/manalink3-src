@@ -214,6 +214,10 @@ validate_target_impl(int player, int card,	// Beware - these will both be -1 whe
 		  can_target_player_1 = 0;
 		}
 
+	  if ((special & TARGET_SPECIAL_OPPONENT)
+		  && (player >= 0 ? player : who_chooses) == tgt_player)
+		FAIL_STR(",opponent");
+
 	  if ((illegal_abilities & KEYWORD_SHROUD)
 		  && ((player_bits[tgt_player] & PB_PLAYER_HAS_SHROUD) || (who_chooses != tgt_player && (player_bits[tgt_player] & PB_PLAYER_HAS_HEXPROOF))))
 		FAILURE(0x785F94);//",abilities"
@@ -240,6 +244,10 @@ validate_target_impl(int player, int card,	// Beware - these will both be -1 whe
 		int query_controller = (who_chooses == HUMAN || (trace_mode & 2)) ? allowed_controller : preferred_controller;
 		int ok_controller;
 		int ok_owner;
+	
+		if( extra == damage_card ){
+			query_controller = (who_chooses == HUMAN || (trace_mode & 2)) ? allowed_controller : (preferred_controller = ANYBODY);//AI can prevent damage to itself.
+		}
 
 		if (query_controller & TARGET_PLAYER_OWNER)
 		  {
@@ -270,7 +278,7 @@ validate_target_impl(int player, int card,	// Beware - these will both be -1 whe
 	  if (illegal_type && target_match_type(tgt_instance, tgt_player, tgt_card, special, illegal_type))
 		FAILURE(0x728F6C);//",type"
 
-	  if (cards_data[tgt_instance->internal_card_id].code_pointer == 0x401010	// multiblocker shadow
+	  if (cards_data[tgt_instance->internal_card_id].code_pointer == (CardFunction)0x401010	// multiblocker shadow
 		  && !(special & TARGET_SPECIAL_ALLOW_MULTIBLOCKER))
 		FAILURE(0x728F6C);//",type"
 
@@ -386,7 +394,7 @@ validate_target_impl(int player, int card,	// Beware - these will both be -1 whe
 			FAILURE(0x73964C);//",subtype"
 		}
 
-	  if (required_subtype != -1 && !(special & TARGET_SPECIAL_DAMAGE_PERMANENT_WITH_SUBTYPE) )
+	  if (required_subtype != -1)
 		{
 		  int is_required_subtype;
 		  if (required_subtype == SUBTYPE_NONBASIC)	// Special-cased since it isn't actually set on anything
@@ -474,22 +482,15 @@ validate_target_impl(int player, int card,	// Beware - these will both be -1 whe
 				}
 			}
 
-		  if ((special & TARGET_SPECIAL_DAMAGE_ANY_PLAYER) && tgt_instance->damage_target_card != -1)
-			FAILURE(0x786C30);//",target player"
-
 		  if ((special & TARGET_SPECIAL_DAMAGE_CREATURE) && tgt_instance->damage_target_card == -1)
 			FAIL_STR("must damage creature");
 
-		  if ((special & TARGET_SPECIAL_DAMAGE_LEGENDARY_CREATURE)
-			  && (tgt_instance->damage_target_card == -1 || ! is_legendary(tgt_instance->damage_target_player, tgt_instance->damage_target_card)))
-			FAIL_STR("must damage legendary creature");
-
-		  if ((special & TARGET_SPECIAL_DAMAGE_PERMANENT_WITH_SUBTYPE)
-			  && (tgt_instance->damage_target_card == -1 || ! has_subtype(tgt_instance->damage_target_player, tgt_instance->damage_target_card, required_subtype)))
+			if( (special & TARGET_SPECIAL_CMC_EQUAL) &&
+				get_cmc(tgt_instance->damage_target_player, tgt_instance->damage_target_card) != extra )
 			{
-			  char buffer[100];
-			  strcpy(buffer, get_subtype_text("must damage %a", required_subtype));
-			  FAIL_STR(buffer);
+				char buffer[100];
+				scnprintf(buffer, 100, "CMC must be %d", extra);
+				FAIL_STR(buffer);
 			}
 
 		  if ((special & TARGET_SPECIAL_ELEPHANT_MAMMOTH)
@@ -943,7 +944,7 @@ select_target_impl(int player, int card,
 			  if (tmp_tgt.card < 0
 				  || (instance = get_card_instance(tmp_tgt.player, tmp_tgt.card))->internal_card_id < 0
 				  || (special & TARGET_SPECIAL_ALLOW_MULTIBLOCKER)
-				  || cards_at_7c7000[instance->internal_card_id]->code_pointer != 0x401010)	// multiblocker card
+				  || cards_at_7c7000[instance->internal_card_id]->code_pointer != (CardFunction)0x401010)	// multiblocker card
 				{
 				  char err_reason[208];
 
@@ -1196,6 +1197,14 @@ void default_target_definition(int player, int card, target_definition_t* td, in
 {
   base_target_definition(player, card, td, type);
   td->illegal_abilities = get_protections_from(player, card);
+}
+
+// Like default_target_definition_t, but sets TARGET_TYPE_PLANESWALKER, TARGET_ZONE_CREATURE_OR_PLAYER, and TARGET_SPECIAL_OPPONENT.
+void opponent_or_pw_target_definition(int player, int card, target_definition_t* td)
+{
+  default_target_definition(player, card, td, TARGET_TYPE_PLANESWALKER);
+  td->zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+  td->special = TARGET_SPECIAL_OPPONENT;
 }
 
 void counterspell_target_definition(int player, int card, target_definition_t* td, int type)
@@ -1809,7 +1818,7 @@ int is_protected_from_me(int player, int card, int t_player, int t_card){
 
 	card_instance_t *instance = get_card_instance(player, card);
 	int clr = instance->card_color;
-	if( get_id(t_player, t_card) == CARD_ID_GAEAS_REVENGE && (clr & COLOR_TEST_GREEN) ){
+	if( get_id(t_player, t_card) == CARD_ID_GAEAS_REVENGE && !(clr & COLOR_TEST_GREEN) ){
 		return 1;
 	}
 

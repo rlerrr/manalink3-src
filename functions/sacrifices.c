@@ -629,9 +629,8 @@ int prevent_damage_sacrificing_a_creature(int player, int card, event_t event, i
 	// mode = 2 --> Martyr's Cause
 
 	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
+	default_target_definition(player, card, &td, 0);
 	td.extra = damage_card;
-	td.required_type = 0;
 	td.allow_cancel = 0;
 
 	target_definition_t td1;

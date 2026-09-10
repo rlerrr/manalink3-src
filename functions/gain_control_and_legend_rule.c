@@ -106,7 +106,7 @@ static int real_switch_control(int player, int card)
   v15 = 1 - player;
   v2 = get_card_instance(player, card);
   int v13 = v2->timestamp;
-  v3 = add_card_to_hand(1 - player, v2->internal_card_id);
+  v3 = add_card_to_hand_exe(1 - player, v2->internal_card_id);
   v14 = v3;
   if (v3 != -1)
     {
@@ -164,7 +164,7 @@ static int real_switch_control(int player, int card)
   types_of_cards_on_bf[v15] |= v9;
   redraw_libraries();
   v8->token_status |= STATUS_CANNOT_LEAVE_PLAY | STATUS_OBLITERATED;
-  kill_card(player, card, KILL_REMOVE);
+  kill_card_exe(player, card, KILL_EXILE);
   if (BYTE3(event_flags) & 0x10)                // EA_CONTROLLED
     dispatch_event(v15, v14, EVENT_CARDCONTROLLED);
   return v14;
@@ -259,60 +259,74 @@ static int generic_control_legacy(int player, int card, event_t event){
 			if( instance->targets[3].card == CARD_ID_MAGUS_OF_THE_UNSEEN || instance->targets[3].card == CARD_ID_RAY_OF_COMMAND ){
 				tap_card(t_player, t_card);
 			}
-			re_enable_the_most_recent_control_effect_attached_to_me(t_player, t_card);
+			re_enable_the_other_most_recent_control_effect_attached_to_me(t_player, t_card, player, card);
 			if( check_state(player, card, STATE_POWER_STRUGGLE) && check_status(player, card, STATUS_CONTROLLED) ){
 				real_switch_control(t_player, t_card);
 			}
-			kill_card(player, card, KILL_REMOVE);
+			kill_card(player, card, KILL_EXILE);
 		}
 
-		if( mode && (mode & (GCUS_CONTROLLED | GCUS_TAPPED | GCUS_BURY_IF_TAPPED_OR_LEAVE_PLAY)) ){
-			if (event == EVENT_STATIC_EFFECTS || event == EVENT_CARDCONTROLLED ||
-			(trigger_condition == TRIGGER_LEAVE_PLAY && affect_me(player, card)))
+		int mode_mask = GCUS_CONTROLLED | GCUS_TAPPED | GCUS_BURY_IF_TAPPED_OR_LEAVE_PLAY | GCUS_CHECK_POWER | GCUS_ENCHANTED |
+						GCUS_SOURCE_IN_PLAY;
+		if( mode && (mode & mode_mask) ){
+			if(	event == EVENT_STATIC_EFFECTS || event == EVENT_CARDCONTROLLED ||
+				(trigger_condition == TRIGGER_LEAVE_PLAY && affect_me(player, card)) )
 			{
 				if( instance->targets[5].player == -1 ){	// hasn't changed control for the first time yet
 					instance->targets[5].player = 1;
 					return 0;
 				}
 
+				int end_effect = 0;
+
 				if (other_leaves_play(player, card, s_player, s_card, event))
 				{
 					if (mode & GCUS_BURY_IF_TAPPED_OR_LEAVE_PLAY){
 						kill_card(t_player, t_card, KILL_BURY);
+						end_effect = 1;
 					}
-					else{
-						re_enable_the_most_recent_control_effect_attached_to_me(t_player, t_card);
-						if( check_state(player, card, STATE_POWER_STRUGGLE) && check_status(player, card, STATUS_CONTROLLED) ){
-							real_switch_control(t_player, t_card);
-						}
-						kill_card(player, card, KILL_REMOVE);
+					if (mode & GCUS_SOURCE_IN_PLAY){
+						end_effect = 1;
 					}
 				}
 
 				if (event == EVENT_CARDCONTROLLED && affect_me(s_player, s_card) && (mode & GCUS_CONTROLLED))
 				{
-					re_enable_the_most_recent_control_effect_attached_to_me(t_player, t_card);
-					if( check_state(player, card, STATE_POWER_STRUGGLE) && check_status(player, card, STATUS_CONTROLLED) ){
-						real_switch_control(t_player, t_card);
-					}
-					kill_card(player, card, KILL_REMOVE);
+					end_effect = 1;
 				}
 
-				if (event == EVENT_STATIC_EFFECTS && s_player >= 0 &&
-					!is_tapped(s_player, s_card) && instance->targets[5].player == 1 )
+				if( event == EVENT_STATIC_EFFECTS && s_player >= 0 && instance->targets[5].player == 1 )
 				{
-					if (mode & GCUS_BURY_IF_TAPPED_OR_LEAVE_PLAY)
-						kill_card(t_player, t_card, KILL_BURY);
+					if(! is_tapped(s_player, s_card) ){
+						if (mode & GCUS_BURY_IF_TAPPED_OR_LEAVE_PLAY)
+							kill_card(t_player, t_card, KILL_BURY);
 
-					if (mode & GCUS_TAPPED)
-					{
+						if (mode & GCUS_TAPPED)
+						{
+							instance->targets[5].player = -1;
+							end_effect = 1;
+						}
+					}
+
+					if( (mode & GCUS_CHECK_POWER) && get_power(t_player, t_card) > get_power(s_player, s_card) ){
 						instance->targets[5].player = -1;
-						re_enable_the_most_recent_control_effect_attached_to_me(t_player, t_card);
+						end_effect = 1;
+					}
+
+					if( (mode & GCUS_ENCHANTED) && ! is_enchanted(t_player, t_card) ){
+						instance->targets[5].player = -1;
+						end_effect = 1;
+					}
+				}
+
+				if( end_effect ){
+					if( in_play(t_player, t_card) ){
+						re_enable_the_other_most_recent_control_effect_attached_to_me(t_player, t_card, player, card);
 						if( check_state(player, card, STATE_POWER_STRUGGLE) && check_status(player, card, STATUS_CONTROLLED) ){
 							real_switch_control(t_player, t_card);
 						}
-						kill_card(player, card, KILL_REMOVE);
 					}
+					kill_card(player, card, KILL_EXILE);
 				}
 			}
 		}
@@ -321,8 +335,7 @@ static int generic_control_legacy(int player, int card, event_t event){
 	return 0;
 }
 
-
-static int effect_on_all_control_effects_attached_to_me(int player, int card, int effect){
+static int effect_on_all_control_effects_attached_to_me(int player, int card, int this_legacy_player, int this_legacy_card, int effect){
 // effect = 0 --> check only
 // effect = 1 -> enable the "control legacy" with the highest timestamp (AKA the most recent)
 // effect = -1 -> disable all "control legacies"
@@ -337,13 +350,20 @@ static int effect_on_all_control_effects_attached_to_me(int player, int card, in
 				if( is_what(p, c, TYPE_EFFECT) && inst->info_slot == (int)generic_control_legacy ){
 					//STATE_POWER_STRUGGLE = This "control legacy" has stolen a permanent from someone, so it needs to be processed.
 					if( check_state(p, c, STATE_POWER_STRUGGLE) ){
-						if( effect == 1 && ! check_status(p, c, STATUS_CONTROLLED) ){
-							legacies[lc][0] = inst->timestamp;
-							legacies[lc][1] = p;
-							legacies[lc][2] = c;
-							lc++;
-							result = 1;
+						if( effect == 1 ){
+							if( ! check_status(p, c, STATUS_CONTROLLED) ){
+								if( this_legacy_player == -1 || 
+									(this_legacy_player != -1 && this_legacy_card != -1 && !(p == this_legacy_player && c == this_legacy_card)))
+								{
+									legacies[lc][0] = inst->timestamp;
+									legacies[lc][1] = p;
+									legacies[lc][2] = c;
+									lc++;
+									result = 1;
+								}
+							}
 						}
+						//STATUS_CONTROLLED = This "control legacy" is active and the enchanted permanent will return to its previous controller if this legacy leaves play
 						if( effect == -1 ){
 							remove_status(p, c, STATUS_CONTROLLED);
 							result = 1;
@@ -369,11 +389,15 @@ static int effect_on_all_control_effects_attached_to_me(int player, int card, in
 }
 
 int disable_all_control_effects_attached_to_me(int player, int card){
-	return effect_on_all_control_effects_attached_to_me(player, card, -1);
+	return effect_on_all_control_effects_attached_to_me(player, card, -1, -1, -1);
 }
 
 int re_enable_the_most_recent_control_effect_attached_to_me(int player, int card){
-	return effect_on_all_control_effects_attached_to_me(player, card, 1);
+	return effect_on_all_control_effects_attached_to_me(player, card, -1, -1, 1);
+}
+
+int re_enable_the_other_most_recent_control_effect_attached_to_me(int player, int card, int legacy_p, int legacy_c){
+	return effect_on_all_control_effects_attached_to_me(player, card, legacy_p, legacy_c, 1);
 }
 
 int gain_control_permanently_impl(int player, int t_player, int t_card, int sound){
@@ -531,7 +555,43 @@ void gain_control_until_source_is_in_play_and_tapped(int player, int card, int t
 		  || ((mode & GCUS_TAPPED) && !is_tapped(player, card)))
 		return;
 
-		gain_control_until_clause(source_player, source_card, t_player, t_card, mode, 0, 0, 0, 0);
+	  gain_control_until_clause(source_player, source_card, t_player, t_card, mode, 0, 0, 0, 0);
 	}
 }
+
+void get_back_your_permanents(int player, int card, type_t typ)
+{
+	// First, destroy any effect cards controlling permanents stolen from player.
+	int marked[151];
+	int mc = 0;
+	int c;
+	int p = 1-player;
+	for(c=0; c<active_cards_count[p]; c++){
+		if( in_play(p, c) && is_what(p, c, TYPE_EFFECT) ){
+			card_instance_t *inst = get_card_instance(p, c);
+			if( inst->info_slot == (int)generic_control_legacy ){
+				if( is_stolen(inst->damage_target_player, inst->damage_target_card) && 
+					is_what(inst->damage_target_player, inst->damage_target_card, typ) )
+				{
+					marked[mc] = c;
+					mc++;
+				}
+			}
+		}
+	}
+
+	for(c=0; c<mc; c++){
+		kill_card(p, marked[c], KILL_EXILE);
+	}
+
+	// Anything left over.
+	for(c=0; c<active_cards_count[p]; c++){
+		if( in_play(p, c) && is_what(p, c, typ) ){
+			if( is_stolen(p, c) ){
+				gain_control_permanently(player, p, c);
+			}
+		}
+	}
+}
+
 

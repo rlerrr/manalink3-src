@@ -44,7 +44,7 @@ int card_arena(int player, int card, event_t event){
 	/* Arena	""
 	 * Land
 	 * |3, |T: Tap target creature you control and target creature of an opponent's choice he or she controls. Those creatures fight each other. */
-
+	// Used externally
 	if (event == EVENT_CAST_SPELL && affect_me(player, card) && player == AI){
 		ai_modifier += 48;
 		return 0;
@@ -176,8 +176,9 @@ int card_aswan_jaguar(int player, int card, event_t event)
    * When ~ comes into play, choose a random creature subtype from those in target opponent's deck.
    * |G|G, |T: Destroy target creature of the chosen subtype. It can't be regenerated. */
 
-  if (comes_into_play(player, card, event) && target_opponent(player, card))
-	{
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY && target_opponent(player, card) ){
 	  // Equal chance for each creature type present in opponent's library, no matter how many times it appears, or whether it's on a creature or a Tribal.
 
 	  char creature_type_is_present[SUBTYPE_MAX_USED_CREATURE_SUBTYPE + 1] = {0};
@@ -256,6 +257,17 @@ int card_call_from_the_grave(int player, int card, event_t event){
 	  Put a random creature from a random graveyard into play under your control.
 	  Call from the Grave deals to you an amount of damage equal to that creature's converted mana cost.
 	*/
+
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		test_definition_t test;
+		default_test_definition(&test, TYPE_CREATURE);
+		test.cmc = 3;
+		test.cmc_flag = F5_CMC_GREATER_THAN_VALUE;
+		if( new_special_count_grave(player, &test) || new_special_count_grave(player, &test) ){
+			ai_modifier += 48;
+		}
+	}
+
 	if( event == EVENT_RESOLVE_SPELL ){
 		int corpses[500];
 		int cc = 0;
@@ -285,7 +297,7 @@ int card_call_from_the_grave(int player, int card, event_t event){
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+	return basic_spell(player, card, event);
 }
 
 int card_faerie_dragon(int player, int card, event_t event)
@@ -476,7 +488,7 @@ int card_faerie_dragon(int player, int card, event_t event)
 
 		  case 18:
 			gain_life(tgt_player, get_power(tgt_player, tgt_card));
-			kill_card(tgt_player, tgt_card, KILL_REMOVE);
+			kill_card(tgt_player, tgt_card, KILL_EXILE);
 			break;
 
 		  case 19:
@@ -537,6 +549,12 @@ int card_giant_badger(int player, int card, event_t event){
 	  Creature - Badger 2/2
 	  Whenever Giant Badger blocks, it gets +2/+2 until end of turn.
 	*/
+	/*
+	  Royal Trooper	|2|W
+	  Creature - Human Soldier 2/2
+	  Whenever ~ blocks, it gets +2/+2 until end of turn.
+	*/
+
 	if( ! is_humiliated(player, card) && blocking(player, card, event) ){
 		int amount = 2*count_creatures_this_is_blocking(player, card);
 		pump_until_eot(player, card, player, card, amount, amount);
@@ -661,63 +679,6 @@ int card_goblin_polka_band(int player, int card, event_t event)
   return 0;
 }
 
-int card_goblin_tutor(int player, int card, event_t event){
-	/* Goblin Tutor	|R
-	 * Instant
-	 * Roll a six-sided die for ~. On a 1, ~ has no effect. Otherwise, search your library for the indicated card, reveal that card to all players, and put it
-	 * into your hand. Shuffle your library afterwards.
-	 * 2 - Any ~
-	 * 3 - Any enchantment
-	 * 4 - Any artifact
-	 * 5 - Any creature
-	 * 6 - Any sorcery, instant, or interrupt */
-
-	if(event == EVENT_CAN_CAST){
-		return 1;
-	}
-	else if(event == EVENT_RESOLVE_SPELL){
-		int roll = internal_rand(6) + 1;
-		int type = 0;
-		if( roll == 1 ){
-			do_dialog(player, player, card, -1, -1, "Rolled 1: no effect", 1);
-		}
-		else if( roll == 2 ){
-			do_dialog(player, player, card, -1, -1, "Rolled 2: search for Goblin Tutor", 1);
-		}
-		else if( roll == 3 ){
-			do_dialog(player, player, card, -1, -1, "Rolled 3: find an enchantment", 1);
-			type = TYPE_ENCHANTMENT;
-		}
-		else if( roll == 4 ){
-			do_dialog(player, player, card, -1, -1, "Rolled 4: find an artifact", 1);
-			type = TYPE_ARTIFACT;
-		}
-		else if( roll == 5 ){
-			do_dialog(player, player, card, -1, -1, "Rolled 5: find a creature", 1);
-			type = TYPE_CREATURE;
-		}
-		else if( roll == 6 ){
-			do_dialog(player, player, card, -1, -1, "Rolled 6: find an instant or sorcery", 1);
-			type = TYPE_INSTANT | TYPE_SORCERY | TYPE_INTERRUPT;
-		}
-
-		if( roll > 2 ){
-			if( type > 0 ){
-				int mode = 0;
-				if( roll == 6 ){
-					mode = 2;
-				}
-				global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, 1, type, mode, 0, 0, 0, 0, 0, 0, -1, 0);
-			}
-			else{
-				global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, 4, 0, 0, 0, 0, 0, 0, CARD_ID_GOBLIN_TUTOR, 0, -1, 0);
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-	return 0;
-}
-
 int card_mana_crypt(int player, int card, event_t event){
 	/*
 	  Mana Crypt 0
@@ -756,8 +717,8 @@ int card_necropolis_of_azar(int player, int card, event_t event)
    * |5, Remove a husk counter from ~: Put a Spawn of Azar token into play. Treat this token as a |Sblack creature with a random power and toughness, each no
    * less than 1 and no greater than 3, that has |H2swampwalk. */
 
-  if (event == EVENT_CAN_CAST)
-	return 1;
+	if (event == EVENT_CAN_CAST)
+		return 1;
 
 	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
 		test_definition_t test;
@@ -768,18 +729,18 @@ int card_necropolis_of_azar(int player, int card, event_t event)
 		count_for_gfp_ability(player, card, event, ANYBODY, 0, &test);
 	}
 
-	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		add_counters(player, card, COUNTER_HUSK, get_card_instance(player, card)->targets[11].card);
-		get_card_instance(player, card)->targets[11].card = 0;
+	int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	if( result ){
+		add_counters(player, card, COUNTER_HUSK, BYTE0(result));
 	}
 
-  if (event == EVENT_CAN_ACTIVATE && count_counters(player, card, COUNTER_HUSK) <= 0)
-	return 0;
-  int rval = generic_activated_ability(player, card, event, 0, MANACOST_X(5), 0, NULL, NULL);
-  if (event == EVENT_ACTIVATE && cancel != 1)
-	remove_counter(player, card, COUNTER_HUSK);
+	if (event == EVENT_CAN_ACTIVATE && count_counters(player, card, COUNTER_HUSK) <= 0)
+		return 0;
+	int rval = generic_activated_ability(player, card, event, 0, MANACOST_X(5), 0, NULL, NULL);
+	if (event == EVENT_ACTIVATE && cancel != 1)
+		remove_counter(player, card, COUNTER_HUSK);
 
-  if (event == EVENT_RESOLVE_ACTIVATION)
+	if (event == EVENT_RESOLVE_ACTIVATION)
 	{
 	  play_sound_effect(WAV_NECRAZAR);
 	  int parent_controller = get_card_instance(player, card)->parent_controller;
@@ -800,13 +761,17 @@ int card_necropolis_of_azar(int player, int card, event_t event)
 	  generate_token(&token);
 	}
 
-  return rval;
+	return rval;
 }
 
 int card_orcish_catapult(int player, int card, event_t event){
 	/*
 	  Randomly distribute |X -0/-1 counters among a random number of random target creatures.
 	*/
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 
@@ -891,6 +856,7 @@ int card_pandoras_box(int player, int card, event_t event){
 	  and treat it as though an exact copy of the chosen creature card were just played.
 	*/
 	if( event == EVENT_RESOLVE_ACTIVATION ){
+		card_instance_t *instance = get_card_instance( player, card);
 		play_sound_effect(WAV_PANDORA);
 		int corpses[500];
 		int cc = 0;
@@ -913,12 +879,13 @@ int card_pandoras_box(int player, int card, event_t event){
 		default_token_definition(player, card, cards_data[revealed_by_pandoras_box[0]].id, &token);
 		token.no_sleight = 1;
 
-		for(i=0; i<2; i++){
-			if( player_flips_a_coin(player, card, i) ){
-				token.t_player = i;
-				generate_token(&token);
-			}
-		}
+		APNAP(p, {
+					if( player_flips_a_coin(instance->parent_controller, instance->parent_card, p) ){
+						token.t_player = p;
+						generate_token(&token);
+					}
+				};
+		);
 	}
 
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(3), 0, NULL, NULL);
@@ -998,10 +965,6 @@ int card_prismatic_dragon(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, 0, MANACOST_X(2), 0, NULL, NULL);
 }
 
-static void sewers_of_estark_prevent_damage_effect(int player, int card, int t_player, int t_card){
-	prevent_all_damage_dealt_by_target(player, card, t_player, t_card, DDBM_MUST_BE_COMBAT_DAMAGE);
-}
-
 int card_rainbow_knights(int player, int card, event_t event){
 	/*
 	  Rainbow Knights	|W|W
@@ -1059,6 +1022,10 @@ int card_rainbow_knights(int player, int card, event_t event){
 	return 0;
 }
 
+static void sewers_of_estark_prevent_damage_effect(int player, int card, int t_player, int t_card){
+	prevent_all_damage_dealt_by_target(player, card, t_player, t_card, DDBM_MUST_BE_COMBAT_DAMAGE);
+}
+
 int card_sewers_of_estark(int player, int card, event_t event){
 	/*
 	  Sewers of Estark
@@ -1104,3 +1071,152 @@ Creature - Centaur 2/2
 Vigilance
 */
 
+/**********************************
+ * Heroes of the Realm 2016 cards *
+ **********************************/
+
+/* Chandra, Gremlin Wrangler	|2|R|R
+ * Legendary Planeswalker - Chandra (3)
+ * +1: Create a 2/2 |Sred Gremlin creature token.
+ * -2: ~ deals X damage to target creature or player, where X is the number of Gremlins you control. */
+
+/* Dungeon Master	|2|W|U
+ * Legendary Planeswalker - Dungeon Master (1d4+1)
+ * +1: Target opponent creates a 1/1 |Sblack Skeleton creature token with "When this creature dies, each opponent gains 2 life."
+ * +1: Roll a d20. If you roll a 1, skip your next turn. If you roll a 12 or higher, draw a card.
+ * -6: You get an adventuring party. (Your party is a 3/3 |Sred Fighter with first strike, a 1/1 |Swhite Cleric with lifelink, a 2/2 |Sblack Rogue with hexproof, and a 1/1 |Sblue Wizard with flying.) */
+
+/* Nira, Hellkite Duelist	|W|U|B|R|G
+ * Legendary Creature - Dragon 6/6
+ * Flash
+ * Flying, trample, haste
+ * When ~ enters the battlefield, the next time you would lose the game this turn, instead draw three cards and your life total becomes 5. */
+
+/***********************************************************************************
+ * Hascon 2017 cards (except Swords of Dungeons & Dragons, which is in unstable.c) *
+ ***********************************************************************************/
+
+/* Grimlock, Dinobot Leader	|1|R|G|W
+ * Legendary Artifact Creature - Autobot 4/4
+ * Dinosaurs, Vehicles, and other Transformers(R) creatures you control get +2/+0.
+ * |2, Convert a Transformers toy you own to its other mode: ~ becomes ~, Ferocious King.
+ * (~, Ferocious King - 8/8) Trample
+ * |2, Convert a Transformers toy you own to its other mode: ~, Ferocious King becomes ~. */
+/* Grimlock, Ferocious King	""
+ * Legendary Artifact Creature - Dinosaur 8/8
+ * Trample
+ * |2, Convert a Transformers toy you own to its other mode: ~ becomes ~, Dinobot Leader. */
+/* Rulings from Maro, for what they're worth, amount to:
+ * "Transformers creatures" includes creatures that transform, and creatures that are the backs of double-faced-cards
+ * whose front could transform, and melded creatures; but not flip-walkers, the fronts of meld cards, or anything else
+ * that reads something like "exile this card, then return it to the battlefield transformed". */
+
+/* Nerf War	|3|U|R
+ * Sorcery
+ * Fire a Nerf(R) blaster until empty at target library from at least two meters away. For each card knocked off that library, put it into its owner's graveyard and ~ deals 1/2 damage to that player. (Foam darts only.) */
+
+/************************************************
+ * MTG:Arena "New Player Experience"-only cards *
+ ************************************************/
+
+/* Angelic Reward	|3|W|W
+ * Enchantment - Aura
+ * Enchant creature
+ * Enchanted creature gets +3/+3 and has flying. */
+
+/* Blinding Radiance	|2|W
+ * Sorcery
+ * Tap all creatures your opponents control with toughness 2 or less. */
+
+/* Confront the Assault	|4|W
+ * Instant
+ * Cast this spell only if a creature is attacking you.
+ * Create three 1/1 |Swhite Spirit creature tokens with flying. */
+
+/* Cruel Cut	|1|B
+ * Instant
+ * Destroy target creature with power 2 or less. */
+
+/* Feral Roar	|1|G
+ * Sorcery
+ * Target creature gets +4/+4 until end of turn. */
+
+/* Goblin Bruiser	|1|R|R
+ * Creature - Goblin Warrior 3/3 */
+
+/* Goblin Gang Leader	|2|R|R
+ * Creature - Goblin Warrior 2/2
+ * When ~ enters the battlefield, create two 1/1 |Sred Goblin creature tokens. */
+
+/* Inspiring Commander	|4|W|W
+ * Creature - Human Soldier 1/4
+ * Whenever another creature with power 2 or less enters the battlefield under your control, you gain 1 life and draw a card. */
+
+/* Nimble Pilferer	|1|B
+ * Creature - Human Rogue 2/1
+ * Flash */
+
+/* Ogre Painbringer	|3|R|R
+ * Creature - Ogre 7/3
+ * When ~ enters the battlefield, it deals 3 damage to each player. */
+
+/* River's Favor	|U
+ * Enchantment - Aura
+ * Enchant creature
+ * Enchanted creature gets +1/+1. */
+
+/* Shorecomber Crab	|U
+ * Creature - Crab 0/4 */
+
+/* Shrine Keeper	|1|W
+ * Creature - Human Cleric 2/2 */
+
+/* Soulhunter Rakshasa	|3|B|B
+ * Creature - Cat Demon 5/5
+ * ~ can't block.
+ * When ~ enters the battlefield, it deals 5 damage to target opponent. */
+
+/* Tactical Advantage	|W
+ * Instant
+ * Target blocking or blocked creature you control gets +2/+2 until end of turn. */
+
+/* Titanic Pelagosaur	|3|U|U
+ * Creature - Dinosaur 4/6 */
+
+/* Treetop Warden	|1|G
+ * Creature - Elf Warrior 2/2 */
+
+/* Zephyr Gull	|U
+ * Creature - Bird 1/1
+ * Flying */
+
+/****************************
+ * Game Night box set, 2018 *
+ ****************************/
+
+/* Militant Angel	|3|W|W
+ * Creature - Angel 3/4
+ * Flying, lifelink
+ * When ~ enters the battlefield, create a number of 2/2 |Swhite Knight creature tokens with vigilance equal to the number of opponents you attacked this turn. */
+
+/* Inspired Sphinx	|5|U|U
+ * Creature - Sphinx 5/5
+ * Flying
+ * When ~ enters the battlefield, draw cards equal to the number of opponents you have.
+ * |3|U: Create a 1/1 colorless Thopter creature token with flying. */
+
+/* Rot Hulk	|5|B|B
+ * Creature - Zombie 5/5
+ * Menace
+ * When ~ enters the battlefield, return up to X target Zombie cards from your graveyard to the battlefield, where X is the number of opponents you have. */
+
+/* Goblin Goliath	|4|R|R
+ * Creature - Goblin Mutant 5/4
+ * When ~ enters the battlefield, create a number of 1/1 |Sred Goblin creature tokens equal to the number of opponents you have.
+ * |3|R, |T: If a source you control would deal damage to an opponent this turn, it deals double that damage to that player instead. */
+
+/* Avatar of Growth	|4|G|G
+ * Creature - Elemental Avatar 4/4
+ * This spell costs |1 less to cast for each opponent you have.
+ * Trample
+ * When ~ enters the battlefield, each player searches their library for up to two basic land cards, puts them onto the battlefield, then shuffles their library. */

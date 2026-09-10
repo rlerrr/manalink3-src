@@ -280,22 +280,22 @@ static int process_as_cost(int who_processes, int num_cards, event_t event, int 
   return gaa_result;
 }
 
-static int rally(int player, int card, event_t event, resolve_trigger_t mode)
+static void rally(int player, int card, event_t event, resolve_trigger_t mode)
 {
   // Rally - Whenever ~ or another Ally enters the battlefield under your control, [return true]
 
-  if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && reason_for_trigger_controller == player
-	  && trigger_cause_controller == player)
+	if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) )
 	{
-	  test_definition_t test;
-	  new_default_test_definition(&test, TYPE_PERMANENT, "");
-	  test.subtype = SUBTYPE_ALLY;
-	  test.subtype_flag = MATCH;
-	  test.not_me = 2;	// === pass the test if it's this card.  Only valid for new_specific_cip().
+		test_definition_t test;
+		new_default_test_definition(&test, TYPE_PERMANENT, "");
+		test.subtype = SUBTYPE_ALLY;
+		test.subtype_flag = MATCH;
+		test.not_me = 1;
 
-	  return new_specific_cip(player, card, event, player, mode, &test);
+		etb_ability_global(player, event, mode, 0, &test, player, card);
 	}
-  return 0;
+
+	etb_ability(player, card, event, mode);
 }
 
 static int test_isnt_land(int iid, int unused, int player, int card)
@@ -325,7 +325,7 @@ int card_bane_of_bala_ged(int player, int card, event_t event)
 	  int i, chosen = pick_up_to_n_targets_noload(&td, "Select a permanent you control.", 2);
 	  card_instance_t* inst = get_card_instance(player, card);
 	  for (i = 0; i < chosen; ++i)
-		kill_card(inst->targets[i].player, inst->targets[i].card, KILL_REMOVE);
+		kill_card(inst->targets[i].player, inst->targets[i].card, KILL_EXILE);
 	  inst->number_of_targets = 0;
 	}
 
@@ -381,10 +381,56 @@ int card_conduit_of_ruin(int player, int card, event_t event)
   return 0;
 }
 
-/* Deathless Behemoth	|6	0x000000
+int card_deathless_behemoth(int player, int card, event_t event)
+{
+/* Deathless Behemoth	|6	0x200ee7c
  * Creature - Eldrazi 6/6
  * Vigilance
  * Sacrifice two Eldrazi Scions: Return ~ from your graveyard to your hand. Activate this ability only any time you could cast a sorcery. */
+
+	vigilance(player, card, event);
+
+	if( event == EVENT_GRAVEYARD_ABILITY ){
+		test_definition_t test;
+		new_default_test_definition(&test, TYPE_PERMANENT, "Select an Eldrazi Scion to sacrifice.");
+		test.qty = 2;
+		if( new_can_sacrifice_as_cost(player, card, &test) ){
+			return GA_RETURN_TO_HAND;
+		}
+	}
+
+	if( event == EVENT_PAY_FLASHBACK_COSTS ){
+		test_definition_t test;
+		new_default_test_definition(&test, TYPE_PERMANENT, "Select an Eldrazi Scion to sacrifice.");
+		int sac = new_sacrifice(player, card, player, SAC_JUST_MARK|SAC_AS_COST|SAC_RETURN_CHOICE, &test);
+		if (sac){
+			int sac2 = new_sacrifice(player, card, player, SAC_JUST_MARK|SAC_AS_COST|SAC_RETURN_CHOICE, &test);
+			if( sac2 ){
+				if( spell_fizzled != 1 ){
+					kill_card(BYTE2(sac), BYTE3(sac), KILL_SACRIFICE);
+					kill_card(BYTE2(sac2), BYTE3(sac2), KILL_SACRIFICE);
+					return GAPAID_REMOVE;
+				}
+				else{
+					state_untargettable(BYTE2(sac), BYTE3(sac), 0);
+					state_untargettable(BYTE2(sac2), BYTE3(sac2), 0);
+					spell_fizzled = 1;
+					return 0;
+				}
+			}
+			else{
+				state_untargettable(BYTE2(sac), BYTE3(sac), 0);
+				spell_fizzled = 1;
+				return 0;
+			}
+		}
+		else{
+			spell_fizzled = 1;
+		}
+	}
+
+	return 0;
+}
 
 int card_desolation_twin(int player, int card, event_t event)
 {
@@ -427,9 +473,108 @@ int card_endless_one(int player, int card, event_t event)
   return 0;
 }
 
-/* Gruesome Slaughter	|6	0x000000
+static const char* can_activate_colorless_creature(int who_chooses, int player, int card)
+{
+	if( has_mana_for_activated_ability(player, card, MANACOST0) && ! is_tapped(player, card) && ! is_sick(player, card) &&
+		can_use_activated_abilities(player, card) && get_color(player, card) == 0 )
+	{
+		return NULL;
+	}
+	return "this creature can't use activated abilities.";
+}
+
+static int gruesome_slaughter_legacy(int player, int card, event_t event){
+// Until end of turn, colorless creatures you control gain "|T: This creature deals damage equal to its power to target creature."
+
+	if( event == EVENT_CLEANUP ){
+		kill_card(player, card, KILL_EXILE);
+	}
+
+	if( !IS_GAA_EVENT(event)  ){
+		return 0;
+	}
+
+	target_definition_t td;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+	td.allowed_controller = td.preferred_controller = player;
+	td.illegal_abilities = 0;
+	td.illegal_state = TARGET_STATE_TAPPED;
+	td.extra = (int32_t)can_activate_colorless_creature;
+	td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+
+	card_instance_t *instance = get_card_instance(player, card);
+
+	if( event == EVENT_CAN_ACTIVATE ){
+		int c;
+		for(c=0; c<active_cards_count[player]; c++){
+			if( in_play(player, c) && is_what(player, c, TYPE_CREATURE) ){
+				if( has_mana_for_activated_ability(player, c, MANACOST0) && ! is_tapped(player, c) && ! is_sick(player, c) &&
+					can_use_activated_abilities(player, c) && get_color(player, c) == 0 )
+				{
+					target_definition_t td2;
+					default_target_definition(player, c, &td2, TYPE_CREATURE);
+					if( can_target(&td2) ){
+						return 1;
+					}
+				}
+			}
+		}
+	}
+
+
+	if( event == EVENT_ACTIVATE  ){
+		instance->number_of_targets = 0;
+		if( new_pick_target(&td, "Select an untapped colorless creature you control.", 0, 1 | GS_LITERAL_PROMPT) ){
+			target_definition_t td2;
+			default_target_definition(instance->targets[0].player, instance->targets[0].card, &td2, TYPE_CREATURE);
+
+			if( charge_mana_for_activated_ability(instance->targets[0].player, instance->targets[0].card, MANACOST0) ){
+				get_card_instance(instance->targets[0].player, instance->targets[0].card)->number_of_targets = 0;
+				if( new_pick_target(&td2, "TARGET_CREATURE", 0, 1) ){
+					tap_card(instance->targets[0].player, instance->targets[0].card);
+				}
+			}
+		}
+	}
+
+	if( event == EVENT_RESOLVE_ACTIVATION ){
+		target_definition_t td2;
+		default_target_definition(instance->targets[0].player, instance->targets[0].card, &td2, TYPE_CREATURE);
+
+		card_instance_t *crit = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+		if( validate_target(crit->targets[0].player, crit->targets[0].card, &td2, 0) ){
+			damage_target0(crit->targets[0].player, crit->targets[0].card,
+							get_power(instance->targets[0].player, instance->targets[0].card));
+		}
+	}
+
+	return 0;
+}
+
+int card_gruesome_slaughter(int player, int card, event_t event){
+/* Gruesome Slaughter	|6	0x200ee81
  * Sorcery
  * Until end of turn, colorless creatures you control gain "|T: This creature deals damage equal to its power to target creature." */
+
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.allowed_controller = td.preferred_controller = player;
+		td.illegal_abilities = 0;
+		td.illegal_state = TARGET_STATE_TAPPED;
+		td.extra = (int32_t)can_activate_colorless_creature;
+		td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+
+		ai_modifier += (5*target_available(player, card, &td));
+	}
+
+	if( event == EVENT_RESOLVE_SPELL ){
+		create_legacy_activate(player, card, &gruesome_slaughter_legacy);
+		kill_card(player, card, KILL_DESTROY);
+	}
+
+	return basic_spell(player, card, event);
+}
 
 /* Kozilek's Channeler	|5	=>scars_of_mirrodin.c:card_palladium_myr
  * Creature - Eldrazi 4/4
@@ -484,7 +629,7 @@ int card_scour_from_existence(int player, int card, event_t event)
 	  if (valid_target(&td))
 		{
 		  card_instance_t* inst = get_card_instance(player, card);
-		  kill_card(inst->targets[0].player, inst->targets[0].card, KILL_REMOVE);
+		  kill_card(inst->targets[0].player, inst->targets[0].card, KILL_EXILE);
 		}
 	  kill_card(player, card, KILL_DESTROY);
 	}
@@ -517,7 +662,7 @@ int card_titans_presence(int player, int card, event_t event)
 	{
 	  if (valid_target(&td)
 		  && get_power(inst->targets[0].player, inst->targets[0].card) <= inst->info_slot)
-		kill_card(inst->targets[0].player, inst->targets[0].card, KILL_REMOVE);
+		kill_card(inst->targets[0].player, inst->targets[0].card, KILL_EXILE);
 
 	  kill_card(player, card, KILL_DESTROY);
 	}
@@ -566,7 +711,7 @@ int card_ulamog_the_ceaseless_hunger(int player, int card, event_t event)
 	  int i, chosen = pick_up_to_n_targets(&td, "TARGET_PERMANENT", 2);
 	  card_instance_t* inst = get_card_instance(player, card);
 	  for (i = 0; i < chosen; ++i)
-		kill_card(inst->targets[i].player, inst->targets[i].card, KILL_REMOVE);
+		kill_card(inst->targets[i].player, inst->targets[i].card, KILL_EXILE);
 	  inst->number_of_targets = 0;
 	}
 
@@ -623,10 +768,13 @@ int card_angel_of_renewal(int player, int card, event_t event)
    * Flying
    * When ~ enters the battlefield, you gain 1 life for each creature you control. */
 
-  if (comes_into_play(player, card, event))
-	gain_life(player, count_subtype(player, TYPE_CREATURE, -1));
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-  return 0;
+	if( event == EVENT_ETB_ABILITY ){
+		gain_life(player, count_subtype(player, TYPE_CREATURE, -1));
+	}
+
+	return 0;
 }
 
 int card_angelic_gift(int player, int card, event_t event)
@@ -637,10 +785,13 @@ int card_angelic_gift(int player, int card, event_t event)
    * When ~ enters the battlefield, draw a card.
    * Enchanted creature has flying. */
 
-  if (comes_into_play(player, card, event))
-	draw_a_card(player);
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-  return generic_aura(player, card, event, player, 0,0, KEYWORD_FLYING,0, 0,0,0);
+	if( event == EVENT_ETB_ABILITY ){
+		draw_a_card(player);
+	}
+
+	return generic_aura(player, card, event, player, 0,0, KEYWORD_FLYING,0, 0,0,0);
 }
 
 int card_cliffside_lookout(int player, int card, event_t event)
@@ -674,7 +825,8 @@ int card_emeria_shepherd(int player, int card, event_t event)
    * Flying
    * Landfall - Whenever a land enters the battlefield under your control, you may return target nonland permanent card from your graveyard to your hand. If that land is |Ha Plains, you may return that nonland permanent card to the battlefield instead. */
 
-  if (landfall_mode(player, card, event, RESOLVE_TRIGGER_AI(player)))
+   landfall_mode(player, card, event, RESOLVE_TRIGGER_AI(player));
+  if( event == EVENT_ETB_ABILITY )
 	{
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_PERMANENT, "Select target nonland permanent card.");
@@ -828,10 +980,12 @@ int card_hero_of_goma_fada(int player, int card, event_t event)
    * Creature - Human Knight Ally 4/3
    * Rally - Whenever ~ or another Ally enters the battlefield under your control, creatures you control gain indestructible until end of turn. */
 
-  if (rally(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	pump_creatures_until_eot_no_repeat(player, card, player, 0, 0,SP_KEYWORD_INDESTRUCTIBLE, NULL);
+	rally(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-  return 0;
+	if( event == EVENT_ETB_ABILITY )
+		pump_creatures_until_eot_no_repeat(player, card, player, 0, 0,SP_KEYWORD_INDESTRUCTIBLE, NULL);
+
+	return 0;
 }
 
 /* Inspired Charge	|2|W|W	=>m11.c:card_inspired_charge
@@ -848,8 +1002,10 @@ int card_kor_bladewhirl(int player, int card, event_t event)
    * Creature - Kor Soldier Ally 2/2
    * Rally - Whenever ~ or another Ally enters the battlefield under your control, creatures you control gain first strike until end of turn. */
 
-  if (rally(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	pump_creatures_until_eot_no_repeat(player, card, player, 0, KEYWORD_FIRST_STRIKE,0, NULL);
+	rally(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY )
+		pump_creatures_until_eot_no_repeat(player, card, player, 0, KEYWORD_FIRST_STRIKE,0, NULL);
 
   return 0;
 }
@@ -873,20 +1029,22 @@ int card_kor_entanglers(int player, int card, event_t event)
    * Creature - Kor Soldier Ally 3/4
    * Rally - Whenever ~ or another Ally enters the battlefield under your control, tap target creature an opponent controls. */
 
-  if (rally(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	{
-	  target_definition_t td;
-	  default_target_definition(player, card, &td, TYPE_CREATURE);
-	  td.allowed_controller = 1-player;
-	  td.allow_cancel = 0;
+	rally(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	  card_instance_t* inst = get_card_instance(player, card);
-	  inst->number_of_targets = 0;
-	  if (can_target(&td) && pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS"))
-		tap_card(inst->targets[0].player, inst->targets[0].card);
+	if( event == EVENT_ETB_ABILITY ){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.allowed_controller = 1-player;
+		td.allow_cancel = 0;
+
+		card_instance_t* inst = get_card_instance(player, card);
+		if (can_target(&td) && pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS")){
+			tap_card(inst->targets[0].player, inst->targets[0].card);
+		}
+		inst->number_of_targets = 0;
 	}
 
-  return 0;
+	return 0;
 }
 
 int card_lantern_scout(int player, int card, event_t event)
@@ -895,10 +1053,12 @@ int card_lantern_scout(int player, int card, event_t event)
    * Creature - Human Scout Ally 3/2
    * Rally - Whenever ~ or another Ally enters the battlefield under your control, creatures you control gain lifelink until end of turn. */
 
-  if (rally(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	pump_creatures_until_eot_no_repeat(player, card, player, 0, 0,SP_KEYWORD_LIFELINK, NULL);
+	rally(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-  return 0;
+	if( event == EVENT_ETB_ABILITY )
+		pump_creatures_until_eot_no_repeat(player, card, player, 0, 0,SP_KEYWORD_LIFELINK, NULL);
+
+	return 0;
 }
 
 static int fx_p2_p2_fog_me_from_colorless(int player, int card, event_t event)
@@ -911,16 +1071,18 @@ static int fx_p2_p2_fog_me_from_colorless(int player, int card, event_t event)
 		event_result += 2;
 	}
 
-  card_instance_t* damage = damage_being_prevented(event);
-  if (damage
-	  && (inst = get_card_instance(player, card))
+	card_instance_t* damage = damage_being_prevented(event);
+	if( damage && (inst = get_card_instance(player, card))
 	  && damage->damage_target_card == inst->damage_target_card
 	  && damage->damage_target_player == inst->damage_target_player
 	  && !(damage->initial_color & COLOR_TEST_ANY_COLORED))
-	damage->info_slot = 0;
+	{
+	  int amount = damage->info_slot;
+	  prevent_damage(affected_card_controller, affected_card, amount);
+	}
 
   if (event == EVENT_CLEANUP)
-	kill_card(player, card, KILL_REMOVE);
+	kill_card(player, card, KILL_EXILE);
 
   return 0;
 }
@@ -962,8 +1124,10 @@ int card_makindi_patrol(int player, int card, event_t event)
    * Creature - Human Knight Ally 2/3
    * Rally - Whenever ~ or another Ally enters the battlefield under your control, creatures you control gain vigilance until end of turn. */
 
-  if (rally(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	pump_creatures_until_eot_no_repeat(player, card, player, 0, 0,SP_KEYWORD_VIGILANCE, NULL);
+	rally(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY )
+		pump_creatures_until_eot_no_repeat(player, card, player, 0, 0,SP_KEYWORD_VIGILANCE, NULL);
 
   return 0;
 }
@@ -986,7 +1150,7 @@ static int fx_when_creature_attacks_it_gains_lifelink(int player, int card, even
 	}
 
   if (event == EVENT_CLEANUP)
-	kill_card(player, card, KILL_REMOVE);
+	kill_card(player, card, KILL_EXILE);
 
   return 0;
 }
@@ -1039,10 +1203,10 @@ int card_quarantine_field(int player, int card, event_t event)
    * ~ enters the battlefield with X isolation counters on it.
    * When ~ enters the battlefield, for each isolation counter on it, exile up to one target nonland permanent an opponent controls until ~ leaves the battlefield. */
 
-  card_instance_t* inst = get_card_instance(player, card);
-
   if (event == EVENT_CAST_SPELL && affect_me(player, card))
 	{
+	card_instance_t* inst = get_card_instance(player, card);
+
 	  set_special_flags2(player, card, SF2_X_SPELL);
 	  if (played_for_free(player, card) || is_token(player, card))
 		inst->info_slot = 0;
@@ -1050,25 +1214,31 @@ int card_quarantine_field(int player, int card, event_t event)
 		inst->info_slot = charge_mana_for_double_x(player, COLOR_COLORLESS) / 2;
 	}
 
-  enters_the_battlefield_with_counters(player, card, event, COUNTER_ISOLATION, inst->info_slot);
+	enters_the_battlefield_with_counters(player, card, event, COUNTER_ISOLATION, get_card_instance(player, card)->info_slot);
 
-  int isolation;
-  if (comes_into_play(player, card, event) && (isolation = count_counters(player, card, COUNTER_ISOLATION)) > 0)
-	{
-	  target_definition_t td;
-	  default_target_definition(player, card, &td, TYPE_PERMANENT);
-	  td.illegal_type = TYPE_LAND;
-	  td.allowed_controller = 1-player;
-	  td.allow_cancel = 2;
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	  int i, count = pick_up_to_n_targets_noload(&td, "Select target nonland permanent an opponent controls.", isolation);
-	  for (i = 0; i < count; ++i)
-		obliviation(player, card, inst->targets[i].player, inst->targets[i].card);
+	if( event == EVENT_ETB_ABILITY ){
+		card_instance_t* inst = get_card_instance(player, card);
+
+		int isolation;
+		if( (isolation = count_counters(player, card, COUNTER_ISOLATION) > 0) )
+		{
+		  target_definition_t td;
+		  default_target_definition(player, card, &td, TYPE_PERMANENT);
+		  td.illegal_type = TYPE_LAND;
+		  td.allowed_controller = 1-player;
+		  td.allow_cancel = 2;
+
+		  int i, count = pick_up_to_n_targets_noload(&td, "Select target nonland permanent an opponent controls.", isolation);
+		  for (i = 0; i < count; ++i)
+			obliviation(player, card, inst->targets[i].player, inst->targets[i].card);
+		}
 	}
 
-  return_from_oblivion(player, card, event);
+	return_from_oblivion(player, card, event);
 
-  return global_enchantment(player, card, event);
+	return global_enchantment(player, card, event);
 }
 
 int card_retreat_to_emeria(int player, int card, event_t event)
@@ -1078,8 +1248,8 @@ int card_retreat_to_emeria(int player, int card, event_t event)
    * Landfall - Whenever a land enters the battlefield under your control, choose one -
    * * Put a 1/1 |Swhite Kor Ally creature token onto the battlefield.
    * * Creatures you control get +1/+1 until end of turn. */
-
-  if (landfall(player, card, event))
+	landfall(player, card, event);
+  if( event == EVENT_ETB_ABILITY )
 	{
 	  if (DIALOG(player, card, EVENT_ACTIVATE,
 				 DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
@@ -1343,8 +1513,11 @@ int card_drowner_of_hope(int player, int card, event_t event)
    * When ~ enters the battlefield, put two 1/1 colorless Eldrazi Scion creature tokens onto the battlefield. They have "Sacrifice this creature: Add |1 to your mana pool."
    * Sacrifice an Eldrazi Scion: Tap target creature. */
 
-  if (comes_into_play(player, card, event))
-	generate_tokens_by_id(player, card, CARD_ID_ELDRAZI_SCION, 2);
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY ){
+		generate_tokens_by_id(player, card, CARD_ID_ELDRAZI_SCION, 2);
+	}
 
   if (!IS_GAA_EVENT(event))
 	return 0;
@@ -1407,8 +1580,11 @@ int card_eldrazi_skyspawner(int player, int card, event_t event)
    * Flying
    * When ~ enters the battlefield, put a 1/1 colorless Eldrazi Scion creature token onto the battlefield. It has "Sacrifice this creature: Add |1 to your mana pool." */
 
-  if (comes_into_play(player, card, event))
-	generate_token_by_id(player, card, CARD_ID_ELDRAZI_SCION);
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY ){
+		generate_token_by_id(player, card, CARD_ID_ELDRAZI_SCION);
+	}
 
   return 0;
 }
@@ -1431,7 +1607,7 @@ int card_horribly_awry(int player, int card, event_t event)
 		{
 		  card_instance_t* inst = get_card_instance(player, card);
 		  set_flags_when_spell_is_countered(player, card, inst->targets[0].player, inst->targets[0].card);
-		  kill_card(inst->targets[0].player, inst->targets[0].card, KILL_REMOVE);
+		  kill_card(inst->targets[0].player, inst->targets[0].card, KILL_EXILE);
 		}
 	  kill_card(player, card, KILL_DESTROY);
 	  return 0;
@@ -1463,8 +1639,9 @@ int card_murk_strider(int player, int card, event_t event)
    * Devoid
    * When ~ enters the battlefield, you may put a card an opponent owns from exile into that player's graveyard. If you do, return target creature to its owner's hand. */
 
-  if (comes_into_play_mode(player, card, event, RESOLVE_TRIGGER_AI(player)))
-	{
+	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+
+	if( event == EVENT_ETB_ABILITY ){
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
 
@@ -1546,7 +1723,7 @@ int card_spell_shrivel(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
 	{
 	  // That - sign is there for a reason
-	  counterspell_resolve_unless_pay_x(player, card, NULL, -KILL_REMOVE, 4);
+	  counterspell_resolve_unless_pay_x(player, card, NULL, -KILL_EXILE, 4);
 	  kill_card(player, card, KILL_DESTROY);
 	  return 0;
 	}
@@ -1577,16 +1754,18 @@ int card_ulamogs_reclaimer(int player, int card, event_t event)
    * Devoid
    * When ~ enters the battlefield, you may put a card an opponent owns from exile into that player's graveyard. If you do, return target instant or sorcery card from your graveyard to your hand. */
 
-  if (comes_into_play_mode(player, card, event, RESOLVE_TRIGGER_AI(player))
-	  && count_graveyard_by_type(player, TYPE_INSTANT|TYPE_SORCERY) > 0 && !graveyard_has_shroud(player)
-	  && process(player, 1))
-	{
-	  test_definition_t test;
-	  new_default_test_definition(&test, TYPE_INSTANT|TYPE_SORCERY, "Select target instant or sorcery card.");
-	  new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 1, AI_MAX_VALUE, &test);
+	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+
+	if( event == EVENT_ETB_ABILITY ){
+		if ( count_graveyard_by_type(player, TYPE_INSTANT|TYPE_SORCERY) > 0 && !graveyard_has_shroud(player) && process(player, 1))
+		{
+		  test_definition_t test;
+		  new_default_test_definition(&test, TYPE_INSTANT|TYPE_SORCERY, "Select target instant or sorcery card.");
+		  new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_HAND, 1, AI_MAX_VALUE, &test);
+		}
 	}
 
-  return 0;
+	return 0;
 }
 
 /* Anticipate	|1|U	=>dragons_of_tarkir.c:card_anticipate
@@ -1711,7 +1890,8 @@ int card_guardian_of_tazeem(int player, int card, event_t event)
    * Flying
    * Landfall - Whenever a land enters the battlefield under your control, tap target creature an opponent controls. If that land is |Han Island, that creature doesn't untap during its controller's next untap step. */
 
-  if (landfall(player, card, event))
+	landfall(player, card, event);
+  if( event == EVENT_ETB_ABILITY )
 	{
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -1735,8 +1915,7 @@ int card_guardian_of_tazeem(int player, int card, event_t event)
 
 static int test_has_awaken(int iid, int unused, int player, int card)
 {
-  typedef int (*WhyIsItStoredAsAnUint32T)(int, int, event_t);
-  return call_card_fn((WhyIsItStoredAsAnUint32T)(cards_data[iid].code_pointer),
+  return call_card_fn(cards_data[iid].code_pointer,
 					  get_card_instance(0, 0),	// Since broken asm cards look at it, and they haven't necessarily all been removed
 					  0, 0, EVENT_QUERY_AWAKEN);
 }
@@ -1747,7 +1926,9 @@ int card_halimar_tidecaller(int player, int card, event_t event)
    * When ~ enters the battlefield, you may return target card with awaken from your graveyard to your hand.
    * Land creatures you control have flying. */
 
-  if (comes_into_play_mode(player, card, event, RESOLVE_TRIGGER_AI(player)))
+	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+
+	if( event == EVENT_ETB_ABILITY )
 	{
 	  /* Awaken is defined in rule 702.112a to only be on instant and sorcery cards, so take advantage of that to limit the number of cards to send
 	   * EVENT_QUERY_AWAKEN to directly.  If later sets redefine it to work on permanents, this'll need revisiting. */
@@ -1781,7 +1962,7 @@ int card_part_the_waterveil(int player, int card, event_t event)
 		{
 		  alternate_legacy_text(1, player, time_walk_effect(player, card));
 		  alternate_legacy_text(2, player, awaken_resolve(player, card, 0, 6));
-		  kill_card(player, card, KILL_REMOVE);	// Should, stricly speaking, happen before the awaken effect
+		  kill_card(player, card, KILL_EXILE);	// Should, stricly speaking, happen before the awaken effect
 		}
 	  else
 		kill_card(player, card, KILL_DESTROY);
@@ -1852,7 +2033,8 @@ int card_retreat_to_coralhelm(int player, int card, event_t event)
    * * You may tap or untap target creature.
    * * Scry 1. */
 
-  if (landfall(player, card, event))
+	landfall(player, card, event);
+  if( event == EVENT_ETB_ABILITY )
 	{
 	  /* The way it's supposed to happen:
 	   * 1. Land enters bf.
@@ -2030,7 +2212,7 @@ int card_complete_disregard(int player, int card, event_t event)
 	  if (valid_target(&td))
 		{
 		  card_instance_t* inst = get_card_instance(player, card);
-		  kill_card(inst->targets[0].player, inst->targets[0].card, KILL_REMOVE);
+		  kill_card(inst->targets[0].player, inst->targets[0].card, KILL_EXILE);
 		}
 	  kill_card(player, card, KILL_DESTROY);
 	}
@@ -2052,8 +2234,9 @@ int card_dominator_drone(int player, int card, event_t event)
 
   ingest(player, card, event);
 
-  if (comes_into_play(player, card, event))
-	{
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY ){
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_CREATURE, "");
 	  test.color = COLOR_TEST_ANY_COLORED;
@@ -2132,10 +2315,10 @@ int card_grip_of_desolation(int player, int card, event_t event)
 	  card_instance_t* inst = get_card_instance(player, card);
 
 	  if (valid_target(&td_creature))
-		kill_card(inst->targets[0].player, inst->targets[0].card, KILL_REMOVE);
+		kill_card(inst->targets[0].player, inst->targets[0].card, KILL_EXILE);
 
 	  if (validate_target(player, card, &td_land, 1))
-		kill_card(inst->targets[1].player, inst->targets[1].card, KILL_REMOVE);
+		kill_card(inst->targets[1].player, inst->targets[1].card, KILL_EXILE);
 
 	  kill_card(player, card, KILL_DESTROY);
 	}
@@ -2150,11 +2333,15 @@ int card_mind_raker(int player, int card, event_t event)
    * Devoid
    * When ~ enters the battlefield, you may put a card an opponent owns from exile into that player's graveyard. If you do, each opponent discards a card. */
 
-  if (comes_into_play_mode(player, card, event, RESOLVE_TRIGGER_AI(player))
-	  && process(player, 1))
-	discard(1-player, 0, player);
+	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
 
-  return 0;
+	if( event == EVENT_ETB_ABILITY ){
+		if( process(player, 1)){
+			discard(1-player, 0, player);
+		}
+	}
+
+	return 0;
 }
 
 int card_silent_skimmer(int player, int card, event_t event)
@@ -2293,8 +2480,9 @@ int card_wasteland_strangler(int player, int card, event_t event)
    * Devoid
    * When ~ enters the battlefield, you may put a card an opponent owns from exile into that player's graveyard. If you do, target creature gets -3/-3 until end of turn. */
 
-  if (comes_into_play_mode(player, card, event, RESOLVE_TRIGGER_AI(player)))
-	{
+ 	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+
+	if( event == EVENT_ETB_ABILITY ){
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
 
@@ -2401,7 +2589,8 @@ int card_geyserfield_stalker(int player, int card, event_t event)
 
   menace(player, card, event);
 
-  if (landfall(player, card, event))
+	landfall(player, card, event);
+  if( event == EVENT_ETB_ABILITY )
 	pump_until_eot_merge_previous(player, card, player, card, 2,2);
 
   return 0;
@@ -2414,7 +2603,8 @@ int card_guul_draz_overseer(int player, int card, event_t event)
    * Flying
    * Landfall - Whenever a land enters the battlefield under your control, other creatures you control get +1/+0 until end of turn. If that land is |Ha Swamp, those creatures get +2/+0 until end of turn instead. */
 
-  if (landfall(player, card, event))
+	landfall(player, card, event);
+  if( event == EVENT_ETB_ABILITY )
 	{
 	  int swamp = has_subtype(trigger_cause_controller, trigger_cause, get_hacked_subtype(player, card, SUBTYPE_SWAMP));
 
@@ -2455,13 +2645,14 @@ int card_kalastria_healer(int player, int card, event_t event)
    * Creature - Vampire Cleric Ally 1/2
    * Rally - Whenever ~ or another Ally enters the battlefield under your control, each opponent loses 1 life and you gain 1 life. */
 
-  if (rally(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	{
-	  lose_life(1-player, 1);
-	  gain_life(player, 1);
+	rally(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY ){
+		lose_life(1-player, 1);
+		gain_life(player, 1);
 	}
 
-  return 0;
+	return 0;
 }
 
 int card_kalastria_nightwatch(int player, int card, event_t event)
@@ -2621,7 +2812,8 @@ int card_retreat_to_hagra(int player, int card, event_t event)
    * * Target creature gets +1/+0 and gains deathtouch until end of turn.
    * * Each opponent loses 1 life and you gain 1 life. */
 
-  if (landfall(player, card, event))
+	landfall(player, card, event);
+  if( event == EVENT_ETB_ABILITY )
 	{
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -2774,7 +2966,7 @@ int card_zulaport_cutthroat(int player, int card, event_t event)
 		}
 	  if (event == EVENT_END_TRIGGER
 		  && get_card_instance(player, card)->internal_card_id == LEGACY_EFFECT_CUSTOM)
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 	}
 
   return 0;
@@ -2787,8 +2979,7 @@ int card_barrage_tyrant(int player, int card, event_t event)
   /* Barrage Tyrant	|4|R	0x200e044
    * Creature - Eldrazi 5/3
    * Devoid
-   * |2|R, Sacrifice another colorless creature: ~ deals damage equal to the sacrificed creature's power to target creature or player. */
-
+   * |2|R, Sacrifice another colorless creature: ~ deals damage equal to the sacrificed creature's power to any target. */
   if (!IS_GAA_EVENT(event))
 	return 0;
 
@@ -2799,11 +2990,11 @@ int card_barrage_tyrant(int player, int card, event_t event)
   test.not_me = 1;
 
   target_definition_t td;
-  default_target_definition(player, card, &td, TYPE_CREATURE);
+  default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
   td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
   if (event == EVENT_CAN_ACTIVATE)
-	return (generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_XR(2,1), 0, &td, "TARGET_CREATURE_OR_PLANESWALKER")
+	return (generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_XR(2,1), 0, &td, "TARGET_ANY")
 			&& new_can_sacrifice_as_cost(player, card, &test));
 
   if (event == EVENT_ACTIVATE)
@@ -2824,7 +3015,7 @@ int card_barrage_tyrant(int player, int card, event_t event)
 	  remove_state(BYTE2(sac), BYTE3(sac), STATE_CANNOT_TARGET);
 	  add_state(BYTE2(sac), BYTE3(sac), STATE_TARGETTED);
 	  get_card_instance(player, card)->number_of_targets = 0;
-	  if (!pick_target(&td, "TARGET_CREATURE_OR_PLAYER"))
+	  if (!pick_target(&td, "TARGET_ANY"))
 		{
 		  remove_state(BYTE2(sac), BYTE3(sac), STATE_TARGETTED);
 		  cancel = 1;
@@ -2863,7 +3054,7 @@ int card_crumble_to_dust(int player, int card, event_t event)
 		{
 		  card_instance_t* inst = get_card_instance(player, card);
 		  int csvid = get_id(inst->targets[0].player, inst->targets[0].card);
-		  kill_card(inst->targets[0].player, inst->targets[0].card, KILL_REMOVE);
+		  kill_card(inst->targets[0].player, inst->targets[0].card, KILL_EXILE);
 		  lobotomy_effect(player, 1-player, csvid, 0);
 		}
 	  kill_card(player, card, KILL_DESTROY);
@@ -2889,17 +3080,16 @@ int card_molten_nursery(int player, int card, event_t event)
   /* Molten Nursery	|2|R	0x200e053
    * Enchantment
    * Devoid
-   * Whenever you cast a colorless spell, ~ deals 1 damage to target creature or player. */
-
+   * Whenever you cast a colorless spell, ~ deals 1 damage to any target. */
   if (specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, 0,0, 0,0, COLOR_TEST_ANY_COLORED,DOESNT_MATCH, 0,0, -1,0))
 	{
 	  target_definition_t td;
-	  default_target_definition(player, card, &td, TYPE_CREATURE);
+	  default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
 	  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 	  td.allow_cancel = 0;
 
 	  get_card_instance(player, card)->number_of_targets = 0;
-	  if (can_target(&td) && pick_target(&td, "TARGET_CREATURE_OR_PLAYER"))
+	  if (can_target(&td) && pick_target(&td, "TARGET_ANY"))
 		damage_target0(player, card, 1);
 	}
 
@@ -2989,8 +3179,8 @@ int card_serpentine_spike(int player, int card, event_t event)
 
 /* Touch of the Void	|2|R	=>champions_of_kamigawa.c:card_yamabushis_flame
  * Sorcery
- * Devoid
- * ~ deals 3 damage to target creature or player. If a creature dealt damage this way would die this turn, exile it instead. */
+ * Devoid (This card has no color.)
+ * ~ deals 3 damage to any target. If a creature dealt damage this way would die this turn, exile it instead. */
 
 /* Turn Against	|4|R	=>m10.c:card_act_of_treason
  * Instant
@@ -3045,12 +3235,12 @@ int card_akoum_hellkite(int player, int card, event_t event)
   /* Akoum Hellkite	|4|R|R	0x200e071
    * Creature - Dragon 4/4
    * Flying
-   * Landfall - Whenever a land enters the battlefield under your control, ~ deals 1 damage to target creature or player. If that land is |Ha Mountain, ~ deals 2 damage to that creature or player instead. */
-
-  if (landfall(player, card, event))
+   * Landfall - Whenever a land enters the battlefield under your control, ~ deals 1 damage to any target. If that land is |Ha Mountain, ~ deals 2 damage to that permanent or player instead. */
+  landfall(player, card, event);
+  if (event == EVENT_ETB_ABILITY)
 	{
 	  target_definition_t td;
-	  default_target_definition(player, card, &td, TYPE_CREATURE);
+	  default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
 	  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 	  td.allow_cancel = 0;
 
@@ -3058,7 +3248,7 @@ int card_akoum_hellkite(int player, int card, event_t event)
 
 	  card_instance_t* inst = get_card_instance(player, card);
 	  inst->number_of_targets = 0;
-	  if (can_target(&td) && pick_target(&td, "TARGET_CREATURE_OR_PLAYER"))
+	  if (can_target(&td) && pick_target(&td, "TARGET_ANY"))
 		damage_target0(player, card, mountain ? 2 : 1);
 	}
 
@@ -3071,18 +3261,18 @@ int card_akoum_stonewaker(int player, int card, event_t event)
    * Creature - Human Shaman 2/1
    * Landfall - Whenever a land enters the battlefield under your control, you may pay |2|R. If you do, put a 3/1 |Sred Elemental creature token with trample and haste onto the battlefield. Exile that token at the beginning of the next end step. */
 
-  if (landfall_mode(player, card, event, RESOLVE_TRIGGER_AI(player))
-	  && has_mana_multi(player, MANACOST_XR(2,1))
+	landfall_mode(player, card, event, RESOLVE_TRIGGER_AI(player));
+  if( event == EVENT_ETB_ABILITY && has_mana_multi(player, MANACOST_XR(2,1))
 	  && charge_mana_multi_while_resolving(player, card, event, player, MANACOST_XR(2,1)))
 	{
-	  token_generation_t token;
-	  default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
-	  token.pow = 3;
-	  token.tou = 1;
-	  token.special_infos = 66;
-	  token.key_plus = KEYWORD_TRAMPLE;
-	  token.s_key_plus = SP_KEYWORD_HASTE;
-	  generate_token(&token);
+		token_generation_t token;
+		default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
+		token.pow = 3;
+		token.tou = 1;
+		token.special_code_on_generation = &haste_and_remove_token_at_end_of_next_turn;
+		token.key_plus = KEYWORD_TRAMPLE;
+		token.s_key_plus = SP_KEYWORD_HASTE;
+		generate_token(&token);
 	}
 
   return 0;
@@ -3093,9 +3283,9 @@ int card_belligerent_whiptail(int player, int card, event_t event)
   /* Belligerent Whiptail	|3|R	0x200e07b
    * Creature - Wurm 4/2
    * Landfall - Whenever a land enters the battlefield under your control, ~ gains first strike until end of turn. */
-
-  if (landfall(player, card, event))
-	pump_ability_until_eot_no_repeat(player, card, player, card, KEYWORD_FIRST_STRIKE,0);
+	landfall(player, card, event);
+	if( event == EVENT_ETB_ABILITY )
+		pump_ability_until_eot_no_repeat(player, card, player, card, KEYWORD_FIRST_STRIKE,0);
 
   return 0;
 }
@@ -3125,10 +3315,12 @@ int card_chasm_guide(int player, int card, event_t event)
    * Creature - Goblin Scout Ally 3/2
    * Rally - Whenever ~ or another Ally enters the battlefield under your control, creatures you control gain haste until end of turn. */
 
-  if (rally(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	pump_creatures_until_eot_no_repeat(player, card, player, 0, 0,SP_KEYWORD_HASTE, NULL);
+	rally(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-  return 0;
+	if( event == EVENT_ETB_ABILITY )
+		pump_creatures_until_eot_no_repeat(player, card, player, 0, 0,SP_KEYWORD_HASTE, NULL);
+
+	return 0;
 }
 
 /* Dragonmaster Outcast	|R	=>worldwake.c:card_dragonmaster_outcast
@@ -3141,13 +3333,18 @@ int card_firemantle_mage(int player, int card, event_t event)
    * Creature - Human Shaman Ally 2/2
    * Rally - Whenever ~ or another Ally enters the battlefield under your control, creatures you control gain menace until end of turn. */
 
-  int c;
-  if (rally(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	for (c = 0; c < active_cards_count[player]; ++c)
-	  if (in_play(player, c) && is_what(player, c, TYPE_CREATURE))
-		create_targetted_legacy_effect_no_repeat(player, card, fx_menace, player, c);
+	rally(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-  return 0;
+	if( event == EVENT_ETB_ABILITY ){
+		int c;
+		for (c = 0; c < active_cards_count[player]; ++c){
+			if (in_play(player, c) && is_what(player, c, TYPE_CREATURE)){
+				create_targetted_legacy_effect_no_repeat(player, card, fx_menace, player, c);
+			}
+		}
+	}
+
+	return 0;
 }
 
 /* Goblin War Paint	|1|R	=>zendikar.c:card_goblin_war_paint
@@ -3175,10 +3372,12 @@ int card_ondu_champion(int player, int card, event_t event)
    * Creature - Minotaur Warrior Ally 4/3
    * Rally - Whenever ~ or another Ally enters the battlefield under your control, creatures you control gain trample until end of turn. */
 
-  if (rally(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	pump_creatures_until_eot_no_repeat(player, card, player, 0, KEYWORD_TRAMPLE,0, NULL);
+	rally(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-  return 0;
+	if( event == EVENT_ETB_ABILITY )
+		pump_creatures_until_eot_no_repeat(player, card, player, 0, KEYWORD_TRAMPLE,0, NULL);
+
+	return 0;
 }
 
 int card_outnumber(int player, int card, event_t event)
@@ -3247,7 +3446,8 @@ int card_retreat_to_valakut(int player, int card, event_t event)
    * * Target creature gets +2/+0 until end of turn.
    * * Target creature can't block this turn. */
 
-  if (landfall(player, card, event))
+	landfall(player, card, event);
+	if( event == EVENT_ETB_ABILITY )
 	{
 	  target_definition_t td_pump;
 	  default_target_definition(player, card, &td_pump, TYPE_CREATURE);
@@ -3301,8 +3501,9 @@ int card_tunneling_geopede(int player, int card, event_t event)
    * Creature - Insect 3/2
    * Landfall - Whenever a land enters the battlefield under your control, ~ deals 1 damage to each opponent. */
 
-  if (landfall(player, card, event))
-	damage_player(1-player, 1, player, card);
+	landfall(player, card, event);
+	if( event == EVENT_ETB_ABILITY )
+		damage_player(1-player, 1, player, card);
 
   return 0;
 }
@@ -3311,19 +3512,18 @@ int card_valakut_invoker(int player, int card, event_t event)
 {
   /* Valakut Invoker	|2|R	0x200e0b2
    * Creature - Human Shaman 2/3
-   * |8: ~ deals 3 damage to target creature or player. */
-
+   * |8: ~ deals 3 damage to any target. */
   if (!IS_GAA_EVENT(event))
 	return 0;
 
   target_definition_t td;
-  default_target_definition(player, card, &td, TYPE_CREATURE);
+  default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
   td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
   if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
 	damage_target0(player, card, 3);
 
-  return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_X(8), 0, &td, "TARGET_CREATURE_OR_PLAYER");
+  return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_X(8), 0, &td, "TARGET_ANY");
 }
 
 /* Valakut Predator	|2|R	=>zendikar.c:card_steppe_lynx
@@ -3336,7 +3536,8 @@ int card_valakut_invoker(int player, int card, event_t event)
 
 /* Zada, Hedron Grinder	|3|R	0x000000
  * Legendary Creature - Goblin Ally 3/3
- * Whenever you cast an instant or sorcery spell that targets only ~, copy that spell for each other creature you control that the spell could target. Each copy targets a different one of those creatures. */
+ * Whenever you cast an instant or sorcery spell that targets only ~, copy that spell for each other creature you control
+ * that the spell could target. Each copy targets a different one of those creatures. */
 
 /*** Green ***/
 
@@ -3352,10 +3553,13 @@ int card_brood_monitor(int player, int card, event_t event)
    * Devoid
    * When ~ enters the battlefield, put three 1/1 colorless Eldrazi Scion creature tokens onto the battlefield. They have "Sacrifice this creature: Add |1 to your mana pool." */
 
-  if (comes_into_play(player, card, event))
-	generate_tokens_by_id(player, card, CARD_ID_ELDRAZI_SCION, 3);
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-  return 0;
+	if( event == EVENT_ETB_ABILITY ){
+		generate_tokens_by_id(player, card, CARD_ID_ELDRAZI_SCION, 3);
+	}
+
+	return 0;
 }
 
 int card_call_the_scions(int player, int card, event_t event)
@@ -3381,10 +3585,13 @@ int card_eyeless_watcher(int player, int card, event_t event)
    * Devoid
    * When ~ enters the battlefield, put two 1/1 colorless Eldrazi Scion creature tokens onto the battlefield. They have "Sacrifice this creature: Add |1 to your mana pool." */
 
-  if (comes_into_play(player, card, event))
-	generate_tokens_by_id(player, card, CARD_ID_ELDRAZI_SCION, 2);
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-  return 0;
+	if( event == EVENT_ETB_ABILITY ){
+		generate_tokens_by_id(player, card, CARD_ID_ELDRAZI_SCION, 2);
+	}
+
+	return 0;
 }
 
 int card_from_beyond(int player, int card, event_t event)
@@ -3518,9 +3725,10 @@ int card_greenwarden_of_murasa(int player, int card, event_t event)
    * When ~ enters the battlefield, you may return target card from your graveyard to your hand.
    * When ~ dies, you may exile it. If you do, return target card from your graveyard to your hand. */
 
-  if (comes_into_play_mode(player, card, event, RESOLVE_TRIGGER_AI(player))
-	  || (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_AI(player))
-		  && exile_from_owners_graveyard(player, card)))
+	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+
+	if( event == EVENT_ETB_ABILITY ||
+		( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)) && exile_from_owners_graveyard(player, card) ) )
 	{
 	  test_definition_t test;
 	  default_test_definition(&test, TYPE_ANY);
@@ -3566,8 +3774,9 @@ int card_jaddi_offshoot(int player, int card, event_t event)
    * Defender
    * Landfall - Whenever a land enters the battlefield under your control, you gain 1 life. */
 
-  if (landfall(player, card, event))
-	gain_life(player, 1);
+	landfall(player, card, event);
+	if( event == EVENT_ETB_ABILITY )
+		gain_life(player, 1);
 
   return 0;
 }
@@ -3597,8 +3806,8 @@ int card_murasa_ranger(int player, int card, event_t event)
    * Creature - Human Warrior 3/3
    * Landfall - Whenever a land enters the battlefield under your control, you may pay |3|G. If you do, put two +1/+1 counters on ~. */
 
-  if (landfall_mode(player, card, event, RESOLVE_TRIGGER_AI(player))
-	  && has_mana_multi(player, MANACOST_XG(3,1))
+	landfall_mode(player, card, event, RESOLVE_TRIGGER_AI(player));
+	if( event == EVENT_ETB_ABILITY && has_mana_multi(player, MANACOST_XG(3,1))
 	  && charge_mana_multi_while_resolving(player, card, event, player, MANACOST_XG(3,1)))
 	add_1_1_counters(player, card, 2);
 
@@ -3630,9 +3839,9 @@ int card_oran_rief_hydra(int player, int card, event_t event)
    * Creature - Hydra 5/5
    * Trample
    * Landfall - Whenever a land enters the battlefield under your control, put a +1/+1 counter on ~. If that land is |Ha Forest, put two +1/+1 counters on ~ instead. */
-
-  if (landfall(player, card, event))
-	add_1_1_counters(player, card, has_subtype(trigger_cause_controller, trigger_cause, get_hacked_subtype(player, card, SUBTYPE_FOREST)) ? 2 : 1);
+	landfall(player, card, event);
+	if( event == EVENT_ETB_ABILITY )
+		add_1_1_counters(player, card, has_subtype(trigger_cause_controller, trigger_cause, get_hacked_subtype(player, card, SUBTYPE_FOREST)) ? 2 : 1);
 
   return 0;
 }
@@ -3666,7 +3875,8 @@ int card_retreat_to_kazandu(int player, int card, event_t event)
    * * Put a +1/+1 counter on target creature.
    * * You gain 2 life. */
 
-  if (landfall(player, card, event))
+	landfall(player, card, event);
+	if( event == EVENT_ETB_ABILITY )
 	{
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -3741,10 +3951,12 @@ int card_tajuru_beastmaster(int player, int card, event_t event)
    * Creature - Elf Warrior Ally 5/5
    * Rally - Whenever ~ or another Ally enters the battlefield under your control, creatures you control get +1/+1 until end of turn. */
 
-  if (rally(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	pump_creatures_until_eot_merge_pt(player, card, player, 1,1, NULL);
+	rally(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	if( event == EVENT_ETB_ABILITY ){
+		pump_creatures_until_eot_merge_pt(player, card, player, 1, 1, NULL);
+	}
 
-  return 0;
+	return 0;
 }
 
 int card_tajuru_stalwart(int player, int card, event_t event)
@@ -3764,10 +3976,12 @@ int card_tajuru_warcaller(int player, int card, event_t event)
    * Creature - Elf Warrior Ally 2/1
    * Rally - Whenever ~ or another Ally enters the battlefield under your control, creatures you control get +2/+2 until end of turn. */
 
-  if (rally(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	pump_creatures_until_eot_merge_pt(player, card, player, 2,2, NULL);
+	rally(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+	if( event == EVENT_ETB_ABILITY ){
+		pump_creatures_until_eot_merge_pt(player, card, player, 2, 2, NULL);
+	}
 
-  return 0;
+	return 0;
 }
 
 /* Territorial Baloth	|4|G	=>zendikar.c:card_steppe_lynx
@@ -3782,7 +3996,8 @@ int card_undergrowth_champion(int player, int card, event_t event)
    * Landfall - Whenever a land enters the battlefield under your control, put a +1/+1 counter on ~. */
 
   phantom_effect(player, card, event, 1);
-  if (landfall(player, card, event))
+	landfall(player, card, event);
+	if( event == EVENT_ETB_ABILITY )
 	add_1_1_counter(player, card);
 
   return 0;
@@ -3811,8 +4026,11 @@ int card_brood_butcher(int player, int card, event_t event)
    * When ~ enters the battlefield, put a 1/1 colorless Eldrazi Scion creature token onto the battlefield. It has "Sacrifice this creature: Add |1 to your mana pool."
    * |B|G, Sacrifice a creature: Target creature gets -2/-2 until end of turn. */
 
-  if (comes_into_play(player, card, event))
-	generate_token_by_id(player, card, CARD_ID_ELDRAZI_SCION);
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY ){
+		generate_token_by_id(player, card, CARD_ID_ELDRAZI_SCION);
+	}
 
   if (!IS_GAA_EVENT(event))
 	return 0;
@@ -3921,8 +4139,11 @@ int card_catacomb_sifter(int player, int card, event_t event)
    * When ~ enters the battlefield, put a 1/1 colorless Eldrazi Scion creature token onto the battlefield. It has "Sacrifice this creature: Add |1 to your mana pool."
    * Whenever another creature you control dies, scry 1. */
 
-  if (comes_into_play(player, card, event))
-	generate_token_by_id(player, card, CARD_ID_ELDRAZI_SCION);
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY ){
+		generate_token_by_id(player, card, CARD_ID_ELDRAZI_SCION);
+	}
 
   count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
 
@@ -4023,11 +4244,11 @@ int card_sire_of_stagnation(int player, int card, event_t event)
    * Creature - Eldrazi 5/7
    * Devoid
    * Whenever a land enters the battlefield under an opponent's control, that player exiles the top two cards of his or her library and you draw two cards. */
+    etb_ability_global(1-player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_LAND, NULL, player, card);
 
-  if (specific_cip(player, card, event, 1-player, RESOLVE_TRIGGER_MANDATORY, TYPE_LAND,MATCH, 0,0, 0,0, 0, 0, -1,0))
-	{
-	  rfg_top_n_cards_of_deck(1-player, 2);
-	  draw_cards(player, 2);
+	if( event == EVENT_ETB_ABILITY ){
+	    rfg_top_n_cards_of_deck(1-player, 2);
+	    draw_cards(player, 2);
 	}
 
   return 0;
@@ -4067,11 +4288,13 @@ int card_ulamogs_nullifier(int player, int card, event_t event)
 		}
 	}
 
-  if (comes_into_play(player, card, event) && inst->info_slot == 99)
-	{
-	  if (counterspell_validate(player, card, NULL, 0) && process(player, 2))
-		real_counter_a_spell(player, card, inst->targets[0].player, inst->targets[0].card);
-	  inst->number_of_targets = 0;
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY && inst->info_slot == 99 ){
+		if (counterspell_validate(player, card, NULL, 0) && process(player, 2)){
+			real_counter_a_spell(player, card, inst->targets[0].player, inst->targets[0].card);
+		}
+		inst->number_of_targets = 0;
 	}
 
   return 0;
@@ -4160,19 +4383,24 @@ int card_grovetender_druids(int player, int card, event_t event)
 {
   /* Grovetender Druids	|2|G|W	0x200e14d
    * Creature - Elf Druid Ally 3/3
-   * Rally - Whenever ~ or another Ally enters the battlefield under your control, you may pay |1. If you do, put a 1/1 |Sgreen Plant creature token onto the battlefield. */
+   * Rally - Whenever ~ or another Ally enters the battlefield under your control, you may pay |1.
+   * 		If you do, put a 1/1 |Sgreen Plant creature token onto the battlefield. */
 
-  if (rally(player, card, event, RESOLVE_TRIGGER_AI(player))
-	  && has_mana(player, COLOR_COLORLESS, 1)
-	  && charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 1))
-	{
-	  token_generation_t token;
-	  default_token_definition(player, card, CARD_ID_PLANT, &token);
-	  token.pow = token.tou = 1;
-	  generate_token(&token);
+	rally(player, card, event, RESOLVE_TRIGGER_AI(player));
+
+	if( event == EVENT_ETB_ABILITY ){
+		if( has_mana(player, COLOR_ANY, 1) ){
+			if( charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 1) ){
+				token_generation_t token;
+				default_token_definition(player, card, CARD_ID_PLANT, &token);
+				token.pow = token.tou = 1;
+				token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
+				generate_token(&token);
+			}
+		}
 	}
 
-  return 0;
+	return 0;
 }
 
 int card_kiora_master_of_the_depths(int player, int card, event_t event)
@@ -4213,27 +4441,25 @@ int card_kiora_master_of_the_depths(int player, int card, event_t event)
 
 	  if (event == EVENT_ACTIVATE && choice == CHOICE_UNTAP)
 		{
-		  inst->number_of_targets = 0;
+			int targ = inst->number_of_targets = 0;
 
-		  if (can_target(&td_creature))
+			if (can_target(&td_creature))
 			{
-			  load_text(0, "TARGET_CREATURE");
-			  if (!select_target(player, card, &td_creature, text_lines[0], &inst->targets[0]))
-				{
-				  if (inst->targets[0].card == -1)
-					cancel = 1;
-				  else
-					inst->info_slot = CHOICE_UNTAP_ONLY_LAND;
+				if( new_pick_target(&td_creature, "TARGET_CREATURE", 0, 0) ){
+					state_untargettable(inst->targets[0].player, inst->targets[0].card, 1);
+					targ++;
 				}
 			}
 
-		  if (cancel != 1 && can_target(&td_land))
+			if (can_target(&td_land))
 			{
-			  load_text(0, "TARGET_LAND");
-			  int loc = inst->number_of_targets;
-			  if (!select_target(player, card, &td_land, text_lines[0], &inst->targets[loc])
-				  && inst->targets[loc].card == -1)
-				cancel = 1;
+				new_pick_target(&td_land, "TARGET_LAND", targ, 0);
+				if( targ == 0 ){
+					inst->info_slot = CHOICE_UNTAP_ONLY_LAND;
+				}
+			}
+			if( targ == 1 ){
+				state_untargettable(inst->targets[0].player, inst->targets[0].card, 0);
 			}
 		}
 
@@ -4366,53 +4592,56 @@ int card_munda_ambush_leader(int player, int card, event_t event)
   /* Munda, Ambush Leader	|2|R|W	0x200e157
    * Legendary Creature - Kor Ally 3/4
    * Haste
-   * Rally - Whenever ~ or another Ally enters the battlefield under your control, you may look at the top four cards of your library. If you do, reveal any number of Ally cards from among them, then put those cards on top of your library in any order and the rest on the bottom in any order. */
+   * Rally - Whenever ~ or another Ally enters the battlefield under your control, you may look at the top four cards of your library.
+   *	If you do, reveal any number of Ally cards from among them, then put those cards on top of your library in any order and
+   *	the rest on the bottom in any order. */
 
-  check_legend_rule(player, card, event);
-  haste(player, card, event);
+	check_legend_rule(player, card, event);
 
-  if (rally(player, card, event, RESOLVE_TRIGGER_AI(player)))
-	{
-	  test_definition_t test;
-	  new_default_test_definition(&test, TYPE_ANY, "Select an Ally card to put on top.");
-	  test.subtype = SUBTYPE_ALLY;
+	haste(player, card, event);
 
-	  int depth = MIN(4, count_deck(player));
-	  if (depth == 0)
-		return 0;
+	rally(player, card, event, RESOLVE_TRIGGER_AI(player));
 
-	  int to_reveal[4], num_to_reveal = 0;
+	if( event == EVENT_ETB_ABILITY ){
+		test_definition_t test;
+		new_default_test_definition(&test, TYPE_ANY, "Select an Ally card to put on top.");
+		test.subtype = SUBTYPE_ALLY;
 
-	  int selected;
-	  while (depth > 0
-			 && (selected = select_card_from_zone(player, player, deck_ptr[player], depth, 0, AI_MIN_VALUE, -1, &test)) != -1)
+		int depth = MIN(4, count_deck(player));
+		if (depth == 0)
+			return 0;
+
+		int to_reveal[4], num_to_reveal = 0;
+
+		int selected;
+		while (depth > 0 && (selected = select_card_from_zone(player, player, deck_ptr[player], depth, 0, AI_MIN_VALUE, -1, &test)) != -1)
 		{
-		  int iid = deck_ptr[player][selected];
-		  to_reveal[num_to_reveal++] = iid;
+			int iid = deck_ptr[player][selected];
+			to_reveal[num_to_reveal++] = iid;
 
-		  remove_card_from_deck(player, selected);
-		  --depth;
-		  put_iid_under_the_first_x_cards_of_library(player, iid, depth);
+			remove_card_from_deck(player, selected);
+			--depth;
+			put_iid_under_the_first_x_cards_of_library(player, iid, depth);
 		}
 
-	  put_top_x_on_bottom(player, player, depth);
+		put_top_x_on_bottom(player, player, depth);
 
-	  if (num_to_reveal > 0 && player == AI)
+		if (num_to_reveal > 0 && player == AI)
 		{
-		  // Randomize order, since the order to put them on top of the library isn't revealed
-		  int i;
-		  for (i = num_to_reveal - 1; i >= 1; --i)
+			// Randomize order, since the order to put them on top of the library isn't revealed
+			int i;
+			for (i = num_to_reveal - 1; i >= 1; --i)
 			{
-			  int r = internal_rand(i + 1);
-			  if (r != i)
-				SWAP(to_reveal[i], to_reveal[r]);
+				int r = internal_rand(i + 1);
+				if (r != i)
+					SWAP(to_reveal[i], to_reveal[r]);
 			}
 
-		  show_deck(HUMAN, to_reveal, num_to_reveal, "Revealed", 0, 0x7375b0);
+			show_deck(HUMAN, to_reveal, num_to_reveal, "Revealed", 0, 0x7375b0);
 		}
 	}
 
-  return 0;
+	return 0;
 }
 
 int card_noyan_dar_roil_shaper(int player, int card, event_t event)
@@ -4490,14 +4719,14 @@ static int omnath_death_trigger(int player, int card, event_t event)
 		  if (num > 0)
 			{
 			  target_definition_t td;
-			  default_target_definition(player, card, &td, TYPE_CREATURE);
+			  default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
 			  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 			  td.allow_cancel = 0;
 
 			  for (; num > 0; --num)
 				{
 				  inst->number_of_targets = 0;
-				  if (can_target(&td) && pick_target(&td, "TARGET_CREATURE_OR_PLAYER"))
+				  if (can_target(&td) && pick_target(&td, "TARGET_ANY"))
 					damage_target0(player, card, 3);
 				  else
 					break;
@@ -4506,7 +4735,7 @@ static int omnath_death_trigger(int player, int card, event_t event)
 		}
 	  if (event == EVENT_END_TRIGGER
 		  && get_card_instance(player, card)->internal_card_id == LEGACY_EFFECT_CUSTOM)
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 	}
 
   return 0;
@@ -4515,12 +4744,12 @@ int card_omnath_locus_of_rage(int player, int card, event_t event)
 {
   /* Omnath, Locus of Rage	|3|R|R|G|G	0x200e161
    * Legendary Creature - Elemental 5/5
-   * Landfall - Whenever a land enters the battlefield under your control, put a 5/5 |Sred and |Sgreen Elemental creature token onto the battlefield.
-   * Whenever ~ or another Elemental you control dies, ~ deals 3 damage to target creature or player. */
-
+   * Landfall - Whenever a land enters the battlefield under your control, create a 5/5 |Sred and |Sgreen Elemental creature token.
+   * Whenever ~ or another Elemental you control dies, ~ deals 3 damage to any target. */
   check_legend_rule(player, card, event);
 
-  if (landfall(player, card, event))
+	landfall(player, card, event);
+	if( event == EVENT_ETB_ABILITY )
 	{
 	  token_generation_t token;
 	  default_token_definition(player, card, CARD_ID_ELEMENTAL, &token);
@@ -4538,10 +4767,12 @@ int card_resolute_blademaster(int player, int card, event_t event)
    * Creature - Human Soldier Ally 2/2
    * Rally - Whenever ~ or another Ally enters the battlefield under your control, creatures you control gain double strike until end of turn. */
 
-  if (rally(player, card, event, RESOLVE_TRIGGER_MANDATORY))
-	pump_creatures_until_eot_no_repeat(player, card, player, 0, KEYWORD_DOUBLE_STRIKE,0, NULL);
+	rally(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-  return 0;
+	if( event == EVENT_ETB_ABILITY )
+		pump_creatures_until_eot_no_repeat(player, card, player, 0, KEYWORD_DOUBLE_STRIKE,0, NULL);
+
+	return 0;
 }
 
 int card_roil_spout(int player, int card, event_t event)
@@ -4600,7 +4831,7 @@ int card_veteran_warleader(int player, int card, event_t event)
    * Tap another untapped Ally you control: ~ gains your choice of first strike, vigilance, or trample until end of turn. */
 
   if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && !is_humiliated(player, card))
-	event_result += creature_count[player];
+	event_result += count_subtype(player, TYPE_CREATURE, -1);
 
   if (!IS_GAA_EVENT(event))
 	return 0;
@@ -4671,8 +4902,9 @@ int card_aligned_hedron_network(int player, int card, event_t event)
    * Hedron Network will exile itself along with other creatures with power 5 or greater. Those cards will immediately return to the battlefield. If this causes
    * a loop with Aligned Hedron Network continually exiling and returning itself, the game will be a draw unless a player breaks the loop somehow. */
 
-  if (comes_into_play(player, card, event))
-	{
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY ){
 	  char marked[2][151] = {{0}};
 	  int p, c;
 	  for (p = 0; p <= 1; ++p)
@@ -4948,16 +5180,15 @@ int card_blighted_gorge(int player, int card, event_t event)
 {
   /* Blighted Gorge	""	0x200e19d
    * Land
-   * |T: Add |1 to your mana pool.
-   * |4|R, |T, Sacrifice ~: ~ deals 2 damage to target creature or player. */
-
+   * |T: Add |C.
+   * |4|R, |T, Sacrifice ~: It deals 2 damage to any target. */
   target_definition_t td;
   if (IS_ACTIVATING(event))
 	{
-	  default_target_definition(player, card, &td, TYPE_CREATURE);
+	  default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
 	  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 	}
-  return blighted_land(player, card, event, MANACOST_XR(4,1), "Deal damage",1, &td,"TARGET_CREATURE_OR_PLAYER", blighted_gorge_impl);
+  return blighted_land(player, card, event, MANACOST_XR(4,1), "Deal damage",1, &td,"TARGET_ANY", blighted_gorge_impl);
 }
 
 static void blighted_steppe_impl(int player, int card, target_definition_t* td)
@@ -5027,8 +5258,9 @@ int card_fertile_thicket(int player, int card, event_t event)
 
   comes_into_play_tapped(player, card, event);
 
-  if (comes_into_play_mode(player, card, event, RESOLVE_TRIGGER_AI(player)))
-	{
+	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+
+	if( event == EVENT_ETB_ABILITY ){
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_LAND, "Select a basic land card.");
 	  test.subtype = SUBTYPE_BASIC;
@@ -5048,8 +5280,9 @@ int card_looming_spires(int player, int card, event_t event)
 
   comes_into_play_tapped(player, card, event);
 
-  if (comes_into_play(player, card, event))
-	{
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY ){
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
 	  td.preferred_controller = player;
@@ -5085,7 +5318,7 @@ int card_lumbering_falls(int player, int card, event_t event)
 							mana_producer(player, card, EVENT_CAN_ACTIVATE),
 							paying_mana(),
 						"Become Elemental",
-							!paying_mana(),
+							!paying_mana() && can_use_activated_abilities(player, card),
 							!(get_card_instance(player, card)->token_status & STATUS_LEGACY_TYPECHANGE),
 						DLG_MANA(MANACOST_XGU(2,1,1)));
 
@@ -5116,8 +5349,9 @@ int card_mortuary_mire(int player, int card, event_t event)
 
   comes_into_play_tapped(player, card, event);
 
-  if (comes_into_play_mode(player, card, event, RESOLVE_TRIGGER_AI(player)))
-	{
+	etb_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+
+	if( event == EVENT_ETB_ABILITY ){
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_CREATURE, "Select target creature card.");
 	  new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_DECK, 0, AI_MAX_VALUE, &test);
@@ -5163,8 +5397,9 @@ int card_sandstone_bridge(int player, int card, event_t event)
 
   comes_into_play_tapped(player, card, event);
 
-  if (comes_into_play(player, card, event))
-	{
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY ){
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
 	  td.preferred_controller = player;
@@ -5200,7 +5435,7 @@ int card_shambling_vent(int player, int card, event_t event)
 							mana_producer(player, card, EVENT_CAN_ACTIVATE),
 							paying_mana(),
 						"Become Elemental",
-							!paying_mana(),
+							!paying_mana() && can_use_activated_abilities(player, card),
 							!(get_card_instance(player, card)->token_status & STATUS_LEGACY_TYPECHANGE),
 						DLG_MANA(MANACOST_XWB(1,1,1)));
 
@@ -5236,8 +5471,9 @@ int card_skyline_cascade(int player, int card, event_t event)
 
   comes_into_play_tapped(player, card, event);
 
-  if (comes_into_play(player, card, event))
-	{
+	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+	if( event == EVENT_ETB_ABILITY ){
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
 	  td.allowed_controller = 1-player;

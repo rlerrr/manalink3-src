@@ -16,24 +16,37 @@ draw_special_counters(HDC hdc, const RECT* rect, int player, int card)
   if (!hdc || !rect)
 	return;
 
-  card_instance_t actual;
-  card_instance_t* instance = get_displayed_card_instance(player, card);	// unsafe to dereference
+  int counter_type;
+  int num;
+  if (player >= 0 && player <= 1)
+	{
+	  card_instance_t actual;
+	  card_instance_t* instance = get_displayed_card_instance(player, card);	// unsafe to dereference
 
-  EnterCriticalSection(critical_section_for_display);
-  memcpy(&actual, instance, sizeof(card_instance_t));
-  LeaveCriticalSection(critical_section_for_display);
+	  EnterCriticalSection(critical_section_for_display);
+	  memcpy(&actual, instance, sizeof(card_instance_t));
+	  LeaveCriticalSection(critical_section_for_display);
 
-  instance = &actual;	// now safe
+	  instance = &actual;	// now safe
 
-  int counter_type = instance->special_counter_type;
+	  counter_type = instance->special_counter_type;
+
+	  num = instance->special_counters;
+
+	  if (suppress_next_counters && counter_type == COUNTER_LOYALTY)
+		return;
+	}
+  else if (player == -1)	// Special case: counter_type and num are encoded in card
+	{
+	  counter_type = BYTE0(card);
+	  num = BYTE1(card);
+	}
+  else
+	return;
+
   if (counter_type < 0 || counter_type >= COUNTER_end)
 	return;
-
-  int num = instance->special_counters;
   if (num <= 0)
-	return;
-
-  if (suppress_next_counters && counter_type == COUNTER_LOYALTY)
 	return;
 
   RECT r;
@@ -302,4 +315,98 @@ draw_standard_counters(HDC hdc, const RECT* rect, int player, int card)
 	LeaveCriticalSection(critical_section_for_drawing);
 
 #undef COUNTERS
+}
+
+void
+draw_counters_for_fullcard(HDC hdc, const RECT* rect, counter_t counter_type, int num)
+{
+  // assumes already in appropriate critical sections
+  if (!hdc || !rect || num <= 0 || counter_type == COUNTER_invalid)
+	return;
+
+  int wid = rect->right - rect->left;
+  int hgt = rect->bottom - rect->top;
+
+  RECT r;
+  r.left = rect->left + wid/3 + wid/12;
+  //r.right = rect->right - wid/3;
+  r.top = rect->top + hgt/3;
+  r.bottom = rect->bottom - hgt/3;
+
+  unsigned int src_width, src_height;
+  if (counters_renderer == RENDERER_GDIPLUS)
+	{
+	  GdipGetImageWidth(gpics[CARDCOUNTERS], &src_width);
+	  GdipGetImageHeight(gpics[CARDCOUNTERS], &src_height);
+	  src_width /= counters_num_columns;
+	  src_height /= counters_num_rows;
+	}
+  else
+	{
+	  BITMAP bmp;
+	  GetObject(pics[CARDCOUNTERS], sizeof(BITMAP), &bmp);
+	  src_width = bmp.bmWidth / counters_num_columns;
+	  src_height = bmp.bmHeight / counters_num_rows;
+	}
+
+  int scaled_height = r.bottom - r.top;
+  int scaled_width = scaled_height * src_width / src_height;
+
+  int src_xpos = (counter_type / counters_num_rows) * src_width;
+  int src_ypos = (counter_type % counters_num_rows) * src_height;
+
+  BLENDFUNCTION blend;
+  int savedc = SaveDC(hdc);
+
+  if (counters_renderer != RENDERER_GDIPLUS)
+	{
+	  SelectObject(*spare_hdc, pics[CARDCOUNTERS]);
+
+	  blend.BlendOp = AC_SRC_OVER;
+	  blend.BlendFlags = 0;
+	  blend.SourceConstantAlpha = 255;
+	  blend.AlphaFormat = AC_SRC_ALPHA;
+	}
+
+  r.right = r.left + scaled_width;
+
+  if (counters_renderer == RENDERER_GDIPLUS)
+	gdip_blt(hdc, &r, CARDCOUNTERS, src_xpos, src_ypos, src_width, src_height, NULL);
+  else
+	AlphaBlend(hdc, r.left, r.top, r.right - r.left, r.bottom - r.top,
+			   *spare_hdc, src_xpos, src_ypos, src_width, src_height, blend);
+
+  if (num > 1)
+	{
+	  /* The normally-allocated fonts are absofuckingly tiny when displaying graveyard/exiled cards, which is what
+	   * this is used for, and we can't just draw them bigger - we have to make the effective window smaller instead.
+	   * Man, fuck Windows. */
+	  /* This should really all be configurable - counter placement and size, text placement and size, text colors -
+	   * but I can't be bothered. */
+#define INFLATE  4
+	  SetWindowExtEx(hdc, 800 / INFLATE, 1200 / INFLATE, NULL);
+	  SetWindowOrgEx(hdc, 400 / INFLATE, 600 / INFLATE, NULL);
+	  r.left = (rect->right - wid * 0.35) / INFLATE;
+	  r.right = rect->right / INFLATE;
+	  r.top = (rect->bottom - hgt * 0.45) / INFLATE;
+	  r.bottom = rect->bottom / INFLATE;
+
+	  SelectObject(hdc, fonts[BIGCARDLOYALTYCOST_FONT]);
+	  SetTextAlign(hdc, TA_LEFT);
+
+	  char buf[20];
+	  sprintf(buf, "%d", num);
+
+	  TextWithShadow tws;
+	  tws.color.r = tws.color.g = tws.color.b = 255;
+	  tws.color.colorref = RGB(255,255,255);
+	  tws.shadow_color.r = tws.shadow_color.g = tws.shadow_color.b = 0;
+	  tws.shadow_color.colorref = RGB(0,0,0);
+	  tws.shadow_offset.x = tws.shadow_offset.y = 2;
+	  tws.shadow_visible = 1;
+
+	  draw_text_with_shadow_at_x(hdc, &r, r.left, &tws, -1, buf, -1);
+	}
+
+  RestoreDC(hdc, savedc);
 }

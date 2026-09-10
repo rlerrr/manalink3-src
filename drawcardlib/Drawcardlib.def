@@ -14,3 +14,6 @@ initialize_for_shandalar
 draw_special_counters
 draw_standard_counters
 get_special_counter_rect
+get_frame_type
+get_border_color
+get_watermarks

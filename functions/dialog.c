@@ -341,7 +341,7 @@ dialog_impl(int player, int card, event_t event, ...)
 
 		  case DLGIMPL_LITERAL_TARGET_CH:
 			choice[choices - 1].flags |= DF_LITERAL_PROMPT;
-			// and fall through
+			// intentionally fall through
 		  case DLGIMPL_TARGET_CH:
 			any_targets = 1;
 			ASSERT(choices > 0 && "DLG_TARGET can't precede the first choice");

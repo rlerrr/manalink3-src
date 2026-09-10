@@ -12,22 +12,20 @@ int call_card_function(int player, int card, event_t event)
 {
   card_instance_t* instance = get_card_instance(player, card);
 
-  typedef int (*CardFunction)(int, int, event_t);
-  CardFunction fn = (CardFunction)(cards_data[instance->internal_card_id].code_pointer);
+  CardFunction fn = cards_data[instance->internal_card_id].code_pointer;
   return call_card_fn(fn, get_card_instance(player, card), player, card, event);
 }
 
 // A frontend for call_card_fn() where address should be computed from instance.
 int call_card_function_i(card_instance_t* instance, int player, int card, event_t event)
 {
-  typedef int (*CardFunction)(int, int, event_t);
-  CardFunction fn = (CardFunction)(cards_data[instance->internal_card_id].code_pointer);
+  CardFunction fn = cards_data[instance->internal_card_id].code_pointer;
   return call_card_fn(fn, instance, player, card, event);
 }
 
-int call_card_fn_impl(void* address, card_instance_t* instance, int player, int card, event_t event);	// never call directly
+int call_card_fn_impl(CardFunction address, card_instance_t* instance, int player, int card, event_t event);	// never call directly
 // Puts instance into esi, then calls address(player, card, event).
-int call_card_fn(void* address, card_instance_t* instance, int player, int card, event_t event)
+int call_card_fn(CardFunction address, card_instance_t* instance, int player, int card, event_t event)
 {
   int old_trigger_condition = trigger_condition;
   if (event != EVENT_TRIGGER && event != EVENT_RESOLVE_TRIGGER && event != EVENT_END_TRIGGER)
@@ -103,8 +101,7 @@ void dispatch_event_raw(event_t event)
 		  && !(instance->state & STATE_OUBLIETTED)
 		  && (instance->state & (STATE_INVISIBLE | STATE_IN_PLAY)))
 		{
-		  typedef int (*CardFunction)(int, int, event_t);
-		  CardFunction fn = (CardFunction)(cards_data[instance->internal_card_id].code_pointer);
+		  CardFunction fn = cards_data[instance->internal_card_id].code_pointer;
 		  call_card_fn(fn, instance, player, card, event);
 		  // Begin removals
 		  // if event == EVENT_DECLARE_ATTACKERS, then tap the card if it's attacking, untapped, and doesn't have vigilance; then resolve damage cards and run regeneration/graveyard triggers
@@ -291,8 +288,7 @@ int dispatch_event_to_single_card_overriding_function(int player, int card, even
   if (event != EVENT_TRIGGER && event != EVENT_RESOLVE_TRIGGER && event != EVENT_END_TRIGGER)
 	trigger_condition = -1;
 
-  typedef int (*CardFunction)(int, int, event_t);
-  CardFunction fn = (CardFunction)(cards_data[iid].code_pointer);
+  CardFunction fn = cards_data[iid].code_pointer;
   int rval = call_card_fn(fn, get_card_instance(player, card), player, card, event);
 
   trigger_condition = old_trigger_condition;

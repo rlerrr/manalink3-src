@@ -88,7 +88,10 @@ int exiledby_choose(int player, int card, int csvid, exiledby_choose_mode_t mode
 					  int test_can_cast = 99;
 					  if (tests & EXBY_TEST_CAN_CAST)
 						{
-						  test_can_cast = can_legally_play_iid_now(player, iid, testarg);
+							if( testarg )
+								test_can_cast = can_legally_play_iid_now(player, iid, testarg);
+							else
+								test_can_cast = can_legally_play_iid(player, iid);
 						  if (!test_can_cast)
 							continue;
 						  else if (test_can_cast != 99)
@@ -96,6 +99,10 @@ int exiledby_choose(int player, int card, int csvid, exiledby_choose_mode_t mode
 						}
 
 					  int test_has_mana_to_cast = ((tests & EXBY_TEST_HAS_MANA_TO_CAST) && !has_mana_to_cast_iid(player, testarg, iid)) ? -1 : 99;
+					  if( tests & EXBY_TEST_HAS_GENERIC_MANA_TO_PAY_CMC ){
+						  int cmc = get_cmc_by_internal_id(iid);
+						  test_has_mana_to_cast = has_mana_for_activated_ability(player, card, MANACOST_X(cmc)) ? 99 : -1;
+					  }
 					  if (test_has_mana_to_cast < 0)
 						continue;
 
@@ -373,13 +380,13 @@ void exiledby_destroy_detached(int player, int detach_id)
   int leg;
   for (leg = 0; leg < active_cards_count[player]; ++leg)
 	if (exiledby_legacymatches(get_card_instance(player, leg), player - 2, detach_id))
-	  kill_card(player, leg, KILL_REMOVE);
+	  kill_card(player, leg, KILL_EXILE);
 }
 
 void exile_card_and_remember_it_on_exiledby(int player, int card, int t_player, int t_card){
 	int owner = get_owner(t_player, t_card);
 	int iid = get_card_instance(t_player, t_card)->original_internal_card_id;
-	kill_card(t_player, t_card, KILL_REMOVE);
+	kill_card(t_player, t_card, KILL_EXILE);
 	exiledby_remember(player, card, owner, iid, NULL, NULL);
 }
 
@@ -428,13 +435,13 @@ static void return_auras_and_counters_to_play(int player, int card){
 					leg->targets[17].card == instance->targets[18].card
 				   ){
 					copy_counters(t_player, card_added, player, count, 1);
-					kill_card(player, count, KILL_REMOVE);
+					kill_card(player, count, KILL_EXILE);
 					break;
 				}
 			}
 		}
 	}
-	
+
 
 	// Then, retur to play all the exiled auras attached to the original exiled card.
 	if (mode & (EPAAC_STORE_AURAS_RETURN_EOT | EPAAC_STORE_AURAS_RETURN_IF_SOURCE_LEAVES_PLAY | EPAAC_TAWNOSS_COFFIN)){
@@ -456,7 +463,7 @@ static void return_auras_and_counters_to_play(int player, int card){
 static int return_auras_counters_on_eot(int player, int card, event_t event){
 	if( eot_trigger(player, card, event) ){
 		return_auras_and_counters_to_play(player, card);
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 	}
 	return 0;
 }
@@ -475,7 +482,7 @@ static int return_auras_counters_if_source_leaves_play(int player, int card, eve
 			}
 			else if(event == EVENT_RESOLVE_TRIGGER){
 					return_auras_and_counters_to_play(player, card);
-					kill_card(player, card, KILL_REMOVE);
+					kill_card(player, card, KILL_EXILE);
 			}
 		}
 	}
@@ -493,7 +500,7 @@ static int tawnoss_coffin_legacy(int player, int card, event_t event){
 			(event == EVENT_UNTAP_CARD && affect_me(instance->damage_target_player, instance->damage_target_card))
 		  ){
 			return_auras_and_counters_to_play(player, card);
-			kill_card(player, card, KILL_REMOVE);
+			kill_card(player, card, KILL_EXILE);
 		}
 	}
 	return 0;
@@ -514,7 +521,7 @@ static void store_permanent_on_legacy(card_instance_t* leg, int to_copy_player, 
 int exile_permanent_and_auras_attached(int player, int card, int t_player, int t_card, unsigned int mode){
 	int rvalue = -1;
 	if (is_token(t_player, t_card) || ! is_what(-1, get_original_internal_card_id(t_player, t_card), TYPE_PERMANENT) ){
-		manipulate_auras_enchanting_target(player, card, t_player, t_card, NULL, KILL_REMOVE);
+		manipulate_auras_enchanting_target(player, card, t_player, t_card, NULL, KILL_EXILE);
 	} 
 	else {
 		int legacy_auras = -1;
@@ -547,7 +554,7 @@ int exile_permanent_and_auras_attached(int player, int card, int t_player, int t
 					if( legacy_auras != -1 && !is_token(p, count) ){
 						store_permanent_on_legacy(leg, p, count, 1, 18);
 					}
-					kill_card(p, count, KILL_REMOVE);
+					kill_card(p, count, KILL_EXILE);
 				}
 			}
 		}
@@ -564,6 +571,30 @@ int exile_permanent_and_auras_attached(int player, int card, int t_player, int t
 			rvalue = legacy_auras;
 		}
 	}
-	kill_card(t_player, t_card, KILL_REMOVE);
+	kill_card(t_player, t_card, KILL_EXILE);
 	return rvalue;
+}
+
+void get_back_cards_stored_in_exiledby(int player, int exby_player, int exby_card, get_back_cards_stored_in_exiledby_mode flags){
+	int leg;
+	int idx;
+	int* loc;
+	while( (loc = exiledby_find_any(exby_player, exby_card, &leg, &idx)) != NULL ){
+			int owner = (*loc & 0x80000000) ? 1 : 0;
+			int iid = *loc & ~0x80000000;
+			*loc = -1;
+			int who_gets_the_card = (flags & GBC_PLAYER_GET_ALL_CARDS) ? player : owner;
+			int card_added = add_card_to_hand(who_gets_the_card, iid);
+			if( owner != player ){
+				if( player == AI ){
+					remove_state(who_gets_the_card, card_added, STATE_OWNED_BY_OPPONENT);
+				}
+				else{
+					add_state(who_gets_the_card, card_added, STATE_OWNED_BY_OPPONENT);
+				}
+			}
+			if( flags & GBC_PUT_PERMANENTS_INTO_BF ){
+				put_into_play(who_gets_the_card, card_added);
+			}
+	}
 }

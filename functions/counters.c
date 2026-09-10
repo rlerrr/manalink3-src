@@ -130,7 +130,7 @@ int get_counter_type_by_id(int csvid)
 	  case CARD_ID_GWAFA_HAZID_PROFITEER:	return COUNTER_BRIBERY;///
 	  case CARD_ID_OSAI_VULTURES:			return COUNTER_CARRION;
 
-	  case CARD_ID_ETHER_VIAL:	// AEther Vial
+	  case CARD_ID_AETHER_VIAL:
 	  case CARD_ID_ALTAR_OF_SHADOWS:
 	  case CARD_ID_ANGELHEART_VIAL:///
 	  case CARD_ID_ARCANE_SPYGLASS:///
@@ -263,7 +263,7 @@ int get_counter_type_by_id(int csvid)
 	  case CARD_ID_RASPUTIN_DREAMWEAVER:	return COUNTER_DREAM;
 	  case CARD_ID_SOUL_ECHO:				return COUNTER_ECHO;///
 	  case CARD_ID_ESSENCE_BOTTLE:			return COUNTER_ELIXIR;
-	  case CARD_ID_ENERGY_VORTEX:			return COUNTER_ENERGY;///
+	  case CARD_ID_ENERGY_VORTEX:			return COUNTER_VORTEX;///
 	  case CARD_ID_MAGOSI_THE_WATERVEIL:	return COUNTER_EON;
 	  case CARD_ID_JAR_OF_EYEBALLS:			return COUNTER_EYEBALL;
 
@@ -381,6 +381,8 @@ int get_counter_type_by_id(int csvid)
 	  case CARD_ID_AJANI_GOLDMANE:
 	  case CARD_ID_AJANI_MENTOR_OF_HEROES:
 	  case CARD_ID_AJANI_STEADFAST:
+	  case CARD_ID_AJANI_UNYIELDING:
+	  case CARD_ID_AJANI_VALIANT_PROTECTOR:
 	  case CARD_ID_AJANI_VENGEANT:
 	  case CARD_ID_ARLINN_KORD:
 	  case CARD_ID_ARLINN_EMBRACED_BY_THE_MOON:
@@ -388,12 +390,15 @@ int get_counter_type_by_id(int csvid)
 	  case CARD_ID_CHANDRA_ABLAZE:
 	  case CARD_ID_CHANDRA_FLAMECALLER:
 	  case CARD_ID_CHANDRA_NALAAR:
+	  case CARD_ID_CHANDRA_PYROGENIUS:
 	  case CARD_ID_CHANDRA_PYROMASTER:
 	  case CARD_ID_CHANDRA_ROARING_FLAME:
 	  case CARD_ID_CHANDRA_THE_FIREBRAND:
+	  case CARD_ID_CHANDRA_TORCH_OF_DEFIANCE:
 	  case CARD_ID_DACK_FAYDEN:
 	  case CARD_ID_DARETTI_SCRAP_SAVANT:
 	  case CARD_ID_DOMRI_RADE:
+	  case CARD_ID_DOVIN_BAAN:
 	  case CARD_ID_ELSPETH_KNIGHT_ERRANT:
 	  case CARD_ID_ELSPETH_SUNS_CHAMPION:
 	  case CARD_ID_ELSPETH_TIREL:
@@ -415,6 +420,7 @@ int get_counter_type_by_id(int csvid)
 	  case CARD_ID_JACE_THE_MIND_SCULPTOR:
 	  case CARD_ID_JACE_UNRAVELER_OF_SECRETS:
 	  case CARD_ID_KARN_LIBERATED:
+	  case CARD_ID_KAYA_GHOST_ASSASSIN:
 	  case CARD_ID_KIORA_MASTER_OF_THE_DEPTHS:
 	  case CARD_ID_KIORA_THE_CRASHING_WAVE:
 	  case CARD_ID_KOTH_OF_THE_HAMMER:
@@ -427,13 +433,16 @@ int get_counter_type_by_id(int csvid)
 	  case CARD_ID_NAHIRI_THE_LITHOMANCER:
 	  case CARD_ID_NARSET_TRANSCENDENT:
 	  case CARD_ID_NICOL_BOLAS_PLANESWALKER:
+	  case CARD_ID_NISSA_NATURES_ARTISAN:
 	  case CARD_ID_NISSA_REVANE:
 	  case CARD_ID_NISSA_SAGE_ANIMIST:
+	  case CARD_ID_NISSA_VITAL_FORCE:
 	  case CARD_ID_NISSA_VOICE_OF_ZENDIKAR:
 	  case CARD_ID_NISSA_WORLDWAKER:
 	  case CARD_ID_OB_NIXILIS_OF_THE_BLACK_OATH:
 	  case CARD_ID_OB_NIXILIS_REIGNITED:
 	  case CARD_ID_RAL_ZAREK:
+	  case CARD_ID_SAHEELI_RAI:
 	  case CARD_ID_SARKHAN_THE_DRAGONSPEAKER:
 	  case CARD_ID_SARKHAN_THE_MAD:
 	  case CARD_ID_SARKHAN_UNBROKEN:
@@ -446,6 +455,8 @@ int get_counter_type_by_id(int csvid)
 	  case CARD_ID_TAMIYO_THE_MOON_SAGE:
 	  case CARD_ID_TEFERI_TEMPORAL_ARCHMAGE:
 	  case CARD_ID_TEZZERET_AGENT_OF_BOLAS:
+	  case CARD_ID_TEZZERET_MASTER_OF_METAL:
+	  case CARD_ID_TEZZERET_THE_SCHEMER:
 	  case CARD_ID_TEZZERET_THE_SEEKER:
 	  case CARD_ID_TIBALT_THE_FIEND_BLOODED:
 	  case CARD_ID_UGIN_THE_SPIRIT_DRAGON:
@@ -698,7 +709,7 @@ int get_counter_type_by_id(int csvid)
 	  case CARD_ID_ELDER_DRAGON_HIGHLANDER:	//(none)
 	  case CARD_ID_PLANECHASE:	//(none)
 	  case CARD_ID_SPAT:	//(none)
-		return COUNTER_ENERGY;
+		return COUNTER_VORTEX;
 
 	  default:
 		return -1;
@@ -787,10 +798,10 @@ int get_updated_counters_number(int player, int card, counter_t type, int number
 			  break;
 
 			case CARD_ID_HARDENED_SCALES:
-				if (p == player)
-					if (type == COUNTER_P1_P1)
-						number++;
-						break;
+			  if (p == player && type == COUNTER_P1_P1)
+				number++;
+			  break;
+
 			case CARD_ID_CORPSEJACK_MENACE:		// self only: doubles +1/+1
 			  if (p != player)
 				continue;
@@ -1016,6 +1027,10 @@ static void add_or_remove_counters_impl(int player, int card, counter_t type, in
 		  if (num > 0)
 			play_counters_sound(WAV_COUNTER);
 		}
+	}
+
+	if( num && is_what(player, card, TYPE_PERMANENT) ){
+		set_trap_condition(player, TRAP_P1_P1_COUNTER_PLACED, 1);
 	}
 
   if (type == COUNTER_P1_P1 && num > 0 && (enable_xtrigger_flags & ENABLE_XTRIGGER_1_1_COUNTERS))
@@ -1345,7 +1360,7 @@ void remove_all_counters(int player, int card, counter_t type)
 	  instance->counters5 = 0;
 	  instance->counters_m1m1 = 0;
 	  instance->targets[18].player = -1;
-	  instance->targets[18].card = 0x0000FFFF;
+	  instance->targets[18].card = 0xFFFF0000;
 
 	  instance->counter_power = 0;
 	  instance->counter_toughness = 0;
@@ -1484,6 +1499,8 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
 
 	  case COUNTER_BOUNTY:		return CREATURE0(adding ? -6 : -601);
 	  case COUNTER_BRIBERY:		return CREATURE0(adding ? -7 : -701);
+	  case COUNTER_BRICK:		return NATIVE0(316);
+	  case COUNTER_CAGE:		return 0;
 	  case COUNTER_CARRION:		return NATIVE0(40);
 	  case COUNTER_CHIP:		return NATIVE0(36);
 	  case COUNTER_CORPSE:		return NATIVE0(430);
@@ -1539,8 +1556,8 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
 		  return 410;
 
 	  case COUNTER_ECHO:		return NATIVE0(65);
+	  case COUNTER_EGG:			return 0;	// only appears on cards in exile
 	  case COUNTER_ELIXIR:		return NATIVE0(44);
-	  case COUNTER_ENERGY:		return NATIVE0(380);
 	  case COUNTER_EON:			return !IS_NATIVE() ? 0 : adding ? 4 : 9001;
 	  case COUNTER_EYEBALL:		return NATIVE0(70);
 
@@ -1559,14 +1576,18 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
 	  case COUNTER_FLOOD:		return adding ? 0 : -301;
 	  case COUNTER_FUNGUS:		return -190;
 	  case COUNTER_FUNK:		return NATIVE0(9000);
+	  case COUNTER_FURY:		return NATIVE0(1201);
 	  case COUNTER_FUSE:		return IS_NATIVE() ? 400 : IS(TYPE_CREATURE) ? -800 : 0;
 	  case COUNTER_GEM:			return NATIVE0(442);
+	  case COUNTER_GLOBE:		return -281;
 	  case COUNTER_GLYPH:		return -210;
 	  case COUNTER_GOLD:		return !IS(TYPE_CREATURE) ? 0 : adding ? -3 : -6001;
 	  case COUNTER_GROWTH:		return IS_NATIVE() ? 0 : csvid == CARD_ID_MOMENTUM ? 480 : 15;
 	  case COUNTER_HATCHLING:	return NATIVE0(7900);
 	  case COUNTER_HEALING:		return NATIVE0(39);
+	  case COUNTER_HIT:			return 0;
 	  case COUNTER_HOOFPRINT:	return NATIVE0(8000);
+	  case COUNTER_HOUR:		return NATIVE0(5003);
 	  case COUNTER_HOURGLASS:	return adding || !is_tapped(t_player, t_card) ? -9 : -2001;
 	  case COUNTER_HUNGER:		return NATIVE0(510);
 	  case COUNTER_HUSK:		return NATIVE0(8100);
@@ -1586,6 +1607,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
 	  case COUNTER_JAVELIN:		return NATIVE0(701);
 	  case COUNTER_KI:			return NATIVE0(511);
 
+	  case COUNTER_LANDMARK:	return NATIVE0(1500);
 	  case COUNTER_LEVEL:
 		if (!IS_NATIVE())
 		  return 0;
@@ -1676,6 +1698,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
 		else
 		  return 100;
 
+	  case COUNTER_PLOT:		return NATIVE0(5002);
 	  case COUNTER_POLYP:		return NATIVE0(110);
 	  case COUNTER_POP:			return NATIVE0(35);
 
@@ -1685,6 +1708,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
 		else
 		  return NATIVE0(360);
 
+	  case COUNTER_PREY:		return adding ? 0 : -3001;
 	  case COUNTER_PUPA:		return NATIVE0(-260);
 
 	  case COUNTER_QUEST:
@@ -1741,10 +1765,13 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
 	  case COUNTER_SHIELD:	return NATIVE0(50);
 	  case COUNTER_SHOE:	return NATIVE0(1400);
 	  case COUNTER_SHRED:	return NATIVE0(7400);
+	  case COUNTER_SILVER:	return 0;	// only appears on cards in exile
 	  case COUNTER_SLEEP:	return -261;
 	  case COUNTER_SLEIGHT:	return NATIVE0(-290);	// deliberately not checking damage_target_player
 	  case COUNTER_SLIME:	return NATIVE0(7700);
+	  case COUNTER_SLUMBER:	return NATIVE0(-331);
 	  case COUNTER_SOOT:	return NATIVE0(14);
+	  case COUNTER_SPITE:	return NATIVE0(402);
 	  case COUNTER_SPORE:	return NATIVE0(550);
 	  case COUNTER_STORAGE:	return NATIVE0(560);
 	  case COUNTER_STRIFE:	return NATIVE0(320);
@@ -1783,6 +1810,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
 	  case COUNTER_TRAINING:return 0;
 	  case COUNTER_TRAP:	return !IS(TYPE_LAND) ? 0 : adding ? 1 : 101;
 	  case COUNTER_TREASURE:return NATIVE0(5000);
+	  case COUNTER_UNITY:	return NATIVE0(3101);
 	  case COUNTER_VELOCITY:return csvid == CARD_ID_TORNADO ? -550 : 0;	// its native type is COUNTER_AGE, not this
 
 	  case COUNTER_VERSE:
@@ -1842,6 +1870,8 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
 			default:
 			  return NATIVE0(450);
 		  }
+
+	  case COUNTER_VORTEX:		return NATIVE0(380);
 
 	  case COUNTER_end:		return 0;
 	  case COUNTER_invalid:	return 0;
@@ -2088,4 +2118,89 @@ void add_experience(int player, int number_of_counters)
 void raw_set_experience(int player, uint8_t new_number_of_counters)
 {
   player_counters[player].experience_ = new_number_of_counters;
+}
+
+void add_energy(int player, int number_of_counters)
+{
+	if (number_of_counters <= 0)
+        return;
+
+	int nrg = player_counters[player].energy_;
+	nrg += number_of_counters;
+	if (nrg > 255)
+		nrg = 255;
+	player_counters[player].energy_ = nrg;
+
+	if (ai_is_speculating != 1)
+		play_sound_effect(WAV_COUNTER);  // maybe use a new sound here; same with poison and experience counters
+
+	if( number_of_counters > 0 && (enable_xtrigger_flags & XTRIGGER_COUNTER_ENERGY))
+	{
+		int old_counters_added = counters_added;
+		counters_added = number_of_counters;
+		dispatch_xtrigger2(player, XTRIGGER_COUNTER_ENERGY, number_of_counters > 1 ? "energy counters" : "energy counter", 0, player, -1);
+		counters_added = old_counters_added;
+	}
+}
+
+void remove_energy(int player, int number_of_counters)
+{
+      if (number_of_counters <= 0)
+        return;
+
+      int nrg = player_counters[player].energy_;
+      nrg -= number_of_counters;
+      if (nrg < 0)
+        nrg = 0;
+      player_counters[player].energy_ = nrg;
+
+      // maybe play a new sound here?
+}
+
+int count_player_counters(int player, player_counter_names_t type){
+	switch( type ){
+			case PCOUNTER_ENERGY:
+				return ENERGY_COUNTERS(player);
+			case PCOUNTER_POISON:
+				return POISON_COUNTERS(player);
+			case PCOUNTER_EXPERIENCE:
+				return EXPERIENCE_COUNTERS(player);
+			case PCOUNTER_invalid:
+				return ENERGY_COUNTERS(player)+POISON_COUNTERS(player)+EXPERIENCE_COUNTERS(player);
+	}
+	return 0;
+}
+
+void add_player_counters(int player, player_counter_names_t type, int amount){
+	switch( type ){
+			case PCOUNTER_ENERGY:
+				add_energy(player, amount);
+				break;
+			case PCOUNTER_POISON:
+				poison(player, amount);
+				break;
+			case PCOUNTER_EXPERIENCE:
+				add_experience(player, amount);
+				break;
+			case PCOUNTER_invalid:
+				ASSERT( 0 && "PCOUNTER_invalid not handled by 'add_player_counters'.");
+				break;
+	}
+}
+
+void remove_player_counters(int player, player_counter_names_t type, int amount){
+	switch( type ){
+			case PCOUNTER_ENERGY:
+				remove_energy(player, amount);
+				break;
+			case PCOUNTER_POISON:
+				ASSERT( 0 && "you can't remove poison counters via 'remove_player_counters'");
+				break;
+			case PCOUNTER_EXPERIENCE:
+				ASSERT( 0 && "you can't remove experience counters via 'remove_player_counters'");
+				break;
+			case PCOUNTER_invalid:
+				ASSERT( 0 && "PCOUNTER_invalid not handled by 'remove_player_counters'.");
+				break;
+	}
 }

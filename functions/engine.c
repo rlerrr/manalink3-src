@@ -128,6 +128,13 @@ void recalculate_all_cards_in_play(void)
   player_bits[1] &= ~PB_CAN_USE_PW_ABILITIES_AS_INSTANT;
   player_bits[0] &= ~PB_COMMANDER_IN_PLAY;
   player_bits[1] &= ~PB_COMMANDER_IN_PLAY;
+  player_bits[0] &= ~PB_CANT_GAIN_LIFE;
+  player_bits[1] &= ~PB_CANT_GAIN_LIFE;
+
+  int disabling_mask = 	PB_ACTIVATE_ABILITIES_OF_CREATURES_DISABLED | PB_ACTIVATE_ABILITIES_OF_ARTIFACTS_DISABLED |
+						PB_NONMANA_ACTIVATE_ABILITIES_OF_CREATURES_DISABLED | PB_NONMANA_ACTIVATE_ABILITIES_OF_ARTIFACTS_DISABLED;
+  player_bits[0] &= ~disabling_mask;
+  player_bits[1] &= ~disabling_mask;
 
   minimize_nondraining_mana();
 
@@ -251,7 +258,7 @@ int untap_phase(int player)
 		{
 		  if (instance->internal_card_id == LEGACY_EFFECT_CUSTOM && instance->info_slot == (int)target_player_skips_untap && instance->targets[0].player == player)
 			{
-			  kill_card(p, c, KILL_REMOVE);
+			  kill_card(p, c, KILL_EXILE);
 			  return 0;
 			}
 		  else if (cards_data[instance->internal_card_id].id == CARD_ID_SHIMMER){
@@ -363,7 +370,7 @@ int upkeep_phase(int player)
 
   current_phase = PHASE_BEGIN_UPKEEP;
   phase_changed(player, PHASE_BEGIN_UPKEEP);
-  dispatch_trigger(player, TRIGGER_UPKEEP, EXE_STR(0x739C20), 0);	//PROMPT_SPECIALFEPHASE[8]
+  dispatch_trigger2(player, TRIGGER_UPKEEP, EXE_STR(0x739C20), 0, 0, 0);	//PROMPT_SPECIALFEPHASE[8]
 
   EXE_DWORD(0x60A43C) = 1;
   current_phase = PHASE_UPKEEP;
@@ -415,22 +422,22 @@ int is_legal_block_impl(int blocking_player, int blocking_card, int blocked_play
 	  && (abils & KEYWORD_PROT_ARTIFACTS))
 	return 0;
 
-	if(abils & landwalks & KEYWORD_BASIC_LANDWALK ){
-		if( (abils & landwalks & KEYWORD_SWAMPWALK) && !(player_bits[blocked_player] & PB_SWAMPWALK_DISABLED) ){
-			return 0;
-		}
-		if( (abils & landwalks & KEYWORD_ISLANDWALK) && !(player_bits[blocked_player] & PB_ISLANDWALK_DISABLED) ){
-			return 0;
-		}
-		if( (abils & landwalks & KEYWORD_FORESTWALK) && !(player_bits[blocked_player] & PB_FORESTWALK_DISABLED) ){
-			return 0;
-		}
-		if( (abils & landwalks & KEYWORD_MOUNTAINWALK) && !(player_bits[blocked_player] & PB_MOUNTAINWALK_DISABLED) ){
-			return 0;
-		}
-		if( (abils & landwalks & KEYWORD_PLAINSWALK) && !(player_bits[blocked_player] & PB_PLAINSWALK_DISABLED) ){
-			return 0;
-		}
+  if (abils & landwalks & KEYWORD_BASIC_LANDWALK)
+	{
+	  if ((abils & landwalks & KEYWORD_SWAMPWALK) && !(player_bits[blocked_player] & PB_SWAMPWALK_DISABLED))
+		return 0;
+
+	  if ((abils & landwalks & KEYWORD_ISLANDWALK) && !(player_bits[blocked_player] & PB_ISLANDWALK_DISABLED))
+		return 0;
+
+	  if ((abils & landwalks & KEYWORD_FORESTWALK) && !(player_bits[blocked_player] & PB_FORESTWALK_DISABLED))
+		return 0;
+
+	  if ((abils & landwalks & KEYWORD_MOUNTAINWALK) && !(player_bits[blocked_player] & PB_MOUNTAINWALK_DISABLED))
+		return 0;
+
+	  if ((abils & landwalks & KEYWORD_PLAINSWALK) && !(player_bits[blocked_player] & PB_PLAINSWALK_DISABLED))
+		return 0;
 	}
 
   // Begin additions
@@ -949,6 +956,9 @@ int charge_mana(int player, color_t color, int amount)
 {
   int old_affected_card_controller = affected_card_controller;
   int old_affected_card = affected_card;
+
+  if (color == COLOR_ANY)    // added
+    color = COLOR_COLORLESS; // added
 
   unknown62BCEC = 0;
   EXE_DWORD(0x4d7cb0) = 200;

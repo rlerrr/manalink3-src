@@ -4,7 +4,7 @@
 
 #include "drawcardlib.h"
 
-#define MANA_SYMBOLS 63
+#define MANA_SYMBOLS 65
 signed char mana_tags[MANA_SYMBOLS * 3 + 1] =
 {
 #define MANA_TAG_HYBRID_MAX -38
@@ -101,6 +101,13 @@ signed char mana_tags[MANA_SYMBOLS * 3 + 1] =
 
 #define MANA_TAG_OR -63
   -63, '/', 0,
+
+#define MANA_TAG_ENERGY -64
+  -64, 'E', 0,
+
+#define MANA_TAG_PLANESWALKER -65
+  -65, 'L', 0,
+
   0
 };
 
@@ -265,8 +272,16 @@ calc_draw_mana_text(HDC hdc, const RECT* rect, const char* str, int rules_text_f
   return rval;
 }
 
+/* drawflag values:
+ * 0: do nothing but return width/height
+ * |1: draw everything
+ * |2: draw everything except symbols
+ * |4: draw symbols at full ascent+descent height of glyph, not 3/4 ascent+descent+leading
+ * |8: find proper aspect ratio via DPtoLP()/LPtoDP(), not via the bigcard/smallcard heuristics
+ * |16: compress the horizontal separation between mana symbols to 1/4 normal */
 int
-draw_mana_text(HDC hdc, const RECT* dest_rect, const char* str, int drawflag, int rules_text_flag, int no_additional_space, LoyaltyCost* loyalty)
+draw_mana_text(HDC hdc, const RECT* dest_rect, const char* str, int drawflag, int rules_text_flag,
+			   int no_additional_space, LoyaltyCost* loyalty)
 {
   if (!hdc || !dest_rect || !str || !*str)
 	return 0;
@@ -275,14 +290,14 @@ draw_mana_text(HDC hdc, const RECT* dest_rect, const char* str, int drawflag, in
 
   TEXTMETRIC metrics;
   GetTextMetrics(hdc, &metrics);
-
   int font_line_hgt = metrics.tmHeight;
+  int font_line_leading = (drawflag & 4) ? metrics.tmInternalLeading : 0;
 
   int drawing_on_fullcard = GetMapMode(hdc) == MM_ISOTROPIC;
 
   RECT rect;
   int line_hgt;
-  rect.bottom = line_hgt = metrics.tmHeight - (drawing_on_fullcard ? 8 : 2);
+  rect.bottom = line_hgt = font_line_hgt - (drawing_on_fullcard ? 8 : 2);
   rect.top = rect.left = rect.right = 0;
   LPtoDP(hdc, (POINT*)(&rect), 2);
 
@@ -290,16 +305,54 @@ draw_mana_text(HDC hdc, const RECT* dest_rect, const char* str, int drawflag, in
   rect.bottom = rect.left = rect.top = 0;
   DPtoLP(hdc, (POINT*)(&rect), 2);
 
-  /* now a very crude hack to draw proper symbols on a fullcard as GDI+ does not support GDI's map mode and I don't want to mess with transformation matrixes
-   * atm -Mok */
+  /* now a very crude hack to draw proper symbols on a fullcard as GDI+ does not support GDI's map mode and I don't
+   * want to mess with transformation matrixes atm -Mok */
 
   int sym_ext_wid, sym_wid, sym_hgt;
   {
-	int w = drawing_on_fullcard ? metrics.tmHeight : (rect.right - rect.left);
+	if (drawflag & 4)
+	  sym_hgt = metrics.tmHeight - metrics.tmInternalLeading;
+	else
+	  sym_hgt = (int64_t)(font_line_hgt) * 75 / 100;
 
-	sym_hgt = (int64_t)(metrics.tmHeight) * 75 / 100;
-	sym_wid = (int64_t)w * 75 / 100;
-	sym_ext_wid = (int64_t)w * 85 / 100;
+	if (drawflag & 8)
+	  {
+		// Go through hoops just in case DPtoLP() and/or LPtoDP() decide to move the origin
+		POINT p[2];
+		p[0].x = 0;
+		p[0].y = 0;
+		p[1].x = sym_hgt;
+		p[1].y = sym_hgt;
+
+		// convert "logical" units to sanity
+		LPtoDP(hdc, p, 2);
+
+		// translate origin back to 0
+		p[1].x -= p[0].x;
+		p[1].y -= p[0].y;
+
+		p[1].x = p[1].y;	// the point: same width as height
+
+		// translate origin back to where it was
+		p[1].x += p[0].x;
+		p[1].y += p[0].y;
+
+		// convert sanity back to "logical" units
+		DPtoLP(hdc, p, 2);
+		// and translate origin
+		p[1].x -= p[0].x;
+
+		sym_wid = p[1].x;
+	  }
+	else
+	  {
+		int w = drawing_on_fullcard ? font_line_hgt : (rect.right - rect.left);
+		sym_wid = (int64_t)w * 75 / 100;
+	  }
+
+	int spacing = (drawflag & 16) ? 31 : 34;
+
+	sym_ext_wid = (int64_t)sym_wid * spacing / 30;	// canonically, w*.75 => w*.85
   }
 
   IntersectClipRect(hdc, dest_rect->left, dest_rect->top, dest_rect->right + 1, dest_rect->bottom);
@@ -436,10 +489,10 @@ draw_mana_text(HDC hdc, const RECT* dest_rect, const char* str, int drawflag, in
 			char* p = buf;
 			for (; buf_len; --buf_len)
 			  {
-				if (drawflag)	// otherwise, calculating size, so no symbols needed
+				if (drawflag & 1)	// otherwise, calculating size or drawing shadow, so no symbols needed
 				  draw_mana_symbol(hdc, *p++,
-								   ((uint32_t)(sym_ext_wid - sym_wid) >> 1) + posx,
-								   ((uint32_t)(font_line_hgt - sym_hgt) >> 1) + posy,
+								   posx + (sym_ext_wid - sym_wid) / 2,
+								   posy + font_line_leading + ((font_line_hgt - font_line_leading) - sym_hgt) / 2,
 								   sym_wid, sym_hgt);
 				posx += sym_ext_wid;
 			  }
@@ -451,7 +504,8 @@ draw_mana_text(HDC hdc, const RECT* dest_rect, const char* str, int drawflag, in
 				++str;
 
 				GetTextExtentPoint32(hdc, buf, 1, &word_wid);
-				TextOut(hdc, posx, posy, buf, 1);
+				if (drawflag & 3)
+				  TextOut(hdc, posx, posy, buf, 1);
 
 				posx += word_wid.cx;
 			  }
@@ -464,14 +518,37 @@ draw_mana_text(HDC hdc, const RECT* dest_rect, const char* str, int drawflag, in
 		char* p = buf;
 		int buf_len = 0;
 		int switch_back = 0;
-		while (*str && *str != ' ' && *str != '\n' && *str != '|')
+		while (*str && *str != ' ' && *str != '\n')
 		  {
+			if (str[0] == '|')
+			  {
+				if (str[1] == '|')
+				  {
+					str += 2;
+					*p++ = '|';
+					++buf_len;
+					continue;
+				  }
+				else
+				  break;
+			  }
+
 			if (*str == '(' && rules_text_flag)
 			  {
 				if (buf_len)
 				  break;
 
 				SelectObject(hdc, fonts[FLAVOR_FONT]);
+			  }
+
+			if (*str == '-'
+				&& (str[1] < '0' || str[1] > '9')
+				&& str[1] != 'X')
+			  {
+				str++;
+				*p++ = '-';
+				++buf_len;
+				break;
 			  }
 
 			char c = *str++;
@@ -499,7 +576,8 @@ draw_mana_text(HDC hdc, const RECT* dest_rect, const char* str, int drawflag, in
 			posy += line_hgt;
 			posx = dest_rect->left;
 		  }
-		TextOut(hdc, posx, posy, buf, buf_len);
+		if (drawflag & 3)
+		  TextOut(hdc, posx, posy, buf, buf_len);
 
 		posx += word_wid.cx;
 

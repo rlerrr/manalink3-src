@@ -42,12 +42,14 @@ int get_dead_count(int player, int mode){
 			int dbc = get_deadbox_card(p);
 			if (dbc > -1){
 				if (mode == TYPE_PERMANENT || mode == TYPE_ANY){
-					amount = count_counters(p, dbc, COUNTER_DEATH);
-				} else if (mode == (TYPE_PERMANENT|GDC_NONTOKEN) || mode == (TYPE_ANY|GDC_NONTOKEN)){
-					amount = count_counters(p, dbc, COUNTER_CORPSE);
-				} else {
+					amount += count_counters(p, dbc, COUNTER_DEATH);
+				} 
+				else if (mode == (TYPE_PERMANENT|GDC_NONTOKEN) || mode == (TYPE_ANY|GDC_NONTOKEN)){
+					amount += count_counters(p, dbc, COUNTER_CORPSE);
+				} 
+				else {
 					card_instance_t* instance = get_card_instance(p, dbc);
-					for (q = &instance->targets[0].player; q <= &instance->targets[18].card; ++q){
+					for (q = &instance->targets[0].player; q <= &instance->targets[17].card; ++q){
 						if (*q != -1){
 							int tok = (*q & TOKEN_FLAG) ? TARGET_TYPE_TOKEN : 0;
 							int iid = *q & ~TOKEN_FLAG;
@@ -100,7 +102,7 @@ int card_deadbox(int player, int card, event_t event){
 		if( affected_card_controller == -1 || affected_card == -1 ){ return 0; }
 		if( ! in_play(affected_card_controller, affected_card) ){ return 0; }
 		card_instance_t *dead = get_card_instance( affected_card_controller, affected_card );
-		if( dead->kill_code > 0 && dead->kill_code != KILL_REMOVE ){
+		if( dead->kill_code > 0 && dead->kill_code != KILL_EXILE ){
 			if( is_what(affected_card_controller, affected_card, TYPE_PERMANENT) ){
 				int t_player = is_stolen(affected_card_controller, affected_card) ? 1-affected_card_controller : affected_card_controller;
 				/* Roughly half the deadbox uses want the state of the card as it left play (i.e., internal_card_id - for example, the Innistrad block morbid

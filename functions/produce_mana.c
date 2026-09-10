@@ -1190,7 +1190,8 @@ int get_color_of_mana_produced_by_id(int csvid, int info_slot, int player){
 		case CARD_ID_PRISMATIC_LENS:
 		case CARD_ID_SHIMMERING_GROTTO:
 		case CARD_ID_UNKNOWN_SHORES:
-			return info_slot >= 0 ? info_slot : COLOR_TEST_COLORLESS | COLOR_TEST_ANY_COLORED;
+		case CARD_ID_HOLDOUT_SETTLEMENT:
+			return info_slot >= 0 ? info_slot : COLOR_TEST_COLORLESS | COLOR_TEST_ANY;
 
 		case CARD_ID_COLDSTEEL_HEART:
 		case CARD_ID_GEM_BAZAAR:
@@ -1244,6 +1245,7 @@ int get_color_of_mana_produced_by_id(int csvid, int info_slot, int player){
 
 		case CARD_ID_VIVID_GROVE:
 		case CARD_ID_QUIRION_ELVES:
+		case CARD_ID_SILHANA_STARFLETCHER:
 			return info_slot >= 0 ? info_slot : COLOR_TEST_GREEN;
 
 		case CARD_ID_URBORG_TOMB_OF_YAWGMOTH:
@@ -1260,9 +1262,10 @@ int get_color_of_mana_produced_by_id(int csvid, int info_slot, int player){
 
 		case CARD_ID_EXOTIC_ORCHARD:
 		case CARD_ID_FELLWAR_STONE:
+		case CARD_ID_QUIRION_EXPLORER:
 		case CARD_ID_SYLVOK_EXPLORER:
 			player = 1 - player;
-			// and fall through
+			// intentionally fall through
 		case CARD_ID_REFLECTING_POOL:
 		case CARD_ID_SQUANDERED_RESOURCES:
 		case CARD_ID_STAR_COMPASS:{
@@ -1428,34 +1431,36 @@ void mana_burn(void)
 	  int amt_drained = 0, amt_left = 0;
 	  int clr;
 	  if (mana_pool[p][COLOR_ANY] > 0)
-		for (clr = COLOR_ARTIFACT; clr >= COLOR_COLORLESS; --clr)
-		  if (mana_doesnt_drain_from_pool[p][clr] & MANADRAIN_DOESNT_DRAIN)
-			amt_left += mana_pool[p][clr];
-		  else
-			{
-			  uint8_t nondraining;
-			  if ((nondraining = (mana_doesnt_drain_from_pool[p][clr] & MANADRAIN_AMT_MASK)))
-				{
-				  if (nondraining > mana_pool[p][clr])
-					{	// more flagged as not-draining than is actually in pool
-					  nondraining = mana_pool[p][clr];
-					  mana_doesnt_drain_from_pool[p][clr] &= ~MANADRAIN_AMT_MASK;
-					  mana_doesnt_drain_from_pool[p][clr] |= nondraining;
-					}
-				  mana_pool[p][clr] -= nondraining;
-				}
+		{
+		  for (clr = COLOR_ARTIFACT; clr >= COLOR_COLORLESS; --clr)
+		    if (mana_doesnt_drain_from_pool[p][clr] & MANADRAIN_DOESNT_DRAIN)
+			  amt_left += mana_pool[p][clr];
+			else
+			  {
+				uint8_t nondraining;
+				if ((nondraining = (mana_doesnt_drain_from_pool[p][clr] & MANADRAIN_AMT_MASK)))
+				  {
+					if (nondraining > mana_pool[p][clr])
+					  {	// more flagged as not-draining than is actually in pool
+						nondraining = mana_pool[p][clr];
+						mana_doesnt_drain_from_pool[p][clr] &= ~MANADRAIN_AMT_MASK;
+						mana_doesnt_drain_from_pool[p][clr] |= nondraining;
+					  }
+					mana_pool[p][clr] -= nondraining;
+				  }
 
-			  if (mana_doesnt_drain_from_pool[p][clr] & MANADRAIN_BECOMES_COLORLESS)
-				{
-				  amt_left += mana_pool[p][clr];
-				  mana_pool[p][COLOR_COLORLESS] += mana_pool[p][clr];
-				}
-			  else
-				amt_drained += mana_pool[p][clr];
+				if (mana_doesnt_drain_from_pool[p][clr] & MANADRAIN_BECOMES_COLORLESS)
+				  {
+					amt_left += mana_pool[p][clr];
+					mana_pool[p][COLOR_COLORLESS] += mana_pool[p][clr];
+				  }
+				else
+				  amt_drained += mana_pool[p][clr];
 
-			  mana_pool[p][clr] = nondraining;
-			  amt_left += nondraining;
-			}
+				mana_pool[p][clr] = nondraining;
+				amt_left += nondraining;
+			  }
+		}
 
 	  mana_pool[p][COLOR_ANY] = amt_left;
 

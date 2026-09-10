@@ -30,6 +30,7 @@ int card_insect(int player, int card, event_t event){
 
 int card_gold(int player, int card, event_t event)
 {
+  // Used externally
   if (event == EVENT_CAN_ACTIVATE)
 	return can_sacrifice_this_as_cost(player, card) && can_produce_mana(player, card);
 
@@ -84,6 +85,14 @@ int card_spirit2(int player, int card, event_t event){
 	if( get_special_infos(player, card) == 67 ){
 		if( eot_trigger(player, card, event) ){
 			kill_card(player, card, KILL_SACRIFICE);
+		}
+	}
+
+	// spirit token from Daxos the Returned
+	//"This creature's power and toughness are each equal to the number of experience counters you have."
+	if( get_special_infos(player, card) == 66 ){
+		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) ){
+			 event_result = EXPERIENCE_COUNTERS(player);
 		}
 	}
 
@@ -305,14 +314,6 @@ int card_horror_token(int player, int card, event_t event){
 
 int card_bird_token(int player, int card, event_t event){
 
-	// Bird token from Daxos the Returned
-	//"This creature's power and toughness are each equal to the number of experience counters you have."
-	if( get_special_infos(player, card) == 66 ){
-		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) ){
-			event_result += EXPERIENCE_COUNTERS(player);
-		}
-	}
-
 	return generic_token(player, card, event);
 }
 
@@ -325,13 +326,17 @@ int card_goblin_token(int player, int card, event_t event){
 			}
 			else{
 				if( eot_trigger(player, card, event) ){
-					kill_card(player, card, KILL_REMOVE);
+					kill_card(player, card, KILL_EXILE);
 				}
 			}
 		}
 	}
 	if( get_special_infos(player, card) == 67 ){
 		haste(player, card, event);
+	}
+	if( get_special_infos(player, card) == 68 ){
+		// "Creatures you control attack each combat if able."
+		all_must_attack_if_able(player, event, -1);
 	}
 	return generic_token(player, card, event);
 }
@@ -425,7 +430,7 @@ int card_elemental_cat(int player, int card, event_t event){
 
 	if( get_special_infos(player, card) == 66 ){
 		if( eot_trigger(player, card, event) ){
-			kill_card(player, card, KILL_REMOVE);
+			kill_card(player, card, KILL_EXILE);
 		}
 	}
 	if( get_special_infos(player, card) == 67 ){
@@ -450,7 +455,7 @@ int card_cleric_token(int player, int card, event_t event){
 			charge_mana_for_activated_ability(player, card, 3, 2, 0, 0, 0, 1) ;
 			if( spell_fizzled != 1 ){
 				tap_card(player, card);
-				kill_card(player, card, KILL_REMOVE);
+				kill_card(player, card, KILL_EXILE);
 			}
 		}
 
@@ -479,3 +484,7 @@ int card_eldrazi_spawn(int player, int card, event_t event){
 	return generic_token(player, card, event);
 }
 
+int card_angel_token(int player, int card, event_t event){
+
+	return generic_token(player, card, event);
+}

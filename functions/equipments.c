@@ -19,17 +19,14 @@ static int is_shroud_equipment(int player, int card){
 
 void unattach(int equipment_controller, int equipment_card)
 {
-  card_instance_t* instance = get_card_instance(equipment_controller, equipment_card), *inst;
+	if( is_equipping(equipment_controller, equipment_card) ){
+		call_card_function(equipment_controller, equipment_card, EVENT_UNATTACH);
+	}
+	card_instance_t* instance = get_card_instance(equipment_controller, equipment_card), *inst;
   if (instance->targets[8].player >= 0 && instance->targets[8].player >= 0
 	  && (inst = in_play(instance->targets[8].player, instance->targets[8].card)))
 	{
 	  inst->regen_status |= KEYWORD_RECALC_ALL;
-	  int id = get_id(equipment_controller, equipment_card);
-	  if ((id == CARD_ID_GRAFTED_WARGEAR || id == CARD_ID_GRAFTED_EXOSKELETON || id == CARD_ID_STITCHERS_GRAFT)
-		  && equipment_controller == instance->targets[8].player)
-		kill_card(instance->targets[8].player, instance->targets[8].card, KILL_SACRIFICE);
-	  if (id == CARD_ID_NIM_DEATHMANTLE)
-		reset_subtypes(instance->targets[8].player, instance->targets[8].card, 1);
 	}
 
   instance->damage_target_player = instance->targets[8].player = -1;
@@ -53,27 +50,27 @@ static int equipment_legacy(int player, int card, event_t event)
 		  || !(equipment = in_play(eqp, eqc)))		// Equipment not in play
 		{
 		  // Just remove the legacy.
-		  kill_card(player, card, KILL_REMOVE);
+		  kill_card(player, card, KILL_EXILE);
 		}
 	  else if (!in_play(crp, crc))	/* Equipped creature not in play (despite this effect is attached to it and still in play; but we could get here if the
 									 * creature moves to the stack or a hand by fiddling with its bits rather than doing it properly with bounce_permanent()) */
 		{
 		  // Remove the legacy; and unattach the equipment only if equipment thinks it's still attached to this creature too
-		  kill_card(player, card, KILL_REMOVE);
+		  kill_card(player, card, KILL_EXILE);
 		  if (equipment->targets[8].player == crp && equipment->targets[8].card == crc)
 			unattach(eqp, eqc);
 		}
 	  else if (equipment->targets[8].player != crp || equipment->targets[8].card != crc)	// Equipment no longer attached to this creature
 		{
 		  // Just remove the legacy, don't unattach from whatever it's attached to now.
-		  kill_card(player, card, KILL_REMOVE);
+		  kill_card(player, card, KILL_EXILE);
 		}
 	  else if (!is_what(crp, crc, TYPE_CREATURE)	// Attached object no longer a creature
 			   || is_what(eqp, eqc, TYPE_CREATURE)	// Equipment now a creature
 			   || is_protected_from(crp, crc, eqp, eqc, IPF_ATTACH_EQUIPMENT))	// Creature has protection from the equipment
 		{
 		  // Remove the legacy and unattach the equipment.
-		  kill_card(player, card, KILL_REMOVE);
+		  kill_card(player, card, KILL_EXILE);
 		  unattach(eqp, eqc);
 		}
 	}
@@ -129,6 +126,7 @@ void equip_target_creature(int equipment_controller, int equipment_card, int t_p
 		set_special_flags2(t_player, t_card, SF2_CANNOT_BE_SACRIFICED);
 	}
 	play_sound_effect(WAV_EQUIP);
+	call_card_function(equipment_controller, equipment_card, EVENT_EQUIPMENT_ATTACHED);
 }
 
 
@@ -158,33 +156,29 @@ static const char* already_equipping(int who_chooses, int player, int card, int 
   return NULL;
 }
 #endif
-int check_for_equipment_targets(int player, int card)
+static int check_for_equipment_targets_impl(int player, int card, target_definition_t *td)
 {
-  target_definition_t td;
-  default_target_definition(player, card, &td, TYPE_CREATURE);
-  td.allowed_controller = player;
-  td.preferred_controller = player;
-
-  int csvid = get_id(player, card);
-
-  if (csvid == CARD_ID_O_NAGINATA)
-	td.power_requirement = 3 | TARGET_PT_GREATER_OR_EQUAL;
-
-  if (csvid == CARD_ID_GATE_SMASHER)
-	td.toughness_requirement = 4 | TARGET_PT_GREATER_OR_EQUAL;
-
-  if (csvid == CARD_ID_KONDAS_BANNER)
-	td.required_subtype = SUBTYPE_LEGEND;
-
 #ifndef ALLOW_REEQUIP
   if (is_equipping(player, card))
 	{
-	  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
-	  td.extra = (int)already_equipping;
+	  td->special = TARGET_SPECIAL_EXTRA_FUNCTION;
+	  td->extra = (int)already_equipping;
 	}
 #endif
 
-  return can_target(&td);
+  return can_target(td);
+}
+
+int check_for_equipment_targets(int player, int card){
+	target_definition_t td;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+	td.allowed_controller = player;
+	td.preferred_controller = player;
+	return check_for_equipment_targets_impl(player, card, &td);
+}
+
+int check_for_equipment_targets_custom(int player, int card, target_definition_t *td){
+	return check_for_equipment_targets_impl(player, card, td);
 }
 
 int get_updated_equip_cost(int player, int card, int equip_cost){
@@ -197,10 +191,10 @@ int get_updated_equip_cost(int player, int card, int equip_cost){
 				if( is_what(player, count, TYPE_ARTIFACT) ){
 					art_count++;
 				}
-				if( get_id(player, count) == CARD_ID_AURIOK_STEELSHAPER ){
+				if( get_id(player, count) == CARD_ID_AURIOK_STEELSHAPER && ! is_humiliated(player, count) ){
 					new_cost--;
 				}
-				if( get_id(player, count) == CARD_ID_PURESTEEL_PALADIN ){
+				if( get_id(player, count) == CARD_ID_PURESTEEL_PALADIN && ! is_humiliated(player, count) ){
 					psp_flag = 1;
 				}
 			}
@@ -216,14 +210,23 @@ int get_updated_equip_cost(int player, int card, int equip_cost){
 	return new_cost;
 }
 
-int can_activate_basic_equipment(int player, int card, event_t event, int equip_cost){
-	if( can_sorcery_be_played(player, event) && ! is_what(player, card, TYPE_CREATURE) ){
+static int can_activate_basic_equipment_impl(int player, int card, event_t event, int equip_cost, target_definition_t *td){
+	if( can_sorcery_be_played(player, event) && ! is_what(player, card, TYPE_CREATURE) && can_use_activated_abilities(player, card) ){
 		int new_cost = get_updated_equip_cost(player, card, equip_cost);
-		if( has_mana( player, COLOR_COLORLESS, new_cost) ){
-			return check_for_equipment_targets(player, card);
+		if( has_mana_for_activated_ability(player, card, MANACOST_X(new_cost)) ){
+			return check_for_equipment_targets_custom(player, card, td);
 		}
 	}
 	return 0;
+}
+
+int can_activate_basic_equipment(int player, int card, event_t event, int equip_cost){
+	target_definition_t td;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+	td.allowed_controller = player;
+	td.preferred_controller = player;
+
+	return can_activate_basic_equipment_impl(player, card, event, equip_cost, &td);
 }
 
 int activate_basic_equipment(int player, int card, int equip_cost){
@@ -234,13 +237,6 @@ int activate_basic_equipment(int player, int card, int equip_cost){
 	td.allowed_controller = player;
 	td.preferred_controller = player;
 
-	int csvid = get_id(player, card);
-
-	if( csvid == CARD_ID_O_NAGINATA ){
-		td.power_requirement = 3 | TARGET_PT_GREATER_OR_EQUAL;
-	} else if( csvid == CARD_ID_GATE_SMASHER ){
-		td.toughness_requirement = 4 | TARGET_PT_GREATER_OR_EQUAL;
-	}
 	td.allow_cancel = 0;
 
 	instance->number_of_targets = 0;
@@ -276,40 +272,46 @@ int activate_basic_equipment(int player, int card, int equip_cost){
 	return rval;
 }
 
+int resolve_activation_equipment(int player, int card, target_definition_t *td){
+	if( valid_target(td) ){
+		card_instance_t* instance = get_card_instance(player, card);
+		equip_target_creature(instance->parent_controller, instance->parent_card, 
+								instance->targets[0].player, instance->targets[0].card);
+	}
+	return 0;
+}
+
 int resolve_activation_basic_equipment(int player, int card){
-	card_instance_t* instance = get_card_instance(player, card);
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.allowed_controller = player;
 	td.preferred_controller = player;
 
-	int csvid = get_id(player, card);
-	if( csvid == CARD_ID_O_NAGINATA ){
-		td.power_requirement = 3 | TARGET_PT_GREATER_OR_EQUAL;
-	} else if( csvid == CARD_ID_GATE_SMASHER ){
-		td.toughness_requirement = 4 | TARGET_PT_GREATER_OR_EQUAL;
-	}
-
-	if( validate_target(player, card, &td, 0) ){
-		equip_target_creature(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card);
-		return 1;
-	} else {
-		return 0;
-	}
+	return resolve_activation_equipment(player, card, &td);
 }
 
 int basic_equipment(int player, int card, event_t event, int equip_cost){
-	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) ){
-		return can_activate_basic_equipment(player, card, event, equip_cost);
+
+	if( ! IS_GAA_EVENT(event) ){
+		return 0;
 	}
-	else if( event == EVENT_ACTIVATE ){
-		activate_basic_equipment(player, card, equip_cost);
+
+	target_definition_t td;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+	td.allowed_controller = player;
+	td.preferred_controller = player;
+
+	if(event == EVENT_RESOLVE_ACTIVATION ){
+		if( valid_target(&td) ){
+			card_instance_t* instance = get_card_instance(player, card);
+			equip_target_creature(instance->parent_controller, instance->parent_card, 
+									instance->targets[0].player, instance->targets[0].card);
+		}
 	}
-	else if(event == EVENT_RESOLVE_ACTIVATION ){
-		resolve_activation_basic_equipment(player, card);
-	}
-	return 0;
+
+	return generic_activated_ability(player, card, event, GAA_EQUIPMENT | GAA_LITERAL_PROMPT, MANACOST_X(equip_cost), 0, &td, 
+									"Select target creature you control.");
 }
 
 int living_weapon(int player, int card, event_t event, int equip_cost){

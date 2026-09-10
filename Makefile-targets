@@ -21,8 +21,11 @@ $(OBJDIR)%.o: %.c $(BASEDIR)/manalink.h $(BASEDIR)/defs.h $(BASEDIR)/subtypes.h 
 $(OBJDIR)%.obj: %.cpp $(BASEDIR)/manalink.h $(BASEDIR)/defs.h $(BASEDIR)/subtypes.h $(BASEDIR)/card_id.h $(HFILES)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
+OUTPUT_DLL_TO_DBG=$(OUTPUT:.dll=.dbg)
+OUTPUT_EXEDLL_TO_DBG=$(OUTPUT_DLL_TO_DBG:.exe=.dbg)
+
 clean::
-	-$(RM) $(WILDOBJFILES) $(OUTPUT) $(OUTPUT:.dll=.dbg) $(LOCAL_LIBFILES)
+	-$(RM) $(WILDOBJFILES) $(OUTPUT) $(OUTPUT_EXEDLL_TO_DBG) $(LOCAL_LIBFILES)
 
 .PHONY: all clean
 

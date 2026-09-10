@@ -64,6 +64,8 @@ void human_autotap_for_mana(int player, int* amt, int* unknown_v46, int unknown_
 	}
 }
 
+void memcpy_suppress_size_warning(void* dest, const void* src, size_t sz);
+
 /* Copies the following data (all int or arrays of int unless noted):
 0x4ef170			must_attack
 0x4ef174			TENTATIVE_types_of_cards_in_graveyard[2]
@@ -163,7 +165,7 @@ void backup_data_for_ai(void)
 void restore_data_for_ai(void)
 {
   // 0x498e70
-  memcpy(&must_attack, (void*)0x50be70, 0x1a740);
+  memcpy_suppress_size_warning(&must_attack, (void*)0x50be70, 0x1a740);
   STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
   memcpy(&cards_data[EXE_DWORD(0x7a5380)], (void*)0x5265b0, 16 * sizeof(card_data_t));
   ai_modifier = EXE_DWORD(0x5b9b3c);
@@ -208,7 +210,7 @@ void backup_data_for_ai_0(void)
 void restore_data_for_ai_0(void)
 {
   // 0x498df0
-  memcpy(&must_attack, (void*)0x526a30, 0x1cd00);
+  memcpy_suppress_size_warning(&must_attack, (void*)0x526a30, 0x1cd00);
   STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
   memcpy(&cards_data[EXE_DWORD(0x7a5380)], (void*)0x543730, 16 * sizeof(card_data_t));
 #define BACKUP_CMD_A(data)	memcpy(data, backup0_##data, sizeof(data))

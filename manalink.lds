@@ -252,14 +252,9 @@ _call_sub_437E20_unless_ai_is_speculating = 0x471D60;
 
 /* Cards in the exe */
 _card_braingeyser_exe = 0x0041BB00;
-_card_glorious_anthem = 0x403CD0;
 _card_lich_exe = 0x00432300;
 _card_magical_hack_exe = 0x4A45B0;
-_card_manta_riders = 0x4D9790;
-_card_master_decoy = 0x40E510;
-_card_shock = 0x4134B0;
 _card_sleight_of_mind_exe = 0x4A49F0;
-_card_volcanic_hammer = 0x4A3F20;
 _card_zombie_master_exe = 0x004E203F;
 _card_fireball_exe = 0x40A980;
 _card_disintegrate_exe = 0x41E850;
@@ -274,9 +269,6 @@ _card_farmstead_exe = 0x4314A0;
 _card_ancestral_recall_exe = 0x4A2C50;
 _card_swords_to_plowshares_exe =0x4A3750;
 _card_guardian_angel_exe = 0x00474D90;
-_card_river_boa = 0x0040D650;
-_card_ghazban_ogre = 0x00452D40;
-_card_relic_bind = 0x004B7310;
 _card_assembly_worker_exe = 0x47AE00;
 
 /*

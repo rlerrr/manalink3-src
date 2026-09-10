@@ -350,7 +350,7 @@ DestroyAllCardBackgrounds(void)
   return 1;
 }
 
-static void make_frame(PicHandleNames frame);
+void make_frame(PicHandleNames frame);
 
 static void
 make_frame_from_2_overlays(PicHandleNames target, PicHandleNames background, PicHandleNames overlay1, PicHandleNames overlay2)
@@ -461,7 +461,7 @@ make_hybrid_frame_with_overlay(Config* config, PicHandleNames target, PicHandleN
 
 		  k = (255 - blend)*targetbits[3]/255 + blend*rightbits[3]/255;
 		  CLAMP_INTO(3);
-#undef CLAMP
+#undef CLAMP_INTO
 		}
 	}
 
@@ -488,7 +488,7 @@ make_hybrid_frame(Config* config, PicHandleNames target, PicHandleNames left, Pi
   make_hybrid_frame_with_overlay(config, target, left, right, PICHANDLE_INVALID);
 }
 
-static void
+void
 make_frame(PicHandleNames frame)
 {
   switch (frame)
@@ -620,6 +620,8 @@ make_frame(PicHandleNames frame)
 	  case MAKE_FRAMESET(PLANESWALKER_DFC_FRONT, PLANESWALKER_DFC_FRONT_NYX, 1);	break;
 	  case MAKE_FRAMESET(PLANESWALKER_DFC_BACK, PLANESWALKER_DFC_BACK, 0);			break;
 	  case MAKE_FRAMESET(PLANESWALKER_DFC_BACK, PLANESWALKER_DFC_BACK_NYX, 1);		break;
+	  case MAKE_FRAMESET(VEHICLE, VEHICLE, 0);				break;
+	  case MAKE_FRAMESET(VEHICLE, VEHICLE_NYX, 1);			break;
 	  case MAKE_FRAMESET(TOKEN, TOKEN, 0);					break;
 	  case MAKE_FRAMESET(TOKEN, TOKEN_NYX, 1);				break;
 	  case MAKE_FRAMESET(SCHEME, SCHEME, 0);				break;
@@ -701,6 +703,7 @@ get_special_type_cfgnum_by_type(int type)
 	  case SUBTYPE_PLANESWALKER:	return CFG_PLANESWALKER;
 	  case SUBTYPE_SCHEME:			return CFG_SCHEME;
 	  case SUBTYPE_VANGUARD:		return CFG_VANGUARD;
+	  case SUBTYPE_VEHICLE:			return CFG_VEHICLE;
 	  case SUBTYPE_CONSPIRACY:		return CFG_CONSPIRACY;
 	  case SUBTYPE_PRIVATE:			return CFG_INTERNAL;
 	  default:						return -1;
@@ -748,7 +751,7 @@ typedef enum
   } dfc_t;
 
 static dfc_t
-is_dfc(const Rarity* r)
+is_dfc(const Rarities* r)
 {
   if (r->dfc_symbol > DFC_SYMBOL_MAX)
 	return DFC_NO;
@@ -758,7 +761,7 @@ is_dfc(const Rarity* r)
 }
 
 PicHandleNames
-select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card)
+select_frame(const card_ptr_t* cp, const Rarities* r, int player, int card)
 {
   int typ;
   int clr;
@@ -780,17 +783,27 @@ select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card)
 		}
 	  instance = hack_instance = get_displayed_card_instance(player, card);
 
-	  /* Activation cards on the stack, other than the top one, for some reason get their colors overwritten by 1.  This can be observed with the original
-	   * executable/drawcardlib by picking a permanent that has a repeatable activation ability (I used Figure of Destiny), changing its color (I used
-	   * Lifelace), activating it, and activating it again in response.  Double-right-clicking the top activation card on the stack will show the permanent with
-	   * its laced color (green in my test); double-right-clicking the earlier activation card on the stack will show the card's default color (gold here).  I
-	   * can't find what's doing the overwriting, so can't comment on whether it's intentional.  Note that this won't affect cards that are actually supposed to
-	   * be temporarily colorless; they end up with 0, not 1, for color. */
+	  /* Activation cards on the stack, other than the top one, for some reason get their colors overwritten by 1.
+	   * This can be observed with the original executable/drawcardlib by picking a permanent that has a repeatable
+	   * activation ability (I used Figure of Destiny), changing its color (I used Lifelace), activating it, and
+	   * activating it again in response.  Double-right-clicking the top activation card on the stack will show the
+	   * permanent with its laced color (green in my test); double-right-clicking the earlier activation card on the
+	   * stack will show the card's default color (gold here).  I can't find what's doing the overwriting, so can't
+	   * comment on whether it's intentional.  Note that this won't affect cards that are actually supposed to be
+	   * temporarily colorless; they end up with 0, not 1, for color. */
 
-	  typ = cards_data_exe[instance->internal_card_id].type;
+	  int32_t iid = instance->internal_card_id;
+	  if (iid < 0)
+		iid = instance->backup_internal_card_id;
+	  int32_t iid_for_color = iid;
+
+	  typ = cards_data_exe[iid].type;
 
 	  if (typ & TYPE_EFFECT)
-		typ |= cards_data_exe[instance->original_internal_card_id].type;
+		{
+		  iid_for_color = (int32_t)(instance->original_internal_card_id);
+		  typ |= cards_data_exe[instance->original_internal_card_id].type;
+		}
 
 	  if (typ & TYPE_PERMANENT)
 		{
@@ -809,12 +822,15 @@ select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card)
 			}
 		  else if (parent == PARENT_SHANDALAR)
 			{
-			  if ((instance->initial_color & 0x2)	// INSTANCE_FLAG_ENCHANTMENT, in pre-GG instance_flags location
-				  || (instance->unused0x26 & 0x2))	// INSTANCE_FLAG_ENCHANTMENT, in post-GG instance_flags location
+#ifdef EXPORT_TO_DRAWCARDLIB_H
+			  if (instance->aux->instance_flags & INSTANCE_FLAG_ARTIFACT)
+				typ |= TYPE_ARTIFACT;
+			  if (instance->aux->instance_flags & INSTANCE_FLAG_ENCHANTMENT)
 				{
 				  typ |= TYPE_ENCHANTMENT;
 				  ench_evening = 1;
 				}
+#endif
 			}
 		}
 
@@ -826,7 +842,7 @@ select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card)
 			clr = manacost_to_count_colors(cp);
 
 		  if (clr == 0 && !(typ & (TYPE_ARTIFACT | TYPE_LAND)))	// no mana cost (like, say, Ancestral Vision, Evermind, Garruk Relentless, or a token)
-			switch (get_card_ptr(cards_data_exe[((typ & TYPE_EFFECT) ? (int32_t)instance->original_internal_card_id : instance->internal_card_id)].id)->color)
+			switch (get_card_ptr(cards_data_exe[iid_for_color].id)->color)
 			  {
 				case CP_COLOR_BLACK:	clr = COLOR_TEST_BLACK;	break;
 				case CP_COLOR_BLUE:		clr = COLOR_TEST_BLUE;	break;
@@ -835,6 +851,7 @@ select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card)
 				case CP_COLOR_RED:		clr = COLOR_TEST_RED;	break;
 				case CP_COLOR_WHITE:	clr = COLOR_TEST_WHITE;	break;
 				case CP_COLOR_SPECIAL:	clr = -2;				break;
+				case -3:				clr = -3;				break;
 
 				case CP_COLOR_LESS:
 				case CP_COLOR_ARTIFACT:
@@ -904,6 +921,8 @@ select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card)
 			case CP_COLOR_RED:		clr = COLOR_TEST_RED;	break;
 			case CP_COLOR_WHITE:	clr = COLOR_TEST_WHITE;	break;
 			case CP_COLOR_SPECIAL:	clr = -2;				break;
+			case -3:				clr = -3;				break;
+			case -4:				clr = 0;	typ |= TYPE_ARTIFACT;	break;
 
 			case CP_COLOR_LESS:
 			case CP_COLOR_ARTIFACT:
@@ -921,13 +940,19 @@ select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card)
   else if ((special_type_cfgnum = get_special_type_cfgnum_by_cp(cp)) >= 0)
 	{
 	  cfg = &configs[special_type_cfgnum];
-	  /* Most of these types will always be tokens, which is why they're checked for first;
-	   * but Planeswalkers won't be, so using the Token frame for non-card ones is meaningful. */
-	  if (special_type_cfgnum == CFG_PLANESWALKER)
+	  /* Most of these types will always be tokens, which is why they're checked for first; but Planeswalkers and
+	   * Vehicles won't be, so using the Token frame for non-card ones is meaningful. */
+	  if (special_type_cfgnum == CFG_VEHICLE)
 		{
 		  if (instance && is_token_by_instance(instance))
 			cfg = &configs[CFG_TOKEN];
-		  else if (r->default_expansion >= EXPANSION_MAGIC_2015)
+		}
+	  else if (special_type_cfgnum == CFG_PLANESWALKER)
+		{
+		  if (instance && is_token_by_instance(instance))
+			cfg = &configs[CFG_TOKEN];
+		  else if (r->default_expansion >= EXPANSION_MAGIC_2015
+				   || r->default_expansion == EXPANSION_PROMO)
 			switch (is_dfc(r))
 			  {
 				case DFC_FRONT:	cfg = &configs[CFG_MAGIC2015_PLANESWALKER_DFC_FRONT];	break;
@@ -951,6 +976,45 @@ select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card)
   else if ((r->flags & RARITYFLAG_TIMESHIFT)
 		   && r->default_expansion == EXPANSION_FUTURE_SIGHT)
 	cfg = &configs[CFG_FUTURESHIFT];
+  else if (r->default_expansion == EXPANSION_PROMO)
+	{
+	  switch (cp->id)
+		{
+		  case CARD_ID_NALATHNI_DRAGON:
+		  case CARD_ID_SEWERS_OF_ESTARK:
+		  case CARD_ID_WINDSEEKER_CENTAUR:
+			cfg = &configs[CFG_CLASSIC];
+			break;
+
+		  case CARD_ID_EVIL_PRESENTS:
+		  case CARD_ID_FRUITCAKE_ELEMENTAL:
+		  case CARD_ID_SNOW_MERCY:
+		  case CARD_ID_GIFTS_GIVEN:
+		  case CARD_ID_SEASONS_BEATINGS:
+		  case CARD_ID_NAUGHTY_NICE:
+		  case CARD_ID_STOCKING_TIGER:
+		  case CARD_ID_YULE_OOZE:
+			cfg = &configs[CFG_MODERN];
+			break;
+
+		  default:	// Newer Happy Holidays cards
+			if (r->default_rarity == RARE || r->default_rarity == MYTHIC)
+			  switch (is_dfc(r))
+				{
+				  case DFC_FRONT:	cfg = &configs[CFG_MAGIC2015_HOLO_DFC_FRONT];	break;
+				  case DFC_BACK:	cfg = &configs[CFG_MAGIC2015_HOLO_DFC_BACK];	break;
+				  case DFC_NO:		cfg = &configs[CFG_MAGIC2015_HOLO];				break;
+				}
+			else
+			  switch (is_dfc(r))
+				{
+				  case DFC_FRONT:	cfg = &configs[CFG_MAGIC2015_DFC_FRONT];	break;
+				  case DFC_BACK:	cfg = &configs[CFG_MAGIC2015_DFC_BACK];		break;
+				  case DFC_NO:		cfg = &configs[CFG_MAGIC2015];				break;
+				}
+			break;
+		}
+	}
   else if (r->default_expansion < EXPANSION_EIGHTH_EDITION
 		   || r->default_expansion == EXPANSION_MASTERS_EDITION
 		   || r->default_expansion == EXPANSION_MASTERS_EDITION_II
@@ -984,7 +1048,7 @@ select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card)
 	{
 	  case 1:
 		typ = 0;
-		if (clr != -2)
+		if (clr >= -1)	// -1 is multi; -2 and below are effect cards
 		  clr = 0;
 		break;
 
@@ -1071,13 +1135,28 @@ select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card)
 
   if (clr == -2)
 	frame = CARDBK_MODERN_SPECIAL;
+  else if (clr == -3)
+	frame = CARDBK_MODERN_TRIGGER;
   else if (typ & TYPE_LAND)
 	{
 	  int mana_clr;
 	  if (instance)
 		mana_clr = instance->mana_color;
 	  else
-		mana_clr = cp->mana_source_colors;
+		{
+		  mana_clr = cp->mana_source_colors;
+		  if (parent == PARENT_SHANDALAR && ((mana_clr & COLOR_TEST_ANY_COLORED) != COLOR_TEST_ANY_COLORED))
+			for (int i = 0; i < 7; ++i)
+			  switch (cp->types[i])
+				{
+				  case SUBTYPE_PLAINS:		mana_clr |= COLOR_TEST_WHITE;	break;
+				  case SUBTYPE_ISLAND:		mana_clr |= COLOR_TEST_BLUE;	break;
+				  case SUBTYPE_SWAMP:		mana_clr |= COLOR_TEST_BLACK;	break;
+				  case SUBTYPE_MOUNTAIN:	mana_clr |= COLOR_TEST_RED;		break;
+				  case SUBTYPE_FOREST:		mana_clr |= COLOR_TEST_GREEN;	break;
+				  default:	break;
+				}
+		}
 
 	  mana_clr &= (COLOR_TEST_ANY & ~COLOR_TEST_COLORLESS); // i.e., the five colors, but not colorless
 
@@ -1177,7 +1256,7 @@ select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card)
 
   if (frame == FRAME_MODERN_SPELL_COLORLESS && cp->id == CARD_ID_FACE_DOWN_CREATURE && cfg->frames_facedown_creature >= 0)
 	frame = CARDBACK;
-  else if (frame == CARDBK_MODERN_SPECIAL)	// on the frameparts scale, not the frame one
+  else if (frame == CARDBK_MODERN_SPECIAL || frame == CARDBK_MODERN_TRIGGER)	// on the frameparts scale, not the frame one
 	frame = cfg->cardbk_base + (frame - CARDBK_MIN_FRAMEPART);
   else
 	frame = frameset + (frame - FRAME_MODERN_MIN);
@@ -1186,6 +1265,31 @@ select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card)
 	make_frame(frame);
 
   return frame;
+}
+
+// Returns 0 for classic frame, 1 for modern, 2 for timeshift, 3 for futureshift, 4 for 2015, -1 for special.
+int
+get_frame_type(const card_ptr_t* cp)
+{
+  const Rarities* r = get_rarity(cp->id);
+  PicHandleNames framenum = select_frame(cp, r, -1, -1);
+  if (framenum >= FRAME_MODERN_MIN && framenum < FRAME_MODERN_DFC_BACK_NYX_MAX)
+	return 1;
+  if (framenum >= FRAME_CLASSIC_MIN && framenum < FRAME_CLASSIC_NYX_MAX)
+	return 0;
+  if (framenum >= FRAME_TIMESHIFT_MIN && framenum < FRAME_TIMESHIFT_NYX_MAX)
+	return 2;
+  if (framenum >= FRAME_FUTURESHIFT_MIN && framenum < FRAME_FUTURESHIFT_NYX_MAX)
+	return 3;
+  if (framenum >= FRAME_PLANESWALKER_MIN && framenum < FRAME_PLANESWALKER_DFC_BACK_NYX_MAX)
+	return 1;
+  if (framenum >= FRAME_VEHICLE_MIN && framenum < FRAME_VEHICLE_NYX_MAX)
+	return 4;
+  if (framenum >= FRAME_TOKEN_MIN && framenum < FRAME_INTERNAL_NYX_MAX)
+	return -1;
+  if (framenum >= FRAME_MAGIC2015_MIN && framenum < FRAME_MAGIC2015_PLANESWALKER_DFC_BACK_NYX_MAX)
+	return 4;
+  return -1;
 }
 
 static RECT*
@@ -1476,6 +1580,16 @@ DrawSmallCardTitle(HDC hdc, const RECT* dest_rect, const char* card_title, int c
   return rval;
 }
 
+// precondition: hack_instance != NULL
+static int
+is_hack_instance_a_creature(void)
+{
+  int32_t iid = hack_instance->internal_card_id;
+  if (iid < 0)
+	iid = hack_instance->backup_internal_card_id;
+  return cards_data_exe[iid].type & TYPE_CREATURE;
+}
+
 int
 DrawSmallCard(HDC hdc, const RECT* card_rect, const card_ptr_t* cp, int version, int mode, int player, int card)
 {
@@ -1493,7 +1607,7 @@ DrawSmallCard(HDC hdc, const RECT* card_rect, const card_ptr_t* cp, int version,
   SetWindowOrgEx(hdc, 0, 0, NULL);
   SetViewportOrgEx(hdc, card_rect->left, card_rect->top, NULL);
 
-  const Rarity* r = get_rarity(cp->id);
+  const Rarities* r = get_rarity(cp->id);
   PicHandleNames framenum = select_frame(cp, r, -1, -1);
   int colorless_option;
   if (framenum == CARDBACK)
@@ -1553,7 +1667,7 @@ DrawSmallCard(HDC hdc, const RECT* card_rect, const card_ptr_t* cp, int version,
 	}
 
   if (hack_instance && is_planeswalker_by_cp(cp)
-	  && (parent == PARENT_MANALINK || parent == PARENT_SHANDALAR) && !(cards_data_exe[hack_instance->internal_card_id].type & TYPE_CREATURE)
+	  && (parent == PARENT_MANALINK || parent == PARENT_SHANDALAR) && !is_hack_instance_a_creature()
 	  && cfg->smallcard_show_loyalty_curr && hack_instance->special_counters > 0)
 	{
 	  GpImageAttributes* loy_alpha_xform = cfg->smallcard_loyalty_curr_alpha_xform;
@@ -1750,28 +1864,4 @@ get_card_data_from_csvid(uint32_t csvid)
 	return NULL;
   else
 	return &cards_data_exe[csvid_to_iid[csvid]];
-}
-
-int
-find_rules_engine_csvid(void)
-{
-  if (parent == PARENT_MANALINK || parent == PARENT_SHANDALAR)
-	{
-	  static int card_id_rules_engine = -1;
-	  if (card_id_rules_engine != -1)
-		return card_id_rules_engine;
-
-	  card_id_rules_engine = CARD_ID_RULES_ENGINE;	// If it's not found, don't search again
-	  int iid;
-	  for (iid = 0; cards_data_exe[iid].id != 0xffff; ++iid)
-		if (cards_data_exe[iid].code_pointer == 0x20014f7)
-		  {
-			card_id_rules_engine = cards_data_exe[iid].id;
-			break;
-		  }
-
-	  return card_id_rules_engine;
-	}
-  else	// Deck.dll - just use the hardcoded number csvid as of compilation time.
-	return CARD_ID_RULES_ENGINE;
 }

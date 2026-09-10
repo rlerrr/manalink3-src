@@ -75,7 +75,7 @@ int calc_initial_attack_rating_by_iid(int player, int iid)
   if (abils & KEYWORD_REGENERATION)
 	rating = 3 * rating / 2;
 
-  if (cards_data[iid].code_pointer == 0x4CA0F0)	// card_ball_lightning()
+  if (cards_data[iid].code_pointer == (CardFunction)0x4CA0F0)	// original card_ball_lightning()
 	rating = 1;
 
   rating *= EXE_DWORD_PTR(0x628C1C)[player];	// Seems to always be 12
@@ -129,7 +129,7 @@ static int calc_initial_attack_rating(int player, int card)
 #endif
 	  rating *= 3;
 	}
-  else if (cards_data[iid].code_pointer == 0x4CA0F0)	// card_ball_lightning()
+  else if (cards_data[iid].code_pointer == (CardFunction)0x4CA0F0)	// original card_ball_lightning()
 	rating = 1;
 
   rating *= EXE_DWORD_PTR(0x628C1C)[player];	// Seems to always be 12
@@ -726,7 +726,7 @@ int draw_a_card(int player)
 	++cards_drawn_this_turn[player];
 
   play_sound_effect(WAV_DRAW);
-  instance->state |= STATE_JUST_DRAWED;
+  instance->state |= STATE_DRAWN_THIS_TURN;
   dispatch_trigger2(player, TRIGGER_CARD_DRAWN, EXE_STR(0x7158D4)/*PROMPT_SPECIALFEPHASE[5]*/, 0, player, card_added);
 
   return card_added;
@@ -975,7 +975,7 @@ void reshuffle_all_into_deck(int player, int mode){
 			if( in_play(player, count) ){
 				if( is_what(player, count, TYPE_PERMANENT) ){
 					if( check_special_flags2(player, count, SF2_COMMANDER) ){
-						kill_card(player, count, KILL_REMOVE);
+						kill_card(player, count, KILL_EXILE);
 						commander_found = 1;
 					}
 					else{
@@ -985,7 +985,7 @@ void reshuffle_all_into_deck(int player, int mode){
 				else{
 					if( (mode & 1) ){
 						if( get_id(player, count) == CARD_ID_ELDER_DRAGON_HIGHLANDER ){
-							remove_counters(player, count, COUNTER_ENERGY, count_counters(player, count, COUNTER_ENERGY));
+							remove_counters(player, count, COUNTER_VORTEX, count_counters(player, count, COUNTER_VORTEX));
 							if( get_card_instance(player, count)->targets[3].player != 0 ){
 								get_card_instance(player, count)->targets[3].player = 0;
 								if( ! commander_found ){
@@ -994,7 +994,7 @@ void reshuffle_all_into_deck(int player, int mode){
 							}
 						}
 						if( is_plane_card(get_id(player, count)) ){
-							remove_counters(player, count, COUNTER_ENERGY, count_counters(player, count, COUNTER_ENERGY));
+							remove_counters(player, count, COUNTER_VORTEX, count_counters(player, count, COUNTER_VORTEX));
 							planes[pc] = count;
 							pc++;
 						}
@@ -1027,7 +1027,7 @@ void reshuffle_all_into_deck(int player, int mode){
 							}
 						}
 						if( kill_effect ){
-							kill_card(player, count, KILL_REMOVE);
+							kill_card(player, count, KILL_EXILE);
 						}
 					}
 				}
@@ -1117,8 +1117,8 @@ static void kill_card_impl(int player, int card, kill_t kill_mode, int flags)
   // Hack for cards the allow to play another card and then exile it (example : Toshiro Umezawa)
   // Will work only for Sorceries, Instants and Interrupts and only if SF_EXILE_ON_RESOLUTION is set.
   // Actually, this hack is used only by the "play_card_for_free_and_exile_it" function
-  if (kill_mode != KILL_REMOVE && is_what(player, card, TYPE_SPELL) && check_special_flags(player, card, SF_EXILE_ON_RESOLUTION))
-	kill_mode = KILL_REMOVE;
+  if (kill_mode != KILL_EXILE && is_what(player, card, TYPE_SPELL) && check_special_flags(player, card, SF_EXILE_ON_RESOLUTION))
+	kill_mode = KILL_EXILE;
 
   if (ai_is_speculating != 1
 	  && kill_mode == KILL_SACRIFICE
@@ -1132,14 +1132,14 @@ static void kill_card_impl(int player, int card, kill_t kill_mode, int flags)
 	}
 
 	// Hack for our implementation of Soulfire Grand Master
-	if( kill_mode != KILL_REMOVE && is_what(player, card, TYPE_SPELL) && check_special_flags2(player, card, SF2_SOULFIRE_GRAND_MASTER) &&
+	if( kill_mode != KILL_EXILE && is_what(player, card, TYPE_SPELL) && check_special_flags2(player, card, SF2_SOULFIRE_GRAND_MASTER) &&
 		!(flags & SPELL_IS_BEING_COUNTERED)
 	  ){
 		bounce_permanent(player, card);
 		return;
 	}
 
-  if (kill_mode == KILL_REMOVE && !(flags & FROM_EXE) && !is_what(player, card, TYPE_EFFECT))
+  if (kill_mode == KILL_EXILE && !(flags & FROM_EXE) && !is_what(player, card, TYPE_EFFECT))
 	{
 	  // kill_card forces kill_mode to sacrifice for cards without STATE_IN_PLAY set.  Work around.
 	  if (!(instance->state & STATE_IN_PLAY))
@@ -1170,7 +1170,7 @@ static void kill_card_impl(int player, int card, kill_t kill_mode, int flags)
 
   if (!(instance->token_status & STATUS_OBLITERATED)
 	  && kill_mode != KILL_SACRIFICE
-	  && kill_mode != KILL_REMOVE
+	  && kill_mode != KILL_EXILE
 	  && cards_data[instance->internal_card_id].type & (TYPE_ARTIFACT|TYPE_CREATURE|TYPE_LAND))
 	{
 	  instance->state |= STATE_IN_PLAY;
@@ -1246,7 +1246,7 @@ int destroy_attached_auras_and_obliterate_card(int player, int card)
 }
 
 int manage_counterspell_linked_hacks(int player, int card, int to_counter_player, int to_counter_card){
-	int kill_mode = check_special_flags(to_counter_player, to_counter_card, SF_EXILE_ON_RESOLUTION) ? KILL_REMOVE : KILL_SACRIFICE;
+	int kill_mode = check_special_flags(to_counter_player, to_counter_card, SF_EXILE_ON_RESOLUTION) ? KILL_EXILE : KILL_SACRIFICE;
 	if( check_special_flags2(to_counter_player, to_counter_card, SF2_COMMANDER) ){
 		int edhc = -1;
 		int i;
@@ -1257,8 +1257,8 @@ int manage_counterspell_linked_hacks(int player, int card, int to_counter_player
 			}
 		}
 		if( edhc != -1 ){
-			if( do_dialog(to_counter_player, to_counter_player, to_counter_card, -1, -1, " Exile Commander\n Decline", 0) == 0 ){
-				kill_mode = KILL_REMOVE;
+			if( do_dialog(to_counter_player, to_counter_player, to_counter_card, -1, -1, " Return Commander to commander's zone\n Decline", 0) == 0 ){
+				kill_mode = KILL_EXILE;
 				get_card_instance(to_counter_player, edhc)->targets[3].player = 0;
 			}
 		}
@@ -1282,7 +1282,7 @@ int counterspell_resolve_unless_pay_x(int player, int card, target_definition_t*
   if (target_num < 0)
 	{
 	  // A bletcherous special case for Syncopate and Spell Shrivel.
-	  kill_code = KILL_REMOVE;
+	  kill_code = KILL_EXILE;
 	  target_num = 0;
 	}
 
@@ -1307,8 +1307,8 @@ int counterspell_resolve_unless_pay_x(int player, int card, target_definition_t*
 
 		int prev_kill_code = kill_code;
 		kill_code = manage_counterspell_linked_hacks(player, card, instance->targets[target_num].player, instance->targets[target_num].card);
-		if( prev_kill_code == KILL_REMOVE ){
-			kill_code = KILL_REMOVE;
+		if( prev_kill_code == KILL_EXILE ){
+			kill_code = KILL_EXILE;
 		}
 		kill_card_impl(instance->targets[target_num].player, instance->targets[target_num].card, kill_code, 2);
 		if( ! is_what(player, card, TYPE_INTERRUPT) ){
@@ -1558,6 +1558,9 @@ int rfg_card_from_grave(int player, int grave_id)
 		return -1;
 	}
 
+	obliterate_card_from_deck_impl(graveyard_source[player], grave_id);
+	int iid = rfg_card_from_deck_impl(player, graveyard_ptr_mutable[player], grave_id);
+
 	// Rakshasa Vizier effect.
 	int c;
 	for(c=0; c<active_cards_count[player]; c++){
@@ -1566,8 +1569,11 @@ int rfg_card_from_grave(int player, int grave_id)
 		}
 	}
 
-	obliterate_card_from_deck_impl(graveyard_source[player], grave_id);
-	return rfg_card_from_deck_impl(player, graveyard_ptr_mutable[player], grave_id);
+	if( is_what(-1, iid, TYPE_CREATURE) ){
+		ereboss_titan_effect(1-player);
+	}
+
+	return iid;
 }
 
 // Exile an arbitrary player/card.  Works for cards on the stack, in play, or oublietted, not just in hand, despite the name.
@@ -1704,7 +1710,7 @@ int rfg_target_permanent(int player, int card){
 		return -1;
 	}
 	if( is_token(player, card) ){
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 		return -1;
 	}
 
@@ -1717,7 +1723,7 @@ int rfg_target_permanent(int player, int card){
 	if (owner != player)
 		orig += available_slots;
 
-	kill_card(player, card, KILL_REMOVE);
+	kill_card(player, card, KILL_EXILE);
 
 	return orig;
 }
@@ -1769,14 +1775,14 @@ static int effect_replace_self_mill(int player, int card, event_t event)
 		event_result |= RESOLVE_TRIGGER_MANDATORY;
 
 	  if (event == EVENT_END_TRIGGER)
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 
 	  if (event == EVENT_RESOLVE_TRIGGER)
 		switch (csvid)
 		  {
 			case CASES_GY_FROM_ANYWHERE_REPLACE_SHUFFLE:
 			  // If ~ would be put into a graveyard from anywhere, reveal ~ and shuffle it into its owner's library instead.
-			  kill_card(player, card, KILL_REMOVE);
+			  kill_card(player, card, KILL_EXILE);
 
 			  if (ai_is_speculating != 1)
 				{
@@ -1818,7 +1824,7 @@ static int effect_self_mill(int player, int card, event_t event)
 	{
 	  if (event == EVENT_END_TRIGGER)
 		{
-		  kill_card(player, card, KILL_REMOVE);
+		  kill_card(player, card, KILL_EXILE);
 		  return 0;
 		}
 
@@ -1834,12 +1840,12 @@ static int effect_self_mill(int player, int card, event_t event)
 			  return 0;
 			pos = find_in_graveyard_by_source(player, instance->targets[0].card, instance->targets[0].player);
 			if (pos == -1)	// not in graveyard anymore
-			  kill_card(player, card, KILL_REMOVE);
+			  kill_card(player, card, KILL_EXILE);
 			else if (event == EVENT_TRIGGER)
 			  event_result |= duh_mode(player) ? RESOLVE_TRIGGER_MANDATORY : RESOLVE_TRIGGER_OPTIONAL;
 			else if (event == EVENT_RESOLVE_TRIGGER)
 			  {
-				kill_card(player, card, KILL_REMOVE);
+				kill_card(player, card, KILL_EXILE);
 				reanimate_permanent(player, -1, player, pos, REANIMATE_DEFAULT);
 			  }
 			break;
@@ -1848,13 +1854,13 @@ static int effect_self_mill(int player, int card, event_t event)
 			// When ~ is put into a graveyard from anywhere, shuffle it into its owner's library.
 			pos = find_in_graveyard_by_source(player, instance->targets[0].card, instance->targets[0].player);
 			if (pos == -1)	// not in graveyard anymore
-			  kill_card(player, card, KILL_REMOVE);
+			  kill_card(player, card, KILL_EXILE);
 			else if (event == EVENT_TRIGGER)
 			  event_result |= RESOLVE_TRIGGER_MANDATORY;
 			else if (event == EVENT_RESOLVE_TRIGGER)
 			  {
 				int iid = get_internal_card_id_from_csv_id(csvid);
-				kill_card(player, card, KILL_REMOVE);
+				kill_card(player, card, KILL_EXILE);
 				if (ai_is_speculating != 1)
 				  {
 					// Strictly speaking, shouldn't explicitly reveal, but do so because this is confusing (especially when coming from a library)
@@ -1872,7 +1878,7 @@ static int effect_self_mill(int player, int card, event_t event)
 			// When ~ is put into your graveyard from your library, shuffle your graveyard into your library.
 			if (xtrigger_condition() == XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY)
 			  return 0;
-			// and fall through
+			// else fall through
 		  case CASES_GY_FROM_ANYWHERE_TRIGGER_SHUFFLE_WHOLE_GY:
 			// When ~ is put into a graveyard from anywhere, its owner shuffles his or her graveyard into his or her library.
 			// (Unlike the others, it doesn't matter if these are in the graveyard anymore)
@@ -1881,7 +1887,7 @@ static int effect_self_mill(int player, int card, event_t event)
 			else if (event == EVENT_RESOLVE_TRIGGER)
 			  {
 				int iid = get_internal_card_id_from_csv_id(csvid);
-				kill_card(player, card, KILL_REMOVE);
+				kill_card(player, card, KILL_EXILE);
 				if (ai_is_speculating != 1)
 				  {
 					// Strictly speaking, shouldn't explicitly reveal, but do so because this is confusing (especially when coming from a library)
@@ -2083,7 +2089,7 @@ void special_mill(int player, int card, int source_csvid, int orig_t_player, int
 				for (i = 0; i < local_num_cards_milled; ++i)
 				{
 					if (local_milled[i].position != -1)	// update positions, just in case a replacement trigger (or, more likely, something misbehaving) somehow caused other cards in graveyard to shift
-						local_milled[i].position = find_in_graveyard_by_source(1-player, local_milled[i].source, local_milled[i].position);
+						local_milled[i].position = find_in_graveyard_by_source(player, local_milled[i].source, local_milled[i].position);
 					if (local_milled[i].position != -1)	// still in graveyard?
 					{
 						iids[num] = local_milled[i].internal_card_id;
@@ -2100,6 +2106,29 @@ void special_mill(int player, int card, int source_csvid, int orig_t_player, int
 						}
 					}
 					instance->info_slot = max_cmc;
+				}
+			}
+
+			if (source_csvid == CARD_ID_COMBUSTIBLE_GEARHULK)	// Part of resolution, so happens before normal mill triggers
+			{
+				card_instance_t* instance = get_card_instance(player, card);
+				int iids[local_num_cards_milled], num = 0;
+				for (i = 0; i < local_num_cards_milled; ++i)
+				{
+					if (local_milled[i].position != -1)	// update positions, just in case a replacement trigger (or, more likely, something misbehaving) somehow caused other cards in graveyard to shift
+						local_milled[i].position = find_in_graveyard_by_source(player, local_milled[i].source, local_milled[i].position);
+					if (local_milled[i].position != -1)	// still in graveyard?
+					{
+						iids[num] = local_milled[i].internal_card_id;
+						++num;
+					}
+				}
+
+				if (num > 0){
+					int q;
+					for(q=0; q<num ; q++){
+						instance->info_slot += get_cmc_by_internal_id(iids[q]);
+					}
 				}
 			}
 

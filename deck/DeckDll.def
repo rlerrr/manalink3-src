@@ -8,4 +8,5 @@ DeckBuilderMain @ 5
 _PlayerFace @ 6
 DllEntryPoint @ 1
 Deckdll_initialize_for_shandalar
+Deckdll_initialize_for_shandalar_sa
 deckbuilder_main

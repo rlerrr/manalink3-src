@@ -3,12 +3,9 @@
 
 #include "manalink.h"
 
-void UNUSED1(void){}
-void UNUSED2(void){}
-void UNUSED3(void){}
-
 static const int cardclass_offset_player = 0;
 static const int cardclass_offset_card = 4;
+static const int cardclass_offset_unk1 = 8;
 static const int cardclass_offset_instance_copy = 12;
 static const int territoryclass_offset_card_hwnds = 0;
 static const int territoryclass_offset_card_hwnd_length = 4;
@@ -42,6 +39,8 @@ DLLIMPORT void draw_standard_counters(HDC hdc, const RECT* rect, int player, int
 
 #define blt_dying_pic						EXE_FN(void, 0x4d49b0, HDC hdc, RECT* rect)
 #define blt_summon_pic						EXE_FN(void, 0x4d4820, HDC hdc, RECT* rect)
+#define card_is_valid_for_leftclick			EXE_FN(int, 0x48c7b0, HWND hwnd)
+#define card_leftclick						EXE_FN(BOOL, 0x48c700, HWND hwnd)
 #define draw_damage							EXE_FN(void, 0x4d3630, HDC hdc, RECT* rect, int amt)
 #define draw_manastripes					EXE_FN(int, 0x4d4600, HDC hdc, RECT* rect, int player, int card)
 #define draw_oublietted_effect				EXE_FN(int, 0x4d48b0, HDC hdc, RECT* rect)
@@ -126,18 +125,86 @@ static void premultiply_alpha_hbitmap(HBITMAP hbmp)
 
 STATIC_ASSERT(sizeof(uint64_t) == sizeof(unsigned long long), unsigned_long_long_is_exactly_64_bits);
 
-static unsigned long long get_icons(int player, int card, int is_damage_card)
+//[[[ bitset128: A poor man's version of C++'s std::bitset<128>
+typedef struct
 {
+  unsigned long long ull[2];
+} bitset128;
+
+// Sets the given bit.  Precondition: bit < 128.  Absolutely no errorchecking is done.
+static inline void bitset128_set(bitset128* bs, unsigned int bit)
+{
+  if (bit < 64)
+	bs->ull[0] |= 1ULL << bit;
+  else
+	bs->ull[1] |= 1ULL << (bit - 64);
+}
+
+// Sets all bits.
+static inline void bitset128_set_all(bitset128* bs)
+{
+  bs->ull[0] = -1ULL;
+  bs->ull[1] = -1ULL;
+}
+
+static inline int bitset128_isset(bitset128* bs, unsigned int bit)
+{
+  if (bit < 64)
+	return bs->ull[0] & (1ULL << bit);
+  else
+	return bs->ull[1] & (1ULL << (bit - 64));
+}
+
+// Clears all bits.
+static inline void bitset128_reset_all(bitset128* bs)
+{
+  bs->ull[0] = 0;
+  bs->ull[1] = 0;
+}
+
+// Returns true iff all bits are cleared.
+static inline int bitset128_empty(const bitset128* bs)
+{
+  return bs->ull[0] == 0 && bs->ull[1] == 0;
+}
+
+// Returns the position of the first set bit, and unsets it.  Returns -1 if none set.
+static inline int bitset128_ffs_and_reset(bitset128* bs)
+{
+  int f;
+  if (bs->ull[0])
+	f = 0;
+  else
+	f = 1;
+
+  unsigned int bit = __builtin_ffsll(bs->ull[f]);
+  if (!bit)
+	return -1;
+
+  --bit;
+  bs->ull[f] &= ~(1ULL<<bit);
+
+  return bit + f*64;
+};
+//]]]
+
+static bitset128 get_icons(int player, int card, int is_damage_card)
+{
+  bitset128 rval;
+  bitset128_reset_all(&rval);
+
   if (player < 0 || player > 1 || card < 0 || card >= 150)
-	return 0;
+	return rval;
 
   if (get_setting(SETTING_ABILITY_ICON_MAX) < 0)
-	return -1ULL;
-
-  unsigned long long rval = 0;
+	{
+	  bitset128_set_all(&rval);
+	  return rval;
+	}
 
   keyword_t kw = 0;
   int spkw = 0;
+  int sf2 = 0, sf3 = 0;
   int not_valid_card = 0;
   type_t typ;
   {
@@ -160,13 +227,13 @@ static unsigned long long get_icons(int player, int card, int is_damage_card)
 			spkw = instance->targets[16].card & (SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_LIFELINK | SP_KEYWORD_WITHER);
 
 			if (instance->regen_status & KEYWORD_INFECT)
-			  rval |= 1ULL<<ICON_INFECT;
+			  bitset128_set(&rval, ICON_INFECT);
 
 			if (instance->token_status & STATUS_FIRST_STRIKE_DAMAGE)
-			  rval |= 1ULL<<ICON_FIRST_STRIKE;
+			  bitset128_set(&rval, ICON_FIRST_STRIKE);
 
 			if (instance->token_status & STATUS_TRAMPLE_DAMAGE)
-			  rval |= 1ULL<<ICON_TRAMPLE;
+			  bitset128_set(&rval, ICON_TRAMPLE);
 
 			typ = TYPE_EFFECT;
 		  }
@@ -183,12 +250,15 @@ static unsigned long long get_icons(int player, int card, int is_damage_card)
 			// This is mildly dangerous; cards_data can change during speculation.  But it's rare, and magic.exe already does it lots.
 			// const card_data_t* cd = &cards_data[iid];
 			// if ((typ & (TYPE_INSTANT|TYPE_INTERRUPT)) && (cd->type & TYPE_PERMANENT))
-			// rval |= 1ULL<<ICON_FLASH;	// won't actually show up in Manalink since all icons are suppressed while off battlefield
+			// bitset128_set(&rval, ICON_FLASH);	// won't actually show up in Manalink since all icons are suppressed while off battlefield
 
 			if (is_humiliated_by_instance(instance))
-			  rval |= 1ULL<<ICON_LOST_ABILITIES;
+			  bitset128_set(&rval, ICON_LOST_ABILITIES);
 			else if (!can_use_activated_abilities_by_instance(instance))
-			  rval |= 1ULL<<ICON_CANT_ACTIVATE;
+			  bitset128_set(&rval, ICON_CANT_ACTIVATE);
+
+			sf2 = get_special_flags2_by_instance(instance);
+			sf3 = get_special_flags3_by_instance(instance);
 		  }
       }
 	else
@@ -206,94 +276,145 @@ static unsigned long long get_icons(int player, int card, int is_damage_card)
       if (kw & (KEYWORD_FLYING | KEYWORD_REACH | KEYWORD_BANDING | KEYWORD_PROT_CREATURES | KEYWORD_TRAMPLE | KEYWORD_DEFENDER))
 		{
 		  if (kw & KEYWORD_FLYING)
-			rval |= 1ULL<<ICON_FLYING;
+			bitset128_set(&rval, ICON_FLYING);
 		  if (kw & KEYWORD_REACH)
-			rval |= 1ULL<<ICON_REACH;
+			bitset128_set(&rval, ICON_REACH);
 		  if (kw & KEYWORD_BANDING)
-			rval |= 1ULL<<ICON_BANDING;
+			bitset128_set(&rval, ICON_BANDING);
 		  if (kw & KEYWORD_TRAMPLE)
-			rval |= 1ULL<<ICON_TRAMPLE;
+			bitset128_set(&rval, ICON_TRAMPLE);
 		  //if (kw & KEYWORD_PROT_CREATURES)	// no bit actually assigned; this means something else in Manalink
-		  //rval |= 1ULL<<ICON_PROT_CREATURES;
+		  //bitset128_set(&rval, ICON_PROT_CREATURES);
 		  if (kw & KEYWORD_DEFENDER)
-			rval |= 1ULL<<ICON_DEFENDER;
+			bitset128_set(&rval, ICON_DEFENDER);
 		}
 
       if (kw & (KEYWORD_REGENERATION | KEYWORD_DOUBLE_STRIKE | KEYWORD_FIRST_STRIKE | KEYWORD_SHROUD | KEYWORD_INFECT))
 		{
 		  if (kw & KEYWORD_DOUBLE_STRIKE)
-			rval |= 1ULL<<ICON_DOUBLE_STRIKE;
+			bitset128_set(&rval, ICON_DOUBLE_STRIKE);
 		  else if (kw & KEYWORD_FIRST_STRIKE)
-			rval |= 1ULL<<ICON_FIRST_STRIKE;
+			bitset128_set(&rval, ICON_FIRST_STRIKE);
 
 		  if (kw & KEYWORD_REGENERATION)
-			rval |= 1ULL<<ICON_REGENERATION;
+			bitset128_set(&rval, ICON_REGENERATION);
 		  if (kw & KEYWORD_SHROUD)
-			rval |= 1ULL<<ICON_SHROUD;
+			bitset128_set(&rval, ICON_SHROUD);
 		  if (kw & KEYWORD_INFECT)
-			rval |= 1ULL<<ICON_INFECT;
+			bitset128_set(&rval, ICON_INFECT);
 		}
 
       if (kw & KEYWORD_BASIC_LANDWALK)
-		rval |= (kw & KEYWORD_BASIC_LANDWALK) << ICON_SWAMPWALK;	// KEYWORD_SWAMPWALK is the first, so this is right
+		rval.ull[0] |= (kw & KEYWORD_BASIC_LANDWALK) << ICON_SWAMPWALK;	// KEYWORD_SWAMPWALK is the first, so this is right
 
       if (kw & (KEYWORD_PROT_COLORED | KEYWORD_PROT_ARTIFACTS))
-		rval |= (kw & (KEYWORD_PROT_COLORED | KEYWORD_PROT_ARTIFACTS)) << 4;	// KEYWORD PROT_BLACK 1<<11 to ICON_PROT_BLACK 15
+		rval.ull[0] |= (kw & (KEYWORD_PROT_COLORED | KEYWORD_PROT_ARTIFACTS)) << 4;	// KEYWORD PROT_BLACK 1<<11 to ICON_PROT_BLACK 15
     }
 
-  //if (untap_status & UNTAP_STATUS_DOESNT_UNTAP)	// no bit assigned
-  //rval |= 1ULL<<ICON_DOESNT_UNTAP;
+  if (sf3 & SF3_RENOWNED)
+	bitset128_set(&rval, ICON_RENOWNED);
+  if (sf2 & SF2_MONSTROUS)
+	bitset128_set(&rval, ICON_MONSTROUS);
+  if ((sf2 & SF2_KATABATIC_WINDS)
+	  && !bitset128_isset(&rval, ICON_CANT_ACTIVATE))
+	bitset128_set(&rval, ICON_CANT_ACTIVATE_TAP);
+  if (sf2 & SF2_PAIRED)
+	bitset128_set(&rval, ICON_SOULBOND);
 
-  if (spkw)
+  if (spkw)	// All the icons that can't be shown in Manalink are commented-out in here, too, though they obviously won't all fit in sp_keyword_t
     {
 	  if (spkw & SP_KEYWORD_VIGILANCE)
-		rval |= 1ULL<<ICON_VIGILANCE;
+		bitset128_set(&rval, ICON_VIGILANCE);
+      //if (spkw & SP_KEYWORD_MADNESS)	// no bit assigned, and can't display anyway in Manalink since all icons are suppress while off battlefield
+	  //bitset128_set(&rval, ICON_MADNESS);
 	  if (spkw & SP_KEYWORD_CANNOT_BLOCK)
-		rval |= 1ULL<<ICON_CANT_BLOCK;
+		bitset128_set(&rval, ICON_CANT_BLOCK);
 	  if (spkw & SP_KEYWORD_UNBLOCKABLE)
-		rval |= 1ULL<<ICON_UNBLOCKABLE;
+		bitset128_set(&rval, ICON_UNBLOCKABLE);
 	  if (spkw & SP_KEYWORD_SHADOW)
-		rval |= 1ULL<<ICON_SHADOW;
+		bitset128_set(&rval, ICON_SHADOW);
 	  if (spkw & SP_KEYWORD_HORSEMANSHIP)
-		rval |= 1ULL<<ICON_HORSEMANSHIP;
+		bitset128_set(&rval, ICON_HORSEMANSHIP);
 	  if (spkw & SP_KEYWORD_FEAR)
-		rval |= 1ULL<<ICON_FEAR;
+		bitset128_set(&rval, ICON_FEAR);
 	  if (spkw & SP_KEYWORD_INTIMIDATE)
-		rval |= 1ULL<<ICON_INTIMIDATE;
+		bitset128_set(&rval, ICON_INTIMIDATE);
 	  if (spkw & SP_KEYWORD_DEATHTOUCH)
-		rval |= 1ULL<<ICON_DEATHTOUCH;
+		bitset128_set(&rval, ICON_DEATHTOUCH);
 	  if (spkw & SP_KEYWORD_LIFELINK)
-		rval |= 1ULL<<ICON_LIFELINK;
+		bitset128_set(&rval, ICON_LIFELINK);
 	  if (spkw & SP_KEYWORD_FLANKING)
-		rval |= 1ULL<<ICON_FLANKING;
+		bitset128_set(&rval, ICON_FLANKING);
 	  //if (spkw & SP_KEYWORD_RAMPAGE)	// no bit assigned
-	  //rval |= 1ULL<<ICON_RAMPAGE;
+	  //bitset128_set(&rval, ICON_RAMPAGE);
 	  if (spkw & SP_KEYWORD_BUSHIDO)
-		rval |= 1ULL<<ICON_BUSHIDO;
+		bitset128_set(&rval, ICON_BUSHIDO);
 	  if (spkw & SP_KEYWORD_WITHER)
-		rval |= 1ULL<<ICON_WITHER;
+		bitset128_set(&rval, ICON_WITHER);
 	  //if (spkw & SP_KEYWORD_EXALTED)	// no bit assigned
-	  //rval |= 1ULL<<ICON_EXALTED;
+	  //bitset128_set(&rval, ICON_EXALTED);
 	  if (spkw & SP_KEYWORD_INDESTRUCTIBLE)
-		rval |= 1ULL<<ICON_INDESTRUCTIBLE;
+		bitset128_set(&rval, ICON_INDESTRUCTIBLE);
 	  if (spkw & SP_KEYWORD_HASTE)
-		rval |= 1ULL<<ICON_HASTE;
+		bitset128_set(&rval, ICON_HASTE);
 	  if (spkw & SP_KEYWORD_HEXPROOF)
-		rval |= 1ULL<<ICON_HEXPROOF;
-      //if (kw2 & SP_KEYWORD_PERSIST)	// no bit assigned
-	  //rval |= 1ULL<<ICON_PERSIST;
-      //if (kw2 & SP_KEYWORD_UNDYING)	// no bit assigned
-	  //rval |= 1ULL<<ICON_UNDYING;
-      //if (kw2 & SP_KEYWORD_NINJUTSU)	// no bit assigned, and can't display anyway in Manalink since all icons are suppressed while off battlefield
-	  //rval |= 1ULL<<ICON_NINJUTSU;
-      //if (kw2 & SP_KEYWORD_CANT_BE_COUNTERED)	// no bit assigned, and can't display anyway in Manalink since all icons are suppressed while off battlefield
-	  //rval |= 1ULL<<ICON_CANT_BE_COUNTERED;
-      //if (kw2 & (SP_KEYWORD_PROT_MISC | SP_KEYWORD_GRANTED_PROT_MISC))	// no bit assigned
-	  //rval |= 1ULL<<ICON_PROT_MISC;
+		bitset128_set(&rval, ICON_HEXPROOF);
+      //if (spkw & SP_KEYWORD_PROWESS)	// no bit assigned
+	  //bitset128_set(&rval, ICON_PROWESS);
+	  //if (spkw & SP_KEYWORD_DOESNT_UNTAP)	// no bit assigned
+	  //bitset128_set(&rval, ICON_DOESNT_UNTAP);
+      //if (spkw & SP_KEYWORD_PERSIST)	// no bit assigned
+	  //bitset128_set(&rval, ICON_PERSIST);
+      //if (spkw & SP_KEYWORD_UNDYING)	// no bit assigned
+	  //bitset128_set(&rval, ICON_UNDYING);
+      //if (spkw & SP_KEYWORD_NINJUTSU)	// no bit assigned, and can't display anyway in Manalink since all icons are suppressed while off battlefield
+	  //bitset128_set(&rval, ICON_NINJUTSU);
+      //if (spkw & SP_KEYWORD_CANT_BE_COUNTERED)	// no bit assigned, and can't display anyway in Manalink since all icons are suppressed while off battlefield
+	  //bitset128_set(&rval, ICON_CANT_BE_COUNTERED);
+      //if (spkw & (SP_KEYWORD_PROT_MISC | SP_KEYWORD_GRANTED_PROT_MISC))	// no bit assigned
+	  //bitset128_set(&rval, ICON_PROT_MISC);
       if (spkw & SP_KEYWORD_SKULK)
-		rval |= 1ULL<<ICON_SKULK;
+		bitset128_set(&rval, ICON_SKULK);
       if (spkw & SP_KEYWORD_MENACE)
-		rval |= 1ULL<<ICON_MENACE;
+		bitset128_set(&rval, ICON_MENACE);
+	  //if (spkw & SP_KEYWORD_MORPH)	// no bit assigned
+	  //bitset128_set(&rval, ICON_MORPH);
+	  //if (spkw & SP_KEYWORD_MANIFEST)	// no bit assigned.  SF2_FACE_DOWN_DUE_TO_MANIFEST is closest, but gives away information - it's not set on manifested cards whose front has morph.
+	  //bitset128_set(&rval, ICON_MANIFEST);
+	  //if (spkw & SP_KEYWORD_DELVE)	// no bit assigned
+	  //bitset128_set(&rval, ICON_DELVE);
+	  //if (spkw & SP_KEYWORD_IMPROVISE)	// no bit assigned
+	  //bitset128_set(&rval, ICON_IMPROVISE);
+	  //if (spkw & SP_KEYWORD_CONVOKE)	// no bit assigned
+	  //bitset128_set(&rval, ICON_CONVOKE);
+	  //if (spkw & SP_KEYWORD_CANT_ATTACK)	// no bit assigned
+	  //bitset128_set(&rval, ICON_CANT_ATTACK);
+	  //if (spkw & SP_KEYWORD_REBOUND)	// no bit assigned
+	  //bitset128_set(&rval, ICON_REBOUND);
+	  //if (spkw & SP_KEYWORD_STORM)	// no bit assigned
+	  //bitset128_set(&rval, ICON_STORM);
+	  //if (spkw & SP_KEYWORD_PROVOKE)	// no bit assigned
+	  //bitset128_set(&rval, ICON_PROVOKE);
+	  //if (spkw & SP_KEYWORD_REPLICATE)	// no bit assigned
+	  //bitset128_set(&rval, ICON_REPLICATE);
+	  //if (spkw & SP_KEYWORD_PHASING)	// no bit assigned
+	  //bitset128_set(&rval, ICON_PHASING);
+	  //if (spkw & SP_KEYWORD_SQUIRRELLINK)	// no bit assigned
+	  //bitset128_set(&rval, ICON_SQUIRRELLINK);
+	  //if (spkw & SP_KEYWORD_SPLIT_SECOND)	// no bit assigned
+	  //bitset128_set(&rval, ICON_SPLIT_SECOND);
+	  //if (spkw & SP_KEYWORD_HEXPROOF_MONOCOLORED)	// no bit assigned
+	  //bitset128_set(&rval, ICON_HEXPROOF_MONOCOLORED);
+	  //if (spkw & SP_KEYWORD_HEXPROOF_BLACK)	// no bit assigned
+	  //bitset128_set(&rval, ICON_HEXPROOF_BLACK);
+	  //if (spkw & SP_KEYWORD_HEXPROOF_BLUE)	// no bit assigned
+	  //bitset128_set(&rval, ICON_HEXPROOF_BLUE);
+	  //if (spkw & SP_KEYWORD_HEXPROOF_GREEN)	// no bit assigned
+	  //bitset128_set(&rval, ICON_HEXPROOF_GREEN);
+	  //if (spkw & SP_KEYWORD_HEXPROOF_RED)	// no bit assigned
+	  //bitset128_set(&rval, ICON_HEXPROOF_RED);
+	  //if (spkw & SP_KEYWORD_HEXPROOF_WHITE)	// no bit assigned
+	  //bitset128_set(&rval, ICON_HEXPROOF_WHITE);
     }
 
   return rval;
@@ -368,8 +489,8 @@ static void draw_abilities(HDC hdc, RECT* rect, int player, int card, int is_dam
   if (!bmp_abilities_pic)
 	return;
 
-  unsigned long long icons = get_icons(player, card, is_damage_card ? 1 : 0);
-  if (!icons)
+  bitset128 icons = get_icons(player, card, is_damage_card ? 1 : 0);
+  if (bitset128_empty(&icons))
     return;
 
   int saved_dc = SaveDC(hdc);
@@ -383,11 +504,8 @@ static void draw_abilities(HDC hdc, RECT* rect, int player, int card, int is_dam
 
   int pos = 0;
   int bit;
-  while ((bit = __builtin_ffsll(icons)))
+  while ((bit = bitset128_ffs_and_reset(&icons)) >= 0)
     {
-      --bit;
-      icons &= ~(1ULL<<bit);
-
       int src_x = (bit / 5) * src_size;
       int src_y = (bit % 5) * src_size;
 
@@ -404,7 +522,7 @@ static void draw_abilities(HDC hdc, RECT* rect, int player, int card, int is_dam
 
 static int card_instances_will_have_same_icons(card_instance_t* inst1, card_instance_t* inst2)
 {
-  // By the time we get here, we already know that the cards have the same iid, so no change in flash, or legendary.
+  // By the time we get here, we already know that the cards have the same iid, so no change in flash.
   if ((inst1->regen_status ^ inst2->regen_status)
       & (((KEYWORD_SHROUD<<1)-1) /*| KEYWORD_PROT_CREATURES*/ | KEYWORD_DEFENDER | KEYWORD_INFECT | KEYWORD_DOUBLE_STRIKE))
     return 0;
@@ -428,6 +546,14 @@ static int card_instances_will_have_same_icons(card_instance_t* inst1, card_inst
 						 | SP_KEYWORD_INDESTRUCTIBLE | SP_KEYWORD_HASTE | SP_KEYWORD_HEXPROOF | SP_KEYWORD_SKULK
 						 | SP_KEYWORD_MENACE))
     return 0;
+
+  if ((get_special_flags3_by_instance(inst1) ^ get_special_flags3_by_instance(inst2)) & SF3_RENOWNED)
+	return 0;
+  if ((get_special_flags2_by_instance(inst1) ^ get_special_flags2_by_instance(inst2)) & SF2_MONSTROUS)
+	return 0;
+
+  if (can_use_activated_abilities_by_instance(inst1) != can_use_activated_abilities_by_instance(inst2))
+	return 0;
 
   return 1;
 }
@@ -491,8 +617,8 @@ static const char* get_name_for_ability_icon_at_point(const RECT* rect, int play
   if (!rect || !option_ShowAbilitiesOnCards)
     return NULL;
 
-  unsigned long long icons = get_icons(player, card, -1);
-  if (!icons)
+  bitset128 icons = get_icons(player, card, -1);
+  if (bitset128_empty(&icons))
     return NULL;
 
   RECT dest;
@@ -500,11 +626,8 @@ static const char* get_name_for_ability_icon_at_point(const RECT* rect, int play
 
   int pos = 0;
   int bit;
-  while ((bit = __builtin_ffsll(icons)))
+  while ((bit = bitset128_ffs_and_reset(&icons)) >= 0)
     {
-      --bit;
-      icons &= ~(1ULL<<bit);
-
       copy_rect_for_ability(&dest, rect, pos++);
       if (bit > ICON_MAX || dest.right == 0)
 		break;
@@ -559,6 +682,61 @@ LRESULT __stdcall wndproc_CardClass_hook(HWND hwnd, UINT msg, WPARAM wparam, LPA
 			  return 0;
 		  }
 		break;	// And fall through to call to wndproc_CardClass() below
+
+      case WM_LBUTTONDOWN:
+		{
+		  int attachedto_cast_to_int = GetWindowLong(hwnd, cardclass_offset_unk1);
+		  HWND attachedto = (HWND)attachedto_cast_to_int;
+		  Sleep(GetDoubleClickTime() - (GetMessageTime() - GetTickCount()));
+
+		  MSG ignore;
+		  int saw_dblclk = PeekMessage(&ignore, hwnd, WM_LBUTTONDBLCLK, WM_LBUTTONDBLCLK, PM_NOREMOVE);
+
+		  int ignore_clk;
+		  HWND parent = GetParent(hwnd);
+		  if (parent != hwnd_TerritoryClass_player && parent != hwnd_TerritoryClass_opponent)
+			ignore_clk = FALSE;
+		  else
+			{
+			  if (!attachedto)
+				attachedto = hwnd;
+			  else
+				for (;;)
+				  {
+					int next_cast_to_int = GetWindowLong(attachedto, cardclass_offset_unk1);
+					if (next_cast_to_int)
+					  attachedto = (HWND)next_cast_to_int;
+					else
+					  break;
+				  }
+
+			  RECT orig;
+			  GetWindowRect(attachedto, &orig);
+			  HWND insert_after = GetWindow(attachedto, GW_HWNDPREV);
+			  SendMessage(attachedto, WM_SYSCOMMAND, 0xF012, 0);
+			  RECT curr;
+			  GetWindowRect(attachedto, &curr);
+			  if (abs(curr.top - orig.top) + abs(curr.right - orig.right) >= 1)
+				{
+				  ignore_clk = TRUE;
+				  BringWindowToTop(attachedto);
+				}
+			  else
+				{
+				  ignore_clk = FALSE;
+				  SetWindowPos(attachedto, insert_after, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+				}
+			}
+
+		  if (!ignore_clk
+			  && EXE_DWORD(0x738a10)
+			  && card_is_valid_for_leftclick(hwnd))
+			{
+			  ldoubleclicked = saw_dblclk;
+			  card_leftclick(hwnd);
+			}
+		  return 0;
+		}
 
 	  case 0x432:	// redraw title
 		if (!IsWindowVisible(hwnd))
@@ -808,6 +986,19 @@ LRESULT __stdcall wndproc_MainClass_hook(HWND hwnd, UINT msg, WPARAM wparam, LPA
 #define lifeclass_offset_player_counters	EXE_DWORD(0x4d7540)
 #define stretchblt_with_transparency_where_stencil_is_right_half	EXE_FN(void, 0x466540, HDC, RECT*, HBITMAP)
 
+static HBITMAP get_bmp_energy(void)
+{
+  static HBITMAP bmp_energy_pic = NULL;
+  if (!bmp_energy_pic)
+    {
+      char path[264];
+      sprintf(path, "%s\\energy.pic", path_CardArt);
+      bmp_energy_pic = read_graphics_file(path);
+      premultiply_alpha_hbitmap(bmp_energy_pic);
+    }
+  return bmp_energy_pic;
+}
+
 static HBITMAP get_bmp_experience(void)
 {
   static HBITMAP bmp_experience_pic = NULL;
@@ -851,17 +1042,17 @@ static void paint_one_counter_type(HDC hdc, int width, int height, HBITMAP bmp, 
       counter_width /= 8;
       counter_height /= 8;	// height/6
     }
-  else if (num_counters <= 63)
+  else if (num_counters <= 54)
     {
       counter_width /= 9;
       counter_height /= 9;	// 4height/27: < 1/6
     }
-  else if (num_counters <= 80)
+  else if (num_counters <= 70)
     {
       counter_width /= 10;
       counter_height /= 10;	// 4height/30: < 1/7
     }
-  else if (num_counters <= 99)
+  else if (num_counters <= 88)
     {
       counter_width /= 11;
       counter_height /= 11;	// 4height/33: < 1/8
@@ -1014,6 +1205,121 @@ static void paint_half_of_two_counter_types(HDC hdc, int width, int height, int 
     }
 }
 
+static void paint_quarter_of_four_counter_types(HDC hdc, int width, int height, int offset_x, int offset_y,
+												HBITMAP bmp, int num_counters, void (*blt_fn)(HDC, RECT*, HBITMAP))
+{
+  int counter_width = width;
+  int counter_height = (4 * height) / 3;
+  // width and width are 1/2 for this, hence e.g. /10 becomes 5 across and /3 becomes 1.5 high
+  if (num_counters <= 2)
+	{
+	  counter_width /= 4;
+	  counter_height /= 4;      // 4height/6 < 1/1
+	}
+  else if (num_counters <= 6)
+	{
+	  counter_width /= 6;
+	  counter_height /= 6;      // 4height/9: < 1/2
+	}
+  else if (num_counters <= 12)
+	{
+	  counter_width /= 8;
+	  counter_height /= 8;      // height/3
+	}
+  else if (num_counters <= 15)
+	{
+	  counter_width /= 10;
+	  counter_height /= 10;     // 4height/15: < 1/3
+	}
+  else if (num_counters <= 24)
+	{
+	  counter_width /= 12;
+	  counter_height /= 12;     // 2height/9: < 1/4
+	}
+  else if (num_counters <= 35)
+	{
+	  counter_width /= 14;
+	  counter_height /= 14;     // 4height/21: < 1/5
+	}
+  else if (num_counters <= 48)
+	{
+	  counter_width /= 16;
+	  counter_height /= 16;     // height/6
+	}
+  else if (num_counters <= 54)
+	{
+	  counter_width /= 18;
+	  counter_height /= 18;     // 4height/27: < 1/6
+	}
+  else if (num_counters <= 70)
+	{
+	  counter_width /= 20;
+	  counter_height /= 20;     // 4height/30: < 1/7
+	}
+  else if (num_counters <= 88)
+	{
+	  counter_width /= 22;
+	  counter_height /= 22;     // 4height/33: < 1/8
+	}
+  else if (num_counters <= 108)
+	{
+	  counter_width /= 24;
+	  counter_height /= 24;     // height/9
+	}
+  else if (num_counters <= 117)
+	{
+	  counter_width /= 26;
+	  counter_height /= 26;     // 4height/39: < 1/9
+	}
+  else if (num_counters <= 140)
+	{
+	  counter_width /= 28;
+	  counter_height /= 28;     // 4height/42: < 1/10
+	}
+  else if (num_counters <= 165)
+	{
+	  counter_width /= 30;
+	  counter_height /= 26;     // 4height/45: < 1/11
+	}
+  else if (num_counters <= 192)
+	{
+	  counter_width /= 32;
+	  counter_height /= 28;     // height/12
+	}
+  else if (num_counters <= 204)
+	{
+	  counter_width /= 34;
+	  counter_height /= 26;     // 4height/51: < 1/12
+	}
+  else if (num_counters <= 234)
+	{
+	  counter_width /= 36;
+	  counter_height /= 28;     // 4height/54: < 1/13
+	}
+  else  // up to 266
+	{
+	  counter_width /= 38;
+	  counter_height /= 26;     // 4height/57: < 1/14
+	}
+
+  int x = 0;
+  int y = 0;
+  RECT rc;
+  width /= 2;
+  int i;
+  for (i = 0; i < num_counters; ++i)
+	{
+	  SetRect(&rc, offset_x + x, offset_y + y, offset_x + x + counter_width, offset_y + y + counter_height);
+	  blt_fn(hdc, &rc, bmp);
+	  x += counter_width;
+	  if (x + counter_width > width)
+		{
+		  x = 0;
+		  y += counter_height;
+		}
+	}
+}
+
 static void paint_two_counter_types(HDC hdc, int width, int height,
 									HBITMAP bmp1, int num_counters1, void (*blt_fn1)(HDC, RECT*, HBITMAP),
 									HBITMAP bmp2, int num_counters2, void (*blt_fn2)(HDC, RECT*, HBITMAP))
@@ -1022,20 +1328,84 @@ static void paint_two_counter_types(HDC hdc, int width, int height,
   paint_half_of_two_counter_types(hdc, width, height, width / 2, bmp2, num_counters2, blt_fn2);
 }
 
+static void paint_three_counter_types(HDC hdc, int width, int height,
+									  HBITMAP bmp1, int num_counters1, void (*blt_fn1)(HDC, RECT*, HBITMAP),
+									  HBITMAP bmp2, int num_counters2, void (*blt_fn2)(HDC, RECT*, HBITMAP),
+									  HBITMAP bmp3, int num_counters3, void (*blt_fn3)(HDC, RECT*, HBITMAP))
+{
+  paint_quarter_of_four_counter_types(hdc, width, height, 0,          0, bmp1, num_counters1, blt_fn1);
+  paint_half_of_two_counter_types(hdc, width, height, width / 2, bmp2, num_counters2, blt_fn2);
+  paint_quarter_of_four_counter_types(hdc, width, height, 0, height / 2, bmp3, num_counters3, blt_fn3);
+}
+
+typedef enum
+{
+  PCT_0				= 0,
+  PCT_POISON		= 0x1,
+  PCT_ENERGY		= 0x2,
+  PCT_EXPERIENCE	= 0x4,
+
+  // All combinations, so the compiler will warn if we forget one.
+  PCT_3 = 0x3,
+  PCT_5 = 0x5,
+  PCT_6 = 0x6,
+  PCT_7 = 0x7,
+} PlayerCounterTypes;
+
+STATIC_ASSERT(sizeof(PlayerCounters) == sizeof(int), PlayerCounters_wrong_size);
+
 void paint_player_counters(HDC hdc, int width, int height, int player_counters_cast_to_int)
 {
-  PlayerCounters counters = *(PlayerCounters*)(&player_counters_cast_to_int);
-  if (counters.poison_ > 0 && counters.experience_ > 0)
-    paint_two_counter_types(hdc, width, height,
-							bmp_poison_pic, counters.poison_, stretchblt_with_transparency_where_stencil_is_right_half,
-							get_bmp_experience(), counters.experience_, stretchblt_bmp);
-  else
-    {
-      if (counters.poison_ > 0)
-		paint_one_counter_type(hdc, width, height, bmp_poison_pic, counters.poison_, stretchblt_with_transparency_where_stencil_is_right_half);
-      else if (counters.experience_ > 0)
-		paint_one_counter_type(hdc, width, height, get_bmp_experience(), counters.experience_, stretchblt_bmp);
-    }
+  PlayerCounters counters;
+  // This gets optimized to a no-op, but is required for strict aliasing
+  memcpy(&counters, &player_counters_cast_to_int, sizeof(int));
+
+  PlayerCounterTypes pct = ((counters.poison_ > 0 ? PCT_POISON : PCT_0)
+							| (counters.energy_ > 0 ? PCT_ENERGY : PCT_0)
+							| (counters.experience_ > 0 ? PCT_EXPERIENCE : PCT_0));
+
+  switch (pct)
+	{
+      case PCT_0:
+		break;
+
+      case PCT_POISON:
+		paint_one_counter_type(hdc, width, height, bmp_poison_pic, counters.poison_,
+							   stretchblt_with_transparency_where_stencil_is_right_half);
+		break;
+      case PCT_EXPERIENCE:
+        paint_one_counter_type(hdc, width, height, get_bmp_experience(), counters.experience_, stretchblt_bmp);
+		break;
+      case PCT_ENERGY:
+		paint_one_counter_type(hdc, width, height, get_bmp_energy(), counters.energy_, stretchblt_bmp);
+		break;
+
+      case PCT_POISON | PCT_ENERGY:
+		paint_two_counter_types(hdc, width, height,
+								bmp_poison_pic, counters.poison_,
+									stretchblt_with_transparency_where_stencil_is_right_half,
+								get_bmp_energy(), counters.energy_, stretchblt_bmp);
+		break;
+      case PCT_POISON | PCT_EXPERIENCE:
+		paint_two_counter_types(hdc, width, height,
+								bmp_poison_pic, counters.poison_,
+									stretchblt_with_transparency_where_stencil_is_right_half,
+								get_bmp_experience(), counters.experience_, stretchblt_bmp);
+		break;
+      case PCT_ENERGY | PCT_EXPERIENCE:
+		paint_two_counter_types(hdc, width, height,
+								get_bmp_energy(), counters.energy_, stretchblt_bmp,
+								get_bmp_experience(), counters.experience_, stretchblt_bmp);
+		break;
+
+      case PCT_POISON | PCT_ENERGY | PCT_EXPERIENCE:
+		paint_three_counter_types(hdc, width, height,
+								  bmp_poison_pic, counters.poison_,
+									stretchblt_with_transparency_where_stencil_is_right_half,
+								  get_bmp_energy(), counters.energy_, stretchblt_bmp,
+								  get_bmp_experience(), counters.experience_, stretchblt_bmp);
+		break;
+	}
 }
 
 LRESULT __stdcall wndproc_LifeClass_hook(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -1066,10 +1436,14 @@ LRESULT __stdcall wndproc_LifeClass_hook(HWND hwnd, UINT msg, WPARAM wparam, LPA
 		  p += sprintf(p, "%ld", GetWindowLong(hwnd, lifeclass_offset_life));
 
 		int stored_player_counters_cast_to_int = GetWindowLong(hwnd, lifeclass_offset_player_counters);
-		PlayerCounters stored_player_counters = *(PlayerCounters*)(&stored_player_counters_cast_to_int);
+		PlayerCounters stored_player_counters;
+		// This gets optimized to a no-op, but is required for strict aliasing
+		memcpy(&stored_player_counters, &stored_player_counters_cast_to_int, sizeof(int));
 
 		if (stored_player_counters.poison_)
 		  p += sprintf(p, " Poison counters: %d", stored_player_counters.poison_);
+		if (stored_player_counters.energy_)
+		  p += sprintf(p, " Energy counters: %d", stored_player_counters.energy_);
 		if (stored_player_counters.experience_)
 		  p += sprintf(p, " Experience counters: %d", stored_player_counters.experience_);
 
@@ -1263,6 +1637,9 @@ static const char* wav_filenames[WAV_HIGHEST + 1] =
   "Equip.wav",
   "LifeGain.wav",
   "Transform.wav",
+  "Scheme.wav",
+  "Monarch.wav",
+  "Ascend.wav",
 };
 
 int play_sound_effect(wav_t soundnum)

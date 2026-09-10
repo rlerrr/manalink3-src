@@ -67,7 +67,7 @@ static int attacking_planeswalker(int player, int card, event_t event){
 	} else if (event == EVENT_TRIGGER && trigger_condition == TRIGGER_END_COMBAT){
 		// Just remove immediately instead of putting on the stack, since it's not an actual trigger
 		remove_special_flags(instance->targets[0].player, instance->targets[0].card, SF_ATTACKING_PWALKER);
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 	} else {
 		card_instance_t* damage = combat_damage_being_dealt(event);
 		if (damage &&
@@ -76,6 +76,7 @@ static int attacking_planeswalker(int player, int card, event_t event){
 		   ){
 			/* Reattaching the damage card to the planeswalker now, or even doing so as it's created, makes for a better interface and would deal damage
 			 * correctly, but would probably confuse damage prevention cards and the AI.  So make the damage card switch targets when it resolves. */
+			// !!!DOM: above comment is no longer correct
 			damage->targets[4] = instance->targets[1];	// struct copy
 		}
 	}
@@ -188,6 +189,32 @@ void choose_who_attack(int player, int card){
 	}
 }
 
+/* Returns the card number of the planeswalker that creature {player,card} is currently attacking, -1 if it's
+ * attacking a player, or -2 if it was attacking a planeswalker that's no longer on the bf or has changed control.
+ * Precondition: {player,card} is an attacking creature. */
+int planeswalker_its_attacking(int player, int card){
+	if (!check_special_flags(player, card, SF_ATTACKING_PWALKER)){
+		return -1;
+	}
+	int p, c, i;
+	for (i = 0, p = player; i <= 1; ++i, p = 1-p){
+		for (c = 0; c < active_cards_count[p]; ++c){
+			card_instance_t* fx = in_play(p, c);
+			if (fx && fx->internal_card_id == LEGACY_EFFECT_CUSTOM && fx->info_slot == (int)attacking_planeswalker &&
+				fx->damage_target_player == player && fx->damage_target_card == card)
+			{
+				if (fx->targets[1].player != 1-player ||	// pw changed control
+					!in_play(fx->targets[1].player, fx->targets[1].card))	// pw no longer on bf
+				{
+					return -2;
+				}
+				return fx->targets[1].card;
+			}
+		}
+	}
+	return -2;	// Should be impossible - marked SF_ATTACKING_PLANESWALKER, but no effect card found
+}
+
 int planeswalker(int player, int card, event_t event, int loyalty){
 
 	card_instance_t *instance = get_card_instance(player, card);
@@ -255,11 +282,13 @@ int planeswalker(int player, int card, event_t event, int loyalty){
 	// when creatures attack, prompt for who they attack
 	if( trigger_condition == TRIGGER_PAY_TO_ATTACK && current_phase == PHASE_DECLARE_ATTACKERS && current_turn == 1-player){
 		if( affect_me( trigger_cause_controller, trigger_cause ) && reason_for_trigger_controller == affected_card_controller ){
-			if(event == EVENT_TRIGGER ){
-				event_result |= RESOLVE_TRIGGER_MANDATORY;
-			}
-			else if(event == EVENT_RESOLVE_TRIGGER){
-					choose_who_attack(affected_card_controller, affected_card);
+			if( ! check_special_flags(trigger_cause_controller, trigger_cause, SF_ATTACKING_PWALKER) ){
+				if(event == EVENT_TRIGGER ){
+					event_result |= RESOLVE_TRIGGER_MANDATORY;
+				}
+				else if(event == EVENT_RESOLVE_TRIGGER){
+						choose_who_attack(affected_card_controller, affected_card);
+				}
 			}
 		}
 	}
@@ -269,7 +298,8 @@ int planeswalker(int player, int card, event_t event, int loyalty){
 	 * Ideally, this should cause the damage card to reattach to the planeswalker and then resolve normally, so it can be prevented.  All the effects that look
 	 * at damage, though, assume damage_target_card != -1 is a creature.  Damage that *does* get attached to a planeswalker *does* resolve normally; currently
 	 * this can only happen with Fated Conflagration. */
-	card_instance_t* damage = noncombat_damage_being_prevented(event);	// sic
+	// !!!DOM: the rule allowing noncombat damage to be redirected from players to planewalkers no longer exists - remove
+	/*card_instance_t* damage = noncombat_damage_being_prevented(event);	// sic
 	if( damage && damage->damage_source_player != player &&
 		damage->damage_target_player == player && damage->damage_target_card == -1 &&
 		in_play(player, card) && !check_battlefield_for_id(player, CARD_ID_PALISADE_GIANT)
@@ -293,8 +323,8 @@ int planeswalker(int player, int card, event_t event, int loyalty){
 #if 0
 						damage->damage_target_card = card;	// Not yet robust enough
 #endif
-						/* Cards are recalculated (and thus static effects run) after spell resolution, but before damage resolves, so check again here -
-						 * http://www.slightlymagic.net/forum/viewtopic.php?t=13968 */
+						 * Cards are recalculated (and thus static effects run) after spell resolution, but before damage resolves, so check again here -
+						 * http://www.slightlymagic.net/forum/viewtopic.php?t=13968
 						if (count_counters(player, count, COUNTER_LOYALTY) == 0 && BYTE0(get_card_instance(player, count)->targets[9].player) == 2){
 							SET_SBYTE0(get_card_instance(player, count)->targets[9].player) = 3;
 							kill_card(player, count, KILL_STATE_BASED_ACTION);
@@ -305,7 +335,7 @@ int planeswalker(int player, int card, event_t event, int loyalty){
 				}
 				count--;
 		}
-	}
+	}*/
 
 	// reset the flag for "fog"	effects
 	if( check_special_flags(player, card, SF_WONT_RECEIVE_DAMAGE) && eot_trigger(player, card, event) ){

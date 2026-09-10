@@ -123,7 +123,7 @@ void damage_effects(int player, int card, event_t event){
 						}
 					}
 					gain_life(player, max);
-					kill_card(player, card, KILL_REMOVE);
+					kill_card(player, card, KILL_EXILE);
 				}
 			}
 			if( is_what(player, card, TYPE_EFFECT) && instance->targets[2].card == CARD_ID_BRIGHTFLAME ){
@@ -246,7 +246,7 @@ int damage_creature(int tgt_player, int tgt_card, int32_t amt, int src_player, i
 	{
 	  card_instance_t* tgt_inst = get_card_instance(tgt_player, tgt_card);
 	  if ((tgt_inst->token_status & STATUS_SPECIAL_BLOCKER)
-		  && cards_data[tgt_inst->internal_card_id].code_pointer == 0x401010)	// card_multiblocker()
+		  && cards_data[tgt_inst->internal_card_id].code_pointer == (CardFunction)0x401010)	// card_multiblocker()
 		{
 		  tgt_player = tgt_inst->damage_source_player;
 		  tgt_card = tgt_inst->damage_source_card;
@@ -419,7 +419,7 @@ static int remove_indestructible_until_eot(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 	}
 
 	return 0;
@@ -653,12 +653,16 @@ int effect_damage(int player, int card, event_t event)
 
 			  if (instance->targets[16].card & SP_KEYWORD_DEATHTOUCH)
 				{
-				  // A bletcherous special case, but better than wasting a sp_keyword_t bit in addition to the special_flags_t bit
-				  if (instance->display_pic_csv_id == CARD_ID_PHAGE_THE_UNTOUCHABLE
-					  && (instance->token_status & (STATUS_COMBAT_DAMAGE|STATUS_FIRST_STRIKE_DAMAGE)))
-					set_special_flags(instance->targets[4].player, instance->targets[4].card, SF_LETHAL_DAMAGE_BURY);
-				  else
-					set_special_flags(instance->targets[4].player, instance->targets[4].card, SF_LETHAL_DAMAGE_DESTROY);
+					int sf = SF_LETHAL_DAMAGE_DESTROY;
+					// A bletcherous special case, but better than wasting a sp_keyword_t bit in addition to the special_flags_t bit
+					if( instance->display_pic_csv_id == CARD_ID_PHAGE_THE_UNTOUCHABLE ||
+						instance->display_pic_csv_id == CARD_ID_MEPHITIC_OOZE )
+					{
+						if( instance->token_status & (STATUS_COMBAT_DAMAGE|STATUS_FIRST_STRIKE_DAMAGE) ){
+							sf = SF_LETHAL_DAMAGE_BURY;
+						}
+					}
+					set_special_flags(instance->targets[4].player, instance->targets[4].card, sf);
 				}
 
 			  if (instance->targets[16].card & SP_KEYWORD_RFG_WHEN_DAMAGE)
@@ -671,23 +675,23 @@ int effect_damage(int player, int card, event_t event)
 				Equipped creature has "{2}, {T}: This creature deals 1 damage to target creature.
 									If a colorless creature is dealt damage this way, tap it."
 				*/
-				if( instance->targets[10].card == CARD_ID_PATHWAY_ARROWS &&
+			  if( instance->targets[10].card == CARD_ID_PATHWAY_ARROWS &&
 					get_color(instance->targets[4].player, instance->targets[4].card) == 0
 				  ){
 					tap_card(instance->targets[4].player, instance->targets[4].card);
-				}
+			  }
 				/* Burn from Within	|X|R
 				 * ~ deals X damage to target creature or player. If a creature is dealt damage this way,
 				 * it loses indestructible until end of turn. If that creature would die this turn, exile it instead. */
-				if( instance->targets[10].card == CARD_ID_BURN_FROM_WITHIN ){
+			  if( instance->targets[10].card == CARD_ID_BURN_FROM_WITHIN ){
 					create_targetted_legacy_effect(instance->targets[4].player, instance->targets[4].card, &remove_indestructible_until_eot,
 													player, card);
-				}
+			  }
 				/* Illusory Ambushers
 				Whenever Illusory Ambusher is dealt damage, draw that many cards.*/
-				if( get_id(instance->targets[4].player, instance->targets[4].card) == CARD_ID_ILLUSORY_AMBUSHER ){
+			  if( get_id(instance->targets[4].player, instance->targets[4].card) == CARD_ID_ILLUSORY_AMBUSHER ){
 					draw_cards(instance->targets[4].player, instance->info_slot);
-				}
+			  }
 
 			  if ((instance->targets[16].card & SP_KEYWORD_WITHER)
 				  || (instance->regen_status & KEYWORD_INFECT))
@@ -727,24 +731,24 @@ void after_damage(void)
 		  if (flags)	// Prevent them from retriggering if this gets regenerated
 			remove_special_flags(player, card, SF_LETHAL_DAMAGE_DESTROY | SF_LETHAL_DAMAGE_BURY | SF_LETHAL_DAMAGE_EXILE|SF_EXILE_IF_DAMAGED);
 
-			if ((flags & SF_EXILE_IF_DAMAGED) // Pit Spawn/Sword of Kaldra
+		  if ((flags & SF_EXILE_IF_DAMAGED) // Pit Spawn/Sword of Kaldra
 				|| ((flags & SF_LETHAL_DAMAGE_EXILE) && (int)get_card_instance(player, card)->damage_on_card >= get_toughness(player, card))
 			  ){
-				kill_mode = KILL_REMOVE;
-			}
-			else if (flags & SF_LETHAL_DAMAGE_BURY){		// Phage the Untouchable
+				kill_mode = KILL_EXILE;
+		  }
+		  else if (flags & SF_LETHAL_DAMAGE_BURY){		// Phage the Untouchable
 					kill_mode = KILL_BURY;
-			}
-			else if ((flags & SF_LETHAL_DAMAGE_DESTROY)	// Deathtouch
+		  }
+		  else if ((flags & SF_LETHAL_DAMAGE_DESTROY)	// Deathtouch
 						|| (int)get_card_instance(player, card)->damage_on_card >= get_toughness(player, card)
 				   ){
 						kill_mode = KILL_DESTROY;
-			}
+		  }
 
-			if (kill_mode){
+		  if (kill_mode){
 				kill_card(player, card, kill_mode);
-			}
-			else{
+		  }
+		  else{
 				if( check_special_flags3(player, card, SF3_ARCHANGEL_OF_THUNE_COUNTER) ){
 					int amount = get_card_instance(player, card)->eot_toughness;
 					if( amount ){
@@ -752,7 +756,7 @@ void after_damage(void)
 						add_1_1_counters(player, card, amount);
 					}
 				}
-			}
+		  }
 		}
 
   /* The original exe version did this in one pass, calling the code_pointer of instance->original_internal_card_id if the card was no longer in play after the
@@ -913,7 +917,7 @@ static int if_attached_creature_dies_do_something(int player, int card, event_t 
 	if( p > -1 ){
 		if( event == EVENT_GRAVEYARD_FROM_PLAY ){
 			if( affect_me(p, c) && in_play(p, c) && get_card_instance(p, c)->kill_code > 0 &&
-				get_card_instance(p, c)->kill_code < KILL_REMOVE &&
+				get_card_instance(p, c)->kill_code < KILL_EXILE &&
 				! check_special_flags2(p, c, SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE)
 			  ){
 				if( mode && (mode & 1) ){
@@ -930,7 +934,7 @@ static int if_attached_creature_dies_do_something(int player, int card, event_t 
 		current_phase != PHASE_FIRST_STRIKE_DAMAGE
 	  ){
 		if( other_leaves_play(player, card, instance->targets[0].player, instance->targets[0].card, event) ){
-			kill_card(player, card, KILL_REMOVE);
+			kill_card(player, card, KILL_EXILE);
 		}
 	}
 
@@ -943,11 +947,11 @@ static int if_attached_creature_dies_do_something(int player, int card, event_t 
 				draw_cards(instance->targets[0].player, 1);
 			}
 		}
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 	}
 
 	if( current_phase == PHASE_CLEANUP ){
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 	}
 
 	return 0;

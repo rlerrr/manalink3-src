@@ -177,10 +177,30 @@ int play_card_in_deck_for_free(int player, int t_player, int deck_pos){
 			if (player != t_player){
 				get_card_instance(player, card_added)->state ^= STATE_OWNED_BY_OPPONENT;
 			}
+			if( is_what(player, card_added, TYPE_LAND) ){
+				set_special_flags3(player, card_added, SF3_EMULATING_LANDS_PLAYED);
+			}
 			if ( ! real_play_spell_for_free(player, card_added, SF_PLAYED_FROM_DECK) ){
 				obliterate_card(player, card_added);
 				card_added = -1;
 			}
+		}
+	}
+	return card_added;
+}
+
+int fake_play_card_in_zone_for_free(int player, int t_player, int iid, int special_flags){
+// See Talent of the Telepath
+
+	int card_added = -1;
+	if( can_legally_play_iid(player, iid) ){
+		card_added = add_card_to_hand(player, iid);
+		if (player != t_player){
+			get_card_instance(player, card_added)->state ^= STATE_OWNED_BY_OPPONENT;
+		}
+		if ( ! real_play_spell_for_free(player, card_added, special_flags) ){
+			obliterate_card(player, card_added);
+			card_added = -1;
 		}
 	}
 	return card_added;
@@ -194,6 +214,9 @@ static int play_card_in_grave_for_free_impl(int player, int t_player, int g_pos,
 		if( can_legally_play_iid(player, iid) ){
 			remove_card_from_grave(t_player, g_pos);
 			card_added = add_card_to_hand(player, iid);
+			if( is_what(player, card_added, TYPE_LAND) ){
+				set_special_flags3(player, card_added, SF3_EMULATING_LANDS_PLAYED);
+			}
 			if (player != t_player){
 				get_card_instance(player, card_added)->state ^= STATE_OWNED_BY_OPPONENT;
 			}
@@ -255,6 +278,13 @@ void play_card_in_hand_for_free(int player, int card){
 	real_play_spell_for_free(player, card, 0);
 }
 
+void play_card_in_hand_for_free_miracle(int player, int card){
+	set_special_flags2(player, card, SF2_MIRACLE);
+	if( ! real_play_spell_for_free(player, card, 0) ){
+		remove_special_flags2(player, card, SF2_MIRACLE);
+	}
+}
+
 void play_card_in_hand_madness(int player, int card){
 	//We aren't really playing a card from exile, as per Madness ruling, just faking it.
 	real_play_spell_for_free(player, card, SF_PLAYED_FROM_EXILE);
@@ -283,6 +313,8 @@ int put_into_play(int player, int card){
 	return card;
 }
 
+void memset_suppress_size_warning(void* addr, int val, size_t sz);
+
 int compute_and_check_casting_cost(int player, int unused, int card)
 {
   // 200bb14
@@ -300,7 +332,7 @@ int compute_and_check_casting_cost(int player, int unused, int card)
   int8_t* cost_xbugrwaU = (int8_t*)&COST_COLORLESS;
   int8_t* byte_55CF20 = (int8_t*)EXE_BYTE_PTR(0x55CF20);
 
-  memset(cost_xbugrwaU, 0, 8);
+  memset_suppress_size_warning(cost_xbugrwaU, 0, 8);
   memset(byte_55CF20, 0, 8);	// Amount of surplus free mana?
 
   card_instance_t* instance = get_card_instance(player, card);
@@ -321,12 +353,12 @@ int compute_and_check_casting_cost(int player, int unused, int card)
 		{
 		  card_data_t* cd = &cards_data[inst->internal_card_id];
 		  if (cd->extra_ability & EA_PLAY_COST)
-			call_card_fn((void*)cd->code_pointer, inst, p, c, EVENT_MODIFY_COST_GLOBAL);
+			call_card_fn(cd->code_pointer, inst, p, c, EVENT_MODIFY_COST_GLOBAL);
 		}
 
   card_data_t* cd = &cards_data[EXE_DWORD(0x73825C)];
   if (cd->new_field & 1)	// "Modifies Casting Cost" column in ct_all.csv
-	call_card_fn((void*)cd->code_pointer, instance, player, card, EVENT_MODIFY_COST);
+	call_card_fn(cd->code_pointer, instance, player, card, EVENT_MODIFY_COST);
 
   card_ptr_t* cp = cards_ptr[cd->id];
 
@@ -396,12 +428,12 @@ static int effect_may_play_card_from_exile(int player, int card, event_t event)
   if (event == EVENT_STATIC_EFFECTS)
 	{
 	  if (!(mode & MPCFE_FACE_DOWN) && !check_rfg(whose_exile_zone, csvid))
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 	  return 0;
 	}
 
   if (event == EVENT_CLEANUP && (mode & MPCFE_UNTIL_EOT))
-	kill_card(player, card, KILL_REMOVE);
+	kill_card(player, card, KILL_EXILE);
 
   if (event == EVENT_BEGIN_TURN && (mode & MPCFE_UNTIL_END_OF_YOUR_NEXT_TURN) && current_turn == player)
 	instance->targets[1].player |= MPCFE_UNTIL_EOT;
@@ -474,7 +506,7 @@ static int effect_may_play_card_from_exile(int player, int card, event_t event)
 	  if (cancel == 1)
 		return 0;
 
-	  kill_card(player, card, KILL_REMOVE);
+	  kill_card(player, card, KILL_EXILE);
 
 	  if (mode & MPCFE_FACE_DOWN)
 		add_csvid_to_rfg(whose_exile_zone, csvid);
@@ -520,7 +552,7 @@ static int spell_has_flashback_legacy(int player, int card, event_t event)
 
   if (event == EVENT_CLEANUP
 	  || (event == EVENT_STATIC_EFFECTS && get_card_instance(player, card)->targets[1].card == -1))	// no longer in graveyard
-	kill_card(player, card, KILL_REMOVE);
+	kill_card(player, card, KILL_EXILE);
 
   if (!IS_ACTIVATING(event))
 	return 0;
@@ -550,9 +582,12 @@ static int spell_has_flashback_legacy(int player, int card, event_t event)
 	  && ((instance->targets[2].player & FBL_NO_MANA_COST)
 		  || charge_mana_from_id(player, -1, event, cards_data[instance->targets[0].card].id)))
 	{
-	  kill_card(player, card, KILL_REMOVE);
-	  play_card_in_grave_for_free_and_exile_it(player, player, instance->targets[1].card);
-	  cant_be_responded_to = 1;	// already had opportunity to respond to the spell; no response to this fake activation
+		kill_card(player, card, KILL_EXILE);
+		if( !(instance->targets[2].player & FBL_PLAYING_PERMANENT_CARD) )
+			play_card_in_grave_for_free_and_exile_it(player, player, instance->targets[1].card);
+		else
+			play_card_in_grave_for_free(player, player, instance->targets[1].card);
+		cant_be_responded_to = 1;	// already had opportunity to respond to the spell; no response to this fake activation
 	}
 
   return 0;
@@ -580,6 +615,7 @@ int can_activate_to_play_cards_from_graveyard(int player, int card, event_t even
 		for (i = 0; grave[i] != -1; ++i){
 			if ((cards_data[grave[i]].type & types) &&	// deliberately not is_what()
 				has_mana_to_cast_iid(player, event, grave[i]) &&
+				! is_suspend_only_card(-1, grave[i]) &&
 				(rval = can_legally_play_iid_now(player, grave[i], event))
 			   ){
 				if (rval == 99){
@@ -598,6 +634,7 @@ int can_activate_to_play_cards_from_graveyard(int player, int card, event_t even
 		for (i = 0; grave[i] != -1; ++i){
 			if ((cards_data[grave[i]].type & types) &&	// deliberately not is_what()
 				has_mana_to_cast_iid(player, event, grave[i]) &&
+				! is_suspend_only_card(-1, grave[i]) &&
 				can_legally_play_iid_now(player, grave[i], event)
 			   ){
 				iids[num_cards] = grave[i];
@@ -728,7 +765,7 @@ int card_special_effect(int player, int card, event_t event ){
 					test_definition_t this_test;
 					default_test_definition(&this_test, TYPE_PERMANENT);
 					new_manipulate_all(player, card, instance->targets[0].player, &this_test, ACT_ENABLE_NONMANA_ACTIVATED_ABILITIES);
-					kill_card(player, card, KILL_REMOVE);
+					kill_card(player, card, KILL_EXILE);
 				}
 			}
 			else{
@@ -737,7 +774,7 @@ int card_special_effect(int player, int card, event_t event ){
 						instance->targets[2].player--;
 					}
 					else{
-						kill_card(player, card, KILL_REMOVE);
+						kill_card(player, card, KILL_EXILE);
 					}
 				}
 			}

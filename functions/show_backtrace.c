@@ -4,7 +4,10 @@
 
 #include <windows.h>
 
+#ifndef CaptureStackBackTrace
 USHORT WINAPI RtlCaptureStackBackTrace(ULONG FramesToSkip, ULONG FramesToCapture, PVOID *BackTrace, PULONG BackTraceHash);
+#  define CaptureStackBackTrace RtlCaptureStackBackTrace
+#endif
 
 void popup(const char* title, const char* fmt, ...);
 
@@ -13,7 +16,7 @@ show_backtrace(const char* title, const char* header)
 {
   PVOID frames[100];
 
-  int numframes = RtlCaptureStackBackTrace(0, 30, &frames[0], NULL);
+  int numframes = CaptureStackBackTrace(0, 30, &frames[0], NULL);
 
   char buf[4000];
   char* p = &buf[0];

@@ -30,10 +30,23 @@ extern "C"
   BOOL WINAPI DllMain(HINSTANCE dll, DWORD reason, LPVOID reserved);
   WPARAM WINAPI DeckBuilderMain(HWND parent_hwnd, int db_flags_1, int db_flags_2);
   WPARAM deckbuilder_main(HWND parent_hwnd, int db_flags_1, int db_flags_2);
+  void Deckdll_initialize_for_shandalar_sa(const card_ptr_t* i_raw_cards_ptr,
+					   int i_available_slots,
+					   char* i_card_coded,
+					   int (*check_card_count_fn)(const DeckEntry*, int, int, int),
+					   int (*is_valid_card_fn)(int),
+					   bool (*colors_match_fn)(iid_t, color_test_t),
+					   int (*check_colors_inout_edited_deck_fn)(const GlobalDeckEntry*, int, bool),
+					   int cardsowned_size,
+					   void* i_deck,
+					   const card_data_t* i_raw_cards_data,
+					   int (*i_get_internal_card_id_from_csv_id_fn)(int),
+					   int (*i_min_deck_size)(void),
+					   bool (*i_draw_manastripes)(HDC, RECT*, int, int, csvid_t, int));
   void Deckdll_initialize_for_shandalar(const card_ptr_t* i_raw_cards_ptr,
 					int i_available_slots,
 					char* i_card_coded,
-					int (*check_card_count_fn)(const DeckEntry*, int, int),
+					int (*check_card_count_fn)(const DeckEntry*, int, int, int),
 					int (*is_valid_card_fn)(int),
 					bool (*colors_match_fn)(iid_t, color_test_t),
 					int (*check_colors_inout_edited_deck_fn)(const GlobalDeckEntry*, int, bool));

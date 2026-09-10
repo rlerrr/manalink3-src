@@ -1,4 +1,5 @@
 #include "manalink.h"
+#define NUM_SUBTYPES 26
 
 static const subtype_t arr_from_hardcoded_subtype_to_subtype[] =
 {
@@ -249,6 +250,7 @@ subtype_t from_hardcodedsubtype_to_subtype(hardcoded_subtype_t hcs)
 	return hcs;
 }
 
+/*
 static int is_basic_land_subtype(int subtype){
 	if( subtype == SUBTYPE_MOUNTAIN ||
 		subtype == SUBTYPE_ISLAND ||
@@ -260,6 +262,7 @@ static int is_basic_land_subtype(int subtype){
 	}
 	return 0;
 }
+*/
 
 static int is_creature_type(int new_type){
 	return new_type >= SUBTYPE_MIN_CREATURE_SUBTYPE && new_type <= SUBTYPE_MAX_CREATURE_SUBTYPE;
@@ -305,27 +308,31 @@ static int is_changeling(int player, int card){
 		}
 	}
 	else{
-		if( cards_data[card].static_ability & KEYWORD_PROT_INTERRUPTS ){
+		int iid = card;
+		if( player > -1 && in_hand(player, card) ){
+			iid = get_original_internal_card_id(player, card);
+		}
+		if( cards_data[iid].static_ability & KEYWORD_PROT_INTERRUPTS ){
 			return 1;
 		}
 	}
 	return 0;
 }
 
-void reset_subtypes(int player, int card, int mode){
+void reset_subtypes(int player, int card, reset_subtype_mode_t mode){
 	// mode = 1 --> Reset forced subtype
 	// mode = 2 --> Reset added subtype
 	// mode = 3 --> Reset both
 
 	card_instance_t *instance = get_card_instance(player, card);
-	if( instance->targets[15].player == -1 || (mode & 3) == 3 ){
+	if( instance->targets[15].player == -1 || (mode & (RS_RESET_FORCED | RS_RESET_ADDED)) == (RS_RESET_FORCED | RS_RESET_ADDED) ){
 		instance->targets[15].player = 0;
 	}
 	else{
-		if( mode & 1 ){
+		if( mode & RS_RESET_FORCED ){
 			instance->targets[15].player &= ~0xFFFF0000;
 		}
-		if( mode & 2 ){
+		if( mode & RS_RESET_ADDED ){
 			instance->targets[15].player &= ~0x0000FFFF;
 		}
 	}
@@ -359,7 +366,7 @@ static int force_a_subtype_until_eot_legacy(int player, int card, event_t event)
 	card_instance_t *instance = get_card_instance(player, card);
 	if( eot_trigger(player, card, event) ){
 		reset_subtypes(instance->targets[0].player, instance->targets[0].card, 1);
-		kill_card(player, card, KILL_REMOVE);
+		kill_card(player, card, KILL_EXILE);
 	}
 	return 0;
 }
@@ -400,6 +407,225 @@ int has_added_subtype(int player, int card){
 	return get_added_subtype(player, card) > 0;
 }
 
+void get_subtypes_by_csvid(int csvid, reported_subtypes_t *my_subtypes){
+	int i;
+	for(i=0; i<NUM_SUBTYPES; i++){	
+		my_subtypes->reported_subtypes[i] = 0;
+	}
+	card_ptr_t* c = cards_ptr[csvid];
+	my_subtypes->reported_subtypes[1] = c->types[0];
+	my_subtypes->reported_subtypes[2] = c->types[1];
+	my_subtypes->reported_subtypes[3] = c->types[2];
+	my_subtypes->reported_subtypes[4] = c->types[3];
+	my_subtypes->reported_subtypes[5] = c->types[4];
+	my_subtypes->reported_subtypes[6] = c->types[5];
+	// c->types[6] is unused
+}
+
+void get_subtypes(int player, int card, reported_subtypes_t *my_subtypes){
+ /* 0 is an added or forced subtype
+  * 1..6 are natural subtypes from card_ptr_t; 
+  * 7 is Wall added by Aurification; 
+  *	8..12 are subtype hacks added by specific cards to themselves. 
+  * 13..16 are for Xenograft
+  * 17 is for Rimefeather Howl / SUBTYPE_SNOW
+  * 18..22 are Prismatic Omen and other that add basic land types.
+  * 23 is Mephidross Vampire
+  * 24 is Dismiss into Dream
+  */
+
+  // All the special cases in the "subtype" department MUST go here and nowhere else.
+  // In particular:
+  // - Cards that add MORE than 1 subtype to themselves / others
+  // - Cards with global effects that adds / forces subtypes to self and / or others.
+
+	int i;
+	int csvid = player == -1 ? cards_data[card].id : get_backup_id(player, card);
+	card_instance_t* instance = player == -1 ? NULL : in_play(player, card);
+	get_subtypes_by_csvid(csvid, my_subtypes);
+	int dralnus_crusade_flag = 0;
+
+	//Special cases for cards in play
+	if( instance ){
+
+		unsigned int forced_subtype = (unsigned int)get_forced_subtype(player, card);
+		if( forced_subtype ){
+			//A 'forced subtype' disable all the other creature types
+			for(i=3; i<7; i++){	
+				my_subtypes->reported_subtypes[i] = 0;
+			}
+			my_subtypes->reported_subtypes[0] = forced_subtype;
+			return;
+		}
+		//Cards that add specific subtypes to themselves
+		switch (csvid)
+		{
+			case CARD_ID_FIGURE_OF_DESTINY:
+			{
+				if( instance->targets[9].player > 0 ){
+					if( (instance->targets[9].player & 1) || (instance->targets[9].player & 2) ){
+						my_subtypes->reported_subtypes[10] = SUBTYPE_SPIRIT;
+					}
+					if( instance->targets[9].player & 2 ){
+						my_subtypes->reported_subtypes[9] = SUBTYPE_WARRIOR;
+					}
+					if( instance->targets[9].player == 3 ){
+						my_subtypes->reported_subtypes[8] = SUBTYPE_AVATAR;
+					}
+				}
+				break;
+			}
+
+			case CARD_ID_AGELESS_SENTINELS:
+			{
+				if (instance->targets[5].player == 66)
+				{
+					my_subtypes->reported_subtypes[8] = SUBTYPE_BIRD;
+					my_subtypes->reported_subtypes[9] = SUBTYPE_GIANT;
+					for(i=3; i<7; i++){
+						if( my_subtypes->reported_subtypes[i] == SUBTYPE_WALL ){
+							my_subtypes->reported_subtypes[i] = 0;
+						}
+					}
+				}
+				break;
+			}
+
+			case CARD_ID_WARDEN_OF_THE_FIRST_TREE:
+			{
+				if( instance->targets[9].player > 0 ){
+					if( instance->targets[9].player & 1 ){
+						my_subtypes->reported_subtypes[9] = SUBTYPE_WARRIOR;
+					}
+					if( instance->targets[9].player & 2 ){
+						my_subtypes->reported_subtypes[8] = SUBTYPE_SPIRIT;
+					}
+				}
+				break;
+			}
+
+			case CARD_ID_DUPLICANT:
+			{
+				for (i = 2; i < 6; ++i){
+					my_subtypes->reported_subtypes[(i + 8)-2] = (unsigned int)instance->targets[i].player;
+				}
+				break;
+			}
+
+			//Imprisoned in the Moon
+			/* 7/13/2016: If the enchanted permanent is a land and has land types, it retains those types even though it loses any 
+			 * intrinsic mana abilities associated with them. For example, a Plains enchanted by Imprisoned in the Moon is still a Plains, 
+			 * but it can’t tap for {W}, only for {C}.*/
+			 case CARD_ID_WASTES:
+			{
+				if( instance->targets[1].card > -1 ){
+					if( is_what(-1, instance->targets[1].card, TYPE_LAND) ){
+						get_subtypes_by_csvid(cards_data[instance->targets[1].card].id, my_subtypes);
+					}
+				}
+				break;
+			}
+		}
+		if (check_special_flags3(player, card, SF3_EMBALMED_OR_ETERNALIZED)){
+			my_subtypes->reported_subtypes[8] = SUBTYPE_ZOMBIE;
+		}
+		// Cards that add specific subtypes to others in play
+		CYCLE_ALL_CARDS(p, c, {
+								if( in_play(p, c) && ! is_humiliated(p, c) ){
+									int csvid2 = get_id(p, c);
+									//On both battlefields
+									switch( csvid2 ){
+											case CARD_ID_AURIFICATION:
+											{
+												if( is_what(player, card, TYPE_CREATURE) && count_counters(player, card, COUNTER_GOLD) ){
+													my_subtypes->reported_subtypes[7] = SUBTYPE_WALL;
+												}
+												break;
+											}
+											default:
+												break;
+											case CARD_ID_RIMEFEATHER_OWL:
+											{
+												if( is_what(player, card, TYPE_PERMANENT) && count_counters(player, card, COUNTER_ICE) ){
+													my_subtypes->reported_subtypes[17] = SUBTYPE_SNOW;
+												}
+												break;
+											}
+											case CARD_ID_DRALNUS_CRUSADE:
+												dralnus_crusade_flag = 1;
+												break;
+									}
+									//Only on your battlefield
+									if( p == player ){
+										switch( csvid2 ){
+												case CARD_ID_HIVESTONE:
+												{
+													if( is_what(player, card, TYPE_CREATURE) ){
+														int k;
+														for(k=13; k<16; k++){
+															if( my_subtypes->reported_subtypes[k] == 0 ){ 
+																my_subtypes->reported_subtypes[k] = SUBTYPE_SLIVER;
+																break;
+															}
+														}
+														// If there are 4 Xenograft in play with different creature types this will fizzle, 
+														// but if this happens you deserve it.
+													}
+													break;
+												}
+												case CARD_ID_PRISMATIC_OMEN:
+												{
+													if( is_what(player, card, TYPE_LAND) ){
+														my_subtypes->reported_subtypes[18] = SUBTYPE_SWAMP;
+														my_subtypes->reported_subtypes[19] = SUBTYPE_ISLAND;
+														my_subtypes->reported_subtypes[20] = SUBTYPE_FOREST;
+														my_subtypes->reported_subtypes[21] = SUBTYPE_MOUNTAIN;
+														my_subtypes->reported_subtypes[22] = SUBTYPE_PLAINS;
+													}
+													break;
+												}
+												case CARD_ID_XENOGRAFT:
+												{
+													if( is_what(player, card, TYPE_CREATURE) ){
+														int k;
+														for(k=13; k<16; k++){
+															if( my_subtypes->reported_subtypes[k] == 0 ){ 
+																my_subtypes->reported_subtypes[k] = (unsigned int)get_card_instance(p, c)->info_slot;
+																break;
+															}
+														}
+													}
+													break;
+												}
+												case CARD_ID_MEPHIDROSS_VAMPIRE:
+												{
+													my_subtypes->reported_subtypes[23] = SUBTYPE_VAMPIRE;
+													break;
+												}
+												case CARD_ID_DISMISS_INTO_DREAM:
+												{
+													my_subtypes->reported_subtypes[24] = SUBTYPE_ILLUSION;
+													break;
+												}
+										}
+									}
+								}
+							};
+		);
+
+		my_subtypes->reported_subtypes[0] = (unsigned int)get_added_subtype(player, card);
+		if( dralnus_crusade_flag ){
+			int q;
+			for(q=0; q<(NUM_SUBTYPES-1); q++){
+				if( my_subtypes->reported_subtypes[q] == SUBTYPE_GOBLIN ){
+					my_subtypes->reported_subtypes[NUM_SUBTYPES-1] = SUBTYPE_ZOMBIE;
+					break;
+				}
+			}
+		}
+	}
+}
+
 int has_subtype_by_id(int id, subtype_t subtype){
 
 	if( subtype == SUBTYPE_LEGEND ){
@@ -428,7 +654,7 @@ int has_subtype(int player, int card, subtype_t subtype){
 	if( player == -1 ){
 		return has_subtype_by_id(cards_data[card].id, subtype);
 	}
-	int id = get_id(player, card);
+
 	card_instance_t *instance = get_card_instance(player, card);
 
 	// Legendary permanents
@@ -459,76 +685,18 @@ int has_subtype(int player, int card, subtype_t subtype){
 		}
 	}
 
-	if( creature_type ){
-		// Mirror Entity effect / Changeling hack
-		if( is_changeling(player, card) ){
-			return 1;
-		}
-
-		// Hacks for cards that add creature subtypes to themselves.  Anything here must also be mirrored in shares_creature_subtype() below.
-		if( is_in_play && id == CARD_ID_FIGURE_OF_DESTINY ){
-			if( instance->targets[9].player > 0 ){
-				if( subtype == SUBTYPE_SPIRIT && (instance->targets[9].player & 1) ){
-					return 1;
-				}
-				if( subtype == SUBTYPE_WARRIOR && (instance->targets[9].player & 2) ){
-					return 1;
-				}
-				if( subtype == SUBTYPE_AVATAR && instance->targets[9].player == 3 ){
-					return 1;
-				}
-			}
-		}
-
-		if( is_in_play && id == CARD_ID_WARDEN_OF_THE_FIRST_TREE ){
-			if( instance->targets[9].player > 0 ){
-				if( subtype == SUBTYPE_WARRIOR && ((instance->targets[9].player & 1) || (instance->targets[9].player & 2)) ){
-					return 1;
-				}
-				if( subtype == SUBTYPE_SPIRIT && (instance->targets[9].player & 2) ){
-					return 1;
-				}
-			}
-		}
-
-		if( is_in_play && id == CARD_ID_AGELESS_SENTINELS ){
-			if( instance->targets[5].player == 66 ){
-				if( subtype == SUBTYPE_GIANT ){
-					return 1;
-				}
-				if( subtype == SUBTYPE_BIRD ){
-					return 1;
-				}
-			}
-		}
-
-		if( is_in_play && id == CARD_ID_DUPLICANT ){
-			int i;
-			for(i=2; i<6; i++){
-				if( (unsigned int)instance->targets[i].player == subtype ){
-					return 1;
-				}
-			}
-		}
-
-		if (subtype == SUBTYPE_WALL && count_counters(player, card, COUNTER_GOLD) && check_battlefield_for_id(ANYBODY, CARD_ID_AURIFICATION)){
-			return 1;
-		}
-	}
-
-	if (subtype == SUBTYPE_SNOW && count_counters(player, card, COUNTER_ICE) && check_battlefield_for_id(ANYBODY, CARD_ID_RIMEFEATHER_OWL)){
+	// Mirror Entity effect / Changeling hack
+	if( creature_type && is_changeling(player, card) ){
 		return 1;
 	}
 
-	//  Prismatic Omen hack
-	if( is_in_play && is_what(player, card, TYPE_LAND) && is_basic_land_subtype(subtype) ){
-		if( check_special_flags2(player, card, SF2_PRISMATIC_OMEN) ){
+	reported_subtypes_t stypes;
+	get_subtypes(player, card, &stypes);
+	int q;
+	for(q=0; q<NUM_SUBTYPES; q++){
+		if( stypes.reported_subtypes[q] == subtype ){
 			return 1;
 		}
-	}
-
-	if (has_subtype_by_id(id, subtype)){
-		return 1;
 	}
 
 	static int depth = 0;	// A bandaid for braindead coding that calls this for every invocation of a card's function.
@@ -543,6 +711,7 @@ int has_subtype(int player, int card, subtype_t subtype){
 	--depth;
 	return rval;
 }
+
 
 int has_creature_type(int player, int card, subtype_t subtype){
 
@@ -560,8 +729,8 @@ int is_tribal(int player, int card){
 // Returns true if {p0,c0} shares at least one creature subtype with {p1,c1}.
 int shares_creature_subtype(int p0, int c0, int p1, int c1)
 {
-  int i, j;
-  int p[2] = {p0, p1}, c[2] = {c0, c1};	// For convenience.
+	int i, j;
+	int p[2] = {p0, p1}, c[2] = {c0, c1};	// For convenience.
 
   // If a card isn't a creature or a tribal, it has no creature subtypes.
   for (i = 0; i < 2; ++i)
@@ -572,9 +741,10 @@ int shares_creature_subtype(int p0, int c0, int p1, int c1)
    * changeling, since the other might not have any creature types.  We can't even return immediately if both are, since one or the other may have lost all
    * creature types, or had its creature types forced to something else. */
 
-#define NUM_SUBTYPES	11
-  /* 0 is an added or forced subtype; 1..5 are natural subtypes from card_ptr_t; 6 is Wall added by Aurification; 7..10 are subtype hacks added by specific
-   * cards to themselves. */
+ /* 0 is an added or forced subtype; 1..5 are natural subtypes from card_ptr_t; 6 is Wall added by Aurification; 
+  *	7..10 are subtype hacks added by specific cards to themselves. 
+  * 11..14 are for Xenograft
+  */
 
   int subtypes[2][NUM_SUBTYPES] = {{0}};
 
@@ -621,61 +791,12 @@ int shares_creature_subtype(int p0, int c0, int p1, int c1)
 		  continue;	// No need to enumerate natural subtypes
 		}
 
-	  int csvid = p[i] == -1 ? cards_data[c[i]].id : get_backup_id(p[i], c[i]);
-	  card_ptr_t* cp = cards_ptr[csvid];
-	  for (j = 1; j < 6; ++j)	// types[0] is always either a type or supertype; types[6] is unused
-		subtypes[i][j] = cp->types[j];
-
-	  // Hacks for cards that add creature subtypes to themselves.  Anything here must also be mirrored in has_subtype() above.
-	  if (instance)	// and therefore in play
-		{
-		  if (count_counters(p[i], c[i], COUNTER_GOLD) && check_battlefield_for_id(ANYBODY, CARD_ID_AURIFICATION))
-			subtypes[i][6] = SUBTYPE_WALL;
-
-		  switch (csvid)
-			{
-				case CARD_ID_FIGURE_OF_DESTINY:
-				{
-					if( instance->targets[9].player > 0 ){
-						if( instance->targets[9].player & 1 ){
-							subtypes[i][9] = SUBTYPE_SPIRIT;
-						}
-						if( instance->targets[9].player & 2 ){
-							subtypes[i][8] = SUBTYPE_WARRIOR;
-						}
-						if( instance->targets[9].player == 3 ){
-							subtypes[i][7] = SUBTYPE_AVATAR;
-						}
-					}
-				}
-				break;
-
-			  case CARD_ID_AGELESS_SENTINELS:
-				if (instance->targets[5].player == 66)
-				  {
-					subtypes[i][7] = SUBTYPE_BIRD;
-					subtypes[i][8] = SUBTYPE_GIANT;
-				  }
-				break;
-
-			  case CARD_ID_DUPLICANT:
-				for (j = 2; j < 6; ++j)
-				  subtypes[i][j + 5] = instance->targets[j].player;
-				break;
-
-			  case CARD_ID_WARDEN_OF_THE_FIRST_TREE:
-				{
-					if( instance->targets[9].player > 0 ){
-						if( instance->targets[9].player & 1 ){
-							subtypes[i][9] = SUBTYPE_WARRIOR;
-						}
-						if( instance->targets[9].player & 2 ){
-							subtypes[i][8] = SUBTYPE_SPIRIT;
-						}
-					}
-				}
-				break;
-			}
+		reported_subtypes_t stypes;
+		get_subtypes(p[i], c[i], &stypes);
+		// .reported_subtypes[0] (added or forced subtype) have been already examined above
+		int q;
+		for(q=1; q<NUM_SUBTYPES; q++){
+			subtypes[i][q] = stypes.reported_subtypes[q];
 		}
 	}
 
@@ -709,7 +830,6 @@ int shares_creature_subtype(int p0, int c0, int p1, int c1)
 	}
 
   return 0;
-#undef NUM_SUBTYPES
 }
 
 // Finds creature subtypes only (by design)
@@ -743,11 +863,24 @@ static int get_most_common_subtype_in_zone(const int *zone){
 	return mcsid;
 }
 
-static int get_most_common_subtype_in_deck(int t_player){
-	return get_most_common_subtype_in_zone(deck_ptr[t_player]);
+/*
+static int create_select_subtype_legacy(int player, int card, subtype_t subtype, int show_legacy)
+{
+	int legacy = -1;
+	if( show_legacy && subtype > 0 && subtype != SUBTYPE_NONE ){
+		if( is_what(player, card, TYPE_PERMANENT) && show_legacy ){
+			legacy = create_subtype_name_legacy(player, card, subtype);
+			if( show_legacy == 2 ){
+				get_card_instance(player, legacy)->targets[0].card = 2;
+			}
+		}
+	}
+	return legacy;
 }
+*/
 
 static int select_a_subtype_impl(int player, int card, int who_chooses, int t_player, const int *zone, int show_legacy){
+// Actually, is "select a creature type"
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -759,23 +892,24 @@ static int select_a_subtype_impl(int player, int card, int who_chooses, int t_pl
 
 	card_instance_t *instance = get_card_instance(player, card);
 
- restart:;
-	int result = -1;
-	int choice = 0;
-	int sc = 0;
-	char b1[500];
-	int p1 = snprintf(b1, 500, " Auto\n Choose from a card list\n");
-	if( can_target(&td)  ){
-		choice = 2;
-		p1+=snprintf(b1+p1, 500-p1, " Choose from a creature");
-	}
-	if( who_chooses != AI ){
-		choice = do_dialog(who_chooses, player, card, -1, -1, b1, 2);
-	}
+	enum{
+		CHOICE_AUTO = 1,
+		CHOICE_CARD_LIST,
+		CHOICE_PICK_CREATURE
+	};
 
+
+ restart:;
+	reported_subtypes_t stypes;
+ 	int result = -1;
 	int csvid = -1;
-	int subs[6] = {-1, -1, -1, -1, -1, -1};
-	if( choice == 0 ){
+	int subs[NUM_SUBTYPES] = {0};
+	int choice = DIALOG(player, card, EVENT_CAST_SPELL, DLG_NO_STORAGE, DLG_RANDOM, DLG_NO_CANCEL,
+						"Auto", 1, 5,
+						"Choose from a card list", 1, 1,
+						"Pick it from a creature in play", can_target(&td), 10);
+
+	if( choice == CHOICE_AUTO ){
 		if( zone == NULL ){
 			zone = deck_ptr[t_player];
 			result = get_most_common_subtype_in_zone(zone);
@@ -795,85 +929,47 @@ static int select_a_subtype_impl(int player, int card, int who_chooses, int t_pl
 			result = get_most_common_subtype_in_zone(zone);
 		}
 	}
-	else if( choice == 1 ){
-			csvid = card_from_list(player, 3, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+
+	if( choice == CHOICE_CARD_LIST ){
+		int iid = card_from_list(player, 5, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+		if( is_changeling(-1, iid) ){
+			goto restart;
+		}
+		csvid = cards_data[iid].id;
 	}
-	else if(choice == 2 ){
-			instance->number_of_targets = 0;
-			if (!pick_target(&td, "TARGET_CREATURE")){
-				goto restart;
+
+	if(choice == CHOICE_PICK_CREATURE ){
+		instance->number_of_targets = 0;
+		if (!pick_target(&td, "TARGET_CREATURE")){
+			goto restart;
+		}
+		if( is_changeling(instance->targets[0].player, instance->targets[0].card) ){
+			goto restart;
+		}
+		get_subtypes(instance->targets[0].player, instance->targets[0].card, &stypes);
+		int i;
+		int sc = 0;
+		for (i = 0; i < NUM_SUBTYPES; ++i){
+			if( is_creature_type(stypes.reported_subtypes[i]) ){
+				subs[sc] = stypes.reported_subtypes[i];
+				sc++;
 			}
-			int forced = get_forced_subtype(instance->targets[0].player, instance->targets[0].card);
-			if( forced > 0 ){
-				int added = get_added_subtype(instance->targets[0].player, instance->targets[0].card);
-				if( added > 0 && added != forced ){
-					subs[sc++] = added;
-					subs[sc++] = forced;
-				} else {
-					result = get_forced_subtype(instance->targets[0].player, instance->targets[0].card);
-				}
-			}
-			else if( is_changeling(instance->targets[0].player, instance->targets[0].card) ){
-				result = get_most_common_subtype_in_deck(t_player);
-			}
-			else{
-				card_instance_t *chosen = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-				csvid = get_id(instance->targets[0].player, instance->targets[0].card);
-				int added = get_added_subtype(instance->targets[0].player, instance->targets[0].card);
-				if( added > 0 ){
-					subs[sc] = added;
-					sc++;
-				}
-				if( count_counters(instance->targets[0].player, instance->targets[0].card, COUNTER_GOLD) &&
-					check_battlefield_for_id(ANYBODY, CARD_ID_AURIFICATION)
-					){
-					subs[sc] = SUBTYPE_WALL;
-					sc++;
-				}
-				if( csvid == CARD_ID_FIGURE_OF_DESTINY ){
-					if( chosen->targets[9].player > 0 ){
-						if( chosen->targets[9].player & 1 ){
-							subs[sc] = SUBTYPE_SPIRIT;
-							sc++;
-						}
-						if( chosen->targets[9].player & 2 ){
-							subs[sc] = SUBTYPE_WARRIOR;
-							sc++;
-						}
-						if( chosen->targets[9].player == 3 ){
-							subs[sc] = SUBTYPE_AVATAR;
-							sc++;
-						}
-					}
-				}
-				if( csvid == CARD_ID_AGELESS_SENTINELS ){
-					if( chosen->targets[5].player == 66 ){
-						subs[sc] = SUBTYPE_BIRD;
-						sc++;
-						subs[sc] = SUBTYPE_GIANT;
-						sc++;
-					}
-				}
-				if( csvid == CARD_ID_DUPLICANT ){
-					int j = 2;
-					while( sc < 6 && j < 6 ){
-						subs[sc] = chosen->targets[j].player;
-						sc++;
-						j++;
-					}
-				}
-			}
+		}
 	}
-	if( result == -1 ){
+
+	if( choice != CHOICE_AUTO ){
+		int sc = 0;
 		if( csvid < 0 ){
 			csvid = CARD_ID_AIR_ELEMENTAL;
 		}
-		card_ptr_t* c = cards_ptr[ csvid ];
-		int i;
-		for (i = 1; i < 6 && sc < 6; ++i){	// [0] is always either a type or supertype; [6] is unused
-			if( is_creature_type(c->types[i]) ){
-				subs[sc] = c->types[i];
-				sc++;
+		if( choice == CHOICE_CARD_LIST ){
+			get_subtypes_by_csvid(csvid, &stypes);
+			int i;
+			for (i = 1; i < NUM_SUBTYPES; ++i){	// [0] is added / forced subtype and it's valid only for cards in play.
+				if( is_creature_type(stypes.reported_subtypes[i]) ){
+					subs[sc] = stypes.reported_subtypes[i];
+					sc++;
+				}
 			}
 		}
 
@@ -886,16 +982,25 @@ static int select_a_subtype_impl(int player, int card, int who_chooses, int t_pl
 							 OPTION(2),
 							 OPTION(3),
 							 OPTION(4),
-							 OPTION(5));
+							 OPTION(5),
+							 OPTION(6),
+							 OPTION(7),
+							 OPTION(8),
+							 OPTION(9),
+							 OPTION(10),
+							 OPTION(11),
+							 OPTION(12),
+							 OPTION(13));
 #undef OPTION
 
 		if (choice2 == 0){
 			goto restart;
 		}
-		else {
+		else{
 			result = subs[choice2 - 1];
 		}
 	}
+
 	if( result > 0 && result != SUBTYPE_NONE ){
 		if( is_what(player, card, TYPE_PERMANENT) && show_legacy ){
 			int legacy = create_subtype_name_legacy(player, card, result);
@@ -911,7 +1016,7 @@ static int select_a_subtype_impl(int player, int card, int who_chooses, int t_pl
 int select_a_subtype(int player, int card){
 
 	int t_player = player;
-	if( get_id(player, card) == CARD_ID_ENGINEERED_PLAGUE || get_id(player, card) == CARD_ID_TSABOS_DECREE ){
+	if( get_id(player, card) == CARD_ID_ENGINEERED_PLAGUE || get_id(player, card) == CARD_ID_TSABOS_DECREE || get_id(player, card) == CARD_ID_AN_ZERRIN_RUINS){
 		if( player == AI ){
 			t_player = 1-player;
 		}
@@ -1485,7 +1590,7 @@ fx_change_types(int player, int card, event_t event)
 
   if (event == EVENT_CLEANUP
 	  && !(inst->token_status & STATUS_PERMANENT))
-	kill_card(player, card, KILL_REMOVE);
+	kill_card(player, card, KILL_EXILE);
 
   return 0;
 }
@@ -1568,3 +1673,24 @@ has_subtypes_if_animated_self(int player, int card, event_t event, subtype_t sub
 		event_result = 0;
 	}
 }
+
+int count_all_other_creatures_that_shares_a_creature_type_with_me(int player, int card, int t_player){
+	int result = 0;
+	int p;
+	for(p=0; p<2; p++){
+		if( p == t_player || t_player == ANYBODY ){
+			int c;
+			for(c=0; c<active_cards_count[p]; c++){
+				if( in_play(p, c) && is_what(p, c, TYPE_CREATURE) && !(p == player && c == card) && 
+					shares_creature_subtype(player, card, p, c) )
+				{
+					result++;
+				}
+			}
+		}
+	}
+	return result;
+}
+
+
+#undef NUM_SUBTYPES
