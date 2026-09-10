@@ -1,51 +1,36 @@
 #include "manalink.h"
 
 // Functions
-static int bloodfire(int player, int card, event_t event, int dmg){
 
-	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) && has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 1, 0) ){
-		return can_sacrifice_as_cost(player, 1, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-	}
+int recruiting(int player, int card, int subtype, int cards_to_look){
 
-	if(event == EVENT_ACTIVATE ){
-		charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 1, 0);
-		if( spell_fizzled != 1 ){
-			kill_card(player, card, KILL_SACRIFICE);
-		}
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_CREATURE);
-		new_damage_all(player, card, 2, dmg, NDA_PLAYER_TOO, &this_test);
-	}
-
-	return 0;
-}
-
-static int recruiter(int player, int card, event_t event, int subtype){
-
-	/* Creature
-	 * When ~ enters the battlefield, reveal the top four cards of your library. Put all [subtype] cards revealed this way into your hand and the rest on the
+	/* Reveal the top "cards_to_look" cards of your library. Put all [subtype] cards revealed this way into your hand and the rest on the
 	 * bottom of your library in any order. */
+	int result = 0;
+	int amount = reveal_top_cards_of_library(player, cards_to_look);
+	if (amount <= 0){
+		return 0;
+	}
 
-	if( comes_into_play(player, card, event) ){
-		int amount = reveal_top_cards_of_library(player, 4);
-		if (amount <= 0){
-			return 0;
-		}
-
-		int i, *deck = deck_ptr[player];
-		for (i = amount - 1; i >= 0; --i){
+	int i, *deck = deck_ptr[player];
+	for (i = amount - 1; i >= 0; --i){
 			if( has_subtype(-1, deck[i], subtype) ){
 				add_card_to_hand(player, deck[i]);
 				remove_card_from_deck(player, i);
+				result++;
 				amount--;
 			}
-		}
-		if( amount > 0 ){
-			put_top_x_on_bottom(player, player, amount);
-		}
+	}
+	if( amount > 0 ){
+		put_top_x_on_bottom(player, player, amount);
+	}
+
+	return result;
+}
+
+static int recruiter(int player, int card, event_t event, int subtype){
+	if( comes_into_play(player, card, event) ){
+		recruiting(player, card, subtype, 4);
 	}
 	return 0;
 }
@@ -64,16 +49,17 @@ void volver(int player, int card, event_t event, int colorless, int black, int b
   ){
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		if( ! check_special_flags(player, card, SF_NOT_CAST) && ! is_token(player, card) ){
-			int options[10] = { black > 0 && has_mana_multi(player, colorless, black, 0, 0, 0, 0),
-							black2 > 0 && has_mana_multi(player, colorless, black2, 0, 0, 0, 0),
+			int options[10] = {
+							black > 0 && has_mana_multi(player, colorless, black, 0, 0, 0, 0),
+							black2 > 0 && has_mana_multi(player, 0, black2, 0, 0, 0, 0),
 							blue > 0 && has_mana_multi(player, colorless, 0, blue, 0, 0, 0),
-							blue2 > 0 && has_mana_multi(player, colorless, 0, blue2, 0, 0, 0),
+							blue2 > 0 && has_mana_multi(player, 0, 0, blue2, 0, 0, 0),
 							green > 0 && has_mana_multi(player, colorless, 0, 0, green, 0, 0),
-							green2 > 0 && has_mana_multi(player, colorless, 0, 0, green2, 0, 0),
+							green2 > 0 && has_mana_multi(player, 0, 0, 0, green2, 0, 0),
 							red > 0 && has_mana_multi(player, colorless, 0, 0, 0, red, 0),
-							red2 > 0 && has_mana_multi(player, colorless, 0, 0, 0, red2, 0),
+							red2 > 0 && has_mana_multi(player, 0, 0, 0, 0, red2, 0),
 							white > 0 && has_mana_multi(player, colorless, 0, 0, 0, 0, white),
-							white2 > 0 && has_mana_multi(player, colorless, 0, 0, 0, 0, white2)
+							white2 > 0 && has_mana_multi(player, 0, 0, 0, 0, 0, white2)
 			};
 
 			int choice = DIALOG(player, card, event, DLG_NO_STORAGE, DLG_OMIT_ILLEGAL,
@@ -132,9 +118,11 @@ void volver(int player, int card, event_t event, int colorless, int black, int b
 						set_special_flags(player, card, SF_KICKED | SF_KICKED2);
 					}
 					else{
-						int sf = (choice == 1 || choice == 3 || choice == 5 || choice == 7 || choice == 9) ? SF_KICKED : SF_KICKED2;
+						int sf = mana_to_charge[0] > 0 ? SF_KICKED : SF_KICKED2;
 						set_special_flags(player, card, sf);
 					}
+					int amount = (check_special_flags(player, card, SF_KICKED) ? 2 : 0) + (check_special_flags(player, card, SF_KICKED2) ? 1 : 0);
+					enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, amount);
 				}
 			}
 		}
@@ -286,38 +274,57 @@ int card_anavolver(int player, int card, event_t event){
 	}
 
 	if( in_play(player, card) && check_special_flags(player, card, SF_KICKED2) ){
-		card_instance_t *instance = get_card_instance( player, card );
-
-		if( land_can_be_played & LCBP_REGENERATION ){
-			if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card)  && can_pay_life(player, 3) && can_regenerate(player, card) &&
-				has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0)
-			  ){
-				return 0x63;
-			}
-			else if( event == EVENT_ACTIVATE ){
-					if( charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) ){
-						lose_life(player, 3);
-					}
-			}
-			else if( event == EVENT_RESOLVE_ACTIVATION && can_regenerate(player, instance->parent_card) ){
-					 regenerate_target(player, instance->parent_card);
-			}
-		}
+		modify_pt_and_abilities(player, card, event, 0, 0, KEYWORD_REGENERATION);
+		return generic_activated_ability(player, card, event, GAA_REGENERATION, MANACOST0, 3, NULL, NULL);
 	}
 
 	return 0;
 }
 
 int card_bloodfire_colossus(int player, int card, event_t event){
-	return bloodfire(player, card, event, 6);
+
+	if( event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE ){
+		return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME, MANACOST_R(1), 0, NULL, NULL);
+	}
+
+	if( event == EVENT_RESOLVE_ACTIVATION ){
+		test_definition_t this_test;
+		default_test_definition(&this_test, TYPE_CREATURE);
+		new_damage_all(player, card, 2, 6, NDA_PLAYER_TOO, &this_test);
+	}
+
+	return 0;
 }
 
+
 int card_bloodfire_dwarf(int player, int card, event_t event){
-	return bloodfire(player, card, event, 1);
+	if( event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE ){
+		return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME, MANACOST_R(1), 0, NULL, NULL);
+	}
+
+	if( event == EVENT_RESOLVE_ACTIVATION ){
+		test_definition_t this_test;
+		default_test_definition(&this_test, TYPE_CREATURE);
+		this_test.keyword = KEYWORD_FLYING;
+		this_test.keyword_flag = DOESNT_MATCH;
+		new_damage_all(player, card, 2, 1, 0, &this_test);
+	}
+
+	return 0;
 }
 
 int card_bloodfire_kavu(int player, int card, event_t event){
-	return bloodfire(player, card, event, 2);
+	if( event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE ){
+		return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME, MANACOST_R(1), 0, NULL, NULL);
+	}
+
+	if( event == EVENT_RESOLVE_ACTIVATION ){
+		test_definition_t this_test;
+		default_test_definition(&this_test, TYPE_CREATURE);
+		new_damage_all(player, card, 2, 2, 0, &this_test);
+	}
+
+	return 0;
 }
 
 int card_brass_herald(int player, int card, event_t event){
@@ -641,9 +648,28 @@ int card_cromat(int player, int card, event_t event){
 	*/
 	check_legend_rule(player, card, event);
 
+	// Debug code: put into play a land for each basic type when it resolves. Do not remove.
+	/*
+	if( event == EVENT_RESOLVE_SPELL ){
+		int i;
+		for(i=0; i<5; i++){
+			int card_added = add_card_to_hand(player, i);
+			put_into_play(player, card_added);
+		}
+	}
+	*/
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
+
+	enum{
+		CHOICE_DESTR_BLOCK = 1,
+		CHOICE_FLYING = 2,
+		CHOICE_REGENERATE = 3,
+		CHOICE_PUMP = 4,
+		CHOICE_RETURN_DECK = 5,
+	};
 
 	target_definition_t td2;
 	default_target_definition(player, card, &td2, TYPE_CREATURE);
@@ -687,8 +713,8 @@ int card_cromat(int player, int card, event_t event){
 		}
 	}
 
-	if (event == EVENT_ACTIVATE || event == EVENT_RESOLVE_ACTIVATION){
-
+	if (event == EVENT_ACTIVATE ){
+		instance->info_slot = 0;
 		int can_regen = regeneration(player, card, EVENT_CAN_ACTIVATE, MANACOST_BG(1, 1));
 		int can_destroy_blocked_blocking_creature = 0;
 		if( current_turn == player ){
@@ -701,15 +727,14 @@ int card_cromat(int player, int card, event_t event){
 		int can_pump = has_mana_for_activated_ability(player, card, MANACOST_RW(1, 1)) ;
 		int can_be_put_on_top_of_library = has_mana_for_activated_ability(player, card, MANACOST_UG(1, 1)) ;
 
-		enum{
-			CHOICE_DESTR_BLOCK = 1,
-			CHOICE_FLYING = 2,
-			CHOICE_REGENERATE = 3,
-			CHOICE_PUMP = 4,
-			CHOICE_RETURN_DECK = 5,
-		};
 		int choice = can_regen ? CHOICE_REGENERATE : 0;
-		if( ! choice ){
+		if( choice ){
+			if( ! charge_mana_for_activated_ability(player, card, MANACOST_BG(1, 1)) ){
+				spell_fizzled = 1;
+				return 0;
+			}
+		}
+		else{
 			choice = DIALOG(player, card, event,
 							DLG_RANDOM,
 							"Destroy a creature blocking / blocked by me", can_destroy_blocked_blocking_creature, 15, DLG_MANA(MANACOST_BW(1, 1)),
@@ -719,26 +744,31 @@ int card_cromat(int player, int card, event_t event){
 							"Put on top of deck", can_be_put_on_top_of_library, 5, DLG_MANA(MANACOST_UG(1, 1))
 							);
 		}
+		if( ! choice ){
+			spell_fizzled = 1;
+			return 0;
+		}
 
-		if (event == EVENT_ACTIVATE){
-			if( choice == CHOICE_DESTR_BLOCK ){
-				if( current_turn == player ){
-					if( ! select_target(player, card, &td2, "Select a creature that is blocking Cromat", &(instance->targets[0])) ){
-						spell_fizzled = 1;
-						return 0;
-					}
+		if( choice == CHOICE_DESTR_BLOCK ){
+			if( current_turn == player ){
+				if( ! select_target(player, card, &td2, "Select a creature that is blocking Cromat", &(instance->targets[0])) ){
+					spell_fizzled = 1;
+					return 0;
 				}
-				else{
-					if( ! select_target(player, card, &td1, "Select a creature that is blocked by Cromat", &(instance->targets[0])) ){
-						spell_fizzled = 1;
-						return 0;
-					}
+			}
+			else{
+				if( ! select_target(player, card, &td1, "Select a creature that is blocked by Cromat", &(instance->targets[0])) ){
+					spell_fizzled = 1;
+					return 0;
 				}
 			}
 		}
-		else	// event == EVENT_RESOLVE_ACTIVATION
-			{
-			  switch (choice)
+		instance->info_slot = choice;
+	}
+
+	if( event == EVENT_RESOLVE_ACTIVATION){
+			int choice = instance->info_slot;
+			switch (choice)
 				{
 				  case CHOICE_REGENERATE:
 					{
@@ -774,7 +804,6 @@ int card_cromat(int player, int card, event_t event){
 						break;
 					}
 				}
-		}
 	}
 
 	return 0;
@@ -883,30 +912,15 @@ int card_degavolver(int player, int card, event_t event){
 	  If Degavolver was kicked with its {1}{B} kicker, it enters the battlefield with two +1/+1 counters on it and with "Pay 3 life: Regenerate Degavolver."
 	  If Degavolver was kicked with its {R} kicker, it enters the battlefield with a +1/+1 counter on it and with first strike.
 	*/
-	volver(player, card, event, MANACOST_XW(1, 1), MANACOST_R(1), 5, 10);
+	volver(player, card, event, MANACOST_XB(1, 1), MANACOST_R(1), 5, 10);
 
 	if( in_play(player, card) && check_special_flags(player, card, SF_KICKED2) ){
 		modify_pt_and_abilities(player, card, event, 0, 0, KEYWORD_FIRST_STRIKE);
 	}
 
 	if( in_play(player, card) && check_special_flags(player, card, SF_KICKED) ){
-		card_instance_t *instance = get_card_instance( player, card );
-
-		if( land_can_be_played & LCBP_REGENERATION ){
-			if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card)  && can_pay_life(player, 3) && can_regenerate(player, card) &&
-				has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0)
-			  ){
-				return 0x63;
-			}
-			else if( event == EVENT_ACTIVATE ){
-					if( charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) ){
-						lose_life(player, 3);
-					}
-			}
-			else if( event == EVENT_RESOLVE_ACTIVATION ){
-					 regenerate_target(player, instance->parent_card);
-			}
-		}
+		modify_pt_and_abilities(player, card, event, 0, 0, KEYWORD_REGENERATION);
+		return generic_activated_ability(player, card, event, GAA_REGENERATION, MANACOST0, 3, NULL, NULL);
 	}
 
 	return 0;
@@ -986,6 +1000,9 @@ int card_enlistment_officer(int player, int card, event_t event){
 }
 
 int card_evasive_action(int player, int card, event_t event){
+	/* Evasive Action	|1|U
+	 * Instant
+	 * Domain - Counter target spell unless its controller pays |1 for each basic land type among lands you control. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -1111,14 +1128,23 @@ int card_fire_ice(int player, int card, event_t event){
 
 int card_flowstone_charger(int player, int card, event_t event)
 {
-  // Whenever ~ attacks, it gets +3/-3 until end of turn.
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
-	pump_until_eot(player, card, player, card, 3, -3);
+	/* Flowstone Charger	|2|R|W
+	 * Creature - Beast 2/5
+	 * Whenever ~ attacks, it gets +3/-3 until end of turn. */
 
-  return 0;
+	return when_attacks_pump_self(player, card, event, 3,-3);
 }
 
-// fungal shambler --> dimir cutpurse
+int card_fungal_shambler(int player, int card, event_t event){
+
+	if( damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_OPPONENT) ){
+		draw_cards(player, 1);
+		discard(1-player, 0, player);
+	}
+
+	return 0;
+}
+
 
 int card_gerrard_capashen(int player, int card, event_t event){
 

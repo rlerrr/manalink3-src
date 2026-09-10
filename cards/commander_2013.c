@@ -50,15 +50,17 @@ int card_curse_of_shallow_graves(int player, int card, event_t event)
 }
 
 int card_tempt_with_immortality(int player, int card, event_t event){
+	/* Tempt with Immortality	|4|B
+	 * Sorcery
+	 * Tempting offer - Return a creature card from your graveyard to the battlefield. Each opponent may return a creature card from his or her graveyard to the battlefield. For each player who does, return a creature card from your graveyard to the battlefield. */
 
 	if( event == EVENT_CAN_CAST && count_graveyard_by_type(player, TYPE_CREATURE) > 0 ){
 		return 1;
 	}
 
-	if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
-		char msg[100] = "Select a creature card.";
+	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_CREATURE, msg);
+		new_default_test_definition(&this_test, TYPE_CREATURE, "Select a creature card.");
 		new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_PLAY, 1, AI_MAX_CMC, &this_test);
 		if( new_global_tutor(1-player, 1-player, TUTOR_FROM_GRAVE, TUTOR_PLAY, 0, AI_MAX_CMC, &this_test) != -1 ){
 			if( count_graveyard_by_type(player, TYPE_CREATURE) > 0 ){
@@ -175,34 +177,46 @@ int card_ophiomancer(int player, int card, event_t event){
 }
 
 int card_toxic_deluge(int player, int card, event_t event){
+	/* Toxic Deluge	|2|B
+	 * Sorcery
+	 * As an additional cost to cast ~, pay X life.
+	 * All creatures get -X/-X until end of turn. */
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_CAN_CAST ){
-		return can_pay_life(player, 1);
+		if( basic_spell(player, card, event) ){
+			return can_pay_life_as_cost_for_spells_or_activated_abilities(player, 1);
+		}
 	}
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_CREATURE);
-		int ltp = check_battlefield_for_special_card(player, card, 1-player, CBFSC_GET_MAX_TOU, &this_test);
-		while( life[player]-ltp < 6 ){
-				ltp--;
-		}
-		if( player == HUMAN ){
-			ltp = choose_a_number(player, "Pay how much life?", life[player]);
-		}
-		if( ltp < 1 || ltp > life[player] ){
-			spell_fizzled = 1;
-		}
-		else{
-			lose_life(player, ltp);
-			instance->info_slot = ltp;
+		if( ! is_token(player, card) ){
+			test_definition_t this_test;
+			default_test_definition(&this_test, TYPE_CREATURE);
+			int ltp = check_battlefield_for_special_card(player, card, 1-player, CBFSC_GET_MAX_TOU, &this_test);
+			while( life[player]-ltp < 6 ){
+					ltp--;
+			}
+			if( player == HUMAN ){
+				ltp = choose_a_number(player, "Pay how much life?", life[player]);
+			}
+			if( ltp < 1 || ltp > life[player] ){
+				spell_fizzled = 1;
+			}
+			else{
+				lose_life(player, ltp);
+				instance->info_slot = ltp;
+			}
 		}
 	}
 
-	if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
-		pump_subtype_until_eot(player, card, 2, -1, -instance->info_slot, -instance->info_slot, 0, 0);
+	if( event == EVENT_RESOLVE_SPELL ){
+		APNAP(p, {pump_subtype_until_eot(player, card, p, -1, -instance->info_slot, -instance->info_slot, 0, 0);};);
 		kill_card(player, card, KILL_SACRIFICE);
 	}
 
@@ -479,7 +493,9 @@ int card_naya_soulbeast(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) && ! check_special_flags(player, card, SF_NOT_CAST) &&
+		! is_token(player, card)
+	  ){
 		int i;
 		instance->info_slot = 0;
 		for(i=0; i<2; i++){
@@ -548,6 +564,14 @@ int card_restore2(int player, int card, event_t event){
 }
 
 int card_spawning_grounds(int player, int card, event_t event){
+	/* Spawning Grounds	|6|G|G
+	 * Enchantment - Aura
+	 * Enchant land
+	 * Enchanted land has "|T: Put a 5/5 |Sgreen Beast creature token with trample onto the battlefield." */
+
+	if (!IS_CASTING(player, card, event) && !IS_ACTIVATING(event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, LAND);
@@ -562,7 +586,7 @@ int card_spawning_grounds(int player, int card, event_t event){
 		ai_modifier+=100;
 		pick_target(&td, "TARGET_LAND");
 	}
-	if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	if( event == EVENT_RESOLVE_SPELL ){
 			if( valid_target(&td) ){
 				instance->damage_target_player = instance->targets[0].player;
 				instance->damage_target_card = instance->targets[0].card;
@@ -593,15 +617,17 @@ int card_spawning_grounds(int player, int card, event_t event){
 }
 
 int card_tempt_with_discovery(int player, int card, event_t event){
+	/* Tempt with Discovery	|3|G
+	 * Sorcery
+	 * Tempting offer - Search your library for a land card and put it onto the battlefield. Each opponent may search his or her library for a land card and put it onto the battlefield. For each opponent who searches a library this way, search your library for a land card and put it onto the battlefield. Then each player who searched a library this way shuffles it. */
 
 	if( event == EVENT_CAN_CAST ){
 		return 1;
 	}
 
-	if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
-		char msg[100] = "Select a land card.";
+	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_LAND, msg);
+		new_default_test_definition(&this_test, TYPE_LAND, "Select a land card.");
 		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_MAX_VALUE, &this_test);
 		if( new_global_tutor(1-player, 1-player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_MAX_VALUE, &this_test) != -1 ){
 			new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_MAX_VALUE, &this_test);
@@ -846,94 +872,51 @@ int card_darksteel_mutation_insect(int player, int card, event_t event ){
 
 int card_darksteel_mutation(int player, int card, event_t event ){
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( valid_target(&td) ){
-			int iid = get_card_instance(instance->targets[0].player, instance->targets[0].card)->internal_card_id;
-			int niid = iid;
-			if( !(cards_data[iid].type & TYPE_ARTIFACT) ){
-				niid = create_a_card_type(iid);
-				cards_data[niid].type |= TYPE_ARTIFACT;
-			}
-			instance->targets[1].card = niid;
-			return generic_aura(player, card, event, 1-player, 0, 0, 0, 0, SUBTYPE_INSECT, 0, GA_FORBID_HUMILIATE | GA_FORCE_SUBTYPE);
-		}
-	}
-
-	if( in_play(player, card) && instance->damage_target_player != -1 && instance->targets[1].card != -1 ){
+	if( in_play(player, card) && instance->damage_target_player > -1 ){
 		int p = instance->damage_target_player;
 		int c = instance->damage_target_card;
 
-		indestructible(p, c, event);
-
-		if( affect_me(p, c) ){
-		  switch (event)
-			{
-			  case EVENT_CHANGE_TYPE:
-				event_result = instance->targets[1].card;
-				break;
-
-			case EVENT_POWER:
-				event_result += 0 - get_base_power(p, c);
-				break;
-
-			  case EVENT_TOUGHNESS:
-				event_result += 1 - get_base_toughness(p, c);
-				break;
-
-			  case EVENT_ABILITIES:
-				event_result &= (KEYWORD_RECALC_CHANGE_TYPE|KEYWORD_RECALC_TOUGHNESS|KEYWORD_RECALC_POWER|KEYWORD_RECALC_ABILITIES|KEYWORD_RECALC_SET_COLOR);
-				break;
-
-			  case EVENT_SET_COLOR:
-				event_result |= cards_data[get_original_internal_card_id(p, c)].color;
-				break;
-
-			  default:;	// avoid warning
+		if( event == EVENT_CHANGE_TYPE && affect_me(p, c) ){
+			instance->targets[1].card = event_result;
+			if( instance->targets[1].player == -1 ){
+				instance->targets[1].player = get_internal_card_id_from_csv_id(CARD_ID_DARKSTEEL_MUTATION_INSECT);
 			}
-			if( leaves_play(player, card, event) ){
-				return generic_aura(player, card, event, 1-player, 0, 0, 0, 0, SUBTYPE_INSECT, 0, GA_FORBID_HUMILIATE | GA_FORCE_SUBTYPE);
-			}
+			event_result = instance->targets[1].player;
 		}
-	}
 
-	if( event == EVENT_CAN_MOVE_AURA || event == EVENT_MOVE_AURA ){
-		return generic_aura(player, card, event, 1-player, 0, 0, 0, 0, SUBTYPE_INSECT, 0, GA_FORBID_HUMILIATE | GA_FORCE_SUBTYPE);
-	}
-
-	if( event == EVENT_RESOLVE_MOVING_AURA ){
-		if( valid_target(&td) ){
-			int iid = get_card_instance(instance->targets[0].player, instance->targets[0].card)->internal_card_id;
-			int niid = iid;
-			if( !(cards_data[iid].type & TYPE_ARTIFACT) ){
-				niid = create_a_card_type(iid);
-				cards_data[niid].type |= TYPE_ARTIFACT;
-			}
-			instance->targets[1].card = niid;
-			return generic_aura(player, card, event, 1-player, 0, 0, 0, 0, SUBTYPE_INSECT, 0, GA_FORBID_HUMILIATE | GA_FORCE_SUBTYPE);
+		if( event == EVENT_SET_COLOR && affect_me(p, c) && instance->targets[1].card > -1 ){
+			event_result |= cards_data[instance->targets[1].card].color;
 		}
+
 	}
 
+	if( ! IS_AURA_EVENT(player, card, event) ){
+		return 0;
+	}
 
-	return generic_spell(player, card, event, GS_CAN_TARGET | GS_AURA, &td, "TARGET_CREATURE", 1, NULL);
+	target_definition_t td;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+
+	return targeted_aura(player, card, event, &td, "TARGET_CREATURE");
 }
 
 // mystic barrier --> skipped
 
 
 int card_serene_master(int player, int card, event_t event ){
+	/* Serene Master	|1|W
+	 * Creature - Human Monk 0/2
+	 * Whenever ~ blocks, exchange its power and the power of target creature it's blocking until end of combat. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( current_turn != player && blocking(player, card, event) ){
 		int his_pow = get_power(1-player, instance->blocking);
 		int my_pow = get_power(player, card);
-		set_pt_and_abilities_until_eot(player, card, player, card, his_pow, 0, 0, 0, 1);
-		set_pt_and_abilities_until_eot(player, card, 1-player, instance->blocking, my_pow, 0, 0, 0, 1);
+		set_pt_and_abilities_until_eot(player, card, player, card, his_pow, -1, 0, 0, 1);
+		set_pt_and_abilities_until_eot(player, card, 1-player, instance->blocking, my_pow, -1, 0, 0, 1);
 	}
 
 	return 0;
@@ -1268,27 +1251,21 @@ int card_prossh_skyraider_of_kher(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( event == EVENT_MODIFY_COST ){
-		if( has_mana_to_cast_id(player, event, get_id(player, card)) ){
-			null_casting_cost(player, card);
-		}
-	}
-
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		if( ! played_for_free(player, card) && ! is_token(player, card) ){
 			store_mana_paid_to_play_this(player, card, event);
 		}
-		if( instance->targets[3].card > 0 ){
+		if( instance->targets[3].card > 0 && ! check_special_flags(player, card, SF_NOT_CAST) && ! is_token(player, card) ){
 			generate_tokens_by_id(player, card, CARD_ID_KOBOLDS_OF_KHER_KEEP, instance->targets[3].card);
 		}
 	}
 
 	if( event == EVENT_CAN_ACTIVATE && count_subtype(player, TYPE_CREATURE, -1) > 1 ){
-		return generic_activated_ability(player, card, event, GAA_SACRIFICE_CREATURE, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		return generic_activated_ability(player, card, event, GAA_SACRIFICE_CREATURE, MANACOST0, 0, NULL, NULL);
 	}
 
 	if( event == EVENT_ACTIVATE ){
-		if( charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) ){
+		if( charge_mana_for_activated_ability(player, card, MANACOST0) ){
 			state_untargettable(player, card, 1);
 			if( ! sacrifice(player, card, player, 0, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0) ){
 				spell_fizzled = 1;
@@ -1499,6 +1476,10 @@ int card_surveyors_scope(int player, int card, event_t event){
 
 // lands
 int card_opal_palace(int player, int card, event_t event){
+	/* Opal Palace	""
+	 * Land
+	 * |T: Add |C to your mana pool.
+	 * |1, |T: Add to your mana pool one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters the battlefield with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game. */
 
 	card_instance_t *instance = get_card_instance( player, card);
 
@@ -1526,7 +1507,7 @@ int card_opal_palace(int player, int card, event_t event){
 		return 1;
 	}
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
 		if( has_mana(player, COLOR_COLORLESS, 2) && player != AI && instance->info_slot > 0 ){
 			choice = do_dialog(player, player, card, -1, -1, " Add colorless mana\n Add colored mana\n Cancel", 0);

@@ -273,11 +273,11 @@ int card_increasing_devotion(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int amount = 5;
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			amount*=2;
 		}
 		generate_tokens_by_id(player, card, CARD_ID_HUMAN, amount);
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			kill_card(player, card, KILL_REMOVE);
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -305,7 +305,7 @@ int card_lingering_souls(int player, int card, event_t event){
 		token.key_plus = KEYWORD_FLYING;
 		token.color_forced = COLOR_TEST_WHITE;
 		generate_token(&token);
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			kill_card(player, card, KILL_REMOVE);
 		}
 		else{
@@ -567,7 +567,7 @@ int card_artful_dodge(int player, int card, event_t event){
 		if( valid_target(&td) ){
 			pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, 0, SP_KEYWORD_UNBLOCKABLE);
 		}
-		kill_card(player, card, get_flashback() ? KILL_REMOVE : KILL_DESTROY);
+		kill_card(player, card, get_flashback(player, card) ? KILL_REMOVE : KILL_DESTROY);
 	}
 
 	return do_flashback(player, card, event, 0, 0, 1, 0, 0, 0);
@@ -776,12 +776,6 @@ int card_havengul_runebinder(int player, int card, event_t event){
 
 int card_headless_skaab(int player, int card, event_t event){
 
-	if( event == EVENT_MODIFY_COST ){
-		if( count_graveyard_by_type(player, TYPE_CREATURE)  < 1 ){
-			event_result+=49;;
-		}
-	}
-
 	skaabs(player, card, event, 1);
 
 	comes_into_play_tapped(player, card, event);
@@ -790,6 +784,10 @@ int card_headless_skaab(int player, int card, event_t event){
 }
 
 int card_increasing_confusion(int player, int card, event_t event){
+	/* Increasing Confusion	|X|U
+	 * Sorcery
+	 * Target player puts the top X cards of his or her library into his or her graveyard. If ~ was cast from a graveyard, that player puts twice that many cards into his or her graveyard instead.
+	 * Flashback |X|U */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -798,24 +796,24 @@ int card_increasing_confusion(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_GRAVEYARD_ABILITY && has_mana(player, COLOR_BLUE, 1) && can_target(&td) ){
-		return ! check_battlefield_for_id(2, CARD_ID_GADDOCK_TEEG);
+		return check_battlefield_for_id(2, CARD_ID_GADDOCK_TEEG) ? 0 : GA_PLAYABLE_FROM_GRAVE;
 	}
 	if( event == EVENT_PAY_FLASHBACK_COSTS ){
 		charge_mana_multi(player, MANACOST_XU(-1, 1));
 		if( spell_fizzled != 1 ){
 			instance->info_slot = x_value;
-			return 1;
+			return GAPAID_EXILE;
 		}
 	}
 	if(event == EVENT_RESOLVE_SPELL){
 		if( valid_target(&td) && instance->info_slot > 0 ){
 			int amount = instance->info_slot;
-			if( get_flashback() ){
+			if( get_flashback(player, card) ){
 				amount*=2;
 			}
 			mill(instance->targets[0].player, amount);
 		}
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			kill_card(player, card, KILL_REMOVE);
 		}
 		else{
@@ -826,32 +824,16 @@ int card_increasing_confusion(int player, int card, event_t event){
 }
 
 int card_mystic_retrieval(int player, int card, event_t event){
-
-	card_instance_t *instance= get_card_instance(player, card);
-
+	/* Mystic Retrieval	|3|U
+	 * Sorcery
+	 * Return target instant or sorcery card from your graveyard to your hand.
+	 * Flashback |2|R */
 
 	if( event == EVENT_GRAVEYARD_ABILITY || event == EVENT_PAY_FLASHBACK_COSTS ){
-		return do_flashback(player, card, event, 2, 0, 0, 0, 1, 0);
-	}
-	else if(event == EVENT_RESOLVE_SPELL){
-			int selected = instance->targets[0].player;
-			const int *grave = get_grave(player);
-			if( grave[selected] == instance->targets[0].card ){
-				add_card_to_hand(player, grave[selected]);
-				remove_card_from_grave(player, selected);
-			}
-			if( get_flashback() ){
-			   kill_card(player, card, KILL_REMOVE);
-			}
-			else{
-				 kill_card(player, card, KILL_DESTROY);
-			}
-	}
-	else{
-		return card_call_to_mind(player, card, event);
+		return do_flashback(player, card, event, MANACOST_XR(2, 1));
 	}
 
-	return 0;
+	return card_call_to_mind(player, card, event);
 }
 
 int card_niblis_of_the_breath(int player, int card, event_t event){
@@ -905,12 +887,6 @@ int card_niblis_of_the_breath(int player, int card, event_t event){
 
 int card_relentless_skaabs(int player, int card, event_t event){
 
-	if( event == EVENT_MODIFY_COST ){
-		if( count_graveyard_by_type(player, TYPE_CREATURE)  < 1 ){
-			event_result+=49;;
-		}
-	}
-
 	skaabs(player, card, event, 1);
 
 	return undying(player, card, event);
@@ -941,7 +917,7 @@ int card_saving_grasp(int player, int card, event_t event){
 		if( valid_target(&td) ){
 			bounce_permanent(instance->targets[0].player, instance->targets[0].card);
 		}
-			if( get_flashback() ){
+			if( get_flashback(player, card) ){
 			   kill_card(player, card, KILL_REMOVE);
 			}
 			else{
@@ -1201,7 +1177,7 @@ int card_deadly_allure(int player, int card, event_t event){
 			pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
 									0, 0, 0, SP_KEYWORD_DEATHTOUCH + SP_KEYWORD_MUST_BE_BLOCKED);
 		}
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			kill_card(player, card, KILL_REMOVE);
 		}
 		else{
@@ -1323,6 +1299,10 @@ int card_geralfs_messanger(int player, int card, event_t event){
 }
 
 int card_gravecrawler(int player, int card, event_t event){
+	/* Gravecrawler	|B
+	 * Creature - Zombie 2/1
+	 * ~ can't block.
+	 * You may cast ~ from your graveyard as long as you control a Zombie. */
 
 	cannot_block(player, card, event);
 
@@ -1416,7 +1396,7 @@ int card_increasing_ambition(int player, int card, event_t event){
 	}
 
 	if(event == EVENT_RESOLVE_SPELL ){
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, 1, TYPE_ANY, 0, 0, 0, 0, 0, 0, 0, -1, 0);
 			global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, 1, TYPE_ANY, 0, 0, 0, 0, 0, 0, 0, -1, 0);
 			kill_card(player, card, KILL_REMOVE);
@@ -1636,7 +1616,7 @@ int card_reap_the_seagraf(int player, int card, event_t event){
 	}
 	else if(event == EVENT_RESOLVE_SPELL){
 		generate_token_by_id(player, card, CARD_ID_ZOMBIE);
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			kill_card(player, card, KILL_REMOVE);
 		}
 		else{
@@ -1930,7 +1910,7 @@ int card_burning_oil(int player, int card, event_t event){
 		if( valid_target(&td)){
 			damage_creature(instance->targets[0].player, instance->targets[0].card, 3, player, card);
 		}
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			kill_card(player, card, KILL_REMOVE);
 		}
 		else{
@@ -1981,7 +1961,7 @@ int card_faithless_looting(int player, int card, event_t event){
 	if(event == EVENT_RESOLVE_SPELL ){
 		draw_cards(player, 2);
 		multidiscard(player, 2, 0);
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			kill_card(player, card, KILL_REMOVE);
 		}
 		else{
@@ -2006,7 +1986,7 @@ int card_fires_of_undeath(int player, int card, event_t event){
 		if( valid_target(&td) ){
 			damage_creature_or_player(player, card, event, 2);
 		}
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			kill_card(player, card, KILL_REMOVE);
 		}
 		else{
@@ -2136,7 +2116,7 @@ static int legacy_2_minimum_blockers(int player, int card, event_t event){
 	int t_card = instance->targets[0].card;
 
 	if( t_player > -1 ){
-		minimum_blockers(t_player, t_card, event, 2);
+		menace(t_player, t_card, event);
 	}
 
 	if( eot_trigger(player, card, event) ){
@@ -2147,7 +2127,11 @@ static int legacy_2_minimum_blockers(int player, int card, event_t event){
 
 int card_pyreheart_wolf(int player, int card, event_t event){
 
-	// Whenever ~ attacks, each creature you control can't be blocked this turn except by two or more creatures.
+	/* Pyreheart Wolf	|2|R
+	 * Creature - Wolf 1/1
+	 * Whenever ~ attacks, creatures you control gain menace until end of turn.
+	 * Undying */
+
 	int count;
 	if (declare_attackers_trigger(player, card, event, 0, player, card)){
 		for (count = active_cards_count[player]-1; count >= 0; --count){
@@ -2188,7 +2172,7 @@ int card_shattered_perception(int player, int card, event_t event){
 			discard_all(player);
 			draw_cards(player, amount);
 
-			if( get_flashback() ){
+			if( get_flashback(player, card) ){
 			   kill_card(player, card, KILL_REMOVE);
 			}
 			else{
@@ -2506,7 +2490,7 @@ int card_increasing_savagery(int player, int card, event_t event){
 	}
 
 	if(event == EVENT_RESOLVE_SPELL ){
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			add_1_1_counters(instance->targets[0].player, instance->targets[0].card, 10);
 			kill_card(player, card, KILL_REMOVE);
 		}
@@ -2584,15 +2568,29 @@ int card_predator_ooze(int player, int card, event_t event){
 }
 
 int card_scorned_villager(int player, int card, event_t event){
+	/* Scorned Villager	|1|G
+	 * Creature - Human Werewolf 1/1
+	 * |T: Add |G to your mana pool.
+	 * At the beginning of each upkeep, if no spells were cast last turn, transform ~.
+	 * (Moonscarred Werewolf - 2/2) Vigilance
+	 * |T: Add |G|G to your mana pool.
+	 * At the beginning of each upkeep, if a player cast two or more spells last turn, transform Moonscarred Werewolf. */
 
 	double_faced_card(player, card, event);
 
 	human_moon_phases(player, card, event);
 
-	return mana_producing_creature(player, card, event, 24, COLOR_GREEN, 2);
+	return mana_producing_creature(player, card, event, 24, COLOR_GREEN, 1);
 }
 
 int card_moonscarred_werewolf(int player, int card, event_t event){
+	/* Scorned Villager	|1|G
+	 * Creature - Human Werewolf 1/1
+	 * |T: Add |G to your mana pool.
+	 * At the beginning of each upkeep, if no spells were cast last turn, transform ~.
+	 * (Moonscarred Werewolf - 2/2) Vigilance
+	 * |T: Add |G|G to your mana pool.
+	 * At the beginning of each upkeep, if a player cast two or more spells last turn, transform Moonscarred Werewolf. */
 
 	vigilance(player, card, event);
 
@@ -2638,7 +2636,7 @@ int card_trackers_instict(int player, int card, event_t event){
 	}
 	else if(event == EVENT_RESOLVE_SPELL){
 			select_one_and_mill_the_rest(player, player, 4, TYPE_CREATURE);
-			if( get_flashback() ){
+			if( get_flashback(player, card) ){
 			   kill_card(player, card, KILL_REMOVE);
 			}
 			else{

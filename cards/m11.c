@@ -291,14 +291,13 @@ int card_serra_ascendant(int player, int card, event_t event){
 
 //Silence
 int card_silence(int player, int card, event_t event ){
-
+/*
+Silence |W
+Instant
+Your opponents can't cast spells this turn. (Spells cast before this resolves are unaffected.)
+*/
 	if( event == EVENT_RESOLVE_SPELL ){
-		int spc = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);//64
-		card_instance_t *leg = get_card_instance(player, spc);
-		leg->targets[2].player = 8;
-		leg->targets[3].player = 1-player;
-		leg->targets[2].card = get_id(player, card);
-		create_card_name_legacy(player, spc, get_id(player, card));
+		target_player_cant_cast_type(player, card, 1-player, TYPE_ANY);
 		kill_card(player, card, KILL_DESTROY );
 	}
 
@@ -503,9 +502,13 @@ int card_blood_tithe(int player, int card, event_t event ){
 
 //Captivating Vampire
 int card_captivating_vampire(int player, int card, event_t event){
+	/* Captivating Vampire	|1|B|B
+	 * Creature - Vampire 2/2
+	 * Other Vampire creatures you control get +1/+1.
+	 * Tap five untapped Vampires you control: Gain control of target creature. It becomes a Vampire in addition to its other types. */
 
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
+	if (!IS_GAA_EVENT(event)){
+		return boost_creature_type(player, card, event, SUBTYPE_VAMPIRE, 1, 1, 0, BCT_CONTROLLER_ONLY);
 	}
 
 	target_definition_t td;
@@ -553,7 +556,7 @@ int card_captivating_vampire(int player, int card, event_t event){
 		}
 	}
 
-	return boost_creature_type(player, card, event, SUBTYPE_VAMPIRE, 1, 1, 0, BCT_CONTROLLER_ONLY);
+	return 0;
 }
 
 //Deathmark
@@ -653,6 +656,9 @@ int card_demon_of_deaths_gate(int player, int card, event_t event){
 
 //Doom Blade
 int card_doom_blade(int player, int card, event_t event){
+	/* Doom Blade	|1|B
+	 * Instant
+	 * Destroy target non|Sblack creature. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -672,7 +678,7 @@ int card_doom_blade(int player, int card, event_t event){
 	}
 
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td,
-						get_sleighted_color_text(player, card, "Select a non%s or creature.", COLOR_TEST_BLACK), 1, NULL);
+						get_sleighted_color_text(player, card, "Select target non%s creature.", COLOR_BLACK), 1, NULL);
 }
 
 
@@ -833,6 +839,10 @@ int card_quag_sickness(int player, int card, event_t event)
 }
 
 int card_reassembling_skeleton(int player, int card, event_t event){
+	/* Reassembling Skeleton	|1|B
+	 * Creature - Skeleton Warrior 1/1
+	 * |1|B: Return ~ from your graveyard to the battlefield tapped. */
+
 	if(event == EVENT_GRAVEYARD_ABILITY){
 		if( has_mana_multi( player, MANACOST_XB(1, 1) ) ){
 			return GA_RETURN_TO_PLAY_MODIFIED;
@@ -1398,7 +1408,8 @@ int card_inferno_titan(int player, int card, event_t event){
 	 * |R: ~ gets +1/+0 until end of turn.
 	 * Whenever ~ enters the battlefield or attacks, it deals 3 damage divided as you choose among one, two, or three target creatures and/or players. */
 
-	if (comes_into_play(player, card, event) || declare_attackers_trigger(player, card, event, 0, player, card)){
+	store_attackers(player, card, event, DAT_STORE_IN_INFO_SLOT, player, card, NULL);
+	if( comes_into_play(player, card, event) || resolve_declare_attackers_trigger(player, card, event, DAT_STORE_IN_INFO_SLOT) ){
 		target_and_divide_damage(player, card, NULL, NULL, 3);
 	}
 
@@ -1417,6 +1428,12 @@ int card_leyline_of_punishment(int player, int card, event_t event){
 }
 
 int card_magma_phoenix(int player, int card, event_t event){
+	/* Magma Phoenix	|3|R|R
+	 * Creature - Phoenix 3/3
+	 * Flying
+	 * When ~ dies, it deals 3 damage to each creature and each player.
+	 * |3|R|R: Return ~ from your graveyard to your hand. */
+
 	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);

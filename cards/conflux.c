@@ -322,6 +322,13 @@ int card_cylian_sunsinger(int player, int card, event_t event){
 }
 
 int card_drag_down(int player, int card, event_t event){
+	/* Drag Down	|2|B
+	 * Instant
+	 * Domain - Target creature gets -1/-1 until end of turn for each basic land type among lands you control. */
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -334,7 +341,7 @@ int card_drag_down(int player, int card, event_t event){
 	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
 			pick_target(&td, "TARGET_CREATURE");
 	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if(event == EVENT_RESOLVE_SPELL ){
 			if( valid_target(&td) ){
 				int amount = count_domain(player, card);
 				pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -amount, -amount);
@@ -374,6 +381,11 @@ int card_esperzoa(int player, int card, event_t event){
 }
 
 int card_ethersworn_adjudicator(int player, int card, event_t event){
+	/* Ethersworn Adjudicator	|4|U
+	 * Artifact Creature - Vedalken Knight 4/4
+	 * Flying
+	 * |1|W|B, |T: Destroy target creature or enchantment.
+	 * |2|U: Untap ~. */
 
 	card_instance_t *instance = get_card_instance( player, card);
 
@@ -407,7 +419,7 @@ int card_ethersworn_adjudicator(int player, int card, event_t event){
 		}
 		else if( choice == 1 ){
 				charge_mana_for_activated_ability(player, card, MANACOST_XBW(1, 1, 1));
-				if( spell_fizzled != 1 && pick_target(&td, "DISENCHANT") ){
+				if( spell_fizzled != 1 && pick_target(&td, "TARGET_CREATURE_ENCHANTMENT") ){
 					tap_card(player, card);
 					instance->info_slot = 66+choice;
 				}
@@ -461,23 +473,22 @@ int card_exploding_borders(int player, int card, event_t event){//UNUSEDCARD
 
 int card_extractor_demon(int player, int card, event_t event){
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE );
-	td.zone = TARGET_ZONE_PLAYERS;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
 	if( trigger_condition == TRIGGER_LEAVE_PLAY ){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE );
+		td.zone = TARGET_ZONE_PLAYERS;
+
 		if( affect_me( player, card) && !( trigger_cause == card && trigger_cause_controller == player) &&
 			reason_for_trigger_controller == player && can_target(&td)
 		  ){
-			if( is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) ){
+			if( is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) && in_play(trigger_cause_controller, trigger_cause) ){
 				if(event == EVENT_TRIGGER){
-					event_result |= 1+player;
+					event_result |= RESOLVE_TRIGGER_AI(player);
 				}
 				else if(event == EVENT_RESOLVE_TRIGGER){
+						card_instance_t *instance = get_card_instance(player, card);
+						instance->number_of_targets = 0;
 						if( pick_target(&td, "TARGET_PLAYER") ){
-							instance->number_of_targets = 1;
 							mill(instance->targets[0].player, 2);
 						}
 				}
@@ -485,7 +496,7 @@ int card_extractor_demon(int player, int card, event_t event){
 		}
 	}
 
-	return unearth(player, event, 2, 1, 0, 0, 0, 0);
+	return unearth(player, event, MANACOST_XB(2, 1));
 }
 
 int card_faerie_mechanist(int player, int card, event_t event){
@@ -1008,9 +1019,7 @@ int card_meglonoth(int player, int card, event_t event){
 }
 
 
-int card_might_of_alara(int player, int card, event_t event){
-	if( ! is_unlocked(player, card, event, 24) ){ return 0; }
-
+int card_might_of_alara_unlocked(int player, int card, event_t event){
 	if( event == EVENT_CHECK_PUMP && has_mana(player, COLOR_GREEN, 1) ){
 		int count = count_domain(player, card);
 		pumpable_power[player] += count;
@@ -1035,6 +1044,10 @@ int card_might_of_alara(int player, int card, event_t event){
 	}
 
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
+}
+int card_might_of_alara(int player, int card, event_t event){
+	if( ! is_unlocked(player, card, event, 24) ){ return 0; }
+	return card_might_of_alara_unlocked(player, card, event);
 }
 
 int card_mirror_sigil_sergeant(int player, int card, event_t event){
@@ -1103,34 +1116,16 @@ int card_nicol_bolas_planeswalker(int player, int card, event_t event){
 		}
 		choice = DIALOG(player, card, event,
 						DLG_RANDOM, DLG_PLANESWALKER,
-						"Kill a noncreature", can_target(&td), 10, 3,
-						"Stole a creature", can_target(&td1), 8, -2,
-						"Cruel Ultimatum", can_target(&td2), 20, -9);
+						"Destroy noncreature", can_target(&td), 10, 3, DLG_LITERAL_TARGET(&td, "Select target noncreature permanent"),
+						"Gain control", can_target(&td1), 8, -2, DLG_TARGET(&td1, "TARGET_CREATURE"),
+						"7 damage, discard 7, sac 7", can_target(&td2), 20, -9, DLG_TARGET(&td2, "TARGET_PLAYER"));
 
 	  if (event == EVENT_CAN_ACTIVATE)
 		{
 		  if (!choice)
 			return 0;
 		}
-	  else if (event == EVENT_ACTIVATE)
-		{
-			instance->number_of_targets = 0;
-			switch (choice)
-			{
-				case CHOICE_KILL_NONCREATURE:
-					new_pick_target(&td, "Select a noncreature permanent.", 0, 1 | GS_LITERAL_PROMPT);
-					break;
-
-				case CHOICE_STEAL_CREATURE:
-					pick_target(&td1, "TARGET_CREATURE");
-					break;
-
-				case CHOICE_CRUEL_ULTIMATUM:
-					pick_target(&td2, "TARGET_PLAYER");
-					break;
-			}
-		}
-	  else	// event == EVENT_RESOLVE_ACTIVATION
+	  else if (event == EVENT_RESOLVE_ACTIVATION)
 		switch (choice)
 		{
 			case CHOICE_KILL_NONCREATURE:

@@ -10,7 +10,7 @@ static int panorama(int player, int card, event_t event, int sub1, int sub2, int
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0) && can_use_activated_abilities(player, card) &&
 			can_sacrifice_as_cost(player, 1, TYPE_LAND, 0, 0, 0, 0, 0, 0, 0, -1, 0)
@@ -62,6 +62,10 @@ static int panorama(int player, int card, event_t event, int sub1, int sub2, int
 }
 
 int unearth(int player, event_t event, int colorless, int black, int blue, int green, int red, int white){
+	/* 702.83a Unearth is an activated ability that functions while the card with unearth is in a graveyard. "Unearth
+	 * [cost]" means "[Cost]: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the
+	 * beginning of the next end step. If it would leave the battlefield, exile it instead of putting it anywhere
+	 * else. Activate this ability only any time you could cast a sorcery." */
 	if(event == EVENT_GRAVEYARD_ABILITY){
 		if( (has_mana_multi( player, colorless, black, blue, green, red, white )) && ( can_sorcery_be_played(player, event)) ){
 			return GA_UNEARTH;
@@ -480,6 +484,11 @@ int card_bant_charm(int player, int card, event_t event){
 }
 
 int card_bant_panorama(int player, int card, event_t event){
+	/* Bant Panorama	""
+	 * Land
+	 * |T: Add |C to your mana pool.
+	 * |1, |T, Sacrifice ~: Search your library for a basic |H2Forest, |H2Plains, or |H2Island card and put it onto the battlefield tapped. Then shuffle your library. */
+
 	return panorama(player, card, event, SUBTYPE_FOREST, SUBTYPE_ISLAND, SUBTYPE_PLAINS);
 }
 
@@ -821,42 +830,65 @@ int card_call_to_heel(int player, int card, event_t event){
 	return 0;
 }
 
-int card_clarion_ultimatum(int player, int card, event_t event){
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_PERMANENT );
-	td.allowed_controller = player;
-	td.preferred_controller = player;
-	td.illegal_abilities = 0;
-
-	card_instance_t *instance = get_card_instance( player, card);
-
-	if( event == EVENT_CAN_CAST  ){
-		return 1;
-	}
-	else if(event == EVENT_RESOLVE_SPELL ){
-			int selected = 0;
-			while( selected < 5 && can_target(&td) ){
-					if( select_target(player, card, &td, "Select a permanent you control", &(instance->targets[selected])) ){
-						state_untargettable(instance->targets[selected].player, instance->targets[selected].card, 1);
-						selected++;
-					}
-			}
-			int i;
-			for(i=0; i<selected; i++){
-				state_untargettable(instance->targets[i].player, instance->targets[i].card, 0);
-				int id = get_id(instance->targets[i].player, instance->targets[i].card);
-				card_ptr_t* c_me = cards_ptr[ id ];
-				char buffer[100];
-				scnprintf(buffer, 100, "Select a card called %s", c_me->name);
-				test_definition_t this_test;
-				new_default_test_definition(&this_test, TYPE_PERMANENT, buffer);
-				this_test.id = id;
-				new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY_TAPPED, 0, AI_FIRST_FOUND, &this_test);
-			}
-			kill_card(player, card, KILL_DESTROY );
+static int check_clarion_ultimatum_targets(int iid, int card, int player, int unused)
+{
+	card_instance_t* instance = get_card_instance(player, card);
+	int i;
+	for(i=0; i<5; i++){
+		if( instance->targets[i].card != -1 && cards_data[iid].id == instance->targets[i].card ){
+			instance->targets[i].card = -1;
+			return 1;
+		}
 	}
 	return 0;
+}
+
+int card_clarion_ultimatum(int player, int card, event_t event){
+	/*
+	  Clarion Ultimatum |W|W|W|U|U|G|G
+	  Sorcery
+	  Choose five permanents you control.
+	  For each of those permanents, you may search your library for a card with the same name as that permanent.
+	  Put those cards onto the battlefield tapped, then shuffle your library.
+	*/
+
+	if(event == EVENT_RESOLVE_SPELL ){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_PERMANENT );
+		td.allowed_controller = player;
+		td.preferred_controller = player;
+		td.illegal_abilities = 0;
+
+		card_instance_t *instance = get_card_instance( player, card);
+
+		int selected = 0;
+
+		while( selected < 5 && can_target(&td) ){
+				if( select_target(player, card, &td, "Select a permanent you control", &(instance->targets[selected])) ){
+					state_untargettable(instance->targets[selected].player, instance->targets[selected].card, 1);
+					selected++;
+				}
+		}
+		instance->number_of_targets = 0;
+		int i;
+		for(i=0; i<selected; i++){
+			state_untargettable(instance->targets[i].player, instance->targets[i].card, 0);
+			int name = get_card_name(instance->targets[i].player, instance->targets[i].card);
+			instance->targets[i].player = -1;
+			instance->targets[i].card = name;
+		}
+
+		test_definition_t this_test;
+		new_default_test_definition(&this_test, TYPE_ANY, "Select a permanent that was targetted by Clarion Ultimatum");
+		this_test.special_selection_function = &check_clarion_ultimatum_targets;
+		this_test.qty = selected;
+		this_test.value_for_special_selection_function = card;
+		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_FIRST_FOUND, &this_test);
+
+		kill_card(player, card, KILL_DESTROY );
+	}
+
+	return basic_spell(player, card, event);
 }
 
 int card_corpse_conoisseur(int player, int card, event_t event){
@@ -1197,6 +1229,16 @@ int card_esper_battlemage(int player, int card, event_t event){
 }
 
 int card_esper_charm(int player, int card, event_t event){
+	/* Esper Charm	|W|U|B
+	 * Instant
+	 * Choose one -
+	 * * Destroy target enchantment.
+	 * * Draw two cards.
+	 * * Target player discards two cards. */
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_ENCHANTMENT);
@@ -1263,7 +1305,7 @@ int card_esper_charm(int player, int card, event_t event){
 				spell_fizzled = 1;
 			}
 	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if(event == EVENT_RESOLVE_SPELL ){
 			if( instance->info_slot == 66 && valid_target(&td) ){
 				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
 			}
@@ -1280,6 +1322,11 @@ int card_esper_charm(int player, int card, event_t event){
 }
 
 int card_esper_panorama(int player, int card, event_t event){
+	/* Esper Panorama	""
+	 * Land
+	 * |T: Add |C to your mana pool.
+	 * |1, |T, Sacrifice ~: Search your library for a basic |H2Plains, |H2Island, or |H2Swamp card and put it onto the battlefield tapped. Then shuffle your library. */
+
 	return panorama(player, card, event, SUBTYPE_SWAMP, SUBTYPE_ISLAND, SUBTYPE_PLAINS);
 }
 
@@ -1540,32 +1587,44 @@ int card_gather_specimens(int player, int card, event_t event){
 	return 0;
 }
 
-int card_gift_of_the_gargantuan(int player, int card, event_t event){
+int card_gift_of_the_gargantuan(int player, int card, event_t event)
+{
+  /* Gift of the Gargantuan	|2|G
+   * Sorcery
+   * Look at the top four cards of your library. You may reveal a creature card and/or a land card from among them and put the revealed cards into your hand. Put the rest on the bottom of your library in any order. */
 
-	if( event == EVENT_CAN_CAST ){
-		return 1;
-	}
-	else if(event == EVENT_RESOLVE_SPELL ){
-			int amount = 4;
-			if( amount > count_deck(player) ){
-				amount = count_deck(player);
+  if (event == EVENT_RESOLVE_SPELL)
+	{
+	  if (deck_ptr[player][0] != -1)
+		{
+		  int sz = MIN(4, count_deck(player));
+
+		  test_definition_t test;
+		  new_default_test_definition(&test, TYPE_CREATURE, "Select a creature card.");
+		  test.no_shuffle = 1;
+		  test.create_minideck = sz;
+
+		  if (new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test) != -1)
+			--sz;
+
+		  if (deck_ptr[player][0] != -1)
+			{
+			  new_default_test_definition(&test, TYPE_LAND, "Select a land card.");
+			  test.no_shuffle = 1;
+			  test.create_minideck = sz;
+
+			  if (new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test) != -1)
+				--sz;
 			}
-			if( amount > 0 ){
-				test_definition_t this_test;
-				new_default_test_definition(&this_test, TYPE_CREATURE | TYPE_LAND, "Select a creature or land.");
-				this_test.create_minideck = amount;
-				this_test.no_shuffle = 1;
-				if( new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test) != -1 ){
-					amount--;
-				}
-				if( amount > 0 ){
-					put_top_x_on_bottom(player, player, amount);
-				}
-			}
-			kill_card(player, card, KILL_DESTROY );
+
+		  if (sz > 0)
+			put_top_x_on_bottom(player, player, sz);
+		}
+
+	  kill_card(player, card, KILL_DESTROY);
 	}
 
-	return 0;
+  return basic_spell(player, card, event);
 }
 
 int card_glaze_fiend(int player, int card, event_t event){
@@ -1682,6 +1741,16 @@ int card_grixis_battlemage(int player, int card, event_t event){
 }
 
 int card_grixis_charm(int player, int card, event_t event){
+	/* Grixis Charm	|U|B|R
+	 * Instant
+	 * Choose one -
+	 * * Return target permanent to its owner's hand.
+	 * * Target creature gets -4/-4 until end of turn.
+	 * * Creatures you control get +2/+0 until end of turn. */
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_PERMANENT);
@@ -1744,7 +1813,7 @@ int card_grixis_charm(int player, int card, event_t event){
 				spell_fizzled = 1;
 			}
 	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if(event == EVENT_RESOLVE_SPELL ){
 			if( instance->info_slot == 66 && valid_target(&td) ){
 				bounce_permanent(instance->targets[0].player, instance->targets[0].card);
 			}
@@ -1761,6 +1830,11 @@ int card_grixis_charm(int player, int card, event_t event){
 }
 
 int card_grixis_panorama(int player, int card, event_t event){
+	/* Grixis Panorama	""
+	 * Land
+	 * |T: Add |C to your mana pool.
+	 * |1, |T, Sacrifice ~: Search your library for a basic |H2Island, |H2Swamp, or |H2Mountain card and put it onto the battlefield tapped. Then shuffle your library. */
+
 	return panorama(player, card, event, SUBTYPE_SWAMP, SUBTYPE_ISLAND, SUBTYPE_MOUNTAIN);
 }
 
@@ -2014,6 +2088,16 @@ int card_jund_battlemage(int player, int card, event_t event){
 }
 
 int card_jund_charm(int player, int card, event_t event){
+	/* Jund Charm	|B|R|G
+	 * Instant
+	 * Choose one -
+	 * * Exile all cards from target player's graveyard.
+	 * * ~ deals 2 damage to each creature.
+	 * * Put two +1/+1 counters on target creature. */
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -2075,7 +2159,7 @@ int card_jund_charm(int player, int card, event_t event){
 				spell_fizzled = 1;
 			}
 	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if(event == EVENT_RESOLVE_SPELL ){
 			if( instance->info_slot == 66 && valid_target(&td) ){
 				int count = count_graveyard(instance->targets[0].player)-1;
 				while( count > -1 ){
@@ -2098,11 +2182,21 @@ int card_jund_charm(int player, int card, event_t event){
 }
 
 int card_jund_panorama(int player, int card, event_t event){
+	/* Jund Panorama	""
+	 * Land
+	 * |T: Add |C to your mana pool.
+	 * |1, |T, Sacrifice ~: Search your library for a basic |H2Swamp, |H2Mountain, or |H2Forest card and put it onto the battlefield tapped. Then shuffle your library. */
+
 	return panorama(player, card, event, SUBTYPE_SWAMP, SUBTYPE_FOREST, SUBTYPE_MOUNTAIN);
 }
 
 int card_kederekt_creeper(int player, int card, event_t event){
-	minimum_blockers(player, card, event, 2);
+	/* Kederekt Creeper	|U|B|R
+	 * Creature - Horror 2/3
+	 * Menace
+	 * Deathtouch */
+
+	menace(player, card, event);
 	deathtouch(player, card, event);
 	return 0;
 }
@@ -2260,29 +2354,25 @@ int card_kresh_the_bloodbraided(int player, int card, event_t event){
 
 int card_magma_spray(int player, int card, event_t event){
 
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
 
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		pick_target(&td, "TARGET_CREATURE");
-	}
-
 	if( event == EVENT_RESOLVE_SPELL){
 		if( valid_target(&td) ){
+			card_instance_t* instance = get_card_instance(player, card);
 			exile_if_would_be_put_into_graveyard(player, card, instance->targets[0].player, instance->targets[0].card, 1);
-			damage_creature(instance->targets[0].player, instance->targets[0].card, 2, player, card);
+			damage_target0(player, card, 2);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return 0;
+	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
+
 
 int card_manaplasm(int player, int card, event_t event){
 
@@ -2589,7 +2679,7 @@ int card_naya_charm(int player, int card, event_t event){
 				spell_fizzled = 1;
 			}
 	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if(event == EVENT_RESOLVE_SPELL ){
 			if( instance->info_slot == 66 && valid_target(&td) ){
 				damage_creature(instance->targets[0].player, instance->targets[0].card, 3, player, card);
 			}
@@ -2613,6 +2703,11 @@ int card_naya_charm(int player, int card, event_t event){
 }
 
 int card_naya_panorama(int player, int card, event_t event){
+	/* Naya Panorama	""
+	 * Land
+	 * |T: Add |C to your mana pool.
+	 * |1, |T, Sacrifice ~: Search your library for a basic |H2Mountain, |H2Forest, or |H2Plains card and put it onto the battlefield tapped. Then shuffle your library. */
+
 	return panorama(player, card, event, SUBTYPE_FOREST, SUBTYPE_PLAINS, SUBTYPE_MOUNTAIN);
 }
 
@@ -2777,29 +2872,27 @@ int card_prince_of_thralls(int player, int card, event_t event){
 	return 0;
 }
 
-int card_punish_ignorance(int player, int card, event_t event){
+int card_punish_ignorance(int player, int card, event_t event)
+{
+  /* Punish Ignorance	|W|U|U|B
+   * Instant
+   * Counter target spell. Its controller loses 3 life and you gain 3 life. */
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		int result = card_counterspell(player, card, event);
-		if( result > 0 ){
-			instance->targets[1].player = card_on_stack_controller;
-			return result;
+  if (event == EVENT_RESOLVE_SPELL)
+	{
+      card_instance_t* inst = get_card_instance(player, card);
+	  if (counterspell_validate(player, card, NULL, 0))
+		{
+		  real_counter_a_spell(player, card, inst->targets[0].player, inst->targets[0].card);
+		  gain_life(player, 3);
+		  lose_life(inst->targets[0].player, 3);
 		}
+	  inst->number_of_targets = 0;
+	  kill_card(player, card, KILL_DESTROY);
+	  return 0;
 	}
-
-	else if( event == EVENT_RESOLVE_SPELL ){
-			set_flags_when_spell_is_countered(player, card, instance->targets[0].player, instance->targets[0].card);
-			gain_life(player, 3);
-			lose_life(instance->targets[1].player, 3);
-			return card_counterspell(player, card, event);
-	}
-	else{
-		return card_counterspell(player, card, event);
-	}
-
-	return 0;
+  else
+	return counterspell(player, card, event, NULL, 0);
 }
 
 int card_qasali_ambusher(int player, int card, event_t event){
@@ -3114,166 +3207,199 @@ int card_relic_of_progenitus(int player, int card, event_t event){
 }
 
 int card_resounding_roar(int player, int card, event_t event){
+	/* Resounding Roar	|1|G
+	 * Instant
+	 * Target creature gets +3/+3 until end of turn.
+	 * Cycling |5|R|G|W
+	 * When you cycle ~, target creature gets +6/+6 until end of turn. */
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.preferred_controller = player;
+	if (IS_CASTING(player, card, event) || event == EVENT_RESOLVE_ACTIVATION_FROM_HAND){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.preferred_controller = player;
 
-	card_instance_t *instance = get_card_instance(player, card);
+		card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			pick_target(&td, "TARGET_CREATURE");
-	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
-			if( valid_target(&td) ){
-				pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 3, 2);
+		if( event == EVENT_CAN_CAST ){
+			return can_target(&td);
+		}
+		else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+				pick_target(&td, "TARGET_CREATURE");
+		}
+		else if(event == EVENT_RESOLVE_SPELL){
+				if( valid_target(&td) ){
+					pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 3, 2);
+				}
+				kill_card(player, card, KILL_DESTROY );
+		}
+		if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && can_target(&td) ){
+			td.allow_cancel = 0;
+			if( pick_target(&td, "TARGET_CREATURE") ){
+				pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 6, 6);
 			}
-			kill_card(player, card, KILL_DESTROY );
-	}
-	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && can_target(&td) ){
-		td.allow_cancel = 0;
-		if( pick_target(&td, "TARGET_CREATURE") ){
-			pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 6, 6);
 		}
 	}
-
-	return cycling(player, card, event, 5, 0, 0, 1, 1, 1);
+	return cycling(player, card, event, MANACOST_XRGW(5,1,1,1));
 }
 
 int card_resounding_scream(int player, int card, event_t event){
+	/* Resounding Scream	|2|B
+	 * Sorcery
+	 * Target player discards a card at random.
+	 * Cycling |5|U|B|R
+	 * When you cycle ~, target player discards two cards at random. */
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.zone = TARGET_ZONE_PLAYERS;
+	if (IS_CASTING(player, card, event) || event == EVENT_RESOLVE_ACTIVATION_FROM_HAND){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.zone = TARGET_ZONE_PLAYERS;
 
-	card_instance_t *instance = get_card_instance(player, card);
+		card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			pick_target(&td, "TARGET_PLAYER");
-	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
-			if( valid_target(&td) ){
-				discard(instance->targets[0].player, DISC_RANDOM, player);
+		if( event == EVENT_CAN_CAST ){
+			return can_target(&td);
+		}
+		else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+				pick_target(&td, "TARGET_PLAYER");
+		}
+		else if(event == EVENT_RESOLVE_SPELL){
+				if( valid_target(&td) ){
+					discard(instance->targets[0].player, DISC_RANDOM, player);
+				}
+				kill_card(player, card, KILL_DESTROY );
+		}
+		if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && can_target(&td) ){
+			td.allow_cancel = 0;
+			if( pick_target(&td, "TARGET_PLAYER") ){
+				new_multidiscard(instance->targets[0].player, 2, DISC_RANDOM, player);
 			}
-			kill_card(player, card, KILL_DESTROY );
-	}
-	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && can_target(&td) ){
-		td.allow_cancel = 0;
-		if( pick_target(&td, "TARGET_PLAYER") ){
-			new_multidiscard(instance->targets[0].player, 2, DISC_RANDOM, player);
 		}
 	}
-
-	return cycling(player, card, event, 5, 1, 1, 0, 1, 0);
+	return cycling(player, card, event, MANACOST_XUBR(5,1,1,1));
 }
 
 int card_resounding_silence(int player, int card, event_t event){
+	/* Resounding Silence	|3|W
+	 * Instant
+	 * Exile target attacking creature.
+	 * Cycling |5|G|W|U
+	 * When you cycle ~, exile up to two target attacking creatures. */
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.required_state = TARGET_STATE_ATTACKING;
+	if (IS_CASTING(player, card, event) || event == EVENT_RESOLVE_ACTIVATION_FROM_HAND){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.required_state = TARGET_STATE_ATTACKING;
 
-	card_instance_t *instance = get_card_instance(player, card);
+		card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			pick_target(&td, "TARGET_CREATURE");
-	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
-			if( valid_target(&td) ){
-				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_REMOVE);
-			}
-			kill_card(player, card, KILL_DESTROY );
-	}
-	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && can_target(&td) ){
-		int rfged = 0;
-		while( rfged < 2 && can_target(&td) ){
-			if( pick_target(&td, "TARGET_CREATURE") ){
-				instance->number_of_targets = 1;
-				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_REMOVE);
-				rfged++;
-			}
-			else{
-				break;
+		if( event == EVENT_CAN_CAST ){
+			return can_target(&td);
+		}
+		else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+				pick_target(&td, "TARGET_CREATURE");
+		}
+		else if(event == EVENT_RESOLVE_SPELL){
+				if( valid_target(&td) ){
+					kill_card(instance->targets[0].player, instance->targets[0].card, KILL_REMOVE);
+				}
+				kill_card(player, card, KILL_DESTROY );
+		}
+		if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && can_target(&td) ){
+			int rfged = 0;
+			while( rfged < 2 && can_target(&td) ){
+				if( pick_target(&td, "TARGET_CREATURE") ){
+					instance->number_of_targets = 1;
+					kill_card(instance->targets[0].player, instance->targets[0].card, KILL_REMOVE);
+					rfged++;
+				}
+				else{
+					break;
+				}
 			}
 		}
 	}
-
-	return cycling(player, card, event, 5, 0, 1, 1, 0, 1);
+	return cycling(player, card, event, MANACOST_XGWU(5,1,1,1));
 }
 
 int card_resounding_thunder(int player, int card, event_t event){
+	/* Resounding Thunder	|2|R
+	 * Instant
+	 * ~ deals 3 damage to target creature or player.
+	 * Cycling |5|B|R|G
+	 * When you cycle ~, it deals 6 damage to target creature or player. */
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+	if (IS_CASTING(player, card, event) || event == EVENT_RESOLVE_ACTIVATION_FROM_HAND){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			pick_target(&td, "TARGET_CREATURE_OR_PLAYER");
-	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
-			if( valid_target(&td) ){
-				damage_creature_or_player(player, card, event, 3);
+		if( event == EVENT_CAN_CAST ){
+			return can_target(&td);
+		}
+		else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+				pick_target(&td, "TARGET_CREATURE_OR_PLAYER");
+		}
+		else if(event == EVENT_RESOLVE_SPELL){
+				if( valid_target(&td) ){
+					damage_creature_or_player(player, card, event, 3);
+				}
+				kill_card(player, card, KILL_DESTROY );
+		}
+		if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && can_target(&td) ){
+			if( pick_target(&td, "TARGET_CREATURE_OR_PLAYER") ){
+				damage_creature_or_player(player, card, event, 6);
 			}
-			kill_card(player, card, KILL_DESTROY );
-	}
-	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && can_target(&td) ){
-		if( pick_target(&td, "TARGET_CREATURE_OR_PLAYER") ){
-			damage_creature_or_player(player, card, event, 6);
 		}
 	}
-
-	return cycling(player, card, event, 5, 1, 0, 1, 1, 0);
+	return cycling(player, card, event, MANACOST_XBRG(5,1,1,1));
 }
 
 int card_resounding_wave(int player, int card, event_t event){
+	/* Resounding Wave	|2|U
+	 * Instant
+	 * Return target permanent to its owner's hand.
+	 * Cycling |5|W|U|B
+	 * When you cycle ~, return two target permanents to their owners' hands. */
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_PERMANENT);
+	if (IS_CASTING(player, card, event) || event == EVENT_RESOLVE_ACTIVATION_FROM_HAND){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_PERMANENT);
 
-	card_instance_t *instance = get_card_instance(player, card);
+		card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			pick_target(&td, "TARGET_PERMANENT");
-	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
-			if( valid_target(&td) ){
-				bounce_permanent(instance->targets[0].player, instance->targets[0].card);
-			}
-			kill_card(player, card, KILL_DESTROY );
-	}
-	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && can_target(&td) ){
-		int rfged = 0;
-		while( rfged < 2 && can_target(&td) ){
-			if( pick_target(&td, "TARGET_PERMANENT") ){
-				instance->number_of_targets = 1;
-				bounce_permanent(instance->targets[0].player, instance->targets[0].card);
-				rfged++;
-			}
-			else{
-				break;
+		if( event == EVENT_CAN_CAST ){
+			return can_target(&td);
+		}
+		else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+				pick_target(&td, "TARGET_PERMANENT");
+		}
+		else if(event == EVENT_RESOLVE_SPELL){
+				if( valid_target(&td) ){
+					bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+				}
+				kill_card(player, card, KILL_DESTROY );
+		}
+		if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && can_target(&td) ){
+			int rfged = 0;
+			while( rfged < 2 && can_target(&td) ){
+				if( pick_target(&td, "TARGET_PERMANENT") ){
+					instance->number_of_targets = 1;
+					bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+					rfged++;
+				}
+				else{
+					break;
+				}
 			}
 		}
 	}
-
-	return cycling(player, card, event, 5, 1, 1, 0, 0, 1);
+	return cycling(player, card, event, MANACOST_XWUB(5,1,1,1));
 }
 
 int card_sacellum_godspeaker(int player, int card, event_t event){
+	/* Sacellum Godspeaker	|2|G
+	 * Creature - Elf Druid 2/2
+	 * |T: Reveal any number of creature cards with power 5 or greater from your hand. Add |G to your mana pool for each card revealed this way. */
 
 	test_definition_t this_test;
 	new_default_test_definition(&this_test, TYPE_CREATURE, "Select a creature card with power 5 or more.");
@@ -3291,7 +3417,7 @@ int card_sacellum_godspeaker(int player, int card, event_t event){
 		}
 	}
 
-	else if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	else if( event == EVENT_ACTIVATE ){
 			int result = reveal_cards_from_your_hand(player, card, &this_test);
 			produce_mana_tapped(player, card, COLOR_GREEN, result);
 	}
@@ -3613,6 +3739,13 @@ int card_sharuum_the_hegemon(int player, int card, event_t event){
 }
 
 int card_sigil_blessing(int player, int card, event_t event){
+	/* Sigil Blessing	|G|W
+	 * Instant
+	 * Until end of turn, target creature you control gets +3/+3 and other creatures you control get +1/+1. */
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -3627,7 +3760,7 @@ int card_sigil_blessing(int player, int card, event_t event){
 	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
 			pick_target(&td, "TARGET_CREATURE");
 	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if(event == EVENT_RESOLVE_SPELL){
 			if( valid_target(&td) ){
 				pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 2, 2);
 				pump_subtype_until_eot(player, card, player, -1, 1, 1, 0, 0);
@@ -3723,6 +3856,13 @@ int card_skullmulcher(int player, int card, event_t event){
 }
 
 int card_souls_fire(int player, int card, event_t event){
+	/* Soul's Fire	|2|R
+	 * Instant
+	 * Target creature you control on the battlefield deals damage equal to its power to target creature or player. */
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -3750,7 +3890,7 @@ int card_souls_fire(int player, int card, event_t event){
 				spell_fizzled = 1;
 			}
 	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if(event == EVENT_RESOLVE_SPELL){
 			if( validate_target(player, card, &td1, 1) && in_play(instance->targets[0].player, instance->targets[0].card) ){
 				int dmg = get_power(instance->targets[0].player, instance->targets[0].card);
 				damage_creature(instance->targets[1].player, instance->targets[1].card, dmg, instance->targets[0].player, instance->targets[0].card);
@@ -4248,6 +4388,11 @@ int card_where_ancients_tread(int player, int card, event_t event){
 	}
 
 int card_worldheart_phoenix(int player, int card, event_t event){
+	/* Worldheart Phoenix	|3|R
+	 * Creature - Phoenix 2/2
+	 * Flying
+	 * You may cast ~ from your graveyard by paying |W|U|B|R|G rather than paying its mana cost. If you do, it enters the battlefield with two +1/+1 counters on it. */
+
 	if(event == EVENT_GRAVEYARD_ABILITY){
 		if( has_mana_multi( player, 0, 1, 1, 1, 1, 1) && can_sorcery_be_played(player, event) ){
 			return GA_RETURN_TO_PLAY_MODIFIED;

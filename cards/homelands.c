@@ -572,14 +572,8 @@ int card_broken_visage(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td, "Select target nonartifact attacking creature.", 1, NULL);
 }
 
-int card_carapace(int player, int card, event_t event)
+int base_carapace(int player, int card, event_t event, int pow, int tgh)
 {
-  /* Carapace	|G	0x200d6b2
-   * Enchantment - Aura
-   * Enchant creature
-   * Enchanted creature gets +0/+2.
-   * Sacrifice ~: Regenerate enchanted creature. */
-
   if (IS_GAA_EVENT(event))
 	{
 	  card_instance_t* instance = get_card_instance(player, card);
@@ -598,7 +592,17 @@ int card_carapace(int player, int card, event_t event)
 	  return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL) ? 99 : 0;
 	}
 
-  return generic_aura(player, card, event, player, 0,2, 0,0, 0, 0, 0);
+  return generic_aura(player, card, event, player, pow,tgh, 0,0, 0, 0, 0);
+}
+
+int card_carapace(int player, int card, event_t event)
+{
+  /* Carapace	|G	0x200d6b2
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature gets +0/+2.
+   * Sacrifice ~: Regenerate enchanted creature. */
+  return base_carapace(player, card, event, 0,2);
 }
 
 int card_castle_sengir(int player, int card, event_t event)
@@ -1661,8 +1665,8 @@ int card_leeches(int player, int card, event_t event){
 
 	if(event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
-			int amount = poison_counters[instance->targets[0].player];
-			poison_counters[instance->targets[0].player] = 0;
+			int amount = POISON_COUNTERS(instance->targets[0].player);
+			raw_set_poison(instance->targets[0].player, 0);
 			damage_player(instance->targets[0].player, amount, player, card);
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -2125,8 +2129,10 @@ int card_reveka_wizard_savant(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( valid_target(&td) ){
 			damage_target0(player, card, 2);
-			if (in_play(instance->parent_controller, instance->parent_card))
-			  does_not_untap_effect(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card, 0, 1);
+			if (in_play(instance->parent_controller, instance->parent_card) ){
+			  does_not_untap_effect(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card, 
+									EDNT_CHECK_ORIGINAL_CONTROLLER, 1);
+			}
 		}
 	}
 
@@ -2448,7 +2454,7 @@ int card_spectral_bears(int player, int card, event_t event){
 		if (!check_battlefield_for_special_card(player, card, 1-current_turn, 0, &this_test) &&
 			declare_attackers_trigger(player, card, event, 0, player, card)
 		   ){
-			does_not_untap_effect(player, card, player, card, 0, 1);
+			does_not_untap_effect(player, card, player, card, EDNT_CHECK_ORIGINAL_CONTROLLER, 1);
 		}
 	}
 
@@ -2500,7 +2506,7 @@ int card_trade_caravan(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if (event == EVENT_CAN_ACTIVATE && current_phase == PHASE_UPKEEP && current_turn != player ){
-		return generic_activated_ability(player, card, event, GS_CAN_TARGET, MANACOST0, GVC_COUNTERS(COUNTER_CURRENCY, 2), &td, NULL);
+		return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST0, GVC_COUNTERS(COUNTER_CURRENCY, 2), &td, NULL);
 	}
 
 	if( event == EVENT_ACTIVATE ){

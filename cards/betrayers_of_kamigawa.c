@@ -310,10 +310,13 @@ int ninjutsu(int player, int card, event_t event, int cless, int black, int blue
 	  card_instance_t* instance = get_card_instance(player, card);
 	  instance->number_of_targets = 0;
 	  if (charge_mana_multi(player, cless, black, blue, green, red, white) && pick_target(&td, "NINJUTSU"))
-		bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+		{
+		  bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+		  return 1;
+		}
 	}
 
-  if (event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && spell_fizzled != 1)
+  if (event == EVENT_RESOLVE_ACTIVATION_FROM_HAND)
 	{
 	  card_instance_t* inst;
 	  int c;
@@ -1246,12 +1249,16 @@ int card_kami_of_false_hope(int player, int card, event_t event){
 }
 
 int card_kentaro_the_smiling_cat(int player, int card, event_t event){
+	/* Kentaro, the Smiling Cat	|1|W
+	 * Legendary Creature - Human Samurai 2/1
+	 * Bushido 1
+	 * You may pay |X rather than pay the mana cost for Samurai spells you cast, where X is that spell's converted mana cost. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
 	check_legend_rule(player, card, event);
 
-	if( event == EVENT_CAN_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_CAN_ACTIVATE ){
 		int i, sorc = can_sorcery_be_played(player, event);
 		card_instance_t* aff;
 		for (i = 0; i < active_cards_count[player]; ++i){
@@ -1267,7 +1274,7 @@ int card_kentaro_the_smiling_cat(int player, int card, event_t event){
 		}
 	}
 
-	else if(event == EVENT_ACTIVATE && affect_me(player, card) ){
+	else if(event == EVENT_ACTIVATE){
 			target_definition_t td;
 			default_target_definition(player, card, &td, 0);
 			td.zone = TARGET_ZONE_HAND;
@@ -1882,33 +1889,16 @@ int card_patron_of_the_kitsune(int player, int card, event_t event){
 
 int card_patron_of_the_moon(int player, int card, event_t event){
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_LAND );
-	td.zone = TARGET_ZONE_HAND;
-	td.allowed_controller = player;
-	td.preferred_controller = player;
-	td.illegal_type = TYPE_LAND;
-
-	char msg[100] = "Select a land card.";
-	test_definition_t this_test;
-	new_default_test_definition(&this_test, TYPE_LAND, msg);
-	this_test.zone = TARGET_ZONE_HAND;
-	this_test.qty = 2;
-
-	check_legend_rule(player, card, event);
-
-	if( event == EVENT_CAN_ACTIVATE ){
-		return generic_activated_ability(player, card, event, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+	if( event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE ){
+		return generic_activated_ability(player, card, event, 0, MANACOST_X(1), 0, NULL, NULL);
 	}
 
-	else if(event == EVENT_ACTIVATE ){
-			if( ! check_battlefield_for_special_card(player, card, player, 0, &this_test) )
-				ai_modifier-=100;
-			return generic_activated_ability(player, card, event, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
-	}
+	if( event == EVENT_RESOLVE_ACTIVATION ){
+		test_definition_t this_test;
+		new_default_test_definition(&this_test, TYPE_LAND, "Select a land card.");
+		this_test.qty = 2;
 
-	else if( event == EVENT_RESOLVE_ACTIVATION ){
-			new_global_tutor(player, player, TUTOR_FROM_HAND, TUTOR_PLAY_TAPPED, 0, AI_MAX_VALUE, &this_test);
+		tutor_multiple_card_from_hand(player, player, player, TUTOR_PLAY_TAPPED, 0, AI_MAX_VALUE, &this_test);
 	}
 
 	return patron(player, card, event, SUBTYPE_MOONFOLK);
@@ -2424,16 +2414,16 @@ int card_tendo_ice_bridge(int player, int card, event_t event){
 	int colored_mana_before = 0;
 	if( event == EVENT_ACTIVATE ){
 		int i;
-		for(i=1; i<6;i++){
-			colored_mana_before+=mana_pool[(1<<i)+8*player];
+		for(i=COLOR_BLACK; i<=COLOR_WHITE;i++){
+			colored_mana_before+=mana_pool[player][i];
 		}
 	}
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		int colored_mana_after = 0;
 		int i;
-		for(i=1; i<6;i++){
-			colored_mana_after+=mana_pool[(1<<i)+8*player];
+		for(i=COLOR_BLACK; i<=COLOR_WHITE;i++){
+			colored_mana_after+=mana_pool[player][i];
 		}
 		if( colored_mana_before < colored_mana_after ){
 			remove_counter(instance->parent_controller, instance->parent_card, COUNTER_CHARGE);
@@ -2500,30 +2490,42 @@ int card_that_which_was_taken(int player, int card, event_t event)
 
 int card_threads_of_disloyalty(int player, int card, event_t event){
 
+	// Checking if the CMC varies becoming > 2 (EX: we've stolen a face-down card, which was later turned face-up)
+	if( in_play(player, card) ){
+		card_instance_t* instance = get_card_instance(player, card);
+		if( instance->damage_target_player > -1 ){
+			if( get_cmc(instance->damage_target_player, instance->damage_target_card) > 2 ){
+				kill_card(player, card, KILL_SACRIFICE);
+			}
+		}
+	}
+
+	//Killing the invisible "control" legacy if the aura leaves play. This is normally done by "generic_stealing_aura"
+	// but this event won't pass the IS AURA_EVENT test.
+	if( leaves_play(player, card, event) ){
+		card_instance_t* instance = get_card_instance(player, card);
+		if( instance->targets[3].card > -1){
+			kill_card(player, instance->targets[3].card, KILL_REMOVE);
+		}
+	}
+
+	if( ! IS_AURA_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.special = TARGET_SPECIAL_CMC_LESSER_OR_EQUAL;
 	td.extra = 2;
-	td.allowed_controller = 1-player;
 
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		return generic_spell(player, card, event, GS_CAN_TARGET | GS_AURA | GS_LITERAL_PROMPT,
+							&td, "Select a creature with CMC 2 or less", 1, NULL);
 	}
-
-	else if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			ai_modifier+=15;
-			if( ! select_target(player, card, &td, "Select a creature with CMC 2 or less", NULL) ){
-				spell_fizzled = 1;
-			}
-	}
-
-	else if( event == EVENT_RESOLVE_SPELL ){
-			return card_control_magic(player, card, event);
-	}
-
 	else{
-		return generic_aura(player, card, event, 1-player, 0, 0, 0, 0, 0, 0, 0);
+		return generic_stealing_aura(player, card, event, &td, "TARGET_CREATURE");
 	}
+
 	return 0;
 }
 

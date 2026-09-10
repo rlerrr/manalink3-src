@@ -233,6 +233,49 @@ int dispatch_event_arbitrary_to_one_card(int player, int card, event_t event, in
   return new_event_result;
 }
 
+/* The semantics of this one are a bit unusual.  Avoid unless you know exactly why you need it. */
+int dispatch_event_to_single_card(int player, int card, event_t event, int new_attacking_card_controller, int new_attacking_card)
+{
+  card_instance_t* inst = get_card_instance(player, card);
+  if (inst->internal_card_id == -1)
+	return 0;
+
+  if (event == EVENT_CAN_ACTIVATE
+	  && ((inst->state & STATE_OUBLIETTED) || inst->upkeep_flags & 8))
+	return 0;
+
+  push_affected_card_stack();
+
+  event_result = 0;
+  affected_card_controller = player;
+  affected_card = card;
+  attacking_card_controller = new_attacking_card_controller;
+  attacking_card = new_attacking_card;
+  int old_736808 = EXE_DWORD(0x736808);
+
+  int old_trigger_condition = trigger_condition;
+  if (event != EVENT_TRIGGER && event != EVENT_RESOLVE_TRIGGER && event != EVENT_END_TRIGGER)
+    trigger_condition = -1;
+
+  int rval = call_card_function_i(inst, player, card, event);
+
+  trigger_condition = old_trigger_condition;
+
+  if (rval == 99
+	  || !(land_can_be_played & (LCBP_REGENERATION | LCBP_SPELL_BEING_PLAYED | LCBP_DAMAGE_PREVENTION))
+	  || !(event == EVENT_CAN_CAST || event == EVENT_CAN_ACTIVATE)
+	  || EXE_FN(int, 0x435c30, int, int)(player, card)	// is_mana_source_but_not_act_ability
+	  || (land_can_be_played & LCBP_CHARGING_MANA))
+	EXE_DWORD(0x739D58) = event_result;
+  else
+	{
+	  EXE_DWORD(0x736808) = old_736808;
+	  rval = 0;
+	}
+  pop_affected_card_stack();
+  return rval;
+}
+
 // Properly stashes globals then calls an arbitrary iid's card function for player/card (instead of that card's own one).  Returns what the function does.
 int dispatch_event_to_single_card_overriding_function(int player, int card, event_t event, int iid)
 {
@@ -250,7 +293,7 @@ int dispatch_event_to_single_card_overriding_function(int player, int card, even
 
   typedef int (*CardFunction)(int, int, event_t);
   CardFunction fn = (CardFunction)(cards_data[iid].code_pointer);
-  int rval = (*fn)(player, card, event);
+  int rval = call_card_fn(fn, get_card_instance(player, card), player, card, event);
 
   trigger_condition = old_trigger_condition;
   pop_affected_card_stack();
@@ -258,6 +301,30 @@ int dispatch_event_to_single_card_overriding_function(int player, int card, even
   return rval;
 }
 
+int dispatch_trigger_to_one_card(int player, int card, event_t event)
+{
+  // 0x477970
+  if (event == EVENT_TRIGGER
+	  && (EXE_DWORD(0x60E9F8)	// suppress_this_trigger
+		  || (get_card_instance(player, card)->state & STATE_PROCESSING)))
+	return 0;
+
+  if (trigger_condition < 200)
+	return 0;
+
+  push_affected_card_stack();	// missing in original (and the pop below)
+
+  event_result = 0;
+  affected_card_controller = player;
+  affected_card = card;
+  attacking_card = -1;
+  dispatch_event_raw(event);
+  int rval = event_result;
+
+  pop_affected_card_stack();
+
+  return rval;
+}
 
 xtrigger_t xtrigger_impl_value_dont_use_directly = 0;
 enable_xtrigger_flags_t enable_xtrigger_flags = 0;
@@ -432,7 +499,7 @@ int dispatch_trigger(int player, trigger_t trig, const char *prompt, int TENTATI
 
 int dispatch_trigger2(int player, trigger_t trig, const char *prompt, int TENTATIVE_allow_response, int new_trigger_cause_controller, int new_trigger_cause)
 {
-  int old_trigger_cause = trigger_cause_controller;
+  int old_trigger_cause = trigger_cause;
   int old_trigger_cause_controller = trigger_cause_controller;
   xtrigger_t old_xtrigger = xtrigger_impl_value_dont_use_directly;
 
@@ -442,7 +509,7 @@ int dispatch_trigger2(int player, trigger_t trig, const char *prompt, int TENTAT
   dispatch_trigger_impl(  player, trig, 0, prompt, TENTATIVE_allow_response);
   dispatch_trigger_impl(1-player, trig, 0, prompt, TENTATIVE_allow_response);
 
-  trigger_cause_controller = old_trigger_cause;
+  trigger_cause = old_trigger_cause;
   trigger_cause_controller = old_trigger_cause_controller;
   xtrigger_impl_value_dont_use_directly = old_xtrigger;
 
@@ -451,7 +518,7 @@ int dispatch_trigger2(int player, trigger_t trig, const char *prompt, int TENTAT
 
 int dispatch_xtrigger2(int player, xtrigger_t xtrig, const char *prompt, int TENTATIVE_allow_response, int new_trigger_cause_controller, int new_trigger_cause)
 {
-  int old_trigger_cause = trigger_cause_controller;
+  int old_trigger_cause = trigger_cause;
   int old_trigger_cause_controller = trigger_cause_controller;
   xtrigger_t old_xtrigger = xtrigger_impl_value_dont_use_directly;
 
@@ -461,7 +528,7 @@ int dispatch_xtrigger2(int player, xtrigger_t xtrig, const char *prompt, int TEN
   dispatch_trigger_impl(  player, TRIGGER_XTRIGGER, xtrig, prompt, TENTATIVE_allow_response);
   dispatch_trigger_impl(1-player, TRIGGER_XTRIGGER, xtrig, prompt, TENTATIVE_allow_response);
 
-  trigger_cause_controller = old_trigger_cause;
+  trigger_cause = old_trigger_cause;
   trigger_cause_controller = old_trigger_cause_controller;
   xtrigger_impl_value_dont_use_directly = old_xtrigger;
 
@@ -870,7 +937,7 @@ void event_activate_then_duplicate_into_stack(int player, int card, int event, i
    * 7) If cancel == 1, refund all mana spent since the mana_spent stack state was stored (sub_430200), obliterate the top card of the stack, and return.
    * 8) Remove the mana_stack entry (so cancelling afterwards won't refund mana spent so far) (sub_4301E0)
    * 9) Dispatch either EVENT_PLAY_ABILITY or both EVENT_TAP_CARD and EVENT_TAPPED_TO_PLAY_ABILITY, with affected_card_controller/affected_card == player/card.
-   *10) Copy player/card's current state into the activation card again, preserving the same things as before; and set the activation card's display_pic_int_id
+   *10) Copy player/card's current state into the activation card again, preserving the same things as before; and set the activation card's display_pic_csv_id
    *    to the original card's csvid and display_pic_num to 0.  (Digression: The original_internal_card_id saved when the activation_card was put on the stack
    *    is copied anew from player/card here, instead of preserving it; if player/card's internal_card_id is now -1 since it's no longer in play due to
    *    sacrificing or exiling or bouncing itself during activation or anything else that immediately gets rid of it, then it's pulled from player/card's
@@ -947,7 +1014,7 @@ void event_activate_then_duplicate_into_stack(int player, int card, int event, i
 		  // if (instance->original_internal_card_id < iid_damage_card
 		  //     || instance->original_internal_card_id >= iid_damage_card + 47)
 		  //   {
-		  //     instance->display_pic_int_id = cards_data[parent_instance->original_internal_card_id].id;
+		  //     instance->display_pic_csv_id = cards_data[parent_instance->original_internal_card_id].id;
 		  //     instance->display_pic_num = 0;
 		  //   }
 		  // End removals

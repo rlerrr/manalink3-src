@@ -871,6 +871,10 @@ int card_lava_zombie(int player, int card, event_t event){
 }
 
 int card_lord_of_the_undead(int player, int card, event_t event){
+	/* Lord of the Undead	|1|B|B
+	 * Creature - Zombie 2/2
+	 * Other Zombie creatures get +1/+1.
+	 * |1|B, |T: Return target Zombie card from your graveyard to your hand. */
 
 	test_definition_t this_test;
 	new_default_test_definition(&this_test, TYPE_ANY, "Select a Zombie card.");
@@ -882,7 +886,7 @@ int card_lord_of_the_undead(int player, int card, event_t event){
 		if( ! is_tapped(player, card) && ! is_sick(player, card) &&
 			has_mana_for_activated_ability(player, card, 1, 1, 0, 0, 0, 0 )
 		  ){
-			if( count_graveyard_by_subtype(player, SUBTYPE_ZOMBIE) > 0 ){
+			if( any_in_graveyard_by_subtype(player, SUBTYPE_ZOMBIE) ){
 				return ! graveyard_has_shroud(2);
 			}
 		}
@@ -1195,19 +1199,31 @@ int card_nightscape_familiar(int player, int card, event_t event)
 }
 
 int card_orims_chant(int player, int card, event_t event){
+	/*
+	  Orim's Chant |W
+	  Instant
+	  Kicker {W} (You may pay an additional {W} as you cast this spell.)
+	  Target player can't cast spells this turn.
+	  If Orim's Chant was kicked, creatures can't attack this turn.
+	*/
+
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
 
 	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
+	default_target_definition(player, card, &td, 0);
 	td.zone = TARGET_ZONE_PLAYERS;
 
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
+		return generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 1, NULL);
 	}
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( pick_target(&td, "TARGET_PLAYER") ){
+		generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 1, NULL);
+		if( spell_fizzled != 1 ){
 			if( ! is_token(player, card) ){
 				do_kicker(player, card, MANACOST_W(1));
 			}
@@ -1217,15 +1233,10 @@ int card_orims_chant(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
-			int card_added = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);//8
-			card_instance_t *this = get_card_instance(player, card_added);
-			this->targets[2].player = 8;
-			this->targets[3].player = instance->targets[0].player;
-			if( kicked(player, card) ){
-				this->targets[3].card = (1<<0) | (1<<1);
+			int se_card = target_player_cant_cast_type(player, card, instance->targets[0].player, TYPE_ANY);
+			if( kicked(player, card) && se_card > -1 ){
+				add_flag_to_special_effect(player, se_card, SE_CREATURES_CANT_ATTACK);
 			}
-			this->targets[2].card = get_id(player, card);
-			create_card_name_legacy(player, card_added, get_id(player, card));
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -1272,6 +1283,44 @@ int card_phyrexian_tyranny(int player, int card, event_t event){
 	}
 
 	return global_enchantment(player, card, event);
+}
+
+int card_primal_growth(int player, int card, event_t event){
+	/*
+	  Primal Growth |2|G
+	  Sorcery, 2G
+	  Kicker — Sacrifice a creature. (You may sacrifice a creature in addition to any other costs as you cast this spell.)
+	  Search your library for a basic land card, put that card onto the battlefield, then shuffle your library.
+	  If Primal Growth was kicked, instead search your library for up to two basic land cards, put them onto the battlefield,
+	  then shuffle your library.
+	*/
+	if( event == EVENT_CAN_CAST ){
+		return basic_spell(player, card, event);
+	}
+
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		if( can_sacrifice_type_as_cost(player, 1, TYPE_CREATURE) ){
+			int choice = DIALOG(player, card, event, DLG_NO_STORAGE, DLG_NO_CANCEL,
+								"Pay Kicker", 1, (count_subtype(player, TYPE_CREATURE, -1) > 3 ? 10 : 0),
+								"Decline", 1, 5);
+			if( choice == 1 ){
+				test_definition_t test;
+				new_default_test_definition(&test, TYPE_CREATURE, "Select a creature to sacrifice");
+				int sac = new_sacrifice(player, card, player, SAC_JUST_MARK|SAC_AS_COST|SAC_RETURN_CHOICE, &test);
+				if( sac ){
+					kill_card(BYTE2(sac), BYTE3(sac), KILL_SACRIFICE);
+					set_special_flags(player, card, SF_KICKED);
+				}
+			}
+		}
+	}
+
+	if( event == EVENT_RESOLVE_SPELL ){
+		tutor_basic_lands(player, TUTOR_PLAY, (check_special_flags(player, card, SF_KICKED) ? 2 : 1));
+		kill_card(player, card, KILL_DESTROY);
+	}
+
+	return 0;
 }
 
 int card_questing_phelddagrif(int player, int card, event_t event){
@@ -1801,7 +1850,7 @@ int card_terminal_moraine(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, 3, 0, 0, 0, 0, 0) && can_use_activated_abilities(player, card) &&
 			can_sacrifice_as_cost(player, 1, TYPE_LAND, 0, 0, 0, 0, 0, 0, 0, -1, 0)
@@ -2112,11 +2161,9 @@ int card_warped_devotion(int player, int card, event_t event){
 	  Whenever a permanent is returned to a player's hand, that player discards a card.
 	*/
 	if( ! is_humiliated(player, card) ){
-		if( trigger_condition == TRIGGER_LEAVE_PLAY ){
-			if( affect_me( player, card) && reason_for_trigger_controller == player && in_play(trigger_cause_controller, trigger_cause) ){
-				if( get_card_instance(trigger_cause_controller, trigger_cause)->kill_code < KILL_DESTROY ||
-					get_card_instance(trigger_cause_controller, trigger_cause)->kill_code > KILL_REMOVE
-				  ){
+		if( trigger_condition == TRIGGER_BOUNCE_PERMANENT ){
+			if( affect_me( player, card) && reason_for_trigger_controller == player ){
+				if( trigger_cause != -1 ){ //Won't trigger for tokens
 					if(event == EVENT_TRIGGER){
 						event_result |= RESOLVE_TRIGGER_MANDATORY;
 					}

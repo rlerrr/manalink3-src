@@ -109,6 +109,10 @@ static void casting_the_planar_dice( int player, int card, int result){
 			char buffer[100];
 			scnprintf(buffer, 100, "Planeswalking away from %s\nto %s", c->name, c1->name);
 			do_dialog(HUMAN, player, card, -1, -1, buffer, 0);
+			int se_card = check_for_special_effect_card(player, CARD_ID_ELOREN_WILDS);
+			if( result > -1 ){
+				kill_card(player, se_card, KILL_REMOVE);
+			}
 			planeswalk_to(player, np, 0);
 		}
 		else if( result == 6 || (get_id(player, card) != CARD_ID_PLANECHASE && result == 5) ){
@@ -405,28 +409,21 @@ int card_maeltrom_wanderer(int player, int card, event_t event){
 	return 0;
 }
 
-static int can_legally_play_iid_reversed(int iid, int player, int unused1, int unused2){
-	return can_legally_play_iid(player, iid);
-}
-
 int card_silent_blade_oni(int player, int card, event_t event ){
 
 	/* Silent-Blade Oni	|3|U|U|B|B
 	 * Creature - Demon Ninja 6/5
 	 * Ninjutsu |4|U|B
-	 * Whenever ~ deals combat damage to a player, look at that player's hand. You may cast a nonland card in it without paying that card's mana cost. */
+	 * Whenever ~ deals combat damage to a player, look at that player's hand.
+	 You may cast a nonland card in it without paying that card's mana cost. */
 
 	if( damage_dealt_by_me(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE|DDBM_MUST_DAMAGE_OPPONENT) && hand_count[1-player] > 0 ){
 		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_LAND, "Select a nonland card to play for free.");
+		new_default_test_definition(&this_test, TYPE_LAND, "Select a nonland card to cast for free.");
 		this_test.type_flag = DOESNT_MATCH;
-		this_test.special_selection_function = &can_legally_play_iid_reversed;
-		this_test.value_for_special_selection_function = player;
+		this_test.can_legally_play = 1;
 
-		int selected = new_select_a_card(player, 1-player, TUTOR_FROM_HAND, 0, AI_MAX_CMC, -1, &this_test);
-		if( selected != -1 ){
-			opponent_plays_card_in_your_hand_for_free(1-player, selected);
-		}
+		play_card_in_opponent_hand_by_test(player, card, &this_test);
 	}
 	return ninjutsu(player, card, event, 4, 1, 1, 0, 0, 0, CARD_ID_SILENT_BLADE_ONI);
 }
@@ -477,10 +474,14 @@ int card_vela_the_night_clad(int player, int card, event_t event ){
 
 // artifacts
 int card_fractured_powerstone(int player, int card, event_t event){
+	/* Fractured Powerstone	|2
+	 * Artifact
+	 * |T: Add |C to your mana pool.
+	 * |T: Roll the planar die. Activate this ability only any time you could cast a sorcery. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
 		if( player != AI && ! paying_mana() && can_sorcery_be_played(player, event) && has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) ){
 			choice = do_dialog(player, player, card, -1, -1, " Produce mana\n Cast the planar dice\n Cancel", 0);
@@ -778,14 +779,10 @@ int card_eloren_wilds(int player, int card, event_t event){
 
 		card_instance_t *instance = get_card_instance( player, card );
 
+		instance->number_of_targets = 0;
+
 		if( can_target(&td) && pick_target(&td, "TARGET_PLAYER") ){
-			instance->number_of_targets = 1;
-			int spc = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);//64
-			card_instance_t *leg = get_card_instance(player, spc);
-			leg->targets[2].player = 64;
-			leg->targets[3].player = instance->targets[0].player;
-			leg->targets[2].card = get_id(player, card);
-			create_card_name_legacy(player, spc, get_id(player, card));
+			target_player_cant_cast_type(player, card, instance->targets[0].player, TYPE_ANY);
 		}
 	}
 
@@ -1581,7 +1578,12 @@ int card_shiv2(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_CHAOS ){
-		generate_token_by_id(player, card, CARD_ID_DRAGON);
+		token_generation_t token;
+		default_token_definition(player, card, CARD_ID_DRAGON, &token);
+		token.color_forced = COLOR_TEST_RED;
+		token.pow = 5;
+		token.tou = 5;
+		generate_token(&token);
 	}
 
 	return generic_plane(player, card, event);

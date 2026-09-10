@@ -158,6 +158,9 @@ int card_body_snatcher(int player, int card, event_t event){
 }
 
 int card_brine_seer(int player, int card, event_t event){
+	/* Brine Seer	|3|U
+	 * Creature - Human Wizard 1/1
+	 * |2|U, |T: Reveal any number of |Sblue cards in your hand. Counter target spell unless its controller pays |1 for each card revealed this way. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -508,7 +511,8 @@ int card_field_surgeon(int player, int card, event_t event){
 	if( event == EVENT_ACTIVATE ){
 		instance->number_of_targets = 0;
 		if( charge_mana_for_activated_ability(player, card, MANACOST0) ){
-			if( tapsubtype_ability(player, card, 1, &td) ){
+			if( new_pick_target(&td, "Select target creature to tap.", 0, 1 | GS_LITERAL_PROMPT) ){
+				tap_card(instance->targets[0].player,  instance->targets[0].card);
 				instance->number_of_targets = 0;
 				pick_target(&td1, "TARGET_DAMAGE");
 			}
@@ -565,6 +569,9 @@ static const char* target_is_not_token(int who_chooses, int player, int card, in
 }
 
 int card_flicker2(int player, int card, event_t event){
+	/* Flicker	|1|W
+	 * Sorcery
+	 * Exile target nontoken permanent, then return it to the battlefield under its owner's control. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -584,7 +591,7 @@ int card_flicker2(int player, int card, event_t event){
 
 	if( event == EVENT_CAN_CAST ){
 		if( player == AI ){
-			return generic_spell(player, card, event, GS_CAN_TARGET | GAA_REGENERATION, &td, NULL, 1, NULL);
+			return generic_spell(player, card, event, GS_CAN_TARGET | GS_REGENERATION, &td, NULL, 1, NULL);
 		}
 		else{
 			return generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 1, NULL);
@@ -754,12 +761,32 @@ int card_hunting_moa(int player, int card, event_t event){
 
 int card_impatience(int player, int card, event_t event){
 
-	if( eot_trigger_mode(player, card, event, ANYBODY, ! get_specific_storm_count(current_turn) ? RESOLVE_TRIGGER_MANDATORY : 0) ){
-		damage_player(current_turn, 2, player, card);
+	if( event == EVENT_RESOLVE_SPELL ){
+		card_instance_t *instance = get_card_instance(player, card);
+		instance->targets[current_turn+1].player = get_specific_storm_count(current_turn);
 	}
 
+	if( event == EVENT_CAST_SPELL && ! affect_me(player, card) && ! is_what(affected_card_controller, affected_card, TYPE_LAND) &&
+		affected_card_controller == current_turn
+	  ){
+		card_instance_t *instance = get_card_instance(player, card);
+		if( instance->targets[current_turn+1].player < 0 ){
+			instance->targets[current_turn+1].player = 0;
+		}
+		instance->targets[current_turn+1].player++;
+	}
+
+	if(trigger_condition == TRIGGER_EOT &&  affect_me(player, card ) && reason_for_trigger_controller == player && ! is_humiliated(player, card) ){
+		card_instance_t *instance = get_card_instance(player, card);
+		int trigs = instance->targets[current_turn+1].player < 1 ? 1 : 0;
+		instance->targets[current_turn+1].player = 0;
+		if( eot_trigger_mode(player, card, event, ANYBODY, (trigs ? RESOLVE_TRIGGER_MANDATORY : 0)) ){
+			damage_player(current_turn, 2, player, card);
+		}
+	}
 	return global_enchantment(player, card, event);
 }
+
 
 int card_iridescent_drake(int player, int card, event_t event){
 
@@ -791,6 +818,9 @@ int card_iridescent_drake(int player, int card, event_t event){
 		new_default_test_definition(&this_test, TYPE_ENCHANTMENT, "Select target Aura card with enchant creature.");
 		this_test.subtype = SUBTYPE_AURA_CREATURE;
 		int card_added = new_global_tutor(player, instance->targets[0].player, TUTOR_FROM_GRAVE, TUTOR_HAND, 1, AI_MAX_CMC, &this_test);
+		if (instance->targets[0].player != player){
+			get_card_instance(player, card_added)->state ^= STATE_OWNED_BY_OPPONENT;
+		}
 		put_into_play_aura_attached_to_target(player, card_added, player, card);
 	}
 
@@ -1459,6 +1489,10 @@ int card_rayne_academy_chancellor(int player, int card, event_t event)
 }
 
 int card_reckless_abandon(int player, int card, event_t event){
+	/* Reckless Abandon	|R
+	 * Sorcery
+	 * As an additional cost to cast ~, sacrifice a creature.
+	 * ~ deals 4 damage to target creature or player. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
@@ -1475,7 +1509,8 @@ int card_reckless_abandon(int player, int card, event_t event){
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return generic_spell(player, card, event, GS_CAN_TARGET | GS_SAC_CREATURE_AS_COST, &td, NULL, 1, NULL);
+	return generic_spell(player, card, event, GS_CAN_TARGET | GS_SAC_CREATURE_AS_COST,
+						 &td, "TARGET_CREATURE_OR_PLAYER", 1, NULL);
 }
 
 int card_repercussion(int player, int card, event_t event){
@@ -1613,6 +1648,9 @@ int card_scour(int player, int card, event_t event){
 }
 
 int card_scent_of_brine(int player, int card, event_t event){
+	/* Scent of Brine	|1|U
+	 * Instant
+	 * Reveal any number of |Sblue cards in your hand. Counter target spell unless its controller pays |1 for each card revealed this way. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
@@ -2051,19 +2089,7 @@ int card_wake_of_destruction(int player, int card, event_t event){
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_LAND);
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( valid_target(&td) ){
-			test_definition_t test;
-			default_test_definition(&test, TYPE_LAND);
-			test.id = get_id(instance->targets[0].player, instance->targets[0].card);
-			APNAP(p, {new_manipulate_all(player, card, p, &test, KILL_DESTROY);};);
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_LAND", 1, NULL);
+	return echoing_spell(player, card, event, &td, "TARGET_LAND", KILL_DESTROY);
 }
 
 int card_yavimaya_elder(int player, int card, event_t event){

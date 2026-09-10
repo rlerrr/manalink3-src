@@ -311,7 +311,7 @@ int untap_phase(int player)
 
   EXE_FN(void, 0x43a060, void)();	// mana_burn()
 
-  return EXE_FN(int, 0x43a1b0, void)();	// is_anyone_dead()
+  return is_anyone_dead();
 }
 
 extern int hack_ai_decision_phase_upkeep;
@@ -389,7 +389,7 @@ int upkeep_phase(int player)
 	goto speculate_more;
   // End additions
 
-  return EXE_FN(int, 0x43A1B0, void)() ? 1 : 0;	// is_anyone_dead()
+  return is_anyone_dead();
 }
 
 int is_legal_block_impl(int blocking_player, int blocking_card, int blocked_player, int blocked_card, keyword_t abils, int landwalks)
@@ -776,7 +776,7 @@ int create_legacy_effect_exe(int player, int card, int iid, int t_player, int t_
 		  legacy->damage_source_player = instance->damage_source_player;
 		  legacy->damage_source_card = instance->damage_source_card;
 		  legacy->original_internal_card_id = instance->original_internal_card_id;
-		  legacy->display_pic_int_id = instance->display_pic_int_id;
+		  legacy->display_pic_csv_id = instance->display_pic_csv_id;
 		  legacy->display_pic_num = instance->display_pic_num;
 		}
 	  return leg;
@@ -789,7 +789,7 @@ int create_legacy_effect_exe(int player, int card, int iid, int t_player, int t_
 		{
 		  card_instance_t* legacy = get_card_instance(player, leg);
 		  legacy->original_internal_card_id = get_internal_card_id_from_csv_id(instance->targets[12].player);
-		  legacy->display_pic_int_id = instance->targets[12].player;
+		  legacy->display_pic_csv_id = instance->targets[12].player;
 		  legacy->display_pic_num = get_card_image_number(instance->targets[12].player, player, card);
 		}
 	  return leg;
@@ -816,7 +816,7 @@ int create_legacy_effect_from_iid(int player, int iid, int (*func_ptr)(int, int,
 
   int csvid = cards_data[iid].id;
 
-  legacy->display_pic_int_id = csvid;
+  legacy->display_pic_csv_id = csvid;
   int num_pics = cards_ptr[csvid]->num_pics;
   legacy->display_pic_num = num_pics <= 1 ? 0 : internal_rand(num_pics);
 
@@ -914,6 +914,534 @@ void format_manacost_into_global_allpurpose_buffer(int ignored, int* mana_cost_a
   p += sprintf(p, "%s, ", intro);
   sprintf(p, EXE_STR(0x786B00)/*PROMPT_GRABMANA[0]*/, str);
 }
+
+void event_activate_then_duplicate_into_stack(int player, int card, int event, int new_attacking_card_controller, int new_attacking_card);
+void human_autotap_for_mana(int player, int* amt, int* unknown_v46, int unknown_v47);
+int pay_mana_maximally_satisfied(int* pay_mana_array, int x_val, int max_x_val);
+int try_to_pay_for_mana_by_autotapping(int player, int* amt, int* unknown_v46, int autotap_flags, int unknown_v47);
+extern int pay_mana_xbugrwaU[8];
+#define APPLY_MANA_IN_POOL_TO_COSTS(total_paid)	\
+	apply_mana_in_pool_to_cost(player, amtspaid, total_paid, amt_of_nonartifact_mana);	\
+	apply_mana_in_pool_to_colorless_cost(player, amtspaid, total_paid, amt_of_nonartifact_mana, &x_value, max_x_value);	\
+	apply_mana_in_pool_to_x_cost(player, amtspaid, total_paid, amt_of_nonartifact_mana, &x_value, max_x_value)
+
+#define amt_to_apply_to_cost					EXE_FN(int, 0x4300d0, int*, int, int*, int, int, int, int)
+#define apply_mana_in_pool_to_colorless_cost	EXE_FN(void, 0x42ef80, int, int*, int*, int, int*, int)
+#define apply_mana_in_pool_to_cost				EXE_FN(void, 0x42ec40, int, int*, int*, int)
+#define apply_mana_in_pool_to_x_cost			EXE_FN(void, 0x42edc0, int, int*, int*, int, int*, int)
+#define apply_mana_to_cost						EXE_FN(void, 0x430060, int*, int, int, int*, int, int, color_t, int*, int*)
+#define calculate_needed_mana_colors			EXE_FN(int, 0x42f1a0, int*)
+#define copy_mana_pool_to_display				EXE_FN(void, 0x4388d0, void)
+#define TENTATIVE_reassess_all_cards			EXE_FN(void, 0x472260, void)
+#define resolve_top_card_on_stack				EXE_FN(void, 0x436740, void)
+#define single_color_test_bit_to_color_t		EXE_FN(color_t, 0x4358f0, color_test_t)
+#define TENTATIVE_update_mana_spent				EXE_FN(void, 0x430260, int*)
+
+#define EXE_2D_ARR(typ, dim1, dim2, addr)		((typ(*)[dim2])addr)	// dim1 for documentation only
+
+#define TENTATIVE_color_clicked_in_mana_summary_pane	EXE_DWORD(0x60a52c)
+#define global_all_purpose_buffer				((char*)(0x60a690))
+#define WILDGUESS_phase_to_run_to				EXE_DWORD(0x4ef1ac)
+#define raw_mana_may_be_spent_as_color			EXE_2D_ARR(int, 2, 11, 0x60a4b4)
+#define WILDGUESS_whose_phase_to_run_to			EXE_DWORD(0x4ef1b0)
+
+int charge_mana(int player, color_t color, int amount)
+{
+  int old_affected_card_controller = affected_card_controller;
+  int old_affected_card = affected_card;
+
+  unknown62BCEC = 0;
+  EXE_DWORD(0x4d7cb0) = 200;
+
+  int amtspaid[COLOR_ARTIFACT + 1] = {0};
+  int total_paid = 0;
+
+  if (!(land_can_be_played & LCBP_CARD_BEING_COPIED))
+    {
+	  int old_land_can_be_played = land_can_be_played;
+	  land_can_be_played |= LCBP_CHARGING_MANA;
+
+#if 0	// Apparently MicroProse's attempt at Power Artifact.  We won't be using it.
+      if (pay_mana_xbugrwaU[7] > 0)
+		{
+		  if (color)
+			{
+			  if (pay_mana_xbugrwaU[0] > 0)
+				{
+				  int diff = pay_mana_xbugrwaU[0] - 2*pay_mana_xbugrwaU[7];
+				  pay_mana_xbugrwaU[0] = MAX(diff, 1);
+				}
+			}
+		  else if (amount != -1)
+			{
+			  int diff = amount - 2*pay_mana_xbugrwaU[7];
+			  amount = MAX(diff, 1);
+			}
+		}
+#endif
+
+      pay_mana_xbugrwaU[color] += amount;
+
+      int amt_of_nonartifact_mana = has_mana(player, COLOR_ARTIFACT, 1) - has_mana(player, COLOR_ANY, 1);
+      int autotap_matching_colors_in_pool = 1;	// a parameter in Shandalar
+      int autotap_colored_in_pool_for_colorless, autotap_pool_for_x, autotap_sources_human, autotap_sources_ai;
+      if (!ldoubleclicked
+		  && !IS_AI(player))
+		{
+		  autotap_colored_in_pool_for_colorless = autotap_pool_for_x = autotap_sources_human = 0;
+		  autotap_sources_ai = 0;
+		}
+      else
+		{
+		  //autotap_matching_colors_in_pool = 1;
+		  autotap_colored_in_pool_for_colorless = autotap_pool_for_x = autotap_sources_human = 1;
+		  if (!IS_AI(player))
+			autotap_sources_ai = 0;
+		  else
+			autotap_sources_ai = 1;
+		}
+
+      if (player == AI && !(trace_mode & 2))
+		{
+		  int any_x_cost = 0;
+		  int x = 0;
+
+		  color_t c;
+		  for (c = COLOR_COLORLESS; c <= COLOR_ARTIFACT; ++c)
+			if (pay_mana_xbugrwaU[c] == -1)
+			  {
+				any_x_cost = 1;
+				if (ai_is_speculating == 1)
+				  {
+					int avail = has_mana(player, c, 1);
+					if (c == COLOR_COLORLESS)
+					  {
+						color_t d;
+						for (d = COLOR_COLORLESS; d <= COLOR_ARTIFACT; ++d)
+						  if (pay_mana_xbugrwaU[d] > 0)
+							avail -= pay_mana_xbugrwaU[d];
+					  }
+
+					if (avail > 0)
+					  x += avail;
+				  }
+			  }
+
+		  if (any_x_cost)
+			{
+			  if (ai_is_speculating == 1)
+				{
+				  if (x > 1 && internal_rand(3))
+					x = internal_rand(x - 1) + 1;
+
+				  if (x > max_x_value && max_x_value != -1)
+					x = max_x_value;
+
+				  EXE_DWORD(0x7a2fe4) = x;		// TENTATIVE_ai_branch_value_99_is_abort
+				  EXE_FN(void, 0x498f20, void)();	// TENTATIVE_ai_save_values_on_speculative_branch()
+				}
+			  else
+				{
+				  EXE_FN(int, 0x499050, void)();	// TENTATIVE_ai_retrieve_values_on_chosen_branch()
+
+				  if (EXE_DWORD(0x7a2fe4) == 99)	// TENTATIVE_ai_branch_value_99_is_abort
+					EXE_DWORD(0x7a2fe4) = 0;		// TENTATIVE_ai_branch_value_99_is_abort
+
+				  x = EXE_DWORD(0x7a2fe4);		// TENTATIVE_ai_branch_value_99_is_abort
+				}
+			}
+
+		  max_x_value = x;
+		}
+
+#if 0	// as above
+      if (pay_mana_xbugrwaU[7] <= 0)
+		x_value = 0;
+      else
+		x_value = 2 * pay_mana_xbugrwaU[7];
+#else
+      x_value = 0;	// Shandalar: = additional_x_avail (a parameter)
+#endif
+
+      if (max_x_value == 0)
+		{
+		  color_t c;
+		  for (c = COLOR_COLORLESS; c <= COLOR_ARTIFACT; ++c)
+			if (pay_mana_xbugrwaU[c] == -1)
+			  pay_mana_xbugrwaU[c] = 0;
+		}
+
+      int pay_mana_has_x = 0;
+      color_t c;
+      for (c = COLOR_COLORLESS; c <= COLOR_ARTIFACT; ++c)
+		if (pay_mana_xbugrwaU[c] == -1)
+		  pay_mana_has_x = 1;
+
+      if (autotap_matching_colors_in_pool
+		  && !pay_mana_maximally_satisfied(pay_mana_xbugrwaU, x_value, max_x_value))
+		{
+		  apply_mana_in_pool_to_cost(player, amtspaid, &total_paid, amt_of_nonartifact_mana);
+		  copy_mana_pool_to_display();
+		}
+
+      if (autotap_colored_in_pool_for_colorless
+		  && !pay_mana_maximally_satisfied(pay_mana_xbugrwaU, x_value, max_x_value))
+		{
+		  apply_mana_in_pool_to_colorless_cost(player, amtspaid, &total_paid, amt_of_nonartifact_mana, &x_value, max_x_value);
+		  copy_mana_pool_to_display();
+		}
+
+      if (autotap_pool_for_x && pay_mana_has_x
+		  && !pay_mana_maximally_satisfied(pay_mana_xbugrwaU, x_value, max_x_value))
+		{
+		  apply_mana_in_pool_to_x_cost(player, amtspaid, &total_paid, amt_of_nonartifact_mana, &x_value, max_x_value);
+		  copy_mana_pool_to_display();
+		}
+
+      if (autotap_sources_human)
+		human_autotap_for_mana(player, amtspaid, &total_paid, 1);
+
+      if (autotap_sources_ai
+		  && !pay_mana_maximally_satisfied(pay_mana_xbugrwaU, x_value, max_x_value))
+		{	// AI-only autotapping
+		  try_to_pay_for_mana_by_autotapping(player, amtspaid, &total_paid, AUTOTAP_NO_CREATURES|AUTOTAP_NO_DONT_AUTO_TAP, 1);
+
+		  if (!pay_mana_maximally_satisfied(pay_mana_xbugrwaU, x_value, max_x_value))
+			try_to_pay_for_mana_by_autotapping(player, amtspaid, &total_paid, AUTOTAP_NO_DONT_AUTO_TAP, 1);
+
+		  if (!pay_mana_maximally_satisfied(pay_mana_xbugrwaU, x_value, max_x_value))
+			try_to_pay_for_mana_by_autotapping(player, amtspaid, &total_paid, AUTOTAP_NO_CREATURES|AUTOTAP_NO_ARTIFACTS|AUTOTAP_NO_NONBASIC_LANDS, 1);
+
+		  if (!pay_mana_maximally_satisfied(pay_mana_xbugrwaU, x_value, max_x_value))
+			try_to_pay_for_mana_by_autotapping(player, amtspaid, &total_paid, AUTOTAP_NO_CREATURES|AUTOTAP_NO_ARTIFACTS, 1);
+
+		  if (!pay_mana_maximally_satisfied(pay_mana_xbugrwaU, x_value, max_x_value))
+			try_to_pay_for_mana_by_autotapping(player, amtspaid, &total_paid, AUTOTAP_NO_CREATURES, 1);
+
+		  if (!pay_mana_maximally_satisfied(pay_mana_xbugrwaU, x_value, max_x_value))
+			try_to_pay_for_mana_by_autotapping(player, amtspaid, &total_paid, 0, 1);
+		}
+
+      if (IS_AI(player))
+		{
+		  if (!pay_mana_maximally_satisfied(pay_mana_xbugrwaU, x_value, max_x_value)
+			  && !pay_mana_has_x)
+			cancel = 1;
+		}
+      else
+		while (!pay_mana_maximally_satisfied(pay_mana_xbugrwaU, x_value, max_x_value))
+		  {
+			int any_nonx_mana = 0;
+			for (c = COLOR_COLORLESS; c <= COLOR_ARTIFACT; ++c)
+			  if (pay_mana_xbugrwaU[c] > 0)
+				{
+				  any_nonx_mana = 1;
+				  break;
+				}
+
+			format_manacost_into_global_allpurpose_buffer(0, pay_mana_xbugrwaU, x_value, max_x_value);
+			int card = EXE_FN(int, 0x49C8D0, int, int, int, int, int, char*, int)(player, player, player, 0, 0, global_all_purpose_buffer, any_nonx_mana ? 1 : 3);
+			if (EXE_DWORD(0x60a550) != -1 || (card != -1 && card != -2))
+			  {
+				if (EXE_DWORD(0x60a550) == -1 || card != -1)
+				  {
+					card_instance_t* inst = get_card_instance(player, card);
+					int iid = inst->internal_card_id;
+					if (iid >= 0
+						&& (cards_data[iid].extra_ability & EA_MANA_SOURCE)
+						&& ((cards_data[iid].type & TYPE_INTERRUPT)
+							|| (inst->state & (STATE_IN_PLAY | STATE_OUBLIETTED)) == STATE_IN_PLAY))
+					  {
+						int old_mana_pool[8], old_pay_mana[8], old_x_value, old_max_x_value, i;
+						for (i = 0; i < 8; ++i)
+						  old_mana_pool[i] = mana_pool[player][i];
+
+						int (*old_charge_mana_addr_of_pre_mana_pool)[8] = charge_mana_addr_of_pre_mana_pool;
+						charge_mana_addr_of_pre_mana_pool = &old_mana_pool;
+						int* old_charge_mana_addr_of_x_value = charge_mana_addr_of_x_value;
+						charge_mana_addr_of_x_value = &old_x_value;
+						int (*old_charge_mana_addr_of_pay_mana_xbugrw)[8] = charge_mana_addr_of_pay_mana_xbugrw;
+						charge_mana_addr_of_pay_mana_xbugrw = &old_pay_mana;
+						int* old_charge_mana_addr_of_max_x_value = charge_mana_addr_of_max_x_value;
+						charge_mana_addr_of_max_x_value = &old_max_x_value;
+
+						old_x_value = x_value;
+						x_value = 0;
+						old_max_x_value = max_x_value;
+						max_x_value = -1;
+						for (i = 0; i < 8; ++i)
+						  {
+							old_pay_mana[i] = pay_mana_xbugrwaU[i];
+							pay_mana_xbugrwaU[i] = 0;
+						  }
+
+						if ((inst->state & (STATE_OUBLIETTED|STATE_IN_PLAY)) != STATE_IN_PLAY)
+						  {
+							put_card_on_stack2(player, card);
+							TENTATIVE_reassess_all_cards();
+						  }
+						else if (dispatch_event_to_single_card(player, card, EVENT_CAN_ACTIVATE, 1 - player, -1))
+						  {
+							put_card_or_activation_onto_stack(player, card, EVENT_RESOLVE_ACTIVATION, player, 0);
+							needed_mana_colors = calculate_needed_mana_colors(old_pay_mana);
+							tapped_for_mana_color = -1;
+							int was_tapped = inst->state & STATE_TAPPED;
+							event_activate_then_duplicate_into_stack(player, card, EVENT_ACTIVATE, 1 - player, -1);
+
+							needed_mana_colors = 0;
+
+							if (cancel == 1)
+							  {
+								cancel = 0;
+								obliterate_top_card_of_stack();
+							  }
+							else
+							  {
+								land_can_be_played &= ~LCBP_CHARGING_MANA;
+
+								if (!was_tapped && (inst->state & STATE_TAPPED))
+								  dispatch_event(player, card, EVENT_TAP_CARD);// Needs to either dispatch EVENT_PLAY_ABILITY instead, or also dispatch EVENT_TAPPED_TO_PLAY_ABILITY
+								play_sound_effect(WAV_TAP);
+								resolve_top_card_on_stack();
+
+								land_can_be_played |= LCBP_CHARGING_MANA;
+
+								TENTATIVE_reassess_all_cards();
+							  }
+						  }
+
+						charge_mana_addr_of_pre_mana_pool = old_charge_mana_addr_of_pre_mana_pool;
+						charge_mana_addr_of_x_value = old_charge_mana_addr_of_x_value;
+						charge_mana_addr_of_pay_mana_xbugrw = old_charge_mana_addr_of_pay_mana_xbugrw;
+						charge_mana_addr_of_max_x_value = old_charge_mana_addr_of_max_x_value;
+
+						x_value = old_x_value;
+						max_x_value = old_max_x_value;
+
+						for (i = 0; i < 8; ++i)
+						  pay_mana_xbugrwaU[i] = old_pay_mana[i];
+
+						for (i = 0; i < 8; ++i)
+						  mana_pool[player][i] -= old_mana_pool[i];
+
+						amt_of_nonartifact_mana = 0;
+						APPLY_MANA_IN_POOL_TO_COSTS(&total_paid);
+
+						for (i = 0; i < 8; ++i)
+						  mana_pool[player][i] += old_mana_pool[i];
+
+						copy_mana_pool_to_display();
+					  }
+				  }
+			  }
+			else if (EXE_DWORD(0x60a564) == -2)
+			  {
+				if (WILDGUESS_whose_phase_to_run_to == -1 && WILDGUESS_phase_to_run_to == -1)
+				  {
+					if (card == -1)
+					  cancel = 1;
+					break;
+				  }
+				else if (!any_nonx_mana)
+				  break;
+			  }
+			else if (EXE_DWORD(0x60a564) == -3 && EXE_DWORD(0x60a434) == player && TENTATIVE_color_clicked_in_mana_summary_pane != -1)
+			  {
+				if (mana_pool[player][TENTATIVE_color_clicked_in_mana_summary_pane] > 0)
+				  {
+					// Apply directly
+					if (TENTATIVE_color_clicked_in_mana_summary_pane != COLOR_ARTIFACT || pay_mana_xbugrwaU[COLOR_ARTIFACT])
+					  {
+						int col_to_apply_to = -1;
+						if (pay_mana_xbugrwaU[TENTATIVE_color_clicked_in_mana_summary_pane])
+						  col_to_apply_to = TENTATIVE_color_clicked_in_mana_summary_pane;
+						else if (pay_mana_xbugrwaU[COLOR_ARTIFACT])
+						  col_to_apply_to = COLOR_ARTIFACT;
+						else if (pay_mana_xbugrwaU[COLOR_COLORLESS])
+						  col_to_apply_to = COLOR_COLORLESS;
+
+						if (col_to_apply_to != -1)
+						  {
+							apply_mana_to_cost(pay_mana_xbugrwaU, col_to_apply_to,
+											   amt_to_apply_to_cost(pay_mana_xbugrwaU, col_to_apply_to, mana_pool[player],
+																	TENTATIVE_color_clicked_in_mana_summary_pane, ldoubleclicked, max_x_value, x_value),
+											   &x_value, max_x_value, player, TENTATIVE_color_clicked_in_mana_summary_pane,
+											   amtspaid, &total_paid);
+							copy_mana_pool_to_display();
+							continue;
+						  }
+					  }
+
+					// Apply via raw_mana_may_be_spent_as_color[][]
+					{
+					  color_test_t colors = 0;
+					  int n;
+					  for (n = 0; n < 10 && raw_mana_may_be_spent_as_color[player][n] != -1; ++n)
+						if (TENTATIVE_color_clicked_in_mana_summary_pane == LOWORD(raw_mana_may_be_spent_as_color[player][n]))
+						  colors |= 1 << BYTE3(raw_mana_may_be_spent_as_color[player][n]);
+
+					  color_test_t paymask = 0;
+					  for (c = COLOR_COLORLESS; c <= COLOR_ARTIFACT; ++c)
+						if (pay_mana_xbugrwaU[c])
+						  paymask |= 1 << c;
+					  colors &= paymask;
+
+					  if (colors)
+						{
+						  int num_colors = num_bits_set(colors);
+
+						  color_t col_to_apply_to;
+						  if (num_colors == 1)
+							col_to_apply_to = single_color_test_bit_to_color_t(colors);
+						  else
+							{
+							  load_text(0, "PROMPT_GRABMANA_DUALUSE");
+							  col_to_apply_to = choose_a_color_exe(player, text_lines[0], 1, TENTATIVE_color_clicked_in_mana_summary_pane, colors);
+							}
+
+						  apply_mana_to_cost(pay_mana_xbugrwaU, col_to_apply_to,
+											 amt_to_apply_to_cost(pay_mana_xbugrwaU, col_to_apply_to, mana_pool[player],
+																  TENTATIVE_color_clicked_in_mana_summary_pane, ldoubleclicked, max_x_value, x_value),
+											 &x_value, max_x_value, player, TENTATIVE_color_clicked_in_mana_summary_pane,
+											 amtspaid, &total_paid);
+						  copy_mana_pool_to_display();
+						}
+					}
+				  }
+			  }
+		  }
+
+	  if (!(old_land_can_be_played & LCBP_CHARGING_MANA))
+		land_can_be_played &= ~LCBP_CHARGING_MANA;
+    }
+
+  if (cancel == 1)
+    {
+      TENTATIVE_update_mana_spent(amtspaid);
+      color_t c;
+      for (c = COLOR_COLORLESS; c <= COLOR_ARTIFACT; ++c)
+		{
+		  produce_mana(player, c, amtspaid[c]);
+		  amtspaid[c] = 0;
+		}
+      total_paid = 0;
+      x_value = 0;
+    }
+
+  int c;
+  for (c = 0; c < 7; ++c)
+	{
+	  mana_paid[c] = amtspaid[c];
+	  pay_mana_xbugrwaU[c] = 0;
+	}
+  pay_mana_xbugrwaU[7] = 0;
+
+  max_x_value = -1;
+  unknown62BCEC = -1;
+
+  affected_card_controller = old_affected_card_controller;
+  affected_card = old_affected_card;
+
+  return total_paid;
+}
+
+int autotap_mana_source(int player, int card)
+{
+  card_instance_t* inst = get_card_instance(player, card);
+  if (inst->state & STATE_TAPPED)
+    return 0;
+
+  if ((inst->state & STATE_SUMMON_SICK) && is_what(player, card, TYPE_CREATURE))
+	return 0;
+
+  int old_land_can_be_played = land_can_be_played;
+  land_can_be_played |= LCBP_CHARGING_MANA;
+
+  int old_pay_mana[8], old_x_value, old_max_x_value;
+
+  int* old_charge_mana_addr_of_x_value = charge_mana_addr_of_x_value;
+  charge_mana_addr_of_x_value = &old_x_value;
+  int (*old_charge_mana_addr_of_pay_mana_xbugrw)[8] = charge_mana_addr_of_pay_mana_xbugrw;
+  charge_mana_addr_of_pay_mana_xbugrw = &old_pay_mana;
+  int* old_charge_mana_addr_of_max_x_value = charge_mana_addr_of_max_x_value;
+  charge_mana_addr_of_max_x_value = &old_max_x_value;
+
+  old_x_value = x_value;                              // inject before this
+  x_value = 0;
+  old_max_x_value = max_x_value;
+  max_x_value = -1;
+
+  int c;
+  for (c = 0; c < 8; ++c)
+	{
+	  old_pay_mana[c] = pay_mana_xbugrwaU[c];
+	  pay_mana_xbugrwaU[c] = 0;
+	}
+
+  put_card_or_activation_onto_stack(player, card, EVENT_RESOLVE_ACTIVATION, player, 0);
+  needed_mana_colors = calculate_needed_mana_colors(old_pay_mana);
+  tapped_for_mana_color = -1;
+  int was_tapped = inst->state & STATE_TAPPED;
+
+  event_activate_then_duplicate_into_stack(player, card, EVENT_ACTIVATE, 1 - player, -1);
+
+  needed_mana_colors = 0;
+
+  int rval;
+  if (cancel == 1)
+	{
+	  cancel = 0;
+	  obliterate_top_card_of_stack();
+	  rval = 0;
+	}
+  else
+	{
+	  land_can_be_played &= ~LCBP_CHARGING_MANA;
+
+	  if (!was_tapped && (inst->state & STATE_TAPPED))
+		dispatch_event(player, card, EVENT_TAP_CARD);
+	  play_sound_effect(WAV_TAP);
+	  resolve_top_card_on_stack();
+
+	  rval = 1;
+	}
+
+  charge_mana_addr_of_x_value = old_charge_mana_addr_of_x_value;
+  charge_mana_addr_of_pay_mana_xbugrw = old_charge_mana_addr_of_pay_mana_xbugrw;
+  charge_mana_addr_of_max_x_value = old_charge_mana_addr_of_max_x_value;
+
+  x_value = old_x_value;
+  max_x_value = old_max_x_value;
+
+  for (c = 0; c < 8; ++c)
+	pay_mana_xbugrwaU[c] = old_pay_mana[c];
+
+  land_can_be_played = old_land_can_be_played;
+
+  return rval;
+}
+#undef APPLY_MANA_IN_POOL_TO_COSTS
+
+#undef amt_to_apply_to_cost
+#undef apply_mana_in_pool_to_colorless_cost
+#undef apply_mana_in_pool_to_cost
+#undef apply_mana_in_pool_to_x_cost
+#undef apply_mana_to_cost
+
+#undef calculate_needed_mana_colors
+#undef copy_mana_pool_to_display
+#undef TENTATIVE_reassess_all_cards
+#undef resolve_top_card_on_stack
+#undef single_color_test_bit_to_color_t
+#undef TENTATIVE_update_mana_spent
+
+#undef EXE_2D_ARR
+
+#undef TENTATIVE_color_clicked_in_mana_summary_pane
+#undef global_all_purpose_buffer
+#undef WILDGUESS_phase_to_run_to
+#undef raw_mana_may_be_spent_as_color
+#undef WILDGUESS_whose_phase_to_run_to
 
 void human_assign_blockers(int player)
 {
@@ -1172,12 +1700,12 @@ void recopy_card_onto_stack(int a1)
 		  if ((int)stack_inst->original_internal_card_id < damage_card
 			  || (int)stack_inst->original_internal_card_id >= damage_card + 47)
 			{
-			  stack_inst->display_pic_int_id = cards_data[stack_inst->original_internal_card_id].id;
+			  stack_inst->display_pic_csv_id = cards_data[stack_inst->original_internal_card_id].id;
 			  // Begin removals
 			  // stack_inst->display_pic_num = 0
 			  // End removals
 			  // Begin additions
-			  stack_inst->display_pic_num = get_card_image_number(stack_inst->display_pic_int_id, pp, pc);
+			  stack_inst->display_pic_num = get_card_image_number(stack_inst->display_pic_csv_id, pp, pc);
 			  // End additions
 			}
 		}
@@ -1200,6 +1728,7 @@ static void comes_into_play_trigger(int player, int card)
   // 0x401bb0.  Not moved out of exe, since it has a non-standard calling convention and is only called from put_card_on_stack3().
 
   push_affected_card_stack();
+  get_card_instance(player, card)->regen_status |= KEYWORD_RECALC_ALL;
   dispatch_trigger2(current_turn, TRIGGER_COMES_INTO_PLAY, EXE_STR(0x787108), 0, player, card);	//PROMPT_SPECIALFEPHASE[0]
   pop_affected_card_stack();
 }
@@ -1250,7 +1779,7 @@ int put_card_on_stack3(int player, int card)
   //   }
 
   uint8_t type = cd->type;
-  EXE_DWORD_PTR(0x4EF17C)[player] |= type;
+  types_of_cards_on_bf[player] |= type;
   if (ai_is_speculating != 1)
 	{
 	  if (type & TYPE_CREATURE)
@@ -1416,7 +1945,7 @@ int card_instances_should_be_displayed_identically(card_instance_t* inst1, card_
 			   || inst1->counters5 != inst2->counters5
 			   || inst1->unknown0x122 != inst2->unknown0x122
 			   || ((inst1->token_status ^ inst2->token_status) & STATUS_RED_BORDER)
-			   || inst1->display_pic_int_id != inst2->display_pic_int_id
+			   || inst1->display_pic_csv_id != inst2->display_pic_csv_id
 			   || inst1->display_pic_num != inst2->display_pic_num
 			   || inst1->untap_status != inst2->untap_status
 			   || inst1->kill_code != inst2->kill_code
@@ -1424,4 +1953,100 @@ int card_instances_should_be_displayed_identically(card_instance_t* inst1, card_
 			   || inst1->targets[18].player != inst2->targets[18].player	// added; counter types
 			   || inst1->targets[18].card != inst2->targets[18].card	// added; counter types
 			   ));
+}
+
+int determine_start_duel_winner(void)
+{
+  // Replacement for the last part of start_duel().
+  // This isn't actually reached most of the time - I think it never is, but that's difficult to prove.  Usually, lose_the_game() calls ExitThread() instead.
+  int lost0 = life[0] <= 0 || POISON_COUNTERS(0) >= 10;
+  int lost1 = life[1] <= 0 || POISON_COUNTERS(1) >= 10;
+
+  if (!lost0 && lost1)
+    return 1;
+  else if (!lost1 && lost0)
+    return 0;
+  else
+    return -1;
+}
+
+int is_anyone_dead(void)
+{
+  if (life[0] <= 0 || life[1] <= 0
+	  || POISON_COUNTERS(0) >= 10 || POISON_COUNTERS(1) >= 10)
+	{
+	  if (ai_is_speculating != 1)
+		{
+		  EXE_FN(void, 0x472260, void)();	// TENTATIVE_reassess_all_cards()
+		  return 1;
+		}
+	  else
+		{
+		  if (POISON_COUNTERS(0) >= 10)
+			life[0] = -99;
+
+		  if (POISON_COUNTERS(1) >= 10)
+			life[1] = -99;
+		}
+	}
+  return 0;
+}
+
+// Returns the most common color either in Deck[] (if plr == -1), or in initial_library[plr].
+int sub_495BE0(int plr)
+{
+  int num_per_col[COLOR_WHITE + 1] = {0};
+  int i;
+
+  if (plr == -1)
+	{
+	  for (i = 0; i < 500; ++i)
+		if (Deck[i] != -1 && !(Deck[i] & 0x88000))	// 0x8000 = offered as ante; 0x80000 = not in current deck (moved from 0x4000)
+		  {
+			color_test_t cols = cards_data[Deck[i] & 0x7FFF].color;
+			if (cols & COLOR_TEST_BLACK)
+			  ++num_per_col[COLOR_BLACK];
+			if (cols & COLOR_TEST_WHITE)
+			  ++num_per_col[COLOR_WHITE];
+			if (cols & COLOR_TEST_GREEN)
+			  ++num_per_col[COLOR_GREEN];
+			if (cols & COLOR_TEST_RED)
+			  ++num_per_col[COLOR_RED];
+			if (cols & COLOR_TEST_BLUE)
+			  ++num_per_col[COLOR_BLUE];
+		  }
+	}
+  else
+	{
+	  for (i = 0; i < 200; ++i)
+		{
+		  csvid_t csvid = initial_library[plr][i].csvid;
+		  int num = initial_library[plr][i].numcards;
+		  if (csvid != -1 && num > 0)
+			{
+			  color_test_t cols = cards_data[get_internal_card_id_from_csv_id(csvid)].color;
+			  if (cols & COLOR_TEST_BLACK)
+				num_per_col[COLOR_BLACK] += num;
+			  if (cols & COLOR_TEST_WHITE)
+				num_per_col[COLOR_WHITE] += num;
+			  if (cols & COLOR_TEST_GREEN)
+				num_per_col[COLOR_GREEN] += num;
+			  if (cols & COLOR_TEST_RED)
+				num_per_col[COLOR_RED] += num;
+			  if (cols & COLOR_TEST_BLUE)
+				num_per_col[COLOR_BLUE] += num;
+			}
+		}
+	}
+
+  // Not quite the same as the original, which checks in the order black, white, green, red, blue, for no apparent reason.  The order matters for ties.
+  int highest_idx = 0, highest_num = -1;
+  for (i = COLOR_BLACK; i <= COLOR_WHITE; ++i)
+	if (num_per_col[i] > highest_num)
+	  {
+		highest_idx = i;
+		highest_num = num_per_col[i];
+	  }
+
+  return highest_idx;
 }

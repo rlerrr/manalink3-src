@@ -3,6 +3,7 @@
 
 // Functions
 
+
 static void bestow(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white){
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -417,12 +418,33 @@ int card_dauntless_onslaught(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_OPTIONAL_TARGET, &td, "TARGET_CREATURE", 2, NULL);
 }
 
+static const char* target_noncombat_damage(int who_chooses, int player, int card, int targeting_player, int targeting_card)
+{
+	card_instance_t* inst = get_card_instance(player, card);
+	if (inst->internal_card_id != damage_card){
+		return ",card type";
+	}
+	if (!(inst->token_status & (STATUS_COMBAT_DAMAGE | STATUS_FIRST_STRIKE_DAMAGE))){
+		return ",combat damage";
+	}
+	return NULL;
+}
 int card_decorated_griffin(int player, int card, event_t event){
+	/* Decorated Griffin	|4|W
+	 * Creature - Griffin 2/3
+	 * Flying
+	 * |1|W: Prevent the next 1 combat damage that would be dealt to you this turn. */
+
+	if (!IS_GAA_EVENT(event)){
+		return 0;
+	}
+
 	target_definition_t td;
-	default_target_definition(player, card, &td, 0);
-	td.extra = damage_card;
+	default_target_definition(player, card, &td, TYPE_NONE);
+	td.preferred_controller = ANYBODY;	// damage cards attached to a player are internally controlled by that player
+	td.extra = (int)target_noncombat_damage;
 	td.illegal_abilities = 0;
-	td.special = TARGET_SPECIAL_DAMAGE_PLAYER;
+	td.special = TARGET_SPECIAL_DAMAGE_PLAYER | TARGET_SPECIAL_EXTRA_FUNCTION;
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -1218,7 +1240,7 @@ int card_master_of_waves(int player, int card, event_t event){
 		token.qty = devotion(player, card, COLOR_BLUE, 0);
 		token.pow = 1;
 		token.tou = 0;
-		token.color_forced = COLOR_BLUE;
+		token.color_forced = COLOR_TEST_BLUE;
 		generate_token(&token);
 	}
 
@@ -1326,8 +1348,8 @@ int sealock_monster_legacy(int player, int card, event_t event){
 	if ( instance->damage_target_player > -1 ){
 		int p = instance->damage_target_player;
 		int c = instance->damage_target_card;
-		if( event == EVENT_CAN_ACTIVATE ){
-			return can_produce_mana(p, c);
+		if( event == EVENT_CAN_ACTIVATE && instance->damage_target_player == player ){ //Or you will be able to tap opponent's lands for mana.
+			return mana_producer(p, c, event);
 		}
 		if( event == EVENT_ACTIVATE ){
 			tap_card(p, c);
@@ -1340,7 +1362,7 @@ int sealock_monster_legacy(int player, int card, event_t event){
 
 int card_sealock_monster(int player, int card, event_t event){
 
-	if( event == EVENT_ATTACK_LEGALITY && affect_me(player, card) ){
+	if( event == EVENT_ATTACK_LEGALITY && affect_me(player, card) && ! is_humiliated(player, card) ){
 		if (!basiclandtypes_controlled[1-player][get_hacked_color(player, card, COLOR_BLUE)]){
 			event_result = 1;
 		}
@@ -1359,7 +1381,7 @@ int card_sealock_monster(int player, int card, event_t event){
 		}
 	}
 
-	return monstrosity(player, card, event, 5, 0, 2, 0, 0, 0, 3);
+	return monstrosity(player, card, event, MANACOST_XU(5, 2), 3);
 }
 
 int card_shipbreaker_kraken(int player, int card, event_t event){
@@ -1386,6 +1408,9 @@ int card_shipbreaker_kraken(int player, int card, event_t event){
 }
 
 int card_stymied_hopes(int player, int card, event_t event){
+	/* Stymied Hopes	|1|U
+	 * Instant
+	 * Counter target spell unless its controller pays |1. Scry 1. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		if (counterspell_resolve_unless_pay_x(player, card, NULL, 0, 1)){
@@ -2302,17 +2327,23 @@ int card_deathbellow_raider(int player, int card, event_t event){
 }
 
 int card_dragon_mantle(int player, int card, event_t event){
+	/* Dragon Mantle	|R
+	 * Enchantment - Aura
+	 * Enchant creature
+	 * When ~ enters the battlefield, draw a card.
+	 * Enchanted creature has "|R: This creature gets +1/+0 until end of turn." */
 
-	card_instance_t *instance = get_card_instance(player, card);
+	if (IS_GAA_EVENT(event)){
+		card_instance_t *instance = get_card_instance(player, card);
 
-	if( instance->damage_target_player > -1 ){
-		int t_player = instance->damage_target_player;
-		int t_card = instance->damage_target_card;
-		if( event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE ){
-			return granted_generic_activated_ability(player, card, t_player, t_card, event, 0, MANACOST_R(1), 0, NULL, NULL);
-		}
-		if( event == EVENT_RESOLVE_ACTIVATION ){
-			pump_until_eot(player, instance->parent_card, t_player, t_card, 1, 0);
+		if( instance->damage_target_player > -1 ){
+			int t_player = instance->damage_target_player;
+			int t_card = instance->damage_target_card;
+			if( event == EVENT_RESOLVE_ACTIVATION ){
+				pump_until_eot_merge_previous(player, card, t_player, t_card, 1, 0);
+			}
+			return granted_generic_activated_ability(player, card, t_player, t_card, event, 0,
+													 MANACOST_R(1), 0, NULL, NULL);
 		}
 	}
 
@@ -2563,13 +2594,18 @@ int card_purphoros_god_of_the_forge(int player, int card, event_t event){
 }
 
 int card_purphoross_emissary(int player, int card, event_t event){
+	/* Purphoros's Emissary	|3|R
+	 * Enchantment Creature - Ox 3/3
+	 * Bestow |6|R
+	 * Menace
+	 * Enchanted creature gets +3/+3 and has menace. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	minimum_blockers(player, card, event, 2);
+	menace(player, card, event);
 
 	if( instance->damage_target_player > -1 ){
-		minimum_blockers(instance->damage_target_player, instance->damage_target_card, event, 2);
+		menace(instance->damage_target_player, instance->damage_target_card, event);
 	}
 
 	return generic_creature_with_bestow(player, card, event, 6, 0, 0, 0, 1, 0, 3, 3, 0, 0);
@@ -3135,34 +3171,13 @@ int card_nyleas_presence(int player, int card, event_t event){
 
 	card_instance_t *instance= get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		ai_modifier+=50;
-		pick_target(&td, "TARGET_LAND");
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( valid_target(&td) ){
-			instance->damage_target_player = instance->targets[0].player;
-			instance->damage_target_card = instance->targets[0].card;
-			set_special_flags2(instance->targets[0].player, instance->targets[0].card, SF2_PRISMATIC_OMEN);
-		}
-		else{
-			kill_card(player, card, KILL_SACRIFICE);
-			return 0;
-		}
-	}
-
 	if (comes_into_play(player, card, event)){
 		draw_cards(player, 1);
 	}
 
-	if( in_play(player, card) && instance->targets[0].player > -1 ){
-		int p = instance->targets[0].player;
-		int c = instance->targets[0].card;
+	if( in_play(player, card) && instance->damage_target_player > -1 ){
+		int p = instance->damage_target_player;
+		int c = instance->damage_target_card;
 		if( event == EVENT_CAN_ACTIVATE ){
 			if( ! is_tapped(p, c) && ! is_animated_and_sick(p, c) && can_produce_mana(p, c) ){
 				return 1;
@@ -3180,11 +3195,15 @@ int card_nyleas_presence(int player, int card, event_t event){
 			}
 		}
 
+		set_special_flags2(p, c, SF2_PRISMATIC_OMEN);
+
+
 		if( leaves_play(player, card, event)){
-			remove_special_flags2(instance->targets[0].player, instance->targets[0].card, SF2_PRISMATIC_OMEN);
+			remove_special_flags2(p, c, SF2_PRISMATIC_OMEN);
 		}
 	}
-	return 0;
+
+	return targeted_aura(player, card, event, &td, "TARGET_LAND");
 }
 
 int card_ordeal_of_nylea(int player, int card, event_t event){
@@ -4247,6 +4266,10 @@ int card_triad_of_fates(int player, int card, event_t event)
 }
 
 int card_tymaret_the_murder_king(int player, int card, event_t event){
+	/* Tymaret, the Murder King	|B|R
+	 * Legendary Creature - Zombie Warrior 2/2
+	 * |1|R, Sacrifice another creature: ~ deals 2 damage to target player.
+	 * |1|B, Sacrifice a creature: Return Tymaret from your graveyard to your hand. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -4283,6 +4306,11 @@ int card_tymaret_the_murder_king(int player, int card, event_t event){
 }
 
 int card_underworld_cerberus(int player, int card, event_t event){
+	/* Underworld Cerberus	|3|B|R
+	 * Creature - Hound 6/6
+	 * ~ can't be blocked except by three or more creatures.
+	 * Cards in graveyards can't be the targets of spells or abilities.
+	 * When ~ dies, exile it and each player returns all creature cards from his or her graveyard to his or her hand. */
 
 	minimum_blockers(player, card, event, 3);
 
@@ -4626,12 +4654,16 @@ int card_witches_eye(int player, int card, event_t event, int equip_cost){
 // Lands
 
 int card_nykthos_shrine_to_nix(int player, int card, event_t event){
+	/* Nykthos, Shrine to Nyx	""
+	 * Legendary Land
+	 * |T: Add |C to your mana pool.
+	 * |2, |T: Choose a color. Add to your mana pool an amount of mana of that color equal to your devotion to that color. */
 
 	card_instance_t* instance = get_card_instance(player, card);
 
 	check_legend_rule(player, card, event);
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
 		int ai_choice = 0;
 		if( has_mana(player, COLOR_COLORLESS, 3) ){
@@ -4864,13 +4896,7 @@ int card_disorienting_glower(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
-		int card_added = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);//64
-		card_instance_t *this = get_card_instance(player, card_added);
-		this->targets[2].player = 64;
-		this->targets[2].card = get_id(player, card);
-		this->targets[3].player = 1-player;
-		this->targets[3].card = 1;
-		create_card_name_legacy(player, card_added, get_id(player, card));
+		target_player_cant_cast_type(player, card, 1-player, TYPE_ANY);
 		kill_card(player, card, KILL_DESTROY);
 	}
 

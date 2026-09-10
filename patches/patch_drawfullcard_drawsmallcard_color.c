@@ -22,7 +22,7 @@ main(int argc, char** argv)
    * 4d17e3:	8b 45 18		mov	eax, dword [ebp+0x18]	; eax = fifth argument to enclosing function	// the card number
    * 4d17e6:	50			push	eax			; arg2 = eax
    * 4d17e7:	8b 45 14		mov	eax, dword [ebp+0x14]	; eax = fourth argument to enclosing function	// the player number
-   * 4d17ea:	50			push	eax			; arg1 = eax
+   * 4d17ea:	50 			push	eax			; arg1 = eax
    * 4d17eb:	e8 d0 75 f6 ff		call	0x438dc0		; eax = get_displayed_card_instance_t_color(arg1, arg2)
    * 4d17f0:	83 c4 08		add	esp, 0x8		; pop two arguments
    * 4d17f3:	89 85 58 ff ff ff	mov	dword [ebp-0xa8], eax	; local var at -0xa8 = eax

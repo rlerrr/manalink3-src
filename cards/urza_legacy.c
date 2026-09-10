@@ -626,11 +626,13 @@ int card_impending_disaster(int player, int card, event_t event){
 
 int card_iron_maiden(int player, int card, event_t event){
 
-	upkeep_trigger_ability_mode(player, card, event, 1-player, hand_count[1-player]-4 > 0 ? RESOLVE_TRIGGER_MANDATORY : 0);
+	upkeep_trigger_ability(player, card, event, 1-player);
 
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
 		int dmg = hand_count[1-player]-4;
-		damage_player(1-player, dmg, player, card);
+		if( dmg ){
+			damage_player(1-player, dmg, player, card);
+		}
 	}
 
 	return 0;
@@ -1698,7 +1700,7 @@ int card_unearth(int player, int card, event_t event){
 	this_test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
 
 	if( event == EVENT_RESOLVE_SPELL ){
-		int selected = validate_target_from_grave(player, card, player, 0);
+		int selected = validate_target_from_grave_source(player, card, player, 0);
 		if( selected != -1 ){
 			reanimate_permanent(player, card, player, selected, REANIMATE_DEFAULT);
 		}
@@ -1801,11 +1803,13 @@ int card_weatherseed_treefolk(int player, int card, event_t event){
 
 int card_wheel_of_torture(int player, int card, event_t event){
 
-	upkeep_trigger_ability_mode(player, card, event, 1-player, 3-hand_count[1-player] > 0);
+	upkeep_trigger_ability(player, card, event, 1-player);
 
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
 		int dmg = 3-hand_count[1-player];
-		damage_player(1-player, dmg, player, card);
+		if( dmg ){
+			damage_player(1-player, dmg, player, card);
+		}
 	}
 
 	return 0;

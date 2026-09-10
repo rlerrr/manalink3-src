@@ -775,7 +775,6 @@ int card_enclave_elite(int player, int card, event_t event){
 static int counter_first_spell_ability_that_targets_me_every_turn(int player, int card, event_t event){
 
 	if( ! is_humiliated(player, card) ){
-
 		if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && player == reason_for_trigger_controller ){
 			int trig = 0;
 			if( ! is_what(trigger_cause_controller, trigger_cause, TYPE_LAND) ){
@@ -793,7 +792,7 @@ static int counter_first_spell_ability_that_targets_me_every_turn(int player, in
 
 			if( trig > 0 ){
 				if(event == EVENT_TRIGGER){
-					event_result |= 2;
+					event_result |= RESOLVE_TRIGGER_MANDATORY;
 				}
 				else if(event == EVENT_RESOLVE_TRIGGER){
 						card_instance_t *instance = get_card_instance(trigger_cause_controller, trigger_cause);
@@ -803,12 +802,13 @@ static int counter_first_spell_ability_that_targets_me_every_turn(int player, in
 								set_special_flags2(instance->targets[i].player, instance->targets[i].card, SF2_KIRA_GREAT_GLASS_SPINNER);
 							}
 						}
-						kill_card(trigger_cause_controller, trigger_cause, KILL_SACRIFICE);
+						real_counter_a_spell(player, card, trigger_cause_controller, trigger_cause);
 				}
 			}
 		}
 
-		if ( stack_size >= 1){
+		/*
+		if ( stack_size >= 1 ){
 			if( stack_data[stack_size - 1].generating_event != EVENT_RESOLVE_TRIGGER &&
 				cards_data[stack_data[stack_size - 1].internal_card_id].id != 904
 			  ){
@@ -835,6 +835,7 @@ static int counter_first_spell_ability_that_targets_me_every_turn(int player, in
 				}
 			}
 		}
+		*/
 
 		if( event == EVENT_CLEANUP ){
 			remove_special_flags2(player, card, SF2_KIRA_GREAT_GLASS_SPINNER);
@@ -959,10 +960,16 @@ int card_screaming_seahawk(int player, int card, event_t event){
 	  When Screaming Seahawk enters the battlefield, you may search your library for a card named Screaming Seahawk, reveal it, and put it into your hand. If you do, shuffle your library.
 	  2/2
 	*/
+	/* Daru Cavalier	|3|W
+	 * Creature - Human Soldier 2/2
+	 * First strike
+	 * When ~ enters the battlefield, you may search your library for a card named ~, reveal it, and put it into your hand. If you do, shuffle your library. */
+
 	if( comes_into_play_mode(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
 		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_ANY, "Select a Screaming Seahawk card");
+		new_default_test_definition(&this_test, TYPE_ANY, "");
 		this_test.id = get_id(player, card);
+		scnprintf(this_test.message, 100, "Select a card named %s.", cards_ptr[this_test.id]->name);
 		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_FIRST_FOUND, &this_test);
 	}
 
@@ -1296,6 +1303,20 @@ int card_tyrants_choice(int player, int card, event_t event){
 * 	Red	     *
 *************/
 
+static int reset_forced_subtype_at_eot(int player, int card, event_t event){
+
+	card_instance_t *instance = get_card_instance(player, card);
+
+	if( instance->damage_target_player > -1 ){
+		if( eot_trigger(player, card, event) ){
+			reset_subtypes(instance->damage_target_player, instance->damage_target_card, 1);
+			kill_card(player, card, KILL_REMOVE);
+		}
+	}
+
+	return 0;
+}
+
 int card_boldwyr_intimidator(int player, int card, event_t event){
 	/*
 	  Boldwyr Intimidator |5|R|R REPRINT
@@ -1375,10 +1396,8 @@ int card_boldwyr_intimidator(int player, int card, event_t event){
 		if( (instance->info_slot == 66 && valid_target(&td)) ||(instance->info_slot == 67 && valid_target(&td1)) ){
 			int sta = instance->info_slot == 66 ? SUBTYPE_COWARD : SUBTYPE_WARRIOR;
 			force_a_subtype(instance->targets[0].player, instance->targets[0].card, sta);
-			pump_ability_t pump;
-			default_pump_ability_definition(instance->parent_controller, instance->parent_card, &pump, 0, 0, 0, 0);
-			pump.paue_flags = PAUE_END_AT_EOT | PAUE_RESET_SUBTYPES_AT_EOT;
-			pump_ability(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card, &pump);
+			create_targetted_legacy_effect(instance->parent_controller, instance->parent_card, &reset_forced_subtype_at_eot,
+											instance->targets[0].player, instance->targets[0].card);
 		}
 	}
 
@@ -1430,13 +1449,17 @@ int card_flowstone_blade(int player, int card, event_t event){
 	  Enchant creature
 	  R: Enchanted creature gets +1/-1 until end of turn.
 	*/
-	card_instance_t* instance = get_card_instance(player, card);
 
-	if( instance->damage_target_player > -1 ){
-		if( event == EVENT_RESOLVE_ACTIVATION ){
-			pump_until_eot(instance->parent_controller, instance->parent_card, instance->damage_target_player, instance->damage_target_card, 1, -1);
+	if (IS_GAA_EVENT(event)){
+		card_instance_t* instance = get_card_instance(player, card);
+
+		if( instance->damage_target_player > -1 ){
+			if( event == EVENT_RESOLVE_ACTIVATION ){
+				pump_until_eot_merge_previous(player, card,
+											  instance->damage_target_player, instance->damage_target_card, 1, -1);
+			}
+			return generic_activated_ability(player, card, event, 0, MANACOST_R(1), 0, NULL, NULL);
 		}
-		return generic_activated_ability(player, card, event, 0, MANACOST_R(1), 0, NULL, NULL);
 	}
 
 	return vanilla_aura(player, card, event, player);
@@ -2322,7 +2345,7 @@ int card_magister_of_worth(int player, int card, event_t event)
 	return 0;
 }
 
-static int marchesa_legacy(int player, int card, event_t event){
+static int marchesa_reanimation_legacy(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -2333,69 +2356,55 @@ static int marchesa_legacy(int player, int card, event_t event){
 	return 0;
 }
 
-int marchesa_reanimation_legacy(int player, int card, event_t event){
-	// This is less precise than the standard Unying, but oh well...
-	card_instance_t *instance = get_card_instance(player, card);
-	if( instance->targets[0].player > -1 ){
-		int p = instance->targets[0].player;
-		int c = instance->targets[0].card;
+int marchesa_effect(int player, int card, event_t event){
 
-		if( ! in_play(p, c) ){
-			instance->targets[1].card = 66;
-		}
-
-		if( (instance->token_status & STATUS_INVISIBLE_FX) && instance->targets[1].card == 66 ){
-			remove_status(player, card, STATUS_INVISIBLE_FX);
-		}
-
-		if( ! is_humiliated(p, c) ){
-			if (event == EVENT_GRAVEYARD_FROM_PLAY ){
-				if( affect_me(p, c) ){
-					if( get_card_instance(p, c)->kill_code > 0 ){
-						instance->targets[1].card = 66;
-					}
-				}
-				else{
-					if( affected_card_controller == player && is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
-						! is_token(affected_card_controller, affected_card) && count_counters(affected_card_controller, affected_card, COUNTER_P1_P1)
-						){
-						if( instance->targets[1].player < 2 ){
-							instance->targets[1].player = 2;
-						}
-						int pos = instance->targets[1].player;
-						if( pos < 19 ){
-							instance->targets[pos].player = get_owner(affected_card_controller, affected_card);
-							instance->targets[pos].card = cards_data[get_card_instance(affected_card_controller, affected_card)->original_internal_card_id].id;
-							instance->targets[1].player++;
-						}
-					}
-				}
-			}
-
-
-			if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && player == reason_for_trigger_controller && instance->targets[1].player > 2){
-				int trig_player = instance->targets[1].card == 66 ? player : p;
-				int trig_card = instance->targets[1].card == 66 ? card : c;
-				if( affect_me(trig_player, trig_card ) ){
-					if(event == EVENT_TRIGGER){
-						//Make all trigges mandatoy for now
-						event_result |= RESOLVE_TRIGGER_MANDATORY;
-					}
-					else if(event == EVENT_RESOLVE_TRIGGER){
-						int i;
-						for(i=2; i<instance->targets[1].player; i++){
-							int legacy = create_legacy_effect(trig_player, trig_card, &marchesa_legacy);
-							get_card_instance(trig_player, legacy)->targets[0] = instance->targets[i];
-						}
-						instance->targets[1].player = 2;
-						if( instance->targets[1].card == 66 ){
-							kill_card(player, card, KILL_REMOVE);
-						}
-					}
-				}
+	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
+		card_instance_t *instance = get_card_instance(player, card);
+		if( instance->damage_target_player > -1 ){
+			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_MARCHESA_THE_BLACK_ROSE ){
+				kill_card(player, card, KILL_REMOVE);
 			}
 		}
-		if( event == EVENT_CLEANUP && instance->targets[1].card == 66 ){
+	}
+
+	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
+		return 0;
+	}
+
+	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
+		card_instance_t *instance = get_card_instance(player, card);
+		if( instance->damage_target_player > -1 && affect_me(instance->damage_target_player, instance->damage_target_card) ){
+			card_instance_t *aff = get_card_instance(affected_card_controller, affected_card);
+			if( aff->kill_code > 0 ){
+				instance->damage_target_player = instance->damage_target_card = -1;
+			}
+		}
+		if( ! is_token(affected_card_controller, affected_card) && count_1_1_counters(affected_card_controller, affected_card) ){
+			count_for_gfp_ability_and_store_values(player, card, event, player, TYPE_CREATURE, NULL, GFPC_TRACK_DEAD_CREATURES, 0);
+		}
+	}
+
+	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
+		card_instance_t *instance = get_card_instance( player, card );
+		instance->targets[11].card = 0;
+		int k;
+		for(k=0; k<10; k++){
+			if( instance->targets[k].player != -1 ){
+				int legacy = create_legacy_effect(player, card, &marchesa_reanimation_legacy);
+				card_instance_t *leg = get_card_instance(player, legacy);
+				leg->targets[0].player = player;
+				leg->targets[0].card = cards_data[instance->targets[k].player].id;
+				instance->targets[k].player = -1;
+			}
+			if( instance->targets[k].card != -1 ){
+				int legacy = create_legacy_effect(player, card, &marchesa_reanimation_legacy);
+				card_instance_t *leg = get_card_instance(player, legacy);
+				leg->targets[0].player = player;
+				leg->targets[0].card = cards_data[instance->targets[k].card].id;
+				instance->targets[k].card = -1;
+			}
+		}
+		if( instance->damage_target_player == -1 ){
 			kill_card(player, card, KILL_REMOVE);
 		}
 	}
@@ -2416,13 +2425,24 @@ int card_marchesa_the_black_rose(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		int legacy = create_legacy_effect(player, card, &marchesa_reanimation_legacy);
-		card_instance_t *leg = get_card_instance(player, legacy);
-		leg->token_status |= STATUS_INVISIBLE_FX;
-		leg->targets[0].player = player;
-		leg->targets[0].card = card;
-		leg->number_of_targets = 1;
+	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
+		int found = 0;
+		int c;
+		for(c=0; c<active_cards_count[player]; c++){
+			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
+				card_instance_t *inst = get_card_instance(player, c);
+				if( inst->info_slot == (int)marchesa_effect ){
+					found = 1;
+					break;
+				}
+			}
+		}
+		if( ! found ){
+			int legacy = create_targetted_legacy_effect(player, card, &marchesa_effect, player, card);
+			card_instance_t *leg = get_card_instance(player, legacy);
+			leg->number_of_targets = 0;
+			leg->targets[0].player = leg->targets[0].card = -1;
+		}
 	}
 
 	int amt;
@@ -2758,26 +2778,6 @@ int card_spectral_searchlight(int player, int card, event_t event){
 	}
 
 	return 0;
-}
-
-// Can this card in hand be played (other than mana cost and timing restrictions)?
-int can_legally_play_card_in_hand(int player, int card)
-{
-  card_data_t* card_d = &cards_data[get_card_instance(player, card)->internal_card_id];
-
-  // Lands can only be played once per turn, and only during your turn.
-  if ((card_d->type & TYPE_LAND)
-	  && ((land_can_be_played & LCBP_LAND_HAS_BEEN_PLAYED) || (current_turn != player)))
-	return 0;
-
-  // Instants, interrupts, sorceries, and enchantments (including permanents with flash and planeswalkers) must return true from EVENT_CAN_CAST.
-  if (card_d->type & (TYPE_INSTANT | TYPE_INTERRUPT | TYPE_SORCERY | TYPE_ENCHANTMENT))	// deliberately not is_what(), so flash cards returning 99 are correct
-	{
-		return call_card_function(player, card, EVENT_CAN_CAST);
-	}
-
-  // A (non-flash) creature, artifact, or land (when one hasn't been played, and it's your turn).
-  return 1;
 }
 
 int card_vedalken_orrery(int player, int card, event_t event){

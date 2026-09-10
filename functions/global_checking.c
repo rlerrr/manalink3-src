@@ -413,6 +413,7 @@ void new_default_test_definition(test_definition_t *this_test, int type, const c
 	this_test->painters_servant_hack[0] = -1;
 	this_test->painters_servant_hack[1] = -1;
 	this_test->owner = ANYBODY;
+	this_test->storage = -1;
 }
 
 void default_test_definition(test_definition_t *this_test, int type){
@@ -477,11 +478,21 @@ int new_make_test_in_play(int player, int to_examine, int test_type, test_defini
 
 	if( this_test->color ){
 		int clr = get_color(player, to_examine);
-		if( this_test->color_flag == MATCH && !(clr & this_test->color) ){
-			return 0;
+		if( this_test->color == COLOR_TEST_COLORLESS ){
+			if( this_test->color_flag == MATCH && clr != 0 ){
+				return 0;
+			}
+			if( this_test->color_flag == DOESNT_MATCH && clr == 0 ){
+				return 0;
+			}
 		}
-		if( this_test->color_flag == DOESNT_MATCH && (clr & this_test->color) ){
-			return 0;
+		else{
+			if( this_test->color_flag == MATCH && !(clr & this_test->color) ){
+				return 0;
+			}
+			if( this_test->color_flag == DOESNT_MATCH && (clr & this_test->color) ){
+				return 0;
+			}
 		}
 	}
 
@@ -492,6 +503,10 @@ int new_make_test_in_play(int player, int to_examine, int test_type, test_defini
 		if( this_test->color_flag == F3_MONOCOLORED && count_colors(player, to_examine) != 1 ){
 			return 0;
 		}
+	}
+
+	if( this_test->id == -1 ){ //We're checking agains a card with no name, so the test is always negative.
+		return 0;
 	}
 
 	if( this_test->id ){
@@ -698,6 +713,10 @@ int new_make_test(int player, int to_examine, int test_type, test_definition_t *
 		if( this_test->color_flag == F3_MONOCOLORED && real_count_colors(clr) != 1 ){
 			return 0;
 		}
+	}
+
+	if( this_test->id == -1 ){ //We're checking agains a card with no name, so the test is always negative.
+		return 0;
 	}
 
 	if( this_test->id ){
@@ -1154,5 +1173,20 @@ int select_card_to_play_from_zone(int player, int card, event_t event, const int
 		}
 	}
 	return result;
+}
+
+int check_battlefield_for_name(int player, int type, int name){
+	APNAP(p,{ 
+				if( player == ANYBODY || p == player ){
+					int c;
+					for(c=0; c<active_cards_count[p]; c++){
+						if( in_play(p, c) && is_what(p, c, type) && get_card_name(p, c) == name ){
+							return 1;
+						}
+					}
+				}
+			};
+	);
+	return 0;
 }
 

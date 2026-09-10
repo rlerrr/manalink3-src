@@ -67,7 +67,7 @@ void human_autotap_for_mana(int player, int* amt, int* unknown_v46, int unknown_
 /* Copies the following data (all int or arrays of int unless noted):
 0x4ef170			must_attack
 0x4ef174			TENTATIVE_types_of_cards_in_graveyard[2]
-0x4ef17c			dword_4EF17C[2]
+0x4ef17c			types_of_cards_on_bf[2]
 0x4ef184			current_phase
 0x4ef188			event_flags
 0x4ef18c			time_walk_flag
@@ -83,9 +83,9 @@ void human_autotap_for_mana(int player, int* amt, int* unknown_v46, int unknown_
 0x4ef1b8			dword_4EF1B8
 0x4ef1bc			dword_4EF1BC[2]
 0x4ef1c4			hand_count[2]
-0x4ef1cc			TENTATIVE_creature_count[2]
-0x4ef1d4			TENTATIVE_artifact_count[2]
-0x4ef1dc			TENTATIVE_enchantment_count[]
+0x4ef1cc			creature_count[2]
+0x4ef1d4			artifact_count[2]
+0x4ef1dc			enchantment_count[]
 0x4ef1e4			(unreferenced)
 0x4ef1e8			(unreferenced)
 0x4ef1ec			damage_taken_this_turn[2]
@@ -105,7 +105,7 @@ void human_autotap_for_mana(int player, int* amt, int* unknown_v46, int unknown_
 0x4ef4e0			mana_pool[2][8]
 0x4ef520			active_cards_count[2]
 0x4ef528			life[2]
-0x4ef530			poison_counters[2]
+0x4ef530			player_counters[2]
 0x4ef538			liched[2]
 0x4ef540			card_instances[2][151]		// array of 302 card_instance_t
 0x505728			ante_cards[2][16]
@@ -574,7 +574,7 @@ int ai_decision_phase(int player, int *phase_code_to_go_to, int *becomes_second_
 	  EXE_FN(int, 0x439C90, int)(PHASE_CLEANUP2);	// TENTATIVE_check_for_stops(PHASE_CLEANUP2);
 	  mana_burn();
 
-	  if (EXE_FN(int, 0x43A1B0, void)())	// is_anyone_dead()
+	  if (is_anyone_dead())
 		return 1;
 
 	  if (current_turn == EXE_DWORD(0x4EF1B0)

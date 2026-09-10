@@ -1,28 +1,6 @@
 #include "manalink.h"
 
 // utility functions
-void deck_was_shuffled(int player){
-	/*
-	int count = 0;
-	int p = 1-player;
-	while(count < active_cards_count[p]){
-		card_data_t* card_d = get_card_data(p, count);
-		if(card_d->id == CARD_ID_COSIS_TRICKSTER  && in_play(p, count)){
-			add_1_1_counter(p, count);
-		}
-		count++;
-	}
-	*/
-}
-
-
-// int tutor_basic_land_tapped(int player){
-//    int card = tutor_basic_land(player);
-//    if( card != -1 ){
-//        tap_card(player, card);
-//    }
-//    return card;
-// }
 
 static int count_allies(int player, int card){
 	return count_subtype(player, TYPE_CREATURE, SUBTYPE_ALLY);
@@ -588,16 +566,14 @@ int card_magosi_the_waterveil(int player, int card, event_t event){
 	return 0;
 }
 
-void activate_oran_rief_pump(int player, int card){
-	int i;
-	for(i=0; i<active_cards_count[player]; i++){
-		if( in_play(player, i) && is_what(player, i, TYPE_CREATURE) && check_special_flags(player, i, SF_JUST_CAME_INTO_PLAY) ){
-			int good = 1;
-			if( get_id(player, card) == CARD_ID_ORAN_RIEF_THE_VASTWOOD && ! (get_color(player, i) & COLOR_TEST_GREEN) ){
-				good = 0;
-			}
-			if( good == 1 ){
-				add_1_1_counter(player, i);
+void activate_oran_rief_pump(int player, int card, int color){
+	int p, c;
+	for(p=0; p<2; p++){
+		for(c=active_cards_count[p]-1; c>-1; c--){
+			if( in_play(p, c) && is_what(p, c, TYPE_CREATURE) && check_special_flags(p, c, SF_JUST_CAME_INTO_PLAY) ){
+				if( color == 0 || (get_sleighted_color_test(p, c, COLOR_TEST_GREEN) & COLOR_TEST_GREEN) ){
+					add_1_1_counter(p, c);
+				}
 			}
 		}
 	}
@@ -632,7 +608,7 @@ int card_oran_rief_the_vastwood(int player, int card, event_t event){
 
 	else if( event == EVENT_RESOLVE_ACTIVATION ){
 			if( instance->info_slot == 1 ){
-				activate_oran_rief_pump(player, instance->parent_card);
+				activate_oran_rief_pump(player, instance->parent_card, COLOR_TEST_GREEN);
 				card_instance_t *parent= get_card_instance(player, instance->parent_card);
 				parent->info_slot = 0;
 			}
@@ -1032,9 +1008,9 @@ int card_nissa_revane(int player, int card, event_t event){
 		}
 		choice = DIALOG(player, card, event,
 						DLG_RANDOM, DLG_PLANESWALKER,
-						"Search a Nissa's Chosen", player == AI ? (instance->targets[1].player != -1 ? 1 : 0) : 1, 10, 1,
-						"Add counters to creatures and planeswalkers", 1, priority_life, 1,
-						"Elf festival", 1, priority_ef, -7);
+						"Search for Nissa's Chosen", player == AI ? (instance->targets[1].player != -1 ? 1 : 0) : 1, 10, 1,
+						"Gain 2 life for each Elf", 1, priority_life, 1,
+						"Search for Elf creatures", 1, priority_ef, -7);
 
 	  if (event == EVENT_CAN_ACTIVATE)
 		{
@@ -1570,7 +1546,7 @@ int card_bloodchief_ascension(int player, int card, event_t event)
    * Whenever a card is put into an opponent's graveyard from anywhere, if ~ has three or more quest counters on it, you may have that player lose 2 life. If
    * you do, you gain 2 life. */
 
-  if (get_trap_condition(1-player, TRAP_LIFE_LOST) >= 2 && eot_trigger(player, card, event))
+  if (get_trap_condition(1-player, TRAP_LIFE_LOST) >= 2 && eot_trigger_mode(player, card, event, current_turn, RESOLVE_TRIGGER_AI(player)))
 	add_counter(player, card, COUNTER_QUEST);
 
   if (count_counters(player, card, COUNTER_QUEST) >= 3)
@@ -2345,7 +2321,7 @@ int card_chandra_ablaze(int player, int card, event_t event){
 		this_test.zone = TARGET_ZONE_HAND;
 
 		target_definition_t td;
-		counterspell_target_definition(player, card, &td, TYPE_CREATURE);
+		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
 		if( event == EVENT_ACTIVATE ){
@@ -2914,7 +2890,7 @@ int card_pyromancer_ascension(int player, int card, event_t event){
 					int i;
 					for(i=0;i<count_graveyard(player);i++){
 						if( grave[i] == instance->internal_card_id ){
-							event_result |= 2;
+							event_result |= RESOLVE_TRIGGER_AI(player);
 							me->info_slot = -2;
 							break;
 						}
@@ -2922,7 +2898,7 @@ int card_pyromancer_ascension(int player, int card, event_t event){
 				}
 				else{
 					me->info_slot = instance->internal_card_id;
-					event_result |= 1+player;
+					event_result |= RESOLVE_TRIGGER_AI(player);
 				}
 			}
 			else if(event == EVENT_RESOLVE_TRIGGER){
@@ -3436,12 +3412,12 @@ static void kor_outfitter_effect(int player, int card ){
 		int eq_creature_controller = -1;
 		int eq_creature = -1;
 
-		if( select_target(player, card, &td, "Choose an equipment", NULL) ){
+		if( select_target(player, card, &td, "Select target Equipment you control.", NULL) ){
 			eq_controller = instance->targets[0].player;
 			eq_card = instance->targets[0].card;
 			instance->number_of_targets = 1;
 
-			if( select_target(player, card, &td1, "Choose a creature to equip", NULL) ){
+			if( select_target(player, card, &td1, "Select target creature you control.", NULL) ){
 				eq_creature_controller = instance->targets[0].player;
 				eq_creature = instance->targets[0].card;
 			}
@@ -3545,8 +3521,8 @@ int card_luminarch_ascension(int player, int card, event_t event){
 			}
 		}
 
-		if( eot_trigger(player, card, event) ){
-			if( instance->targets[2].player == 1 ){
+		if( instance->targets[2].player == 1 ){
+			if( eot_trigger_mode(player, card, event, 1-player, RESOLVE_TRIGGER_AI(player)) ){
 				add_counter(player, card, COUNTER_QUEST);
 			}
 		}
@@ -4113,17 +4089,7 @@ int card_merfolk_seastalkers(int player, int card, event_t event){
 
 int card_merfolk_wayfinder(int player, int card, event_t event){
 	if( comes_into_play(player, card, event) ){
-		int i=0;
-		int *deck = deck_ptr[player];
-		for(i=0;i<3;i++){
-			int card_added = add_card_to_hand(player, deck[0] );
-			reveal_card(player, card, player, card_added);
-			remove_card_from_deck( player, 0 );
-			if( !has_subtype(player, card_added, SUBTYPE_ISLAND) ){
-				put_on_top_of_deck(player, card_added);
-				put_top_card_of_deck_to_bottom(player);
-			}
-		}
+		recruiting(player, card, SUBTYPE_ISLAND, 3);
 	}
 	return 0;
 }
@@ -4491,14 +4457,27 @@ int card_whiplash_trap(int player, int card, event_t event){
 
 int card_hellkite_charger(int player, int card, event_t event)
 {
-  haste(player, card, event);
+	// Whenever ~ attacks, you may pay |5|R|R. If you do, untap all attacking creatures and after this phase, there is an additional combat phase.
 
-  // Whenever ~ attacks, you may pay |5|R|R. If you do, untap all attacking creatures and after this phase, there is an additional combat phase.
-  if (declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), player, card)
-	  && charge_mana_multi_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, MANACOST_XR(5,2)))
-	relentless_assault_effect(player, card);
+	haste(player, card, event);
 
-  return 0;
+	store_attackers(player, card, event, 0, player, card, NULL);
+	
+	if (xtrigger_condition() == XTRIGGER_ATTACKING && affect_me(player, card) && reason_for_trigger_controller == player){
+		int good = player == HUMAN ? 1 : 0;
+		if( player == AI ){
+			if( has_mana_multi(player, MANACOST_XR(5,2)) ){
+				good = 1;
+			}
+		}
+		if( declare_attackers_trigger(player, card, event, (good ? RESOLVE_TRIGGER_AI(player) : 0), player, card) &&
+			charge_mana_multi_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, MANACOST_XR(5,2))
+		  ){
+			relentless_assault_effect(player, card);
+		}
+	}
+	
+	return 0;
 }
 
 int card_noble_vestige(int player, int card, event_t event){

@@ -1129,7 +1129,7 @@ void apply_challenge_10_to_1(int player, int card, event_t event){
 	}
 
 	if( success == 1 ){
-		poison_counters[HUMAN] = 1;
+		raw_set_poison(HUMAN, 1);
 		unlocked_challenge[round] = 2;
 	}
 }
@@ -1258,7 +1258,7 @@ void apply_challenge_not_my_deck_upkeep(void){
 	}
 	*/
 	draw_cards(HUMAN, 7);
-	//poison_counters[HUMAN]=1;
+	//raw_set_poison(HUMAN, 1);
 	return;
 }
 
@@ -1266,7 +1266,7 @@ void apply_challenge_puzzle_upkeep(void){
 	int round = gauntlet_round - 1;
 
 	if( challenge1 == 8 ){
-		if ( poison_counters[HUMAN]==0 ){
+		if ( POISON_COUNTERS(HUMAN) == 0 ){
 			apply_challenge_not_my_deck_upkeep();
 		}
 		return;
@@ -1449,7 +1449,7 @@ void apply_challenge_onslaught(void){
 	// decimation
 	if( round >= 59 && round <= 68 ){
 		mill(HUMAN, 6);
-		poison_counters[HUMAN]++;
+		poison(HUMAN, 1);
 		life[HUMAN]-=2;
 	}
 

@@ -1,7 +1,5 @@
 #include "manalink.h"
 
-static int attack_who_flag = -1;
-
 static int pw_identity(int player, int card){
 	int i;
 	card_ptr_t* cp = cards_ptr[get_id(player, card)];
@@ -13,7 +11,7 @@ static int pw_identity(int player, int card){
 	return -1;
 }
 
-static int check_for_alternate_identities(int player, int card){
+int check_for_alternate_identities(int player, int card){
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -25,7 +23,7 @@ static int check_for_alternate_identities(int player, int card){
 	int count, l_count = 0;
 	for( count = 0; count < active_cards_count[player]; ++count ){
 		if( in_play(player, count) && ! is_what(player, count, TYPE_EFFECT) ){
-			if( is_planeswalker(player, count) && pw_identity(player, count) == identity ){
+			if( pw_identity(player, count) == identity ){
 				l_count++;
 			}
 			else{
@@ -57,14 +55,14 @@ static int check_for_alternate_identities(int player, int card){
 static int attacking_planeswalker(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 	if (event == EVENT_SET_LEGACY_EFFECT_NAME){
-		snprintf(set_legacy_effect_name_addr, 51, "%s", get_card_name_by_id(instance->display_pic_int_id));
+		snprintf(set_legacy_effect_name_addr, 51, "%s", get_card_name_by_id(instance->display_pic_csv_id));
 	} else if (event == EVENT_SET_LEGACY_EFFECT_TEXT){
 		if (instance->targets[1].player >= 0 && instance->targets[1].card >= 0 && in_play(instance->targets[1].player, instance->targets[1].card)){
 			snprintf(set_legacy_effect_name_addr, 399, "Attacking %s with %d loyalty.",
-					 get_card_name_by_id(instance->display_pic_int_id),
+					 get_card_name_by_id(instance->display_pic_csv_id),
 					 count_counters(instance->targets[1].player, instance->targets[1].card, COUNTER_LOYALTY));
 		} else {
-			snprintf(set_legacy_effect_name_addr, 399, "Attacked %s.", get_card_name_by_id(instance->display_pic_int_id));
+			snprintf(set_legacy_effect_name_addr, 399, "Attacked %s.", get_card_name_by_id(instance->display_pic_csv_id));
 		}
 	} else if (event == EVENT_TRIGGER && trigger_condition == TRIGGER_END_COMBAT){
 		// Just remove immediately instead of putting on the stack, since it's not an actual trigger
@@ -185,8 +183,8 @@ void choose_who_attack(int player, int card){
 		leg->eot_toughness = EVENT_SET_LEGACY_EFFECT_NAME | EVENT_SET_LEGACY_EFFECT_TEXT;
 		/* Change effect display to the planeswalker by brute force - legacy_name() doesn't get called if we just call
 		 * create_targeted_legacy_effect(1-player, planeswalkers[choice], &attacking_planeswalker, player, card) above and I'm not sure why yet. */
-		leg->display_pic_int_id = get_id(1 - player, planeswalkers[choice][0]);
-		leg->display_pic_num = get_card_image_number(leg->display_pic_int_id, 1 - player, planeswalkers[choice][0]);
+		leg->display_pic_csv_id = get_id(1 - player, planeswalkers[choice][0]);
+		leg->display_pic_num = get_card_image_number(leg->display_pic_csv_id, 1 - player, planeswalkers[choice][0]);
 	}
 }
 
@@ -204,8 +202,11 @@ int planeswalker(int player, int card, event_t event, int loyalty){
 	enters_the_battlefield_with_counters(player, card, event, COUNTER_LOYALTY, loyalty);
 
 	// die if duplicate planeswalker
-	if( comes_into_play(player, card, event) ){
+	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
 		check_for_alternate_identities(player, card);
+	}
+
+	if( event == EVENT_RESOLVE_SPELL ){
 		instance->targets[9].player = 2;
 	}
 
@@ -247,19 +248,15 @@ int planeswalker(int player, int card, event_t event, int loyalty){
 		}
 	}
 
-	if( event == EVENT_CLEANUP && current_turn == player ){
-		if( ! check_battlefield_for_id(player, CARD_ID_THE_CHAIN_VEIL) ){
-			instance->targets[9].card = 0;
-		}
-		attack_who_flag = -1;
+	if( event == EVENT_CAN_SKIP_TURN ){
+		instance->targets[9].card = 0;
 	}
 
 	// when creatures attack, prompt for who they attack
 	if( trigger_condition == TRIGGER_PAY_TO_ATTACK && current_phase == PHASE_DECLARE_ATTACKERS && current_turn == 1-player){
 		if( affect_me( trigger_cause_controller, trigger_cause ) && reason_for_trigger_controller == affected_card_controller ){
-			if(event == EVENT_TRIGGER && ( attack_who_flag == -1 || attack_who_flag == card ) ){
-				event_result |= 2;
-				attack_who_flag = card;
+			if(event == EVENT_TRIGGER ){
+				event_result |= RESOLVE_TRIGGER_MANDATORY;
 			}
 			else if(event == EVENT_RESOLVE_TRIGGER){
 					choose_who_attack(affected_card_controller, affected_card);
@@ -273,9 +270,8 @@ int planeswalker(int player, int card, event_t event, int loyalty){
 	 * at damage, though, assume damage_target_card != -1 is a creature.  Damage that *does* get attached to a planeswalker *does* resolve normally; currently
 	 * this can only happen with Fated Conflagration. */
 	card_instance_t* damage = noncombat_damage_being_prevented(event);	// sic
-	if( damage &&
+	if( damage && damage->damage_source_player != player &&
 		damage->damage_target_player == player && damage->damage_target_card == -1 &&
-		damage->damage_source_player != player &&
 		in_play(player, card) && !check_battlefield_for_id(player, CARD_ID_PALISADE_GIANT)
 	  ){
 		int count = active_cards_count[player]-1;

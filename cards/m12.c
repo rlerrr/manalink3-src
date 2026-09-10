@@ -219,7 +219,10 @@ int card_arbalest_elite(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( valid_target(&td) ){
 			damage_creature(instance->targets[0].player, instance->targets[0].card, 3, player, instance->parent_card);
-			effect_frost_titan(player, instance->parent_card, player, instance->parent_card);
+			if (in_play(instance->parent_controller, instance->parent_card) ){
+			  does_not_untap_effect(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card,
+									EDNT_CHECK_ORIGINAL_CONTROLLER, 1);
+			}
 		}
 	}
 
@@ -272,11 +275,11 @@ int card_azure_mage(int player, int card, event_t event){
 
 int card_benalish_veteran(int player, int card, event_t event)
 {
-  // Whenever ~ attacks, it gets +1/+1 until end of turn.
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
-	pump_until_eot(player, card, player, card, 1, 1);
+	/* Benalish Veteran	|2|W
+	 * Creature - Human Soldier 2/2
+	 * Whenever ~ attacks, it gets +1/+1 until end of turn. */
 
-  return 0;
+	return when_attacks_pump_self(player, card, event, 1,1);
 }
 
 int card_bloodlord_of_vaasgoth(int player, int card, event_t event){
@@ -462,16 +465,14 @@ int card_divine_favor(int player, int card, event_t event){
 
 int card_doubling_chant(int player, int card, event_t event){
 
-	if( event == EVENT_CAN_CAST ){
-		if( IS_AI(player) && player == AI && count_permanents_by_type(player, TYPE_CREATURE) < 1 ){
-			return 0;
-		}
-		return 1;
-	}
-
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( ! check_battlefield_for_id(ANYBODY, CARD_ID_GRAFDIGGERS_CAGE) ){
-			int choice = do_dialog(player, player, card, -1, -1, " Auto mode\n Manual mode", 0);
+			enum{
+				AUTO_MODE = 0,
+				MANUAL_MODE = 1,
+			};
+
+			int choice = do_dialog(player, player, card, -1, -1, " Auto search\n Manual mode", 0);
 			int *deck = deck_ptr[player];
 			int count = active_cards_count[player]-1;
 			int found[100];
@@ -479,7 +480,7 @@ int card_doubling_chant(int player, int card, event_t event){
 			while( count > -1 ){
 					if( in_play(player, count) && is_what(player, count, TYPE_CREATURE) ){
 						int to_search = 1;
-						int id = get_id(player, count);
+						int id = get_card_name(player, count);
 						if( choice == 1 ){
 							to_search = 1-do_dialog(player, player, count, -1, -1, " Search your deck for this creature\n Pass", 0);
 						}
@@ -488,7 +489,7 @@ int card_doubling_chant(int player, int card, event_t event){
 							to_search = 0;
 						}
 
-						if( to_search == 1 ){
+						if( to_search == 1 && choice == AUTO_MODE && id == -1 ){ //No point of auto search for a card with no name
 							int cards = 0;
 							while( cards < count_deck(player) ){
 									if( cards_data[deck[cards]].id == id ){
@@ -499,7 +500,24 @@ int card_doubling_chant(int player, int card, event_t event){
 									}
 									cards++;
 							}
+						}
 
+						if( to_search == 1 && choice == MANUAL_MODE ){
+							char msg[100];
+							if( id == -1 ){ //A creature card with no name, probably a face-down card.
+								scnprintf(msg, 100, "You won't be able to tutor any card as you're searching for a card with no name.");
+							}
+							else{
+								scnprintf(msg, 100, "Select a card named %s", cards_ptr[ id ]->name);
+							}
+							test_definition_t test;
+							new_default_test_definition(&test, TYPE_CREATURE, msg);
+							int selected = new_select_a_card(player, player, TUTOR_FROM_DECK, 0, AI_FIRST_FOUND, -1, &test);
+							if( selected != -1 ){
+								found[fc] = deck[selected];
+								fc++;
+								remove_card_from_deck(player, selected);
+							}
 						}
 					}
 					count--;
@@ -514,7 +532,7 @@ int card_doubling_chant(int player, int card, event_t event){
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return 0;
+	return basic_spell(player, card, event);
 }
 
 int card_druidic_satchel(int player, int card, event_t event){
@@ -785,9 +803,9 @@ int card_jace_memory_adept(int player, int card, event_t event){
 		int mill10_priority = would_validate_arbitrary_target(&td, 1-player, -1) ? 40-count_deck(1-player) : 0;
 		int draw7_priority = would_validate_arbitrary_target(&td, player, -1) && count_deck(player) > 30 ? 42-(hand_count[player]*6) : 0;
 		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_PLANESWALKER,
-						"Draw & Mill", can_target(&td), 35-(hand_count[player]*5), 1,
+						"Draw & mill", can_target(&td), 35-(hand_count[player]*5), 1,
 						"Mill 10", can_target(&td), mill10_priority, 0,
-						"Tutor land and animate them", can_target(&td), draw7_priority, -7);
+						"Draw 20", can_target(&td), draw7_priority, -7);
 
 	  if (event == EVENT_CAN_ACTIVATE)
 		{
@@ -839,7 +857,7 @@ int card_jace_memory_adept(int player, int card, event_t event){
 					int i;
 					for(i=0; i<instance->number_of_targets; i++){
 						if( validate_target(player, card, &td, i) ){
-							draw_cards(instance->targets[0].player, 20);
+							draw_cards(instance->targets[i].player, 20);
 						}
 					}
 				}
@@ -1798,9 +1816,14 @@ int card_scrambleverse(int player, int card, event_t event){
 
 int card_stormblood_berserker(int player, int card, event_t event){
 
+	/* Stormblood Berserker	|1|R
+	 * Creature - Human Berserker 1/1
+	 * Bloodthirst 2
+	 * Menace */
+
 	bloodthirst(player, card, event, 2);
 
-	minimum_blockers(player, card, event, 2);
+	menace(player, card, event);
 
 	return 0;
 }

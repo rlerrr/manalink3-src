@@ -25,7 +25,8 @@ void unattach(int equipment_controller, int equipment_card)
 	{
 	  inst->regen_status |= KEYWORD_RECALC_ALL;
 	  int id = get_id(equipment_controller, equipment_card);
-	  if (id == CARD_ID_GRAFTED_WARGEAR || id == CARD_ID_GRAFTED_EXOSKELETON)
+	  if ((id == CARD_ID_GRAFTED_WARGEAR || id == CARD_ID_GRAFTED_EXOSKELETON || id == CARD_ID_STITCHERS_GRAFT)
+		  && equipment_controller == instance->targets[8].player)
 		kill_card(instance->targets[8].player, instance->targets[8].card, KILL_SACRIFICE);
 	  if (id == CARD_ID_NIM_DEATHMANTLE)
 		reset_subtypes(instance->targets[8].player, instance->targets[8].card, 1);
@@ -131,18 +132,18 @@ void equip_target_creature(int equipment_controller, int equipment_card, int t_p
 }
 
 
-int is_equipping(int player, int card){
+card_instance_t* is_equipping(int player, int card){
 
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( instance->targets[8].player >= 0 && instance->targets[8].card >= 0 ){
 		if( in_play(instance->targets[8].player, instance->targets[8].card) ){
-			return 1;
+			return instance;
 		} else if (get_card_instance(instance->targets[8].player, instance->targets[8].card)->internal_card_id == -1){
 			instance->targets[8].player = instance->targets[8].card = -1;
 		}
 	}
-	return 0;
+	return NULL;
 }
 
 #ifndef ALLOW_REEQUIP
@@ -472,4 +473,9 @@ int altar_equipment(int player, int card, event_t event, int req_type, int p_plu
 
 	return 0;
 }
+
+int is_equipped(int player, int card){
+	return equipments_attached_to_me(player, card, EATM_CHECK);
+}
+
 

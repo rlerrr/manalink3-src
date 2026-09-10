@@ -447,7 +447,7 @@ static int np_shrines(int player, int card, event_t event, int clr, int act_cost
 }
 
 static int is_poisoned(int player){
-	if( poison_counters[player] > 0 ){
+	if( POISON_COUNTERS(player) > 0 ){
 		return 1;
 	}
 	return 0;
@@ -1179,8 +1179,10 @@ int card_karn_liberated(int player, int card, event_t event){
 					shuffle(1-player);
 					draw_cards(player, 7);
 					draw_cards(1-player, 7);
-					poison_counters[HUMAN] = 0;
-					poison_counters[AI] = 0;
+					raw_set_poison(HUMAN, 0);
+					raw_set_experience(HUMAN, 0);
+					raw_set_poison(AI, 0);
+					raw_set_experience(AI, 0);
 
 					for(p=0; p<2; p++){
 						int c;
@@ -1283,15 +1285,15 @@ int card_melira_sylvok_outcast(int player, int card, event_t event ){
 
 	// Deal with Poison Counters
 	if( event == EVENT_RESOLVE_SPELL ){
-		instance->targets[9].player = poison_counters[player];
+		instance->targets[9].player = POISON_COUNTERS(player);
 	}
 
-	if( instance->targets[9].player > -1 && poison_counters[player] != instance->targets[9].player  ){
-		if( poison_counters[player] > instance->targets[9].player && !is_humiliated(player, card) ){
-			poison_counters[player] = instance->targets[9].player;
+	if( instance->targets[9].player > -1 && POISON_COUNTERS(player) != instance->targets[9].player  ){
+		if( POISON_COUNTERS(player) > instance->targets[9].player && !is_humiliated(player, card) ){
+			raw_set_poison(player, instance->targets[9].player);
 		}
 		else{
-			 instance->targets[9].player = poison_counters[player];
+			 instance->targets[9].player = POISON_COUNTERS(player);
 		}
 	}
 
@@ -1507,7 +1509,7 @@ int card_phyrexian_swarmlord(int player, int card, event_t event){
 		token.legacy = 1;
 		token.special_code_for_legacy = &empty;
 		token.special_infos = 67;
-		token.qty = poison_counters[1-player];
+		token.qty = POISON_COUNTERS(1-player);
 		generate_token(&token);
 	}
 
@@ -2211,8 +2213,11 @@ int card_artillerize(int player, int card, event_t event){
 }
 
 int card_auriok_survivors(int player, int card, event_t event){
+	/* Auriok Survivors	|5|W
+	 * Creature - Human Soldier 4/6
+	 * When ~ enters the battlefield, you may return target Equipment card from your graveyard to the battlefield. If you do, you may attach it to ~. */
 
-	if( comes_into_play(player, card, event) && count_graveyard_by_subtype(player, SUBTYPE_EQUIPMENT) > 0 ){
+	if( comes_into_play(player, card, event) && any_in_graveyard_by_subtype(player, SUBTYPE_EQUIPMENT) ){
 		int equip = global_tutor(player, player, 2, TUTOR_PLAY, 0, 2, TYPE_ARTIFACT, 0, SUBTYPE_EQUIPMENT, 0, 0, 0, 0, 0, -1, 0);
 		equip_target_creature(player, equip, player, card);
 	}
@@ -2366,8 +2371,8 @@ int card_caress_of_phyrexia(int player, int card, event_t event){
 			}
 			else{
 				 instance->targets[0].player = player;
-				 if(life[player] < 7 || poison_counters[player] > 5 || count_deck(player) < 20 || life[1-player] < 4 ||
-					poison_counters[1-player] > 6 || count_deck(1-player) < 4 ){
+				 if(life[player] < 7 || POISON_COUNTERS(player) > 5 || count_deck(player) < 20 || life[1-player] < 4 ||
+					POISON_COUNTERS(1-player) > 6 || count_deck(1-player) < 4 ){
 					instance->targets[0].player = 1-player;
 				}
 			}
@@ -2377,7 +2382,7 @@ int card_caress_of_phyrexia(int player, int card, event_t event){
 			if( valid_target(&td) ){
 				draw_cards(instance->targets[0].player, 3);
 				lose_life(instance->targets[0].player, 3);
-				poison_counters[instance->targets[0].player]+=3;
+				poison(instance->targets[0].player, 3);
 			}
 			kill_card(player, card, KILL_DESTROY);
 	}
@@ -2423,10 +2428,20 @@ int card_coa_special_effect(int player, int card, event_t event){
 }
 
 int card_chancellor_of_the_annex(int player, int card, event_t event){
+	/* Chancellor of the Annex	|4|W|W|W
+	 * Creature - Angel 5/6
+	 * You may reveal this card from your opening hand. If you do, when each opponent casts his or her first spell of the game, counter that spell unless that player pays |1.
+	 * Flying
+	 * Whenever an opponent casts a spell, counter it unless that player pays |1. */
+
 	return card_coa_special_effect(player, card, event);
 }
 
 int card_chancellor_of_the_forge(int player, int card, event_t event){
+	/* Chancellor of the Forge	|4|R|R|R
+	 * Creature - Giant 5/5
+	 * You may reveal this card from your opening hand. If you do, at the beginning of the first upkeep, put a 1/1 |Sred Goblin creature token with haste onto the battlefield.
+	 * When ~ enters the battlefield, put X 1/1 |Sred Goblin creature tokens with haste onto the battlefield, where X is the number of creatures you control. */
 
 	if( comes_into_play(player, card, event) ){
 		int amount = count_permanents_by_type(player, TYPE_CREATURE);
@@ -2822,25 +2837,29 @@ int card_etched_monstrosity(int player, int card, event_t event){
 
 int card_exclusion_ritual(int player, int card, event_t event){
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_PERMANENT);
-	td.illegal_type = TYPE_LAND;
-	td.allow_cancel = 0;
-
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( instance->targets[1].card != -1 && event == EVENT_MODIFY_COST_GLOBAL ){
-		if( get_id(affected_card_controller, affected_card) == instance->targets[1].card ){
+	if( instance->targets[1].card != -1 && event == EVENT_MODIFY_COST_GLOBAL && ! is_humiliated(player, card) ){
+		if( has_same_name(affected_card_controller, affected_card, -1, instance->targets[1].card) ){
 			infinite_casting_cost();
 		}
 	}
 
-	if( event == EVENT_RESOLVE_SPELL && can_target(&td) ){
-		pick_target(&td, "TARGET_PERMANENT");
-		instance->targets[1].card = get_id(instance->targets[0].player, instance->targets[0].card);
-		rfg_target_permanent(instance->targets[0].player, instance->targets[0].card);
-		create_card_name_legacy(player, card, instance->targets[1].card);
+	if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && player == reason_for_trigger_controller ){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_PERMANENT);
+		td.illegal_type = TYPE_LAND;
+		td.allow_cancel = 0;
+
+		if( can_target(&td) && comes_into_play(player, card, event) ){
+			if( new_pick_target(&td, "Select target nonland permanent.", 0, 0 | GS_LITERAL_PROMPT) ){
+				instance->targets[1].card = get_card_name(instance->targets[0].player, instance->targets[0].card);
+				rfg_target_permanent(instance->targets[0].player, instance->targets[0].card);
+				create_card_name_legacy(player, card, instance->targets[1].card);
+			}
+		}
 	}
+
 	return global_enchantment(player, card, event);
 }
 
@@ -3293,14 +3312,11 @@ int card_jor_kadeen_the_prevailer(int player, int card, event_t event){
 
 int card_kiln_walker(int player, int card, event_t event)
 {
-  // Whenever ~ attacks, it gets +3/+0 until end of turn.
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
-	pump_until_eot(player, card, player, card, 3, 0);
+	/* Kiln Walker	|3
+	 * Artifact Creature - Construct 0/3
+	 * Whenever ~ attacks, it gets +3/+0 until end of turn. */
 
-  if (event == EVENT_POW_BOOST && current_turn == player && current_phase <= PHASE_DECLARE_ATTACKERS)
-	return 3;
-
-  return 0;
+	return when_attacks_pump_self(player, card, event, 3,0);
 }
 
 int card_leeching_bite(int player, int card, event_t event){
@@ -3515,7 +3531,7 @@ int card_mutagenic_growth(int player, int card, event_t event){
 int card_mycosynth_fiend(int player, int card, event_t event){
 
 	if( in_play(player, card) ){
-		int amount = poison_counters[1-player];
+		int amount = POISON_COUNTERS(1-player);
 		modify_pt_and_abilities(player, card, event, amount, amount, 0);
 	}
 
@@ -3785,7 +3801,8 @@ int card_praetors_grasp(int player, int card, event_t event)
 		  test_definition_t test;
 		  new_default_test_definition(&test, 0, "Select a card to exile.");
 
-		  int csvid = new_global_tutor(player, 1-player, TUTOR_FROM_DECK, TUTOR_RFG, 1, AI_MAX_VALUE, &test);
+		  int csvid = new_select_a_card(player, 1-player, TUTOR_FROM_DECK, TUTOR_RFG, 1, AI_MAX_VALUE, &test);
+		  remove_card_from_rfg(1-player, csvid);
 		  if (csvid != -1)
 			{
 			  play_sound_effect(WAV_DESTROY);	// exile sound, since we just obliterated the card to simulate it being exiled face-down
@@ -3881,7 +3898,7 @@ int card_reaper_of_sheoldred(int player, int card, event_t event){
 		card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
 		if( damage->internal_card_id == damage_card ){
 			if( damage->damage_target_card == card && damage->damage_target_player == player && damage->info_slot > 0 ){
-				poison_counters[damage->damage_source_player]++;
+				poison(damage->damage_source_player, 1);
 			}
 		}
 	}
@@ -4465,13 +4482,13 @@ int card_whispering_specter(int player, int card, event_t event){
 
 	if( damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_OPPONENT+DDBM_MUST_BE_COMBAT_DAMAGE) ){
 		int ai_choice = 1;
-		if( poison_counters[1-player] > 1 ){
+		if( POISON_COUNTERS(1-player) > 1 ){
 			ai_choice = 0;
 		}
 		int choice = do_dialog(player, player, card, -1, -1, " Sac and make opponent discard\n Pass", ai_choice);
 		if( choice == 0 ){
 			kill_card(player, card, KILL_SACRIFICE);
-			new_multidiscard(1-player, poison_counters[1-player], 0, player);
+			new_multidiscard(1-player, POISON_COUNTERS(1-player), 0, player);
 		}
 	}
 	return 0;

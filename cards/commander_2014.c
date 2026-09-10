@@ -935,7 +935,7 @@ int card_malicious_affliction(int player, int card, event_t event){
 		instance->number_of_targets = 0;
 		if( new_pick_target(&td, get_sleighted_color_text(player, card, "Select target non%s creature.", COLOR_BLACK), 0, 1 | GS_LITERAL_PROMPT) ){
 			state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
-			if( can_target(&td) && morbid() ){
+			if( ! check_special_flags(player, card, SF_NOT_CAST) && can_target(&td) && morbid() ){
 				new_pick_target(&td, get_sleighted_color_text(player, card, "Select target non%s creature.", COLOR_BLACK), 1, GS_LITERAL_PROMPT);
 			}
 			state_untargettable(instance->targets[0].player, instance->targets[0].card, 0);
@@ -1193,7 +1193,7 @@ int card_wake_the_dead(int player, int card, event_t event){
 	}
 
 	test_definition_t this_test;
-	new_default_test_definition(&this_test, TYPE_CREATURE, "Select a creature to sacrifice.");
+	new_default_test_definition(&this_test, TYPE_CREATURE, "Select a creature card.");
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -1241,7 +1241,7 @@ int card_wake_the_dead(int player, int card, event_t event){
 				if( zombo != -1 ){
 					pump_ability_t pump;
 					default_pump_ability_definition(player, card, &pump, 0, 0, 0, 0);
-					pump.paue_flags = PAUE_REMOVE_TARGET_AT_EOT;
+					pump.paue_flags = PAUE_END_AT_EOT | PAUE_REMOVE_TARGET_AT_EOT;
 					pump.eot_removal_method = KILL_SACRIFICE;
 					pump_ability(player, card, player, zombo, &pump);
 					++num_validated;
@@ -1843,49 +1843,44 @@ int card_freyalise_llanowars_fury(int player, int card, event_t event){
 	return planeswalker(player, card, event, 3);
 }
 
-int card_gravesifter(int player, int card, event_t event){
-	/*
-	  Gravesifter |5|G
-	  Creature - Elemental Beast
-	  When Gravesifter enters the battlefield, each player chooses a creature type and returns any number of cards of that type from his or her graveyard to his or her hand.
-	  5/7
-	*/
+int card_grave_sifter(int player, int card, event_t event){
+	/* Grave Sifter	|5|G
+	 * Creature - Elemental Beast 5/7
+	 * When ~ enters the battlefield, each player chooses a creature type and returns any number of cards of that type from his or her graveyard to his or her hand. */
+
 	if( comes_into_play(player, card, event) ){
-		if( ! check_battlefield_for_id(ANYBODY, CARD_ID_GRAFDIGGERS_CAGE) ){
-			APNAP(p,{
-					int max = count_graveyard_by_type(p, TYPE_CREATURE);
-					if( max ){
-						int sub = select_a_subtype_full_choice(player, card, p, get_grave(p), 0);
-						int added[max];
-						int ac = 0;
+		APNAP(p,{
+				int max = count_graveyard_by_type(p, TYPE_CREATURE);
+				if( max ){
+					int sub = select_a_subtype_full_choice(player, card, p, get_grave(p), 0);
+					int added[max];
+					int ac = 0;
 
-						test_definition_t test;
-						new_default_test_definition(&test, TYPE_CREATURE, get_subtype_text("Select a %s creature card", sub));
-						test.subtype = sub;
+					test_definition_t test;
+					new_default_test_definition(&test, TYPE_CREATURE, get_subtype_text("Select %a creature card.", sub));
+					test.subtype = sub;
 
-						while( max  ){
-								int selected = new_select_a_card(p, p, TUTOR_FROM_GRAVE, 0, AI_FIRST_FOUND, -1, &test);
-								if( selected != -1 ){
-									added[ac] = get_grave(p)[selected];
-									remove_card_from_grave(p, selected);
-									ac++;
-									max--;
-								}
-								else{
-									break;
-								}
-						}
-
-						int k;
-						for(k=0; k<ac; k++){
-							int card_added = add_card_to_hand(p, added[k]);
-							set_special_flags3(player, card_added, SF3_REANIMATED);
-							put_into_play(p, card_added);
-						}
+					while( max  ){
+							int selected = new_select_a_card(p, p, TUTOR_FROM_GRAVE, 0, AI_FIRST_FOUND, -1, &test);
+							if( selected != -1 ){
+								added[ac] = get_grave(p)[selected];
+								remove_card_from_grave(p, selected);
+								ac++;
+								max--;
+							}
+							else{
+								break;
+							}
 					}
-				};
-			);
-		}
+
+					int k;
+					for(k=0; k<ac; k++){
+						int card_added = add_card_to_hand(p, added[k]);
+						from_grave_to_hand_triggers(p, card_added);
+					}
+				}
+			}
+		);
 	}
 
 	return 0;
@@ -2203,13 +2198,13 @@ int card_arcane_lighthouse(int player, int card, event_t event){
 	  1, T: Until end of turn, creatures your opponents control lose hexproof and shroud and can't have hexproof or shroud.
 	*/
 
-	card_instance_t *instance = get_card_instance( player, card );
-
 	if( ! IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE ){
 		return mana_producer(player, card, event);
 	}
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	card_instance_t *instance = get_card_instance( player, card );
+
+	if( event == EVENT_ACTIVATE ){
 		int choice = instance->info_slot = 0;
 		if( !paying_mana() && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST_X(2), 0, NULL, NULL) ){
 			choice = do_dialog(player, player, card, -1, -1, " Generate mana\n Hexproof & Shroud removal\n Cancel", 1);
@@ -2249,34 +2244,19 @@ int card_flamekin_village(int player, int card, event_t event){
 	*/
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( ! IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE || !(event == EVENT_CAST_SPELL && affect_me(player, card)) ){
-		return mana_producer(player, card, event);
-	}
+	lorwyn_need_subtype_land(player, card, event, SUBTYPE_ELEMENTAL);
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) && !is_tapped(player, card) ){	// e.g. from Kismet
-		int tapme = 1;
-		if( is_subtype_in_hand(player, SUBTYPE_ELEMENTAL) ){
-			test_definition_t this_test;
-			new_default_test_definition(&this_test, 0, get_subtype_text("Select %a card to reveal.", SUBTYPE_ELEMENTAL));
-			this_test.subtype = SUBTYPE_ELEMENTAL;
-			int selected = new_global_tutor(player, player, TUTOR_FROM_HAND, TUTOR_GET_POSITION, 0, AI_MIN_VALUE, &this_test);
-			if (selected != -1){
-				reveal_card(player, card, player, selected);
-				tapme = 0 ;
-			}
-		}
-		if( tapme ){
-			add_state(player, card, STATE_TAPPED);
-		}
+	if( ! IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE ){
+		return mana_producer(player, card, event);
 	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.preferred_controller = player;
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = instance->number_of_targets = instance->info_slot = 0;
-		if( !paying_mana() && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_R(2), 0, NULL, NULL) ){
+		if( !paying_mana() && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_R(2), 0, &td, NULL) ){
 			choice = do_dialog(player, player, card, -1, -1, " Generate mana\n Give haste\n Cancel", 1);
 		}
 
@@ -2316,13 +2296,15 @@ int card_myriad_landscape(int player, int card, event_t event){
 	  then shuffle your library.
 	*/
 
-	card_instance_t *instance = get_card_instance( player, card );
+	comes_into_play_tapped(player, card, event);
 
 	if( ! IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE ){
-		return mana_producer(player, card, event);
+		return mana_producer_tapped(player, card, event);
 	}
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	card_instance_t *instance = get_card_instance( player, card );
+
+	if( event == EVENT_ACTIVATE ){
 		int choice = instance->info_slot = 0;
 		if( !paying_mana() && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_SACRIFICE_ME, MANACOST_X(3), 0, NULL, NULL) ){
 			choice = do_dialog(player, player, card, -1, -1, " Generate mana\n Tutor lands\n Cancel", 1);
@@ -2371,11 +2353,11 @@ int card_myriad_landscape(int player, int card, event_t event){
 				if( cards_data[lands[0]].id == CARD_ID_PLAINS ){
 					subtype = SUBTYPE_PLAINS;
 				}
-				new_default_test_definition(&this_test, TYPE_LAND, get_subtype_text("Select a %s basic land.", subtype));
+				new_default_test_definition(&this_test, TYPE_LAND, get_subtype_text("Select a basic %s.", subtype));
 				this_test.subtype = SUBTYPE_BASIC;
 				this_test.sub2 = subtype;
 				this_test.no_shuffle = 1;
-				this_test.subtype_flag = F2_MULTISUBTYPE;
+				this_test.subtype_flag = F2_MULTISUBTYPE_ALL;
 				selected = new_select_a_card(player, player, TUTOR_FROM_DECK, 0, AI_FIRST_FOUND, -1, &this_test);
 				if( selected != -1 ){
 					lands[1] = deck_ptr[player][selected];
@@ -2470,14 +2452,14 @@ int card_commanders_sphere(int player, int card, event_t event){
 		if( instance->info_slot > 0 && mana_producer(player, card, event) ){
 			return 1;
 		}
-		return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL);
+		return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL);
 	}
 
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = instance->targets[1].player = 0;
 		if( instance->info_slot > 0 && mana_producer(player, card, EVENT_CAN_ACTIVATE) ){
-			if( !paying_mana() && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL) ){
+			if( !paying_mana() && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL) ){
 				int ai_choice = hand_count[player] < 3 && count_subtype(player, TYPE_LAND, -1) > 5 ? 1 : 0;
 				choice = do_dialog(player, player, card, -1, -1, " Generate mana\n Sac & draw\n Cancel", ai_choice);
 			}
@@ -2491,7 +2473,6 @@ int card_commanders_sphere(int player, int card, event_t event){
 		}
 
 		if( choice == 1 ){
-			tap_card(player, card);
 			instance->targets[1].player = 1;
 			kill_card(player, card, KILL_SACRIFICE);
 		}
@@ -2543,11 +2524,11 @@ int card_crown_of_doom(int player, int card, event_t event)
 
 int card_loreseekers_stone(int player, int card, event_t event)
 {
-/*
-Loreseeker's Stone |6
-Artifact
-3,T: Draw three cards. This ability costs 1 more to activate for each card in your hand.
-*/
+	/*
+	  Loreseeker's Stone |6
+	  Artifact
+	  3,T: Draw three cards. This ability costs 1 more to activate for each card in your hand.
+	*/
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		draw_cards(player, 3);
 	}

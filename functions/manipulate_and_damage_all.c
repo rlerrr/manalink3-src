@@ -295,13 +295,13 @@ int new_damage_all(int player, int card, int targ_player, int dmg, int mode, tes
 					( ( mode & NDA_ALL_CREATURES ) || !this_test || new_make_test_in_play(i, count, score, this_test) ) &&
 					( card != count || player != i || !((mode & NDA_NOT_TO_ME) || (this_test && this_test->not_me == 1)) )
 				  ){
-					if( mode & NDA_EXILE_IF_FATALLY_DAMAGED ){
-						exile_if_would_be_put_into_graveyard(player, card, i, count, 1);
-					}
 					int dmg_card = damage_creature(i, count, dmg, player, card);
-					if ((mode & NDA_CANT_REGENERATE_IF_DEALT_DAMAGE_THIS_WAY) && dmg_card != -1){
-						card_instance_t* damage = get_card_instance(player, dmg_card);
+					card_instance_t* damage = get_card_instance(player, dmg_card);
+					if ( mode & NDA_CANT_REGENERATE_IF_DEALT_DAMAGE_THIS_WAY ){
 						damage->targets[3].card |= DMG_CANT_REGENERATE_IF_DEALT_DAMAGE_THIS_WAY;
+					}
+					if( mode & NDA_EXILE_IF_FATALLY_DAMAGED ){
+						damage->targets[3].card |= DMG_EXILE_IF_LETHALLY_DAMAGED_THIS_WAY;
 					}
 					result+=dmg;
 				}

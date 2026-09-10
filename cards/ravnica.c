@@ -2,9 +2,9 @@
 
 // global functions
 
-int has_convoked_mana_extended(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white){
+int has_convoked_mana_extended_generic(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white, int cmc_modifier){
 	int up_cless = (cless == 40 || cless == -1) ? 0 : cless; // cless == 40 or -1 meaning 'X in casting cost'.
-	if( cless != 40 && cless != -1){
+	if( cless != 40 && cless != -1 && cmc_modifier ){
 		up_cless = get_updated_casting_cost(player, card, -1, event, cless);
 	}
 	int tapped[active_cards_count[player]];
@@ -50,10 +50,17 @@ int has_convoked_mana_extended(int player, int card, event_t event, int cless, i
 		for(i=0; i<tc; i++){
 			remove_state(player, tapped[i], STATE_TAPPED);
 		}
+		if( rval && tc > 0 ){
+			rval = 2;
+		}
 		tc = 0;
 		attempt++;
 	}
 	return rval;
+}
+
+int has_convoked_mana_extended(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white){
+	return has_convoked_mana_extended_generic(player, card, event, cless, black, blue, green, red, white, 1);
 }
 
 int has_convoked_mana(int player, int card, int cless, int green, int white ){
@@ -265,6 +272,13 @@ int charge_convoked_mana_extended_generic(int player, int card, event_t event, i
 		else{
 			charge_mana_multi(player, cless, black, blue, green, red, white);
 		}
+		if( spell_fizzled != 1 ){
+			if (cless == -1){
+				return x_value;	// And no way to tell the difference between 0 and cancel from the return value - but you should just check for spell_fizzled == 1 anyway
+			} else {
+				return 1;
+			}
+		}
 	}
 	if( mode == 2 ){
 		spell_fizzled = 1;
@@ -287,11 +301,15 @@ int ravnica_manachanger(int player, int card, event_t event, int plus_black, int
 
 	if( event == EVENT_MODIFY_COST && affect_me(player, card) ){
 		card_ptr_t* c = cards_ptr[ get_id(player, card) ];
-		if( has_mana_multi(player, c->req_colorless-1, c->req_black+plus_black, c->req_blue+plus_blue,
+		int cless = get_updated_casting_cost(player, card, -1, event, -1);
+		if( has_mana_multi(player, cless-1, c->req_black+plus_black, c->req_blue+plus_blue,
 							c->req_green+plus_green, c->req_red+plus_red, c->req_white+plus_white)
 		  ){
 			null_casting_cost(player, card);
 			instance->info_slot = 1;
+		}
+		else{
+			instance->info_slot = 0;
 		}
 	}
 	return 0;
@@ -427,10 +445,12 @@ static void radiance_pump(int player, int card, int t_player, int t_card, int po
 	for(i=0; i<2; i++){
 		int count = active_cards_count[i]-1;
 		while(count > -1){
-			if( in_play(i, count) && is_what(i, count, TYPE_CREATURE) && has_my_colors(t_player, t_card, i, count) > 0 ){
-				pump_ability_until_eot(player, card, i, count, power, toughness, ability, sp_ability );
-				if( effect == ACT_UNTAP ){
-					untap_card(i, count);
+			if( in_play(i, count) && is_what(i, count, TYPE_CREATURE) ){
+				if( (i == t_player && count == t_card) || has_my_colors(t_player, t_card, i, count) > 0 ){
+					pump_ability_until_eot(player, card, i, count, power, toughness, ability, sp_ability );
+					if( effect == ACT_UNTAP ){
+						untap_card(i, count);
+					}
 				}
 			}
 			count--;
@@ -449,6 +469,7 @@ int transmute(int player, int card, event_t event, int colorless, int black, int
 		charge_mana_multi(player, colorless, black, blue, green, red, white);
 		if( spell_fizzled != 1 ){
 			discard_card(player, card);
+			return 1;
 		}
 	}
 	else if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && spell_fizzled != 1 ){
@@ -1044,6 +1065,7 @@ int card_chord_of_calling(int player, int card, event_t event){
 
 	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		if( check_special_flags2(player, card, SF2_COPIED_FROM_STACK) ){
+			instance->info_slot = 0;
 			return 0;
 		}
 		if( played_for_free(player, card) || is_token(player, card) ){
@@ -1413,6 +1435,9 @@ int card_consult_the_necrosages(int player, int card, event_t event){
 }
 
 int card_convolute(int player, int card, event_t event){
+	/* Convolute	|2|U
+	 * Instant
+	 * Counter target spell unless its controller pays |4. */
 
 	if( event == EVENT_RESOLVE_SPELL){
 			counterspell_resolve_unless_pay_x(player, card, NULL, 0, 4);
@@ -1925,6 +1950,10 @@ int card_dryads_caress(int player, int card, event_t event){
 }
 
 int card_duskmantle_house_of_shadows(int player, int card, event_t event){
+	/* Duskmantle, House of Shadow	""
+	 * Land
+	 * |T: Add |C to your mana pool.
+	 * |U|B, |T: Target player puts the top card of his or her library into his or her graveyard. */
 
 	target_definition_t td1;
 	default_target_definition(player, card, &td1, TYPE_CREATURE );
@@ -1944,7 +1973,7 @@ int card_duskmantle_house_of_shadows(int player, int card, event_t event){
 		return 1;
 	}
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, 0, 1, 1, 0, 0, 0) && can_target(&td1) && can_use_activated_abilities(player, card) ){
@@ -2708,6 +2737,11 @@ int card_golgari_germination(int player, int card, event_t event){
 }
 
 int card_golgari_grave_troll(int player, int card, event_t event){
+	/* Golgari Brownscale	|1|G|G
+	 * Creature - Lizard 2/3
+	 * When ~ is put into your hand from your graveyard, you gain 2 life.
+	 * Dredge 2 */
+
 	card_instance_t *instance = get_card_instance(player, card);
 	if( event == EVENT_TOUGHNESS && instance->targets[0].card != 3 && affect_me(player, card)){
 		event_result++;
@@ -3397,11 +3431,10 @@ int card_mindleech_mass(int player, int card, event_t event){
 		new_default_test_definition(&this_test, TYPE_LAND, "Select a nonland card to cast for free.");
 		this_test.type_flag = DOESNT_MATCH;
 		this_test.can_legally_play = 1;
-		int selected = new_select_a_card(player, 1-player, TUTOR_FROM_HAND, 0, AI_MAX_CMC, -1, &this_test);
-		if( selected != -1 ){
-			opponent_plays_card_in_your_hand_for_free(1-player, selected);
-		}
+
+		play_card_in_opponent_hand_by_test(player, card, &this_test);
 	}
+
 	return 0;
 }
 
@@ -3440,6 +3473,12 @@ int card_mnemonic_nexus(int player, int card, event_t event){
 }
 
 int card_moldervine_cloak(int player, int card, event_t event){
+	/* Moldervine Cloak	|2|G
+	 * Enchantment - Aura
+	 * Enchant creature
+	 * Enchanted creature gets +3/+3.
+	 * Dredge 2 */
+
 	if( event == EVENT_GRAVEYARD_ABILITY ){
 		return 2;
 	}
@@ -3724,7 +3763,7 @@ int card_putrefy(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
-			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_BURY);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -4088,6 +4127,13 @@ int card_rolling_spoil(int player, int card, event_t event){
 }
 
 int card_sandsower(int player, int card, event_t event){
+	/* Sandsower	|3|W
+	 * Creature - Spirit 1/3
+	 * Tap three untapped creatures you control: Tap target creature. */
+
+	if (!IS_ACTIVATING(event)){
+		return 0;
+	}
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -4102,7 +4148,7 @@ int card_sandsower(int player, int card, event_t event){
 	default_target_definition(player, card, &td1, TYPE_CREATURE);
 	td1.allow_cancel = 0;
 
-	if( event == EVENT_CAN_ACTIVATE  && can_use_activated_abilities(player, card) && affect_me(player, card) ){
+	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) ){
 		if( target_available(player, card, &td) > 2 && has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) ){
 			return can_target(&td1);
 		}
@@ -4459,6 +4505,10 @@ int card_shadow_of_doubt(int player, int card, event_t event){
 }
 
 int card_shambling_shell(int player, int card, event_t event){
+	/* Shambling Shell	|1|B|G
+	 * Creature - Plant Zombie 3/1
+	 * Sacrifice ~: Put a +1/+1 counter on target creature.
+	 * Dredge 3 */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -4999,6 +5049,10 @@ int card_sunhome_enforcer(int player, int card, event_t event){
 }
 
 int card_sunhome_fortress_of_the_legion(int player, int card, event_t event){
+	/* Sunhome, Fortress of the Legion	""
+	 * Land
+	 * |T: Add |C to your mana pool.
+	 * |2|R|W, |T: Target creature gains double strike until end of turn. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -5006,7 +5060,7 @@ int card_sunhome_fortress_of_the_legion(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, 3, 0, 0, 0, 1, 1) && can_use_activated_abilities(player, card) && can_target(&td) ){
 			ai_choice = 1;
@@ -5593,7 +5647,7 @@ int card_vitu_ghazi_the_city_tree(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, 3, 0, 0, 1, 0, 1) ){

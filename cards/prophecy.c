@@ -469,23 +469,24 @@ int card_dual_nature(int player, int card, event_t event){
 		if( trigger_condition == TRIGGER_LEAVE_PLAY && affect_me( player, card ) &&
 		   reason_for_trigger_controller == affected_card_controller
 		 ){
-		   int trig = 0;
-
-			if( is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) && ! is_token(trigger_cause_controller, trigger_cause) ){
-				trig = 1;
-			}
-
-			if( trig > 0 ){
-				if(event == EVENT_TRIGGER){
-					event_result |= 2;
+			int trig = 0;
+			int id = get_card_name(trigger_cause_controller, trigger_cause);
+			if( id != -1 ){ //If a face-down card leaves play, Double Nature will trigger but won't do nothing as it has no name
+				if( is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) && ! is_token(trigger_cause_controller, trigger_cause) ){
+					trig = 1;
 				}
-				else if(event == EVENT_RESOLVE_TRIGGER){
-						int id = get_id(trigger_cause_controller, trigger_cause);
-						test_definition_t this_test;
-						default_test_definition(&this_test, TYPE_CREATURE);
-						this_test.type_flag = F1_IS_TOKEN;
-						this_test.id = id;
-						new_manipulate_all(player, card, 2, &this_test, KILL_REMOVE);
+
+				if( trig > 0 ){
+					if(event == EVENT_TRIGGER){
+						event_result |= RESOLVE_TRIGGER_MANDATORY;
+					}
+					else if(event == EVENT_RESOLVE_TRIGGER){
+							test_definition_t this_test;
+							default_test_definition(&this_test, TYPE_CREATURE);
+							this_test.type_flag = F1_IS_TOKEN;
+							this_test.id = id;
+							APNAP(p, {new_manipulate_all(player, card, p, &this_test, KILL_REMOVE);};);
+					}
 				}
 			}
 		}
@@ -833,16 +834,19 @@ int card_panic_attack(int player, int card, event_t event){
 	  Up to three target creatures can't block this turn.
 	*/
 
+	if (!IS_GS_EVENT(player, card, event)){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 
-	card_instance_t *instance = get_card_instance(player, card);
-
 	if( event == EVENT_RESOLVE_SPELL ){
+		card_instance_t *instance = get_card_instance(player, card);
 		int i;
-		for(i=0; i<3; i++){
+		for(i = 0; i < instance->number_of_targets; i++){
 			if( validate_target(player, card, &td, i) ){
-				pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, SP_KEYWORD_CANNOT_BLOCK, 0);
+				pump_ability_until_eot(player, card, instance->targets[i].player, instance->targets[i].card, 0,0, 0,SP_KEYWORD_CANNOT_BLOCK);
 			}
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -868,6 +872,9 @@ int card_plague_wind(int player, int card, event_t event){
 }
 
 int card_rethink(int player, int card, event_t event){
+	/* Rethink	|2|U
+	 * Instant
+	 * Counter target spell unless its controller pays |X, where X is its converted mana cost. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -885,7 +892,7 @@ int card_rethink(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
-		counterspell_resolve_unless_pay_x(player, card, NULL, 0, get_cmc(instance->targets[0].player, instance->targets[0].card));;
+		counterspell_resolve_unless_pay_x(player, card, NULL, 0, get_cmc(instance->targets[0].player, instance->targets[0].card));
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -1148,6 +1155,10 @@ int card_snag(int player, int card, event_t event){
 }
 
 int card_spiketail_drake2(int player, int card, event_t event){
+	/* Spiketail Drake	|3|U|U
+	 * Creature - Drake 3/3
+	 * Flying
+	 * Sacrifice ~: Counter target spell unless its controller pays |3. */
 
 	target_definition_t td;
 	counterspell_target_definition(player, card, &td, 0);
@@ -1160,6 +1171,11 @@ int card_spiketail_drake2(int player, int card, event_t event){
 }
 
 int card_spiketail_hatchling(int player, int card, event_t event){
+	/* Spiketail Hatchling	|1|U
+	 * Creature - Drake 1/1
+	 * Flying
+	 * Sacrifice ~: Counter target spell unless its controller pays |1. */
+
 	target_definition_t td;
 	counterspell_target_definition(player, card, &td, 0);
 
@@ -1184,13 +1200,13 @@ int card_spitting_spider(int player, int card, event_t event){
 
 	if( event == EVENT_CAN_ACTIVATE ){
 		if( generic_activated_ability(player, card, event, 0, MANACOST0, 0, NULL, NULL) ){
-			return can_sacrifice_as_cost(player, 1, TYPE_ARTIFACT, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+			return can_sacrifice_as_cost(player, 1, TYPE_LAND, 0, 0, 0, 0, 0, 0, 0, -1, 0);
 		}
 	}
 
 	if(event == EVENT_ACTIVATE ){
 		if( charge_mana_for_activated_ability(player, card, MANACOST0) ){
-			if( ! controller_sacrifices_a_permanent(player, card, TYPE_ARTIFACT, 0) ){
+			if( ! controller_sacrifices_a_permanent(player, card, TYPE_LAND, 0) ){
 				spell_fizzled = 1;
 			}
 		}

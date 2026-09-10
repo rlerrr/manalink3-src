@@ -89,7 +89,7 @@ static int create_archenemy_legacy(int player, int card, int csvid, int (*func_p
   if (leg != -1)
 	{
 	  card_instance_t* legacy = get_card_instance(player, leg);
-	  legacy->display_pic_int_id = csvid;
+	  legacy->display_pic_csv_id = csvid;
 	  legacy->display_pic_num = get_card_image_number(csvid, player, card);
 	}
 
@@ -659,8 +659,15 @@ static void set_scheme_in_motion(int player, int card, int csvid)
 		/* Look Skyward and Despair	""
 		 * Scheme
 		 * When you set this scheme in motion, put a 5/5 |Sred Dragon creature token with flying onto the battlefield. */
-		generate_token_by_id(player, card, CARD_ID_DRAGON);
-		break;
+		 {
+			token_generation_t token;
+			default_token_definition(player, card, CARD_ID_DRAGON, &token);
+			token.color_forced = COLOR_TEST_RED;
+			token.pow = 5;
+			token.tou = 5;
+			generate_token(&token);
+			break;
+		}
 
 	  case CARD_ID_MAY_CIVILIZATION_COLLAPSE:
 		if (target_opponent(player, card))
@@ -675,7 +682,7 @@ static void set_scheme_in_motion(int player, int card, int csvid)
 			  if (leg != -1)
 				{
 				  card_instance_t* legacy = get_card_instance(player, leg);
-				  legacy->display_pic_int_id = csvid;
+				  legacy->display_pic_csv_id = csvid;
 				  legacy->display_pic_num = get_card_image_number(csvid, player, card);
 
 				  legacy->targets[1].player |= SP_KEYWORD_MUST_ATTACK;
@@ -1008,7 +1015,7 @@ int card_archenemy(int player, int card, event_t event)
 			if (in_play(player, c))
 			  {
 				card_instance_t* inst = get_card_instance(player, c);
-				if (inst->internal_card_id == 903 && inst->display_pic_int_id == CARD_ID_THE_PIECES_ARE_COMING_TOGETHER)
+				if (inst->internal_card_id == 903 && inst->display_pic_csv_id == CARD_ID_THE_PIECES_ARE_COMING_TOGETHER)
 				  ++num_effects;
 			  }
 

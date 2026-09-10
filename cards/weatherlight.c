@@ -61,36 +61,28 @@ static int generic_creature_with_discard_type_on_cip(int player, int card, event
 
 int card_abeyance(int player, int card, event_t event){
 
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
+	default_target_definition(player, card, &td, 0);
 	td.zone = TARGET_ZONE_PLAYERS;
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
+	if( event == EVENT_RESOLVE_SPELL ){
+		if( valid_target(&td) ){
+			test_definition_t this_test;
+			default_test_definition(&this_test, TYPE_PERMANENT);
+			new_manipulate_all(player, card, instance->targets[0].player, &this_test, ACT_DISABLE_NONMANA_ACTIVATED_ABILITIES);
+			target_player_cant_cast_type(player, card, instance->targets[0].player, TYPE_ANY);
+			draw_cards(player, 1);
+		}
+		kill_card(player, card, KILL_DESTROY);
 	}
 
-	else if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		pick_target(&td, "TARGET_PLAYER");
-	}
-	else if( event == EVENT_RESOLVE_SPELL ){
-			if( valid_target(&td) ){
-				test_definition_t this_test;
-				default_test_definition(&this_test, TYPE_PERMANENT);
-				new_manipulate_all(player, card, instance->targets[0].player, &this_test, ACT_DISABLE_NONMANA_ACTIVATED_ABILITIES);
-				int spc = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);//64
-				card_instance_t *leg = get_card_instance(player, spc);
-				leg->targets[2].player = 64;
-				leg->targets[3].player = instance->targets[0].player;
-				leg->targets[2].card = get_id(player, card);
-				create_card_name_legacy(player, spc, get_id(player, card));
-				draw_cards(player, 1);
-			}
-			kill_card(player, card, KILL_DESTROY);
-	}
-
-   return 0;
+   return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
 }
 
 
@@ -769,7 +761,7 @@ int card_circling_vultures(int player, int card, event_t event){
 	}
 	if( event == EVENT_ACTIVATE_FROM_HAND ){
 		discard_card(player, card);
-		return 2;
+		return 1;
 	}
 
 	return card_barrow_ghoul(player, card, event);
@@ -879,6 +871,11 @@ int card_dingus_staff(int player, int card, event_t event){
 
 int card_disrupt(int player, int card, event_t event)
 {
+  /* Disrupt	|U
+   * Instant
+   * Counter target instant or sorcery spell unless its controller pays |1.
+   * Draw a card. */
+
   target_definition_t td;
   counterspell_target_definition(player, card, &td, TYPE_INSTANT | TYPE_INTERRUPT | TYPE_SORCERY);
 
@@ -950,6 +947,10 @@ int card_doomsday(int player, int card, event_t event)
 }
 
 int card_downdraft(int player, int card, event_t event){
+	/* Downdraft	|2|G
+	 * Enchantment
+	 * |G: Target creature loses flying until end of turn.
+	 * Sacrifice ~: ~ deals 2 damage to each creature with flying. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -984,7 +985,7 @@ int card_downdraft(int player, int card, event_t event){
 					if( target_available(player, card, &td1) > 1 ){
 						ai_choice = 1;
 					}
-					choice = do_dialog(player, player, card, -1, -1, " Target loses Flying\n 2 damage to all flyers\n Pass", ai_choice);
+					choice = do_dialog(player, player, card, -1, -1, " Creature loses flying\n 2 damage to all flyers\n Cancel", ai_choice);
 				}
 			}
 			else{

@@ -177,6 +177,15 @@ int card_burst_of_speed(int player, int card, event_t event){
 	return basic_spell(player, card, event);
 }
 
+int card_bramble_creeper(int player, int card, event_t event)
+{
+	/* Bramble Creeper	|4|G	0x200ec83
+	 * Creature - Elemental 0/3
+	 * Whenever ~ attacks, it gets +5/+0 until end of turn. */
+
+	return when_attacks_pump_self(player, card, event, 5,0);
+}
+
 int card_capricious_efreet(int player, int card, event_t event){
 
 	card_instance_t *instance= get_card_instance(player, card);

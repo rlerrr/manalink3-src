@@ -24,9 +24,10 @@ use Manalink::Patch;
 #42e934:	0f 85 69 02 00 00	jne	0x42eba3			;     != 0) goto 0x42eba3
 #42e93a:	8b 45 08		mov	eax, dword [ebp+0x8]		; ...
 
-patch("Magic.exe", 0x42e913,
-      "eb 25",	# jmp 0x42e93a
-      (0x90) x 2);
+# Obsolete - charge_mana() now in C
+#patch("Magic.exe", 0x42e913,
+#      "eb 25",	# jmp 0x42e93a
+#      (0x90) x 2);
 
 ################################
 # Skip check against TYPE_LAND #
@@ -39,9 +40,10 @@ patch("Magic.exe", 0x42e913,
 #42e9c9:	75 23			jne	0x42e9ee			;     != 0) goto 0x42e9ee
 #42e9cb:	6a ff			...					; dispatch_event(...,CAN_ACTIVATE,...)
 
-patch(0x42e9b9,
-      "eb 10",	# jmp 0x42e9cb
-      0x90);
+# Obsolete - charge_mana() now in C
+#patch(0x42e9b9,
+#      "eb 10",	# jmp 0x42e9cb
+#      0x90);
 
 ###################################################################################################
 # Allow cards flagged both mana-source and act-ability to be activated whenever a mana-source can #
@@ -49,6 +51,9 @@ patch(0x42e9b9,
 # Previous contents:
 #435c58:	f6 84 c0 4c 70 7e 00 01	test	byte [eax+eax*8+0x7e704c], 0x1	; if (cards_data[iid].extra_ability & EA_ACT_ABILITY
 #435c60:	74 02			je	0x435c64			;     == 0) goto 0x435c64
-patch(0x435c58,
-      "eb 0a",	# jmp 0x435c64
-      (0x90) x 6);
+#patch("Magic.exe", 0x435c58,
+#      "eb 0a",	# jmp 0x435c64
+#      (0x90) x 6);
+# Revert; now handled directly in dispatch_event_to_single_card() for the problematic case, and the original version is needed when called from sub_475A30()
+patch("Magic.exe", 0x435c58,
+      "f6 84 c0 4c 70 7e 00 01");

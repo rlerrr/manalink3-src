@@ -125,72 +125,73 @@ sub main
   # Fix image version number in draw_smallcard_activation_card/*4D2B30*/ #
   ########################################################################
   # Previous contents:
-  #4d2bad:	e8 de 60 f6 ff				# call	0x438c90		; get_displayed_pic_num_and_pic_int_id_of_damage_source_playercard(&ret_tgt_ignored, player, card);
+  #4d2bad:	e8 de 60 f6 ff				# call	0x438c90		; get_displayed_pic_num_and_pic_csv_id_of_damage_source_playercard(&ret_tgt_ignored, player, card);
 
   seek_and_write($f, 0xd2bad,
-		 0xe8, 0x6e, 0xd6, 0xd9, 0x00);		# call 0x1270220		; get_displayed_pic_num_and_pic_int_id_of_parent_playercard(&ret_tgt_ignored, player, card);
+		 0xe8, 0x12, 0xb7, 0xb3, 0x01);		# call 0x200e2c4		; get_displayed_pic_num_and_pic_csv_id_of_parent_playercard(&ret_tgt_ignored, player, card);
 
   close $f or die "Couldn't close $filename: ?!";
 
 
-  $filename = "ManalinkEx.dll";
-  open($f, "+<", $filename) or die "Couldn't open $filename: ?!";
-  binmode($f);
+  #$filename = "ManalinkEx.dll";
+  #open($f, "+<", $filename) or die "Couldn't open $filename: ?!";
+  #binmode($f);
 
   ############################################################################
-  # New function get_displayed_pic_num_and_pic_int_id_of_parent_playercard() #
+  # New function get_displayed_pic_num_and_pic_csv_id_of_parent_playercard() #
   ############################################################################
-  seek_and_write($f, 0x26f620,	#0x1270220
-		 0x55,					# push	ebp			; save stack
-		 0x89, 0xe5,				# mov	ebp, esp		; new stack
-		 0x83, 0xec, 0x04,			# sub	esp, 0x4		; 4 bytes of local variables
-		 0x56,					# push	esi			; save esi
+  # Obsolete - now moved into C
+  #seek_and_write($f, 0x26f620,	#0x1270220
+  #		 0x55,					# push	ebp			; save stack
+  #		 0x89, 0xe5,				# mov	ebp, esp		; new stack
+  #		 0x83, 0xec, 0x04,			# sub	esp, 0x4		; 4 bytes of local variables
+  #		 0x56,					# push	esi			; save esi
 
-		 0xff, 0x75, 0x10,			# push	dword [ebp+0x10]	; arg2 = card
-		 0xff, 0x75, 0x0c,			# push	dword [ebp+0xc]		; arg1 = player
-		 0xe8, 0x4e, 0x87, 0x1c, 0xff,		# call	438980			; eax = player_gt_1_or_card_ge_150(player, card)
-		 0x83, 0xc4, 0x08,			# add	esp, 0x8		; pop 2 args
+  #		 0xff, 0x75, 0x10,			# push	dword [ebp+0x10]	; arg2 = card
+  #		 0xff, 0x75, 0x0c,			# push	dword [ebp+0xc]		; arg1 = player
+  #		 0xe8, 0x4e, 0x87, 0x1c, 0xff,		# call	438980			; eax = player_gt_1_or_card_ge_150(player, card)
+  #		 0x83, 0xc4, 0x08,			# add	esp, 0x8		; pop 2 args
 
-		 0x85, 0xc0,				# test	eax, eax		; if (eax
-		 0x74, 0x0f,				# je	ok			;     == 0 goto ok
+  #		 0x85, 0xc0,				# test	eax, eax		; if (eax
+  #		 0x74, 0x0f,				# je	ok			;     == 0 goto ok
 
-		 0x0d, 0xff, 0xff, 0xff, 0xff,		# or	eax, 0xffffffff		; eax = -1
-		 0x8b, 0x4d, 0x08,			# mov	ecx, dword [ebp+0x8]	; ecx = (target_t*)ret_tgt
-		 0x89, 0x01,				# mov	dword [ecx], eax	; ret_tgt->player = -1
-		 0x89, 0x41, 0x04,			# mov	dword [ecx+0x4], eax	; ret_tgt->card = -1
-		 0xeb, 0x51,				# jmp	epilog			; goto epilog
+  #		 0x0d, 0xff, 0xff, 0xff, 0xff,		# or	eax, 0xffffffff		; eax = -1
+  #		 0x8b, 0x4d, 0x08,			# mov	ecx, dword [ebp+0x8]	; ecx = (target_t*)ret_tgt
+  #		 0x89, 0x01,				# mov	dword [ecx], eax	; ret_tgt->player = -1
+  #		 0x89, 0x41, 0x04,			# mov	dword [ecx+0x4], eax	; ret_tgt->card = -1
+  #		 0xeb, 0x51,				# jmp	epilog			; goto epilog
 #ok:
-		 0x8b, 0x45, 0x0c,			# mov	eax, dword [ebp+0xc]	; eax = card
-		 0x8b, 0x4d, 0x10,			# mov	ecx, dword [ebp+0x10]	; ecx = player
-		 0xe8, 0x5d, 0x18, 0x19, 0xff,		# call	401ab0			; esi = get_displayed_card_instance(player, card)
+  #		 0x8b, 0x45, 0x0c,			# mov	eax, dword [ebp+0xc]	; eax = card
+  #		 0x8b, 0x4d, 0x10,			# mov	ecx, dword [ebp+0x10]	; ecx = player
+  #		 0xe8, 0x5d, 0x18, 0x19, 0xff,		# call	401ab0			; esi = get_displayed_card_instance(player, card)
 
-		 0x8b, 0x96, 0x10, 0x01, 0x00, 0x00,	# mov	edx, dword [esi+0x110]	; edx = esi->parent_card
-		 0x0f, 0xbe, 0x86, 0x0c, 0x01, 0x00, 0,	# movsx	eax, byte [esi+0x10c]	; eax = (int)esi->parent_controller
-		 0x8b, 0x4d, 0x08,			# mov	ecx, dword [ebp+0x8]	; ecx = (target_t*)ret_tgt
-		 0x89, 0x01,				# mov	dword [ecx], eax	; ret_tgt->player = eax
-		 0x89, 0x51, 0x04,			# mov	dword [ecx+0x4], edx	; ret_tgt->card = edx
+  #		 0x8b, 0x96, 0x10, 0x01, 0x00, 0x00,	# mov	edx, dword [esi+0x110]	; edx = esi->parent_card
+  #		 0x0f, 0xbe, 0x86, 0x0c, 0x01, 0x00, 0,	# movsx	eax, byte [esi+0x10c]	; eax = (int)esi->parent_controller
+  #		 0x8b, 0x4d, 0x08,			# mov	ecx, dword [ebp+0x8]	; ecx = (target_t*)ret_tgt
+  #		 0x89, 0x01,				# mov	dword [ecx], eax	; ret_tgt->player = eax
+  #		 0x89, 0x51, 0x04,			# mov	dword [ecx+0x4], edx	; ret_tgt->card = edx
 
-		 0x8b, 0x46, 0x64,			# mov	eax, dword [esi+0x64]	; eax = esi->display_pic_int_id
-		 0x66, 0x89, 0x45, 0xfc,		# mov	word [ebp-0x4], ax	; local_0x4 = eax
+  #		 0x8b, 0x46, 0x64,			# mov	eax, dword [esi+0x64]	; eax = esi->display_pic_csv_id
+  #		 0x66, 0x89, 0x45, 0xfc,		# mov	word [ebp-0x4], ax	; local_0x4 = eax
 
-		 0xff, 0xb6, 0x10, 0x01, 0x00, 0x00,	# push	dword [esi+0x110]	; arg3 = esi->parent_card
-		 0xff, 0xb6, 0x0c, 0x01, 0x00, 0x00,	# push	dword [esi+0x10c]	; arg2 = esi->parent_controller
+  #		 0xff, 0xb6, 0x10, 0x01, 0x00, 0x00,	# push	dword [esi+0x110]	; arg3 = esi->parent_card
+  #		 0xff, 0xb6, 0x0c, 0x01, 0x00, 0x00,	# push	dword [esi+0x10c]	; arg2 = esi->parent_controller
 
 		 # eax = cards_at_7c7000[esi->original_internal_card_id]->id
-		 0x8b, 0x46, 0x3c,			# mov	eax, dword [esi+0x3c]		; eax = esi->original_internal_card_id
-		 0x8b, 0x04, 0x85, 0x00, 0x70, 0x7c, 0,	# mov	eax, dword [eax*4+0x7c7000]	; eax = cards_at_7c7000[eax]
-		 0x0f, 0xb7, 0x40, 0x24,		# movzx	eax, byte [eax+0x24]		; eax = eax->type
+  #		 0x8b, 0x46, 0x3c,			# mov	eax, dword [esi+0x3c]		; eax = esi->original_internal_card_id
+  #		 0x8b, 0x04, 0x85, 0x00, 0x70, 0x7c, 0,	# mov	eax, dword [eax*4+0x7c7000]	; eax = cards_at_7c7000[eax]
+  #		 0x0f, 0xb7, 0x40, 0x24,		# movzx	eax, byte [eax+0x24]		; eax = eax->type
 
-		 0x50,					# push	eax			; arg1 = cards_at_7c7000[esi->original_internal_card_id]->id
-		 0xe8, 0xd1, 0x7e, 0x1f, 0xff,		# call	468160			; eax = get_card_image_number(cards_at_7c7000[esi->original_internal_card_id]->id, esi->parent_controller, esi->parent_card)
-		 0x83, 0xc4, 0x0c,			# add	esp, 0xc		; pop 3 args
+  #		 0x50,					# push	eax			; arg1 = cards_at_7c7000[esi->original_internal_card_id]->id
+  #		 0xe8, 0xd1, 0x7e, 0x1f, 0xff,		# call	468160			; eax = get_card_image_number(cards_at_7c7000[esi->original_internal_card_id]->id, esi->parent_controller, esi->parent_card)
+  #		 0x83, 0xc4, 0x0c,			# add	esp, 0xc		; pop 3 args
 
-		 0xc1, 0xe0, 0x10,			# shl	eax, 0x10		; eax <<= 16
-		 0x66, 0x8b, 0x45, 0xfc,		# mov	ax, word [ebp-0x4]	; LOWORD(eax) = local_0x4
+  #		 0xc1, 0xe0, 0x10,			# shl	eax, 0x10		; eax <<= 16
+  #		 0x66, 0x8b, 0x45, 0xfc,		# mov	ax, word [ebp-0x4]	; LOWORD(eax) = local_0x4
 #epilog:
-		 0x5e,					# pop	esi			; restore esi
-		 0xc9,					# leave				; restore stack
-		 0xc3);					# ret				; return
+  #		 0x5e,					# pop	esi			; restore esi
+  #		 0xc9,					# leave				; restore stack
+  #		 0xc3);					# ret				; return
 
-  close $f or die "Couldn't close $filename: ?!";
+  #close $f or die "Couldn't close $filename: ?!";
 }

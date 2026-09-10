@@ -734,6 +734,9 @@ int card_capsize(int player, int card, event_t event){
 }
 
 int card_carrionette(int player, int card, event_t event){
+	/* Carrionette	|1|B
+	 * Creature - Skeleton 1/1
+	 * |2|B|B: Exile ~ and target creature unless that creature's controller pays |2. Activate this ability only if ~ is in your graveyard. */
 
 	if( event == EVENT_GRAVEYARD_ABILITY && has_mana_multi(player, MANACOST_XB(2, 2)) ){
 		target_definition_t td;
@@ -2604,41 +2607,9 @@ int card_lightning_blast(int player, int card, event_t event){
 int card_living_death(int player, int card, event_t event){
 
 	if(event == EVENT_RESOLVE_SPELL ){
-		int zombies[100][2];
-		int z_count[2] = {0, 0};
-		APNAP(p,{
-					const int *grave = get_grave(p);
-					int count = count_graveyard(p)-1;
-					while( count > -1 ){
-							if( is_what(-1, grave[count],TYPE_CREATURE) ){
-								zombies[z_count[p]][p] = grave[count];
-								remove_card_from_grave(p, count);
-								z_count[p]++;
-							}
-							count--;
-					}
-				};
-		);
-		APNAP(p,{
-					test_definition_t this_test;
-					default_test_definition(&this_test, TYPE_CREATURE);
-					if( can_sacrifice(player, p, 1, TYPE_CREATURE, 0) ){
-						new_manipulate_all(player, card, p, &this_test, KILL_SACRIFICE);
-					}
-				};
-		);
-		APNAP(p,{
-					if( ! check_battlefield_for_id(2, CARD_ID_GRAFDIGGERS_CAGE) ){
-						int count = 0;
-						while( count < z_count[p] ){
-								int card_added = add_card_to_hand(p, zombies[count][p]);
-								set_special_flags3(p, card_added, SF3_REANIMATED);
-								put_into_play(p, card_added);
-								count++;
-						}
-					}
-				};
-		);
+		test_definition_t this_test;
+		default_test_definition(&this_test, TYPE_CREATURE);
+		new_reanimate_all(player, card, ANYBODY, &this_test, REANIMATE_SPECIAL_LIVING_DEAD);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -4049,13 +4020,14 @@ int card_soltari_lancer(int player, int card, event_t event){
 
 int card_soltari_trooper(int player, int card, event_t event)
 {
-  shadow(player, card, event);
+	/* Soltari Trooper	|1|W
+	 * Creature - Soltari Soldier 1/1
+	 * Shadow
+	 * Whenever ~ attacks, it gets +1/+1 until end of turn. */
 
-  // Whenever ~ attacks, it gets +1/+1 until end of turn.
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
-	pump_until_eot(player, card, player, card, 1,1);
+	shadow(player, card, event);
 
-  return 0;
+	return when_attacks_pump_self(player, card, event, 1,1);
 }
 
 int card_spike_drone(int player, int card, event_t event){
@@ -4319,12 +4291,7 @@ int card_tooth_and_claw(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
-		token_generation_t token;
-		default_token_definition(player, card, CARD_ID_BEAST, &token);
-		token.pow = 3;
-		token.tou = 1;
-		token.color_forced = COLOR_TEST_RED;
-		generate_token(&token);
+		generate_token_by_id(player, card, CARD_ID_CARNIVORE);
 	}
 
 	return global_enchantment(player, card, event);
@@ -4545,7 +4512,7 @@ int card_wasteland(int player, int card, event_t event){
 		else if( choice == 1 ){
 				add_state(player, card, STATE_TAPPED);
 				if( charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) &&
-					new_pick_target(&td, "Select_target nonbasic land.", 0, 1 | GS_LITERAL_PROMPT)
+					new_pick_target(&td, "TARGET_NONBASIC_LAND", 0, 1)
 				  ){
 					instance->info_slot = 1;
 					kill_card(player, card, KILL_SACRIFICE);

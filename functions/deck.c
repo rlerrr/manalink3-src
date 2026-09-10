@@ -181,7 +181,7 @@ static card_instance_t card_instance_template =
   0,	// unk5b				// left uninitialized
   0,	// upkeep_flags
   0,	// attack_rating
-  0,	// display_pic_int_id	// left uninitialized
+  0,	// display_pic_csv_id	// left uninitialized
   0,	// display_pic_num		// left uninitialized
   0,	// kill_code
   0,	// unk69				// left uninitialized
@@ -353,30 +353,30 @@ card_instance_t* in_hand(int player, int card){
 }
 
 static int* csvid_to_iid = NULL;
-static int max_csvid = 8192;	// immediately doubled to 16384 in first call
+static const int max_csvid = 32768;
 
 static int get_internal_card_id_from_csv_id_impl(int csvid)
 {
-  if (!csvid_to_iid || csvid >= max_csvid)
-	{
-	  if (csvid_to_iid)
-		free(csvid_to_iid);
+  if (csvid < 0 || csvid >= max_csvid - 1)
+	return -1;
 
-	  max_csvid *= 2;
+  if (!csvid_to_iid)
+	{
 	  csvid_to_iid = (int32_t*)malloc(sizeof(int32_t) * max_csvid);
 	  memset(csvid_to_iid, -1, sizeof(int32_t) * max_csvid);
 
 	  int i;
-	  for (i = 0; cards_data[i].id != (uint16_t)(-1); ++i)
+	  for (i = 0; i < max_csvid && cards_data[i].id != (uint16_t)(-1); ++i)
 		csvid_to_iid[cards_data[i].id] = i;
 	}
 
   if (csvid_to_iid[csvid] == -1)
 	{
 	  // Search for it, like the original exe version at 0x479df0 did every call.  Slow!
-	  int i = 0;
 	  int end = EXE_DWORD(0x7a5380) + 16;
-	  for (i = 0, end = EXE_DWORD(0x7a5380) + 16; i < end; ++i)
+	  ASSERT(end < max_csvid);
+	  int i;
+	  for (i = 0; i < end; ++i)
 		if (cards_data[i].id != csvid)
 		  {
 			csvid_to_iid[csvid] = i;
@@ -386,7 +386,6 @@ static int get_internal_card_id_from_csv_id_impl(int csvid)
 	  if (csvid_to_iid[csvid] == -1)
 		csvid_to_iid[csvid] = -2;	// So we don't search again
 	}
-
 
   if (csvid_to_iid[csvid] == -2)
 	return -1;
@@ -532,14 +531,75 @@ int is_hydra_head(int player, int card){
 	return 0;
 }
 
-void bounce_permanent(int player, int card){
+void bounce_permanent(int player, int card)
+{
 	// Hack for "hydra heads"
 	if( is_hydra_head(player, card) ){
 		kill_card(player, card, KILL_BURY);
+		return;
 	}
-	else{
-		real_bounce_permanent(player, card);
+
+	// 0x4A650
+
+	// str_card_leaving_play is a cached string of PROMPT_SPECIALFEPHASE[1]: "Card leaving play"
+	dispatch_trigger2(current_turn, TRIGGER_LEAVE_PLAY, "Card leaving play", 0, player, card);
+
+	card_instance_t* instance = get_card_instance(player, card);
+
+	instance->internal_card_id = -1;      // a prerequisite for destroy_attached_auras_and_obliterate_card()
+	destroy_attached_auras_and_obliterate_card(player, card);
+
+	int card_added = -1;
+	int owner = get_owner(player, card);
+	int csvid = cards_data[instance->original_internal_card_id].id;
+	if (!(instance->token_status & STATUS_TOKEN))
+    {
+		card_added = add_card_to_hand(owner, instance->original_internal_card_id);
+//          ++hand_count[owner];  Removed, since the non-exe version of add_card_to_hand() will do it for us
+    }
+	call_sub_437E20_unless_ai_is_speculating();   // redisplay
+
+	// str_permanent_to_hand is a cached string of PROMPT_SPECIALFEPHASE[16]: "Permanent to hand"
+	//dispatch_trigger2(current_turn, TRIGGER_BOUNCE_PERMANENT, str_permanent_to_hand, 0, owner, card_added);
+	dispatch_trigger2(current_turn, TRIGGER_BOUNCE_PERMANENT, "Permanent to hand", 0, owner, card_added);
+
+	//Hack for cards that will trigger if bounced to hand
+	if( card_added == -1 ){
+		return;
 	}
+
+	switch( csvid ){
+			case CARD_ID_WARPED_DEVOTION:
+				discard(owner, 0, owner);
+				break;
+
+			/*
+			case CARD_ID_AZORIUS_AETHERMAGE:
+			{
+				if( has_mana(owner, COLOR_COLORLESS, 1) ){
+					if( charge_mana_while_resolving(owner, card_added, EVENT_RESOLVE_TRIGGER, owner, COLOR_COLORLESS, 1) ){
+						draw_cards(owner, 1);
+					}
+				}
+				break;
+			}
+			*/
+
+			case CARD_ID_STORMFRONT_RIDERS:
+			{
+				token_generation_t token;
+				default_token_definition(player, card, CARD_ID_SOLDIER, &token);
+				token.pow = token.tou = 1;
+				token.color_forced = COLOR_TEST_WHITE;
+				token.no_sleight = 1;
+				generate_token(&token);
+				break;
+			}
+
+			default:
+				break;
+	}
+
 }
 
 int can_draw_cards_as_cost(int player, int amount)
@@ -1021,9 +1081,15 @@ void reshuffle_all_into_deck(int player, int mode){
 * To graveyard *
 ***************/
 
-static void kill_card_impl(int player, int card, kill_t kill_mode, int from_exe)
+static void kill_card_impl(int player, int card, kill_t kill_mode, int flags)
 {
-  // 0x4779f0
+	// 0x4779f0
+
+	// Flags
+	enum{
+		FROM_EXE = 1,
+		SPELL_IS_BEING_COUNTERED = 2
+	};
 
   if (player < 0 || card < 0)
 	return;
@@ -1056,7 +1122,7 @@ static void kill_card_impl(int player, int card, kill_t kill_mode, int from_exe)
 
   if (ai_is_speculating != 1
 	  && kill_mode == KILL_SACRIFICE
-	  && !from_exe
+	  && !(flags & FROM_EXE)
 	  && in_play(player, card))
 	{
 	  type_t typ = get_card_data(player, card)->type;
@@ -1065,7 +1131,15 @@ static void kill_card_impl(int player, int card, kill_t kill_mode, int from_exe)
 		play_sound_effect(WAV_SACRFICE);
 	}
 
-  if (kill_mode == KILL_REMOVE && !from_exe && !is_what(player, card, TYPE_EFFECT))
+	// Hack for our implementation of Soulfire Grand Master
+	if( kill_mode != KILL_REMOVE && is_what(player, card, TYPE_SPELL) && check_special_flags2(player, card, SF2_SOULFIRE_GRAND_MASTER) &&
+		!(flags & SPELL_IS_BEING_COUNTERED)
+	  ){
+		bounce_permanent(player, card);
+		return;
+	}
+
+  if (kill_mode == KILL_REMOVE && !(flags & FROM_EXE) && !is_what(player, card, TYPE_EFFECT))
 	{
 	  // kill_card forces kill_mode to sacrifice for cards without STATE_IN_PLAY set.  Work around.
 	  if (!(instance->state & STATE_IN_PLAY))
@@ -1084,7 +1158,7 @@ static void kill_card_impl(int player, int card, kill_t kill_mode, int from_exe)
 		play_sound_effect(WAV_DESTROY);	// This is the rfg sound effect, despite its name.  Exe will only play it for cards whose original type has creature set.
 	}
 
-  if (!from_exe && in_hand(player, card))
+  if (!(flags & FROM_EXE) && in_hand(player, card))
 	--hand_count[player];
 
   instance->token_status |= STATUS_DYING;
@@ -1109,13 +1183,6 @@ static void kill_card_impl(int player, int card, kill_t kill_mode, int from_exe)
 
 void kill_card(int player, int card, kill_t kill_mode)
 {
-  /* Doing this here is a terrible idea.  Is there some special reason that it shouldn't work on spells still using the exe's implementation?  Or that it should
-   * with spells that get countered? */
-  if (check_special_flags2(player, card, SF2_SOULFIRE_GRAND_MASTER)
-	  && kill_mode != KILL_REMOVE
-	  && is_what(player, card, TYPE_INSTANT|TYPE_SORCERY))
-	bounce_permanent(player, card);
-  else
 	kill_card_impl(player, card, kill_mode, 0);
 }
 
@@ -1125,6 +1192,7 @@ void kill_card_exe(int player, int card, kill_t kill_mode)
 }
 
 int effect_this_dies(int player, int card, event_t event);
+void make_smallcard_visible(int player, int card);
 
 int destroy_attached_auras_and_obliterate_card(int player, int card)
 {
@@ -1150,6 +1218,8 @@ int destroy_attached_auras_and_obliterate_card(int player, int card)
 				  {
 					instance->damage_target_player = -1;
 					instance->damage_target_card = -1;
+					make_smallcard_visible(p, c);	/* e.g. if it was attached to an attacking creature, this makes it visible in the territory window - see
+													 * http://www.slightlymagic.net/forum/tracker.php?t=987 */
 				  }
 				else if (!(instance->internal_card_id == LEGACY_EFFECT_CUSTOM
 						   && instance->info_slot == (int)effect_this_dies))
@@ -1158,6 +1228,8 @@ int destroy_attached_auras_and_obliterate_card(int player, int card)
 					auras_to_destroy[count].card = c;
 					++count;
 				  }
+				else
+				  make_smallcard_visible(p, c);	// as above
 			  }
 		  }
 
@@ -1197,8 +1269,57 @@ int manage_counterspell_linked_hacks(int player, int card, int to_counter_player
 
 void real_counter_a_spell(int player, int card, int to_counter_player, int to_counter_card){
 	int kill_mode = manage_counterspell_linked_hacks(player, card, to_counter_player, to_counter_card);
-	kill_card_impl(to_counter_player, to_counter_card, kill_mode, 0);
+	kill_card_impl(to_counter_player, to_counter_card, kill_mode, 2);
+	if( ! is_what(player, card, TYPE_INTERRUPT) ){
+		play_sound_effect(WAV_INTERUPT);
+	}
 }
+
+// Returns 0 if didn't validate, 1 if validated but didn't pay (so spell was countered), 2 if validated and paid (so spell wasn't countered).
+int counterspell_resolve_unless_pay_x(int player, int card, target_definition_t* td /*optional*/, int target_num, int x)
+{
+  int kill_code = KILL_SACRIFICE;
+  if (target_num < 0)
+	{
+	  // A bletcherous special case for Syncopate and Spell Shrivel.
+	  kill_code = KILL_REMOVE;
+	  target_num = 0;
+	}
+
+  if (counterspell_validate(player, card, td, target_num))
+	{
+		if (x <= 0){
+			return 1;
+		}
+
+		char options[40];
+		sprintf(options, " Pay %d\n Decline", x);
+
+		card_instance_t* instance = get_card_instance(player, card);
+
+		if (has_mana(instance->targets[target_num].player, COLOR_ANY, x)
+		  && do_dialog(instance->targets[target_num].player, player, card,
+					   instance->targets[target_num].player, instance->targets[target_num].card, options, 0) == 0
+		  && charge_mana_while_resolving(player, card, EVENT_RESOLVE_SPELL, instance->targets[target_num].player, COLOR_COLORLESS, x)
+		  ){
+			return 2;
+		}
+
+		int prev_kill_code = kill_code;
+		kill_code = manage_counterspell_linked_hacks(player, card, instance->targets[target_num].player, instance->targets[target_num].card);
+		if( prev_kill_code == KILL_REMOVE ){
+			kill_code = KILL_REMOVE;
+		}
+		kill_card_impl(instance->targets[target_num].player, instance->targets[target_num].card, kill_code, 2);
+		if( ! is_what(player, card, TYPE_INTERRUPT) ){
+			play_sound_effect(WAV_INTERUPT);
+		}
+		return 1;
+	}
+
+  return 0;
+}
+
 
 #define CASES_GY_FROM_ANYWHERE_REPLACE_SHUFFLE	\
 	   CARD_ID_BLIGHTSTEEL_COLOSSUS:			\
@@ -1626,7 +1747,7 @@ static int effect_replace_self_mill(int player, int card, event_t event)
 {
   // If ~ would be put into your graveyard from your library/anywhere, ...
 
-  // display_pic_int_id: csvid
+  // display_pic_csv_id: csvid
 
   enable_xtrigger_flags |= ENABLE_XTRIGGER_REPLACE_MILL | ENABLE_XTRIGGER_REPLACE_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY;
   if ((xtrigger_condition() == XTRIGGER_REPLACE_MILL || xtrigger_condition() == XTRIGGER_REPLACE_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY)
@@ -1634,7 +1755,7 @@ static int effect_replace_self_mill(int player, int card, event_t event)
 	  && trigger_cause_controller == player)
 	{
 	  card_instance_t* instance = get_card_instance(player, card);
-	  int iid, csvid = instance->display_pic_int_id;
+	  int iid, csvid = instance->display_pic_csv_id;
 
 	  if (xtrigger_condition() == XTRIGGER_REPLACE_MILL)
 		iid = deck_ptr[player][trigger_cause];
@@ -1688,7 +1809,7 @@ static int effect_self_mill(int player, int card, event_t event)
 
   /* targets[0].player: tentative position in graveyard
    * targets[0].card: graveyard_source[][] value
-   * display_pic_int_id: csvid */
+   * display_pic_csv_id: csvid */
 
   enable_xtrigger_flags |= ENABLE_XTRIGGER_MILLED | ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY;
   if ((xtrigger_condition() == XTRIGGER_MILLED || xtrigger_condition() == XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY)
@@ -1702,7 +1823,7 @@ static int effect_self_mill(int player, int card, event_t event)
 		}
 
 	  card_instance_t* instance = get_card_instance(player, card);
-	  int csvid = instance->display_pic_int_id;
+	  int csvid = instance->display_pic_csv_id;
 	  int pos;
 
 	  switch (csvid)
@@ -1835,6 +1956,13 @@ void special_mill(int player, int card, int source_csvid, int orig_t_player, int
 				* as the card is moved to a public zone. */
 				if (source_csvid == CARD_ID_CELLAR_DOOR && (replaced != 2) && is_what(-1, iid, TYPE_CREATURE))
 					generate_token_by_id(player, card, CARD_ID_ZOMBIE);
+
+				if (source_csvid == CARD_ID_DREAD_SUMMONS && (replaced != 2) && is_what(-1, iid, TYPE_CREATURE)){
+					token_generation_t token;
+					default_token_definition(player, card, CARD_ID_ZOMBIE, &token);
+					token.action = TOKEN_ACTION_TAPPED;
+					generate_token(&token);
+				}
 
 				if (replaced){
 					if(source_csvid == CARD_ID_HELM_OF_OBEDIENCE || source_csvid == CARD_ID_GRENZO_DUNGEON_WARDEN)
@@ -2002,6 +2130,56 @@ void special_mill(int player, int card, int source_csvid, int orig_t_player, int
 void mill(int t_player, int amount)
 {
   special_mill(-1, -1, -1, t_player, amount);
+}
+
+int whenever_type_is_put_into_graveyard_from_anywhere(int player, int card, event_t event, int t_player, int type,
+	test_definition_t *test )
+{
+	// from library
+	enable_xtrigger_flags |= ENABLE_XTRIGGER_MILLED;
+	if (xtrigger_condition() == XTRIGGER_MILLED && affect_me(player, card) && reason_for_trigger_controller == player
+		&& trigger_cause_controller == t_player )
+	{
+		if( (event != EVENT_TRIGGER && event != EVENT_RESOLVE_TRIGGER) )
+			return 0;
+
+		int i, num_milled = 0;
+		for (i = 0; i < num_cards_milled; ++i){
+			if( (type && is_what(-1, cards_milled[i].internal_card_id, TYPE_LAND)) ||
+				(test != NULL && new_make_test(player, cards_milled[i].internal_card_id, -1, test)) )
+			{
+				if (event == EVENT_TRIGGER)
+				{
+					event_result |= RESOLVE_TRIGGER_MANDATORY;
+					return 0;
+				}
+				if (event == EVENT_RESOLVE_TRIGGER)
+				++num_milled;
+			}
+		}
+		return num_milled;
+	}
+
+	enable_xtrigger_flags |= ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY;
+	if (xtrigger_condition() == XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY )
+	{
+		if( test == NULL ){
+			test_definition_t test2;
+			default_test_definition(&test2, type);
+			if (when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test2))
+			{
+				return 1;
+			}
+		}
+		else{
+			if (when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, test))
+			{
+				return 1;
+			}
+		}
+	}
+
+	return 0;
 }
 
 /**************
@@ -2415,4 +2593,32 @@ void whenever_a_card_is_put_into_a_graveyard_from_anywhere_exile_that_card(int p
 			}
 		}
 	}
+}
+
+int count_types_in_grave(int player){
+	int i;
+	int result = 0;
+	int pump = 0;
+	for(i=0; i<2; i++ ){
+		if( i == player || player == ANYBODY ){
+			int count = 0;
+			const int *grave = get_grave(i);
+			while( grave[count] != -1 ){
+					/* Whitelist allowable types.  get_type() deliberately reports interrupts as TYPE_INSTANT|TYPE_INTERRUPT, for example.
+					 * It may be made to do the same with other cases in the future.
+					 * It does deal correctly with flash permanents, instant-speed sorceries, enchantments vs. planewalkers, etc., though.
+					 */
+					result |= get_type(-1, grave[count]) & (TYPE_LAND | TYPE_CREATURE | TYPE_ENCHANTMENT | TYPE_SORCERY | TYPE_INSTANT | TYPE_ARTIFACT | TARGET_TYPE_PLANESWALKER);
+					if( has_subtype(-1, grave[count], SUBTYPE_TRIBAL) ){
+						result |= TARGET_TYPE_TOKEN;	// this bit known to be free, as we didn't whitelist it above
+					}
+					count++;
+			}
+			pump = num_bits_set(result);
+			if( pump >= 8 ){
+				break;
+			}
+		}
+	}
+	return pump;
 }

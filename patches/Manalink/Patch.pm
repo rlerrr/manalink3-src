@@ -10,11 +10,23 @@ use Scalar::Util qw/looks_like_number/;
 
 our $VERSION = 1.00;
 our @ISA = qw/Exporter/;
-our @EXPORT = qw/patch string_literal/;
+our @EXPORT = qw/patch string_literal jmp_to call_to/;
 
 my $last_filename = undef;
 my $last_raw = 0;
 my $filename;
+
+my $f;
+
+END
+  {
+    if (defined $last_filename)
+      {
+	my $lf = $last_filename;
+	$last_filename = undef;
+	close $f or die "Couldn't close $lf: $!";
+      }
+  }
 
 my %offsets =
   (
@@ -44,7 +56,17 @@ sub patch
     {
       $filename = shift;
       $seekpos = shift;
+
+      if (defined $last_filename)
+	{
+	  my $lf = $last_filename;
+	  $last_filename = undef;
+	  close $f or die "Couldn't close $lf: $!";
+	}
+      open($f, "+<", $filename) or croak "Couldn't open $filename: $!";
+      binmode($f);
       $last_filename = $filename;
+
       $last_raw = 1;
       $lc_filename = 'raw';
     }
@@ -58,7 +80,17 @@ sub patch
   else
     {
       $seekpos = shift;
+
+      if (defined $last_filename)
+	{
+	  my $lf = $last_filename;
+	  $last_filename = undef;
+	  close $f or die "Couldn't close $lf: $!";
+	}
+      open($f, "+<", $filename) or croak "Couldn't open $filename: $!";
+      binmode($f);
       $last_filename = $filename;
+
       $last_raw = 0;
       $lc_filename = lc $filename;
     }
@@ -67,11 +99,6 @@ sub patch
 
   $seekpos >= $offsets{$lc_filename} or croak sprintf qq/Seekpos $seekpos is less than $filename's base offset %x/, $offsets{$lc_filename};
   $seekpos -= $offsets{$lc_filename};
-
-  my $f;
-  open($f, "+<", $filename) or croak "Couldn't open $filename: $!";
-
-  binmode($f);
 
   seek $f, $seekpos, 0 or croak(sprintf "Couldn't seek to %x in $filename: %s", $seekpos, $?);
 
@@ -97,8 +124,65 @@ sub patch
     }
 
   print $f pack("C" . scalar @args, @args) or croak(sprintf "Couldn't write" . (" 0x%02x" x scalar @args) . " at %x in $filename: %s", @args, $seekpos, $?);
+}
 
-  close $f or die "Couldn't close $filename: $!";
+sub jmp_to_impl
+{
+  my $opcode = shift;
+
+  my @args;
+  my $filename = shift;
+
+  defined $filename or croak "needs at least two non-filename arguments";
+
+  if ($filename =~ /^raw$/i)
+    {
+      push @args, $filename;
+      push @args, shift;	# actual filename
+    }
+  elsif (looks_like_number $filename)
+    {
+      unshift @_, $filename;
+    }
+  else
+    {
+      push @args, $filename;
+    }
+
+  scalar @_ >= 2 or croak "needs at least two non-filename arguments";
+  (scalar @_) % 2 == 0 or croak "needs an even number of non-filename arguments";
+
+  while (scalar @_ > 0)
+    {
+      my $seekpos = shift;
+      my $newloc = shift;
+      push @args, $seekpos;
+      my $diff = $newloc - $seekpos - 5;
+      if ($diff < 0)
+	{	# force proper 32-bit 2's-complement representation
+	  $diff += 1;
+	  $diff += 0xFFFFFFFF;
+	  $diff >= 0 or die;
+	}
+      push @args, sprintf("%s %02x %02x %02x %02x",
+			  $opcode,
+			  $diff & 0xFF,
+			  ($diff >> 8) & 0xFF,
+			  ($diff >> 16) & 0xFF,
+			  ($diff >> 24) & 0xFF);
+      patch(@args);
+      @args = ();
+    }
+}
+
+sub jmp_to
+{
+  jmp_to_impl("e9", @_);
+}
+
+sub call_to
+{
+  jmp_to_impl("e8", @_);
 }
 
 1;

@@ -1,34 +1,16 @@
 #include "manalink.h"
 
-
 int attach_aura_to_target(int aura_player, int aura_card, event_t event, int t_player, int t_card){
 	if( ! check_for_guardian_beast_protection(t_player, t_card) ){
-		set_special_flags(aura_player, aura_card, SF_CORRECTLY_RESOLVED);
+		if( event == EVENT_RESOLVE_SPELL ){
+			set_special_flags(aura_player, aura_card, SF_CORRECTLY_RESOLVED);
+		}
 		card_instance_t* instance = get_card_instance(aura_player, aura_card);
 		instance->damage_target_player = t_player;
 		instance->damage_target_card = t_card;
 		return 1;
 	}
 	return 0;
-}
-
-int gain_control_and_attach_as_aura(int player, int card, event_t event, int t_player, int t_card){
-	if( check_for_guardian_beast_protection(t_player, t_card) ){
-		return -1;
-	}
-	// will store the invisible 'gain_control' legacy into 'targets[3].card'
-	int legacy = gain_control(player, card, t_player, t_card);
-	card_instance_t *leg = get_card_instance(player, legacy);
-	leg->token_status |= STATUS_INVISIBLE_FX;
-
-	attach_aura_to_target(player, card, event, leg->damage_target_player, leg->damage_target_card);
-	get_card_instance(player, card)->targets[3].player = player;
-	get_card_instance(player, card)->targets[3].card = legacy;
-	if( event == EVENT_RESOLVE_SPELL ){
-		set_special_flags(player, card, SF_CORRECTLY_RESOLVED);
-	}
-
-	return legacy;
 }
 
 int aura_attached_to_me(int player, int card, event_t event, resolve_trigger_t trigger_mode, test_definition_t *test2){
@@ -70,7 +52,7 @@ int generic_aura_impl(int player, int card, event_t event, target_definition_t *
 	if( csvid == CARD_ID_EMBLEM_OF_THE_WARMIND || csvid == CARD_ID_DYING_WISH ||
 		csvid == CARD_ID_MURDER_INVESTIGATION || csvid == CARD_ID_SPLINTER_TWIN || csvid == CARD_ID_FIRE_WHIP ||
 		csvid == CARD_ID_HERMETIC_STUDY || csvid == CARD_ID_QUICKSILVER_DAGGER ||
-		csvid == CARD_ID_RIME_TRANSFUSION
+		csvid == CARD_ID_RIME_TRANSFUSION || csvid == CARD_ID_FAITH_UNBROKEN
 	  ){
 		td->allowed_controller = player;
 	}
@@ -83,38 +65,15 @@ int generic_aura_impl(int player, int card, event_t event, target_definition_t *
 	if( csvid == CARD_ID_GROUNDED && player == AI ){
 		td->required_abilities = KEYWORD_FLYING;
 	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-			// Specifically avoid validating target if one's been forced onto the card before putting it into play
-			if( ((instance->damage_target_player >= 0 && instance->damage_target_card >= 0) || valid_target(td)) &&
-				attach_aura_to_target(player, card, event, instance->targets[0].player, instance->targets[0].card)
-			  ){
-				if( flags & GA_FORBID_NONMANA_ACTIVATED_ABILITIES ){
-					disable_nonmana_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
-				}
-				if( flags & GA_FORBID_HUMILIATE ){
-					humiliate(player, card, instance->targets[0].player, instance->targets[0].card, 1);
-				}
-				if( flags & GA_FORBID_ALL_ACTIVATED_ABILITIES ){
-					disable_all_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
-				}
-				if( subtype > 0 ){
-					if( flags & GA_FORCE_SUBTYPE ){
-						force_a_subtype(instance->targets[0].player, instance->targets[0].card, subtype);
-					}
-					if( flags & GA_ADD_SUBTYPE ){
-						add_a_subtype(instance->targets[0].player, instance->targets[0].card, subtype);
-					}
-				}
-			}
-			else{
-				kill_card(player, card, KILL_BURY);
-				cancel = 1;
-			}
-			instance->number_of_targets = 0;
-			return 0;	// Don't fall through to aura_pump()
+	if( check_special_flags3(player, card, SF3_IN_PLAY_DIRECTLY) ){ //In case an Aura enters the battlefield directly from exile, graveyard or library.
+		td->illegal_abilities = 0;
 	}
-	else if (event == EVENT_CAST_SPELL && affect_me(player, card)){
+
+	if( event == EVENT_CAN_CAST ){
+		return generic_spell(player, card, event, GS_CAN_TARGET | GS_AURA, td, NULL, 1, NULL);
+	}
+
+	if (event == EVENT_CAST_SPELL && affect_me(player, card)){
 		// Don't prompt for a target if one's been forced onto the card before putting it into play
 		if( check_special_flags(player, card, SF_TARGETS_ALREADY_SET) ||
 			(instance->damage_target_player >= 0 && instance->damage_target_card >= 0 )
@@ -124,136 +83,190 @@ int generic_aura_impl(int player, int card, event_t event, target_definition_t *
 			instance->number_of_targets = 1;
 		}
 		else{
-			load_text(0, prompt);
-			int result = select_target(player, card, td, text_lines[0], NULL);
-			if( ! result ){
-				spell_fizzled = 1;
-				return 0;
-			}
+			generic_spell(player, card, event, GS_CAN_TARGET | GS_AURA, td, prompt, 1, NULL);
 		}
 		if (player == AI && !(trace_mode & 2)){
 			ai_modifier += (instance->targets[0].player == td->preferred_controller) ? 24 : -24;
 		}
-		return 0;	// Don't fall through to aura_pump()
+
 	}
-	else if( in_play(player, card) && instance->damage_target_player > -1 ){
 
-			modify_pt_and_abilities(instance->damage_target_player, instance->damage_target_card, event, 0, 0, k_plus);
-
-			if( event == EVENT_SET_COLOR && affect_me(instance->damage_target_player, instance->damage_target_card) ){
-				if( flags & GA_FORCE_COLOR ){
-					event_result = clr;
-				}
-				else{
-					event_result |= clr;
+	if( event == EVENT_RESOLVE_SPELL ){
+		int good = 0;
+		// Specifically avoid validating target if one's been forced onto the card before putting it into play
+		if( instance->damage_target_player >= 0 && instance->damage_target_card >= 0 ){
+			good = 1;
+		}
+		if( ! good ){
+			if( valid_target(td) ){
+				good = 1;
+				//Dealing with the only two cases of "can't be the target of Aura spells"
+				if( ! is_humiliated(instance->targets[0].player, instance->targets[0].card) ){
+					int this_csvid = get_id(instance->targets[0].player, instance->targets[0].card);
+					if( this_csvid == CARD_ID_TETSUO_UMEZAWA || this_csvid == CARD_ID_BARTEL_RUNEAXE ){
+						good = 0;
+					}
 				}
 			}
-
-			if( k_special > 0 ){
-				special_abilities(instance->damage_target_player, instance->damage_target_card, event, k_special, player, card);
+		}
+		if( good ){
+			good = attach_aura_to_target(player, card, event, instance->targets[0].player, instance->targets[0].card);
+		}
+		if( good ){
+			remove_special_flags3(player, card, SF3_IN_PLAY_DIRECTLY);
+			if( flags & GA_FORBID_NONMANA_ACTIVATED_ABILITIES ){
+				disable_nonmana_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
 			}
+			if( flags & GA_FORBID_HUMILIATE ){
+				humiliate(player, card, instance->targets[0].player, instance->targets[0].card, 1);
+			}
+			if( flags & GA_FORBID_ALL_ACTIVATED_ABILITIES ){
+				disable_all_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
+			}
+			if( subtype > 0 ){
+				if( flags & GA_FORCE_SUBTYPE ){
+					force_a_subtype(instance->targets[0].player, instance->targets[0].card, subtype);
+				}
+				if( flags & GA_ADD_SUBTYPE ){
+					add_a_subtype(instance->targets[0].player, instance->targets[0].card, subtype);
+				}
+			}
+		}
+		else{
+			kill_card(player, card, KILL_BURY);
+			cancel = 1;
+		}
+		instance->number_of_targets = 0;
+	}
 
-			if( (leaves_play(player, card, event) && instance->damage_target_player != -1) ){
+	if( in_play(player, card) && instance->damage_target_player > -1 ){
+
+		if( event == EVENT_POWER && affect_me(instance->damage_target_player, instance->damage_target_card) ){
+			event_result += p_plus;
+		}
+
+		if( event == EVENT_TOUGHNESS && affect_me(instance->damage_target_player, instance->damage_target_card) ){
+			event_result += t_plus;
+		}
+
+		if( event == EVENT_ABILITIES && affect_me(instance->damage_target_player, instance->damage_target_card) ){
+			event_result |= k_plus;
+		}
+
+		if( event == EVENT_SET_COLOR && affect_me(instance->damage_target_player, instance->damage_target_card) ){
+			if( flags & GA_FORCE_COLOR ){
+				event_result = clr;
+			}
+			else{
+				event_result |= clr;
+			}
+		}
+
+		if( k_special > 0 ){
+			special_abilities(instance->damage_target_player, instance->damage_target_card, event, k_special, player, card);
+		}
+
+		if( leaves_play(player, card, event) && instance->damage_target_player != -1 ){
+			if( flags & GA_FORBID_NONMANA_ACTIVATED_ABILITIES ){
+				disable_nonmana_activated_abilities(instance->damage_target_player, instance->damage_target_card, 0);
+			}
+			if( flags & GA_FORBID_HUMILIATE ){
+				humiliate(player, card, instance->damage_target_player, instance->damage_target_card, 0);
+			}
+			if( flags & GA_FORBID_ALL_ACTIVATED_ABILITIES ){
+				disable_all_activated_abilities(instance->damage_target_player, instance->damage_target_card, 0);
+			}
+			if( subtype > 0 ){
+				if( flags & GA_FORCE_SUBTYPE ){
+					reset_subtypes(instance->damage_target_player, instance->damage_target_card, 1);
+				}
+				if( flags & GA_ADD_SUBTYPE ){
+					reset_subtypes(instance->damage_target_player, instance->damage_target_card, 2);
+				}
+			}
+		}
+
+		if( event == EVENT_CAN_MOVE_AURA ){
+			target_definition_t *td1;
+			td1 = td;
+			if( ! check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET) ){
+				td1->illegal_abilities = 0;
+			}
+			if( check_special_flags(player, card, SF_MOVE_AURA_SAME_CONTROLLER) ){
+				td1->allowed_controller = instance->damage_target_player;
+				td1->preferred_controller = instance->damage_target_player;
+			}
+			if( check_special_flags2(player, card, SF2_ENCHANTMENT_ALTERATION) ){
+				td->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+			}
+			if( target_available(player, card, td1) > 1 ){
+				return 1;
+			}
+			else{
+				return 0;
+			}
+		}
+
+		if( event == EVENT_MOVE_AURA ){
+			state_untargettable(instance->damage_target_player, instance->damage_target_card, 1);
+			target_definition_t *td1;
+			td1 = td;
+			if( ! check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET) ){
+				td1->illegal_abilities = 0;
+			}
+			if( check_special_flags(player, card, SF_MOVE_AURA_SAME_CONTROLLER) ){
+				td1->allowed_controller = instance->damage_target_player;
+				td1->preferred_controller = instance->damage_target_player;
+			}
+			if( check_special_flags2(player, card, SF2_ENCHANTMENT_ALTERATION) ){
+				td->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+			}
+			int result = new_pick_target(td1, prompt, 0, GS_LITERAL_PROMPT);
+			state_untargettable(instance->damage_target_player, instance->damage_target_card, 0);
+			return result;
+		}
+
+		if( event == EVENT_RESOLVE_MOVING_AURA ){
+			target_definition_t *td1;
+			td1 = td;
+			if( ! check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET) ){
+				td1->illegal_abilities = 0;
+			}
+			if( check_special_flags(player, card, SF_MOVE_AURA_SAME_CONTROLLER) ){
+				td1->allowed_controller = instance->damage_target_player;
+				td1->preferred_controller = instance->damage_target_player;
+			}
+			if( check_special_flags2(player, card, SF2_ENCHANTMENT_ALTERATION) ){
+				td->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
+			}
+			if( valid_target(td1) && attach_aura_to_target(player, card, event, instance->targets[0].player, instance->targets[0].card) ){
 				if( flags & GA_FORBID_NONMANA_ACTIVATED_ABILITIES ){
 					disable_nonmana_activated_abilities(instance->damage_target_player, instance->damage_target_card, 0);
+					disable_nonmana_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
 				}
 				if( flags & GA_FORBID_HUMILIATE ){
 					humiliate(player, card, instance->damage_target_player, instance->damage_target_card, 0);
+					humiliate(player, card, instance->targets[0].player, instance->targets[0].card, 1);
 				}
 				if( flags & GA_FORBID_ALL_ACTIVATED_ABILITIES ){
 					disable_all_activated_abilities(instance->damage_target_player, instance->damage_target_card, 0);
+					disable_all_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
 				}
 				if( subtype > 0 ){
 					if( flags & GA_FORCE_SUBTYPE ){
 						reset_subtypes(instance->damage_target_player, instance->damage_target_card, 1);
+						force_a_subtype(instance->targets[0].player, instance->targets[0].card, subtype);
 					}
 					if( flags & GA_ADD_SUBTYPE ){
 						reset_subtypes(instance->damage_target_player, instance->damage_target_card, 2);
+						add_a_subtype(instance->targets[0].player, instance->targets[0].card, subtype);
 					}
 				}
 			}
-
-			if( event == EVENT_CAN_MOVE_AURA ){
-				target_definition_t *td1;
-				td1 = td;
-				if( ! check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET) ){
-					td1->illegal_abilities = 0;
-				}
-				if( check_special_flags(player, card, SF_MOVE_AURA_SAME_CONTROLLER) ){
-					td1->allowed_controller = instance->damage_target_player;
-					td1->preferred_controller = instance->damage_target_player;
-				}
-				if( check_special_flags2(player, card, SF2_ENCHANTMENT_ALTERATION) ){
-					td->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
-				}
-				if( target_available(player, card, td1) > 1 ){
-					return 1;
-				}
-				else{
-					return 0;
-				}
-			}
-			if( event == EVENT_MOVE_AURA ){
-				state_untargettable(instance->damage_target_player, instance->damage_target_card, 1);
-				target_definition_t *td1;
-				td1 = td;
-				if( ! check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET) ){
-					td1->illegal_abilities = 0;
-				}
-				if( check_special_flags(player, card, SF_MOVE_AURA_SAME_CONTROLLER) ){
-					td1->allowed_controller = instance->damage_target_player;
-					td1->preferred_controller = instance->damage_target_player;
-				}
-				if( check_special_flags2(player, card, SF2_ENCHANTMENT_ALTERATION) ){
-					td->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
-					td->who_chooses = check_special_flags3(instance->damage_target_player, instance->damage_target_card, SF3_MOVING_AURA_PLAYER0_SELECT_TARGET) ? 0 : 1;
-				}
-				int result = new_pick_target(td1, prompt, 0, GS_LITERAL_PROMPT);
-				state_untargettable(instance->damage_target_player, instance->damage_target_card, 0);
-				return result;
-			}
-			if( event == EVENT_RESOLVE_MOVING_AURA ){
-				target_definition_t *td1;
-				td1 = td;
-				if( ! check_special_flags(player, card, SF_MOVE_AURA_LEGAL_TARGET) ){
-					td1->illegal_abilities = 0;
-				}
-				if( check_special_flags(player, card, SF_MOVE_AURA_SAME_CONTROLLER) ){
-					td1->allowed_controller = instance->damage_target_player;
-					td1->preferred_controller = instance->damage_target_player;
-				}
-				if( check_special_flags2(player, card, SF2_ENCHANTMENT_ALTERATION) ){
-					td->required_type = get_type(instance->damage_target_player, instance->damage_target_card);
-				}
-				if( valid_target(td1) && attach_aura_to_target(player, card, event, instance->targets[0].player, instance->targets[0].card) ){
-					if( flags & GA_FORBID_NONMANA_ACTIVATED_ABILITIES ){
-						disable_nonmana_activated_abilities(instance->damage_target_player, instance->damage_target_card, 0);
-						disable_nonmana_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
-					}
-					if( flags & GA_FORBID_HUMILIATE ){
-						humiliate(player, card, instance->damage_target_player, instance->damage_target_card, 0);
-						humiliate(player, card, instance->targets[0].player, instance->targets[0].card, 1);
-					}
-					if( flags & GA_FORBID_ALL_ACTIVATED_ABILITIES ){
-						disable_all_activated_abilities(instance->damage_target_player, instance->damage_target_card, 0);
-						disable_all_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
-					}
-					if( subtype > 0 ){
-						if( flags & GA_FORCE_SUBTYPE ){
-							reset_subtypes(instance->damage_target_player, instance->damage_target_card, 1);
-							force_a_subtype(instance->targets[0].player, instance->targets[0].card, subtype);
-						}
-						if( flags & GA_ADD_SUBTYPE ){
-							reset_subtypes(instance->damage_target_player, instance->damage_target_card, 2);
-							add_a_subtype(instance->targets[0].player, instance->targets[0].card, subtype);
-						}
-					}
-				}
-			}
+		}
 	}
-
-	// This isn't doing anything anymore except responding to EVENT_CAN_CAST, EVENT_POWER, and EVENT_TOUGHNESS, and they all do exactly as you'd expect
-	return aura_pump(player, card, event, p_plus, t_plus);
+	return 0;
+//	return aura_pump(player, card, event, p_plus, t_plus);
 }
 
 int generic_aura(int player, int card, event_t event, int pref_controller, int p_plus, int t_plus, int k_plus, int k_special, int subtype, int clr, int flags ){
@@ -269,10 +282,18 @@ static int targeted_aura_impl(int player, int card, event_t event, target_defini
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if (event == EVENT_CAN_CAST){
+		//In case an Aura enters the battlefield directly from exile, graveyard or library.
+		if( check_special_flags3(player, card, SF3_IN_PLAY_DIRECTLY) ){
+			td->illegal_abilities = 0;
+		}
 		return generic_spell(player, card, event, GS_CAN_TARGET, td, NULL, 1, NULL);
 	}
 
 	if (event == EVENT_CAST_SPELL && affect_me(player, card)){
+		//In case an Aura enters the battlefield directly from exile, graveyard or library.
+		if( check_special_flags3(player, card, SF3_IN_PLAY_DIRECTLY) ){
+			td->illegal_abilities = 0;
+		}
 		// Don't prompt for a target if one's been forced onto the card before putting it into play
 		if (instance->damage_target_player >= 0 && instance->damage_target_card >= 0){
 			instance->targets[0].player = instance->damage_target_player;
@@ -281,14 +302,10 @@ static int targeted_aura_impl(int player, int card, event_t event, target_defini
 		}
 		else{
 			if( custom_prompt ){
-				if (! new_pick_target(td, prompt, 0, 1 | GS_LITERAL_PROMPT)){
-					return 0;
-				}
+				generic_spell(player, card, event, GS_CAN_TARGET | GS_AURA | GS_LITERAL_PROMPT, td, prompt, 1, NULL);
 			}
 			else{
-				if (!pick_target(td, prompt)){
-					return 0;
-				}
+				generic_spell(player, card, event, GS_CAN_TARGET | GS_AURA, td, prompt, 1, NULL);
 			}
 			if (player == AI && !(trace_mode & 2)){
 				ai_modifier += (instance->targets[0].player == td->preferred_controller) ? 24 : -24;
@@ -297,22 +314,36 @@ static int targeted_aura_impl(int player, int card, event_t event, target_defini
 	}
 
 	if (event == EVENT_RESOLVE_SPELL){
+		int good = 0;
 		// Specifically avoid validating target if one's been forced onto the card before putting it into play
-		if( (instance->damage_target_player >= 0 && instance->damage_target_card >= 0) || valid_target(td) ){
-			if( ! attach_aura_to_target(player, card, event, instance->targets[0].player, instance->targets[0].card) ){
-				kill_card(player, card, KILL_BURY);
-				cancel = 1;
+		if( instance->damage_target_player >= 0 && instance->damage_target_card >= 0 ){
+			good = 1;
+		}
+		if( ! good ){
+			if( valid_target(td) ){
+				good = 1;
+				//Dealing with the only two cases of "can't be the target of Aura spells"
+				if( ! is_humiliated(instance->targets[0].player, instance->targets[0].card) ){
+					int this_csvid = get_id(instance->targets[0].player, instance->targets[0].card);
+					if( this_csvid == CARD_ID_TETSUO_UMEZAWA || this_csvid == CARD_ID_BARTEL_RUNEAXE ){
+						good = 0;
+					}
+				}
 			}
-			else{
-				if( disabling_mode == 1 ){
-					disable_nonmana_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
-				}
-				if( disabling_mode == 2 ){
-					disable_all_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
-				}
-				if( disabling_mode == 3 ){
-					humiliate(player, card, instance->targets[0].player, instance->targets[0].card, 1);
-				}
+		}
+		if( good ){
+			good = attach_aura_to_target(player, card, event, instance->targets[0].player, instance->targets[0].card);
+		}
+		if( good ){
+			remove_special_flags3(player, card, SF3_IN_PLAY_DIRECTLY);
+			if( disabling_mode == 1 ){
+				disable_nonmana_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
+			}
+			if( disabling_mode == 2 ){
+				disable_all_activated_abilities(instance->targets[0].player, instance->targets[0].card, 1);
+			}
+			if( disabling_mode == 3 ){
+				humiliate(player, card, instance->targets[0].player, instance->targets[0].card, 1);
 			}
 		}
 		else {
@@ -501,7 +532,7 @@ int count_auras_enchanting_me(int player, int card){
 	return result;
 }
 
-int is_enchanted(int player, int card){
+static int is_enchanted_impl(int player, int card, int subtype){
 	card_instance_t* aura;
 	int i, count;
 	for (i = 0; i < 2; i++){
@@ -509,11 +540,21 @@ int is_enchanted(int player, int card){
 			if( (aura = in_play(i, count)) && is_what(i, count, TYPE_ENCHANTMENT) && has_subtype(i, count, SUBTYPE_AURA) &&
 				aura->damage_target_player == player && aura->damage_target_card == card
 			  ){
-				return 1;
+				int result = 1;
+				if( subtype > 0 && ! has_subtype(i, count, subtype) ){
+					result = 0;
+				}
+				if( result ){
+					return 1;
+				}
 			}
 		}
 	}
 	return 0;
+}
+
+int is_enchanted(int player, int card){
+	return is_enchanted_impl(player, card, 0);
 }
 
 void put_into_play_aura_attached_to_target(int aura_player, int aura_card, int t_player, int t_card){
@@ -538,21 +579,79 @@ int aura_granting_activated_ability(int player, int card, event_t event, int pre
   return rval ? rval : vanilla_aura(player, card, event, preferred_controller);
 }
 
+int gain_control_and_attach_as_aura(int player, int card, event_t event, int t_player, int t_card){
+
+	int flag = player != t_player ? 1 : 0;
+	if( check_special_flags3(t_player, t_card, SF3_IS_STEALING_AURA) ){
+		card_instance_t *instance = get_card_instance(t_player, t_card);
+		flag = player != instance->damage_target_player ? 1 : 0;
+		int result = gain_control_permanently(player, instance->damage_target_player, instance->damage_target_card);
+		if( result > -1 ){
+			if( event == EVENT_RESOLVE_SPELL ){
+				set_special_flags3(player, card, SF3_IS_STEALING_AURA);
+			}
+			if( flag ){
+				add_state(player, card, STATE_POWER_STRUGGLE);
+			}
+			else{
+				if( check_state(player, card, STATE_POWER_STRUGGLE) ){
+					remove_state(player, card, STATE_POWER_STRUGGLE);
+				}
+			}
+			result = gain_control_permanently_no_sound(player, t_player, t_card);
+			return attach_aura_to_target(player, card, event, player, result);
+		}
+	}
+	else{
+		int result = gain_control_permanently(player, t_player, t_card);
+		if( result > -1 ){
+			if( event == EVENT_RESOLVE_SPELL ){
+				set_special_flags3(player, card, SF3_IS_STEALING_AURA);
+			}
+			if( flag ){
+				add_state(player, card, STATE_POWER_STRUGGLE);
+			}
+			else{
+				if( check_state(player, card, STATE_POWER_STRUGGLE) ){
+					remove_state(player, card, STATE_POWER_STRUGGLE);
+				}
+			}
+			return attach_aura_to_target(player, card, event, player, result);
+		}
+	}
+
+	return 0;
+}
+
+static int is_enchanted_by_another_stealing_aura(int player, int card, int orig_aura_player, int orig_aura_card){
+	card_instance_t* aura;
+	int i, count;
+	for( i = 0; i < 2; i++ ){
+		for( count = 0; count < active_cards_count[i]; ++count ){
+			if( (aura = in_play(i, count)) && is_what(i, count, TYPE_ENCHANTMENT) && has_subtype(i, count, SUBTYPE_AURA) ){
+				if( !( i == orig_aura_player && count == orig_aura_card ) ){
+					if( aura->damage_target_player == player && aura->damage_target_card == card &&
+						check_special_flags3(i, count, SF3_IS_STEALING_AURA)
+					  ){
+						return 1;
+					}
+				}
+			}
+		}
+	}
+	return 0;
+}
+
 int generic_stealing_aura(int player, int card, event_t event, target_definition_t *td, const char *prompt){
 
-	card_instance_t *instance = get_card_instance(player, card);
+	if( player < 0 || card < 0 ){
+		return 0;
+	}
 
 	if(event == EVENT_RESOLVE_SPELL){
+		card_instance_t *instance = get_card_instance(player, card);
 		if( valid_target(td) ){
-			// Case 1 : The normal behaviour. Gain control of a permanent opponent's control and attach the aura to it
-			if( player != instance->targets[0].player ){
-				gain_control_and_attach_as_aura(player, card, event, instance->targets[0].player, instance->targets[0].card);
-			}
-			// Case 2 : For some reasons you target a permanent you already own / the original target of the spell was changed.
-			//			Simply attach the aura to that permanent
-			else{
-				return targeted_aura(player, card, event, td, prompt);
-			}
+			gain_control_and_attach_as_aura(player, card, event, instance->targets[0].player, instance->targets[0].card);
 		}
 		else{
 			kill_card(player, card, KILL_SACRIFICE);
@@ -565,30 +664,25 @@ int generic_stealing_aura(int player, int card, event_t event, target_definition
 
 	if( event == EVENT_RESOLVE_MOVING_AURA ){
 		if( valid_target(td) ){
-			// Case 1 : gain control of a new permanent opponent's control and attach the aura to it
-			if( player != instance->targets[0].player ){
-				if( instance->targets[3].card > -1 ){
-					// instance->targets[3].card = the invisible 'gain_control' legacy, see 'gain_control_and_attach_as_aura'
-					kill_card(instance->targets[3].player, instance->targets[3].card, KILL_REMOVE);
-				}
-				gain_control_and_attach_as_aura(player, card, event, instance->targets[0].player, instance->targets[0].card);
-			}
-			// Case 2 : The aura is moved to one of your permanents, so it will simply be attached to it
-			//			and the previous enchanted permanent will returned to its owner
-			else{
-				if( instance->targets[3].card > -1 ){
-					kill_card(instance->targets[3].player, instance->targets[3].card, KILL_REMOVE);
-					// set instance->targets[3].card to '-1' as there isn't a new invisible 'gain_control' legacy
-					instance->targets[3].card = -1;
-				}
-				return targeted_aura(player, card, event, td, prompt);
-			}
+			card_instance_t *instance = get_card_instance(player, card);
+			gain_control_and_attach_as_aura(player, card, event, instance->targets[0].player, instance->targets[0].card);
 		}
 	}
 
 	if( leaves_play(player, card, event) ){
-		if( instance->targets[3].card > -1){
-			kill_card(player, instance->targets[3].card, KILL_REMOVE);
+		card_instance_t *instance = get_card_instance(player, card);
+		if( check_state(player, card, STATE_POWER_STRUGGLE) && in_play(instance->damage_target_player, instance->damage_target_card)){
+			if( ! check_special_flags3(instance->damage_target_player, instance->damage_target_card, SF3_IS_STEALING_AURA) ){
+				if( ! is_enchanted_by_another_stealing_aura(instance->damage_target_player, instance->damage_target_card, player, card) ){
+					re_enable_the_most_recent_control_effect_attached_to_me(instance->damage_target_player, instance->damage_target_card);
+				}
+				gain_control_permanently_no_sound(1-instance->damage_target_player, instance->damage_target_player, instance->damage_target_card);
+			}
+			else{
+				card_instance_t *aura = get_card_instance(instance->damage_target_player, instance->damage_target_card);
+				gain_control_permanently_no_sound(1-aura->damage_target_player, aura->damage_target_player, aura->damage_target_card);
+				gain_control_permanently_no_sound(1-instance->damage_target_player, instance->damage_target_player, instance->damage_target_card);
+			}
 		}
 	}
 
@@ -701,3 +795,27 @@ void when_enchanted_permanent_dies_return_aura_to_hand(int player, int card, eve
 		}
 	}
 }
+
+void cannot_be_enchanted_granted(int granting_player, int granting_card, event_t event, int t_player, int t_card){
+
+	if( event == EVENT_STATIC_EFFECTS ){
+		card_instance_t* aura;
+		int i, count;
+		for (i = 0; i < 2; i++){
+			for(count = active_cards_count[i]-1; count >-1 ; count--){
+				if( (aura = in_play(i, count)) && is_what(i, count, TYPE_ENCHANTMENT) && has_subtype(i, count, SUBTYPE_AURA) &&
+					aura->damage_target_player == t_player && aura->damage_target_card == t_card
+				  ){
+					if( granting_player == -1 || !(i== granting_player && count == granting_card) ){
+						kill_card(i, count, KILL_SACRIFICE);
+					}
+				}
+			}
+		}
+	}
+}
+
+void cannot_be_enchanted(int player, int card, event_t event){
+	cannot_be_enchanted_granted(-1, -1, event, player, card);
+}
+

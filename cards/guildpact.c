@@ -134,7 +134,7 @@ static int replicate(int player, int card, event_t event, int cless, int black, 
 				spell_fizzled = 1;
 			}
 		}
-		if( result == 1){
+		if( result == 1 && ! check_special_flags(player, card, SF_NOT_CAST) ){
 			instance->info_slot = 1;
 			if( one_target_per_spell ){
 				state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
@@ -417,7 +417,12 @@ int card_cerebral_vortex(int player, int card, event_t event){
 }
 
 int card_conjurers_ban(int player, int card, event_t event){
-
+	/*
+	  Conjurer's Ban |W|B
+	  Sorcery
+	  Name a card. Until your next turn, the named card can't be played.
+	  Draw a card.
+	*/
 	if(event == EVENT_RESOLVE_SPELL ){
 		int cd = count_deck(1-player);
 		int *deck = deck_ptr[1-player];
@@ -425,19 +430,16 @@ int card_conjurers_ban(int player, int card, event_t event){
 		if( player == HUMAN ){
 			id = card_from_list(player, 3, TYPE_ANY, 0, 0, 0, 0, 0, 0, 0, -1, 0);
 		}
-		int card_added = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);//4
+		int card_added = target_player_cant_cast_type(player, card, ANYBODY, id);
 		card_instance_t *this = get_card_instance(player, card_added);
-		this->targets[2].player = 4;
-		this->targets[2].card = get_id(player, card);
-		this->targets[3].player = 1;
 		if( current_turn == player ){
-			this->targets[3].player++;
+			this->targets[2].player = 1;
 		}
-		create_card_name_legacy(player, card_added, id);
+		draw_cards(player, 1);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+	return basic_spell(player, card, event);
 }
 
 int card_crash_landing(int player, int card, event_t event){
@@ -524,6 +526,8 @@ int card_cry_of_contrition(int player, int card, event_t event){
 				int legacy = create_targetted_legacy_effect(player, card, &haunting_legacy, instance->targets[0].player, instance->targets[0].card);
 				card_instance_t *leg = get_card_instance(player, legacy);
 				leg->targets[2].card = instance->internal_card_id;
+				kill_card(player, card, KILL_REMOVE);
+				return 0;
 			}
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -592,21 +596,23 @@ int card_debtors_knell(int player, int card, event_t event){
 
 int card_djinn_illuminatus(int player, int card, event_t event){
 
-	card_instance_t *instance = get_card_instance( player, card );
-
 	hybrid(player, card, event);
 
-	if( specific_spell_played(player, card, event, player, 1+player, TYPE_SPELL, F1_NO_CREATURE, 0, 0, 0, 0, 0, 0, -1, 0) ){
-		int id = get_id(instance->targets[1].player, instance->targets[1].card);
-		if( has_mana_to_cast_id(player, event, id) ){
-			if( charge_mana_from_id(player, -1, event, id) ){
-				copy_spell(player, id);
+	if( trigger_condition == TRIGGER_SPELL_CAST && ! check_special_flags(trigger_cause_controller, trigger_cause, SF_NOT_CAST) ){
+		if( specific_spell_played(player, card, event, player, 1+player, TYPE_SPELL, F1_NO_CREATURE, 0, 0, 0, 0, 0, 0, -1, 0) ){
+			card_instance_t *instance = get_card_instance( player, card );
+			int id = get_id(instance->targets[1].player, instance->targets[1].card);
+			if( has_mana_to_cast_id(player, event, id) ){
+				if( charge_mana_from_id(player, -1, event, id) ){
+					copy_spell(player, id);
+				}
 			}
 		}
 	}
 
 	return 0;
 }
+
 
 int card_droning_bureaucrats(int player, int card, event_t event){
 
@@ -1341,10 +1347,8 @@ int card_mimeofacture(int player, int card, event_t event){
 		int i;
 		for(i=0; i<instance->info_slot; i++){
 			if( validate_target(player, card, &td, i) ){
-				test_definition_t this_test;
-				default_test_definition(&this_test, TYPE_PERMANENT);
-				this_test.id = get_id(instance->targets[i].player, instance->targets[i].card);
-				new_global_tutor(player, 1-player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_FIRST_FOUND, &this_test);
+				tutor_card_with_the_same_name(instance->targets[i].player, instance->targets[i].card, player, instance->targets[i].player,
+											TUTOR_FROM_DECK, TUTOR_PLAY, 0);
 			}
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -1811,7 +1815,7 @@ int card_orzhova_the_church_of_deals(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
 		if( ! paying_mana() && CAN_ACTIVATE(player, card, MANACOST_XWB(4,1,1)) && can_target(&td) ){
 			choice = do_dialog(player, player, card, -1, -1, " Produce mana\n Suck life from a player\n Cancel", 1);
@@ -1948,7 +1952,7 @@ int card_predatory_focus(int player, int card, event_t event)
   if (event == EVENT_CAN_CAST)
 	return 1;
 
-  if (event == EVENT_RESOLVE_SPELL && affect_me(player, card))
+  if (event == EVENT_RESOLVE_SPELL)
 	{
 	  if (do_dialog(player, player, card, -1, -1, " Ignore blockers\n No effect", 0) == 0)
 		create_legacy_effect(player, card, effect_predatory_focus);
@@ -2418,6 +2422,11 @@ int card_skarrg_the_rage_pit(int player, int card, event_t event){
 }
 
 int card_skarrgan_firebird(int player, int card, event_t event){//UNUSEDCARD
+	/* Skarrgan Firebird	|4|R|R
+	 * Creature - Phoenix 3/3
+	 * Bloodthirst 3
+	 * Flying
+	 * |R|R|R: Return ~ from your graveyard to your hand. Activate this ability only if an opponent was dealt damage this turn. */
 
 	bloodthirst(player, card, event, 3);
 

@@ -3,7 +3,9 @@
 // Functions
 static int graft_trigger(int player, int card, event_t event){
 
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me( player, card ) && reason_for_trigger_controller == player ){
+	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me( player, card ) && reason_for_trigger_controller == player &&
+		count_1_1_counters(player, card) > 0
+	  ){
 		int trig_mode = player == AI ? RESOLVE_TRIGGER_MANDATORY : RESOLVE_TRIGGER_OPTIONAL;
 		if( player == AI ){
 			if( (is_what(player, card, TYPE_CREATURE) && get_toughness(player, card) <= 1) || trigger_cause_controller != player ){
@@ -386,7 +388,7 @@ int card_bond_of_agony(int player, int card, event_t event){
 
 	if( event == EVENT_CAN_CAST ){
 		if( generic_spell(player, card, event, GS_X_SPELL, NULL, NULL, 0, NULL) ){
-			return can_pay_life(player, 1);
+			return can_pay_life_as_cost_for_spells_or_activated_abilities(player, 1);
 		}
 	}
 
@@ -774,7 +776,7 @@ int card_cytoplast_manipulator(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( valid_target(&td) ){
 			gain_control_until_source_is_in_play_and_tapped(instance->parent_controller, instance->parent_card,
-															instance->targets[0].player, instance->targets[0].card, 0);
+															instance->targets[0].player, instance->targets[0].card, GCUS_CONTROLLED);
 		}
 	}
 
@@ -984,8 +986,8 @@ int card_demonfire(int player, int card, event_t event){
 				get_card_instance(player, legacy)->targets[0].card = card;
 			}
 			if( instance->targets[0].card != -1 ){
-				exile_if_would_be_put_into_graveyard(player, card, instance->targets[0].player, instance->targets[0].card, 1);
-				damage_creature( instance->targets[0].player, instance->targets[0].card, instance->info_slot, player, card);
+				int dc = damage_target0(player, card, instance->info_slot);
+				get_card_instance(player, dc)->targets[3].card |= DMG_EXILE_IF_LETHALLY_DAMAGED_THIS_WAY;
 			}
 			else{
 				damage_player(instance->targets[0].player, instance->info_slot, player, card);
@@ -1312,17 +1314,23 @@ int card_error_trial(int player, int card, event_t event){
 }
 
 static int evolution_vat_legacy(int player, int card, event_t event){
-	card_instance_t *instance = get_card_instance(player, card);
-	int p = instance->damage_target_player;
-	int c = instance->damage_target_card;
 
-	if( p > -1 ){
+	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
+		return 0;
+	}
+
+	if( get_card_instance(player, card)->damage_target_player > -1 ){
+		card_instance_t *instance = get_card_instance(player, card);
+
+		int p = instance->damage_target_player;
+		int c = instance->damage_target_card;
+
 		if( event == EVENT_RESOLVE_ACTIVATION ){
 			int amount = count_1_1_counters(p, c);
 			add_1_1_counters(p, c, amount);
 		}
 
-		return generic_activated_ability(player, card, event, 0, MANACOST_XUG(2, 1, 1), 0, NULL, NULL);
+		return granted_generic_activated_ability(player, card, p, c, event, 0, MANACOST_XUG(2, 1, 1), 0, NULL, NULL);
 	}
 
 	if( event == EVENT_CLEANUP ){
@@ -1666,6 +1674,10 @@ int card_guardian_of_the_guildpact(int player, int card, event_t event){
 }
 
 int card_haazda_shield_mate(int player, int card, event_t event){
+	/* Haazda Shield Mate	|2|W
+	 * Creature - Human Soldier 1/1
+	 * At the beginning of your upkeep, sacrifice ~ unless you pay |W|W.
+	 * |W: The next time a source of your choice would deal damage to you this turn, prevent that damage. */
 
 	basic_upkeep(player, card, event, MANACOST_W(2));
 
@@ -1687,7 +1699,7 @@ int card_haazda_shield_mate(int player, int card, event_t event){
 		}
 	}
 
-	return generic_activated_ability(player, card, event, GS_CAN_TARGET | GS_DAMAGE_PREVENTION, MANACOST_W(1), 0, &td, "TARGET_DAMAGE");
+	return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION, MANACOST_W(1), 0, &td, "TARGET_DAMAGE");
 }
 
 int card_helium_squirter(int player, int card, event_t event){
@@ -2186,6 +2198,10 @@ int card_momir_vig(int player, int card, event_t event){
 }
 
 int card_nihilistic_glee(int player, int card, event_t event){
+	/* Nihilistic Glee	|2|B|B
+	 * Enchantment
+	 * |2|B, Discard a card: Target opponent loses 1 life and you gain 1 life.
+	 * Hellbent - |1, Pay 2 life: Draw a card. Activate this ability only if you have no cards in hand. */
 
 	if( event == EVENT_CAN_CAST || event == EVENT_SHOULD_AI_PLAY ){
 		return global_enchantment(player, card, event);
@@ -2202,7 +2218,7 @@ int card_nihilistic_glee(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_CAN_ACTIVATE ){
-		if( generic_activated_ability(player, card, event, GAA_DISCARD | GS_CAN_ONLY_TARGET_OPPONENT, MANACOST_XB(2, 1), 0, &td, NULL) ){
+		if( generic_activated_ability(player, card, event, GAA_DISCARD | GAA_CAN_ONLY_TARGET_OPPONENT, MANACOST_XB(2, 1), 0, &td, NULL) ){
 			return 1;
 		}
 		return hand_count[player] < 1 && generic_activated_ability(player, card, event, 0, MANACOST_X(1), 2, NULL, NULL);
@@ -2210,7 +2226,7 @@ int card_nihilistic_glee(int player, int card, event_t event){
 
 	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
-		if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_DISCARD | GS_CAN_ONLY_TARGET_OPPONENT, MANACOST_XB(2, 1), 0, &td, NULL) ){
+		if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_DISCARD | GAA_CAN_ONLY_TARGET_OPPONENT, MANACOST_XB(2, 1), 0, &td, NULL) ){
 			if( hand_count[player] < 1 && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_X(1), 2, NULL, NULL) ){
 				choice = do_dialog(player, player, card, -1, -1, " Suck life\n Draw a card\n Cancel", life[1-player] < 6 && life[player] < 6 ? 0 : 1);
 			}
@@ -2219,7 +2235,7 @@ int card_nihilistic_glee(int player, int card, event_t event){
 			choice = 1;
 		}
 		if( choice == 0 ){
-			generic_activated_ability(player, card, event, GAA_DISCARD | GS_CAN_ONLY_TARGET_OPPONENT, MANACOST_XB(2, 1), 0, &td, "TARGET_PLAYER");
+			generic_activated_ability(player, card, event, GAA_DISCARD | GAA_CAN_ONLY_TARGET_OPPONENT, MANACOST_XB(2, 1), 0, &td, "TARGET_PLAYER");
 			if( spell_fizzled != 1 ){
 				instance->info_slot = 66;
 			}
@@ -2352,7 +2368,7 @@ int card_novijen_heart_of_progress(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( instance->info_slot == 1 ){
-			activate_oran_rief_pump(player, card);
+			activate_oran_rief_pump(player, card, 0);
 		}
 		else{
 			return mana_producer(player, card, event);
@@ -2404,6 +2420,9 @@ int card_omnibian(int player, int card, event_t event){
 }
 
 int card_overrule(int player, int card, event_t event){
+	/* Overrule	|X|W|U
+	 * Instant
+	 * Counter target spell unless its controller pays |X. You gain X life. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -2466,6 +2485,11 @@ int card_pain_magnification(int player, int card, event_t event){
 }
 
 int card_paladin_of_prahv(int player, int card, event_t event){
+	/* Paladin of Prahv	|4|W|W
+	 * Creature - Human Knight 3/4
+	 * Whenever ~ deals damage, you gain that much life.
+	 * Forecast - |1|W, Reveal ~ from your hand: Whenever target creature deals damage this turn, you gain that much life. */
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.preferred_controller = player;
@@ -2484,7 +2508,7 @@ int card_paladin_of_prahv(int player, int card, event_t event){
 		charge_mana_multi(player, MANACOST_XW(1, 1));
 		if( spell_fizzled != 1 && pick_target(&td, "TARGET_CREATURE") ){
 			instance->number_of_targets = 1;
-			return 2;
+			return 1;
 		}
 	}
 
@@ -2589,6 +2613,12 @@ int card_plaxmanta(int player, int card, event_t event){
 }
 
 int card_plumes_of_peace(int player, int card, event_t event){
+	/* Plumes of Peace	|1|W|U
+	 * Enchantment - Aura
+	 * Enchant creature
+	 * Enchanted creature doesn't untap during its controller's untap step.
+	 * Forecast - |W|U, Reveal ~ from your hand: Tap target creature. */
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 
@@ -2604,7 +2634,7 @@ int card_plumes_of_peace(int player, int card, event_t event){
 		charge_mana_multi(player, MANACOST_UW(1, 1));
 		if( spell_fizzled != 1 && pick_target(&td, "TARGET_CREATURE") ){
 			instance->number_of_targets = 1;
-			return 2;
+			return 1;
 		}
 	}
 
@@ -2711,7 +2741,7 @@ int card_pride_of_clouds(int player, int card, event_t event){
 		charge_mana_multi(player, MANACOST_XUW(2, 1, 1));
 		if( spell_fizzled != 1 ){
 			instance->number_of_targets = 1;
-			return 2;
+			return 1;
 		}
 	}
 
@@ -2749,7 +2779,7 @@ int card_proclamation_of_rebirth(int player, int card, event_t event){
 	if( event == EVENT_ACTIVATE_FROM_HAND ){
 		charge_mana_multi(player, MANACOST_XW(5, 1));
 		if( spell_fizzled != 1 ){
-			return 2;
+			return 1;
 		}
 	}
 
@@ -3024,8 +3054,21 @@ int card_rakdos_augermage(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_ONLY_TARGET_OPPONENT|GAA_CAN_SORCERY_BE_PLAYED, 0, 0, 0, 0, 0, 0, 0, &td, "TARGET_PLAYER");
 }
 
-int card_rakdos_guildmage(int player, int card, event_t event){
+static void check_for_tokens_created_at_eot(token_generation_t* token, int gob, int number)
+{
+	if( current_phase == PHASE_DISCARD ){
+		set_special_flags3(token->t_player, gob, SF3_WONT_TRIGGER_AT_THIS_EOT);
+	}
+}
 
+
+int card_rakdos_guildmage(int player, int card, event_t event){
+/*
+Rakdos Guildmage  {B/R}{B/R}
+Creature — Zombie Shaman 2/2
+{3}{B}, Discard a card: Target creature gets -2/-2 until end of turn.
+{3}{R}: Put a 2/1 red Goblin creature token with haste onto the battlefield. Exile it at the beginning of the next end step.
+*/
 	hybrid(player, card, event);
 
 	if( ! IS_GAA_EVENT(event) ){
@@ -3038,7 +3081,7 @@ int card_rakdos_guildmage(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance( player, card );
 
 	if( event == EVENT_CAN_ACTIVATE ){
-		if( generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_XB(3, 1), 0, &td, NULL) ){
+		if( generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_DISCARD, MANACOST_XB(3, 1), 0, &td, NULL) ){
 			return 1;
 		}
 		if( generic_activated_ability(player, card, event, 0, MANACOST_XR(3, 1), 0, NULL, NULL) ){
@@ -3048,7 +3091,7 @@ int card_rakdos_guildmage(int player, int card, event_t event){
 
 	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
-		if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_CAN_TARGET, MANACOST_XB(3, 1), 0, &td, NULL) ){
+		if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_CAN_TARGET | GAA_DISCARD, MANACOST_XB(3, 1), 0, &td, NULL) ){
 			if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_XR(3, 1), 0, NULL, NULL) ){
 				choice = do_dialog(player, player, card, -1, -1, " Weaken a creature\n Generate a Goblin\n Cancel", 0);
 			}
@@ -3064,7 +3107,9 @@ int card_rakdos_guildmage(int player, int card, event_t event){
 		if( charge_mana_multi(player, MANACOST_XBR(3, choice == 0, choice == 1)) ){
 			instance->number_of_targets = 0;
 			if( choice == 0 ){
-				pick_target(&td, "TARGET_CREATURE");
+				if( pick_target(&td, "TARGET_CREATURE")){
+					discard(player, 0, player);
+				}
 			}
 			if( spell_fizzled != 1 ){
 				instance->info_slot = 66+choice;
@@ -3074,14 +3119,17 @@ int card_rakdos_guildmage(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( instance->info_slot == 66 && valid_target(&td)){
-			pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -2, -2);
+			pump_until_eot(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card, -2, -2);
 		}
 		if( instance->info_slot == 67 ){
 			token_generation_t token;
 			default_token_definition(player, card, CARD_ID_GOBLIN, &token);
+			token.color_forced = get_sleighted_color_test(instance->parent_controller, instance->parent_card, COLOR_TEST_RED);
 			token.pow = 2;
+			token.tou = 1;
 			token.special_infos = 66;
 			token.s_key_plus = SP_KEYWORD_HASTE;
+			token.special_code_on_generation = &check_for_tokens_created_at_eot;
 			generate_token(&token);
 		}
 	}
@@ -3537,6 +3585,11 @@ int card_simic_initiate(int player, int card, event_t event){
 }
 
 int card_sky_hussar(int player, int card, event_t event){
+	/* Sky Hussar	|3|W|U
+	 * Creature - Human Knight 4/3
+	 * Flying
+	 * When ~ enters the battlefield, untap all creatures you control.
+	 * Forecast - Tap two untapped |Swhite and/or |Sblue creatures you control, Reveal ~ from your hand: Draw a card. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -3563,7 +3616,7 @@ int card_sky_hussar(int player, int card, event_t event){
 		if( pick_target(&td, "TARGET_CREATURE") ){
 			instance->number_of_targets = 1;
 			tap_card(instance->targets[0].player, instance->targets[0].card);
-			return 2;
+			return 1;
 		}
 	}
 
@@ -3575,6 +3628,10 @@ int card_sky_hussar(int player, int card, event_t event){
 }
 
 int card_skyscribing(int player, int card, event_t event){
+	/* Skyscribing	|X|U|U
+	 * Sorcery
+	 * Each player draws X cards.
+	 * Forecast - |2|U, Reveal ~ from your hand: Each player draws a card. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -3587,7 +3644,7 @@ int card_skyscribing(int player, int card, event_t event){
 	if( event == EVENT_ACTIVATE_FROM_HAND ){
 		charge_mana_multi(player, MANACOST_XU(2, 1));
 		if( spell_fizzled != 1 ){
-			return 2;
+			return 1;
 		}
 	}
 
@@ -3924,6 +3981,10 @@ int card_twinstrike(int player, int card, event_t event){
 }
 
 int card_unliving_psychopath(int player, int card, event_t event){
+	/* Unliving Psychopath	|2|B|B
+	 * Creature - Zombie Assassin 0/4
+	 * |B: ~ gets +1/-1 until end of turn.
+	 * |B, |T: Destroy target creature with power less than ~'s power. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -3931,18 +3992,23 @@ int card_unliving_psychopath(int player, int card, event_t event){
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.power_requirement = get_power(player, card) | TARGET_PT_LESSER_OR_EQUAL;
+	int pwr = get_power(player, card);
+	if (pwr > 0){
+		td.power_requirement = (pwr - 1) | TARGET_PT_LESSER_OR_EQUAL;
+	} else {
+		td.power_requirement = TARGET_PT_LESSER_OR_EQUAL | TARGET_PT_GREATER_OR_EQUAL | TARGET_PT_MASK;	// always impossible
+	}
 
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_CAN_ACTIVATE ){
-		generic_activated_ability(player, card, event, 0, MANACOST_B(1), 0, NULL, NULL);
+		return generic_activated_ability(player, card, event, 0, MANACOST_B(1), 0, NULL, NULL);
 	}
 
 	if(event == EVENT_ACTIVATE ){
 		int choice = 0;
-		if( generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_B(1), 0, &td, NULL) ){
-			choice = do_dialog(player, player, card, -1, -1, " Pump Unliving Psychopath\n Kill a creature\n Cancel", 1);
+		if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_B(1), 0, &td, "") ){
+			choice = do_dialog(player, player, card, -1, -1, " Pump Unliving Psychopath\n Destroy a creature\n Cancel", 1);
 		}
 		if( choice == 2 ){
 			spell_fizzled = 1;
@@ -3951,18 +4017,18 @@ int card_unliving_psychopath(int player, int card, event_t event){
 		if( charge_mana_for_activated_ability(player, card, MANACOST_B(1)) ){
 			instance->number_of_targets = 0;
 			if( choice == 1 ){
-				new_pick_target(&td, "Select target creature with power lesser or equal than Unliving Psychopath.", 0, 1 | GS_LITERAL_PROMPT);
+				new_pick_target(&td, "Select target creature with power less than Unliving Psychopath's power.", 0, 1 | GS_LITERAL_PROMPT);
+				if (cancel != 1){
+					instance->state |= STATE_TAPPED;	// no, not tap_card(), never tap_card() during something's own EVENT_ACTIVATE
+				}
 			}
-			if( spell_fizzled != 1 ){
-				instance->info_slot = 66+choice;
-				tap_card(player, card);
-			}
+			instance->info_slot = 66+choice;
 		}
 	}
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( instance->info_slot == 66 ){
-			pump_until_eot(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card, 1, -1);
+			pump_until_eot_merge_previous(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card, 1, -1);
 		}
 		if( instance->info_slot == 67 && valid_target(&td) ){
 			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);

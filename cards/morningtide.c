@@ -84,6 +84,7 @@ static int reinforce(int player, int card, event_t event, int amount_counter, in
 			charge_mana_multi(player, colorless, black, blue, green, red, white);
 			if( spell_fizzled != 1 && pick_target(&td, "TARGET_CREATURE") ){
 				discard_card(player, card);
+				return 1;
 			}
 	}
 	else if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && spell_fizzled != 1 ){
@@ -295,54 +296,32 @@ int card_countryside_crusher(int player, int card, event_t event)
 {
   /* Countryside Crusher	|1|R|R
    * Creature - Giant Warrior 3/3
-   * At the beginning of your upkeep, reveal the top card of your library. If it's a land card, put it into your graveyard and repeat this process.
+   * At the beginning of your upkeep, reveal the top card of your library. 
+   * If it's a land card, put it into your graveyard and repeat this process.
    * Whenever a land card is put into your graveyard from anywhere, put a +1/+1 counter on ~. */
 
-  upkeep_trigger_ability(player, card, event, player);
-  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
-	while (deck_ptr[player][0] != -1)
-	  {
-		reveal_card_iid(player, card, deck_ptr[player][0]);
-		if (is_what(-1, deck_ptr[player][0], TYPE_LAND))
-		  mill(player, 1);
-		else
-		  break;
-	  }
-
-  // from library
-  enable_xtrigger_flags |= ENABLE_XTRIGGER_MILLED;
-  if (xtrigger_condition() == XTRIGGER_MILLED && affect_me(player, card) && reason_for_trigger_controller == player
-	  && trigger_cause_controller == player && !is_humiliated(player, card))
-	{
-	  if (event != EVENT_TRIGGER && event != EVENT_RESOLVE_TRIGGER)
-		return 0;
-
-	  int i, num_lands = 0;
-	  for (i = 0; i < num_cards_milled; ++i)
-		if (is_what(-1, cards_milled[i].internal_card_id, TYPE_LAND))
-		  {
-			if (event == EVENT_TRIGGER)
-			  {
-				event_result |= RESOLVE_TRIGGER_MANDATORY;
-				return 0;
-			  }
-			if (event == EVENT_RESOLVE_TRIGGER)
-			  ++num_lands;
-		  }
-	  if (num_lands)
-		add_1_1_counters(player, card, num_lands);
+	upkeep_trigger_ability(player, card, event, player);
+	
+	if ( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
+		while( deck_ptr[player][0] != -1 ){
+				reveal_card_iid(player, card, deck_ptr[player][0]);
+				if( is_what(-1, deck_ptr[player][0], TYPE_LAND) ){
+					mill(player, 1);
+				}
+				else{
+					break;
+				}
+		}
+	}
+	
+	if( in_play(player, card) && ! is_humiliated(player, card) ){
+		int result = whenever_type_is_put_into_graveyard_from_anywhere(player, card, event, player, TYPE_LAND, NULL);
+		if( result ){
+			add_1_1_counters(player, card, result);
+		}
 	}
 
-  enable_xtrigger_flags |= ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY;
-  if (xtrigger_condition() == XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY)
-	{
-	  test_definition_t test;
-	  new_default_test_definition(&test, TYPE_LAND, "");
-	  if (when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test))
-		add_1_1_counter(player, card);
-	}
-
-  return 0;
+	return 0;
 }
 
 int card_cream_of_the_crop(int player, int card, event_t event){
@@ -376,38 +355,43 @@ int card_declaration_of_naught(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_RESOLVE_SPELL ){
+		int csvid = CARD_ID_LIGHTNING_BOLT;
 		if( player != AI ){
-			instance->targets[0].card = card_from_list(player, 3, TYPE_ANY, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+			csvid = card_from_list(player, 3, TYPE_ANY, 0, 0, 0, 0, 0, 0, 0, -1, 0);
 		}
 		else{
 			test_definition_t this_test;
 			default_test_definition(&this_test, TYPE_LAND);
 			this_test.type_flag = 1;
-			instance->targets[0].card = new_global_tutor(player, 1-player, TUTOR_FROM_DECK, TUTOR_GET_ID, 0, AI_MAX_VALUE, &this_test);
-		}
-		create_card_name_legacy(player, card, instance->targets[0].card);
-	}
-
-	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) && has_mana_for_activated_ability(player, card, 0, 0, 1, 0, 0, 0) ){
-		int result = card_spiketail_hatchling(player, card, event);
-		if( result > 0 ){
-			if( get_id(card_on_stack_controller, card_on_stack) == instance->targets[0].card ){
-				return result;
+			int selected = new_select_a_card(player, 1-player, TUTOR_FROM_DECK, 0, AI_MAX_VALUE, -1, &this_test);
+			if( selected != -1 ){
+				csvid = cards_data[deck_ptr[1-player][selected]].id;
+			}
+			else{
+				int c;
+				for(c=0; c<active_cards_count[1-player]; c++){
+					if( in_play(1-player, c) && is_what(1-player, c, TYPE_PERMANENT) && ! is_what(1-player, c, TYPE_LAND) ){
+						csvid = get_id(1-player, c);
+						break;
+					}
+				}
 			}
 		}
+		create_card_name_legacy(player, card, csvid);
+		instance->targets[1].card = get_internal_card_id_from_csv_id(csvid);
 	}
-
-	if(event == EVENT_ACTIVATE  ){
-		charge_mana_for_activated_ability(player, card, 0, 0, 1, 0, 0, 0);
-		if( spell_fizzled != 1 ){
-			instance->targets[1].player = card_on_stack_controller;
-			instance->targets[1].card = card_on_stack;
+	
+	
+	if( IS_GAA_EVENT(event) ){
+		target_definition_t td1;
+		counterspell_target_definition(player, card, &td1, TYPE_ANY);
+		td1.extra = instance->targets[1].card;
+	
+		if( event == EVENT_RESOLVE_ACTIVATION ){
+			real_counter_a_spell(instance->parent_controller, instance->parent_card, instance->targets[0].player, instance->targets[0].card);
 		}
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		set_flags_when_spell_is_countered(player, instance->parent_card, instance->targets[1].player, instance->targets[1].card);
-		kill_card(instance->targets[1].player, instance->targets[1].card, KILL_SACRIFICE);
+		
+		return generic_activated_ability(player, card, event, GAA_SPELL_ON_STACK, MANACOST_U(1), 0, &td1, NULL);
 	}
 
 	return global_enchantment(player, card, event);
@@ -957,32 +941,46 @@ int card_grimoire_thief(int player, int card, event_t event){
 	}
 
 	if (event == EVENT_ACTIVATE){
+		enum{
+			SHOW_CARDS = 1,
+			REAL_ABILITY = 2,
+		};
 		card_instance_t* instance = get_card_instance(player, card);
-		card_instance_t* spell = get_card_instance(card_on_stack_controller, card_on_stack);
-		if (FIND_IN_RFG(instance, spell)){
-			ABILITY();
+		int choice = SHOW_CARDS;
+		int can_counter = 0;
+		if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_SPELL_ON_STACK|GAA_SACRIFICE_ME, MANACOST_U(1), 0, NULL, NULL) ){
+			card_instance_t* spell = get_card_instance(card_on_stack_controller, card_on_stack);
+			if (FIND_IN_RFG(instance, spell)){
+				choice = REAL_ABILITY;
+				can_counter = 1;
+			}
 		}
-		else{
-			if( player == AI ){
-				cancel = 1;
+		if( player != AI && ai_is_speculating != 1 ){
+			choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
+							"Show exiled", 1, 1,
+							"Sacrifice and counter.", can_counter, 2);
+			if( ! choice ){
+				spell_fizzled = 1;
+				return 0;
 			}
-			else{
-				exiledby_choose(player, card, CARD_ID_GRIMOIRE_THIEF, EXBY_CHOOSE | EXBY_MAX_VALUE, 0, "any", 1);
-				cancel = 1;
-			}
+		}
+		if( choice == SHOW_CARDS ){
+			exiledby_choose(player, card, CARD_ID_GRIMOIRE_THIEF, EXBY_CHOOSE, 0, "any", 1);
+			cancel = 1;
+		}
+		if( choice == REAL_ABILITY ){
+			ABILITY();
 		}
 	}
 
-  if (event == EVENT_RESOLVE_ACTIVATION)
-	{
-	  card_instance_t* instance = get_card_instance(player, card);
-	  if (counterspell_validate(player, card, NULL, 0))
-		{
+	if (event == EVENT_RESOLVE_ACTIVATION){
+		card_instance_t* instance = get_card_instance(player, card);
+		if (counterspell_validate(player, card, NULL, 0)){
 			real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
 		}
 	}
 
-  return 0;
+	return 0;
 
 #undef FIND_IN_RFG
 #undef ABILITY
@@ -1309,6 +1307,7 @@ int card_meadowboon(int player, int card, event_t event)
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, 0);
 	  td.zone = TARGET_ZONE_PLAYERS;
+	  td.preferred_controller = player;
 	  td.allow_cancel = 0;
 
 	  card_instance_t* instance = get_card_instance(player, card);
@@ -1415,10 +1414,10 @@ int card_mothdust_changeling(int player, int card, event_t event){
 int card_murmuring_bosk(int player, int card, event_t event){
 
 	if( event == EVENT_ACTIVATE ){
-		int black_mana_before = mana_pool[COLOR_BLACK+8*player];
-		int white_mana_before = mana_pool[COLOR_WHITE+8*player];
+		int black_mana_before = mana_pool[player][COLOR_BLACK];
+		int white_mana_before = mana_pool[player][COLOR_WHITE];
 		mana_producer(player, card, event);
-		if( black_mana_before < mana_pool[COLOR_BLACK+8*player] || white_mana_before < mana_pool[COLOR_WHITE+8*player]){
+		if( black_mana_before < mana_pool[player][COLOR_BLACK] || white_mana_before < mana_pool[player][COLOR_WHITE]){
 			damage_player(player, 1, player, card);
 		}
 	}
@@ -1996,36 +1995,11 @@ int card_rustic_clachan(int player, int card, event_t event){
 
 	lorwyn_need_subtype_land(player, card, event, SUBTYPE_KITHKIN);
 
-	if (!IS_ACTIVATING_FROM_HAND(event)){
-		if (in_play(player, card)){
-			return mana_producer(player, card, event);
-		} else {
-			return 0;
-		}
+	if (IS_ACTIVATING_FROM_HAND(event)){
+		return reinforce(player, card, event, 1, MANACOST_XW(1, 1));
+	} else {
+		return mana_producer(player, card, event);
 	}
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.preferred_controller = player;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_ACTIVATE_FROM_HAND  ){
-		if( has_mana_multi(player, 1, 0, 0, 0, 0, 1) ){
-			return can_target(&td);
-		}
-	}
-	if( event == EVENT_ACTIVATE_FROM_HAND ){
-			charge_mana_multi(player, 1, 0, 0, 0, 0, 1);
-			if( spell_fizzled != 1 && pick_target(&td, "TARGET_CREATURE") ){
-				discard_card(player, card);
-			}
-	}
-	if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && spell_fizzled != 1 ){
-		add_1_1_counters(instance->targets[0].player, instance->targets[0].card, 1);
-	}
-
-	return 0;
 }
 
 int card_sage_of_fables(int player, int card, event_t event){
@@ -2084,6 +2058,9 @@ int card_sage_of_fables(int player, int card, event_t event){
 }
 
 int card_sages_dousing(int player, int card, event_t event){
+	/* Sage's Dousing	|2|U
+	 * Tribal Instant - Wizard
+	 * Counter target spell unless its controller pays |3. If you control a Wizard, draw a card. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -2507,7 +2484,7 @@ int card_thornbite_staff(int player, int card, event_t event){
 	target_definition_t td1;
 	if( event == EVENT_RESOLVE_ACTIVATION
 		? (instance->targets[8].player >= 0 && instance->targets[8].card >= 0)	// equipped creature may have left play, so is_equipping() is too strict
-		: is_equipping(player, card)
+		: !!is_equipping(player, card)
 	  ){
 		default_target_definition(instance->targets[8].player, instance->targets[8].card, &td1, TYPE_CREATURE);
 		td1.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
@@ -2666,11 +2643,19 @@ int card_vendilion_clique(int player, int card, event_t event){
 	return flash(player, card, event);
 }
 
-int card_vengeful_firebrand(int player, int card, event_t event){
-	if( is_sick(player, card) && count_graveyard_by_subtype(player, SUBTYPE_WARRIOR) > 0 ){
-		give_haste(player, card);
-	}
-	return generic_shade(player, card, event, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0);
+int card_vengeful_firebrand(int player, int card, event_t event)
+{
+  /* Vengeful Firebrand	|3|R
+   * Creature - Elemental Warrior 5/2
+   * ~ has haste as long as a Warrior card is in your graveyard.
+   * |R: ~ gets +1/+0 until end of turn. */
+
+  if (event == EVENT_ABILITIES && affect_me(player, card)
+	  && (get_card_instance(player, card)->state & STATE_SUMMON_SICK)
+	  && any_in_graveyard_by_subtype(player, SUBTYPE_WARRIOR))
+	give_haste(player, card);
+
+  return generic_shade_merge_pt(player, card, event, 0, MANACOST_R(1), 1,0);
 }
 
 int card_veterans_armaments(int player, int card, event_t event)

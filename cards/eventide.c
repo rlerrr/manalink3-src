@@ -92,14 +92,21 @@ static int hatchling(int player, int card, event_t event, int c1, int c2){
 
 static int retrace(int player, int card, event_t event, int id){
 
+	/* 702.80. Retrace
+	 *
+	 * 702.80a Retrace appears on some instants and sorceries. It represents a static ability that functions while the
+	 * card with retrace is in a player's graveyard. "Retrace" means "You may cast this card from your graveyard by
+	 * discarding a land card as an additional cost to cast it." Casting a spell using its retrace ability follows the
+	 * rules for paying additional costs in rules 601.2b and 601.2f-h. */
 	if( event == EVENT_GRAVEYARD_ABILITY && has_mana_to_cast_id(player, event, id)){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_LAND);
 		this_test.zone = TARGET_ZONE_HAND;
 
-		if ( check_battlefield_for_special_card(player, card, player, 0, &this_test) ){
-			int iid = get_internal_card_id_from_csv_id(id);
-			return can_legally_play_iid_now(player, iid, event);
+		if( check_battlefield_for_special_card(player, card, player, 0, &this_test) ){
+			if( can_legally_play_iid_now(player, get_card_instance(player, card)->internal_card_id, event) ){
+				return GA_PLAYABLE_FROM_GRAVE;
+			}
 		}
 	}
 
@@ -111,7 +118,7 @@ static int retrace(int player, int card, event_t event, int id){
 			int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MIN_VALUE, -1, &this_test);
 			if( selected != -1 ){
 				discard_card(player, selected);
-				return 1;
+				return GAPAID_REMOVE;
 			}
 			else{
 				spell_fizzled = 1;
@@ -581,7 +588,7 @@ int card_card_call_the_skybreaker(int player, int card, event_t event){
 		default_test_definition(&this_test, TYPE_LAND);
 		this_test.zone = TARGET_ZONE_HAND;
 		if( check_battlefield_for_special_card(player, card, player, 0, &this_test) && can_sorcery_be_played(player, event) ){
-			return 1;
+			return GA_PLAYABLE_FROM_GRAVE;
 		}
 	}
 	if( event == EVENT_PAY_FLASHBACK_COSTS ){
@@ -593,7 +600,7 @@ int card_card_call_the_skybreaker(int player, int card, event_t event){
 			int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MIN_VALUE, -1, &this_test);
 			if( selected != -1 ){
 				discard_card(player, selected);
-				return 1;
+				return GAPAID_REMOVE;
 			}
 			else{
 				spell_fizzled = 1;
@@ -1388,6 +1395,12 @@ int card_endless_horizons(int player, int card, event_t event){
 }
 
 int card_evershrike(int player, int card, event_t event){
+	/* Evershrike	|3|WB|WB
+	 * Creature - Elemental Spirit 2/2
+	 * Flying
+	 * ~ gets +2/+2 for each Aura attached to it.
+	 * |X|WB|WB: Return ~ from your graveyard to the battlefield. You may put an Aura card with converted mana cost X or less from your hand onto the battlefield attached to it. If you don't, exile ~. */
+
 	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card) ){
 		event_result += 2 * count_auras_enchanting_me(player, card);
 	}
@@ -1677,6 +1690,10 @@ int card_fire_at_will(int player, int card, event_t event){
 }
 
 int card_flame_jab(int player, int card, event_t event){
+	/* Flame Jab	|R
+	 * Sorcery
+	 * ~ deals 1 damage to target creature or player.
+	 * Retrace */
 
 	if( event == EVENT_GRAVEYARD_ABILITY || event == EVENT_PAY_FLASHBACK_COSTS ){
 		return retrace(player, card, event, CARD_ID_FLAME_JAB);
@@ -1850,8 +1867,15 @@ int card_hag_hedge_mage(int player, int card, event_t event){
 }
 
 int card_hallowed_burial(int player, int card, event_t event){
+	/* Hallowed Burial	|3|W|W
+	 * Sorcery
+	 * Put all creatures on the bottom of their owners' libraries. */
 
-	if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	if (!IS_GS_EVENT(player, card, event)){
+		return 0;
+	}
+
+	if(event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
 		new_manipulate_all(player, card, 2, &this_test, ACT_PUT_ON_BOTTOM);
@@ -1863,26 +1887,25 @@ int card_hallowed_burial(int player, int card, event_t event){
 
 int card_hateflayer(int player, int card, event_t event){
 
-	if (!IS_GAA_EVENT(event) ){
-		return 0;
-	}
-
-	target_definition_t td1;
-	default_target_definition(player, card, &td1, TYPE_CREATURE);
-	td1.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
 	wither(player, card, event);
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( valid_target(&td1) ){
-			damage_target0(player, card, get_power(instance->parent_controller, instance->parent_card));
-		}
-	}
+	if( event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE || event == EVENT_RESOLVE_ACTIVATION ){
+		target_definition_t td1;
+		default_target_definition(player, card, &td1, TYPE_CREATURE);
+		td1.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
-	return generic_activated_ability(player, card, event, GAA_TAPPED|GAA_CAN_TARGET, 2, 0, 0, 0, 1, 0, 0,
-													&td1, "TARGET_CREATURE_OR_PLAYER");
+		card_instance_t *instance = get_card_instance(player, card);
+
+		if( event == EVENT_RESOLVE_ACTIVATION ){
+			if( valid_target(&td1) ){
+				damage_target0(player, card, get_power(instance->parent_controller, instance->parent_card));
+			}
+		}
+
+		return generic_activated_ability(player, card, event, GAA_TAPPED|GAA_CAN_TARGET, MANACOST_XR(2, 1), 0,
+										&td1, "TARGET_CREATURE_OR_PLAYER");
+	}
+	return 0;
 }
 
 int card_heartfire_goblin(int player, int card, event_t event){
@@ -2491,6 +2514,10 @@ int card_nucklavee(int player, int card, event_t event){
 }
 
 int card_oonas_grace(int player, int card, event_t event){
+	/* Oona's Grace	|2|U
+	 * Instant
+	 * Target player draws a card.
+	 * Retrace */
 
 	if( event == EVENT_GRAVEYARD_ABILITY || event == EVENT_PAY_FLASHBACK_COSTS ){
 		return retrace(player, card, event, CARD_ID_OONAS_GRACE);
@@ -2630,7 +2657,7 @@ int card_quillspike(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance( player, card );
 
 	if( event == EVENT_CAN_ACTIVATE ){
-		if( generic_activated_ability(player, card, event, GS_CAN_TARGET, MANACOST0, 0, &td, NULL) ){
+		if( generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST0, 0, &td, NULL) ){
 			int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST_G(1));
 			return has_mana_hybrid(player, 1, COLOR_BLACK, COLOR_GREEN, c1);
 		}
@@ -2653,6 +2680,10 @@ int card_quillspike(int player, int card, event_t event){
 }
 
 int card_ravens_crime(int player, int card, event_t event){
+	/* Raven's Crime	|B
+	 * Sorcery
+	 * Target player discards a card.
+	 * Retrace */
 
 	if( event == EVENT_GRAVEYARD_ABILITY || event == EVENT_PAY_FLASHBACK_COSTS ){
 		return retrace(player, card, event, CARD_ID_RAVENS_CRIME);
@@ -3224,6 +3255,10 @@ int card_spitemare(int player, int card, event_t event){
 }
 
 int card_spitting_image(int player, int card, event_t event){
+	/* Spitting Image	|4|GU|GU
+	 * Sorcery
+	 * Put a token that's a copy of target creature onto the battlefield.
+	 * Retrace */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -3239,7 +3274,7 @@ int card_spitting_image(int player, int card, event_t event){
 		if( has_mana_hybrid(player, 2, COLOR_BLUE, COLOR_GREEN, cless) && check_battlefield_for_special_card(player, card, player, 0, &this_test) &&
 			can_sorcery_be_played(player, event)
 		  ){
-			return can_target(&td);
+			return can_target(&td) ? GA_PLAYABLE_FROM_GRAVE : 0;
 		}
 	}
 
@@ -3247,13 +3282,12 @@ int card_spitting_image(int player, int card, event_t event){
 		int cless = get_updated_casting_cost(player, card, -1, event, -1);
 		charge_mana_hybrid(player, card, 2, COLOR_BLUE, COLOR_GREEN, cless);
 		if( spell_fizzled != 1 ){
-			char msg[100] = "Select a land card to discard.";
 			test_definition_t this_test;
-			new_default_test_definition(&this_test, TYPE_LAND, msg);
+			new_default_test_definition(&this_test, TYPE_LAND, "Select a land card to discard.");
 			int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MIN_VALUE, -1, &this_test);
 			if( selected != -1 ){
 				discard_card(player, selected);
-				return 1;
+				return GAPAID_REMOVE;
 			}
 			else{
 				spell_fizzled = 1;
@@ -3558,6 +3592,10 @@ int card_suture_spirit(int player, int card, event_t event){
 }
 
 int card_syphon_life(int player, int card, event_t event){
+	/* Syphon Life	|1|B|B
+	 * Sorcery
+	 * Target player loses 2 life and you gain 2 life.
+	 * Retrace */
 
 	if( event == EVENT_GRAVEYARD_ABILITY || event == EVENT_PAY_FLASHBACK_COSTS ){
 		return retrace(player, card, event, CARD_ID_SYPHON_LIFE);
@@ -3781,15 +3819,8 @@ int card_unwilling_recruit(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
-			if( player != instance->targets[0].player ){
-				int result = effect_act_of_treason( player, card, instance->targets[0].player, instance->targets[0].card);
-				card_instance_t *leg = get_card_instance(player, result);
-				leg->targets[2].player = instance->info_slot;
-			}
-			else{
-				untap_card(instance->targets[0].player, instance->targets[0].card);
-				pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, instance->info_slot, 0, 0, SP_KEYWORD_HASTE);
-			}
+			effect_act_of_treason_and_modify_pt_or_abilities(player, card, instance->targets[0].player, instance->targets[0].card,
+															instance->info_slot, 0, 0, 0);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -3922,7 +3953,7 @@ int card_worm_harvest(int player, int card, event_t event){
 		this_test.zone = TARGET_ZONE_HAND;
 		int cless = get_updated_casting_cost(player, card, -1, event, -1);
 		if( has_mana_hybrid(player, 3, COLOR_BLACK, COLOR_GREEN, cless) && can_sorcery_be_played(player, event) ){
-			return check_battlefield_for_special_card(player, card, player, 0, &this_test);
+			return check_battlefield_for_special_card(player, card, player, 0, &this_test) ? GA_PLAYABLE_FROM_GRAVE : 0;
 		}
 	}
 
@@ -3930,13 +3961,12 @@ int card_worm_harvest(int player, int card, event_t event){
 		int cless = get_updated_casting_cost(player, card, -1, event, -1);
 		charge_mana_hybrid(player, card, 3, COLOR_BLACK, COLOR_GREEN, cless);
 		if( spell_fizzled != 1 ){
-			char msg[100] = "Select a land card to discard.";
 			test_definition_t this_test;
-			new_default_test_definition(&this_test, TYPE_LAND, msg);
+			new_default_test_definition(&this_test, TYPE_LAND, "Select a land card to discard.");
 			int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MIN_VALUE, -1, &this_test);
 			if( selected != -1 ){
 				discard_card(player, selected);
-				return 1;
+				return GAPAID_REMOVE;
 			}
 			else{
 				spell_fizzled = 1;
@@ -3965,6 +3995,10 @@ int card_worm_harvest(int player, int card, event_t event){
 
 
 int card_waves_of_aggression(int player, int card, event_t event){
+	/* Waves of Aggression	|3|RW|RW
+	 * Sorcery
+	 * Untap all creatures that attacked this turn. After this main phase, there is an additional combat phase followed by an additional main phase.
+	 * Retrace */
 
 	if( event == EVENT_GRAVEYARD_ABILITY ){
 		test_definition_t this_test;
@@ -3972,7 +4006,7 @@ int card_waves_of_aggression(int player, int card, event_t event){
 		this_test.zone = TARGET_ZONE_HAND;
 		int cless = get_updated_casting_cost(player, card, -1, event, 3);
 		if( has_mana_hybrid(player, 2, COLOR_RED, COLOR_WHITE, cless) && can_sorcery_be_played(player, event) ){
-			return check_battlefield_for_special_card(player, card, player, 0, &this_test);
+			return check_battlefield_for_special_card(player, card, player, 0, &this_test) ? GA_PLAYABLE_FROM_GRAVE : 0;
 		}
 	}
 
@@ -3986,7 +4020,7 @@ int card_waves_of_aggression(int player, int card, event_t event){
 			int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MIN_VALUE, -1, &this_test);
 			if( selected != -1 ){
 				discard_card(player, selected);
-				return 1;
+				return GAPAID_REMOVE;
 			}
 			else{
 				spell_fizzled = 1;

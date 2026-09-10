@@ -1774,7 +1774,7 @@ int autoselect_target( int player, int card, int i, int j, int k, int who_choose
 	if( choose_default_target(player, card, &td) ){
 		//card_instance_t *instance = get_card_instance(player, card);
 		//gain_life(HUMAN, instance->targets[0].player+1);
-		//poison_counters[HUMAN]= 2 + instance->targets[0].card;
+		//raw_set_poison(HUMAN, 2 + instance->targets[0].card);
 		return 1;
 	}
 	else{

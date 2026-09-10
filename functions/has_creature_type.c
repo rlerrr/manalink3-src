@@ -365,7 +365,7 @@ static int force_a_subtype_until_eot_legacy(int player, int card, event_t event)
 }
 
 int force_a_subtype_until_eot(int player, int card, int t_player, int t_card, subtype_t subtype){
-	add_force_subtype_impl(player, card, subtype, FORCE_SUBTYPE);
+	add_force_subtype_impl(t_player, t_card, subtype, FORCE_SUBTYPE);
 	int legacy = create_targetted_legacy_effect(player, card, &force_a_subtype_until_eot_legacy, t_player, t_card);
 	return legacy;
 }
@@ -482,7 +482,7 @@ int has_subtype(int player, int card, subtype_t subtype){
 
 		if( is_in_play && id == CARD_ID_WARDEN_OF_THE_FIRST_TREE ){
 			if( instance->targets[9].player > 0 ){
-				if( subtype == SUBTYPE_WARRIOR && (instance->targets[9].player & 1) ){
+				if( subtype == SUBTYPE_WARRIOR && ((instance->targets[9].player & 1) || (instance->targets[9].player & 2)) ){
 					return 1;
 				}
 				if( subtype == SUBTYPE_SPIRIT && (instance->targets[9].player & 2) ){
@@ -533,7 +533,7 @@ int has_subtype(int player, int card, subtype_t subtype){
 
 	static int depth = 0;	// A bandaid for braindead coding that calls this for every invocation of a card's function.
 	int rval = 0;
-	if (++depth < 10){
+	if (++depth < 10 && instance->internal_card_id >= 0){
 		int old_event_result = event_result;
 		event_result = subtype;
 		call_card_function_i(instance, player, card, EVENT_SUBTYPE);

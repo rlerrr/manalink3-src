@@ -464,7 +464,7 @@ static int dream_halls_effect(int player, int card, event_t event){
 		return result;
 	}
 
-	if(event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if(event == EVENT_ACTIVATE ){
 		test_definition_t test;
 		new_default_test_definition(&test, TYPE_ANY, "Select a card to play with Dream Halls.");
 
@@ -539,6 +539,9 @@ static int dream_halls_legacy(int player, int card, event_t event){
 }
 
 int card_dream_halls(int player, int card, event_t event){
+	/* Dream Halls	|3|U|U
+	 * Enchantment
+	 * Rather than pay the mana cost for a spell, its controller may discard a card that shares a color with that spell. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int fake = add_card_to_hand(1-player, get_original_internal_card_id(player, card));
@@ -1028,13 +1031,7 @@ int card_mask_of_the_mimic(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
-			card_ptr_t* c = cards_ptr[ get_id(instance->targets[0].player, instance->targets[0].card)  ];
-			char msg[100];
-			scnprintf(msg, 100, "Select a card named %s", c->name);
-			test_definition_t this_test2;
-			new_default_test_definition(&this_test2, TYPE_CREATURE, msg);
-			this_test2.id = get_id(instance->targets[0].player, instance->targets[0].card);
-			new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_FIRST_FOUND, &this_test2);
+			tutor_card_with_the_same_name(instance->targets[0].player, instance->targets[0].card, player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -1363,65 +1360,68 @@ int card_mox_diamond(int player, int card, event_t event)
 	return artifact_mana_all_one_color(player, card, event, 1, 0);
 }
 
-static int kor_effect(int player, int card, event_t event){
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	int t_player = instance->targets[0].player;
-	int t_card = instance->targets[0].card;
-
-	if( event == EVENT_PREVENT_DAMAGE ){
-		card_instance_t *source = get_card_instance(affected_card_controller, affected_card);
-		if( source->damage_target_player != t_player || source->damage_target_card != t_card ){
-			return 0;
-		}
-
-		if( damage_card != source->internal_card_id ){
-			return 0;
-		}
-
-		if( source->info_slot <= 0 ){
-			return 0;
-		}
-
-		else{
-			 damage_creature(instance->targets[1].player, instance->targets[1].card, 1,
-							 source->damage_source_player, source->damage_source_card);
-			 source->info_slot--;
-			 kill_card(player, card, KILL_REMOVE);
+static int en_kor_card = -1;
+static const char* is_damaging_me(int who_chooses, int player, int card){
+	card_instance_t* dmg = get_card_instance(player, card);
+	if ( dmg->internal_card_id == damage_card && dmg->info_slot > 0 ){
+		if( dmg->damage_target_player == who_chooses && dmg->damage_target_card == en_kor_card ){
+			return NULL;
 		}
 	}
 
-	if( eot_trigger(player, card, event) ){
-		kill_card(player, card, KILL_REMOVE);
-	}
-
-	return 0;
-
+	return "must be damage to this card.";
 }
 
-int card_nomads_en_kor(int player, int card, event_t event){
+int en_kor_damage_prevention_ability(int player, int card, event_t event){
+	// Also code for: Lancers en-Kor, Spirit en-Kor, Warrior en-Kor
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
 
 	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.allowed_controller = player;
-	td.preferred_controller = player;
+	default_target_definition(player, card, &td, TYPE_EFFECT);
+	td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+	td.extra = (int32_t)is_damaging_me;
+
+
+	target_definition_t td2;
+	default_target_definition(player, card, &td2, TYPE_CREATURE);
+	td2.allowed_controller = player;
+	td2.preferred_controller = player;
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		int legacy = create_targetted_legacy_effect(player, card, &kor_effect, player, instance->parent_card);
-		card_instance_t *leg = get_card_instance(player, legacy);
-		leg->targets[1].player = instance->targets[0].player;
-		leg->targets[1].card = instance->targets[0].card;
-		leg->number_of_targets = 2;
+	if( event == EVENT_CAN_ACTIVATE ){
+		en_kor_card = card;
+		int result = generic_activated_ability(player, card, event, GAA_DAMAGE_PREVENTION | GAA_CAN_TARGET, MANACOST0, 0, &td, NULL);
+		if( result && can_target(&td2) ){
+			return result;
+		}
 	}
 
-	return generic_activated_ability(player, card, event, GAA_NOT_ME_AS_TARGET | GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_CREATURE");
+	if( event == EVENT_ACTIVATE ){
+		en_kor_card = card;
+		instance->number_of_targets = 0;
+		if( new_pick_target(&td, "Select a damage dealt to this card.", 0, 1 | GS_LITERAL_PROMPT) ){
+			new_pick_target(&td2, "Select target creature you control.", 1, 1 | GS_LITERAL_PROMPT);
+		}
+	}
+
+	if( event == EVENT_RESOLVE_ACTIVATION ){
+		en_kor_card = instance->parent_card;
+		if( validate_target(player, card, &td, 0) && validate_target(player, card, &td2, 1) ){
+			card_instance_t *dmg = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+			dmg->info_slot--;
+			damage_creature(instance->targets[1].player, instance->targets[1].card, 1, dmg->damage_source_player, dmg->damage_source_card);
+		}
+	}
+
+	return 0;
+}
+
+int card_nomads_en_kor(int player, int card, event_t event){
+	return en_kor_damage_prevention_ability(player, card, event);
 }
 
 int card_overgrowth(int player, int card, event_t event){
@@ -1775,58 +1775,85 @@ int card_seething_anger(int player, int card, event_t event){
 }
 
 int card_shaman_en_kor(int player, int card, event_t event){
-
+	/*
+	  Shaman en-Kor |1|W
+	  Creature — Kor Cleric Shaman 1/2
+	  {0}: The next 1 damage that would be dealt to Shaman en-Kor this turn is dealt to target creature you control instead.
+	  {1}{W}: The next time a source of your choice would deal damage to target creature this turn, that damage is dealt to Shaman en-Kor instead.
+	*/
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
 
 	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.allowed_controller = player;
-	td.preferred_controller = player;
+	default_target_definition(player, card, &td, TYPE_EFFECT);
+	td.extra = damage_card;
+	td.preferred_controller = 1-player;
+	td.special = TARGET_SPECIAL_DAMAGE_CREATURE;
+
+	enum
+	{
+		CHOICE_PASS_DAMAGE = 1,
+		CHOICE_TAKE_DAMAGE,
+		CHOICE_CANCEL
+	};
 
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_CAN_ACTIVATE ){
-		return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_NOT_ME_AS_TARGET, MANACOST0, 0, &td, NULL);
+		int result = generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION, MANACOST_XW(1, 1), 0, &td, NULL);
+		if( result ){
+			return result;
+		}
+		return en_kor_damage_prevention_ability(player, card, event);
 	}
 
 	if( event == EVENT_ACTIVATE ){
-		int choice = 0;
-		if( has_mana_for_activated_ability(player, card, MANACOST_XW(1, 1)) ){
-			choice = do_dialog(player, player, card, -1, -1, " Pass damage\n Take damage\n Do nothing", 1);
+		instance->info_slot = instance->number_of_targets = 0;
+		int can_take_damage = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION, MANACOST_XW(1, 1), 0, &td, NULL);
+		int can_pass_damage = en_kor_damage_prevention_ability(player, card, EVENT_CAN_ACTIVATE);
+		int choice = CHOICE_PASS_DAMAGE;
+		if( can_pass_damage ){
+			if( can_take_damage ){
+				choice = DIALOG(player, card, event, DLG_RANDOM,
+								"Pass damage", can_pass_damage, 10,
+								"Take damage", can_take_damage, 5);
+			}
+		}
+		else{
+			choice = CHOICE_TAKE_DAMAGE;
+		}
+		if( ! choice ){
+			spell_fizzled = 1;
+			return 0;
 		}
 		if( choice == 2 ){
 			spell_fizzled = 1;
 		}
-		else{
-			if( charge_mana_for_activated_ability(player, card, 1*choice, 0, 0, 0, 0, 1*choice) ){
-				state_untargettable(player, card, 1);
-				if( pick_target(&td, "TARGET_CREATURE") ){
-					instance->number_of_targets = 1;
-					instance->info_slot = 66+choice;
-				}
-				state_untargettable(player, card, 0);
+		if( choice == CHOICE_PASS_DAMAGE ){
+			en_kor_damage_prevention_ability(player, card, event);
+			if( spell_fizzled != 1 ){
+				instance->info_slot = CHOICE_PASS_DAMAGE;
+			}
+		}
+		if( choice == CHOICE_TAKE_DAMAGE ){
+			if( new_pick_target(&td, "Select target damage dealt to a creature.", 0, 1 | GS_LITERAL_PROMPT) ){
+				instance->info_slot = CHOICE_TAKE_DAMAGE;
 			}
 		}
 	}
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
-		int legacy = create_targetted_legacy_effect(player, card, &kor_effect, player, instance->parent_card);
-		card_instance_t *leg = get_card_instance(player, legacy);
-		if( instance->info_slot == 66 ){
-			leg->targets[0].player = player;
-			leg->targets[0].card = instance->parent_card;
-			leg->targets[1].player = instance->targets[0].player;
-			leg->targets[1].card = instance->targets[0].card;
-			leg->number_of_targets = 2;
+		if( instance->info_slot == CHOICE_PASS_DAMAGE  ){
+			return en_kor_damage_prevention_ability(player, card, event);
 		}
-		else if( instance->info_slot == 67 ){
-				leg->targets[1].player = player;
-				leg->targets[1].card = instance->parent_card;
-				leg->targets[0].player = instance->targets[0].player;
-				leg->targets[0].card = instance->targets[0].card;
-				leg->number_of_targets = 2;
+
+		if( instance->info_slot == CHOICE_TAKE_DAMAGE ){
+			if( valid_target(&td) ){
+				card_instance_t *dmg = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+				dmg->damage_target_player = instance->parent_controller;
+				dmg->damage_target_card = instance->parent_card;
+			}
 		}
 	}
 
@@ -1834,8 +1861,12 @@ int card_shaman_en_kor(int player, int card, event_t event){
 }
 
 int card_shard_phoenix(int player, int card, event_t event){
+	/* Shard Phoenix	|4|R
+	 * Creature - Phoenix 2/2
+	 * Flying
+	 * Sacrifice ~: ~ deals 2 damage to each creature without flying.
+	 * |R|R|R: Return ~ from your graveyard to your hand. Activate this ability only during your upkeep. */
 
-	// |R|R|R: Return ~ from your graveyard to your hand. Activate this ability only during your upkeep.
 	if( event == EVENT_GRAVEYARD_ABILITY  && has_mana(player, COLOR_RED, 3) && current_phase == PHASE_UPKEEP && current_turn == player ){
 		return GA_RETURN_TO_HAND;
 	}
@@ -1846,7 +1877,6 @@ int card_shard_phoenix(int player, int card, event_t event){
 		}
 	}
 
-	// Sacrifice ~: ~ deals 2 damage to each creature without flying.
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		test_definition_t test;
 		new_default_test_definition(&test, TYPE_CREATURE, "");
@@ -1930,7 +1960,13 @@ int card_skyshroud_archer(int player, int card, event_t event){
 }
 
 int card_sliver_queen(int player, int card, event_t event ){
-	// original code :  004DE208
+	// asm implementation: 0x4DE208
+
+	/* Sliver Queen	|W|U|B|R|G
+	 * Legendary Creature - Sliver 7/7
+	 * |2: Put a 1/1 colorless Sliver creature token onto the battlefield. */
+
+	check_legend_rule(player, card, event);
 
 	if( IS_GAA_EVENT(event) ){
 		if( event == EVENT_RESOLVE_ACTIVATION ){
@@ -1964,6 +2000,11 @@ int card_soltari_champion(int player, int card, event_t event)
 // spike token --> rhino token.
 
 int card_spike_breeder(int player, int card, event_t event){
+	/* Spike Breeder	|3|G
+	 * Creature - Spike 0/0
+	 * ~ enters the battlefield with three +1/+1 counters on it.
+	 * |2, Remove a +1/+1 counter from ~: Put a +1/+1 counter on target creature.
+	 * |2, Remove a +1/+1 counter from ~: Put a 1/1 |Sgreen Spike creature token onto the battlefield. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -1989,7 +2030,7 @@ int card_spike_breeder(int player, int card, event_t event){
 				if( current_phase == PHASE_AFTER_BLOCKING ){
 					ai_choice = 0;
 				}
-				choice = do_dialog(player, player, card, -1, -1, " Move a counter\n Gain 2 life\n Cancel", ai_choice);
+				choice = do_dialog(player, player, card, -1, -1, " Add +1/+1 counter\n Spike token\n Cancel", ai_choice);
 			}
 		}
 		else{
@@ -2459,75 +2500,44 @@ int card_volraths_laboratory(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(2), 0, NULL, NULL);
 }
 
-static int vs_legacy_shapeshift(int player, int card, event_t event){
-
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if( instance->damage_target_player > -1 ){
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-
-		const int *grave = get_grave(p);
-
-		if( event == EVENT_CHANGE_TYPE && affect_me(p, c) ){
-			if( grave[0] != -1 && (cards_data[grave[count_graveyard(p)-1]].type & TYPE_CREATURE) ){
-				event_result = grave[count_graveyard(p)-1];
-			}
-		}
-
-	}
-	return 0;
-}
-
 static int vs_legacy_ability(int player, int card, event_t event){
 
-	card_instance_t *instance = get_card_instance( player, card );
+	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
+		card_instance_t *instance = get_card_instance(player, card);
+		if( instance->damage_target_player > -1 ){
+			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_VOLRATHS_SHAPESHIFTER ){
+				remove_status(player, card, STATUS_INVISIBLE_FX);
+			}
+		}
+	}
 
-	if( instance->damage_target_player > -1 ){
+	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
+		return 0;
+	}
+
+	if( get_card_instance( player, card )->damage_target_player > -1 ){
+
+		card_instance_t *instance = get_card_instance( player, card );
+
 		int p = instance->damage_target_player;
 		int c = instance->damage_target_card;
 
-		if( get_id(p, c) == CARD_ID_VOLRATHS_SHAPESHIFTER ){
-			add_status(player, card, STATUS_INVISIBLE_FX);
-		}
-		else{
-			remove_status(player, card, STATUS_INVISIBLE_FX);
-		}
-
-		if( effect_follows_control_of_attachment(player, card, event) ){
-			return 0;
-		}
-
-		if( ! IS_GAA_EVENT(event) ){
+		if( ! IS_GAA_EVENT(event) || is_humiliated(p, c) ){
 			return 0;
 		}
 
 		test_definition_t test;
-		default_test_definition(&test, TYPE_CREATURE);
-		if( event == EVENT_CAN_ACTIVATE ){
-			int result = granted_generic_activated_ability(player, card, p, c, event, GAA_DISCARD, MANACOST_X(2), 0, NULL, NULL);
-			if( player == AI ){
-				return (result && check_battlefield_for_special_card(player, card, p, 0, &test));
-			}
-			return result;
-		}
-
-		if( event == EVENT_ACTIVATE ){
-			charge_mana_for_activated_ability(p, c, MANACOST_X(2));
-		}
+		new_default_test_definition(&test, TYPE_CREATURE, "Select a creature card to discard.");
 
 		if( event == EVENT_RESOLVE_ACTIVATION ){
-			if( player == HUMAN ){
-				discard(p, 0, player);
-			}
-			else{
+			if( hand_count[p] ){
 				int selected = new_select_a_card(p, p, TUTOR_FROM_HAND, 1, AI_MAX_CMC, -1, &test);
 				if( selected != -1 ){
 					discard_card(p, selected);
 				}
 			}
 		}
-		return 0;
+		return granted_generic_activated_ability(player, card, p, c, event, 0, MANACOST_X(2), 0, NULL, NULL);
 	}
 	return 0;
 }
@@ -2539,13 +2549,31 @@ int card_volraths_shapeshifter(int player, int card, event_t event){
 	 * As long as the top card of your graveyard is a creature card, ~ has the full text of that card and has the text "|2: Discard a card."
 	 * |2: Discard a card. */
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		int l1 = create_targetted_legacy_effect(player, card, &vs_legacy_shapeshift, player, card);
-		add_status(player, l1, STATUS_INVISIBLE_FX);
-		int l2 = create_targetted_legacy_activate(player, card, &vs_legacy_ability, player, card);
-		card_instance_t *instance = get_card_instance( player, l2 );
-		instance->targets[0].player = player;
-		instance->targets[0].card = card;
+	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
+		int found = 0;
+		int c;
+		for(c=0; c<active_cards_count[player]; c++){
+			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
+				card_instance_t *inst = get_card_instance(player, c);
+				if( inst->damage_target_player == player && inst->damage_target_card == card &&
+					inst->info_slot == (int)vs_legacy_ability )
+				{
+					found = 1;
+					break;
+				}
+			}
+		}
+		if( ! found ){
+			int legacy = create_targetted_legacy_effect(player, card, &vs_legacy_ability, player, card);
+			add_status(player, legacy, STATUS_INVISIBLE_FX);
+		}
+	}
+
+	if( event == EVENT_CHANGE_TYPE && affect_me(player, card) && ! is_humiliated(player, card) ){
+		const int *grave = get_grave(player);
+		if( grave[0] != -1 && (cards_data[grave[count_graveyard(player)-1]].type & TYPE_CREATURE) ){
+			event_result = grave[count_graveyard(player)-1];
+		}
 	}
 
 	if( ! IS_GAA_EVENT(event) ){
@@ -2553,32 +2581,17 @@ int card_volraths_shapeshifter(int player, int card, event_t event){
 	}
 
 	test_definition_t test;
-	default_test_definition(&test, TYPE_CREATURE);
-	if( event == EVENT_CAN_ACTIVATE ){
-		int result = generic_activated_ability(player, card, event, GAA_DISCARD, MANACOST_X(2), 0, NULL, NULL);
-		if( player == AI ){
-			return (result && check_battlefield_for_special_card(player, card, player, 0, &test));
-		}
-		return result;
-	}
-
-	if( event == EVENT_ACTIVATE ){
-		charge_mana_for_activated_ability(player, card, MANACOST_X(2));
-	}
+	new_default_test_definition(&test, TYPE_CREATURE, "Select a creature card to discard.");
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( player == HUMAN ){
-			discard(player, 0, player);
-		}
-		else{
+		if( hand_count[player] ){
 			int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 1, AI_MAX_CMC, -1, &test);
 			if( selected != -1 ){
 				discard_card(player, selected);
 			}
 		}
 	}
-
-	return 0;
+	return generic_activated_ability(player, card, event, 0, MANACOST_X(2), 0, NULL, NULL);
 }
 
 int card_volrath_stronghold(int player, int card, event_t event){

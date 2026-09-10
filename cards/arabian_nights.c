@@ -357,6 +357,7 @@ int card_cuombajj_witches(int player, int card, event_t event){
 	td1.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 	td1.who_chooses = 1-player;
 	td1.preferred_controller = player;
+	td1.allow_cancel = 0;
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -502,7 +503,7 @@ int card_desert_nomads(int player, int card, event_t event){
 	if( event == EVENT_PREVENT_DAMAGE ){
 		card_instance_t *affected = get_card_instance(affected_card_controller, affected_card);
 		if( affected->internal_card_id == damage_card ){
-			if( affected->damage_target_player == player &&  affected->damage_target_card == card && affected->display_pic_int_id == CARD_ID_DESERT ){
+			if( affected->damage_target_player == player &&  affected->damage_target_card == card && affected->display_pic_csv_id == CARD_ID_DESERT ){
 				affected->info_slot = 0;
 			}
 		}
@@ -944,7 +945,24 @@ int card_flying_carpet(int player, int card, event_t event){
 
 // flying men --> vanilla
 
-// Ghazban Ogre --> hardcoded, for now
+int card_ghazban_ogre(int player, int card, event_t event){
+/*
+Ghazbán Ogre English |G
+Creature — Ogre 2/2
+At the beginning of your upkeep, if a player has more life than each other player, the player with the most life gains control of
+Ghazbán Ogre.
+*/
+	if( current_turn == player && upkeep_trigger_mode(player, card, event, (life[player] != life[1-player] ? RESOLVE_TRIGGER_MANDATORY : 0)) ){
+		if( life[player] > life[1-player] ){
+			gain_control_permanently(player, player, card);
+		}
+		if( life[player] < life[1-player] ){
+			gain_control_permanently(1-player, player, card);
+		}
+	}
+
+	return 0;
+}
 
 int card_giant_tortoise(int player, int card, event_t event){
 	if( ! is_humiliated(player, card) ){
@@ -1475,9 +1493,11 @@ int card_magnetic_mountain(int player, int card, event_t event){
 		while( count > -1 ){
 				if( in_play(current_turn, count) && new_make_test_in_play(current_turn, count, -1, &this_test) ){
 					int leave_tapped = 1;
-					if( has_mana(player, COLOR_COLORLESS, 4) ){
+					if( !has_mana(current_turn, COLOR_COLORLESS, 4) ){
+						break;
+					} else {
 						int choice = 0;
-						if( player == AI ){
+						if( current_turn == AI ){
 							if( ai_best_choice == -1 ){
 								ai_best_choice = check_battlefield_for_special_card(player, card, current_turn, CBFSC_AI_MAX_VALUE, &this_test);
 							}
@@ -1485,11 +1505,11 @@ int card_magnetic_mountain(int player, int card, event_t event){
 								choice = 1;
 							}
 						}
-						if( player == HUMAN ){
+						if( current_turn == HUMAN ){
 							choice = do_dialog(current_turn, current_turn, count, -1, -1, " Untap this\n Leave tapped", 0);
 						}
 						if( choice == 0 ){
-							charge_mana(player, COLOR_COLORLESS, 4);
+							charge_mana(current_turn, COLOR_COLORLESS, 4);
 							if( spell_fizzled != 1 ){
 								leave_tapped = 0;
 							}
@@ -1541,13 +1561,13 @@ int nafs_asp_legacy(int player, int card, event_t event){
 	if( current_turn == get_card_instance(player, card)->targets[0].player && event == EVENT_DRAW_PHASE ){
 		int dmg = 1;
 		if( has_mana(current_turn, COLOR_COLORLESS, 1) ){
-			charge_mana(current_turn, COLOR_COLORLESS, 1);
+			charge_mana_while_resolving(player, card, EVENT_DRAW_PHASE, current_turn, COLOR_COLORLESS, 1);
 			if( spell_fizzled != 1 ){
 				dmg = 0;
 			}
 		}
 		if( dmg ){
-			damage_player(player, dmg, player, card);
+			damage_player(get_card_instance(player, card)->targets[0].player, dmg, player, card);
 		}
 		kill_card(player, card, KILL_REMOVE);
 	}

@@ -946,7 +946,7 @@ int card_corrosive_mentor(int player, int card, event_t event)
 	  && !is_humiliated(player, card)
 	  && is_what(affected_card_controller, affected_card, TYPE_CREATURE)
 	  && (get_color(affected_card_controller, affected_card) & get_sleighted_color_test(player, card, COLOR_TEST_BLACK)))
-	wither(player, card, event);
+	wither(affected_card_controller, affected_card, event);
 
   return 0;
 }
@@ -1030,6 +1030,10 @@ int card_crowd_of_cinders(int player, int card, event_t event){
 }
 
 int card_cursecatcher(int player, int card, event_t event){
+	/* Cursecatcher	|U
+	 * Creature - Merfolk Wizard 1/1
+	 * Sacrifice ~: Counter target instant or sorcery spell unless its controller pays |1. */
+
 	target_definition_t td;
 	counterspell_target_definition(player, card, &td, TYPE_SPELL);
 
@@ -1103,7 +1107,9 @@ int card_deep_slumber_titan(int player, int card, event_t event){
 int card_demigod_of_revenge(int player, int card, event_t event){
 	modify_cost_for_hybrid_spells(player, card, event, 0);
 	haste(player, card, event);
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) && ! check_special_flags(player, card, SF_NOT_CAST) &&
+		! is_token(player, card)
+	  ){
 		if( hybrid_casting(player, card, 0) ){
 			const int *graveyard = get_grave(player);
 			int count = count_graveyard(player)-1;
@@ -1531,7 +1537,7 @@ int card_enchanted_evening(int player, int card, event_t event)
 
 	hybrid(player, card, event);
 
-	if( in_play(affected_card_controller, affected_card) && event == EVENT_CHANGE_TYPE &&
+	if( in_play(player, card) && in_play(affected_card_controller, affected_card) && event == EVENT_CHANGE_TYPE &&
 		is_what(affected_card_controller, affected_card, TYPE_PERMANENT) && in_play(affected_card_controller, affected_card)
 	  ){
 		set_special_flags2(affected_card_controller, affected_card, SF2_ENCHANTED_EVENING);
@@ -1561,6 +1567,11 @@ int card_everlasting_torment(int player, int card, event_t event){
 }
 
 int card_farie_macabre(int player, int card, event_t event){
+	/* Faerie Macabre	|1|B|B
+	 * Creature - Faerie Rogue 2/2
+	 * Flying
+	 * Discard ~: Exile up to two target cards from graveyards. */
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.zone = TARGET_ZONE_PLAYERS;
@@ -1575,6 +1586,7 @@ int card_farie_macabre(int player, int card, event_t event){
 	}
 	else if( event == EVENT_ACTIVATE_FROM_HAND ){
 			discard_card(player, card);
+			return 1;
 	}
 	else if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && spell_fizzled != 1 ){
 			instance->targets[0].player = 1-player;
@@ -2248,7 +2260,7 @@ int card_horde_of_boggarts(int player, int card, event_t event)
    * Menace
    * ~'s power and toughness are each equal to the number of |Sred permanents you control. */
 
-  minimum_blockers(player, card, event, 2);
+  menace(player, card, event);
 
   if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && player != -1)
 	event_result += count_permanents_by_color(player, TYPE_PERMANENT, get_sleighted_color_test(player, card, COLOR_TEST_RED));
@@ -2272,6 +2284,16 @@ int card_howl_of_the_night_pack(int player, int card, event_t event){
 		kill_card(player, card, KILL_DESTROY);
 	}
 	return 0;
+}
+
+int card_hungry_spriggan(int player, int card, event_t event)
+{
+	/* Hungry Spriggan	|2|G	0x200ec7e
+	 * Creature - Goblin Warrior 1/1
+	 * Trample
+	 * Whenever ~ attacks, it gets +3/+3 until end of turn. */
+
+	return when_attacks_pump_self(player, card, event, 3,3);
 }
 
 int card_improptu_raid(int player, int card, event_t event){
@@ -2310,42 +2332,50 @@ int card_improptu_raid(int player, int card, event_t event){
 
 int card_incremental_blight(int player, int card, event_t event){
 
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 
 	card_instance_t *instance = get_card_instance( player, card);
 
-	if( event == EVENT_CAN_CAST && target_available(player, card, &td) > 2 ){
-		return 1;
+	if( event == EVENT_CAN_CAST ){
+		return generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 3, NULL);
 	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			int i;
-			int trgs = 0;
-			for(i=0; i<3; i++){
-				if( select_target(player, card, &td, "Select target creature.", &(instance->targets[i])) ){
-					state_untargettable(instance->targets[i].player, instance->targets[i].card, 1);
-					trgs++;
-				}
-				else{
-					break;
-				}
+
+	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		instance->number_of_targets = 0;
+		char buffer[100];
+		int i;
+		for (i = 0; i < 3; ++i){
+			scnprintf(buffer, 100, "Select target creature (%d -1/-1 counters)", i+1 );
+			if ( select_target(player, card, &td, buffer, &instance->targets[i])){
+				state_untargettable(instance->targets[i].player, instance->targets[i].card, 1);
 			}
-			for(i=0; i<trgs; i++){
-				state_untargettable(instance->targets[i].player, instance->targets[i].card, 0);
+			else{
+				break;
 			}
-			if( trgs < 3 ){
-				spell_fizzled = 1;
-			}
+		}
+		for(i=0; i<instance->number_of_targets; i++){
+			state_untargettable(instance->targets[i].player, instance->targets[i].card, 0);
+		}
+		if( instance->number_of_targets < 3 ){
+			spell_fizzled = 1;
+		}
 	}
-	else if(event == EVENT_RESOLVE_SPELL){
-			int i;
-			for(i=0; i<3; i++){
-				if( validate_target(player, card, &td, i) ){
-					add_minus1_minus1_counters(instance->targets[i].player, instance->targets[i].card, i+1);
-				}
+
+	if(event == EVENT_RESOLVE_SPELL){
+		int i;
+		for(i=0; i<3; i++){
+			if( validate_target(player, card, &td, i) ){
+				add_minus1_minus1_counters(instance->targets[i].player, instance->targets[i].card, i+1);
 			}
-			kill_card(player, card, KILL_DESTROY);
+		}
+		kill_card(player, card, KILL_DESTROY);
 	}
+
 	return 0;
 }
 
@@ -2662,7 +2692,7 @@ int card_leechridden_swamp(int player, int card, event_t event){
 
 	comes_into_play_tapped(player, card, event);
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, 0, 2, 0, 0, 0, 0) && can_use_activated_abilities(player, card) &&
 			count_permanents_by_color(player, TYPE_PERMANENT, COLOR_TEST_BLACK) > 1 ){
@@ -2754,12 +2784,16 @@ int card_lurebound_scarecrow(int player, int card, event_t event){
 }
 
 int card_madblind_mountain(int player, int card, event_t event){
+	/* Madblind Mountain	""
+	 * Land - |H2Mountain
+	 * ~ enters the battlefield tapped.
+	 * |R, |T: Shuffle your library. Activate this ability only if you control two or more |Sred permanents. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
 	comes_into_play_tapped(player, card, event);
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 2, 0) && can_use_activated_abilities(player, card) ){
 			ai_choice = 1;
@@ -2803,6 +2837,11 @@ int card_madblind_mountain(int player, int card, event_t event){
 }
 
 int card_mana_reflection(int player, int card, event_t event){
+
+	if( in_play(player, card) && is_humiliated(player, card) ){
+		return 0;
+	}
+
 	if (event == EVENT_TAP_CARD && affected_card_controller == player){
 		color_t c;
 		switch (tapped_for_mana_color){
@@ -3167,7 +3206,7 @@ int card_mistveil_plains(int player, int card, event_t event){
 
 	comes_into_play_tapped(player, card, event);
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 2) && can_use_activated_abilities(player, card) &&
 			count_permanents_by_color(player, TYPE_PERMANENT, get_sleighted_color_test(player, card, COLOR_TEST_WHITE)) >= 2 && get_grave(player)[0] != -1 &&
@@ -3215,6 +3254,10 @@ int card_mistveil_plains(int player, int card, event_t event){
 }
 
 int card_moonring_island(int player, int card, event_t event){
+	/* Moonring Island	""
+	 * Land - |H2Island
+	 * ~ enters the battlefield tapped.
+	 * |U, |T: Look at the top card of target player's library. Activate this ability only if you control two or more |Sblue permanents. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -3224,7 +3267,7 @@ int card_moonring_island(int player, int card, event_t event){
 
 	comes_into_play_tapped(player, card, event);
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( player != AI && ! paying_mana() && has_mana_for_activated_ability(player, card, 0, 0, 2, 0, 0, 0) && can_use_activated_abilities(player, card) &&
 			count_permanents_by_color(player, TYPE_PERMANENT, COLOR_TEST_BLUE) > 1 && can_target(&td)
@@ -4373,17 +4416,7 @@ int card_rhys_the_redeemed(int player, int card, event_t event){
 			generate_token(&token);
 		}
 		if( instance->info_slot == 67 ){
-			int c, marked[151] = {0};
-			for (c = 0; c < active_cards_count[player]; ++c){
-				if (in_play(player, c) && is_what(player, c, TYPE_CREATURE) && is_token(player, c)){
-					marked[c] = 1;
-				}
-			}
-			for (c = 0; c < active_cards_count[player]; ++c){
-				if (marked[c]){
-					copy_token(player, card, player, c);
-				}
-			}
+			copy_all_tokens(instance->parent_controller, instance->parent_card, TYPE_CREATURE, NULL);
 		}
 	}
 
@@ -4671,7 +4704,7 @@ int card_runed_halo(int player, int card, event_t event){
 		card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
 		if( damage->internal_card_id == damage_card ){
 			if( damage->damage_target_card == -1 && damage->damage_target_player == player && damage->info_slot > 0 &&
-				damage->display_pic_int_id == instance->targets[9].card
+				damage->display_pic_csv_id == instance->targets[9].card
 			  ){
 				damage->info_slot = 0;
 			}
@@ -4716,12 +4749,16 @@ int card_safewright_quest(int player, int card, event_t event){
 }
 
 int card_sapseep_forest(int player, int card, event_t event){
+	/* Sapseep Forest	""
+	 * Land - |H2Forest
+	 * ~ enters the battlefield tapped.
+	 * |G, |T: You gain 1 life. Activate this ability only if you control two or more |Sgreen permanents. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
 	comes_into_play_tapped(player, card, event);
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, 0, 0, 0, 2, 0, 0) && can_use_activated_abilities(player, card) &&
 			count_permanents_by_color(player, TYPE_PERMANENT, COLOR_TEST_GREEN) > 1 ){
@@ -5185,7 +5222,7 @@ int card_torrent_of_souls(int player, int card, event_t event){
 					pos +=scnprintf(buffer+pos, 500-pos, " Pay %dR\n", cless);
 					mode |=(1<<1);
 				}
-				if( has_mana_multi(player, cless-1, 1, 1, 0, 0, 0) ){
+				if( has_mana_multi(player, cless-1, 1, 0, 0, 1, 0) ){
 					pos +=scnprintf(buffer+pos, 500-pos, " Pay %dBR\n", cless-1);
 					mode |=(1<<2);
 					ai_choice = 2;
@@ -5805,7 +5842,7 @@ int card_worldpurge(int player, int card, event_t event){
 					shuffle(p);
 					int clr;
 					for (clr = COLOR_COLORLESS; clr <= COLOR_ANY; ++clr){
-						mana_in_pool[p][clr] = 0;
+						mana_pool[p][clr] = 0;
 					}
 				};
 		);

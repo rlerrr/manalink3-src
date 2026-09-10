@@ -610,7 +610,8 @@ int card_hatred(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_CAN_CAST ){
-		return can_pay_life(player, 1) && generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 1, NULL);
+		return can_pay_life_as_cost_for_spells_or_activated_abilities(player, 1) && 
+				generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 1, NULL);
 	}
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -1739,6 +1740,9 @@ int card_srivener(int player, int card, event_t event){
 }
 
 int card_seismic_assault(int player, int card, event_t event){
+	/* Seismic Assault	|R|R|R
+	 * Enchantment
+	 * Discard a land card: ~ deals 2 damage to target creature or player. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return global_enchantment(player, card, event);
@@ -1755,7 +1759,7 @@ int card_seismic_assault(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if(event == EVENT_CAN_ACTIVATE ){
-		if( generic_activated_ability(player, card, event, GS_CAN_TARGET, MANACOST0, 0, &td1, NULL) ){
+		if( generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST0, 0, &td1, NULL) ){
 			return check_battlefield_for_special_card(player, card, player, 0, &this_test);
 		}
 	}
@@ -2179,7 +2183,7 @@ int card_spike_rogue(int player, int card, event_t event){
 			}
 		}
 		else if( choice == 1 ){
-				generic_activated_ability(player, card, event, GAA_CAN_TARGET | GS_LITERAL_PROMPT, MANACOST_X(2), 0,
+				generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST_X(2), 0,
 											&td1, "Select target creature you control with a +1/+1 counter.");
 				if( spell_fizzled != 1 ){
 					remove_1_1_counter(instance->targets[0].player, instance->targets[0].card);

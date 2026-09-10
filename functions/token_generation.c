@@ -79,6 +79,9 @@ void copy_token_definition(int player, int card, token_generation_t* token, int 
 	  token->color_forced = instance->targets[7].card;
 	  token->special_flags2 = instance->targets[8].card;
 	  token->special_infos = get_copyable_special_infos(t_player, t_card);
+		if( check_special_flags2(t_player, t_card, SF2_ENCHANTED_EVENING) ){
+			token->special_flags2 = SF2_ENCHANTED_EVENING;
+		}
 	}
 }
 
@@ -102,6 +105,10 @@ int copy_token_characteristics_for_clone(int player, int card, int t_player, int
 
 	  set_special_infos(player, card, get_copyable_special_infos(t_player, t_card));
 
+		if( check_special_flags2(t_player, t_card, SF2_ENCHANTED_EVENING) ){
+			set_special_flags2(player, card, SF2_ENCHANTED_EVENING);
+		}
+		
 	  return 1;
 	}
   else
@@ -111,6 +118,9 @@ int copy_token_characteristics_for_clone(int player, int card, int t_player, int
 /* Just like generic_token(), but supports storing the values on an effect card to set them on a different permanent.  The idea is that changing a permanent to
  * temporarily be a copy of a token shouldn't have to overwrite all of its targets. */
 int token_characteristic_setting_effects(int player, int card, event_t event, int t_player, int t_card){
+	if (card == -1){
+		return 0;
+	}
 	if (check_special_flags2(player, card, SF2_TEMPORARY_COPY_OF_TOKEN)){
 		return 0;
 	}
@@ -250,6 +260,10 @@ static int get_copyable_special_infos(int t_player, int t_card)
 		  break;
 		case CARD_ID_BAT:
 		  if (special_infos != 66)	// Sengir Nosferatu bat: has "1B, Sacrifice this creature: Return an exiled card named Sengir Nosferatu to the battlefield under its owner's control."
+			special_infos = 0;
+		  break;
+		case CARD_ID_BIRD:
+		  if (special_infos != 66)	// Daxos the Returned bird : has "This creature's power and toughness are each equal to the number of experience counters you have."
 			special_infos = 0;
 		  break;
 		case CARD_ID_CLERIC:
@@ -425,6 +439,10 @@ void copy_token(int player, int card, int tok_player, int tok_card ){
 }
 
 static int generate_token_by_id_impl(int player, int card, int csvid, int number, int reserved){
+	if (number <= 0){
+		return 0;
+	}
+
 	token_generation_t token;
 	default_token_definition(player, card, csvid, &token);
 	int int_id = get_internal_card_id_from_csv_id(csvid);
@@ -460,3 +478,21 @@ int generate_reserved_token_by_id(int player, int csvid){
 	// It's only safe to use -1 for card because we're sending 1 for reserved, and therefore will be setting no_sleight=1
 	return generate_token_by_id_impl(player, -1, csvid, 1, 1);
 }
+
+void copy_all_tokens(int player, int card, int type, test_definition_t *test){
+	int c, marked[151] = {0};
+	for (c = 0; c < active_cards_count[player]; ++c){
+		if (in_play(player, c) && is_token(player, c)){
+			if( (type && is_what(player, c, type)) || (test != NULL && new_make_test_in_play(player, c, -1, test)) ){
+				marked[c] = 1;
+			}
+		}
+	}
+	
+	for (c = active_cards_count[player]-1; c >-1 ; c--){
+		if (marked[c]){
+			copy_token(player, card, player, c);
+		}
+	}
+}
+

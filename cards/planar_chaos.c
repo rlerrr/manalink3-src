@@ -65,32 +65,39 @@ int card_aeon_chronicler(int player, int card, event_t event){
 	 * Whenever a time counter is removed from ~ while it's exiled, draw a card. */
 
 	if( event == EVENT_MODIFY_COST ){
-		if( has_mana_multi(player, 4, 0, 1, 0, 0, 0) ){
-			card_ptr_t* c = cards_ptr[ get_id(player, card) ];
-			COST_COLORLESS-=c->req_colorless;
-			COST_BLUE-=c->req_blue;
+		card_instance_t* instance = get_card_instance(player, card);
+		if( has_mana_multi(player, MANACOST_XU(4, 1)) ){ // Can't be suspended with X = 0
+			null_casting_cost(player, card);
+			instance->info_slot = 1;
+		}
+		else{
+			instance->info_slot = 0;
 		}
 	}
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( ! played_for_free(player, card) && ! is_token(player, card) ){
+		card_instance_t* instance = get_card_instance(player, card);
+		if( ! played_for_free(player, card) && ! is_token(player, card) && instance->info_slot == 1 ){
 			int choice = 1;
-			int ai_choice = 1;
-			if( hand_count[player] > 3 ){
-				ai_choice = 0;
-			}
 
-			if( has_mana_multi(player, 3, 0, 2, 0, 0, 0) ){
+			if( has_mana_to_cast_iid(player, event, instance->internal_card_id) ){
+				int ai_choice = 1;
+				if( hand_count[player] > 3 ){
+					ai_choice = 0;
+				}
 				choice = do_dialog(player, player, card, -1, -1, " Play normally\n Suspend\n Do nothing", ai_choice);
 			}
 
 			if( choice == 0 ){
-				charge_mana_multi(player, 3, 0, 2, 0, 0, 0);
+				charge_mana_from_id(player, -1, event, get_id(player, card));
 			}
 			else if( choice == 1 ){
-					charge_mana_multi(player, 3, 0, 1, 0, 0, 0);
+					charge_mana_multi(player, MANACOST_XU(3, 1));
 					if( spell_fizzled != 1 ){
 						charge_mana(player, COLOR_COLORLESS, -1);
+						if( x_value == 0 ){ // Can't be suspended with X = 0
+							spell_fizzled = 1;
+						}
 						if( spell_fizzled != 1 ){
 							suspend_a_card(player, card, player, card, x_value);
 							land_can_be_played &= ~LCBP_SPELL_BEING_PLAYED;
@@ -103,7 +110,8 @@ int card_aeon_chronicler(int player, int card, event_t event){
 		}
 	}
 
-	if( player != -1 ){
+	// Please see http://www.slightlymagic.net/forum/viewtopic.php?t=18981 before changing this again
+	if( player != -1 && !is_humiliated(player, card) ){
 		modify_pt_and_abilities(player, card, event, hand_count[player], hand_count[player], 0);
 	}
 
@@ -238,19 +246,22 @@ int card_benalish_commander(int player, int card, event_t event)
 
 int card_big_game_hunter(int player, int card, event_t event){
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE );
-	td.power_requirement = 4 | TARGET_PT_GREATER_OR_EQUAL;
-	td.allow_cancel = 0;
+	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE );
+		td.power_requirement = 4 | TARGET_PT_GREATER_OR_EQUAL;
+		td.allow_cancel = 0;
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( comes_into_play(player, card, event) && can_target(&td) ){
-		if( pick_target(&td, "TARGET_CREATURE") ){
-			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_BURY);
+		if( can_target(&td) && comes_into_play(player, card, event) ){
+			if( new_pick_target(&td, "Select target creature with power 4 or greater.", 0, GS_LITERAL_PROMPT) ){
+				card_instance_t *instance = get_card_instance(player, card);
+				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_BURY);
+				instance->number_of_targets = 0;
+			}
 		}
 	}
-	return madness(player, card, event, 0, 1, 0, 0, 0, 0);
+
+	return madness(player, card, event, MANACOST_B(1));
 }
 
 int card_blightspeaker(int player, int card, event_t event){
@@ -665,6 +676,7 @@ int card_chronozoa(int player, int card, event_t event)
 	{
 	  token_generation_t token;
 	  default_token_definition(player, card, CARD_ID_CHRONOZOA, &token);
+	  token.qty = 2;
 	  token.no_sleight = 1;
 	  generate_token(&token);
 	}
@@ -834,27 +846,43 @@ int card_darkheart_sliver(int player, int card, event_t event){
 }
 
 int card_dash_hopes(int player, int card, event_t event){
+	/* Dash Hopes	|B|B
+	 * Instant
+	 * When you cast ~, any player may pay 5 life. If a player does, counter ~.
+	 * Counter target spell. */
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+	if( event == EVENT_CAN_CAST || (event == EVENT_CAST_SPELL && affect_me(player, card)) ){
+		return counterspell(player, card, event, NULL, 0);
+	}
+
+	if( event == EVENT_RESOLVE_SPELL ){
 		int choice = 1;
-		if( can_pay_life(1-player, 5) ){
-			int ai_choice = 0;
-			if( life[1-player] < 11 ){
-				ai_choice = 1;
-			}
-			choice = do_dialog(1-player, player, card, -1, -1," Pay 5 life and counter Dash Hopes\n Pass", ai_choice);
+		if( ! check_special_flags(player, card, SF_NOT_CAST) ){
+			APNAP(p, {
+					if( can_pay_life(p, 1) ){
+						int ai_choice = 0;
+						if( choice == 0 || life[p]-5 < 6 ){
+							ai_choice = 1;
+						}
+						int p_choice = do_dialog(p, player, card, -1, -1," Counter Dash Hopes\n Pass", ai_choice);
+						if( p_choice == 0 ){
+							lose_life(p, 5);
+							if( choice == 1 ){
+								choice = 0;
+							}
+						}
+					}
+				}
+			);
 		}
 		if( choice == 0 ){
-			lose_life(1-player, 5);
-			kill_card(player, card, KILL_DESTROY);
+			real_counter_a_spell(player, card, player, card);
 		}
 		else{
-			return card_counterspell(player, card, event);
+			return counterspell(player, card, event, NULL, 0);
 		}
 	}
-	else{
-		return card_counterspell(player, card, event);
-	}
+
 	return 0;
 }
 
@@ -1077,10 +1105,7 @@ int card_dichotomancy(int player, int card, event_t event){
 				if( in_play(instance->targets[0].player, count) && is_tapped(instance->targets[0].player, count) &&
 					! is_what(instance->targets[0].player, count, TYPE_LAND)
 				  ){
-					test_definition_t this_test;
-					default_test_definition(&this_test, TYPE_PERMANENT);
-					this_test.id = get_id(instance->targets[0].player, count);
-					new_global_tutor(player, instance->targets[0].player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_FIRST_FOUND, &this_test);
+					tutor_card_with_the_same_name(instance->targets[0].player, count, player, instance->targets[0].player, TUTOR_FROM_DECK, TUTOR_PLAY, 0);
 				}
 			}
 		}
@@ -1157,6 +1182,16 @@ int card_enslave(int player, int card, event_t event ){
 // essence warden --> soul warden
 
 int card_evolution_charm(int player, int card, event_t event){
+	/* Evolution Charm	|1|G
+	 * Instant
+	 * Choose one -
+	 * * Search your library for a basic land card, reveal it, put it into your hand, then shuffle your library.
+	 * * Return target creature card from your graveyard to your hand.
+	 * * Target creature gains flying until end of turn. */
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -1224,7 +1259,7 @@ int card_evolution_charm(int player, int card, event_t event){
 			}
 	}
 
-	else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if( event == EVENT_RESOLVE_SPELL ){
 
 			if( instance->info_slot == 66){
 				tutor_basic_land(player, 0, 0);
@@ -1509,6 +1544,10 @@ int card_fury_charm(int player, int card, event_t event){
 	 * Choose one - Destroy target artifact; or target creature gets +1/+1 and gains trample until end of turn; or remove two time counters from target
 	 * permanent or suspended card. */
 
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_ARTIFACT);
 
@@ -1582,7 +1621,7 @@ int card_fury_charm(int player, int card, event_t event){
 			}
 	}
 
-	else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if( event == EVENT_RESOLVE_SPELL ){
 
 			if( instance->info_slot == 66 && valid_target(&td) ){
 				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
@@ -2480,7 +2519,7 @@ int card_rebuff_the_wicked(int player, int card, event_t event){
 }
 
 int card_reckless_wurm(int player, int card, event_t event){
-	return madness(player, card, event, 2, 0, 0, 0, 1, 0);
+	return madness(player, card, event, MANACOST_XR(2, 1));
 }
 
 int card_retether(int player, int card, event_t event){
@@ -2763,11 +2802,16 @@ int card_shrouded_lore(int player, int card, event_t event)
 }
 
 int card_simian_spirit_guide(int player, int card, event_t event){
+	/* Simian Spirit Guide	|2|R
+	 * Creature - Ape Spirit 2/2
+	 * Exile ~ from your hand: Add |R to your mana pool. */
+
 	if( event == EVENT_CAN_ACTIVATE_FROM_HAND ){
 		return 1;
 	}
 	else if( event == EVENT_ACTIVATE_FROM_HAND ){
 		kill_card(player, card, KILL_REMOVE);
+		return 1;
 	}
 	else if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND ){
 		produce_mana(player, COLOR_RED, 1);
@@ -2894,16 +2938,26 @@ int card_temporal_extortion(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int choice = 1;
-		if( can_pay_life(1-player, 1) ){
-			int ai_choice = 0;
-			if( life[1-player] < 6 || check_battlefield_for_id(1-player, CARD_ID_STRANGLEHOLD) ){
-				ai_choice = 1;
-			}
-			choice = do_dialog(1-player, player, card, -1, -1," Counter Temporal Extortion\n Pass", ai_choice);
+		if( ! check_special_flags(player, card, SF_NOT_CAST) ){
+			APNAP(p, {
+					if( can_pay_life(p, 1) ){
+						int ai_choice = 0;
+						if( choice == 0 || life[p] < 12 || check_battlefield_for_id(p, CARD_ID_STRANGLEHOLD) ){
+							ai_choice = 1;
+						}
+						int p_choice = do_dialog(p, player, card, -1, -1," Counter Temporal Extortion\n Pass", ai_choice);
+						if( p_choice == 0 ){
+							int amount = round_up_value(life[p]);
+							lose_life(p, amount);
+							if( choice == 1 ){
+								choice = 0;
+							}
+						}
+					}
+				}
+			);
 		}
 		if( choice == 0 ){
-			int amount = round_up_value(life[1-player]);
-			lose_life(1-player, amount);
 			real_counter_a_spell(player, card, player, card);
 		}
 		else{

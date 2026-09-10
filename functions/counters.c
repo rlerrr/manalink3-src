@@ -382,8 +382,11 @@ int get_counter_type_by_id(int csvid)
 	  case CARD_ID_AJANI_MENTOR_OF_HEROES:
 	  case CARD_ID_AJANI_STEADFAST:
 	  case CARD_ID_AJANI_VENGEANT:
+	  case CARD_ID_ARLINN_KORD:
+	  case CARD_ID_ARLINN_EMBRACED_BY_THE_MOON:
 	  case CARD_ID_ASHIOK_NIGHTMARE_WEAVER:
 	  case CARD_ID_CHANDRA_ABLAZE:
+	  case CARD_ID_CHANDRA_FLAMECALLER:
 	  case CARD_ID_CHANDRA_NALAAR:
 	  case CARD_ID_CHANDRA_PYROMASTER:
 	  case CARD_ID_CHANDRA_ROARING_FLAME:
@@ -410,6 +413,7 @@ int get_counter_type_by_id(int csvid)
 	  case CARD_ID_JACE_TELEPATH_UNBOUND:
 	  case CARD_ID_JACE_THE_LIVING_GUILDPACT:
 	  case CARD_ID_JACE_THE_MIND_SCULPTOR:
+	  case CARD_ID_JACE_UNRAVELER_OF_SECRETS:
 	  case CARD_ID_KARN_LIBERATED:
 	  case CARD_ID_KIORA_MASTER_OF_THE_DEPTHS:
 	  case CARD_ID_KIORA_THE_CRASHING_WAVE:
@@ -417,12 +421,15 @@ int get_counter_type_by_id(int csvid)
 	  case CARD_ID_LILIANA_DEFIANT_NECROMANCER:
 	  case CARD_ID_LILIANA_OF_THE_DARK_REALMS:
 	  case CARD_ID_LILIANA_OF_THE_VEIL:
+	  case CARD_ID_LILIANA_THE_LAST_HOPE:
 	  case CARD_ID_LILIANA_VESS:
+	  case CARD_ID_NAHIRI_THE_HARBINGER:
 	  case CARD_ID_NAHIRI_THE_LITHOMANCER:
 	  case CARD_ID_NARSET_TRANSCENDENT:
 	  case CARD_ID_NICOL_BOLAS_PLANESWALKER:
 	  case CARD_ID_NISSA_REVANE:
 	  case CARD_ID_NISSA_SAGE_ANIMIST:
+	  case CARD_ID_NISSA_VOICE_OF_ZENDIKAR:
 	  case CARD_ID_NISSA_WORLDWAKER:
 	  case CARD_ID_OB_NIXILIS_OF_THE_BLACK_OATH:
 	  case CARD_ID_OB_NIXILIS_REIGNITED:
@@ -431,9 +438,11 @@ int get_counter_type_by_id(int csvid)
 	  case CARD_ID_SARKHAN_THE_MAD:
 	  case CARD_ID_SARKHAN_UNBROKEN:
 	  case CARD_ID_SARKHAN_VOL:
+	  case CARD_ID_SORIN_GRIM_NEMESIS:
 	  case CARD_ID_SORIN_LORD_OF_INNISTRAD:
 	  case CARD_ID_SORIN_MARKOV:
 	  case CARD_ID_SORIN_SOLEMN_VISITOR:
+	  case CARD_ID_TAMIYO_FIELD_RESEARCHER:
 	  case CARD_ID_TAMIYO_THE_MOON_SAGE:
 	  case CARD_ID_TEFERI_TEMPORAL_ARCHMAGE:
 	  case CARD_ID_TEZZERET_AGENT_OF_BOLAS:
@@ -712,7 +721,7 @@ int get_counter_type_by_instance(card_instance_t* instance)
 	  if (instance->info_slot == (int)generic_suspend_legacy)
 		return COUNTER_TIME;
 	  else
-		csvid = instance->display_pic_int_id;
+		csvid = instance->display_pic_csv_id;
 	}
   else
 	csvid = cards_data[iid].id;
@@ -1059,15 +1068,80 @@ void add_counters_as_cost(int player, int card, counter_t type, int num)
 // num must be > 0, or no effect
 void remove_counters(int player, int card, counter_t type, int num)
 {
-  if (num > 0)
+	if (num > 0)
 	{
-	  card_instance_t* instance = get_card_instance(player, card);
-	  if (instance->internal_card_id == activation_card)
+		card_instance_t* instance = get_card_instance(player, card);
+		if (instance->internal_card_id == activation_card)
 		{
-		  player = instance->parent_controller;
-		  card = instance->parent_card;
+			player = instance->parent_controller;
+			card = instance->parent_card;
 		}
-	  add_or_remove_counters_impl(player, card, type, -num);
+		int counters_removed = MIN(num, count_counters(player, card, type));
+		add_or_remove_counters_impl(player, card, type, -num);
+
+		// Special cases
+		if( type == COUNTER_TIME && is_suspend_legacy(player, card) ){
+
+			if( instance->targets[9].card == CARD_ID_AEON_CHRONICLER ){
+				draw_cards(player, counters_removed);
+			}
+
+			if( instance->targets[9].card == CARD_ID_BENALISH_COMMANDER ){
+				token_generation_t token;
+				default_token_definition(player, card, CARD_ID_SOLDIER, &token);
+				token.qty = counters_removed;
+				generate_token(&token);
+			}
+
+			if( instance->targets[9].card == CARD_ID_DETRITIVORE){
+				target_definition_t td;
+				default_target_definition(player, card, &td, TYPE_LAND);
+				td.required_subtype = SUBTYPE_BASIC;
+				td.special = TARGET_SPECIAL_ILLEGAL_SUBTYPE;
+				td.allow_cancel = 0;
+
+				int i;
+				for(i=0; i<counters_removed; i++){
+					instance->number_of_targets = 0;
+
+					if( can_target(&td) && new_pick_target(&td, "Select target nonbasic land.", 0, GS_LITERAL_PROMPT) ){
+						kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+					}
+				}
+			}
+
+			if( instance->targets[9].card == CARD_ID_FUNGAL_BEHEMOTH){
+				target_definition_t td;
+				default_target_definition(player, card, &td, TYPE_CREATURE);
+				td.preferred_controller = player;
+
+				int i;
+				for(i=0; i<counters_removed; i++){
+					instance->number_of_targets = 0;
+
+					if( can_target(&td) && pick_target(&td, "TARGET_CREATURE") ){
+						add_1_1_counter(instance->targets[0].player, instance->targets[0].card);
+					}
+				}
+			}
+
+			if( instance->targets[9].card == CARD_ID_ROILING_HORROR ){
+				target_definition_t td;
+				default_target_definition(player, card, &td, TYPE_CREATURE);
+				td.zone = TARGET_ZONE_PLAYERS;
+				td.allow_cancel = 0;
+
+				int i;
+				for(i=0; i<counters_removed; i++){
+					instance->number_of_targets = 0;
+
+					if( can_target(&td) && pick_target(&td, "TARGET_PLAYER") ){
+						lose_life(instance->targets[0].player, 1);
+						gain_life(player, 1);
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -1421,7 +1495,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
 
 	  case COUNTER_DELAY:
 		if (csvid == CARD_ID_DELAYING_SHIELD
-			|| (iid == LEGACY_EFFECT_CUSTOM && instance->display_pic_int_id == CARD_ID_ERTAIS_MEDDLING))
+			|| (iid == LEGACY_EFFECT_CUSTOM && instance->display_pic_csv_id == CARD_ID_ERTAIS_MEDDLING))
 		  return -850;
 		else
 		  return 0;
@@ -1649,7 +1723,7 @@ static int raw_counter_value(int player, int t_player, int t_card, counter_t cou
 	  case COUNTER_RUST:		return IS(TYPE_ARTIFACT) ? -600 : 0;
 
 	  case COUNTER_SCREAM:
-		if (iid == LEGACY_EFFECT_CUSTOM && instance->display_pic_int_id == CARD_ID_ALL_HALLOWS_EVE)
+		if (iid == LEGACY_EFFECT_CUSTOM && instance->display_pic_csv_id == CARD_ID_ALL_HALLOWS_EVE)
 		  return -500;
 
 		if (csvid == CARD_ID_ENDLESS_SCREAM)
@@ -1966,4 +2040,52 @@ counter_t choose_existing_counter_type(int who_chooses, int src_player, int src_
 	}
   else
 	return counter_types[choice - 1];
+}
+
+void poison(int player, int number_of_counters)
+{
+  if (number_of_counters <= 0)
+    return;
+
+  int pois = POISON_COUNTERS(player);
+  pois += number_of_counters;
+  if (pois > 255)
+    pois = 255;
+  player_counters[player].poison_ = pois;
+
+  /* in Shandalar, check_loss_of_game() checks for Platinum Angel-like effects, and if there aren't any and a player has < 0 life or > 10 poison, sets life[] to
+   * influence ai_modifier (much like is_anyone_dead() does) */
+  //if (ai_is_speculating == 1)
+  //  check_loss_of_game(false);
+}
+
+void raw_set_poison(int player, uint8_t new_number_of_counters)
+{
+  //if (ai_is_speculating == 1 && new_number_of_counters > player_counters[player].poison_)
+  //  {
+  //    player_counters[player].poison_ = new_number_of_counters;
+  //    check_loss_of_game(false);
+  //  }
+  //else
+  player_counters[player].poison_ = new_number_of_counters;
+}
+
+void add_experience(int player, int number_of_counters)
+{
+  if (number_of_counters <= 0)
+    return;
+
+  int exp = player_counters[player].experience_;
+  exp += number_of_counters;
+  if (exp > 255)
+    exp = 255;
+  player_counters[player].experience_ = exp;
+
+  if (ai_is_speculating != 1)
+    play_sound_effect(WAV_COUNTER);
+}
+
+void raw_set_experience(int player, uint8_t new_number_of_counters)
+{
+  player_counters[player].experience_ = new_number_of_counters;
 }

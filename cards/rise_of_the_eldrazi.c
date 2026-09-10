@@ -331,7 +331,7 @@ int card_emrakul_the_aeons_torn(int player, int card, event_t event){
 	}
 
 	if( when_you_cast(player, card, event) ){
-		alternate_legacy_text(1, player, create_time_walk_legacy(player, card));
+		alternate_legacy_text(1, player, time_walk_effect(player, card));
 	}
 
 	return 0;
@@ -470,8 +470,17 @@ static int targets_a_creature_you_control_with_power_ge_7(int who_chooses, int p
 
   return 0;
 }
-int card_not_of_this_world(int player, int card, event_t event)
-{
+
+int card_not_of_this_world(int player, int card, event_t event){
+  /*
+	Not of This World |7
+
+	Tribal Instant — Eldrazi
+
+	Counter target spell or ability that targets a permanent you control.
+
+	Not of This World costs {7} less to cast if it targets a spell or ability that targets a creature you control with power 7 or greater.
+  */
   target_definition_t td_effect;
   counter_activated_target_definition(player, card, &td_effect, 0);
   td_effect.extra = (int32_t)targets_a_permanent_you_control;
@@ -484,54 +493,61 @@ int card_not_of_this_world(int player, int card, event_t event)
 
   card_instance_t* instance = get_card_instance(player, card);
 
-  if (event == EVENT_MODIFY_COST)
-	{
-	  if (instance->info_slot & 4)
-		null_casting_cost(player, card);
-	}
-  else if (event == EVENT_CAN_CAST)
-	{
-	  if (counterspell(player, card, event, &td_spell, 0))
-		{
-		  instance->info_slot = 1;
-		  if (targets_a_creature_you_control_with_power_ge_7(player, card_on_stack_controller, card_on_stack))
-			instance->info_slot |= 4;
-		  return 99;
+	if (event == EVENT_MODIFY_COST){
+		if (instance->info_slot & 4){
+			null_casting_cost(player, card);
 		}
-	  if (can_counter_activated_ability(player, card, event, &td_effect))
-		{
-		  instance->info_slot = 2;
-		  if (targets_a_creature_you_control_with_power_ge_7(player, stack_cards[stack_size - 1].player, stack_cards[stack_size - 1].card))
-			instance->info_slot |= 4;
-		  return 99;
+	}
+
+	if (event == EVENT_CAN_CAST){
+		if (counterspell(player, card, event, &td_spell, 0)){
+			instance->info_slot = 1;
+			if (targets_a_creature_you_control_with_power_ge_7(player, card_on_stack_controller, card_on_stack)){
+				instance->info_slot |= 4;
+			}
+			return 99;
 		}
-	  instance->info_slot = 0;
-	  return 0;
+
+		if (can_counter_activated_ability(player, card, event, &td_effect)){
+			instance->info_slot = 2;
+			if (targets_a_creature_you_control_with_power_ge_7(player, stack_cards[stack_size - 1].player, stack_cards[stack_size - 1].card)){
+				instance->info_slot |= 4;
+			}
+			return 99;
+		}
+		instance->info_slot = 0;
+		return 0;
 	}
-  else if (event == EVENT_CAST_SPELL && affect_me(player, card))
-	{
-	  instance->number_of_targets = 0;
-	  if (instance->info_slot & 1)
-		counterspell(player, card, event, &td_spell, 0);
-	  else if (instance->info_slot & 2)
-		cast_counter_activated_ability(player, card, 0);
+
+	if (event == EVENT_CAST_SPELL && affect_me(player, card)){
+		instance->number_of_targets = 0;
+		if (instance->info_slot & 1){
+			counterspell(player, card, event, &td_spell, 0);
+		}
+		else if (instance->info_slot & 2){
+				cast_counter_activated_ability(player, card, 0);
+		}
 	}
-  else if (event == EVENT_RESOLVE_SPELL)
-	{
-		if (instance->info_slot == 1){
-			set_flags_when_spell_is_countered(player, card, instance->targets[0].player, instance->targets[0].card);
+
+	if (event == EVENT_RESOLVE_SPELL){
+		if (instance->info_slot & 1){
 			counterspell(player, card, event, &td_spell, 0);	// destroys card
 		}
-	  else if (instance->info_slot == 2 && resolve_counter_activated_ability(player, card, &td_effect, 0))
+		else if (instance->info_slot & 2 ){
+				resolve_counter_activated_ability(player, card, &td_effect, 0);
+		}
 		kill_card(player, card, KILL_DESTROY);
 	}
-  else
-	return counterspell(player, card, event, &td_spell, 0);
 
-  return 0;
+	return 0;
 }
 
 int card_pathrazer_of_ulamog(int player, int card, event_t event){
+	/* Pathrazer of Ulamog	|11
+	 * Creature - Eldrazi 9/9
+	 * Annihilator 3
+	 * ~ can't be blocked except by three or more creatures. */
+
 	annihilator(player, card, event, 3);
 	minimum_blockers(player, card, event, 3);
 	return 0;
@@ -802,8 +818,8 @@ int card_gideon_jura(int player, int card, event_t event){
 
 		enum {
 			CHOICE_FORCE_ATTACK = 1,
-			CHOICE_ANIMATE = 2,
-			CHOICE_KILL = 3
+			CHOICE_KILL,
+			CHOICE_ANIMATE,
 		}
 		choice = DIALOG(player, card, event,
 						DLG_RANDOM, DLG_PLANESWALKER,
@@ -828,7 +844,7 @@ int card_gideon_jura(int player, int card, event_t event){
 					break;
 
 			  case CHOICE_KILL:
-					pick_target(&td, "TARGET_CREATURE");
+					pick_target(&td, "ROYAL_ASSASSIN");
 					break;
 			}
 		}
@@ -858,8 +874,9 @@ int card_gideon_jura(int player, int card, event_t event){
 }
 
 int card_gideon_jura_animated(int player, int card, event_t event){
+
 	// prevent any damage that would be dealt to me
-	if( event == EVENT_DEAL_DAMAGE ){
+	if( event == EVENT_DEAL_DAMAGE && ! is_humiliated(player, card) ){
 		card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
 		if( damage->internal_card_id == damage_card ){
 			if( damage->damage_target_card == card && damage->damage_target_player == player && damage->info_slot > 0 ){
@@ -1109,6 +1126,13 @@ int card_nomads_assembly(int player, int card, event_t event){
 }
 
 int card_oust(int player, int card, event_t event){
+	/* Oust	|W
+	 * Sorcery
+	 * Put target creature into its owner's library second from the top. Its controller gains 3 life. */
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -1122,7 +1146,7 @@ int card_oust(int player, int card, event_t event){
 	else if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 			pick_target(&td, "TARGET_CREATURE");
 	}
-	else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if( event == EVENT_RESOLVE_SPELL ){
 			if( valid_target(&td)  ){
 			   int *deck = deck_ptr[instance->targets[0].player];
 			   put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
@@ -1813,7 +1837,7 @@ int card_see_beyond(int player, int card, event_t event){
 	if( event == EVENT_CAN_CAST){
 		return 1;
 	}
-	else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if( event == EVENT_RESOLVE_SPELL ){
 			draw_cards(player, 2);
 
 			target_definition_t td;
@@ -2213,19 +2237,19 @@ int card_guul_draz_assassin(int player, int card, event_t event){
 	int level = count_counters_no_parent(player, card, COUNTER_LEVEL);
 
 	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) ){
-		if( has_mana_for_activated_ability(player, card, 1, 1, 0, 0, 0, 0) && can_sorcery_be_played(player, event) ){
+		if( has_mana_for_activated_ability(player, card, MANACOST_XB(1,1)) && can_sorcery_be_played(player, event) ){
 			return 1;
 		}
-		if( level > 1 && has_mana_for_activated_ability(player, card, 0, 1, 0, 0, 0, 0) && ! is_tapped(player, card) && ! is_sick(player, card) &&
+		if( level > 1 && has_mana_for_activated_ability(player, card, MANACOST_B(1)) && ! is_tapped(player, card) && ! is_sick(player, card) &&
 			can_target(&td)
 		  ){
 			return 1;
 		}
 	}
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
-		if( has_mana_for_activated_ability(player, card, 1, 1, 0, 0, 0, 0) && can_sorcery_be_played(player, event) ){
-			if( level > 1 && has_mana_for_activated_ability(player, card, 0, 1, 0, 0, 0, 0) && ! is_tapped(player, card) && ! is_sick(player, card) &&
+		if( has_mana_for_activated_ability(player, card, MANACOST_XB(1,1)) && can_sorcery_be_played(player, event) ){
+			if( level > 1 && has_mana_for_activated_ability(player, card, MANACOST_B(1)) && ! is_tapped(player, card) && ! is_sick(player, card) &&
 				can_target(&td)
 			  ){
 				if( level > 3 ){
@@ -2240,10 +2264,10 @@ int card_guul_draz_assassin(int player, int card, event_t event){
 			choice = 1;
 		}
 
-		if( choice == 0 && charge_mana_for_activated_ability(player, card, 1, 1, 0, 0, 0, 0) ){
+		if( choice == 0 && charge_mana_for_activated_ability(player, card, MANACOST_XB(1,1)) ){
 			instance->info_slot = 66+choice;
 		}
-		else if( choice == 1 && charge_mana_for_activated_ability(player, card, 0, 1, 0, 0, 0, 0) && pick_target(&td, "TARGET_CREATURE") ){
+		else if( choice == 1 && charge_mana_for_activated_ability(player, card, MANACOST_B(1)) && pick_target(&td, "TARGET_CREATURE") ){
 			instance->info_slot = 66+choice;
 			tap_card(player, card);
 			instance->number_of_targets = 1;
@@ -2252,7 +2276,7 @@ int card_guul_draz_assassin(int player, int card, event_t event){
 			spell_fizzled = 1;
 		}
 	}
-	else if( event == EVENT_RESOLVE_ACTIVATION && affect_me(player, card) ){
+	else if( event == EVENT_RESOLVE_ACTIVATION ){
 			if( instance->info_slot == 66 ){
 			   add_counter(instance->parent_controller, instance->parent_card, COUNTER_LEVEL);
 			}
@@ -2413,29 +2437,122 @@ int card_null_champion(int player, int card, event_t event)
 				  4, 7,3, KEYWORD_REGENERATION,0);
 }
 
-int card_pawn_of_ulamog(int player, int card, event_t event){
-	/* Pawn of Ulamog	|1|B|B
-	 * Creature - Vampire Shaman 2/2
-	 * Whenever ~ or another nontoken creature you control dies, you may put a 0/1 colorless Eldrazi Spawn creature token onto the battlefield. It has "Sacrifice this creature: Add |1 to your mana pool." */
+static int pawn_of_ulamog_effect(int player, int card, event_t event){
 
-	card_instance_t *instance = get_card_instance(player, card);
+	//In case something is copying Pawn of Ulamog and then reverts to its original form.
+	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
+		card_instance_t *instance = get_card_instance(player, card);
+		if( instance->damage_target_player > -1 ){
+			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_PAWN_OF_ULAMOG ){
+				kill_card(player, card, KILL_REMOVE);
+			}
+		}
+	}
+
+	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
+		return 0;
+	}
 
 	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_CREATURE);
-		test.type_flag = F1_NO_TOKEN;
-		test.not_me = 1;
-
-		count_for_gfp_ability(player, card, event, player, 0, &test);
+		card_instance_t *instance = get_card_instance(player, card);
+		if( in_play(affected_card_controller, affected_card) ){
+			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+			if( kill_code ){
+				if( instance->damage_target_player > -1 ){
+					int p = instance->damage_target_player;
+					int c = instance->damage_target_card;
+					if( affect_me(p, c) ){
+						//Will trigger also if Pawn of Ulamog is not a creature when it goes into the graveyard;
+						if( ! is_what(p, c, TYPE_CREATURE) ){
+							count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
+						}
+						instance->damage_target_player = instance->damage_target_card = -1;
+						remove_status(player, card, STATUS_INVISIBLE_FX);
+					}
+				}
+				if( ! is_token(affected_card_controller, affected_card) ){
+					count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
+				}
+			}
+		}
 	}
 
-	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
-		generate_tokens_by_id(player, card, CARD_ID_ELDRAZI_SPAWN, instance->targets[11].card);
-		instance->targets[11].card = 0;
+	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
+		int amount = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+		if( amount ){
+
+			token_generation_t token;
+			default_token_definition(player, card, CARD_ID_ELDRAZI_SPAWN, &token);
+			token.qty = amount;
+			generate_token(&token);
+
+			kill_card(player, card, KILL_REMOVE);
+		}
 	}
 
-	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
-		generate_token_by_id(player, card, CARD_ID_ELDRAZI_SPAWN);
+	//Reset counts if the legacy is still invisible
+	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
+		get_card_instance(player, card)->targets[11].player = 0;
+	}
+
+	//If you decide to not get the Eldrazi Spawns...
+	if( event == EVENT_CLEANUP && get_card_instance(player, card)->damage_target_player == -1 ){
+		kill_card(player, card, KILL_REMOVE);
+	}
+
+	return 0;
+}
+
+int card_pawn_of_ulamog(int player, int card, event_t event){
+	/*
+	  Pawn of Ulamog English
+	  Creature — Vampire Shaman 2/2, 1BB (3)
+	  Whenever Pawn of Ulamog or another nontoken creature you control dies, you may put a 0/1 colorless Eldrazi Spawn creature token
+	  onto the battlefield. It has "Sacrifice this creature: Add {C} to your mana pool."
+	*/
+
+	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
+		int found = 0;
+		int c;
+		for(c=0; c<active_cards_count[player]; c++){
+			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
+				card_instance_t *inst = get_card_instance(player, c);
+				if( inst->info_slot == (int)pawn_of_ulamog_effect ){
+					if( (inst->damage_target_player == player && inst->damage_target_card == card) ||
+						(inst->targets[0].player == player && inst->targets[0].card == card) )
+					{
+						found = 1;
+						break;
+					}
+				}
+			}
+		}
+		if( ! found ){
+			int legacy = create_targetted_legacy_effect(player, card, &pawn_of_ulamog_effect, player, card);
+			card_instance_t *inst = get_card_instance(player, legacy);
+			inst->targets[0].player = player;
+			inst->targets[0].card = card;
+			inst->number_of_targets = 1;
+			add_status(player, legacy, STATUS_INVISIBLE_FX);
+		}
+	}
+
+	if( event == EVENT_GRAVEYARD_FROM_PLAY && in_play(affected_card_controller, affected_card) ){
+		if( ! is_token(affected_card_controller, affected_card) ){
+			count_for_gfp_ability(player, card, event, player, TYPE_CREATURE, NULL);
+		}
+	}
+
+	if( get_card_instance(player, card)->kill_code <= 0 ){
+		int amount = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player));
+		if( amount ){
+
+			token_generation_t token;
+			default_token_definition(player, card, CARD_ID_ELDRAZI_SPAWN, &token);
+			token.qty = amount;
+			generate_token(&token);
+
+		}
 	}
 
 	return 0;
@@ -2961,8 +3078,12 @@ int card_kargan_dragonlord(int player, int card, event_t event)
 }
 
 int card_kiln_fiend(int player, int card, event_t event){
+	/* Kiln Fiend	|1|R
+	 * Creature - Elemental Beast 1/2
+	 * Whenever you cast an instant or sorcery spell, ~ gets +3/+0 until end of turn. */
+
 	if( specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, TYPE_SPELL, 0, 0, 0, 0, 0, 0, 0, -1, 0) ){
-		pump_until_eot(player, card, player, card, 3, 0);
+		pump_until_eot_merge_previous(player, card, player, card, 3, 0);
 	}
 	return 0;
 }
@@ -3000,31 +3121,57 @@ int card_lord_of_shatterskull_pass(int player, int card, event_t event)
  * Enchanted creature attacks each turn if able. */
 
 int card_magmaw(int player, int card, event_t event){
+	/*
+	  Magmaw |3|R|R
+	  Creature — Elemental 4/4
+	  {1}, Sacrifice a nonland permanent: Magmaw deals 1 damage to target creature or player.
+	*/
+	if( ! IS_GAA_EVENT(event) ){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-	td.allow_cancel = 0;
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) && has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0) &&
-		can_target(&td)
-	  ){
-		return can_sacrifice_as_cost(player, 1, TYPE_LAND, 1, 0, 0, 0, 0, 0, 0, -1, 0);
+	if( event == EVENT_CAN_ACTIVATE ){
+		test_definition_t test;
+		default_test_definition(&test, TYPE_LAND);
+		test.type_flag = DOESNT_MATCH;
+
+		if( new_can_sacrifice_as_cost(player, card, &test) ){
+			return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_X(1), 0, &td, NULL);
+		}
 	}
 
 	if(event == EVENT_ACTIVATE ){
-		if (charge_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0)
-			&& sacrifice(player, card, player, 0, TYPE_LAND, 1, 0, 0, 0, 0, 0, 0, -1, 0)
-			&& pick_target(&td, "TARGET_CREATURE_OR_PLAYER")){
-			instance->number_of_targets = 1;
+		instance->number_of_targets = 0;
+		if (charge_mana_for_activated_ability(player, card, MANACOST_X(1)) ){
+			test_definition_t test;
+			new_default_test_definition(&test, TYPE_LAND, "Select a nonland permanent to sacrifice.");
+			test.type_flag = DOESNT_MATCH;
+
+			int sac = new_sacrifice(player, card, player, SAC_JUST_MARK|SAC_RETURN_CHOICE, &test);
+			if (sac){
+				instance->number_of_targets = 0;
+				if( pick_target(&td, "TARGET_CREATURE_OR_PLAYER") ){
+					kill_card(BYTE2(sac), BYTE3(sac), KILL_SACRIFICE);
+				}
+				else{
+					state_untargettable(BYTE2(sac), BYTE3(sac), 0);
+				}
+			}
+			else{
+				spell_fizzled = 1;
+			}
 		}
 	}
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( valid_target(&td) ){
-			damage_creature_or_player(player, card, event, 1);
+			damage_target0(player, card, 1);
 		}
 	}
 
@@ -3177,30 +3324,23 @@ int card_surreal_memoir(int player, int card, event_t event){
 
 int card_traitorous_instinct(int player, int card, event_t event){
 
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.allowed_controller = 1-player;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		pick_target(&td, "TARGET_CREATURE");
-	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
+		card_instance_t *instance = get_card_instance(player, card);
 		if( valid_target(&td) ){
-			int legacy = effect_act_of_treason(player, card, instance->targets[0].player, instance->targets[0].card);
-			card_instance_t *leg = get_card_instance(player, legacy);
-			leg->targets[2].player = 2;
+			effect_act_of_treason_and_modify_pt_or_abilities(player, card, instance->targets[0].player, instance->targets[0].card,
+															2, 0, 0, 0);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return 0;
+	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
 int card_tuktuk_the_explorer(int player, int card, event_t event){
@@ -3637,17 +3777,17 @@ int card_kazandu_tuskcaller(int player, int card, event_t event){
 	int level = count_counters_no_parent(player, card, COUNTER_LEVEL);
 
 	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) ){
-		if( has_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0) && can_sorcery_be_played(player, event) ){
+		if( has_mana_for_activated_ability(player, card, MANACOST_XB(1,1)) && can_sorcery_be_played(player, event) ){
 			return 1;
 		}
-		if( level > 1 && ! is_tapped(player, card) && ! is_sick(player, card) && has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) ){
+		if( level > 1 && ! is_tapped(player, card) && ! is_sick(player, card) && has_mana_for_activated_ability(player, card, MANACOST0) ){
 			return 1;
 		}
 	}
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
-		if( has_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0) && can_sorcery_be_played(player, event) ){
-			if( level > 1 && ! is_tapped(player, card) && ! is_sick(player, card) && has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) ){
+		if( has_mana_for_activated_ability(player, card, MANACOST_XG(1,1)) && can_sorcery_be_played(player, event) ){
+			if( level > 1 && ! is_tapped(player, card) && ! is_sick(player, card) && has_mana_for_activated_ability(player, card, MANACOST0) ){
 				if( level < 6){
 					choice = do_dialog(player, player, card, -1, -1, " Level up\n Generate a 3/3 Elephant token\n Cancel", 1);
 				}
@@ -3671,7 +3811,7 @@ int card_kazandu_tuskcaller(int player, int card, event_t event){
 			spell_fizzled = 1;
 		}
 	}
-	else if( event == EVENT_RESOLVE_ACTIVATION && affect_me(player, card) ){
+	else if( event == EVENT_RESOLVE_ACTIVATION ){
 			if( instance->info_slot == 66 ){
 			   add_counter(instance->parent_controller, instance->parent_card, COUNTER_LEVEL);
 			}
@@ -3971,7 +4111,14 @@ int card_sarkhan_the_mad(int player, int card, event_t event){
 			else if( choice == CHOICE_SAC_TO_DRAGON ){
 					if( valid_target(&td) && can_sacrifice(player, instance->targets[0].player, 1, TYPE_CREATURE, 0) ){
 						kill_card(instance->targets[0].player, instance->targets[0].card, KILL_SACRIFICE);
-						generate_token_by_id(player, card, CARD_ID_DRAGON);
+
+						token_generation_t token;
+						default_token_definition(player, card, CARD_ID_DRAGON, &token);
+						token.t_player = instance->targets[0].player;
+						token.color_forced = COLOR_TEST_RED;
+						token.pow = 5;
+						token.tou = 5;
+						generate_token(&token);
 					}
 			}
 			else if( choice == CHOICE_DRAGON_POWER ){

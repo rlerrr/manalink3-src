@@ -169,53 +169,61 @@ int card_astral_steel(int player, int card, event_t event){
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.preferred_controller = player;
-	td.allow_cancel = 0;
 
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if(event == EVENT_CAN_CAST ){
-		return can_target(&td);
+		return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		int i;
-		for(i=0;i<get_storm_count();i++){
-			if( pick_target(&td, "TARGET_CREATURE") ){
-				instance->number_of_targets = 1;
-				pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 1, 2);
+
+	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
+		if( spell_fizzled != 1 && ! check_special_flags(player, card, SF_NOT_CAST) ){
+			int i;
+			for(i=0;i<get_storm_count();i++){
+				if( new_pick_target(&td, "TARGET_CREATURE", 1, 0) ){
+					pump_until_eot(player, card, instance->targets[1].player, instance->targets[1].card, 1, 2);
+				}
 			}
+			instance->number_of_targets = 1;
 		}
-		pick_target(&td, "TARGET_CREATURE");
-		instance->number_of_targets = 1;
 	}
-	else if(event == EVENT_RESOLVE_SPELL ){
-			if( valid_target(&td) ){
-				pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 1, 2);
-			}
-			kill_card(player, card, KILL_DESTROY);
+
+	if(event == EVENT_RESOLVE_SPELL ){
+		if( valid_target(&td) ){
+			pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 1, 2);
+		}
+		kill_card(player, card, KILL_DESTROY);
 	}
+
 	return 0;
 }
 
 int card_bladewing_the_risen(int player, int card, event_t event){
-
-	char msg[100] = "Select a Dragon permanent card.";
-	test_definition_t this_test;
-	new_default_test_definition(&this_test, TYPE_PERMANENT, msg);
-	this_test.subtype = SUBTYPE_DRAGON;
-
-	card_instance_t *instance = get_card_instance( player, card);
+	/* Bladewing the Risen	|3|B|B|R|R
+	 * Legendary Creature - Zombie Dragon 4/4
+	 * Flying
+	 * When ~ enters the battlefield, you may return target Dragon permanent card from your graveyard to the battlefield.
+	 * |B|R: Dragon creatures get +1/+1 until end of turn. */
 
 	check_legend_rule(player, card, event);
 
-	if( comes_into_play(player, card, event) && new_special_count_grave(player, &this_test) > 0 && ! graveyard_has_shroud(2)){
-		new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_PLAY, 0, AI_MAX_CMC, &this_test);
+	if( comes_into_play(player, card, event) ){
+		test_definition_t this_test;
+		new_default_test_definition(&this_test, TYPE_PERMANENT, "Select a Dragon permanent card.");
+		this_test.subtype = SUBTYPE_DRAGON;
+
+		if (new_special_count_grave(player, &this_test) > 0 && ! graveyard_has_shroud(2)){
+			new_global_tutor(player, player, TUTOR_FROM_GRAVE, TUTOR_PLAY, 0, AI_MAX_CMC, &this_test);
+		}
 	}
 
-	if( event == EVENT_RESOLVE_ACTIVATION && affect_me(player, card)){
+	if( event == EVENT_RESOLVE_ACTIVATION ){
+		card_instance_t *instance = get_card_instance( player, card);
 		pump_subtype_until_eot(instance->parent_controller, instance->parent_card, ANYBODY, SUBTYPE_DRAGON, 1, 1, 0, 0);
 	}
 
-	return generic_activated_ability(player, card, event, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0);
+	return generic_activated_ability(player, card, event, 0, MANACOST_BR(1,1), 0, NULL, NULL);
 }
 
 int card_bladewings_thrall(int player, int card, event_t event){
@@ -242,25 +250,28 @@ int card_brain_freeze(int player, int card, event_t event){
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.allow_cancel = 0;
 	td.zone = TARGET_ZONE_PLAYERS;
 
 	card_instance_t* instance = get_card_instance(player, card);
 
 	if(event == EVENT_CAN_CAST ){
-		return can_target(&td);
+		return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
 	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card)){
-		int i;
-		for(i=0;i<get_storm_count();i++){
-			instance->number_of_targets = 0;
-			pick_target(&td, "TARGET_PLAYER");
-			mill(instance->targets[0].player, 3);
+
+	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
+		if( spell_fizzled != 1 && ! check_special_flags(player, card, SF_NOT_CAST) ){
+			int i;
+			for(i=0;i<get_storm_count();i++){
+				if( new_pick_target(&td, "TARGET_PLAYER", 1, 0) ){
+					mill(instance->targets[1].player, 3);
+				}
+			}
+			instance->number_of_targets = 1;
 		}
-		instance->number_of_targets = 0;
-		pick_target(&td, "TARGET_PLAYER");
 	}
-	else if(event == EVENT_RESOLVE_SPELL ){
+
+	if(event == EVENT_RESOLVE_SPELL ){
 		if (valid_target(&td)){
 			mill(instance->targets[0].player, 3);
 		}
@@ -426,22 +437,17 @@ int card_call_to_the_grave(int player, int card, event_t event){
 
 int card_carbonize(int player, int card, event_t event){
 
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
 	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		pick_target(&td, "TARGET_CREATURE_OR_PLAYER");
-	}
-
 	if( event == EVENT_RESOLVE_SPELL){
 		if( valid_target(&td) ){
+			card_instance_t *instance = get_card_instance( player, card );
 			if( instance->targets[0].card != -1 ){
 				cannot_regenerate_until_eot(player, card, instance->targets[0].player, instance->targets[0].card);
 				exile_if_would_be_put_into_graveyard(player, card, instance->targets[0].player, instance->targets[0].card, 1);
@@ -451,7 +457,7 @@ int card_carbonize(int player, int card, event_t event){
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return 0;
+	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE_OR_PLAYER", 1, NULL);
 }
 
 int card_carrion_feeder(int player, int card, event_t event)
@@ -640,31 +646,8 @@ int card_decree_of_justice(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_ACTIVATE_FROM_HAND  ){
-		int colorless = 2;
-		int amount = 2 * count_cards_by_id(player, CARD_ID_FLUCTUATOR);
-		colorless -=amount;
-
-		if( colorless < 0 ){
-			colorless = 0;
-		}
-		if( has_mana_multi(player, colorless, 0, 0, 0, 0, 1) ){
-			return 1;
-		}
-	}
-	else if( event == EVENT_ACTIVATE_FROM_HAND ){
-			 int colorless = 2;
-			 int amount = 2 * count_cards_by_id(player, CARD_ID_FLUCTUATOR);
-			 colorless -=amount;
-
-			 if( colorless < 0 ){
-				 colorless = 0;
-			 }
-			 charge_mana_multi(player, colorless, 0, 0, 0, 0, 1);
-			 if( spell_fizzled != 1 ){
-				 discard_card(player, card);
-				 return 2;
-			 }
+	if( event == EVENT_CAN_ACTIVATE_FROM_HAND || event == EVENT_ACTIVATE_FROM_HAND ){
+		return cycling(player, card, event, MANACOST_XW(2, 1));
 	}
 	else if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && spell_fizzled != 1 ){
 			 draw_a_card(player);
@@ -945,6 +928,13 @@ int card_dragon_tyrant(int player, int card, event_t event){
 }
 
 int card_dragons_wings(int player, int card, event_t event){
+	/* Dragon Wings	|1|U
+	 * Enchantment - Aura
+	 * Enchant creature
+	 * Enchanted creature has flying.
+	 * Cycling |1|U
+	 * When a creature with converted mana cost 6 or greater enters the battlefield, you may return ~ from your graveyard to the battlefield attached to that creature. */
+
 	if( event == EVENT_CAN_ACTIVATE_FROM_HAND || event == EVENT_ACTIVATE_FROM_HAND ){
 		return cycling(player, card, event, MANACOST_XU(1, 1));
 	}
@@ -966,23 +956,38 @@ int card_dragonspeaker_shaman(int player, int card, event_t event){
 }
 
 int card_dragonstorm(int player, int card, event_t event){
-	if(event == EVENT_CAN_CAST ){
-		return 1;
-	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+	/*
+	  Dragonstorm |8|R
+	  Sorcery
+	  Search your library for a Dragon permanent card and put it onto the battlefield. Then shuffle your library.
+	  Storm (When you cast this spell, copy it for each spell cast before it this turn.)
+	*/
+	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		if( ! check_special_flags(player, card, SF_NOT_CAST) ){
 			int amount = get_storm_count();
-			if( amount > 0 ){
-				int i;
-				for(i=0;i<amount;i++){
-					global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, 12, TYPE_PERMANENT, 0, SUBTYPE_DRAGON, 0, 0, 0, 0, 0, -1, 0);
-				}
+
+			test_definition_t test;
+			new_default_test_definition(&test, TYPE_PERMANENT, "Select a Dragon permanent card.");
+			test.subtype = SUBTYPE_DRAGON;
+
+			int i;
+			for(i=0;i<amount;i++){
+				new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_MAX_CMC, &test);
 			}
+		}
 	}
-	else if(event == EVENT_RESOLVE_SPELL ){
-			global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, 2, TYPE_PERMANENT, 0, SUBTYPE_DRAGON, 0, 0, 0, 0, 0, -1, 0);
-			kill_card(player, card, KILL_DESTROY);
+
+	if(event == EVENT_RESOLVE_SPELL ){
+		test_definition_t test;
+		new_default_test_definition(&test, TYPE_PERMANENT, "Select a Dragon permanent card.");
+		test.subtype = SUBTYPE_DRAGON;
+
+		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_MAX_CMC, &test);
+
+		kill_card(player, card, KILL_DESTROY);
 	}
-	return 0;
+
+	return basic_spell(player, card, event);
 }
 
 int card_edgewalker(int player, int card, event_t event){
@@ -1240,14 +1245,27 @@ int card_guilty_conscience(int player, int card, event_t event){
 }
 
 int card_hindering_touch(int player, int card, event_t event ){
+	/* Hindering Touch	|3|U
+	 * Instant
+	 * Counter target spell unless its controller pays |2.
+	 * Storm */
+
+	if( event == EVENT_CAN_CAST ){
+		return card_counterspell(player, card, event);
+	}
+
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		get_card_instance(player, card)->info_slot = 0;
+		if( ! check_special_flags(player, card, SF_NOT_CAST) ){
+			get_card_instance(player, card)->info_slot = get_storm_count();
+		}
+		return card_counterspell(player, card, event);
+	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
-			int amount = 2 * (1 + get_storm_count());
-			counterspell_resolve_unless_pay_x(player, card, NULL, 0, amount);
-			kill_card(player, card, KILL_DESTROY);
-	}
-	else{
-		return card_counterspell(player, card, event);
+		int amount = 2 + (2 * get_card_instance(player, card)->info_slot);
+		counterspell_resolve_unless_pay_x(player, card, NULL, 0, amount);
+		kill_card(player, card, KILL_DESTROY);
 	}
 
 	return 0;
@@ -1259,27 +1277,30 @@ int card_hunting_pack(int player, int card, event_t event){
 	 * Put a 4/4 |Sgreen Beast creature token onto the battlefield.
 	 * Storm */
 
-	token_generation_t token;
-	default_token_definition(player, card, CARD_ID_BEAST, &token);
-	token.pow = 4;
-	token.tou = 4;
-	token.color_forced = COLOR_TEST_GREEN;
-
-	if( event == EVENT_CAN_CAST ){
-		return 1;
-	}
-
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		token.qty = get_storm_count();
-		generate_token(&token);
+		if( ! check_special_flags(player, card, SF_NOT_CAST) ){
+			token_generation_t token;
+			default_token_definition(player, card, CARD_ID_BEAST, &token);
+			token.pow = 4;
+			token.tou = 4;
+			token.color_forced = COLOR_TEST_GREEN;
+			token.qty = get_storm_count();
+			generate_token(&token);
+		}
 	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
-		token.qty = 1;
+		token_generation_t token;
+		default_token_definition(player, card, CARD_ID_BEAST, &token);
+		token.pow = 4;
+		token.tou = 4;
+		token.color_forced = COLOR_TEST_GREEN;
 		generate_token(&token);
+
 		kill_card(player, card, KILL_DESTROY);
 	}
-	return 0;
+
+	return basic_spell(player, card, event);
 }
 
 int card_karona_false_god(int player, int card, event_t event){
@@ -1511,15 +1532,13 @@ static int create_minds_desire_legacy(int player, int card){
 int card_minds_desire(int player, int card, event_t event){
 	if( ! is_unlocked(player, card, event, 28) ){ return 0; }
 
-	if( event == EVENT_CAN_CAST ){
-		return 1;
-	}
-
 	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		int count = get_storm_count();
-		while( count > 0 ){
-				create_minds_desire_legacy(player, card);
-				count--;
+		if( ! check_special_flags(player, card, SF_NOT_CAST) ){
+			int count = get_storm_count();
+			while( count > 0 ){
+					create_minds_desire_legacy(player, card);
+					count--;
+			}
 		}
 	}
 
@@ -1527,7 +1546,8 @@ int card_minds_desire(int player, int card, event_t event){
 		create_minds_desire_legacy(player, card);
 		kill_card(player, card, KILL_DESTROY);
 	}
-	return 0;
+
+	return basic_spell(player, card, event);
 }
 
 int card_mischievous_quanar(int player, int card, event_t event)
@@ -1711,8 +1731,8 @@ int card_reaping_the_graves(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST && count_graveyard_by_type(player, TYPE_CREATURE) > 0 ){
-		return ! graveyard_has_shroud(2);
+	if( event == EVENT_CAN_CAST ){
+		return generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 1, NULL);
 	}
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -1720,7 +1740,10 @@ int card_reaping_the_graves(int player, int card, event_t event){
 		new_default_test_definition(&this_test, TYPE_CREATURE, "Select target creature card.");
 
 		int swap[500][2];
-		int max = 1+get_storm_count();
+		int max = 1;
+		if( ! check_special_flags(player, card, SF_NOT_CAST) ){
+			max += get_storm_count();
+		}
 		max = MIN(19, max);
 		int pos = 0;
 		while( max > 0 ){
@@ -1968,7 +1991,10 @@ int card_sprouting_vines(int player, int card, event_t event){
 		test_definition_t this_test;
 		new_default_test_definition(&this_test, TYPE_LAND, "Select a basic land card.");
 		this_test.subtype = SUBTYPE_BASIC;
-		int i, storm = get_storm_count();
+		int i, storm = 0;
+		if( ! check_special_flags(player, card, SF_NOT_CAST) ){
+			storm = get_storm_count();
+		}
 		for (i = 0; i < storm; ++i){
 			// Deliberately shuffle after each search
 			new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_FIRST_FOUND, &this_test);
@@ -2044,23 +2070,42 @@ int card_tendrils_of_agony(int player, int card, event_t event)
 	 * Target player loses 2 life and you gain 2 life.
 	 * Storm */
 
-	if(event == EVENT_CAN_CAST ){
-		return opponent_is_valid_target(player, card);
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
 	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		int i;
-		for(i=0;i<get_storm_count();i++){
-			gain_life(player, 2);
-			lose_life(1-player, 2);
+
+	target_definition_t td;
+	default_target_definition(player, card, &td, 0);
+	td.zone = TARGET_ZONE_PLAYERS;
+
+	card_instance_t* instance = get_card_instance(player, card);
+
+	if(event == EVENT_CAN_CAST ){
+		return generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 1, NULL);
+	}
+
+	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
+		if( spell_fizzled != 1 && ! check_special_flags(player, card, SF_NOT_CAST) ){
+			int i;
+			for(i=0;i<get_storm_count();i++){
+				if( new_pick_target(&td, "TARGET_PLAYER", 1, 0) ){
+					lose_life(instance->targets[1].player, 2);
+					gain_life(player, 2);
+				}
+			}
+			instance->number_of_targets = 1;
 		}
 	}
-	else if(event == EVENT_RESOLVE_SPELL ){
-		if (opponent_is_valid_target(player, card)){
+
+	if(event == EVENT_RESOLVE_SPELL ){
+		if (valid_target(&td)){
+			lose_life(instance->targets[0].player, 2);
 			gain_life(player, 2);
-			lose_life(1-player, 2);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
+
 	return 0;
 }
 
@@ -2245,13 +2290,8 @@ int card_wirewood_symbiote(int player, int card, event_t event){
 }
 
 int card_xantid_swarm(int player, int card, event_t event){
-	if( event == EVENT_DECLARE_ATTACKERS && is_attacking(player, card) ){
-			int spc = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);//64
-			card_instance_t *leg = get_card_instance(player, spc);
-			leg->targets[2].player = 64;
-			leg->targets[3].player = 1-player;
-			leg->targets[2].card = get_id(player, card);
-			create_card_name_legacy(player, spc, get_id(player, card));
+	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
+		target_player_cant_cast_type(player, card, 1-player, TYPE_ANY);
 	}
 	return 0;
 }

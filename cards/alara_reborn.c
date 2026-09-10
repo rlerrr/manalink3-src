@@ -574,6 +574,14 @@ int card_defiler_of_souls(int player, int card, event_t event){
 }
 
 int card_demonic_dread(int player, int card, event_t event){
+	/* Demonic Dread	|1|B|R
+	 * Sorcery
+	 * Cascade
+	 * Target creature can't block this turn. */
+
+	if (!IS_GS_EVENT(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -587,7 +595,7 @@ int card_demonic_dread(int player, int card, event_t event){
 			}
 	}
 
-	else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if( event == EVENT_RESOLVE_SPELL ){
 			if( valid_target(&td) ){
 			   pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, 0, SP_KEYWORD_CANNOT_BLOCK);
 			}
@@ -602,61 +610,84 @@ int card_demonic_dread(int player, int card, event_t event){
 	return 0;
 }
 
-int card_demonspine_whip(int player, int card, event_t event, int equip_cost){
+int card_demonspine_whip(int player, int card, event_t event){
 
 	/* Demonspine Whip	|B|R
 	 * Artifact - Equipment
 	 * |X: Equipped creature gets +X/+0 until end of turn.
 	 * Equip |1 */
 
+	if( ! IS_GAA_EVENT(event) ){
+		return 0;
+	}
+
+	enum{
+		CHOICE_EQUIP = 1,
+		CHOICE_PUMP
+	};
+
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) ){
-		if( is_equipping(player, card) && has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0) ){
+	if( event == EVENT_CAN_ACTIVATE ){
+		if( is_equipping(player, card) && generic_activated_ability(player, card, event, 0, MANACOST_X(1), 0, NULL, NULL) ){
 			return 1;
 		}
-		return can_activate_basic_equipment(player, card, event, 1);
+		return basic_equipment(player, card, event, 1);
 	}
-	else if( event == EVENT_ACTIVATE ){
-			int choice =  0;
-			int ai_choice = 0;
-			if( is_equipping(player, card) && has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0) ){
-				if( can_activate_basic_equipment(player, card, event, 1) ){
-					if( can_attack(instance->targets[8].player, instance->targets[8].card) ){
-						ai_choice = 1;
-					}
-					choice = do_dialog(player, player, card, -1, -1, " Change equipment\n Pump equipped creature\n Cancel", ai_choice);
-				}
+
+	if( event == EVENT_ACTIVATE ){
+		instance->info_slot = instance->number_of_targets = instance->targets[2].player = 0;
+		int can_equip = can_activate_basic_equipment(player, card, event, 1);
+		int can_pump = (is_equipping(player, card) && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_X(1), 0, NULL, NULL) ? 1 : 0);
+
+		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
+						  "Equip", can_equip, 5,
+						  "Pump equipped creature", can_pump, (current_phase == PHASE_AFTER_BLOCKING ? 10 : 0));
+		if( ! choice ){
+			spell_fizzled = 1;
+			return 0;
+		}
+
+		if( choice == CHOICE_EQUIP ){
+			basic_equipment(player, card, event, 1);
+			if( spell_fizzled != 1 ){
+				instance->info_slot = choice;
 			}
-			else{
-				choice = 1;
-			}
-			if( choice == 0 ){
-				charge_mana_for_activated_ability(player, card, -1, 0, 0, 0, 0, 0);
+		}
+
+		if( choice == CHOICE_PUMP ){
+			charge_mana_for_activated_ability(player, card, MANACOST0);
+			if( spell_fizzled != 1 ){
+				charge_mana(player, COLOR_COLORLESS, -1);
 				if( spell_fizzled != 1 ){
-					instance->info_slot = x_value;
+					instance->targets[2].player = x_value;
+					instance->info_slot = choice;
 				}
 			}
-			else if( choice == 1 ){
-				instance->info_slot = -1;
-				activate_basic_equipment(player, card, 1);
-			}
-			else{
-				spell_fizzled = 1;
-			}
+		}
 	}
-	else if(event == EVENT_RESOLVE_ACTIVATION ){
-			if( instance->info_slot >= 0 ){
-				pump_until_eot(player, instance->parent_card, instance->targets[8].player, instance->targets[8].card, instance->info_slot, 0);
-			}
-			else{
-				resolve_activation_basic_equipment(player, card);
-			}
+
+	if(event == EVENT_RESOLVE_ACTIVATION ){
+		if( instance->info_slot == CHOICE_EQUIP ){
+			return basic_equipment(player, card, event, 1);
+		}
+		if( instance->info_slot == CHOICE_PUMP ){
+			pump_until_eot(instance->parent_controller, instance->parent_card, instance->targets[8].player, instance->targets[8].card,
+							instance->targets[2].player, 0);
+		}
 	}
 	return 0;
 }
 
 int card_deny_reality(int player, int card, event_t event){
+	/* Deny Reality	|3|U|B
+	 * Sorcery
+	 * Cascade
+	 * Return target permanent to its owner's hand. */
+
+	if (!IS_GS_EVENT(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_PERMANENT );
@@ -670,7 +701,7 @@ int card_deny_reality(int player, int card, event_t event){
 			}
 	}
 
-	else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if( event == EVENT_RESOLVE_SPELL ){
 			if( valid_target(&td) ){
 			   bounce_permanent(instance->targets[0].player, instance->targets[0].card);
 			}
@@ -808,6 +839,12 @@ int card_ethersworn_shieldmage(int player, int card, event_t event){
 }
 
 int card_etherwrought_page(int player, int card, event_t event){
+	/* Etherwrought Page	|1|W|U|B
+	 * Artifact
+	 * At the beginning of your upkeep, choose one -
+	 * * You gain 2 life.
+	 * * Look at the top card of your library. You may put that card into your graveyard.
+	 * * Each opponent loses 1 life. */
 
 	upkeep_trigger_ability(player, card, event, player);
 
@@ -817,12 +854,15 @@ int card_etherwrought_page(int player, int card, event_t event){
 		if( life[player] < 6 ){
 			ai_choice = 0;
 		}
-		choice = do_dialog(player, player, card, -1, -1, " Gain 2 life\n Scry 1\n Opponent loses 1 life", ai_choice);
+		choice = do_dialog(player, player, card, -1, -1, " Gain life\n Look at library\n Opponent loses life", ai_choice);
 		if( choice == 0 ){
 			gain_life(player, 2);
 		}
 		if( choice == 1 ){
-			scrylike_effect(player, player, 1);
+			if(deck_ptr[player][0] != -1 ){
+				show_deck(player, deck_ptr[player], 1, "Top card of library", 0, (int)"Into grave?");
+				mill(player, 1);
+			}
 		}
 		if( choice == 2 ){
 			lose_life(1-player, 1);
@@ -988,6 +1028,13 @@ int card_grixis_grimblade(int player, int card, event_t event)
 }
 
 int card_identity_crisis(int player, int card, event_t event){
+	/* Identity Crisis	|2|W|W|B|B
+	 * Sorcery
+	 * Exile all cards from target player's hand and graveyard. */
+
+	if (!IS_GS_EVENT(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -995,7 +1042,7 @@ int card_identity_crisis(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	if(event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
 			test_definition_t this_test;
 			default_test_definition(&this_test, TYPE_ANY);
@@ -1034,14 +1081,20 @@ int card_illusory_demon(int player, int card, event_t event){
 }
 
 int card_intimidation_bolt(int player, int card, event_t event){
+	/* Intimidation Bolt	|1|R|W
+	 * Instant
+	 * ~ deals 3 damage to target creature. Other creatures can't attack this turn. */
 
-	// ~ deals 3 damage to target creature. Other creatures can't attack this turn.
+	if (!IS_GS_EVENT(player, card, event)){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	if(event == EVENT_RESOLVE_SPELL ){
 			if( valid_target(&td) ){
 				damage_creature(instance->targets[0].player, instance->targets[0].card, 3, player, card);
 				nobody_can_attack_until_eot(player, card, ANYBODY, instance->targets[0].player, instance->targets[0].card);
@@ -1324,6 +1377,10 @@ int card_maelstrom_nexus(int player, int card, event_t event){
 
 int card_maelstrom_pulse(int player, int card, event_t event){
 
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_PERMANENT);
 	td.illegal_type = TYPE_LAND;
@@ -1331,15 +1388,13 @@ int card_maelstrom_pulse(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_RESOLVE_SPELL ){
-			if( validate_target(player, card, &td, 0)){
-				test_definition_t this_test;
-				default_test_definition(&this_test, TYPE_PERMANENT);
-				this_test.id = get_id(instance->targets[0].player, instance->targets[0].card );
-				new_manipulate_all(player, card, 2, &this_test, KILL_DESTROY);
-			}
-			kill_card(player, card, KILL_DESTROY);
+		if( validate_target(player, card, &td, 0)){
+			echoing_effect(player, card, instance->targets[0].player, instance->targets[0].card, &td, KILL_DESTROY );
+		}
+		kill_card(player, card, KILL_DESTROY);
 	}
-	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PERMANENT", 1, NULL);
+
+	return generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td, "Select target nonland permanent", 1, NULL);
 }
 
 int card_mage_slayer(int player, int card, event_t event)
@@ -1559,6 +1614,9 @@ int card_nulltread_gargantuan(int player, int card, event_t event){
 }
 
 int card_offering_to_asha(int player, int card, event_t event){
+	/* Offering to Asha	|2|W|U
+	 * Instant
+	 * Counter target spell unless its controller pays |4. You gain 4 life. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		if (counterspell_resolve_unless_pay_x(player, card, NULL, 0, 4)){
@@ -1645,7 +1703,12 @@ int card_reborn_hope(int player, int card, event_t event){
 }
 
 int card_retaliator_griffin(int player, int card, event_t event){
-
+	/*
+	  Retaliator Griffin |1|W|R|G
+	  Creature — Griffin 2/2
+	  Flying
+	  Whenever a source an opponent controls deals damage to you, you may put that many +1/+1 counters on Retaliator Griffin.
+	*/
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_DEAL_DAMAGE ){
@@ -1678,14 +1741,20 @@ int card_retaliator_griffin(int player, int card, event_t event){
 	if( instance->info_slot > 0 && trigger_condition == TRIGGER_DEAL_DAMAGE && affect_me(player, card) &&
 		reason_for_trigger_controller == player ){
 		if(event == EVENT_TRIGGER){
-			event_result |= 1+player;
+			event_result |= RESOLVE_TRIGGER_AI(player);
 		}
 		else if(event == EVENT_RESOLVE_TRIGGER){
-				add_1_1_counters(player, card, instance->info_slot);
+				if( current_phase == PHASE_NORMAL_COMBAT_DAMAGE || current_phase == PHASE_FIRST_STRIKE_DAMAGE ){
+					set_special_flags3(player, card, SF3_ARCHANGEL_OF_THUNE_COUNTER);
+					instance->eot_toughness = instance->info_slot;
+				}
+				else{
+					add_counters(player, card, COUNTER_P1_P1, instance->info_slot);
+				}
 				instance->info_slot = 0;
 		}
 		else if (event == EVENT_END_TRIGGER){
-			instance->info_slot = 0;
+				instance->info_slot = 0;
 		}
 	}
 
@@ -1953,6 +2022,9 @@ int card_sphinx_steel_wind(int player, int card, event_t event){
 }
 
 int card_stun_sniper(int player, int card, event_t event){
+	/* Stun Sniper	|R|W
+	 * Creature - Human Archer 1/1
+	 * |1, |T: ~ deals 1 damage to target creature. Tap that creature. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -1966,7 +2038,7 @@ int card_stun_sniper(int player, int card, event_t event){
 		}
 	}
 
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, 0, 0, 0, 0, 0, 0, 0, &td, "TARGET_CREATURE");
+	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST_X(1), 0, &td, "TARGET_CREATURE");
 }
 
 int card_tainted_sigil(int player, int card, event_t event){
@@ -2032,7 +2104,7 @@ int card_thopter_foundry(int player, int card, event_t event){
 			}
 	}
 
-  else if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+  else if( event == EVENT_ACTIVATE ){
 			charge_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0);
 			if( spell_fizzled != 1 && pick_target(&td, "TARGET_ARTIFACT") ){
 				instance->number_of_targets = 1;

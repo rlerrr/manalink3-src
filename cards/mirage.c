@@ -528,33 +528,43 @@ int card_acidic_dagger(int player, int card, event_t event){
 }
 
 int card_afiya_grove(int player, int card, event_t event){
+/*
+Afiya Grove |1|G
+Enchantment, 1G (2)
+Afiya Grove enters the battlefield with three +1/+1 counters on it.
+At the beginning of your upkeep, move a +1/+1 counter from Afiya Grove onto target creature.
+When Afiya Grove has no +1/+1 counters on it, sacrifice it.
+*/
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.preferred_controller = player;
-	td.allow_cancel = 0;
+	enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 3);
 
-	card_instance_t *instance = get_card_instance(player, card);
+	if(current_turn == player && trigger_condition == TRIGGER_UPKEEP && affect_me(player, card) ){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.preferred_controller = player;
+		td.allow_cancel = 0;
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		add_1_1_counters(player, card, 3);
-		instance->targets[1].player = 66;
-	}
-
-	if( count_1_1_counters(player, card) > 0 ){
-		upkeep_trigger_ability(player, card, event, player);
-
-		if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-			if( pick_target(&td, "TARGET_CREATURE") ){
-				add_1_1_counter(instance->targets[0].player,  instance->targets[0].card);
-				remove_1_1_counter(player, card);
-				instance->number_of_targets = 1;
-			}
+		if( count_1_1_counters(player, card) > 0 && can_target(&td) ){
+			upkeep_trigger_ability(player, card, event, player);
 		}
 	}
 
+	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.preferred_controller = player;
+		td.allow_cancel = 0;
 
-	if( instance->targets[1].player == 66 && count_1_1_counters(player, card) < 1 ){
+		card_instance_t *instance = get_card_instance(player, card);
+
+		instance->number_of_targets = 0;
+
+		if( pick_target(&td, "TARGET_CREATURE") ){
+			move_counters(instance->targets[0].player,  instance->targets[0].card, player, card, COUNTER_P1_P1, 1);
+		}
+	}
+
+	if( event == EVENT_STATIC_EFFECTS && in_play(player, card) && count_1_1_counters(player, card) < 1 ){
 		kill_card(player, card, KILL_SACRIFICE);
 	}
 
@@ -751,11 +761,17 @@ int card_bad_river(int player, int card, event_t event){
 static int barbed_foliage_effect(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance(player, card);
+	
+	if( event == EVENT_ABILITIES && instance->damage_target_player > -1 ){
+		if( affect_me(instance->damage_target_player, instance->damage_target_card) ){
+			remove_special_ability(instance->damage_target_player, instance->damage_target_card, SP_KEYWORD_FLANKING);
+		}
+	}
 
-	if( eot_trigger(player, card, event) ){
-		remove_special_flags(instance->targets[0].player, instance->targets[0].card, SF_FLANKING_REMOVED);
+	if( current_phase == PHASE_CLEANUP ){
 		kill_card(player, card, KILL_REMOVE);
 	}
+
 	return 0;
 }
 
@@ -773,7 +789,6 @@ int card_barbed_foliage(int player, int card, event_t event)
 		  {
 			if (check_for_special_ability(current_turn, attackers[amt], SP_KEYWORD_FLANKING))
 			  {
-				set_special_flags(current_turn, attackers[amt], SF_FLANKING_REMOVED);
 				create_targetted_legacy_effect(player, card, &barbed_foliage_effect, current_turn, attackers[amt]);
 			  }
 
@@ -915,44 +930,62 @@ int card_benthic_djinn(int player, int card, event_t event){
 	return 0;
 }
 
-int card_bone_harvest(int player, int card, event_t event){
+int bone_harvest_impl(int player, int card, event_t event, int draw_else_slowtrip){
 
-	if( event == EVENT_CAN_CAST){
-		return 1;
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
 	}
-	else if( event == EVENT_RESOLVE_SPELL ){
-			 const int *grave = get_grave(player);
-			 if( player != AI ){
-				while( count_graveyard_by_type(player, TYPE_CREATURE) > 0 ){
-					  int selected = pick_card_from_graveyard(player, player, "Select a Creature card");
-					  if( cards_data[grave[selected]].type & TYPE_CREATURE ){
-						 int card_added = add_card_to_hand(player, grave[selected]);
-						 put_on_top_of_deck(player, card_added);
-						 remove_card_from_grave(player, selected);
-					  }
-					  else{
-						   break;
-					  }
-				}
-			 }
-			 else{
-				  int count = count_graveyard(player)-1;
-				  int total = 0;
-				  while( total < 2 && count > -1 ){
-					  if( cards_data[grave[count]].type & TYPE_CREATURE ){
-						 int card_added = add_card_to_hand(player, grave[count]);
-						 put_on_top_of_deck(player, card_added);
-						 remove_card_from_grave(player, count);
-						 total++;
-					  }
-					  count--;
-				}
+
+	test_definition_t test;
+	new_default_test_definition(&test, TYPE_CREATURE, "Select a creature cards.");
+
+	card_instance_t* instance = get_card_instance(player, card);
+	
+	if (event == EVENT_CAN_CAST){
+		return generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 1, &test);
+	}
+
+	if (event == EVENT_CAST_SPELL && affect_me(player, card)){
+		int max_targ = MIN(count_graveyard_by_type(player, TYPE_CREATURE), 18);
+		instance->info_slot = select_multiple_cards_from_graveyard(player, player, -1, AI_MAX_VALUE, &test, max_targ, &instance->targets[0]);
+	}
+
+	if (event == EVENT_RESOLVE_SPELL){
+		int i, num_validated = 0, selected;
+		for (i = 0; i < instance->info_slot; ++i){
+			if( (selected = validate_target_from_grave(player, card, player, i)) != -1){
+				int card_added = add_card_to_hand(player, get_grave(player)[selected]);
+				put_on_top_of_deck(player, card_added);
+				++num_validated;
 			}
-			cantrip(player, card, 1);
-			kill_card(player, card, KILL_DESTROY);
-   }
+		}
+
+		if (num_validated == 0){
+			spell_fizzled = 1;
+		}
+		else{
+			rearrange_top_x(player, player, num_validated);
+			if( draw_else_slowtrip ){
+				draw_a_card(player);
+			} 
+			else{
+				cantrip(player, card, 1);
+			}
+		}
+		
+		kill_card(player, card, KILL_DESTROY);
+	}
 
 	return 0;
+}
+
+int card_bone_harvest(int player, int card, event_t event)
+{
+  /* Bone Harvest	|2|B
+   * Instant
+   * Put any number of target creature cards from your graveyard on top of your library.
+   * Draw a card at the beginning of the next turn's upkeep. */
+  return bone_harvest_impl(player, card, event, 0);
 }
 
 int card_bone_mask(int player, int card, event_t event){
@@ -2053,7 +2086,7 @@ static int can_reanimated_aura(void){
 	int result = 0;
 	int i;
 	for(i=0; i<2; i++){
-		result |= (count_graveyard_by_subtype(i, SUBTYPE_AURA_CREATURE) && ! graveyard_has_shroud(i) ? (1+i) : 0);
+		result |= (any_in_graveyard_by_subtype(i, SUBTYPE_AURA_CREATURE) && ! graveyard_has_shroud(i) ? (1+i) : 0);
 	}
 	return result;
 }
@@ -2386,24 +2419,11 @@ int card_jungle_patrol(int player, int card, event_t event){
 
 int card_jungle_wurm(int player, int card, event_t event){
 
-	if( event == EVENT_DECLARE_BLOCKERS ){
-		if( current_turn == player ){
-			if( is_attacking(player, card) ){
-				int count = active_cards_count[1-player]-1;
-				while( count > -1 ){
-						int max = 0;
-						if( in_play(1-player, count) && is_what(1-player, count, TYPE_CREATURE) ){
-							card_instance_t *instance = get_card_instance(1-player, count);
-							if( instance->blocking == card ){
-								max++;
-								if( max > 1 ){
-									pump_ability_until_eot(player, card, player, card, -1, -1, 0, 0);
-								}
-							}
-						}
-						count--;
-				}
-			}
+	if( in_play(player, card) && current_turn == player && ! is_humiliated(player, card) && event == EVENT_DECLARE_BLOCKERS){
+		int blockers = count_my_blockers(player, card);
+		if (blockers > 1){
+			int number = -(blockers - 1);
+			pump_until_eot(player, card, player, card, number, number);
 		}
 	}
 
@@ -2442,27 +2462,36 @@ int card_kukemssa_pirates(int player, int card, event_t event){
 }
 
 int card_lions_eye_diamond(int player, int card, event_t event){
-	if( event == EVENT_COUNT_MANA && affect_me(player, card) && can_produce_mana(player, card) ){
-		if( can_sacrifice_as_cost(player, 1, TYPE_ARTIFACT, 0, 0, 0, 0, 0, 0, 0, -1, 0) ){
-			return card_black_lotus(player, card, event);
-		}
-	}
-	if( event == EVENT_CAN_ACTIVATE && can_produce_mana(player, card) ){
-		if( can_sacrifice_as_cost(player, 1, TYPE_ARTIFACT, 0, 0, 0, 0, 0, 0, 0, -1, 0) ){
-			return card_black_lotus(player, card, event);
-		}
-	}
-	else if( event == EVENT_ACTIVATE && spell_fizzled != 1){
+	/* Lion's Eye Diamond	|0
+	 * Artifact
+	 * Sacrifice ~, Discard your hand: Add three mana of any one color to your mana pool. Activate this ability only any time you could cast an instant. */
+
+	if (event == EVENT_ACTIVATE){
+		get_card_instance(player, card)->mana_color = COLOR_TEST_ANY_COLORED;
+		artifact_mana_all_one_color(player, card, event, 3, 1);
+		if (cancel != 1){
 			discard_all(player);
-			return card_black_lotus(player, card, event);
+		}
+		return 0;
+	} else {
+		return artifact_mana_all_one_color(player, card, event, 3, 1);
 	}
-	else{
-		return card_black_lotus(player, card, event);
-	}
-	return 0;
 }
 
 int card_locust_swarm(int player, int card, event_t event){
+
+	if(event == EVENT_CLEANUP){
+		get_card_instance(player, card)->targets[2].player = 0;
+	}
+
+	if( ! IS_GAA_EVENT(event) ){
+		return 0;
+	}
+
+	enum{
+		CHOICE_REGENERATE = 1,
+		CHOICE_UNTAP
+	};
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -2477,23 +2506,32 @@ int card_locust_swarm(int player, int card, event_t event){
 
 	if(event == EVENT_ACTIVATE ){
 		instance->info_slot = 0;
-		int result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_REGENERATION, MANACOST_G(1), 0, NULL, NULL) ? 1 : 2;
-		if( charge_mana_for_activated_ability(player, card, MANACOST_G(1)) ){
-			instance->info_slot = result;
+		int choice = CHOICE_UNTAP;
+		int result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_REGENERATION, MANACOST_G(1), 0, NULL, NULL);
+		if( result ){
+			if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_ONCE_PER_TURN, MANACOST_G(1), 0, NULL, NULL) ){
+				choice = DIALOG(player, card, event, DLG_RANDOM, 
+								"Regenerate", result ? 1 : 0, 15,
+								"Untap", 1, 5
+								);
+			}
+			else{
+				choice = CHOICE_REGENERATE;
+			}
+		}
+		
+		if( generic_activated_ability(player, card, event, choice == CHOICE_REGENERATE ? GAA_REGENERATION : GAA_ONCE_PER_TURN, MANACOST_G(1), 0, NULL, NULL) ){
+			instance->info_slot = choice;
 		}
 	}
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( instance->info_slot == 1 && can_regenerate(instance->parent_controller, instance->parent_card) ){
+		if( instance->info_slot == CHOICE_REGENERATE && can_regenerate(instance->parent_controller, instance->parent_card) ){
 			regenerate_target(instance->parent_controller, instance->parent_card);
 		}
-		if( instance->info_slot == 2 ){
+		if( instance->info_slot == CHOICE_UNTAP ){
 			untap_card(instance->parent_controller, instance->parent_card);
 		}
-	}
-
-	if(event == EVENT_CLEANUP){
-		instance->targets[2].player = 0;
 	}
 
 	return 0;
@@ -4776,18 +4814,25 @@ int card_withering_boon(int player, int card, event_t event){
 
 	if( event == EVENT_CAN_CAST){
 		int result = card_remove_soul(player, card, event);
-		if( result > 0 ){
-			if( player == AI && can_pay_life(player, 3) ){
+		if( result ){
+			if( can_pay_life_as_cost_for_spells_or_activated_abilities(player, 3) ){
 				return result;
 			}
 		}
 	}
-	else if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			 lose_life(player, 3);
-			 return card_remove_soul(player, card, event);
+	
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		card_remove_soul(player, card, event);
+		if( spell_fizzled != 1 ){
+			lose_life(player, 3);
+		}
 	}
 
-	return card_remove_soul(player, card, event);
+	if( event == EVENT_RESOLVE_SPELL ){
+		 return card_remove_soul(player, card, event);
+	}
+
+	return 0;
 }
 
 int card_yare(int player, int card, event_t event)

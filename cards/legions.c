@@ -31,8 +31,8 @@ static int provoke_impl(int src_player, int src_card, int player, int card, even
 			{
 			  // Reseat the legacy's text and image to the source card's
 			  card_instance_t* legacy = get_card_instance(player, leg);
-			  legacy->display_pic_int_id = get_id(src_player, src_card);
-			  legacy->display_pic_num = get_card_image_number(legacy->display_pic_int_id, src_player, src_card);
+			  legacy->display_pic_csv_id = get_id(src_player, src_card);
+			  legacy->display_pic_num = get_card_image_number(legacy->display_pic_csv_id, src_player, src_card);
 			}
 
 		  untap_card(instance->targets[0].player, instance->targets[0].card);
@@ -925,6 +925,11 @@ int card_keeper_of_the_nine_gales(int player, int card, event_t event){
 }
 
 int card_kilnmouth_dragon(int player, int card, event_t event){
+	/* Kilnmouth Dragon	|5|R|R
+	 * Creature - Dragon 5/5
+	 * Amplify 3
+	 * Flying
+	 * |T: ~ deals damage equal to the number of +1/+1 counters on it to target creature or player. */
 
 	amplify(player, card, event, SUBTYPE_DRAGON, 3);
 
@@ -945,7 +950,7 @@ int card_kilnmouth_dragon(int player, int card, event_t event){
 		}
 	}
 
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_CREATURE");
+	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0, &td, "TARGET_CREATURE_OR_PLAYER");
 }
 
 int card_krosan_cloudscrapper(int player, int card, event_t event){

@@ -568,34 +568,76 @@ int card_bloodthirsty_ogre(int player, int card, event_t event){
 }
 
 int card_brothers_yamazaki(int player, int card, event_t event){
-	if( event == EVENT_RESOLVE_SPELL ){
-		int p;
-		int kill_all = 0;
-		int found = 0;
-		for(p=0;p<2;p++){
-			int c = 0;
-			while(c < active_cards_count[p]){
-					if( in_play(p, c) && get_id(p, c) == get_id(player, card) ){
-						found++;
-						if( found > 2 ){
-							kill_all = 1;
-							break;
-						}
-					}
-					c++;
-			}
+	/*
+	  Brothers Yamazaki |2|R
+
+	  Legendary Creature — Human Samurai 2/1
+
+	  Bushido 1 (Whenever this creature blocks or becomes blocked, it gets +1/+1 until end of turn.)
+
+	  If there are exactly two permanents named Brothers Yamazaki on the battlefield, the "legend rule" doesn't apply to them.
+
+	  Each other creature named Brothers Yamazaki gets +2/+2 and has haste.
+	*/
+	if( event == EVENT_STATIC_EFFECTS && ! is_humiliated(player, card) ){
+		if( check_battlefield_for_id(ANYBODY, CARD_ID_MIRROR_GALLERY) ){
+			return 0;
 		}
-		if( kill_all == 1 ){
-			manipulate_all(player, card, 1-player, 0, 0, 0, 0, 0, 0, get_id(player, card), 0, -1, 0, KILL_SACRIFICE);
-			manipulate_all(player, card, player, 0, 0, 0, 0, 0, 0, get_id(player, card), 0, -1, 0, KILL_SACRIFICE);
+
+		int this_card = get_card_name(player, card);
+		int p = player;
+		int lr = 0;
+		int found = 0;
+		int c = 0;
+		while(c < active_cards_count[p]){
+				if( in_play(p, c) && get_card_name(p, c) == this_card ){
+					found++;
+					if( found > 2 ){
+						lr = 1;
+						break;
+					}
+				}
+				c++;
+		}
+
+		if( lr ){
+			target_definition_t td;
+			default_target_definition(player, card, &td, TYPE_PERMANENT);
+			td.extra = get_internal_card_id_from_csv_id(this_card);
+			td.allow_cancel = 0;
+
+			card_instance_t* instance = get_card_instance(player, card);
+
+			int i;
+			for(i=0; i<2; i++){
+				char buffer[100];
+				scnprintf(buffer, 100, "Special Legend Rule: selec a card named %s to keep (%d of 2)", cards_ptr[this_card]->name, i+1);
+				if( new_pick_target(&td, buffer, i, GS_LITERAL_PROMPT) ){
+					state_untargettable(instance->targets[i].player, instance->targets[i].card, 1);
+				}
+				instance->number_of_targets = 0;
+			}
+
+			test_definition_t this_test;
+			default_test_definition(&this_test, TYPE_PERMANENT);
+			this_test.id = this_card;
+			new_manipulate_all(player, card, player, &this_test, KILL_SACRIFICE);
+
+			for(i=0; i<2; i++){
+				state_untargettable(instance->targets[i].player, instance->targets[i].card, 0);
+			}
 		}
 	}
 
-	if ((event == EVENT_ABILITIES || event == EVENT_POWER || event == EVENT_TOUGHNESS) &&
-		affected_card != card && in_play(affected_card_controller, affected_card) &&
-		get_id(affected_card_controller, affected_card) == get_id(player, card)
+	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && in_play(affected_card_controller, affected_card) &&
+		get_card_name(affected_card_controller, affected_card) == get_card_name(player, card) && affected_card != card
 	  ){
-		modify_pt_and_abilities(affected_card_controller, affected_card, event, 2, 2, 0);
+		event_result+=2;
+	}
+
+	if ( event == EVENT_ABILITIES && in_play(affected_card_controller, affected_card) &&
+		get_card_name(affected_card_controller, affected_card) == get_card_name(player, card) && affected_card != card
+	  ){
 		haste(affected_card_controller, affected_card, event);
 	}
 
@@ -848,7 +890,7 @@ ARCANE(card_devouring_greed){
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_CAN_CAST ){
-		return can_sacrifice_as_cost(player, 1, TYPE_PERMANENT, 0, SUBTYPE_SPIRIT, 0, 0, 0, 0, 0, -1, 0);
+		return !(player == AI && IS_AI(player) && !can_sacrifice(player, player, 1, TYPE_PERMANENT, SUBTYPE_SPIRIT));
 	}
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -888,6 +930,9 @@ ARCANE(card_devouring_greed){
 }
 
 int card_dosan_the_falling_leaf(int player, int card, event_t event){
+	/* Dosan the Falling Leaf	|1|G|G
+	 * Legendary Creature - Human Monk 2/2
+	 * Players can cast spells only during their own turns. */
 
 	check_legend_rule(player, card, event);
 
@@ -933,23 +978,19 @@ ARCANE(card_eerie_procession){
 	return 0;
 }
 
-static int ec_damage_prevention(int player, int card){
-
-	target_definition_t td1;
-	default_target_definition(player, card, &td1, TYPE_CREATURE);
-	td1.extra = damage_card;
-	td1.special = TARGET_SPECIAL_DAMAGE_LEGENDARY_CREATURE;
-	td1.required_type = 0;
-
-	if( has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 2) && can_use_activated_abilities(player, card) && can_target(&td1) &&
-		(land_can_be_played & LCBP_DAMAGE_PREVENTION)
-	  ){
-		return 99;
-	}
-	return 0;
-}
-
 int card_eiganjo_castle(int player, int card, event_t event){
+	/* Eiganjo Castle	""
+	 * Legendary Land
+	 * |T: Add |W to your mana pool.
+	 * |W, |T: Prevent the next 2 damage that would be dealt to target legendary creature this turn. */
+
+	if( event == EVENT_COUNT_MANA && affect_me(player, card) ){
+		return mana_producer(player, card, event);
+	}
+
+	if( ! IS_GAA_EVENT(event) ){
+		return 0;
+	}
 
 	target_definition_t td1;
 	default_target_definition(player, card, &td1, TYPE_CREATURE);
@@ -962,12 +1003,20 @@ int card_eiganjo_castle(int player, int card, event_t event){
 	check_legend_rule(player, card, event);
 
 	if( event == EVENT_CAN_ACTIVATE ){
-		return ec_damage_prevention(player, card) ? 99 : mana_producer(player, card, event);
+		int result = generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION,
+												MANACOST_W(2), 0, &td1, NULL);
+		if( result ){
+			return result;
+		}
+		return mana_producer(player, card, event);
 	}
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
+		instance->info_slot = instance->number_of_targets = 0;
+		int result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION,
+												MANACOST_W(2), 0, &td1, NULL);
 		int ai_choice = 0;
-		if( ec_damage_prevention(player, card) ){
+		if( result ){
 			ai_choice = 1;
 		}
 		int choice = 0;
@@ -981,8 +1030,8 @@ int card_eiganjo_castle(int player, int card, event_t event){
 
 		else if( choice == 1 ){
 				add_state(player, card, STATE_TAPPED);
-				charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 1);
-				if( spell_fizzled != 1 && pick_target(&td1, "TARGET_DAMAGE") ){
+				charge_mana_for_activated_ability(player, card, MANACOST_W(1));
+				if( spell_fizzled != 1 && new_pick_target(&td1, "Select target damage dealt to a legendary creature.", 0, GS_LITERAL_PROMPT) ){
 					instance->info_slot = 1;
 				}
 				else{
@@ -994,27 +1043,19 @@ int card_eiganjo_castle(int player, int card, event_t event){
 			spell_fizzled = 1;
 		}
 	}
-	else if( event == EVENT_RESOLVE_ACTIVATION ){
-			if( instance->info_slot > 0 ){
-				card_instance_t *parent = get_card_instance( instance->parent_controller, instance->parent_card );
-				parent->info_slot = 0;
-				if( valid_target(&td1) ){
-					card_instance_t *dmg = get_card_instance( instance->targets[0].player, instance->targets[0].card );
-					if( dmg->info_slot <= 2 ){
-						dmg->info_slot = 0;
-					}
-					else{
-						dmg->info_slot -= 2;
-					}
+
+	if( event == EVENT_RESOLVE_ACTIVATION ){
+		if( instance->info_slot > 0 ){
+			if( valid_target(&td1) ){
+				card_instance_t *dmg = get_card_instance( instance->targets[0].player, instance->targets[0].card );
+				if( dmg->info_slot <= 2 ){
+					dmg->info_slot = 0;
+				}
+				else{
+					dmg->info_slot -= 2;
 				}
 			}
-			else{
-				return mana_producer(player, card, event);
-			}
-	}
-
-	else{
-		return mana_producer(player, card, event);
+		}
 	}
 
 	return 0;
@@ -1211,10 +1252,18 @@ int card_forbidden_orchard(int player, int card, event_t event){
 }
 
 int card_generals_kabuto(int player, int card, event_t event){
+	/* General's Kabuto	|4
+	 * Artifact - Equipment
+	 * Equipped creature has shroud.
+	 * Prevent all combat damage that would be dealt to equipped creature.
+	 * Equip |2 */
 
-	if( is_equipping(player, card) ){
-		card_instance_t *instance= get_card_instance(player, card);
-		prevent_all_damage(instance->targets[8].player, instance->targets[8].card, event);
+	card_instance_t* damage = combat_damage_being_prevented(event);
+	if (damage && is_equipping(player, card)){
+		card_instance_t* instance = get_card_instance(player, card);
+		if (instance->targets[8].card == damage->damage_target_card && instance->targets[8].player == damage->damage_target_player){
+			damage->info_slot = 0;
+		}
 	}
 
 	return vanilla_equipment(player, card, event, 2, 0, 0, KEYWORD_SHROUD, 0);
@@ -1449,13 +1498,15 @@ int card_gutwrencher_oni(int player, int card, event_t event){
 }
 
 int card_hana_kami(int player, int card, event_t event){
+	/* Hana Kami	|G
+	 * Creature - Spirit 1/1
+	 * |1|G, Sacrifice ~: Return target Arcane card from your graveyard to your hand. */
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_ACTIVATE && has_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0) && count_graveyard_by_subtype(player, SUBTYPE_ARCANE) > 0){
+	if( event == EVENT_CAN_ACTIVATE && has_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0) && any_in_graveyard_by_subtype(player, SUBTYPE_ARCANE)){
 		return can_sacrifice_as_cost(player, 1, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0);
 	}
 	else if( event == EVENT_ACTIVATE ){
+			card_instance_t *instance = get_card_instance(player, card);
 			charge_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0);
 			if( spell_fizzled != 1 ){
 				int selected = select_a_card(player, player, 2, 0, 1, -1, TYPE_ANY, 0, SUBTYPE_ARCANE, 0, 0, 0, 0, 0, -1, 0);
@@ -1471,6 +1522,7 @@ int card_hana_kami(int player, int card, event_t event){
 			}
 	}
 	else if(event == EVENT_RESOLVE_ACTIVATION){
+			card_instance_t *instance = get_card_instance(player, card);
 			int selected = instance->targets[0].player;
 			const int *grave = get_grave(player);
 			if( instance->targets[0].card == grave[selected] ){
@@ -2679,6 +2731,10 @@ int card_meloku_the_clouded_mirror(int player, int card, event_t event){
 }
 
 int card_minamo_school_at_waters_edge(int player, int card, event_t event){
+	/* Minamo, School at Water's Edge	""
+	 * Legendary Land
+	 * |T: Add |U to your mana pool.
+	 * |U, |T: Untap target legendary permanent. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_PERMANENT );
@@ -2693,7 +2749,7 @@ int card_minamo_school_at_waters_edge(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if (!paying_mana() && has_mana_for_activated_ability(player, card, MANACOST_U(2)) && can_use_activated_abilities(player, card) && can_target(&td)){
 			ai_choice = 1;
@@ -3713,6 +3769,10 @@ int card_shimatsu_the_bloodcloaked(int player, int card, event_t event)
 }
 
 int card_shinka_the_bloodsoaked_keep(int player, int card, event_t event){
+	/* Shinka, the Bloodsoaked Keep	""
+	 * Legendary Land
+	 * |T: Add |R to your mana pool.
+	 * |R, |T: Target legendary creature gains first strike until end of turn. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -3723,7 +3783,7 @@ int card_shinka_the_bloodsoaked_keep(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, MANACOST_R(2)) && can_use_activated_abilities(player, card) && can_target(&td) ){
 			ai_choice = 1;
@@ -3790,6 +3850,10 @@ int card_shisato_whispering_hunter(int player, int card, event_t event){
 }
 
 int card_shizo_deaths_storehouse(int player, int card, event_t event){
+	/* Shizo, Death's Storehouse	""
+	 * Legendary Land
+	 * |T: Add |B to your mana pool.
+	 * |B, |T: Target legendary creature gains fear until end of turn. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -3800,7 +3864,7 @@ int card_shizo_deaths_storehouse(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, MANACOST_B(2))  && can_use_activated_abilities(player, card) && can_target(&td) ){
 			ai_choice = 1;
@@ -3902,6 +3966,10 @@ int card_soratami_cloudskater(int player, int card, event_t event){
 }
 
 int card_soratami_savant(int player, int card, event_t event){
+	/* Soratami Savant	|2|U|U
+	 * Creature - Moonfolk Wizard 2/2
+	 * Flying
+	 * |3, Return a land you control to its owner's hand: Counter target spell unless its controller pays |3. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_LAND );
@@ -4385,37 +4453,31 @@ int card_wicked_akuba(int player, int card, event_t event){
 
 int card_yamabushis_flame(int player, int card, event_t event){
 
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		pick_target(&td, "TARGET_CREATURE_OR_PLAYER");
-	}
-
 	if( event == EVENT_RESOLVE_SPELL ){
-			if( valid_target(&td)  ){
-				if( instance->targets[0].card > -1 ){
-					create_targetted_legacy_effect(player, card, &rfg_when_die, instance->targets[0].player, instance->targets[0].card);
-				}
-				damage_creature_or_player(player, card, event, 3);
+		if( valid_target(&td)  ){
+			card_instance_t *instance = get_card_instance( player, card );
+			if( instance->targets[0].card != -1 ){
+				int dc = damage_target0(player, card, 3);
+				get_card_instance(player, dc)->targets[3].card |= DMG_EXILE_IF_LETHALLY_DAMAGED_THIS_WAY;
 			}
-			kill_card(player, card, KILL_DESTROY);
+			else{
+				damage_player(instance->targets[0].player, 3, player, card);
+			}
+		}
+		kill_card(player, card, KILL_DESTROY);
 	}
-	return 0;
+	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE_OR_PLAYER", 1, NULL);
 }
 
 int card_yamabushis_storm(int player, int card, event_t event){
-
-	if( event == EVENT_CAN_CAST ){
-		return 1;
-	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int i;
@@ -4423,15 +4485,15 @@ int card_yamabushis_storm(int player, int card, event_t event){
 			int count = active_cards_count[i]-1;
 			while( count > -1 ){
 					if( in_play(i, count) && is_what(i, count, TYPE_CREATURE) ){
-						create_targetted_legacy_effect(player, card, &rfg_when_die, i, count);
-						damage_creature(i, count, 1, player, card);
+						int dc = damage_creature(i, count, 1, player, card);
+						get_card_instance(player, dc)->targets[3].card |= DMG_EXILE_IF_LETHALLY_DAMAGED_THIS_WAY;
 					}
 					count--;
 			}
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
-	return 0;
+	return basic_spell(player, card, event);
 }
 
 int card_yosei(int player, int card, event_t event){

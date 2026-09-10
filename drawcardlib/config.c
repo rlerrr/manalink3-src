@@ -25,6 +25,7 @@ const char* cfg_pic_names[CARDBK_MAX_FRAMEPART_FRAMESET + 1] =
   "Expansion_Symbols",
   "Watermarks",
   "Cardcounters",
+  "dfc",
 
   "CardBk_Colorless",	"CardBk_Artifact",	"CardBk_Land",	"CardBk_Gold",	"CardBk_Special",
   "CardBk_Black",		"CardBk_Blue",		"CardBk_Green",	"CardBk_Red",	"CardBk_White",
@@ -388,7 +389,7 @@ get_cfg_str_dup(char** dest, const char* section, const char* key, const char* d
 }
 
 static LOGFONT*
-cfg_font(const char* font_name, int italic)
+cfg_font(const char* font_name, int italic, int* decrement)
 {
   static LOGFONT fnt;
   memset(&fnt, 0, sizeof(LOGFONT));
@@ -396,6 +397,9 @@ cfg_font(const char* font_name, int italic)
   fnt.lfWidth = 4 * get_cfg_int2_raw(FONTSTXT, "width", font_name, 0);
   fnt.lfHeight = 4 * get_cfg_int2_raw(FONTSTXT, "size", font_name, 20);
   fnt.lfWeight = get_cfg_int2_raw(FONTSTXT, "bold", font_name, 0) ? 600 : 400;
+
+  if (decrement)
+	*decrement = get_cfg_int2_raw(FONTSTXT, "decrement", font_name, 1);
 
   if (italic)
 	fnt.lfItalic = 1;
@@ -495,6 +499,18 @@ prepare_fonts_and_imgs(void)
 			found:
 			  break;
 			}
+
+		  case DFC_SYMBOLS:
+			{	// Don't read unless at least one set has visible dfc symbols
+			  int fs;
+			  for (fs = 0; fs <= MAX_FRAMESET; ++fs)
+				if (configs[fs].fullcard_dfc_visible || configs[fs].smallcard_dfc_visible)
+				  goto found2;
+			  //otherwise
+			  continue;
+			found2:
+			  break;
+			}
 		}
 
 	  int j;
@@ -533,43 +549,68 @@ prepare_fonts_and_imgs(void)
   if (any_failures)
 	return 0;
 
-  LOGFONT* logfont = cfg_font("BigCardTitle", 0);
+  int decrement;
+
+  LOGFONT* logfont = cfg_font("BigCardTitle", 0, &decrement);
   if ((unsigned int)logfont->lfWidth < 12)
 	logfont->lfWidth = 24;
   for (i = BIGCARDTITLE_FONT; i <= BIGCARDTITLE_FONT9; ++i)
 	{
 	  fonts[i] = CreateFontIndirect(logfont);
-	  logfont->lfWidth -= 1;
+	  logfont->lfWidth -= decrement;
+	  if (logfont->lfWidth <= 0)
+		logfont->lfWidth = 1;
 	}
 
-  logfont = cfg_font("BigCardSubtitle", 0);
+  logfont = cfg_font("BigCardSubtitle", 0, &decrement);
   if ((unsigned int)logfont->lfWidth < 12)
 	logfont->lfWidth = 20;
   for (i = BIGCARDTYPE_FONT; i <= BIGCARDTYPE_FONT9; ++i)
 	{
 	  fonts[i] = CreateFontIndirect(logfont);
-	  logfont->lfWidth -= 1;
+	  logfont->lfWidth -= decrement;
+	  if (logfont->lfWidth <= 0)
+		logfont->lfWidth = 1;
 	}
 
-  logfont = cfg_font("BigCardPT", 0);
+  logfont = cfg_font("BigCardPT", 0, NULL);
   fonts[BIGCARDPT_FONT] = CreateFontIndirect(logfont);
 
-  logfont = cfg_font("BigCardLoyaltyBase", 0);
+  logfont = cfg_font("BigCardLoyaltyBase", 0, NULL);
   fonts[BIGCARDLOYALTYBASE_FONT] = CreateFontIndirect(logfont);
 
-  logfont = cfg_font("BigCardLoyaltyCost", 0);
+  logfont = cfg_font("BigCardLoyaltyCost", 0, NULL);
   fonts[BIGCARDLOYALTYCOST_FONT] = CreateFontIndirect(logfont);
 
-  logfont = cfg_font("BigCardText", 0);
+  logfont = cfg_font("BigCardVanguard", 0, &decrement);
+  if ((unsigned int)logfont->lfWidth < 12)
+	logfont->lfWidth = 5;
+  for (i = BIGCARDVANGUARD_FONT; i <= BIGCARDVANGUARD_FONT3; ++i)
+	{
+	  fonts[i] = CreateFontIndirect(logfont);
+	  logfont->lfWidth -= decrement;
+	  if (logfont->lfWidth <= 0)
+		logfont->lfWidth = 1;
+	}
+
+  logfont = cfg_font("BigCardText", 0, NULL);
   fonts[BIGCARDTEXT_FONT] = CreateFontIndirect(logfont);
 
-  logfont = cfg_font("BigCardText2", 1);
+  logfont = cfg_font("BigCardText2", 1, NULL);
   fonts[FLAVOR_FONT] = CreateFontIndirect(logfont);
 
-  logfont = cfg_font("SmallCardTitle", 0);
-  fonts[SMALLCARDTITLE_FONT] = CreateFontIndirect(logfont);
+  logfont = cfg_font("SmallCardTitle", 0, &decrement);
+  if ((unsigned int)logfont->lfWidth < 12)
+	logfont->lfWidth = 32;
+  for (i = SMALLCARDTITLE_FONT; i <= SMALLCARDTITLE_FONT9; ++i)
+	{
+	  fonts[i] = CreateFontIndirect(logfont);
+	  logfont->lfWidth -= decrement;
+	  if (logfont->lfWidth <= 0)
+		logfont->lfWidth = 1;
+	}
 
-  logfont = cfg_font("SmallCardLoyaltyCurr", 0);
+  logfont = cfg_font("SmallCardLoyaltyCurr", 0, NULL);
   fonts[SMALLCARDLOYALTYCURR_FONT] = CreateFontIndirect(logfont);
 
   if (!fonts[BIGCARDTITLE_FONT]
@@ -593,9 +634,20 @@ prepare_fonts_and_imgs(void)
 	  || !fonts[BIGCARDPT_FONT]
 	  || !fonts[BIGCARDLOYALTYBASE_FONT]
 	  || !fonts[BIGCARDLOYALTYCOST_FONT]
+	  || !fonts[BIGCARDVANGUARD_FONT]
+	  || !fonts[BIGCARDVANGUARD_FONT2]
+	  || !fonts[BIGCARDVANGUARD_FONT3]
 	  || !fonts[BIGCARDTEXT_FONT]
 	  || !fonts[FLAVOR_FONT]
 	  || !fonts[SMALLCARDTITLE_FONT]
+	  || !fonts[SMALLCARDTITLE_FONT2]
+	  || !fonts[SMALLCARDTITLE_FONT3]
+	  || !fonts[SMALLCARDTITLE_FONT4]
+	  || !fonts[SMALLCARDTITLE_FONT5]
+	  || !fonts[SMALLCARDTITLE_FONT6]
+	  || !fonts[SMALLCARDTITLE_FONT7]
+	  || !fonts[SMALLCARDTITLE_FONT8]
+	  || !fonts[SMALLCARDTITLE_FONT9]
 	  || !fonts[SMALLCARDLOYALTYCURR_FONT])
 	{
 	  popup("drawcardlib.dll", "Could not load fonts");
@@ -617,9 +669,12 @@ read_cfg_file(Config* config)
   get_cfg_rect(config, &config->smallcard_art, section, "Art", 79, 161, 860, 786);
 
   get_cfg_int(config, &config->smallcard_art_first, section, "ArtFirst", 0);
+
   get_cfg_int(config, &config->smallcard_title_source_top, section, "TitleSourceTop", 4);
   get_cfg_int(config, &config->smallcard_title_source_height, section, "TitleSourceHeight", 15);
   get_cfg_int(config, &config->smallcard_title_dest_height, section, "TitleDestHeight", 200);
+  get_cfg_int(config, &config->smallcard_title_center, section, "TitleCenter", 0);
+
   get_cfg_int(config, &config->smallcard_frame_source_top, section, "FrameSourceTop", 14);
   get_cfg_int(config, &config->smallcard_frame_source_height, section, "FrameSourceHeight", 175);
   get_cfg_int(config, &config->smallcard_frame_dest_top, section, "FrameDestTop", 144);
@@ -645,12 +700,30 @@ read_cfg_file(Config* config)
 				 configs[CFG_BASE].deflt.shadow_offset.x, configs[CFG_BASE].deflt.shadow_offset.y)
 
   TXT_AND_SHADOW(smallcard_title_owned_txt, "TitleOwned", 255,255,255, 47,47,47, 12,12);
+  config->smallcard_title_owned_on_light_visible =
+	get_cfg_colordef(config, &config->smallcard_title_owned_on_light_color, section,
+					 "TitleOwnedOnLightColor", -1,-1,-1);
+  config->smallcard_title_owned_on_white_black_visible =
+	get_cfg_colordef(config, &config->smallcard_title_owned_on_white_black_color, section,
+					 "TitleOwnedOnWhiteBlackColor", -1,-1,-1);
+  config->smallcard_title_owned_on_colorless_visible =
+	get_cfg_colordef(config, &config->smallcard_title_owned_on_colorless_color, section,
+					 "TitleOwnedOnColorlessColor", -1,-1,-1);
   TXT_AND_DEFAULT_SHADOW(smallcard_title_owned_can_activate_txt, "TitleOwnedCanActivate", 241,217,39, smallcard_title_owned_txt);
   TXT_AND_DEFAULT_SHADOW(smallcard_title_owned_must_activate_txt, "TitleOwnedMustActivate", 255,148,17, smallcard_title_owned_txt);
   config->smallcard_title_owned_background_visible = get_cfg_colordef(config, &config->smallcard_title_owned_background_color, section,
 																	  "TitleOwnedBackgroundColor", -1,-1,-1);
 
   TXT_AND_SHADOW_ALL_DEFAULT(smallcard_title_unowned_txt, "TitleUnowned", smallcard_title_owned_txt);
+  config->smallcard_title_unowned_on_light_visible =
+	get_cfg_colordef(config, &config->smallcard_title_unowned_on_light_color, section,
+					 "TitleUnownedOnLightColor", -1,-1,-1);
+  config->smallcard_title_unowned_on_white_black_visible =
+	get_cfg_colordef(config, &config->smallcard_title_unowned_on_white_black_color, section,
+					 "TitleUnownedOnWhiteBlackColor", -1,-1,-1);
+  config->smallcard_title_unowned_on_colorless_visible =
+	get_cfg_colordef(config, &config->smallcard_title_unowned_on_colorless_color, section,
+					 "TitleUnownedOnColorlessColor", -1,-1,-1);
   TXT_AND_SHADOW_ALL_DEFAULT(smallcard_title_unowned_can_activate_txt, "TitleUnownedCanActivate", smallcard_title_owned_can_activate_txt);
   TXT_AND_SHADOW_ALL_DEFAULT(smallcard_title_unowned_must_activate_txt, "TitleUnownedMustActivate", smallcard_title_owned_must_activate_txt);
   config->smallcard_title_unowned_background_visible = get_cfg_colordef(config, &config->smallcard_title_unowned_background_color, section,
@@ -664,6 +737,9 @@ read_cfg_file(Config* config)
   get_cfg_rect(config, &config->smallcard_loyalty_curr, section, "LoyaltyCurr", 630, 960, 160, 150);
   get_cfg_rect(config, &config->smallcard_loyalty_curr_box, section, "LoyaltyCurrBox", 587, 920, 220, 250);
   TXT_AND_SHADOW_ALL_DEFAULT(smallcard_loyalty_txt, "Loyalty", smallcard_title_owned_txt);
+
+  get_cfg_int(config, &config->smallcard_dfc_visible, section, "DfcVisible", 0);
+  get_cfg_rect(config, &config->smallcard_dfc, section, "Dfc", 12,15,80,112);
 
   get_cfg_rect(config, &config->smallcard_expansion, section, "Expansion", 587, 9, 208, 147);
   get_cfg_int(config, &config->smallcard_expansion_visible, section, "ExpansionVisible", 0);
@@ -693,6 +769,8 @@ read_cfg_file(Config* config)
   get_cfg_rect(config, &config->fullcard_loyalty_base_box, section, "LoyaltyBaseBox", 640, 1075, 140, 105);
   get_cfg_rect(config, &config->fullcard_loyalty_cost, section, "LoyaltyCost", 30, -12, 80, 50);
   get_cfg_rect(config, &config->fullcard_loyalty_cost_box, section, "LoyaltyCostBox", 20, -27, 101, 88);
+  get_cfg_rect(config, &config->fullcard_vanguard_hand, section, "VanguardHand", 100, 900, 100, 100);
+  get_cfg_rect(config, &config->fullcard_vanguard_life, section, "VanguardLife", 600, 900, 100, 100);
   get_cfg_rect(config, &config->fullcard_expansion, section, "Expansion", 638, 666, 104, 53);
 
   get_cfg_int(config, &config->fullcard_curve_mana_diameter, section, "CurveManaDiameter", 0);
@@ -705,6 +783,7 @@ read_cfg_file(Config* config)
 	}
 
   get_cfg_int(config, &config->fullcard_title_center, section, "TitleCenter", 0);
+  get_cfg_int(config, &config->fullcard_type_center, section, "TypeCenter", 0);
   get_cfg_int(config, &config->fullcard_show_loyalty_base, section, "ShowLoyaltyBase", 0);
   get_cfg_int(config, &config->fullcard_show_loyalty_cost, section, "ShowLoyaltyCost", 0);
   get_cfg_int(config, &config->fullcard_loyalty_cull, section, "LoyaltyCull", 50);
@@ -721,6 +800,9 @@ read_cfg_file(Config* config)
   get_cfg_int(config, &config->fullcard_tombstone_visible, section, "TombstoneVisible", 0);
   get_cfg_int(config, &config->fullcard_tombstone_title_offset, section, "TombstoneTitleOffset", 28);
   get_cfg_rect(config, &config->fullcard_tombstone, section, "Tombstone", 32,32,32,48);
+
+  get_cfg_int(config, &config->fullcard_dfc_visible, section, "DfcVisible", 0);
+  get_cfg_rect(config, &config->fullcard_dfc, section, "Dfc", 37,47,68,71);
 
   get_cfg_int(config, &config->fullcard_type_icon_visible, section, "TypeIconVisible", 0);
   get_cfg_int(config, &config->fullcard_type_icon_suppressed_by_tombstone, section, "TypeIconSuppressedByTombstone", 0);
@@ -739,10 +821,24 @@ read_cfg_file(Config* config)
 
   get_cfg_colordef(config, &config->fullcard_rulestext_color, section, "RulestextColor", 47,47,47);
 
-  config->fullcard_title_on_light_visible = get_cfg_colordef(config, &config->fullcard_title_on_light_color, section, "TitleOnLightColor", -1,-1,-1);
-  config->fullcard_title_on_white_black_visible = get_cfg_colordef(config, &config->fullcard_title_on_white_black_color, section, "TitleOnWhiteBlackColor", -1,-1,-1);
-  config->fullcard_rules_on_dark_land_visible = get_cfg_colordef(config, &config->fullcard_rules_on_dark_land_color, section, "RulesOnDarkLandColor", -1,-1,-1);
-  config->fullcard_rules_on_white_black_land_visible = get_cfg_colordef(config, &config->fullcard_rules_on_white_black_land_color, section, "RulesOnWhiteBlackLandColor", -1,-1,-1);
+  config->fullcard_title_on_light_visible =
+	get_cfg_colordef(config, &config->fullcard_title_on_light_color, section,
+					 "TitleOnLightColor", -1,-1,-1);
+  config->fullcard_title_on_white_black_visible =
+	get_cfg_colordef(config, &config->fullcard_title_on_white_black_color, section,
+					 "TitleOnWhiteBlackColor", -1,-1,-1);
+  config->fullcard_title_on_colorless_visible =
+	get_cfg_colordef(config, &config->fullcard_title_on_colorless_color, section,
+					 "TitleOnColorlessColor", -1,-1,-1);
+  config->fullcard_rules_on_dark_land_visible =
+	get_cfg_colordef(config, &config->fullcard_rules_on_dark_land_color, section,
+					 "RulesOnDarkLandColor", -1,-1,-1);
+  config->fullcard_rules_on_white_black_land_visible =
+	get_cfg_colordef(config, &config->fullcard_rules_on_white_black_land_color, section,
+					 "RulesOnWhiteBlackLandColor", -1,-1,-1);
+  config->fullcard_vanguard_visible =
+	get_cfg_colordef(config, &config->fullcard_vanguard_color, section,
+					 "VanguardColor", -1,-1,-1);
 
 
   section = "Frames";
@@ -974,6 +1070,14 @@ read_cfg(void)
   configs[CFG_MODERN].cardbk_base = CARDBK_MODERN_MIN;
   configs[CFG_MODERN].frame_base = FRAME_MODERN_MIN;
 
+  configs[CFG_MODERN_DFC_FRONT].option_name = "ModernDFCfront";
+  configs[CFG_MODERN_DFC_FRONT].cardbk_base = CARDBK_MODERN_DFC_FRONT_MIN;
+  configs[CFG_MODERN_DFC_FRONT].frame_base = FRAME_MODERN_DFC_FRONT_MIN;
+
+  configs[CFG_MODERN_DFC_BACK].option_name = "ModernDFCback";
+  configs[CFG_MODERN_DFC_BACK].cardbk_base = CARDBK_MODERN_DFC_BACK_MIN;
+  configs[CFG_MODERN_DFC_BACK].frame_base = FRAME_MODERN_DFC_BACK_MIN;
+
   configs[CFG_CLASSIC].option_name = "Classic";
   configs[CFG_CLASSIC].cardbk_base = CARDBK_CLASSIC_MIN;
   configs[CFG_CLASSIC].frame_base = FRAME_CLASSIC_MIN;
@@ -989,6 +1093,14 @@ read_cfg(void)
   configs[CFG_PLANESWALKER].option_name = "Planeswalker";
   configs[CFG_PLANESWALKER].cardbk_base = CARDBK_PLANESWALKER_MIN;
   configs[CFG_PLANESWALKER].frame_base = FRAME_PLANESWALKER_MIN;
+
+  configs[CFG_PLANESWALKER_DFC_FRONT].option_name = "PlaneswalkerDFCfront";
+  configs[CFG_PLANESWALKER_DFC_FRONT].cardbk_base = CARDBK_PLANESWALKER_DFC_FRONT_MIN;
+  configs[CFG_PLANESWALKER_DFC_FRONT].frame_base = FRAME_PLANESWALKER_DFC_FRONT_MIN;
+
+  configs[CFG_PLANESWALKER_DFC_BACK].option_name = "PlaneswalkerDFCback";
+  configs[CFG_PLANESWALKER_DFC_BACK].cardbk_base = CARDBK_PLANESWALKER_DFC_BACK_MIN;
+  configs[CFG_PLANESWALKER_DFC_BACK].frame_base = FRAME_PLANESWALKER_DFC_BACK_MIN;
 
   configs[CFG_TOKEN].option_name = "Token";
   configs[CFG_TOKEN].cardbk_base = CARDBK_TOKEN_MIN;
@@ -1006,6 +1118,10 @@ read_cfg(void)
   configs[CFG_VANGUARD].cardbk_base = CARDBK_VANGUARD_MIN;
   configs[CFG_VANGUARD].frame_base = FRAME_VANGUARD_MIN;
 
+  configs[CFG_CONSPIRACY].option_name = "Conspiracy";
+  configs[CFG_CONSPIRACY].cardbk_base = CARDBK_CONSPIRACY_MIN;
+  configs[CFG_CONSPIRACY].frame_base = FRAME_CONSPIRACY_MIN;
+
   configs[CFG_INTERNAL].option_name = "Internal";
   configs[CFG_INTERNAL].cardbk_base = CARDBK_INTERNAL_MIN;
   configs[CFG_INTERNAL].frame_base = FRAME_INTERNAL_MIN;
@@ -1014,13 +1130,37 @@ read_cfg(void)
   configs[CFG_MAGIC2015].cardbk_base = CARDBK_MAGIC2015_MIN;
   configs[CFG_MAGIC2015].frame_base = FRAME_MAGIC2015_MIN;
 
+  configs[CFG_MAGIC2015_DFC_FRONT].option_name = "Magic2015DFCfront";
+  configs[CFG_MAGIC2015_DFC_FRONT].cardbk_base = CARDBK_MAGIC2015_DFC_FRONT_MIN;
+  configs[CFG_MAGIC2015_DFC_FRONT].frame_base = FRAME_MAGIC2015_DFC_FRONT_MIN;
+
+  configs[CFG_MAGIC2015_DFC_BACK].option_name = "Magic2015DFCback";
+  configs[CFG_MAGIC2015_DFC_BACK].cardbk_base = CARDBK_MAGIC2015_DFC_BACK_MIN;
+  configs[CFG_MAGIC2015_DFC_BACK].frame_base = FRAME_MAGIC2015_DFC_BACK_MIN;
+
   configs[CFG_MAGIC2015_HOLO].option_name = "Magic2015holo";
   configs[CFG_MAGIC2015_HOLO].cardbk_base = CARDBK_MAGIC2015_HOLO_MIN;
   configs[CFG_MAGIC2015_HOLO].frame_base = FRAME_MAGIC2015_HOLO_MIN;
 
+  configs[CFG_MAGIC2015_HOLO_DFC_FRONT].option_name = "Magic2015holoDFCfront";
+  configs[CFG_MAGIC2015_HOLO_DFC_FRONT].cardbk_base = CARDBK_MAGIC2015_HOLO_DFC_FRONT_MIN;
+  configs[CFG_MAGIC2015_HOLO_DFC_FRONT].frame_base = FRAME_MAGIC2015_HOLO_DFC_FRONT_MIN;
+
+  configs[CFG_MAGIC2015_HOLO_DFC_BACK].option_name = "Magic2015holoDFCback";
+  configs[CFG_MAGIC2015_HOLO_DFC_BACK].cardbk_base = CARDBK_MAGIC2015_HOLO_DFC_BACK_MIN;
+  configs[CFG_MAGIC2015_HOLO_DFC_BACK].frame_base = FRAME_MAGIC2015_HOLO_DFC_BACK_MIN;
+
   configs[CFG_MAGIC2015_PLANESWALKER].option_name = "Magic2015planeswalker";
   configs[CFG_MAGIC2015_PLANESWALKER].cardbk_base = CARDBK_MAGIC2015_PLANESWALKER_MIN;
   configs[CFG_MAGIC2015_PLANESWALKER].frame_base = FRAME_MAGIC2015_PLANESWALKER_MIN;
+
+  configs[CFG_MAGIC2015_PLANESWALKER_DFC_FRONT].option_name = "Magic2015planeswalkerDFCfront";
+  configs[CFG_MAGIC2015_PLANESWALKER_DFC_FRONT].cardbk_base = CARDBK_MAGIC2015_PLANESWALKER_DFC_FRONT_MIN;
+  configs[CFG_MAGIC2015_PLANESWALKER_DFC_FRONT].frame_base = FRAME_MAGIC2015_PLANESWALKER_DFC_FRONT_MIN;
+
+  configs[CFG_MAGIC2015_PLANESWALKER_DFC_BACK].option_name = "Magic2015planeswalkerDFCback";
+  configs[CFG_MAGIC2015_PLANESWALKER_DFC_BACK].cardbk_base = CARDBK_MAGIC2015_PLANESWALKER_DFC_BACK_MIN;
+  configs[CFG_MAGIC2015_PLANESWALKER_DFC_BACK].frame_base = FRAME_MAGIC2015_PLANESWALKER_DFC_BACK_MIN;
 
   int i;
   static int first_time = 1;
@@ -1040,8 +1180,26 @@ read_cfg(void)
 			default_dat = "Modern";
 			break;
 
+		  case CFG_MAGIC2015_DFC_FRONT:
+		  case CFG_MAGIC2015_HOLO_DFC_FRONT:
+			default_dat = "ModernDFCfront";
+			break;
+
+		  case CFG_MAGIC2015_DFC_BACK:
+		  case CFG_MAGIC2015_HOLO_DFC_BACK:
+			default_dat = "ModernDFCback";
+			break;
+
 		  case CFG_MAGIC2015_PLANESWALKER:
 			default_dat = "Planeswalker";
+			break;
+
+		  case CFG_MAGIC2015_PLANESWALKER_DFC_FRONT:
+			default_dat = "PlaneswalkerDFCfront";
+			break;
+
+		  case CFG_MAGIC2015_PLANESWALKER_DFC_BACK:
+			default_dat = "PlaneswalkerDFCback";
 			break;
 
 		  default:
@@ -1212,6 +1370,40 @@ read_watermarks_csv(void)
 			  continue;
 			}
 
+		  if (radix == 'x')
+			{
+			  if (!strcmp(wmark, "xday"))
+				{
+				  r->dfc_symbol = DFC_SYMBOL_DAY;
+				  continue;
+				}
+			  if (!strcmp(wmark, "xnight"))
+				{
+				  r->dfc_symbol = DFC_SYMBOL_NIGHT;
+				  continue;
+				}
+			  if (!strcmp(wmark, "xspark"))
+				{
+				  r->dfc_symbol = DFC_SYMBOL_SPARK;
+				  continue;
+				}
+			  if (!strcmp(wmark, "xignite"))
+				{
+				  r->dfc_symbol = DFC_SYMBOL_IGNITE;
+				  continue;
+				}
+			  if (!strcmp(wmark, "xmoon"))
+				{
+				  r->dfc_symbol = DFC_SYMBOL_MOON;
+				  continue;
+				}
+			  if (!strcmp(wmark, "xemrakul"))
+				{
+				  r->dfc_symbol = DFC_SYMBOL_EMRAKUL;
+				  continue;
+				}
+			}
+
 		  radix -= 'a';
 		  for (idx = 0; lookup[radix][idx]; ++idx)
 			if (!strcmp(wmark, watermarks[lookup[radix][idx]-1].name))
@@ -1299,8 +1491,9 @@ read_rarities(void)
 		  r->rarity_in_expansion[exp] = ((((uint16_t)(raw_rarities[offset + 1]) << 8) | raw_rarities[offset]) & bit_mask) >> (bit_pos & 0x07);
 		}
 
-	  r->flags = 0;
 	  r->watermark = 0xFF;
+	  r->dfc_symbol = 0xFF;
+	  r->flags = 0;
 	}
   free(raw_rarities);
 
@@ -1456,8 +1649,9 @@ assign_default_rarities(void)
 
 	  r->default_expansion = 0;
 	  r->default_rarity = NONE;
-	  r->watermark = 0xFF;
 	  r->flags = 0;
+	  r->watermark = 0xFF;
+	  r->dfc_symbol = 0xFF;
 
 	  int raw_exp, this_priority, best_priority = expansions_priority[EXPCAT_NONE];
 

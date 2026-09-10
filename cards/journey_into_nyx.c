@@ -6,7 +6,7 @@
 * Set mechanics *
 ****************/
 
-static int constellation(int player, int card, event_t event)
+int constellation(int player, int card, event_t event)
 {
   // Constellation - Whenever ~ or another enchantment enters the battlefield under your control, ...
   return specific_cip(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, TYPE_ENCHANTMENT,MATCH, 0,0, 0,0, 0,0, -1,0);
@@ -672,15 +672,12 @@ int card_sightless_brawler(int player, int card, event_t event){
 	 * ~ can't attack alone.
 	 * Enchanted creature gets +3/+2 and can't attack alone. */
 
-	card_instance_t *instance = get_card_instance( player, card );
-
-	cannot_attack_alone(player, card, event);
-
-	if( instance->damage_target_player > -1 ){
+	if( get_card_instance( player, card )->damage_target_player > -1 ){
+		card_instance_t *instance = get_card_instance( player, card );
 		cannot_attack_alone(instance->damage_target_player, instance->damage_target_card, event);
 	}
 
-	return generic_creature_with_bestow(player, card, event, 4, 0, 0, 0, 0, 1, 3, 2, 0, SP_KEYWORD_LIFELINK);
+	return generic_creature_with_bestow(player, card, event, MANACOST_XW(4, 1), 3, 2, 0, 0);
 }
 
 int card_skybind(int player, int card, event_t event){
@@ -3668,10 +3665,10 @@ int card_fleetfeather_cockatrice(int player, int card, event_t event){
 int card_iroas_god_of_victory(int player, int card, event_t event)
 {
 	/* Iroas, God of Victory	|2|R|W
-	 * Legendary Enchantment Creature - God 7/4
+	 * Legendary Enchantment Creature - God 0/0
 	 * Indestructible
-	 * As long as your devotion to |Sred and |Swhite is less than seven, ~ isn't a creature.
-	 * Creatures you control can't be blocked except by two or more creatures.
+	 * As long as your devotion to |Sred and |Swhite is less than seven, Iroas isn't a creature.
+	 * Creatures you control have menace.
 	 * Prevent all damage that would be dealt to attacking creatures you control. */
 
 	check_legend_rule(player, card, event);
@@ -3688,7 +3685,7 @@ int card_iroas_god_of_victory(int player, int card, event_t event)
 		int c;
 		for (c = 0; c < active_cards_count[player]; ++c){
 			if (in_play(player, c) && is_what(player, c, TYPE_CREATURE) && is_attacking(player, c) ){
-				minimum_blockers(player, c, event, 2);
+				menace(player, c, event);
 			}
 		}
 	}
@@ -4143,8 +4140,8 @@ int card_cloak_of_the_philospher(int player, int card, event_t event){
 						check_for_equipment_targets(player, card);
 		int can_untap = is_equipping(player, card) && generic_activated_ability(player, card, event, 0, MANACOST_X(2), 0, NULL, NULL);
 		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
-							"Equip", can_equip, 10-9*is_equipping(player, card),
-							"Untap equipped creature", can_untap, 1+(10*( is_equipping(player, card) ? is_tapped(instance->targets[8].player, instance->targets[8].card) : 0))
+							"Equip", can_equip, is_equipping(player, card) ? 1 : 10,
+							"Untap equipped creature", can_untap, is_equipping(player, card) && is_tapped(instance->targets[8].player, instance->targets[8].card) ? 11 : 1
 							);
 
 		if( choice == 0 ){
@@ -4234,7 +4231,7 @@ int card_bow_of_the_hunter(int player, int card, event_t event){
 						generic_activated_ability(instance->targets[8].player, instance->targets[8].card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0,
 													0, &td1, "TARGET_ZONE_CREATURE_OR_PLAYER");
 		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
-							"Equip", can_equip, 10-9*is_equipping(player, card),
+							"Equip", can_equip, is_equipping(player, card) ? 1 : 10,
 							"Equipped creature deals 2 damages", can_damage, 10
 							);
 

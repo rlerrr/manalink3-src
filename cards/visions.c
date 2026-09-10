@@ -784,35 +784,49 @@ int card_everglades(int player, int card, event_t event){//UNUSEDCARD
 }
 
 static void eos_effect(int id){
-		int i;
-		int sum = 0;
-		int f_player = -1;
-		int f_card = -1;
-		for(i=0; i<2; i++){
-			int count = active_cards_count[i]-1;
-			while( count > -1 ){
-					if( in_play(i, count) && is_what(i, count, TYPE_PERMANENT) && get_id(i, count) == id ){
-						sum++;
-						if( sum == 1 ){
-							f_player = i;
-							f_card = count;
-						}
-						if( sum > 1 ){
-							kill_card(i, count, KILL_BURY);
-						}
+	//"destroy each permanent with the same name as another permanent, except for basic lands. They can't be regenerated."
+
+	if( id == -1 ){ //No effect if the card has no name.
+		return;
+	}
+
+	int i;
+	int sum = 0;
+	int f_player = -1;
+	int f_card = -1;
+	for(i=0; i<2; i++){
+		int count = active_cards_count[i]-1;
+		while( count > -1 ){
+				if( in_play(i, count) && is_what(i, count, TYPE_PERMANENT) && get_id(i, count) == id ){
+					sum++;
+					if( sum == 1 ){
+						f_player = i;
+						f_card = count;
 					}
-					count--;
-			}
+					if( sum > 1 ){
+						kill_card(i, count, KILL_BURY);
+					}
+				}
+				count--;
 		}
-		if( sum > 1 ){
-			kill_card(f_player, f_card, KILL_BURY);
-		}
+	}
+	if( sum > 1 ){
+		kill_card(f_player, f_card, KILL_BURY);
+	}
 }
 
 
 int card_eye_of_singularity(int player, int card, event_t event){
-
+	/*
+	  Eye of Singularity |3|W
+	  World Enchantment
+	  When Eye of Singularity enters the battlefield, destroy each permanent with the same name as another permanent, except for basic lands.
+	  They can't be regenerated.
+	  Whenever a permanent other than a basic land enters the battlefield, destroy all other permanents with that name. They can't be regenerated.
+	*/
 	card_instance_t *instance = get_card_instance( player, card );
+
+	enchant_world(player, card, event);
 
 	if( comes_into_play(player, card, event) ){
 		int i;
@@ -820,7 +834,7 @@ int card_eye_of_singularity(int player, int card, event_t event){
 			int count = active_cards_count[i]-1;
 			while( count > -1 ){
 					if( in_play(i, count) && is_what(i, count, TYPE_PERMANENT) && ! is_basic_land(i, count)  ){
-						eos_effect(get_id(i, count));
+						eos_effect(get_card_name(i, count));
 					}
 					count--;
 			}
@@ -828,12 +842,15 @@ int card_eye_of_singularity(int player, int card, event_t event){
 	}
 
 	if( specific_cip(player, card, event, ANYBODY, RESOLVE_TRIGGER_MANDATORY, TYPE_PERMANENT, 0, SUBTYPE_BASIC, DOESNT_MATCH, 0, 0, 0, 0, -1, 0) ){
-		state_untargettable(instance->targets[1].player, instance->targets[1].card, 1);
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_PERMANENT);
-		this_test.id = get_id(instance->targets[1].player, instance->targets[1].card);
-		APNAP(p, {new_manipulate_all(player, card, p, &this_test, KILL_BURY);};);
-		state_untargettable(instance->targets[1].player, instance->targets[1].card, 0);
+		int id = get_card_name(instance->targets[1].player, instance->targets[1].card);
+		if( id != -1 ){ //No effect if the permanent entered the battlefield has no name.
+			state_untargettable(instance->targets[1].player, instance->targets[1].card, 1);
+			test_definition_t this_test;
+			default_test_definition(&this_test, TYPE_PERMANENT);
+			this_test.id = id;
+			APNAP(p, {new_manipulate_all(player, card, p, &this_test, KILL_BURY);};);
+			state_untargettable(instance->targets[1].player, instance->targets[1].card, 0);
+		}
 	}
 
 	return global_enchantment(player, card, event);
@@ -1443,11 +1460,14 @@ int card_iron_heart_chimera(int player, int card, event_t event){
 }
 
 int card_impulse(int player, int card, event_t event){
+	/* Impulse	|1|U
+	 * Instant
+	 * Look at the top four cards of your library. Put one of them into your hand and the rest on the bottom of your library in any order. */
 
 	if(event == EVENT_CAN_CAST){
 	   return 1;
 	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if(event == EVENT_RESOLVE_SPELL){
 			impulse_effect(player, 4, 0);
 			kill_card(player, card, KILL_DESTROY);
 	}
@@ -1989,6 +2009,9 @@ int card_necromancy(int player, int card, event_t event){
 }
 
 int card_necrosavant(int player, int card, event_t event){
+	/* Necrosavant	|3|B|B|B
+	 * Creature - Zombie Giant 5/5
+	 * |3|B|B, Sacrifice a creature: Return ~ from your graveyard to the battlefield. Activate this ability only during your upkeep. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -2193,7 +2216,7 @@ int card_quicksand(int player, int card, event_t event){
 		else if( choice == 1 ){
 				add_state(player, card, STATE_TAPPED);
 				if( charge_mana_for_activated_ability(player, card, MANACOST0) &&
-					new_pick_target(&td, "Select_target attacking creature without flying.", 0, 1 | GS_LITERAL_PROMPT)
+					new_pick_target(&td, "Select target attacking creature without flying.", 0, 1 | GS_LITERAL_PROMPT)
 				  ){
 					instance->info_slot = 1;
 					kill_card(player, card, KILL_SACRIFICE);
@@ -2312,7 +2335,7 @@ int card_rainbow_efreet(int player, int card, event_t event){
 void relentless_assault_effect(int player, int card){
 	test_definition_t this_test;
 	default_test_definition(&this_test, TYPE_CREATURE);
-	this_test.state = STATE_ATTACKED;
+	this_test.state = STATE_ATTACKING | STATE_ATTACKED;
 	new_manipulate_all(player, card, player, &this_test, ACT_UNTAP);
 	get_an_additional_combat_phase();
 }
@@ -2631,8 +2654,11 @@ int card_suleimans_legacy(int player, int card, event_t event){
 
 
 int card_summer_bloom(int player, int card, event_t event){
+	/* Summer Bloom	|1|G
+	 * Sorcery
+	 * You may play up to three additional lands this turn. */
 
-	if(event == EVENT_CAN_CAST && affect_me(player, card) ){
+	if(event == EVENT_CAN_CAST ){
 			return 1;
 	}
 	else if(event == EVENT_RESOLVE_SPELL ){
@@ -2649,7 +2675,7 @@ int card_suqata_assassin(int player, int card, event_t event){
 	fear(player, card, event);
 	if( event == EVENT_DECLARE_BLOCKERS ){
 		if( is_unblocked(player, card) && ! is_humiliated(player, card) ){
-			poison_counters[1-player]++;
+			poison(1-player, 1);
 		}
 	}
 	return 0;
@@ -3182,7 +3208,7 @@ int card_zhalfirin_crusader(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( validate_target(player, card, &td, 0) && validate_target(player, card, &td, 1) ){
+		if( validate_target(player, card, &td, 0) && validate_target(player, card, &td1, 1) ){
 			card_instance_t *source = get_card_instance(instance->targets[0].player, instance->targets[0].card);
 			if( source->info_slot > 0 ){
 				if( source->info_slot == 1 ){

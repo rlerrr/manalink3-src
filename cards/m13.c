@@ -624,6 +624,11 @@ int card_faiths_reward(int player, int card, event_t event){
 }
 
 int card_firewing_phoenix(int player, int card, event_t event){
+	/* Firewing Phoenix	|3|R
+	 * Creature - Phoenix 4/2
+	 * Flying
+	 * |1|R|R|R: Return ~ from your graveyard to your hand. */
+
 	if (event == EVENT_GRAVEYARD_ABILITY && has_mana_multi(player, MANACOST_XR(1, 3))){
 		return GA_RETURN_TO_HAND;
 	}
@@ -657,7 +662,7 @@ int card_flames_of_the_firebrand(int player, int card, event_t event){
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE_OR_PLAYER", 3, NULL);
+	return generic_spell(player, card, event, GS_CAN_TARGET | GS_ONE_OR_MULTIPLE_TARGETS, &td, "TARGET_CREATURE_OR_PLAYER", 3, NULL);
 }
 
 int card_fungal_sprouting(int player, int card, event_t event){
@@ -1147,9 +1152,63 @@ int card_nefarox_overlord_of_grixis(int player, int card, event_t event){
 
 int card_omniscience(int player, int card, event_t event){
 
-	if( event == EVENT_MODIFY_COST_GLOBAL ){
-		if( affected_card_controller == player && ! is_what(affected_card_controller,affected_card, TYPE_LAND) ){
-			null_casting_cost(affected_card_controller,affected_card);
+	if( is_humiliated(player, card) ){
+		return 0;
+	}
+
+	if( event == EVENT_CAN_ACTIVATE ){
+		int i;
+		int result = 0;
+		for(i=0; i<active_cards_count[player]; i++){
+			if( in_hand(player, i) && ! is_what(player, i, TYPE_LAND) ){
+				int tr = can_legally_play_card_in_hand(player, i);
+				if( tr ){
+					if( tr == 99 && is_what(player, i, TYPE_INTERRUPT) ){
+						return 99;
+					}
+					if( tr == 1 && (is_what(player, i, TYPE_INSTANT) || can_sorcery_be_played(player, event)) ){
+						return 1;
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	if( event == EVENT_ACTIVATE ){
+		int playable[2][hand_count[player]];
+		int pc = 0;
+		int i;
+		for(i=0; i<active_cards_count[player]; i++){
+			if( in_hand(player, i) && ! is_what(player, i, TYPE_LAND) ){
+				int tr = can_legally_play_card_in_hand(player, i);
+				if( tr ){
+					if( tr == 99 && is_what(player, i, TYPE_INTERRUPT) ){
+						playable[0][pc] = get_card_instance(player, i)->internal_card_id;
+						playable[1][pc] = i;
+						pc++;
+					}
+					if( tr == 1 && (is_what(player, i, TYPE_INSTANT) || can_sorcery_be_played(player, event)) ){
+						playable[0][pc] = get_card_instance(player, i)->internal_card_id;
+						playable[1][pc] = i;
+						pc++;
+					}
+				}
+			}
+		}
+
+		test_definition_t this_test;
+		new_default_test_definition(&this_test, TYPE_LAND, "Select a non-land card to play.");
+		this_test.type_flag = DOESNT_MATCH;
+
+		int selected = select_card_from_zone(player, player, playable[0], pc, 0, AI_MAX_CMC, -1, &this_test);
+		if( selected != -1 ){
+			play_card_in_hand_for_free(player, playable[1][selected]);
+			cant_be_responded_to = 1;	// The spell will be respondable to, but this (fake) activation won't
+		}
+		else{
+			spell_fizzled = 1;
+			return 0;
 		}
 	}
 
@@ -1356,12 +1415,12 @@ int card_spelltwine(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int spells[2] = {-1, -1};
-		int selected = validate_target_from_grave(player, card, player, 0);
+		int selected = validate_target_from_grave_source(player, card, player, 0);
 		if( selected != -1 ){
 			spells[0] = get_grave(player)[selected];
 			rfg_card_from_grave(player, selected);
 		}
-		selected = validate_target_from_grave(player, card, 1-player, 1);
+		selected = validate_target_from_grave_source(player, card, 1-player, 1);
 		if( selected != -1 ){
 			spells[1] = get_grave(1-player)[selected];
 			rfg_card_from_grave(1-player, selected);
@@ -1426,36 +1485,51 @@ int card_sublime_archangel(int player, int card, event_t event)
 }
 
 int card_switcheroo(int player, int card, event_t event){
+	/* Switcheroo	|4|U
+	 * Sorcery
+	 * Exchange control of two target creatures. */
 
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
 
 	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE );
-	td.preferred_controller = player;
-	td.allowed_controller = player;
-
-	target_definition_t td1;
-	default_target_definition(player, card, &td1, TYPE_CREATURE );
-	td1.preferred_controller = 1-player;
-	td1.allowed_controller = 1-player;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST && generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 1, NULL) ){
-		return can_target(&td1);
+	if (event == EVENT_CAN_CAST){
+		if (player == AI && IS_AI(player)){
+			td.preferred_controller = td.allowed_controller = player;
+			if (!generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 1, NULL)){
+				return 0;
+			}
+			td.preferred_controller = td.allowed_controller = 1-player;
+			if (!can_target(&td)){
+				return 0;
+			}
+		} else {
+			return generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 2, NULL);
+		}
 	}
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		instance->number_of_targets = 0;
-		if( new_pick_target(&td, "Select target creature you control.", 0, 1 | GS_LITERAL_PROMPT) ){
-			new_pick_target(&td, "Select target creature opponent controls.", 1, 1 | GS_LITERAL_PROMPT);
+		if (player == AI && IS_AI(player)){
+			td.preferred_controller = td.allowed_controller = player;
+		}
+		if (new_pick_target(&td, "TARGET_CREATURE", 0, 1)){
+			if (player == AI && IS_AI(player)){
+				td.preferred_controller = td.allowed_controller = 1-player;
+			}
+			add_state(instance->targets[0].player, instance->targets[0].card, STATE_TARGETTED|STATE_CANNOT_TARGET);
+			new_pick_target(&td, "TARGET_CREATURE", 1, 1);
+			remove_state(instance->targets[0].player, instance->targets[0].card, STATE_TARGETTED|STATE_CANNOT_TARGET);
 		}
 	}
 
 	if( event == EVENT_RESOLVE_SPELL ){
-		if( validate_target(player, card, &td, 0) && validate_target(player, card, &td1, 1) ){
+		if( validate_target(player, card, &td, 0) && validate_target(player, card, &td, 1) ){
 			exchange_control_of_target_permanents(player, card, instance->targets[0].player, instance->targets[0].card,
 													instance->targets[1].player, instance->targets[1].card);
 		}

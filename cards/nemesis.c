@@ -515,7 +515,7 @@ int card_dominate(int player, int card, event_t event){
 		td.extra = instance->info_slot;
 		td.special = TARGET_SPECIAL_CMC_LESSER_OR_EQUAL;
 		if( valid_target(&td) ){
-			gain_control(player, card, instance->targets[0].player, instance->targets[0].card);
+			gain_control_permanently(player, instance->targets[0].player, instance->targets[0].card);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -1088,36 +1088,34 @@ int card_overlaid_terrain(int player, int card, event_t event){
 
 int card_pack_hunt(int player, int card, event_t event){
 
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.preferred_controller = player;
 
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		pick_target(&td, "TARGET_CREATURE");
-	}
-
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
-			char buffer[100];
-			card_ptr_t* c = cards_ptr[ get_id(instance->targets[0].player, instance->targets[0].card) ];
-			scnprintf(buffer, 100, "Select a card named %s.", c->name);
-
+			int id = get_card_name(player, card);
+			char msg[100];
+			if( id == -1 ){ // A card with no name, probably a face-down card.
+				scnprintf(msg, 100, "You won't be able to tutor any card as you're searching for a card with no name.");
+			}
+			else{
+				scnprintf(msg, 100, "Select a card named %s", cards_ptr[ id ]->name);
+			}
 			test_definition_t this_test;
-			new_default_test_definition(&this_test, TYPE_PERMANENT, buffer);
-			this_test.id = get_id(instance->targets[0].player, instance->targets[0].card);
-			this_test.qty = 3;
+			new_default_test_definition(&this_test, TYPE_ANY, msg);
+			this_test.id = id;
+			this_test.qty = id != -1 ? 3 : 1; //No need to tutor for 3 cards if you can't get any
 			new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_FIRST_FOUND, &this_test);
-			shuffle(player);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return 0;
+	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 1, NULL);
 }
 
 int card_parallax_inhibitor(int player, int card, event_t event){
@@ -1424,6 +1422,10 @@ int card_predator_flagship(int player, int card, event_t event){
 // rackling --> the rack
 
 int card_raths_edge(int player, int card, event_t event){
+	/* Rath's Edge	""
+	 * Legendary Land
+	 * |T: Add |C to your mana pool.
+	 * |4, |T, Sacrifice a land: ~ deals 1 damage to target creature or player. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -1434,7 +1436,7 @@ int card_raths_edge(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, 5, 0, 0, 0, 0, 0) && can_use_activated_abilities(player, card) && can_target(&td) &&
 			can_sacrifice_as_cost(player, 1, TYPE_LAND, 0, 0, 0, 0, 0, 0, 0, -1, 0)

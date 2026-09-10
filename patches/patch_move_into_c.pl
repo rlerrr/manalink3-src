@@ -1,49 +1,7 @@
 #!/bin/env perl
 
 # Updates Magic.exe in-place.
-# 1. Moves various functions entirely into C:
-# get_protections_from()
-# resolve_trigger()
-# is_legal_block()/is_legal_block2()
-# is_legal_block_impl()
-# count_colors_of_lands_in_play()
-# backup_data_for_ai()
-# restore_data_for_ai()
-# backup_data_for_ai_0()
-# restore_data_for_ai_0()
-# phase_changed()
-# can_attack()
-# check_destroys_if_blocked()
-# ante_top_card_of_library()
-# get_internal_card_id_from_csv_id() and CardTypeFromID()
-# damage_creature()
-# format_manacost_into_global_allpurpose_buffer()
-# draw_a_card()
-# ai_assign_blockers()
-# get_card_image_number()
-# dispatch_event_raw()
-# human_assign_blockers()
-# tap_card()
-# mana_burn()
-# get_counter_type_by_id()
-# get_special_counters_name()
-# upkeep_phase()
-# ai_decision_phase()
-# put_card_or_activation_onto_stack()
-# recopy_card_onto_stack()
-# finalize_activation()
-# card_holy_armor()
-# card_blessing()
-# put_card_on_stack3()
-# compute_and_check_casting_cost()
-# card_instances_should_be_displayed_identically()
-# raw_put_card_in_graveyard()
-# remove_card_from_grave()
-# current_event_or_trigger_is_forced()
-# kill_card()
-# get_card_or_subtype_name()
-# play_sound_effect()
-# update_hand_window()
+# 1. Moves various functions entirely into C.
 
 use strict;
 use warnings;
@@ -544,3 +502,138 @@ patch(0x435f50,
 patch(0x47d2f0,
       "e9 57 0f b9 01",	# jmp 0x200e24c
       0x90);
+
+################################
+# dispatch_trigger_to_one_card #
+################################
+#477970:	55			push	ebp
+#477971:	8b ec			mov	ebp, esp
+#477973:	53			push	ebx
+#477974:	56			push	esi
+patch(0x477970,
+      "e9 b8 0f b9 01");	# jmp 0x200892d
+
+###############
+# charge_mana #
+###############
+#42de60:	55			push	ebp
+#42de61:	8b ec			mov	ebp, esp
+#42de63:	81 ec d4 00 00 00	sub	esp, 0xd4
+patch(0x42de60,
+      "e9 70 6c bd 01",		# jmp 0x2004ad5
+      (0x90) x 4);
+
+###################
+# shuffle_for_exe #
+###################
+#(Not that the previous contents will help, since the function had already been injected into)
+#479bf0:	55			push	ebp
+#479bf1:	8b ec			mov	ebp, esp
+#479bf3:	83 ec 14		sub	esp, 0x14
+patch(0x479bf0,
+      "e9 22 81 b8 01",	# jmp 0x2001d17
+      0x90);
+
+#######################
+# autotap_mana_source #
+#######################
+#42fed0:	55			push	ebp
+#42fed1:	8b ec			mov	ebp, esp
+#42fed3:	83 ec 34		sub	esp, 0x34
+patch(0x42fed0,
+      "e9 f4 e3 bd 01",	# jmp 0x200e2c9
+      0x90);
+
+#######################################
+# card_instances_will_have_same_icons #
+#######################################
+#48cb60:	55			push	ebp
+#48cb61:	8b ec			mov	ebp, esp
+#48cb63:	ba 01 00 00 00		mov	edx, 0x1
+patch(0x48cb60,
+      "e9 69 17 b8 01",	# jmp 0x200e2ce
+      (0x90) x 3);
+
+#########################
+# load_startduel_assets #
+#########################
+#46a0f0:	55			push	ebp
+#46a0f1:	8b ec			mov	ebp, esp
+#46a0f3:	81 ec 08 01 00 00	sub	esp, 0x108
+patch(0x46a0f0,
+      "e9 de 41 ba 01",	# jmp 0x200e2d3
+      (0x90) x 4);
+
+##########################
+# load_startduel_assets2 #
+##########################
+#46a000:	55			push	ebp
+#46a001:	8b ec			mov	ebp, esp
+#46a003:	81 ec 08 01 00 00	sub	esp, 0x108
+patch(0x46a000,
+      "e9 d3 42 ba 01",	# jmp 0x200e2d8
+      (0x90) x 4);
+
+##############
+# launch_mcu #
+##############
+#440f00:	55			push	ebp
+#440f01:	8b ec			mov	ebp, esp
+#440f03:	53			push	ebx
+#440f04:	56			push	esi
+patch(0x440f00,
+      "e9 d8 d3 bc 01");	# jmp 0x200e2dd
+
+#######################
+# load_endduel_assets #
+#######################
+#46b6f0:	55			push	ebp
+#46b6f1:	8b ec			mov	ebp, esp
+#46b6f3:	81 ec 08 01 00 00	sub	esp, 0x108
+patch(0x46b6f0,
+      "e9 ed 2b ba 01",	# jmp 0x200e2e2
+      (0x90) x 4);
+
+######################
+# real_put_into_play #
+######################
+#4b5d90:	55			push	ebp
+#4b5d91:	8b ec			mov	ebp, esp
+#4b5d93:	83 ec 08		sub	esp, 0x8
+patch(0x4b5d90,
+      "e9 52 85 b5 01",	# jmp 0x200e2e7
+      0x90);
+
+#################################
+# dispatch_event_to_single_card #
+#################################
+#435b50:	55			push	ebp
+#435b51:	8b ec			mov	ebp, esp
+#435b53:	83 ec 08		sub	esp, 0x8
+patch(0x435b50,
+      "e9 97 87 bd 01",	# jmp 0x200e2ec
+      0x90);
+
+##################################
+# draw_smallcard_activation_card #
+##################################
+#4d2b30:	55			push	ebp
+#4d2b31:	8b ec			mov	ebp, esp
+#4d2b33:	81 ec ac 00 00 00	sub	esp, 0xac
+jmp_to(0x4d2b30 => 0x200ec33);
+
+######################################
+# draw_smallcard_special_effect_card #
+######################################
+#4d25d0:	55			push	ebp
+#4d25d1:	8b ec			mov	ebp, esp
+#4d25d3:	81 ec f0 00 00 00	sub	esp, 0xf0
+jmp_to(0x4d25d0 => 0x200ec38);
+
+#########################
+# draw_smallcard_normal #
+#########################
+#4d2d80:	55			push	ebp
+#4d2d81:	8b ec			mov	ebp, esp
+#4d2d83:	81 ec e0 00 00 00	sub	esp, 0xe0
+jmp_to(0x4d2d80 => 0x200ec3d);

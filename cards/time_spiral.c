@@ -42,40 +42,6 @@ int generic_suspend_legacy(int player, int card, event_t event){
 						continue;
 					}
 					remove_counter(player, card, COUNTER_TIME);
-					if( instance->targets[9].card == CARD_ID_AEON_CHRONICLER ){
-						draw_cards(player, 1);
-					}
-					if( instance->targets[9].card == CARD_ID_BENALISH_COMMANDER ){
-						generate_token_by_id(player, card, CARD_ID_SOLDIER);
-					}
-					if( instance->targets[9].card == CARD_ID_DETRITIVORE){
-						if (pick_target_nonbasic_land(player, card, 1)){
-							kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-						} else {
-							spell_fizzled = 0; // sic
-						}
-					}
-					if( instance->targets[9].card == CARD_ID_FUNGAL_BEHEMOTH){
-						target_definition_t td;
-						default_target_definition(player, card, &td, TYPE_CREATURE);
-						td.preferred_controller = player;
-						if( pick_target(&td, "TARGET_CREATURE") ){
-							instance->number_of_targets = 1;
-							add_1_1_counter(instance->targets[0].player, instance->targets[0].card);
-						}
-					}
-					if( instance->targets[9].card == CARD_ID_ROILING_HORROR ){
-						target_definition_t td;
-						default_target_definition(player, card, &td, TYPE_CREATURE);
-						td.zone = TARGET_ZONE_PLAYERS;
-						instance->targets[0].player = 1-player;
-						instance->targets[0].card = -1;
-						instance->number_of_targets = 1;
-						if( valid_target(&td) ){
-							lose_life(1-player, 1);
-							gain_life(player, 1);
-						}
-					}
 			}
 		}
 	}
@@ -136,6 +102,13 @@ int generic_suspend_legacy(int player, int card, event_t event){
 	return 0;
 }
 
+int is_suspend_legacy(int player, int card){
+	if( is_what(player, card, TYPE_EFFECT) ){
+		return get_card_instance(player, card)->info_slot == (int)generic_suspend_legacy ? 1 : 0;
+	}
+	return 0;
+}
+
 int suspend_a_card(int player, int card, int t_player, int t_card, int turns){
 	int csvid;
 	if( t_player != -1 ){
@@ -168,9 +141,17 @@ int suspend_a_card(int player, int card, int t_player, int t_card, int turns){
 int suspend(int player, int card, event_t event, int turns, int colorless, int black, int blue, int green, int red, int white, target_definition_t* td, const char* prompt){
 	if( event == EVENT_MODIFY_COST ){
 		card_instance_t* instance = get_card_instance(player, card);
+		int csvid = get_id(player, card);
 		int cless = colorless;
 		if( cless == -1 ){
 			cless = 0;
+		}
+		if (csvid == CARD_ID_DETRITIVORE ||
+			csvid == CARD_ID_BENALISH_COMMANDER ||
+			csvid == CARD_ID_FUNGAL_BEHEMOTH ||
+			csvid == CARD_ID_ROILING_HORROR
+		  ){
+			cless = 1; //Cannot be suspended with X = 0
 		}
 		if( has_mana_multi(player, cless, black, blue, green, red, white) ){
 			null_casting_cost(player, card);
@@ -231,6 +212,10 @@ int suspend(int player, int card, event_t event, int turns, int colorless, int b
 						csvid == CARD_ID_ROILING_HORROR
 					   ){
 						charge_mana(player, COLOR_COLORLESS, -1);
+						if( x_value == 0 ){ //Cannot be suspended with X = 0
+							spell_fizzled = 1;
+							return 0;
+						}
 					}
 					if (turns == -1){
 						turns = x_value;
@@ -277,18 +262,6 @@ static int suspend_only(int player, int card, event_t event, int turns, int colo
 	}
 
   return 0;
-}
-
-int madness(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white){
-	if( event == EVENT_CAN_PAY_MADNESS_COST ){
-		return has_mana_multi(player, colorless, black, blue, green, red, white);
-	}
-
-	if( event == EVENT_PAY_MADNESS_COST ){
-		charge_mana_multi(player, colorless, black, blue, green, red, white);
-	}
-
-	return 0;
 }
 
 void holy_nimbus(int player, int card, event_t event, int cost)
@@ -539,40 +512,28 @@ int card_brine_elemental(int player, int card, event_t event){
 
 int card_call_to_the_netherworld(int player, int card, event_t event){
 
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if( event == EVENT_CAN_CAST && special_count_grave(player, TYPE_CREATURE, 0, 0, 0, COLOR_TEST_BLACK, 0, 0, 0, -1, 0) > 0 ){
-		return ! graveyard_has_shroud(2);
+	if( event == EVENT_CAN_PAY_MADNESS_COST || event == EVENT_PAY_MADNESS_COST ){
+		return madness(player, card, event, MANACOST0);
 	}
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		int selected = select_a_card(player, player, TUTOR_FROM_GRAVE, 0, 2, -1, TYPE_CREATURE, 0, 0, 0, COLOR_TEST_BLACK, 0, 0, 0, -1, 0);
-		if( selected != -1 ){
-			const int *grave = get_grave(player);
-			instance->targets[0].player = selected;
-			instance->targets[0].card = grave[selected];
-		}
-		else{
-			spell_fizzled = 1;
-		}
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
 	}
+
+	test_definition_t test;
+	new_default_test_definition(&test, TYPE_CREATURE, get_sleighted_color_text(player, card, "Select a %s creature card.", COLOR_TEST_BLACK));
 
 	if( event == EVENT_RESOLVE_SPELL ){
-		const int *grave = get_grave(player);
-		int selected = instance->targets[0].player;
-		if( grave[selected] == instance->targets[0].card ){
-			add_card_to_hand(player, grave[selected]);
-			remove_card_from_grave(player, selected);
+		int selected = validate_target_from_grave_source(player, card, player, 0);
+		if( selected != -1 ){
+			from_grave_to_hand(player, selected, TUTOR_HAND);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	if( event == EVENT_CAN_PAY_MADNESS_COST && special_count_grave(player, TYPE_CREATURE, 0, 0, 0, COLOR_TEST_BLACK, 0, 0, 0, -1, 0) > 0 ){
-		return ! graveyard_has_shroud(2);
-	}
-
-	return 0;
+	return generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 1, &test);
 }
+
 
 int card_candles_of_leng(int player, int card, event_t event){
 
@@ -621,7 +582,34 @@ int card_careful_consideration(int player, int card, event_t event){
 	return 0;
 }
 
-// Cavalry Master --> benalish cavalry
+int card_cavalry_master(int player, int card, event_t event){
+
+	flanking(player, card, event);
+
+	if( event == EVENT_DECLARE_BLOCKERS && ! is_humiliated(player, card) && current_turn == player ){
+		int p = current_turn;
+		int count = active_cards_count[p]-1;
+		while( count > -1 ){
+				if( in_play(p, count) && is_attacking(p, count) && check_for_special_ability(p, count, SP_KEYWORD_FLANKING) ){
+					int c2 = active_cards_count[1-p]-1;
+					while( c2 > -1 ){
+							if( in_play(1-p, c2) && is_what(1-p, c2, TYPE_CREATURE) ){
+								card_instance_t *this = get_card_instance(1-p, c2);
+								if( this->blocking == count ){
+									if( ! check_for_special_ability(1-p, c2, SP_KEYWORD_FLANKING) ){
+										pump_until_eot(player, card, 1-p, c2, -1, -1);
+									}
+								}
+							}
+							c2--;
+					}
+				}
+				count--;
+		}
+	}
+	return 0;
+
+}
 
 int card_celestial_crusader(int player, int card, event_t event){
 
@@ -793,6 +781,9 @@ int card_chronatog_totem(int player, int card, event_t event){
 }
 
 int card_chronosavant(int player, int card, event_t event){
+	/* Chronosavant	|5|W
+	 * Creature - Giant 5/5
+	 * |1|W: Return ~ from your graveyard to the battlefield tapped. You skip your next turn. */
 
 	if( event == EVENT_GRAVEYARD_ABILITY && has_mana_multi(player, MANACOST_XW(1, 1))){
 		return GA_RETURN_TO_PLAY_MODIFIED | GA_RETURN_TO_PLAY_WITH_EFFECT;
@@ -978,6 +969,10 @@ int card_coal_stoker(int player, int card, event_t event){
 }
 
 int card_conflagrate(int player, int card, event_t event){
+	/* Conflagrate	|X|X|R
+	 * Sorcery
+	 * ~ deals X damage divided as you choose among any number of target creatures and/or players.
+	 * Flashback-|R|R, Discard X cards. */
 
 	if( ! IS_GS_EVENT(player, card, event) && event != EVENT_GRAVEYARD_ABILITY && event != EVENT_PAY_FLASHBACK_COSTS ){
 		return 0;
@@ -995,13 +990,13 @@ int card_conflagrate(int player, int card, event_t event){
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		instance->number_of_targets = 0;
-		if( (played_for_free(player, card) || is_token(player, card)) && ! check_special_flags2(player, card, SF2_COPIED_FROM_STACK) && ! get_flashback() ){
+		if( (played_for_free(player, card) || is_token(player, card)) && ! check_special_flags2(player, card, SF2_COPIED_FROM_STACK) && ! get_flashback(player, card) ){
 			return 0;
 		}
 		int trgs = 0;
 		int targs[10][2];
 		while( trgs < 10 ){
-				if( get_flashback() && trgs+1 > hand_count[player] ){
+				if( get_flashback(player, card) && trgs+1 > hand_count[player] ){
 					break;
 				}
 				if( ! check_special_flags2(player, card, SF2_COPIED_FROM_STACK) && ! has_mana(player, COLOR_COLORLESS, ((trgs+1)*2)) ){
@@ -1022,7 +1017,7 @@ int card_conflagrate(int player, int card, event_t event){
 					break;
 				}
 		}
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			int original_hand[2][hand_count[player]];
 			int ohc = 0;
 			int i;
@@ -1079,7 +1074,7 @@ int card_conflagrate(int player, int card, event_t event){
 
 	if(event == EVENT_RESOLVE_SPELL){
 		divide_damage(player, card, &td);
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			kill_card(player, card, KILL_REMOVE);
 		}
 		else{
@@ -1170,19 +1165,19 @@ int card_curse_of_the_cabal(int player, int card, event_t event){
 
 int card_dark_withering(int player, int card, event_t event){
 
+	if( event == EVENT_CAN_PAY_MADNESS_COST || event == EVENT_PAY_MADNESS_COST ){
+		return madness(player, card, event, MANACOST_B(1));
+	}
+
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE );
-	td.illegal_color = COLOR_TEST_BLACK;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+	td.illegal_color = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		pick_target(&td, "TARGET_CREATURE");
-	}
+	card_instance_t *instance = get_card_instance( player, card);
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
@@ -1190,18 +1185,8 @@ int card_dark_withering(int player, int card, event_t event){
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
-
-	if( event == EVENT_CAN_PAY_MADNESS_COST ){
-		if( has_mana(player, COLOR_BLACK, 1) ){
-			return can_target(&td);
-		}
-	}
-
-	if( event == EVENT_PAY_MADNESS_COST ){
-		charge_mana(player, COLOR_BLACK, 1);
-	}
-
-	return 0;
+	return generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td,
+						get_sleighted_color_text(player, card, "Select target target non%s creature.", COLOR_TEST_BLACK), 1, NULL);
 }
 
 int card_deathspore_thallid(int player, int card, event_t event){
@@ -1401,13 +1386,18 @@ int card_dralnu_lich_lord(int player, int card, event_t event ){
 }
 
 int card_dread_return(int player, int card, event_t event){
+	/* Dread Return	|2|B|B
+	 * Sorcery
+	 * Return target creature card from your graveyard to the battlefield.
+	 * Flashback-Sacrifice three creatures. */
+
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if(event == EVENT_GRAVEYARD_ABILITY){
 		// can only play as sorcery
 		if( can_sorcery_be_played(player, event) && count_graveyard_by_type(player, TYPE_CREATURE) > 0 && ! graveyard_has_shroud(2) ){
 			if( can_pay_flashback(player, instance->internal_card_id, event, 0, 0, 0, 0, 0, 0) ){
-				return can_sacrifice_as_cost(player, 3, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+				return can_sacrifice_as_cost(player, 3, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0) ? GA_PLAYABLE_FROM_GRAVE : 0;
 			}
 		}
 	}
@@ -1432,7 +1422,7 @@ int card_dread_return(int player, int card, event_t event){
 				spell_fizzled = 1;
 			}
 			else{
-				return 1;
+				return GAPAID_EXILE;
 			}
 		}
 	}
@@ -1450,7 +1440,7 @@ int card_dread_return(int player, int card, event_t event){
 			reanimate_permanent(player, card, player, selected, REANIMATE_DEFAULT);
 		}
 
-		if( get_flashback() ){
+		if( get_flashback(player, card) ){
 			kill_card(player, card, KILL_REMOVE);
 		}
 		else{
@@ -1507,17 +1497,31 @@ int card_empty_the_warrens(int player, int card, event_t event){
 	 * Put two 1/1 |Sred Goblin creature tokens onto the battlefield.
 	 * Storm */
 
-	if(event == EVENT_CAN_CAST ){
-		return 1;
+	if(event == EVENT_CAST_SPELL && affect_me(player, card)){
+		if( ! check_special_flags(player, card, SF_NOT_CAST) ){
+			token_generation_t token;
+			default_token_definition(player, card, CARD_ID_GOBLIN, &token);
+			token.pow = 1;
+			token.tou = 1;
+			token.color_forced = COLOR_TEST_RED;
+			token.qty = 2*get_storm_count();
+			generate_token(&token);
+		}
 	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card)){
-		generate_tokens_by_id(player, card, CARD_ID_GOBLIN, 2*get_storm_count());
-	}
-	else if(event == EVENT_RESOLVE_SPELL ){
-		generate_tokens_by_id(player, card, CARD_ID_GOBLIN, 2);
+
+	if(event == EVENT_RESOLVE_SPELL ){
+		token_generation_t token;
+		default_token_definition(player, card, CARD_ID_GOBLIN, &token);
+		token.pow = 1;
+		token.tou = 1;
+		token.color_forced = COLOR_TEST_RED;
+		token.qty = 2;
+		generate_token(&token);
+
 		kill_card(player, card, KILL_DESTROY);
 	}
-	return 0;
+
+	return basic_spell(player, card, event);
 }
 
 int card_endrek_sahr_master_breeder(int player, int card, event_t event){
@@ -1957,10 +1961,21 @@ int card_fury_sliver(int player, int card, event_t event){
 }
 
 int card_gauntlet_of_power(int player, int card, event_t event){
+	/* Gauntlet of Power	|5
+	 * Artifact
+	 * As ~ enters the battlefield, choose a color.
+	 * Creatures of the chosen color get +1/+1.
+	 * Whenever a basic land is tapped for mana of the chosen color, its controller adds one mana of that color to his or her mana pool. */
+
+	if (event != EVENT_RESOLVE_SPELL && event != EVENT_TAP_CARD && event != EVENT_COUNT_MANA && event != EVENT_POWER && event != EVENT_TOUGHNESS){
+		return 0;
+	}
+
 	card_instance_t *instance= get_card_instance(player, card);
 
-	if(comes_into_play(player, card, event) ){
+	if (event == EVENT_RESOLVE_SPELL){
 		instance->info_slot = choose_a_color_and_show_legacy(player, card, player, -1);
+		return 0;
 	}
 
 	int test_color = 1 << instance->info_slot;
@@ -1986,6 +2001,15 @@ int card_gauntlet_of_power(int player, int card, event_t event){
 		return 0;
 	}
 
+	// do the creature part
+	if( event == EVENT_POWER || event == EVENT_TOUGHNESS ){
+		int affected = get_color(affected_card_controller, affected_card);
+		if( affected & test_color ){
+			event_result++;
+		}
+		return 0;
+	}
+
 	// do the mana part
 	if (has_subtype(affected_card_controller, affected_card, subtype) && is_basic_land(affected_card_controller, affected_card)){
 		if (event == EVENT_TAP_CARD){
@@ -1999,14 +2023,6 @@ int card_gauntlet_of_power(int player, int card, event_t event){
 				&& can_produce_mana(affected_card_controller, affected_card)){
 				declare_mana_available(affected_card_controller, instance->info_slot, 1);
 			}
-		}
-	}
-
-	// do the creature part
-	if( event == EVENT_POWER || event == EVENT_TOUGHNESS ){
-		int affected = get_color(affected_card_controller, affected_card);
-		if( affected & test_color ){
-			event_result++;
 		}
 	}
 
@@ -2060,7 +2076,7 @@ int card_goblin_skycutter(int player, int card, event_t event){
 int card_gorgon_recluse(int player, int card, event_t event)
 {
 	card_deathgazer(player, card, event);
-	return madness(player, card, event, 0, 2, 0, 0, 0, 0);
+	return madness(player, card, event, MANACOST_B(2));
 }
 
 int card_grapeshot(int player, int card, event_t event){
@@ -2081,27 +2097,27 @@ int card_grapeshot(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if(event == EVENT_CAN_CAST ){
-		return can_target(&td);
+		return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE_OR_PLAYER", 1, NULL);
 	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card)){
-		int amount = get_storm_count();
-		int i;
-		for(i=0; i<amount; i++){
-			td.allow_cancel = 0;
-			if( pick_target(&td, "TARGET_CREATURE_OR_PLAYER") ){
-				instance->number_of_targets = 1;
-				damage_creature_or_player(player, card, event, 1);
+
+	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE_OR_PLAYER", 1, NULL);
+		if( spell_fizzled != 1 && ! check_special_flags(player, card, SF_NOT_CAST) ){
+			int i;
+			for(i=0;i<get_storm_count();i++){
+				if( new_pick_target(&td, "TARGET_CREATURE_OR_PLAYER", 1, 0) ){
+					damage_creature(instance->targets[1].player, instance->targets[1].card, 1, player, card);
+				}
 			}
-		}
-		if( pick_target(&td, "TARGET_CREATURE_OR_PLAYER") ){
 			instance->number_of_targets = 1;
 		}
 	}
-	else if(event == EVENT_RESOLVE_SPELL ){
-			if( valid_target(&td) ){
-				damage_creature_or_player(player, card, event, 1);
-			}
-			kill_card(player, card, KILL_DESTROY);
+
+	if(event == EVENT_RESOLVE_SPELL ){
+		if( valid_target(&td) ){
+			damage_target0(player, card, 1);
+		}
+		kill_card(player, card, KILL_DESTROY);
 	}
 	return 0;
 }
@@ -2245,26 +2261,27 @@ int card_ground_rift(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if(event == EVENT_CAN_CAST ){
-		return can_target(&td);
+		return generic_spell(player, card, event, GS_CAN_TARGET, &td, NULL, 1, NULL);
 	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card)){
-		int amount = get_storm_count();
-		int i;
-		for(i=0; i<amount; i++){
-			td.allow_cancel = 0;
-			instance->number_of_targets = 0;
-			if( pick_target(&td, "TARGET_CREATURE") ){
-				pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, 0, SP_KEYWORD_CANNOT_BLOCK);
+
+	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td, "Select target creature without flying.", 1, NULL);
+		if( spell_fizzled != 1 && ! check_special_flags(player, card, SF_NOT_CAST) ){
+			int i;
+			for(i=0;i<get_storm_count();i++){
+				if( new_pick_target(&td, "Select target creature without flying.", 1, GS_LITERAL_PROMPT) ){
+					pump_ability_until_eot(player, card, instance->targets[1].player, instance->targets[1].card, 0, 0, 0, SP_KEYWORD_CANNOT_BLOCK);
+				}
 			}
+			instance->number_of_targets = 1;
 		}
-		instance->number_of_targets = 0;
-		pick_target(&td, "TARGET_CREATURE");
 	}
-	else if(event == EVENT_RESOLVE_SPELL ){
-			if( valid_target(&td) ){
-				pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, 0, SP_KEYWORD_CANNOT_BLOCK);
-			}
-			kill_card(player, card, KILL_DESTROY);
+
+	if(event == EVENT_RESOLVE_SPELL ){
+		if( valid_target(&td) ){
+			pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, 0, SP_KEYWORD_CANNOT_BLOCK);
+		}
+		kill_card(player, card, KILL_DESTROY);
 	}
 	return 0;
 }
@@ -2602,10 +2619,10 @@ int card_jaya_ballard_task_mage(int player, int card, event_t event){
 		}
 		else if( choice == CHOICE_BOLT ){
 			if( valid_target(&td1) ){
-				if (is_what(instance->targets[0].player, instance->targets[0].card, TYPE_CREATURE)){
-					cannot_regenerate_until_eot(player, card, instance->targets[0].player, instance->targets[0].card);
+				int dc = damage_target0(player, card, 3);
+				if( instance->targets[0].card != -1 ){
+					get_card_instance(player, dc)->targets[3].card |= DMG_CANT_REGENERATE_IF_DEALT_DAMAGE_THIS_WAY;
 				}
-				damage_target0(player, card, 3);
 			}
 		}
 		else if( choice == CHOICE_INFERNO ){
@@ -2972,21 +2989,14 @@ int card_living_end(int player, int card, event_t event)
 	/* Living End	""
 	 * Sorcery
 	 * Suspend 3-|2|B|B
-	 * Each player exiles all creature cards from his or her graveyard, then sacrifices all creatures he or she controls, then puts all cards he or she exiled
+	 * Each player exiles all creature cards from his or her graveyard, then sacrifices all creatures he or she controls,
+	 * then puts all cards he or she exiled
 	 * this way onto the battlefield. */
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		card_instance_t* instance = get_card_instance(player, card);
-		instance->targets[0].player = count_graveyard(player)-1;
-		instance->targets[1].player = count_graveyard(1-player)-1;
+	if(event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
-		new_manipulate_all(player, card, player, &this_test, KILL_SACRIFICE);
-		if( can_sacrifice(player, 1-player, 1, TYPE_CREATURE, 0) ){
-			new_manipulate_all(player, card, 1-player, &this_test, KILL_SACRIFICE);
-		}
-		reanimate_all(player, card, player, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0, REANIMATE_DEFAULT);
-		reanimate_all(player, card, 1-player, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0, REANIMATE_DEFAULT);
+		new_reanimate_all(player, card, ANYBODY, &this_test, REANIMATE_SPECIAL_LIVING_DEAD);
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -3195,12 +3205,8 @@ int card_mishra_artificer_prodigy(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( specific_spell_played(player, card, event, player, 1+player, TYPE_ARTIFACT, 0, 0, 0, 0, 0, 0, 0, -1, 0) ){
-		int id = get_id(instance->targets[1].player, instance->targets[1].card);
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_ARTIFACT);
-		this_test.id = id;
-		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_FIRST_FOUND, &this_test);
+	if( specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), TYPE_ARTIFACT, 0, 0, 0, 0, 0, 0, 0, -1, 0) ){
+		tutor_card_with_the_same_name(instance->targets[1].player, instance->targets[1].card, player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0);
 	}
 	return 0;
 }
@@ -3263,7 +3269,7 @@ int card_momentary_blink(int player, int card, event_t event){
 		}
 	}
 	else if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			if( get_flashback() ){
+			if( get_flashback(player, card) ){
 				instance->info_slot = 66;
 			}
 			if( player == AI ){
@@ -3333,7 +3339,7 @@ int card_mystical_teachings(int player, int card, event_t event){
 			this_test.special_selection_function = &is_instant_or_has_flash;
 			this_test.value_for_special_selection_function = check_battlefield_for_id(player, CARD_ID_TEFERI_MAGE_OF_ZHALFIR);
 			new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test);
-			if( get_flashback() ){
+			if( get_flashback(player, card) ){
 			   kill_card(player, card, KILL_REMOVE);
 			}
 			else{
@@ -3382,7 +3388,7 @@ int card_nightshade_assassin(int player, int card, event_t event){
 			}
 		}
 	}
-	return madness(player, card, event, 1, 1, 0, 0, 0, 0);
+	return madness(player, card, event, MANACOST_XB(1, 1));
 }
 
 int card_norin_the_wary(int player, int card, event_t event)
@@ -3417,7 +3423,7 @@ int card_opaline_sliver(int player, int card, event_t event)
 
 int card_outrider_en_kor(int player, int card, event_t event){
 	flanking(player, card, event);
-	return card_nomads_en_kor(player, card, event);
+	return en_kor_damage_prevention_ability(player, card, event);
 }
 
 int card_paradise_plume(int player, int card, event_t event){
@@ -3577,7 +3583,7 @@ int card_phyrexian_totem(int player, int card, event_t event){
 
 	if( event == EVENT_CAN_ACTIVATE ){
 		set_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
-		if( generic_activated_ability(player, card, event, GAA_TYPE_CHANGE, 2, 1, 0, 0, 0, 0, 0, 0, 0) ){
+		if( generic_activated_ability(player, card, event, GAA_TYPE_CHANGE, MANACOST_XB(2, 1), 0, NULL, NULL) ){
 			return 1;
 		}
 		remove_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
@@ -3585,64 +3591,67 @@ int card_phyrexian_totem(int player, int card, event_t event){
 	}
 
 	if(event == EVENT_ACTIVATE ){
-		int mode = (1<<2);
-		if( mana_producer(player, card, EVENT_CAN_ACTIVATE) ){
-			mode |= (1<<0);
-		}
+		instance->info_slot = 0;
+
+		enum
+		{
+			CHOICE_MANA = 1,
+			CHOICE_ANIMATE
+		};
+
+		int can_produce = mana_producer(player, card, EVENT_CAN_ACTIVATE);
 		set_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
-		if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_TYPE_CHANGE, 2, 1, 0, 0, 0, 0, 0, 0, 0) ){
-			mode |=(1<<1);
-		}
+		int can_animate = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_TYPE_CHANGE, MANACOST_XB(2, 1), 0, NULL, NULL);
 		remove_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
-		int choice = 0;
-		if( ! paying_mana() && (mode & (1<<1)) ){
-			char buffer[500];
-			int pos = 0;
-			int ai_choice = 1;
-			if( mode & (1<<0) ){
-				pos += scnprintf(buffer + pos, 500-pos, " Get mana\n", buffer);
-			}
-			if( mode & (1<<1) ){
-				pos += scnprintf(buffer + pos, 500-pos, " Animate\n", buffer);
-			}
-			pos += scnprintf(buffer + pos, 500-pos, " Cancel", buffer);
-			choice = do_dialog(player, player, card, -1, -1, buffer, ai_choice);
-			while( !( (1<<choice) & mode) ){
-					choice++;
-			}
+
+		int choice = DIALOG(player, card, event, DLG_RANDOM,
+							"Get mana", can_produce, 5,
+							"Animate", can_animate, 15);
+
+		if( ! choice ){
+			spell_fizzled = 1;
+			return 0;
 		}
-		if( choice == 0 ){
-			instance->info_slot = 66+choice;
+
+		if( choice == CHOICE_MANA ){
+			instance->info_slot = CHOICE_MANA;
 			return mana_producer(player, card, event);
 		}
-		else if( choice == 1){
-				set_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
-				if( generic_activated_ability(player, card, event, GAA_TYPE_CHANGE, 2, 1, 0, 0, 0, 0, 0, 0, 0) ){
-					instance->info_slot = 66+choice;
-				}
-				remove_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
-		}
-		else{
-			spell_fizzled = 1;
+		if( choice == CHOICE_ANIMATE ){
+			set_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
+			generic_activated_ability(player, card, event, GAA_TYPE_CHANGE, MANACOST_XB(2, 1), 0, NULL, NULL);
+			if( spell_fizzled != 1 ){
+				instance->info_slot = CHOICE_ANIMATE;
+			}
+			remove_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
 		}
 	}
+
+	if( event == EVENT_RESOLVE_ACTIVATION ){
+		enum
+		{
+			CHOICE_MANA = 1,
+			CHOICE_ANIMATE
+		};
+
+		if( instance->info_slot == CHOICE_MANA ){
+			return mana_producer(player, card, event);
+		}
+
+		if( instance->info_slot == CHOICE_ANIMATE ){
+			add_a_subtype(instance->parent_controller, instance->parent_card, SUBTYPE_HORROR);
+			int legacy = artifact_animation(instance->parent_controller, instance->parent_card,
+											instance->parent_controller, instance->parent_card, 1, 5, 5, KEYWORD_TRAMPLE, 0);
+			card_instance_t *leg = get_card_instance(instance->parent_controller, legacy);
+			leg->targets[6].player = COLOR_TEST_BLACK;
+			get_card_instance(instance->parent_controller, instance->parent_card)->targets[1].player = 66;
+		}
+	}
+
 	if( instance->targets[1].player == 66 ){
 		true_phyrexian_negator(player, card, event);
 	}
 
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t *parent = get_card_instance(player, instance->parent_card);
-		if( instance->info_slot == 66 ){
-			return mana_producer(player, card, event);
-		}
-		if( instance->info_slot == 67 ){
-			add_a_subtype(player, instance->parent_card, SUBTYPE_HORROR);
-			int legacy = artifact_animation(player, instance->parent_card, player, instance->parent_card, 1, 5, 5, KEYWORD_TRAMPLE, 0);
-			card_instance_t *leg = get_card_instance(player, legacy);
-			leg->targets[6].player = COLOR_TEST_BLACK;
-			parent->targets[1].player = 66;
-		}
-	}
 	if( event == EVENT_CLEANUP ){
 		instance->targets[1].player = 0;
 	}
@@ -3795,7 +3804,7 @@ int psionic_sliver_shared_ability(int player, int card, event_t event){
 		if( event == EVENT_RESOLVE_ACTIVATION ){
 			if( would_validate_arbitrary_target(&td2, instance->targets[2].player, instance->targets[2].card) ){
 				damage_creature(instance->targets[2].player, instance->targets[2].card, 2, instance->targets[0].player, instance->targets[0].card);
-				damage_creature(instance->targets[0].player, instance->targets[0].card, 3, instance->targets[2].player, instance->targets[2].card);
+				damage_creature(instance->targets[0].player, instance->targets[0].card, 3, instance->targets[0].player, instance->targets[0].card);
 			}
 		}
 
@@ -4198,6 +4207,22 @@ int card_sangrophage(int player, int card, event_t event){
 	return 0;
 }
 
+static int sarpadian_empires_legacy(int player, int card, event_t event){
+
+	if (event == EVENT_SET_LEGACY_EFFECT_NAME ){
+		card_instance_t *instance = get_card_instance(player, card);
+		if( instance->damage_target_player > -1 ){
+			char clr[10];
+			scnprintf(clr, 10, "%s", cards_ptr[get_card_instance(instance->damage_target_player, instance->damage_target_card)->targets[2].player]->name);
+			char subt[20];
+			scnprintf(subt, 20, "%s", raw_get_subtype_text(get_card_instance(instance->damage_target_player, instance->damage_target_card)->targets[2].card));
+			scnprintf(set_legacy_effect_name_addr, 51, "%s %s", clr, subt);
+		}
+	}
+
+	return 0;
+}
+
 int card_sarpadian_empires_vol_vii(int player, int card, event_t event){
 
 	/* Sarpadian Empires, Vol. VII	|3
@@ -4205,22 +4230,26 @@ int card_sarpadian_empires_vol_vii(int player, int card, event_t event){
 	 * As ~ enters the battlefield, choose |Swhite Citizen, |Sblue Camarid, |Sblack Thrull, |Sred Goblin, or |Sgreen Saproling.
 	 * |3, |T: Put a 1/1 creature token of the chosen color and type onto the battlefield. */
 
-	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_RESOLVE_SPELL ){
+		int clrs[5] = {COLOR_TEST_BLACK, COLOR_TEST_BLUE, COLOR_TEST_GREEN, COLOR_TEST_RED, COLOR_TEST_WHITE};
+		int ids[5] = {CARD_ID_THRULL, CARD_ID_CAMARID, CARD_ID_SAPROLING, CARD_ID_GOBLIN, CARD_ID_CITIZEN};
+		int subs[5] = {SUBTYPE_THRULL, SUBTYPE_CAMARID, SUBTYPE_SAPROLING, SUBTYPE_GOBLIN, SUBTYPE_CITIZEN};
 		int choice = do_dialog(player, player, card, -1, -1, " Black Thrull\n Blue Camarid\n Green Saproling\n Red Goblin\n White Citizen", internal_rand(5));
-		instance->info_slot = choice;
-		create_card_name_legacy(player, card, CARD_ID_BLACK+choice);
-		int subs[5] = {CARD_ID_THRULL, CARD_ID_CAMARID, CARD_ID_SAPROLING, CARD_ID_GOBLIN, CARD_ID_CITIZEN};
-		create_subtype_name_legacy(player, card, subs[choice]);
+		card_instance_t *instance = get_card_instance(player, card);
+		instance->targets[1].player = clrs[choice];
+		instance->targets[2].player = CARD_ID_BLACK+choice;
+		instance->targets[1].card = ids[choice];
+		instance->targets[2].card = subs[choice];
+		int legacy_card = create_targetted_legacy_effect(player, card, &sarpadian_empires_legacy, player, card);
+		get_card_instance(player, legacy_card)->eot_toughness = EVENT_SET_LEGACY_EFFECT_NAME;
 	}
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
-		int subs[5] = {CARD_ID_THRULL, CARD_ID_CAMARID, CARD_ID_SAPROLING, CARD_ID_GOBLIN, CARD_ID_CITIZEN};
-		int clrs[5] = {COLOR_TEST_BLACK, COLOR_TEST_BLUE, COLOR_TEST_GREEN, COLOR_TEST_RED, COLOR_TEST_WHITE};
+		card_instance_t *instance = get_card_instance(player, card);
 		token_generation_t token;
-		default_token_definition(player, card, subs[instance->info_slot], &token);
-		token.color_forced = clrs[instance->info_slot];
+		default_token_definition(player, card, instance->targets[1].card, &token);
+		token.color_forced = instance->targets[1].player;
 		token.pow = token.tou = 1;
 		generate_token(&token);
 	}
@@ -4560,12 +4589,18 @@ int card_shadow_sliver(int player, int card, event_t event){
 
 int card_sidewinder_sliver(int player, int card, event_t event){
 
+	if( event == EVENT_ABILITIES && in_play(affected_card_controller, affected_card) &&
+		has_subtype(affected_card_controller, affected_card, SUBTYPE_SLIVER)
+	  ){
+		flanking(affected_card_controller, affected_card, event);
+	}
+
 	if( event == EVENT_DECLARE_BLOCKERS ){
 		int p = current_turn;
 		int count = active_cards_count[p]-1;
 		while( count > -1 ){
-				if( in_play(p, count) && has_subtype(p, count, SUBTYPE_SLIVER) && is_attacking(p, count)
-				&& ! check_special_flags(p, count, SF_FLANKING_REMOVED)
+				if( in_play(p, count) && has_subtype(p, count, SUBTYPE_SLIVER) && is_attacking(p, count) &&
+					check_for_special_ability(p, count, SP_KEYWORD_FLANKING)
 				  ){
 					int c2 = active_cards_count[1-p]-1;
 					while( c2 > -1 ){
@@ -4573,8 +4608,7 @@ int card_sidewinder_sliver(int player, int card, event_t event){
 								card_instance_t *this = get_card_instance(1-p, c2);
 								if( this->blocking == count ){
 									if( ! check_for_special_ability(1-p, c2, SP_KEYWORD_FLANKING) ){
-										int pump = -1 * (1 + count_cards_by_id(p, CARD_ID_CAVALRY_MASTER));
-										pump_until_eot(player, card, 1-p, c2, pump, pump);
+										pump_until_eot(player, card, 1-p, c2, -1, -1);
 									}
 								}
 							}
@@ -4639,7 +4673,7 @@ int card_spectral_force(int player, int card, event_t event)
   if ((xtrigger_condition() == XTRIGGER_ATTACKING || event == EVENT_DECLARE_ATTACKERS)
 	  && count_permanents_by_color(1-current_turn, TYPE_PERMANENT, get_sleighted_color(player, card, COLOR_TEST_BLACK)) == 0
 	  && declare_attackers_trigger(player, card, event, 0, player, card))
-	does_not_untap_effect(player, card, player, card, 0, 1);
+		does_not_untap_effect(player, card, player, card, EDNT_CHECK_ORIGINAL_CONTROLLER, 1);
 
   return 0;
 }
@@ -4683,6 +4717,10 @@ int card_spell_burst(int player, int card, event_t event){
 }
 
 int card_spiketail_drakeling(int player, int card, event_t event){
+	/* Spiketail Drakeling	|1|U|U
+	 * Creature - Drake 2/2
+	 * Flying
+	 * Sacrifice ~: Counter target spell unless its controller pays |2. */
 
 	target_definition_t td;
 	counterspell_target_definition(player, card, &td, 0);
@@ -4785,14 +4823,22 @@ int card_stonebrow_krosan_hero(int player, int card, event_t event)
 }
 
 int card_stonewood_invocation(int player, int card, event_t event){
+	/* Stonewood Invocation	|3|G
+	 * Instant
+	 * Split second
+	 * Target creature gets +5/+5 and gains shroud until end of turn. */
+
+	cannot_be_countered(player, card, event);
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.preferred_controller = player;
 
 	card_instance_t *instance = get_card_instance(player, card);
-
-	cannot_be_countered(player, card, event);
 
 	if( event == EVENT_CAN_CAST ){
 		return can_target(&td);
@@ -4804,7 +4850,7 @@ int card_stonewood_invocation(int player, int card, event_t event){
 			}
 	}
 
-	else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if( event == EVENT_RESOLVE_SPELL ){
 		  kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -4812,34 +4858,39 @@ int card_stonewood_invocation(int player, int card, event_t event){
 }
 
 int card_strangling_soot(int player, int card, event_t event){
+	/* Strangling Soot	|2|B
+	 * Instant
+	 * Destroy target creature with toughness 3 or less.
+	 * Flashback |5|R */
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.toughness_requirement = 3 | TARGET_PT_LESSER_OR_EQUAL;
+	if (IS_CASTING(player, card, event)){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.toughness_requirement = 3 | TARGET_PT_LESSER_OR_EQUAL;
 
-	card_instance_t *instance = get_card_instance(player, card);
+		card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
+		if( event == EVENT_CAN_CAST ){
+			return can_target(&td);
+		}
+
+		else if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+				pick_target(&td, "TARGET_CREATURE");
+		}
+
+		else if( event == EVENT_RESOLVE_SPELL ){
+				if( valid_target(&td) ){
+					kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+				}
+				if( get_flashback(player, card) ){
+				   kill_card(player, card, KILL_REMOVE);
+				}
+				else{
+					 kill_card(player, card, KILL_DESTROY);
+				}
+		}
 	}
-
-	else if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			pick_target(&td, "TARGET_CREATURE");
-	}
-
-	else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
-			if( valid_target(&td) ){
-				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-			}
-			if( get_flashback() ){
-			   kill_card(player, card, KILL_REMOVE);
-			}
-			else{
-				 kill_card(player, card, KILL_DESTROY);
-			}
-	}
-
-	return do_flashback(player, card, event, 5, 0, 0, 0, 1, 0);
+	return do_flashback(player, card, event, MANACOST_XR(5,1));
 }
 
 int card_strength_in_numbers(int player, int card, event_t event){
@@ -4914,13 +4965,21 @@ int card_subterranean_shambler(int player, int card, event_t event){
 }
 
 int card_sudden_death(int player, int card, event_t event){
+	/* Sudden Death	|1|B|B
+	 * Instant
+	 * Split second
+	 * Target creature gets -4/-4 until end of turn. */
+
+	cannot_be_countered(player, card, event);
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 
 	card_instance_t *instance = get_card_instance(player, card);
-
-	cannot_be_countered(player, card, event);
 
 	if( event == EVENT_CAN_CAST ){
 		return can_target(&td);
@@ -4932,7 +4991,7 @@ int card_sudden_death(int player, int card, event_t event){
 			}
 	}
 
-	else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if( event == EVENT_RESOLVE_SPELL ){
 		  kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -4940,12 +4999,20 @@ int card_sudden_death(int player, int card, event_t event){
 }
 
 int card_sudden_shock(int player, int card, event_t event){
+	/* Sudden Shock	|1|R
+	 * Instant
+	 * Split second
+	 * ~ deals 2 damage to target creature or player. */
+
+	cannot_be_countered(player, card, event);
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-
-	cannot_be_countered(player, card, event);
 
 	if( event == EVENT_CAN_CAST ){
 		return can_target(&td);
@@ -4957,7 +5024,7 @@ int card_sudden_shock(int player, int card, event_t event){
 			}
 	}
 
-	else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if( event == EVENT_RESOLVE_SPELL ){
 		  kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -4972,13 +5039,17 @@ int card_sudden_spoiling(int player, int card, event_t event){
 	  Creatures target player controls become 0/2 and lose all abilities until end of turn.
 	*/
 
+	cannot_be_countered(player, card, event);
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.zone = TARGET_ZONE_PLAYERS;
 
 	card_instance_t *instance = get_card_instance(player, card);
-
-	cannot_be_countered(player, card, event);
 
 	if( event == EVENT_CAN_CAST ){
 		return can_target(&td);
@@ -5004,7 +5075,7 @@ int card_sudden_spoiling(int player, int card, event_t event){
 		}
 	}
 
-	if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	if( event == EVENT_RESOLVE_SPELL ){
 		kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -5379,19 +5450,17 @@ int card_thelon_of_havenwood(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_CAN_ACTIVATE ){
-		if( has_mana_for_activated_ability(player, card, 0, 1, 0, 1, 0, 0) ){
-			if ( count_graveyard_by_subtype(player, SUBTYPE_FUNGUS) > 0 || count_graveyard_by_subtype(1-player, SUBTYPE_FUNGUS) > 0){
-				return ! graveyard_has_shroud(2);
-			}
-		}
+		return (has_mana_for_activated_ability(player, card, MANACOST_BG(1,1))
+				&& any_in_graveyard_by_subtype(ANYBODY, SUBTYPE_FUNGUS)
+				&& !graveyard_has_shroud(ANYBODY));
 	}
 
 	else if(event == EVENT_ACTIVATE ){
 			charge_mana_for_activated_ability(player, card, 0, 1, 0, 1, 0, 0);
 			if( spell_fizzled != 1){
 				instance->targets[0].player = 1-player;
-				if( count_graveyard_by_subtype(1-player, SUBTYPE_FUNGUS) > 0 ){
-					if( count_graveyard_by_subtype(player, SUBTYPE_FUNGUS) > 0 ){
+				if( any_in_graveyard_by_subtype(1-player, SUBTYPE_FUNGUS)){
+					if( any_in_graveyard_by_subtype(player, SUBTYPE_FUNGUS)){
 						pick_target(&td, "TARGET_PLAYER");
 					}
 				}
@@ -5452,7 +5521,7 @@ int card_think_twice(int player, int card, event_t event){
 	}
 	else if(event == EVENT_RESOLVE_SPELL){
 			draw_cards(player, 1);
-			if( get_flashback() ){
+			if( get_flashback(player, card) ){
 			   kill_card(player, card, KILL_REMOVE);
 			}
 			else{
@@ -5925,28 +5994,27 @@ int card_volcanic_awakening(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if(event == EVENT_CAN_CAST ){
-		return can_target(&td);
+		return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_LAND", 1, NULL);
 	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card)){
-		int amount = get_storm_count();
-		int i;
-		for(i=0; i<amount; i++){
-			td.allow_cancel = 0;
-			instance->number_of_targets = 0;
-			if( can_target(&td) && pick_target(&td, "TARGET_LAND") ){
-				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+
+	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_LAND", 1, NULL);
+		if( spell_fizzled != 1 && ! check_special_flags(player, card, SF_NOT_CAST) ){
+			int i;
+			for(i=0;i<get_storm_count();i++){
+				if( new_pick_target(&td, "TARGET_LAND", 1, 0) ){
+					kill_card(instance->targets[1].player, instance->targets[1].card, KILL_DESTROY);
+				}
 			}
-		}
-		instance->number_of_targets = 0;
-		if (can_target(&td)){
-			pick_target(&td, "TARGET_LAND");
+			instance->number_of_targets = 1;
 		}
 	}
-	else if(event == EVENT_RESOLVE_SPELL ){
-			if( instance->number_of_targets > 0 && valid_target(&td) ){
-				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-			}
-			kill_card(player, card, KILL_DESTROY);
+
+	if(event == EVENT_RESOLVE_SPELL ){
+		if( valid_target(&td) ){
+			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+		}
+		kill_card(player, card, KILL_DESTROY);
 	}
 	return 0;
 }
@@ -6130,13 +6198,21 @@ int card_wheel_of_fate(int player, int card, event_t event)
 }
 
 int card_wipe_away(int player, int card, event_t event){
+	/* Wipe Away	|1|U|U
+	 * Instant
+	 * Split second
+	 * Return target permanent to its owner's hand. */
+
+	cannot_be_countered(player, card, event);
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_PERMANENT);
 
 	card_instance_t *instance = get_card_instance(player, card);
-
-	cannot_be_countered(player, card, event);
 
 	if( event == EVENT_CAN_CAST ){
 		return can_target(&td);
@@ -6148,7 +6224,7 @@ int card_wipe_away(int player, int card, event_t event){
 			}
 	}
 
-	else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if( event == EVENT_RESOLVE_SPELL ){
 		  kill_card(player, card, KILL_DESTROY);
 	}
 

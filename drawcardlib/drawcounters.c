@@ -13,30 +13,15 @@ draw_special_counters(HDC hdc, const RECT* rect, int player, int card)
 {
   // magic.exe:0x4d3a00
 
-  // This is a bit odd - in Manalink, we're already in a critical_section_for_drawing; in Shandalar, we're not.
-
   if (!hdc || !rect)
 	return;
 
   card_instance_t actual;
   card_instance_t* instance = get_displayed_card_instance(player, card);	// unsafe to dereference
 
-  if (parent == PARENT_MANALINK)
-	{
-	  LeaveCriticalSection(critical_section_for_drawing);
-
-	  EnterCriticalSection(critical_section_for_display);
-	  memcpy(&actual, instance, sizeof(card_instance_t));
-	  LeaveCriticalSection(critical_section_for_display);
-
-	  EnterCriticalSection(critical_section_for_drawing);
-	}
-  else
-	{
-	  EnterCriticalSection(critical_section_for_display);
-	  memcpy(&actual, instance, sizeof(card_instance_t));
-	  LeaveCriticalSection(critical_section_for_display);
-	}
+  EnterCriticalSection(critical_section_for_display);
+  memcpy(&actual, instance, sizeof(card_instance_t));
+  LeaveCriticalSection(critical_section_for_display);
 
   instance = &actual;	// now safe
 
@@ -174,30 +159,15 @@ get_special_counter_rect(RECT* rect_dest, const RECT* rect_src, int num)
 void
 draw_standard_counters(HDC hdc, const RECT* rect, int player, int card)
 {
-  // This is a bit odd - in Manalink, we're already in a critical_section_for_drawing; in Shandalar, we're not.
-
   if (!hdc || !rect)
 	return;
 
   card_instance_t actual;
   card_instance_t* instance = get_displayed_card_instance(player, card);	// unsafe to dereference
 
-  if (parent == PARENT_MANALINK)
-	{
-	  LeaveCriticalSection(critical_section_for_drawing);
-
-	  EnterCriticalSection(critical_section_for_display);
-	  memcpy(&actual, instance, sizeof(card_instance_t));
-	  LeaveCriticalSection(critical_section_for_display);
-
-	  EnterCriticalSection(critical_section_for_drawing);
-	}
-  else
-	{
-	  EnterCriticalSection(critical_section_for_display);
-	  memcpy(&actual, instance, sizeof(card_instance_t));
-	  LeaveCriticalSection(critical_section_for_display);
-	}
+  EnterCriticalSection(critical_section_for_display);
+  memcpy(&actual, instance, sizeof(card_instance_t));
+  LeaveCriticalSection(critical_section_for_display);
 
   instance = &actual;	// now safe
 

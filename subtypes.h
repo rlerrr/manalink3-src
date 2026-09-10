@@ -238,8 +238,8 @@ SUBTYPE_MIN_CREATURE_SUBTYPE		= 0x0001,
   SUBTYPE_NAGA						  = 0x00E7,
   SUBTYPE_PROCESSOR					  = 0x00E8,
   SUBTYPE_SCION						  = 0x00E9,
-  SUBTYPE_MAX_USED_CREATURE_SUBTYPE	  = 0x00E9,
-// 0x00F0 is used for legendary.
+  SUBTYPE_MOLE						  = 0x00EA,
+  SUBTYPE_MAX_USED_CREATURE_SUBTYPE	  = 0x00EA,
   SUBTYPE_NONE                        = 0x0FFE, //When set, by design the creature lost every other creature type.
   SUBTYPE_ALL_CREATURES               = 0x0FFF,	//FIXME: counts as all possible creature types
   SUBTYPE_MAX_CREATURE_SUBTYPE		  = 0x0FFF,
@@ -265,7 +265,7 @@ SUBTYPE_MAX_TYPE					  = 0x1FFF,
 
 SUBTYPE_MIN_SUPERTYPE				= 0x2000,
   SUBTYPE_BASIC                       = 0x2000,      //supertypes
-  SUBTYPE_LEGEND	                  = 0x2001,      // Not used at all in the csv; 0xF0 is.
+  SUBTYPE_LEGEND	                  = 0x2001,
   SUBTYPE_ONGOING                     = 0x2002,
   SUBTYPE_SNOW                        = 0x2003,
   SUBTYPE_WORLD                       = 0x2004,
@@ -279,7 +279,8 @@ SUBTYPE_MIN_ARTIFACT_SUBTYPE		= 0x3000,
   SUBTYPE_EQUIPMENT                   = 0x3001,
   SUBTYPE_FORTIFICATION               = 0x3002,
   SUBTYPE_HORDE_ARTIFACT              = 0x3003,		//internal use only
-SUBTYPE_MAX_USED_ARTIFACT_SUBTYPE	= 0x3003,
+  SUBTYPE_CLUE                        = 0x3004,
+SUBTYPE_MAX_USED_ARTIFACT_SUBTYPE	= 0x3004,
 SUBTYPE_MAX_ARTIFACT_SUBTYPE		= 0x3FFF,
 
 SUBTYPE_MIN_ENCHANTMENT_SUBTYPE		= 0x4000,
@@ -291,6 +292,8 @@ SUBTYPE_MIN_ENCHANTMENT_SUBTYPE		= 0x4000,
   SUBTYPE_AURA_LAND					= 0x4004,
   SUBTYPE_AURA_PERMANENT			= 0x4005,
   SUBTYPE_AURA_PLAYER				= 0x4006,
+  SUBTYPE_AURA_INSTANT				= 0x4007,
+  SUBTYPE_AURA_PLANESWALKER			= 0x4008,
   /* End internal use only */
   SUBTYPE_CURSE                       = 0x4010,
   SUBTYPE_SHRINE                      = 0x4020,
@@ -352,7 +355,8 @@ SUBTYPE_MIN_PLANESWALKER_SUBTYPE	= 0x7000,
   SUBTYPE_TEFERI                      = 0x701C,
   SUBTYPE_UGIN                        = 0x701D,
   SUBTYPE_NARSET                      = 0x701E,
-SUBTYPE_MAX_USED_PLANESWALKER_SUBTYPE = 0x701E,
+  SUBTYPE_ARLINN                      = 0x701F,
+SUBTYPE_MAX_USED_PLANESWALKER_SUBTYPE = 0x701F,
 SUBTYPE_MAX_PLANESWALKER_SUBTYPE	  = 0x71FF,
 
 SUBTYPE_MIN_PLANE_SUBTYPE			= 0x8000,
@@ -570,7 +574,7 @@ typedef enum
   HARDCODED_SUBTYPE_SCORPION          = 162,
   HARDCODED_SUBTYPE_SERPENT           = 163,
   HARDCODED_SUBTYPE_SHADE             = 164,
-  HARDCODED_SUBTYPE_PERMANENT         = 165,	// aura with enchant permanent
+  HARDCODED_SUBTYPE_PERMANENT         = 165,	// aura with enchant permanent or planeswalker
   HARDCODED_SUBTYPE_FISH              = 166,
   HARDCODED_SUBTYPE_PIRATE            = 167,
   HARDCODED_SUBTYPE_SAMURAI           = 168,

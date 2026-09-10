@@ -515,7 +515,11 @@ int card_homarid_warrior(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		pump_ability_until_eot(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card,
 								0, 0, KEYWORD_SHROUD, 0 );
-		effect_frost_titan(instance->parent_controller, instance->parent_card, player, instance->parent_card);
+		if (in_play(instance->parent_controller, instance->parent_card) ){
+			tap_card(instance->parent_controller, instance->parent_card);
+			 does_not_untap_effect(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card,
+									EDNT_CHECK_ORIGINAL_CONTROLLER, 1);
+		}
 	}
 
 	return generic_activated_ability(player, card, event, 0, MANACOST_U(1), 0, NULL, NULL);
@@ -888,6 +892,9 @@ int card_tidal_influence(int player, int card, event_t event){
 }
 
 int card_vodalian_mage(int player, int card, event_t event){
+	/* Vodalian Mage	|2|U
+	 * Creature - Merfolk Wizard 1/1
+	 * |U, |T: Counter target spell unless its controller pays |1. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -1250,27 +1257,16 @@ int card_thrull_champion(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST0, 0, &td, "Select target Thrull.");
 }
 
-int card_thrull_retainer(int player, int card, event_t event){
-	card_instance_t *instance = get_card_instance(player, card);
+int base_carapace(int player, int card, event_t event, int pow, int tgh);
 
-	if( in_play(player, card) && instance->damage_target_player > -1 ){
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-		if( event == EVENT_CAN_ACTIVATE ){
-			int result = generic_activated_ability(player, card, event, GAA_SACRIFICE_ME | GAA_REGENERATION, MANACOST0, 0, NULL, NULL);
-			return player == AI ? (can_be_regenerated(p, c) ? result : 0) : result;
-		}
-		if( event == EVENT_ACTIVATE ){
-			if( charge_mana_for_activated_ability(player, card, MANACOST0) ){
-				kill_card(player, card, KILL_SACRIFICE);
-			}
-		}
-		if( event == EVENT_RESOLVE_ACTIVATION && can_regenerate(p, c) ){
-			regenerate_target( p, c );
-		}
-	}
-
-	return generic_aura(player, card, event, player, 1, 1, 0, 0, 0, 0, 0);
+int card_thrull_retainer(int player, int card, event_t event)
+{
+  /* Thrull Retainer	|B
+   * Enchantment - Aura
+   * Enchant creature
+   * Enchanted creature gets +1/+1.
+   * Sacrifice ~: Regenerate enchanted creature. */
+  return base_carapace(player, card, event, 1,1);
 }
 
 int card_thrull_wizard(int player, int card, event_t event){
@@ -1540,6 +1536,10 @@ int card_dwarven_soldier(int player, int card, event_t event){
 }
 
 int card_goblin_chirurgeon(int player, int card, event_t event){
+	/* Goblin Chirurgeon	|R
+	 * Creature - Goblin Shaman 0/2
+	 * Sacrifice a Goblin: Regenerate target creature. */
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1557,7 +1557,7 @@ int card_goblin_chirurgeon(int player, int card, event_t event){
 
 	if( event == EVENT_CAN_ACTIVATE ){
 		if( can_sacrifice_as_cost(player, 1, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0) ){
-			return generic_activated_ability(player, card, event, GS_CAN_TARGET | GS_REGENERATION, MANACOST0, 0, &td, NULL);
+			return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_REGENERATION, MANACOST0, 0, &td, NULL);
 		}
 	}
 	if( event == EVENT_ACTIVATE ){
@@ -1704,11 +1704,15 @@ int card_goblin_kites(int player, int card, event_t event){
 }
 
 int card_goblin_war_drums(int player, int card, event_t event){
+	/* Goblin War Drums	|2|R
+	 * Enchantment
+	 * Creatures you control have menace. */
+
 	if( event == EVENT_DECLARE_BLOCKERS && ! is_humiliated(player, card) ){
 		int count;
 		for (count = 0; count < active_cards_count[player]; ++count){
 			if(in_play(player, count) ){
-				minimum_blockers(player, count, event, 2);
+				menace(player, card, event);
 			}
 		}
 	}
@@ -2820,74 +2824,33 @@ int card_implements_of_sacrifice(int player, int card, event_t event){
 	}
 	return 0;
 }
-/*
+
 static int effect_rainbow_vale(int player, int card, event_t event){
 	if( eot_trigger(player, card, event) ){
 		card_instance_t *instance = get_card_instance(player, card);
-		card_instance_t *original = get_card_instance(instance->targets[0].player, instance->targets[0].card);
-		if( player != original->targets[0].player ){
-			int i=0;
-			int p = original->targets[0].player;
-			for(i=0;i<active_cards_count[p];i++){
-				card_instance_t *inst = get_card_instance(p, i);
-				if( inst->targets[3].card == 121 ){
-					kill_card(p, i, KILL_SACRIFICE);
-				}
-			}
-			int result = switch_control(instance->targets[0].player, instance->targets[0].card, instance->targets[0].player, instance->targets[0].card);
-			kill_card(player, result, KILL_SACRIFICE);
-		}
-		else{
-			int result = switch_control(instance->targets[0].player, instance->targets[0].card, instance->targets[0].player, instance->targets[0].card);
-			card_instance_t *legacy_instance = get_card_instance(player, result);
-			legacy_instance->targets[3].card = 121;
-		}
-		kill_card(player, card, KILL_SACRIFICE );
+		give_control_of_self(instance->damage_target_player, instance->damage_target_card);
+		kill_card(player, card, KILL_REMOVE);
 	}
 	return 0;
 }
-*/
+
 int card_rainbow_vale(int player, int card, event_t event){
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( comes_into_play(player, card, event) ){
-		instance->targets[0].player = player;
-	}
-
-	if( event == EVENT_ACTIVATE && spell_fizzled != 1 ){
-		instance->targets[0].card = 1;
+	if( event == EVENT_ACTIVATE ){
 		ai_modifier+=15;
-	}
-
-	if( instance->targets[0].card == 1 && eot_trigger(player, card, event) ){
-		instance->targets[0].card = 0;
-		if( player == instance->targets[0].player ){
-			int fake = add_card_to_hand(1-player, instance->internal_card_id);
-			int legacy = gain_control(1-player, fake, player, card);
-			card_instance_t *leg = get_card_instance(1-player, legacy);
-			leg->targets[1].card = CARD_ID_RAINBOW_VALE;
-			obliterate_card(1-player, fake);
-		}
-		else{
-			int p;
-			for(p=0; p<2; p++){
-				int c;
-				for(c = active_cards_count[p]-1; c > -1; c--){
-					if( in_play(p, c) && is_what(p, c, TYPE_EFFECT) ){
-						card_instance_t *leg = get_card_instance(p, c);
-						if( leg->internal_card_id == LEGACY_EFFECT_ALADDIN && leg->damage_target_player == player && leg->damage_target_card == card ){
-							if( leg->targets[1].card == CARD_ID_RAINBOW_VALE ){
-								kill_card(p, c, KILL_REMOVE);
-							}
-						}
-					}
-				}
+		mana_producer(player, card, event);
+		if( chosen_colors ){
+			int legacy = create_targetted_legacy_effect(player, card, &effect_rainbow_vale, player, card);
+			if( current_phase == PHASE_DISCARD ){
+				remove_state(player, legacy, STATE_PROCESSING);
 			}
 		}
 	}
+	else{
+		return mana_producer(player, card, event);
+	}
 
-	return mana_producer(player, card, event);
+	return 0;
 }
 
 int card_ring_of_renewal(int player, int card, event_t event){

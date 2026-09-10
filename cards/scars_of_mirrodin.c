@@ -150,8 +150,10 @@ void proliferate(int player, int card)
 
   if (IS_AI(player))
 	{
-	  if (poison_counters[1-player] > 0)
-		++poison_counters[1-player];
+	  if (POISON_COUNTERS(1-player) > 0)
+		poison(1-player, 1);
+	  if (EXPERIENCE_COUNTERS(player) > 0)
+		add_experience(player, 1);
 
 	  int p, c;
 	  counter_t counter_type;
@@ -168,8 +170,10 @@ void proliferate(int player, int card)
 	{
 	  // Automatic mode
 
-	  if (poison_counters[1-player] > 0)
-		++poison_counters[1-player];
+	  if (POISON_COUNTERS(1-player) > 0)
+		poison(1-player, 1);
+	  if (EXPERIENCE_COUNTERS(player) > 0)
+		add_experience(player, 1);
 
 	  int p, c;
 	  counter_t counter_type;
@@ -192,7 +196,8 @@ void proliferate(int player, int card)
 	  SET_BYTE0(td.extra) = COUNTER_invalid;
 
 	  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-	  if (poison_counters[0] <= 0 && poison_counters[1] <= 0)
+	  if (POISON_COUNTERS(0) <= 0 && POISON_COUNTERS(1) <= 0
+		  && EXPERIENCE_COUNTERS(0) <= 0 && EXPERIENCE_COUNTERS(1) <= 0)
 		td.zone = TARGET_ZONE_IN_PLAY;	// no targettable players
 
 	  int chosen_players[2] = {0, 0};
@@ -216,14 +221,29 @@ void proliferate(int player, int card)
 				  add_counter(tgt.player, tgt.card, counter_type);
 				}
 			}
-		  else if (poison_counters[tgt.player] > 0 && chosen_players[tgt.player] != 1)
+		  else if (chosen_players[tgt.player] != 1)
 			{
-			  poison_counters[tgt.player]++;
+			  if (POISON_COUNTERS(tgt.player) > 0)
+				{
+				  if (EXPERIENCE_COUNTERS(tgt.player) <= 0)
+					poison(tgt.player, 1);
+				  else
+					switch (do_dialog(player, player, card, -1, -1, " Poison\n Experience\n Cancel", player != tgt.player ? 0 : 1))
+					  {
+						case 0:	poison(tgt.player, 1);			break;
+						case 1:	add_experience(tgt.player, 1);	break;
+						default:continue;	// and leave this player targettable
+					  }
+				}
+			  else if (EXPERIENCE_COUNTERS(tgt.player) > 0)
+				add_experience(tgt.player, 1);
+
 			  chosen_players[tgt.player] = 1;
-			  if (chosen_players[1 - tgt.player] || poison_counters[1 - tgt.player] <= 0)
+			  if (chosen_players[1 - tgt.player]
+				  || (POISON_COUNTERS(1 - tgt.player) <= 0
+					  && EXPERIENCE_COUNTERS(1 - tgt.player) <= 0))
 				td.zone = TARGET_ZONE_IN_PLAY;	// no more targettable chosen_players
 			}
-
 		}
 
 	  remove_untargettable_from_all();
@@ -237,6 +257,11 @@ int card_wurmcoil_engine(int player, int card, event_t event){
 	 * Artifact Creature - Wurm 6/6
 	 * Deathtouch, lifelink
 	 * When ~ dies, put a 3/3 colorless Wurm artifact creature token with deathtouch and a 3/3 colorless Wurm artifact creature token with lifelink onto the battlefield. */
+
+	if (event == EVENT_ABILITIES && affect_me(player, card)){
+		deathtouch(player, card, event);
+		lifelink(player, card, event);
+	}
 
 	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
 		token_generation_t token;
@@ -293,6 +318,10 @@ int card_myr_battlesphere(int player, int card, event_t event)
 }
 
 int card_ezuris_brigade(int player, int card, event_t event){
+	/* Ezuri's Brigade	|2|G|G
+	 * Creature - Elf Warrior 4/4
+	 * Metalcraft - As long as you control three or more artifacts, ~ gets +4/+4 and has trample. */
+
 	if( in_play(player, card) && affect_me(player, card) && metalcraft(player, card) ){
 		if( event == EVENT_POWER || event == EVENT_TOUGHNESS ){
 			event_result+=4;
@@ -352,7 +381,7 @@ int card_koth_of_the_hammer(int player, int card, event_t event){
 			switch (choice)
 			{
 				case CHOICE_ANIMATE:
-					if( select_target(player, card, &td, get_hacked_land_text(player, card, "Select target %d", SUBTYPE_MOUNTAIN), NULL) ){
+					if( select_target(player, card, &td, get_hacked_land_text(player, card, "Select target %s.", SUBTYPE_MOUNTAIN), NULL) ){
 						instance->number_of_targets = 1;
 					}
 					else{
@@ -389,8 +418,15 @@ int card_koth_of_the_hammer(int player, int card, event_t event){
 }
 
 int card_koth_emblem(int player, int card, event_t event){
+		/* Koth's Emblem	""
+		 * Emblem - Koth
+		 * Tap an untapped |H2Mountain you control: Koth Emblem deals 1 damage to target creature or player. */
 
-	card_instance_t *instance = get_card_instance(player, card);
+		if (!IS_ACTIVATING(event)){
+			return 0;
+		}
+
+		card_instance_t *instance = get_card_instance(player, card);
 
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_LAND);
@@ -404,7 +440,7 @@ int card_koth_emblem(int player, int card, event_t event){
 		td1.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 		td1.allow_cancel = 0;
 
-		if(event == EVENT_CAN_ACTIVATE && affect_me(player, card)){
+		if(event == EVENT_CAN_ACTIVATE){
 			if( target_available(player, card, &td) && has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) ){
 				return can_target(&td1);
 			}
@@ -632,6 +668,9 @@ int card_elspeth_tirel(int player, int card, event_t event){
 
 
 int card_tempered_steel(int player, int card, event_t event){
+  /* Tempered Steel	|1|W|W
+   * Enchantment
+   * Artifact creatures you control get +2/+2. */
 
   if( event == EVENT_POWER || event == EVENT_TOUGHNESS ){
 	 if( is_what(affected_card_controller, affected_card, TYPE_ARTIFACT) && is_what(affected_card_controller, affected_card, TYPE_CREATURE) ){
@@ -646,6 +685,10 @@ int card_tempered_steel(int player, int card, event_t event){
 
 
 int card_myr_galvanizer(int player, int card, event_t event){
+	/* Myr Galvanizer	|3
+	 * Artifact Creature - Myr 2/2
+	 * Other Myr creatures you control get +1/+1.
+	 * |1, |T: Untap each other Myr you control. */
 
 	boost_creature_type(player, card, event, SUBTYPE_MYR, 1, 1, 0, BCT_CONTROLLER_ONLY);
 
@@ -677,7 +720,7 @@ int card_kuldotha_rebirth(int player, int card, event_t event){
 	td.allow_cancel = 0;
 	td.illegal_abilities = 0;
 
-	if(event == EVENT_CAN_CAST && can_target(&td) && affect_me(player, card) ){
+	if(event == EVENT_CAN_CAST && can_target(&td) ){
 			return 1;
 	}
 	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -686,7 +729,7 @@ int card_kuldotha_rebirth(int player, int card, event_t event){
 			   instance->info_slot=66;
 		   }
 	}
-	else if(event == EVENT_RESOLVE_SPELL && instance->info_slot==66 && affect_me(player, card) ){
+	else if(event == EVENT_RESOLVE_SPELL && instance->info_slot==66 ){
 			generate_tokens_by_id(player, card, CARD_ID_GOBLIN, 3);
 			kill_card(player, card, KILL_DESTROY);
 	}
@@ -720,6 +763,12 @@ int card_spikeshot_elder(int player, int card, event_t event){
 
 int card_argentum_armor(int player, int card, event_t event)
 {
+  /* Argentum Armor	|6
+   * Artifact - Equipment
+   * Equipped creature gets +6/+6.
+   * Whenever equipped creature attacks, destroy target permanent.
+   * Equip |6 */
+
   // Whenever equipped creature attacks, destroy target permanent.
   card_instance_t* instance = get_card_instance(player, card);
   if (declare_attackers_trigger(player, card, event, 0, instance->targets[8].player, instance->targets[8].card))
@@ -777,6 +826,10 @@ int card_sword_of_body_and_mind(int player, int card, event_t event)\
 }
 
 int card_glint_hawk(int player, int card, event_t event){
+  /* Glint Hawk	|W
+   * Creature - Bird 2/2
+   * Flying
+   * When ~ enters the battlefield, sacrifice it unless you return an artifact you control to its owner's hand. */
 
   card_instance_t *instance = get_card_instance( player, card );
 
@@ -800,6 +853,9 @@ int card_glint_hawk(int player, int card, event_t event){
 
 
 int card_genesis_wave(int player, int card, event_t event){
+	/* Genesis Wave	|X|G|G|G
+	 * Sorcery
+	 * Reveal the top X cards of your library. You may put any number of permanent cards with converted mana cost X or less from among them onto the battlefield. Then put all cards revealed this way that weren't put onto the battlefield into your graveyard. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -903,6 +959,10 @@ int card_ratchet_bomb(int player, int card, event_t event)
 }
 
 int card_ezuri_renegade_leader(int player, int card, event_t event){
+	/* Ezuri, Renegade Leader	|1|G|G
+	 * Legendary Creature - Elf Warrior 2/2
+	 * |G: Regenerate another target Elf.
+	 * |2|G|G|G: Elf creatures you control get +3/+3 and gain trample until end of turn. */
 
 	check_legend_rule(player, card, event);
 
@@ -955,6 +1015,9 @@ int card_ezuri_renegade_leader(int player, int card, event_t event){
 }
 
 int card_skinrender(int player, int card, event_t event){
+	/* Skinrender	|2|B|B
+	 * Creature - Zombie 3/3
+	 * When ~ enters the battlefield, put three -1/-1 counters on target creature. */
 
 	if (comes_into_play(player, card, event)){
 		card_instance_t* instance = get_card_instance( player, card );
@@ -971,14 +1034,18 @@ int card_skinrender(int player, int card, event_t event){
 }
 
 int card_moltentail_masticore(int player, int card, event_t event){
+	/* Molten-Tail Masticore	|4
+	 * Artifact Creature - Masticore 4/4
+	 * At the beginning of your upkeep, sacrifice ~ unless you discard a card.
+	 * |4, Exile a creature card from your graveyard: ~ deals 4 damage to target creature or player.
+	 * |2: Regenerate ~. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
 	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
-	char msg[100] = "Select a creature card to exile.";
 	test_definition_t this_test;
-	new_default_test_definition(&this_test, TYPE_CREATURE, msg);
+	new_default_test_definition(&this_test, TYPE_CREATURE, "Select a creature card to exile.");
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -1008,7 +1075,7 @@ int card_moltentail_masticore(int player, int card, event_t event){
 		}
 	}
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		if( can_regenerate(player, card) ){
 			if( charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0) ){
 				instance->targets[1].player = 66;
@@ -1041,6 +1108,12 @@ int card_moltentail_masticore(int player, int card, event_t event){
 }
 
 int card_skithiryx_blight_dragon(int player, int card, event_t event){
+	/* Skithiryx, the Blight Dragon	|3|B|B
+	 * Legendary Creature - Dragon Skeleton 4/4
+	 * Flying
+	 * Infect
+	 * |B: ~ gains haste until end of turn.
+	 * |B|B: Regenerate Skithiryx. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -1055,7 +1128,7 @@ int card_skithiryx_blight_dragon(int player, int card, event_t event){
 		}
 	}
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		if( can_regenerate(player, card) && has_mana_for_activated_ability(player, card, 0, 2, 0, 0, 0, 0) ){
 			if( charge_mana_for_activated_ability(player, card, 0, 2, 0, 0, 0, 0) ){
 				instance->targets[1].player = 66;
@@ -1190,6 +1263,10 @@ static int generic_artifact_with_proliferate(int player, int card, event_t event
 
 
 int card_contagion_clasp(int player, int card, event_t event){
+	/* Contagion Clasp	|2
+	 * Artifact
+	 * When ~ enters the battlefield, put a -1/-1 counter on target creature.
+	 * |4, |T: Proliferate. */
 
 	if (comes_into_play(player, card, event)){
 		target_definition_t td;
@@ -1249,6 +1326,10 @@ int card_contagion_engine(int player, int card, event_t event){
 
 
 int card_thrummingbird(int player, int card, event_t event){
+	/* Thrummingbird	|1|U
+	 * Creature - Bird Horror 1/1
+	 * Flying
+	 * Whenever ~ deals combat damage to a player, proliferate. */
 
 	if (has_combat_damage_been_inflicted_to_a_player(player, card, event)){
 		proliferate(player, card);
@@ -1318,6 +1399,9 @@ int card_lux_cannon(int player, int card, event_t event){
 }
 
 int card_etched_champion(int player, int card, event_t event){
+  /* Etched Champion	|3
+   * Artifact Creature - Soldier 2/2
+   * Metalcraft - ~ has protection from all colors as long as you control three or more artifacts. */
 
   if( event == EVENT_ABILITIES ){
 	 if( ! affect_me(player, card) ){ return 0; }
@@ -1334,6 +1418,14 @@ int card_etched_champion(int player, int card, event_t event){
 }
 
 int card_shape_anew(int player, int card, event_t event){
+  /* Shape Anew	|3|U
+   * Sorcery
+   * The controller of target artifact sacrifices it, then reveals cards from the top of his or her library until he or she reveals an artifact card. That player puts that card onto the battlefield, then shuffles all other cards revealed this way into his or her library. */
+
+  if (!IS_CASTING(player, card, event)){
+	  return 0;
+  }
+
   card_instance_t *instance = get_card_instance( player, card );
   target_definition_t td;
   default_target_definition(player, card, &td, TYPE_ARTIFACT );
@@ -1348,7 +1440,7 @@ int card_shape_anew(int player, int card, event_t event){
 		  pick_target(&td, "TARGET_ARTIFACT");
   }
 
-  else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card)){
+  else if( event == EVENT_RESOLVE_SPELL ){
 		  if( valid_target(&td) ){
 			 metamorphosis(instance->targets[0].player, instance->targets[0].card, TYPE_ARTIFACT, KILL_SACRIFICE);
 		  }
@@ -1359,6 +1451,11 @@ int card_shape_anew(int player, int card, event_t event){
 }
 
 int card_hand_of_the_praetors(int player, int card, event_t event){
+  /* Hand of the Praetors	|3|B
+   * Creature - Zombie 3/2
+   * Infect
+   * Other creatures you control with infect get +1/+1.
+   * Whenever you cast a creature spell with infect, target player gets a poison counter. */
 
   if( event == EVENT_POWER || event == EVENT_TOUGHNESS ){
 	 if( affect_me(player, card) ){ return 0; }
@@ -1376,7 +1473,7 @@ int card_hand_of_the_praetors(int player, int card, event_t event){
 			 event_result |= RESOLVE_TRIGGER_MANDATORY;
 		  }
 		  else if(event == EVENT_RESOLVE_TRIGGER){
-				  poison_counters[1-player]++;
+				  poison(1-player, 1);
 		  }
 	   }
 	}
@@ -1385,6 +1482,10 @@ int card_hand_of_the_praetors(int player, int card, event_t event){
 }
 
 int card_ichorclaw_myr(int player, int card, event_t event){
+  /* Ichorclaw Myr	|2
+   * Artifact Creature - Myr 1/1
+   * Infect
+   * Whenever ~ becomes blocked, it gets +2/+2 until end of turn. */
 
   if( current_turn == player && event == EVENT_DECLARE_BLOCKERS && ! is_unblocked(player, card) &&
 	  (get_card_instance(player, card)->state & STATE_ATTACKING) ){
@@ -1395,10 +1496,17 @@ int card_ichorclaw_myr(int player, int card, event_t event){
 }
 
 int card_vector_asp(int player, int card, event_t event){
+	/* Vector Asp	|1
+	 * Artifact Creature - Snake 1/1
+	 * |B: ~ gains infect until end of turn. */
+
 	return generic_shade(player, card, event, 0, 0, 1, 0, 0, 0, 0, 0, 0, KEYWORD_INFECT, 0);
 }
 
 int card_tainted_strike(int player, int card, event_t event){
+  /* Tainted Strike	|B
+   * Instant
+   * Target creature gets +1/+0 and gains infect until end of turn. */
 
   target_definition_t td;
   default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -1427,6 +1535,11 @@ int card_tainted_strike(int player, int card, event_t event){
 }
 
 int card_grafted_exoskeleton(int player, int card, event_t event){
+	/* Grafted Exoskeleton	|4
+	 * Artifact - Equipment
+	 * Equipped creature gets +2/+2 and has infect.
+	 * Whenever ~ becomes unattached from a permanent, sacrifice that permanent.
+	 * Equip |2 */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -1447,6 +1560,10 @@ int card_grafted_exoskeleton(int player, int card, event_t event){
 }
 
 int card_semblance_anvil(int player, int card, event_t event){
+	/* Semblance Anvil	|3
+	 * Artifact
+	 * Imprint - When ~ enters the battlefield, you may exile a nonland card from your hand.
+	 * Spells you cast that share a card type with the exiled card cost |2 less to cast. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -1485,6 +1602,9 @@ int card_semblance_anvil(int player, int card, event_t event){
 }
 
 int card_throne_of_geth(int player, int card, event_t event){
+	/* Throne of Geth	|2
+	 * Artifact
+	 * |T, Sacrifice an artifact: Proliferate. */
 
 	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card)  && ! is_tapped(player, card) && ! is_animated_and_sick(player, card) ){
 		if( has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) ){
@@ -1507,6 +1627,9 @@ int card_throne_of_geth(int player, int card, event_t event){
 }
 
 int card_kuldotha_forgemaster(int player, int card, event_t event){
+	/* Kuldotha Forgemaster	|5
+	 * Artifact Creature - Construct 3/5
+	 * |T, Sacrifice three artifacts: Search your library for an artifact card and put it onto the battlefield. Then shuffle your library. */
 
 	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card)  && ! is_tapped(player, card) && ! is_sick(player, card) ){
 		if( has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) ){
@@ -1559,10 +1682,13 @@ int card_tumble_magnet(int player, int card, event_t event){
 		}
 	}
 
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST0, GVC_COUNTER(COUNTER_CHARGE), &td, "TARGET_PERMANENT");
+	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST0, GVC_COUNTER(COUNTER_CHARGE), &td, "PUTREFY");	// "Select target artifact or creature."
 }
 
 int card_necrotic_ooze(int player, int card, event_t event ){
+	/* Necrotic Ooze	|2|B|B
+	 * Creature - Ooze 4/3
+	 * As long as ~ is on the battlefield, it has all activated abilities of all creature cards in all graveyards. */
 
 	card_instance_t *instance= get_card_instance(player, card);
 
@@ -1763,6 +1889,9 @@ int card_nim_deathmantle(int player, int card, event_t event){
 }
 
 int card_perilous_myr(int player, int card, event_t event){
+	/* Perilous Myr	|2
+	 * Artifact Creature - Myr 1/1
+	 * When ~ dies, it deals 2 damage to target creature or player. */
 
 	if( this_dies_trigger(player, card, event, 2) ){
 		target_definition_t td;
@@ -1780,6 +1909,11 @@ int card_perilous_myr(int player, int card, event_t event){
 }
 
 int card_abuna_acolyte(int player, int card, event_t event){
+	/* Abuna Acolyte	|1|W
+	 * Creature - Cat Cleric 1/1
+	 * |T: Prevent the next 1 damage that would be dealt to target creature or player this turn.
+	 * |T: Prevent the next 2 damage that would be dealt to target artifact creature this turn. */
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.extra = damage_card;
@@ -1810,18 +1944,26 @@ int card_abuna_acolyte(int player, int card, event_t event){
 }
 
 int card_accorder_shield(int player, int card, event_t event){
+	/* Accorder's Shield	|0
+	 * Artifact - Equipment
+	 * Equipped creature gets +0/+3 and has vigilance.
+	 * Equip |3 */
 
 	return vanilla_equipment(player, card, event, 3, 0, 3, 0, SP_KEYWORD_VIGILANCE);
 }
 
 int card_acid_web_spider(int player, int card, event_t event){
+	/* Acid Web Spider	|3|G|G
+	 * Creature - Spider 3/5
+	 * Reach
+	 * When ~ enters the battlefield, you may destroy target Equipment. */
 
 	if( comes_into_play(player, card, event) ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_ARTIFACT);
 		td.required_subtype = SUBTYPE_EQUIPMENT;
 		card_instance_t *instance = get_card_instance(player, card);
-		if( can_target(&td) && pick_target(&td, "TARGET_ARTIFACT")  ){
+		if( can_target(&td) && pick_target(&td, "TARGET_EQUIPMENT")  ){
 			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
 		}
 	}
@@ -1830,6 +1972,9 @@ int card_acid_web_spider(int player, int card, event_t event){
 }
 
 int card_arc_trail(int player, int card, event_t event){
+	/* Arc Trail	|1|R
+	 * Sorcery
+	 * ~ deals 2 damage to target creature or player and 1 damage to another target creature or player. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -1927,6 +2072,10 @@ int card_arc_trail(int player, int card, event_t event){
 }
 
 int card_argent_sphynx(int player, int card, event_t event){
+	/* Argent Sphinx	|2|U|U
+	 * Creature - Sphinx 4/3
+	 * Flying
+	 * Metalcraft - |U: Exile ~. Return it to the battlefield under your control at the beginning of the next end step. Activate this ability only if you control three or more artifacts. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -1946,6 +2095,10 @@ int card_argent_sphynx(int player, int card, event_t event){
 }
 
 int card_asceticism(int player, int card, event_t event){
+	/* Asceticism	|3|G|G
+	 * Enchantment
+	 * Creatures you control have hexproof.
+	 * |1|G: Regenerate target creature. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -1984,6 +2137,9 @@ int card_asceticism(int player, int card, event_t event){
 }
 
 int card_assault_strobe(int player, int card, event_t event){
+	/* Assault Strobe	|R
+	 * Sorcery
+	 * Target creature gains double strike until end of turn. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -2009,6 +2165,9 @@ int card_assault_strobe(int player, int card, event_t event){
 }
 
 int card_auriok_edgewright(int player, int card, event_t event){
+	/* Auriok Edgewright	|W|W
+	 * Creature - Human Soldier 2/2
+	 * Metalcraft - ~ has double strike as long as you control three or more artifacts. */
 
 	if( metalcraft(player, card) ){
 		modify_pt_and_abilities(player, card, event, 0, 0, KEYWORD_DOUBLE_STRIKE);
@@ -2018,6 +2177,9 @@ int card_auriok_edgewright(int player, int card, event_t event){
 }
 
 int card_auriok_replica(int player, int card, event_t event){
+	/* Auriok Replica	|3
+	 * Artifact Creature - Cleric 2/2
+	 * |W, Sacrifice ~: Prevent all damage a source of your choice would deal to you this turn. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -2034,6 +2196,9 @@ int card_auriok_replica(int player, int card, event_t event){
 }
 
 int card_auriok_sunchaser(int player, int card, event_t event){
+	/* Auriok Sunchaser	|1|W
+	 * Creature - Human Soldier 1/1
+	 * Metalcraft - As long as you control three or more artifacts, ~ gets +2/+2 and has flying. */
 
 	if( metalcraft(player, card) ){
 		modify_pt_and_abilities(player, card, event, 2, 2, KEYWORD_FLYING);
@@ -2043,11 +2208,18 @@ int card_auriok_sunchaser(int player, int card, event_t event){
 }
 
 int card_barbed_battlegear(int player, int card, event_t event){
+	/* Barbed Battlegear	|3
+	 * Artifact - Equipment
+	 * Equipped creature gets +4/-1.
+	 * Equip |2 */
 
 	return vanilla_equipment(player, card, event, 2, 4, -1, 0, 0);
 }
 
 int card_barrage_ogre(int player, int card, event_t event){
+	/* Barrage Ogre	|3|R|R
+	 * Creature - Ogre Warrior 3/3
+	 * |T, Sacrifice an artifact: ~ deals 2 damage to target creature or player. */
 
 	target_definition_t td1;
 	default_target_definition(player, card, &td1, TYPE_CREATURE );
@@ -2087,11 +2259,17 @@ int card_barrage_ogre(int player, int card, event_t event){
 
 int card_bellowing_tanglewurm(int player, int card, event_t event)
 {
+	/* Bellowing Tanglewurm	|3|G|G
+	 * Creature - Wurm 4/4
+	 * Intimidate
+	 * Other |Sgreen creatures you control have intimidate. */
+
   if (event == EVENT_ABILITIES
 	  && affected_card_controller == player
 	  && (affected_card == card
 		  || (is_what(affected_card_controller, affected_card, TYPE_CREATURE)
-			  && (get_color(affected_card_controller, affected_card) & get_sleighted_color_test(player, card, COLOR_TEST_GREEN))))
+			  && (get_color(affected_card_controller, affected_card) & get_sleighted_color_test(player, card, COLOR_TEST_GREEN))
+			  && in_play(player, card) && in_play(affected_card_controller, affected_card)))
 	  && !is_humiliated(player, card))
 	intimidate(affected_card_controller, affected_card, event);
 
@@ -2099,6 +2277,9 @@ int card_bellowing_tanglewurm(int player, int card, event_t event)
 }
 
 int card_blade_tribe_berserkers(int player, int card, event_t event){
+	/* Blade-Tribe Berserkers	|3|R
+	 * Creature - Human Berserker 3/3
+	 * Metalcraft - When ~ enters the battlefield, if you control three or more artifacts, ~ gets +3/+3 and gains haste until end of turn. */
 
 	if( comes_into_play(player, card, event) && metalcraft(player, card) ){
 		pump_ability_until_eot(player, card, player, card, 3, 3, 0, SP_KEYWORD_HASTE);
@@ -2108,11 +2289,18 @@ int card_blade_tribe_berserkers(int player, int card, event_t event){
 }
 
 int card_bladed_pinons(int player, int card, event_t event){
+	/* Bladed Pinions	|2
+	 * Artifact - Equipment
+	 * Equipped creature has flying and first strike.
+	 * Equip |2 */
 
 	return vanilla_equipment(player, card, event, 2, 0, 0, KEYWORD_FLYING+KEYWORD_FIRST_STRIKE, 0);
 }
 
 int card_bleak_coven_vampires(int player, int card, event_t event){
+	/* Bleak Coven Vampires	|3|B|B
+	 * Creature - Vampire Warrior 4/3
+	 * Metalcraft - When ~ enters the battlefield, if you control three or more artifacts, target player loses 4 life and you gain 4 life. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -2131,6 +2319,10 @@ int card_bleak_coven_vampires(int player, int card, event_t event){
 }
 
 int card_blistergrub(int player, int card, event_t event){
+	/* Blistergrub	|2|B
+	 * Creature - Horror 2/2
+	 * |H2Swampwalk
+	 * When ~ dies, each opponent loses 2 life. */
 
 	if( graveyard_from_play(player, card, event) ){
 		lose_life(1-player, 2);
@@ -2140,6 +2332,9 @@ int card_blistergrub(int player, int card, event_t event){
 }
 
 int card_bloodshoot_trainee(int player, int card, event_t event){
+	/* Bloodshot Trainee	|3|R
+	 * Creature - Goblin Warrior 2/3
+	 * |T: ~ deals 4 damage to target creature. Activate this ability only if ~'s power is 4 or greater. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -2164,6 +2359,9 @@ int card_bloodshoot_trainee(int player, int card, event_t event){
 }
 
 int card_blunt_the_assault(int player, int card, event_t event){
+	/* Blunt the Assault	|3|G
+	 * Instant
+	 * You gain 1 life for each creature on the battlefield. Prevent all combat damage that would be dealt this turn. */
 
 	if(event == EVENT_RESOLVE_SPELL){
 		int amount = count_permanents_by_type(player, TYPE_CREATURE) +
@@ -2180,6 +2378,11 @@ int card_blunt_the_assault(int player, int card, event_t event){
 }
 
 int card_bonds_of_quicksilver(int player, int card, event_t event){
+	/* Bonds of Quicksilver	|3|U
+	 * Enchantment - Aura
+	 * Flash
+	 * Enchant creature
+	 * Enchanted creature doesn't untap during its controller's untap step. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -2195,7 +2398,6 @@ int card_bonds_of_quicksilver(int player, int card, event_t event){
 }
 
 int card_carnifex_demon(int player, int card, event_t event){
-
 	/* Carnifex Demon	|4|B|B
 	 * Creature - Demon 6/6
 	 * Flying
@@ -2216,6 +2418,9 @@ int card_carnifex_demon(int player, int card, event_t event){
 }
 
 int card_carrion_call(int player, int card, event_t event){
+	/* Carrion Call	|3|G
+	 * Instant
+	 * Put two 1/1 |Sgreen Insect creature tokens with infect onto the battlefield. */
 
 	if( event == EVENT_CAN_CAST ){
 		return 1;
@@ -2236,6 +2441,9 @@ int card_carrion_call(int player, int card, event_t event){
 }
 
 int card_cerebral_eruption(int player, int card, event_t event){
+	/* Cerebral Eruption	|2|R|R
+	 * Sorcery
+	 * Target opponent reveals the top card of his or her library. ~ deals damage equal to the revealed card's converted mana cost to that player and each creature he or she controls. If a land card is revealed this way, return ~ to its owner's hand. */
 
 	if( event == EVENT_CAN_CAST ){
 		return 1;
@@ -2266,6 +2474,10 @@ int card_cerebral_eruption(int player, int card, event_t event){
 }
 
 int card_chimeric_mass(int player, int card, event_t event){
+	/* Chimeric Mass	|X
+	 * Artifact
+	 * ~ enters the battlefield with X charge counters on it.
+	 * |1: Until end of turn, ~ becomes a Construct artifact creature with "This creature's power and toughness are each equal to the number of charge counters on it." */
 
 	/* Chimeric Mass	|X
 	 * Artifact
@@ -2339,7 +2551,7 @@ int card_clone_shell(int player, int card, event_t event){
 				}
 			}
 			instance->targets[9].player = deck[selected];
-			rfg_card_from_grave(player, selected);
+			rfg_card_in_deck(player, selected);
 			number--;
 			if( number > 0 ){
 				put_top_x_on_bottom(player, player, number);
@@ -2380,7 +2592,10 @@ int card_clone_shell(int player, int card, event_t event){
 
 int card_copperhorn_scout(int player, int card, event_t event)
 {
-  // Whenever ~ attacks, untap each other creature you control.
+  /* Copperhorn Scout	|G
+   * Creature - Elf Scout 1/1
+   * Whenever ~ attacks, untap each other creature you control. */
+
   if (declare_attackers_trigger(player, card, event, 0, player, card))
 	{
 	  test_definition_t test;
@@ -2393,6 +2608,10 @@ int card_copperhorn_scout(int player, int card, event_t event)
 }
 
 int card_corpse_cur(int player, int card, event_t event){
+	/* Corpse Cur	|4
+	 * Artifact Creature - Hound 2/2
+	 * Infect
+	 * When ~ enters the battlefield, you may return target creature card with infect from your graveyard to your hand. */
 
 	if( comes_into_play(player, card, event) ){
 		test_definition_t this_test;
@@ -2491,6 +2710,11 @@ int card_culling_dais(int player, int card, event_t event)
 
 int card_darkslick_drake(int player, int card, event_t event){
 	if( this_dies_trigger(player, card, event, 2) ){
+		/* Darkslick Drake	|2|U|U
+		 * Creature - Drake 2/4
+		 * Flying
+		 * When ~ dies, draw a card. */
+
 		draw_cards(player, 1);
 	}
 
@@ -2498,6 +2722,11 @@ int card_darkslick_drake(int player, int card, event_t event){
 }
 
 int card_darksteel_axe(int player, int card, event_t event){
+	/* Darksteel Axe	|1
+	 * Artifact - Equipment
+	 * Indestructible
+	 * Equipped creature gets +2/+0.
+	 * Equip |2 */
 
 	indestructible(player, card, event);
 
@@ -2505,6 +2734,11 @@ int card_darksteel_axe(int player, int card, event_t event){
 }
 
 int card_darksteel_juggernaut(int player, int card, event_t event){
+	/* Darksteel Juggernaut	|5
+	 * Artifact Creature - Juggernaut 100/100
+	 * Indestructible
+	 * ~'s power and toughness are each equal to the number of artifacts you control.
+	 * ~ attacks each turn if able. */
 
 	indestructible(player, card, event);
 
@@ -2517,6 +2751,9 @@ int card_darksteel_juggernaut(int player, int card, event_t event){
 }
 
 int card_darksteel_myr(int player, int card, event_t event){
+	/* Darksteel Myr	|3
+	 * Artifact Creature - Myr 0/1
+	 * Indestructible */
 
 	indestructible(player, card, event);
 
@@ -2524,6 +2761,11 @@ int card_darksteel_myr(int player, int card, event_t event){
 }
 
 int card_darksteel_sentinel(int player, int card, event_t event){
+	/* Darksteel Sentinel	|6
+	 * Artifact Creature - Golem 3/3
+	 * Flash
+	 * Vigilance
+	 * Indestructible */
 
 	indestructible(player, card, event);
 
@@ -2533,6 +2775,10 @@ int card_darksteel_sentinel(int player, int card, event_t event){
 }
 
 int card_dispense_justice(int player, int card, event_t event){
+	/* Dispense Justice	|2|W
+	 * Instant
+	 * Target player sacrifices an attacking creature.
+	 * Metalcraft - That player sacrifices two attacking creatures instead if you control three or more artifacts. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -2584,6 +2830,9 @@ int card_dispense_justice(int player, int card, event_t event){
 }
 
 int card_dissipation_field(int player, int card, event_t event){
+	/* Dissipation Field	|2|U|U
+	 * Enchantment
+	 * Whenever a permanent deals damage to you, return it to its owner's hand. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -2626,6 +2875,9 @@ int card_dissipation_field(int player, int card, event_t event){
 }
 
 int card_dross_hopper(int player, int card, event_t event){
+	/* Dross Hopper	|1|B
+	 * Creature - Insect Horror 2/1
+	 * Sacrifice a creature: ~ gains flying until end of turn. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -2637,6 +2889,10 @@ int card_dross_hopper(int player, int card, event_t event){
 }
 
 int card_echo_circlet(int player, int card, event_t event){
+	/* Echo Circlet	|2
+	 * Artifact - Equipment
+	 * Equipped creature can block an additional creature each combat.
+	 * Equip |1 */
 
 	if( is_equipping(player, card) ){
 		attached_creature_can_block_additional(player, card, event, 1);
@@ -2645,6 +2901,9 @@ int card_echo_circlet(int player, int card, event_t event){
 }
 
 int card_embersmith(int player, int card, event_t event){
+	/* Embersmith	|1|R
+	 * Creature - Human Artificer 2/1
+	 * Whenever you cast an artifact spell, you may pay |1. If you do, ~ deals 1 damage to target creature or player. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -2677,6 +2936,10 @@ static void destroy_creature_and_gain_life(int player, int card, int t_player, i
 
 int card_engulfing_slagwurm(int player, int card, event_t event)
 {
+  /* Engulfing Slagwurm	|5|G|G
+   * Creature - Wurm 7/7
+   * Whenever ~ blocks or becomes blocked by a creature, destroy that creature. You gain life equal to that creature's toughness. */
+
   card_instance_t* instance = get_card_instance(player, card);
 
   if (event == EVENT_CHANGE_TYPE && affect_me(player, card) && !is_humiliated(player, card))
@@ -2695,6 +2958,9 @@ int card_engulfing_slagwurm(int player, int card, event_t event)
 }
 
 int card_exsanguinate(int player, int card, event_t event){
+	/* Exsanguinate	|X|B|B
+	 * Sorcery
+	 * Each opponent loses X life. You gain life equal to the life lost this way. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -2716,6 +2982,10 @@ int card_exsanguinate(int player, int card, event_t event){
 }
 
 int card_ezuris_archers(int player, int card, event_t event){
+	/* Ezuri's Archers	|G
+	 * Creature - Elf Archer 1/2
+	 * Reach
+	 * Whenever ~ blocks a creature with flying, ~ gets +3/+0 until end of turn. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -2731,6 +3001,9 @@ int card_ezuris_archers(int player, int card, event_t event){
 }
 
 int card_ferrovore(int player, int card, event_t event){
+	/* Ferrovore	|2|R
+	 * Creature - Beast 2/2
+	 * |R, Sacrifice an artifact: ~ gets +3/+0 until end of turn. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -2746,13 +3019,17 @@ int card_ferrovore(int player, int card, event_t event){
 		}
 	}
 	else if( event == EVENT_RESOLVE_ACTIVATION ){
-		pump_until_eot(player, card, instance->parent_controller, instance->parent_card, 3,0);
+		pump_until_eot_merge_previous(player, card, instance->parent_controller, instance->parent_card, 3,0);
 	}
 
 	return 0;
 }
 
 int card_flameborn_hellion(int player, int card, event_t event){
+	/* Flameborn Hellion	|5|R
+	 * Creature - Hellion 5/4
+	 * Haste
+	 * ~ attacks each turn if able. */
 
 	haste(player, card, event);
 	attack_if_able(player, card, event);
@@ -2798,6 +3075,10 @@ int card_flesh_allergy(int player, int card, event_t event){
 }
 
 int card_flight_spellbomb(int player, int card, event_t event){
+	/* Flight Spellbomb	|1
+	 * Artifact
+	 * |T, Sacrifice ~: Target creature gains flying until end of turn.
+	 * When ~ is put into a graveyard from the battlefield, you may pay |U. If you do, draw a card. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -2821,6 +3102,9 @@ int card_flight_spellbomb(int player, int card, event_t event){
 }
 
 int card_fulgent_distraction(int player, int card, event_t event){
+	/* Fulgent Distraction	|2|W
+	 * Instant
+	 * Choose two target creatures. Tap those creatures, then unattach all Equipment from them. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -2862,6 +3146,9 @@ int card_fulgent_distraction(int player, int card, event_t event){
 }
 
 int card_fume_spitter(int player, int card, event_t event){
+	/* Fume Spitter	|B
+	 * Creature - Horror 1/1
+	 * Sacrifice ~: Put a -1/-1 counter on target creature. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -2876,6 +3163,9 @@ int card_fume_spitter(int player, int card, event_t event){
 }
 
 int card_furnace_celebration(int player, int card, event_t event){
+	/* Furnace Celebration	|1|R|R
+	 * Enchantment
+	 * Whenever you sacrifice another permanent, you may pay |2. If you do, ~ deals 2 damage to target creature or player. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -2928,6 +3218,10 @@ int card_furnace_celebration(int player, int card, event_t event){
 }
 
 int card_galvanic_blast(int player, int card, event_t event){
+	/* Galvanic Blast	|R
+	 * Instant
+	 * ~ deals 2 damage to target creature or player.
+	 * Metalcraft - ~ deals 4 damage to that creature or player instead if you control three or more artifacts. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -2984,6 +3278,10 @@ static int can_activate_geth(int player, int card, int mode){
 }
 
 int card_geth_lord_of_the_vault(int player, int card, event_t event ){
+	/* Geth, Lord of the Vault	|4|B|B
+	 * Legendary Creature - Zombie 5/5
+	 * Intimidate
+	 * |X|B: Put target artifact or creature card with converted mana cost X from an opponent's graveyard onto the battlefield under your control tapped. Then that player puts the top X cards of his or her library into his or her graveyard. */
 
 	char msg[100] = "Select a creature or artifact card.";
 	test_definition_t this_test;
@@ -3030,6 +3328,10 @@ int card_geth_lord_of_the_vault(int player, int card, event_t event ){
 }
 
 int card_glimmerpoint_stag(int player, int card, event_t event ){
+	/* Glimmerpoint Stag	|2|W|W
+	 * Creature - Elk 3/3
+	 * Vigilance
+	 * When ~ enters the battlefield, exile another target permanent. Return that card to the battlefield under its owner's control at the beginning of the next end step. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_PERMANENT );
@@ -3054,11 +3356,14 @@ int card_glimmerpoint_stag(int player, int card, event_t event ){
 
 int card_glimmerpost(int player, int card, event_t event)
 {
-  // When ~ enters the battlefield, you gain 1 life for each Locus on the battlefield.
+  /* Glimmerpost	""
+   * Land - Locus
+   * When ~ enters the battlefield, you gain 1 life for each Locus on the battlefield.
+   * |T: Add |C to your mana pool. */
+
   if (comes_into_play(player, card, event))
 	gain_life(player, count_subtype(ANYBODY, TYPE_LAND, SUBTYPE_LOCUS));
 
-  // |T: Add |1 to your mana pool.
   return mana_producer(player, card, event);
 }
 
@@ -3070,6 +3375,10 @@ static void animate_glint_hawk_idol(int player, int card){
 }
 
 int card_glint_hawk_idol(int player, int card, event_t event){
+	/* Glint Hawk Idol	|2
+	 * Artifact
+	 * Whenever another artifact enters the battlefield under your control, you may have ~ become a 2/2 Bird artifact creature with flying until end of turn.
+	 * |W: ~ becomes a 2/2 Bird artifact creature with flying until end of turn. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -3085,6 +3394,10 @@ int card_glint_hawk_idol(int player, int card, event_t event){
 }
 
 int card_goblin_gaveleer(int player, int card, event_t event){
+	/* Goblin Gaveleer	|R
+	 * Creature - Goblin Warrior 1/1
+	 * Trample
+	 * ~ gets +2/+0 for each Equipment attached to it. */
 
 	if( event == EVENT_POWER && affect_me(player, card) && ! is_humiliated(player, card) ){
 		event_result += (equipments_attached_to_me(player, card, EATM_REPORT_TOTAL) *2);
@@ -3114,6 +3427,10 @@ int card_golden_urn(int player, int card, event_t event){
 }
 
 int card_golem_artisan(int player, int card, event_t event){
+	/* Golem Artisan	|5
+	 * Artifact Creature - Golem 3/3
+	 * |2: Target artifact creature gets +1/+1 until end of turn.
+	 * |2: Target artifact creature gains your choice of flying, trample, or haste until end of turn. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -3257,6 +3574,9 @@ int card_golem_foundry(int player, int card, event_t event){
 }
 
 int card_golems_heart(int player, int card, event_t event){
+	/* Golem's Heart	|2
+	 * Artifact
+	 * Whenever a player casts an artifact spell, you may gain 1 life. */
 
 	if( specific_spell_played(player, card, event, ANYBODY, RESOLVE_TRIGGER_AI(player), TYPE_ARTIFACT, 0, 0, 0, 0, 0, 0, 0, -1, 0) ){
 		gain_life(player, 1);
@@ -3266,6 +3586,11 @@ int card_golems_heart(int player, int card, event_t event){
 }
 
 int card_grand_architect(int player, int card, event_t event){
+	/* Grand Architect	|1|U|U
+	 * Creature - Vedalken Artificer 1/3
+	 * Other |Sblue creatures you control get +1/+1.
+	 * |U: Target artifact creature becomes |Sblue until end of turn.
+	 * Tap an untapped |Sblue creature you control: Add |C|C to your mana pool. Spend this mana only to cast artifact spells or activate abilities of artifacts. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -3342,6 +3667,9 @@ int card_grand_architect(int player, int card, event_t event){
 }
 
 int card_grasp_of_darkness(int player, int card, event_t event){
+	/* Grasp of Darkness	|B|B
+	 * Instant
+	 * Target creature gets -4/-4 until end of turn. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -3434,6 +3762,10 @@ int card_grindclock(int player, int card, event_t event)
 }
 
 int card_halt_order(int player, int card, event_t event){
+	/* Halt Order	|2|U
+	 * Instant
+	 * Counter target artifact spell.
+	 * Draw a card. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -3542,6 +3874,10 @@ int card_heavy_arbalest(int player, int card, event_t event){
 }
 
 int card_hoard_smelter_dragon(int player, int card, event_t event){
+	/* Hoard-Smelter Dragon	|4|R|R
+	 * Creature - Dragon 5/5
+	 * Flying
+	 * |3|R: Destroy target artifact. ~ gets +X/+0 until end of turn, where X is that artifact's converted mana cost. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -3560,8 +3896,12 @@ int card_hoard_smelter_dragon(int player, int card, event_t event){
 }
 
 int card_horizon_spellbomb(int player, int card, event_t event){
+	/* Horizon Spellbomb	|1
+	 * Artifact
+	 * |2, |T, Sacrifice ~: Search your library for a basic land card, reveal it, and put it into your hand. Then shuffle your library.
+	 * When ~ is put into a graveyard from the battlefield, you may pay |G. If you do, draw a card. */
 
- //   card_instance_t *instance = get_card_instance( player, card );
+	//   card_instance_t *instance = get_card_instance( player, card );
 
 	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) &&
 		! is_tapped(player, card) && ! is_animated_and_sick(player, card) &&
@@ -3584,16 +3924,24 @@ int card_horizon_spellbomb(int player, int card, event_t event){
 }
 
 int card_ichor_rats(int player, int card, event_t event){
+	/* Ichor Rats	|1|B|B
+	 * Creature - Rat 2/1
+	 * Infect
+	 * When ~ enters the battlefield, each player gets a poison counter. */
 
 	if( comes_into_play(player, card, event) ){
-		poison_counters[player]++;
-		poison_counters[1-player]++;
+		poison(player, 1);
+		poison(1-player, 1);
 	}
 
 	return 0;
 }
 
 int card_indomitable_archangel(int player, int card, event_t event){
+	/* Indomitable Archangel	|2|W|W
+	 * Creature - Angel 4/4
+	 * Flying
+	 * Metalcraft - Artifacts you control have shroud as long as you control three or more artifacts. */
 
 	if( metalcraft(player, card) ){
 		if( event == EVENT_ABILITIES && affected_card_controller == player &&
@@ -3607,6 +3955,9 @@ int card_indomitable_archangel(int player, int card, event_t event){
 }
 
 int card_inexorable_tide(int player, int card, event_t event){
+	/* Inexorable Tide	|3|U|U
+	 * Enchantment
+	 * Whenever you cast a spell, proliferate. */
 
 	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) &&
 		player == reason_for_trigger_controller && player == trigger_cause_controller
@@ -3661,6 +4012,10 @@ int card_infiltration_lens(int player, int card, event_t event)
 }
 
 int card_instill_infection(int player, int card, event_t event){
+	/* Instill Infection	|3|B
+	 * Instant
+	 * Put a -1/-1 counter on target creature.
+	 * Draw a card. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -3690,6 +4045,10 @@ int card_instill_infection(int player, int card, event_t event){
 }
 
 int card_kembas_skyguard(int player, int card, event_t event){
+	/* Kemba's Skyguard	|1|W|W
+	 * Creature - Cat Knight 2/2
+	 * Flying
+	 * When ~ enters the battlefield, you gain 2 life. */
 
 	if( comes_into_play(player, card, event) ){
 		gain_life(player, 2);
@@ -3715,19 +4074,25 @@ int card_kemba_kha_regent(int player, int card, event_t event){
 }
 
 int card_kuldotha_phoenix(int player, int card, event_t event){
+	/* Kuldotha Phoenix	|2|R|R|R
+	 * Creature - Phoenix 4/4
+	 * Flying, haste
+	 * Metalcraft - |4: Return ~ from your graveyard to the battlefield. Activate this ability only during your upkeep and only if you control three or more artifacts. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
 	haste(player, card, event);
 
-	if( metalcraft(player, card) && has_mana(player, COLOR_COLORLESS, 4) && event == EVENT_GRAVEYARD_ABILITY_UPKEEP ){
-		int choice = do_dialog(player, player, card, -1, -1," Return Kuldotha Phoenix to play\n Pass", 0);
-		if( choice == 0 ){
-			charge_mana(player, COLOR_COLORLESS, 4);
-			if( spell_fizzled != 1){
-				instance->state &= ~STATE_INVISIBLE;
-				put_into_play(player, card);
-				return -1;
+	if( event == EVENT_GRAVEYARD_ABILITY_UPKEEP ){
+		if( current_turn == player && has_mana(player, COLOR_COLORLESS, 4) && metalcraft(player, card) ){
+			int choice = do_dialog(player, player, card, -1, -1," Return Kuldotha Phoenix to play\n Pass", 0);
+			if( choice == 0 ){
+				charge_mana(player, COLOR_COLORLESS, 4);
+				if( spell_fizzled != 1){
+					instance->state &= ~STATE_INVISIBLE;
+					put_into_play(player, card);
+					return -1;
+				}
 			}
 		}
 		return -2;
@@ -3737,6 +4102,10 @@ int card_kuldotha_phoenix(int player, int card, event_t event){
 }
 
 int card_leonine_arbiter(int player, int card, event_t event){
+	/* Leonin Arbiter	|1|W
+	 * Creature - Cat Cleric 2/2
+	 * Players can't search libraries. Any player may pay |2 for that player to ignore this effect until end of turn. */
+
 	card_instance_t *instance = get_card_instance( player, card );
 
 	if( event == EVENT_CLEANUP ){
@@ -3795,6 +4164,9 @@ int card_liege_of_the_tangle(int player, int card, event_t event){
 }
 
 int card_lifesmith(int player, int card, event_t event){
+	/* Lifesmith	|1|G
+	 * Creature - Human Artificer 2/1
+	 * Whenever you cast an artifact spell, you may pay |1. If you do, you gain 3 life. */
 
 	if( has_mana(player, COLOR_COLORLESS, 1) && smiths(player, card, event) ){
 		charge_mana(player, COLOR_COLORLESS, 1);
@@ -3808,6 +4180,9 @@ int card_lifesmith(int player, int card, event_t event){
 
 
 int card_liquidmetal_coating(int player, int card, event_t event){
+	/* Liquimetal Coating	|2
+	 * Artifact
+	 * |T: Target permanent becomes an artifact in addition to its other types until end of turn. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -3862,6 +4237,10 @@ int card_livewire_lash(int player, int card, event_t event){
 }
 
 int card_lumengrid_drake(int player, int card, event_t event){
+	/* Lumengrid Drake	|3|U
+	 * Creature - Drake 2/2
+	 * Flying
+	 * Metalcraft - When ~ enters the battlefield, if you control three or more artifacts, return target creature to its owner's hand. */
 
 	if( metalcraft(player, card) ){
 		return card_man_o_war(player, card, event);
@@ -3938,6 +4317,9 @@ int card_memoricide(int player, int card, event_t event){
 }
 
 int card_melt_terrain(int player, int card, event_t event){
+	/* Melt Terrain	|2|R|R
+	 * Sorcery
+	 * Destroy target land. ~ deals 2 damage to that land's controller. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_LAND );
@@ -3964,6 +4346,10 @@ int card_melt_terrain(int player, int card, event_t event){
 }
 
 int card_molder_beast(int player, int card, event_t event){
+	/* Molder Beast	|4|G
+	 * Creature - Beast 5/3
+	 * Trample
+	 * Whenever an artifact is put into a graveyard from the battlefield, ~ gets +2/+0 until end of turn. */
 
 	card_instance_t *instance= get_card_instance(player, card);
 
@@ -4013,6 +4399,10 @@ int card_molten_psyche(int player, int card, event_t event){
 
 int card_moriok_replica(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_ACTIVATION ){
+		/* Moriok Replica	|3
+		 * Artifact Creature - Warrior 2/2
+		 * |1|B, Sacrifice ~: You draw two cards and you lose 2 life. */
+
 		draw_cards(player, 2);
 		lose_life(player, 2);
 	}
@@ -4020,6 +4410,10 @@ int card_moriok_replica(int player, int card, event_t event){
 }
 
 int card_mox_opal(int player, int card, event_t event){
+	/* Mox Opal	|0
+	 * Legendary Artifact
+	 * Metalcraft - |T: Add one mana of any color to your mana pool. Activate this ability only if you control three or more artifacts. */
+
 	check_legend_rule(player, card, event);
 	if( metalcraft(player, card) ){
 		return mana_producer(player, card, event);
@@ -4052,6 +4446,10 @@ int card_myr_propagator(int player, int card, event_t event){
 }
 
 int card_myr_reservoir(int player, int card, event_t event){
+	/* Myr Reservoir	|3
+	 * Artifact
+	 * |T: Add |C|C to your mana pool. Spend this mana only to cast Myr spells or activate abilities of Myr.
+	 * |3, |T: Return target Myr card from your graveyard to your hand. */
 
 	char msg[100] = "Select a Myr card.";
 	test_definition_t this_test;
@@ -4126,6 +4524,10 @@ int card_necrogen_censer(int player, int card, event_t event){
 }
 
 int card_necrogen_scudder(int player, int card, event_t event){
+	/* Necrogen Scudder	|2|B
+	 * Creature - Horror 3/3
+	 * Flying
+	 * When ~ enters the battlefield, you lose 3 life. */
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		if( player == AI && life[player] < 9 ){
@@ -4141,6 +4543,10 @@ int card_necrogen_scudder(int player, int card, event_t event){
 }
 
 int card_necropede(int player, int card, event_t event){
+	/* Necropede	|2
+	 * Artifact Creature - Insect 1/1
+	 * Infect
+	 * When ~ dies, you may put a -1/-1 counter on target creature. */
 
 	if( this_dies_trigger(player, card, event, 2) ){
 		target_definition_t td;
@@ -4155,6 +4561,10 @@ int card_necropede(int player, int card, event_t event){
 }
 
 int card_neurok_invisimancer(int player, int card, event_t event){
+	/* Neurok Invisimancer	|1|U|U
+	 * Creature - Human Wizard 2/1
+	 * ~ can't be blocked.
+	 * When ~ enters the battlefield, target creature can't be blocked this turn. */
 
 	unblockable(player, card, event);
 
@@ -4175,6 +4585,9 @@ int card_neurok_invisimancer(int player, int card, event_t event){
 }
 
 int card_neurok_replica(int player, int card, event_t event){
+	/* Neurok Replica	|3
+	 * Artifact Creature - Wizard 1/4
+	 * |1|U, Sacrifice ~: Return target creature to its owner's hand. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -4190,6 +4603,10 @@ int card_neurok_replica(int player, int card, event_t event){
 }
 
 int card_nihil_spellbomb(int player, int card, event_t event){
+	/* Nihil Spellbomb	|1
+	 * Artifact
+	 * |T, Sacrifice ~: Exile all cards from target player's graveyard.
+	 * When ~ is put into a graveyard from the battlefield, you may pay |B. If you do, draw a card. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -4239,8 +4656,10 @@ static int effect_unattach_when_lose_control(int player, int card, event_t event
 
 int card_ogre_geargrabber(int player, int card, event_t event)
 {
-  /* Whenever ~ attacks, gain control of target Equipment an opponent controls until end of turn. Attach it to ~. When you lose control of that Equipment,
-   * unattach it. */
+  /* Ogre Geargrabber	|4|R|R
+   * Creature - Ogre Warrior 4/4
+   * Whenever ~ attacks, gain control of target Equipment an opponent controls until end of turn. Attach it to ~. When you lose control of that Equipment, unattach it. */
+
   if (declare_attackers_trigger(player, card, event, 0, player, card))
 	{
 	  target_definition_t td;
@@ -4292,6 +4711,9 @@ int card_origin_spellbomb(int player, int card, event_t event){
 }
 
 int card_oxidda_daredevil(int player, int card, event_t event){
+	/* Oxidda Daredevil	|1|R
+	 * Creature - Goblin Artificer 2/1
+	 * Sacrifice an artifact: ~ gains haste until end of turn. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -4314,6 +4736,9 @@ int card_oxidda_daredevil(int player, int card, event_t event){
 }
 
 int card_painful_quandary(int player, int card, event_t event){
+	/* Painful Quandary	|3|B|B
+	 * Enchantment
+	 * Whenever an opponent casts a spell, that player loses 5 life unless he or she discards a card. */
 
 	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) &&
 		player == reason_for_trigger_controller && 1-player == trigger_cause_controller ){
@@ -4369,6 +4794,9 @@ static int painsmith_legacy(int player, int card, event_t event){
 }
 
 int card_painsmith(int player, int card, event_t event){
+	/* Painsmith	|1|B
+	 * Creature - Human Artificer 2/1
+	 * Whenever you cast an artifact spell, you may have target creature get +2/+0 and gain deathtouch until end of turn. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -4387,6 +4815,10 @@ int card_painsmith(int player, int card, event_t event){
 }
 
 int card_panic_spellbomb(int player, int card, event_t event){
+	/* Panic Spellbomb	|1
+	 * Artifact
+	 * |T, Sacrifice ~: Target creature can't block this turn.
+	 * When ~ is put into a graveyard from the battlefield, you may pay |R. If you do, draw a card. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -4425,10 +4857,19 @@ int card_panic_spellbomb(int player, int card, event_t event){
 }
 
 int card_platinum_emperion(int player, int card, event_t event){
+	/* Platinum Emperion	|8
+	 * Artifact Creature - Golem 8/8
+	 * Your life total can't change. */
+
 	return 0;
 }
 
 int card_precursor_golem(int player, int card, event_t event){
+	/* Precursor Golem	|5
+	 * Artifact Creature - Golem 3/3
+	 * When ~ enters the battlefield, put two 3/3 colorless Golem artifact creature tokens onto the battlefield.
+	 * Whenever a player casts an instant or sorcery spell that targets only a single Golem, that player copies that spell for each other Golem that spell could target. Each copy targets a different one of those Golems. */
+
 	return 0;
 }
 
@@ -4488,6 +4929,9 @@ int card_prototype_portal(int player, int card, event_t event){
 }
 
 int card_psychic_miasma(int player, int card, event_t event){
+	/* Psychic Miasma	|1|B
+	 * Sorcery
+	 * Target player discards a card. If a land card is discarded this way, return ~ to its owner's hand. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -4536,6 +4980,10 @@ int card_quicksilver_gargantuan(int player, int card, event_t event)
 }
 
 int card_razor_hippogriff(int player, int card, event_t event){
+	/* Razor Hippogriff	|3|W|W
+	 * Creature - Hippogriff 3/3
+	 * Flying
+	 * When ~ enters the battlefield, return target artifact card from your graveyard to your hand. You gain life equal to that card's converted mana cost. */
 
 	if( comes_into_play(player, card, event) && count_graveyard_by_type(player, TYPE_ARTIFACT) > 0 ){
 		int card_added = global_tutor(player, player, 2, TUTOR_HAND, 0, 2, TYPE_ARTIFACT, 0, 0, 0, 0, 0, 0, 0, -1, 0);
@@ -4547,12 +4995,16 @@ int card_razor_hippogriff(int player, int card, event_t event){
 }
 
 int card_relic_putrescence(int player, int card, event_t event){
+	/* Relic Putrescence	|2|B
+	 * Enchantment - Aura
+	 * Enchant artifact
+	 * Whenever enchanted artifact becomes tapped, its controller gets a poison counter. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( in_play(player, card) && instance->targets[0].player != -1 && instance->targets[0].card != -1 ){
 		if( event == EVENT_TAP_CARD && affect_me(instance->targets[0].player, instance->targets[0].card) ){
-			poison_counters[instance->targets[0].player]++;
+			poison(instance->targets[0].player, 1);
 		}
 	}
 	else{
@@ -4562,6 +5014,9 @@ int card_relic_putrescence(int player, int card, event_t event){
 }
 
 int card_revoke_existence(int player, int card, event_t event){
+	/* Revoke Existence	|1|W
+	 * Sorcery
+	 * Exile target artifact or enchantment. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_ARTIFACT | TYPE_ENCHANTMENT );
@@ -4587,6 +5042,9 @@ int card_revoke_existence(int player, int card, event_t event){
 }
 
 int card_riddlesmith(int player, int card, event_t event){
+	/* Riddlesmith	|1|U
+	 * Creature - Human Artificer 2/1
+	 * Whenever you cast an artifact spell, you may draw a card. If you do, discard a card. */
 
 	if( smiths(player, card, event) ){
 		draw_cards(player, 1);
@@ -4597,6 +5055,10 @@ int card_riddlesmith(int player, int card, event_t event){
 }
 
 int card_rust_tick(int player, int card, event_t event){
+	/* Rust Tick	|3
+	 * Artifact Creature - Insect 1/3
+	 * You may choose not to untap ~ during your untap step.
+	 * |1, |T: Tap target artifact. It doesn't untap during its controller's untap step for as long as ~ remains tapped. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_ARTIFACT );
@@ -4629,6 +5091,9 @@ int card_rust_tick(int player, int card, event_t event){
 }
 
 int card_rusted_relic(int player, int card, event_t event){
+	/* Rusted Relic	|4
+	 * Artifact
+	 * Metalcraft - ~ is a 5/5 Golem artifact creature as long as you control three or more artifacts. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -4652,6 +5117,10 @@ int card_rusted_relic(int player, int card, event_t event){
 }
 
 int card_saberclaw_golem(int player, int card, event_t event){
+	/* Saberclaw Golem	|5
+	 * Artifact Creature - Golem 4/2
+	 * |R: ~ gains first strike until end of turn. */
+
 	return generic_shade(player, card, event, 0, 0, 0, 0, 0, 0, 1, 0, 0, KEYWORD_FIRST_STRIKE, 0);
 }
 
@@ -4689,6 +5158,10 @@ int card_salvage_scout(int player, int card, event_t event){
 
 int card_scrapdiver_serpent(int player, int card, event_t event)
 {
+  /* Scrapdiver Serpent	|5|U|U
+   * Creature - Serpent 5/5
+   * ~ can't be blocked as long as defending player controls an artifact. */
+
   if (event == EVENT_ABILITIES && affect_me(player, card) && count_permanents_by_type(1-player, TYPE_ARTIFACT) > 0)
 	unblockable(player, card, event);
 
@@ -4696,6 +5169,10 @@ int card_scrapdiver_serpent(int player, int card, event_t event)
 }
 
 int card_screeching_silcaw(int player, int card, event_t event){
+	/* Screeching Silcaw	|1|U
+	 * Creature - Bird 1/2
+	 * Flying
+	 * Metalcraft - Whenever ~ deals combat damage to a player, if you control three or more artifacts, that player puts the top four cards of his or her library into his or her graveyard. */
 
 	if( metalcraft(player, card) && has_combat_damage_been_inflicted_to_a_player(player, card, event) ){
 		mill(1-player, 4);
@@ -4705,6 +5182,9 @@ int card_screeching_silcaw(int player, int card, event_t event){
 }
 
 int card_seize_the_initiative(int player, int card, event_t event){
+	/* Seize the Initiative	|W
+	 * Instant
+	 * Target creature gets +1/+1 and gains first strike until end of turn. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -4761,6 +5241,9 @@ int card_slice_in_twain(int player, int card, event_t event){
 }
 
 int card_snapsail_glider(int player, int card, event_t event){
+	/* Snapsail Glider	|3
+	 * Artifact Creature - Construct 2/2
+	 * Metalcraft - ~ has flying as long as you control three or more artifacts. */
 
 	if( metalcraft(player, card)  ){
 		modify_pt_and_abilities(player, card, event, 0, 0, KEYWORD_FLYING);
@@ -4770,6 +5253,9 @@ int card_snapsail_glider(int player, int card, event_t event){
 }
 
 int card_soul_parry(int player, int card, event_t event){
+	/* Soul Parry	|1|W
+	 * Instant
+	 * Prevent all damage one or two target creatures would deal this turn. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -4810,6 +5296,10 @@ int card_soul_parry(int player, int card, event_t event){
 }
 
 int card_steady_progress(int player, int card, event_t event){
+	/* Steady Progress	|2|U
+	 * Instant
+	 * Proliferate.
+	 * Draw a card. */
 
 	if( event == EVENT_CAN_CAST ){
 		return 1;
@@ -4825,6 +5315,10 @@ int card_steady_progress(int player, int card, event_t event){
 }
 
 int card_stoic_rebuttal(int player, int card, event_t event){
+	/* Stoic Rebuttal	|1|U|U
+	 * Instant
+	 * Metalcraft - ~ costs |1 less to cast if you control three or more artifacts.
+	 * Counter target spell. */
 
 	if( event == EVENT_MODIFY_COST ){
 		if( metalcraft(player, card) ){
@@ -4835,6 +5329,11 @@ int card_stoic_rebuttal(int player, int card, event_t event){
 }
 
 int card_strata_scythe(int player, int card, event_t event){
+	/* Strata Scythe	|3
+	 * Artifact - Equipment
+	 * Imprint - When ~ enters the battlefield, search your library for a land card, exile it, then shuffle your library.
+	 * Equipped creature gets +1/+1 for each land on the battlefield with the same name as the exiled card.
+	 * Equip |3 */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_LAND );
@@ -4903,11 +5402,19 @@ int card_strata_scythe(int player, int card, event_t event){
 }
 
 int card_strider_harness(int player, int card, event_t event){
+	/* Strider Harness	|3
+	 * Artifact - Equipment
+	 * Equipped creature gets +1/+1 and has haste.
+	 * Equip |1 */
 
 	return vanilla_equipment(player, card, event, 1, 1, 1, 0, SP_KEYWORD_HASTE);
 }
 
 int card_sunblast_angel(int player, int card, event_t event){
+	/* Sunblast Angel	|4|W|W
+	 * Creature - Angel 4/5
+	 * Flying
+	 * When ~ enters the battlefield, destroy all tapped creatures. */
 
 	if( comes_into_play(player, card, event) ){
 		int i;
@@ -4926,6 +5433,10 @@ int card_sunblast_angel(int player, int card, event_t event){
 }
 
 int card_sunspear_shikari(int player, int card, event_t event){
+	/* Sunspear Shikari	|1|W
+	 * Creature - Cat Soldier 2/2
+	 * As long as ~ is equipped, it has first strike and lifelink. */
+
 	if ((event == EVENT_ABILITIES || event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) &&
 		!is_humiliated(player, card) && in_play(player, card) && equipments_attached_to_me(player, card, EATM_CHECK)
 	   ){
@@ -4937,6 +5448,11 @@ int card_sunspear_shikari(int player, int card, event_t event){
 }
 
 int card_sylvok_lifestaff(int player, int card, event_t event){
+	/* Sylvok Lifestaff	|1
+	 * Artifact - Equipment
+	 * Equipped creature gets +1/+0.
+	 * Whenever equipped creature dies, you gain 3 life.
+	 * Equip |1 */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -4950,6 +5466,9 @@ int card_sylvok_lifestaff(int player, int card, event_t event){
 }
 
 int card_sylvok_replica(int player, int card, event_t event){
+	/* Sylvok Replica	|3
+	 * Artifact Creature - Shaman 1/3
+	 * |G, Sacrifice ~: Destroy target artifact or enchantment. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -4965,6 +5484,11 @@ int card_sylvok_replica(int player, int card, event_t event){
 }
 
 int card_tangle_angler(int player, int card, event_t event){
+	/* Tangle Angler	|3|G
+	 * Creature - Horror 1/5
+	 * Infect
+	 * |G: Target creature blocks ~ this turn if able. */
+
 	return 0;
 }
 
@@ -5099,6 +5623,10 @@ int card_steel_hellkite(int player, int card, event_t event){
 }
 
 int card_tel_jilad_defiance(int player, int card, event_t event){
+	/* Tel-Jilad Defiance	|1|G
+	 * Instant
+	 * Target creature gains protection from artifacts until end of turn.
+	 * Draw a card. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -5130,6 +5658,9 @@ int card_tel_jilad_defiance(int player, int card, event_t event){
 }
 
 int card_tower_of_calamities(int player, int card, event_t event){
+	/* Tower of Calamities	|4
+	 * Artifact
+	 * |8, |T: ~ deals 12 damage to target creature. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -5266,6 +5797,10 @@ int card_trigon_of_thought(int player, int card, event_t event)
 
 int card_true_conviction(int player, int card, event_t event)
 {
+  /* True Conviction	|3|W|W|W
+   * Enchantment
+   * Creatures you control have double strike and lifelink. */
+
   if (event == EVENT_ABILITIES
 	  && affected_card_controller == player
 	  && is_what(affected_card_controller, affected_card, TYPE_CREATURE)
@@ -5279,6 +5814,9 @@ int card_true_conviction(int player, int card, event_t event)
 }
 
 int card_tunnel_ignus(int player, int card, event_t event){
+	/* Tunnel Ignus	|1|R
+	 * Creature - Elemental 2/1
+	 * Whenever a land enters the battlefield under an opponent's control, if that player had another land enter the battlefield under his or her control this turn, ~ deals 3 damage to that player. */
 
 	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) &&
 		player == reason_for_trigger_controller && 1-player == trigger_cause_controller
@@ -5305,6 +5843,9 @@ int card_tunnel_ignus(int player, int card, event_t event){
 }
 
 int card_turn_aside(int player, int card, event_t event){
+	/* Turn Aside	|U
+	 * Instant
+	 * Counter target spell that targets a permanent you control. */
 
 	if( event == EVENT_CAN_CAST ){
 		int result = card_counterspell(player, card, event);
@@ -5332,6 +5873,9 @@ int card_turn_aside(int player, int card, event_t event){
 }
 
 int card_turn_to_slag(int player, int card, event_t event){
+	/* Turn to Slag	|3|R|R
+	 * Sorcery
+	 * ~ deals 5 damage to target creature. Destroy all Equipment attached to that creature. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -5361,8 +5905,11 @@ int card_turn_to_slag(int player, int card, event_t event){
 
 int card_twisted_image(int player, int card, event_t event)
 {
-  // Switch target creature's power and toughness until end of turn.
-  // Draw a card.
+  /* Twisted Image	|U
+   * Instant
+   * Switch target creature's power and toughness until end of turn.
+   * Draw a card. */
+
   target_definition_t td;
   default_target_definition(player, card, &td, TYPE_CREATURE);
   td.preferred_controller = ANYBODY;
@@ -5384,6 +5931,9 @@ int card_twisted_image(int player, int card, event_t event)
 }
 
 int card_untamed_might(int player, int card, event_t event){
+	/* Untamed Might	|X|G
+	 * Instant
+	 * Target creature gets +X/+X until end of turn. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -5411,6 +5961,9 @@ int card_untamed_might(int player, int card, event_t event){
 }
 
 int card_vault_skyward(int player, int card, event_t event){
+	/* Vault Skyward	|U
+	 * Instant
+	 * Target creature gains flying until end of turn. Untap it. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -5438,6 +5991,9 @@ int card_vault_skyward(int player, int card, event_t event){
 }
 
 int card_vedalken_certarch(int player, int card, event_t event){
+	/* Vedalken Certarch	|U
+	 * Creature - Vedalken Wizard 1/1
+	 * Metalcraft - |T: Tap target artifact, creature, or land. Activate this ability only if you control three or more artifacts. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE | TYPE_ARTIFACT | TYPE_LAND );
@@ -5461,6 +6017,10 @@ int card_vedalken_certarch(int player, int card, event_t event){
 }
 
 int card_vensers_journal(int player, int card, event_t event){
+	/* Venser's Journal	|5
+	 * Artifact
+	 * You have no maximum hand size.
+	 * At the beginning of your upkeep, you gain 1 life for each card in your hand. */
 
 	if( current_turn == player && event == EVENT_MAX_HAND_SIZE ){
 		event_result = 99;
@@ -5475,6 +6035,9 @@ int card_vensers_journal(int player, int card, event_t event){
 }
 
 int card_vigil_for_the_lost(int player, int card, event_t event){
+	/* Vigil for the Lost	|3|W
+	 * Enchantment
+	 * Whenever a creature you control dies, you may pay |X. If you do, you gain X life. */
 
 	card_instance_t *instance= get_card_instance(player, card);
 
@@ -5514,6 +6077,9 @@ int card_vigil_for_the_lost(int player, int card, event_t event){
 }
 
 int card_viridian_revel(int player, int card, event_t event){
+	/* Viridian Revel	|1|G|G
+	 * Enchantment
+	 * Whenever an artifact is put into an opponent's graveyard from the battlefield, you may draw a card. */
 
 	card_instance_t *instance= get_card_instance(player, card);
 
@@ -5531,6 +6097,12 @@ int card_viridian_revel(int player, int card, event_t event){
 
 int card_volition_reins(int player, int card, event_t event)
 {
+  /* Volition Reins	|3|U|U|U
+   * Enchantment - Aura
+   * Enchant permanent
+   * When ~ enters the battlefield, if enchanted permanent is tapped, untap it.
+   * You control enchanted permanent. */
+
   if (comes_into_play(player, card, event))
 	{
 	  card_instance_t* instance = get_card_instance(player, card);
@@ -5544,6 +6116,9 @@ int card_volition_reins(int player, int card, event_t event)
 }
 
 int card_vulshok_heartstoker(int player, int card, event_t event){
+	/* Vulshok Heartstoker	|2|R
+	 * Creature - Human Shaman 2/2
+	 * When ~ enters the battlefield, target creature gets +2/+0 until end of turn. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -5565,6 +6140,9 @@ int card_vulshok_heartstoker(int player, int card, event_t event){
 }
 
 int card_vulshok_replica(int player, int card, event_t event){
+	/* Vulshok Replica	|3
+	 * Artifact Creature - Berserker 3/1
+	 * |1|R, Sacrifice ~: ~ deals 3 damage to target player. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -5581,10 +6159,18 @@ int card_vulshok_replica(int player, int card, event_t event){
 }
 
 int card_wall_of_tanglecord(int player, int card, event_t event){
+	/* Wall of Tanglecord	|2
+	 * Artifact Creature - Wall 0/6
+	 * Defender
+	 * |G: ~ gains reach until end of turn. */
+
 	return generic_shade(player, card, event, 0, 0, 0, 0, 1, 0, 0, 0, 0, KEYWORD_REACH, 0);
 }
 
 int card_whitesuns_passage(int player, int card, event_t event){
+	/* Whitesun's Passage	|1|W
+	 * Instant
+	 * You gain 5 life. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -5605,6 +6191,9 @@ int card_whitesuns_passage(int player, int card, event_t event){
 }
 
 int card_wing_puncture(int player, int card, event_t event){
+	/* Wing Puncture	|G
+	 * Instant
+	 * Target creature you control deals damage equal to its power to target creature with flying. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -5654,6 +6243,10 @@ int card_withstand_death(int player, int card, event_t event)
 }
 
 int card_palladium_myr(int player, int card, event_t event){
+	/* Palladium Myr	|3
+	 * Artifact Creature - Myr 2/2
+	 * |T: Add |C|C to your mana pool. */
+
 	// Was 0x424b30 (Sol Ring)
 	return mana_producing_creature(player, card, event, 18, COLOR_COLORLESS, 2);
 }

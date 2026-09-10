@@ -3,11 +3,14 @@
 // Any special_infos that's a characteristic-defining ability needs to be special-cased in get_copyable_special_infos() in token_generation.c.
 
 int card_dragon_token(int player, int card, event_t event){
+	if( player < 0 || card < 0 ){
+		return 0;
+	}
 	if( get_special_infos(player, card) == 66 ){
 		devour(player, card, event, 2);
 	}
 	if( get_special_infos(player, card) == 67 && IS_GAA_EVENT(event) ){
-		return generic_shade(player, card, event, 0, MANACOST_R(1), 1, 0, 0, 0);
+		return generic_shade_merge_pt(player, card, event, 0, MANACOST_R(1), 1, 0);
 	}
 	return generic_token(player, card, event);
 }
@@ -302,14 +305,29 @@ int card_horror_token(int player, int card, event_t event){
 
 int card_bird_token(int player, int card, event_t event){
 
+	// Bird token from Daxos the Returned
+	//"This creature's power and toughness are each equal to the number of experience counters you have."
+	if( get_special_infos(player, card) == 66 ){
+		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) ){
+			event_result += EXPERIENCE_COUNTERS(player);
+		}
+	}
+
 	return generic_token(player, card, event);
 }
 
 int card_goblin_token(int player, int card, event_t event){
 
 	if( get_special_infos(player, card) == 66 ){
-		if( eot_trigger(player, card, event) ){
-			kill_card(player, card, KILL_REMOVE);
+		if(trigger_condition == TRIGGER_EOT &&  affect_me(player, card ) && reason_for_trigger_controller == player ){
+			if( check_special_flags3(player, card, SF3_WONT_TRIGGER_AT_THIS_EOT) ){
+				remove_special_flags3(player, card, SF3_WONT_TRIGGER_AT_THIS_EOT);
+			}
+			else{
+				if( eot_trigger(player, card, event) ){
+					kill_card(player, card, KILL_REMOVE);
+				}
+			}
 		}
 	}
 	if( get_special_infos(player, card) == 67 ){

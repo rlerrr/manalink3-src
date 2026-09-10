@@ -36,7 +36,7 @@ static int count_type_in_hand(int player, int type){
 	int count = 0;
 	int result = 0;
 	while( count < active_cards_count[player] ){
-			if( ! in_play(player, count) && ! is_what(player, count, 0x80) ){
+			if( in_hand(player, count) ){
 				if( type & 0x100 ){
 					if( is_planeswalker(player, count) ){
 						result++;
@@ -243,28 +243,23 @@ int card_bargaining_table(int player, int card, event_t event ){
 
 int card_bifurcate(int player, int card, event_t event){
 
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
+	td.illegal_type = TARGET_TYPE_TOKEN;
 	td.preferred_controller = player;
 
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if(event == EVENT_CAN_CAST ){
-		return can_target(&td);
+	if(event == EVENT_RESOLVE_SPELL ){
+		if( valid_target(&td) ){
+			card_instance_t *instance = get_card_instance( player, card );
+			tutor_card_with_the_same_name(instance->targets[0].player, instance->targets[0].card, player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0);
+		}
+		kill_card(player, card, KILL_DESTROY);
 	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			if( pick_target(&td, "TARGET_CREATURE") ){
-				if( is_token(instance->targets[0].player, instance->targets[0].card) ){
-					spell_fizzled = 1;
-				}
-			}
-	}
-	else if(event == EVENT_RESOLVE_SPELL ){
-			int id = get_id(instance->targets[0].player, instance->targets[0].card);
-			global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, 1, 0, 0, 0, 0, 0, 0, id, 0, -1, 0);
-			kill_card(player, card, KILL_DESTROY);
-	}
-	return 0;
+	return generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td, "Select target nontoken creature", 1, NULL);
 }
 
 int card_black_market(int player, int card, event_t event ){
@@ -299,44 +294,35 @@ int card_black_market(int player, int card, event_t event ){
 
 int card_blood_oath(int player, int card, event_t event){
 
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.zone = TARGET_ZONE_PLAYERS;
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	if(event == EVENT_CAN_CAST ){
-		instance->targets[0].player = 1-player;
-		if( would_valid_target(&td) ){
-			return 1;
+	if(event == EVENT_RESOLVE_SPELL ){
+		if( valid_target(&td) ){
+			int types[8] = {TYPE_LAND, TYPE_CREATURE, TYPE_ENCHANTMENT, TYPE_SORCERY, TYPE_INSTANT, TYPE_ARTIFACT, 0x100, 0x200};
+			int choice = do_dialog(player, player, card, -1, -1, " Land\n Creature\n Enchantment\n Sorcery\n Instant\n Artifact\n Planeswalker\n Tribal", internal_rand(8));
+			int sel_type = types[choice];
+
+
+			int amount = count_type_in_hand(instance->targets[0].player, sel_type);
+
+			reveal_target_player_hand(instance->targets[0].player);
+
+			if( amount > 0 ){
+				damage_player(instance->targets[0].player, 3*amount, player, card);
+			}
 		}
-	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			instance->targets[0].player = 1-player;
+		kill_card(player, card, KILL_DESTROY);
 	}
 
-	else if(event == EVENT_RESOLVE_SPELL ){
-			if( valid_target(&td) ){
-				int sel_type = 0;
-				int choice = do_dialog(player, player, card, -1, -1, " Land\n Creature\n Enchantment\n Sorcery\n Instant\n Artifact\n Planeswalker\n Tribal", internal_rand(8));
-				if( choice < 5 ){
-					sel_type = 1 << (choice);
-				}
-				else if( choice == 5 ){
-						sel_type = TYPE_ARTIFACT;
-				}
-				else if( choice > 5 ){
-						sel_type = 1 << (choice+1);
-				}
-				int amount = count_type_in_hand(instance->targets[0].player, sel_type);
-				reveal_target_player_hand(instance->targets[0].player);
-				if( amount > 0 ){
-					damage_player(instance->targets[0].player, 3*amount, player, card);
-				}
-			}
-			kill_card(player, card, KILL_DESTROY);
-	}
-	return 0;
+	return generic_spell(player, card, event, GS_CAN_ONLY_TARGET_OPPONENT, &td, NULL, 1, NULL);
 }
 
 int card_bog_witch(int player, int card, event_t event ){
@@ -684,32 +670,29 @@ int card_collective_unconscious(int player, int card, event_t event){
 
 int card_coastal_piracy(int player, int card, event_t event){
 	// original code : 00405650
+/*
+Coastal Piracy |2|U|U
+Enchantment
+Whenever a creature you control deals combat damage to an opponent, you may draw a card.
+*/
 
-	card_instance_t *instance = get_card_instance(player, card);
+	check_damage_test(player, -1, event, DDBM_MUST_DAMAGE_OPPONENT | DDBM_MUST_BE_COMBAT_DAMAGE, player, card, TYPE_CREATURE, NULL);
 
-	card_instance_t* damage = combat_damage_being_dealt(event);
-	if( damage &&
-		damage->damage_source_player == player &&
-		(damage->targets[3].player & TYPE_CREATURE) &&	// probably redundant to status check
-		damage->damage_target_card == -1 && !check_special_flags(damage->damage_source_player, damage->damage_source_card, SF_ATTACKING_PWALKER) &&
-		damage->damage_target_player != player
-		){
-		instance->info_slot++;
-	}
-
-	if( trigger_condition == TRIGGER_DEAL_DAMAGE && affect_me(player, card) &&
-		reason_for_trigger_controller == player && instance->info_slot > 0 ){
-		if(event == EVENT_TRIGGER){
-			event_result |= RESOLVE_TRIGGER_AI(player);
-		}
-		else if(event == EVENT_RESOLVE_TRIGGER){
-			if (--instance->info_slot > 0){
-				instance->state &= ~STATE_PROCESSING;	// More optional triggers left.  Must be the first thing done during resolve trigger.
+	if( trigger_condition == TRIGGER_DEAL_DAMAGE && affect_me(player, card) && reason_for_trigger_controller == player ){
+		card_instance_t *instance = get_card_instance(player, card);
+		if( instance->targets[8].player > 0 ){
+			if(event == EVENT_TRIGGER){
+				event_result |= RESOLVE_TRIGGER_AI(player);
 			}
-			draw_cards(player, 1);
-		}
-		else if (event == EVENT_END_TRIGGER){
-			instance->info_slot = 0;
+			else if(event == EVENT_RESOLVE_TRIGGER){
+					if (--instance->targets[8].player > 0){
+						instance->state &= ~STATE_PROCESSING;	// More optional triggers left.  Must be the first thing done during resolve trigger.
+					}
+					draw_cards(player, 1);
+			}
+			else if (event == EVENT_END_TRIGGER){
+					instance->targets[8].player = 0;
+			}
 		}
 	}
 
@@ -1088,7 +1071,7 @@ int card_dust_bowl(int player, int card, event_t event){
 	default_target_definition(player, card, &td, TYPE_LAND);
 	td.required_subtype = SUBTYPE_NONBASIC;
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, 4, 0, 0, 0, 0, 0) &&
 			can_target(&td) &&
@@ -1488,7 +1471,7 @@ int card_high_market(int player, int card, event_t event){
 		return 1;
 	}
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
 
 		if( ! paying_mana() && can_use_activated_abilities(player, card) && has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) &&
@@ -1529,7 +1512,7 @@ int card_high_market(int player, int card, event_t event){
 int card_hired_giant(int player, int card, event_t event ){
 
 	if( comes_into_play(player, card, event) ){
-		if( player == AI || do_dialog(1-player, player, card, -1, -1, " Tutor a land\n Pass", 0) == 0 ){
+		if( do_dialog(1-player, player, card, -1, -1, " Tutor a land\n Pass", (1-player == AI ? 0 : 1)) == 0 ){
 			test_definition_t this_test;
 			new_default_test_definition(&this_test, TYPE_LAND, "Select a land card.");
 			new_global_tutor(1-player, 1-player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, 1, &this_test);
@@ -1824,81 +1807,7 @@ int card_kyren_negotiations(int player, int card, event_t event){
 }
 
 int card_kyren_toy(int player, int card, event_t event){
-
-	/* Kyren Toy	|3
-	 * Artifact
-	 * |1, |T: Put a charge counter on ~.
-	 * |T, Remove X charge counters from ~: Add |X|1 to your mana pool. */
-
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if( event == EVENT_COUNT_MANA && !(is_tapped(player, card)) && ! is_animated_and_sick(player, card) && affect_me(player, card) ){
-		declare_mana_available(player, COLOR_COLORLESS, 1 + count_counters(player, card, COUNTER_CHARGE) );
-	}
-
-	if( event == EVENT_CAN_ACTIVATE && ! is_tapped(player, card) && ! is_animated_and_sick(player, card) ){
-		if( can_produce_mana(player, card) ){
-			return 1;
-		}
-		if( has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0) && player != AI ){
-			return 1;
-		}
-	}
-
-	if( event == EVENT_ACTIVATE ){
-		int choice = 0;
-		int ai_choice = 0;
-		instance->info_slot = 0;
-		if( ! paying_mana() && can_use_activated_abilities(player, card) && has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0) && player != AI){
-			ai_choice = 1;
-		}
-
-		if( ai_choice == 1 ){
-			choice = do_dialog(player, player, card, -1, -1, " Produce mana\n Add a counter\n Cancel", ai_choice);
-		}
-
-		if( choice == 0){
-			int amount = count_counters(player, card, COUNTER_CHARGE);
-			if( player != AI && amount > 0 ){
-				amount = choose_a_number(player, "Remove how many charge counters?", count_counters(player, card, COUNTER_CHARGE));
-				if( amount < 0 || amount > count_counters(player, card, COUNTER_CHARGE) ){
-					spell_fizzled = 1;
-				}
-			}
-			if (spell_fizzled != 1){
-				remove_counters(player, card, COUNTER_CHARGE, amount);
-				produce_mana_tapped(player, card, COLOR_COLORLESS, 1 + amount);
-			}
-		}
-
-		if( choice == 1 ){
-			charge_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0);
-			if( spell_fizzled != 1 ){
-				tap_card(player, card);
-				instance->info_slot = 1;
-			}
-		}
-
-		if (choice == 2){
-			cancel = 1;
-		}
-	}
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( instance->info_slot == 1 ){
-			add_counter(player, card, COUNTER_CHARGE);
-		}
-	}
-
-	if( player == AI && current_turn != player && ! is_tapped(player, card) && ! is_sick(player, card) && has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0) &&
-		eot_trigger(player, card, event)
-	  ){
-		charge_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0);
-		if( spell_fizzled != 1 ){
-			tap_card(player, card);
-			add_counter(player, card, COUNTER_CHARGE);
-		}
-	}
-		return 0;
+	return mana_battery_generic(player, card, event, COLOR_COLORLESS, 1);
 }
 
 int card_land_grant(int player, int card, event_t event){
@@ -2074,7 +1983,7 @@ int card_magistrates_scepter(int player, int card, event_t event){
 		}
 	}
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
 		instance->targets[8].player = -1;
 		if( has_mana_for_activated_ability(player, card, 4, 0, 0, 0, 0, 0) ){
@@ -2181,7 +2090,7 @@ int card_mercadian_lift(int player, int card, event_t event){
 		}
 	}
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
 		if( has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0) && player != AI ){
 			if( has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) ){
@@ -2724,7 +2633,7 @@ int card_pulverize(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_LAND);
+		default_test_definition(&this_test, TYPE_ARTIFACT);
 		new_manipulate_all(player, card, ANYBODY, &this_test, KILL_DESTROY);
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -2925,13 +2834,17 @@ int card_rishadan_pawnshop(int player, int card, event_t event){
 }
 
 int card_rishadan_port(int player, int card, event_t event){
+	/* Rishadan Port	""
+	 * Land
+	 * |T: Add |C to your mana pool.
+	 * |1, |T: Tap target land. */
 
 	target_definition_t td1;
 	default_target_definition(player, card, &td1, TYPE_LAND);
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = 0;
 		int ai_choice = 0;
 		if( ! paying_mana() && can_target(&td1) && has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0) ){
@@ -3480,6 +3393,10 @@ int card_thrashing_wumpus(int player, int card, event_t event)
 }
 
 int card_thwart(int player, int card, event_t event){
+	/* Thwart	|2|U|U
+	 * Instant
+	 * You may return three |H1Islands you control to their owner's hand rather than pay ~'s mana cost.
+	 * Counter target spell. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -3501,7 +3418,7 @@ int card_thwart(int player, int card, event_t event){
 		if( ! played_for_free(player, card) && ! is_token(player, card) && instance->info_slot == 1 ){
 			int choice = 0;
 			if( has_mana_to_cast_id(player, event, get_id(player, card)) ){
-				do_dialog(player, player, card, -1, -1, " Bounce 3 Islands\n Play normally\n Cancel", 0);
+				choice = do_dialog(player, player, card, -1, -1, " Bounce 3 Islands\n Cast normally\n Cancel", 0);
 			}
 			if( choice == 0 ){
 				target_definition_t td;
@@ -3648,8 +3565,14 @@ int card_trade_routes(int player, int card, event_t event){
 }
 
 int card_two_headed_dragon(int player, int card, event_t event){
+	/* Two-Headed Dragon	|4|R|R
+	 * Creature - Dragon 4/4
+	 * Flying
+	 * Menace
+	 * ~ can block an additional creature each combat.
+	 * |1|R: ~ gets +2/+0 until end of turn. */
 
-	minimum_blockers(player, card, event, 2);
+	menace(player, card, event);
 
 	creature_can_block_additional(player, card, event, 1);
 

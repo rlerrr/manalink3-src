@@ -187,7 +187,12 @@ int card_banshee2(int player, int card, event_t event){
 
 int card_barls_cage(int player, int card, event_t event)
 {
+
 	// 0x428330
+	if( ! IS_GAA_EVENT(event) ){
+		return 0;
+	}
+
 	target_definition_t td_creature;
 	default_target_definition(player, card, &td_creature, TYPE_CREATURE);
 
@@ -201,7 +206,7 @@ int card_barls_cage(int player, int card, event_t event)
 	}
 
 	target_definition_t* td = (player == AI || ai_is_speculating == 1) ? &td_tapped_creature : &td_creature;	// specifically not during resolution
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST_X(3), 0, td, "TARGET_CREATURE");
+	return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_X(3), 0, td, "TARGET_CREATURE");
 }
 
 void change_lands_into_new_land_type(int player, int card, event_t event, int orig_basic_land_type, int orig_basic_land_type_flag, int basic_land_type_to_become){
@@ -817,7 +822,7 @@ int card_dust_to_dust(int player, int card, event_t event){
 		int i;
 		for(i=0; i<2; i++){
 			if( validate_target(player, card, &td, i) ){
-				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_REMOVE);
+				kill_card(instance->targets[i].player, instance->targets[i].card, KILL_REMOVE);
 			}
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -1821,22 +1826,32 @@ int card_mana_clash(int player, int card, event_t event){
 	  Repeat this process until both players' coins come up heads on the same flip.
 	*/
 
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
+	target_definition_t td;
+	default_target_definition(player, card, &td, 0);
+	td.zone = TARGET_ZONE_PLAYERS;
+
 	if( event == EVENT_RESOLVE_SPELL ){
-		int cf[2] = {1, 1};
-		while( cf[0] || cf[1] ){
-				cf[0] = player_flips_a_coin(player, card, player);
-				if( cf[0] ){
-					damage_player(player, 1, player, card);
-				}
-				cf[1] = player_flips_a_coin(player, card, 1-player);
-				if( cf[1] ){
-					damage_player(1-player, 1, player, card);
-				}
+		if( valid_target(&td) ){
+			int cf[2] = {1, 1};
+			while( cf[0] || cf[1] ){
+					cf[0] = player_flips_a_coin(player, card, player);
+					if( cf[0] ){
+						damage_player(player, 1, player, card);
+					}
+					cf[1] = player_flips_a_coin(player, card, 1-player);
+					if( cf[1] ){
+						damage_player(1-player, 1, player, card);
+					}
+			}
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+	return generic_spell(player, card, event, GS_CAN_ONLY_TARGET_OPPONENT, &td, NULL, 1, NULL);
 }
 
 int card_mana_vortex(int player, int card, event_t event){
@@ -1864,7 +1879,7 @@ int card_mana_vortex(int player, int card, event_t event){
 	}
 	if( event == EVENT_RESOLVE_SPELL ){
 		if( instance->info_slot == 0 ){
-			kill_card(player, card, KILL_SACRIFICE);
+			real_counter_a_spell(player, card, player, card);
 		}
 	}
 	upkeep_trigger_ability(player, card, event, ANYBODY);
@@ -1908,8 +1923,12 @@ int card_marsh_viper(int player, int card, event_t event){
 	*/
 	if( damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_TRACE_DAMAGED_PLAYERS) ){
 		card_instance_t *instance = get_card_instance(player, card);
-		poison_counters[0]+= BYTE0(instance->targets[1].player) ? 2 : 0;
-		poison_counters[1]+= BYTE1(instance->targets[1].player) ? 2 : 0;
+		if (BYTE0(instance->targets[1].player)){
+			poison(0, 2);
+		}
+		if (BYTE1(instance->targets[1].player)){
+			poison(1, 2);
+		}
 	}
 	return 0;
 }

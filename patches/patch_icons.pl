@@ -32,53 +32,55 @@ sub main
   # Eliminate first-strike icon when double-strike is present #
   #############################################################
 
+  # (These modify a previous injection, the entirety of which was moved in patch_orphan_manalinkex.pl)
+
   # Pass a third parameter, the bitfield for the standard icons to be drawn, to get_ability_image()
-  seek_and_write($f, 0x203dbb,
-		 0x8b, 0x85, 0x4c, 0xff, 0xff, 0xff,	# mov eax, dword [ebp-0xb4]
-		 0x50);					# push eax
+  #seek_and_write($f, 0x203dbb,
+  #		 0x8b, 0x85, 0x4c, 0xff, 0xff, 0xff,	# mov eax, dword [ebp-0xb4]
+  #		 0x50);					# push eax
 
   # Pop three parameters instead of two
-  seek_and_write($f, 0x203dd1,
-		 0x0C);					# {add esp, 0x08} => {add esp, 0x0C}
+  #seek_and_write($f, 0x203dd1,
+  #		 0x0C);					# {add esp, 0x08} => {add esp, 0x0C}
 
   # Write return value to address of bitfield for standard icons, rather than or'ing it in
-  seek_and_write($f, 0x203dd4,
-		 0x89);					# {or dword [ebp-0xb4], eax} => {mov dword [ebp-0xb4], eax}
+  #seek_and_write($f, 0x203dd4,
+  #		 0x89);					# {or dword [ebp-0xb4], eax} => {mov dword [ebp-0xb4], eax}
 
   ####################################################################
   # Repaint cards when new ability icons need to be added or removed #
   ####################################################################
 
   # Replace function at 0x48cb60 with new version at 0x1270040
-  seek_and_write($f, 0x26f440,
-		 0x55,					# push ebp			; save stack
-		 0x89, 0xe5,				# mov ebp, esp			; new stack
-		 0xba, 0x01, 0x00, 0x00, 0x00,		# mov edx, 0x1			; default 1
+  #seek_and_write($f, 0x26f440,
+  #		 0x55,					# push ebp			; save stack
+  #		 0x89, 0xe5,				# mov ebp, esp			; new stack
+  #		 0xba, 0x01, 0x00, 0x00, 0x00,		# mov edx, 0x1			; default 1
 
-		 0x8b, 0x4d, 0x0c,			# mov ecx, dword [ebp+0xc]	; ecx = param2
-		 0x8b, 0x45, 0x08,			# mov eax, dword [ebp+0x8]	; eax = param1
-		 0x8b, 0x49, 0x28,			# mov ecx, dword [ecx+0x28]	; ecx = param2->card_instance_t::regen-status
-		 0x39, 0x48, 0x28,			# cmp dword [eax+0x28],ecx	; compare *(eax+0x28) to ecx
-		 0x75, 0x29,				# jnz set0			; if different, jump to set0
+  #		 0x8b, 0x4d, 0x0c,			# mov ecx, dword [ebp+0xc]	; ecx = param2
+  #		 0x8b, 0x45, 0x08,			# mov eax, dword [ebp+0x8]	; eax = param1
+  #		 0x8b, 0x49, 0x28,			# mov ecx, dword [ecx+0x28]	; ecx = param2->card_instance_t::regen-status
+  #		 0x39, 0x48, 0x28,			# cmp dword [eax+0x28],ecx	; compare *(eax+0x28) to ecx
+  #		 0x75, 0x29,				# jnz set0			; if different, jump to set0
 
-		 0x8b, 0x4d, 0x0c,			# mov ecx, dword [ebp+0xc]	; ecx = param2
-		 0x8b, 0x89, 0xf8, 0x00, 0x00, 0x00,	# mov ecx, dword [ecx+0xf8]	; ecx = param2->card_instance_t::targets[16].card
-		 0x39, 0x88, 0xf8, 0x00, 0x00, 0x00,	# cmp dword [eax+0xf8],ecx	; compare *(eax+0xf8) to ecx
-		 0x75, 0x18,				# jnz set0			; if different, jump to set0
+  #		 0x8b, 0x4d, 0x0c,			# mov ecx, dword [ebp+0xc]	; ecx = param2
+  #		 0x8b, 0x89, 0xf8, 0x00, 0x00, 0x00,	# mov ecx, dword [ecx+0xf8]	; ecx = param2->card_instance_t::targets[16].card
+  #		 0x39, 0x88, 0xf8, 0x00, 0x00, 0x00,	# cmp dword [eax+0xf8],ecx	; compare *(eax+0xf8) to ecx
+  #		 0x75, 0x18,				# jnz set0			; if different, jump to set0
 
-		 0x8b, 0x4d, 0x0c,			# mov ecx, dword [ebp+0xc]	; ecx = param2
-		 0x8b, 0x49, 0x08,			# mov ecx, dword [ecx+0x8]	; ecx = param2->card_instance_t::state
-		 0x81, 0xe1, 0x00, 0x20, 0x00, 0x00,	# and ecx, 0x2000		; eax &= STATE_VIGILANCE
-		 0x8b, 0x40, 0x08,			# mov eax, dword [eax+0x8]	; eax = param1->card_instance_t::state
-		 0x25, 0x00, 0x20, 0x00, 0x00,		# and eax, 0x2000		; eax &= STATE_VIGILANCE
-		 0x39, 0xc8,				# cmp eax, ecx			; compare eax to ecx
-		 0x74, 0x01,				# jz epilog			; if same, jump to epilog
+  #		 0x8b, 0x4d, 0x0c,			# mov ecx, dword [ebp+0xc]	; ecx = param2
+  #		 0x8b, 0x49, 0x08,			# mov ecx, dword [ecx+0x8]	; ecx = param2->card_instance_t::state
+  #		 0x81, 0xe1, 0x00, 0x20, 0x00, 0x00,	# and ecx, 0x2000		; eax &= STATE_VIGILANCE
+  #		 0x8b, 0x40, 0x08,			# mov eax, dword [eax+0x8]	; eax = param1->card_instance_t::state
+  #		 0x25, 0x00, 0x20, 0x00, 0x00,		# and eax, 0x2000		; eax &= STATE_VIGILANCE
+  #		 0x39, 0xc8,				# cmp eax, ecx			; compare eax to ecx
+  #		 0x74, 0x01,				# jz epilog			; if same, jump to epilog
 #set0:
-		 0x4a,					# dec edx			; --edx
+  #		 0x4a,					# dec edx			; --edx
 #epilog:
-		 0x89, 0xd0,				# mov eax,edx			; return edx
-		 0xc9,					# leave
-		 0xc3);					# ret
+  #		 0x89, 0xd0,				# mov eax,edx			; return edx
+  #		 0xc9,					# leave
+  #		 0xc3);					# ret
 
   ###########################################################
   # Mark rects of new icons for tooltips (injection target) #
@@ -123,9 +125,11 @@ sub main
   # 48cb77:	8b c2		mov	eax,edx			; 48cb77: return edx
   # 48cb79:	c9		leave
   # 48cb7a:	c3		ret
-  seek_and_write($f, 0x8cb60,
-		 0xe9, 0xdb, 0x34, 0xde, 0x00,	# jmp 0x1270040
-		 0x90, 0x90, 0x90);		# nop	(3 of them, so the following code is still aligned)
+
+  #Obsolete - function moved into C
+  #seek_and_write($f, 0x8cb60,
+  #		 0xe9, 0xdb, 0x34, 0xde, 0x00,	# jmp 0x1270040
+  #		 0x90, 0x90, 0x90);		# nop	(3 of them, so the following code is still aligned)
 
   #####################################################################################
   # Call initialize_ability_tooltip_names() in C instead of writing to a fixed buffer #

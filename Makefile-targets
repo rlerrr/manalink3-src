@@ -15,14 +15,14 @@ lib%.a: %.def
 $(OBJDIR)%.ao: %.asm
 	$(ASM) $(AFLAGS) -o $@ $<
 
-$(OBJDIR)%.o: %.c manalink.h defs.h subtypes.h card_id.h
+$(OBJDIR)%.o: %.c $(BASEDIR)/manalink.h $(BASEDIR)/defs.h $(BASEDIR)/subtypes.h $(BASEDIR)/card_id.h $(HFILES)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(OBJDIR)%.obj: %.cpp
+$(OBJDIR)%.obj: %.cpp $(BASEDIR)/manalink.h $(BASEDIR)/defs.h $(BASEDIR)/subtypes.h $(BASEDIR)/card_id.h $(HFILES)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean::
-	-$(RM) $(WILDOBJFILES) $(OUTPUT) $(LOCAL_LIBFILES)
+	-$(RM) $(WILDOBJFILES) $(OUTPUT) $(OUTPUT:.dll=.dbg) $(LOCAL_LIBFILES)
 
 .PHONY: all clean
 

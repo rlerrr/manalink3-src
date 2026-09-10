@@ -513,7 +513,7 @@ static void store_permanent_on_legacy(card_instance_t* leg, int to_copy_player, 
 
 int exile_permanent_and_auras_attached(int player, int card, int t_player, int t_card, unsigned int mode){
 	int rvalue = -1;
-	if (is_token(t_player, t_card)){
+	if (is_token(t_player, t_card) || ! is_what(-1, get_original_internal_card_id(t_player, t_card), TYPE_PERMANENT) ){
 		manipulate_auras_enchanting_target(player, card, t_player, t_card, NULL, KILL_REMOVE);
 	} 
 	else {

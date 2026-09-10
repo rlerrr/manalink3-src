@@ -9,7 +9,7 @@ static int do_flashback_with_life(int player, int card, event_t event, int color
 	if( event == EVENT_PAY_FLASHBACK_COSTS ){
 		if( pay_flashback(player, instance->internal_card_id, event, colorless, black, blue, green, red, white) ){
 			lose_life(player, lif);
-			return 1;
+			return GAPAID_EXILE;
 		}
 	}
 	return 0;
@@ -141,7 +141,7 @@ int card_acorn_harvest(int player, int card, event_t event){
 	}
 	else if( event == EVENT_RESOLVE_SPELL ){
 			generate_tokens_by_id(player, card, CARD_ID_SQUIRREL, 2);
-			if( get_flashback() ){
+			if( get_flashback(player, card) ){
 				kill_card(player, card, KILL_REMOVE);
 			}
 			else{
@@ -186,7 +186,7 @@ int card_aquamoeba(int player, int card, event_t event){
 }
 
 int card_arrogant_wurm(int player, int card, event_t event){
-	return madness(player, card, event, 2, 0, 0, 1, 0, 0);
+	return madness(player, card, event, MANACOST_XG(2, 1));
 }
 
 // balshan collaborator --> frozen shade
@@ -246,7 +246,7 @@ int card_basking_rootwalla(int player, int card, event_t event){
 		instance->targets[1].card = 0;
 	}
 
-	return madness(player, card, event, 0, 0, 0, 0, 0, 0);
+	return madness(player, card, event, MANACOST0);
 }
 
 int card_breakthrough(int player, int card, event_t event){
@@ -365,6 +365,10 @@ int card_cephalid_vandal(int player, int card, event_t event){
 }
 
 int card_chainers_edict(int player, int card, event_t event){
+	/* Chainer's Edict	|1|B
+	 * Sorcery
+	 * Target player sacrifices a creature.
+	 * Flashback |5|B|B */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -374,13 +378,13 @@ int card_chainers_edict(int player, int card, event_t event){
 	else if(event == EVENT_GRAVEYARD_ABILITY){
 		// can only play as sorcery
 		if( can_sorcery_be_played(player, event) && has_mana_multi(player, 5, 2, 0, 0, 0, 0) ){
-			return 1;
+			return GA_PLAYABLE_FROM_GRAVE;
 		}
 	}
 	else if( event == EVENT_PAY_FLASHBACK_COSTS ){
 			charge_mana_multi(player, 5, 2, 0, 0, 0, 0);
 			if( spell_fizzled != 1 ){
-				return 1;
+				return GAPAID_EXILE;
 			}
 	}
 	else if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -392,7 +396,7 @@ int card_chainers_edict(int player, int card, event_t event){
 	}
 	else if( event == EVENT_RESOLVE_SPELL ){
 			impose_sacrifice(player, card, instance->targets[0].player, 1, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-			if( get_flashback() ){
+			if( get_flashback(player, card) ){
 				kill_card(player, card, KILL_REMOVE);
 			}
 			else{
@@ -573,30 +577,36 @@ int card_compulsion(int player, int card, event_t event){
 }
 
 int card_crippling_fatigue(int player, int card, event_t event){
+	/* Crippling Fatigue	|1|B|B
+	 * Sorcery
+	 * Target creature gets -2/-2 until end of turn.
+	 * Flashback-|1|B, Pay 3 life. */
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE );
+	if (IS_CASTING(player, card, event)){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE );
 
-	card_instance_t *instance = get_card_instance(player, card);
+		card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST && can_target(&td) ){
-		return 1;
+		if( event == EVENT_CAN_CAST && can_target(&td) ){
+			return 1;
+		}
+		else if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+				pick_target(&td, "TARGET_CREATURE");
+		}
+		else if( event == EVENT_RESOLVE_SPELL ){
+				if( valid_target(&td) ){
+					pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -2, -2);
+				}
+				if( get_flashback(player, card) ){
+					kill_card(player, card, KILL_REMOVE);
+				}
+				else{
+					kill_card(player, card, KILL_DESTROY);
+				}
+		}
 	}
-	else if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			pick_target(&td, "TARGET_CREATURE");
-	}
-	else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
-			if( valid_target(&td) ){
-				pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -2, -2);
-			}
-			if( get_flashback() ){
-				kill_card(player, card, KILL_REMOVE);
-			}
-			else{
-				kill_card(player, card, KILL_DESTROY);
-			}
-	}
-	return do_flashback_with_life(player, card, event, 1, 1, 0, 0, 0, 0, 3);
+	return do_flashback_with_life(player, card, event, MANACOST_XB(1,1), 3);
 }
 
 int card_dawn_of_the_dead(int player, int card, event_t event){
@@ -621,6 +631,10 @@ int card_dawn_of_the_dead(int player, int card, event_t event){
 }
 
 int card_deep_analysis(int player, int card, event_t event){
+	/* Deep Analysis	|3|U
+	 * Sorcery
+	 * Target player draws two cards.
+	 * Flashback-|1|U, Pay 3 life. */
 
 	if( event == EVENT_GRAVEYARD_ABILITY || event == EVENT_PAY_FLASHBACK_COSTS ){
 		return do_flashback_with_life(player, card, event, MANACOST_XU(1, 1), 3);
@@ -638,7 +652,7 @@ int card_deep_analysis(int player, int card, event_t event){
 		if( valid_target(&td2) ){
 			draw_cards(get_card_instance(player, card)->targets[0].player, 2);
 		}
-		kill_card(player, card, get_flashback() ? KILL_REMOVE : KILL_DESTROY);
+		kill_card(player, card, get_flashback(player, card) ? KILL_REMOVE : KILL_DESTROY);
 	}
 
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td2, "TARGET_PLAYER", 1, NULL);
@@ -773,72 +787,86 @@ int card_far_wanderings(int player, int card, event_t event){
 }
 
 int card_fiery_temper(int player, int card, event_t event){
-	madness(player, card, event, 0, 0, 0, 0, 1, 0);
+	if( event == EVENT_CAN_PAY_MADNESS_COST || event == EVENT_PAY_MADNESS_COST ){
+		return madness(player, card, event, MANACOST_R(1));
+	}
 	return card_lightning_bolt(player, card, event);
 }
 
 int card_flaming_gambit(int player, int card, event_t event){
+	/* Flaming Gambit	|X|R
+	 * Instant
+	 * ~ deals X damage to target player. That player may choose a creature he or she controls and have ~ deal that damage to it instead.
+	 * Flashback |X|R|R */
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE );
-	td.zone = TARGET_ZONE_PLAYERS;
+	if (IS_CASTING(player, card, event)){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE );
+		td.zone = TARGET_ZONE_PLAYERS;
 
-	card_instance_t *instance = get_card_instance(player, card);
+		card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST && can_target(&td) ){
-		return ! check_battlefield_for_id(2, CARD_ID_GADDOCK_TEEG);
-	}
+		if( event == EVENT_CAN_CAST && can_target(&td) ){
+			return ! check_battlefield_for_id(2, CARD_ID_GADDOCK_TEEG);
+		}
 
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		charge_mana(player, COLOR_COLORLESS, -1);
-		instance->info_slot = x_value;
-		pick_target(&td, "TARGET_PLAYER");
-	}
+		if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+			charge_mana(player, COLOR_COLORLESS, -1);
+			instance->info_slot = x_value;
+			pick_target(&td, "TARGET_PLAYER");
+		}
 
-	if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
-			if( valid_target(&td) ){
-				target_definition_t td1;
-				default_target_definition(player, card, &td1, TYPE_CREATURE );
-				td1.allowed_controller = instance->targets[0].player;
-				td1.preferred_controller = instance->targets[0].player;
-				td1.who_chooses = instance->targets[0].player;
-				if( can_target(&td1) && new_pick_target(&td1, "TARGET_CREATURE", 1, 0) ){
-					damage_creature(instance->targets[1].player, instance->targets[1].card, instance->info_slot, player, card);
+		if( event == EVENT_RESOLVE_SPELL ){
+				if( valid_target(&td) ){
+					target_definition_t td1;
+					default_target_definition(player, card, &td1, TYPE_CREATURE );
+					td1.allowed_controller = instance->targets[0].player;
+					td1.preferred_controller = instance->targets[0].player;
+					td1.who_chooses = instance->targets[0].player;
+					if( can_target(&td1) && new_pick_target(&td1, "TARGET_CREATURE", 1, 0) ){
+						damage_creature(instance->targets[1].player, instance->targets[1].card, instance->info_slot, player, card);
+					}
+					else{
+						damage_player(instance->targets[0].player, instance->info_slot, player, card);
+					}
+				}
+				if( get_flashback(player, card) ){
+					kill_card(player, card, KILL_REMOVE);
 				}
 				else{
-					damage_player(instance->targets[0].player, instance->info_slot, player, card);
+					kill_card(player, card, KILL_DESTROY);
 				}
-			}
-			if( get_flashback() ){
-				kill_card(player, card, KILL_REMOVE);
-			}
-			else{
-				kill_card(player, card, KILL_DESTROY);
-			}
+		}
 	}
 	return do_flashback(player, card, event, MANACOST_R(2));
 }
 
 int card_frantic_purification(int player, int card, event_t event){
+	/* Frantic Purification	|2|W
+	 * Instant
+	 * Destroy target enchantment.
+	 * Madness |W */
+
+	if( event == EVENT_CAN_PAY_MADNESS_COST || event == EVENT_PAY_MADNESS_COST ){
+		return madness(player, card, event, MANACOST_W(1));
+	}
+
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_ENCHANTMENT );
 
-	card_instance_t *instance = get_card_instance(player, card);
+	if( event == EVENT_RESOLVE_SPELL ){
+		if( valid_target(&td) ){
+			card_instance_t *instance = get_card_instance(player, card);
+			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+		}
+		kill_card(player, card, KILL_DESTROY);
+	}
 
-	if( event == EVENT_CAN_CAST && can_target(&td) ){
-		return 1;
-	}
-	else if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			pick_target(&td, "TARGET_ENCHANTMENT");
-	}
-	else if( event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
-			if( valid_target(&td) ){
-				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-			}
-			kill_card(player, card, KILL_DESTROY);
-	}
-	return madness(player, card, event, 0, 0, 0, 0, 0, 1);
+	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_ENCHANTMENT", 1, NULL);
 }
 
 int card_gloomdrifter(int player, int card, event_t event){
@@ -1610,14 +1638,16 @@ int card_nostalgic_dreams(int player, int card, event_t event){
 
 int card_obsessive_search(int player, int card, event_t event){
 
-	if( event == EVENT_CAN_CAST ){
-		return 1;
+	if( event == EVENT_CAN_PAY_MADNESS_COST || event == EVENT_PAY_MADNESS_COST ){
+		return madness(player, card, event, MANACOST_U(1));
 	}
-	else if( event == EVENT_RESOLVE_SPELL ){
-			draw_cards(player, 1);
-			kill_card(player, card, KILL_DESTROY);
+
+	if( event == EVENT_RESOLVE_SPELL ){
+		draw_cards(player, 1);
+		kill_card(player, card, KILL_DESTROY);
 	}
-	return madness(player, card, event, 0, 0, 1, 0, 0, 0);
+
+	return basic_spell(player, card, event);
 }
 
 int card_organ_grinder(int player, int card, event_t event){
@@ -1691,36 +1721,12 @@ int card_overmaster(int player, int card, event_t event){
 
 int card_parallel_evolution(int player, int card, event_t event){
 
-	if( event == EVENT_CAN_CAST ){
-		return 1;
+	if( event == EVENT_RESOLVE_SPELL ){
+		copy_all_tokens(player, card, TYPE_CREATURE, NULL);
+		kill_card(player, card, KILL_DESTROY);
 	}
-	else if( event == EVENT_RESOLVE_SPELL ){
-			int p, c, marked[2][151] = {{0}};
-			for (p = 0; p < 2; ++p){
-				for (c = 0; c < active_cards_count[p]; ++c){
-					if (in_play(p, c) && is_what(p, c, TYPE_CREATURE) && is_token(p, c)){
-						marked[p][c] = 1;
-					}
-				}
-			}
-			for (p = 0; p < 2; ++p){
-				for (c = 0; c < active_cards_count[p]; ++c){
-					if (marked[p][c]){
-						token_generation_t token;
-						copy_token_definition(player, card, &token, p, c);
-						token.t_player = p;
-						generate_token(&token);
-					}
-				}
-			}
-			if( get_flashback() ){
-				kill_card(player, card, KILL_REMOVE);
-			}
-			else{
-				kill_card(player, card, KILL_DESTROY);
-			}
-	}
-	return do_flashback(player, card, event, 4, 0, 0, 3, 0, 0);
+
+	return do_flashback(player, card, event, MANACOST_XG(4, 3));
 }
 
 int card_pardic_arsonist(int player, int card, event_t event){
@@ -2174,12 +2180,16 @@ int card_sonic_seizures(int player, int card, event_t event){
 }
 
 int card_strength_of_isolation(int player, int card, event_t event){
-	madness(player, card, event, 0, 0, 0, 0, 0, 1);
+	if( event == EVENT_CAN_PAY_MADNESS_COST || event == EVENT_PAY_MADNESS_COST ){
+		return madness(player, card, event, MANACOST_W(1));
+	}
 	return generic_aura(player, card, event, player, 1, 2, get_sleighted_protection(player, card, KEYWORD_PROT_BLACK), 0, 0, 0, 0);
 }
 
 int card_strength_of_lunacy(int player, int card, event_t event){
-	madness(player, card, event, 0, 1, 0, 0, 0, 0);
+	if( event == EVENT_CAN_PAY_MADNESS_COST || event == EVENT_PAY_MADNESS_COST ){
+		return madness(player, card, event, MANACOST_B(1));
+	}
 	return generic_aura(player, card, event, player, 2, 1, get_sleighted_protection(player, card, KEYWORD_PROT_WHITE), 0, 0, 0, 0);
 }
 
@@ -2357,24 +2367,30 @@ int card_vengeful_dreams(int player, int card, event_t event){
 }
 
 int card_violent_eruption(int player, int card, event_t event){
+
+	if( event == EVENT_CAN_PAY_MADNESS_COST || event == EVENT_PAY_MADNESS_COST ){
+		return madness(player, card, event, MANACOST_XR(1, 2));
+	}
+
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
 	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-	td.allow_cancel = 0;
 
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			int i;
-			for(i=0; i<4; i++){
-				new_pick_target(&td, "TARGET_CREATURE_OR_PLAYER", i, 0);
+	if( event == EVENT_RESOLVE_SPELL ){
+		card_instance_t *instance = get_card_instance( player, card);
+		int i;
+		for(i=0; i<4; i++){
+			if( validate_target(player, card, &td, i) ){
+				damage_creature(instance->targets[i].player, instance->targets[i].card, 1, player, card);
 			}
+		}
+		kill_card(player, card, KILL_DESTROY);
 	}
-	else if( event == EVENT_RESOLVE_SPELL ){
-			divide_damage(player, card, &td);
-			kill_card(player, card, KILL_DESTROY);
-	}
-	return madness(player, card, event, 1, 0, 0, 0, 2, 0);
+
+	return generic_spell(player, card, event, GS_ONE_OR_MULTIPLE_TARGETS, &td, "TARGET_CREATURE_OR_PLAYER", 4, NULL);
 }
 

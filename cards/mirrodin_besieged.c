@@ -410,7 +410,7 @@ int card_phyrexian_vatmother(int player, int card, event_t event ){
 	upkeep_trigger_ability(player, card, event, player);
 
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-		poison_counters[player]++;
+		poison(player, 1);
 	}
 
 	return 0;
@@ -548,12 +548,12 @@ int card_phyrexian_hydra(int player, int card, event_t event ){
 				}
 				add_minus1_minus1_counters(damage->damage_target_player, damage->damage_target_card, quantity);
 				if( poisoning > 0){
-				   poison_counters[1-player] += poisoning;
+					poison(1-player, poisoning);
 				}
 				damage->info_slot = 0;
 			}
 			else if( damage->damage_target_player == 1-player && damage->damage_target_card == -1 && damage->damage_source_player == player &&  damage->damage_source_card == card && damage->info_slot > 0 ){
-					poison_counters[1-player] += damage->info_slot;
+					poison(1-player, damage->info_slot);
 					damage->info_slot = 0;
 			}
 
@@ -570,10 +570,8 @@ int card_phyrexian_hydra(int player, int card, event_t event ){
 
 int card_rot_wolf(int player, int card, event_t event)
 {
-  if (sengir_vampire_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)))
-	draw_cards(player, get_card_instance(player, card)->targets[11].card);
-
-  return 0;
+	if_a_creature_damaged_by_me_dies_do_something(player, card, event, 2);
+	return 0;
 }
 
 int card_ichor_wellspring(int player, int card, event_t event ){
@@ -626,8 +624,11 @@ int card_hero_of_oxid_ridge(int player, int card, event_t event)
 }
 
 int card_creeping_corrosion(int player, int card, event_t event ){
+	/* Creeping Corrosion	|2|G|G
+	 * Sorcery
+	 * Destroy all artifacts. */
 
-	if( event == EVENT_CAN_CAST && affect_me(player, card) ){
+	if( event == EVENT_CAN_CAST ){
 	   return 1;
 	}
 	else if( event == EVENT_RESOLVE_SPELL ){
@@ -647,7 +648,7 @@ int card_go_for_the_throat(int player, int card, event_t event ){
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST && affect_me(player, card) && can_target(&td) ){
+	if( event == EVENT_CAN_CAST && can_target(&td) ){
 	   return 1;
 	}
 	else if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -665,6 +666,14 @@ int card_go_for_the_throat(int player, int card, event_t event ){
 }
 
 int card_vivisection(int player, int card, event_t event ){
+	/* Vivisection	|3|U
+	 * Sorcery
+	 * As an additional cost to cast ~, sacrifice a creature.
+	 * Draw three cards. */
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -673,7 +682,7 @@ int card_vivisection(int player, int card, event_t event ){
 	td.allow_cancel = 0;
 	td.illegal_abilities = 0;
 
-	if( event == EVENT_CAN_CAST && affect_me(player, card) && can_target(&td) ){
+	if( event == EVENT_CAN_CAST && can_target(&td) ){
 	   return  can_sacrifice_as_cost(player, 1, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0);
 	}
 
@@ -688,7 +697,7 @@ int card_vivisection(int player, int card, event_t event ){
 			kill_card(player, card, KILL_DESTROY);
 	}
 
-  return 0;
+	return 0;
 }
 
 int card_thrun_the_last_troll(int player, int card, event_t event){
@@ -1005,30 +1014,31 @@ int card_mortarpod(int player, int card, event_t event){
 	return 0;
 }
 
-int lead_the_stampede_effect(int player, int csvid, int amount){
-	int *deck = deck_ptr[player];
+int lead_the_stampede_effect(int player, int card, int amount){
 	int result = 0;
 	if( amount > count_deck(player) ){
 		amount = count_deck(player);
 	}
-	if( amount > 0 ){
-		char buf[200];
-		sprintf(buf, "Cards revealed by %s", cards_ptr[csvid]->full_name);
-		show_deck( HUMAN, deck, amount, buf, 0, 0x7375B0 );
-		int i = amount-1;
-		while( i > -1 ){
-				if( is_what(-1, deck[i], TYPE_CREATURE) ){
-					add_card_to_hand(player, deck[i]);
-					remove_card_from_deck(player, i);
-					result++;
-					amount--;
-				}
-				i--;
+	while( amount ){
+		char msg[100] = "Select a creature card.";
+		test_definition_t this_test;
+		new_default_test_definition(&this_test, TYPE_CREATURE, msg);
+		this_test.create_minideck = amount;
+		this_test.no_shuffle = 1;
+
+		int revealed =  new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &this_test);
+		if( revealed != -1 ){
+			amount--;
+			result++;
 		}
-		if( amount > 0 ){
-			put_top_x_on_bottom(player, player, amount);
+		else{
+			break;
 		}
 	}
+	if( amount > 0 ){
+		put_top_x_on_bottom(player, player, amount);
+	}
+
 	return result;
 }
 
@@ -1040,7 +1050,7 @@ int card_lead_the_stampede(int player, int card, event_t event){
 	}
 
 	else if(event == EVENT_RESOLVE_SPELL ){
-			lead_the_stampede_effect(player, CARD_ID_LEAD_THE_STAMPEDE, 5);
+			lead_the_stampede_effect(player, card, 5);
 			kill_card(player, card, KILL_DESTROY);
 	}
 
@@ -1083,7 +1093,7 @@ int card_septic_rats(int player, int card, event_t event )
 {
   // Whenever ~ attacks, if defending player is poisoned, it gets +1/+1 until end of turn.
   if ((xtrigger_condition() == XTRIGGER_ATTACKING || event == EVENT_DECLARE_ATTACKERS)
-	  && poison_counters[1-player] > 0
+	  && POISON_COUNTERS(1-player) > 0
 	  && declare_attackers_trigger(player, card, event, 0, player, card))
 	pump_until_eot(player, card, player, card, 1, 1);
 
@@ -1323,6 +1333,11 @@ int card_consecrated_sphinx(int player, int card, event_t event)
 }
 
 int card_contested_war_zone(int player, int card, event_t event){
+	/* Contested War Zone	""
+	 * Land
+	 * Whenever a creature deals combat damage to you, that creature's controller gains control of ~.
+	 * |T: Add |C to your mana pool.
+	 * |1, |T: Attacking creatures get +1/+0 until end of turn. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 	card_instance_t* damage = combat_damage_being_dealt(event);
@@ -1340,7 +1355,7 @@ int card_contested_war_zone(int player, int card, event_t event){
 			give_control_of_self(player, card);
 	}
 
-	else if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	else if( event == EVENT_ACTIVATE ){
 			int choice = 0;
 			if( ! paying_mana() && has_mana_for_activated_ability(player, card, MANACOST_X(2)) && can_use_activated_abilities(player, card) ){
 				int ai_choice = (current_turn == AI && current_phase > PHASE_MAIN1 && current_phase < PHASE_MAIN2) ? 1 : 0;
@@ -1513,7 +1528,7 @@ int card_decimator_web(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_ACTIVATION){
 		if( valid_target(&td) ){
 			lose_life(instance->targets[0].player, 2);
-			poison_counters[instance->targets[0].player]++;
+			poison(instance->targets[0].player, 1);
 			mill(instance->targets[0].player, 6);
 		}
 	}
@@ -2404,7 +2419,7 @@ int card_pistus_strike(int player, int card, event_t event){
 	if(event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
 			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-			poison_counters[instance->targets[0].player]++;
+			poison(instance->targets[0].player, 1);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -2468,50 +2483,34 @@ int card_psychosis_crawler(int player, int card, event_t event){
 }
 
 int card_quicksilve_geyser(int player, int card, event_t event){
+	/*
+	  Quicksilver Geyser |4|U
+	  Instant
+	  Return up to two target nonland permanents to their owners' hands.
+	*/
+
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_PERMANENT);
 	td.illegal_type = TYPE_LAND;
-	if( player == AI ){
-		td.allowed_controller = 1-player;
-		td.preferred_controller = 1-player;
-	}
+	td.allow_cancel = 2; //"Done" button.
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( pick_target(&td, "TARGET_PERMANENT") ){
-			instance->targets[1].player = instance->targets[0].player;
-			instance->targets[1].card = instance->targets[0].card;
-			state_untargettable(instance->targets[1].player, instance->targets[1].card, 1);
-			if( can_target(&td) ){
-				int choice = do_dialog(player, player, card, -1, -1, " Continue\n Stop", 0);
-				if( choice == 0 ){
-					td.allow_cancel = 0;
-					pick_target(&td, "TARGET_PERMANENT");
-				}
-			}
-			state_untargettable(instance->targets[1].player, instance->targets[1].card, 0);
-		}
-	}
-
 	if(event == EVENT_RESOLVE_SPELL ){
-			int i;
-			for(i=0; i<2; i++){
-				if( instance->targets[i].card != -1 ){
-					if( validate_target(player, card, &td, i) ){
-						bounce_permanent(instance->targets[i].player, instance->targets[i].card);
-					}
-				}
+		int i;
+		for(i=0; i<instance->number_of_targets; i++){
+			if( validate_target(player, card, &td, i) ){
+				bounce_permanent(instance->targets[i].player, instance->targets[i].card);
 			}
-			kill_card(player, card, KILL_DESTROY);
+		}
+		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return 0;
+	return generic_spell(player, card, event, GS_OPTIONAL_TARGET | GS_LITERAL_PROMPT, &td, "Select target nonland permanent.", 2, NULL);
 }
 
 int card_rally_the_forces(int player, int card, event_t event){
@@ -2836,7 +2835,7 @@ static int virulent_wound_legacy(int player, int card, event_t event ){
 	card_instance_t *instance = get_card_instance( player, card );
 
 	if( graveyard_from_play(instance->targets[0].player, instance->targets[0].card, event) ){
-		poison_counters[instance->targets[0].player]++;
+		poison(instance->targets[0].player, 1);
 	}
 
 	if( eot_trigger(player, card, event) ){

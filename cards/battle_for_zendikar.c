@@ -1,9 +1,6 @@
 // -*- c-basic-offset:2 -*-
 #include "manalink.h"
 
-int card_UNUSED1(int player, int card, event_t event){return 0;}
-int card_UNUSED2(int player, int card, event_t event){return 0;}
-
 /***** Functions *****/
 
 // Awaken.  See comments within awaken_tgt; also, requires the Modifies Casting Cost bit to be set.
@@ -73,7 +70,7 @@ static int awaken_tgt(int player, int card, event_t event, int flags, target_def
 	return 0;
 
   if (event == EVENT_CAN_CAST)
-	return !td ? 1 : generic_spell(player, card, event, flags, td, prompt, 1, NULL);
+	return !(td || (flags & GS_CAN_ONLY_TARGET_OPPONENT)) ? 1 : generic_spell(player, card, event, flags, td, prompt, 1, NULL);
 
   target_definition_t td_land;
   default_target_definition(player, card, &td_land, TYPE_LAND);
@@ -99,7 +96,7 @@ static int awaken_tgt(int player, int card, event_t event, int flags, target_def
 			  charge_mana_multi(player, MAX(0, x), b, u, g, r, w);
 			  if (cancel == 1)
 				return 0;
-			  if (td)
+			  if (td || (flags & GS_CAN_ONLY_TARGET_OPPONENT))
 				{
 				  generic_spell(player, card, event, flags, td, prompt, 1, NULL);
 				  if (cancel == 1)
@@ -258,10 +255,13 @@ static int process(int who_processes, int num_cards)
 	{
 	  test_definition_t test;
 	  default_test_definition(&test, TYPE_ANY);
-	  if (new_global_tutor(who_processes, 1-who_processes, TUTOR_FROM_RFG, TUTOR_GRAVE, 0, AI_MIN_VALUE, &test) != -1 && num_cards > 1)
+	  if (new_global_tutor(who_processes, 1-who_processes, TUTOR_FROM_RFG, TUTOR_GRAVE, 0, AI_MIN_VALUE, &test) != -1)
 		{
-		  test.qty = num_cards - 1;
-		  new_global_tutor(who_processes, 1-who_processes, TUTOR_FROM_RFG, TUTOR_GRAVE, 1, AI_MIN_VALUE, &test);
+		  if (num_cards > 1)
+			{
+			  test.qty = num_cards - 1;
+			  new_global_tutor(who_processes, 1-who_processes, TUTOR_FROM_RFG, TUTOR_GRAVE, 1, AI_MIN_VALUE, &test);
+			}
 		  return 1;
 		}
 	}
@@ -375,7 +375,7 @@ int card_conduit_of_ruin(int player, int card, event_t event)
 	  test.cmc = 6;
 	  test.cmc_flag = F5_CMC_GREATER_THAN_VALUE;
 
-	  new_global_tutor(player, 1-player, TUTOR_FROM_DECK, TUTOR_DECK, 0, AI_MAX_VALUE, &test);
+	  new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_DECK, 0, AI_MAX_VALUE, &test);
 	}
 
   return 0;
@@ -570,7 +570,7 @@ int card_ulamog_the_ceaseless_hunger(int player, int card, event_t event)
 	  inst->number_of_targets = 0;
 	}
 
-  if (declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card))
+  if (declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY|DAT_STORE_IN_INFO_SLOT, player, card))
 	rfg_top_n_cards_of_deck(1-current_turn, 20);
 
   return 0;
@@ -712,7 +712,8 @@ int card_encircling_fissure(int player, int card, event_t event)
 	  td.allowed_controller = 1-player;
 
 	  if (valid_target(&td))
-		alternate_legacy_text(1, player, fog_special(player, card, 1-player, FOG_COMBAT_DAMAGE_ONLY));
+		alternate_legacy_text(1, player, fog_special(player, card, 1-player,
+													 FOG_COMBAT_DAMAGE_ONLY | FOG_BY_CONTROLLED_BY_PLAYER));
 	  if (awaken_validate(player, card, 1))
 		alternate_legacy_text(2, player, awaken_resolve(player, card, 1, 2));
 	  kill_card(player, card, KILL_DESTROY);
@@ -1288,7 +1289,7 @@ int card_adverse_conditions(int player, int card, event_t event)
 	  int i;
 	  for (i = 0; i < inst->number_of_targets; ++i)
 		if (validate_target(player, card, &td, i))
-		  effect_frost_titan(player, card, inst->targets[0].player, inst->targets[0].card);
+		  effect_frost_titan(player, card, inst->targets[i].player, inst->targets[i].card);
 
 	  generate_token_by_id(player, card, CARD_ID_ELDRAZI_SCION);
 
@@ -1892,7 +1893,7 @@ int card_roilmages_trick(int player, int card, event_t event)
 	{
 	  card_instance_t* inst = get_card_instance(player, card);
 	  // Merging the effects won't do anything, but this lets the effect cards show the power mod instead of just "-X/-0".
-	  pump_creatures_until_eot_merge_pt(player, card, player, -inst->info_slot,0, NULL);
+	  pump_creatures_until_eot_merge_pt(player, card, 1-player, -inst->info_slot,0, NULL);
 	  draw_a_card(player);
 	  kill_card(player, card, KILL_DESTROY);
 	}
@@ -2381,7 +2382,7 @@ int card_drana_liberator_of_malakir(int player, int card, event_t event)
 		  marked[c] = 1;
 	  for (c = 0; c < active_cards_count[player]; ++c)
 		if (marked[c] && in_play(player, c))
-		  add_1_1_counter(player, packets);
+		  add_1_1_counters(player, c, packets);
 	}
 
   return 0;
@@ -2398,7 +2399,7 @@ int card_geyserfield_stalker(int player, int card, event_t event)
    * Menace
    * Landfall - Whenever a land enters the battlefield under your control, ~ gets +2/+2 until end of turn. */
 
-  minimum_blockers(player, card, event, 2);
+  menace(player, card, event);
 
   if (landfall(player, card, event))
 	pump_until_eot_merge_previous(player, card, player, card, 2,2);
@@ -2895,6 +2896,7 @@ int card_molten_nursery(int player, int card, event_t event)
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
 	  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+	  td.allow_cancel = 0;
 
 	  get_card_instance(player, card)->number_of_targets = 0;
 	  if (can_target(&td) && pick_target(&td, "TARGET_CREATURE_OR_PLAYER"))
@@ -2976,8 +2978,8 @@ int card_serpentine_spike(int player, int card, event_t event)
 	  for (i = 0; i < 3; ++i)
 		if (validate_target(player, card, &td, i))
 		  {
-			exile_if_would_be_put_into_graveyard(player, card, inst->targets[i].player, inst->targets[i].card, 1);
-			damage_creature(inst->targets[i].player, inst->targets[i].card, i + 2, player, card);
+			int dc = damage_creature(inst->targets[i].player, inst->targets[i].card, i + 2, player, card);
+			get_card_instance(player, dc)->targets[3].card |= DMG_EXILE_IF_LETHALLY_DAMAGED_THIS_WAY;
 		  }
 	  kill_card(player, card, KILL_DESTROY);
 	}
@@ -3050,6 +3052,7 @@ int card_akoum_hellkite(int player, int card, event_t event)
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
 	  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+	  td.allow_cancel = 0;
 
 	  int mountain = has_subtype(trigger_cause_controller, trigger_cause, get_hacked_subtype(player, card, SUBTYPE_MOUNTAIN));
 
@@ -3256,13 +3259,21 @@ int card_retreat_to_valakut(int player, int card, event_t event)
 	  td_blck.allow_cancel = 0;
 
 	  card_instance_t* inst = get_card_instance(player, card);
-	  if (DIALOG(player, card, EVENT_ACTIVATE,
-				 DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
-				 "+2/+0",		1,	1,	DLG_TARGET(&td_pump, "TARGET_CREATURE"),
-				 "Can't block",	1,	1,	DLG_TARGET(&td_blck, "TARGET_CREATURE")) == 1)
-		pump_until_eot_merge_previous(player, card, inst->targets[0].player, inst->targets[0].card, 2,0);
-	  else
-		pump_ability_until_eot_no_repeat(player, card, inst->targets[0].player, inst->targets[0].card, 0,SP_KEYWORD_CANNOT_BLOCK);
+	  switch (DIALOG(player, card, EVENT_ACTIVATE,
+					 DLG_RANDOM, DLG_NO_STORAGE, DLG_NO_CANCEL,
+					 "+2/+0",		1,	1,	DLG_TARGET(&td_pump, "TARGET_CREATURE"),
+					 "Can't block",	1,	1,	DLG_TARGET(&td_blck, "TARGET_CREATURE")))
+		{
+		  // case 0: auto-chosen without a shown dialog if neither td_pump nor td_blck is targetable
+
+		  case 1:
+			alternate_legacy_text(1, player, pump_until_eot_merge_previous(player, card, inst->targets[0].player, inst->targets[0].card, 2,0));
+			break;
+
+		  case 2:
+			alternate_legacy_text(2, player, pump_ability_until_eot_no_repeat(player, card, inst->targets[0].player, inst->targets[0].card, 0,SP_KEYWORD_CANNOT_BLOCK));
+			break;
+		}
 	}
 
   return global_enchantment(player, card, event);
@@ -3391,7 +3402,7 @@ int card_from_beyond(int player, int card, event_t event)
   if (!IS_GAA_EVENT(event))
 	return global_enchantment(player, card, event);
 
-  if (event == EVENT_RESOLVE_SPELL)
+  if (event == EVENT_RESOLVE_ACTIVATION)
 	{
 	  test_definition_t test;
 	  new_default_test_definition(&test, TYPE_ANY, "Select an Eldrazi card.");
@@ -3838,6 +3849,7 @@ int card_brutal_expulsion(int player, int card, event_t event)
   default_target_definition(player, card, &td_spell_or_creature, 0);
   td_spell_or_creature.illegal_type = TYPE_EFFECT;
   td_spell_or_creature.zone = TARGET_ZONE_IN_PLAY|TARGET_ZONE_ON_STACK;
+  td_spell_or_creature.special = TARGET_SPECIAL_EXTRA_FUNCTION;
   td_spell_or_creature.extra = (int)(&target_is_creature_or_not_on_bf);
 
   target_definition_t td_creature_or_planeswalker;
@@ -3987,7 +3999,7 @@ int card_forerunner_of_slaughter(int player, int card, event_t event)
 	  card_instance_t* inst = get_card_instance(player, card);
 	  pump_ability_until_eot(player, card, inst->targets[0].player, inst->targets[0].card, 0,0, 0,SP_KEYWORD_HASTE);
 	}
-  return generic_activated_ability(player, card, event, GAA_CAN_TARGET|GS_LITERAL_PROMPT, MANACOST_X(1), 0, &td, "Select target colorless creature.");
+  return generic_activated_ability(player, card, event, GAA_CAN_TARGET|GAA_LITERAL_PROMPT, MANACOST_X(1), 0, &td, "Select target colorless creature.");
 }
 
 int card_herald_of_kozilek(int player, int card, event_t event)
@@ -4014,7 +4026,7 @@ int card_sire_of_stagnation(int player, int card, event_t event)
 
   if (specific_cip(player, card, event, 1-player, RESOLVE_TRIGGER_MANDATORY, TYPE_LAND,MATCH, 0,0, 0,0, 0, 0, -1,0))
 	{
-	  rfg_top_n_cards_of_deck(1-current_turn, 2);
+	  rfg_top_n_cards_of_deck(1-player, 2);
 	  draw_cards(player, 2);
 	}
 
@@ -4030,7 +4042,8 @@ int card_ulamogs_nullifier(int player, int card, event_t event)
    * Flying
    * When ~ enters the battlefield, you may put two cards your opponents own from exile into their owners' graveyards. If you do, counter target spell. */
 
-  if (!IS_CASTING(player, card, event))	// sic
+  if (!IS_CASTING(player, card, event) // sic
+	  && trigger_condition != TRIGGER_COMES_INTO_PLAY)
 	return 0;
 
   card_instance_t* inst = get_card_instance(player, card);
@@ -4218,7 +4231,7 @@ int card_kiora_master_of_the_depths(int player, int card, event_t event)
 			{
 			  load_text(0, "TARGET_LAND");
 			  int loc = inst->number_of_targets;
-			  if (!select_target(player, card, &td_creature, text_lines[0], &inst->targets[loc])
+			  if (!select_target(player, card, &td_land, text_lines[0], &inst->targets[loc])
 				  && inst->targets[loc].card == -1)
 				cancel = 1;
 			}
@@ -4283,7 +4296,7 @@ int card_kiora_master_of_the_depths_emblem(int player, int card, event_t event)
    * Emblem
    * Whenever a creature enters the battlefield under your control, you may have it fight target creature. */
 
-  if (specific_cip(player, card, event, 1-player, RESOLVE_TRIGGER_AI(player), TYPE_CREATURE,MATCH, 0,0, 0,0, 0, 0, -1,0))
+  if (specific_cip(player, card, event, player, RESOLVE_TRIGGER_AI(player), TYPE_CREATURE,MATCH, 0,0, 0,0, 0, 0, -1,0))
 	{
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -4418,7 +4431,7 @@ int card_noyan_dar_roil_shaper(int player, int card, event_t event)
 
 	  card_instance_t* inst = get_card_instance(player, card);
 	  inst->number_of_targets = 0;
-	  if (can_target(&td) && new_pick_target(&td, "Select target land you control", -1, 0))
+	  if (can_target(&td) && new_pick_target(&td, "Select target land you control.", -1, GS_LITERAL_PROMPT))
 		{
 		  /* Adding the +1/+1 counters is a cost per rule 117.12.  There isn't currently anything that could prevent it, I don't think; maybe some sort of
 		   * hell-Johnny combination that somehow gave an already-animated land Melira's Keepers' ability.  But it doesn't hurt to check. */
@@ -4479,6 +4492,7 @@ static int omnath_death_trigger(int player, int card, event_t event)
 			  target_definition_t td;
 			  default_target_definition(player, card, &td, TYPE_CREATURE);
 			  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+			  td.allow_cancel = 0;
 
 			  for (; num > 0; --num)
 				{
@@ -4554,7 +4568,7 @@ int card_roil_spout(int player, int card, event_t event)
 		awaken_resolve(player, card, 1, 4);
 	  kill_card(player, card, KILL_DESTROY);
 	}
-  return awaken_tgt(player, card, event, GS_CAN_TARGET, &td, "TARGET_", MANACOST_XWU(4,1,1));
+  return awaken_tgt(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", MANACOST_XWU(4,1,1));
 }
 
 int card_skyrider_elf(int player, int card, event_t event)
@@ -4593,6 +4607,7 @@ int card_veteran_warleader(int player, int card, event_t event)
 
   target_definition_t td;
   base_target_definition(player, card, &td, TYPE_PERMANENT);
+  td.allowed_controller = td.preferred_controller = player;
   td.required_subtype = SUBTYPE_ALLY;
   td.illegal_state = TARGET_STATE_TAPPED;
   td.special = TARGET_SPECIAL_NOT_ME;
@@ -4834,9 +4849,9 @@ int card_pathway_arrows(int player, int card, event_t event)
 		  default_target_definition(player, card, &td, TYPE_CREATURE);	// after reassigning parent
 		  if (valid_target(&td))
 			{
-			  damage_creature(inst->targets[0].player, inst->targets[0].card, 1, inst->targets[8].player, inst->targets[8].card);
-			  if (!(get_color(inst->targets[0].player, inst->targets[0].card) & COLOR_TEST_ANY_COLORED))
-				tap_card(inst->targets[0].player, inst->targets[0].card);
+				//The "tap" effects is done inside of "effect_damage.c" in "damage_effects".
+			  int dmg = damage_creature(inst->targets[0].player, inst->targets[0].card, 1, inst->targets[8].player, inst->targets[8].card);
+			  get_card_instance(player, dmg)->targets[10].card = CARD_ID_PATHWAY_ARROWS;
 			}
 		  break;
 	  }
@@ -4864,6 +4879,7 @@ int card_slab_hammer(int player, int card, event_t event)
 	  target_definition_t td;
 	  base_target_definition(player, card, &td, TYPE_LAND);
 	  td.allowed_controller = player;
+	  td.preferred_controller = player;
 
 	  int eqp = inst->targets[8].player;
 	  int eqc = inst->targets[8].card;
@@ -4873,7 +4889,7 @@ int card_slab_hammer(int player, int card, event_t event)
 		{
 		  bounce_permanent(land.player, land.card);
 		  if (in_play(eqp, eqc))	// Just in case, say, it was equipping an animated land, and you chose to bounce that land
-			pump_until_eot(player, card, player, card, 2,2);
+			pump_until_eot(player, card, eqp, eqc, 2,2);
 		}
 	}
 
@@ -4937,7 +4953,10 @@ int card_blighted_gorge(int player, int card, event_t event)
 
   target_definition_t td;
   if (IS_ACTIVATING(event))
-	default_target_definition(player, card, &td, TYPE_CREATURE);
+	{
+	  default_target_definition(player, card, &td, TYPE_CREATURE);
+	  td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+	}
   return blighted_land(player, card, event, MANACOST_XR(4,1), "Deal damage",1, &td,"TARGET_CREATURE_OR_PLAYER", blighted_gorge_impl);
 }
 
@@ -5222,6 +5241,7 @@ int card_skyline_cascade(int player, int card, event_t event)
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
 	  td.allowed_controller = 1-player;
+	  td.allow_cancel = 0;
 	  if (IS_AI(player))
 		{
 		  td.required_state = TARGET_STATE_TAPPED;

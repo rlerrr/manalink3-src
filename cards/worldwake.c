@@ -319,38 +319,50 @@ int card_basilisk_collar(int player, int card, event_t event)
 }
 
 int card_bazaar_trader(int player, int card, event_t event){
+
+	if( ! IS_GAA_EVENT(event) ){
+		return 0;
+	}
+
 	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_ARTIFACT|TYPE_CREATURE|TYPE_LAND);
-	td.allowed_controller = player;
-	td.preferred_controller = player;
-	target_definition_t td1;
-	default_target_definition(player, card, &td1, TYPE_CREATURE);
-	td1.zone = TARGET_ZONE_PLAYERS;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+	td.zone = TARGET_ZONE_PLAYERS;
+
+	target_definition_t td2;
+	default_target_definition(player, card, &td2, TYPE_ARTIFACT|TYPE_CREATURE|TYPE_LAND);
+	td2.preferred_controller = player;
+	td2.allowed_controller = player;
+
 	card_instance_t *instance = get_card_instance(player, card);
+
 	if( event == EVENT_CAN_ACTIVATE ){
-		if( generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, 0, 0, 0, 0, 0, 0, 0, &td, "TWIDDLE") ){
-			instance->targets[0].player = 1-player;
-			instance->targets[0].card = -1;
-			instance->number_of_targets = 1;
-			return would_valid_target(&td1);
+		if( generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST0, 0, &td, NULL) ){
+			return can_target(&td2);
 		}
 	}
+
 	if(event == EVENT_ACTIVATE ){
-		if( charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) && select_target(player, card, &td, "Select target artifact, creature or land you control.", &instance->targets[1]) ){
-			instance->targets[0].player = 1-player;
-			instance->targets[0].card = -1;
-			instance->number_of_targets = 2;
-			instance->state |= STATE_TAPPED;
-		} else {
-			instance->number_of_targets = 0;
-			cancel = 1;
+		instance->number_of_targets = 0;
+		if( charge_mana_for_activated_ability(player, card, MANACOST0) ){
+			if( new_pick_target(&td, "TARGET_PLAYER", 0, 1) ){
+				if( new_pick_target(&td2, "Select target artifact, creature or land you control.", 1, 1) ){
+					tap_card(player, card);
+				}
+			}
 		}
 	}
+
 	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( validate_target(player, card, &td1, 0) && validate_target(player, card, &td, 1) ){
-			give_control(player, instance->parent_card, instance->targets[1].player, instance->targets[1].card);
+		if( validate_target(player, card, &td, 0) && validate_target(player, card, &td2, 1) ){
+			if( instance->targets[0].player != player ){
+				give_control(instance->parent_controller, instance->parent_card, instance->targets[1].player, instance->targets[1].card);
+			}
+			else{
+				gain_control(instance->parent_controller, instance->parent_card, instance->targets[1].player, instance->targets[1].card);
+			}
 		}
 	}
+
 	return 0;
 }
 
@@ -466,6 +478,7 @@ int card_chain_reaction(int player, int card, event_t event){
 }
 
 int card_comet_storm(int player, int card, event_t event){
+
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -479,14 +492,35 @@ int card_comet_storm(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	if( event == EVENT_CAN_CAST && can_target(&td) ){
-		return ! check_battlefield_for_id(2, CARD_ID_GADDOCK_TEEG);
+	if( event == EVENT_CAN_CAST ){
+		return generic_spell(player, card, event, GS_X_SPELL | GS_CAN_TARGET, &td, NULL, 1, NULL);
 	}
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		instance->number_of_targets = 0;
 		if( spell_fizzled != 1 ){
-			instance->number_of_targets = 0;
+			//A very particular case, so we couldn't use the "set_x_for_x_spell" function
 			instance->info_slot = x_value;
+			int value_before_x = 0;
+			if( cards_data[instance->internal_card_id].cc[1] <= 15 ){
+				value_before_x += cards_data[instance->internal_card_id].cc[1];
+			}
+			int diff = value_before_x - true_get_updated_casting_cost(player, card, -1, event, -1);
+
+			int max_available_targets = 0;
+			int i;
+			for(i=0; i<18; i++){
+				if( has_mana(player, COLOR_COLORLESS, i+1) ){
+					max_available_targets++;
+				}
+				else{
+					break;
+				}
+			}
+			if( diff < 0 ){
+				max_available_targets -= diff;
+			}
+			max_available_targets++;
 			int trgs = 0;
 			if( player == AI ){
 				if( would_validate_arbitrary_target(&td, 1-player, -1) ){
@@ -495,7 +529,7 @@ int card_comet_storm(int player, int card, event_t event){
 					instance->number_of_targets = 1;
 					trgs++;
 				}
-				while( can_target(&td1) && (trgs == 0 || has_mana(player, COLOR_COLORLESS, trgs+1)) && trgs < 18 ){
+				while( can_target(&td1) && trgs < max_available_targets ){
 						if( select_target(player, card, &td1, "Select target creature.", &(instance->targets[trgs])) ){
 							state_untargettable(instance->targets[trgs].player, instance->targets[trgs].card, 1);
 							trgs++;
@@ -507,7 +541,7 @@ int card_comet_storm(int player, int card, event_t event){
 			}
 			else{
 				int targeted_players[2] = {0, 0};
-				while( 1 ){
+				while( trgs < max_available_targets ){
 						if( ! can_target(&td1) ){
 							if( targeted_players[0] ){
 								if( ! would_validate_arbitrary_target(&td, 1, -1) ){
@@ -519,9 +553,6 @@ int card_comet_storm(int player, int card, event_t event){
 									break;
 								}
 							}
-						}
-						if( !(trgs == 0 || has_mana(player, COLOR_COLORLESS, trgs+1)) || trgs > 18  ){
-							break;
 						}
 
 						if( select_target(player, card, &td, "Select target creature or player.", &(instance->targets[trgs])) ){
@@ -544,10 +575,18 @@ int card_comet_storm(int player, int card, event_t event){
 						}
 				}
 			}
-			int i;
 			for(i=0; i<trgs; i++){
 				if( instance->targets[i].card != -1 ){
 					state_untargettable(instance->targets[i].player, instance->targets[i].card, 0);
+				}
+			}
+			instance->number_of_targets = trgs;
+			if( diff < 0 ){
+				int orig_trgs = trgs;
+				trgs += diff;
+				diff += orig_trgs;
+				if( trgs < 0 ){
+					trgs = 0;
 				}
 			}
 			charge_mana(player, COLOR_COLORLESS, trgs-1);
@@ -555,7 +594,9 @@ int card_comet_storm(int player, int card, event_t event){
 				if( trgs > 1 ){
 					set_special_flags(player, card, SF_KICKED);
 				}
-				instance->number_of_targets = trgs;
+				if( diff < 0 ){
+					instance->info_slot -= diff;
+				}
 			}
 		}
 	}
@@ -608,9 +649,16 @@ int card_dragonmaster_outcast( int player, int card, event_t event){
 	 * At the beginning of your upkeep, if you control six or more lands, put a 5/5 |Sred Dragon creature token with flying onto the battlefield. */
 
 	upkeep_trigger_ability(player, card, event, player);
+
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY && count_permanents_by_type(player, TYPE_LAND) >= 6){
-		generate_token_by_id(player, card, CARD_ID_DRAGON);
+		token_generation_t token;
+		default_token_definition(player, card, CARD_ID_DRAGON, &token);
+		token.color_forced = COLOR_TEST_RED;
+		token.pow = 5;
+		token.tou = 5;
+		generate_token(&token);
 	}
+
 	return 0;
 }
 
@@ -691,7 +739,12 @@ int card_everflowing_chalice(int player, int card, event_t event)
 }
 
 int card_explore2(int player, int card, event_t event){
-	if(event == EVENT_CAN_CAST && affect_me(player, card) ){
+	/* Explore	|1|G
+	 * Sorcery
+	 * You may play an additional land this turn.
+	 * Draw a card. */
+
+	if(event == EVENT_CAN_CAST ){
 			return 1;
 	}
 	else if(event == EVENT_RESOLVE_SPELL ){
@@ -937,7 +990,7 @@ int card_join_the_ranks(int player, int card, event_t event){
 	if( event == EVENT_CAN_CAST){
 		return 1;
 	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if(event == EVENT_RESOLVE_SPELL){
 			generate_tokens_by_id(player, card, CARD_ID_SOLDIER_ALLY, 2);
 			kill_card(player, card, KILL_DESTROY );
 	}
@@ -1355,12 +1408,12 @@ int card_omnath_locus_of_mana(int player, int card, event_t event)
 	mana_doesnt_drain_from_pool[player][get_sleighted_color(player, card, COLOR_GREEN)] |= MANADRAIN_DOESNT_DRAIN;
   // ~ gets +1/+1 for each green mana in your mana pool.
   if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && !is_humiliated(player, card))
-	event_result += mana_in_pool[player][get_sleighted_color(player, card, COLOR_GREEN)] + get_card_instance(player, card)->info_slot;
+	event_result += mana_pool[player][get_sleighted_color(player, card, COLOR_GREEN)] + get_card_instance(player, card)->info_slot;
   // AI
   if (event == EVENT_CAN_ACTIVATE && (player == AI || ai_is_speculating == 1) && !is_humiliated(player, card))
 	{
 	  int clr = get_sleighted_color(player, card, COLOR_GREEN);
-	  int more_avail = has_mana(player, clr, 1) - mana_in_pool[player][clr];
+	  int more_avail = has_mana(player, clr, 1) - mana_pool[player][clr];
 	  return more_avail > 0;
 	}
   if (event == EVENT_ACTIVATE)
@@ -1370,21 +1423,21 @@ int card_omnath_locus_of_mana(int player, int card, event_t event)
 	  int any = 0;
 	  while (1)
 		{
-		  int prev_in_pool = mana_in_pool[player][clr];
+		  int prev_in_pool = mana_pool[player][clr];
 		  instance->info_slot = prev_in_pool;	// Prevent p/t from changing while activating
-		  mana_in_pool[player][clr] = 0;
-		  mana_in_pool[player][COLOR_ANY] -= prev_in_pool;
+		  mana_pool[player][clr] = 0;
+		  mana_pool[player][COLOR_ANY] -= prev_in_pool;
 		  charge_mana(player, clr, 1);
 		  instance->info_slot = 0;
-		  mana_in_pool[player][clr] += prev_in_pool;
-		  mana_in_pool[player][COLOR_ANY] += prev_in_pool;
+		  mana_pool[player][clr] += prev_in_pool;
+		  mana_pool[player][COLOR_ANY] += prev_in_pool;
 		  if (cancel == 1)
 			break;
 		  else
 			{
 			  any = 1;
-			  mana_in_pool[player][clr] += 1;
-			  mana_in_pool[player][COLOR_ANY] += 1;
+			  mana_pool[player][clr] += 1;
+			  mana_pool[player][COLOR_ANY] += 1;
 			}
 		}
 	  if (any)
@@ -1394,7 +1447,7 @@ int card_omnath_locus_of_mana(int player, int card, event_t event)
   if (event == EVENT_SHOULD_AI_PLAY)
 	{
 	  int clr = get_sleighted_color(player, card, COLOR_GREEN);
-	  ai_modifier += 24 * mana_in_pool[player][clr];
+	  ai_modifier += 24 * mana_pool[player][clr];
 	}
   return 0;
 }
@@ -1848,8 +1901,12 @@ int card_strength_of_the_tajuru(int player, int card, event_t event){
 }
 
 int card_summit_apes(int player, int card, event_t event){
+	/* Summit Apes	|3|G
+	 * Creature - Ape 5/2
+	 * As long as you control |Ha Mountain, ~ has menace. */
+
 	if( check_battlefield_for_subtype(player, TYPE_LAND, SUBTYPE_MOUNTAIN) ){
-		minimum_blockers(player, card, event, 2);
+		menace(player, card, event);
 	}
 	return 0;
 }

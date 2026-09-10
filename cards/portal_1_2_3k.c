@@ -3,18 +3,27 @@
 // Cards - Portal
 int card_balance_of_power(int player, int card, event_t event){
 
-	if( event == EVENT_CAN_CAST ){
-		return 1;
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
 	}
 
+	target_definition_t td;
+	default_target_definition(player, card, &td, 0);
+	td.zone = TARGET_ZONE_PLAYERS;
+
+	card_instance_t* instance = get_card_instance(player, card);
+
 	if( event == EVENT_RESOLVE_SPELL ){
-		int amount = hand_count[1-player]-hand_count[player];
-		if( amount > 0 ){
-			draw_cards(player, amount);
+		if( valid_target(&td) ){
+			int amount = hand_count[instance->targets[0].player]-hand_count[player];
+			if( amount > 0 ){
+				draw_cards(player, amount);
+			}
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
-	return 0;
+
+	return generic_spell(player, card, event, GS_CAN_ONLY_TARGET_OPPONENT, &td, NULL, 1, NULL);
 }
 
 // bee sting --> shock
@@ -61,6 +70,14 @@ int card_breath_of_life(int player, int card, event_t event){
 	}
 
 	return generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 0, &this_test);
+}
+
+int card_charging_paladin(int player, int card, event_t event){
+	/* Charging Paladin	|2|W	0x200ec79
+	 * Creature - Human Knight 2/2
+	 * Whenever ~ attacks, it gets +0/+3 until end of turn. */
+
+	return when_attacks_pump_self(player, card, event, 0,3);
 }
 
 // cloud dragon --> cloud sprite
@@ -507,14 +524,14 @@ int card_last_chance(int player, int card, event_t event ){
 			int legacy = create_legacy_effect(player, card, &last_chance_legacy);
 			card_instance_t *instance = get_card_instance(player, legacy);
 			instance->targets[1].player = 2;
-			return card_time_walk_exe(player, card, event);
+			return card_time_walk(player, card, event);
 		}
 		else{
 			kill_card(player, card, KILL_DESTROY);
 		}
 	}
 	else{
-		return card_time_walk_exe(player, card, event);
+		return card_time_walk(player, card, event);
 	}
 	return 0;
 }
@@ -711,6 +728,9 @@ int card_sylvan_tutor(int player, int card, event_t event){
 }
 
 int card_temporary_truce(int player, int card, event_t event){
+	/* Temporary Truce	|1|W
+	 * Sorcery
+	 * Each player may draw up to two cards. For each card less than two a player draws this way, that player gains 2 life. */
 
 	if( event == EVENT_CAN_CAST ){
 		return 1;
@@ -720,8 +740,8 @@ int card_temporary_truce(int player, int card, event_t event){
 		int i;
 		for(i=0; i<2; i++){
 			int amount = 2;
-			if( i != AI ){
-				amount = choose_a_number(player, "Draw how many cards?", 2);
+			if( !IS_AI(i) ){
+				amount = choose_a_number(i, "Draw how many cards?", 2);
 				if( amount > 2 || amount < 0 ){
 					amount = 2;
 				}
@@ -1017,14 +1037,33 @@ int card_goblin_lore(int player, int card, event_t event){
 
 int card_lurking_nightstalker(int player, int card, event_t event)
 {
-	// Whenever ~ attacks, it gets +2/+0 until end of turn.
-	if (declare_attackers_trigger(player, card, event, 0, player, card))
-		pump_until_eot(player, card, player, card, 2, 0);
+	/* Borderland Marauder	|1|R	0x200968e
+	 * Creature - Human Warrior 1/2
+	 * Whenever ~ attacks, it gets +2/+0 until end of turn. */
+	/* Brazen Wolves	|2|R
+	 * Creature - Wolf 2/3
+	 * Whenever ~ attacks, it gets +2/+0 until end of turn. */
+	/* Charging Bandits	|4|B
+	 * Creature - Human Rogue 3/3
+	 * Whenever ~ attacks, it gets +2/+0 until end of turn. */
+	/* Hollow Dogs	|4|B
+	 * Creature - Zombie Hound 3/3
+	 * Whenever ~ attacks, it gets +2/+0 until end of turn. */
+	/* Lurking Nightstalker	|B|B
+	 * Creature - Nightstalker 1/1
+	 * Whenever ~ attacks, it gets +2/+0 until end of turn. */
+	/* Ravenous Skirge	|2|B
+	 * Creature - Imp 1/1
+	 * Flying
+	 * Whenever ~ attacks, it gets +2/+0 until end of turn. */
+	/* Vicious Kavu	|1|B|R
+	 * Creature - Kavu 2/2
+	 * Whenever ~ attacks, it gets +2/+0 until end of turn. */
+	/* Wei Ambush Force	|1|B
+	 * Creature - Human Soldier 1/1
+	 * Whenever ~ attacks, it gets +2/+0 until end of turn. */
 
-	if (event == EVENT_POW_BOOST && current_turn == player && current_phase <= PHASE_DECLARE_ATTACKERS)
-		return 2;
-
-	return 0;
+	return when_attacks_pump_self(player, card, event, 2,0);
 }
 
 int card_mystic_denial(int player, int card, event_t event){
@@ -1494,11 +1533,14 @@ int card_guan_yu_sainted_warrior(int player, int card, event_t event){
 // heavy fog --> deep wood
 
 int card_hua_tou(int player, int card, event_t event){
+	/* Hua Tuo, Honored Physician	|1|G|G
+	 * Legendary Creature - Human 1/2
+	 * |T: Put target creature card from your graveyard on top of your library. Activate this ability only during your turn, before attackers are declared. */
 
 	check_legend_rule(player, card, event);
 
 	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) ){
-		if( ! is_tapped(player, card) && ! is_sick(player, card) && has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) ){
+		if( ! is_tapped(player, card) && ! is_sick(player, card) && has_mana_for_activated_ability(player, card, MANACOST0) ){
 			if( current_phase < PHASE_DECLARE_ATTACKERS && current_turn == player){
 				if( count_graveyard_by_type(player, TYPE_CREATURE) > 0 ){
 					return ! graveyard_has_shroud(2);
@@ -1508,7 +1550,7 @@ int card_hua_tou(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_ACTIVATE ){
-		if( charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) ){
+		if( charge_mana_for_activated_ability(player, card, MANACOST0) ){
 			char msg[100] = "Select a creature card.";
 			test_definition_t this_test;
 			new_default_test_definition(&this_test, TYPE_CREATURE, msg);
@@ -1521,7 +1563,7 @@ int card_hua_tou(int player, int card, event_t event){
 		}
 	}
 
-	if( event == EVENT_RESOLVE_ACTIVATION && affect_me(player, card) ){
+	if( event == EVENT_RESOLVE_ACTIVATION ){
 		int selected = validate_target_from_grave(player, card, player, 0);
 		if( selected != -1 ){
 			from_graveyard_to_deck(player, selected, 1);
@@ -1677,19 +1719,21 @@ int card_liu_bei_lord_of_shu(int player, int card, event_t event){
 }
 
 int card_loyal_retainers(int player, int card, event_t event){
+	/* Loyal Retainers	|2|W
+	 * Creature - Human Advisor 1/1
+	 * Sacrifice ~: Return target legendary creature card from your graveyard to the battlefield. Activate this ability only during your turn, before attackers are declared. */
 
 	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) ){
 		if( current_phase < PHASE_DECLARE_ATTACKERS && current_turn == player){
-			if( count_graveyard_by_subtype(player, SUBTYPE_LEGEND) > 0 ){
+			if( any_in_graveyard_by_subtype(player, SUBTYPE_LEGEND) > 0 ){
 				return ! graveyard_has_shroud(2);
 			}
 		}
 	}
 
 	if( event == EVENT_ACTIVATE ){
-		char msg[100] = "Select a Legendary creature card.";
 		test_definition_t this_test;
-		new_default_test_definition(&this_test, TYPE_CREATURE, msg);
+		new_default_test_definition(&this_test, TYPE_CREATURE, "Select target legendary creature card.");
 		this_test.subtype = SUBTYPE_LEGEND;
 		int selected = new_select_target_from_grave(player, card, player, 0, AI_MAX_CMC, &this_test, 0);
 		if( selected == -1 ){
@@ -1700,7 +1744,7 @@ int card_loyal_retainers(int player, int card, event_t event){
 		}
 	}
 
-	if( event == EVENT_RESOLVE_ACTIVATION && affect_me(player, card) ){
+	if( event == EVENT_RESOLVE_ACTIVATION ){
 		int selected = validate_target_from_grave(player, card, player, 0);
 		if( selected != -1 ){
 			reanimate_permanent(player, card, player, selected, REANIMATE_DEFAULT);
@@ -2015,6 +2059,10 @@ int card_wei_night_riders(int player, int card, event_t event){
 // wu light cavalry -->  shu cavalry
 
 int card_xiahou_dun_the_one_eyed(int player, int card, event_t event){
+	/* Xiahou Dun, the One-Eyed	|2|B|B
+	 * Legendary Creature - Human Soldier 3/2
+	 * Horsemanship
+	 * Sacrifice ~: Return target |Sblack card from your graveyard to your hand. Activate this ability only during your turn, before attackers are declared. */
 
 	horsemanship2(player, card, event);
 
@@ -2040,7 +2088,7 @@ int card_xiahou_dun_the_one_eyed(int player, int card, event_t event){
 		}
 	}
 
-	if( event == EVENT_RESOLVE_ACTIVATION && affect_me(player, card) ){
+	if( event == EVENT_RESOLVE_ACTIVATION ){
 		int selected = validate_target_from_grave(player, card, player, 0);
 		if( selected != -1 ){
 			from_grave_to_hand(player, selected, TUTOR_HAND);

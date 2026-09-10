@@ -378,6 +378,10 @@ int card_edric_spymaster_of_trest(int player, int card, event_t event ){
 }
 
 int card_flusterstorm(int player, int card, event_t event ){
+	/* Flusterstorm	|U
+	 * Instant
+	 * Counter target instant or sorcery spell unless its controller pays |1.
+	 * Storm */
 
 	if( event == EVENT_CAN_CAST ){
 		int result = card_force_spike(player, card, event);
@@ -386,15 +390,22 @@ int card_flusterstorm(int player, int card, event_t event ){
 		}
 		return 0;
 	}
-	else if( event == EVENT_RESOLVE_SPELL ){
-			int amount = 1+get_storm_count();
-			counterspell_resolve_unless_pay_x(player, card, NULL, 0, amount);
-			kill_card(player, card, KILL_DESTROY);
-	}
-	else{
+
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		card_instance_t *instance = get_card_instance(player, card);
+		instance->info_slot = 0;
+		if( ! check_special_flags(player, card, SF_NOT_CAST) ){
+			instance->info_slot = get_storm_count();
+		}
 		return card_force_spike(player, card, event);
 	}
 
+	if( event == EVENT_RESOLVE_SPELL ){
+		card_instance_t *instance = get_card_instance(player, card);
+		int amount = 1 + instance->info_slot;
+		counterspell_resolve_unless_pay_x(player, card, NULL, 0, amount);
+		kill_card(player, card, KILL_DESTROY);
+	}
 	return 0;
 }
 
@@ -509,10 +520,14 @@ int card_ghave_guru_of_spores(int player, int card, event_t event){
 }
 
 int card_homeward_path(int player, int card, event_t event){
+	/* Homeward Path	""
+	 * Land
+	 * |T: Add |C to your mana pool.
+	 * |T: Each player gains control of all creatures he or she owns. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if (event == EVENT_ACTIVATE && affect_me(player, card)){
+	if (event == EVENT_ACTIVATE){
 		instance->info_slot = 0;
 		int choice = 0;
 
@@ -975,6 +990,7 @@ int card_sewer_nemesis(int player, int card, event_t event){
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.zone = TARGET_ZONE_PLAYERS;
 		td.allow_cancel = 0;
+		td.illegal_abilities = 0;
 
 		pick_target(&td, "TARGET_PLAYER");
 		instance->targets[1] = instance->targets[0];
@@ -1253,25 +1269,13 @@ int card_trench_gorger(int player, int card, event_t event){
 }
 
 int card_tribute_to_the_wild(int player, int card, event_t event){
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.zone = TARGET_ZONE_PLAYERS;
 
-	card_instance_t *instance = get_card_instance(player, card);
+	if(event == EVENT_RESOLVE_SPELL ){
+		impose_sacrifice(player, card, 1-player, 1, TYPE_ARTIFACT | TYPE_ENCHANTMENT, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+		kill_card(player, card, KILL_DESTROY);
+	}
 
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-	else if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			pick_target(&td, "TARGET_PLAYER");
-	}
-	else if(event == EVENT_RESOLVE_SPELL ){
-			if( valid_target(&td) ){
-				impose_sacrifice(player, card, instance->targets[0].player, 1, TYPE_ARTIFACT | TYPE_ENCHANTMENT, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-			}
-			kill_card(player, card, KILL_DESTROY);
-	}
-	return 0;
+	return basic_spell(player, card, event);
 }
 
 

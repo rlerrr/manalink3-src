@@ -1871,32 +1871,28 @@ int card_stolen_goods(int player, int card, event_t event){
 	 * Target opponent exiles cards from the top of his or her library until he or she exiles a nonland card. Until end of turn, you may cast that card without
 	 * paying its mana cost. */
 
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.zone = TARGET_ZONE_PLAYERS;
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST){
-		instance->targets[0].player = 1-player;
-		return would_valid_target(&td);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		instance->targets[0].player = 1-player;
-	}
-
 	if(event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td)  ){
-			int *deck = deck_ptr[instance->targets[0].player];
-			int removed[count_deck(instance->targets[0].player)];
+			int t_player = instance->targets[0].player;
+			int *deck = deck_ptr[t_player];
+			int removed[count_deck(t_player)];
 			int z=0;
 			while( deck[0] != -1 ){
 					removed[z] = deck[0];
-					rfg_top_card_of_deck(instance->targets[0].player);
+					rfg_top_card_of_deck(t_player);
 					if( !(cards_data[removed[z]].type & TYPE_LAND) ){
 						show_deck(HUMAN, removed, z+1, "These cards were revealed", 0, 0x7375B0 );
-						create_may_play_card_from_exile_effect(player, card, 1-player, cards_data[removed[z]].id, MPCFE_FOR_FREE|MPCFE_UNTIL_EOT);
+						create_may_play_card_from_exile_effect(player, card, t_player, cards_data[removed[z]].id, MPCFE_FOR_FREE|MPCFE_UNTIL_EOT);
 						break;
 					}
 					z++;
@@ -1905,7 +1901,7 @@ int card_stolen_goods(int player, int card, event_t event){
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return 0;
+	return generic_spell(player, card, event, GS_CAN_ONLY_TARGET_OPPONENT, &td, NULL, 1, NULL);
 }
 
 int card_tamiyo_the_moon_sage(int player, int card, event_t event){
@@ -1943,7 +1939,7 @@ int card_tamiyo_the_moon_sage(int player, int card, event_t event){
 		choice = DIALOG(player, card, event,
 						DLG_RANDOM, DLG_PLANESWALKER,
 						"Lock permanent", can_target(&td), 10, 1,
-						"Draw cards as tapped permanents", can_target(&td2), 3*MAX(priority_draw_target[0], priority_draw_target[1]), -2,
+						"Draw cards = tapped creatures", can_target(&td2), 3*MAX(priority_draw_target[0], priority_draw_target[1]), -2,
 						"Emblem", 1, 15, -8);
 
 	  if (event == EVENT_CAN_ACTIVATE)
@@ -2116,20 +2112,17 @@ int card_tandem_lookout(int player, int card, event_t event){
 }
 
 int card_temporal_mastery(int player, int card, event_t event ){
+	/* Temporal Mastery	|5|U|U
+	 * Sorcery
+	 * Take an extra turn after this one. Exile ~.
+	 * Miracle |1|U */
 
 	if( event == EVENT_RESOLVE_SPELL ){
-		if( ! check_battlefield_for_id(1-player, CARD_ID_STRANGLEHOLD) ){
-			convert_to_token(player, card);
-			return card_time_walk_exe(player, card, event);
-		}
-		else{
-			kill_card(player, card, KILL_REMOVE);
-		}
+		time_walk_effect(player, card);
+		kill_card(player, card, KILL_REMOVE);
 	}
-	else{
-		return card_time_walk_exe(player, card, event);
-	}
-	return 0;
+
+	return basic_spell(player, card, event);
 }
 
 int card_vanishment(int player, int card, event_t event){
@@ -2203,9 +2196,102 @@ int card_appetite_for_brains(int player, int card, event_t event){
 	return 0;
 }
 
-int card_blood_artist(int player, int card, event_t event){
-	return card_falkenrath_noble(player, card, event);
+static int blood_artist_effect(int player, int card, event_t event){
+
+	//In case something is copying Pawn of Ulamog and then reverts to its original form.
+	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
+		card_instance_t *instance = get_card_instance(player, card);
+		if( instance->damage_target_player > -1 ){
+			if( get_id(instance->damage_target_player, instance->damage_target_card) != CARD_ID_BLOOD_ARTIST ){
+				kill_card(player, card, KILL_REMOVE);
+			}
+		}
+	}
+
+	if( get_card_instance(player, card)->damage_target_player > -1 && effect_follows_control_of_attachment(player, card, event) ){
+		return 0;
+	}
+
+	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
+		card_instance_t *instance = get_card_instance(player, card);
+		if( in_play(affected_card_controller, affected_card) ){
+			int kill_code = get_card_instance(affected_card_controller, affected_card)->kill_code;
+			if( kill_code ){
+				if( instance->damage_target_player > -1 ){
+					int p = instance->damage_target_player;
+					int c = instance->damage_target_card;
+					if( affect_me(p, c) ){
+						//Will trigger also if this is not a creature when it goes into the graveyard;
+						if( ! is_what(p, c, TYPE_CREATURE) ){
+							count_for_gfp_ability(player, card, event, player, TYPE_PERMANENT, NULL);
+						}
+						instance->damage_target_player = instance->damage_target_card = -1;
+						remove_status(player, card, STATUS_INVISIBLE_FX);
+					}
+				}
+				count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, NULL);
+			}
+		}
+	}
+
+	if( ! check_status(player, card, STATUS_INVISIBLE_FX) ){
+		int amount = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+		if( amount ){
+			life_sucking(player, card, amount);
+			kill_card(player, card, KILL_REMOVE);
+		}
+	}
+
+	//Reset counts if the legacy is still invisible
+	if( trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && event == EVENT_END_TRIGGER ){
+		get_card_instance(player, card)->targets[11].player = 0;
+	}
+
+	return 0;
 }
+
+int card_blood_artist(int player, int card, event_t event){
+
+	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
+		int found = 0;
+		int c;
+		for(c=0; c<active_cards_count[player]; c++){
+			if( in_play(player, c) && is_what(player, c, TYPE_EFFECT) ){
+				card_instance_t *inst = get_card_instance(player, c);
+				if( inst->info_slot == (int)blood_artist_effect ){
+					if( (inst->damage_target_player == player && inst->damage_target_card == card) ||
+						(inst->targets[0].player == player && inst->targets[0].card == card) )
+					{
+						found = 1;
+						break;
+					}
+				}
+			}
+		}
+		if( ! found ){
+			int legacy = create_targetted_legacy_effect(player, card, &blood_artist_effect, player, card);
+			card_instance_t *inst = get_card_instance(player, legacy);
+			inst->targets[0].player = player;
+			inst->targets[0].card = card;
+			inst->number_of_targets = 1;
+			add_status(player, legacy, STATUS_INVISIBLE_FX);
+		}
+	}
+
+	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
+		count_for_gfp_ability(player, card, event, ANYBODY, TYPE_CREATURE, NULL);
+	}
+
+	if( get_card_instance(player, card)->kill_code <= 0 ){
+		int amount = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+		if( amount ){
+			life_sucking(player, card, amount);
+		}
+	}
+
+	return 0;
+}
+
 
 // Bloodflow Connoisseur --> Scarland Thrinax
 
@@ -2418,20 +2504,17 @@ int card_descent_into_madness(int player, int card, event_t event){
 
 			int sacrifices = 0;
 			while( sacrifices < amount ){
+					instance->number_of_targets = 0;
 					if( can_target(&td) ){
-						if( ! can_target(&td1) ){
-							td.allow_cancel = 0;
-						}
-						if( pick_target(&td, "TARGET_PERMANENT") ){
-							instance->number_of_targets = 1;
+						td.allow_cancel = ! can_target(&td1) ? 0 : 1;
+						if( new_pick_target(&td, "Select a permanent you control to exile.", 0, GS_LITERAL_PROMPT) ){
 							kill_card(i, instance->targets[0].card, KILL_REMOVE);
 							sacrifices++;
 						}
 						else{
 							if( can_target(&td1) ){
 								td1.allow_cancel = 0;
-								if( pick_target(&td1, "TARGET_CARD") ){
-									instance->number_of_targets = 1;
+								if( new_pick_target(&td1, "Select a card in your hand to exile.", 0, GS_LITERAL_PROMPT) ){
 									rfg_card_in_hand(i, instance->targets[0].card);
 									sacrifices++;
 								}
@@ -2441,8 +2524,7 @@ int card_descent_into_madness(int player, int card, event_t event){
 					else{
 						if( can_target(&td1) ){
 							td1.allow_cancel = 0;
-							if( pick_target(&td1, "TARGET_CARD") ){
-								instance->number_of_targets = 1;
+							if( new_pick_target(&td1, "Select a card in your hand to exile.", 0, GS_LITERAL_PROMPT) ){
 								rfg_card_in_hand(i, instance->targets[0].card);
 								sacrifices++;
 							}
@@ -2937,29 +3019,29 @@ int card_unhallowed_pact(int player, int card, event_t event){
 
 int card_aggravate(int player, int card, event_t event){
 
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 	td.zone = TARGET_ZONE_PLAYERS;
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		pick_target(&td, "TARGET_PLAYER");
-	}
-
 	if(event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
-			damage_all(player, card, instance->targets[0].player, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-			pump_subtype_until_eot(player, card, instance->targets[0].player, -1, 0, 0, 0, SP_KEYWORD_MUST_ATTACK);
+			card_instance_t *instance = get_card_instance(player, card);
+			int c;
+			for(c=active_cards_count[instance->targets[0].player]-1; c > -1; c--){
+				if( in_play(instance->targets[0].player, c) && is_what(instance->targets[0].player, c, TYPE_CREATURE) ){
+					int dc = damage_creature(instance->targets[0].player, c, 1, player, card);
+					get_card_instance(player, dc)->targets[3].card |= DMG_MUST_ATTACK_IF_DEALT_DAMAGE_THIS_WAY;
+				}
+			}
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return 0;
+	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
 }
 
 int card_banners_rised(int player, int card, event_t event){
@@ -3431,37 +3513,34 @@ int card_rite_of_ruin(int player, int card, event_t event){
 }
 
 int card_pillar_of_flame(int player, int card, event_t event){
+	/*
+	  Pillar of Flame |R
+	  Sorcery
+	  Pillar of Flame deals 2 damage to target creature or player. If a creature dealt damage this way would die this turn, exile it instead.
+	*/
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
 	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
 
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( pick_target(&td, "TARGET_CREATURE_OR_PLAYER") ){
-			instance->info_slot = 2;
-		}
-	}
-
 	if( event == EVENT_RESOLVE_SPELL){
 		if( valid_target(&td) ){
+			card_instance_t *instance = get_card_instance( player, card );
 			if( instance->targets[0].card != -1 ){
-				exile_if_would_be_put_into_graveyard(player, card, instance->targets[0].player, instance->targets[0].card, 1);
-				damage_creature( instance->targets[0].player, instance->targets[0].card, instance->info_slot, player, card);
+				int dc = damage_target0(player, card, 2);
+				get_card_instance(player, dc)->targets[3].card |= DMG_EXILE_IF_LETHALLY_DAMAGED_THIS_WAY;
 			}
 			else{
-				damage_player(instance->targets[0].player, instance->info_slot, player, card);
+				damage_player(instance->targets[0].player, 2, player, card);
 			}
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return 0;
+	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE_OR_PLAYER", 1, NULL);
 }
 
 int card_scalding_devil(int player, int card, event_t event){
@@ -4297,28 +4376,30 @@ int card_revenge_of_the_hunted(int player, int card, event_t event){
 }
 
 int card_sheltering_word(int player, int card, event_t event){
+	/*
+	  Sheltering Word |1|G
+	  Instant
+	  Target creature you control gains hexproof until end of turn. You gain life equal to that creature's toughness.
+	*/
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.preferred_controller = player;
+	td.preferred_controller = td.allowed_controller = player;
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-	else if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-			pick_target(&td,"CREATURE");
-	}
-
-	else if( event == EVENT_RESOLVE_SPELL ){
-			if( valid_target(&td) ){
-				pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, 0, SP_KEYWORD_HEXPROOF);
-				gain_life(player, get_toughness(instance->targets[0].player, instance->targets[0].card) );
-			}
-			kill_card(player, card, KILL_DESTROY);
+	if( event == EVENT_RESOLVE_SPELL ){
+		if( valid_target(&td) ){
+			pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 0, 0, SP_KEYWORD_HEXPROOF);
+			gain_life(player, get_toughness(instance->targets[0].player, instance->targets[0].card) );
+		}
+		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return 0;
+	return generic_spell(player, card, event, GS_CAN_TARGET | GS_LITERAL_PROMPT, &td, "Select target creature you control.", 1, NULL);
 }
 
 int card_snare_the_skies(int player, int card, event_t event){
@@ -5159,10 +5240,14 @@ int card_cavern_of_souls(int player, int card, event_t event){
 }
 
 int card_desolate_lighthouse(int player, int card, event_t event){
+	/* Desolate Lighthouse	""
+	 * Land
+	 * |T: Add |C to your mana pool.
+	 * |1|U|R, |T: Draw a card, then discard a card. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, 2, 0, 1, 0, 1, 0) &&
 			can_use_activated_abilities(player, card)
@@ -5226,6 +5311,10 @@ int card_seraphs_sanctuary(int player, int card, event_t event){
 
 
 int card_slayers_stronghold(int player, int card, event_t event){
+	/* Slayers' Stronghold	""
+	 * Land
+	 * |T: Add |C to your mana pool.
+	 * |R|W, |T: Target creature gets +2/+0 and gains vigilance and haste until end of turn. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
@@ -5233,7 +5322,7 @@ int card_slayers_stronghold(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 1, 1) &&
 			can_use_activated_abilities(player, card) && can_target(&td)

@@ -172,6 +172,11 @@ int card_argothian_treefolk(int player, int card, event_t event){
 int card_armageddon_clock(int player, int card, event_t event)
 {
   // 0x424040
+  /* Armageddon Clock	|6
+   * Artifact
+   * At the beginning of your upkeep, put a doom counter on ~.
+   * At the beginning of your draw step, ~ deals damage equal to the number of doom counters on it to each player.
+   * |4: Remove a doom counter from ~. Any player may activate this ability but only during any upkeep step. */
 
   // At the beginning of your upkeep, put a doom counter on ~.
   upkeep_trigger_ability(player, card, event, player);
@@ -217,7 +222,7 @@ int card_armageddon_clock(int player, int card, event_t event)
 	  return should_ai_activate;
 	}
 
-  if (event == EVENT_ACTIVATE && affect_me(player, card))
+  if (event == EVENT_ACTIVATE)
 	get_card_instance(player, card)->info_slot |= 1;
 
   if (event == EVENT_RESOLVE_ACTIVATION)
@@ -1076,11 +1081,12 @@ int card_millstone(int player, int card, event_t event){
 }
 
 int card_mishras_factory(int player, int card, event_t event){
+
 	card_instance_t *instance = get_card_instance(player, card);
 
 	if( event == EVENT_CHANGE_TYPE && affect_me(player, card) ){
-		if( instance->dummy3 > 0 ){
-			event_result = instance->dummy3;
+		if( instance->targets[12].card > -1 ){
+			event_result = instance->targets[12].card;
 		}
 	}
 
@@ -1151,8 +1157,8 @@ int card_mishras_factory(int player, int card, event_t event){
 		}
 		else {	// event == EVENT_RESOLVE_ACTIVATION
 			if (choice == 2 ){
-				card_instance_t *parent = get_card_instance(instance->parent_controller, instance->parent_card);
-				parent->dummy3 = get_internal_card_id_from_csv_id(CARD_ID_ASSEMBLY_WORKER);
+				get_card_instance(instance->parent_controller, instance->parent_card)->targets[12].card = get_internal_card_id_from_csv_id(CARD_ID_ASSEMBLY_WORKER);
+				add_status(instance->parent_controller, instance->parent_card, STATUS_ANIMATED);
 			}
 			else if (choice == 3 && valid_target(&td)){
 					pump_until_eot(player, instance->parent_card, instance->targets[0].player, instance->targets[0].card, 1, 1);
@@ -1161,7 +1167,7 @@ int card_mishras_factory(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_CLEANUP ){
-		instance->dummy3 = -1;
+		instance->targets[12].card = get_internal_card_id_from_csv_id(CARD_ID_MISHRAS_FACTORY);
 	}
 	return 0;
 }
@@ -1584,9 +1590,9 @@ int card_reconstruction(int player, int card, event_t event){
 		return 0;
 	}
 
-	char msg[100] = "Select a creature card.";
+	char msg[100] = "Select an Artifact card.";
 	test_definition_t this_test;
-	new_default_test_definition(&this_test, TYPE_CREATURE, msg);
+	new_default_test_definition(&this_test, TYPE_ARTIFACT, msg);
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		int selected = validate_target_from_grave_source(player, card, player, 0);
@@ -2099,17 +2105,31 @@ int card_tetravus(int player, int card, event_t event){
 }
 
 int card_the_rack(int player, int card, event_t event){
-
+	// 0x420650
+	/*
+	  The Rack |1
+	  Artifact
+	  As The Rack enters the battlefield, choose an opponent.
+	  At the beginning of the chosen player's upkeep, The Rack deals X damage to that player,
+		where X is 3 minus the number of cards in his or her hand.
+	*/
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) && player == AI ){
 		ai_modifier+=(5*(7-hand_count[1-player]));
 	}
 
-	upkeep_trigger_ability(player, card, event, 1-player);
+	if( event == EVENT_RESOLVE_SPELL ){
+		get_card_instance(player, card)->targets[0].player = 1-player;
+	}
 
-	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-		int amount = 3-hand_count[1-player];
-		if( amount > 0 ){
-			damage_player(1-player, amount, player, card);
+	if( get_card_instance(player, card)->targets[0].player > -1 ){
+		upkeep_trigger_ability(player, card, event, get_card_instance(player, card)->targets[0].player);
+
+		if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
+			int af_player = get_card_instance(player, card)->targets[0].player;
+			int amount = 3-hand_count[af_player];
+			if( amount > 0 ){
+				damage_player(af_player, amount, player, card);
+			}
 		}
 	}
 

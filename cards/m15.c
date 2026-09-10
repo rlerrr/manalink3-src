@@ -52,7 +52,7 @@ int generic_spell_with_convoke(int player, int card, event_t event){
 
 	if( event == EVENT_MODIFY_COST){
 		card_ptr_t* c = cards_ptr[ get_id(player, card)  ];
-		if( has_convoked_mana_extended(player, card, event, c->req_colorless, c->req_black, c->req_blue, c->req_green, c->req_red, c->req_white) ){
+		if( has_convoked_mana_extended(player, card, event, c->req_colorless, c->req_black, c->req_blue, c->req_green, c->req_red, c->req_white) == 2 ){
 			null_casting_cost(player, card);
 			instance->info_slot = 1;
 		}
@@ -1488,34 +1488,34 @@ int card_master_of_predicaments(int player, int card, event_t event){
 	return 0;
 }
 
-int effect_mercurial_pretender(int player, int card, event_t event){
-
-	card_instance_t *instance= get_card_instance(player, card);
-
-	if( instance->damage_target_player > -1 ){
-		if( event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE ){
-			return generic_activated_ability(instance->damage_target_player, instance->damage_target_card, event, 0, MANACOST_XU(2, 2), 0, NULL, NULL);
-		}
-
-		if( event == EVENT_RESOLVE_ACTIVATION ){
-			bounce_permanent(instance->damage_target_player, instance->damage_target_card);
-		}
-	}
-
+int effect_mercurial_pretender(int player, int card, event_t event)
+{
+  if (!IS_GAA_EVENT(event))
 	return 0;
+
+  card_instance_t* inst = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_ACTIVATION && in_play(inst->damage_target_player, inst->damage_target_card))
+	bounce_permanent(inst->damage_target_player, inst->damage_target_card);
+
+  return generic_activated_ability(inst->damage_target_player, inst->damage_target_card, event, 0, MANACOST_XU(2, 2), 0, NULL, NULL);
 }
 
-int card_mercurial_pretender(int player, int card, event_t event){
-	// unconfirmed
-	// Mercurial Pretender 4U
-	// Creature - Shapeshifter (R)
-	// You may have Mercurial Pretender enter the battlefield as a copy of any creature you control except it gains "2UU: Return this creature to its owner's hand."
-	// 0/0
-	if (enters_the_battlefield_as_copy_of_any_creature(player, card, event)){
-		set_legacy_image(player, CARD_ID_MERCURIAL_PRETENDER, create_targetted_legacy_activate(player, card, effect_mercurial_pretender, player, card));
-	}
+int card_mercurial_pretender(int player, int card, event_t event)
+{
+  /* Mercurial Pretender	|4|U
+   * Creature - Shapeshifter 0/0
+   * You may have ~ enter the battlefield as a copy of any creature you control except it gains "|2|U|U: Return this creature to its owner's hand." */
 
-	return 0;
+  target_definition_t td;
+  if (event == EVENT_RESOLVE_SPELL)
+	{
+	  base_target_definition(player, card, &td, TYPE_CREATURE);
+	  td.allowed_controller = td.preferred_controller = player;
+	}
+  if (enters_the_battlefield_as_copy_of_any(player, card, event, &td, "SELECT_A_CREATURE_YOU_CONTROL"))
+	set_legacy_image(player, CARD_ID_MERCURIAL_PRETENDER, create_targetted_legacy_activate(player, card, effect_mercurial_pretender, player, card));
+
+  return 0;
 }
 
 int card_military_intelligence(int player, int card, event_t event){
@@ -2685,18 +2685,15 @@ int card_altac_bloodseeker(int player, int card, event_t event){
 }
 
 int card_belligerent_sliver(int player, int card, event_t event){
-	/*
-	  Belligerent Sliver |2|R
-	  Creature - Sliver
-	  Sliver creatures you control have "This creature can't be blocked except by two or more creatures."
-	  2/2
-	*/
+	/* Belligerent Sliver	|2|R
+	 * Creature - Sliver 2/2
+	 * Sliver creatures you control have menace. */
 
 	if( event == EVENT_DECLARE_BLOCKERS && current_turn == player && ! is_humiliated(player, card) ){
 		int c;
 		for (c = 0; c < active_cards_count[player]; ++c){
 			if (in_play(player, c) && has_subtype(player, c, SUBTYPE_SLIVER)){
-				minimum_blockers(player, c, event, 2);
+				menace(player, c, event);
 			}
 		}
 	}
@@ -3418,7 +3415,7 @@ int card_genesis_hydra(int player, int card, event_t event)
 	card_instance_t* instance = get_card_instance(player, card);
 
 	if (event == EVENT_CAST_SPELL && affect_me(player, card)){
-		if( ! is_token(player, card) ){
+		if( ! is_token(player, card) && ! check_special_flags(player, card, SF_NOT_CAST) ){
 			int x = instance->info_slot = x_value;
 
 			test_definition_t test;
@@ -3805,7 +3802,7 @@ int card_paragon_of_eternal_wilds(int player, int card, event_t event){
 
 int phytotitan_legacy(int player, int card, event_t event){
 	if( current_turn == player && upkeep_trigger(player, card, event) ){
-		seek_grave_for_id_to_reanimate(player, card, player, get_card_instance(player, card)->display_pic_int_id, REANIMATE_TAP);
+		seek_grave_for_id_to_reanimate(player, card, player, get_card_instance(player, card)->display_pic_csv_id, REANIMATE_TAP);
 		kill_card(player, card, KILL_REMOVE);
 	}
 

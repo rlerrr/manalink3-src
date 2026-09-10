@@ -1821,7 +1821,7 @@ return_displayed_bitfield_of_1summonsick__2tapped__4attacking__8blocking__10dama
 //----- (438C40) --------------------------------------------------------
 get_displayed_damage_target_player_card(target_t *ret_tgt, unsigned int player, unsigned int card)
 //----- (438C90) --------------------------------------------------------
-get_displayed_pic_num_and_pic_int_id_of_damage_source_playercard(target_t *ret_source, unsigned int player, unsigned int card)
+get_displayed_pic_num_and_pic_csv_id_of_damage_source_playercard(target_t *ret_source, unsigned int player, unsigned int card)
 //----- (438CE0) --------------------------------------------------------
 get_displayed_type(int player, int card)
 //----- (438D10) --------------------------------------------------------

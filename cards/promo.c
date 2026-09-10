@@ -501,8 +501,8 @@ int card_faerie_dragon(int player, int card, event_t event)
 	  if (effect_card != -1)
 		{
 		  card_instance_t* legacy = get_card_instance(player, effect_card);
-		  legacy->display_pic_int_id = EXE_DWORD_PTR(0x4EC234)[abil];	// The csvids of the mimicked effects
-		  legacy->display_pic_num = get_card_image_number(legacy->display_pic_int_id, player, card);
+		  legacy->display_pic_csv_id = EXE_DWORD_PTR(0x4EC234)[abil];	// The csvids of the mimicked effects
+		  legacy->display_pic_num = get_card_image_number(legacy->display_pic_csv_id, player, card);
 		}
 
 	  get_card_instance(instance->parent_controller, instance->parent_card)->number_of_targets = 0;
@@ -1013,11 +1013,11 @@ int card_rainbow_knights(int player, int card, event_t event){
 
 	if( ! is_humiliated(player, card) ){
 		if( comes_into_play(player, card, event) ){
-			get_card_instance(player, card)->info_slot = 1<<(11+internal_rand(5));
+			instance->targets[1].card = 1<<(11+internal_rand(5));
 		}
 
-		if( event == EVENT_ABILITIES && affect_me(player, card) ){
-			event_result |= get_card_instance(player, card)->info_slot;
+		if( event == EVENT_ABILITIES && affect_me(player, card) && instance->targets[1].card > -1 ){
+			event_result |= instance->targets[1].card;
 		}
 	}
 
@@ -1029,8 +1029,7 @@ int card_rainbow_knights(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_ACTIVATE ){
-		int choice = DIALOG(player, card, event,
-						DLG_RANDOM, DLG_PLANESWALKER,
+		int choice = DIALOG(player, card, event, DLG_RANDOM,
 						"First strike", has_mana_for_activated_ability(player, card, MANACOST_X(1)), 15*(!check_for_ability(player, card, KEYWORD_FIRST_STRIKE)),
 						"Random pump", has_mana_for_activated_ability(player, card, MANACOST_W(2)), 10);
 
@@ -1038,17 +1037,17 @@ int card_rainbow_knights(int player, int card, event_t event){
 			spell_fizzled = 1;
 			return 0;
 		}
-		if( charge_mana_for_activated_ability(player, card, MANACOST_XW(choice == 1, 2*(choice == 2))) ){
-			instance->targets[1].player = choice;
+		if( charge_mana_for_activated_ability(player, card, MANACOST_XW((choice == 1 ? 1 : 0), 2*(choice == 2))) ){
+			instance->info_slot = choice;
 		}
 	}
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( instance->targets[1].player == 1 ){
+		if( instance->info_slot == 1 ){
 			pump_ability_until_eot(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card,
-									0, 0, 0, KEYWORD_FIRST_STRIKE);
+									0, 0, KEYWORD_FIRST_STRIKE, 0);
 		}
-		if( instance->targets[1].player == 2 ){
+		if( instance->info_slot == 2 ){
 			play_sound_effect(WAV_RAINBOWK);
 			int rnd = internal_rand(3)+1;
 			if( rnd < 3 ){

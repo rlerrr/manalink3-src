@@ -16,8 +16,9 @@ use Manalink::Patch;
 # Previous contents:
 #42ea4a:	e8 01 71 00 00	call	0x435b50	; dispatch_event_to_single_card(/*5 args already pushed*/)
 
-patch("Magic.exe", 0x42ea4a,
-      "e8 d4 3f bd 01");	# call	0x2002a23	; event_activate_then_duplicate_into_stack(/*same 5 args already pushed*/)
+#Obsolete - charge_mana() now in C
+#patch("Magic.exe", 0x42ea4a,
+#      "e8 d4 3f bd 01");	# call	0x2002a23	; event_activate_then_duplicate_into_stack(/*same 5 args already pushed*/)
 
 ############################
 # in autotap_mana_source() #

@@ -256,7 +256,7 @@ int card_gideons_phalanx(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
 	{
 	  token_generation_t token;
-	  default_token_definition(player, card, CARD_ID_WARRIOR, &token);
+	  default_token_definition(player, card, CARD_ID_KNIGHT, &token);
 	  token.s_key_plus = SP_KEYWORD_VIGILANCE;
 	  token.qty = 4;
 	  generate_token(&token);
@@ -364,7 +364,7 @@ int card_hixus_prison_warden(int player, int card, event_t event)
 
   card_instance_t* inst, *damage = combat_damage_being_dealt(event);
   if (damage
-	  && damage->damage_target_card == -1 && damage->damage_target_player == player
+	  && damage->damage_target_card == -1 && damage->damage_target_player == player && !damage_is_to_planeswalker(damage)
 	  && (damage->targets[3].player & TYPE_CREATURE)	// probably redundant to "combat damage"
 	  && (inst = in_play(player, card)) && !is_humiliated(player, card)
 	  && inst->info_slot == turn_count
@@ -600,7 +600,7 @@ int card_kytheons_irregulars(int player, int card, event_t event)
 	  tap_card(inst->targets[0].player, inst->targets[0].card);
 	}
 
-  return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST_W(2), 0, &td, "TARGET_CREATURE");
+  return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_W(2), 0, &td, "TARGET_CREATURE");
 }
 
 int card_kytheons_tactics(int player, int card, event_t event)
@@ -740,7 +740,7 @@ int card_suppression_bonds(int player, int card, event_t event)
 	  if (event == EVENT_RESOLVE_SPELL)
 		disable_all_activated_abilities(inst->damage_target_player, inst->damage_target_card, 1);
 
-	  cannot_block(inst->damage_target_player, inst->damage_target_card, event);
+	  cannot_attack(inst->damage_target_player, inst->damage_target_card, event);
 	  cannot_block(inst->damage_target_player, inst->damage_target_card, event);
 	  if (leaves_play(player, card, event))
 		disable_all_activated_abilities(inst->damage_target_player, inst->damage_target_card, 0);
@@ -853,13 +853,13 @@ int card_tragic_arrogance(int player, int card, event_t event)
 	  for (i = 0, p = player; i <= 1; ++i, p = 1-p)
 		{
 		  td.allowed_controller = td.preferred_controller = p;
-		  target_definition_t* td_pref = p == player ? &td_marked_or_land : &td_unmarked_nonland;
+		  target_definition_t* td_pref = p == player ? &td_unmarked_nonland : &td_marked_or_land;
 		  for (t = 0; t < 4; ++t)
 			{
 			  td.required_type = td_pref->required_type = typs[t];
 			  if (can_target(&td))
 				{
-				  pick_target(IS_AI(player) && can_target(td_pref) ? td_pref : &td, prompts[i][t]);
+				  pick_next_target_noload(IS_AI(player) && can_target(td_pref) ? td_pref : &td, prompts[i][t]);
 				  add_state(inst->targets[0].player, inst->targets[0].card, STATE_TARGETTED);
 				  inst->number_of_targets = 0;
 				}
@@ -1154,8 +1154,7 @@ int card_harbinger_of_the_tides(int player, int card, event_t event)
    * You may cast ~ as though it had flash if you pay |2 more to cast it.
    * When ~ enters the battlefield, you may return target tapped creature an opponent controls to its owner's hand. */
 
-  if (event == EVENT_MODIFY_COST && !can_sorcery_be_played(player, event))
-	COST_COLORLESS += 2;
+	spell_can_be_cast_as_instant_by_paying_2(player, card, event);
 
   if (comes_into_play_mode(player, card, event, RESOLVE_TRIGGER_AI(player)))
 	{
@@ -1164,11 +1163,10 @@ int card_harbinger_of_the_tides(int player, int card, event_t event)
 	  td.allowed_controller = 1-player;
 	  td.required_state = TARGET_STATE_TAPPED;
 
-	  if (can_target(&td) && pick_target(&td, "Select target tapped creature an opponent controls."))
-		{
-		  card_instance_t* inst = get_card_instance(player, card);
-		  bounce_permanent(inst->targets[0].player, inst->targets[0].card);
-		}
+	  card_instance_t* inst = get_card_instance(player, card);
+	  inst->number_of_targets = 0;
+	  if (can_target(&td) && pick_next_target_noload(&td, "Select target tapped creature an opponent controls."))
+		bounce_permanent(inst->targets[0].player, inst->targets[0].card);
 	}
 
   return flash(player, card, event);
@@ -1267,6 +1265,7 @@ int card_nivix_barrier(int player, int card, event_t event)
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
 	  td.required_state = TARGET_STATE_ATTACKING;
+	  td.allow_cancel = 0;
 
 	  if (can_target(&td) && pick_target(&td, "TARGET_ATTACKING_CREATURE"))
 		{
@@ -1355,7 +1354,7 @@ int card_send_to_sleep(int player, int card, event_t event)
 		if (validate_target(player, card, &td, i))
 		  {
 			if (mastery)
-			  effect_frost_titan(player, card, inst->targets[0].player, inst->targets[0].card);
+			  effect_frost_titan(player, card, inst->targets[i].player, inst->targets[i].card);
 			else
 			  tap_card(inst->targets[i].player, inst->targets[i].card);
 		  }
@@ -1462,6 +1461,7 @@ int card_thopter_spy_network(int player, int card, event_t event)
   if (damage
 	  && damage->damage_target_card == -1
 	  && (damage->targets[3].player & (TYPE_ARTIFACT|TYPE_CREATURE)) == (TYPE_ARTIFACT|TYPE_CREATURE)
+	  && !damage_is_to_planeswalker(damage)
 	  && !is_humiliated(player, card))
 	get_card_instance(player, card)->info_slot = CARD_ID_THOPTER_SPY_NETWORK;
 
@@ -1585,20 +1585,24 @@ int card_dark_dabbling(int player, int card, event_t event)
 	  card_instance_t* inst = get_card_instance(player, card);
 	  if (valid_target(&td))
 		{
-		  if (!spell_mastery(player))
-			{
-			  int p = inst->targets[0].player, c = inst->targets[0].card;
-			  if (can_regenerate(p, c) && get_card_instance(p, c)->kill_code == KILL_DESTROY)
-				regenerate_target(p, c);
-			}
-		  else
+		  int pt = inst->targets[0].player, ct = inst->targets[0].card;
+		  if (can_regenerate(pt, ct) && get_card_instance(pt, ct)->kill_code == KILL_DESTROY)
+			regenerate_target(pt, ct);
+
+		  if (spell_mastery(player))
 			{
 			  int c;
 			  card_instance_t* cr;
 			  for (c = 0; c < active_cards_count[player]; ++c)
-				if ((cr = in_play(player, c)) && (cr->kill_code == KILL_DESTROY) && is_what(player, c, TYPE_CREATURE) && can_regenerate(player, c))
+				if (!(pt == player && ct == c)
+					&& (cr = in_play(player, c))
+					&& (cr->kill_code == KILL_DESTROY)
+					&& is_what(player, c, TYPE_CREATURE)
+					&& can_regenerate(player, c))
 				  regenerate_target(player, c);
 			}
+
+		  draw_a_card(player);
 		}
 
 	  kill_card(player, card, KILL_DESTROY);
@@ -1672,10 +1676,6 @@ int card_demonic_pact(int player, int card, event_t event)
 	  td_opponent.allowed_controller = 1-player;
 	  td_opponent.zone = TARGET_ZONE_PLAYERS;
 	  td_opponent.allow_cancel = 0;
-
-	  inst->targets[1+1].card = CARD_ID_DEMONIC_PACT;
-	  inst->targets[2+1].card = CARD_ID_DEMONIC_PACT;
-	  inst->targets[3+1].card = CARD_ID_DEMONIC_PACT;
 
 #define ALREADY(choice)	(inst->targets[choice+1].card == CARD_ID_DEMONIC_PACT)
 	  enum
@@ -1796,7 +1796,7 @@ int card_gilt_leaf_winnower(int player, int card, event_t event)
    * Menace
    * When ~ enters the battlefield, you may destroy target non-Elf creature whose power and toughness aren't equal. */
 
-  minimum_blockers(player, card, event, 2);
+  menace(player, card, event);
 
   if (comes_into_play_mode(player, card, event, RESOLVE_TRIGGER_AI(player)))
 	{
@@ -2516,59 +2516,20 @@ int card_chandra_roaring_flame(int player, int card, event_t event)
 			  break;
 
 			case CHOICE_OPPONENT:
-			  ;card_instance_t* inst = get_card_instance(player, card);
-			  int dmg_card = damage_player(1-player, 6, player, card);
-			  card_instance_t* dmg = get_card_instance(1-player, dmg_card);	// Weirdly, damage dealt to a player is "controlled" by that player
-			  ASSERT(dmg->damage_source_player == inst->parent_controller);
-			  ASSERT(dmg->damage_source_card == inst->parent_card);
-			  ASSERT(dmg->internal_card_id == damage_card);
-			  dmg->targets[6].card = CARD_ID_CHANDRA_ROARING_FLAME;
-			  break;
+			{
+				card_instance_t* inst = get_card_instance(player, card);
+				int dmg_card = damage_player(1-player, 6, player, card);
+				card_instance_t* dmg = get_card_instance(1-player, dmg_card);	// Weirdly, damage dealt to a player is "controlled" by that player
+				ASSERT(dmg->damage_source_player == inst->parent_controller);
+				ASSERT(dmg->damage_source_card == inst->parent_card);
+				ASSERT(dmg->internal_card_id == damage_card);
+				dmg->targets[10].card = CARD_ID_CHANDRA_ROARING_FLAME;
+				//The emblem is generated inside of "effect_damage" in "damage_effects.c"
+			}
+			break;
 		  }
 	}
-
-  card_instance_t* damage = damage_being_dealt(event);
-  if (damage
-	  && damage->damage_source_card == card && damage->damage_source_player == player
-	  && damage->targets[6].card == CARD_ID_CHANDRA_ROARING_FLAME
-	  && damage->damage_target_card == -1)
-	{
-	  // Don't create immediately, so that if part of the damage is redirected then redirected back (!), that player only gets one emblem
-	  SET_BYTE3(get_card_instance(player, card)->eot_toughness) |= (1 << damage->damage_target_player);
-	}
-
-  if (trigger_condition == TRIGGER_DEAL_DAMAGE)
-	{
-	  // Not a trigger, so just check immediately.
-	  card_instance_t* inst = get_card_instance(player, card);
-	  int who = BYTE3(inst->eot_toughness);
-	  if (who & 3)
-		{
-		  SET_BYTE3(inst->eot_toughness) = 0;
-
-		  // Something in here mangles these.  Thanks.
-		  int old_affected_card_controller = affected_card_controller, old_affected_card = affected_card, old_event_result = event_result;
-
-		  token_generation_t token;
-		  default_token_definition(player, card, CARD_ID_CHANDRA_ROARING_FLAME_EMBLEM, &token);
-		  if (who & 1)
-			{
-			  token.t_player = 0;
-			  generate_token(&token);
-			}
-		  if (who & 2)
-			{
-			  token.t_player = 1;
-			  generate_token(&token);
-			}
-
-		  affected_card_controller = old_affected_card_controller;
-		  affected_card = old_affected_card;
-		  event_result = old_event_result;
-		}
-	}
-
-  return planeswalker(player, card, event, 4);
+	return planeswalker(player, card, event, 4);
 }
 int card_chandra_roaring_flame_emblem(int player, int card, event_t event)
 {
@@ -2598,6 +2559,7 @@ int card_chandras_ignition(int player, int card, event_t event)
 
   target_definition_t td;
   default_target_definition(player, card, &td, TYPE_CREATURE);
+  td.allowed_controller = td.preferred_controller = player;
 
   if (event == EVENT_RESOLVE_SPELL)
 	{
@@ -2803,7 +2765,7 @@ int card_goblin_glory_chaser(int player, int card, event_t event)
    * As long as ~ is renowned, it has menace. */
 
   if (is_renowned(player, card) && !is_humiliated(player, card))
-    minimum_blockers(player, card, event, 2);
+    menace(player, card, event);
 
   return 0;
 }
@@ -2824,7 +2786,7 @@ int card_infectious_bloodlust(int player, int card, event_t event)
   if (attached_creature_dies_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)))
 	{
 	  // Although effect_this_dies tries reasonably hard to hide it, it's still an effect card; get_id() will return 903.
-	  int csvid = get_card_instance(player, card)->display_pic_int_id;
+	  int csvid = get_card_instance(player, card)->display_pic_csv_id;
 	  char prompt[100];
 	  sprintf(prompt, "Select a card named %s.", cards_ptr[csvid]->full_name);
 
@@ -2910,7 +2872,7 @@ int card_molten_vortex(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td_creature_or_player))
 	damage_target0(player, card, 2);
 
-  int rval = generic_activated_ability(player, card, event, GS_CAN_TARGET, MANACOST_R(1), 0, &td_creature_or_player, "TARGET_CREATURE_OR_PLAYER");
+  int rval = generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_R(1), 0, &td_creature_or_player, "TARGET_CREATURE_OR_PLAYER");
 
   if (event == EVENT_CAN_ACTIVATE && rval && !check_battlefield_for_special_card(player, card, player, 0, &test_land))
 	return 0;
@@ -2949,7 +2911,7 @@ int card_pia_and_kiran_nalaar(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td_creature_or_player))
 	damage_target0(player, card, 2);
 
-  int rval = generic_activated_ability(player, card, event, GS_CAN_TARGET, MANACOST_XR(2,1), 0, &td_creature_or_player, "TARGET_CREATURE_OR_PLAYER");
+  int rval = generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_XR(2,1), 0, &td_creature_or_player, "TARGET_CREATURE_OR_PLAYER");
 
   if (event == EVENT_CAN_ACTIVATE && rval && !can_sacrifice_as_cost(player, 1, TYPE_ARTIFACT,MATCH, 0,0, 0,0, 0,0, -1,0))
 	return 0;
@@ -2966,10 +2928,10 @@ int card_prickleboar(int player, int card, event_t event)
    * Creature - Boar 3/3
    * As long as it's your turn, ~ gets +2/+0 and has first strike. */
 
-  if (event == EVENT_POWER && affect_me(player, card) && !is_humiliated(player, card))
+  if (event == EVENT_POWER && affect_me(player, card) && current_turn == player && !is_humiliated(player, card))
 	event_result += 2;
 
-  if (event == EVENT_ABILITIES && affect_me(player, card) && !is_humiliated(player, card))
+  if (event == EVENT_ABILITIES && affect_me(player, card) && current_turn == player && !is_humiliated(player, card))
 	event_result |= KEYWORD_FIRST_STRIKE;
 
   return 0;
@@ -3061,7 +3023,7 @@ int card_subterranean_scout(int player, int card, event_t event)
 	  if (can_target(&td) && pick_target(&td, "TAWNOS_WAND"))	// "Select target creature with power 2 or less."
 		{
 		  card_instance_t* inst = get_card_instance(player, card);
-		  pump_ability_until_eot(player, card, inst->targets[0].player, inst->targets[0].card, 0,0, 0,SP_KEYWORD_CANNOT_BLOCK);
+		  pump_ability_until_eot(player, card, inst->targets[0].player, inst->targets[0].card, 0,0, 0,SP_KEYWORD_UNBLOCKABLE);
 		}
 	}
 
@@ -3288,15 +3250,15 @@ int card_evolutionary_leap(int player, int card, event_t event)
 		  }
 	  if (!found)
 		--i;
-	  if (i <= 0)
+	  if (++i <= 0)
 		return 0;
 
 	  show_deck(HUMAN, deck, i, "Revealed", 0, (int)"OK");
 	  if (found)
 		{
+		  --i;
 		  add_card_to_hand(player, deck[i]);
 		  remove_card_from_deck(player, i);
-		  --i;
 		}
 
 	  if (i > 0)
@@ -3488,7 +3450,7 @@ int card_nissa_vastwood_seer(int player, int card, event_t event)
 	  test.subtype = get_hacked_subtype(player, card, SUBTYPE_FOREST);
 	  test.sub2 = SUBTYPE_BASIC;
 	  test.subtype_flag = F2_MULTISUBTYPE_ALL;
-	  new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_FIRST_FOUND, &test);
+	  new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_FIRST_FOUND, &test);
 	}
 
   if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && reason_for_trigger_controller == player
@@ -3742,7 +3704,7 @@ int card_valeron_wardens(int player, int card, event_t event)
 	  && trigger_cause_controller == player && !is_humiliated(player, card))
 	{
 	  if (event == EVENT_TRIGGER)
-		event_result |= RESOLVE_TRIGGER_AI(player);
+		event_result |= RESOLVE_TRIGGER_MANDATORY;
 	  if (event == EVENT_RESOLVE_TRIGGER)
 		draw_a_card(player);
 	}
@@ -3933,7 +3895,7 @@ int card_blood_cursed_knight(int player, int card, event_t event)
 	  if (event == EVENT_ABILITIES)
 		lifelink(player, card, event);
 	  else
-		event_result |= 1;
+		event_result += 1;
 	}
 
   return 0;
@@ -4084,7 +4046,7 @@ int card_alchemists_vial(int player, int card, event_t event)
 	{
 	  card_instance_t* inst = get_card_instance(player, card);
 	  int leg = pump_ability_until_eot(player, card, inst->targets[0].player, inst->targets[0].card, 0,0, 0,SP_KEYWORD_CANNOT_BLOCK);
-	  get_card_instance(player, leg)->targets[3].player = PAUE_CANT_ATTACK;
+	  get_card_instance(player, leg)->targets[3].player |= PAUE_CANT_ATTACK;
 	}
 
   return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET|GAA_SACRIFICE_ME, MANACOST_X(1), 0, &td, "TARGET_CREATURE");
@@ -4204,6 +4166,7 @@ int card_mage_ring_responder(int player, int card, event_t event)
 	  target_definition_t td;
 	  default_target_definition(player, card, &td, TYPE_CREATURE);
 	  td.allowed_controller = 1-player;
+	  td.allow_cancel = 0;
 
 	  card_instance_t* inst = get_card_instance(player, card);
 	  inst->number_of_targets = 0;
@@ -4434,7 +4397,7 @@ int card_foundry_of_the_consuls(int player, int card, event_t event)
 	  // else fall through to mana_producer below
 	}
 
-  return mana_producer(player, card, EVENT_CAN_ACTIVATE);
+  return mana_producer(player, card, event);
 }
 
 /* Llanowar Wastes	""	=>functions.c:generic_painland

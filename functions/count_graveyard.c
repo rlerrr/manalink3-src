@@ -116,8 +116,7 @@ int count_graveyard_by_subtype(int player, subtype_t subtype)
 	  for (i = 0; i < 500 && get_grave(p)[i] != -1; ++i)
 		if (has_subtype(-1, get_grave(p)[i], subtype))
 			++count;
-		  return 1;
-  return 0;
+  return count;
 }
 
 int any_in_graveyard_by_subtype(int player, subtype_t subtype)

@@ -155,7 +155,7 @@ int card_ainok_bon_kin(int player, int card, event_t event){
 	  Outlast 1W (1W, T: Put a +1/+1 counter on this creature. Outlast only as a sorcery.)
 	  Each creature you control with a +1/+1 counter on it has first strike.
 	*/
-	if( event == EVENT_ABILITIES && player == affected_card_controller && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && event == EVENT_ABILITIES && player == affected_card_controller && ! is_humiliated(player, card) ){
 		if( count_1_1_counters(affected_card_controller, affected_card) > 0 ){
 			event_result |= KEYWORD_FIRST_STRIKE;
 		}
@@ -524,7 +524,7 @@ int card_suspension_field(int player, int card, event_t event){
 		td.toughness_requirement = 3 | TARGET_PT_GREATER_OR_EQUAL;
 
 		if( comes_into_play_mode(player, card, event, can_target(&td) ? RESOLVE_TRIGGER_AI(player) : 0) ){
-			if( new_pick_target(&td, "Select target creature with toughness 3 or less.", 0, GS_LITERAL_PROMPT) ){
+			if( new_pick_target(&td, "Select target creature with toughness 3 or greater.", 0, GS_LITERAL_PROMPT) ){
 				card_instance_t *instance = get_card_instance(player, card);
 				obliviation(player, card, instance->targets[0].player, instance->targets[0].card);
 				instance->number_of_targets = 0;
@@ -651,30 +651,21 @@ int card_blinding_spray(int player, int card, event_t event){
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
 
-int card_clever_impersonator(int player, int card, event_t event){
-	/*
-	  Clever Impersonator |2|U|U
-	  Creature - Shapeshifter
-	  You have may Clever Impersonator enter the battlefield as a copy of any nonland permanent on the battlefield.
-	  0/0
-	*/
-	card_instance_t *instance = get_card_instance(player, card);
+int card_clever_impersonator(int player, int card, event_t event)
+{
+  /* Clever Impersonator	|2|U|U
+   * Creature - Shapeshifter 0/0
+   * You may have ~ enter the battlefield as a copy of any nonland permanent on the battlefield. */
 
-	if (event == EVENT_RESOLVE_SPELL){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_PERMANENT);
-		td.illegal_type = TYPE_LAND;
-
-		if( new_pick_target(&td, "TARGET_NONLAND_PERMANENT", 0, 0) ){
-			instance->number_of_targets = 0;
-			if (instance->targets[0].card != card || instance->targets[0].player != player)	// didn't pick self
-				set_legacy_image(player, CARD_ID_CLEVER_IMPERSONATOR, create_targetted_legacy_effect(player, card, empty, player, card));
-		}
+  target_definition_t td;
+  if (event == EVENT_RESOLVE_SPELL)
+	{
+	  base_target_definition(player, card, &td, TYPE_PERMANENT);
+	  td.illegal_type = TYPE_LAND;
 	}
+  enters_the_battlefield_as_copy_of_any(player, card, event, &td, "SELECT_A_NONLAND_PERMANENT");
 
-	enters_the_battlefield_as_copy_of(player, card, event, instance->targets[0].player, instance->targets[0].card);
-
-	return 0;
+  return 0;
 }
 
 int card_dig_through_time(int player, int card, event_t event){
@@ -1420,9 +1411,9 @@ int card_bitter_revelation(int player, int card, event_t event){
 			this_test.qty = to_add;
 			this_test.create_minideck = to_reveal;
 			new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 1, AI_MAX_VALUE, &this_test);
-			int to_put_on_bottom = to_reveal-to_add;
-			if( to_put_on_bottom > 0){
-				put_top_x_on_bottom(player, player, to_put_on_bottom);
+			int to_mill = to_reveal-to_add;
+			if( to_mill > 0){
+				mill(player, to_mill);
 			}
 		}
 		lose_life(player, 2);
@@ -1753,37 +1744,40 @@ int card_mer_ek_nightblade(int player, int card, event_t event){
 }
 
 static int molting_snakeskin_ability(int player, int card, event_t event){
+
 	card_instance_t *instance = get_card_instance( player, card);
-
-	int aura_player = is_what(player, card, TYPE_EFFECT) ? instance->targets[0].player : player;
-	if( aura_player > -1 ){
-		int aura_card = is_what(player, card, TYPE_EFFECT) ? instance->targets[0].card : card;
-
-		if( leaves_play(aura_player, aura_card, event) && is_what(player, card, TYPE_EFFECT) ){
-			kill_card(player, card, KILL_REMOVE);
+	
+	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
+		if( player == AI ){
+			remove_status(player, card, STATUS_INVISIBLE_FX);
 		}
-		card_instance_t *attached = get_card_instance( aura_player, aura_card);
-		int enc_player = attached->damage_target_player;
-		int enc_card = attached->damage_target_card;
+		else{
+			add_status(player, card, STATUS_INVISIBLE_FX);
+		}
+	}
 
-		if( is_what(player, card, TYPE_EFFECT) ){
-			if( enc_player != player && ! check_status(player, card, STATUS_INVISIBLE_FX) ){
-				add_status(player, card, STATUS_INVISIBLE_FX);
-			}
-
-			if( enc_player == player && check_status(player, card, STATUS_INVISIBLE_FX) ){
-				remove_status(player, card, STATUS_INVISIBLE_FX);
-			}
+	if( instance->damage_target_player > -1 ){
+		int aura_player = instance->damage_target_player;
+		int aura_card = instance->damage_target_card;
+		
+		if( is_humiliated(aura_player, aura_card) ){
+			return 0;
+		}
+			
+		card_instance_t *aura = get_card_instance( aura_player, aura_card);
+		int enc_player = aura->damage_target_player;
+		int enc_card = aura->damage_target_card;
+		
+		if( enc_player == -1 ){
+			return 0;
 		}
 
 		if( event == EVENT_RESOLVE_ACTIVATION && can_regenerate(enc_player, enc_card) ){
 			regenerate_target(enc_player, enc_card);
 		}
-
-		if( enc_player == player ){
-			return granted_generic_activated_ability(player, card, enc_player, enc_card, event, GAA_REGENERATION, MANACOST_XB(2, 1), 0, NULL, NULL);
-		}
+		return granted_generic_activated_ability(player, card, enc_player, enc_card, event, GAA_REGENERATION, MANACOST_XB(2, 1), 0, NULL, NULL);
 	}
+
 	return 0;
 }
 
@@ -1794,25 +1788,59 @@ int card_molting_snakeskin(int player, int card, event_t event){
 	  Enchant creature
 	  Enchanted creature gets +2/+0 and has "2B: Regenerate this creature."
 	*/
-	card_instance_t *instance = get_card_instance( player, card);
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		int fake = add_card_to_hand(instance->targets[0].player, instance->internal_card_id);
-		int legacy = create_legacy_activate(instance->targets[0].player, fake, &molting_snakeskin_ability);
-		obliterate_card(instance->targets[0].player, fake);
-		card_instance_t *leg = get_card_instance( instance->targets[0].player, legacy);
-		leg->targets[0].player = player;
-		leg->targets[0].card = card;
-		leg->number_of_targets = 1;
+	if( ! is_humiliated(player, card) && IS_GAA_EVENT(event) ){
+		card_instance_t *instance = get_card_instance( player, card);
+		int p = instance->damage_target_player;
+		int c = instance->damage_target_card;
+		if( p == -1 ){
+			return 0;
+		}
+		if( event == EVENT_RESOLVE_ACTIVATION ){
+			if( can_regenerate(p, c) ){
+				regenerate_target(p, c);
+			}
+		}
+		return granted_generic_activated_ability(player, card, p, c, event, GAA_REGENERATION, MANACOST_XB(2, 1), 0, NULL, NULL);
 	}
-
-	if( in_play(player, card) && instance->damage_target_player > -1 ){
-		if( instance->damage_target_player == player && IS_GAA_EVENT(event) ){
-			return molting_snakeskin_ability(player, card, event);
+	
+	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
+		card_instance_t *instance = get_card_instance( player, card);
+		if( instance->damage_target_player == -1 ){
+			return 0;
+		}
+		
+		int found = 0;
+		int p, c;
+		for(p=0; p<2; p++){
+			for(c=active_cards_count[p]-1; c > -1; c--){
+				if( in_play(p, c) && is_what(p, c, TYPE_EFFECT) ){
+					card_instance_t *eff = get_card_instance( p, c );
+					if( eff->info_slot == (int)molting_snakeskin_ability ){
+						if( eff->damage_target_player == player && eff->damage_target_card == card ){
+							found = 1;
+							break;
+						}
+					}
+				}
+			}
+		}
+		if( ! found ){
+			int fake = add_card_to_hand(instance->damage_target_player, instance->internal_card_id);
+			create_targetted_legacy_activate(instance->damage_target_player, fake, &molting_snakeskin_ability, player, card);
+			obliterate_card(instance->damage_target_player, fake);
 		}
 	}
 
-	return generic_aura(player, card, event, player, 2, 0, 0, 0, 0, 0, 0);
+	if( ! IS_AURA_EVENT(player, card, event) ){
+		return 0;
+	}
+
+	target_definition_t td;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+	td.preferred_controller = player;
+
+	return generic_aura(player, card, event, player, 2, 0, KEYWORD_REGENERATION, 0, 0, 0, 0);
 }
 
 int card_murderous_cut(int player, int card, event_t event){
@@ -2672,7 +2700,7 @@ int card_mardu_warshrieker(int player, int card, event_t event){
 	  3/3
 	*/
 	if( raid_cip(player, card, event) ){
-		produce_mana_multi(player, MANACOST_BRW(1, 1, 1));
+		produce_mana_multi(player, MANACOST_RWB(1, 1, 1));
 	}
 
 	return 0;
@@ -2749,10 +2777,12 @@ int card_sarkhan_the_dragonspeaker(int player, int card, event_t event){
 int card_sarkhan_the_dragonspeaker_animated(int player, int card, event_t event){
 	haste(player, card, event);
 	indestructible(player, card, event);
+	check_legend_rule(player, card, event);
 	if( eot_trigger(player, card, event) ){
 		get_card_instance(player, card)->targets[9].card = 0;
 		remove_special_flags(player, card, SF_WONT_RECEIVE_DAMAGE);
 		true_transform(player, card);
+		check_legend_rule(player, card, event);
 	}
 	return planeswalker(player, card, event, 4);
 }
@@ -3163,7 +3193,7 @@ int card_rattleclaw_mystic(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_TURNED_FACE_UP ){
-		produce_mana_multi(player, MANACOST_UGR(1, 1, 1));
+		produce_mana_multi(player, MANACOST_GUR(1, 1, 1));
 	}
 
 	return morph(player, card, event, MANACOST_X(2));
@@ -3454,7 +3484,7 @@ int card_abomination_of_gudul(int player, int card, event_t event){
 		discard(player, 0, player);
 	}
 
-	return morph(player, card, event, MANACOST_XBUG(2, 1, 1, 1));
+	return morph(player, card, event, MANACOST_XBGU(2, 1, 1, 1));
 }
 
 int card_abzan_ascendancy(int player, int card, event_t event){
@@ -4406,17 +4436,11 @@ int card_narset_enlightened_master(int player, int card, event_t event){
 	hexproof(player, card, event);
 
 	if( declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card)){
-		int count = 0;
-		while( deck_ptr[player][0] != -1 && count < 4 ){
-			int iid = deck_ptr[player][0];
-			if (iid != -1){
-				rfg_top_card_of_deck(player);
-				if (!is_what(-1, iid, TYPE_CREATURE | TYPE_LAND)){
-					create_may_play_card_from_exile_effect(player, card, player, cards_data[iid].id, MPCFE_FOR_FREE | MPCFE_UNTIL_EOT);
-				}
-			}
-			count++;
-		}
+		test_definition_t this_test;
+		default_test_definition(&this_test, TYPE_CREATURE | TYPE_LAND);
+		this_test.type_flag = DOESNT_MATCH;
+
+		exile_top_x_card_you_may_play_them(player, card, 4, &this_test, player, MPCFE_FOR_FREE | MPCFE_UNTIL_EOT);
 	}
 
 	return 0;
@@ -4434,7 +4458,7 @@ int card_ponyback_brigade(int player, int card, event_t event){
 		generate_tokens_by_id(player, card, CARD_ID_GOBLIN, 3);
 	}
 
-	return morph(player, card, event, MANACOST_XBRW(2, 1, 1, 1));
+	return morph(player, card, event, MANACOST_XRWB(2, 1, 1, 1));
 }
 
 int card_rakshasa_deathdealer(int player, int card, event_t event){
@@ -4706,7 +4730,7 @@ int card_snowhorn_rider(int player, int card, event_t event){
 	  Morph 2GUR
 	  5/5
 	*/
-	return morph(player, card, event, MANACOST_XUGR(2, 1, 1, 1));
+	return morph(player, card, event, MANACOST_XGUR(2, 1, 1, 1));
 }
 
 int card_sorin_solemn_visitor(int player, int card, event_t event){
@@ -5145,7 +5169,7 @@ int card_villainous_wealth(int player, int card, event_t event){
 			int max = MIN(count_deck(t_player), instance->info_slot);
 			if( max ){
 				int *deck = deck_ptr[t_player];
-				show_deck(player, deck, max, "Cards revealed with Villainous Wealth.", 0, 0x7375B0 );
+				show_deck(player, deck, max, "Cards exiled by Villainous Wealth", 0, 0x7375B0 );
 				int i;
 				int cards_exiled[max];
 				for(i=0; i<max; i++){
@@ -5155,15 +5179,19 @@ int card_villainous_wealth(int player, int card, event_t event){
 				int playable[max];
 				int pc = 0;
 				for(i=0; i<max; i++){
-					if( is_what(-1, cards_exiled[i], TYPE_SPELL) && ! is_what(-1, cards_exiled[i], TYPE_CREATURE) &&
+					if( !is_what(-1, cards_exiled[i], TYPE_LAND) &&
 						get_cmc_by_internal_id(cards_exiled[i]) <= instance->info_slot && can_legally_play_iid(player, cards_exiled[i])
 					  ){
 						playable[pc] = cards_exiled[i];
 						pc++;
 					}
 				}
+				// No need to test for nonland or maximum cmc again; they've already been excluded from the list.
 				test_definition_t this_test;
-				new_default_test_definition(&this_test, TYPE_SPELL, "Select a spell to play for free.");
+				new_default_test_definition(&this_test, TYPE_ANY, "");
+				if (ai_is_speculating != 1){
+					sprintf(this_test.message, "Select a nonland card with cmc %d or less to cast.", instance->info_slot);
+				}
 				while( pc ){
 						int selected = select_card_from_zone(player, player, playable, pc, 0, AI_MAX_VALUE, -1, &this_test);
 						if( selected != -1 ){
@@ -5184,12 +5212,6 @@ int card_villainous_wealth(int player, int card, event_t event){
 						else{
 							break;
 						}
-				}
-				for(i=0; i<max; i++){
-					if( cards_exiled[i] != -1 ){
-						int pos = find_iid_in_rfg(t_player, cards_exiled[i]);
-						from_exile_to_graveyard(player, pos);
-					}
 				}
 			}
 		}
@@ -5248,6 +5270,7 @@ int card_winterflame(int player, int card, event_t event){
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
 		instance->number_of_targets = 0;
 		if( ! check_special_flags2(player, card, SF2_COPIED_FROM_STACK) ){
+			instance->info_slot = 0;
 			int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
 							"Tap creature", 1, 8,
 							"Damage creature", 1, 10,
@@ -5259,19 +5282,13 @@ int card_winterflame(int player, int card, event_t event){
 			instance->info_slot = choice;
 		}
 		if( instance->info_slot & CHOICE_TAP ){
-			if( new_pick_target(&td, "Select target creature to tap.", 0, 1 | GS_LITERAL_PROMPT) ){
-				add_state(instance->targets[0].player, instance->targets[0].card, STATE_TARGETTED);
-			}
-			else{
+			if( ! new_pick_target(&td, "Select target creature to tap.", 0, 1 | GS_LITERAL_PROMPT) ){
 				return 0;
 			}
 		}
 		if( instance->info_slot & CHOICE_DAMAGE ){
 			int tt = (instance->info_slot & CHOICE_TAP) ? 1 : 0;
-			if( new_pick_target(&td, "Select target creature to damage.", tt, 1 | GS_LITERAL_PROMPT) ){
-				add_state(instance->targets[tt].player, instance->targets[tt].card, STATE_TARGETTED);
-			}
-			else{
+			if( ! new_pick_target(&td, "Select target creature to damage.", tt, 1 | GS_LITERAL_PROMPT) ){
 				return 0;
 			}
 		}

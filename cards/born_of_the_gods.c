@@ -1553,8 +1553,8 @@ int card_black_oak_of_odunos(int player, int card, event_t event)
    * |B, Tap another untapped creature you control: ~ gets +1/+1 until end of turn. */
 
   target_definition_t td;
-  default_target_definition(player, card, &td, TYPE_CREATURE);
-  td.illegal_abilities = 0;
+  base_target_definition(player, card, &td, TYPE_CREATURE);
+  td.allowed_controller = td.preferred_controller = player;
   td.illegal_state = TARGET_STATE_TAPPED;
   td.special = TARGET_SPECIAL_NOT_ME;
 
@@ -3420,6 +3420,7 @@ int card_satyr_wayfinder(int player, int card, event_t event)
   return 0;
 }
 
+extern int hack_what_was_sacced_for_gaa;
 int card_scourge_of_skola_vale(int player, int card, event_t event)
 {
   /* Scourge of Skola Vale |2|G
@@ -3437,7 +3438,10 @@ int card_scourge_of_skola_vale(int player, int card, event_t event)
 		add_1_1_counters(instance->parent_controller, instance->parent_card, instance->targets[2].card);
 	}
 
-  return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_SACRIFICE_CREATURE|GAA_NOT_ME_AS_TARGET, MANACOST_X(0), 0, NULL, NULL);
+  int rval = generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_SACRIFICE_CREATURE|GAA_NOT_ME_AS_TARGET, MANACOST_X(0), 0, NULL, NULL);
+  if (event == EVENT_ACTIVATE && hack_what_was_sacced_for_gaa)
+	get_card_instance(player, card)->targets[2].card = get_toughness(BYTE2(hack_what_was_sacced_for_gaa), BYTE3(hack_what_was_sacced_for_gaa));
+  return rval;
 }
 
 /* Setessan Oathsworn |1|G|G => theros.c:card_staunch_hearted_warrior
@@ -4291,6 +4295,7 @@ int card_altar_of_mogis(int player, int card, event_t event){
 }
 
 int unquenchable_fury_legacy(int player, int card, event_t event){
+	// This would probably have been updated to "Minotaur creatures gain menace until end of turn" if it were in Oracle.
 	if( event == EVENT_DECLARE_BLOCKERS ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);

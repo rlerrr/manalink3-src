@@ -1120,6 +1120,9 @@ int card_composite_golem(int player, int card, event_t event){
 }
 
 int card_condescend(int player, int card, event_t event){
+	/* Condescend	|X|U
+	 * Instant
+	 * Counter target spell unless its controller pays |X. Scry 2. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -1300,6 +1303,13 @@ int card_devour_in_shadows(int player, int card, event_t event){
 
 int card_door_to_nothingness( int player, int card, event_t event){
 
+	/* Door to Nothingness	|5
+	 * Artifact
+	 * ~ enters the battlefield tapped.
+	 * |W|W|U|U|B|B|R|R|G|G, |T, Sacrifice ~: Target player loses the game. */
+
+	comes_into_play_tapped(player, card, event);
+
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
 	}
@@ -1309,8 +1319,6 @@ int card_door_to_nothingness( int player, int card, event_t event){
 	td.zone = TARGET_ZONE_PLAYERS;
 
 	card_instance_t *instance = get_card_instance( player, card);
-
-	comes_into_play_tapped(player, card, event);
 
 	if(event == EVENT_RESOLVE_ACTIVATION){
 		if( valid_target(&td) ){
@@ -1336,10 +1344,10 @@ int card_doubling_cube(int player, int card, event_t event){
 			int m[6];
 			int i;
 			for(i=0; i<6; i++){
-				m[i] = mana_pool[i + 8*player];
+				m[i] = mana_pool[player][i];
 			}
 			// Ruling 12/1/2004: Any restrictions on the mana in your pool aren't copied.
-			m[COLOR_COLORLESS] += mana_in_pool[player][COLOR_ARTIFACT];
+			m[COLOR_COLORLESS] += mana_pool[player][COLOR_ARTIFACT];
 			produce_mana_tapped_multi(player, card, m[COLOR_COLORLESS], m[COLOR_BLACK], m[COLOR_BLUE], m[COLOR_GREEN], m[COLOR_RED], m[COLOR_WHITE]);
 		}
 	}
@@ -1800,6 +1808,9 @@ int card_fist_of_suns(int player, int card, event_t event){
 }
 
 int card_fleshgrafter(int player, int card, event_t event){
+	/* Fleshgrafter	|2|B
+	 * Creature - Human Warrior 2/2
+	 * Discard an artifact card: ~ gets +2/+2 until end of turn. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -1815,7 +1826,7 @@ int card_fleshgrafter(int player, int card, event_t event){
 		return check_battlefield_for_special_card(player, card, player, 0, &this_test);
 	}
 
-	if(event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if(event == EVENT_ACTIVATE ){
 		if( charge_mana_for_activated_ability(player, card, MANACOST0) ){
 			int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MAX_CMC, -1, &this_test);
 			if( selected != -1 ){
@@ -1964,6 +1975,11 @@ int card_granulate(int player, int card, event_t event){
 }
 
 int card_guardian_idol(int player, int card, event_t event){
+	/* Guardian Idol	|2
+	 * Artifact
+	 * ~ enters the battlefield tapped.
+	 * |T: Add |C to your mana pool.
+	 * |2: ~ becomes a 2/2 Golem artifact creature until end of turn. */
 
 	comes_into_play_tapped(player, card, event);
 
@@ -1974,11 +1990,16 @@ int card_guardian_idol(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_CAN_ACTIVATE ){
-		set_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
-		if( generic_activated_ability(player, card, event, GAA_TYPE_CHANGE, MANACOST_X(2), 0, NULL, NULL) ){
-			return 1;
+		if( player == AI ){
+			if( generic_activated_ability(player, card, event, GAA_TYPE_CHANGE, MANACOST_X(3), 0, NULL, NULL) ){
+				return 1;
+			}
 		}
-		remove_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
+		else{
+			if( generic_activated_ability(player, card, event, GAA_TYPE_CHANGE, MANACOST_X(2), 0, NULL, NULL) ){
+				return 1;
+			}
+		}
 		return mana_producer(player, card, event);
 	}
 
@@ -1987,13 +2008,20 @@ int card_guardian_idol(int player, int card, event_t event){
 		int abilities[2] = {	mana_producer(player, card, EVENT_CAN_ACTIVATE),
 								0
 		};
-		set_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
-		abilities[1] = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_TYPE_CHANGE, MANACOST_X(2), 0, NULL, NULL);
-		remove_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
+		if( player == AI ){
+			if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_TYPE_CHANGE, MANACOST_X(3), 0, NULL, NULL) ){
+				abilities[1] = 1;
+			}
+		}
+		else{
+			if( generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_TYPE_CHANGE, MANACOST_X(2), 0, NULL, NULL) ){
+				abilities[1] = 1;
+			}
+		}
 
 		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
-						  "Produce mana", abilities[0], 5,
-						  "Animate", abilities[1], 10);
+						  "Produce mana", abilities[0], 1,
+						  "Animate", abilities[1], current_phase < PHASE_DECLARE_ATTACKERS ? 10 : 0);
 		if( ! choice ){
 			spell_fizzled = 1;
 			return 0;
@@ -2002,13 +2030,17 @@ int card_guardian_idol(int player, int card, event_t event){
 			instance->info_slot = choice;
 			return mana_producer(player, card, event);
 		}
-		if( choice == 1){
-			set_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
+		if( choice == 2){
+			if( player == AI ){
+				add_state(player, card, STATE_TAPPED);
+			}
 			generic_activated_ability(player, card, event, GAA_TYPE_CHANGE, MANACOST_X(2), 0, NULL, NULL);
 			if( spell_fizzled != 1 ){
 				instance->info_slot = choice;
 			}
-			remove_special_flags(player, card, SF_MANA_PRODUCER_DISABLED_FOR_AI);
+			if( player == AI ){
+				remove_state(player, card, STATE_TAPPED);
+			}
 		}
 	}
 
@@ -3453,6 +3485,9 @@ int card_trinket_mage(int player, int card, event_t event){
 }
 
 int card_vedalken_mastermind(int player, int card, event_t event){
+	/* Vedalken Mastermind	|U|U
+	 * Creature - Vedalken Wizard 1/2
+	 * |U, |T: Return target permanent you control to its owner's hand. */
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -3471,7 +3506,7 @@ int card_vedalken_mastermind(int player, int card, event_t event){
 		}
 	}
 
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET | GS_LITERAL_PROMPT, MANACOST_U(1), 0,
+	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST_U(1), 0,
 									&td, "Select target permanent you control.");
 }
 

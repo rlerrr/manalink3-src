@@ -884,24 +884,30 @@ int card_cloudpost(int player, int card, event_t event){
 
 int card_confusion_in_the_ranks(int player, int card, event_t event){
 
-	if( specific_cip(player, card, event, 2, 2, TYPE_ARTIFACT | TYPE_CREATURE | TYPE_ENCHANTMENT, 0, 0, 0, 0, 0, 0, 0, -1, 0)){
-		card_instance_t *instance = get_card_instance( player, card );
+	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && reason_for_trigger_controller == player ){
+		if( !(trigger_cause_controller == player && trigger_cause == player) ){
+			if( specific_cip(player, card, event, 2, 2, TYPE_ARTIFACT | TYPE_CREATURE | TYPE_ENCHANTMENT, 0, 0, 0, 0, 0, 0, 0, -1, 0)){
+				card_instance_t *instance = get_card_instance( player, card );
 
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_PERMANENT );
-		td.required_type = get_type(instance->targets[1].player, instance->targets[1].card);
-		td.preferred_controller = 1-instance->targets[1].player;
-		td.allowed_controller = 1-instance->targets[1].player;
-		td.allow_cancel = 0;
-		td.who_chooses = instance->targets[1].player;
+				target_definition_t td;
+				default_target_definition(player, card, &td, TYPE_PERMANENT );
+				td.required_type = get_type(instance->targets[1].player, instance->targets[1].card);
+				td.preferred_controller = 1-instance->targets[1].player;
+				td.allowed_controller = 1-instance->targets[1].player;
+				td.allow_cancel = 0;
+				td.who_chooses = instance->targets[1].player;
 
-		if( can_target(&td) ){
-			pick_target(&td, "TARGET_PERMANENT");
-			instance->number_of_targets = 1;
-			if( instance->targets[1].player == player ){
-				exchange_control_of_target_permanents(player, card, instance->targets[1].player, instance->targets[1].card, instance->targets[0].player, instance->targets[0].card);
-			} else {
-				exchange_control_of_target_permanents(player, card, instance->targets[0].player, instance->targets[0].card, instance->targets[1].player, instance->targets[1].card);
+				instance->number_of_targets = 0;
+
+				if( can_target(&td) ){
+					pick_target(&td, "TARGET_PERMANENT");
+					instance->number_of_targets = 1;
+					if( instance->targets[1].player == player ){
+						exchange_control_of_target_permanents(player, card, instance->targets[1].player, instance->targets[1].card, instance->targets[0].player, instance->targets[0].card);
+					} else {
+						exchange_control_of_target_permanents(player, card, instance->targets[0].player, instance->targets[0].card, instance->targets[1].player, instance->targets[1].card);
+					}
+				}
 			}
 		}
 	}
@@ -910,9 +916,43 @@ int card_confusion_in_the_ranks(int player, int card, event_t event){
 }
 
 int card_consume_spirit(int player, int card, event_t event){
-	return generic_x_spell(player, card, event, TARGET_ZONE_CREATURE_OR_PLAYER, COLOR_BLACK, 9);
-}
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
 
+	target_definition_t td;
+	default_target_definition(player, card, &td, TYPE_CREATURE);
+	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+
+	card_instance_t* instance = get_card_instance(player, card);
+
+	if( event == EVENT_CAN_CAST || event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET ){
+		return generic_spell(player, card, event, GS_CAN_TARGET | GS_X_SPELL, &td, "TARGET_CREATURE_OR_PLAYER", 1, NULL);
+	}
+
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		if( ! played_for_free(player, card) && ! is_token(player, card) ){
+			charge_mana(player, COLOR_BLACK, -1);
+			if( spell_fizzled != 1 ){
+				set_x_for_x_spells(player, card, event, instance->info_slot);
+			}
+		}
+		if( spell_fizzled != 1 ){
+			pick_target(&td, "TARGET_CREATURE_OR_PLAYER");
+		}
+	}
+
+
+	if( event == EVENT_RESOLVE_SPELL ){
+		if( valid_target(&td) && instance->info_slot > 0){
+			damage_target0(player, card, instance->info_slot);
+			gain_life(player, instance->info_slot);
+		}
+		kill_card(player, card, KILL_DESTROY);
+	}
+
+	return 0;
+}
 int card_crystal_shard(int player, int card, event_t event){
 
 	card_instance_t *instance = get_card_instance( player, card );
@@ -975,89 +1015,71 @@ int card_crystal_shard(int player, int card, event_t event){
 }
 
 int card_culling_scales(int player, int card, event_t event){
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_PERMANENT);
-	td.illegal_type = TYPE_LAND;
-	td.illegal_abilities = 0;
-	td.allow_cancel = 0;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
+/*
+Culling Scales |3
+Artifact
+At the beginning of your upkeep, destroy target nonland permanent with the lowest converted mana cost.
+(If two or more permanents are tied for lowest cost, target any one of them.)
+*/
 	upkeep_trigger_ability(player, card, event, player);
 
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-		if( can_target(&td) ){
-			int i;
-			int t_player = -1;
-			int t_card = -1;
-			int doubles_count = 1;
-			int min_t = 100;
-			int count;
-			for(i=0; i<2; i++){
-				count = active_cards_count[i]-1;
-				while( count > -1 ){
-					   if( in_play(i, count) && !is_what(i, count, TYPE_LAND) ){
-						   if( get_cmc(i, count) < min_t ){
-							   t_player = i;
-							   t_card = count;
-							   min_t = get_cmc(i, count);
-							   doubles_count = 1;
-							   instance->targets[doubles_count].player = t_player;
-							   instance->targets[doubles_count].card = t_card;
-						   }
-						   else if( get_cmc(i, count) == min_t ){
-									doubles_count++;
-									instance->targets[doubles_count].player = i;
-									instance->targets[doubles_count].card = count;
-						   }
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_PERMANENT);
+		td.illegal_type = TYPE_LAND;
+		td.allow_cancel = 0;
 
+		card_instance_t *instance = get_card_instance(player, card);
 
-					   }
-					   count--;
-				}
-			}
+		instance->targets[0].player = instance->targets[0].card = -1;
+		instance->number_of_targets = 0;
 
-			if( doubles_count > 1 ){
-				i=0;
-				for(i=0; i<2; i++){
-					count = 0;
-					while( count < active_cards_count[i] ){
-							if( in_play(i, count) && !is_what(i, count, TYPE_LAND) ){
-								card_instance_t *this = get_card_instance(i, count);
-								this->state |= STATE_CANNOT_TARGET;
+		int i;
+		int doubles_count = 0;
+		int min_t = 100;
+		int count;
+		for(i=0; i<2; i++){
+			count = active_cards_count[i]-1;
+			while( count > -1 ){
+					if( in_play(i, count) && is_what(i, count, TYPE_PERMANENT) && ! is_what(i, count, TYPE_LAND) ){
+						if( get_cmc(i, count) < min_t ){
+							min_t = get_cmc(i, count);
+							doubles_count = 0;
+							if( would_validate_arbitrary_target(&td, i, count) ){
+								instance->targets[0].player = i;
+								instance->targets[0].card = count;
+								doubles_count = 1;
 							}
-							count++;
-					}
-				}
-				int k;
-				for(k=0; k<doubles_count; k++){
-					card_instance_t *this = get_card_instance(instance->targets[k+1].player, instance->targets[k+1].card);
-					this->state  &= ~STATE_CANNOT_TARGET;
-				}
-				if( pick_target(&td, "TARGET_PERMANENT") ){
-					instance->number_of_targets = 1;
-					t_player = instance->targets[0].player;
-					t_card = instance->targets[0].card;
-					 i=0;
-					for(i=0; i<2; i++){
-						count = 0;
-						while( count < active_cards_count[i] ){
-								if( in_play(i, count) && !is_what(i, count, TYPE_LAND) ){
-									card_instance_t *this = get_card_instance(i, count);
-									if( this->state & STATE_CANNOT_TARGET ){
-										this->state  &= ~STATE_CANNOT_TARGET;
+						}
+						else if( get_cmc(i, count) == min_t ){
+								if( would_validate_arbitrary_target(&td, i, count) ){
+									if( doubles_count == 0 ){
+										instance->targets[0].player = i;
+										instance->targets[0].card = count;
+										doubles_count = 1;
+									}
+									else{
+										doubles_count++;
 									}
 								}
-								count++;
 						}
 					}
-				}
+					count--;
 			}
+		}
 
-			if( t_player != -1 && t_card != -1 ){
-				kill_card(t_player, t_card, KILL_DESTROY);
-			}
+		if( doubles_count > 1 ){
+			td.special = TARGET_SPECIAL_CMC_LESSER_OR_EQUAL;
+			td.extra = min_t;
+
+			char buffer[100];
+			scnprintf(buffer, 100, "Select target permanent with CMC %d", min_t);
+
+			new_pick_target(&td, buffer, 0, GS_LITERAL_PROMPT);
+		}
+
+		if( instance->targets[0].player > -1 ){
+			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
 		}
 	}
 
@@ -1681,6 +1703,10 @@ int card_glimmervoid(int player, int card, event_t event)
 }
 
 int card_goblin_charbelcher(int player, int card, event_t event){
+	/* Goblin Charbelcher	|4
+	 * Artifact
+	 * |3, |T: Reveal cards from the top of your library until you reveal a land card. ~ deals damage equal to the number of nonland cards revealed this way to target creature or player. If the revealed land card was |Ha Mountain, ~ deals double that damage instead. Put the revealed cards on the bottom of your library in any order. */
+
 	if( ! is_unlocked(player, card, event, 12) ){ return 0; }
 
 	target_definition_t td1;
@@ -1716,7 +1742,7 @@ int card_goblin_charbelcher(int player, int card, event_t event){
 				}
 			}
 	}
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED+GAA_NONSICK+GAA_CAN_TARGET, 3, 0, 0, 0, 0, 0, 0, &td1, "TARGET_PLAYER");
+	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST_X(3), 0, &td1, "TARGET_CREATURE_OR_PLAYER");
 }
 
 int card_goblin_replica(int player, int card, event_t event){
@@ -2699,27 +2725,26 @@ int card_nightmare_lash(int player, int card, event_t event){
 }
 
 int card_nim_devourer(int player, int card, event_t event){
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.allowed_controller = player;
-	td.preferred_controller = player;
-	td.illegal_abilities = 0;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
+/*
+Nim Devourer |3|B|B
+Creature — Zombie 4/1
+Nim Devourer gets +1/+0 for each artifact you control.
+{B}{B}: Return Nim Devourer from your graveyard to the battlefield, then sacrifice a creature.
+		Activate this ability only during your upkeep.
+*/
 	if( player == AI ){
-		if( event == EVENT_GRAVEYARD_ABILITY_UPKEEP && has_mana(player, COLOR_BLACK, 2) ){
-			int choice = do_dialog(player, player, card, -1, -1," Return Nim Devourer to play\n Pass\n", count_subtype(player, TYPE_CREATURE, -1) > 0 ? 0 : 1);
-			if( choice == 0 ){
-				charge_mana(player, COLOR_BLACK, 2);
-				if( spell_fizzled != 1){
-					controller_sacrifices_a_creature(player, card);
-					instance->state &= ~STATE_INVISIBLE;
-					++hand_count[player];
-					put_into_play(player, card);
-					impose_sacrifice(player, card, player, 1, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-					return -1;
+		if( event == EVENT_GRAVEYARD_ABILITY_UPKEEP ){
+			if( has_mana(player, COLOR_BLACK, 2) ){
+				int choice = do_dialog(player, player, card, -1, -1," Return Nim Devourer to play\n Pass", count_subtype(player, TYPE_CREATURE, -1) > 0 ? 0 : 1);
+				if( choice == 0 ){
+					charge_mana(player, COLOR_BLACK, 2);
+					if( spell_fizzled != 1){
+						remove_state(player, card, STATE_INVISIBLE);
+						++hand_count[player];
+						put_into_play(player, card);
+						controller_sacrifices_a_creature(player, card);
+						return -1;
+					}
 				}
 			}
 			return -2;
@@ -2738,7 +2763,7 @@ int card_nim_devourer(int player, int card, event_t event){
 			}
 		}
 		if( event == EVENT_RESOLVE_ACTIVATED_GRAVEYARD_ABILITY ){
-			impose_sacrifice(player, card, player, 1, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+			controller_sacrifices_a_creature(player, card);
 		}
 	}
 	return nims(player, card, event);
@@ -2998,6 +3023,9 @@ int card_one_dozen_eyes(int player, int card, event_t event){
 }
 
 int card_override(int player, int card, event_t event){
+	/* Override	|2|U
+	 * Instant
+	 * Counter target spell unless its controller pays |1 for each artifact you control. */
 
 	if(event == EVENT_RESOLVE_SPELL ){
 			int amount = count_subtype(player, TYPE_ARTIFACT, -1);
@@ -3295,7 +3323,7 @@ int card_quicksilver_fountain(int player, int card, event_t event)
 		  card_instance_t* inst;
 		  for (p = 0; p <= 1; ++p)
 			for (c = 0; c < active_cards_count[p]; ++c)
-			  if ((inst = in_play(p, c)) && is_what(p, c, TYPE_EFFECT) && inst->display_pic_int_id == CARD_ID_QUICKSILVER_FOUNTAIN)
+			  if ((inst = in_play(p, c)) && is_what(p, c, TYPE_EFFECT) && inst->display_pic_csv_id == CARD_ID_QUICKSILVER_FOUNTAIN)
 				kill_card(p, c, KILL_REMOVE);
 
 		  // Remove all flood counters
@@ -3903,7 +3931,7 @@ int card_soldier_replica(int player, int card, event_t event){
 		}
 	}
 
-	return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME+GAA_CAN_TARGET, 1, 0, 0, 0, 0, 1, 0, &td, "TARGET_PLAYER");
+	return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME | GAA_CAN_TARGET, MANACOST_XW(1,1), 0, &td, "TARGET_ATTACKING_BLOCKING_CREATURE");
 }
 
 int card_solemn_simulacrum(int player, int card, event_t event)
@@ -4170,6 +4198,10 @@ int card_sun_droplet(int player, int card, event_t event)
 }
 
 int card_sunbeam_spellbomb(int player, int card, event_t event){
+	/* Sunbeam Spellbomb	|1
+	 * Artifact
+	 * |W, Sacrifice ~: You gain 5 life.
+	 * |1, Sacrifice ~: Draw a card. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -4183,7 +4215,7 @@ int card_sunbeam_spellbomb(int player, int card, event_t event){
 			}
 			else{
 				if( charge_mana_for_activated_ability(player, card, 1-choice, 0, 0, 0, 0, choice) ){
-					instance->targets[1].player = 66;
+					instance->targets[1].player = 66 + choice;
 					kill_card(player, card, KILL_SACRIFICE);
 				}
 			}
@@ -4631,7 +4663,7 @@ int card_turn_to_dust(int player, int card, event_t event){
 	}
 
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		pick_target(&td, "TARGET_ARTIFACT");
+		pick_target(&td, "TARGET_EQUIPMENT");
 	}
 
 	if(event == EVENT_RESOLVE_SPELL ){
@@ -4829,6 +4861,10 @@ int card_war_elemental(int player, int card, event_t event){
 
 int card_welding_jar(int player, int card, event_t event){
 
+	if( ! IS_GAA_EVENT(event) ){
+		return 0;
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE );
 	td.required_type = TYPE_ARTIFACT;
@@ -4845,10 +4881,15 @@ int card_welding_jar(int player, int card, event_t event){
 		}
 	}
 
-	return generic_activated_ability(player, card, event, GAA_UNTAPPED+GAA_NONSICK+GAA_CAN_TARGET+GAA_REGENERATION, 0, 0, 0, 0, 0, 0, 0, &td, "TARGET_ARTIFACT");
+	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET | GAA_REGENERATION | GAA_LITERAL_PROMPT, MANACOST0, 0,
+									&td, "Select target artifact to regenerate.");
 }
 
 int card_wizard_replica(int player, int card, event_t event){
+	/* Wizard Replica	|3
+	 * Artifact Creature - Wizard 1/3
+	 * Flying
+	 * |U, Sacrifice ~: Counter target spell unless its controller pays |2. */
 
 	target_definition_t td;
 	counterspell_target_definition(player, card, &td, 0);

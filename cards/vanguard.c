@@ -1493,26 +1493,27 @@ enum{
 static int legacy_edh_general(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
-	int t_player = instance->damage_target_player;
-	int t_card = instance->damage_target_card;
+	int t_player = instance->targets[0].player; //Not "damage_target_player" as we need to detach the legacy later
+	int t_card = instance->targets[0].card;
 
 	card_instance_t *edh = get_card_instance(instance->targets[1].player, instance->targets[1].card);
 
 	if( instance->damage_target_player > -1 ){
 		player_bits[player] |= PB_COMMANDER_IN_PLAY;
-		if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(t_player, t_card) ){
-			if( ! in_play(t_player, t_card) ){ return 0; }
+		if( event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(t_player, t_card) && in_play(t_player, t_card) ){
 			card_instance_t *general = get_card_instance(t_player, t_card);
 			if( general->kill_code > 0 ){
-				int choice = do_dialog(player, t_player, t_card, -1, -1, " Move the Commander in the Command Zone\n Pass", 0);
+				int owner = get_owner(t_player, t_card);
+				int choice = do_dialog(owner, t_player, t_card, -1, -1, " Move the Commander in the Command Zone\n Pass", 0);
 				if( choice == 0 ){
-					instance->targets[2].player = get_owner(t_player, t_card);
+					instance->targets[2].player = owner;
 					instance->targets[2].card = get_original_internal_card_id(t_player, t_card);
 					instance->damage_target_player = instance->damage_target_card = -1;
 					instance->number_of_targets = 0;
 					if( general->kill_code == KILL_REMOVE ){
 						instance->targets[2].card = -1;
 					}
+					instance->damage_target_player = instance->damage_target_card = -1; //Unattach or it won't trigger in some cases
 				}
 				else{
 					edh->targets[3].player = COMM_MISSING_IN_ACTION;
@@ -1721,6 +1722,21 @@ int card_edh(int player, int card, event_t event){
 				return 1;
 			}
 		}
+		
+		// Tasigur, the Golden Fang: a special case since he has Delve :(
+		if( general_csvid == CARD_ID_TASIGUR_THE_GOLDEN_FANG ){
+			card_ptr_t* c = cards_ptr[ general_csvid ];
+			instance->targets[5].card = instance->info_slot;
+			int t_cless = true_get_updated_casting_cost(player, -1, instance->info_slot, event, -1);
+			instance->targets[5].card = -1;
+			if( t_cless > 0 ){
+				t_cless -= count_graveyard(player);
+			}
+			int cless = MAX(0, t_cless);
+			if( has_mana_multi(player, cless, c->req_black, c->req_blue, c->req_green, c->req_red, c->req_white) ){
+				return 1;
+			}
+		}
 
 		// Check if the general is in the RFG / Command zone (unaccurate, will be fixed later)
 		if( count_counters(player, card, COUNTER_ENERGY) > 0 && ( instance->targets[3].player != COMM_IN_COMMAND_ZONE || ! check_rfg(player, general_csvid)) ){
@@ -1744,6 +1760,7 @@ int card_edh(int player, int card, event_t event){
 			return rval;
 		}
 	}
+	
 	if(event == EVENT_ACTIVATE){
 		int general_csvid = cards_data[instance->info_slot].id;
 		instance->targets[1].player = 1;
@@ -1769,8 +1786,22 @@ int card_edh(int player, int card, event_t event){
 		else if( mode == 1){ //Casting the commander
 				instance->targets[3].card = 0;
 				instance->targets[5].card = instance->info_slot;
-				charge_mana_from_id(player, -1, event, general_csvid);
-				instance->targets[5].card = -1;
+				if( general_csvid == CARD_ID_TASIGUR_THE_GOLDEN_FANG ){
+					int card_added = add_card_to_hand(player, instance->info_slot);
+					hand_count[player]--;
+					add_state(player, card_added, STATE_INVISIBLE);
+					int result = cast_spell_with_delve(player, card_added);
+					obliterate_card(player, card_added);
+					instance->targets[5].card = -1;
+					if( ! result ){
+						spell_fizzled = 1;
+						return 0;
+					}
+				}
+				else{
+					charge_mana_from_id(player, -1, event, general_csvid);
+					instance->targets[5].card = -1;
+				}
 				if (cancel != 1){
 					remove_card_from_rfg(player, general_csvid);
 					int i;
@@ -1787,33 +1818,26 @@ int card_edh(int player, int card, event_t event){
 
 	if(event == EVENT_RESOLVE_ACTIVATION && spell_fizzled != 1){
 		int general_csvid = cards_data[instance->info_slot].id;
-		int card_added = -1;
 		if( instance->targets[1].player == 2 ){
-			card_added = add_card_to_hand(player, get_internal_card_id_from_csv_id(general_csvid));
+			get_card_instance(instance->parent_controller, instance->parent_card)->targets[3].player = COMM_MISSING_IN_ACTION; //Needed for generating the "commander" legacy
+			int card_added = add_card_to_hand(player, get_internal_card_id_from_csv_id(general_csvid));
 			set_special_flags2(player, card_added, SF2_COMMANDER);
 			put_into_play(player, card_added);
 		}
 		else{
+			get_card_instance(instance->parent_controller, instance->parent_card)->targets[3].player = COMM_MISSING_IN_ACTION; //Needed for generating the "commander" legacy
 			add_csvid_to_rfg(player, general_csvid);
-			card_added = play_card_in_exile_for_free_commander(player, player, general_csvid, instance->targets[3].card);
-		}
-		if( in_play(player, card_added) ){
-			commander_enters_the_battlefield(instance->parent_controller, instance->parent_card, instance->parent_controller, card_added);
+			play_card_in_exile_for_free_commander(player, player, general_csvid, instance->targets[3].card);
 		}
 	}
 
 	// "Wait mode" : our Commander is not in play and not in the Command Zone.
 	if(instance->targets[3].player == COMM_MISSING_IN_ACTION ){
-		if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && player == reason_for_trigger_controller ){
-			if( ! is_token(trigger_cause_controller, trigger_cause) &&
-				get_original_internal_card_id(trigger_cause_controller, trigger_cause) == instance->info_slot
+		if( event == EVENT_CAST_SPELL && affected_card_controller == player ){
+			if( ! is_token(affected_card_controller, affected_card) &&
+				get_original_internal_card_id(affected_card_controller, affected_card) == instance->info_slot
 			  ){
-				if (event == EVENT_TRIGGER){
-					event_result |= RESOLVE_TRIGGER_MANDATORY;
-				}
-				else if (event == EVENT_RESOLVE_TRIGGER){
-						commander_enters_the_battlefield(player, card, trigger_cause_controller, trigger_cause);
-				}
+				commander_enters_the_battlefield(player, card, affected_card_controller, affected_card);
 			}
 		}
 	}

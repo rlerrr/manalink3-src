@@ -458,6 +458,27 @@ static int invasion_masters(int player, int card, event_t event, int clr1, int c
 	return 0;
 }
 
+void spell_can_be_cast_as_instant_by_paying_2(int player, int card, event_t event){
+	if( event == EVENT_MODIFY_COST && ! can_sorcery_be_played(player, event) ){
+		if( ! can_sorcery_be_played(player, event) ){
+			COST_COLORLESS+=2;
+			get_card_instance(player, card)->info_slot = 1;
+		}
+		else{
+			get_card_instance(player, card)->info_slot = 0;
+		}
+	}
+
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		if( get_card_instance(player, card)->info_slot == 0 && player != AI && has_mana(player, COLOR_COLORLESS, 2) ){
+			int choice = do_dialog(player, player, card, -1, -1, " Play as Sorcery\n Play as Instant\n Cancel", 0);
+			if( choice == 1 ){
+				charge_mana(player, COLOR_COLORLESS, 2);
+			}
+		}
+	}
+}
+
 // Cards
 
 int card_absorb(int player, int card, event_t event){
@@ -512,33 +533,38 @@ int card_aether_rift(int player, int card, event_t event){
 
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
 		int chosen = get_random_card_in_hand(player);
-		int id = -1;
-		if( is_what(player, chosen, TYPE_CREATURE) ){
-			id = get_id(player, chosen);
-		}
-		discard_card(player, chosen);
-		if( id > -1 ){
-			int result = 0;
-			int i;
-			for(i=0; i<2; i++){
-				int ai_choice = 1;
-				if( life[player] < 11 ){
-					ai_choice = 0;
-				}
-				char buffer[500];
-				card_ptr_t* c = cards_ptr[ id ];
-				scnprintf(buffer, 500, " Make %s return\n Pay 5 life", c->name);
-				int choice = do_dialog(i, player, card, -1, -1, buffer, ai_choice);
-				if( choice == 0 ){
-					result++;
-				}
-				else{
-					lose_life(i, 5);
-					result--;
-				}
+		if( chosen > -1 ){
+			int id = -1;
+			if( is_what(player, chosen, TYPE_CREATURE) ){
+				id = get_id(player, chosen);
 			}
-			if( result == 2 ){
-				seek_grave_for_id_to_reanimate(player, card, player, id, REANIMATE_DEFAULT);
+			discard_card(player, chosen);
+			if( id > -1 ){
+				int result = 0;
+				APNAP(p, { 
+							int choice = 0;
+							if( can_pay_life(p, 5) ){
+								int ai_choice = 1;
+								if( life[p]-5 < 6 ){
+									ai_choice = 0;
+								}
+								char buffer[500];
+								card_ptr_t* c = cards_ptr[ id ];
+								scnprintf(buffer, 500, " Make %s return\n Pay 5 life", c->name);
+								choice = do_dialog(p, player, card, -1, -1, buffer, ai_choice);
+							}
+							if( choice == 0 ){
+								result++;
+							}
+							else{
+								lose_life(p, 5);
+								result--;
+							}
+						};
+				);
+				if( result == 2 ){
+					seek_grave_for_id_to_reanimate(player, card, player, id, REANIMATE_DEFAULT);
+				}
 			}
 		}
 	}
@@ -926,8 +952,7 @@ int card_breaking_wave(int player, int card, event_t event)
    * You may cast ~ any time you could cast an instant if you pay |2 more to cast it.
    * Simultaneously untap all tapped creatures and tap all untapped creatures. */
 
-  if (event == EVENT_MODIFY_COST && !can_sorcery_be_played(player, event))
-	COST_COLORLESS += 2;
+	spell_can_be_cast_as_instant_by_paying_2(player, card, event);
 
   if (event == EVENT_CAN_CAST)
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -1688,9 +1713,7 @@ int card_galinas_knight(int player, int card, event_t event){
 
 int card_ghitu_fire(int player, int card, event_t event){
 
-	if( event == EVENT_MODIFY_COST && ! can_sorcery_be_played(player, event) ){
-		COST_COLORLESS+=2;
-	}
+	spell_can_be_cast_as_instant_by_paying_2(player, card, event);
 
 	if (!IS_GS_EVENT(player, card, event)){
 		return 0;
@@ -2800,9 +2823,7 @@ int card_rith_the_awakener(int player, int card, event_t event){
 
 int card_rout(int player, int card, event_t event){
 	if( ! is_unlocked(player, card, event, 10) ){ return 0; }
-	if( event == EVENT_MODIFY_COST && ! can_sorcery_be_played(player, event) ){
-		COST_COLORLESS += 2;
-	}
+	spell_can_be_cast_as_instant_by_paying_2(player, card, event);
 	return card_wrath_of_god(player, card, event);
 }
 
@@ -2830,9 +2851,7 @@ int card_saproling_symbiosis(int player, int card, event_t event){
 	 * You may cast ~ as though it had flash if you pay |2 more to cast it.
 	 * Put a 1/1 |Sgreen Saproling creature token onto the battlefield for each creature you control. */
 
-	if( event == EVENT_MODIFY_COST && ! can_sorcery_be_played(player, event) ){
-		COST_COLORLESS+=2;
-	}
+	spell_can_be_cast_as_instant_by_paying_2(player, card, event);
 
 	if(event == EVENT_CAN_CAST ){
 		return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -3464,11 +3483,11 @@ int card_tsabos_decree(int player, int card, event_t event){
 
 	if(event == EVENT_RESOLVE_SPELL ){
 		if( valid_target(&td) ){
-			reveal_target_player_hand(instance->targets[0].player);
-
 			test_definition_t this_test;
 			default_test_definition(&this_test, TYPE_CREATURE);
 			this_test.subtype = select_a_subtype(player, card);
+
+			reveal_target_player_hand(instance->targets[0].player);
 
 			ec_definition_t this_definition;
 			default_ec_definition(instance->targets[0].player, player, &this_definition);
@@ -3534,9 +3553,7 @@ int card_tsabos_web(int player, int card, event_t event){
 
 int card_twilights_call(int player, int card, event_t event){
 
-	if( event == EVENT_MODIFY_COST && ! can_sorcery_be_played(player, event) ){
-		COST_COLORLESS+=2;
-	}
+	spell_can_be_cast_as_instant_by_paying_2(player, card, event);
 
 	if(event == EVENT_CAN_CAST ){
 		return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);

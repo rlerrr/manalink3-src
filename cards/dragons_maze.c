@@ -24,25 +24,30 @@ int card_boros_mastiff(int player, int card, event_t event){
 int card_haazda_snare_squad(int player, int card, event_t event)
 {
   // Whenever ~ attacks, you may pay |W. If you do, tap target creature an opponent controls.
-  if ((xtrigger_condition() == XTRIGGER_ATTACKING || event == EVENT_DECLARE_ATTACKERS)
-	  && has_mana(player, COLOR_WHITE, 1))
-	{
-	  target_definition_t td;
-	  default_target_definition(player, card, &td, TYPE_CREATURE);
-	  td.allowed_controller = 1-player;
 
-	  if (can_target(&td)
-		  && declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player), player, card)
-		  && charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_WHITE, 1))
-		{
-		  card_instance_t* instance = get_card_instance(player, card);
-		  instance->number_of_targets = 0;
-		  if (pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS"))
-			tap_card(instance->targets[0].player, instance->targets[0].card);
+	store_attackers(player, card, event, 0, player, card, NULL);
+
+	if (xtrigger_condition() == XTRIGGER_ATTACKING && affect_me(player, card) && reason_for_trigger_controller == player){
+		target_definition_t td;
+		default_target_definition(player, card, &td, TYPE_CREATURE);
+		td.allowed_controller = 1-player;
+
+		card_instance_t* instance = get_card_instance(player, card);
+
+		if(can_target(&td) && has_mana(player, COLOR_WHITE, 1) && is_attacking(player, card) ){
+			if( resolve_declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
+				if( charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_WHITE, 1) ){
+					instance->number_of_targets = 0;
+					if ( pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS") ){
+						tap_card(instance->targets[0].player, instance->targets[0].card);
+					}
+				}
+			}
 		}
+		instance->info_slot = 0;
 	}
-
-  return 0;
+	
+	return 0;
 }
 
 int card_lyev_decree(int player, int card, event_t event){
@@ -86,8 +91,16 @@ int card_maze_sentinel(int player, int card, event_t event){
 int card_renounce_the_guilds(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_SPELL ){
-		impose_sacrifice(player, card, player, 1, TYPE_CREATURE, 0, 0, 0, 0, F3_MULTICOLORED, 0, 0, -1, 0);
-		impose_sacrifice(player, card, 1-player, 1, TYPE_CREATURE, 0, 0, 0, 0, F3_MULTICOLORED, 0, 0, -1, 0);
+		APNAP(p, {
+					test_definition_t test;
+					new_default_test_definition(&test, TYPE_PERMANENT, "Select a multicolored permanent to sacrifice.");
+					test.color_flag = F3_MULTICOLORED;
+					int sac = new_sacrifice(player, card, p, SAC_CAUSED|SAC_NO_CANCEL|SAC_JUST_MARK|SAC_RETURN_CHOICE, &test);
+					if (sac){
+						kill_card(BYTE2(sac), BYTE3(sac), KILL_SACRIFICE);
+					}
+		
+		});
 		kill_card(player, card, KILL_DESTROY );
 	}
 
@@ -188,7 +201,7 @@ int card_aetherling(int player, int card, event_t event){
 			spell_fizzled = 1;
 			return 0;
 		}
-		if( charge_mana_for_activated_ability(player, card, MANACOST_XU((choice == 2 || choice == 3), (choice == 0 || choice == 1))) ){
+		if( charge_mana_for_activated_ability(player, card, MANACOST_XU(((choice == 3 || choice == 4) ? 1 : 0), ((choice == 1 || choice == 2) ? 1 : 0))) ){
 			instance->info_slot = choice;
 		}
 	}
@@ -271,6 +284,9 @@ int card_maze_glider(int player, int card, event_t event){
 }
 
 int card_mindstatic(int player, int card, event_t event){
+	/* Mindstatic	|3|U
+	 * Instant
+	 * Counter target spell unless its controller pays |6. */
 
 	if( event == EVENT_CAN_CAST ){
 		return counterspell(player, card, event, NULL, 0);
@@ -1471,6 +1487,8 @@ int card_korozda_gorgon(int player, int card, event_t event){
 	 * Creature - Gorgon 2/5
 	 * Deathtouch
 	 * |2, Remove a +1/+1 counter from a creature you control: Target creature gets -1/-1 until end of turn. */
+	 
+	deathtouch(player, card, event);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -1763,7 +1781,7 @@ int card_morgue_burst(int player, int card, event_t event){
 int card_nivix_cyclops(int player, int card, event_t event){
 
 	if( specific_spell_played(player, card, event, player, 2, TYPE_SPELL, F1_NO_CREATURE, 0, 0, 0, 0, 0, 0, -1, 0) ){
-		pump_until_eot(player, card, player, card, 3, 0);
+		pump_until_eot_merge_previous(player, card, player, card, 3, 0);
 		int leg = create_targetted_legacy_effect(player, card, effect_defender_can_attack_until_eot, player, card);
 		if (leg != -1){
 			get_card_instance(player, leg)->token_status |= STATUS_INVISIBLE_FX;
@@ -2088,38 +2106,44 @@ int card_reap_intellect(int player, int card, event_t event){
 }
 
 int card_render_silent(int player, int card, event_t event){
-	card_instance_t *instance = get_card_instance(player, card);
+/*
+Render Silent |W|U|U|
+Instant
+Counter target spell. Its controller can't cast spells this turn.
+*/
+
 	if( event == EVENT_RESOLVE_SPELL ){
-		int spc = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);//64
-		card_instance_t *leg = get_card_instance(player, spc);
-		leg->targets[2].player = 64;
-		leg->targets[3].player = instance->targets[0].player;
-		leg->targets[2].card = get_id(player, card);
-		create_card_name_legacy(player, spc, get_id(player, card));
-		return card_counterspell(player, card, event);
+		if( counterspell_validate(player, card, NULL, 0) ){
+			card_instance_t *instance = get_card_instance(player, card);
+			target_player_cant_cast_type(player, card, instance->targets[0].player, TYPE_ANY);
+			real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
+		}
+		kill_card(player, card, KILL_DESTROY);
+		return 0;
 	}
-	else{
-		return card_counterspell(player, card, event);
-	}
-	return 0;
+	return card_counterspell(player, card, event);
 }
 
 // restore the peace --> impossible
 
 int card_rot_farm_skeleton(int player, int card, event_t event){
+	/* Rot Farm Skeleton	|2|B|G
+	 * Creature - Plant Skeleton 4/1
+	 * ~ can't block.
+	 * |2|B|G, Put the top four cards of your library into your graveyard: Return ~ from your graveyard to the battlefield. Activate this ability only any time you could cast a sorcery. */
 
 	cannot_block(player, card, event);
 
 	if(event == EVENT_GRAVEYARD_ABILITY && can_sorcery_be_played(player, event) ){
 		if( has_mana_multi( player, 2, 1, 0, 1, 0, 0) ){
-			return 1;
+			return GA_RETURN_TO_PLAY;
 		}
 	}
 	else if( event == EVENT_PAY_FLASHBACK_COSTS ){
 			charge_mana_multi( player, 2, 1, 0, 1, 0, 0);
 			if( spell_fizzled != 1 ){
 				mill(player, 4);
-				return 1;
+				return GAPAID_REMOVE;
 			}
 	}
 
@@ -3640,7 +3664,66 @@ int card_wear_tear(int player, int card, event_t event){
 // Artifacts
 
 int card_azorius_cluestone(int player, int card, event_t event){
-	// Also code for all the others cluestone
+	/* Abzan Banner	|3
+	 * Artifact
+	 * |T: Add |W, |B, or |G to your mana pool.
+	 * |W|B|G, |T, Sacrifice ~: Draw a card. */
+	/* Azorius Cluestone	|3
+	 * Artifact
+	 * |T: Add |W or |U to your mana pool.
+	 * |W|U, |T, Sacrifice ~: Draw a card. */
+	/* Boros Cluestone	|3
+	 * Artifact
+	 * |T: Add |R or |W to your mana pool.
+	 * |R|W, |T, Sacrifice ~: Draw a card. */
+	/* Dimir Cluestone	|3
+	 * Artifact
+	 * |T: Add |U or |B to your mana pool.
+	 * |U|B, |T, Sacrifice ~: Draw a card. */
+	/* Golgari Cluestone	|3
+	 * Artifact
+	 * |T: Add |B or |G to your mana pool.
+	 * |B|G, |T, Sacrifice ~: Draw a card. */
+	/* Gruul Cluestone	|3
+	 * Artifact
+	 * |T: Add |R or |G to your mana pool.
+	 * |R|G, |T, Sacrifice ~: Draw a card. */
+	/* Izzet Cluestone	|3
+	 * Artifact
+	 * |T: Add |U or |R to your mana pool.
+	 * |U|R, |T, Sacrifice ~: Draw a card. */
+	/* Jeskai Banner	|3
+	 * Artifact
+	 * |T: Add |U, |R, or |W to your mana pool.
+	 * |U|R|W, |T, Sacrifice ~: Draw a card. */
+	/* Mardu Banner	|3
+	 * Artifact
+	 * |T: Add |R, |W, or |B to your mana pool.
+	 * |R|W|B, |T, Sacrifice ~: Draw a card. */
+	/* Orzhov Cluestone	|3
+	 * Artifact
+	 * |T: Add |W or |B to your mana pool.
+	 * |W|B, |T, Sacrifice ~: Draw a card. */
+	/* Rakdos Cluestone	|3
+	 * Artifact
+	 * |T: Add |B or |R to your mana pool.
+	 * |B|R, |T, Sacrifice ~: Draw a card. */
+	/* Selesnya Cluestone	|3
+	 * Artifact
+	 * |T: Add |G or |W to your mana pool.
+	 * |G|W, |T, Sacrifice ~: Draw a card. */
+	/* Simic Cluestone	|3
+	 * Artifact
+	 * |T: Add |G or |U to your mana pool.
+	 * |G|U, |T, Sacrifice ~: Draw a card. */
+	/* Sultai Banner	|3
+	 * Artifact
+	 * |T: Add |B, |G, or |U to your mana pool.
+	 * |B|G|U, |T, Sacrifice ~: Draw a card. */
+	/* Temur Banner	|3
+	 * Artifact
+	 * |T: Add |G, |U, or |R to your mana pool.
+	 * |G|U|R, |T, Sacrifice ~: Draw a card. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -3662,7 +3745,7 @@ int card_azorius_cluestone(int player, int card, event_t event){
 		return mana_producer(player, card, event);
 	}
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int ai_choice = 0;
 		if( ! paying_mana() && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL) ){
 			instance->targets[1].player = 66;
@@ -3757,6 +3840,11 @@ static int count_gates(int player){
 }
 
 int card_mazes_end(int player, int card, event_t event){
+	/* Maze's End	""
+	 * Land
+	 * ~ enters the battlefield tapped.
+	 * |T: Add |C to your mana pool.
+	 * |3, |T, Return ~ to its owner's hand: Search your library for a Gate card, put it onto the battlefield, then shuffle your library. If you control ten or more Gates with different names, you win the game. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -3778,9 +3866,9 @@ int card_mazes_end(int player, int card, event_t event){
 		return mana_producer(player, card, event);
 	}
 
-	if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	if( event == EVENT_ACTIVATE ){
 		int choice = instance->info_slot = 0;
-		if( ! paying_mana() && generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(4), 0, NULL, NULL) ){
+		if( ! paying_mana() && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST_X(4), 0, NULL, NULL) ){
 			choice = do_dialog(player, player, card, -1, -1, " Produce mana\n Tutor a Gate\n Cancel", 1);
 		}
 
@@ -3807,9 +3895,8 @@ int card_mazes_end(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( instance->info_slot > 0 ){
-			char msg[100] = "Select a Gate card.";
 			test_definition_t this_test;
-			new_default_test_definition(&this_test, TYPE_LAND, msg);
+			new_default_test_definition(&this_test, TYPE_LAND, "Select a Gate card.");
 			this_test.subtype = SUBTYPE_GATE;
 			if( player == HUMAN ){
 				new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_PLAY, 0, AI_FIRST_FOUND, &this_test);

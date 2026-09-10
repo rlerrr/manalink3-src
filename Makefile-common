@@ -16,15 +16,17 @@ COMMONFLAGS = -O2 -ggdb2 -march=i586 -mpreferred-stack-boundary=2	\
 -Wcast-align -Wwrite-strings -Wshadow -W -Winline -Wno-unused-parameter	\
 -Werror -I.. -I.
 CFLAGS = $(COMMONFLAGS) -Wbad-function-cast -Wstrict-prototypes -Wnested-externs
-CXXFLAGS = $(COMMONFLAGS) -std=c++0x
+CXXFLAGS = $(COMMONFLAGS) -std=gnu++0x
 AFLAGS = -a x86 -m x86 -p nasm -r nasm -f win32 -I.. -I.
 LFLAGS = -shared -static -static-libgcc -static-libstdc++
 
 # Input files
+BASEDIR = .
 SUBDIRS = .
 CFILES = $(wildcard $(patsubst %,%/*.c,$(SUBDIRS)))
 CXXFILES = $(wildcard $(patsubst %,%/*.cpp,$(SUBDIRS)))
 AFILES = $(wildcard $(patsubst %,%/*.asm,$(SUBDIRS)))
+HFILES = $(wildcard $(patsubst %,%/*.h,$(SUBDIRS)))
 LIBS =
 LIBFLAGS = $(patsubst %,-l%,$(LIBS))
 LOCAL_LIBS =

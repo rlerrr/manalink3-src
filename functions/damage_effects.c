@@ -264,7 +264,7 @@ int damage_creature(int tgt_player, int tgt_card, int32_t amt, int src_player, i
 
   if (src_card == -1)
 	{
-	  dmg_inst->display_pic_int_id = CARD_ID_SWAMP;
+	  dmg_inst->display_pic_csv_id = CARD_ID_SWAMP;
 	  dmg_inst->display_pic_num = 0;
 	  return dmg_card;
 	}
@@ -282,7 +282,7 @@ int damage_creature(int tgt_player, int tgt_card, int32_t amt, int src_player, i
 	  attacking = src_inst->state & STATE_ATTACKING;
 
 	  int csvid = cards_data[src_iid].id;
-	  dmg_inst->display_pic_int_id = csvid;
+	  dmg_inst->display_pic_csv_id = csvid;
 	  dmg_inst->display_pic_num = get_card_image_number(csvid, src_player, src_card);
 	}
   else if (src_inst->internal_card_id == activation_card)
@@ -296,7 +296,7 @@ int damage_creature(int tgt_player, int tgt_card, int32_t amt, int src_player, i
 
 	  attacking = 0;
 
-	  dmg_inst->display_pic_int_id = src_inst->display_pic_int_id;
+	  dmg_inst->display_pic_csv_id = src_inst->display_pic_csv_id;
 	  dmg_inst->display_pic_num = src_inst->display_pic_num;
 
 	  dmg_inst->damage_source_player = src_inst->parent_controller;
@@ -316,7 +316,7 @@ int damage_creature(int tgt_player, int tgt_card, int32_t amt, int src_player, i
 
 	  attacking = 0;
 
-	  dmg_inst->display_pic_int_id = src_inst->display_pic_int_id;
+	  dmg_inst->display_pic_csv_id = src_inst->display_pic_csv_id;
 	  dmg_inst->display_pic_num = src_inst->display_pic_num;
 	}
   else
@@ -331,7 +331,7 @@ int damage_creature(int tgt_player, int tgt_card, int32_t amt, int src_player, i
 	  attacking = src_inst->state & STATE_ATTACKING;
 
 	  int csvid = cards_data[src_iid].id;
-	  dmg_inst->display_pic_int_id = csvid;
+	  dmg_inst->display_pic_csv_id = csvid;
 	  dmg_inst->display_pic_num = get_card_image_number(csvid, src_player, src_card);
 	}
 
@@ -358,11 +358,23 @@ int damage_creature(int tgt_player, int tgt_card, int32_t amt, int src_player, i
    * infect, rfg_when_damage, and lifelink) need to be special-cased here.  Right now the only one that exists is Puncture Blast (wither). */
   dmg_inst->targets[3].player = src_typ;
   dmg_inst->targets[3].card = 0;
-  if ((!(src_typ & TYPE_PERMANENT) || is_humiliated_by_instance(src_src_inst))
-	  && cards_data[src_iid].id != CARD_ID_PUNCTURE_BLAST)
-	{
-	  dmg_inst->regen_status = 0;
-	  dmg_inst->targets[16].card = 0;
+
+
+	if ( (!(src_typ & TYPE_PERMANENT) || is_humiliated_by_instance(src_src_inst)) && cards_data[src_iid].id != CARD_ID_PUNCTURE_BLAST
+	  ){
+		// Check for a non-humiliated Soulfire Grand Master
+		int sgm_flag = 0;
+		int i;
+		for(i=0; i<active_cards_count[src_player]; i++){
+			if( in_play(src_player, i) && get_id(src_player, i) == CARD_ID_SOULFIRE_GRAND_MASTER && ! is_humiliated(src_player, i) ){
+				sgm_flag = 1;
+				break;
+			}
+		}
+		if( ! sgm_flag ){
+			dmg_inst->regen_status = 0;
+			dmg_inst->targets[16].card = 0;
+		}
 	}
   else
 	{
@@ -394,6 +406,25 @@ int damage_target0(int player, int card, int dmg)
   return damage_creature(instance->targets[0].player, instance->targets[0].card, dmg, player, card);
 }
 
+static int remove_indestructible_until_eot(int player, int card, event_t event){
+
+	if( get_card_instance(player, card)->damage_target_player > -1 ){
+		card_instance_t* instance = get_card_instance(player, card);
+		int p = instance->damage_target_player;
+		int c = instance->damage_target_card;
+
+		if( event == EVENT_ABILITIES && affect_me(p, c) ){
+			remove_special_ability(p, c, SP_KEYWORD_INDESTRUCTIBLE);
+		}
+	}
+
+	if( event == EVENT_CLEANUP ){
+		kill_card(player, card, KILL_REMOVE);
+	}
+
+	return 0;
+}
+
 int effect_damage(int player, int card, event_t event)
 {
   // 0x4a0f00
@@ -407,7 +438,7 @@ int effect_damage(int player, int card, event_t event)
    *                       from a planeswalker, or adding -1/-1 or poison counters from wither or infect; and giving life from lifelink.  I seem to recall
    *                       some exe cards setting STATE_TAPPED when they prevent damage from a damage card instead of setting info_slot to 0; that convention
    *                       hasn't been followed in C code.
-   * display_pic_int_id: csvid of damage source at the time it dealt damage.
+   * display_pic_csv_id: csvid of damage source at the time it dealt damage.
    * regen_status: keywords of damage source at the time it dealt damage.  This effect is special-cased in get_abilities to never recalculate.
    * targets[3].player: types of damage source (i.e. artifact/creature/enchantment/instant/land/planeswalker/sorcery) at the time it dealt damage.
    * targets[3].card: &0x10: if a creature is dealt damage by this card, it can't regenerate until end of turn.
@@ -480,8 +511,8 @@ int effect_damage(int player, int card, event_t event)
 			  || !is_planeswalker(instance->targets[4].player, instance->targets[4].card))
 			return 0;
 		}
-		
-		if( instance->info_slot > get_trap_condition(player, TRAP_MAX_DAMAGE_DEALT) || 
+
+		if( instance->info_slot > get_trap_condition(player, TRAP_MAX_DAMAGE_DEALT) ||
 			instance->info_slot > get_trap_condition(1-player, TRAP_MAX_DAMAGE_DEALT)
 		  ){
 			set_trap_condition(player, TRAP_MAX_DAMAGE_DEALT, instance->info_slot);
@@ -545,7 +576,7 @@ int effect_damage(int player, int card, event_t event)
 		  EXE_DWORD_PTR(0x4EF1EC)[damaged_player] += damage_dealt;	// damage_taken_this_turn[]
 
 		  if (instance->regen_status & KEYWORD_INFECT)
-			poison_counters[damaged_player] += damage_dealt;
+			poison(damaged_player, damage_dealt);
 		  else
 			{
 			  int new_life = life[damaged_player] - damage_dealt;
@@ -558,6 +589,37 @@ int effect_damage(int player, int card, event_t event)
 			  else if (new_life > life[damaged_player])
 				gain_life(damaged_player, new_life - life[damaged_player]);
 			}
+			// Special effects when dealing damage, if they are unique for a card they will be implemented here, to save Flags
+			/*
+			 Chandra, Roaring Flame
+			-7: Chandra, Roaring Flame deals 6 damage to each opponent.
+				Each player dealt damage this way gets an emblem with
+				"At the beginning of your upkeep, this emblem deals 3 damage to you.
+			*/
+			if (instance->display_pic_csv_id == CARD_ID_CHANDRA_ROARING_FLAME &&
+				instance->targets[10].card == CARD_ID_CHANDRA_ROARING_FLAME
+			  ){
+				token_generation_t token;
+				default_token_definition(player, card, CARD_ID_CHANDRA_ROARING_FLAME_EMBLEM, &token);
+				token.t_player = damaged_player;
+				generate_token(&token);
+			}
+			/*
+			 Aurelia's Fury
+			Aurelia's Fury deals X damage divided as you choose among any number of target creatures and/or players.
+			Tap each creature dealt damage this way. Players dealt damage this way can't cast noncreature spells this turn.
+			*/
+			if (instance->display_pic_csv_id == CARD_ID_AURELIAS_FURY &&
+				instance->targets[10].card == CARD_ID_AURELIAS_FURY
+			  ){
+				int card_added = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);//128
+				card_instance_t *legacy = get_card_instance(player, card_added);
+				legacy->targets[2].player = 128;
+				legacy->targets[3].player = damaged_player;
+				legacy->targets[2].card = CARD_ID_AURELIAS_FURY;
+				create_card_name_legacy(player, card_added, CARD_ID_AURELIAS_FURY);
+			}
+
 		}
 	  else
 		{	// Damaging a creature or a planeswalker.
@@ -572,14 +634,27 @@ int effect_damage(int player, int card, event_t event)
 			}
 		  else
 			{
-			  if (instance->targets[3].card & DMG_CANT_REGENERATE_IF_DEALT_DAMAGE_THIS_WAY)
+			  if (instance->targets[3].card & DMG_MUST_ATTACK_IF_DEALT_DAMAGE_THIS_WAY)
+				pump_ability_until_eot(instance->damage_source_player, instance->damage_source_card,
+								instance->targets[4].player, instance->targets[4].card, 0, 0, 0, SP_KEYWORD_MUST_ATTACK);
+
+			  if (instance->targets[3].card & DMG_TAP_IF_DEALT_DAMAGE_THIS_WAY)
+				tap_card(instance->targets[4].player, instance->targets[4].card);
+
+			  //If a creature dealt damage by the targeted creature would die this turn, exile that creature instead.
+			  if (instance->targets[3].card & DMG_EXILE_IF_LETHALLY_DAMAGED_THIS_WAY){
+					set_special_flags(instance->targets[4].player, instance->targets[4].card, SF_LETHAL_DAMAGE_EXILE);
+					exile_if_would_be_put_into_graveyard(instance->damage_source_player, instance->damage_source_card,
+														 instance->targets[4].player, instance->targets[4].card, 1);
+			  }
+			  if (instance->targets[3].card & DMG_CANT_REGENERATE_IF_DEALT_DAMAGE_THIS_WAY )
 				cannot_regenerate_until_eot(instance->damage_source_player, instance->damage_source_card,
 											instance->targets[4].player, instance->targets[4].card);
 
 			  if (instance->targets[16].card & SP_KEYWORD_DEATHTOUCH)
 				{
 				  // A bletcherous special case, but better than wasting a sp_keyword_t bit in addition to the special_flags_t bit
-				  if (instance->display_pic_int_id == CARD_ID_PHAGE_THE_UNTOUCHABLE
+				  if (instance->display_pic_csv_id == CARD_ID_PHAGE_THE_UNTOUCHABLE
 					  && (instance->token_status & (STATUS_COMBAT_DAMAGE|STATUS_FIRST_STRIKE_DAMAGE)))
 					set_special_flags(instance->targets[4].player, instance->targets[4].card, SF_LETHAL_DAMAGE_BURY);
 				  else
@@ -587,7 +662,32 @@ int effect_damage(int player, int card, event_t event)
 				}
 
 			  if (instance->targets[16].card & SP_KEYWORD_RFG_WHEN_DAMAGE)
-				set_special_flags(instance->targets[4].player, instance->targets[4].card, SF_LETHAL_DAMAGE_EXILE);
+				set_special_flags(instance->targets[4].player, instance->targets[4].card, SF_EXILE_IF_DAMAGED);
+
+
+				//Special cases. As long as it's an effect carried by only one card, there's no point of wasting flags
+				/*
+				 Pathway Arrows English
+				Equipped creature has "{2}, {T}: This creature deals 1 damage to target creature.
+									If a colorless creature is dealt damage this way, tap it."
+				*/
+				if( instance->targets[10].card == CARD_ID_PATHWAY_ARROWS &&
+					get_color(instance->targets[4].player, instance->targets[4].card) == 0
+				  ){
+					tap_card(instance->targets[4].player, instance->targets[4].card);
+				}
+				/* Burn from Within	|X|R
+				 * ~ deals X damage to target creature or player. If a creature is dealt damage this way,
+				 * it loses indestructible until end of turn. If that creature would die this turn, exile it instead. */
+				if( instance->targets[10].card == CARD_ID_BURN_FROM_WITHIN ){
+					create_targetted_legacy_effect(instance->targets[4].player, instance->targets[4].card, &remove_indestructible_until_eot,
+													player, card);
+				}
+				/* Illusory Ambushers
+				Whenever Illusory Ambusher is dealt damage, draw that many cards.*/
+				if( get_id(instance->targets[4].player, instance->targets[4].card) == CARD_ID_ILLUSORY_AMBUSHER ){
+					draw_cards(instance->targets[4].player, instance->info_slot);
+				}
 
 			  if ((instance->targets[16].card & SP_KEYWORD_WITHER)
 				  || (instance->regen_status & KEYWORD_INFECT))
@@ -623,20 +723,36 @@ void after_damage(void)
 	  if (in_play(player, card) && is_what(player, card, TYPE_CREATURE))
 		{
 		  int kill_mode = 0;
-		  int flags = check_special_flags(player, card, SF_LETHAL_DAMAGE_DESTROY | SF_LETHAL_DAMAGE_BURY | SF_LETHAL_DAMAGE_EXILE);
+		  int flags = check_special_flags(player, card, SF_LETHAL_DAMAGE_DESTROY | SF_LETHAL_DAMAGE_BURY | SF_LETHAL_DAMAGE_EXILE|SF_EXILE_IF_DAMAGED);
 		  if (flags)	// Prevent them from retriggering if this gets regenerated
-			remove_special_flags(player, card, SF_LETHAL_DAMAGE_DESTROY | SF_LETHAL_DAMAGE_BURY | SF_LETHAL_DAMAGE_EXILE);
+			remove_special_flags(player, card, SF_LETHAL_DAMAGE_DESTROY | SF_LETHAL_DAMAGE_BURY | SF_LETHAL_DAMAGE_EXILE|SF_EXILE_IF_DAMAGED);
 
-		  if (flags & SF_LETHAL_DAMAGE_EXILE)			// Pit Spawn/Sword of Kaldra
-			kill_mode = KILL_REMOVE;
-		  else if (flags & SF_LETHAL_DAMAGE_BURY)		// Phage the Untouchable
-			kill_mode = KILL_BURY;
-		  else if ((flags & SF_LETHAL_DAMAGE_DESTROY)	// Deathtouch
-				   || (int)get_card_instance(player, card)->damage_on_card >= get_toughness(player, card))
-			kill_mode = KILL_DESTROY;
+			if ((flags & SF_EXILE_IF_DAMAGED) // Pit Spawn/Sword of Kaldra
+				|| ((flags & SF_LETHAL_DAMAGE_EXILE) && (int)get_card_instance(player, card)->damage_on_card >= get_toughness(player, card))
+			  ){
+				kill_mode = KILL_REMOVE;
+			}
+			else if (flags & SF_LETHAL_DAMAGE_BURY){		// Phage the Untouchable
+					kill_mode = KILL_BURY;
+			}
+			else if ((flags & SF_LETHAL_DAMAGE_DESTROY)	// Deathtouch
+						|| (int)get_card_instance(player, card)->damage_on_card >= get_toughness(player, card)
+				   ){
+						kill_mode = KILL_DESTROY;
+			}
 
-		  if (kill_mode)
-			kill_card(player, card, kill_mode);
+			if (kill_mode){
+				kill_card(player, card, kill_mode);
+			}
+			else{
+				if( check_special_flags3(player, card, SF3_ARCHANGEL_OF_THUNE_COUNTER) ){
+					int amount = get_card_instance(player, card)->eot_toughness;
+					if( amount ){
+						get_card_instance(player, card)->eot_toughness = 0;
+						add_1_1_counters(player, card, amount);
+					}
+				}
+			}
 		}
 
   /* The original exe version did this in one pass, calling the code_pointer of instance->original_internal_card_id if the card was no longer in play after the
@@ -782,3 +898,102 @@ int damage_is_to_planeswalker(card_instance_t* damage)
 			 && check_special_flags(damage->damage_source_player, damage->damage_source_card, SF_ATTACKING_PWALKER))
 		  : is_planeswalker(damage->damage_target_player, damage->damage_target_card));
 }
+
+static int if_attached_creature_dies_do_something(int player, int card, event_t event){
+
+	card_instance_t *instance = get_card_instance(player, card);
+	int p = instance->damage_target_player;
+	int c = instance->damage_target_card;
+
+	int mode = instance->targets[1].card;
+	// modes
+	// 1<<0 --> Controller of source gains life equal to attached creature toughness [Abattoir Ghoul]
+	// 1<<1 --> Controller of source may draw a card [Rot Wolf]
+
+	if( p > -1 ){
+		if( event == EVENT_GRAVEYARD_FROM_PLAY ){
+			if( affect_me(p, c) && in_play(p, c) && get_card_instance(p, c)->kill_code > 0 &&
+				get_card_instance(p, c)->kill_code < KILL_REMOVE &&
+				! check_special_flags2(p, c, SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE)
+			  ){
+				if( mode && (mode & 1) ){
+					instance->targets[1].player = get_toughness(p, c);
+				}
+				instance->targets[11].player = 1; //Otherwise "resolve_gfp_ability" won't trigger
+				instance->damage_target_player = instance->damage_target_card = -1;
+			}
+		}
+	}
+
+	//This check is mandatory or the legacy card will be removed before EVENT_GRAVEYARD_ABILITY if source is killed in combat
+	if( instance->targets[0].player > -1 && current_phase != PHASE_NORMAL_COMBAT_DAMAGE &&
+		current_phase != PHASE_FIRST_STRIKE_DAMAGE
+	  ){
+		if( other_leaves_play(player, card, instance->targets[0].player, instance->targets[0].card, event) ){
+			kill_card(player, card, KILL_REMOVE);
+		}
+	}
+
+	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
+		if( mode && (mode & 1) && instance->targets[1].player > 0 ){
+			gain_life(instance->targets[0].player, instance->targets[1].player);
+		}
+		if( mode && (mode & 2) ){
+			if( do_dialog(instance->targets[0].player, player, card, -1, -1, " Draw a card\n Pass", 0) == 0 ){
+				draw_cards(instance->targets[0].player, 1);
+			}
+		}
+		kill_card(player, card, KILL_REMOVE);
+	}
+
+	if( current_phase == PHASE_CLEANUP ){
+		kill_card(player, card, KILL_REMOVE);
+	}
+
+	return 0;
+}
+
+void if_a_creature_damaged_by_me_dies_do_something(int player, int card, event_t event, int mode){
+	// modes
+	// 1<<0 --> Controller of source gains life equal to attached creature toughness [Abattoir Ghoul]
+	// 1<<1 --> Controller of source may draw a card [Rot Wolf]
+
+	card_instance_t *instance = get_card_instance(player, card);
+
+	if( ! in_play(player, card) || is_humiliated(player, card) ){
+		return;
+	}
+
+	if( event == EVENT_DEAL_DAMAGE ){
+		card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
+		if( damage->internal_card_id == damage_card ){
+			if( damage->damage_target_card != -1 && damage->damage_source_player == player &&
+				damage->damage_source_card == card && damage->info_slot > 0
+			  ){
+				if( instance->info_slot < 0 ){
+					instance->info_slot = 0;
+				}
+				if( instance->info_slot < 10 ){
+					instance->targets[instance->info_slot].player = damage->damage_target_player;
+					instance->targets[instance->info_slot].card = damage->damage_target_card;
+					instance->info_slot++;
+				}
+			}
+		}
+	}
+
+	if( instance->info_slot > 0 && trigger_condition == TRIGGER_DEAL_DAMAGE && affect_me(player, card) && reason_for_trigger_controller == player ){
+		int i;
+		for(i=0; i<instance->info_slot; i++){
+			int legacy = create_targetted_legacy_effect(player, card, &if_attached_creature_dies_do_something,
+														instance->targets[i].player, instance->targets[i].card);
+			card_instance_t *leg = get_card_instance(player, legacy);
+			leg->targets[0].player = player;
+			leg->targets[0].card = card;
+			leg->number_of_targets = 1;
+			leg->targets[1].card = mode;
+		}
+		instance->info_slot = 0;
+	}
+}
+

@@ -64,6 +64,9 @@ int overload(int player, int card, event_t event, int colorless, int black, int 
 			null_casting_cost(player, card);
 			instance->info_slot = 1;
 		}
+		else{
+			instance->info_slot = 0;
+		}
 	}
 	return 0;
 }
@@ -1373,6 +1376,9 @@ int card_sphinx_of_the_chimes(int player, int card, event_t event){
 }
 
 int card_stealer_of_secrets(int player, int card, event_t event){
+	/* Stealer of Secrets	|2|U
+	 * Creature - Human Rogue 2/2
+	 * Whenever ~ deals combat damage to a player, draw a card. */
 
 	if( has_combat_damage_been_inflicted_to_a_player(player, card, event) ){
 		draw_cards(player, 1);
@@ -2804,6 +2810,13 @@ int card_savage_surge(int player, int card, event_t event){
 }
 
 int card_slime_molding(int player, int card, event_t event){
+	/* Slime Molding	|X|G
+	 * Sorcery
+	 * Put an X/X |Sgreen Ooze creature token onto the battlefield. */
+
+	if (!IS_CASTING(player, card, event)){
+		return 0;
+	}
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -2815,7 +2828,7 @@ int card_slime_molding(int player, int card, event_t event){
 				instance->info_slot = x_value;
 			}
 	}
-	else if(event == EVENT_RESOLVE_SPELL && affect_me(player, card) ){
+	else if(event == EVENT_RESOLVE_SPELL ){
 			token_generation_t token;
 			default_token_definition(player, card, CARD_ID_OOZE, &token);
 			token.pow = instance->info_slot;
@@ -3215,29 +3228,37 @@ int card_detention_sphere(int player, int card, event_t event){
 
 		if( comes_into_play_mode(player, card, event, can_target(&td) ? RESOLVE_TRIGGER_AI(player) : 0) ){
 			if( new_pick_target(&td, "Select another nonland permanent.", 0, GS_LITERAL_PROMPT) ){
-				int id = get_id(instance->targets[0].player, instance->targets[0].card);
+				int id = get_card_name(instance->targets[0].player, instance->targets[0].card);
 				int result = -1;
 				instance->targets[0].player = 1;
-				int p;
-				for (p = 0; p < 2; ++p){
-					int count = active_cards_count[p]-1;
-					while( count > -1 ){
-							if (in_play(p, count) && get_id(p, count) == id ){
-								if( ! is_token(p, count) ){
-									int i;
-									for(i=1; i<10; i++){
-										if( instance->targets[i].player == -1 ){
-											instance->targets[i].player = get_owner(p, count);
-											instance->targets[i].card = get_original_internal_card_id(p, count);
-											kill_card(p, count, KILL_REMOVE);
-											result = cards_data[instance->targets[i].card].id;
-											break;
+				if( id != -1 ){
+					int p;
+					for (p = 0; p < 2; ++p){
+						int count = active_cards_count[p]-1;
+						while( count > -1 ){
+								if (in_play(p, count) && has_same_name(instance->targets[0].player, instance->targets[0].card, p, count) ){
+									if( ! is_token(p, count) ){
+										int i;
+										for(i=1; i<10; i++){
+											if( instance->targets[i].player == -1 ){
+												instance->targets[i].player = get_owner(p, count);
+												instance->targets[i].card = get_original_internal_card_id(p, count);
+												kill_card(p, count, KILL_REMOVE);
+												result = cards_data[instance->targets[i].card].id;
+												break;
+											}
 										}
 									}
 								}
-							}
-							count--;
+								count--;
+						}
 					}
+				}
+				else{ //Targeting a card with no name (maybe a face-down card)
+					result = cards_data[get_original_internal_card_id(instance->targets[0].player, instance->targets[0].card)].id;
+					instance->targets[1].player = get_owner(instance->targets[0].player, instance->targets[0].card);
+					instance->targets[1].card = get_original_internal_card_id(instance->targets[0].player, instance->targets[0].card);
+					kill_card(instance->targets[0].player, instance->targets[0].card, KILL_REMOVE);
 				}
 				if( result > -1 ){
 					create_card_name_legacy(player, card, result);
@@ -3651,6 +3672,12 @@ int card_isperia_supreme_judge(int player, int card, event_t event)
 }
 
 int card_izzet_charm(int player, int card, event_t event){
+	/* Izzet Charm	|U|R
+	 * Instant
+	 * Choose one -
+	 * * Counter target noncreature spell unless its controller pays |2.
+	 * * ~ deals 2 damage to target creature.
+	 * * Draw two cards, then discard two cards. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -3723,35 +3750,25 @@ int card_izzet_charm(int player, int card, event_t event){
 
 int card_izzet_staticaster(int player, int card, event_t event){
 
+	haste(player, card, event);
+
+	if( ! IS_GAA_EVENT(event) ){
+		return flash(player, card, event);
+	}
+
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	haste(player, card, event);
-
-	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) && ! is_tapped(player, card) && ! is_sick(player, card) &&
-		has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0)
-	  ){
-		return can_target(&td);
-	}
-
-	if(event == EVENT_ACTIVATE ){
-		if( charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0) && pick_target(&td, "TARGET_CREATURE") ){
-			instance->number_of_targets = 1;
-			tap_card(player, card);
-		}
-	}
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( valid_target(&td) ){
-			test_definition_t this_test;
-			default_test_definition(&this_test, TYPE_CREATURE);
-			this_test.id = get_id(instance->targets[0].player, instance->targets[0].card);
-			new_damage_all(player, instance->parent_card, 2, 1, 0, &this_test);
+			damage_creature_and_all_the_others_with_the_same_name(instance->parent_controller, instance->parent_card,
+																	instance->targets[0].player, instance->targets[0].card, 1);
 		}
 	}
 
-	return flash(player, card, event);
+	return generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_UNTAPPED, MANACOST0, 0, &td, "TARGET_CREATURE");
 }
 
 static const char* is_forest_or_swamp(int who_chooses, int player, int card, int targeting_player, int targeting_card){
@@ -3759,6 +3776,11 @@ static const char* is_forest_or_swamp(int who_chooses, int player, int card, int
 }
 
 int card_jarad_golgari_lich_lord(int player, int card, event_t event){
+	/* Jarad, Golgari Lich Lord	|B|B|G|G
+	 * Legendary Creature - Zombie Elf 2/2
+	 * ~ gets +1/+1 for each creature card in your graveyard.
+	 * |1|B|G, Sacrifice another creature: Each opponent loses life equal to the sacrificed creature's power.
+	 * Sacrifice |Ha Swamp and |Ha Forest: Return Jarad from your graveyard to your hand. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -4342,10 +4364,8 @@ int card_rakdos_ragemutt(int player, int card, event_t event){
 }
 
 int card_rakdos_ringleader(int player, int card, event_t event){
-	if( damage_dealt_by_me(player, card, event, DDBM_TRIGGER_OPTIONAL+DDBM_MUST_DAMAGE_OPPONENT) ){
-		discard(1-player, DISC_RANDOM, player);
-	}
-	return regeneration(player, card, event, 0, 1, 0, 0, 0, 0);
+	whenever_i_deal_damage_to_a_player_he_discards_a_card(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE, 0);
+	return regeneration(player, card, event, MANACOST_B(1));
 }
 
 int card_rakdos_lord_of_riots(int player, int card, event_t event){
@@ -4556,6 +4576,12 @@ int card_search_warrant(int player, int card, event_t event){
 }
 
 int card_selesnya_charm(int player, int card, event_t event){
+	/* Selesnya Charm	|G|W
+	 * Instant
+	 * Choose one -
+	 * * Target creature gets +2/+2 and gains trample until end of turn.
+	 * * Exile target creature with power 5 or greater.
+	 * * Put a 2/2 |Swhite Knight creature token with vigilance onto the battlefield. */
 
 	target_definition_t td;
 	default_target_definition(player, card, &td, TYPE_CREATURE);
@@ -4579,15 +4605,15 @@ int card_selesnya_charm(int player, int card, event_t event){
 			int pos = 0;
 			if( can_target(&td) ){
 				mode |= (1<<0);
-				pos += scnprintf(buffer + pos, 500-pos, " Pump a creature\n");
+				pos += scnprintf(buffer + pos, 500-pos, " +2/+2 and trample\n");
 				ai_choice = 0;
 			}
 			if( can_target(&td1) ){
 				mode |= (1<<1);
-				pos += scnprintf(buffer + pos, 500-pos, " Destroy creature with pow >= 5\n");
+				pos += scnprintf(buffer + pos, 500-pos, " Exile\n");
 				ai_choice = 1;
 			}
-			pos += scnprintf(buffer + pos, 500-pos, " Generate a Knight\n");
+			pos += scnprintf(buffer + pos, 500-pos, " Knight token\n");
 			pos += scnprintf(buffer + pos, 500-pos, " Cancel");
 			choice = do_dialog(player, player, card, -1, -1, buffer, ai_choice);
 			while( !( (1<<choice) & mode) ){
@@ -5372,6 +5398,10 @@ int card_growing_ranks(int player, int card, event_t event){
 }
 
 int card_judges_familiar(int player, int card, event_t event){
+	/* Judge's Familiar	|WU
+	 * Creature - Bird 1/1
+	 * Flying
+	 * Sacrifice ~: Counter target instant or sorcery spell unless its controller pays |1. */
 
 	target_definition_t td;
 	counterspell_target_definition(player, card, &td, TYPE_SPELL);
@@ -5591,6 +5621,45 @@ int card_codex_shredder(int player, int card, event_t event){
 
 	return 0;
 }
+
+int card_counterflux(int player, int card, event_t event){
+	/*
+	  Counterflux |U|U|R
+	  Instant
+	  Counterflux can't be countered by spells or abilities.
+	  Counter target spell you don't control.
+	  Overload {1}{U}{U}{R} (You may cast this spell for its overload cost.
+							  If you do, change its text by replacing all instances of "target" with "each.")
+	*/
+
+	//Overload won't be coded as it's worthless under Manalink (no real stack system)
+
+	if( ! IS_GS_EVENT(player, card, event) ){
+		return 0;
+	}
+
+	target_definition_t td;
+	counterspell_target_definition(player, card, &td, TYPE_ANY);
+	td.allowed_controller = player;
+
+	if( event == EVENT_CAN_CAST ){
+		return counterspell(player, card, event, &td, 0);
+	}
+
+	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
+		add_state(player, card, STATE_CANNOT_TARGET);
+		return counterspell(player, card, event, &td, 0);
+	}
+
+	if( event == EVENT_RESOLVE_SPELL ){
+		remove_state(player, card, STATE_CANNOT_TARGET);
+		return counterspell(player, card, event, &td, 0);
+	}
+
+	return 0;
+}
+
+
 
 int card_golgari_keyrune(int player, int card, event_t event){
 	return keyrune(player, card, event, 0, 1, 0, 1, 0, 0, 2, 2, 0, SP_KEYWORD_DEATHTOUCH, COLOR_TEST_BLACK+COLOR_TEST_GREEN, SUBTYPE_INSECT);

@@ -183,7 +183,7 @@ manacost_to_count_colors(const card_ptr_t* cp)
 
   CountColors rval = 0;
 
-  if (*cp->mana_cost_text)
+  if (cp->mana_cost_text)
 	{
 	  const char* q = cp->mana_cost_text;
 	  while (*q)

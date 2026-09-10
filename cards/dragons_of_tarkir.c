@@ -162,7 +162,7 @@ int card_anafenza_kin_tree_spirit(int player, int card, event_t event)
 	  test.not_me = 1;
 	  test.type_flag = F1_NO_TOKEN;
 
-	  if (new_specific_cip(player, card, event, player, RESOLVE_TRIGGER_AI(player), &test))
+	  if (new_specific_cip(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test))
 		bolster(player, card, 1);
 	}
 
@@ -393,7 +393,7 @@ int card_gleam_of_authority(int player, int card, event_t event)
 
   if (event == EVENT_RESOLVE_ACTIVATION)
 	bolster(player, card, 1);
-  else if (IS_GAA_EVENT(event) && (inst = in_play(player, card)) && inst->damage_target_player >= 0)
+  else if (IS_GAA_EVENT(event) && (inst = in_play(player, card)) && inst->damage_target_player == player)
 	return granted_generic_activated_ability(player, card, inst->damage_target_player, inst->damage_target_card, event,
 											 GAA_UNTAPPED, MANACOST_W(1), 0, NULL, NULL);
 
@@ -1346,7 +1346,7 @@ int card_reduce_in_stature(int player, int card, event_t event)
   if (event == EVENT_POWER || event == EVENT_TOUGHNESS)
 	{
 	  card_instance_t* inst = in_play(player, card);
-	  if (inst && inst->damage_target_player >= 0)
+	  if (inst && inst->damage_target_player >= 0 && affect_me(inst->damage_target_player, inst->damage_target_card))
 		{
 		  if (event == EVENT_POWER)
 			event_result += 0 - get_base_power(inst->damage_target_player, inst->damage_target_card);
@@ -1834,7 +1834,7 @@ int card_corpseweft(int player, int card, event_t event)
 	  generate_token(&token);
 	}
 
-  int rval = generic_activated_ability(player, card, event, 0, MANACOST_XR(1,1), 0, NULL, NULL);
+  int rval = generic_activated_ability(player, card, event, 0, MANACOST_XB(1,1), 0, NULL, NULL);
 
   if (event == EVENT_CAN_ACTIVATE && rval && !any_in_graveyard_by_type(player, TYPE_CREATURE))
 	return 0;
@@ -1923,7 +1923,7 @@ int card_deathbringer_regent(int player, int card, event_t event)
    * When ~ enters the battlefield, if you cast it from your hand and there are five or more other creatures on the battlefield, destroy all other creatures. */
 
   if (event == EVENT_CAST_SPELL && affect_me(player, card))
-	get_card_instance(player, card)->info_slot = not_played_from_hand(player, card) ? CARD_ID_DEATHBRINGER_REGENT : 0;
+	get_card_instance(player, card)->info_slot = !not_played_from_hand(player, card) ? CARD_ID_DEATHBRINGER_REGENT : 0;
 
   if (comes_into_play(player, card, event)
 	  && get_card_instance(player, card)->info_slot == CARD_ID_DEATHBRINGER_REGENT)
@@ -1977,7 +1977,7 @@ int card_dutiful_attendant(int player, int card, event_t event)
   if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY))
 	{
 	  test_definition_t test;
-	  new_default_test_definition(&test, TYPE_ARTIFACT, "Select another target creature card.");
+	  new_default_test_definition(&test, TYPE_CREATURE, "Select another target creature card.");
 	  tutor_from_grave_to_hand_except_for_dying_card(player, card, 1, AI_MAX_CMC, &test);
 	}
 
@@ -2029,7 +2029,7 @@ int card_foul_renewal(int player, int card, event_t event)
 		  if (valid_target(&td))	// Per the ruling
 			{
 			  card_instance_t* inst = get_card_instance(player, card);
-			  int x = inst->info_slot;
+			  int x = -inst->info_slot;
 			  pump_until_eot(player, card, inst->targets[0].player, inst->targets[0].card, x, x);
 			}
 		}
@@ -2097,10 +2097,15 @@ int card_foul_tongue_shriek(int player, int card, event_t event)
   return generic_spell(player, card, event, GS_CAN_ONLY_TARGET_OPPONENT, &td, "TARGET_OPPONENT", 1, NULL);
 }
 
-/* Gravepurge	|2|B	=>mirage.c:card_bone_harvest
- * Instant
- * Put any number of target creature cards from your graveyard on top of your library.
- * Draw a card. */
+int bone_harvest_impl(int player, int card, event_t event, int draw_else_slowtrip);
+int card_gravepurge(int player, int card, event_t event)
+{
+  /* Gravepurge	|2|B
+   * Instant
+   * Put any number of target creature cards from your graveyard on top of your library.
+   * Draw a card. */
+  return bone_harvest_impl(player, card, event, 1);
+}
 
 /* Hand of Silumgar	|1|B	=>m10.c:card_deadly_recluse
  * Creature - Human Warrior 2/1
@@ -2797,7 +2802,7 @@ int card_ire_shaman(int player, int card, event_t event)
    * Megamorph |R
    * When ~ is turned face up, exile the top card of your library. Until end of turn, you may play that card. */
 
-  minimum_blockers(player, card, event, 2);
+  menace(player, card, event);
 
   int iid;
   if (event == EVENT_TURNED_FACE_UP && (iid = deck_ptr[player][0]) != -1)
@@ -3518,7 +3523,8 @@ int card_deathmist_raptor(int player, int card, event_t event)
    * Whenever a permanent you control is turned face up, you may return ~ from your graveyard to the battlefield face up or face down.
    * Megamorph |4|G */
 
-  // First ability hacked into the horrible pseudotrigger in onslaught.c:check_for_turned_face_up_card_interactions()
+  deathtouch(player, card, event);
+  // Second ability hacked into the horrible pseudotrigger in onslaught.c:check_for_turned_face_up_card_interactions()
   return megamorph(player, card, event, MANACOST_XG(4,1));
 }
 

@@ -56,6 +56,7 @@ extern int ai_defensive_modifier;
 extern int ai_modifier;
 extern int ante;
 extern int ante_cards[2][16];
+extern int artifact_count[2];
 extern int damage_card;
 extern int affected_card_controller;
 extern int forbid_attack;
@@ -75,8 +76,10 @@ extern card_ptr_t *cards_ptr[]; /* need better name here */
 extern int creature_count[2];
 extern int current_phase;
 extern int current_turn;
+extern int Deck[500];	// global array for interchange with deckbuilder.  Exported as "deck".
 extern int *deck_ptr[];
 extern int displayed_x_value;	// The amount shown in the dialog and claimed as spent when Flags:Act_Use_X is set
+extern int enchantment_count[2];
 extern int event_flags;	// an event_flag_t
 extern int event_result;
 extern game_type_t game_type;
@@ -84,10 +87,14 @@ extern int *graveyard_ptr_mutable[];	// only use directly in deck.c, and only wh
 static inline const int* get_grave(int player){return graveyard_ptr_mutable[player];}
 extern int graveyard_source[2][500];
 extern int next_graveyard_source_id;
-
 extern int hand_count[2];
 extern char hunting_subtypes[15000];
-
+typedef struct
+{
+  int csvid;
+  int numcards;
+} csvid_and_numcards;
+extern csvid_and_numcards initial_library[2][200];
 extern int land_can_be_played;	// a land_can_be_played_t
 extern int lands_played;
 extern int ldoubleclicked;
@@ -104,6 +111,7 @@ extern int landsofcolor_controlled[2][8];
 extern int basiclandtypes_controlled[2][8];
 extern int colors_of_lands_in_play[2];	// Contains a bitfield of all colors or mana at least one land that player controls can produce.  It's used only by the exe version of Fellwar Stone.
 extern int raw_mana_available[2][8];	// mana declared via declare_mana_available().  Does *not* include any declared via declare_mana_available_hex(), nor any already in mana pool.
+extern int raw_mana_available_hex[2][50];	// mana declared via declare_mana_available_hex().
 extern int max_x_value;
 extern int must_attack;
 extern int needed_mana_colors;
@@ -111,7 +119,7 @@ extern char opponent_name[100];
 extern int opponent_skill;
 extern char option_PhaseStoppers[2][38];
 extern player_bits_t player_bits[2];
-extern int poison_counters[2];
+extern PlayerCounters player_counters[2];	// never access directly - use POISON_COUNTERS(), poison(), raw_set_poison() or EXPERIENCE_COUNTERS(), add_experience(), raw_set_experience() instead
 extern int pumpable_power[2];
 extern int pumpable_toughness[2];
 extern int reason_for_trigger_controller;
@@ -126,6 +134,7 @@ extern int trigger_cause;
 extern int trigger_cause_controller;
 extern int turn_count;
 extern int types_of_cards_in_graveyard[2];
+extern int types_of_cards_on_bf[2];
 extern int spell_fizzled;	// alias of cancel
 extern int suppress_draw;
 extern int x_value;
@@ -134,8 +143,7 @@ extern int trace_mode;
 extern uint8_t types_that_dont_untap;
 extern int unknown62BCEC;
 extern int mana_paid[7];	// Mana paid in the last successful call to charge_mana().
-extern int mana_pool[16];
-extern int mana_in_pool[2][8];	// Same array as mana_pool, but matches original microprose declaration.  Transitional until mana_pool[] uses are cleaned up.
+extern int mana_pool[2][8];
 extern int available_slots;
 char card_coded[30000/8];
 extern int creatures_dead_this_turn;
@@ -145,10 +153,20 @@ extern int iid_draw_a_card;
 
 extern uint8_t mana_doesnt_drain_from_pool[2][7];	// Should not be set directly, except to add bits MANADRAIN_DOESNT_DRAIN or MANADRAIN_BECOMES_COLORLESS during EVENT_MANA_POOL_DRAINING.
 extern int16_t number_of_attackers_declared;	// valid only after an EVENT_DECLARE_ATTACKERS
+extern int dword_4EF1B8;			// Used by "Time Walk" effects
+extern char strs_words_to_hack[6][50][100]; //contains @WORDSTOHACK_BLACK etc.
+extern char strs_words_hacked[6][50][100]; // As above, from @WORDSHACKED_BLACK on
+extern int num_words_to_hack;
+/* contains 1 + max for the second index of both strs_words_to_hack[][][] and strs_words_hacked[][][]
+ * (so valid strings are at strs_words_to_hack[COLOR_BLACK][0][...] through strs_words_to_hack[COLOR_WHITE][num_words_to_hack - 1][...],
+ * with strs_words_to_hack[0][...][...] left uninitialized) */
+extern char strs_words_to_sleight[6][50][100]; //contains @WORDSTOSLEIGHT_BLACK etc.
+extern char strs_words_sleighted[6][50][100]; // As above, from @WORDSLEIGHTED_BLACK on
+extern int num_words_to_sleight; // 1 + max for the second index of both strs_words_to_sleight[][][] and strs_words_sleighted[][][]
 
 /***********************************************************************************************************************************************************
  *   The first of these four globals (charge_mana_addr_of_pre_mana_pool) is NULL and the other three have the addresses of their corresponding globals     *
- * except when a card is activated from within charge_mana().  The globals they're associated with (mana_pool[8*player], x_value, pay_mana_xbugrw, and     *
+ * except when a card is activated from within charge_mana().  The globals they're associated with (mana_pool[player], x_value, pay_mana_xbugrw, and       *
  * max_x_value) are copied into locals and then (except for mana_pool) zeroed.                                                                             *
  *    Since the activated card needs to know which colors of mana to activate for, the pay_mana_xbugrw array is consolidated into a color_test_t value and *
  * stored in needed_colors.  Unfortunately, 1) the *amount* of each color needed is lost, and we sometimes need it (e.g., for Axebane Guardian); and       *
@@ -160,7 +178,7 @@ extern int16_t number_of_attackers_declared;	// valid only after an EVENT_DECLAR
  ***********************************************************************************************************************************************************/
 extern int (*charge_mana_addr_of_pre_mana_pool)[8];		// copy of player's mana pool before activation
 extern int *charge_mana_addr_of_x_value;				// copy of x_value before activation
-extern int (*charge_mana_addr_of_pay_mana_xbugrw)[7];	// copy of PAY_MANA_COLORLESS...PAY_MANA_WHITE+1 before activation
+extern int (*charge_mana_addr_of_pay_mana_xbugrw)[8];	// copy of PAY_MANA_COLORLESS...PAY_MANA_WHITE+1 before activation
 extern int *charge_mana_addr_of_max_x_value;			// copy of max_x_value before activation
 
 extern int LEGACY_EFFECT_CUSTOM;
@@ -238,7 +256,7 @@ int aura_pump(int, int, event_t, int, int);
 void real_bounce_permanent(int, int);
 int can_attack(int player, int card);
 void cannot_block_exe(int, int, event_t);
-void charge_mana(int, color_t, int);
+int charge_mana(int, color_t, int);
 int check_hand_for_type(int, int, type_t);
 void check_legend_rule(int, int, event_t);
 int check_mana_multi(int);
@@ -300,6 +318,7 @@ int real_put_into_play(int, int);
 int raw_put_iid_on_top_of_deck(int player, int iid);	// Put a newly-created card with internal_card_id iid on top of player's library.
 int sprintf(char *str, const char *format, ...);
 int rearrange_top_3(int, int, event_t);
+void redraw_libraries(void);
 int regenerate(int, int, event_t, int, int);
 int regenerate_green(int , int, event_t);
 int regenerate_target_exe(int, int);
@@ -308,7 +327,6 @@ void remove_card_from_grave(int player, int position);
 int should_ai_play(int, int);	// equivalent to in_play(); has nothing to do with ai
 int show_deck(int player, const int* deck, int num_cards, const char* prompt, int suppress_done_label, /* const char* */int done_label);	// no desire to cast all the references to 0x7375B0 to const char* (they're the localized "Done" string in Text.res:DIALOGBUTTONS[3]).  See also show_bottom_of_deck() below.
 int signet(int, int, event_t, int, int);
-int shuffle_exe(int, int);
 int tap_card(int player, int card);
 void target_player(int, int, event_t);
 int type_tutor(int, int, event_t, int, int, int, int);
@@ -406,6 +424,10 @@ int has_any_counters(int player, counter_t counter_type, type_t type);	// May us
 void move_counters(int t_player, int t_card, int src_player, int src_card, counter_t counter_type, int number);	// Moves number of counter_type from {src_player, src_card} to {t_player, t_card}.  Moves all counters of all types if counter_type is -1; moves all of counter_type if number is -1.
 void remove_all_counters(int player, int card, counter_t type);	// use -1 to remove all of all types
 void remove_counters(int player, int card, counter_t type, int num);	// num must be > 0, or no effect
+void poison(int player, int number_of_counters);
+void raw_set_poison(int player, uint8_t new_number_of_counters);	// avoid
+void add_experience(int player, int number_of_counters);
+void raw_set_experience(int player, uint8_t new_number_of_counters);	// avoid
 
 static inline void add_counter(int player, int card, counter_t type)	{ add_counters(player, card, type, 1); }
 static inline void remove_counter(int player, int card, counter_t type)	{ remove_counters(player, card, type, 1); }
@@ -492,10 +514,12 @@ int cycling_special_cost(int player, int card, event_t event, int mode);	// Keep
 int landcycling(int player, int card, event_t event, int colorless, int land_subtype1, int land_subtype2);
 void comes_into_play_tapped(int, int, event_t);
 void play_card_in_hand_for_free(int player, int card);
+void play_card_in_hand_madness(int player, int card);
 void opponent_plays_card_in_your_hand_for_free(int player, int card);
 int play_card_in_deck_for_free(int player, int t_player, int deck_pos);
 int play_card_in_grave_for_free(int player, int t_player, int g_pos);
 int play_card_in_grave_for_free_and_exile_it(int player, int t_player, int g_pos);
+int flashback_spell(int player, int g_pos);
 int play_card_in_exile_for_free(int player, int t_player, int csvid);
 int play_spell_for_free(int player, int csvid);
 int leaves_play(int player, int card, event_t event);	// Lets a card watch for itself leaving play.
@@ -537,7 +561,7 @@ int get_turn_count(void);
 int get_specific_turn_count(int player);
 event_t get_actual_event(void);
 int bridge_from_below(int, int, event_t );
-int get_flashback(void);
+int get_flashback(int player, int card);
 int fetchland(int player, int card, event_t event, subtype_t subtype1, subtype_t subtype2, int lifecost);
 int planeswalker(int, int, event_t, int);
 int card_exploration(int, int, event_t );
@@ -560,7 +584,6 @@ const char* get_card_name_by_instance(card_instance_t* instance);
 int reveal_top_card(int player, int card, event_t event);
 int create_card_name_legacy(int player, int card, int id);
 int create_subtype_name_legacy(int player, int card, int subtype);
-int create_time_walk_legacy(int player, int card);
 int get_deck_color(int player, int whose_deck);	// If player == whose_deck or player is an AI (actual AI, or AI speculating for a human player), then returns a color_t of the most common color in whose_deck's library.  If player is a human and whose_deck isn't his, then always returns COLOR_BLACK.  If player is -1, then returns a color_test_t of the two most common colors in whose_deck's library.
 void obliterate_card(int player, int card);
 void obliterate_card_and_recycle(int player, int card);	// Obliterates card and immediately marks its slot as suitable for recycling.  Dangerous.  Should only be used if he card has never been visible to other cards and add_card_to_hand() has not been called again after this card was created.
@@ -648,7 +671,7 @@ int dealt_damage_to_player(int player, int card, int parent_player, int parent_c
 int pump_subtype_until_eot(int player, int card, int, int, int, int, int, int);
 void pump_color_until_eot(int player, int card, int, int, int, int, int, int);
 int from_graveyard_to_deck(int player, int, int);
-void rampage(int, int, int, int);
+void rampage(int player, int card, event_t event, int number);
 void damage_all(int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int);
 type_t get_type(int player, int card);	// Deals properly with flash permanents, enchanted evening, and planeswalkers.  In particular, this will return TARGET_TYPE_PLANESWALKER instead of TYPE_ENCHANTMENT if appropriate; make sure whatever you use it for can deal with that.
 type_t get_type_with_iid(int player, int card, int iid);	// Just like get_type(), but the iid is already known (and possibly may not be easily determinable from just player/card, for instance if it's left play)
@@ -677,7 +700,7 @@ void proliferate(int player, int card);
 int changeling_switcher(int player, int card, event_t event);
 int count_subtype_in_hand(int player, subtype_t);
 int count_untapped_subtype(int, int, int);
-int specific_spell_played(int player, int card, event_t event, int, int, int, int, int, int, int, int, int, int, int, int);
+int specific_spell_played(int player, int card, event_t event, int t_player, int trigger_mode, int type, int flag1, int subtype, int flag2, int color, int flag3, int id, int flag4, int cc, int flag5);
 int specific_cip(int player, int card, event_t event, int, int, int, int, int, int, int, int, int, int, int, int);
 void obliviation(int player, int card, int targ_player, int targ_card);
 void return_from_oblivion(int player, int card, event_t event);
@@ -783,6 +806,7 @@ int get_special_infos(int player, int card);
 int is_legendary(int player, int card);
 int fog_effect(int player, int card);
 int fog_special(int player, int card, int t_player, int flags);	// flags is a fog_special_flags_t
+int fog_special2(int player, int card, int t_player, fog_special_flags_t flags, int param);	// param's meaning defined by which flags are set.
 // void agyrem_eot_effect(int player);
 void blink_effect(int player, int card, void (*before_etb)(int player, int card));	// Exiles {t_player,t_card} and then returns it to the battlefield under its owner's control.  If before_etb is non-null, call that function with the card just before it re-enters the battlefield.
 void pandemonium_effect(int player, int card);
@@ -834,7 +858,7 @@ int has_added_subtype(int player, int card);
 void reset_subtypes(int player, int card, int);
 int get_added_subtype(int player, int card);
 void negate_combat_damage_this_turn(int player, int card, int t_player, int t_card, int unused);
-int is_equipping(int player, int card);
+card_instance_t* is_equipping(int player, int card);
 int check_for_equipment_targets(int player, int card);
 void play_land_sound_effect(int player, int card);
 void play_land_sound_effect_force_color(int player, int card, int colors);
@@ -843,6 +867,7 @@ int boost_creature_by_color(int player, int card, event_t event, int, int, int, 
 void modify_pt_and_abilities(int player, int card, event_t event, int, int, int);
 void nice_creature_to_sacrifice(int player, int card);
 int can_use_activated_abilities(int player, int card);
+int can_use_activated_abilities_by_instance(card_instance_t* instance);
 int can_produce_mana(int player, int card);
 int is_humiliated(int player, int card);
 int is_humiliated_by_instance(card_instance_t* instance);
@@ -925,6 +950,7 @@ void set_starting_life_total(int player, int);
 int get_starting_life_total(int player);
 int has_mana_to_cast_iid(int player, event_t event, int iid);	// prefer this one to has_mana_to_cast_id() if you already have an internal_card_id
 int has_mana_to_cast_id(int player, event_t event, int csvid);
+int is_anyone_dead(void);
 int is_id_in_grave(int player, int);
 int is_id_in_hand(int player, int);
 int charge_mana_from_id(int player_to_charge, int card_to_charge_for/*optional; set to -1 to omit*/, event_t event, int csvid);
@@ -961,7 +987,7 @@ int flip_a_coin(int player, int card);
 int player_flips_a_coin(int player, int card, int who_flips);	// Returns a flip_a_coin_values
 int vanilla_pump(int player, int card, event_t event, target_definition_t *td, int power, int toughness, int keyword, int sp_keyword);	// Can be used with sorceries and with any target restrictions, but the AI can't fully understand the power/toughness modifications.  td only needs to be set if IS_CASTING(player, card, event).
 int vanilla_instant_pump(int player, int card, event_t event, int allowed_controller, int preferred_controller, int power, int toughness, int keyword, int sp_keyword);	// A more restricted version of generic_pump(), usable only for instants and only when there are no restrictions on targeting except for whose creature it can target; but this lets us teach the AI about the power/toughness modifications.
-int shuffle(int player);
+void shuffle(int player);
 int count_creatures_by_power(int player, int, int);
 void rfg_when_damage(int player, int card, event_t event);
 int vanilla_creature_pumper(int player, int card, event_t event, int, int, int, int, int, int, int, int, int, int, int, target_definition_t *td);
@@ -1068,6 +1094,7 @@ int totem_armor(int player, int card, event_t event, int, int, int, int);
 int devouring(int player, int card);
 int has_convoked_mana(int player, int card, int, int, int);
 int has_convoked_mana_extended(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white);
+int has_convoked_mana_extended_generic(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white, int cmc_modifier);
 int charge_convoked_mana(int player, int card, int, int, int);
 int charge_convoked_mana_extended(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white);
 int charge_convoked_mana_extended_generic(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white, int check_for_cc_modifier);
@@ -1095,8 +1122,8 @@ void exchange_control_of_target_permanents(int player, int card, int, int, int, 
 int dredge(int player, int card, event_t event, int);
 int maze_of_ith_effect(int player, int card, int, int);
 int new_get_test_score(test_definition_t *this_test);
-void activate_oran_rief_pump(int player, int card);
-int new_select_a_card(int player, int, int, int, int, int, test_definition_t *this_test);
+void activate_oran_rief_pump(int player, int card, int color);
+int new_select_a_card(int player, int targ_player, int search_location, int must_select, int ai_selection_mode, int test_type, test_definition_t* this_test);
 int select_card_from_zone(int player, int, const int *s_location, int, int, int, int, test_definition_t *this_test);
 int select_multiple_cards_from_graveyard(int player, int targ_player, int must_select_all /*if < 0, not enforced; but failing to select all is considered cancelling */, int ai_selection_mode, test_definition_t* this_test /*optional*/, int max_targets, target_t* ret_location);
 void descending_insertion_sort_on_player(int number, target_t* array);	// Simple n^2 insertion sort on array[number].player, descending.  Poorly suited if number is greater than about 30.
@@ -1181,6 +1208,7 @@ int new_specific_cip(int player, int card, event_t event, int t_player, int trig
 int get_number_of_hybrid_mana(int player, int card, int, int);
 int get_colors_for_hybrid(int player, int card, int, int);
 void count_for_gfp_ability_and_store_values(int player, int card, int event, int t_player, int type, test_definition_t *this_test/*optional*/, int mode, int storage_location);
+void count_for_gfp_ability_and_store_values_extra(int player, int card, int event, int t_player, int type, int(*extra_check)(int player, int card), int mode, int storage_location);
 void count_for_gfp_ability(int player, int card, int event, int t_player, int type, test_definition_t *this_test/*optional*/);
 int resolve_gfp_ability(int player, int card, event_t event, resolve_trigger_t trig_mode);
 int get_random_card_in_hand(int player);
@@ -1245,7 +1273,7 @@ void lose_the_game(int player);
 void set_special_abilities(int player, int card, int, int);
 int counterspell(int player, int card, event_t event, target_definition_t* td /*optional*/, int target_num);
 int counterspell_validate(int player, int card, target_definition_t* td /*optional*/, int target_num);
-int counterspell_resolve_unless_pay_x(int player, int card, target_definition_t* td /*optional*/, int target_num, int x);	// Returns 0 if didn't validate, 1 if validated but didn't pay, 2 if paid.
+int counterspell_resolve_unless_pay_x(int player, int card, target_definition_t* td /*optional*/, int target_num, int x);	// Returns 0 if didn't validate, 1 if validated but didn't pay (so spell was countered), 2 if validated and paid (so spell wasn't countered).
 int can_counter_activated_ability(int player, int card, event_t event, target_definition_t* td /*optional*/);
 int cast_counter_activated_ability(int player, int card, int target_pos);
 int validate_counter_activated_ability(int player, int card, target_definition_t* td /*optional*/, int target_pos);
@@ -1259,7 +1287,7 @@ int choose_a_dead_this_turn(int player, int card, int, int, int, test_definition
 int type_change_legacy(int player, int card, event_t event);
 int turn_into_artifact(int player, int card, int, int, int);
 int turn_into_creature(int player, int card, int, int, int, int, int);
-int lead_the_stampede_effect(int player, int csvid, int amount);
+int lead_the_stampede_effect(int player, int card, int amount);
 void cannot_block(int player, int card, event_t event);
 void give_shroud_to_player(int player, int card, event_t event);
 void give_hexproof_to_player(int player, int card, event_t event);
@@ -1292,7 +1320,7 @@ void choose_to_untap(int player, int card, event_t event);	// AI leaves tapped i
 int choosing_to_untap(int player, int card, event_t event);	// Call as if (choosing_to_untap(player, card, event)) { return should_ai_untap; }.  AI will leave tapped if that return value is 0, otherwise will untap.
 int chroma(int player, int card, int clr1, int clr2);	// If card is supplied, counts *that card only*.  Usually you want -1.
 int devotion(int player, int card, int clr1, int clr2);	// Exactly the same as chroma(player, -1, clr1, clr2), except sleights clr1 and clr2 unless card is -1.
-int new_specific_spell_played(int player, int card, event_t event, int, int, test_definition_t *this_test);
+int new_specific_spell_played(int player, int card, event_t event, int t_player, int trigger_mode, test_definition_t *this_test);
 int generic_spell(int player, int card, event_t event, int flags, target_definition_t *td, const char *prompt, int max_targets, test_definition_t *this_test);
 int basic_spell(int player, int card, event_t event);
 int graveyard_has_shroud(int player);
@@ -1484,7 +1512,7 @@ void real_counter_a_spell(int player, int card, int to_counter_player, int to_co
 int manage_counterspell_linked_hacks(int player, int card, int to_counter_player, int to_counter_card);
 int beginning_of_combat(int player, int card, event_t event, int aff_player, int aff_card);
 int already_dead(int player, int card);
-int get_cost_for_propaganda_like_effect(int player);
+int get_cost_for_propaganda_like_effect(int player, int card);
 void uthden_creature(int player, int card, event_t event, int land_color);
 int get_average_cmc(int player);
 int generic_animating_aura(int player, int card, event_t event, target_definition_t *td, const char *prompt, int pow, int tou, int key, int s_key);
@@ -1495,7 +1523,6 @@ void volver(int player, int card, event_t event, int colorless, int black, int b
 int generic_split_card(int player, int card, event_t event, int can_play_first_half, int priority_first_half,
 						int colorless2, int black2, int blue2, int green2, int red2, int white2, int can_play_second_half, int priority_second_half,
 						int can_be_fused, const char *name_first_half, const char *name_second_half);
-
 void permanents_enters_battlefield_tapped(int player, int card, event_t event, int t_player, int type, test_definition_t *test);
 int prevent_all_damage_dealt_by_target(int player, int card, int t_player, int t_card, int ddbm_flags);
 int generic_stealing_aura(int player, int card, event_t event, target_definition_t *td, const char *prompt);
@@ -1540,6 +1567,7 @@ void when_enchanted_permanent_dies_return_aura_to_hand(int player, int card, eve
 void bolster(int player, int card, int num_counters);
 void dash(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white);
 const char* is_multicolored(int who_chooses, int player, int card);	// targeting lambda
+void menace(int player, int card, event_t event);
 int fx_menace(int player, int card, event_t event);
 void minimize_nondraining_mana(void);
 void mana_doesnt_drain_until_eot(int player, color_t color, int amt);	// A specific amount of a specific color of mana already in player's mana pool doesn't drain until end of turn.  Unlike MANADRAIN_DOESNT_DRAIN and MANADRAIN_BECOMES_COLORLESS, this should be called immediately after adding the mana to the pool, not during EVENT_MANA_POOL_DRAINING.
@@ -1547,6 +1575,68 @@ void new_timestamp(int player, int card);	// Resets {player,card}'s timestamp to
 void store_num_colors_paid_in_info_slot(int player, int card, event_t event);	// Sets {player,card}->info_slot to the number of different colors of mana paid to cast during EVENT_CAST_SPELL.  Must have the Modifies Casting Cost bit set.
 int whenever_a_player_sacrifices_a_permanent(int player, int card, event_t event, int who_sacs, type_t typ, resolve_trigger_t mode);	// Uses {player, card}->targets[11].player.
 card_instance_t* legacy_permanents_destroyed_this_way_accumulate(int src_player, int src_card, card_instance_t* previous_effect, int tgt_player, int tgt_card);	// Call once for each target.  previous_effect should be NULL on the first call, else the return value of the previous call to this function.  When the last target is destroyed (not counting ones that stop being destroyed for whatever reason), then the original card's function will be sent EVENT_RESOLVE_GENERAL_EFFECT, with player/card set to one of the effect cards created.  The number of targets that were destroyed will be in HIWORD(effect->eot_toughness).  The number of those that were controlled by player 0 will be in LOWORD(effect->targets[10].player), and the number that were controlled by player 1 will be in HIWORD(effect->targets[10].player).
+int recruiting(int player, int card, int subtype, int cards_to_look);
+void check_damage_test(int player, int card, event_t event, ddbm_flags_t mode, int triggering_player, int triggering_card, int type /*optional*/, test_definition_t *test/*optional*/);
+int can_legally_play_card_in_hand(int player, int card);
+int upkeep_trigger_no_check(int player, int card, event_t event);
+int echoing_spell(int player, int card, event_t event, target_definition_t *td, const char *prompt, int effect);
+int echoing_effect(int player, int card, int t_player, int t_card, target_definition_t *td, int effect);
+int get_card_name(int player, int card);
+int has_same_name(int player, int card, int player2, int card2);
+void damage_creature_and_all_the_others_with_the_same_name(int player, int card, int t_player, int t_card, int dmg);
+int tutor_card_with_the_same_name(int player, int card, int who_tutors, int t_player, int tutor_from, int tutor_to, int must_tutor);
+int get_special_flags(int player, int card, int type_of_special_flag);
+void remove_special_ability(int player, int card, int sa);
+void cannot_be_enchanted_granted(int granting_player, int granting_card, event_t event, int t_player, int t_card);
+int can_pay_life_as_cost_for_spells_or_activated_abilities(int player, int amount);
+void set_x_for_x_spells(int player, int card, event_t event, int value);
+int check_for_alternate_identities(int player, int card); //AKA Planeswalker legend rule
+int en_kor_damage_prevention_ability(int player, int card, event_t event);
+int is_suspend_legacy(int player, int card);
+void spell_can_be_cast_as_instant_by_paying_2(int player, int card, event_t event);
+int effect_act_of_treason_and_modify_pt_or_abilities(int player, int card, int t_player, int t_card, int pow, int tou, int key, int s_key);
+int beginning_of_phase(int player, int card, event_t event, int aff_player, int aff_card, int phase);
+void play_card_in_opponent_hand_by_test(int player, int card, test_definition_t *this_test);
+int gain_control_permanently(int player, int t_player, int t_card);
+int gain_control_permanently_no_sound(int player, int t_player, int t_card);
+int disable_all_control_effects_attached_to_me(int player, int card);
+int re_enable_the_most_recent_control_effect_attached_to_me(int player, int card);
+int mana_battery_generic(int player, int card, event_t event, color_t color, int colorless_cost);
+void if_a_creature_damaged_by_me_dies_do_something(int player, int card, event_t event, int mode);
+int destroy_attached_auras_and_obliterate_card(int player, int card);
+void reactivate_the_most_recent_pt_setting_effects_attached_to_me(int t_player, int t_card);
+int constellation(int player, int card, event_t event);
+int exile_top_x_card_you_may_play_them(int player, int card, int howmany, test_definition_t *test, int t_player, mpcfe_mode_t flags);
+int check_battlefield_for_name(int player, int type, int name);
+int charge_generic_mana_with_colorless_only(int player, int total_amount, int amount_of_colorless_only);
+int player_has_generic_and_colorless_available(int player, int generic_needed, int colorless_needed);
+int effect_on_all_negate_ability_and_special_ability_legacy_attached_to_me(int player, int card, int effect);
+int negate_ability_and_special_ability_until_eot(int player, int card, int t_player, int t_card, keyword_t keyword, int s_keyword);
+int target_player_cant_cast_csvid(int player, int card, int t_player, int csvid);
+int target_player_cant_cast_type(int player, int card, int t_player, int type);
+int target_player_cant_attack(int player, int card, int t_player);
+void add_flag_to_special_effect(int player, int card, int flag);
+int check_for_special_effect_card(int player, int csvid);
+int count_types_in_grave(int player);
+int is_equipped(int player, int card);
+void skulk(int player, int card, event_t event);
+void life_sucking(int player, int card, int amount);
+void copy_all_tokens(int player, int card, int type, test_definition_t *test);
+int enchanted_land_has_T_add_n_mana_of_any_one_color(int player, int card, event_t event, int amt);
+int whenever_type_is_put_into_graveyard_from_anywhere(int player, int card, event_t event, int t_player, int type, test_definition_t *test);
+void saint_traft_ability(int player, int card, event_t event, int attacker_player, int attacker_card);
+void replace_all_instances_of_one_color_word_with_another(int player, int card);
+void replace_all_instances_of_one_basic_land_type_word_with_another(int player, int card);
+int get_colors_to_sleight_from_text(int csvid);
+int get_colors_to_hack_from_csvid(int csvid);
+void fetch_ability_tooltip_name(char* destination, int i);
+void get_special_counters_name(char* dest, int csvid, int num);
+void get_counter_name_by_type(char* dest, counter_t counter_type, int num);
+int get_counter_type_by_instance(card_instance_t* instance);
+int card_instances_should_be_displayed_identically(card_instance_t* inst1, card_instance_t* inst2);
+const char* get_card_or_subtype_name(int subtype_or_csvid);
+int delirium(int player);
+int when_attacks_pump_self(int player, int card, event_t event, int power, int toughness);
 
 /* Cards in already coded, for re-utilization purposes */
 int card_aladdin(int, int, event_t);
@@ -1578,6 +1668,7 @@ int card_lightning_bolt(int, int, event_t);
 int card_lim_duls_high_guard(int, int, event_t);
 int card_living_lands(int, int, event_t);
 int card_magical_hack(int, int, event_t);
+int card_magical_hack_exe(int, int, event_t);
 int card_mana_flare(int, int, event_t);
 int card_mana_leak(int, int, event_t);
 int card_manta_riders(int, int, event_t);
@@ -1600,6 +1691,7 @@ int card_samite_healer(int, int, event_t);
 int card_shivan_dragon(int, int, event_t);
 int card_shock(int, int, event_t);
 int card_sleight_of_mind(int, int, event_t);
+int card_sleight_of_mind_exe(int, int, event_t);
 int card_storm_seeker(int, int, event_t);
 int card_sylvan_scrying(int, int, event_t);
 int card_tawnoss_weaponry(int, int, event_t);
@@ -1712,6 +1804,11 @@ int card_shocker(int player, int card, event_t event);
 int card_elvish_mystic(int player, int card, event_t event);
 int card_auramancer(int player, int card, event_t event);
 int card_gravedigger(int player, int card, event_t event);
+int card_mana_reflection(int player, int card, event_t event);
+int card_assassinate(int player, int card, event_t event);
+int card_act_of_treason(int player, int card, event_t event);
+int card_rakish_heir(int player, int card, event_t event);
+int card_clone(int player, int card, event_t event);
 
 void backtrace_and_abort(const char* header);
 #define ASSERT(cond) do { if (!(cond)) backtrace_and_abort(__FILE__ ":" STRINGIZE(__LINE__) "\n" #cond); } while (0)
@@ -1770,17 +1867,42 @@ void backtrace_and_abort(const char* header);
 #define MANACOST_XRW(x,r,w)	(x), 0, 0, 0, (r), (w)
 #define  MANACOST_RW(  r,w)	MANACOST_XRW(0,r,w)
 #define MANACOST_XWR(x,w,r)	MANACOST_XRW(x,r,w)
-// Khans of Tarkir "shards"
-#define  MANACOST_BRW(b,r,w)	0, (b), 0, 0, (r), (w)
-#define  MANACOST_BGW(b,g,w)	0, (b), 0, (g), 0, (w)
-#define  MANACOST_URW(u,r,w)	0, 0, (u), 0, (r), (w)
-#define  MANACOST_BUG(b,u,g)	0, (b),(u), (g), 0, 0
-#define  MANACOST_UGR(u, g, r)	0, 0,(u), (g), (r), 0
-#define  MANACOST_XBRW(x, b,r,w)	(x), (b), 0, 0, (r), (w)
-#define  MANACOST_XBGW(x, b,g,w)	(x), (b), 0, (g), 0, (w)
-#define  MANACOST_XURW(x, u,r,w)	(x), 0, (u), 0, (r), (w)
-#define  MANACOST_XBUG(x, b,u,g)	(x), (b),(u), (g), 0, 0
-#define  MANACOST_XUGR(x, u, g, r)	(x), 0,(u), (g), (r), 0
+
+// 3-color ally
+#define MANACOST_XWUB(x,w,u,b)	(x), (b), (u), 0, 0, (w)
+#define  MANACOST_WUB(  w,u,b)	MANACOST_XWUB(0,w,u,b)
+#define MANACOST_XUBR(x,u,b,r)	(x), (b), (u), 0, (r), 0
+#define  MANACOST_UBR(  u,b,r)	MANACOST_XUBR(0,u,b,r)
+#define MANACOST_XBRG(x,b,r,g)	(x), (b), 0, (g), (r), 0
+#define  MANACOST_BRG(  b,r,g)	MANACOST_XBRG(0,b,r,g)
+#define MANACOST_XRGW(x,r,g,w)	(x), 0, 0, (g), (r), (w)
+#define  MANACOST_RGW(  r,g,w)	MANACOST_XRGW(0,r,g,w)
+#define MANACOST_XGWU(x,g,w,u)	(x), 0, (u), (g), 0, (w)
+#define  MANACOST_GWU(  g,w,u)	MANACOST_XGWU(0,g,w,u)
+
+// 3-color shard, pre-Khans of Tarkir order
+#define MANACOST_XWBR(x,w,b,r)	(x), (b), 0, 0, (r), (w)
+#define  MANACOST_WBR(  w,b,r)	MANACOST_XWBR(0,w,b,r)
+#define MANACOST_XURG(x,u,r,g)	(x), 0,(u), (g), (r), 0
+#define  MANACOST_URG(  u,r,g)	MANACOST_XURG(0,u,r,g)
+#define MANACOST_XBGW(x,b,g,w)	(x), (b), 0, (g), 0, (w)
+#define  MANACOST_BGW(  b,g,w)	MANACOST_XBGW(0,b,g,w)
+#define MANACOST_XRWU(x,r,w,u)	(x), 0, (u), 0, (r), (w)
+#define  MANACOST_RWU(  r,w,u)	MANACOST_XRWU(0,r,w,u)
+#define MANACOST_XGUB(x,g,u,b)	(x), (b),(u), (g), 0, 0
+#define  MANACOST_GUB(  g,u,b)	MANACOST_XGUB(0,g,u,b)
+
+// 3-color shard, post-Khans of Tarkir order
+#define MANACOST_XRWB(x,r,w,b)	(x), (b), 0, 0, (r), (w)
+#define  MANACOST_RWB(  r,w,b)	MANACOST_XRWB(0,r,w,b)
+#define MANACOST_XGUR(x,g,u,r)	(x), 0,(u), (g), (r), 0
+#define  MANACOST_GUR(  g,u,r)	MANACOST_XGUR(0,g,u,r)
+#define MANACOST_XWBG(x,w,b,g)	(x), (b), 0, (g), 0, (w)
+#define  MANACOST_WBG(  w,b,g)	MANACOST_XWBG(0,w,b,g)
+#define MANACOST_XURW(x,u,r,w)	(x), 0, (u), 0, (r), (w)
+#define  MANACOST_URW(  u,r,w)	MANACOST_XURW(0,u,r,w)
+#define MANACOST_XBGU(x,b,g,u)	(x), (b),(u), (g), 0, 0
+#define  MANACOST_BGU(  b,g,u)	MANACOST_XBGU(0,b,g,u)
 
 // Needed when a macro expects a single MANACOST macro as an argument.
 #define MANACOST6(x,b,u,g,r,w) (x),(b),(u),(g),(r),(w)

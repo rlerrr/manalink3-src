@@ -107,6 +107,47 @@ blt_expansion_symbol(HDC hdc, const RECT* dest_rect, EXPANSION_t expansion, rari
   GdipDeleteGraphics(gfx);
 }
 
+void
+blt_dfc_symbol(HDC hdc, const RECT* dest_rect, uint8_t dfc_sym)
+{
+  if (!hdc || !dest_rect || !pics[DFC_SYMBOLS])
+	return;
+
+  if (dfc_sym > DFC_SYMBOL_MAX)
+	return;
+  int src_x = dfc_sym % 2;
+  int src_y = dfc_sym / 2;
+
+  GpGraphics* gfx;
+
+  make_gpic_from_pic(DFC_SYMBOLS);
+  GdipCreateFromHDC(hdc, &gfx);
+  GdipSetInterpolationMode(gfx, InterpolationModeHighQualityBicubic);
+
+  UINT width;
+  GdipGetImageWidth(gpics[DFC_SYMBOLS], &width);
+
+  int sym_wid = width / 2;
+  int sym_hgt = sym_wid;
+
+  int dest_x = dest_rect->left;
+  int dest_y = dest_rect->top;
+  int dest_wid = (dest_rect->right >= dest_rect->left) ? dest_rect->right - dest_rect->left : sym_wid;
+  int dest_hgt = (dest_rect->bottom >= dest_rect->top) ? dest_rect->bottom - dest_rect->top : sym_hgt;
+
+  /* Gdi+ prefilters an image before scaling it, so even with a fully-transparent borders around each subimage, it'll
+   * still sometimes pick up edges from adjacent subimages.  So what I do is first crop the image to a secondary
+   * bitmap (which does not interpolate), then blt with interpolation from *that* to the final image. */
+
+  GpBitmap* cropped = NULL;
+  GdipCloneBitmapAreaI(src_x * sym_wid, src_y * sym_hgt, sym_wid, sym_hgt, PixelFormat32bppARGB, gpics[DFC_SYMBOLS], &cropped);
+
+  GdipDrawImageRectI(gfx, cropped, dest_x, dest_y, dest_wid, dest_hgt);
+
+  GdipDisposeImage(cropped);
+  GdipDeleteGraphics(gfx);
+}
+
 // Returns 0 if text should use PowertoughnessColor, 1 if should use TitleOnLightColor
 static int
 blt_powertoughness_box(HDC hdc, const RECT* dest_rect, PicHandleNames frame, GpImageAttributes* alpha_xform)
@@ -738,48 +779,67 @@ strip_planeswalker_base_loyalty(char* srcdest)
   return loy;
 }
 
-static COLORREF
-get_fullcard_title_text_override_color(PicHandleNames framenum, GpImageAttributes* alpha_xform)
+COLORREF
+get_title_text_override_color(PicHandleNames framenum, void* alpha_xform,
+							  int light_visible, COLORREF light_colorref,
+							  int white_black_visible, COLORREF white_black_colorref,
+							  int colorless_visible, COLORREF colorless_colorref)
 {
-  if (cfg->fullcard_title_on_light_visible || cfg->fullcard_title_on_white_black_visible)
-	switch (BASE_FRAME(framenum))
-	  {
-		case FRAME_MODERN_SPELL_HYBRID_WHITE_BLACK:
-		  if (cfg->fullcard_title_on_white_black_visible)
-			return cfg->fullcard_title_on_white_black_color.colorref;
+  if (light_visible || white_black_visible || colorless_visible)
+	{
+	  framenum = BASE_FRAME(framenum);
+	  if (colorless_visible
+		  && (framenum == FRAME_MODERN_LAND_COLORLESS
+			  || framenum == FRAME_MODERN_ARTIFACT_LAND_COLORLESS
+			  || framenum == FRAME_MODERN_SPELL_COLORLESS
+			  || framenum == CARDOV_MODERN_COLORLESS
+			  || alpha_xform))
+		return colorless_colorref;
+	  else
+		switch (framenum)
+		  {
+			case FRAME_MODERN_SPELL_HYBRID_WHITE_BLACK:
+			  if (white_black_visible)
+				return white_black_colorref;
 
-		  // otherwise, fall through
-		case FRAME_MODERN_LAND_COLORLESS:
-		case FRAME_MODERN_LAND_WHITE:
-		case FRAME_MODERN_LAND_GOLD_MIN ... FRAME_MODERN_LAND_GOLD_MAX:
-		case FRAME_MODERN_LAND_GOLD:
+			  // otherwise, fall through
+			case FRAME_MODERN_LAND_COLORLESS:
+			case FRAME_MODERN_LAND_WHITE:
+			case FRAME_MODERN_LAND_GOLD_MIN ... FRAME_MODERN_LAND_GOLD_MAX:
+			case FRAME_MODERN_LAND_GOLD:
 
-		case FRAME_MODERN_ARTIFACT_LAND_COLORLESS:
-		case FRAME_MODERN_ARTIFACT_LAND_WHITE:
-		case FRAME_MODERN_ARTIFACT_LAND_GOLD_MIN ... FRAME_MODERN_ARTIFACT_LAND_GOLD_MAX:
-		case FRAME_MODERN_ARTIFACT_LAND_GOLD:
+			case FRAME_MODERN_ARTIFACT_LAND_COLORLESS:
+			case FRAME_MODERN_ARTIFACT_LAND_WHITE:
+			case FRAME_MODERN_ARTIFACT_LAND_GOLD_MIN ... FRAME_MODERN_ARTIFACT_LAND_GOLD_MAX:
+			case FRAME_MODERN_ARTIFACT_LAND_GOLD:
 
-		case FRAME_MODERN_ARTIFACT_COLORLESS:
-		case FRAME_MODERN_ARTIFACT_WHITE:
-		case FRAME_MODERN_ARTIFACT_GOLD_MIN ... FRAME_MODERN_ARTIFACT_GOLD_MAX:
-		case FRAME_MODERN_ARTIFACT_GOLD:
+			case FRAME_MODERN_ARTIFACT_COLORLESS:
+			case FRAME_MODERN_ARTIFACT_WHITE:
+			case FRAME_MODERN_ARTIFACT_GOLD_MIN ... FRAME_MODERN_ARTIFACT_GOLD_MAX:
+			case FRAME_MODERN_ARTIFACT_GOLD:
 
-		case FRAME_MODERN_SPELL_COLORLESS:
-		case FRAME_MODERN_SPELL_WHITE:
-		case FRAME_MODERN_SPELL_GOLD_MIN ... FRAME_MODERN_SPELL_GOLD_MAX:
-		case FRAME_MODERN_SPELL_GOLD:
-		case FRAME_MODERN_SPELL_HYBRID_WHITE_BLUE:
-		case FRAME_MODERN_SPELL_HYBRID_RED_WHITE:
-		case FRAME_MODERN_SPELL_HYBRID_GREEN_WHITE:
-		  if (cfg->fullcard_title_on_light_visible)
-			return cfg->fullcard_title_on_light_color.colorref;
-		  break;
+			case FRAME_MODERN_SPELL_COLORLESS:
+			case FRAME_MODERN_SPELL_WHITE:
+			case FRAME_MODERN_SPELL_GOLD_MIN ... FRAME_MODERN_SPELL_GOLD_MAX:
+			case FRAME_MODERN_SPELL_GOLD:
+			case FRAME_MODERN_SPELL_HYBRID_WHITE_BLUE:
+			case FRAME_MODERN_SPELL_HYBRID_RED_WHITE:
+			case FRAME_MODERN_SPELL_HYBRID_GREEN_WHITE:
+			  if (light_visible)
+				return light_colorref;
+			  break;
 
-		default:
-		  if (alpha_xform && cfg->fullcard_title_on_light_visible)	// CARDOV_*_COLORLESS
-			return cfg->fullcard_title_on_light_color.colorref;
-		  break;
-	  }
+			default:
+			  if (alpha_xform)	// CARDOV_*_COLORLESS
+				{
+				  if (colorless_visible)
+					return colorless_colorref;
+				  if (light_visible)
+					return light_colorref;
+				}
+			  break;
+		  }
+	}
   return (COLORREF)(-1);
 }
 
@@ -893,10 +953,14 @@ draw_fullcard_frame(HDC hdc, PicHandleNames framenum, GpImageAttributes** alpha_
 }
 
 static COLORREF
-draw_fullcard_tombstone_and_title(HDC hdc, const card_ptr_t* cp, PicHandleNames framenum, GpImageAttributes* alpha_xform)
+draw_fullcard_dfcsym_tombstone_title(HDC hdc, const card_ptr_t* cp, const Rarity* r, PicHandleNames framenum,
+									 GpImageAttributes* alpha_xform)
 {
   RECT rect_title;
   CopyRect(&rect_title, &cfg->fullcard_title);
+
+  if (cfg->fullcard_dfc_visible && r->dfc_symbol <= DFC_SYMBOL_MAX)
+	blt_dfc_symbol(hdc, &cfg->fullcard_dfc, r->dfc_symbol);
 
   int tombstone_drawn = 0;
   if (cfg->fullcard_tombstone_visible && has_graveyard_ability(cp))
@@ -918,18 +982,25 @@ draw_fullcard_tombstone_and_title(HDC hdc, const card_ptr_t* cp, PicHandleNames 
 	rt = cfg->fullcard_title.right;
 
   SIZE textsize;
-  int fnt, len = strlen(cp->full_name);
+  int fnt, len = strlen(cp->name);
   for (fnt = BIGCARDTITLE_FONT; fnt < BIGCARDTITLE_FONT9; ++fnt)
 	{
 	  SelectObject(hdc, fonts[fnt]);
-	  GetTextExtentPoint32(hdc, cp->full_name, len, &textsize);
+	  GetTextExtentPoint32(hdc, cp->name, len, &textsize);
 	  if (rect_title.left + textsize.cx <= rt)
 		goto found_bigcardtitle_font;
 	}
   SelectObject(hdc, fonts[BIGCARDTITLE_FONT9]);
  found_bigcardtitle_font:;
 
-  COLORREF title_text_override_color = get_fullcard_title_text_override_color(framenum, alpha_xform);
+  COLORREF title_text_override_color =
+	get_title_text_override_color(framenum, alpha_xform,
+								  cfg->fullcard_title_on_light_visible,
+								  cfg->fullcard_title_on_light_color.colorref,
+								  cfg->fullcard_title_on_white_black_visible,
+								  cfg->fullcard_title_on_white_black_color.colorref,
+								  cfg->fullcard_title_on_colorless_visible,
+								  cfg->fullcard_title_on_colorless_color.colorref);
 
   int pos = (cfg->fullcard_title_center
 			 ? (rect_title.left + rect_title.right) / 2
@@ -937,7 +1008,7 @@ draw_fullcard_tombstone_and_title(HDC hdc, const card_ptr_t* cp, PicHandleNames 
 
   SetTextAlign(hdc, cfg->fullcard_title_center ? TA_CENTER : TA_LEFT);
 
-  draw_text_with_shadow_at_x(hdc, &rect_title, pos, &cfg->fullcard_title_txt, title_text_override_color, cp->full_name, len);
+  draw_text_with_shadow_at_x(hdc, &rect_title, pos, &cfg->fullcard_title_txt, title_text_override_color, cp->name, len);
 
   if (cfg->fullcard_title_center)
 	SetTextAlign(hdc, TA_LEFT);
@@ -969,9 +1040,19 @@ draw_fullcard_type(HDC hdc, const card_ptr_t* cp, COLORREF title_text_override_c
 			goto found_bigcardtype_font;
 		}
 	  SelectObject(hdc, fonts[BIGCARDTYPE_FONT9]);
-	found_bigcardtype_font:
+	found_bigcardtype_font:;
 
-	  draw_text_with_shadow(hdc, &cfg->fullcard_type, &cfg->fullcard_type_txt, title_text_override_color, buf, len);
+	  int pos = (cfg->fullcard_type_center
+				 ? (cfg->fullcard_type.left + cfg->fullcard_type.right) / 2
+				 : cfg->fullcard_type.left);
+
+	  SetTextAlign(hdc, cfg->fullcard_type_center ? TA_CENTER : TA_LEFT);
+
+	  draw_text_with_shadow_at_x(hdc, &cfg->fullcard_type, pos, &cfg->fullcard_type_txt, title_text_override_color,
+								 buf, len);
+
+	  if (cfg->fullcard_type_center)
+		SetTextAlign(hdc, TA_LEFT);
 	}
 
   return loyalty;
@@ -1006,7 +1087,8 @@ draw_fullcard_watermark(HDC hdc, const Rarity* r, const RECT* rect_rulestext)
 #define MAX_LOYALTY_MODS 5
 
 static int
-fullcard_exclude_expanded_text_box(HDC hdc, const card_ptr_t* cp, char* inout_rules_text, RECT* rect_rulestext, RECT* rect_rulesbox, int is_a_planeswalker)
+fullcard_exclude_expanded_text_box(HDC hdc, const card_ptr_t* cp, char* inout_rules_text, RECT* rect_rulestext,
+								   RECT* rect_rulesbox, int is_a_planeswalker)
 {
   int txt_hgt = 0;
 
@@ -1120,7 +1202,8 @@ draw_fullcard_loyalty_costs(HDC hdc, const RECT* rect_rulestext, LoyaltyCost* lo
 }
 
 static void
-draw_fullcard_textbox_contents(HDC hdc, const card_ptr_t* cp, RECT* rect_rulestext, char* rules_text, const Rarity* r, PicHandleNames framenum, GpImageAttributes* alpha_xform, int is_a_planeswalker)
+draw_fullcard_textbox_contents(HDC hdc, const card_ptr_t* cp, RECT* rect_rulestext, char* rules_text, const Rarity* r,
+							   PicHandleNames framenum, GpImageAttributes* alpha_xform, int is_a_planeswalker)
 {
   if (!*rules_text)	// i.e., not already computed
 	strip_hack_and_sleight_symbols(rules_text, cp->rules_text);
@@ -1156,7 +1239,7 @@ draw_fullcard_textbox_contents(HDC hdc, const card_ptr_t* cp, RECT* rect_ruleste
 }
 
 static void
-draw_fullcard_power_toughness(HDC hdc, PicHandleNames framenum, GpImageAttributes* alpha_xform)
+draw_fullcard_power_toughness(HDC hdc, PicHandleNames framenum, GpImageAttributes* alpha_xform, COLORREF override_color)
 {
   SelectObject(hdc, fonts[BIGCARDPT_FONT]);
 
@@ -1165,6 +1248,9 @@ draw_fullcard_power_toughness(HDC hdc, PicHandleNames framenum, GpImageAttribute
 	  && blt_powertoughness_box(hdc, &cfg->fullcard_powertoughness_box, framenum, alpha_xform)
 	  && cfg->fullcard_title_on_light_visible)
 	pt_color = cfg->fullcard_title_on_light_color.colorref;
+
+  if (override_color != (COLORREF)(-1))
+	pt_color = override_color;
 
   char buf[100];
   *buf = 0;
@@ -1213,6 +1299,46 @@ draw_fullcard_base_loyalty(HDC hdc, int loyalty, GpImageAttributes* alpha_xform)
   sprintf(buf, "%d", loyalty);
 
   draw_text_with_shadow_at_x(hdc, &cfg->fullcard_loyalty_base, pos, &cfg->fullcard_loyalty_txt, -1, buf, -1);
+}
+
+static void
+draw_fullcard_vanguard(HDC hdc, const card_ptr_t* cp)
+{
+  SetTextAlign(hdc, TA_CENTER);
+  char buf[10];
+  int pos, fnt, len;
+  SIZE textsize;
+
+  TextWithShadow tws;
+  tws.color = tws.shadow_color = cfg->fullcard_vanguard_color;
+  tws.shadow_offset.x = tws.shadow_offset.y = 0;
+  tws.shadow_visible = 0;
+
+  len = sprintf(buf, "%+d", (int8_t)(cp->ai_power));
+  for (fnt = BIGCARDVANGUARD_FONT; fnt < BIGCARDVANGUARD_FONT3; ++fnt)
+	{
+	  SelectObject(hdc, fonts[fnt]);
+	  GetTextExtentPoint32(hdc, buf, len, &textsize);
+	  if (cfg->fullcard_vanguard_hand.left + textsize.cx <= cfg->fullcard_vanguard_hand.right)
+		goto found_hand_font;
+	}
+  SelectObject(hdc, fonts[BIGCARDVANGUARD_FONT3]);
+ found_hand_font:;
+  pos = (cfg->fullcard_vanguard_hand.right + cfg->fullcard_vanguard_hand.left) / 2;
+  draw_text_with_shadow_at_x(hdc, &cfg->fullcard_vanguard_hand, pos, &tws, -1, buf, -1);
+
+  len = sprintf(buf, "%+d", (int8_t)(cp->ai_toughness));
+  for (fnt = BIGCARDVANGUARD_FONT; fnt < BIGCARDVANGUARD_FONT3; ++fnt)
+	{
+	  SelectObject(hdc, fonts[fnt]);
+	  GetTextExtentPoint32(hdc, buf, len, &textsize);
+	  if (cfg->fullcard_vanguard_life.left + textsize.cx <= cfg->fullcard_vanguard_life.right)
+		goto found_life_font;
+	}
+  SelectObject(hdc, fonts[BIGCARDVANGUARD_FONT3]);
+ found_life_font:;
+  pos = (cfg->fullcard_vanguard_life.right + cfg->fullcard_vanguard_life.left) / 2;
+  draw_text_with_shadow_at_x(hdc, &cfg->fullcard_vanguard_life, pos, &tws, -1, buf, -1);
 }
 
 static void
@@ -1283,7 +1409,7 @@ DrawFullCard(HDC hdc, const RECT* dest_rect, const card_ptr_t* cp, int pic_versi
   SetViewportOrgEx(hdc, (dest_rect->right + dest_rect->left) / 2, (dest_rect->bottom + dest_rect->top) / 2, NULL);
 
   const Rarity* r = get_rarity(cp->id);
-  PicHandleNames framenum = select_frame(cp, r);
+  PicHandleNames framenum = select_frame(cp, r, -1, -1);
 
   int is_a_creature = (hack_power || hack_toughness
 					   || (int8_t)cp->card_type == CP_TYPE_CREATURE || (int8_t)cp->card_type == CP_TYPE_TOKEN
@@ -1316,7 +1442,8 @@ DrawFullCard(HDC hdc, const RECT* dest_rect, const card_ptr_t* cp, int pic_versi
 
   int exclude_text_box_dc = 0;
   if (expand_text_box)
-	exclude_text_box_dc = fullcard_exclude_expanded_text_box(hdc, cp, rules_text, &rect_rulestext, &rect_rulesbox, is_a_planeswalker);
+	exclude_text_box_dc = fullcard_exclude_expanded_text_box(hdc, cp, rules_text, &rect_rulestext, &rect_rulesbox,
+															 is_a_planeswalker);
 
   if (translucent_frame == TFM_COLORLESS_ALSO_NORMAL_FULLCARD_ART)
 	draw_fullcard_art(hdc, &cfg->fullcard_art, cp->id, pic_version);	// after clipping expanded text box
@@ -1326,7 +1453,7 @@ DrawFullCard(HDC hdc, const RECT* dest_rect, const card_ptr_t* cp, int pic_versi
   if (cfg->fullcard_outline_visible)
 	draw_rect_outline(hdc, &cfg->fullcard_frame, cfg->fullcard_outline_color.colorref);
 
-  COLORREF title_text_override_color = draw_fullcard_tombstone_and_title(hdc, cp, framenum, alpha_xform);
+  COLORREF title_text_override_color = draw_fullcard_dfcsym_tombstone_title(hdc, cp, r, framenum, alpha_xform);
 
   int loyalty = draw_fullcard_type(hdc, cp, title_text_override_color, is_a_planeswalker, is_a_creature);
 
@@ -1348,13 +1475,17 @@ DrawFullCard(HDC hdc, const RECT* dest_rect, const card_ptr_t* cp, int pic_versi
 	  fullcard_expand_text_box(hdc, &rect_rulesbox, framenum, alpha_xform, translucent_frame);
 	}
 
-	draw_fullcard_textbox_contents(hdc, cp, &rect_rulestext, rules_text, r, framenum, alpha_xform, is_a_planeswalker);
+  draw_fullcard_textbox_contents(hdc, cp, &rect_rulestext, rules_text, r, framenum, alpha_xform, is_a_planeswalker);
 
   if (is_a_creature)
-	draw_fullcard_power_toughness(hdc, framenum, alpha_xform);
+	draw_fullcard_power_toughness(hdc, framenum, alpha_xform,
+								  cfg->fullcard_extended_powertoughness ? (COLORREF)(-1) : title_text_override_color);
 
   if (is_a_planeswalker && loyalty != 0 && !is_a_creature)
 	draw_fullcard_base_loyalty(hdc, loyalty, alpha_xform);
+
+  if (cfg->fullcard_vanguard_visible && is_vanguard_by_cp(cp))
+	draw_fullcard_vanguard(hdc, cp);
 
   draw_fullcard_border(hdc);
 

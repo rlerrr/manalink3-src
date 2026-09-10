@@ -494,7 +494,7 @@ make_frame(PicHandleNames frame)
   switch (frame)
 	{
 	  case CARDBACK:	case MANASYMBOLS:	case EXPANSION_SYMBOLS:	case WATERMARKS:	case CARDCOUNTERS:
-	  case CARDBK_MIN_FRAMEPART ... CARDBK_MAX_FRAMEPART_ALL:
+	  case DFC_SYMBOLS:	case CARDBK_MIN_FRAMEPART ... CARDBK_MAX_FRAMEPART_ALL:
 		make_gpic_from_pic(frame);
 		break;
 
@@ -604,6 +604,10 @@ make_frame(PicHandleNames frame)
 
 	  case MAKE_FRAMESET(MODERN, MODERN, 0);				break;
 	  case MAKE_FRAMESET(MODERN, MODERN_NYX, 1);			break;
+	  case MAKE_FRAMESET(MODERN_DFC_FRONT, MODERN_DFC_FRONT, 0);		break;
+	  case MAKE_FRAMESET(MODERN_DFC_FRONT, MODERN_DFC_FRONT_NYX, 1);	break;
+	  case MAKE_FRAMESET(MODERN_DFC_BACK, MODERN_DFC_BACK, 0);			break;
+	  case MAKE_FRAMESET(MODERN_DFC_BACK, MODERN_DFC_BACK_NYX, 1);		break;
 	  case MAKE_FRAMESET(CLASSIC, CLASSIC, 0);				break;
 	  case MAKE_FRAMESET(CLASSIC, CLASSIC_NYX, 1);			break;
 	  case MAKE_FRAMESET(TIMESHIFT, TIMESHIFT, 0);			break;
@@ -612,6 +616,10 @@ make_frame(PicHandleNames frame)
 	  case MAKE_FRAMESET(FUTURESHIFT, FUTURESHIFT_NYX, 1);	break;
 	  case MAKE_FRAMESET(PLANESWALKER, PLANESWALKER, 0);	break;
 	  case MAKE_FRAMESET(PLANESWALKER, PLANESWALKER_NYX, 1);break;
+	  case MAKE_FRAMESET(PLANESWALKER_DFC_FRONT, PLANESWALKER_DFC_FRONT, 0);		break;
+	  case MAKE_FRAMESET(PLANESWALKER_DFC_FRONT, PLANESWALKER_DFC_FRONT_NYX, 1);	break;
+	  case MAKE_FRAMESET(PLANESWALKER_DFC_BACK, PLANESWALKER_DFC_BACK, 0);			break;
+	  case MAKE_FRAMESET(PLANESWALKER_DFC_BACK, PLANESWALKER_DFC_BACK_NYX, 1);		break;
 	  case MAKE_FRAMESET(TOKEN, TOKEN, 0);					break;
 	  case MAKE_FRAMESET(TOKEN, TOKEN_NYX, 1);				break;
 	  case MAKE_FRAMESET(SCHEME, SCHEME, 0);				break;
@@ -620,14 +628,28 @@ make_frame(PicHandleNames frame)
 	  case MAKE_FRAMESET(PLANE, PLANE_NYX, 1);				break;
 	  case MAKE_FRAMESET(VANGUARD, VANGUARD, 0);			break;
 	  case MAKE_FRAMESET(VANGUARD, VANGUARD_NYX, 1);		break;
+	  case MAKE_FRAMESET(CONSPIRACY, CONSPIRACY, 0);		break;
+	  case MAKE_FRAMESET(CONSPIRACY, CONSPIRACY_NYX, 1);	break;
 	  case MAKE_FRAMESET(INTERNAL, INTERNAL, 0);			break;
 	  case MAKE_FRAMESET(INTERNAL, INTERNAL_NYX, 1);		break;
 	  case MAKE_FRAMESET(MAGIC2015, MAGIC2015, 0);			break;
 	  case MAKE_FRAMESET(MAGIC2015, MAGIC2015_NYX, 1);		break;
+	  case MAKE_FRAMESET(MAGIC2015_DFC_FRONT, MAGIC2015_DFC_FRONT, 0);		break;
+	  case MAKE_FRAMESET(MAGIC2015_DFC_FRONT, MAGIC2015_DFC_FRONT_NYX, 1);	break;
+	  case MAKE_FRAMESET(MAGIC2015_DFC_BACK, MAGIC2015_DFC_BACK, 0);		break;
+	  case MAKE_FRAMESET(MAGIC2015_DFC_BACK, MAGIC2015_DFC_BACK_NYX, 1);	break;
 	  case MAKE_FRAMESET(MAGIC2015_HOLO, MAGIC2015_HOLO, 0);							break;
 	  case MAKE_FRAMESET(MAGIC2015_HOLO, MAGIC2015_HOLO_NYX, 1);						break;
+	  case MAKE_FRAMESET(MAGIC2015_HOLO_DFC_FRONT, MAGIC2015_HOLO_DFC_FRONT, 0);		break;
+	  case MAKE_FRAMESET(MAGIC2015_HOLO_DFC_FRONT, MAGIC2015_HOLO_DFC_FRONT_NYX, 1);	break;
+	  case MAKE_FRAMESET(MAGIC2015_HOLO_DFC_BACK, MAGIC2015_HOLO_DFC_BACK, 0);			break;
+	  case MAKE_FRAMESET(MAGIC2015_HOLO_DFC_BACK, MAGIC2015_HOLO_DFC_BACK_NYX, 1);		break;
 	  case MAKE_FRAMESET(MAGIC2015_PLANESWALKER, MAGIC2015_PLANESWALKER, 0);			break;
 	  case MAKE_FRAMESET(MAGIC2015_PLANESWALKER, MAGIC2015_PLANESWALKER_NYX, 1);		break;
+	  case MAKE_FRAMESET(MAGIC2015_PLANESWALKER_DFC_FRONT, MAGIC2015_PLANESWALKER_DFC_FRONT, 0);		break;
+	  case MAKE_FRAMESET(MAGIC2015_PLANESWALKER_DFC_FRONT, MAGIC2015_PLANESWALKER_DFC_FRONT_NYX, 1);	break;
+	  case MAKE_FRAMESET(MAGIC2015_PLANESWALKER_DFC_BACK, MAGIC2015_PLANESWALKER_DFC_BACK, 0);			break;
+	  case MAKE_FRAMESET(MAGIC2015_PLANESWALKER_DFC_BACK, MAGIC2015_PLANESWALKER_DFC_BACK_NYX, 1);		break;
 
 #undef CFG
 #undef MAKE_FRAME_FROM_OVERLAY_MAYBE_NYX
@@ -675,9 +697,11 @@ get_special_type_cfgnum_by_type(int type)
   switch (type)
 	{
 	  case SUBTYPE_PLANE:			return CFG_PLANE;
+	  case SUBTYPE_PHENOMENON:		return CFG_PLANE;
 	  case SUBTYPE_PLANESWALKER:	return CFG_PLANESWALKER;
 	  case SUBTYPE_SCHEME:			return CFG_SCHEME;
 	  case SUBTYPE_VANGUARD:		return CFG_VANGUARD;
+	  case SUBTYPE_CONSPIRACY:		return CFG_CONSPIRACY;
 	  case SUBTYPE_PRIVATE:			return CFG_INTERNAL;
 	  default:						return -1;
 	}
@@ -710,8 +734,31 @@ is_planeswalker_by_cp(const card_ptr_t* cp)
   return get_special_type_cfgnum_by_cp(cp) == CFG_PLANESWALKER;
 }
 
+int
+is_vanguard_by_cp(const card_ptr_t* cp)
+{
+  return get_special_type_cfgnum_by_cp(cp) == CFG_VANGUARD;
+}
+
+typedef enum
+  {
+	DFC_NO		= 0,
+	DFC_FRONT	= 1,
+	DFC_BACK	= 2
+  } dfc_t;
+
+static dfc_t
+is_dfc(const Rarity* r)
+{
+  if (r->dfc_symbol > DFC_SYMBOL_MAX)
+	return DFC_NO;
+  if (r->dfc_symbol & 1)
+	return DFC_BACK;
+  return DFC_FRONT;
+}
+
 PicHandleNames
-select_frame(const card_ptr_t* cp, const Rarity* r)
+select_frame(const card_ptr_t* cp, const Rarity* r, int player, int card)
 {
   int typ;
   int clr;
@@ -720,12 +767,18 @@ select_frame(const card_ptr_t* cp, const Rarity* r)
 
   if ((cp->color & 0xFFFE) == 0xC3D4)	// magic number indicating player and card are encoded into color
 	{
+	  player = cp->color & 0x1;
+	  card = HIWORD(cp->color);
+	}
+
+  if (player != -1 && card != -1)
+	{
 	  if (parent != PARENT_MANALINK && parent != PARENT_SHANDALAR)
 		{
 		  popup("drawcardlib.dll", "Encoded instance found, but running from neither Shandalar nor Manalink (deckbuilder?)");
 		  abort();
 		}
-	  instance = hack_instance = get_displayed_card_instance(cp->color & 0x1, HIWORD(cp->color));
+	  instance = hack_instance = get_displayed_card_instance(player, card);
 
 	  /* Activation cards on the stack, other than the top one, for some reason get their colors overwritten by 1.  This can be observed with the original
 	   * executable/drawcardlib by picking a permanent that has a repeatable activation ability (I used Figure of Destiny), changing its color (I used
@@ -756,7 +809,8 @@ select_frame(const card_ptr_t* cp, const Rarity* r)
 			}
 		  else if (parent == PARENT_SHANDALAR)
 			{
-			  if (instance->initial_color & 0x2)	// INSTANCE_FLAG_ENCHANTMENT
+			  if ((instance->initial_color & 0x2)	// INSTANCE_FLAG_ENCHANTMENT, in pre-GG instance_flags location
+				  || (instance->unused0x26 & 0x2))	// INSTANCE_FLAG_ENCHANTMENT, in post-GG instance_flags location
 				{
 				  typ |= TYPE_ENCHANTMENT;
 				  ench_evening = 1;
@@ -830,23 +884,34 @@ select_frame(const card_ptr_t* cp, const Rarity* r)
 			break;
 		}
 
-	  switch (cp->color)
+	  if ((cp->color & 0xFFFF) == 0xC4D4)	// magic number indicating colors are set in BYTE2(cp->color)
 		{
-		  case CP_COLOR_BLACK:		clr = COLOR_TEST_BLACK;	break;
-		  case CP_COLOR_BLUE:		clr = COLOR_TEST_BLUE;	break;
-		  case CP_COLOR_MULTI:		clr = -1;				break;
-		  case CP_COLOR_GREEN:		clr = COLOR_TEST_GREEN;	break;
-		  case CP_COLOR_RED:		clr = COLOR_TEST_RED;	break;
-		  case CP_COLOR_WHITE:		clr = COLOR_TEST_WHITE;	break;
-		  case CP_COLOR_SPECIAL:	clr = -2;				break;
-
-		  case CP_COLOR_LESS:
-		  case CP_COLOR_ARTIFACT:
-		  case CP_COLOR_LAND:
-		  default:
-			clr = 0;
-			break;
+		  clr = BYTE2(cp->color);
+		  clr &= COLOR_TEST_ANY_COLORED;
+		  if (clr && (typ & TYPE_LAND))
+			{
+			  typ &= ~TYPE_LAND;	// So it gets a fully-colored frame
+			  typ |= TYPE_CREATURE;	// So if it's part enchantment, it still gets the Nyx frame.
+			}
 		}
+	  else
+		switch (cp->color)
+		  {
+			case CP_COLOR_BLACK:	clr = COLOR_TEST_BLACK;	break;
+			case CP_COLOR_BLUE:		clr = COLOR_TEST_BLUE;	break;
+			case CP_COLOR_MULTI:	clr = -1;				break;
+			case CP_COLOR_GREEN:	clr = COLOR_TEST_GREEN;	break;
+			case CP_COLOR_RED:		clr = COLOR_TEST_RED;	break;
+			case CP_COLOR_WHITE:	clr = COLOR_TEST_WHITE;	break;
+			case CP_COLOR_SPECIAL:	clr = -2;				break;
+
+			case CP_COLOR_LESS:
+			case CP_COLOR_ARTIFACT:
+			case CP_COLOR_LAND:
+			default:
+			  clr = 0;
+			  break;
+		  }
 	}
 
   int special_type_cfgnum;
@@ -863,7 +928,19 @@ select_frame(const card_ptr_t* cp, const Rarity* r)
 		  if (instance && is_token_by_instance(instance))
 			cfg = &configs[CFG_TOKEN];
 		  else if (r->default_expansion >= EXPANSION_MAGIC_2015)
-			cfg = &configs[CFG_MAGIC2015_PLANESWALKER];
+			switch (is_dfc(r))
+			  {
+				case DFC_FRONT:	cfg = &configs[CFG_MAGIC2015_PLANESWALKER_DFC_FRONT];	break;
+				case DFC_BACK:	cfg = &configs[CFG_MAGIC2015_PLANESWALKER_DFC_BACK];	break;
+				case DFC_NO:	cfg = &configs[CFG_MAGIC2015_PLANESWALKER];				break;
+			  }
+		  else
+			switch (is_dfc(r))
+			  {
+				case DFC_FRONT:	cfg = &configs[CFG_PLANESWALKER_DFC_FRONT];	break;
+				case DFC_BACK:	cfg = &configs[CFG_PLANESWALKER_DFC_BACK];	break;
+				case DFC_NO:	cfg = &configs[CFG_PLANESWALKER];			break;
+			  }
 		}
 	}
   else if (instance ? is_token_by_instance(instance) : BYTE0(cp->card_type) == CP_TYPE_TOKEN)
@@ -882,11 +959,26 @@ select_frame(const card_ptr_t* cp, const Rarity* r)
 		   || (r->default_expansion == EXPANSION_TIME_SPIRAL && r->default_rarity == SPECIAL))
 	cfg = &configs[CFG_CLASSIC];
   else if (r->default_expansion < EXPANSION_MAGIC_2015)
-	cfg = &configs[CFG_MODERN];
+	switch (is_dfc(r))
+	  {
+		case DFC_FRONT:	cfg = &configs[CFG_MODERN_DFC_FRONT];	break;
+		case DFC_BACK:	cfg = &configs[CFG_MODERN_DFC_BACK];	break;
+		case DFC_NO:	cfg = &configs[CFG_MODERN];				break;
+	  }
   else if (r->default_rarity == RARE || r->default_rarity == MYTHIC)
-	cfg = &configs[CFG_MAGIC2015_HOLO];
+	switch (is_dfc(r))
+	  {
+		case DFC_FRONT:	cfg = &configs[CFG_MAGIC2015_HOLO_DFC_FRONT];	break;
+		case DFC_BACK:	cfg = &configs[CFG_MAGIC2015_HOLO_DFC_BACK];	break;
+		case DFC_NO:	cfg = &configs[CFG_MAGIC2015_HOLO];				break;
+	  }
   else
-	cfg = &configs[CFG_MAGIC2015];
+	switch (is_dfc(r))
+	  {
+		case DFC_FRONT:	cfg = &configs[CFG_MAGIC2015_DFC_FRONT];	break;
+		case DFC_BACK:	cfg = &configs[CFG_MAGIC2015_DFC_BACK];		break;
+		case DFC_NO:	cfg = &configs[CFG_MAGIC2015];				break;
+	  }
 
   switch (cfg->frames_force_colorless)
 	{
@@ -989,7 +1081,7 @@ select_frame(const card_ptr_t* cp, const Rarity* r)
 
 	  mana_clr &= (COLOR_TEST_ANY & ~COLOR_TEST_COLORLESS); // i.e., the five colors, but not colorless
 
-	  if (typ & TYPE_ARTIFACT
+	  if ((typ & TYPE_ARTIFACT)
 		  && cfg->frames_artifact_land)
 		switch (mana_clr)
 		  {
@@ -1169,9 +1261,11 @@ draw_smallcard_frame(HDC hdc, const RECT* dest_rect, PicHandleNames framenum, Gp
 }
 
 static void
-draw_text_with_shadow_and_background(HDC hdc, RECT* rect, int x_offset, const TextWithShadow* tws, const char* str, COLORREF bkcolor)
+draw_text_with_shadow_and_background(HDC hdc, RECT* rect, int x_offset, const TextWithShadow* tws, const char* str,
+									 COLORREF bkcolor, COLORREF override_color, int len)
 {
-  int len = strlen(str);
+  if (len <= 0)
+	len = strlen(str);
 
   if (bkcolor != (COLORREF)(-1))
 	{
@@ -1195,7 +1289,7 @@ draw_text_with_shadow_and_background(HDC hdc, RECT* rect, int x_offset, const Te
 		}
 	}
 
-  SetTextColor(hdc, tws->color.colorref);
+  SetTextColor(hdc, override_color != (COLORREF)(-1) ? override_color : tws->color.colorref);
   ExtTextOut(hdc, x_offset + rect->left, rect->top, ETO_CLIPPED, rect, str, len, NULL);
 
   if (bkcolor != (COLORREF)(-1))
@@ -1239,7 +1333,8 @@ draw_text_with_shadow_at_x(HDC hdc, RECT* rect, int x_pos, const TextWithShadow*
 }
 
 static int
-draw_small_card_title_impl(HDC hdc, const RECT* dest_rect, const char* card_title, int color, int controlled_by_owner)
+draw_smallcard_title_impl(HDC hdc, const RECT* dest_rect, const char* card_title, int color, int controlled_by_owner,
+						  PicHandleNames framenum, GpImageAttributes* alpha_xform)
 {
   if (!hdc || !dest_rect || !card_title)
 	return 0;
@@ -1257,48 +1352,126 @@ draw_small_card_title_impl(HDC hdc, const RECT* dest_rect, const char* card_titl
   COLORREF background_color;
   TextWithShadow* tws;
 
-  /* configs[CFG_BASE] instead of cfg since cfg won't be set correctly when called through the DrawSmallCardTitle() api -
-   * there isn't enough information given to find which card is being drawn. */
+  /* cfg will be configs[CFG_BASE] when called through the short DrawSmallCardTitle() api - there isn't enough
+   * information given to find which card is being drawn. */
+  COLORREF override_color = (COLORREF)(-1);
   if (controlled_by_owner)
 	{
-	  background_visible = configs[CFG_BASE].smallcard_title_owned_background_visible;
-	  background_color   = configs[CFG_BASE].smallcard_title_owned_background_color.colorref;
+	  background_visible = cfg->smallcard_title_owned_background_visible;
+	  background_color   = cfg->smallcard_title_owned_background_color.colorref;
 	  switch ((int8_t)color)
 		{
-		  case 0:	tws = &configs[CFG_BASE].smallcard_title_owned_txt;					break;
-		  case 2:	tws = &configs[CFG_BASE].smallcard_title_owned_must_activate_txt;	break;
-		  default:	tws = &configs[CFG_BASE].smallcard_title_owned_can_activate_txt;	break;
+		  case 0:
+			tws = &cfg->smallcard_title_owned_txt;
+			override_color = get_title_text_override_color(framenum, alpha_xform,
+														   cfg->smallcard_title_owned_on_light_visible,
+														   cfg->smallcard_title_owned_on_light_color.colorref,
+														   cfg->smallcard_title_owned_on_white_black_visible,
+														   cfg->smallcard_title_owned_on_white_black_color.colorref,
+														   cfg->smallcard_title_owned_on_colorless_visible,
+														   cfg->smallcard_title_owned_on_colorless_color.colorref);
+			break;
+		  case 2:
+			tws = &cfg->smallcard_title_owned_must_activate_txt;
+			break;
+		  default:
+			tws = &cfg->smallcard_title_owned_can_activate_txt;
+			break;
 		}
 	}
   else
 	{
-	  background_visible = configs[CFG_BASE].smallcard_title_unowned_background_visible;
-	  background_color   = configs[CFG_BASE].smallcard_title_unowned_background_color.colorref;
+	  background_visible = cfg->smallcard_title_unowned_background_visible;
+	  background_color   = cfg->smallcard_title_unowned_background_color.colorref;
 	  switch ((int8_t)color)
 		{
-		  case 0:	tws = &configs[CFG_BASE].smallcard_title_unowned_txt;				break;
-		  case 2:	tws = &configs[CFG_BASE].smallcard_title_unowned_must_activate_txt;	break;
-		  default:	tws = &configs[CFG_BASE].smallcard_title_unowned_can_activate_txt;	break;
+		  case 0:
+			tws = &cfg->smallcard_title_unowned_txt;
+			override_color = get_title_text_override_color(framenum, alpha_xform,
+														   cfg->smallcard_title_unowned_on_light_visible,
+														   cfg->smallcard_title_unowned_on_light_color.colorref,
+														   cfg->smallcard_title_unowned_on_white_black_visible,
+														   cfg->smallcard_title_unowned_on_white_black_color.colorref,
+														   cfg->smallcard_title_unowned_on_colorless_visible,
+														   cfg->smallcard_title_unowned_on_colorless_color.colorref);
+			break;
+		  case 2:
+			tws = &cfg->smallcard_title_unowned_must_activate_txt;
+			break;
+		  default:
+			tws = &cfg->smallcard_title_unowned_can_activate_txt;
+			break;
 		}
 	}
 
-  SelectObject(hdc, fonts[SMALLCARDTITLE_FONT]);
-  SetTextAlign(hdc, TA_LEFT);
+  SIZE textsize;
+  int fnt, len = strlen(card_title);
+  for (fnt = SMALLCARDTITLE_FONT; fnt < SMALLCARDTITLE_FONT9; ++fnt)
+	{
+	  SelectObject(hdc, fonts[fnt]);
+	  GetTextExtentPoint32(hdc, card_title, len, &textsize);
+	  if (cfg->smallcard_title.left + textsize.cx <= cfg->smallcard_title.right)
+		goto found_smallcardtitle_font;
+	}
+  SelectObject(hdc, fonts[SMALLCARDTITLE_FONT9]);
+ found_smallcardtitle_font:;
 
   if (!background_visible)
 	background_color = (COLORREF)(-1);
 
-  draw_text_with_shadow_and_background(hdc, &configs[CFG_BASE].smallcard_title, 0, tws, card_title, background_color);
+  int x_offset = (cfg->smallcard_title_center
+				  ? (cfg->smallcard_title.right - cfg->smallcard_title.left) / 2
+				  : 0);
+
+  SetTextAlign(hdc, cfg->smallcard_title_center ? TA_CENTER : TA_LEFT);
+
+  draw_text_with_shadow_and_background(hdc, &cfg->smallcard_title, x_offset, tws, card_title, background_color,
+									   override_color, len);
+
+  if (cfg->smallcard_title_center)
+	SetTextAlign(hdc, TA_LEFT);
 
   return RestoreDC(hdc, savedc);
 }
 
+// last three arguments valid only if controlled_by_owner & 0x8
 int
-DrawSmallCardTitle(HDC hdc, const RECT* dest_rect, const char* card_title, int color, int controlled_by_owner)
+DrawSmallCardTitle(HDC hdc, const RECT* dest_rect, const char* card_title, int color, int controlled_by_owner,
+				   const card_ptr_t* cp, int player, int card)
 {
   EnterCriticalSection(critical_section_for_drawing);
 #pragma message "This needs multiple injections so we can figure out which config to use."
-  int rval = draw_small_card_title_impl(hdc, dest_rect, card_title, color, controlled_by_owner);
+  PicHandleNames framenum;
+  GpImageAttributes* alpha_xform;
+  if (controlled_by_owner & 0x8)
+	{
+	  controlled_by_owner &= ~0x8;
+	  framenum = select_frame(cp, get_rarity(cp->id), player, card);
+
+	  int colorless_option;
+	  if (framenum == CARDBACK)
+		{
+		  colorless_option = cfg->frames_facedown_creature;
+		  framenum = FRAME_MODERN_SPELL_COLORLESS;
+		}
+	  else
+		colorless_option = cfg->frames_translucent_colorless;
+
+	  if (BASE_FRAME(framenum) == FRAME_MODERN_SPELL_COLORLESS && colorless_option >= 0)
+		{
+		  framenum = FRAMEPART_FROM_BASE(CARDOV_MODERN_COLORLESS, cfg);
+		  alpha_xform = cfg->colorless_alpha_xform;
+		}
+	  else
+		alpha_xform = NULL;
+	}
+  else
+	{
+	  cfg = &configs[CFG_BASE];
+	  framenum = CARDBACK;
+	  alpha_xform = NULL;
+  }
+  int rval = draw_smallcard_title_impl(hdc, dest_rect, card_title, color, controlled_by_owner, framenum, alpha_xform);
   LeaveCriticalSection(critical_section_for_drawing);
   return rval;
 }
@@ -1321,7 +1494,7 @@ DrawSmallCard(HDC hdc, const RECT* card_rect, const card_ptr_t* cp, int version,
   SetViewportOrgEx(hdc, card_rect->left, card_rect->top, NULL);
 
   const Rarity* r = get_rarity(cp->id);
-  PicHandleNames framenum = select_frame(cp, r);
+  PicHandleNames framenum = select_frame(cp, r, -1, -1);
   int colorless_option;
   if (framenum == CARDBACK)
 	{
@@ -1333,6 +1506,7 @@ DrawSmallCard(HDC hdc, const RECT* card_rect, const card_ptr_t* cp, int version,
 
 #pragma message "suppress for nyx frames"
   GpImageAttributes* alpha_xform = NULL;
+  PicHandleNames orig_framenum = framenum;
   if (BASE_FRAME(framenum) == FRAME_MODERN_SPELL_COLORLESS && colorless_option >= 0)
 	{
 	  draw_smallcard_art(hdc, card_rect, cp->id, version, 1, 0, 0);
@@ -1350,10 +1524,13 @@ DrawSmallCard(HDC hdc, const RECT* card_rect, const card_ptr_t* cp, int version,
   if (!(colorless_option & FRAMES_TRANSLUCENT_COLORLESS_NO_SMALLCARD_FRAME))
 	draw_smallcard_frame(hdc, card_rect, framenum, alpha_xform);
 
+  if (cfg->smallcard_dfc_visible && r->dfc_symbol <= DFC_SYMBOL_MAX)
+	blt_dfc_symbol(hdc, &cfg->smallcard_dfc, r->dfc_symbol);
+
   if (cfg->smallcard_expansion_visible && r)
 	blt_expansion_symbol(hdc, &cfg->smallcard_expansion, r->default_expansion, r->default_rarity, 1);
 
-  draw_small_card_title_impl(hdc, card_rect, cp->name, 0, 1);
+  draw_smallcard_title_impl(hdc, card_rect, cp->name, 0, 1, orig_framenum, alpha_xform);
 
   /************************************************************************
    * frame		art1st->artfirst	!artfirst							  *
@@ -1424,6 +1601,8 @@ DrawSmallCard(HDC hdc, const RECT* card_rect, const card_ptr_t* cp, int version,
 
   int rval = RestoreDC(hdc, savedc);
 
+  LeaveCriticalSection(critical_section_for_drawing);
+
   if (mode == 73)	// Drawing an effect card, so manually draw the counters, too
 	{
 	  // special counters
@@ -1439,7 +1618,6 @@ DrawSmallCard(HDC hdc, const RECT* card_rect, const card_ptr_t* cp, int version,
 	  draw_standard_counters(hdc, &rect_counter, player, card);
 	}
 
-  LeaveCriticalSection(critical_section_for_drawing);
   return rval;
 }
 
@@ -1546,17 +1724,18 @@ get_card_data_from_csvid(uint32_t csvid)
   if (parent != PARENT_MANALINK && parent != PARENT_SHANDALAR)
 	return NULL;
 
-  static int32_t* csvid_to_iid = NULL;
-  static uint32_t max_csvid = 8192;	// immediately doubled to 16384 in first call
+  static const int max_csvid = 32768;
+  if (csvid >= max_csvid - 1)
+	return NULL;
 
-  if (!csvid_to_iid || csvid > max_csvid)
+  static int32_t* csvid_to_iid = NULL;
+  if (!csvid_to_iid)
 	{
-	  max_csvid *= 2;
 	  csvid_to_iid = (int32_t*)malloc(sizeof(int32_t) * max_csvid);
 	  memset(csvid_to_iid, -1, sizeof(int32_t) * max_csvid);
 
 	  int i;
-	  for (i = 0; cards_data_exe[i].id != (uint16_t)(-1); ++i)
+	  for (i = 0; i < max_csvid && cards_data_exe[i].id != (uint16_t)(-1); ++i)
 		csvid_to_iid[cards_data_exe[i].id] = i;
 	}
 

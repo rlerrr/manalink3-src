@@ -1,34 +1,37 @@
 #include "manalink.h"
 
 int count_upkeeps(int player){
-	int i;
 	int result = 1;
-	int eh_flag = 0;
-	for(i=0; i<2; i++){
-		int count = 0;
-		while( count < active_cards_count[i] ){
-				if( in_play(i, count) && get_id(i, count) == CARD_ID_EON_HUB ){
-					eh_flag = 1;
-					result = 0;
-					break;
-				}
-				if( in_play(i, count) && get_id(i, count) == CARD_ID_PARADOX_HAZE ){
-					card_instance_t *instance = get_card_instance(i, count);
-					if( instance->targets[0].player == player ){
-						result++;
+	APNAP(p,{
+				int c;
+				for(c = 0; c < active_cards_count[p]; c++){
+					if( in_play(p, c) && ! is_humiliated(p, c) ){
+						int csvid = get_id(p, c);
+						switch( csvid ){
+								case CARD_ID_EON_HUB:
+									return 0;
+								case CARD_ID_PARADOX_HAZE:
+								{
+									card_instance_t *instance = get_card_instance(p, c);
+									if( instance->targets[0].player == player ){
+										result++;
+									}
+									break;
+								}
+								case CARD_ID_GIBBERING_DESCENT:
+								{
+									if( p == player && hand_count[p] < 1 ){
+										result--;
+									}
+									break;
+								}
+								default:
+									break;
+						}
 					}
 				}
-				if( in_play(i, count) && get_id(i, count) == CARD_ID_GIBBERING_DESCENT ){
-					if( i == player && hand_count[i] < 1 ){
-						result--;
-					}
-				}
-				count++;
-		}
-		if( eh_flag == 1 ){
-			break;
-		}
-	}
+			};
+	);
 	if( result < 0 ){
 		result = 0;
 	}
@@ -42,10 +45,10 @@ void echo(int player, int card, event_t event, int colorless, int black, int blu
 		set_special_flags(player, card, SF_ECHO_TO_PAY);
 	}
 
-	if( check_special_flags(player, card, SF_ECHO_TO_PAY) && ! check_special_flags(player, card, SF_ECHO_PAID) && 
+	if( check_special_flags(player, card, SF_ECHO_TO_PAY) && ! check_special_flags3(player, card, SF3_ECHO_PAID) && 
 		current_turn == player && upkeep_trigger(player, card, event) 
 	  ){
-		set_special_flags(player, card, SF_ECHO_PAID);
+		set_special_flags3(player, card, SF3_ECHO_PAID);
 		if( count_upkeeps(player) > 0 ){
 			int kill = 1;
 			if( has_mana_multi(player, colorless, black, blue, green, red, white) ){

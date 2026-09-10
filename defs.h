@@ -18,7 +18,7 @@
 #define PACKED __attribute__((__packed__))
 #endif
 
-#ifdef SHANDALAR
+#ifdef __cplusplus
 #define STATIC_ASSERT(e, msg)	static_assert(e, #msg)
 #else
 #define STATIC_ASSERT(e, msg)	enum { static_assertion__##msg = 1/(e) }
@@ -28,6 +28,28 @@
 #define PRIVATE_IN_SHANDALAR(arg) private: arg public:
 #else
 #define PRIVATE_IN_SHANDALAR(arg) arg
+#endif
+
+#ifdef __cplusplus
+// Enum math.
+// While the warning's generally useful, complaints about |ing two bitmask types not being convertible back to that bitmask without a cast is infuriating.
+template<typename T> struct SafeBool
+{
+  T t;
+  constexpr explicit SafeBool(T v): t(v)	{}
+  constexpr operator T(void) const		{ return t; }
+  constexpr explicit operator bool(void) const	{ return (int)t; }
+  constexpr explicit operator int(void) const	{ return (int)t; }
+};
+#define OP_BITWISE(T)																																	\
+static inline constexpr T			operator| (T  lhs, T rhs)	{ return static_cast<T>(static_cast<int>(lhs) | static_cast<int>(rhs)); }				\
+static inline           T&			operator|=(T& lhs, T rhs)	{ return lhs = (lhs | rhs); }															\
+static inline constexpr T			operator^ (T  lhs, T rhs)	{ return static_cast<T>(static_cast<int>(lhs) ^ static_cast<int>(rhs)); }				\
+static inline           T&			operator^=(T& lhs, T rhs)	{ return lhs = (lhs ^ rhs); }															\
+static inline constexpr SafeBool<T>	operator& (T lhs, T rhs)	{ return SafeBool<T>(static_cast<T>(static_cast<int>(lhs) & static_cast<int>(rhs))); }	\
+static inline           T&			operator&=(T& lhs, T rhs)	{ return lhs = (lhs & rhs); }															\
+static inline constexpr T			operator~ (T  v)			{ return static_cast<T>(~static_cast<int>(v)); }										\
+/**/
 #endif
 
 /* Colors */
@@ -50,6 +72,7 @@ typedef enum
 /* Colors */
 typedef enum
 {
+  COLOR_TEST_0         = 0,
   COLOR_TEST_COLORLESS = 0x01,
   COLOR_TEST_BLACK     = 0x02,
   COLOR_TEST_BLUE      = 0x04,
@@ -60,6 +83,30 @@ typedef enum
   COLOR_TEST_ANY_COLORED = COLOR_TEST_WHITE | COLOR_TEST_RED | COLOR_TEST_GREEN | COLOR_TEST_BLACK | COLOR_TEST_BLUE,
   COLOR_TEST_ANY       = COLOR_TEST_ANY_COLORED | COLOR_TEST_COLORLESS,
 } color_test_t;
+
+#if defined(SHANDALAR) || defined(DECKBUILDER)
+// Hybrid, Phyrexian, purely-colorless, etc. mana costs
+enum hybrid_t: uint8_t
+{
+  HYBRID_0 = 0,
+
+  // 2-color hybrid
+  HYBRID_WU = (COLOR_TEST_WHITE|COLOR_TEST_BLUE),	HYBRID_WB = (COLOR_TEST_WHITE|COLOR_TEST_BLACK),
+  HYBRID_UB = (COLOR_TEST_BLUE |COLOR_TEST_BLACK),	HYBRID_UR = (COLOR_TEST_BLUE |COLOR_TEST_RED),
+  HYBRID_BR = (COLOR_TEST_BLACK|COLOR_TEST_RED),	HYBRID_BG = (COLOR_TEST_BLACK|COLOR_TEST_GREEN),
+  HYBRID_RG = (COLOR_TEST_RED  |COLOR_TEST_GREEN),	HYBRID_RW = (COLOR_TEST_RED  |COLOR_TEST_WHITE),
+  HYBRID_GW = (COLOR_TEST_GREEN|COLOR_TEST_WHITE),	HYBRID_GU = (COLOR_TEST_GREEN|COLOR_TEST_BLUE),
+  // reverse order, for convenience
+  HYBRID_UW = HYBRID_WU,	HYBRID_BW = HYBRID_WB,
+  HYBRID_BU = HYBRID_UB,	HYBRID_RU = HYBRID_UR,
+  HYBRID_RB = HYBRID_BR,	HYBRID_GB = HYBRID_BG,
+  HYBRID_GR = HYBRID_RG,	HYBRID_WR = HYBRID_RW,
+  HYBRID_WG = HYBRID_GW,	HYBRID_UG = HYBRID_GU,
+
+  // others
+  HYBRID_COLORLESS = COLOR_TEST_COLORLESS,	HYBRID_C = HYBRID_COLORLESS,
+};
+#endif
 
 /* event_t codes */
 typedef enum
@@ -187,42 +234,51 @@ typedef enum
   EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE	= 0x1800,	// Needed because EVENT_RESOLVE_SPELL (the proper time for "As [something] enters the battlefield" replacement events) only gets sent to the resolving spell.
   EVENT_RESOLVE_ACTIVATED_GRAVEYARD_ABILITY = 0x1900,
   EVENT_RETURN_TO_PLAY_FROM_GRAVE_MODIFIED	= 0x1A00,
-//  unused						= 0x1B00,
+  EVENT_ANOTHER_PERMANENT_HAS_TRANSFORMED	= 0x1B00,
   EVENT_PLAY_FIRST_HALF						= 0x1C00, // For "split" cards
   EVENT_PLAY_SECOND_HALF					= 0x1D00, // For "split" cards
   EVENT_HAS_MORPH							= 0x1E00, // Needed to discriminate if the card has originally Morph
 #ifdef SHANDALAR
-  EVENT_SKIP_PHASE							= 0x1F00,	// Set event_result|=1 to skip this phase, or |=2 to skip the rest of the turn without even a cleanup step.  Currently only sent in Shandalar, and only for the upkeep and draw phases.
+  EVENT_SKIP_PHASE							= 0x1F00,	// Set event_result|=1 to skip this phase, |=2 to skip this phase as a temporary effect (you can check event_result&2 to see if something else already skipped it like this), or |=4 to skip the rest of the turn without even a cleanup step.  Currently only sent in Shandalar, and only for the untap, upkeep, and draw phases.
   EVENT_IS_DISABLING_AURA					= 0x2000,	// Return 1 if this aura prevents the creature it's enchanting from attacking, 2 if it prevents blocking, 3 if it prevents both.  Interpret broadly (e.g., Paralyze does both).
   EVENT_AURA_IS_ENCHANTING_NONPREFERRED		= 0x2100,	// Return 1 if this aura has a preferred target controller and it's enchanting the other player's permanents, e.g. a Pacifism on its owner's own creature.
   EVENT_AURA_IS_CONTROLCHANGER				= 0x2200,	// Return 1 if this card reads similar to "You control enchanted/equipped/otherwise-attached-to object".
   EVENT_AURA_IS_ENCHANT_CREATURE			= 0x2300,	// Return TYPE_CREATURE if this card is an aura with enchant creature, e.g. for Tallowisp or Rootwater Shaman.  (Not "enchant creature you control" or anything like that.)
   EVENT_BEGIN_GAME							= 0x2400,	// Sent to all cards in each player's hand immediately before the first turn of a game.
   EVENT_HAS_ACTIVATION_FOR_T				= 0x2500,	// Return nonzero if this is a permanent with an activated ability with T in its cost.
+  EVENT_CANT_TRANSFORM						= 0x2600,	// Set event_result=1 if {affected_card_controller, affected_card} can't transform.
 #endif
-  EVENT_EFFECT_CREATED						= 0x2600,	// Shandalar: sent to each effect card immediately after it's created.  Manalink: the same, but only for a handful of specific effects.
-#ifdef SHANDALAR
-  EVENT_COPY_SPELL							= 0x2700,	// Replaces EVENT_CAST_SPELL when a card is copied by a "Copy spell and choose new targets" effect.  See copy_spell_may_choose_new_targets in events.cpp for details.
-#endif
+  EVENT_EFFECT_CREATED						= 0x2700,	// Shandalar: sent to each effect card immediately after it's created.  Manalink: the same, but only for a handful of specific effects.
   EVENT_RESOLVE_GENERAL_EFFECT				= 0x2800,	// Sent by some general effect implementations, like legacy_permanents_destroyed_this_way()'s, to their original cards' functions.  player and card will be that of the effect card, so the original source will be get_card_instance(player, card)->damage_source().
 #ifdef SHANDALAR
   EVENT_EQUIPMENT_UNATTACHED				= 0x2900,	// Sent to an equipment (that's still in play) when it becomes unattached from something (that's still in play).  Previously-attached object will no longer be in damage_target_player/card, but will still be in damage_source_player/card.  Generally you need a TRIGGER_LEAVES_PLAY handler for when the equipment itself leaves play, too.
   EVENT_PLACED_IN_GRAVEYARD					= 0x2A00,	// Sent to a card after it's been placed in a graveyard.  Player is the card's owner; card is the position in the graveyard.  Only sent to certain cards (currently only Nether Shadow).  This event is likely to be removed in the future.
   EVENT_QUERY_BUSHIDO						= 0x2B00,	// Sent to a card to determine how many points of Bushido it has.  Card function should return the amount directly.
   EVENT_QUERY_MODULAR						= 0x2C00,	// Sent to a card to determine how many points of Modular it has.  Card function should return the amount directly.  (Modular-Sunburst returns 5.)
-  EVENT_OVERRIDE_RULES_TEXT					= 0x2D00,	// Return a nonzero pointer to a string (your responsibility to preserve it) to display arbitrary rules text on a card.  Any inspection of the card should be via get_displayed_card_instance().  If an effect card has BYTE0(eot_toughness) = 66, it will also get sent this.
-  EVENT_AURA_COULD_ATTACH_IF_PUT_ON_BF		= 0x2E00,	// Works just like EVENT_CAN_CAST, but for an Aura card, should be able to "target" cards with shroud, hexproof, and similar.  Non-Aura cards will return 0 if passed this message, of course.
+  EVENT_OVERRIDE_RULES_TEXT					= 0x2D00,	// Return a nonzero pointer to a string (which should be static or a constant; it gets copied first thing after the call) to display arbitrary rules text on a card.  Any inspection of the card should be via get_displayed_card_instance().  2000 chars maximum.  If an effect card has BYTE0(eot_toughness) = 66, it will also get sent this; if it's 67, it'll get sent both this and EVENT_OVERRIDE_TITLE_TEXT.
+  EVENT_AURA_COULD_ATTACH_IF_PUT_ON_BF		= 0x2E00,	// Works just like EVENT_CAN_CAST, but for an Aura card, should be able to "target" cards with shroud, hexproof, and similar.  Non-Aura cards will return 0 if passed this message, of course.  If attacking_card_controller != -1, checks specifically if it could attach to {attacking_card_controller, attacking_card}.  Returns value both directly and in event_result.
   EVENT_PREFERRED_COUNTERS					= 0x2F00,	// Query a card for its preferred counter type, which it should return directly.  Returning COUNTER_P1_P1 (== 0) means no preference; avoid +/- counters.  player and card are unset.
   EVENT_BEGIN_TRIGGER						= 0x3000,	// Sent as a trigger begins being dispatched.  Mainly intended to initialize storage.
   EVENT_NONPERMANENT_GRAVEYARD_FROM_PLAY	= 0x3100,	// Identical to EVENT_GRAVEYARD_FROM_PLAY, but sent for non-permanent, non-effect cards.  (Only permanents and effects get EVENT_GRAVEYARD_FROM_PLAY, irritatingly.)
   EVENT_QUERY_VANISHING						= 0x3200,	// Sent to a card to determine whether it has Vanishing.  Card function should return nonzero directly if so.
-  EVENT_QUERY_CANT_GAIN_LIFE				= 0x3300,	// Sent, not when attempting to gain life, but to see whether a player could do so as a cost.  Set event_result if so.  affected_card_controller will be the player to gain life.
+  EVENT_AFTER_CHANGE_TYPE					= 0x3300,	// Dispatched immediately after EVENT_CHANGE_TYPE is globally recomputed, before anything else is.  For global settings that depend on a card's current name that have to happen in timestamp order but before EVENT_SET_COLOR/EVENT_ABILITIES/EVENT_TOUGHNESS/EVENT_POWER, like Painter's Servant.  Only done if at least one card has EA_AFTER_CHANGE_TYPE set.
   EVENT_QUERY_CAN_LOSE_THE_GAME				= 0x3400,	// Sent to see if affected_card_controller can lose the game.  event_result is a bitfield, defined in shandalar.h as LossReason.  Remove the appropriate bits from event_result to prevent loss for a given reason, or set it to 0 to prevent loss entirely.
   EVENT_SPECULATIVE_LIFE					= 0x3500,	// Sent to change affected_card_controller's life value during AI speculation, after adjustment for lifelink and an initial penalty for starting below 0.  affected_card is the player being assessed, which is not necessarily affected_card_controller.  Stored in event_result.  Requires event_flags & EA_LICH.  Intended for Lich-like effects, where the AI is substituting some other value for life.
 #endif
   EVENT_SUBTYPE								= 0x3600,	// In Manalink, sent only to one card whose subtype is being queried, with event_result preset to a specific subtype.  Set event_result to 0 to indicate it has the subtype, otherwise leave it alone.
   EVENT_FIGHT								= 0x3700,
   EVENT_QUERY_AWAKEN						= 0x3800,	// Return nonzero to indicate this card has awaken.  player and card will be 0; affected_card_controller and affected_card are undefined.
+#ifdef SHANDALAR
+  EVENT_COPY_SPELL							= 0x3900,	// Replaces EVENT_CAST_SPELL when a card is copied by a "Copy spell and choose new targets" effect.  See copy_spell_may_choose_new_targets in events.cpp for details.
+  EVENT_AURA_ATTACHING						= 0x3A00,	// Sent to an aura (only) just before it moves from one enchanted object from another.  The new object will be in aura_inst->targets[0]; the old one will still be in aura_inst->attached_to().  Intended primarily for AI and to update recalculation flags on the two objects.
+  EVENT_AURA_ATTACHED						= 0x3B00,	// Sent to all cards just after an aura becomes attached to a new object, whether or not it was previously attached to another.  affected_card_controller/affected_card is the aura; the new object is now in aura_inst->attached_to().
+  EVENT_FINALIZE_ACTIVATION					= 0x3C00,	// Fake event checked for by ACTIVATION() macros after paying costs.  Used to robustly set accumulate-and-fire globals. :(
+  EVENT_ABILITIES_NOT_IN_PLAY				= 0x3D00,	// Equivalent to EVENT_ABILITIES, but sent only for cards in hands or on the stack (and in particular, sent even to other cards for them, unlike EVENT_ABILITIES)
+  EVENT_END_COMBAT							= 0x3E00,	// Sent for "until end of combat" effects, after TRIGGER_END_COMBAT (if that's sent).
+  EVENT_PROT_MISC							= 0x3F00,	// Sent to cards with KEYWORD2_PROT_MISC set, or to all cards if KEYWORD2_GRANTED_PROT_MISC is set, to see if the card has protection from {attacking_Card_controller,attacking_card}.  BYTE3 of event_result will be set to 'd', 'e', 'q', 'b', or 't' to indicate whether it's checking damage, enchanting, equipping, blocking, or targeting.  Set BYTE0 of event_result to 1 to indicate protection.
+  EVENT_OVERRIDE_TITLE_TEXT					= 0x4000,	// Return a nonzero pointer to a string (which should be static or a constant; it gets copied first thing after the call) to display arbitrary rules text on a card.  Any inspection of the card should be via get_displayed_card_instance().  100 characters maximum.  Currently only sent for effect cards: if an effect card has BYTE0(eot_toughness) = 68, it will get sent this; if it's 67, it'll get sent both this and EVENT_OVERRIDE_RULES_TEXT.  (It doesn't get sent to real cards or activation cards because of wndproc_CardClass WM_USER+0x32, not to activation cards because of draw_smallcard_activation_card, and not to draw-a-card cards because of wndproc_CardClass WM_PAINT.)
+  EVENT_CAN_PLAY_OTHER						= 0x4100,	// Dispatched whenever EVENT_CAN_CAST is (and returns true) if event_flags & EA_CAN_PLAY_OTHER.  affected_card_controller/affected_card is the card being cast (if from a hand), attacking_card_controller to the player casting it, and attacking_card to its iid.  Any card can respond to that by setting event_result = 0 to prevent casting.
+#endif
 } event_t;
 
 /* Trigger conditions */
@@ -286,18 +342,26 @@ typedef enum
   XTRIGGER_REPLACE_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY = 0x01000400,	// Triggers before each card is put into a graveyard from anything except mill()/special_mill().  trigger_cause_controller is the player whose graveyard it is; trigger_cause is the iid of the card going to graveyard.  The card currently won't be anywhere.  Set replace_milled=1 (sic) to indicate replacement; always check it before doing anything to be sure nothing's already replaced it first.  This trigger is very blunt, and probably doesn't interact well with "When [something] is put into a graveyard from the battlefield"/"When [something] dies" triggers (it certainly won't interleave with them properly); probably best to also replace during EVENT_GRAVEYARD_FROM_PLAY if there's no choice involved.
   XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY = 0x01000500,	// Triggers after each card is put into a graveyard from anything except mill()/special_mill().  trigger_cause_controller is the player being milled; trigger_cause is the iid of the card, gy_from_anywhere_pos is the tentative position of the card in the graveyard, and gy_from_anywhere_source is the canonical graveyard_source[][] value of the card so it can be reliably found if it's still there.
   XTRIGGER_SCRY			= 0x01000600,	// Triggers whenever a player scries.  trigger_cause_controller is the player scrying; trigger_cause is the number of cards scryed.
+  XTRIGGER_BECAME_RENOWNED	= 0x1007000,	// {trigger_cause_controller,trigger_cause} just became renowned.
 #ifdef SHANDALAR
-  XTRIGGER_DISCARDED	= 0x01000700,	// Shandalar only: triggers when a card has been discarded (as opposed to TRIGGER_DISCARD, which is for replacement effects).  trigger_cause_controller is the player who discarded; trigger cause is the graveyard_source of the discarded card; discarded_iid is the original_iid of the discarded card.
-  XTRIGGER_LAND_PLAYED	= 0x01000800,	// Shandalar only: a land is being played.  Dispatched instead of TRIGGER_SPELL_CAST.
-  XTRIGGER_REPLACE_GAIN_LIFE= 0x01000900,	// Shandalar only: a player is going to gain life; allow that to be replaced.  The amount is stored and can be edited in life_gained.  trigger_cause_controller and trigger_cause are the player gaining life and -1 respectrively.
-  XTRIGGER_CARD_SPECIFIC= 0x01000A00,	// Shandalar only: generic trigger dispatched from a specific card to other cards, typically to impose an upkeep payment.  Should be handled by the dispatching card.  trigger_cause_controller and trigger_cause should be the dispatching card.  See shandalar/cards/upkeep:impose_upkeep_cost() for an example.
-  XTRIGGER_REPLACE_KILL	= 0x01000B00,	// Shandalar only: sent when a non-effect card or token would go to graveyard or be exiled from the battlefield or stack, including a non-permanent card that was cast.  Happens before EVENT_GRAVEYARD_FROM_PLAY.  Sent only if ENABLE_XTRIGGER_REPLACE_KILL is set; trigger_cause_controller and trigger_cause are the dispatching card, and its kill_code will be accurate.  Set suppress_this_trigger=1 to abort the original kill_card - and you want to do that in essentially all cases of replacement.  Even in the special case of changing a go-to-graveyard to exile, kill the card again rather than setting kill_code.  You'll also need to remove STATUS_DYING in almost all cases.
-  XTRIGGER_CARD_DRAWN	= 0x1000C00,	// Shandalar only: A card was drawn (and not replaced).  It's in {trigger_cause_controller, trigger_cause}.
-  XTRIGGER_THIS_DIES	= 0x1000D00,	// Shandalar only: This isn't actually ever dispatched.  A card calling HAS_WHEN_THIS_DIES() will have TRIGGER_GRAVEYARD_FROM_PLAY translated into this and then forwarded to it after it's left the battlefield.
-  XTRIGGER_LOSE_LIFE	= 0x1000E00,	// Shandalar only: Works exactly like TRIGGER_GAIN_LIFE - either a card must have EA_LICH, or it must be manually set in event_flags; and the amount of life lost is stored in life_gained (always a negative number here)
+  XTRIGGER_DISCARDED	= 0x01000800,	// Shandalar only: triggers when a card has been discarded (as opposed to TRIGGER_DISCARD, which is for replacement effects).  trigger_cause_controller is the player who discarded; trigger cause is the graveyard_source of the discarded card; discarded_iid is the original_iid of the discarded card.
+  XTRIGGER_LAND_PLAYED	= 0x01000900,	// Shandalar only: a land is being played.  Dispatched instead of TRIGGER_SPELL_CAST.
+  XTRIGGER_REPLACE_GAIN_LIFE= 0x01000A00,	// Shandalar only: a player is going to gain life; allow that to be replaced.  The amount is stored and can be edited in life_gained.  trigger_cause_controller and trigger_cause are the player gaining life and -1 respectrively.
+  XTRIGGER_CARD_SPECIFIC= 0x01000B00,	// Shandalar only: generic trigger dispatched from a specific card to other cards, typically to impose an upkeep payment.  Should be handled by the dispatching card.  trigger_cause_controller and trigger_cause should be the dispatching card.  See shandalar/cards/upkeep:impose_upkeep_cost() for an example.
+  XTRIGGER_REPLACE_KILL	= 0x01000C00,	// Shandalar only: sent when a non-effect card or token would go to graveyard or be exiled from the battlefield or stack, including a non-permanent card that was cast.  Happens before EVENT_GRAVEYARD_FROM_PLAY.  Sent only if ENABLE_XTRIGGER_REPLACE_KILL is set; trigger_cause_controller and trigger_cause are the dispatching card, and its kill_code will be accurate.  Set suppress_this_trigger=1 to abort the original kill_card - and you want to do that in essentially all cases of replacement.  Even in the special case of changing a go-to-graveyard to exile, kill the card again rather than setting kill_code.  You'll also need to remove STATUS_DYING in almost all cases.
+  XTRIGGER_CARD_DRAWN	= 0x1000D00,	// Shandalar only: A card was drawn (and not replaced).  It's in {trigger_cause_controller, trigger_cause}.
+  XTRIGGER_THIS_DIES	= 0x1000E00,	// Shandalar only: This isn't actually ever dispatched.  A card calling HAS_WHEN_THIS_DIES() will have TRIGGER_GRAVEYARD_FROM_PLAY translated into this and then forwarded to it after it's left the battlefield.
+  XTRIGGER_LOSE_LIFE	= 0x1000F00,	// Shandalar only: Works exactly like TRIGGER_GAIN_LIFE - either a card must have EA_LICH, or it must be manually set in event_flags; and the amount of life lost is stored in life_gained (always a negative number here)
+  XTRIGGER_MAIN_PHASE	= 0x1001000,	// Shandalar only: dispatched at the start of each main phase.  trigger_cause_controller is current turn; trigger_cause is the number of main phase: 0 is precombat main phase, 1 is first postcombat main phase, 2 is second postcombat main phase, etc.  Dispatched only if ENABLE_XTRIGGER_MAIN_PHASE is set.
+  XTRIGGER_COMBAT		= 0x1002000,	// Shandalar only: dispatched at the start of combat, just before EVENT_MUST_ATTACK.  trigger_cause_controller is current turn; trigger_cause is the number of combat: 1 is the first combat each turn, 2 is the second, etc.  Dispatched only if ENABLE_XTRIGGER_COMBAT is set.
+  XTRIGGER_SHUFFLE		= 0x1003000,	// Shandalar only: trigger_cause_controller's deck is shuffled.  Dispatched only if ENABLE_XTRIGGER_SHUFFLE is set.
+  XTRIGGER_TRANSFORM	= 0x1004000,	// Shandalar only: {trigger_cause_controller, trigger_cause} just transformed
+  XTRIGGER_REPLACE_TOKENS	= 0x1005000,	// One or more tokens would be put on the battlefield.  trigger_cause_controller is whose control, trigger_cause is the iid of the token, Token::num_added() is the number to be placed on the bf (and can be changed with Token::set_num_added()), and Token::added_as_cost() is valid.  Dispatched only if ENABLE_XTRIGGER_COUNTERS (sic) is set.
+  XTRIGGER_REPLACE_COUNTERS	= 0x1006000,	// One or more counters would be added to (not removed from) trigger_cause_controller/trigger_cause.  The number of counters is stored in counters_added, type in counters_added_type, and whether they were added as a cost in counters_added_as_cost; the first two can be modified.  Dispatched only if ENABLE_XTRIGGER_COUNTERS is set.
+  XTRIGGER_COUNTERS		= 0x1007000,	// One or more counters were added to or removed from trigger_cause_controller/trigger_cause.  The number of counters is stored in counters_added and type in counters_added_type.  Set counters_added_need_repeat if a separate trigger is needed for each counter; then counters_added_repeating will be true if it's the second or later.  Dispatched only if ENABLE_XTRIGGER_COUNTERS is set.
+#else
+  XTRIGGER_1_1_COUNTERS	= 0x1007000,	// One or more +1/+1 counters were placed on trigger_cause_controller/trigger_cause.  The number of counters is stored in counters_added. Dispatched only if ENABLE_XTRIGGER_1_1_COUNTERS is set.
 #endif
-  XTRIGGER_1_1_COUNTERS		= 0x1000F00,	// One or more +1/+1 counters were placed on trigger_cause_controller/trigger_cause.  The number of counters is stored in counters_added. Dispatched only if ENABLE_XTRIGGER_1_1_COUNTERS is set.
-  XTRIGGER_BECAME_RENOWNED	= 0x1001000,	// {trigger_cause_controller,trigger_cause} just became renowned.
 } xtrigger_t;
 
 /* Triggers, unlike events, are relatively computationally expensive.  Triggers that are rarely handled, particularly ones from things that would get dispatched
@@ -315,9 +379,14 @@ typedef enum
   ENABLE_XTRIGGER_REPLACE_KILL	= (1<<4),
   ENABLE_TRIGGER_REPLACE_CARD_DRAW	= (1<<5),	// sic
   ENABLE_XTRIGGER_CARD_DRAWN	= (1<<6),
-  ENABLE_TRIGGER_BOUNCE_PERMANENT   = (1<<7),	// sic
+  ENABLE_TRIGGER_BOUNCE_PERMANENT	= (1<<7),	// sic
+  ENABLE_XTRIGGER_MAIN_PHASE	= (1<<8),
+  ENABLE_XTRIGGER_COMBAT		= (1<<9),
+  ENABLE_XTRIGGER_SHUFFLE		= (1<<10),
+  ENABLE_XTRIGGER_COUNTERS		= (1<<11),
+#else
+  ENABLE_XTRIGGER_1_1_COUNTERS	= (1<<11),
 #endif
-  ENABLE_XTRIGGER_1_1_COUNTERS   = (1<<8),
 } enable_xtrigger_flags_t;
 
 typedef struct
@@ -332,17 +401,24 @@ typedef struct
 /* Resolve trigger options */
 typedef enum
 {
-  // this_dies_trigger assumes this can fit into one byte
+  // In Manalink, this_dies_trigger() assumes this can fit into one byte
+  RESOLVE_TRIGGER_0			= 0,
   RESOLVE_TRIGGER_OPTIONAL	= 1,
   RESOLVE_TRIGGER_MANDATORY	= 2,
+#ifndef SHANDALAR
   RESOLVE_TRIGGER_DUH		= 3,	/* Not recognized by the exe, which I hope is obvious.  Handled by a (very few) integrated trigger interfaces to mean
 									 * "change to RESOLVE_TRIGGER_MANDATORY if duh_mode is on, otherwise RESOLVE_TRIGGER_OPTIONAL." */
+#else
+  RESOLVE_TRIGGER_OPPONENT	= 4,	// Triggers for 1-player, not player.
+  RESOLVE_TRIGGER_ANYBODY	= 8,	// Triggers for both player and 1-player.
+#endif
 
+#ifndef SHANDALAR
 // Nominally optional, but forced if you have duh mode on.  And now badly misnamed.
 #define RESOLVE_TRIGGER_AI(p_)	(duh_mode(p_) ? RESOLVE_TRIGGER_MANDATORY : RESOLVE_TRIGGER_OPTIONAL)
 #define RESOLVE_TRIGGER_CHECK_LIFE_TOTAL(p_, v_)	((duh_mode(p_) && life[p_]-v_ > 5)? RESOLVE_TRIGGER_MANDATORY : RESOLVE_TRIGGER_OPTIONAL)
 #define RESOLVE_TRIGGER_CHECK_DECK_COUNT(p_, v_)	((duh_mode(p_) && count_deck(p_)-v_ > 10)? RESOLVE_TRIGGER_MANDATORY : RESOLVE_TRIGGER_OPTIONAL)
-
+#endif
 } resolve_trigger_t;
 
 /* Modes for kill_card() */
@@ -353,6 +429,9 @@ typedef enum
   KILL_SACRIFICE = 3,
   KILL_REMOVE    = 4,
   // Some things use 5 for "bounce permanent" in places that normally hold a kill_t.  actions_t is one, but not the only one.
+
+  // Shandalar uses 16 for KILL_CONTROLLER_SACRIFICES_FOR_KILL_AT_NEXT_EOT.
+
   KILL_STATE_BASED_ACTION = 17,	/* For things "put into the graveyard" as a result of state-based actions, rule 704; for example, a creature with 0 or less
 								 * toughness, a planeswalker with 0 loyalty, planeswalker uniqueness/legend/enchant-world rules, Auras enchanting nothing or
 								 * illegal targets.  kill_card() immediately translates this to KILL_SACRIFICE for kill_card_exe, so it'll show up as
@@ -375,6 +454,7 @@ typedef enum
   TUTOR_BOTTOM_OF_DECK  = 9,
   TUTOR_TPLAYER_HAND	= 10,
   TUTOR_BOTTOM_OF_DECK_RANDOM  = 11,	// Only valid for the destination_rest parameter of reveal_top_cards_of_library_and_choose()
+  TUTOR_HAND_AND_MARK   = 12, // Add a "STATE_TARGETTED" to each card tutored, to be removed lately. See Dwarven Recruiter.
 } tutor_t;
 
 typedef enum
@@ -390,32 +470,48 @@ typedef enum
 typedef enum
 {
   STATE_JUST_DRAWED				= 0x1,
-  STATE_IN_PLAY					= 0x2,	// If STATE_INVISIBLE also set, then on the stack and no longer interruptible.
+  STATE_IN_PLAY					= 0x2,		// If STATE_INVISIBLE also set, then on the stack and no longer interruptible.
   STATE_ATTACKING				= 0x4,
   STATE_BLOCKING				= 0x8,
   STATE_TAPPED					= 0x10,
-  STATE_INVISIBLE				= 0x20, // Mok --> CAST_UNRESOLVED	On the stack.  If STATE_IN_PLAY also set, then no longer interruptible.
-  STATE_ATTACKED				= 0x40, // Previously STATE_ATTACKING this turn, but no longer attacking
-  STATE_JUST_CAST				= 0x80,
+  STATE_INVISIBLE				= 0x20,		// Mok --> CAST_UNRESOLVED	On the stack.  If STATE_IN_PLAY also set, then no longer interruptible.
+  STATE_ATTACKED				= 0x40,		// Previously STATE_ATTACKING this turn, but no longer attacking
+#ifdef SHANDALAR
+  STATE_SUMMONSICK				= 0x80,		// Entered the battlefield or changed control since start of controller's last turn
+#else
+  STATE_JUST_CAST				= 0x80,		// Card still in interrupt window, I think.
+#endif
   STATE_PROCESSING				= 0x100,
-  STATE_ISBLOCKED				= 0x200, // ??
-  STATE_PLAYED_FROM_HAND		= 0x400, // Not what it says.
-  STATE_UNKNOWN800				= 0x800,
+  STATE_ISBLOCKED				= 0x200,	// Card was blocked this combat.
+  STATE_PLAYED_FROM_HAND		= 0x400,	// Not what it says.
+  STATE_UNKNOWN800				= 0x800,	// Manalink: set during reassess_all_cards_helper(); not consistently removed, and nothing looks for it.  Shandalar: unused.
   STATE_OWNED_BY_OPPONENT		= 0x1000,
   STATE_VIGILANCE				= 0x2000,	// Must be set continuously during EVENT_ABILITIES.
-  STATE_BLOCKED					= 0x4000, // Previously STATE_BLOCKING this turn, but no longer blocking
-  STATE_UNKNOWN8000				= 0x8000, // MUST_ATTACK ??
-  STATE_SICKNESS				= 0x10000,	// Is not the same of the following, why ? - Doesn't exist in Manalink.  In Shandalar, this means "summon sick."
-  STATE_SUMMON_SICK				= 0x20000,	// In Shandalar, only STATE_SICKNESS is added to the AI's permanents during speculation; for the human's permanents, and not during speculation, both are.
+  STATE_BLOCKED					= 0x4000,	// Previously STATE_BLOCKING this turn, but no longer blocking
+  STATE_UNKNOWN8000				= 0x8000,	// Means something similar to "Already chosen to attack or block".
+#ifdef SHANDALAR
+  STATE_SUMMONSICK_NOATTACK		= 0x10000,	// Unable to attack due to summoning sickness.  Temporarily removable with haste or Instill Energy.
+  STATE_SUMMONSICK_NOTAP		= 0x20000,	// Unable to tap as a cost due to summoning sickness.  Temporarily removable with hase or Thousand-Year Elixir.
+#else
+  STATE_SICKNESS_UNUSED			= 0x10000,
+  STATE_SUMMON_SICK				= 0x20000,
+#endif
   STATE_NO_AUTO_TAPPING			= 0x40000,
-  STATE_UNKNOWN80000			= 0x80000,
+#ifdef SHANDALAR
+  STATE_ETB_THIS_TURN			= 0x80000,	// Almost the same as STATE_SUMMONSICK, but not added when control changes, and cleared at the start of every turn
+#else
+  STATE_UNUSED80000				= 0x80000,
+#endif
   STATE_CANNOT_TARGET			= 0x100000,
   STATE_TARGETTED				= 0x200000,
   STATE_POWER_STRUGGLE			= 0x400000,	// Seems to be set on control effects to indicate who should gain control when the effect goes away if damage_source_player/card is unset
-  STATE_OUBLIETTED				= 0x800000, // Phased ??
+  STATE_OUBLIETTED				= 0x800000,	// Phased
   STATE_NONCREATURE_CAN_ATTACK	= 0x1000000,
   STATE_NONCREATURE_CAN_BLOCK	= 0x2000000,
-
+#ifdef SHANDALAR
+  STATE_ACCEPT_OPTIONAL_TRIGGER	= 0x4000000,
+  STATE_DECLINE_OPTIONAL_TRIGGER= 0x8000000,
+#endif
   STATE_IS_TRIGGERING			= 0x10000000,
   STATE_DONT_RECOPY_ONTO_STACK	= 0x20000000,	// If set during EVENT_ACTIVATE, then don't copy the card back into its (already-existing) activation card on the stack.  Caller's responsibility to either update all relevant values there (per recopy_card_onto_stack), or simply not handle EVENT_RESOLVE_ACTIVATION.  Bit is removed when recopying is skipped.  Works only for activation, not casting.
 } state_t;
@@ -444,10 +540,17 @@ typedef enum
   STATUS_ISLAND_SANCTUARY	= 0x400000,
   STATUS_CANNOT_REGENERATE	= 0x800000,
   STATUS_CONTROLLED			= 0x1000000,
+#ifdef SHANDALAR
+  STATUS_DURATION_IN_EOT1	= 0x2000000,	// eot_toughness1 is a Duration::Enum.  Honored only for custom effects.
+#else
   STATUS_BASICLAND_DEPENDANT= 0x2000000,	// Alters displayed an effect card's main text for sleight and hack based on its source's current sleight/hack status, not its status when the effect card was created.  Set only with fx_asterisk in exe.
+#endif
   STATUS_CANNOT_BE_DESTROYED= 0x4000000, // Indestructible ???
   STATUS_SPECIAL_BLOCKER	= 0x8000000,
-  STATUS_CANNOT_LEAVE_PLAY	= 0x40000000
+#ifdef SHANDALAR
+  STATUS_TRANSFORMED		= 0x10000000,	// A transformed double-faced card, melded meldable card, or flipped flippable card.
+#endif
+  STATUS_CANNOT_LEAVE_PLAY	= 0x40000000	// Manalink: this card can't be exiled or destroyed; incompletely and poorly-implemented, and unused.  Shandalar: on an effect card, detaches if the object it's attached to leaves play instead of being destroyed.
 } status_t;
 
 /* Card Types  */
@@ -467,6 +570,10 @@ typedef enum
   TYPE_PERMANENT	= TYPE_LAND | TYPE_CREATURE | TYPE_ENCHANTMENT | TYPE_ARTIFACT,
   TYPE_NONEFFECT	= TYPE_PERMANENT | TYPE_SPELL,
   TYPE_ANY			= TYPE_NONEFFECT | TYPE_EFFECT,
+
+#endif
+#ifdef SHANDALAR
+  DAMAGE_TYPE_ACTIVATION			= 1 << 11,	// Set only on damage cards' source type
 #endif
   // Valid only in targetting
   TARGET_TYPE_TOKEN					= 1 << 12,
@@ -476,6 +583,7 @@ typedef enum
   TARGET_TYPE_PLANESWALKER			= 1 << 16,	// Works for targetting, is_what(), and the make_test() family, but not much else.  All will also accept planeswalkers if all of land/creature/enchantment/artifact are set.
   TARGET_TYPE_NONCREATURE_CAN_BLOCK	= 1 << 25,
 #ifdef SHANDALAR
+  TYPE_PLANESWALKER	= TARGET_TYPE_PLANESWALKER,
   TYPE_PERMANENT	= TYPE_LAND | TYPE_CREATURE | TYPE_ENCHANTMENT | TYPE_ARTIFACT | TARGET_TYPE_PLANESWALKER,
   TYPE_NONEFFECT	= TYPE_PERMANENT | TYPE_SPELL,
   TYPE_ANY			= TYPE_NONEFFECT | TYPE_EFFECT,
@@ -554,8 +662,8 @@ typedef enum
   SP_KEYWORD_FLANKING		 = 1<<13,	// must be called continuously
   SP_KEYWORD_WITHER			 = 1<<14,
   SP_KEYWORD_BUSHIDO		 = 1<<15,	// can't be added by bit; must be called continuously
-  //SP_KEYWORD_WILL_DEAL_DOUBLE_DAMAGE	= 1<<16,	// unused
-  //SP_KEYWORD_WILL_RECEIVE_DOUBLE_DAMAGE	= 1<<17,	// unused
+  SP_KEYWORD_MENACE 	 	 = 1<<16,	// can't be added by bit; must be called continuously
+  SP_KEYWORD_SKULK			 = 1<<17,	// can't be added by bit; must be called continuously
   SP_KEYWORD_CANNON_FODDER				= 1<<18,	// doesn't belong here; can't be added by bit
   //SP_KEYWORD_DEFENDER					= 1<<19,	// unused
   SP_KEYWORD_RFG_WHEN_DAMAGE			= 1<<20,	// can't be added by bit
@@ -774,11 +882,12 @@ typedef enum
 #ifndef SHANDALAR
 } counter_t;
 #else
+	COUNTER_ANY = COUNTER_end,
 };
 STATIC_ASSERT(sizeof(counter_t) == 1, counter_t_wrong_size);
 #endif
 
-#ifdef SHANDALAR
+#ifdef __cplusplus
 struct card_instance_struct;
 struct csvid_t;
 
@@ -788,10 +897,6 @@ struct iid_t
 	explicit iid_t(int raw_val): raw(raw_val)	{}
 	explicit iid_t(uint16_t raw_val): raw(raw_val == 0xFFFF ? -1 : (int)raw_val)	{}
 	explicit iid_t(uint32_t raw_val): raw(raw_val)	{}
-	explicit iid_t(const card_instance_struct* inst);
-	iid_t(int player, int card);
-	explicit iid_t(target_struct t);
-	explicit iid_t(csvid_t t);
 
 	iid_t& operator++(void)	{ ++raw;	return *this; }
 
@@ -800,6 +905,8 @@ struct iid_t
 
 	int raw;
 };
+inline bool operator==(iid_t lhs, iid_t rhs)	{ return lhs.raw == rhs.raw; }
+inline bool operator!=(iid_t lhs, iid_t rhs)	{ return lhs.raw != rhs.raw; }
 
 struct csvid_t
 {
@@ -808,16 +915,17 @@ struct csvid_t
 	explicit csvid_t(int raw_val): raw(raw_val)	{}
 	explicit csvid_t(uint32_t raw_val): raw(raw_val)	{}
 	explicit csvid_t(uint16_t raw_val): raw(raw_val == 0xFFFF ? -1 : (int)raw_val)	{}
-	explicit csvid_t(const card_instance_struct* inst);
-	csvid_t(int player, int card);
-	explicit csvid_t(target_struct t);
-	explicit csvid_t(iid_t t);
 
 	bool ok(void) const		{ return raw >= 0; }
 	iid_t iid(void) const;
 
 	int raw;
 };
+inline bool operator==(csvid_t lhs, csvid_t rhs)	{ return lhs.raw == rhs.raw; }
+inline bool operator!=(csvid_t lhs, csvid_t rhs)	{ return lhs.raw != rhs.raw; }
+#else
+typedef int csvid_t;
+typedef int iid_t;
 #endif
 
 #ifdef SHANDALAR
@@ -899,7 +1007,7 @@ typedef struct card_instance_struct
 #endif
   uint32_t	upkeep_flags;		/*  0x5C */	// Eventual candidate for reclamation.  Used in: Curse Artifact, Mishra's War Machine, Brass Man, Colossus of Sardia, Elder Spawn, Cyclone, 0x434040, 0x435b50, 0x436740, 0x437620, 0x437670, Copper Tablet, Mana Crypt, Ghazban Ogre, Serendib Djinn, Juzam Djinn, Yawgmoth Demon, 0x475a30, 0x476b90, 0x477410, Feedback, Power Leak, Energy Flux, Erosion, Cursed Land, Karma, Sunken City, Stasis, Magnetic Mountain, Power Surge, Wanderlust, Unstable Mutation, Warp Artifact, Power Struggle, Conversion, Junun Efreet, Phantasmal Forces, Force of Nature, Cosmic Horror, Lord of the Pit, 0x4d9a30.
   int32_t	attack_rating;		/*  0x60 */
-  PRIVATE_IN_SHANDALAR(uint16_t	display_pic_int_id;)	/*  0x64 */
+  PRIVATE_IN_SHANDALAR(uint16_t	display_pic_csv_id;)	/*  0x64 */
   uint16_t	display_pic_num;	/*  0x66 */
   uint8_t	kill_code;			/*  0x68 */
 #ifdef SHANDALAR
@@ -911,7 +1019,7 @@ typedef struct card_instance_struct
   uint8_t	unk6A;				/*  0x6A */	// Entirely untouched by exe.
   uint8_t	unk6B;				/*  0x6B */	// Entirely untouched by exe.
 #endif
-  PRIVATE_IN_SHANDALAR(int32_t	internal_card_id;)	/*  0x6C */	// a csvid, not an internal_card_id, despite the misnaming
+  PRIVATE_IN_SHANDALAR(int32_t	internal_card_id;)	/*  0x6C */
   uint32_t	unknown0x70;		/*  0x70 */ /* activateability */
   target_t	targets[19];		/*  0x74 */
   int32_t	parent_controller;	/* 0x10C */
@@ -933,8 +1041,8 @@ typedef struct card_instance_struct
 #ifdef SHANDALAR	// strongly-typed accessors
   iid_t original_iid(void) const				{ return iid_t(original_internal_card_id); }
   void set_original_iid(iid_t iid_val)			{ original_internal_card_id = iid_val.raw; }
-  csvid_t display_pic_csvid(void) const			{ return csvid_t(display_pic_int_id); }
-  void set_display_pic_csvid(csvid_t csvid_val)	{ display_pic_int_id = csvid_val.raw & 0xFFFF; }
+  csvid_t display_pic_csvid(void) const			{ return csvid_t(display_pic_csv_id); }
+  void set_display_pic_csvid(csvid_t csvid_val)	{ display_pic_csv_id = csvid_val.raw & 0xFFFF; }
   iid_t backup_iid(void) const					{ return iid_t(backup_internal_card_id); }
   void set_backup_iid(iid_t iid_val)			{ backup_internal_card_id = iid_val.raw & 0xFFFF; }
   iid_t cur_iid(void) const						{ return iid_t(internal_card_id); }
@@ -1016,6 +1124,20 @@ typedef struct
   color_test_t set_colors(color_test_t val)		{ return static_cast<color_test_t>(color = val); }
 #endif
 } PACKED card_data_t;
+STATIC_ASSERT(sizeof(card_data_t) == 72, card_data_t_wrong_size);
+
+typedef enum
+{
+  UNTAP_STATUS_0			= 0,
+  UNTAP_STATUS_COULD_UNTAP	= 0x1,
+  UNTAP_STATUS_WILL_UNTAP	= 0x2,
+  // Executable only ever touches or looks at the above two bits.
+#ifdef SHANDALAR
+  // For these two, also set types_that_dont_untap if appropriate; the executable understands that, but not these.
+  UNTAP_STATUS_DOESNT_UNTAP	= 0x4,	// This permanent doesn't untap during its controller's untap step.  Cleared and set during EVENT_ABILITIES; automatically honored by untap_phase().
+  UNTAP_STATUS_SOME_UNTAP	= 0x8,	// Winter Orb-like effects that only allow a certain number of permanents to untap.  Cleared and set during EVENT_ABILITIES.  Not automatically honored by untap_phase(); effect source is responsible for setting UNTAP_STATUS_COULD_UNTAP/UNTAP_STATUS_WILL_UNTAP.
+#endif
+} untap_status_t;
 
 typedef enum
 {
@@ -1095,18 +1217,24 @@ typedef enum
 	EA_LICH				= 0x200000,
 	EA_PAID_ATTACK		= 0x400000,
 	EA_PAID_BLOCK		= 0x800000,
+#ifdef SHANDALAR
+	EA_AFTER_CHANGE_TYPE= 0x1000000,
+#else
 	EA_FORCE_ATTACK		= 0x1000000,
+#endif
 	EA_BEFORE_COMBAT	= 0x2000000,
 	EA_DECLARE_ATTACK	= 0x4000000,
 	EA_FELLWAR_STONE	= 0x8000000,
 	EA_CONTROLLED		= 0x10000000,	// EVENT_CARDCONTROLLED is only sent if there's at least one card in play with this set
-	// End of bits checked in event_flags.
+	// End of bits checked in event_flags in Manalink; Shandalar uses two more.
 
-	EA_UNK20000000		= 0x20000000,	// Completely unused.
-#ifndef SHANDALAR
-	EA_PLAY_COST		= 0x40000000,	// If set, this specific card receives EVENT_MODIFY_COST_GLOBAL events to change other spells' casting costs.
+#ifdef SHANDALAR
+	EA_CAN_PLAY_OTHER	= 0x20000000,	// If set, each check of EVENT_CAN_CAST is followed by a global dispatch of EVENT_CAN_PLAY_OTHER, with affected_card/controller set to the card being cast (if from a hand), attacking_card_controller to the player casting it, and attacking_card to its iid.  Any card can respond to that by setting event_result = 0 to prevent casting.
+	EA_MODIFY_COST_GLOBAL=0x40000000,	// In Shandalar, EVENT_MODIFY_COST_GLOBAL is sent to all cards if any on the bf have this bit set.
+	// End of bits checked in event_flags in Shandalar.
 #else
-	EA_MODIFY_COST_GLOBAL=0x40000000,	// In Shandalar, EVENT_MODIFY_COST_GLOBAL is sent to all cards if any on the bf have this bit set.  Like EA_MARTYR - EA_CONTROLLED, it's set in event_flags at the end of get_abilities(...EVENT_CHANGE_TYPE).
+	EA_UNK20000000		= 0x20000000,	// Completely unused.
+	EA_PLAY_COST		= 0x40000000,	// If set, this specific card receives EVENT_MODIFY_COST_GLOBAL events to change other spells' casting costs.
 #endif
 	EA_ABILITY_COST		= 0x80000000,
 } extra_abilities_t;
@@ -1116,6 +1244,7 @@ enum mana_flags_t: uint8_t
 {
 	MANA_0							= 0,
 	MANA_SPEND_ONLY_BLACK_MANA_ON_X	= 0x1,
+	MANA_SPEND_ONLY_BLACK_OR_RED_MANA_ON_X_STORE_BLACK_IN_HIWORD	= 0x2,	// For Soul Burn.
 };
 STATIC_ASSERT(sizeof(mana_flags_t) == 1, mana_flags_t_enum_wrong_size);
 #endif
@@ -1150,6 +1279,18 @@ typedef enum
   CP_TYPE_PLANE			= 11	// unused
 } CardPtrType;
 
+typedef enum
+{
+  CPF_0					= 0,
+  CPF_IS_DFC			= 0x1,
+  CPF_IS_TRANSFORMED_DFC= 0x2,
+  CPF_IS_MELD			= 0x4,	// If also CPF_IS_TRANSFORMED_DFC, then it's the melded form, otherwise it's meldable.
+} CardPtrFlags;
+STATIC_ASSERT(sizeof(CardPtrFlags) == 4, CardPtrFlags_wrong_size);
+#ifdef SHANDALAR
+OP_BITWISE(CardPtrFlags);
+#endif
+
 /* Data struct */
 typedef struct
 {
@@ -1167,22 +1308,26 @@ typedef struct
 	uint8_t req_colorless;
 	uint8_t req_black;
 	uint8_t req_blue;
-#ifdef SHANDALAR
-	uint8_t req_hybrid;
-	uint8_t hybrid_colors;
+#if defined(SHANDALAR) || defined(DECKBUILDER)
+	int8_t req_hybrid;
+	hybrid_t hybrid_type;
 #else
-	uint8_t unknown43;
-	uint8_t unknown44;
+	uint8_t unknown0x2b;
+	uint8_t unknown0x2c;
 #endif
 	uint8_t req_green;
 #ifdef SHANDALAR
 	mana_flags_t mana_flags;
 #else
-	uint8_t unknown46;
+	uint8_t unknown0x2e;
 #endif
 	uint8_t req_red;
 	uint8_t req_white;
-	uint8_t unknown0x49[15];
+	uint8_t unused0x31;
+	uint16_t unused0x32;
+	CardPtrFlags flags;	// set only in Shandalar
+	uint32_t unused0x38;
+	uint32_t unused0x3c;	// Only remaining access by Magic.exe is to set it to -1 during draw_fullcard_special_effect_card()
 	const char* artist;		// Always "None"
 	uint32_t num_pics;
 	const char* mana_cost_text;	// e.g. "|4|GU|GU"
@@ -1221,7 +1366,8 @@ typedef struct
 	color_test_t mana_colors(void) const			{ return static_cast<color_test_t>(static_cast<uint8_t>(mana_source_colors)); }
 	color_test_t set_mana_colors(color_test_t val)	{ return static_cast<color_test_t>(static_cast<uint8_t>(mana_source_colors = val)); }
 #endif
-	} PACKED card_ptr_t; /* need better name here */
+	} card_ptr_t; /* need better name here */
+STATIC_ASSERT(sizeof(card_ptr_t) == 152, card_ptr_t_wrong_size);
 
 typedef struct
 {
@@ -1271,6 +1417,7 @@ typedef struct
 	unsigned char has_mana_to_pay_cmc;
 	unsigned char can_legally_play;
 	unsigned char owner;
+	int storage; //If > -1, when used in "new_global_tutor", will store the result of the tutor on (player, card) targeting part, beginning with "get_card_instance(player, storage)->targets[0].card". Will store internal_card_id or csv_id depening on the type of tutor
 } test_definition_t;
 
 typedef enum
@@ -1385,7 +1532,10 @@ typedef enum
 // Flags for (damage card instance)->targets[3].card
 typedef enum
 {
-	DMG_CANT_REGENERATE_IF_DEALT_DAMAGE_THIS_WAY	= 0x10,
+	DMG_CANT_REGENERATE_IF_DEALT_DAMAGE_THIS_WAY	= 1<<5,
+	DMG_TAP_IF_DEALT_DAMAGE_THIS_WAY				= 1<<6,
+	DMG_EXILE_IF_LETHALLY_DAMAGED_THIS_WAY			= 1<<7,
+	DMG_MUST_ATTACK_IF_DEALT_DAMAGE_THIS_WAY		= 1<<8,
 } dmg_t;
 
 /* Rarity */
@@ -1418,6 +1568,7 @@ typedef enum
 	DDBM_TRACE_DAMAGED_CREATURES	= (1<<8),
 	DDBM_TRACE_DAMAGED_PLAYERS		= (1<<9),
 	DDBM_STORE_IN_TARGETS_9			= (1<<10),	// Instead of the default targets[8].player, which, brilliantly, is the same place as equipment.
+	DDBM_TRACE_DAMAGING_SOURCES		= (1<<11),	// "card" must be "-1". Uses "info_slot" and from "targets[0].card" to "targets[9].card" to storage. Tracks only permanents.
 } ddbm_flags_t;
 
 /* Trap conditions  */
@@ -1442,7 +1593,7 @@ typedef enum {
 	// Values 0x200-0x21F: One byte of storage for each, cleared at the start of each turn.
 #define TRAP_MIN_BYTES_PER_TURN		0x200
 	TRAP_DEAD_ZUBERA_COUNT				= 0x200,
-	//0x201 unused
+	TRAP_CLUES_SACRIFICED				= 0x201,
 	TRAP_CARDS_TO_GY_FROM_ANYWHERE		= 0x202,
 	TRAP_DISCARDED_CARDS				= 0x203,
 	TRAP_UNBLOCKED_CREATURES			= 0x204,
@@ -1467,6 +1618,7 @@ typedef enum {
 	TRAP_STORM_RED						= 0x406,
 	TRAP_STORM_WHITE					= 0x407,
 	TRAP_COT_FLAG						= 0x408,
+	TRAP_PLANESWALKERS_PLAYED			= 0x409,
 #define TRAP_MAX_NYBBLES_PER_TURN	0x40F
 #if ((TRAP_MAX_NYBBLES_PER_TURN - TRAP_MIN_NYBBLES_PER_TURN + 1) % 2) != 0
 #  error "Number of nybbles per turn must be a multiple of 2"
@@ -1558,19 +1710,20 @@ typedef enum
 /* flags for "generic_spell" */
 typedef enum
 {
-	GS_CAN_TARGET				= 1<<0,
-	GS_COUNTERSPELL				= 1<<1,
-	GS_X_SPELL					= 1<<2,
-	GS_GRAVE_RECYCLER			= 1<<3,
-	GS_REGENERATION				= 1<<4,
-	GS_OPTIONAL_TARGET			= 1<<5,
-	GS_CAN_ONLY_TARGET_OPPONENT	= 1<<6,
-	GS_LITERAL_PROMPT			= 1<<7,	// Don't load_text for prompt in GS_CAN_TARGET or GS_GRAVE_RECYCLER
-	GS_DAMAGE_PREVENTION		= 1<<8,
-	GS_AURA						= 1<<9,
-	GS_SAC_CREATURE_AS_COST		= 1<<10,
-	GS_GRAVE_RECYCLER_OPP_GRAVE	= 1<<11,
-	GS_GRAVE_RECYCLER_BOTH_GRAVES = 1<<12,
+	GS_CAN_TARGET					= 1<<0,
+	GS_COUNTERSPELL					= 1<<1,
+	GS_X_SPELL						= 1<<2,
+	GS_GRAVE_RECYCLER				= 1<<3,
+	GS_REGENERATION					= 1<<4,
+	GS_OPTIONAL_TARGET				= 1<<5,
+	GS_CAN_ONLY_TARGET_OPPONENT		= 1<<6,
+	GS_LITERAL_PROMPT				= 1<<7,	// Don't load_text for prompt in GS_CAN_TARGET or GS_GRAVE_RECYCLER
+	GS_DAMAGE_PREVENTION			= 1<<8,
+	GS_AURA							= 1<<9,
+	GS_SAC_CREATURE_AS_COST			= 1<<10,
+	GS_GRAVE_RECYCLER_OPP_GRAVE		= 1<<11,
+	GS_GRAVE_RECYCLER_BOTH_GRAVES 	= 1<<12,
+	GS_ONE_OR_MULTIPLE_TARGETS	 	= 1<<13, //For cards like "Fire // Ice"
 } generic_spell_flags_t;
 
 /* Special flags  - Generic flags */
@@ -1580,12 +1733,12 @@ typedef enum
 	SF_WONT_RECEIVE_DAMAGE	= 1<<1,
 	SF_TYPE_ALREADY_CHANGED	= 1<<2,
 	SF_LETHAL_DAMAGE_BURY	= 1<<3,	// Target has been dealt combat damage by a source with deathtouch and a no-regen effect (probably Phage the Untouchable), and will be buried when it resolves
-	SF_FLANKING_REMOVED		= 1<<4,
+	SF_EXILE_IF_DAMAGED 	= 1<<4, // Target has been dealt damage by a source that exiles on damage like Pit Spawn, and will be exiled when it resolves
 	SF_ECHO_TO_PAY			= 1<<5,
 	SF_ATTACKING_PWALKER	= 1<<6,
 	SF_KICKED				= 1<<7,	// Misplaced; only permanents should have these flags, since they overlap the targets array
 	SF_KICKED2				= 1<<8,	// Misplaced; only permanents should have these flags, since they overlap the targets array
-	SF_LETHAL_DAMAGE_EXILE	= 1<<9,	// Target has been dealt damage by a source that exiles on damage like Pit Spawn, and will be exiled when it resolves
+	SF_LETHAL_DAMAGE_EXILE	= 1<<9,	//Incinerate, for example.
 	SF_CANNOT_PHASE_OUT		= 1<<10,
 	SF_KILL_STATE_BASED_ACTION	= 1<<11,	// A permanent being put into a graveyard as a state-based action.  Handled internally as KILL_SACRIFICE.  This flag lets things triggering on cards-being-sacrificed, like It That Betrays, know that it's not really a sacrifice.
 	SF_JUST_CAME_INTO_PLAY	= 1<<12,
@@ -1597,7 +1750,7 @@ typedef enum
 	SF_NOT_CAST				= 1<<18,	// Misplaced; only permanents should have these flags, since they overlap the targets array
 	SF_PLAYED_FOR_FREE		= 1<<19,	// Misplaced; only permanents should have these flags, since they overlap the targets array
 	SF_EXILE_ON_RESOLUTION	= 1<<20,	// Misplaced; only permanents should have these flags, since they overlap the targets array
-	SF_ECHO_PAID			= 1<<21,
+	SF_FLASHBACK			= 1<<21,
 	SF_MANA_PRODUCER_DISABLED_FOR_AI	= 1<<22,
 	SF_MOVE_AURA_LEGAL_TARGET			= 1<<23,
 	SF_MOVE_AURA_SAME_CONTROLLER		= 1<<24,
@@ -1650,11 +1803,32 @@ typedef enum
 /* Special flags  3*/
 typedef enum
 {
-	SF3_REANIMATED					= 1<<0,
-	SF3_MANACOST_NULLIFIED			= 1<<1,
-	SF3_ENCHANTED_PERMANENT_DYING	= 1<<2,
+	SF3_REANIMATED							= 1<<0,
+	SF3_MANACOST_NULLIFIED					= 1<<1,
+	SF3_ENCHANTED_PERMANENT_DYING			= 1<<2,
 	SF3_MOVING_AURA_PLAYER0_SELECT_TARGET	= 1<<3,
-	SF3_RENOWNED					= 1<<4,
+	SF3_RENOWNED							= 1<<4,
+	SF3_WONT_TRIGGER_AT_THIS_EOT			= 1<<5,
+// SF3_IN_PLAY_DIRECTLY must be added to Auras putted directly in play from exile / deck / graveyard so they could enchant permanest
+// which cannot be normally enchanted (permanents with Shroudm, Hexprood, etc.)
+	SF3_IN_PLAY_DIRECTLY					= 1<<6,
+/*
+If we're in the damaging phases, SF3_ARCHANGEL_OF_THUNE_COUNTER will be added instead of counters if we're dealing with
+Archangel of Thune lifegain-triggered ability and instance(player, card)->eot_thoughness will carry the number of counters.
+Then, the counters will be added in PHASE_AFTER_DAMAGE if the creature isn't already dead
+*/
+	SF3_ARCHANGEL_OF_THUNE_COUNTER			= 1<<7,
+	SF3_IS_STEALING_AURA					= 1<<8,
+/* From SOI "Double-Faced Cards Rules Changes" : "Under the new rules, the converted mana cost of the back face of a DFC is based on
+	the mana cost of the front face. (Previously, because the back faces lacked mana costs, their converted mana costs were all 0.)"
+	So, we need to discriminate which side is on.
+*/
+	SF3_CARD_IS_FLIPPED						= 1<<9,
+	SF3_EPIC								= 1<<10,
+	SF3_ECHO_PAID							= 1<<11,
+	SF3_MADNESS_COST_PAID					= 1<<12,
+	SF3_HARDCODED_SLEIGHT_WORDS_REPLACED	= 1<<13,
+	SF3_HARDCODED_HACK_WORDS_REPLACED		= 1<<14,
 } special_flags3_t;
 
 // Parameters for token_generation_t::action
@@ -1789,6 +1963,7 @@ typedef enum
 	EDNT_TAP_AT_END_OF_COMBAT					= 1<<1,
 	EDNT_WONT_UNTAP_ANYMORE						= 1<<2,
 	EDNT_TAP_TARGET								= 1<<3,
+	EDNT_CHECK_ORIGINAL_CONTROLLER				= 1<<3,
 } ednt_flags_t;
 
 typedef enum {
@@ -1800,21 +1975,25 @@ typedef enum {
   STORM_WHITE = COLOR_TEST_WHITE,
 } storm_mode_t;
 
-typedef enum{ // results from EVENT_GRAVEYARD_ABILITY
-	GA_PLAYABLE_FROM_GRAVE			= 1<<0, // the default case, used by almost all the cards with Flashback
-	GA_RETURN_TO_HAND				= 1<<1,
-	GA_RETURN_TO_PLAY				= 1<<2,
-	GA_UNEARTH						= 1<<3,
-	GA_BASIC						= 1<<4, // a standard GAA ability, that could be used multiple times when the card is in grave
-	GA_SCAVENGE						= GA_BASIC | 1<<5,
-	GA_RETURN_TO_PLAY_MODIFIED		= GA_RETURN_TO_PLAY | (1<<6),
-	GA_RETURN_TO_PLAY_WITH_EFFECT	= GA_RETURN_TO_PLAY | (1<<7),
-	GA_PUT_ON_TOP_OF_DECK			= 1<<8,
+typedef enum{ // results from EVENT_GRAVEYARD_ABILITY or EVENT_CAN_ACTIVATE_FROM_HAND
+	GA_EXTRA_ACTIVATE_FROM_HAND		= 1<<0, // reserved for cards that could be activated from hand
+	GA_PLAYABLE_FROM_GRAVE			= 1<<1, // the default case, used by almost all the cards with Flashback
+	GA_RETURN_TO_HAND				= 1<<2,
+	GA_RETURN_TO_PLAY				= 1<<3,
+	GA_UNEARTH						= 1<<4,
+	GA_BASIC						= 1<<5, // a standard GAA ability, that could be used multiple times when the card is in grave
+	GA_SCAVENGE						= GA_BASIC | (1<<6),
+	GA_RETURN_TO_PLAY_MODIFIED		= GA_RETURN_TO_PLAY | (1<<7),
+	GA_RETURN_TO_PLAY_WITH_EFFECT	= GA_RETURN_TO_PLAY | (1<<8),
+	GA_PUT_ON_TOP_OF_DECK			= 1<<9,
+	GA_GRAVE_ABILITY_MASK = GA_PLAYABLE_FROM_GRAVE | GA_RETURN_TO_HAND | GA_RETURN_TO_PLAY | GA_UNEARTH | GA_BASIC | GA_SCAVENGE |
+							GA_RETURN_TO_PLAY_MODIFIED | GA_RETURN_TO_PLAY_WITH_EFFECT | GA_PUT_ON_TOP_OF_DECK,
+	GA_INTERRUPT_ABILITY			= 1<<10,
 } graveyard_ability_type_t;
 
 typedef enum{ // results from EVENT_PAY_FLASHBACK_COST
-	GAPAID_REMOVE			= 1<<0, // Used for flashback and similar
-	GAPAID_EXILE			= 1<<1, // Used for cards that have "exile this from grave:"
+	GAPAID_REMOVE			= 1<<0, // Used for cards with Retrace and so : they go to the stack and the return to grave
+	GAPAID_EXILE			= 1<<1, // Used for Flashback and cards that have "exile this from grave:"
 	GAPAID_REMAIN_IN_GRAVE	= 1<<2, //The card has an activated ability that could be used when in grave
 } graveyard_ability_paid_t;
 
@@ -1838,8 +2017,14 @@ typedef enum {
 	EF_MULTIBLOCKERS			= 1<<2,	// Turned on when a multiblocker card is created, and checked in AI combat functions.  Doesn't seem to work.
 	EF_ATTACKER_CHOOSES_BLOCKERS= 1<<3,	// The attacker, not defender, chooses which creatures blocks  and how.
 
-	EF_EA_MASK					= (EA_MARTYR|EA_SELECT_ATTACK|EA_SELECT_BLOCK|EA_LICH|EA_PAID_ATTACK|EA_PAID_BLOCK|EA_FORCE_ATTACK|EA_BEFORE_COMBAT
-								   |EA_DECLARE_ATTACK|EA_FELLWAR_STONE|EA_CONTROLLED),
+	EF_EA_MASK					= (EA_MARTYR|EA_SELECT_ATTACK|EA_SELECT_BLOCK|EA_LICH|EA_PAID_ATTACK|EA_PAID_BLOCK
+								   |EA_BEFORE_COMBAT|EA_DECLARE_ATTACK|EA_FELLWAR_STONE|EA_CONTROLLED
+#ifdef SHANDALAR
+								   |EA_MODIFY_COST_GLOBAL|EA_CAN_PLAY_OTHER|EA_AFTER_CHANGE_TYPE
+#else
+								   |EA_FORCE_ATTACK
+#endif
+								   ),
 	/* After dispatching EVENT_CHANGE_TYPE for a card, all bits in its card_data_t::extra_ability also in EF_EA_MASK are set in event_flags.  They're mostly
 	 * (all?) required to be set in event_flags for a corresponding event to be sent (such as EVENT_MUST_ATTACK for EA_FORCE_ATTACK).  Bits may be turned on
 	 * manually in response to EVENT_CHANGE_TYPE if it's inappropriate to set them in ct_all.csv for some reason, such as it being an effect card. */
@@ -1856,7 +2041,9 @@ typedef enum {
 	LCBP_PENDING_DAMAGE_CARDS = 0x2,	// There's a damage card in play attached to something that'll need to be resolved eventually by calling 0x477070.
 	LCBP_DAMAGE_PREVENTION = 0x4,	// Turned on while resolving damage.
 	TENTATIVE_LCBP_DURING_COMBAT = 0x8,
+	TENTATIVE_LCBP_UNUSED10 = 0x10,
 	LCBP_SPELL_BEING_PLAYED = 0x20,	// Makes only interrupts playable, etc.
+	TENTATIVE_LCBP_UNUSED40 = 0x40,
 	TENTATIVE_LCBP_DURING_EITHER_MAIN_PHASE = 0x80,
 	TENTATIVE_LCBP_DURING_SECOND_MAIN_PHASE = 0x100,
 	// All values above here are cleared at the start of each turn and the start of the first main phase.
@@ -1866,8 +2053,34 @@ typedef enum {
 	LCBP_SKIP_TURN = 0x8000,	// skips the next turn (no matter whose it is)
 	LCBP_NEED_EVENT_CHANGE_TYPE_SECOND_PASS = 0x10000,	// set this during EVENT_CHANGE_TYPE to indicate this card needs to be run a second time
 	LCBP_DURING_EVENT_CHANGE_TYPE_SECOND_PASS = 0x20000,	// this is set during EVENT_CHANGE_TYPE's second dispatch
+	LCBP_CHARGING_MANA = 0x40000,	// set while charging mana (but turned back off while dispatching EVENT_RESOLVE_ACTIVATION, EVENT_TAP_CARD, and other triggers activated while charging mana)
 	// All other values unused.
 } land_can_be_played_t;
+
+typedef struct
+{
+#ifdef SHANDALAR
+private:
+#endif
+	uint8_t poison_;		// Do not access directly; in Manalink, use POISON_COUNTERS() to access, poison() to add, and raw_set_poison() to remove
+	uint8_t experience_;	// Do not access directly; in Manalink, use EXPERIENCE_COUNTERS() to access, add_experience() to add, and raw_set_experience() to remove
+#ifdef SHANDALAR
+public:
+#endif
+	uint8_t unused1;
+	uint8_t unused2;
+
+#ifdef SHANDALAR
+	uint8_t poison(void) const					{ return poison_; }
+	uint8_t experience(void) const				{ return experience_; }
+	void raw_set_poison(uint8_t new_val)		{ poison_ = new_val; }	// always go through poison(player, number_of_counters = 1) in engine.cpp
+	void raw_set_experience(uint8_t new_val)	{ experience_ = new_val; }	// always go through add_experience(player, number_of_counters = 1) in engine.cpp
+#  define POISON_COUNTERS(p)	(player_counters[(p)].poison())
+#else
+#  define POISON_COUNTERS(p)		(player_counters[(p)].poison_ + 0)
+#  define EXPERIENCE_COUNTERS(p)	(player_counters[(p)].experience_ + 0)
+#endif
+} PlayerCounters;
 
 typedef enum {
 	PB_OPPONENT_CHECKS_ATTACK_LEGALITY	= 1<<0,	// Always dispatch EVENT_ATTACK_LEGALITY for the other player's creatures, even if no card with EA_DECLARE_ATTACK is on the battlefield.
@@ -1956,6 +2169,9 @@ typedef enum
 	SETTING_AI_USES_RULES_ENGINE,
 	SETTING_SMALLCARD_SIZE,
 	SETTING_HAND_SIZE,
+	SETTING_ABILITY_ICON_MAX,
+	SETTING_ABILITY_ICON_SIZE,
+	SETTING_ABILITY_ICON_FILE,
 
 	SETTING_MAX_PLUS_1
 } settings_t;
@@ -1983,7 +2199,7 @@ typedef enum
 	WAV_LIFELOSS = 14,
 	WAV_SACRFICE = 15,
 	WAV_SORCERY = 16,
-	WAV_SUMMON = 17,
+	WAV_SUMMON = 17,	// Also WAV_CREATURE_TOKEN
 	WAV_TAP = 18,
 	WAV_UNTAP = 19,
 	WAV_ATTACK2 = 20,
@@ -2016,10 +2232,10 @@ typedef enum
 	WAV_SHELL_LOSEDUEL = 44,
 	WAV_SHELL_WINDUEL = 45,
 	WAV_ASWANJAG = 46,
-	WAV_CALLGRAV = 47,
+	WAV_CALLGRAV = 47,	// Also WAV_RESURRECT
 	WAV_FAERDRAG = 48,
 	WAV_GEMBAZAR = 49,
-	WAV_NECRAZAR = 50,
+	WAV_NECRAZAR = 50,	// Also WAV_TRANSFORM_EMN
 	WAV_POLKAMIX = 51,
 	WAV_PANDORA = 52,
 	WAV_PRSMDRAG = 53,
@@ -2029,11 +2245,11 @@ typedef enum
 	WAV_WHIMSY = 57,
 	WAV_RAINBOWK = 58,
 	WAV_TOSS = 59,
-	WAV_SHELL_SHANDALAR = 60,
+	WAV_SHELL_SHANDALAR = 60,	// Also WAV_PLANESWALKER
 	WAV_SHELL_TOOLTIME = 61,
 	WAV_SHELL_HELPME = 62,
 	WAV_SHELL_HALLOFRECORDS = 63,
-	WAV_SHELL_DUELMENOW = 64,
+	WAV_SHELL_DUELMENOW = 64,	// Also WAV_BOUNCE
 	WAV_EXP1_OPENFOIL = 65,
 	WAV_EXP1_OPENBOX = 66,
 	WAV_EXP1_OUTOFPACK = 67,
@@ -2058,25 +2274,90 @@ typedef enum
 	WAV_DEVOUR = 70,		// A creature activates its devour ability
 	WAV_MONSTROSITY = 71,	// A creature activates its monstrosity ability
 	WAV_EVOLVE = 72,		// A +1/+1 counter is put on a card because of its evolve ability.
-	WAV_PLUS_COUNTER = 73,	// A +x/+x counter is put on a card.
+	WAV_PLUS_COUNTER = 73,	// A +x/+x counter is put on a card.  Also WAV_DETHRONE.
 	WAV_MINUS_COUNTER = 74,	// A -x/-x counter is put on a card.
 	WAV_MILL = 75,			// Milling effects (as opposed to discard)
 	WAV_RAISE_DEAD = 76,	// Card from graveyard to hand
 	WAV_BUSHIDO = 77,		// A card gets +x/+x from its bushido ability.
 	WAV_EQUIP = 78,			// An equipment card becomes attached to a creature.
 	WAV_LIFEGAIN = 79,		// A player gains life.
+	WAV_TRANSFORM = 80,		// A card with sun/moon symbols transforms.  Fullmoon/Emrakul symbols is WAV_TRANSFORM_EMN below; Spark/Ignite symbols gets nothing (other than WAV_PLANESWALKER).
 
 	// Reuse of unused (or almost-unused) files
 	WAV_RESURRECT = WAV_CALLGRAV,		// A card is returned from a graveyard to the battlefield
 	WAV_BOUNCE = WAV_SHELL_DUELMENOW,	// A card is returned from the battlefield or stack to its owner's hand.
 	WAV_PLANESWALKER = WAV_SHELL_SHANDALAR,	// A planeswalker comes into play
+	WAV_TRANSFORM_EMN = WAV_NECRAZAR,	// A card with fullmoon/Emrakul symbols transforms
 
 	// No unique sounds yet
 	WAV_DETHRONE = WAV_PLUS_COUNTER,	// A +1/+1 counter is put on a card because of its dethrone ability.
 	WAV_CREATURE_TOKEN = WAV_SUMMON,	// A creature token put on the battlefield
 
-	WAV_HIGHEST = 79,
+	WAV_HIGHEST = 80,
 } wav_t;
+
+typedef enum
+{
+  // From keyword_t
+  ICON_FLYING = 0,
+  ICON_REACH = 1,
+  ICON_BANDING = 2,
+  ICON_TRAMPLE = 3,
+  ICON_VIGILANCE = 4,
+  ICON_FIRST_STRIKE = 5,
+  ICON_DOUBLE_STRIKE = 6,
+  ICON_REGENERATION = 7,
+  //ICON_LEGENDARY = 8,	// doesn't seem helpful enough to display
+  ICON_FLASH = 9,
+  ICON_SWAMPWALK = 10,
+  ICON_ISLANDWALK = 11,
+  ICON_FORESTWALK = 12,
+  ICON_MOUNTAINWALK = 13,
+  ICON_PLAINSWALK = 14,
+  ICON_PROT_BLACK = 15,
+  ICON_PROT_BLUE = 16,
+  ICON_PROT_GREEN = 17,
+  ICON_PROT_RED = 18,
+  ICON_PROT_WHITE = 19,
+  ICON_PROT_ARTIFACTS = 20,
+  ICON_PROT_CREATURES = 21,
+
+  // This subset is in the same order as the keyword2_t type in Shandalar
+  ICON_DEFENDER = 22,
+  ICON_CANT_BLOCK = 23,
+  ICON_UNBLOCKABLE = 24,
+  ICON_SHADOW = 25,
+  ICON_HORSEMANSHIP = 26,
+  ICON_FEAR = 27,
+  ICON_INTIMIDATE = 28,
+  ICON_DEATHTOUCH = 29,
+  ICON_LIFELINK = 30,
+  ICON_FLANKING = 31,
+  ICON_RAMPAGE = 32,
+  ICON_BUSHIDO = 33,
+  ICON_WITHER = 34,
+  ICON_EXALTED = 35,
+  ICON_INDESTRUCTIBLE = 36,
+  ICON_HASTE = 37,
+  ICON_HEXPROOF = 38,
+  // end of same-ordered keyword2_t
+
+  ICON_SHROUD = 39,
+  ICON_INFECT = 40,
+  //ICON_CANT_ACTIVATE = 41,
+  ICON_DOESNT_UNTAP = 42,
+  ICON_PERSIST = 43,
+  ICON_UNDYING = 44,
+  //ICON_NINJUTSU = 45,	// speculative for now - unimplemented in Shandalar, can't be displayed in Manalink
+  ICON_CANT_BE_COUNTERED = 46,
+  ICON_PROT_MISC = 47,
+  ICON_SKULK = 48,
+  ICON_MENACE = 49,
+  ICON_CANT_ACTIVATE = 50,
+  ICON_LOST_ABILITIES = 51,
+
+  ICON_MAX = 51
+} ability_icon_t;
 
 typedef enum
 {
@@ -2124,6 +2405,7 @@ typedef enum
   // Values past this can't be combined with others.
   TARGET_ZONE_GRAVEYARD	= 0x01000000,
   TARGET_ZONE_ARRAY		= 0x02000000,	// Target within an arbitrary array.  Set via Target::zone_array(), not directly with Target::zone(TARGET_ZONE_ARRAY).
+  TARGET_ZONE_EXILE		= 0x04000000,
 #endif
 } target_zone_t;
 
@@ -2136,7 +2418,11 @@ typedef enum
 	TARGET_STATE_BLOCKING			= (1 << 4),
 	TARGET_STATE_IN_COMBAT			= (1 << 5),
 	TARGET_STATE_ENCHANTED			= (1 << 6),
+#ifdef SHANDALAR
+	TARGET_STATE_BLOCK_THIS			= (1 << 7),	// Modifies TARGET_ISBLOCKED and TARGET_BLOCKING to mean "target [creature] blocked by this" and "target [creature] blocking this" respectively; if all three given, then "target [creature] blocking or blocked by this".
+#else
 	TARGET_STATE_JUST_CAST			= (1 << 7),	// Checked for but unused by exe
+#endif
 	TARGET_STATE_SPELL_RESOLVED		= (1 << 8),	// Checked for but unused by exe
 	TARGET_STATE_DAMAGED			= (1 << 9),
 	TARGET_STATE_COULD_UNTAP		= (1 << 10),	// Target won't necessarily untap during this untap step, but could
@@ -2199,7 +2485,7 @@ typedef enum
 #ifdef SHANDALAR
 	TARGET_SPECIAL_REQUIRE_ALL_TYPES	= (1 << 3),		// all types in required_types must match, instead of any - e.g., normally "required_type = TYPE_CREATURE|TYPE_ENCHANTMENT" means "creature or enchantment", but with this, it means "enchantment creature".
 	TARGET_SPECIAL_OR_ME				= (1 << 8),		// source of targetting can always be picked if it's in the right zone, ignoring all other requirements
-	TARGET_SPECIAL_EXTRA_OR_SUBTYPE		= (1 << 15),	// extra works as another subtype field; matching either subtype or extra is sufficient to pass.
+	TARGET_SPECIAL_EXTRA_OR_SUBTYPE		= (1 << 15),	// extra works as another subtype field; matching either subtype or extra is sufficient to pass.  If TARGET_SPECIAL_REQUIRE_ALL_TYPES is also set, then requires both subtypes be set, not either.
 #endif
 } target_special_t;
 
@@ -2281,6 +2567,8 @@ typedef enum {
 	REANIMATE_UNDER_OWNER_CONTROL		= (1<<11),	// For special cases like Gift of Immortality
 	REANIMATE_SPECIAL_R_ALL				= (1<<12),	// Used only internally by reanimate all: tells 'reanimate_permanent' that the card to put in play is actually on targ_player hand. Prevents messy effects when stuff like Gravedigger is reanimated.
 	REANIMATE_HASTE_AND_EXILE_AT_YOUR_UPKEEP	= (1<<13),
+	REANIMATE_SPECIAL_LIVING_DEAD				= (1<<14), // Will be recognized only if is used in "reanimate_all".
+	REANIMATE_RETURN_TO_PLAY_TRANSFORMED		= (1<<15),
 	// These two valid only for seek_grave_for_id_to_reanimate.  Can't be combined with any of the modes above.
 	REANIMATEXTRA_RETURN_TO_HAND2 = -1,	// Doesn't have the problems REANIMATE_RETURN_TO_HAND does, though only valid in seek_grave_for_id_to_reanimate
 	REANIMATEXTRA_LEAVE_IN_GRAVEYARD = -2,
@@ -2326,6 +2614,9 @@ typedef enum
 	FOG_COMBAT_DAMAGE_ONLY			= 1<<8,
 	FOG_UNBLOCKED_CREATURES_ONLY	= 1<<9,
 	FOG_CREATURES_WITHOUT_TRAMPLE	= 1<<10,
+	FOG_BY_CONTROLLED_BY_PLAYER		= 1<<11,	// prevents damage by creatures controlled by t_player, not damage to them
+	FOG_BY_NON_SUBTYPE				= 1<<12,	// prevent damage only by non-[subtype] creatures.  subtype is given as param to fog_special2().
+	FOG_BY_ANY_TYPE					= 1<<13,	// prevent damage by any type of source, not just creatures
 } fog_special_flags_t;
 
 typedef enum {
@@ -2427,18 +2718,19 @@ typedef enum {
 } discard_trigger_t;
 
 typedef enum {
-	GFPC_STORE_POWER			= 1<<0,	//Only of this parameters shoudl be used at once
-	GFPC_STORE_TOUGHNESS		= 1<<1,	//Only of this parameters shoudl be used at once
-	GFPC_STORE_CMC				= 1<<2,	//Only of this parameters shoudl be used at once
-	GFPC_STORE_COLORS			= 1<<3,	//Only of this parameters shoudl be used at once
-	GFPC_TRACK_DEAD_CREATURES	= 1<<4,	////Only of this parameters shoudl be used at once. Will store the "internal_card_id" of the dead creatures from "targets[storage_locatio].player" to a maximum of "targets[9].player"
+	GFPC_STORE_POWER			= 1<<0,	//Only one of this parameters shoudl be used at once
+	GFPC_STORE_TOUGHNESS		= 1<<1,	//Only one of this parameters shoudl be used at once
+	GFPC_STORE_CMC				= 1<<2,	//Only one of this parameters shoudl be used at once
+	GFPC_STORE_COLORS			= 1<<3,	//Only one of this parameters shoudl be used at once
+	GFPC_TRACK_DEAD_CREATURES	= 1<<4,	//Only one of this parameters shoudl be used at once Will store the "internal_card_id" of the dead creatures from "targets[storage_locatio].player" to a maximum of "targets[9].player"
 	GFPC_EXTRA_SKIP_TOKENS		= 1<<5, //Can be combined with the previous values.
 } count_for_gfp_ability_and_store_values_flags_t;
 
 typedef enum {
-	GCUS_CONTROLLED = 1,	// lose control if lose control of source
-	GCUS_TAPPED = 2,		// lose control if source isn't tapped
-	GCUS_BURY_IF_TAPPED_OR_LEAVE_PLAY = 4,	// bury controlled permanent if source leaves play or becomes untapped (but not if controlled)
+	GCUS_UNTIL_EOT = 	1<<0,	// Effect ends at eot (Act of Treason, etc.)
+	GCUS_CONTROLLED = 	1<<1,	// lose control if lose control of source
+	GCUS_TAPPED = 		1<<2,	// lose control if source isn't tapped
+	GCUS_BURY_IF_TAPPED_OR_LEAVE_PLAY = 1<<3,	// bury controlled permanent if source leaves play or becomes untapped (but not if controlled)
 } gcus_t;
 
 typedef enum {
@@ -2509,6 +2801,81 @@ typedef enum
 	AUTOTAP_NO_CREATURES		= 1<<4
 } autotap_t;
 
+typedef enum
+{
+	SE_END_AT_EOT					= 1<<0,
+	SE_CSVID_CANT_BE_PLAYED			= 1<<1,
+	SE_TYPE_CANT_BE_PLAYED			= 1<<2,
+	SE_CREATURES_CANT_ATTACK		= 1<<3,
+	SE_EPIC							= 1<<4,
+} card_special_effect_modes_t;
+
+typedef struct
+{
+  csvid_t worldmagic_csvid;
+  int worldmagic_price;
+  int worldmagic_city;
+  int worldmagic_duration;
+} shandalar_worldmagic_t;
+
+typedef enum
+{
+  WORLDMAGIC_SLEIGHT_OF_HAND		= 0,
+  WORLDMAGIC_HAGGLERS_COIN			= 1,
+  WORLDMAGIC_CONJURERS_WILL			= 2,
+  WORLDMAGIC_AMULET_OF_SWAMPWALK	= 3,
+  WORLDMAGIC_LEAP_OF_FATE			= 4,
+  WORLDMAGIC_TOME_OF_ENLIGHTENMENT	= 5,
+  WORLDMAGIC_QUICKENING				= 6,
+  WORLDMAGIC_FRUIT_OF_SUSTENANCE	= 7,
+  WORLDMAGIC_STAFF_OF_THUNDER		= 8,
+  WORLDMAGIC_DWARVEN_PICK			= 9,
+  WORLDMAGIC_SWORD_OF_RESISTANCE	= 10,
+  WORLDMAGIC_RING_OF_THE_GUARDIAN	= 11,
+} shandalar_worldmagic_index_t;
+
+// Data structures exported from drawcardlib.
+typedef struct
+{
+	uint8_t default_expansion;
+	uint8_t default_rarity;
+	uint8_t watermark;					// index into watermarks[] array; 0xFF means no watermark
+	uint8_t dfc_symbol;					/* DFC symbol.  0xFF is no symbol; else a DfcSymbol value.
+										 * If dfc_symbol is even, it's a front-face symbol and dfc_symbol+1 is its
+										 * back.  Also used to determine if a card is double-faced at all. */
+	uint8_t flags;
+#define RARITYFLAG_TIMESHIFT	(1<<0)	// Has a Planar Chaos timeshift or Future Sight futureshift frame
+#define RARITYFLAG_NYX			(1<<1)	// Is a multitype enchantment
+	uint8_t rarity_in_expansion[0];
+} Rarity;
+
+typedef enum
+{
+	DFC_SYMBOL_DAY		= 0,
+	DFC_SYMBOL_NIGHT	= 1,
+	DFC_SYMBOL_SPARK	= 2,
+	DFC_SYMBOL_IGNITE	= 3,
+	DFC_SYMBOL_MOON		= 4,
+	DFC_SYMBOL_EMRAKUL	= 5,
+
+	DFC_SYMBOL_MAX		= DFC_SYMBOL_EMRAKUL
+} DfcSymbol;
+
+typedef enum
+{
+	EXPCAT_NONE = 0,	// always lowest priority
+	EXPCAT_CORE,
+	EXPCAT_EXPERT,
+	EXPCAT_PORTAL,
+	EXPCAT_REPRINT,
+	EXPCAT_CASUAL,
+	EXPCAT_PROMO,
+	EXPCAT_BOX,
+	EXPCAT_DECKS,
+
+	MAX_EXPCAT = EXPCAT_DECKS
+} ExpansionCategory;
+
 /* Repeatedly do something until it's not cancelled.  Dangerous; use only for things you know the AI won't cancel (even while speculating), and that the human
  * player is able to do without cancelling; and that doesn't have any side effects if cancelled.  Mana production choices or choosing a number are ok, for
  * example; charging mana is not. */
@@ -2569,6 +2936,9 @@ typedef enum
 #define EXE_BYTE(addr)		(*EXE_BYTE_PTR(addr))
 
 #define EXE_STR(addr)	((const char*)(addr))
+
+#define EXE_TYP_PTR(typ, addr)	((typ*)(addr))
+#define EXE_TYP(typ, addr)	(*EXE_TYP_PTR(typ, addr))
 
 #ifdef LOWORD
 #  undef LOWORD

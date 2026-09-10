@@ -709,11 +709,16 @@ int card_diseased_vermin(int player, int card, event_t event){
 }
 
 int card_elvish_spirit_guide(int player, int card, event_t event){
+	/* Elvish Spirit Guide	|2|G
+	 * Creature - Elf Spirit 2/2
+	 * Exile ~ from your hand: Add |G to your mana pool. */
+
 	if( event == EVENT_CAN_ACTIVATE_FROM_HAND ){
 		return 1;
 	}
 	else if( event == EVENT_ACTIVATE_FROM_HAND ){
 		kill_card(player, card, KILL_REMOVE);
+		return 1;
 	}
 	else if( event == EVENT_RESOLVE_ACTIVATION_FROM_HAND ){
 		produce_mana(player, COLOR_GREEN, 1);
@@ -1147,6 +1152,7 @@ int card_helm_of_obedience(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t* instance = get_card_instance(player, card);
+		x_value = 0;
 		special_mill(instance->parent_controller, instance->parent_card, CARD_ID_HELM_OF_OBEDIENCE, 1-player, instance->info_slot);
 	}
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_ONLY_TARGET_OPPONENT, -1, 0, 0, 0, 0, 0, 0, &td, "TARGET_PLAYER");
@@ -1810,12 +1816,12 @@ int card_natures_chosen(int player, int card, event_t event){
 		};
 
 		if( event == EVENT_CAN_ACTIVATE ){
-			int abil1 = (instance->targets[1].player > -1 && !(instance->targets[1].player & 1)) ? 1 : 0;
-			if( abil1 && generic_activated_ability(player, card, event, 0, MANACOST0, 0, NULL, NULL) ){
+			int abil1 = (instance->targets[1].player < 0 ||  (instance->targets[1].player > -1 && !(instance->targets[1].player & CHOICE_UNTAP_ENCHANTED_CRIT))) ? 1 : 0;
+			if( current_turn == player && abil1 && generic_activated_ability(player, card, event, 0, MANACOST0, 0, NULL, NULL) ){
 				return 1;
 			}
-			int abil2 = (instance->targets[1].player > -1 && !(instance->targets[1].player & 2)) ? 1 : 0;
-			if( abil2 && ! is_tapped(p, c) && (get_color(player, card) & get_sleighted_color_test(player, card, COLOR_TEST_WHITE)) &&
+			int abil2 = (instance->targets[1].player < 0 || (instance->targets[1].player > -1 && !(instance->targets[1].player & CHOICE_UNTAP_PERMANENT))) ? 1 : 0;
+			if( abil2 && ! is_tapped(p, c) && (get_color(p, c) & get_sleighted_color_test(player, card, COLOR_TEST_WHITE)) &&
 				generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST0, 0, &td1, NULL)
 			  ){
 				return 1;
@@ -1824,12 +1830,12 @@ int card_natures_chosen(int player, int card, event_t event){
 		if( event == EVENT_ACTIVATE ){
 			instance->info_slot = instance->number_of_targets = 0;
 			int abils[2] = {0, 0};
-			int abil1 = (instance->targets[1].player > -1 && !(instance->targets[1].player & CHOICE_UNTAP_ENCHANTED_CRIT)) ? 1 : 0;
-			if( abil1 && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST0, 0, NULL, NULL) ){
+			int abil1 = (instance->targets[1].player < 0 ||  (instance->targets[1].player > -1 && !(instance->targets[1].player & CHOICE_UNTAP_ENCHANTED_CRIT))) ? 1 : 0;
+			if( current_turn == player && abil1 && generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST0, 0, NULL, NULL) ){
 				abils[0] = 1;
 			}
-			int abil2 = (instance->targets[1].player > -1 && !(instance->targets[1].player & CHOICE_UNTAP_PERMANENT)) ? 1 : 0;
-			if( abil2 && ! is_tapped(p, c) && (get_color(player, card) & get_sleighted_color_test(player, card, COLOR_TEST_WHITE)) &&
+			int abil2 = (instance->targets[1].player < 0 || (instance->targets[1].player > -1 && !(instance->targets[1].player & CHOICE_UNTAP_PERMANENT))) ? 1 : 0;
+			if( abil2 && ! is_tapped(p, c) && (get_color(p, c) & get_sleighted_color_test(player, card, COLOR_TEST_WHITE)) &&
 				generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_CAN_TARGET, MANACOST0, 0, &td1, NULL)
 			  ){
 				abils[1] = 1;
@@ -2103,11 +2109,11 @@ int card_phyrexian_war_beast(int player, int card, event_t event){
 }
 
 int card_pillage(int player, int card, event_t event){
-/*
-Pillage |1|R|R
-Sorcery
-Destroy target artifact or land. It can't be regenerated.
-*/
+	/*
+	  Pillage |1|R|R
+	  Sorcery
+	  Destroy target artifact or land. It can't be regenerated.
+	*/
 	if( ! IS_GS_EVENT(player, card, event) ){
 		return 0;
 	}
@@ -2360,35 +2366,27 @@ int card_rogue_skycaptain(int player, int card, event_t event){
 
 int effect_scars_of_the_veteran(int player, int card, event_t event){
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( instance->targets[1].card > 0 && event == EVENT_PREVENT_DAMAGE ){
-		card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
-		if( damage_card == damage->internal_card_id && damage->damage_target_player == instance->targets[0].player &&
-			damage->damage_target_card == instance->targets[0].card &&
+	if( event == EVENT_PREVENT_DAMAGE ){
+		card_instance_t* instance = get_card_instance(player, card);
+		if( instance->counter_toughness <= 0 ){
+			return 0;
+		}
+		card_instance_t* damage = get_card_instance(affected_card_controller, affected_card);
+		if( damage_card == damage->internal_card_id && damage->damage_target_player == instance->damage_target_player &&
+			damage->damage_target_card == instance->damage_target_card &&
 			damage->info_slot > 0
 		  ){
-			int amount = damage->info_slot;
-			int prevention = instance->targets[1].card;
-			if( amount <= prevention ){
-				amount = 0;
-				prevention-=damage->info_slot;
-			}
-			else{
-				prevention = 0;
-				amount-= instance->targets[1].card;
-			}
-			instance->targets[1].card = prevention;
-			damage->info_slot = amount;
+			int prevention = CLAMP(instance->counter_toughness, 0, damage->info_slot);
+			damage->info_slot -= prevention;
+			instance->counter_toughness -= prevention;
 		}
 	}
 
 	if( eot_trigger(player, card, event) ){
-		if( instance->targets[0].card != -1 ){
-			int counters = 7 - instance->targets[1].card;
-			if( counters > 0 ){
-				add_counters(instance->targets[0].player, instance->targets[0].card, COUNTER_P0_P1, counters);
-			}
+		card_instance_t* instance = get_card_instance(player, card);
+		int counters = instance->targets[1].card - instance->counter_toughness;
+		if( counters > 0 ){
+			add_counters(instance->damage_target_player, instance->damage_target_card, COUNTER_P0_P1, counters);
 		}
 		kill_card(player, card, KILL_REMOVE);
 	}
@@ -2429,9 +2427,7 @@ int card_scars_of_the_veteran(int player, int card, event_t event){
 			if( valid_target(&td1) ){
 				 int leg = create_targetted_legacy_effect(player, card, &effect_scars_of_the_veteran, instance->targets[0].player, instance->targets[0].card);
 				 card_instance_t *tok = get_card_instance(player, leg);
-				 tok->targets[0].player = instance->targets[0].player;
-				 tok->targets[0].card = instance->targets[0].card;
-				 tok->targets[1].card = 7;
+				 tok->targets[1].card = tok->counter_toughness = 7;
 			}
 			kill_card(player, card, KILL_DESTROY);
 	}
@@ -2717,7 +2713,7 @@ int card_sustaining_spirit(int player, int card, event_t event)
 int card_swamp_mosquito(int player, int card, event_t event){
 	if( event == EVENT_DECLARE_BLOCKERS ){
 		if( is_unblocked(player, card) && ! is_humiliated(player, card) ){
-			poison_counters[1-player]++;
+			poison(1-player, 1);
 		}
 	}
 	return 0;
@@ -2738,6 +2734,10 @@ int card_taste_of_paradise(int player, int card, event_t event){
 }
 
 int card_thawing_glaciers(int player, int card, event_t event){
+	/* Thawing Glaciers	""
+	 * Land
+	 * ~ enters the battlefield tapped.
+	 * |1, |T: Search your library for a basic land card, put that card onto the battlefield tapped, then shuffle your library. Return ~ to its owner's hand at the beginning of the next cleanup step. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -2747,13 +2747,13 @@ int card_thawing_glaciers(int player, int card, event_t event){
 
 	comes_into_play_tapped(player, card, event);
 
-	if( event == EVENT_CAN_ACTIVATE && affect_me(player, card) && can_use_activated_abilities(player, card) ){
+	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) ){
 		if( has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0) && ! is_tapped(player, card) ){
 			return 1;
 		}
 	}
 
-	else if( event == EVENT_ACTIVATE && affect_me(player, card) ){
+	else if( event == EVENT_ACTIVATE ){
 			if( player == AI ){
 				ai_modifier+=100;
 			}

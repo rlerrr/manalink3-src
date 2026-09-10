@@ -55,14 +55,14 @@ static int create_multiblocker(int player, int card, int num_blockable)
 		{
 		  blocker_inst->damage_source_player = instance->damage_source_player;
 		  blocker_inst->damage_source_card = instance->damage_source_card;
-		  blocker_inst->display_pic_int_id = instance->display_pic_int_id;
+		  blocker_inst->display_pic_csv_id = instance->display_pic_csv_id;
 		  blocker_inst->display_pic_num = instance->display_pic_num;
 		}
 	  else
 		{
 		  blocker_inst->damage_source_player = player;
 		  blocker_inst->damage_source_card = card;
-		  blocker_inst->display_pic_int_id = cards_at_7c7000[instance->internal_card_id]->id;
+		  blocker_inst->display_pic_csv_id = cards_at_7c7000[instance->internal_card_id]->id;
 		  blocker_inst->display_pic_num = get_card_image_number(cards_at_7c7000[instance->internal_card_id]->id, player, card);
 		}
 

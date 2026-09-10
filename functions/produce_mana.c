@@ -282,7 +282,7 @@ static int choose_combination_of_colors_of_mana_to_produce_onechoice(int* cols, 
 				charging[i] = ((*charge_mana_addr_of_pay_mana_xbugrw)[i]	// amount not yet paid for
 							   - cols[i]									// amount already in array
 							   + (charge_mana_addr_of_pre_mana_pool ?		// this will be non-NULL only when handling EVENT_TAP_CARD from sources tapped within charge_mana()
-								  (*charge_mana_addr_of_pre_mana_pool)[i] - mana_in_pool[player][i] : 0));	// amount added to mana pool by source just activated, but not yet applied to amount charged
+								  (*charge_mana_addr_of_pre_mana_pool)[i] - mana_pool[player][i] : 0));	// amount added to mana pool by source just activated, but not yet applied to amount charged
 			}
 		}
 
@@ -482,7 +482,7 @@ static int choose_mana_all_one_color(int player, color_test_t available, int num
 			} else {
 				charging[i] = ((*charge_mana_addr_of_pay_mana_xbugrw)[i]	// amount not yet paid for
 							   + (charge_mana_addr_of_pre_mana_pool ?		// this will be non-NULL only when handling EVENT_TAP_CARD from sources tapped within charge_mana()
-								  (*charge_mana_addr_of_pre_mana_pool)[i] - mana_in_pool[player][i] : 0));	// amount added to mana pool by source just activated, but not yet applied to amount charged
+								  (*charge_mana_addr_of_pre_mana_pool)[i] - mana_pool[player][i] : 0));	// amount added to mana pool by source just activated, but not yet applied to amount charged
 			}
 		}
 
@@ -1374,8 +1374,8 @@ void minimize_nondraining_mana(void)
   for (p = 0; p <= 1; ++p)
 	for (c = 0; c < 7; ++c)
 	  if ((nondraining = (mana_doesnt_drain_from_pool[p][c] & MANADRAIN_AMT_MASK))
-		  && mana_in_pool[p][c] < nondraining)
-		mana_doesnt_drain_from_pool[p][c] = mana_in_pool[p][c] | (mana_doesnt_drain_from_pool[p][c] & ~MANADRAIN_AMT_MASK);
+		  && mana_pool[p][c] < nondraining)
+		mana_doesnt_drain_from_pool[p][c] = mana_pool[p][c] | (mana_doesnt_drain_from_pool[p][c] & ~MANADRAIN_AMT_MASK);
 }
 
 /* A specific amount of a specific color of mana already in player's mana pool doesn't drain until end of turn.  Unlike MANADRAIN_DOESNT_DRAIN and
@@ -1389,7 +1389,7 @@ void mana_doesnt_drain_until_eot(int player, color_t color, int amt)
 
   nondraining += amt;
   nondraining = MIN(nondraining, MANADRAIN_AMT_MASK);
-  nondraining = MIN(nondraining, mana_in_pool[player][color]);
+  nondraining = MIN(nondraining, mana_pool[player][color]);
 
   mana_doesnt_drain_from_pool[player][color] &= ~MANADRAIN_AMT_MASK;
   mana_doesnt_drain_from_pool[player][color] |= nondraining;
@@ -1405,7 +1405,7 @@ void mana_burn(void)
 	restart:;
 	  int c;
 	  card_instance_t* instance;
-	  if (mana_in_pool[AI][7] && current_phase > PHASE_NORMAL_COMBAT_DAMAGE
+	  if (mana_pool[AI][7] && current_phase > PHASE_NORMAL_COMBAT_DAMAGE
 		  && active_cards_count[AI] < 150)
 		for (c = 0; c < active_cards_count[AI]; ++c)
 		  if ((instance = in_play(AI, c))
@@ -1427,37 +1427,37 @@ void mana_burn(void)
 	{
 	  int amt_drained = 0, amt_left = 0;
 	  int clr;
-	  if (mana_in_pool[p][COLOR_ANY] > 0)
+	  if (mana_pool[p][COLOR_ANY] > 0)
 		for (clr = COLOR_ARTIFACT; clr >= COLOR_COLORLESS; --clr)
 		  if (mana_doesnt_drain_from_pool[p][clr] & MANADRAIN_DOESNT_DRAIN)
-			amt_left += mana_in_pool[p][clr];
+			amt_left += mana_pool[p][clr];
 		  else
 			{
 			  uint8_t nondraining;
 			  if ((nondraining = (mana_doesnt_drain_from_pool[p][clr] & MANADRAIN_AMT_MASK)))
 				{
-				  if (nondraining > mana_in_pool[p][clr])
+				  if (nondraining > mana_pool[p][clr])
 					{	// more flagged as not-draining than is actually in pool
-					  nondraining = mana_in_pool[p][clr];
+					  nondraining = mana_pool[p][clr];
 					  mana_doesnt_drain_from_pool[p][clr] &= ~MANADRAIN_AMT_MASK;
 					  mana_doesnt_drain_from_pool[p][clr] |= nondraining;
 					}
-				  mana_in_pool[p][clr] -= nondraining;
+				  mana_pool[p][clr] -= nondraining;
 				}
 
 			  if (mana_doesnt_drain_from_pool[p][clr] & MANADRAIN_BECOMES_COLORLESS)
 				{
-				  amt_left += mana_in_pool[p][clr];
-				  mana_in_pool[p][COLOR_COLORLESS] += mana_in_pool[p][clr];
+				  amt_left += mana_pool[p][clr];
+				  mana_pool[p][COLOR_COLORLESS] += mana_pool[p][clr];
 				}
 			  else
-				amt_drained += mana_in_pool[p][clr];
+				amt_drained += mana_pool[p][clr];
 
-			  mana_in_pool[p][clr] = nondraining;
+			  mana_pool[p][clr] = nondraining;
 			  amt_left += nondraining;
 			}
 
-	  mana_in_pool[p][COLOR_ANY] = amt_left;
+	  mana_pool[p][COLOR_ANY] = amt_left;
 
 	  int setting_mana_burn;
 	  if (amt_drained > 0

@@ -2,6 +2,14 @@
 
 #include "manalink.h"
 
+int show_deck_exe(int player, const int* deck, int num_cards, const char* prompt, int suppress_done_label, /* const char* */int done_label);
+
+int show_deck(int player, const int* deck, int num_cards, const char* prompt, int suppress_done_label, /* const char* */int done_label)
+{
+	call_sub_437E20_unless_ai_is_speculating();	// force redisplay
+	return show_deck_exe(player, deck, num_cards, prompt, suppress_done_label, done_label);
+}
+
 int get_average_value_from_zone(int targ_player, const int *s_location, int zone_count, test_definition_t *this_test, int my_test, int mode){
 	int total = 0;
 	int found = 0;
@@ -268,6 +276,7 @@ int new_global_tutor(int player, int targ_player, int search_location, int desti
 
 	int avoid_shuffle = this_test->no_shuffle;
 
+	// This is inane, but can't be removed because of the ridiculous number of cards that do the shuffling *themselves* afterwards
 	if( this_test->qty > 1 && !avoid_shuffle ){
 		avoid_shuffle = 1;
 	}
@@ -312,7 +321,9 @@ int new_global_tutor(int player, int targ_player, int search_location, int desti
 					set_trap_condition(targ_player, TRAP_DECK_WAS_SEARCHED, 1);
 				}
 				if( grafdiggers_cage_flag && is_what(-1, s_location[selected], TYPE_CREATURE) ){
-					tutored[tc] = -1;
+					if( destination == TUTOR_PLAY || destination == TUTOR_PLAY_TAPPED || destination == TUTOR_PLAY_ATTACKING ){
+						tutored[tc] = -1;
+					}
 				}
 				else{
 					tutored[tc] = s_location[selected];
@@ -323,7 +334,9 @@ int new_global_tutor(int player, int targ_player, int search_location, int desti
 
 			if( nsl == TUTOR_FROM_GRAVE ){
 				if( grafdiggers_cage_flag && is_what(-1, s_location[selected], TYPE_CREATURE) ){
-					tutored[tc] = -1;
+					if( destination == TUTOR_PLAY || destination == TUTOR_PLAY_TAPPED || destination == TUTOR_PLAY_ATTACKING ){
+						tutored[tc] = -1;
+					}
 				}
 				else{
 					tutored[tc] = s_location[selected];
@@ -337,12 +350,16 @@ int new_global_tutor(int player, int targ_player, int search_location, int desti
 				remove_card_from_rfg(targ_player, cards_data[s_location[selected]].id);
 				tc++;
 			}
-		}
-		if( this_test->create_minideck > 1 ){
-			this_test->create_minideck--;
-			if( this_test->create_minideck == 0 ){
-				break;
+			
+			if( this_test->create_minideck > 1 ){
+				this_test->create_minideck--;
+				if( this_test->create_minideck == 0 ){
+					break;
+				}
 			}
+		}
+		else{
+			break;
 		}
 	}
 	if( search_location == TUTOR_FROM_DECK && ! avoid_shuffle ){
@@ -350,6 +367,7 @@ int new_global_tutor(int player, int targ_player, int search_location, int desti
 	}
 	int card_added = -1;
 	int really_tutored = 0;
+	int storage_loc = 0;
 	for(q=0; q<tc; q++){
 		if( tutored[q] != -1 ){
 			really_tutored++;
@@ -403,6 +421,7 @@ int new_global_tutor(int player, int targ_player, int search_location, int desti
 
 					case TUTOR_HAND:
 					case TUTOR_TPLAYER_HAND:
+					case TUTOR_HAND_AND_MARK:
 					{
 						int dest_player = destination == TUTOR_TPLAYER_HAND ? targ_player : player;
 						card_added = add_card_to_hand(dest_player, tutored[q]);
@@ -415,8 +434,11 @@ int new_global_tutor(int player, int targ_player, int search_location, int desti
 						  ){
 							reveal_card(player, card_added, -1, -1);
 						}
+						if( destination == TUTOR_HAND_AND_MARK ){
+							add_state(dest_player, card_added, STATE_TARGETTED);
+						}
 						if( nsl == TUTOR_FROM_GRAVE ){
-							from_grave_to_hand_triggers(player, card_added);
+							from_grave_to_hand_triggers(dest_player, card_added);
 						}
 					}
 					break;
@@ -461,6 +483,10 @@ int new_global_tutor(int player, int targ_player, int search_location, int desti
 
 					default:
 					break;
+			}
+			if( this_test->storage > -1 ){
+				get_card_instance(player, this_test->storage)->targets[storage_loc].card = tutored[q];
+				storage_loc++;
 			}
 		}
 	}
@@ -589,8 +615,12 @@ int reveal_top_cards_of_library_and_choose(int src_player, int src_card, int t_p
 	  switch (destination_chosen)
 		{
 		  case TUTOR_HAND:
+		  case TUTOR_HAND_AND_MARK:
 			remove_card_from_deck(t_player, selected);
-			add_card_to_hand(src_player, iid);
+			int ca = add_card_to_hand(src_player, iid);
+			if( destination_chosen == TUTOR_HAND_AND_MARK && ca > -1 ){
+				add_state(t_player, ca, STATE_TARGETTED);
+			}
 			break;
 
 		  case TUTOR_GRAVE:
@@ -610,7 +640,7 @@ int reveal_top_cards_of_library_and_choose(int src_player, int src_card, int t_p
 			// else fall through to TUTOR_DECK
 		  case TUTOR_DECK:	// Have to make it n'th from the top, where n is num_cards before the above decrement.
 			;int n;
-			for (n = 0; n < num_cards; ++n)
+			for (n = selected; n < num_cards; ++n)
 			  SWAP(deck_ptr[t_player][n], deck_ptr[t_player][n + 1]);
 			break;
 
@@ -641,9 +671,11 @@ int reveal_top_cards_of_library_and_choose(int src_player, int src_card, int t_p
 			break;
 
 		  case TUTOR_BOTTOM_OF_DECK_RANDOM:
-			;char buf[200];
-			sprintf(buf, "%s:%d\nillegal destination_chosen: %d", __FILE__, __LINE__, destination_chosen);
-			backtrace_and_abort(buf);
+			{
+				char buf[200];
+				sprintf(buf, "%s:%d\nillegal destination_chosen: %d", __FILE__, __LINE__, destination_chosen);
+				backtrace_and_abort(buf);
+			}
 			break;
 		}
 	}
@@ -651,11 +683,16 @@ int reveal_top_cards_of_library_and_choose(int src_player, int src_card, int t_p
   if (num_cards > 0)
 	switch (destination_rest)
 	  {
+		case TUTOR_HAND_AND_MARK:
 		case TUTOR_HAND:
-		  for (i = 0; i < num_cards; ++i)
-			add_card_to_hand(t_player, deck_ptr[t_player][i]);
-		  obliterate_top_n_cards_of_deck(t_player, num_cards);
-		  break;
+			for (i = 0; i < num_cards; ++i){
+				int ca = add_card_to_hand(t_player, deck_ptr[t_player][i]);
+				if( ca > -1 && destination_rest == TUTOR_HAND_AND_MARK ){
+					add_state(t_player, ca, STATE_TARGETTED);
+				}
+			}
+			obliterate_top_n_cards_of_deck(t_player, num_cards);
+		break;
 
 		case TUTOR_DECK:			rearrange_top_x(t_player, t_player, num_cards);	break;
 		case TUTOR_GRAVE:			mill(t_player, num_cards);	break;
@@ -851,7 +888,9 @@ void tutor_basic_lands(int player, tutor_t destination, int num){
 	test.subtype = SUBTYPE_BASIC;
 	test.subtype_flag = MATCH;
 	test.qty = num;
+	test.no_shuffle = 1;
 	new_global_tutor(player, player, TUTOR_FROM_DECK, destination, 0, AI_MAX_VALUE, &test);
+	shuffle(player);
 }
 
 // Tutor two basic lands, one onto bf tapped, one into hand, then shuffle
@@ -1485,7 +1524,7 @@ void tutor_multiple_card_from_hand(int who_chooses, int t_player, int who_gets_t
 		int tutored[amount];
 		int tc = 0;
 		while( amount ){
-				int selected = select_card_from_zone(who_chooses, who_chooses, hand_copy[0], hcc, 0, this_test->ai_selection_mode, -1, this_test);
+				int selected = select_card_from_zone(who_chooses, who_chooses, hand_copy[0], hcc, 0, ai_selection_mode, -1, this_test);
 				if( selected != -1 ){
 					tutored[tc] = hand_copy[0][selected];
 					obliterate_card(t_player, hand_copy[1][selected]);
@@ -1502,21 +1541,20 @@ void tutor_multiple_card_from_hand(int who_chooses, int t_player, int who_gets_t
 				}
 		}
 		for(i=0; i<tc; i++){
-			if( destination == TUTOR_PLAY ){
-				if( who_gets_the_card == t_player ){
-					int card_added = add_card_to_hand(who_gets_the_card, tutored[i]);
-					put_into_play(who_gets_the_card, card_added);
+			if( destination == TUTOR_PLAY || destination == TUTOR_PLAY_TAPPED ){
+				int card_added = add_card_to_hand(who_gets_the_card, tutored[i]);
+				if( destination == TUTOR_PLAY_TAPPED ){
+					add_state(who_gets_the_card, card_added, STATE_TAPPED);
 				}
-				else{
-					int card_added = add_card_to_hand(who_gets_the_card, tutored[i]);
-					if( t_player == AI ){
+				if( t_player != who_gets_the_card ){
+					if( t_player == AI && who_gets_the_card == HUMAN){
 						add_state(who_gets_the_card, card_added, STATE_OWNED_BY_OPPONENT);
 					}
-					else{
+					if( t_player == HUMAN && who_gets_the_card == HUMAN){
 						remove_state(who_gets_the_card, card_added, STATE_OWNED_BY_OPPONENT);
 					}
-					put_into_play(who_gets_the_card, card_added);
 				}
+				put_into_play(who_gets_the_card, card_added);
 			}
 		}
 	}

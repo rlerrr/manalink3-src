@@ -157,31 +157,33 @@ static int martyr(int player, int card, event_t event, int cless, test_definitio
 }
 
 static void ripple(int player, int card){
-	int max = 4;
-	int *deck = deck_ptr[player];
-	if( max > count_deck(player) ){
-		max = count_deck(player);
-	}
-	if( max > 0){
-		char buffer[100];
-		card_ptr_t* c = cards_ptr[ get_id(player, card)  ];
-		scnprintf(buffer, 100, "Cards revealed by %s\n", c->name);
-		show_deck(HUMAN, deck, max, buffer, 0, 0x7375B0 );
-		int i;
-		for(i=max-1; i > -1; i--){
-			if( cards_data[deck[i]].id == get_id(player, card) ){
-				char buffer2[100];
-				card_ptr_t* c2 = cards_ptr[ cards_data[deck[i]].id  ];
-				scnprintf(buffer2, 100, " Play %s\n Pass", c2->name);
-				int choice = do_dialog(player, player, card, -1, -1, buffer2, 0);
-				if( choice == 0 ){
-					play_card_in_deck_for_free(player, player, i);
-					max--;
+	if( ! check_special_flags(player, card, SF_NOT_CAST) ){
+		int max = 4;
+		int *deck = deck_ptr[player];
+		if( max > count_deck(player) ){
+			max = count_deck(player);
+		}
+		if( max > 0){
+			char buffer[100];
+			card_ptr_t* c = cards_ptr[ get_id(player, card)  ];
+			scnprintf(buffer, 100, "Cards revealed by %s\n", c->name);
+			show_deck(HUMAN, deck, max, buffer, 0, 0x7375B0 );
+			int i;
+			for(i=max-1; i > -1; i--){
+				if( cards_data[deck[i]].id == get_id(player, card) ){
+					char buffer2[100];
+					card_ptr_t* c2 = cards_ptr[ cards_data[deck[i]].id  ];
+					scnprintf(buffer2, 100, " Play %s\n Pass", c2->name);
+					int choice = do_dialog(player, player, card, -1, -1, buffer2, 0);
+					if( choice == 0 ){
+						play_card_in_deck_for_free(player, player, i);
+						max--;
+					}
 				}
 			}
-		}
-		if( max > 0 ){
-			put_top_x_on_bottom(player, player, max);
+			if( max > 0 ){
+				put_top_x_on_bottom(player, player, max);
+			}
 		}
 	}
 }
@@ -1017,6 +1019,11 @@ int card_gutless_ghoul(int player, int card, event_t event){
 }
 
 int card_haakon_stromgald_scourge(int player, int card, event_t event){
+	/* Haakon, Stromgald Scourge	|1|B|B
+	 * Legendary Creature - Zombie Knight 3/3
+	 * You may cast ~ from your graveyard, but not from anywhere else.
+	 * As long as Haakon is on the battlefield, you may play Knight cards from your graveyard.
+	 * When Haakon dies, you lose 2 life. */
 
 	card_instance_t *instance = get_card_instance( player, card );
 
@@ -1956,8 +1963,13 @@ int card_phyrexian_ironfoot(int player, int card, event_t event){
 
 static int can_sacrifice_creatures(int player, int card, int number_of_age_counters)
 {
-  return can_sacrifice_type_as_cost(player, number_of_age_counters, TYPE_CREATURE);
+	test_definition_t this_test;
+	default_test_definition(&this_test, TYPE_CREATURE);
+	this_test.qty = number_of_age_counters;
+
+	return new_can_sacrifice(player, card, player, &this_test);
 }
+
 static int sacrifice_creatures(int player, int card, int number_of_age_counters)
 {
   return impose_sacrifice(player, card, player, number_of_age_counters, TYPE_CREATURE,MATCH, 0,0, 0,0, 0,0, -1,0) == number_of_age_counters;
@@ -2206,6 +2218,9 @@ int card_ronom_unicorn(int player, int card, event_t event){
 }
 
 int card_rune_snag(int player, int card, event_t event){
+	/* Rune Snag	|1|U
+	 * Instant
+	 * Counter target spell unless its controller pays |2 plus an additional |2 for each card named ~ in each graveyard. */
 
 	if( event == EVENT_RESOLVE_SPELL ){
 			int amount = 1 + count_graveyard_by_id(player, CARD_ID_RUNE_SNAG);
