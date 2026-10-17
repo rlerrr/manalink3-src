@@ -789,3 +789,103 @@ static int legacy_negate_static_abilities(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26668f0; original functions/token_generation.c:680. */
+void copy_all_tokens_both_players(int player, int card, int type, test_definition_t *test)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int *piVar5;
+  unsigned char bVar6;
+  int marked[151];
+
+  iVar3 = current_turn;
+
+  bVar6 = 0;
+  iVar2 = active_cards_count[current_turn];
+  if (0 < iVar2)
+  {
+    piVar5 = marked;
+    for (iVar4 = 0x97; iVar4 != 0; iVar4 = iVar4 + -1)
+    {
+      *piVar5 = 0;
+      piVar5 = piVar5 + 1;
+    }
+    if (0 < iVar2)
+    {
+      iVar4 = 0;
+      do
+      {
+        instance = in_play(iVar3, iVar4);
+        if (((instance != NULL) && (iVar2 = is_token(iVar3, iVar4), iVar2 != 0)) &&
+            (((type != 0 && (iVar2 = is_what(iVar3, iVar4, type), iVar2 != 0)) ||
+              ((test != NULL &&
+                (iVar2 = new_make_test_in_play(iVar3, iVar4, -1, test), iVar2 != 0))))))
+        {
+          marked[iVar4] = 1;
+        }
+        iVar4 = iVar4 + 1;
+        iVar2 = active_cards_count[iVar3];
+      } while (iVar4 < iVar2);
+    }
+    iVar2 = iVar2 + -1;
+    if (-1 < iVar2)
+    {
+      do
+      {
+
+        if ((marked[iVar2] != 0) && (-1 < iVar3))
+        {
+          copy_token(iVar3, iVar2, iVar3, iVar2);
+        }
+        iVar2 = iVar2 + -1;
+      } while (iVar2 != -1);
+    }
+  }
+  iVar3 = 1 - current_turn;
+  iVar2 = active_cards_count[iVar3];
+  if (0 < iVar2)
+  {
+    piVar5 = marked;
+    for (iVar4 = 0x97; iVar4 != 0; iVar4 = iVar4 + -1)
+    {
+      *piVar5 = 0;
+      piVar5 = piVar5 + (unsigned int)bVar6 * -2 + 1;
+    }
+    if (0 < iVar2)
+    {
+      iVar4 = 0;
+      do
+      {
+        instance = in_play(iVar3, iVar4);
+        if (((instance != NULL) && (iVar2 = is_token(iVar3, iVar4), iVar2 != 0)) &&
+            (((type != 0 && (iVar2 = is_what(iVar3, iVar4, type), iVar2 != 0)) ||
+              ((test != NULL &&
+                (iVar2 = new_make_test_in_play(iVar3, iVar4, -1, test), iVar2 != 0))))))
+        {
+          marked[iVar4] = 1;
+        }
+        iVar4 = iVar4 + 1;
+        iVar2 = active_cards_count[iVar3];
+      } while (iVar4 < iVar2);
+    }
+    iVar2 = iVar2 + -1;
+    if (-1 < iVar2)
+    {
+      do
+      {
+
+        if ((marked[iVar2] != 0) && (-1 < iVar3))
+        {
+          copy_token(iVar3, iVar2, iVar3, iVar2);
+        }
+        iVar2 = iVar2 + -1;
+      } while (iVar2 != -1);
+    }
+  }
+  return;
+}

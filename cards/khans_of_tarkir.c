@@ -5850,3 +5850,501 @@ int card_witness_of_the_ages(int player, int card, event_t event){
 	*/
 	return morph(player, card, event, MANACOST_X(5));
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21a3da0; original cards/khans_of_tarkir.c:4287. */
+int player_sacrifices_the_creature_with_highest_power(int player, int card, int t_player)
+{
+  int result;
+
+  result = can_sacrifice(player, t_player, 1, TYPE_CREATURE, SUBTYPE_INVALID);
+  if (result == 0)
+  {
+    return 0;
+  }
+  result = player_sacrifices_the_creature_with_highest_power(player, card, t_player);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int sultai_flayer_effect(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2197f10; original cards/khans_of_tarkir.c:1686. */
+static int grim_haruspex_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+  unsigned int uVar4;
+  test_definition_t this_test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           result != 0x37c5))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
+    {
+      return 0;
+    }
+  LAB_02198068:
+    uVar4 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar4 == 0)
+      goto LAB_02198086;
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_02198068;
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar2 = in_play(affected_card_controller, affected_card);
+    if ((pcVar2 != NULL) &&
+        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+    {
+
+      if ((pcVar1->damage_target_card == affected_card) &&
+          (pcVar1->damage_target_player == affected_card_controller))
+      {
+        pcVar1->damage_target_card = -1;
+        pcVar1->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar1->targets[0xb].player < 0)
+        {
+          pcVar1->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+        return 0;
+      }
+      default_test_definition(&this_test, 2);
+      this_test.type_flag = 3;
+      this_test.not_me = 1;
+      count_for_gfp_ability(player, card, 0x77, player, 0, &this_test);
+    }
+    uVar4 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar4 == 0)
+    {
+      return 0;
+    }
+  }
+  result = check_status(player, card, 0x10000);
+  if (result == 0)
+  {
+    draw_cards(player, uVar4 & 0xff);
+    kill_card(player, card, KILL_EXILE);
+  }
+LAB_02198086:
+  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2198200; original cards/khans_of_tarkir.c:1808. */
+static int kheru_bloodsucker_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  unsigned int uVar2;
+  card_instance_t *pcVar3;
+  int result;
+  test_definition_t this_test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           result != 0x37de))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
+    {
+      return 0;
+    }
+  LAB_02198238:
+    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar2 == 0)
+      goto joined_r0x0219825d;
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_02198238;
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar3 = in_play(affected_card_controller, affected_card);
+    if ((pcVar3 != NULL) &&
+        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+    {
+
+      if ((pcVar1->damage_target_card == affected_card) &&
+          (pcVar1->damage_target_player == affected_card_controller))
+      {
+        result = is_what((int)pcVar1->damage_target_player, pcVar1->damage_target_card, 2);
+        if (result == 0)
+        {
+          count_for_gfp_ability(player, card, 0x77, player, 0x47, NULL);
+        }
+        pcVar1->damage_target_card = -1;
+        pcVar1->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar1->targets[0xb].player < 0)
+        {
+          pcVar1->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+      }
+      default_test_definition(&this_test, 2);
+      this_test.toughness = 3;
+      this_test.toughness_flag = 2;
+      count_for_gfp_ability(player, card, 0x77, player, 0, &this_test);
+    }
+    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar2 == 0)
+    {
+      return 0;
+    }
+  }
+  result = check_status(player, card, 0x10000);
+  if (result == 0)
+  {
+
+    for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
+    {
+      lose_life(1 - player, 2);
+      gain_life(player, 2);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+joined_r0x0219825d:
+  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2198560; original cards/khans_of_tarkir.c:3676. */
+static int sultai_flayer_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  unsigned int uVar2;
+  card_instance_t *pcVar3;
+  int result;
+  test_definition_t this_test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           result != 0x3837))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
+    {
+      return 0;
+    }
+  LAB_02198597:
+    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar2 == 0)
+      goto joined_r0x021985c0;
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_02198597;
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar3 = in_play(affected_card_controller, affected_card);
+    if ((pcVar3 != NULL) &&
+        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+    {
+
+      if ((pcVar1->damage_target_card == affected_card) &&
+          (pcVar1->damage_target_player == affected_card_controller))
+      {
+        pcVar1->damage_target_card = -1;
+        pcVar1->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar1->targets[0xb].player < 0)
+        {
+          pcVar1->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+      }
+      default_test_definition(&this_test, 2);
+      this_test.toughness = 3;
+      this_test.toughness_flag = 2;
+      count_for_gfp_ability(player, card, 0x77, player, 0, &this_test);
+    }
+    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar2 == 0)
+    {
+      return 0;
+    }
+  }
+  result = check_status(player, card, 0x10000);
+  if (result == 0)
+  {
+
+    uVar2 = uVar2 & 0xff;
+    if (uVar2 != 0)
+    {
+      do
+      {
+        uVar2 = uVar2 - 1;
+        gain_life(player, 4);
+      } while (0 < (int)uVar2);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+joined_r0x021985c0:
+  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21a2920; original cards/khans_of_tarkir.c:3730. */
+int card_sultai_flayer(int player, int card, event_t event)
+{
+  uint8_t uVar1;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  int iVar4;
+  int iVar5;
+  test_definition_t this_test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      if (0 < active_cards_count[player])
+      {
+        iVar5 = 0;
+        do
+        {
+          instance = in_play(player, iVar5);
+
+          if ((((instance != NULL) && (iVar4 = is_what(player, iVar5, 0x80), iVar4 != 0)) &&
+               (instance = get_card_instance(player, iVar5),
+                instance->info_slot_fn == sultai_flayer_effect)) &&
+              (((instance->damage_target_player == player &&
+                 (instance->damage_target_card == card)) ||
+                ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
+            goto LAB_021a2a20;
+          iVar5 = iVar5 + 1;
+        } while (iVar5 < active_cards_count[player]);
+      }
+
+      iVar5 = create_targetted_legacy_effect(player, card, sultai_flayer_effect, player, card);
+      instance = get_card_instance(player, iVar5);
+      instance->targets[0].player = player;
+      instance->targets[0].card = card;
+      instance->number_of_targets = '\x01';
+      add_status(player, iVar5, 0x10000);
+    }
+  LAB_021a2a20:
+    instance = get_card_instance(player, card);
+  }
+  else
+  {
+    instance = get_card_instance(player, card);
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
+    {
+      default_test_definition(&this_test, 2);
+      this_test.toughness = 3;
+      this_test.toughness_flag = 2;
+      count_for_gfp_ability(player, card, 0x77, player, 0, &this_test);
+      uVar1 = instance->kill_code;
+      goto joined_r0x021a29bf;
+    }
+  }
+  uVar1 = instance->kill_code;
+joined_r0x021a29bf:
+  if (uVar1 == '\0')
+  {
+
+    uVar3 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar3 = uVar3 & 0xff;
+    if (uVar3 != 0)
+    {
+      do
+      {
+        uVar3 = uVar3 - 1;
+        gain_life(player, 4);
+      } while (0 < (int)uVar3);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2198e30; original cards/khans_of_tarkir.c:3895. */
+static int abzan_ascendancy_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  token_generation_t token;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (iVar2 = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           iVar2 != 0x377d))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (iVar2 = effect_follows_control_of_attachment(player, card, 0x4700), iVar2 != 0))
+    {
+      return 0;
+    }
+  LAB_02198e65:
+    iVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (iVar2 == 0)
+      goto LAB_02198e87;
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (iVar2 = effect_follows_control_of_attachment(player, card, event), iVar2 != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_02198e65;
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar3 = in_play(affected_card_controller, affected_card);
+    if ((pcVar3 != NULL) &&
+        (iVar2 = is_this_dying(affected_card_controller, affected_card), iVar2 != 0))
+    {
+
+      if ((pcVar1->damage_target_card == affected_card) &&
+          (pcVar1->damage_target_player == affected_card_controller))
+      {
+        pcVar1->damage_target_card = -1;
+        pcVar1->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar1->targets[0xb].player < 0)
+        {
+          pcVar1->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+      }
+      count_for_gfp_ability_and_store_values(player, card, 0x77, player, 2, NULL, 0x40, 0);
+    }
+    iVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (iVar2 == 0)
+    {
+      return 0;
+    }
+  }
+  iVar4 = check_status(player, card, 0x10000);
+  if (iVar4 == 0)
+  {
+
+    default_token_definition(player, card, 0x498d, &token);
+    token.pow = 1;
+    token.tou = 1;
+    token.color_forced = ' ';
+    token.key_plus = 0x20;
+    token.qty = (unsigned char)iVar2;
+    generate_token(&token);
+    kill_card(player, card, KILL_EXILE);
+  }
+LAB_02198e87:
+  if ((event == EVENT_CLEANUP) && (iVar2 = check_status(player, card, 0x10000), iVar2 == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void when_another_permanent_dies_add_counters_on_this(int player, int card, event_t event,
+                                                      int permanent_type, int counter_type,
+                                                      int number_of_counters);
+
+/* ManalinkEh 2022: 0x219f970; original cards/khans_of_tarkir.c:2487. */
+void when_another_permanent_dies_add_counters_on_this(int player, int card, event_t event,
+                                                      int permanent_type, int counter_type,
+                                                      int number_of_counters)
+{
+  unsigned int uVar1;
+  test_definition_t this_test;
+
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    default_test_definition(&this_test, permanent_type);
+    this_test.not_me = 1;
+    count_for_gfp_ability(player, card, 0x77, 2, 0, &this_test);
+  }
+  uVar1 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (uVar1 != 0)
+  {
+
+    for (uVar1 = uVar1 & 0xff; uVar1 != 0; uVar1 = uVar1 - 1)
+    {
+      add_counters_from_source(player, card, player, card, counter_type, number_of_counters);
+    }
+  }
+  return;
+}

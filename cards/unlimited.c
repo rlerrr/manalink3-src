@@ -6887,3 +6887,318 @@ int card_zombie_master2(int player, int card, event_t event){
 
 	return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+char *black_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card);
+char *blue_damage_source(int who_chooses, int player, int card, int targeting_player,
+                         int targeting_card);
+char *green_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card);
+char *red_damage_source(int who_chooses, int player, int card, int targeting_player,
+                        int targeting_card);
+char *white_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card);
+int enchanted_land_is_basic_land_type(int player, int card, event_t event, subtype_t subtype,
+                                      int hackable, target_definition_t *td);
+
+/* ManalinkEh 2022: 0x24bae70; original cards/unlimited.c:210. */
+char *black_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  unsigned int uVar3;
+  int result;
+  unsigned int uVar5;
+
+  pcVar1 = get_card_instance(player, card);
+  if (pcVar1->internal_card_id != damage_card)
+  {
+    return "must be a damage card";
+  }
+  if ((pcVar1->damage_target_player == who_chooses) && (pcVar1->damage_target_card == -1))
+  {
+    uVar5 = (unsigned int)pcVar1->initial_color;
+    pcVar2 = in_play((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    if (pcVar2 != NULL)
+    {
+      uVar5 = get_color((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    }
+    uVar3 = get_sleighted_color_test(targeting_player, targeting_card, 2);
+    if ((uVar3 & uVar5) == 0)
+    {
+      return "illegal color of damage source";
+    }
+    result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
+    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
+                                                       pcVar1->damage_source_card, 0x40),
+                          result == 0))
+    {
+      return NULL;
+    }
+  }
+  return "must be damage dealt to you";
+}
+
+/* ManalinkEh 2022: 0x24baf60; original cards/unlimited.c:235. */
+char *blue_damage_source(int who_chooses, int player, int card, int targeting_player,
+                         int targeting_card)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  unsigned int uVar3;
+  int result;
+  unsigned int uVar5;
+
+  pcVar1 = get_card_instance(player, card);
+  if (pcVar1->internal_card_id != damage_card)
+  {
+    return "must be a damage card";
+  }
+  if ((pcVar1->damage_target_player == who_chooses) && (pcVar1->damage_target_card == -1))
+  {
+    uVar5 = (unsigned int)pcVar1->initial_color;
+    pcVar2 = in_play((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    if (pcVar2 != NULL)
+    {
+      uVar5 = get_color((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    }
+    uVar3 = get_sleighted_color_test(targeting_player, targeting_card, 4);
+    if ((uVar3 & uVar5) == 0)
+    {
+      return "illegal color of damage source";
+    }
+    result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
+    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
+                                                       pcVar1->damage_source_card, 0x40),
+                          result == 0))
+    {
+      return NULL;
+    }
+  }
+  return "must be damage dealt to you";
+}
+
+/* ManalinkEh 2022: 0x24bb050; original cards/unlimited.c:260. */
+char *green_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  unsigned int uVar3;
+  int result;
+  unsigned int uVar5;
+
+  pcVar1 = get_card_instance(player, card);
+  if (pcVar1->internal_card_id != damage_card)
+  {
+    return "must be a damage card";
+  }
+  if ((pcVar1->damage_target_player == who_chooses) && (pcVar1->damage_target_card == -1))
+  {
+    uVar5 = (unsigned int)pcVar1->initial_color;
+    pcVar2 = in_play((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    if (pcVar2 != NULL)
+    {
+      uVar5 = get_color((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    }
+    uVar3 = get_sleighted_color_test(targeting_player, targeting_card, 8);
+    if ((uVar3 & uVar5) == 0)
+    {
+      return "illegal color of damage source";
+    }
+    result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
+    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
+                                                       pcVar1->damage_source_card, 0x40),
+                          result == 0))
+    {
+      return NULL;
+    }
+  }
+  return "must be damage dealt to you";
+}
+
+/* ManalinkEh 2022: 0x24bb140; original cards/unlimited.c:285. */
+char *red_damage_source(int who_chooses, int player, int card, int targeting_player,
+                        int targeting_card)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  unsigned int uVar3;
+  int result;
+  unsigned int uVar5;
+
+  pcVar1 = get_card_instance(player, card);
+  if (pcVar1->internal_card_id != damage_card)
+  {
+    return "must be a damage card";
+  }
+  if ((pcVar1->damage_target_player == who_chooses) && (pcVar1->damage_target_card == -1))
+  {
+    uVar5 = (unsigned int)pcVar1->initial_color;
+    pcVar2 = in_play((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    if (pcVar2 != NULL)
+    {
+      uVar5 = get_color((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    }
+    uVar3 = get_sleighted_color_test(targeting_player, targeting_card, 0x10);
+    if ((uVar3 & uVar5) == 0)
+    {
+      return "illegal color of damage source";
+    }
+    result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
+    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
+                                                       pcVar1->damage_source_card, 0x40),
+                          result == 0))
+    {
+      return NULL;
+    }
+  }
+  return "must be damage dealt to you";
+}
+
+/* ManalinkEh 2022: 0x24bb230; original cards/unlimited.c:310. */
+char *white_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  unsigned int uVar3;
+  int result;
+  unsigned int uVar5;
+
+  pcVar1 = get_card_instance(player, card);
+  if (pcVar1->internal_card_id != damage_card)
+  {
+    return "must be a damage card";
+  }
+  if ((pcVar1->damage_target_player == who_chooses) && (pcVar1->damage_target_card == -1))
+  {
+    uVar5 = (unsigned int)pcVar1->initial_color;
+    pcVar2 = in_play((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    if (pcVar2 != NULL)
+    {
+      uVar5 = get_color((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    }
+    uVar3 = get_sleighted_color_test(targeting_player, targeting_card, 0x20);
+    if ((uVar3 & uVar5) == 0)
+    {
+      return "illegal color of damage source";
+    }
+    result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
+    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
+                                                       pcVar1->damage_source_card, 0x40),
+                          result == 0))
+    {
+      return NULL;
+    }
+  }
+  return "must be damage dealt to you";
+}
+
+/* ManalinkEh 2022: 0x24c3440; original cards/unlimited.c:2322. */
+int enchanted_land_is_basic_land_type(int player, int card, event_t event, subtype_t subtype,
+                                      int hackable, target_definition_t *td)
+{
+  card_instance_t *pcVar1;
+  int result;
+  card_instance_t *pcVar3;
+  target_definition_t td_default;
+
+  pcVar1 = in_play(player, card);
+
+  if (((pcVar1 != NULL) &&
+       (pcVar1 = get_card_instance(player, card), -1 < pcVar1->damage_target_player)) &&
+      (pcVar1 = get_card_instance(player, card), event == EVENT_CHANGE_TYPE))
+  {
+    if (pcVar1->damage_target_card != affected_card)
+    {
+      return 0;
+    }
+    if (pcVar1->damage_target_player != affected_card_controller)
+    {
+      return 0;
+    }
+
+    pcVar3 = get_card_instance((int)pcVar1->damage_target_player, pcVar1->damage_target_card);
+    if (hackable != 0)
+    {
+      subtype = get_hacked_subtype(player, card, subtype);
+    }
+    result = land_into_new_basic_land_type(pcVar3->internal_card_id, subtype);
+    if ((cards_data[pcVar3->internal_card_id].type == '\x01') &&
+        (pcVar3->internal_card_id == result))
+    {
+      pcVar1->dummy3 = event_result;
+      return 0;
+    }
+    event_result = pcVar1->dummy3;
+    if ((cards_data[event_result].type == '\x01') && (event_result == result))
+    {
+      return 0;
+    }
+    event_result = result;
+    pcVar1->dummy3 = result;
+    return 0;
+  }
+  if (event == EVENT_CAN_CAST)
+  {
+  LAB_024c34e0:
+    if (td != NULL)
+      goto LAB_024c34ab;
+  LAB_024c34e7:
+    default_target_definition(player, card, &td_default, 1);
+    td = &td_default;
+  LAB_024c349a:
+    if ((event != EVENT_CAST_SPELL) || (card != affected_card))
+      goto LAB_024c34ab;
+  }
+  else
+  {
+    if (event != EVENT_CAST_SPELL)
+    {
+      if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+      {
+        if (event != EVENT_CHANGE_TARGET)
+        {
+          return 0;
+        }
+        goto LAB_024c34e0;
+      }
+      if (td == NULL)
+        goto LAB_024c34e7;
+      goto LAB_024c349a;
+    }
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    if (td == NULL)
+      goto LAB_024c34e7;
+  }
+  if (player == affected_card_controller)
+  {
+    pcVar1 = get_card_instance(player, card);
+    generic_spell(player, card, EVENT_CAST_SPELL, 1, td, "TARGET_LAND", 1, NULL);
+    if (spell_fizzled == 1)
+    {
+      return 0;
+    }
+    result = has_subtype(pcVar1->targets[0].player, pcVar1->targets[0].card, subtype);
+    if ((result == 0) && (pcVar1->targets[0].player != player))
+    {
+      ai_modifier = ai_modifier + 0x18;
+      return 0;
+    }
+    ai_modifier = ai_modifier + -0x18;
+    return 0;
+  }
+LAB_024c34ab:
+  result = targeted_aura(player, card, event, td, "TARGET_LAND");
+  return result;
+}

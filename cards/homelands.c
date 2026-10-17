@@ -2985,3 +2985,313 @@ int card_samite_alchemist(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int aether_storm_effect(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x211fcb0; original cards/homelands.c:167. */
+int aether_storm_effect(int player, int card, event_t event)
+{
+  bool bVar1;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  int iVar5;
+  int iVar6;
+  event_t event_00;
+  uint32_t variable_costs;
+
+  pcVar2 = get_card_instance(player, card);
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) && (stack_size == 0)) &&
+        (iVar5 = pcVar2->targets[0].player, -1 < iVar5))
+    {
+
+      iVar5 = get_id(iVar5, pcVar2->targets[0].card);
+      if (iVar5 != 0x883)
+      {
+        pcVar2->targets[0].card = -1;
+        pcVar2->targets[0].player = -1;
+        kill_card(player, card, KILL_EXILE);
+      }
+      bVar1 = false;
+      iVar5 = 0;
+      do
+      {
+        iVar6 = 0;
+        if (-1 < active_cards_count[iVar5])
+        {
+          do
+          {
+            pcVar3 = in_play(iVar5, iVar6);
+            if (((pcVar3 != NULL) && (pcVar2->targets[0].player == iVar5)) &&
+                (pcVar2->targets[0].card == iVar6))
+            {
+              bVar1 = true;
+              break;
+            }
+            iVar6 = iVar6 + 1;
+          } while (iVar6 <= active_cards_count[iVar5]);
+        }
+        iVar5 = iVar5 + 1;
+      } while (iVar5 != 2);
+      if (!bVar1)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      iVar5 = pcVar2->targets[0].player;
+      iVar6 = pcVar2->targets[0].card;
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        iVar4 = can_pay_life_as_cost_for_spells_or_activated_abilities(player, 4);
+        if (iVar4 == 0)
+        {
+          return 0;
+        }
+        variable_costs = 0;
+        event_00 = EVENT_CAN_ACTIVATE;
+        goto LAB_0211ff26;
+      }
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      iVar5 = pcVar2->targets[0].player;
+      iVar6 = pcVar2->targets[0].card;
+    }
+    else
+    {
+      if (event != EVENT_CLEANUP)
+      {
+        return 0;
+      }
+      iVar5 = pcVar2->targets[0].player;
+      iVar6 = pcVar2->targets[0].card;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      if (((ai_is_speculating == 1) || ((iVar5 == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+          (current_turn != iVar5))
+      {
+        ai_modifier = ai_modifier + -0x30;
+      }
+      variable_costs = 4;
+      event_00 = EVENT_ACTIVATE;
+    LAB_0211ff26:
+      iVar5 = granted_generic_activated_ability(iVar5, iVar6, player, card, event_00, 0, 0, 0, 0, 0,
+                                                0, 0, variable_costs, NULL, NULL);
+      return iVar5;
+    }
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (-1 < pcVar2->targets[0].player))
+    {
+      kill_card(iVar5, iVar6, KILL_BURY);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2121430; original cards/homelands.c:219. */
+int card_aether_storm(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int found[2];
+
+  iVar2 = current_turn;
+  if (event == EVENT_MODIFY_COST_GLOBAL)
+  {
+    instance = in_play(player, card);
+    if ((((instance != NULL) &&
+          (iVar2 = is_humiliated_for_ability(player, card, AL_STATIC), iVar2 == 0)) &&
+         (iVar2 = is_what(affected_card_controller, affected_card, 2), iVar2 != 0)) &&
+        (iVar2 = get_cmc(affected_card_controller, affected_card), iVar2 != 0))
+    {
+      infinite_casting_cost();
+    }
+  }
+  else
+  {
+    if (event == EVENT_STATIC_EFFECTS)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+
+        found[0] = -1;
+        found[1] = -1;
+        iVar4 = active_cards_count[current_turn] + -1;
+        if (-1 < iVar4)
+        {
+          do
+          {
+            instance = in_play(iVar2, iVar4);
+
+            if (((instance != NULL) && (iVar3 = is_what(iVar2, iVar4, 0x80), iVar3 != 0)) &&
+                ((instance = get_card_instance(iVar2, iVar4),
+                  instance->info_slot_fn == aether_storm_effect &&
+                      ((instance->targets[0].player == player &&
+                        (instance->targets[0].card == card))))))
+            {
+              found[iVar2] = iVar4;
+            }
+            iVar4 = iVar4 + -1;
+          } while (iVar4 != -1);
+        }
+        iVar2 = 1 - current_turn;
+        iVar4 = active_cards_count[iVar2] + -1;
+        if (-1 < iVar4)
+        {
+          do
+          {
+            instance = in_play(iVar2, iVar4);
+
+            if ((((instance != NULL) && (iVar3 = is_what(iVar2, iVar4, 0x80), iVar3 != 0)) &&
+                 (instance = get_card_instance(iVar2, iVar4),
+                  instance->info_slot_fn == aether_storm_effect)) &&
+                ((instance->targets[0].player == player && (instance->targets[0].card == card))))
+            {
+              found[iVar2] = iVar4;
+            }
+            iVar4 = iVar4 + -1;
+          } while (iVar4 != -1);
+        }
+        if (-1 < found[player])
+        {
+          kill_card(player, found[player], KILL_EXILE);
+        }
+        iVar2 = 1 - player;
+        if (found[iVar2] == -1)
+        {
+
+          instance = get_card_instance(player, card);
+          iVar4 = add_card_to_hand(iVar2, instance->internal_card_id);
+          iVar3 = create_legacy_activate(iVar2, iVar4, aether_storm_effect);
+          instance = get_card_instance(iVar2, iVar3);
+          instance->targets[0].card = card;
+          instance->targets[0].player = player;
+          instance->number_of_targets = '\x01';
+          obliterate_card(iVar2, iVar4);
+        }
+      }
+      goto LAB_021214c7;
+    }
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar2 = can_pay_life_as_cost_for_spells_or_activated_abilities(player, 4);
+      if (iVar2 == 0)
+      {
+        return 0;
+      }
+      return 1;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      if (((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+          (current_turn != player))
+      {
+        ai_modifier = ai_modifier + -0x30;
+      }
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      lose_life(player, 4);
+      return 0;
+    }
+  }
+  if (event == EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    instance = get_card_instance(player, card);
+    kill_card(instance->parent_controller, instance->parent_card, KILL_BURY);
+    return 0;
+  }
+LAB_021214c7:
+  iVar2 = global_enchantment(player, card, event);
+  return iVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21233c0; original cards/homelands.c:900. */
+int card_chain_stasis(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 0x81, &td,
+                           "Select target creature to tap or untap.", 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 2);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        generic_spell(player, card, EVENT_CAST_SPELL, 0x81, &td,
+                      "Select target creature to tap or untap.", 1, NULL);
+        if (spell_fizzled != 1)
+        {
+          ai_modifier_twiddle(player, card, 0);
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 2);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+
+      instance = get_card_instance(player, card);
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        twiddle(player, card, 0);
+        result = has_mana_multi(instance->targets[0].player, 2, 0, 1, 0, 0, 0);
+        if (result != 0)
+        {
+          result = can_legally_play_iid(instance->targets[0].player, instance->internal_card_id);
+          if (result != 0)
+          {
+            result = do_dialog(instance->targets[0].player, player, card, -1, -1,
+                               " Copy Chain Stasis\n Pass", 1);
+            if (result == 0)
+            {
+              charge_mana_multi(instance->targets[0].player, 2, 0, 1, 0, 0, 0);
+              if (spell_fizzled != 1)
+              {
+                result = get_id(player, card);
+                copy_spell(instance->targets[0].player, result);
+              }
+            }
+          }
+        }
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 2);
+  }
+  return 0;
+}

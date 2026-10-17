@@ -598,3 +598,89 @@ void get_back_cards_stored_in_exiledby(int player, int exby_player, int exby_car
 			}
 	}
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26d6d50; original functions/exiledby.c:309. */
+int exiledby_count_cmcs(int player, int card, int owned_by)
+{
+  target_t *ptVar1;
+  int *piVar2;
+  card_instance_t *instance;
+  unsigned char bVar4;
+  int result;
+  int iStack_70;
+  int leg;
+  int idx;
+  int cmcs[21];
+
+  leg = 0;
+  piVar2 = cmcs;
+
+  for (result = 0x15; result != 0; result = result + -1)
+  {
+    *piVar2 = 0;
+    piVar2 = piVar2 + 1;
+  }
+  idx = 0;
+  iStack_70 = player;
+  if (player < 0)
+  {
+    iStack_70 = player + 2;
+  }
+  do
+  {
+    piVar2 = exiledby_find_any(player, card, &leg, &idx);
+    if (piVar2 == NULL)
+    {
+      piVar2 = cmcs;
+      result = 0;
+      do
+      {
+        if (*piVar2 == 1)
+        {
+          result = result + 1;
+        }
+        piVar2 = piVar2 + 1;
+      } while (cmcs + 0x14 != piVar2);
+      return result;
+    }
+    instance = get_card_instance(iStack_70, leg);
+    bVar4 = (unsigned char)((unsigned int)*piVar2 >> 0x18);
+    if (owned_by == 0)
+    {
+      bVar4 = bVar4 ^ 0xff;
+    LAB_026d6d90:
+      if ((char)bVar4 < '\0')
+        goto LAB_026d6def;
+      ptVar1 = instance->targets + idx;
+    }
+    else
+    {
+      if (owned_by == 1)
+        goto LAB_026d6d90;
+    LAB_026d6def:
+      result = get_cmc_by_id((unsigned int)cards_data[*piVar2].id);
+      cmcs[result] = 1;
+      ptVar1 = instance->targets + idx;
+    }
+    if (((target_t *)piVar2 == ptVar1) && (result = instance->targets[idx].card, result != -1))
+    {
+      bVar4 = (unsigned char)((unsigned int)result >> 0x18);
+      if (owned_by == 0)
+      {
+        bVar4 = (bVar4 ^ 0xff) >> 7;
+      }
+      else
+      {
+        bVar4 = owned_by != 1 | bVar4 >> 7;
+      }
+      if (bVar4 != 0)
+      {
+        result = get_cmc_by_id((unsigned int)cards_data[result].id);
+        cmcs[result] = 1;
+      }
+    }
+    idx = idx + 1;
+  } while (true);
+}

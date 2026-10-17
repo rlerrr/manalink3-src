@@ -3742,3 +3742,25 @@ int card_waning_wurm(int player, int card, event_t event)
   vanishing(player, card, event, 2);
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23b4070; original cards/planar_chaos.c:3305. */
+static char *is_permanent_or_suspended_legacy(int who_chooses, int player, int card)
+{
+  int result;
+  card_instance_t *instance;
+
+  result = is_what(player, card, 0x47);
+  if (result == 0)
+  {
+    instance = get_card_instance(player, card);
+    result = is_what(player, card, 0x80);
+    if (((result == 0) || (instance->info_slot_fn != generic_suspend_legacy)) &&
+        (cards_data[instance->internal_card_id].id != 0x2178))
+    {
+      return "must be a permanent or a Suspend legacy card.";
+    }
+  }
+  return NULL;
+}

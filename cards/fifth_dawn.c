@@ -3928,3 +3928,285 @@ int card_iron_barb_hellion(int player, int card, event_t event)
   haste(player, card, event);
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void store_num_colors_paid_in_eot_toughness0(int player, int card, event_t event);
+static int id_updater_for_reveal_top_card_both_player_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2029340; original cards/fifth_dawn.c:43. */
+void store_num_colors_paid_in_eot_toughness0(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  result = num_colors_paid(player, card, event);
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+      goto LAB_02029384;
+  }
+  else if (event == EVENT_PAY_FLASHBACK_COSTS)
+  {
+  LAB_02029384:
+    instance = get_card_instance(player, card);
+    instance->eot_toughness0 = (uint8_t)result;
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x202ebc0; original cards/fifth_dawn.c:2225. */
+int card_grinding_station(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td1;
+  test_definition_t test;
+
+  result = duh_mode(player);
+  etb_ability_global(2, event, (result != 0) + 1, TYPE_ARTIFACT, NULL, player, card);
+  if (event != EVENT_ETB)
+  {
+    if ((((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
+         (event == EVENT_RESOLVE_ACTIVATION)) ||
+        (event == EVENT_CLEANUP))
+    {
+      default_target_definition(player, card, &td1, 0);
+      td1.zone = 0x1000;
+      new_default_test_definition(&test, 0x40, "Select an artifact to sacrifice.");
+      instance = get_card_instance(player, card);
+      if (event == EVENT_RESOLVE_ACTIVATION)
+      {
+        result = valid_target(&td1);
+        if (result != 0)
+        {
+          mill(instance->targets[0].player, 3);
+        }
+      }
+      result = generic_activated_ability_with_sacrifice_as_cost(
+          player, card, event, GAA_CAN_TARGET | GAA_UNTAPPED, 0, 0, 0, 0, 0, 0, 0, &td1,
+          "TARGET_PLAYER", TYPE_NONE, &test, SARV_0);
+    }
+    else
+    {
+      result = 0;
+    }
+    return result;
+  }
+  untap_card(player, card);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2028750; original cards/fifth_dawn.c:2700. */
+static int id_updater_for_reveal_top_card_both_player_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_player)
+  {
+    instance = get_card_instance((int)instance->damage_target_player, instance->damage_target_card);
+    if ((-1 < instance->damage_target_player) && (*deck_ptr[instance->targets[1].player] != -1))
+    {
+      instance->info_slot = cards_data[*deck_ptr[instance->targets[1].player]].id ^ 0xffffffff;
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20301d0; original cards/fifth_dawn.c:2739. */
+int card_lantern_of_insight(int player, int card, event_t event)
+{
+  int *piVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  int iVar4;
+  card_instance_t *pcVar5;
+  target_definition_t td;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+    pcVar2 = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0xd, 0, 0, 0, 0, 0, 0, 0,
+                                        &td, NULL);
+      return iVar3;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      iVar3 = generic_activated_ability(player, card, EVENT_ACTIVATE, 0xd, 0, 0, 0, 0, 0, 0, 0, &td,
+                                        "TARGET_PLAYER");
+      return iVar3;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      pcVar2 = get_card_instance(player, card);
+      if (event != EVENT_RESOLVE_SPELL)
+      {
+        return 0;
+      }
+      iVar3 = 0;
+      do
+      {
+        piVar1 = deck_ptr[iVar3];
+        pcVar2->targets[iVar3 + 2].player = player;
+        if (*piVar1 == -1)
+        {
+          pcVar2->targets[iVar3 + 2].card = -1;
+        }
+        else
+        {
+          iVar4 = create_card_name_legacy(player, card, (unsigned int)cards_data[*piVar1].id);
+          pcVar5 = get_card_instance(player, iVar4);
+          pcVar5->targets[1].player = iVar3;
+          iVar4 = create_targetted_legacy_effect(
+              player, card, id_updater_for_reveal_top_card_both_player_legacy, player, iVar4);
+          add_status(player, iVar4, 0x10000);
+        }
+        iVar3 = iVar3 + 1;
+      } while (iVar3 != 2);
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+    pcVar2 = get_card_instance(player, card);
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (iVar3 = valid_target(&td), iVar3 != 0))
+  {
+    shuffle(pcVar2->targets[0].player);
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20311f0; original cards/fifth_dawn.c:3055. */
+int card_ouphe_vandals(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t default_td;
+
+  instance = get_card_instance(player, card);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    counter_activated_target_definition(player, card, &default_td, 0x40);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = can_counter_activated_ability(player, card, EVENT_CAN_ACTIVATE, &default_td);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = can_use_activated_abilities(player, card);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = can_sacrifice_this_as_cost(player, card);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = is_humiliated_for_ability(player, card, AL_NM_NL_ACT);
+      if (result != 0)
+      {
+        return 0;
+      }
+      result = has_mana_for_activated_ability(player, card, 0, 0, 0, 1, 0, 0);
+      if (result == 0)
+      {
+        return 0;
+      }
+      return 99;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = '\0';
+      result = charge_mana_for_activated_ability(player, card, 0, 0, 0, 1, 0, 0);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = cast_counter_activated_ability(player, card, 0);
+      if (result == 0)
+      {
+        return 0;
+      }
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 8, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    counter_activated_target_definition(player, card, &default_td, 0x40);
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    instance =
+        get_card_instance(stack_cards[stack_size + -1].player, stack_cards[stack_size + -1].card);
+    kill_card(instance->parent_controller, instance->parent_card, KILL_DESTROY);
+    resolve_counter_activated_ability(player, card, &default_td, 0);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2033b90; original cards/fifth_dawn.c:3907. */
+int card_summoning_station(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    count_for_gfp_ability(player, card, 0x77, 2, 0x40, NULL);
+    instance = in_play(player, card);
+    if (instance == NULL)
+    {
+      return 0;
+    }
+  LAB_02033bbb:
+    result = duh_mode(player);
+    result = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+    if (result != 0)
+    {
+      untap_card(player, card);
+    }
+  }
+  else
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+      goto LAB_02033bbb;
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+  LAB_02033c06:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_02033c0f;
+  }
+  else if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    if (event != EVENT_CLEANUP)
+    {
+      return 0;
+    }
+    goto LAB_02033c06;
+  }
+  generate_token_by_id(player, card, 0x4971);
+LAB_02033c0f:
+  result = generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}

@@ -2353,3 +2353,90 @@ int card_elder_mastery(int player, int card, event_t event)
   result = generic_aura(player, card, event, player, 3, 3, 0x20, 0, 0, 0, 0);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21e90c0; original cards/conflux.c:2214. */
+int card_unstable_frontier(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int card_00;
+  bool bVar3;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_ACTIVATE)
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      default_target_definition(player, card, &td, 1);
+      td.allowed_controller = player;
+      td.preferred_controller = player;
+      instance = get_card_instance(player, card);
+
+      result = paying_mana();
+      if ((result == 0) && (result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5,
+                                                               0, 0, 0, 0, 0, 0, 0, &td, NULL),
+                            result != 0))
+      {
+        bVar3 = ai_is_speculating != 1;
+        instance->info_slot = 2;
+        if ((bVar3) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
+        {
+          result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1,
+                               "Change land type", 1, 5, 0, 0, 0, 0);
+          if (result == 0)
+          {
+            spell_fizzled = 1;
+            return 0;
+          }
+          if (result == 1)
+            goto LAB_021e9163;
+          if (result != 2)
+          {
+            return 0;
+          }
+        }
+        add_state(player, card, 0x10);
+        generic_activated_ability(
+            player, card, EVENT_ACTIVATE, 6, 0, 0, 0, 0, 0, 0, 0, &td,
+            "Select target land you control it becomes your chosen basic land type.");
+        if (spell_fizzled == 1)
+        {
+          remove_state(player, card, 0x10);
+        }
+        return 0;
+      }
+      instance->info_slot = 1;
+    LAB_021e9163:
+      result = mana_producer(player, card, EVENT_ACTIVATE);
+      return result;
+    }
+    if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+    {
+      default_target_definition(player, card, &td, 1);
+      td.allowed_controller = player;
+      td.preferred_controller = player;
+      instance = get_card_instance(player, card);
+      if (event != EVENT_RESOLVE_ACTIVATION)
+      {
+        return 0;
+      }
+      if (instance->info_slot != 2)
+      {
+        return 0;
+      }
+
+      instance = get_card_instance(player, card);
+      result = recorded_rand(player, 5);
+      result = choose_a_land(player, result + 1);
+      card_00 = create_targetted_legacy_effect(
+          player, card, fx_change_landtype, instance->targets[0].player, instance->targets[0].card);
+      instance = get_card_instance(player, card_00);
+      instance->targets[1].player = result;
+      return 0;
+    }
+  }
+  result = mana_producer(player, card, event);
+  return result;
+}

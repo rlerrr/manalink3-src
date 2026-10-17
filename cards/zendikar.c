@@ -5376,3 +5376,162 @@ Prevent all combat damage that would be dealt this turn by creatures without tra
 
 	return card_fog(player, card, event);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25d6740; original cards/zendikar.c:76. */
+static int blade_of_the_bloodchief_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  unsigned int uVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  int iVar5;
+  unsigned int num;
+  int player_00;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (iVar4 = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           iVar4 != 0x2909))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (iVar4 = effect_follows_control_of_attachment(player, card, 0x4700), iVar4 != 0))
+    {
+      return 0;
+    }
+  LAB_025d6775:
+    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar2 == 0)
+      goto LAB_025d6797;
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (iVar4 = effect_follows_control_of_attachment(player, card, event), iVar4 != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_025d6775;
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar3 = in_play(affected_card_controller, affected_card);
+    if ((pcVar3 != NULL) &&
+        (iVar4 = is_this_dying(affected_card_controller, affected_card), iVar4 != 0))
+    {
+
+      if ((pcVar1->damage_target_card == affected_card) &&
+          (pcVar1->damage_target_player == affected_card_controller))
+      {
+        pcVar1->damage_target_card = -1;
+        pcVar1->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar1->targets[0xb].player < 0)
+        {
+          pcVar1->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+      }
+      count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
+    }
+    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar2 == 0)
+    {
+      return 0;
+    }
+  }
+  iVar4 = check_status(player, card, 0x10000);
+  if (iVar4 == 0)
+  {
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar1 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
+    player_00 = (int)pcVar1->damage_target_player;
+    iVar4 = pcVar1->damage_target_card;
+    if (((-1 < player_00) && (-1 < iVar4)) && (pcVar1 = in_play(player_00, iVar4), pcVar1 != NULL))
+    {
+
+      for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
+      {
+        iVar5 = has_subtype(player_00, iVar4, SUBTYPE_VAMPIRE);
+        num = uVar2;
+        if (iVar5 != 0)
+        {
+          num = uVar2 * 2;
+        }
+        add_counters_from_source(player, card, player_00, iVar4, COUNTER_P1_P1, num);
+      }
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+LAB_025d6797:
+  if ((event == EVENT_CLEANUP) && (iVar4 = check_status(player, card, 0x10000), iVar4 == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25da520; original cards/zendikar.c:1205. */
+int card_lullmage_mentor(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_COUNTERSPELL)
+  {
+    if (attacking_card_controller == player)
+    {
+      result = do_dialog(player, player, card, -1, -1, " Create a Merfolk\n Pass", 0);
+      if (result == 0)
+      {
+        default_token_definition(player, card, 0x4961, (token_generation_t *)&td);
+        td.illegal_abilities = 1;
+        td.required_abilities = 1;
+        generate_token((token_generation_t *)&td);
+      }
+    }
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    td.illegal_state = 1;
+    td.required_subtype = 0x74;
+    td.illegal_abilities = 0;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    td.illegal_state = 1;
+    td.required_subtype = 0x74;
+    td.illegal_abilities = 0;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = counterspell_validate(player, card, NULL, 0);
+      if (result != 0)
+      {
+        real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+  }
+  result = generic_activated_ability_with_tapsubtype_as_cost(
+      player, card, event, GAA_SPELL_ON_STACK, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, &td, 7);
+  return result;
+}

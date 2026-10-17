@@ -3616,4 +3616,88 @@ Activated abilities of sources with the chosen name can't be activated.
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
+/* ManalinkEh 2022: 0x232acc0; original cards/mirrodin_besieged.c:2033. */
+static int fangren_marauder_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int result;
+  unsigned int uVar3;
+  card_instance_t *pcVar4;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           result != 0x2cb1))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+    {
+      return 0;
+    }
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      pcVar4 = in_play(affected_card_controller, affected_card);
+      if ((pcVar4 != NULL) &&
+          (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+      {
+
+        if ((pcVar1->damage_target_card == affected_card) &&
+            (pcVar1->damage_target_player == affected_card_controller))
+        {
+          pcVar1->damage_target_card = -1;
+          pcVar1->damage_target_player = -1;
+          remove_status(player, card, 0x10000);
+          if (pcVar1->targets[0xb].player < 0)
+          {
+            pcVar1->targets[0xb].player = 0;
+          }
+          *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+        }
+        count_for_gfp_ability(player, card, 0x77, 2, 0x40, NULL);
+      }
+    }
+  }
+  result = duh_mode(player);
+  uVar3 = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if ((uVar3 != 0) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+
+    uVar3 = uVar3 & 0xff;
+    if (uVar3 != 0)
+    {
+      do
+      {
+        uVar3 = uVar3 - 1;
+        gain_life(player, 5);
+      } while (0 < (int)uVar3);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}

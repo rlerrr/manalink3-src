@@ -929,3 +929,341 @@ void cannot_be_enchanted(int player, int card, event_t event){
 	cannot_be_enchanted_granted(-1, -1, event, player, card);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void attached_gets_pt(int player, int card, event_t event, int power, int toughness);
+
+/* ManalinkEh 2022: 0x26e7870; original functions/auras.c:41. */
+void attached_gets_pt(int player, int card, event_t event, int power, int toughness)
+{
+  if (1 < event - EVENT_POWER)
+  {
+    return;
+  }
+  attached_gets_pt(player, card, event, power, toughness);
+  return;
+}
+
+/* ManalinkEh 2022: 0x26e78b0; original functions/auras.c:62. */
+void attached_set_pt(int player, int card, event_t event, int power, int toughness)
+{
+  if (1 < event - EVENT_POWER)
+  {
+    return;
+  }
+  attached_set_pt(player, card, event, power, toughness);
+  return;
+}
+
+/* ManalinkEh 2022: 0x26e8710; original functions/auras.c:528. */
+void disabling_aura_ai(int player, int card, event_t event)
+{
+  if ((player == 1) && (((unsigned char)trace_mode & 2) == 0))
+  {
+    disabling_aura_ai(1, card, event);
+    return;
+  }
+  return;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void attached_is_additional_subtype(int player, int card, event_t event, subtype_t subtype);
+void attached_is_forced_subtype(int player, int card, event_t event, subtype_t subtype);
+void attached_is_additional_color(int player, int card, event_t event, color_test_t color);
+
+/* ManalinkEh 2022: 0x26e7ad0; original functions/auras.c:129. */
+void disable_attached(int player, int card, event_t event, int disabling_mode)
+{
+  char cVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+
+  if (event != EVENT_ABILITIES)
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      iVar3 = has_subtype(player, card, SUBTYPE_AURA);
+      if (iVar3 == 0)
+      {
+        return;
+      }
+    }
+    else if (event != EVENT_EQUIPMENT_ATTACHED)
+    {
+      return;
+    }
+  }
+
+  instance = in_play(player, card);
+  if (((instance != NULL) && (-1 < instance->damage_target_card)) &&
+      (iVar3 = is_humiliated_for_ability(player, card, AL_STATIC), iVar3 == 0))
+  {
+    cVar1 = instance->damage_target_player;
+    iVar3 = instance->damage_target_card;
+    if (event == EVENT_ABILITIES)
+    {
+      if ((iVar3 == affected_card) && (cVar1 == affected_card_controller))
+        goto LAB_026e7b82;
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      iVar4 = has_subtype(player, card, SUBTYPE_AURA);
+      if (iVar4 != 0)
+        goto LAB_026e7b82;
+    }
+    else if (event == EVENT_EQUIPMENT_ATTACHED)
+    {
+    LAB_026e7b82:
+      remove_abilities((int)cVar1, iVar3, event, disabling_mode);
+      return;
+    }
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26e7bf0; original functions/auras.c:144. */
+void attached_is_additional_subtype(int player, int card, event_t event, subtype_t subtype)
+{
+  card_instance_t *instance;
+  int result;
+  int id;
+  int player_00;
+
+  if (event != EVENT_CHANGE_TYPE)
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = has_subtype(player, card, SUBTYPE_AURA);
+      if (result == 0)
+      {
+        return;
+      }
+    }
+    else if (event != EVENT_EQUIPMENT_ATTACHED)
+    {
+      return;
+    }
+  }
+
+  instance = in_play(player, card);
+  if ((((instance != NULL) && (-1 < instance->damage_target_card)) &&
+       (result = is_humiliated_for_ability(player, card, AL_STATIC), subtype != SUBTYPE_INVALID)) &&
+      (result == 0))
+  {
+    player_00 = (int)instance->damage_target_player;
+    result = instance->damage_target_card;
+    add_a_subtype(player_00, result, subtype);
+    if (subtype == SUBTYPE_LEGEND)
+    {
+      id = get_card_name(player_00, result);
+      verify_legend_rule(player_00, result, id);
+      return;
+    }
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26e7cc0; original functions/auras.c:161. */
+void attached_is_forced_subtype(int player, int card, event_t event, subtype_t subtype)
+{
+  card_instance_t *instance;
+  int result;
+  int id;
+  int player_00;
+
+  if (event != EVENT_CHANGE_TYPE)
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = has_subtype(player, card, SUBTYPE_AURA);
+      if (result == 0)
+      {
+        return;
+      }
+    }
+    else if (event != EVENT_EQUIPMENT_ATTACHED)
+    {
+      return;
+    }
+  }
+
+  instance = in_play(player, card);
+  if ((((instance != NULL) && (-1 < instance->damage_target_card)) &&
+       (result = is_humiliated_for_ability(player, card, AL_STATIC), subtype != SUBTYPE_INVALID)) &&
+      (result == 0))
+  {
+    player_00 = (int)instance->damage_target_player;
+    result = instance->damage_target_card;
+    force_a_subtype(player_00, result, subtype);
+    if (subtype == SUBTYPE_LEGEND)
+    {
+      id = get_card_name(player_00, result);
+      verify_legend_rule(player_00, result, id);
+      return;
+    }
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26e7d90; original functions/auras.c:178. */
+void attached_is_additional_color(int player, int card, event_t event, color_test_t color)
+{
+  card_instance_t *pcVar1;
+  int result;
+  card_instance_t *pcVar3;
+  unsigned int uVar4;
+
+  if (event != EVENT_SET_COLOR)
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = has_subtype(player, card, SUBTYPE_AURA);
+      if (result == 0)
+      {
+        return;
+      }
+    }
+    else if (event != EVENT_EQUIPMENT_ATTACHED)
+    {
+      return;
+    }
+  }
+
+  pcVar1 = in_play(player, card);
+  if ((((pcVar1 != NULL) && (-1 < pcVar1->damage_target_card)) &&
+       (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)) &&
+      ((pcVar3 = in_play(player, card), pcVar3 != NULL && (-1 < pcVar1->damage_target_card))))
+  {
+
+    if (event == EVENT_SET_COLOR)
+    {
+      if (pcVar1->damage_target_card != affected_card)
+      {
+        return;
+      }
+      if (pcVar1->damage_target_player != affected_card_controller)
+      {
+        return;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = has_subtype(player, card, SUBTYPE_AURA);
+      if (result == 0)
+      {
+        return;
+      }
+    }
+    else if (event != EVENT_EQUIPMENT_ATTACHED)
+    {
+      return;
+    }
+    uVar4 = get_sleighted_color_test(player, card, color);
+    event_result = event_result | uVar4;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26e7eb0; original functions/auras.c:194. */
+void attached_is_forced_color(int player, int card, event_t event, color_test_t color)
+{
+  card_instance_t *pcVar1;
+  int result;
+  card_instance_t *pcVar3;
+
+  if (event != EVENT_SET_COLOR)
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = has_subtype(player, card, SUBTYPE_AURA);
+      if (result == 0)
+      {
+        return;
+      }
+    }
+    else if (event != EVENT_EQUIPMENT_ATTACHED)
+    {
+      return;
+    }
+  }
+
+  pcVar1 = in_play(player, card);
+  if ((((pcVar1 != NULL) && (-1 < pcVar1->damage_target_card)) &&
+       (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)) &&
+      ((pcVar3 = in_play(player, card), pcVar3 != NULL && (-1 < pcVar1->damage_target_card))))
+  {
+
+    if (event == EVENT_SET_COLOR)
+    {
+      if (pcVar1->damage_target_card != affected_card)
+      {
+        return;
+      }
+      if (pcVar1->damage_target_player != affected_card_controller)
+      {
+        return;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = has_subtype(player, card, SUBTYPE_AURA);
+      if (result == 0)
+      {
+        return;
+      }
+    }
+    else if (event != EVENT_EQUIPMENT_ATTACHED)
+    {
+      return;
+    }
+    event_result = get_sleighted_color_test(player, card, color);
+  }
+  return;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void attached_gets_kw(int player, int card, event_t event, keyword_t keyword,
+                      sp_keyword_t sp_keyword);
+
+/* ManalinkEh 2022: 0x26e78f0; original functions/auras.c:82. */
+void attached_gets_kw(int player, int card, event_t event, keyword_t keyword,
+                      sp_keyword_t sp_keyword)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event == EVENT_ABILITIES)
+  {
+
+    instance = in_play(player, card);
+    if (instance == NULL)
+    {
+      return;
+    }
+    if (instance->damage_target_card < 0)
+    {
+      return;
+    }
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result != 0)
+    {
+      return;
+    }
+    if ((instance->damage_target_card == affected_card) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+      get_sleighted_hacked_suppressed_ability(player, card, (int)instance->damage_target_player,
+                                              &keyword, &sp_keyword);
+      event_result = event_result | keyword;
+    }
+  }
+
+  if ((((sp_keyword != SP_KEYWORD_0) && (instance = in_play(player, card), instance != NULL)) &&
+       (-1 < instance->damage_target_card)) &&
+      (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+  {
+    special_abilities((int)instance->damage_target_player, instance->damage_target_card, event,
+                      sp_keyword, player, card);
+  }
+  return;
+}

@@ -72,7 +72,8 @@ static int banneret(int player, int card, event_t event, int sub1, int sub2 ){
 	return 0;
 }
 
-static int reinforce(int player, int card, event_t event, int amount_counter, int colorless, int black, int blue, int green, int red, int white){
+/* Shared in October 2022 (COFF external); also used by newer sets. */
+int reinforce(int player, int card, event_t event, int amount_counter, int colorless, int black, int blue, int green, int red, int white){
 	if( ! IS_ACTIVATING_FROM_HAND(event)  ){
 		return 0;
 	}
@@ -3769,4 +3770,113 @@ int card_wolf_skull_shaman(int player, int card, event_t event){
 		generate_token_by_id(player, card, CARD_ID_WOLF);
 	}
 	return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x227f410; original cards/morningtide.c:350. */
+int card_burrenton_bombardier(int player, int card, event_t event)
+{
+  int result;
+
+  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    return 0;
+  }
+  result = reinforce(player, card, event, 2, 2, 0, 0, 0, 0, 1);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x227dcf0; original cards/morningtide.c:3261. */
+static int thornbite_staff_effect(int player, int card, event_t event)
+{
+  int card_00;
+  card_instance_t *pcVar1;
+  int result;
+  card_instance_t *pcVar3;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           result != 0x24e9))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
+    {
+      return 0;
+    }
+  LAB_0227dd25:
+    result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result == 0)
+      goto LAB_0227dd45;
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_0227dd25;
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar3 = in_play(affected_card_controller, affected_card);
+    if ((pcVar3 != NULL) &&
+        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+    {
+
+      if ((pcVar1->damage_target_card == affected_card) &&
+          (pcVar1->damage_target_player == affected_card_controller))
+      {
+        pcVar1->damage_target_card = -1;
+        pcVar1->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar1->targets[0xb].player < 0)
+        {
+          pcVar1->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+      }
+      count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
+    }
+    result =
+        resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (result == 0)
+    {
+      return 0;
+    }
+  }
+  result = check_status(player, card, 0x10000);
+  if (result == 0)
+  {
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar1 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
+    result = pcVar1->targets[0].player;
+    card_00 = pcVar1->targets[0].card;
+    if ((-1 < result) && (-1 < card_00))
+    {
+      untap_card(result, card_00);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+LAB_0227dd45:
+  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
 }

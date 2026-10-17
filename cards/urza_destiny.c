@@ -2687,3 +2687,169 @@ LAB_02109e6b:
 
 /* ManalinkEh 2022: 0x210a1d0; original cards/urza_destiny.c:3097. */
 int card_storage_matrix(int player, int card, event_t event) { return 0; }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2109300; original cards/urza_destiny.c:2824. */
+int card_landslide(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  const char *msg;
+  target_definition_t td;
+  test_definition_t test;
+
+  default_target_definition(player, card, &td, 0x100);
+  td.zone = 0x1200;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      instance = get_card_instance(player, card);
+      msg = get_hacked_land_text(player, card, "Select a %s.", 0x5006);
+      new_default_test_definition(&test, 1, msg);
+      test.subtype = get_hacked_subtype(player, card, 0x5006);
+      test.qty = 500;
+      result = new_sacrifice(player, card, player, SAC_DONE | SAC_NO_CANCEL, &test);
+      damage_creature(instance->targets[0].player, instance->targets[0].card, result, player, card);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER_OR_PLANESWALKER", 1, NULL);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2108160; original cards/urza_destiny.c:2467. */
+int card_bubbling_beebles(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event == EVENT_BLOCK_LEGALITY)
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if (((result == 0) && (attacking_card_controller == player)) && (attacking_card == card))
+      {
+        result = count_permanents_by_type(1 - current_turn, TYPE_ENCHANTMENT);
+        if (0 < result)
+        {
+          event_result = 1;
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21083f0; original cards/urza_destiny.c:2522. */
+int card_compost(int player, int card, event_t event)
+{
+  xtrigger_t xVar1;
+  int iVar2;
+  unsigned int uVar3;
+  int iVar4;
+  unsigned int uVar5;
+  test_definition_t test2;
+
+  enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_MILLED;
+  xVar1 = trigger_condition;
+  if (trigger_condition == 0xe5)
+  {
+    xVar1 = xtrigger_impl_value_dont_use_directly;
+  }
+  if (((((xVar1 == XTRIGGER_MILLED) && (card == affected_card)) &&
+        (player == affected_card_controller)) &&
+       ((reason_for_trigger_controller == player && (trigger_cause_controller == 1 - player)))) &&
+      (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar2 == 0))
+  {
+
+    if (1 < event - EVENT_TRIGGER)
+    {
+      return 0;
+    }
+    if (0 < num_cards_milled)
+    {
+      iVar2 = 0;
+      do
+      {
+        uVar5 = get_color(trigger_cause_controller, cards_milled[iVar2].internal_card_id);
+        uVar3 = get_sleighted_color_test(player, card, 2);
+        if ((uVar5 & uVar3) != 0)
+        {
+          if (event == EVENT_TRIGGER)
+          {
+            event_result = event_result | 2;
+            return 0;
+          }
+          if (cards_milled[iVar2].position != -1)
+          {
+
+            iVar4 = 1;
+            if ((ai_is_speculating == 1) || (iVar4 = 0, player != 1))
+            {
+              uVar5 = 0;
+              if (iVar4 == player)
+                goto LAB_021086af;
+            }
+            else
+            {
+              uVar5 = 0;
+              if (((unsigned char)trace_mode & 2) == 0)
+              {
+              LAB_021086af:
+                iVar4 = count_deck(player);
+                uVar5 = (unsigned int)(iVar4 < 6);
+              }
+            }
+            iVar4 = do_dialog(player, player, card, -1, -1, " Draw a card\n Pass", uVar5);
+            if (iVar4 == 0)
+            {
+              draw_a_card(player);
+            }
+          }
+        }
+        iVar2 = iVar2 + 1;
+      } while (iVar2 < num_cards_milled);
+    }
+  }
+  default_test_definition(&test2, 0xff);
+  test2.color = get_sleighted_color_test(player, card, 2);
+  iVar2 = when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(
+      player, card, event, 1 - player, RESOLVE_TRIGGER_MANDATORY, &test2);
+  if (iVar2 == 0)
+    goto LAB_021084ef;
+
+  iVar2 = 1;
+  if ((ai_is_speculating == 1) || (iVar2 = 0, player != 1))
+  {
+    uVar5 = 0;
+    if (iVar2 == player)
+      goto LAB_0210866f;
+  }
+  else
+  {
+    uVar5 = 0;
+    if (((unsigned char)trace_mode & 2) == 0)
+    {
+    LAB_0210866f:
+      iVar2 = count_deck(player);
+      uVar5 = (unsigned int)(iVar2 < 6);
+    }
+  }
+  iVar2 = do_dialog(player, player, card, -1, -1, " Draw a card\n Pass", uVar5);
+  if (iVar2 == 0)
+  {
+    draw_a_card(player);
+  }
+LAB_021084ef:
+  iVar2 = global_enchantment(player, card, event);
+  return iVar2;
+}

@@ -6466,3 +6466,32 @@ static void imprint(int player, int card, int store_player, int store_card)
   add_status(player, card_00, 0x10000);
   return;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2437100; original cards/scars_of_mirrodin.c:342. */
+static int find_imprint_legacy_next(int player, int card, int *index)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int card_00;
+
+  card_00 = *index;
+  if (card_00 < active_cards_count[player])
+  {
+    do
+    {
+      pcVar1 = get_card_instance(player, card_00);
+      if ((((pcVar1->internal_card_id == LEGACY_EFFECT_CUSTOM) &&
+            (pcVar1->info_slot_fn == imprint_legacy)) &&
+           (pcVar2 = in_play(player, card), pcVar2 != NULL)) &&
+          ((player == pcVar1->damage_source_player && (card == pcVar1->damage_source_card))))
+      {
+        *index = card_00;
+        return card_00;
+      }
+      card_00 = card_00 + 1;
+    } while (card_00 < active_cards_count[player]);
+  }
+  return -1;
+}

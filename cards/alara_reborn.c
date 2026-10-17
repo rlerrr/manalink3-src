@@ -2985,3 +2985,413 @@ int card_marrow_chomper(int player, int card, event_t event)
   gain_life(player, instance->targets[1].card * 2);
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22fecc0; original cards/alara_reborn.c:1794. */
+int card_marisis_twinclaws(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  modify_cost_for_arb_hybrid_spells(player, card, event, 3);
+  if ((((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (instance->info_slot == 1))
+  {
+    result = played_for_free(player, card);
+    if (result == 0)
+    {
+      result = is_token(player, card);
+      if (result == 0)
+      {
+        result = arb_hybrid_casting(player, card, EVENT_CAST_SPELL, 3);
+        if (result == 0)
+        {
+          spell_fizzled = 1;
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23001d0; original cards/alara_reborn.c:2456. */
+int card_sewn_eye_drake(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  haste(player, card, event);
+  instance = get_card_instance(player, card);
+  modify_cost_for_arb_hybrid_spells(player, card, event, 1);
+  if ((((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (instance->info_slot == 1))
+  {
+    result = played_for_free(player, card);
+    if (result == 0)
+    {
+      result = is_token(player, card);
+      if (result == 0)
+      {
+        result = arb_hybrid_casting(player, card, EVENT_CAST_SPELL, 1);
+        if (result == 0)
+        {
+          spell_fizzled = 1;
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int sen_triplets_effect(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x22fa060; original cards/alara_reborn.c:2383. */
+static int sen_triplets_effect(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int iVar5;
+  int iStack_ec;
+  test_definition_t this_test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    *(unsigned int *)(&player_bits + (1 - player) * 4) =
+        *(unsigned int *)(&player_bits + (1 - player) * 4) | 0x200;
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_DESTROY);
+  }
+  else if (event == EVENT_CAN_ACTIVATE)
+  {
+
+    iVar5 = 1 - player;
+    if (0 < active_cards_count[iVar5])
+    {
+      iStack_ec = 0;
+      iVar1 = 0;
+      do
+      {
+        instance = in_hand(iVar5, iVar1);
+        if (instance != NULL)
+        {
+
+          iVar2 = get_id(iVar5, iVar1);
+          iVar2 = can_legally_play_csvid_now(player, iVar2, EVENT_CAN_ACTIVATE);
+          if (iVar2 != 0)
+          {
+            iVar4 = get_original_internal_card_id(iVar5, iVar1);
+            iVar4 = has_mana_to_cast_iid(player, EVENT_CAN_ACTIVATE, iVar4);
+            if (((iVar4 != 0) && (iStack_ec = iVar2, iVar2 == 99)) &&
+                ((iVar2 = is_what(iVar5, iVar1, 0x20),
+                  iVar2 != 0 || (iVar2 = is_what(iVar5, iVar1, 0x22), iVar2 != 0))))
+            {
+              return 99;
+            }
+          }
+        }
+        iVar1 = iVar1 + 1;
+        if (active_cards_count[iVar5] <= iVar1)
+        {
+          return iStack_ec;
+        }
+      } while (true);
+    }
+  }
+  else if ((event == EVENT_ACTIVATE) && (iVar5 = 1 - player, hand_count[iVar5] != 0))
+  {
+
+    new_default_test_definition(&this_test, 0xff, "Select a card to play.");
+    iVar1 = new_select_a_card(player, iVar5, 4, 0, 1, -1, &this_test);
+    if (((-1 < iVar1) && ((iVar2 = is_what(iVar5, iVar1, 1),
+                           iVar2 == 0 || (((unsigned char)land_can_be_played & 1) == 0)))) &&
+        ((iVar2 = is_what(iVar5, iVar1, 0x30),
+          iVar2 != 0 || (iVar2 = can_sorcery_be_played(player, EVENT_ACTIVATE), iVar2 != 0))))
+    {
+      iVar2 = get_id(iVar5, iVar1);
+      iVar2 = has_mana_to_cast_id(player, EVENT_ACTIVATE, iVar2);
+      if (iVar2 != 0)
+      {
+        iVar2 = get_id(iVar5, iVar1);
+        charge_mana_from_id(player, -1, EVENT_ACTIVATE, iVar2);
+        if ((spell_fizzled == 1) && (iVar2 = is_what(iVar5, iVar1, 1), iVar2 == 0))
+        {
+          return 0;
+        }
+        opponent_plays_card_in_your_hand_for_free(iVar5, iVar1);
+        cant_be_responded_to = 1;
+        return 0;
+      }
+    }
+    spell_fizzled = 1;
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2300100; original cards/alara_reborn.c:2435. */
+int card_sen_triplets(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    result = opponent_is_valid_target(player, card);
+    if (result != 0)
+    {
+      default_test_definition(&test, 0x47);
+      new_manipulate_all(player, card, 1 - player, &test, ACT_DISABLE_ALL_ACTIVATED_ABILITIES);
+      target_player_cant_cast_type(player, card, 1 - player, 0x7f);
+      create_legacy_activate(player, card, sen_triplets_effect);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2302190; original cards/alara_reborn.c:3187. */
+int card_vedalken_ghoul(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_DECLARE_BLOCKERS)
+  {
+    result = is_attacking(player, card);
+    if (result != 0)
+    {
+      result = is_unblocked(player, card);
+      if (result == 0)
+      {
+        result = is_humiliated_for_ability(player, card, AL_TRIG);
+        if (result == 0)
+        {
+          lose_life(1 - current_turn, 4);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void do_multicascade(int player, int card, int override, int amount);
+void multicascade(int player, int card, event_t event, int amount);
+
+/* ManalinkEh 2022: 0x22fa680; original cards/alara_reborn.c:4. */
+void do_multicascade(int player, int card, int override, int amount)
+{
+  unsigned short uVar1;
+  int *piVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int iVar5;
+  int *piVar6;
+  int iVar7;
+  int *piVar8;
+  int iVar9;
+  int *piVar10;
+  int iStack_bd8;
+  int iStack_bd4;
+  int iStack_bd0;
+  int iStack_bcc;
+  test_definition_t test;
+  int exiled[500];
+
+  iStack_bd0 = get_cmc(player, card);
+  if (-1 < override)
+  {
+    iStack_bd0 = override;
+  }
+  piVar2 = deck_ptr[player];
+  iStack_bd8 = 0;
+  if (0 < amount)
+  {
+    do
+    {
+
+      iVar9 = 0;
+      iStack_bd4 = 0;
+      if (0 < active_cards_count[player])
+      {
+        do
+        {
+          instance = in_play(player, iVar9);
+          if ((instance != NULL) && (iVar4 = get_id(player, iVar9), iVar4 == 0x563f))
+          {
+            iVar4 = is_humiliated_for_ability(player, iVar9, AL_STATIC);
+            iStack_bd4 = iStack_bd4 + (unsigned int)(iVar4 == 0);
+          }
+          iVar9 = iVar9 + 1;
+        } while (iVar9 < active_cards_count[player]);
+      }
+      iStack_bcc = 0;
+      iVar9 = 0;
+      do
+      {
+        iVar4 = piVar2[iVar9];
+        if (iVar4 == -1)
+        {
+        LAB_022fa7b7:
+          if (iVar9 == 0)
+            goto LAB_022fa7c4;
+          if ((iStack_bd4 != 0) && (iStack_bcc != 0))
+            goto LAB_022fa887;
+          if ((iVar4 < 0) || (iVar5 = can_legally_play_iid(player, iVar4), iVar5 == 0))
+            goto LAB_022fab2b;
+          goto LAB_022faa64;
+        }
+
+        iVar4 = *piVar2;
+        exiled[iVar9] = iVar4;
+        rfg_top_card_of_deck(player);
+        iVar5 = is_what(-1, iVar4, 1);
+        iVar9 = iVar9 + 1;
+        iStack_bcc = (iStack_bcc + 1) - (unsigned int)(iVar5 == 0);
+        iVar5 = is_what(-1, iVar4, 1);
+        if ((iVar5 == 0) && (iVar5 = get_cmc_by_internal_id(iVar4), iVar5 < iStack_bd0))
+          goto LAB_022fa7b7;
+      } while (iVar9 != 500);
+
+      if ((iStack_bd4 == 0) || (iVar4 = -1, iStack_bcc == 0))
+      {
+      LAB_022fab2b:
+        iVar4 = count_deck(player);
+      LAB_022fa9bf:
+        iVar4 = iVar4 + iVar9;
+        piVar10 = exiled + iVar9;
+        do
+        {
+          iVar5 = (iVar4 * 4 + -0x7e0) - (int)piVar10;
+          if (iVar9 < 2)
+          {
+            *(int *)((int)exiled + (int)deck_ptr[player] + iVar5 + 0x7e0) = exiled[0];
+            if (iVar9 == 1)
+              goto LAB_022fa7c4;
+          }
+          else
+          {
+
+            iVar7 = internal_rand(iVar9);
+            *(int *)((int)exiled + (int)deck_ptr[player] + iVar5 + 0x7e0) = exiled[iVar7];
+            if (iVar7 < iVar9)
+            {
+              piVar8 = exiled + iVar7;
+              do
+              {
+                piVar6 = piVar8 + 1;
+                *piVar8 = piVar8[1];
+                piVar8 = piVar6;
+              } while (piVar10 != piVar6);
+            }
+          }
+          iVar9 = iVar9 + -1;
+          piVar10 = piVar10 + -1;
+        } while (true);
+      }
+    LAB_022fa887:
+      piVar10 = exiled + iVar9;
+      iStack_bd4 = iStack_bd4 - iVar9;
+      iStack_bcc = iStack_bcc - iVar9;
+      while (true)
+      {
+
+        new_default_test_definition(&test, 1, "Select a Land card to put into play tapped.");
+        iVar5 = select_card_from_zone(player, player, exiled, iVar9, 0, 1, -1, &test);
+        if (iVar5 < 0)
+          break;
+
+        iVar7 = add_card_to_hand(player, exiled[iVar5]);
+        add_state(player, iVar7, 0x10);
+        put_into_play(player, iVar7);
+        piVar8 = exiled + iVar5;
+        if (iVar5 < iVar9)
+        {
+          do
+          {
+            piVar6 = piVar8 + 1;
+            *piVar8 = piVar8[1];
+            piVar8 = piVar6;
+          } while (piVar6 != piVar10);
+        }
+        iVar9 = iVar9 + -1;
+        piVar10 = piVar10 + -1;
+        if ((iStack_bd4 + iVar9 == 0) || (iStack_bcc + iVar9 == 0))
+          break;
+      }
+      if ((-1 < iVar4) && (iVar5 = can_legally_play_iid(player, iVar4), iVar5 != 0))
+      {
+      LAB_022faa64:
+
+        uVar1 = cards_data[iVar4].id;
+        scnprintf(test.message, 1000, " Play %s\n Do not play", cards_ptr[uVar1]->name);
+        iVar4 = do_dialog(player, player, card, -1, -1, test.message, 0);
+        if (iVar4 == 0)
+        {
+          iVar9 = iVar9 + -1;
+          play_card_in_exile_for_free(player, player, (unsigned int)uVar1);
+          exiled[iVar9] = -1;
+        }
+      }
+      iVar4 = count_deck(player);
+      if (iVar9 != 0)
+        goto LAB_022fa9bf;
+    LAB_022fa7c4:
+      iStack_bd8 = iStack_bd8 + 1;
+    } while (amount != iStack_bd8);
+  }
+  piVar2 = graveyard_ptr_mutable[player];
+  iVar4 = count_graveyard(player);
+  iVar9 = iVar4 + -1;
+  if (-1 < iVar4 + -1)
+  {
+    do
+    {
+      while (cards_data[piVar2[iVar9]].id != 0x563e)
+      {
+        iVar9 = iVar9 + -1;
+        if (iVar9 == -1)
+        {
+          return;
+        }
+      }
+      add_card_to_hand(player, piVar2[iVar9]);
+      iVar4 = iVar9 + -1;
+      remove_card_from_grave(player, iVar9);
+      iVar9 = iVar4;
+    } while (iVar4 != -1);
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x22fab70; original cards/alara_reborn.c:111. */
+void multicascade(int player, int card, event_t event, int amount)
+{
+  int result;
+
+  if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_token(player, card);
+    if (result == 0)
+    {
+      result = check_special_flags(player, card, 0x40000);
+      if (result == 0)
+      {
+        result = get_cmc(player, card);
+        do_multicascade(player, card, result, amount);
+        return;
+      }
+    }
+  }
+  return;
+}

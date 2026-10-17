@@ -4,6 +4,7 @@
 // Type declarations.  Should contain no function or extern data declarations.
 
 #include <inttypes.h>
+#include <stdbool.h>
 
 /* Creature types are in their own header because there are so many of them. */
 #include "subtypes.h"
@@ -343,7 +344,17 @@ typedef enum
   EVENT_EQUIPMENT_ATTACHED					= 0x1500,	// Sent to the equipment when it successfully attach to a creature (in case it also adds creature types and so on)
   EVENT_DAMAGE_TRIGGER_ABILITY				= 0x1600,
   EVENT_CAN_ACTIVATE_HIDEAWAY_LAND			= 0x1700,
-  // 0x500 and 0x1800 to 0x3F00 free
+  /* October 2022 Manalink event names/values recovered from DWARF. */
+  EVENT_CHAPTER1 = 0x1800,
+  EVENT_CHAPTER2 = 0x1900,
+  EVENT_CHAPTER3 = 0x1A00,
+  EVENT_CHAPTER4 = 0x1B00,
+  EVENT_COMMANDER_TO_COMMAND_ZONE = 0x1C00,
+  EVENT_SP_ABILITY = 0x1E00,
+  EVENT_SPA = EVENT_SP_ABILITY,
+  EVENT_DAT_ABILITY = 0x1F00,
+  EVENT_CARD_TO_EXILE = 0x2000,
+  // 0x500 and 0x2100 to 0x3F00 free; CANT_CREW retains its existing shared value below.
 #endif
 
   // Events common to both Manalink and Shandalar; or in one and likely to be used in the other
@@ -384,7 +395,26 @@ typedef enum
   EVENT_CHOOSE_NEW_TARGETS					= 0x5400,	// attacking_card_controller chooses new targets for this spell (activated and triggered effects unimplemented).  If attacking_card is positive, then it's forced; otherwise, he may cancel.  If affected_card_controller != -1, then it indicates an additional restriction on the target type, with TARGET_TYPE_TOKEN (== TARGET_ZONE_PLAYERS) indicating a player.  If cancelled, or all targets cannot be chosen, then set cancel=1; caller's responsibility to restore old targets.  affected_card > 0 can offset the target indices just like in EVENT_VALIDATE_TARGETS and EVENT_SPELL_EFFECT for spliceable and multi-modal spells.
 #endif
   EVENT_SET_IN_MOTION						= 0x5500,	// Sent to an individual scheme's function when it's set in motion.  In Manalink, {player,card} is the Archenemy effect card; event_result is the scheme's csvid.  In Shandalar, {affected_card_controller, affected_card} is the scheme card, and it was set in motion by affected_card_controller.
-  // 0x5600 to 0x7F00 unused
+#ifndef SHANDALAR
+  /* These names are separate from the Shandalar-only values below. */
+  EVENT_COUNTERSPELL = 0x5600,
+  EVENT_EXPLORE = 0x5700,
+  EVENT_COUNTERS = 0x5800,
+  EVENT_QUERY_CUMULATIVE_UPKEEP = 0x5900,
+  EVENT_REMOVED_FROM_GRAVEYARD = 0x5A00,
+  EVENT_COIN_FLIP_WON_OR_LOST = 0x5B00,
+  EVENT_SPELL_COPIED = 0x5C00,
+  EVENT_QUERY = 0x5D00,
+  EVENT_QUERY_AFF = 0x5E00,
+  EVENT_LEAVES_PLAY_ABILITY = 0x5F00,
+  EVENT_LTB = EVENT_LEAVES_PLAY_ABILITY,
+  EVENT_ATTACK_LEGALITY_ALL = 0x6000,
+  EVENT_PROT_MISC = 0x6100,
+  EVENT_SPELL_CAST = 0x6200,
+  EVENT_LAND_PLAYED = 0x6300,
+  EVENT_THIS_SPELL_CAST = 0x6400,
+#endif
+  // 0x6500 to 0x7F00 unused
 
   // Events currently existing only in Shandalar.
 #ifdef SHANDALAR
@@ -927,6 +957,7 @@ typedef enum
 /* Static Abilities */
 typedef enum
 {
+  KEYWORD_0 = 0, /* October 2022 DWARF name for an empty keyword mask. */
   KEYWORD_SWAMPWALK       = 1 <<  0,
   KEYWORD_ISLANDWALK      = 1 <<  1,
   KEYWORD_FORESTWALK      = 1 <<  2,
@@ -971,6 +1002,7 @@ typedef enum
 // Special abilities
 typedef enum
 {
+  SP_KEYWORD_0 = 0, /* October 2022 DWARF name for an empty special-keyword mask. */
   SP_KEYWORD_FEAR            = 1<<0,
   SP_KEYWORD_LIFELINK        = 1<<1,
   SP_KEYWORD_HASTE           = 1<<2,
@@ -1004,6 +1036,25 @@ typedef enum
   SP_KEYWORD_HORSEMANSHIP				= 1<<30,
   SP_KEYWORD_DOES_NOT_END_AT_EOT		= 1<<31,
 } sp_keyword_t;
+
+/* October 2022 DWARF: ability classes in targets[17].card. */
+typedef enum
+{
+  AL_UNUSED = 1,
+  AL_TRIG = 2,
+  AL_STATIC = 4,
+  AL_NM_NL_ACT = 8,
+  AL_MANA = 16,
+  AL_LOYALTY = 32,
+  AL_KEY = 64,
+  AL_INDESTRUCTIBLE = 128,
+  AL_DEFENDER = 256,
+  AL_NM_ACT = 40,
+  AL_ALL_ACT = 56,
+  AL_ALL_NM = 110,
+  AL_NOT_KEY = 62,
+  AL_ALL = 126
+} ability_loss_t;
 
 /* Phases of turn */
 typedef enum
@@ -1317,8 +1368,17 @@ typedef struct card_instance_struct
   int16_t	power;				/*  0x34 */
   uint8_t	number_of_targets;	/*  0x36 */
 #ifndef SHANDALAR
-  uint8_t	unknown0x37;		/*  0x37 */	// Used only on damage cards, apparently for temporary storage for trample damage
-  int32_t	info_slot;			/*  0x38 */
+  union
+  {
+    uint8_t unknown0x37; /* Existing damage-card/trample storage. */
+    uint8_t mode;       /* October 2022 DWARF: byte at 0x37. */
+  };
+  /* October 2022 DWARF: anonymous union at 0x38, still four bytes on x86. */
+  union
+  {
+    int32_t info_slot;
+    CardFunction info_slot_fn;
+  };
 #else
   uint8_t	mode;				// mode for modal spells; activation # for cards w/multiple activations (including double landcycling); and trample damage on damage effects, as above
   union
@@ -1337,7 +1397,18 @@ typedef struct card_instance_struct
   PRIVATE_IN_SHANDALAR(uint16_t	backup_internal_card_id;)	/*  0x46 */ // internal_card_id is stored here at the end of EVENT_CHANGE_TYPE.  A crutch to deal with the poor design decision of setting internal_card_id == -1 to indicate a card's left play.
   int32_t	damage_source_card;	/*  0x48 */ /* damage source card */
 #ifndef SHANDALAR
-  uint32_t	eot_toughness;		/*  0x4C */	// Bytes 0 and 1 manipulate text-modifiers on csvid=903 effect cards; otherwise reserved for individual card use.
+  /* October 2022 DWARF exposes the existing four-byte slot both ways. */
+  union
+  {
+    uint32_t eot_toughness;
+    struct
+    {
+      uint8_t eot_toughness0;
+      uint8_t eot_toughness1;
+      uint8_t eot_toughness2;
+      uint8_t eot_toughness3;
+    };
+  };
 #else
   union {
 	  uint32_t eot_toughness;
@@ -1999,6 +2070,7 @@ enum RarityMask
 /* Flags for damage_dealt_by_me(), subtype_deals_damage(), and damage_dealt_to_me_arbitrary().  New values must be either handled or asserted by all three. */
 typedef enum
 {
+	DDBM_0 = 0, /* Recovered October 2022 zero-valued flag name. */
 	DDBM_TRIGGER_OPTIONAL			= (1<<0),
 	DDBM_MUST_DAMAGE_OPPONENT		= (1<<1),
 	DDBM_MUST_BE_COMBAT_DAMAGE		= (1<<2),
@@ -3225,6 +3297,9 @@ typedef enum
 
 typedef enum {
 	// Bits 0..3 reserved to mirror resolve_trigger_t.  If none are set, then defaults to RESOLVE_TRIGGER_MANDATORY as a convenience.
+	DAT_RESOLVE_TRIGGER_OPTIONAL = 1,
+	DAT_RESOLVE_TRIGGER_MANDATORY = 2,
+	DAT_RESOLVE_TRIGGER_DUH = 3,
 	DAT_ATTACKS_PLAYER		= (1<<4),	// only triggers if attacking a player, not a planeswalker
 	DAT_ATTACKS_PLANESWALKER= (1<<5),	// only triggers if attacking a planewalker, not a player
 
@@ -3236,6 +3311,10 @@ typedef enum {
 
 	DAT_STORE_IN_TARGETS_3	= (1<<10),	// Store internal data in targets[3].player instead of targets[1].player, since there aren't really any slots guaranteed free even amongst just the cards that call this.
 	DAT_STORE_IN_INFO_SLOT	= (1<<11),	// Store internal data in info_slot instead of targets[1].player, since there aren't really any slots guaranteed free even amongst just the cards that call this.
+	/* Additional October 2022 DWARF flags; full engine support remains downstream. */
+	DAT_DONT_REPORT_VALUE = (1<<13),
+	DAT_BATTALION = (1<<14),
+	DAT_ATTACKS_WITH_2_OR_MORE = (1<<15),
 } declare_attackers_trigger_t;
 
 typedef enum
@@ -3252,6 +3331,7 @@ typedef enum
 
 typedef enum
 {
+	SARV_0 = 0, /* Recovered October 2022 zero-valued flag name. */
 	SARV_REPORT_POWER		= 1<<0,		// Use only one of these or you'll get messed result
 	SARV_REPORT_TOUGHNESS	= 1<<1,		// Use only one of these or you'll get messed result
 	SARV_REPORT_COLORS		= 1<<2,		// Use only one of these or you'll get messed result
@@ -3261,6 +3341,7 @@ typedef enum
 
 typedef enum
 {
+	SFG_0 = 0, /* Recovered October 2022 zero-valued flag name. */
 	SFG_CANNOT_CANCEL		= 1,
 	SFG_NOTARGET			= 2,	// unaffected by graveyard_has_shroud
 	SFG_NO_SPELL_FIZZLED	= 4,	// Does not set "cancel" to "1" if no target is selected, see "Pull from the Deep"

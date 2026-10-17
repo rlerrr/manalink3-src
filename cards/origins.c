@@ -5376,3 +5376,127 @@ static int pyromancers_goggles_legacy(int player, int card, event_t event)
   kill_card(player, card, KILL_EXILE);
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20e7210; original cards/origins.c:5191. */
+int card_pyromancers_goggles(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  check_legend_rule(player, card, event);
+  if (event != EVENT_ACTIVATE)
+  {
+    result = mana_producer(player, card, event);
+    return result;
+  }
+  spell_fizzled = 0;
+  mana_producer(player, card, EVENT_ACTIVATE);
+  if (spell_fizzled == 1)
+  {
+    return 0;
+  }
+
+  result = create_legacy_effect(player, card, pyromancers_goggles_legacy);
+  instance = get_card_instance(player, result);
+  instance->targets[6].player = player;
+  instance = get_card_instance(player, result);
+  instance->targets[6].card = card;
+  add_status(player, result, 0x10000);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20d9630; original cards/origins.c:2861. */
+static int shadows_of_the_past_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  unsigned int uVar2;
+  card_instance_t *pcVar3;
+  int result;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           result != 0x3b6f))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
+    {
+      return 0;
+    }
+  LAB_020d9664:
+    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar2 == 0)
+      goto joined_r0x020d968d;
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_020d9664;
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar3 = in_play(affected_card_controller, affected_card);
+    if ((pcVar3 != NULL) &&
+        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+    {
+
+      if ((pcVar1->damage_target_card == affected_card) &&
+          (pcVar1->damage_target_player == affected_card_controller))
+      {
+        pcVar1->damage_target_card = -1;
+        pcVar1->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar1->targets[0xb].player < 0)
+        {
+          pcVar1->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+      }
+      count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
+    }
+    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar2 == 0)
+    {
+      return 0;
+    }
+  }
+  result = check_status(player, card, 0x10000);
+  if (result == 0)
+  {
+
+    uVar2 = uVar2 & 0xff;
+    if (uVar2 != 0)
+    {
+      do
+      {
+        uVar2 = uVar2 - 1;
+        scry(player, 1);
+      } while (0 < (int)uVar2);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+joined_r0x020d968d:
+  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}

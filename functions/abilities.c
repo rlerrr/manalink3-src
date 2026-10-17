@@ -67,6 +67,17 @@ int is_humiliated(int player, int card)
 	return is_humiliated_by_instance(get_card_instance(player, card));
 }
 
+/* ManalinkEh 2022: 0x26dd430; original functions/abilities.c:47. */
+/* Recovered is_humiliated(player, card, mode); the worker at 0x26dd050 reads
+ * the newer bitmask. Its writers still need downstream engine integration. */
+int is_humiliated_for_ability(int player, int card, ability_loss_t mode)
+{
+  if (player == -1 || card == -1)
+    return 0;
+  int flags = get_card_instance(player, card)->targets[17].card;
+  return flags > 0 ? flags & mode : 0;
+}
+
 void disable_nonmana_activated_abilities(int player, int card, int mode)
 {
 
@@ -1318,4 +1329,701 @@ int protection_from_green(int player, int card, event_t event){
 
 int protection_from_white(int player, int card, event_t event){
 	return generic_protection_from(player, card, event, COLOR_TEST_WHITE);
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26de880; original functions/abilities.c:665. */
+void misc_protection(int player, int card, event_t event)
+{
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    misc_protection(player, card, player);
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26e09a0; original functions/abilities.c:2930. */
+void get_protection_source(int8_t can_return_dmg, int *eff_acc, int *eff_ac)
+{
+
+  if (-1 < attacking_card)
+  {
+    get_protection_source(can_return_dmg, eff_acc, eff_ac);
+    return;
+  }
+  return;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void remove_abilities(int player, int card, event_t event, ability_loss_t mode);
+void remove_abilities_by_test(int player, event_t event, test_definition_t *test,
+                              ability_loss_t mode);
+
+/* ManalinkEh 2022: 0x26dda70; original functions/abilities.c:332. */
+void remove_abilities_by_test(int player, event_t event, test_definition_t *test,
+                              ability_loss_t mode)
+{
+  ability_loss_t aVar1;
+  card_instance_t *instance;
+  int result;
+
+  if ((((event == EVENT_ABILITIES) || (event == EVENT_CAST_SPELL)) &&
+       (instance = in_play(affected_card_controller, affected_card), instance != NULL)) &&
+      (((player == 2 || (affected_card_controller == player)) &&
+        ((test == NULL ||
+          (result = new_make_test_in_play(affected_card_controller, affected_card, -1, test),
+           result != 0))))))
+  {
+    instance = get_card_instance(affected_card_controller, affected_card);
+    aVar1 = instance->targets[0x11].card;
+    if (-1 < (int)aVar1)
+    {
+      mode = mode | aVar1;
+    }
+    instance->targets[0x11].card = mode;
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26ddb20; original functions/abilities.c:355. */
+void remove_abilities(int player, int card, event_t event, ability_loss_t mode)
+{
+  ability_loss_t aVar1;
+  card_instance_t *instance;
+
+  instance = in_play(affected_card_controller, affected_card);
+  if (instance != NULL)
+  {
+    aVar1 = instance->targets[0x11].card;
+    if (-1 < (int)aVar1)
+    {
+      mode = mode | aVar1;
+    }
+    instance->targets[0x11].card = mode;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26ddb60; original functions/abilities.c:367. */
+int has_an_activated_ability(iid_t iid)
+{
+  int iVar1;
+  char cVar2;
+  int iVar3;
+  unsigned int uVar4;
+  unsigned short uVar5;
+
+  iVar3 = 0;
+  if ((cards_data[iid].type & 0x47) != 0)
+  {
+    iVar1 = *(int *)&cards_data[iid].id;
+    uVar5 = (unsigned short)iVar1;
+    if (uVar5 != 0x2baa)
+    {
+      cVar2 = (char)iVar1;
+      if (uVar5 < 0x2bab)
+      {
+        if (uVar5 == 0x1710)
+        {
+          return 0;
+        }
+        if (uVar5 < 0x1711)
+        {
+          if (uVar5 == 0xed1)
+          {
+            return 0;
+          }
+          if (uVar5 < 0xed2)
+          {
+            if (uVar5 == 0xba8)
+            {
+              return 0;
+            }
+            if (uVar5 < 0xba9)
+            {
+              if (uVar5 == 0x7fd)
+              {
+                return 0;
+              }
+              if (uVar5 < 0x7fe)
+              {
+                if (uVar5 == 0x2ad)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x789)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x50)
+                {
+                  return 0;
+                }
+              }
+              else
+              {
+                if (uVar5 == 0xac6)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0xb84)
+                {
+                  return 0;
+                }
+              }
+            }
+            else
+            {
+              if (uVar5 == 0xcb7)
+              {
+                return 0;
+              }
+              if (uVar5 < 0xcb8)
+              {
+                if (uVar5 == 0xbcc)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0xc30)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0xbaa)
+                {
+                  return 0;
+                }
+              }
+              else
+              {
+                if (uVar5 == 0xd57)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0xd72)
+                {
+                  return 0;
+                }
+              }
+            }
+          }
+          else
+          {
+            if (uVar5 == 0x1530)
+            {
+              return 0;
+            }
+            if (uVar5 < 0x1531)
+            {
+              if (uVar5 == 0x1261)
+              {
+                return 0;
+              }
+              if (uVar5 < 0x1262)
+              {
+                if (uVar5 == 0x11f2)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x1227)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0xf7c)
+                {
+                  return 0;
+                }
+              }
+              else if (uVar5 < 0x1266)
+              {
+                if (0x1262 < uVar5)
+                {
+                  return 0;
+                }
+              }
+              else if (uVar5 == 0x144c)
+              {
+                return 0;
+              }
+            }
+            else
+            {
+              if (uVar5 == 0x158a)
+              {
+                return 0;
+              }
+              if (uVar5 < 0x158b)
+              {
+                if (uVar5 == 0x155c)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x1580)
+                {
+                  return 0;
+                }
+              }
+              else
+              {
+                if (uVar5 == 0x161f)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x1652)
+                {
+                  return 0;
+                }
+              }
+            }
+          }
+        }
+        else
+        {
+          if (uVar5 == 0x2532)
+          {
+            return 0;
+          }
+          if (uVar5 < 0x2533)
+          {
+            if (uVar5 == 0x1f18)
+            {
+              return 0;
+            }
+            if (uVar5 < 0x1f19)
+            {
+              if (uVar5 == 0x1b7a)
+              {
+                return 0;
+              }
+              if (uVar5 < 0x1b7b)
+              {
+                if (uVar5 == 0x1998)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x1a6a)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x1805)
+                {
+                  return 0;
+                }
+              }
+              else
+              {
+                if (uVar5 == 0x1beb)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x1ea3)
+                {
+                  return 0;
+                }
+              }
+            }
+            else
+            {
+              if (uVar5 == 0x21f5)
+              {
+                return 0;
+              }
+              if (uVar5 < 0x21f6)
+              {
+                if (uVar5 == 0x20bd)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x215c)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x20a0)
+                {
+                  return 0;
+                }
+              }
+              else
+              {
+                if (uVar5 == 0x230a)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x238d)
+                {
+                  return 0;
+                }
+              }
+            }
+          }
+          else if (uVar5 < 0x298f)
+          {
+            if (uVar5 < 0x2982)
+            {
+              if (uVar5 == 0x2631)
+              {
+                return 0;
+              }
+              if (uVar5 < 0x2632)
+              {
+                if (uVar5 == 0x259e)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x260a)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x2544)
+                {
+                  return 0;
+                }
+              }
+              else
+              {
+                if (uVar5 == 0x2689)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x28bd)
+                {
+                  return 0;
+                }
+              }
+            }
+            else if ((1 << (cVar2 + 0x7eU & 0x1f) & 0x1201U) != 0)
+            {
+              return 0;
+            }
+          }
+          else
+          {
+            if (uVar5 == 0x2b2b)
+            {
+              return 0;
+            }
+            if (uVar5 == 0x2b83)
+            {
+              return 0;
+            }
+            if (uVar5 == 0x29af)
+            {
+              return 0;
+            }
+          }
+        }
+      }
+      else
+      {
+        if (uVar5 == 0x3471)
+        {
+          return 0;
+        }
+        if (uVar5 < 0x3472)
+        {
+          if (uVar5 == 0x3163)
+          {
+            return 0;
+          }
+          if (uVar5 < 0x3164)
+          {
+            if (uVar5 == 0x2f0b)
+            {
+              return 0;
+            }
+            if (uVar5 < 0x2f0c)
+            {
+              if (uVar5 == 0x2d8e)
+              {
+                return 0;
+              }
+              if (uVar5 < 0x2d8f)
+              {
+                if (uVar5 == 0x2c5e)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x2d02)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x2bd8)
+                {
+                  return 0;
+                }
+              }
+              else if ((iVar1 - 0x2ddeU & 0xffbf) == 0)
+              {
+                return 0;
+              }
+            }
+            else
+            {
+              if (uVar5 == 0x3046)
+              {
+                return 0;
+              }
+              if (uVar5 < 0x3047)
+              {
+                if (uVar5 == 0x2ff2)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x300a)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x2f2f)
+                {
+                  return 0;
+                }
+              }
+              else
+              {
+                if (uVar5 == 0x307d)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x3136)
+                {
+                  return 0;
+                }
+              }
+            }
+          }
+          else
+          {
+            if (uVar5 == 0x323d)
+            {
+              return 0;
+            }
+            if (uVar5 < 0x323e)
+            {
+              if (uVar5 < 0x320e)
+              {
+                if (uVar5 < 0x31f5)
+                {
+                  if (uVar5 == 0x31a1)
+                  {
+                    return 0;
+                  }
+                  if (uVar5 == 0x31cd)
+                  {
+                    return 0;
+                  }
+                }
+                else if ((1 << (cVar2 + 0xbU & 0x1f) & 0x1400005U) != 0)
+                {
+                  return 0;
+                }
+              }
+            }
+            else
+            {
+              if (uVar5 == 0x330a)
+              {
+                return 0;
+              }
+              if (uVar5 < 0x330b)
+              {
+                if (uVar5 == 0x327a)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x32d9)
+                {
+                  return 0;
+                }
+              }
+              else
+              {
+                if (uVar5 == 0x331a)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x337a)
+                {
+                  return 0;
+                }
+              }
+            }
+          }
+        }
+        else
+        {
+          if (uVar5 == 0x382e)
+          {
+            return 0;
+          }
+          if (uVar5 < 0x382f)
+          {
+            if (uVar5 == 0x35cd)
+            {
+              return 0;
+            }
+            if (uVar5 < 0x35ce)
+            {
+              if (uVar5 < 0x358f)
+              {
+                if (uVar5 < 0x3570)
+                {
+                  if (uVar5 == 0x34d1)
+                  {
+                    return 0;
+                  }
+                  if (uVar5 == 0x3547)
+                  {
+                    return 0;
+                  }
+                }
+                else if ((1 << (cVar2 + 0x90U & 0x1f) & 0x40038003U) != 0)
+                {
+                  return 0;
+                }
+              }
+              else if (uVar5 == 0x35b2)
+              {
+                return 0;
+              }
+            }
+            else
+            {
+              if (uVar5 == 0x3700)
+              {
+                return 0;
+              }
+              if (uVar5 < 0x3701)
+              {
+                if (uVar5 == 0x35df)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x3681)
+                {
+                  return 0;
+                }
+              }
+              else
+              {
+                if (uVar5 == 0x3704)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x37e7)
+                {
+                  return 0;
+                }
+              }
+            }
+          }
+          else
+          {
+            if (uVar5 == 0x3f81)
+            {
+              return 0;
+            }
+            if (uVar5 < 0x3f82)
+            {
+              if (uVar5 == 0x3d25)
+              {
+                return 0;
+              }
+              if (uVar5 < 0x3d26)
+              {
+                if (uVar5 == 0x3bed)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x3c9c)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x3a4b)
+                {
+                  return 0;
+                }
+              }
+              else
+              {
+                if (uVar5 == 0x3e38)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x3f37)
+                {
+                  return 0;
+                }
+              }
+            }
+            else
+            {
+              if (uVar5 == 0x4330)
+              {
+                return 0;
+              }
+              if (uVar5 < 0x4331)
+              {
+                if (uVar5 < 0x4186)
+                {
+                  if (0x4183 < uVar5)
+                  {
+                    return 0;
+                  }
+                }
+                else if (uVar5 == 0x42a7)
+                {
+                  return 0;
+                }
+              }
+              else
+              {
+                if (uVar5 == 0x4837)
+                {
+                  return 0;
+                }
+                if (uVar5 == 0x4b9c)
+                {
+                  return 0;
+                }
+              }
+            }
+          }
+        }
+      }
+      if (((cards_data[iid].extra_ability & 0x1000) != 0) || (uVar5 == 0x36eb))
+      {
+        return 2;
+      }
+      iVar3 = 1;
+      if ((cards_data[iid].extra_ability & 3) == 0)
+      {
+        uVar4 = check_card_for_rules_engine(iid);
+        return uVar4 >> 0xc & 1;
+      }
+    }
+  }
+  return iVar3;
+}
+
+/* ManalinkEh 2022: 0x26e0db0; original functions/abilities.c:3063. */
+void protection_from_everything(int player, int card, event_t event)
+{
+  if (event == EVENT_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      misc_protection(player, card, player);
+      return;
+    }
+  }
+  else if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    event_result = event_result | 1;
+    return;
+  }
+  return;
 }

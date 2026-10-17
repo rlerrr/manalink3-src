@@ -1255,3 +1255,180 @@ int card_crow_storm(int player, int card, event_t event)
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int test_ineffable_blessing_a(int iid, int val, int player, int card);
+static int test_words_in_name_mod_val(int iid, int val, int player, int card);
+
+/* ManalinkEh 2022: 0x25c4b50; original cards/unstable.c:155. */
+static int test_words_in_name_val(int iid, int val, int player, int card)
+{
+  int result;
+
+  result = words_in_name(player, card);
+  return (unsigned int)(result == val);
+}
+
+/* ManalinkEh 2022: 0x25c4b10; original cards/unstable.c:305. */
+static int test_words_in_name_mod_val(int iid, int val, int player, int card)
+{
+  int result;
+
+  result = words_in_name(player, card);
+  return (unsigned int)(result % 2 == val);
+}
+
+/* ManalinkEh 2022: 0x25c53e0; original cards/unstable.c:309. */
+int card_oddly_uneven(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        result =
+            dialog_impl(player, card, event, "\001\002", "Odd", 1, 1, "Even", 1, 1, 0, 0, 0, 0);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          default_test_definition(&test, 0x47);
+          test.value_for_special_selection_function = (int)(result == 1);
+          test.special_selection_function = test_words_in_name_mod_val;
+          new_manipulate_all(player, card, 2, &test, ACT_KILL_DESTROY);
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_025c54f4;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  dialog_impl(player, card, event, "\001\002", "Odd", 1, 1, "Even", 1, 1, 0, 0, 0, 0);
+LAB_025c54f4:
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25c4970; original cards/unstable.c:1661. */
+static int test_ineffable_blessing_a(int iid, int val, int player, int card)
+{
+  unsigned int uVar1;
+
+  uVar1 = (unsigned int)(val != 1);
+  if ((cards_ptr[cards_data[iid].id]->flavor_text != NULL) &&
+      (*cards_ptr[cards_data[iid].id]->flavor_text != '\0'))
+  {
+    uVar1 = (unsigned int)(val == 1);
+  }
+  return uVar1;
+}
+
+/* ManalinkEh 2022: 0x25c7c10; original cards/unstable.c:1666. */
+int card_ineffable_blessing_a(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  test_definition_t test;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    uVar3 = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\002", "\001\014", "\001\003",
+                        "Flavorful", 1, 1, "Bland", 1, 1, 0, 0, 0, 0);
+    instance = get_card_instance(player, card);
+    instance->targets[5].player = uVar3 | 0x46550000;
+    result = create_targetted_legacy_effect(player, card, fx_0, player, card);
+    alternate_legacy_text(uVar3, player, result);
+  }
+  else if ((trigger_condition == 0xdb) && (event - EVENT_TRIGGER < 2))
+  {
+
+    instance = get_card_instance(player, card);
+    uVar3 = instance->targets[5].player;
+    if (((short)(uVar3 >> 0x10) != 0x4655) || (uVar3 = uVar3 & 0xffff, 1 < uVar3 - 1))
+    {
+      return 0;
+    }
+    default_test_definition(&test, 2);
+    test.special_selection_function = test_ineffable_blessing_a;
+    test.value_for_special_selection_function = uVar3;
+    etb_ability_global(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  else if (event == EVENT_ETB)
+  {
+    draw_a_card(player);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *target_hasnt_reminder_text(int who_chooses, int player, int card, int targeting_player,
+                                        int targeting_card);
+
+/* ManalinkEh 2022: 0x25c4b80; original cards/unstable.c:342. */
+static char *target_hasnt_reminder_text(int who_chooses, int player, int card, int targeting_player,
+                                        int targeting_card)
+{
+  int result;
+  char *pcVar2;
+
+  result = has_reminder_text(player, card);
+  pcVar2 = NULL;
+  if (result != 0)
+  {
+    pcVar2 = "reminder text";
+  }
+  return pcVar2;
+}
+
+/* ManalinkEh 2022: 0x25c55c0; original cards/unstable.c:347. */
+int card_old_guard(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.special = 0x8000;
+    td.extra = (int32_t)target_hasnt_reminder_text;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.special = 0x8000;
+    td.extra = (int32_t)target_hasnt_reminder_text;
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+
+      instance = get_card_instance(player, card);
+      tap_card(instance->targets[0].player, instance->targets[0].card);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 1, 0, &td,
+                                     "TARGET_CREATURE");
+  return result;
+}

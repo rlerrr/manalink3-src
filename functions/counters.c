@@ -2204,3 +2204,596 @@ void remove_player_counters(int player, player_counter_names_t type, int amount)
 				break;
 	}
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int can_have_counters_placed_on_it(int player, int card);
+
+/* ManalinkEh 2022: 0x26d44d0; original functions/counters.c:2691. */
+int can_have_counters_placed_on_it(int player, int card)
+{
+  int result;
+
+  if (-1 < card)
+  {
+    result = get_id(player, card);
+    if ((result == 0x25db) || (result == 0x2cd6))
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      return (unsigned int)(result != 0);
+    }
+  }
+  return 1;
+}
+
+/* October 2022 source-aware counters. Legacy four-argument APIs above remain.
+ * Target trigger/mask numbers differ from the old engine; integration is pending. */
+int counters_added_type = -1; /* Target .data 0x02721d68, counters.c:7. */
+enum {
+  COUNTERS_2022_FLAGS_NONE = 0x0,
+  COUNTERS_2022_ENABLE_REPLACEMENT = 0x4,
+  COUNTERS_2022_ENABLE_M1_M1 = 0x40,
+  COUNTERS_2022_ENABLE_P1_P1 = 0x20,
+  COUNTERS_2022_REPLACE = 0x1000400,
+  COUNTERS_2022_M1_M1 = 0x1000d00,
+  COUNTERS_2022_P1_P1 = 0x1000c00,
+};
+
+/* ManalinkEh 2022: 0x26d4540; original functions/counters.c:919. */
+static int counter_number_as_cost_2022(int player, int card, counter_t type, int number)
+{
+  int result;
+  result = can_have_counters_placed_on_it(player, card);
+  if (result != 0)
+  {
+    if (type == COUNTER_M1_M1)
+    {
+      if ((-1 < card) && (result = is_what(player, card, 2), result == 0))
+      {
+        return number;
+      }
+      result = check_battlefield_for_id(player, 0x2d73);
+    }
+    else
+    {
+      if (type != COUNTER_P1_P1)
+      {
+        return number;
+      }
+      if ((-1 < card) && (result = is_what(player, card, 2), result == 0))
+      {
+        return number;
+      }
+      result = check_battlefield_for_id(1 - player, 0x4f3c);
+    }
+    if (result == 0)
+    {
+      return number;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x26d45f0; original functions/counters.c:933. */
+static int counter_number_2022_impl(int player, int card, counter_t type, int number)
+{
+  uint16_t uVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int card_00;
+  int iVar5;
+
+  iVar2 = counter_number_as_cost_2022(player, card, type, number);
+  if ((iVar2 != 0) && ((card < 0 || (iVar5 = is_what(player, card, 0x80), iVar5 == 0))))
+  {
+    iVar5 = 0;
+    do
+    {
+      card_00 = 0;
+      if (0 < active_cards_count[iVar5])
+      {
+        do
+        {
+          instance = in_play(iVar5, card_00);
+          if (instance != NULL)
+          {
+            uVar1 = cards_data[instance->internal_card_id].id;
+            if (uVar1 == 0x41bc)
+            {
+              if (player == iVar5)
+              {
+                iVar4 = is_what(player, card, 0x42);
+                iVar2 = (iVar2 + 1) - (unsigned int)(iVar4 == 0);
+              }
+            }
+            else if ((unsigned short)uVar1 < 0x41bd)
+            {
+              if (uVar1 == 0x3541)
+              {
+              LAB_026d4710:
+                if (type == COUNTER_P1_P1)
+                {
+                LAB_026d4671:
+                  iVar2 = iVar2 * 2;
+                }
+              }
+              else if ((unsigned short)uVar1 < 0x3542)
+              {
+                if (uVar1 == 0x1e90)
+                {
+                  if (player == iVar5)
+                    goto LAB_026d4671;
+                }
+                else if (uVar1 == 0x3192)
+                {
+                LAB_026d46e6:
+                  if ((player == iVar5) && (iVar4 = is_what(player, card, 2), iVar4 != 0))
+                    goto LAB_026d4710;
+                }
+              }
+              else if (uVar1 == 0x37c7)
+              {
+              LAB_026d46c8:
+                if (player == iVar5)
+                {
+                  iVar2 = (iVar2 + 1) - (unsigned int)(type != COUNTER_P1_P1);
+                }
+              }
+              else if (uVar1 == 0x39ba)
+                goto LAB_026d4671;
+            }
+            else if (uVar1 == 0x48bd)
+            {
+              iVar2 = iVar2 + (unsigned int)(player == iVar5);
+            }
+            else if ((unsigned short)uVar1 < 0x48be)
+            {
+              if (uVar1 == 0x42a5)
+              {
+                if ((player == iVar5) && (type == COUNTER_M1_M1))
+                {
+                  iVar4 = is_what(player, card, 2);
+                  iVar2 = iVar2 + -1 + (unsigned int)(iVar4 == 0);
+                }
+              }
+              else if ((uVar1 == 0x4348) && (iVar4 = is_what(iVar5, card, 0x47), iVar4 != 0))
+              {
+                iVar2 = iVar2 + -99;
+              }
+            }
+            else if (uVar1 == 0x4df1)
+            {
+              if (card == card_00)
+                goto LAB_026d46c8;
+            }
+            else if (uVar1 == 0x54d2)
+              goto LAB_026d46e6;
+          }
+          card_00 = card_00 + 1;
+        } while (card_00 < active_cards_count[iVar5]);
+      }
+      iVar5 = iVar5 + 1;
+    } while (iVar5 != 2);
+  }
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x26d4810; original functions/counters.c:933. */
+static int counter_number_2022(int player, int card, counter_t type, int number)
+{
+  int result;
+
+  if (0 < number)
+  {
+    result = counter_number_2022_impl(player, card, type, number);
+    return result;
+  }
+  return number;
+}
+
+/* ManalinkEh 2022: 0x26d0e90; original functions/counters.c:1012. */
+static void add_or_remove_counters_from_source_impl(int player, int card, int t_player, int t_card,
+                                                    counter_t type, int num)
+{
+  uint16_t uVar1;
+  bool bVar2;
+  int iVar3;
+  unsigned char bVar4;
+  uint8_t uVar5;
+  card_instance_t *instance;
+  counter_t cVar6;
+  const char *pcVar7;
+  int iVar8;
+  uint8_t *label;
+  int iStack_1c;
+  uint8_t *position;
+  iVar3 = counters_added;
+  iVar8 = counters_added_type;
+  if ((0 < num) && (((uint8_t)enable_xtrigger_flags & COUNTERS_2022_ENABLE_REPLACEMENT) !=
+                    COUNTERS_2022_FLAGS_NONE))
+  {
+    counters_added = num;
+    counters_added_type = type;
+    pcVar7 = "counters";
+    if (num < 2)
+    {
+      pcVar7 = "counter";
+    }
+    dispatch_xtrigger2(t_player, COUNTERS_2022_REPLACE, pcVar7, 0, t_player, t_card);
+  }
+  counters_added_type = iVar8;
+  counters_added = iVar3;
+  instance = get_card_instance(t_player, t_card);
+  label = (uint8_t *)(instance->targets + 0x12);
+  switch (type)
+  {
+  case COUNTER_P1_P1:
+    position = (uint8_t *)&instance->counters;
+    iStack_1c = 1;
+    goto code_r0x026d1118;
+  case COUNTER_M1_M1:
+    position = (uint8_t *)&instance->counters_m1m1;
+    iStack_1c = -1;
+  code_r0x026d1118:
+    label = NULL;
+    bVar4 = *position;
+    iVar8 = iStack_1c;
+    goto LAB_026d1122;
+  case COUNTER_P0_P1:
+    iVar8 = 1;
+    iStack_1c = 0;
+    break;
+  case COUNTER_P0_P2:
+    iVar8 = 2;
+    iStack_1c = 0;
+    break;
+  case COUNTER_P1_P0:
+    iVar8 = 0;
+    iStack_1c = 1;
+    break;
+  case COUNTER_P1_P2:
+    iVar8 = 2;
+    iStack_1c = 1;
+    break;
+  case COUNTER_P2_P0:
+    iVar8 = 0;
+    iStack_1c = 2;
+    break;
+  case COUNTER_P2_P2:
+    iVar8 = 2;
+    iStack_1c = 2;
+    break;
+  case COUNTER_M0_M1:
+    iVar8 = -1;
+    iStack_1c = 0;
+    break;
+  case COUNTER_M0_M2:
+    iVar8 = -2;
+    iStack_1c = 0;
+    break;
+  case COUNTER_M1_M0:
+    iVar8 = 0;
+    iStack_1c = -1;
+    break;
+  case COUNTER_M2_M1:
+    iVar8 = -1;
+    iStack_1c = -2;
+    break;
+  case COUNTER_M2_M2:
+    iVar8 = -2;
+    iStack_1c = -2;
+    break;
+  default:
+    iVar8 = 0;
+    iStack_1c = 0;
+  }
+  bVar4 = instance->special_counter_type;
+  position = (uint8_t *)instance;
+  if (type == bVar4)
+  {
+    if (instance->special_counters == '\0')
+    {
+      instance->special_counter_type = 0xff;
+      goto LAB_026d0f68;
+    }
+    label = (uint8_t *)&instance->special_counter_type;
+  LAB_026d1018:
+    if (bVar4 != 0xff)
+    {
+      bVar4 = *position;
+      if (num < 1)
+        goto LAB_026d102d;
+    LAB_026d112a:
+      if ((int)((unsigned int)bVar4 + num) < 0x100)
+      {
+        *position = bVar4 + (char)num;
+        if (label == NULL)
+          goto LAB_026d1340;
+      }
+      else
+      {
+        num = 0xff - (unsigned int)bVar4;
+        *position = bVar4 + (char)num;
+        if (label == NULL)
+          goto LAB_026d115d;
+      }
+      *(uint8_t *)&*label = (uint8_t)type;
+      goto LAB_026d115d;
+    }
+  LAB_026d1308:
+    *position = '\0';
+    bVar4 = 0;
+  LAB_026d1122:
+    if (0 < num)
+      goto LAB_026d112a;
+  LAB_026d102d:
+    if (-1 < num)
+    {
+    LAB_026d1033:
+      uVar5 = bVar4 + (char)num;
+      *position = uVar5;
+      if (label == NULL)
+        goto LAB_026d115d;
+    LAB_026d1042:
+      if ((uVar5 == '\0') &&
+          ((*(uint8_t *)&*label = 0xff,
+            label == (uint8_t *)&instance->special_counter_type ||
+                (label <= (uint8_t *)((int)&instance->targets[0x12].player + 3U)))))
+      {
+        uVar5 = (uint8_t)instance->targets[0x12].card;
+        if ((uVar5 == '\0') || (*(char *)((int)&instance->targets[0x12].card + 2) == -1))
+        {
+          uVar5 = *(uint8_t *)((int)&instance->targets[0x12].card + 1);
+          if ((uVar5 != '\0') && (*(char *)((int)&instance->targets[0x12].card + 3) != -1))
+          {
+            *position = uVar5;
+            *(uint8_t *)&*label = *(uint8_t *)((int)&instance->targets[0x12].card + 3);
+            *(uint8_t *)((int)&instance->targets[0x12].card + 1) = 0;
+            *(uint8_t *)((int)&instance->targets[0x12].card + 3) = 0xff;
+          }
+        }
+        else
+        {
+          *position = uVar5;
+          *(uint8_t *)&*label = *(uint8_t *)((int)&instance->targets[0x12].card + 2);
+          *(uint8_t *)&instance->targets[0x12].card = 0;
+          *(uint8_t *)((int)&instance->targets[0x12].card + 2) = 0xff;
+        }
+      }
+      goto LAB_026d115d;
+    }
+    if ((int)((unsigned int)bVar4 + num) < 0)
+    {
+      num = -(unsigned int)bVar4;
+      goto LAB_026d1033;
+    }
+    uVar5 = bVar4 + (char)num;
+    *position = uVar5;
+    if (label != NULL)
+      goto LAB_026d1042;
+  LAB_026d1340:
+    if (iStack_1c != 0)
+    {
+      instance->counter_power = instance->counter_power + (short)iStack_1c * (short)num;
+      instance->regen_status = instance->regen_status | 0x4000000;
+    }
+    if (iVar8 != 0)
+    {
+      uVar1 = instance->counter_toughness;
+      instance->regen_status = instance->regen_status | 0x2000000;
+      instance->counter_toughness = uVar1 + (short)iVar8 * (short)num;
+    }
+    if (0 < num)
+    {
+      if (hack_silent_counters < 1)
+      {
+        play_sound_effect(WAV_COUNTER);
+      }
+      iVar3 = counters_added;
+      iVar8 = counters_added_type;
+      counters_added_type = type;
+      counters_added = num;
+      dispatch_event_with_attacker(t_player, t_card, EVENT_COUNTERS, player, card);
+      counters_added_type = iVar8;
+      counters_added = iVar3;
+      if (type == COUNTER_P1_P1)
+      {
+        iVar8 = is_what(t_player, t_card, 0x47);
+        if (iVar8 != 0)
+        {
+          set_trap_condition(t_player, 0x607, 1);
+        }
+        iVar8 = counters_added;
+        if (((uint8_t)enable_xtrigger_flags & COUNTERS_2022_ENABLE_P1_P1) ==
+            COUNTERS_2022_FLAGS_NONE)
+        {
+          return;
+        }
+        pcVar7 = "+1/+1 counters";
+        if (num < 2)
+        {
+          pcVar7 = "+1/+1 counter";
+        }
+        counters_added = num;
+        dispatch_xtrigger2(t_player, COUNTERS_2022_P1_P1, pcVar7, 0, t_player, t_card);
+        counters_added = iVar8;
+        return;
+      }
+      bVar2 = true;
+      goto LAB_026d11b8;
+    }
+  }
+  else
+  {
+  LAB_026d0f68:
+    bVar4 = (unsigned char)instance->targets[0x12].player;
+    if (type == bVar4)
+    {
+      if (instance->counters2 != '\0')
+      {
+        position = (uint8_t *)&instance->counters2;
+        goto LAB_026d1018;
+      }
+      *(uint8_t *)&instance->targets[0x12].player = 0xff;
+    }
+    bVar4 = *(unsigned char *)((int)&instance->targets[0x12].player + 1);
+    if (type == bVar4)
+    {
+      if (instance->counters3 != '\0')
+      {
+        label = (uint8_t *)((int)&instance->targets[0x12].player + 1);
+        position = (uint8_t *)&instance->counters3;
+        goto LAB_026d1018;
+      }
+      *(uint8_t *)((int)&instance->targets[0x12].player + 1) = 0xff;
+    }
+    bVar4 = *(unsigned char *)((int)&instance->targets[0x12].player + 2);
+    if (type == bVar4)
+    {
+      if (instance->counters4 != '\0')
+      {
+        label = (uint8_t *)((int)&instance->targets[0x12].player + 2);
+        position = (uint8_t *)&instance->counters4;
+        goto LAB_026d1018;
+      }
+      *(uint8_t *)((int)&instance->targets[0x12].player + 2) = 0xff;
+    }
+    bVar4 = *(unsigned char *)((int)&instance->targets[0x12].player + 3);
+    if (type == bVar4)
+    {
+      if (instance->counters5 != '\0')
+      {
+        label = (uint8_t *)((int)&instance->targets[0x12].player + 3);
+        position = (uint8_t *)&instance->counters5;
+        goto LAB_026d1018;
+      }
+      *(uint8_t *)((int)&instance->targets[0x12].player + 3) = 0xff;
+    }
+    bVar4 = *(unsigned char *)((int)&instance->targets[0x12].card + 2);
+    if (type == bVar4)
+    {
+      if ((char)instance->targets[0x12].card != '\0')
+      {
+        label = (uint8_t *)((int)&instance->targets[0x12].card + 2);
+        position = (uint8_t *)&instance->targets[0x12].card;
+        goto LAB_026d1018;
+      }
+      *(uint8_t *)((int)&instance->targets[0x12].card + 2) = 0xff;
+    }
+    bVar4 = *(unsigned char *)((int)&instance->targets[0x12].card + 3);
+    if (type == bVar4)
+    {
+      if (*(char *)((int)&instance->targets[0x12].card + 1) != '\0')
+      {
+        label = (uint8_t *)((int)&instance->targets[0x12].card + 3);
+        position = (uint8_t *)((int)&instance->targets[0x12].card + 1);
+        goto LAB_026d1018;
+      }
+      *(uint8_t *)((int)&instance->targets[0x12].card + 3) = 0xff;
+    }
+    if (num < 0)
+    {
+      return;
+    }
+    uVar5 = instance->special_counters;
+    if ((uVar5 == '\0') && (cVar6 = get_counter_type_by_instance(instance), type == cVar6))
+    {
+    LAB_026d1009:
+      label = (uint8_t *)&instance->special_counter_type;
+      bVar4 = instance->special_counter_type;
+      goto LAB_026d1018;
+    }
+    if (instance->counters2 == '\0')
+    {
+      bVar4 = (unsigned char)instance->targets[0x12].player;
+      position = (uint8_t *)&instance->counters2;
+      goto LAB_026d1018;
+    }
+    if (instance->counters3 == '\0')
+    {
+      label = (uint8_t *)((int)&instance->targets[0x12].player + 1);
+      bVar4 = *(unsigned char *)((int)&instance->targets[0x12].player + 1);
+      position = (uint8_t *)&instance->counters3;
+      goto LAB_026d1018;
+    }
+    if (instance->counters4 == '\0')
+    {
+      label = (uint8_t *)((int)&instance->targets[0x12].player + 2);
+      bVar4 = *(unsigned char *)((int)&instance->targets[0x12].player + 2);
+      position = (uint8_t *)&instance->counters4;
+      goto LAB_026d1018;
+    }
+    if (instance->counters5 == '\0')
+    {
+      label = (uint8_t *)((int)&instance->targets[0x12].player + 3);
+      bVar4 = *(unsigned char *)((int)&instance->targets[0x12].player + 3);
+      position = (uint8_t *)&instance->counters5;
+      goto LAB_026d1018;
+    }
+    if (uVar5 == '\0')
+      goto LAB_026d1009;
+    if (*(char *)((int)&instance->targets[0x12].card + 2) == -1)
+    {
+      position = (uint8_t *)&instance->targets[0x12].card;
+      label = (uint8_t *)((int)&instance->targets[0x12].card + 2);
+      goto LAB_026d1308;
+    }
+    if (*(char *)((int)&instance->targets[0x12].card + 3) == -1)
+    {
+      position = (uint8_t *)((int)&instance->targets[0x12].card + 1);
+      label = (uint8_t *)((int)&instance->targets[0x12].card + 3);
+      goto LAB_026d1308;
+    }
+  LAB_026d115d:
+    if (num != 0)
+      goto LAB_026d1340;
+  }
+  iVar3 = counters_added;
+  iVar8 = counters_added_type;
+  counters_added_type = type;
+  counters_added = num;
+  dispatch_event_with_attacker(t_player, t_card, EVENT_COUNTERS, player, card);
+  bVar2 = 0 < num;
+  counters_added_type = iVar8;
+  counters_added = iVar3;
+LAB_026d11b8:
+  iVar8 = counters_added;
+  if (((type == COUNTER_M1_M1) && (bVar2)) &&
+      (((uint8_t)enable_xtrigger_flags & COUNTERS_2022_ENABLE_M1_M1) != COUNTERS_2022_FLAGS_NONE))
+  {
+    pcVar7 = "-1/-1 counters";
+    if (num < 2)
+    {
+      pcVar7 = "-1/-1 counter";
+    }
+    counters_added = num;
+    dispatch_xtrigger2(t_player, COUNTERS_2022_M1_M1, pcVar7, 0, t_player, t_card);
+  }
+  counters_added = iVar8;
+  return;
+}
+
+/* ManalinkEh 2022: 0x26d4840; original functions/counters.c:1266. */
+void add_counters_from_source(int player, int card, int t_player, int t_card, counter_t type,
+                              int num)
+{
+  card_instance_t *instance;
+  int num_00;
+
+  instance = get_card_instance(t_player, t_card);
+  if (instance->internal_card_id == activation_card)
+  {
+    t_player = instance->parent_controller;
+    t_card = instance->parent_card;
+  }
+  if (0 < num)
+  {
+    num_00 = counter_number_2022(t_player, t_card, type, num);
+    if (0 < num_00)
+    {
+      add_or_remove_counters_from_source_impl(player, card, t_player, t_card, type, num_00);
+      return;
+    }
+  }
+  return;
+}

@@ -856,3 +856,52 @@ int sacrifice_and_report_value(int player, int card, int t_player, int flags, te
 	}
 	return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26e36e0; original functions/sacrifices.c:4. */
+static type_t types_cannot_sac(void)
+{
+  card_instance_t *instance;
+  int result;
+  int card;
+  int player;
+  type_t tVar3;
+
+  tVar3 = TYPE_NONE;
+  player = 0;
+  do
+  {
+    card = 0;
+    if (0 < active_cards_count[player])
+    {
+      do
+      {
+        while (true)
+        {
+          instance = in_play(player, card);
+          if (((instance != NULL) && (cards_data[instance->internal_card_id].id == 0x3010)) &&
+              (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+          {
+            tVar3 = tVar3 | TYPE_CREATURE;
+          }
+          instance = in_play(player, card);
+          if (((instance != NULL) && (cards_data[instance->internal_card_id].id == 0x5626)) &&
+              (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+            break;
+          card = card + 1;
+          if (active_cards_count[player] <= card)
+            goto LAB_026e3798;
+        }
+        card = card + 1;
+        tVar3 = TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_ENCHANTMENT | TYPE_CREATURE;
+      } while (card < active_cards_count[player]);
+    }
+  LAB_026e3798:
+    player = player + 1;
+    if (player == 2)
+    {
+      return tVar3;
+    }
+  } while (true);
+}

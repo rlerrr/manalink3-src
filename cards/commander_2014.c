@@ -2924,3 +2924,94 @@ int card_zoetic_cavern(int player, int card, event_t event){
 }
 
 // Skyhunter Skirmisher --> vanilla
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21d9af0; original cards/commander_2014.c:2237. */
+static int titania_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  token_generation_t token;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (iVar2 = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           iVar2 != 0x389d))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (iVar2 = effect_follows_control_of_attachment(player, card, 0x4700), iVar2 != 0))
+    {
+      return 0;
+    }
+  LAB_021d9b25:
+    iVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (iVar2 == 0)
+      goto LAB_021d9b47;
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (iVar2 = effect_follows_control_of_attachment(player, card, event), iVar2 != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_021d9b25;
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar3 = in_play(affected_card_controller, affected_card);
+    if ((pcVar3 != NULL) &&
+        (iVar2 = is_this_dying(affected_card_controller, affected_card), iVar2 != 0))
+    {
+
+      if ((pcVar1->damage_target_card == affected_card) &&
+          (pcVar1->damage_target_player == affected_card_controller))
+      {
+        pcVar1->damage_target_card = -1;
+        pcVar1->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar1->targets[0xb].player < 0)
+        {
+          pcVar1->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+      }
+      count_for_gfp_ability(player, card, 0x77, player, 1, NULL);
+    }
+    iVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (iVar2 == 0)
+    {
+      return 0;
+    }
+  }
+  iVar4 = check_status(player, card, 0x10000);
+  if (iVar4 == 0)
+  {
+    default_token_definition(player, card, 0x4926, &token);
+    token.pow = 5;
+    token.tou = 3;
+    token.qty = (unsigned char)iVar2;
+    token.color_forced = '\b';
+    generate_token(&token);
+    kill_card(player, card, KILL_EXILE);
+  }
+LAB_021d9b47:
+  if ((event == EVENT_CLEANUP) && (iVar2 = check_status(player, card, 0x10000), iVar2 == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}

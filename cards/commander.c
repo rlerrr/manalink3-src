@@ -1705,4 +1705,41 @@ At the beginning of your upkeep, you gain X life and draw X cards, where X is th
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int count_permanents_you_control_but_you_dont_own(int player, int type);
 
+/* ManalinkEh 2022: 0x23e5c70; original cards/commander.c:1663. */
+int count_permanents_you_control_but_you_dont_own(int player, int type)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int card;
+  int player_00;
+  int iVar3;
+
+  iVar3 = 0;
+  player_00 = 0;
+  do
+  {
+
+    if (((player == player_00) || (player_00 == 2)) &&
+        (card = active_cards_count[player_00] + -1, -1 < card))
+    {
+      instance = in_play(player_00, card);
+      while (true)
+      {
+        if ((instance != NULL) && (iVar2 = is_what(player_00, card, type), iVar2 != 0))
+        {
+          iVar2 = is_stolen(player_00, card);
+          iVar3 = (iVar3 + 1) - (unsigned int)(iVar2 == 0);
+        }
+        card = card + -1;
+        if (card == -1)
+          break;
+        instance = in_play(player_00, card);
+      }
+    }
+    player_00 = player_00 + 1;
+  } while (player_00 != 2);
+  return iVar3;
+}

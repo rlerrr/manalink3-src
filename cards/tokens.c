@@ -593,3 +593,79 @@ int card_pest_token(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2582f40; original cards/tokens.c:623. */
+int card_construct(int player, int card, event_t event)
+{
+  int result;
+
+  result = get_special_infos(player, card);
+  if (result == 0x42)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if ((((result == 0) && (event - EVENT_POWER < 2)) && (card == affected_card)) &&
+        (player == affected_card_controller))
+    {
+      result = count_subtype(player, 0x40, -1);
+      event_result = event_result + result;
+    }
+  }
+  result = generic_token(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25830a0; original cards/tokens.c:647. */
+int card_sculpture_token(int player, int card, event_t event)
+{
+  int result;
+
+  if ((-1 < player) && (-1 < card))
+  {
+    if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
+        (player == affected_card_controller))
+    {
+      result = get_special_infos(player, card);
+      if (result == 0x42)
+      {
+        result = count_subtype(player, -1, 0x101);
+        set_characteristic_pt(result);
+      }
+    }
+    result = generic_token(player, card, event);
+    return result;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2583240; original cards/tokens.c:676. */
+int card_nightmare_token(int player, int card, event_t event)
+{
+  int result;
+
+  if ((player < 0) || (card < 0))
+  {
+    return 0;
+  }
+  result = get_special_infos(player, card);
+  if (result == 0x42)
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+      if (event != EVENT_DAT_ABILITY)
+      {
+        result = blocking(player, card, event);
+        if (result == 0)
+          goto LAB_0258326b;
+      }
+      rfg_top_card_of_deck(1 - player);
+      rfg_top_card_of_deck(1 - player);
+    }
+  }
+LAB_0258326b:
+  result = generic_token(player, card, event);
+  return result;
+}

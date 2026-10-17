@@ -7556,3 +7556,67 @@ int card_keldon_halberdier(int player, int card, event_t event)
   result = suspend(player, card, event, 4, 0, 0, 0, 0, 1, 0, NULL, NULL);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int glass_asp_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x20e9460; original cards/time_spiral.c:2543. */
+int glass_asp_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event != EVENT_PHASE_CHANGED)
+  {
+    return 0;
+  }
+  if (current_phase == 10)
+  {
+    instance = get_card_instance(player, card);
+    if ((instance->targets[1].player != 0x42) &&
+        (instance = get_card_instance(player, card), instance->targets[0].player == current_turn))
+    {
+
+      result = has_mana(current_turn, 0, 2);
+      if ((result == 0) || (charge_mana_while_resolving(player, card, EVENT_DRAW_PHASE,
+                                                        current_turn, COLOR_COLORLESS, 2),
+                            spell_fizzled == 1))
+      {
+        instance = get_card_instance(player, card);
+        damage_player(instance->targets[0].player, 2, player, card);
+      }
+      instance = get_card_instance(player, card);
+      instance->targets[1].player = 0x42;
+      kill_card(player, card, KILL_EXILE);
+    }
+    if (current_phase == 10)
+    {
+      return 0;
+    }
+  }
+  instance = get_card_instance(player, card);
+  instance->targets[1].player = 0;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20f1d10; original cards/time_spiral.c:2569. */
+int card_glass_asp(int player, int card, event_t event)
+{
+  int32_t iVar1;
+  int iVar2;
+  card_instance_t *instance;
+
+  iVar2 =
+      damage_dealt_by_me(player, card, event, DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER);
+  if (iVar2 == 0)
+  {
+    return 0;
+  }
+
+  instance = get_card_instance(player, card);
+  iVar1 = instance->targets[1].player;
+  iVar2 = create_legacy_effect(player, card, glass_asp_legacy);
+  instance = get_card_instance(player, iVar2);
+  instance->targets[0].player = (unsigned int)((char)iVar1 == '\0');
+  return 0;
+}

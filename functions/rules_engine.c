@@ -3595,3 +3595,32 @@ int get_aftermath(int player, int card)
   result = check_special_flags(player, card, 0x200000);
   return (unsigned int)(result != 0);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26c5ff0; original functions/rules_engine.c:439. */
+int companion_effect(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = can_sorcery_be_played(player, EVENT_CAN_ACTIVATE);
+    if (result != 0)
+    {
+      result = has_mana(player, 0, 3);
+      return (unsigned int)(result != 0);
+    }
+  }
+  else if (((event == EVENT_ACTIVATE) &&
+            (result = charge_mana(player, COLOR_COLORLESS, 3), result != 0)) &&
+           (spell_fizzled != 1))
+  {
+    instance = get_card_instance(player, card);
+    result = get_internal_card_id_from_csv_id((unsigned int)instance->display_pic_csv_id);
+    add_card_to_hand(player, result);
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}

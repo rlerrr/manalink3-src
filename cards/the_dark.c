@@ -3926,3 +3926,25 @@ int card_wormwood_treefolk(int player, int card, event_t event){
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x242fb80; original cards/the_dark.c:1736. */
+int card_goblins_of_the_flarg(int player, int card, event_t event)
+{
+  int result;
+
+  if (((event == EVENT_STATIC_EFFECTS) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      result = check_battlefield_for_subtype(player, -1, 0x36);
+      if (result != 0)
+      {
+        kill_card(player, card, KILL_SACRIFICE);
+      }
+    }
+  }
+  return 0;
+}

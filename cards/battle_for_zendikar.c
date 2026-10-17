@@ -5529,3 +5529,98 @@ int card_spawning_bed(int player, int card, event_t event)
 
 /* Forest	""	=>magic.exe:card_forest
  * Basic Land - |H2Forest */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x244cb90; original cards/battle_for_zendikar.c:4214. */
+static int catacomb_sifter_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+  unsigned int uVar4;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           result != 0x3bbb))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
+    {
+      return 0;
+    }
+  LAB_0244ccb0:
+    uVar4 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar4 == 0)
+      goto joined_r0x0244ccd5;
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_0244ccb0;
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar2 = in_play(affected_card_controller, affected_card);
+    if ((pcVar2 != NULL) &&
+        (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+    {
+
+      if ((pcVar1->damage_target_card == affected_card) &&
+          (pcVar1->damage_target_player == affected_card_controller))
+      {
+        pcVar1->damage_target_card = -1;
+        pcVar1->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar1->targets[0xb].player < 0)
+        {
+          pcVar1->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+        return 0;
+      }
+      count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
+    }
+    uVar4 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar4 == 0)
+    {
+      return 0;
+    }
+  }
+  result = check_status(player, card, 0x10000);
+  if (result == 0)
+  {
+
+    uVar4 = uVar4 & 0xff;
+    if (uVar4 != 0)
+    {
+      do
+      {
+        uVar4 = uVar4 - 1;
+        scry(player, 1);
+      } while (0 < (int)uVar4);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+joined_r0x0244ccd5:
+  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}

@@ -1230,3 +1230,61 @@ static int has_globe_counter(int unused, int unused2, int player, int card)
   result = count_counters(player, card, COUNTER_GLOBE);
   return (unsigned int)(result != 0);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2411480; original cards/promo.c:1596. */
+int card_bog_humbugs(int player, int card, event_t event)
+{
+  int result;
+
+  result = damage_dealt_by_me(player, card, event, DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (result == 0)
+  {
+    return 0;
+  }
+  play_sound_effect(WAV_POLKAMIX);
+  hack_silent_counters = hack_silent_counters + 1;
+  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  hack_silent_counters = hack_silent_counters + -1;
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2410730; original cards/promo.c:1314. */
+int card_fruitcake_elemental(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  indestructible(player, card, event);
+  if ((current_turn == player) && (result = eot_trigger(player, card, event), result != 0))
+  {
+    damage_player(player, 7, player, card);
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+
+    if (((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0)) &&
+        (instance = get_card_instance(player, card), instance->targets[0].player == 1 - player))
+    {
+      give_control_of_self(instance->parent_controller, instance->parent_card);
+    }
+  }
+  result =
+      generic_activated_ability(player, card, event, 4, 3, 0, 0, 0, 0, 0, 0, &td, "TARGET_PLAYER");
+  return result;
+}

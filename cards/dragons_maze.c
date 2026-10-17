@@ -4239,3 +4239,46 @@ int card_mazes_end(int player, int card, event_t event){
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int notion_thief_effect(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2297700; original cards/dragons_maze.c:2176. */
+int notion_thief_effect(int player, int card, event_t event)
+{
+  CardFunction p_Var1;
+  card_instance_t *instance;
+  int result;
+
+  instance = in_play(player, card);
+  if (((((instance != NULL) && (result = is_humiliated_for_ability(player, card, AL_STATIC),
+                                trigger_condition == 0xcf)) &&
+        (card == affected_card)) &&
+       ((player == affected_card_controller && (reason_for_trigger_controller != player)))) &&
+      (result == 0 && suppress_draw == 0))
+  {
+    if (event == EVENT_TRIGGER)
+    {
+      event_result = event_result | 2;
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_TRIGGER)
+    {
+
+      instance = get_card_instance(player, card);
+      if ((current_phase == 10) &&
+          (p_Var1 = instance->info_slot_fn, instance->info_slot = (int32_t)(p_Var1 + 1),
+           (int)(p_Var1 + 1) < 2))
+      {
+        return 0;
+      }
+      suppress_draw = 1;
+      return 1;
+    }
+  }
+  if (event == EVENT_CLEANUP)
+  {
+    instance = get_card_instance(player, card);
+    instance->info_slot = 0;
+  }
+  return 0;
+}

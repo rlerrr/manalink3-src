@@ -1,0 +1,1702 @@
+{
+  "release": "October 2022 Hotfix",
+  "dwarf_source": "G:/Manalink/ManalinkEh_10_22_Hotfix.dbg",
+  "anonymous_member_evidence": {
+    "44": {
+      "name": null,
+      "members": [
+        {
+          "name": "ext",
+          "offset": null,
+          "type": null
+        }
+      ]
+    },
+    "56": {
+      "name": null,
+      "members": [
+        {
+          "name": "info_slot",
+          "offset": null,
+          "type": "int32_t"
+        },
+        {
+          "name": "info_slot_fn",
+          "offset": null,
+          "type": "CardFunction"
+        }
+      ]
+    },
+    "76": {
+      "name": null,
+      "members": [
+        {
+          "name": "eot_toughness",
+          "offset": null,
+          "type": "uint32_t"
+        },
+        {
+          "name": null,
+          "offset": null,
+          "type": null
+        }
+      ]
+    }
+  },
+  "projected_members": [
+    "info_slot",
+    "info_slot_fn",
+    "eot_toughness",
+    "eot_toughness0",
+    "eot_toughness1",
+    "eot_toughness2",
+    "eot_toughness3"
+  ],
+  "extension_pointer_projected": false,
+  "shared_linkage": [
+    {
+      "name": "pump_when_blocked",
+      "address": "0x2642ad0",
+      "coff_storage": 2,
+      "change": "Existing implementation made public; body retained."
+    },
+    {
+      "name": "real_play_spell_for_free",
+      "address": "0x2668760",
+      "coff_storage": 2,
+      "change": "Existing implementation made public; body retained."
+    },
+    {
+      "name": "reinforce",
+      "address": "0x227ec90",
+      "coff_storage": 2,
+      "change": "Existing implementation made public; body retained."
+    },
+    {
+      "name": "get_sleighted_hacked_suppressed_ability",
+      "address": "0x267a790",
+      "coff_storage": 2,
+      "change": "Existing implementation made public; body retained."
+    }
+  ],
+  "tail_calls": {
+    "corrected_deferred_entries": 2857,
+    "new_overrides": 414,
+    "rule": "Direct unconditional jumps outside the caller DWARF extent to exact known function entry points become Ghidra CALL_RETURN flow."
+  },
+  "supplemental_exports": [
+    {
+      "address": "0x2678680",
+      "end": "0x26786d8",
+      "source": "functions/functions.c",
+      "name": "has_only_1_target_and_could_legally_change_target",
+      "reason": "Private callback required by recovered deflection helpers; same-named private function exists in a different source unit."
+    }
+  ],
+  "zero_flags": {
+    "DDBM_0": 0,
+    "SARV_0": 0,
+    "SFG_0": 0
+  },
+  "mode_byte": {
+    "size": 300,
+    "members": [
+      {
+        "name": null,
+        "offset": 44,
+        "die": "0xb1b60",
+        "type": "0xb157a"
+      },
+      {
+        "name": "mode",
+        "offset": 55,
+        "die": "0xb1ba3",
+        "type": "0x68da"
+      },
+      {
+        "name": null,
+        "offset": 56,
+        "die": "0xb1bb2",
+        "type": "0xb18a7"
+      },
+      {
+        "name": null,
+        "offset": 76,
+        "die": "0xb1c2e",
+        "type": "0xb194a"
+      }
+    ]
+  },
+  "ability_loss_values": {
+    "AL_UNUSED": 1,
+    "AL_TRIG": 2,
+    "AL_STATIC": 4,
+    "AL_NM_NL_ACT": 8,
+    "AL_MANA": 16,
+    "AL_LOYALTY": 32,
+    "AL_KEY": 64,
+    "AL_INDESTRUCTIBLE": 128,
+    "AL_DEFENDER": 256,
+    "AL_NM_ACT": 40,
+    "AL_ALL_ACT": 56,
+    "AL_ALL_NM": 110,
+    "AL_NOT_KEY": 62,
+    "AL_ALL": 126
+  },
+  "manalink_event_values": {
+    "EVENT_CHAPTER1": 6144,
+    "EVENT_CHAPTER2": 6400,
+    "EVENT_CHAPTER3": 6656,
+    "EVENT_CHAPTER4": 6912,
+    "EVENT_COMMANDER_TO_COMMAND_ZONE": 7168,
+    "EVENT_CANT_CREW": {
+      "target": 7424,
+      "status": "Existing shared value 0x4f00 retained; requires downstream reconciliation."
+    },
+    "EVENT_SP_ABILITY": 7680,
+    "EVENT_SPA": 7680,
+    "EVENT_DAT_ABILITY": 7936,
+    "EVENT_CARD_TO_EXILE": 8192,
+    "EVENT_COUNTERSPELL": 22016,
+    "EVENT_EXPLORE": 22272,
+    "EVENT_COUNTERS": 22528,
+    "EVENT_QUERY_CUMULATIVE_UPKEEP": 22784,
+    "EVENT_REMOVED_FROM_GRAVEYARD": 23040,
+    "EVENT_COIN_FLIP_WON_OR_LOST": 23296,
+    "EVENT_SPELL_COPIED": 23552,
+    "EVENT_QUERY": 23808,
+    "EVENT_QUERY_AFF": 24064,
+    "EVENT_LEAVES_PLAY_ABILITY": 24320,
+    "EVENT_LTB": 24320,
+    "EVENT_ATTACK_LEGALITY_ALL": 24576,
+    "EVENT_PROT_MISC": 24832,
+    "EVENT_SPELL_CAST": 25088,
+    "EVENT_LAND_PLAYED": 25344,
+    "EVENT_THIS_SPELL_CAST": 25600
+  },
+  "keyword_zero_flags": {
+    "KEYWORD_0": 0,
+    "SP_KEYWORD_0": 0
+  },
+  "typed_globals": [
+    {
+      "name": "raw_characteristic_pt",
+      "address": "0x2721d60",
+      "type": "int",
+      "bytes": 4,
+      "initial_value": 1,
+      "source": "functions/events.c",
+      "line": 787
+    },
+    {
+      "name": "raw_base_pt",
+      "address": "0x2721d64",
+      "type": "int",
+      "bytes": 4,
+      "initial_value": 1,
+      "source": "functions/events.c",
+      "line": 786
+    }
+  ],
+  "interface_adaptations": [
+    {
+      "original": "is_humiliated(int player, int card, ability_loss_t mode)",
+      "recovered": "is_humiliated_for_ability",
+      "address": "0x26dd430",
+      "worker": "0x26dd050",
+      "operation": "Return zero for -1 player/card; otherwise return positive targets[17].card masked by mode.",
+      "integration": "The existing two-argument API and its writers retain their legacy behavior. The recovered check needs the newer ability-loss bitmask writers downstream."
+    }
+  ],
+  "string_recovery": {
+    "contexts": {
+      "dialog_impl": "Direct read-only address arguments after the first three parameters.",
+      "new_default_test_definition": "Direct read-only prompt address at parameter index 2."
+    },
+    "accepted_bytes": "NUL-terminated ASCII text or two-byte dialog controls; only DLL .rdata without write permission.",
+    "alias_strategy": "Only one matching .rdata symbol address in the caller operands is accepted.",
+    "caller_aliases": [
+      {
+        "function": "23c6560",
+        "alias": "_rdata",
+        "address": "02746da8"
+      },
+      {
+        "function": "23b1850",
+        "alias": "_rdata",
+        "address": "02745e10"
+      },
+      {
+        "function": "25e6a60",
+        "alias": "_rdata",
+        "address": "02759054"
+      },
+      {
+        "function": "22883c0",
+        "alias": "_rdata",
+        "address": "0273a0a4"
+      },
+      {
+        "function": "2485f50",
+        "alias": "_rdata",
+        "address": "0274da38"
+      },
+      {
+        "function": "2212970",
+        "alias": "_rdata",
+        "address": "02735d00"
+      },
+      {
+        "function": "222a950",
+        "alias": "_rdata",
+        "address": "02736c1c"
+      },
+      {
+        "function": "2359220",
+        "alias": "_rdata",
+        "address": "027420a0"
+      },
+      {
+        "function": "235d270",
+        "alias": "_rdata",
+        "address": "027420a0"
+      },
+      {
+        "function": "2306fe0",
+        "alias": "_rdata",
+        "address": "0273f400"
+      },
+      {
+        "function": "2308bb0",
+        "alias": "_rdata",
+        "address": "0273f400"
+      },
+      {
+        "function": "2662180",
+        "alias": "_rdata",
+        "address": "0275df24"
+      },
+      {
+        "function": "2675d70",
+        "alias": "_rdata",
+        "address": "0275f6c0"
+      }
+    ],
+    "dialog_control_opcodes": {
+      "minimum": 1,
+      "maximum": 27,
+      "new_opcode": "DLGIMPL_MODE = 27; parser support remains downstream."
+    }
+  },
+  "scalar_projections": [
+    {
+      "original": "raw_characteristic_pt._1_1_",
+      "recovered": "((unsigned int)raw_characteristic_pt >> 8 & 0xff)",
+      "evidence": "DWARF declares a four-byte int."
+    },
+    {
+      "original": "*(byte *)(player * 4 + 0x4ef1a7)",
+      "recovered": "((unsigned int)player_bits[player] >> 24 & 0xff)",
+      "evidence": "Verified EXE interface player_bits[2] starts at 0x4ef1a4 and has four-byte elements."
+    },
+    {
+      "original": "undefined1/2/4/8 scalar body types",
+      "recovered": "uint8_t/uint16_t/uint32_t/uint64_t",
+      "scope": "Body scalar loads/stores and bit containers only; missing signature types, unsized pointer targets, aggregates, partial values, registers and machine state stay deferred."
+    }
+  ],
+  "runtime_interfaces": {
+    "evidence": "COFF _name plus FF25 indirect thunk to PE msvcrt.dll import of the same name.",
+    "entries": [
+      {
+        "name": "calloc",
+        "address": "0x2701ea8",
+        "import_slot": "0x27b548c",
+        "library": "msvcrt.dll",
+        "signature": [
+          "void *",
+          "unsigned int",
+          "unsigned int"
+        ],
+        "thunk_bytes": "ff258c547b02"
+      },
+      {
+        "name": "free",
+        "address": "0x2701e60",
+        "import_slot": "0x27b54b0",
+        "library": "msvcrt.dll",
+        "signature": [
+          "void",
+          "void *"
+        ],
+        "thunk_bytes": "ff25b0547b02"
+      },
+      {
+        "name": "malloc",
+        "address": "0x2701e30",
+        "import_slot": "0x27b54cc",
+        "library": "msvcrt.dll",
+        "signature": [
+          "void *",
+          "unsigned int"
+        ],
+        "thunk_bytes": "ff25cc547b02"
+      },
+      {
+        "name": "memcmp",
+        "address": "0x2701e20",
+        "import_slot": "0x27b54d4",
+        "library": "msvcrt.dll",
+        "signature": [
+          "int",
+          "void *",
+          "void *",
+          "unsigned int"
+        ],
+        "thunk_bytes": "ff25d4547b02"
+      },
+      {
+        "name": "memcpy",
+        "address": "0x2701e18",
+        "import_slot": "0x27b54d8",
+        "library": "msvcrt.dll",
+        "signature": [
+          "void *",
+          "void *",
+          "void *",
+          "unsigned int"
+        ],
+        "thunk_bytes": "ff25d8547b02"
+      },
+      {
+        "name": "memmove",
+        "address": "0x2701e10",
+        "import_slot": "0x27b54dc",
+        "library": "msvcrt.dll",
+        "signature": [
+          "void *",
+          "void *",
+          "void *",
+          "unsigned int"
+        ],
+        "thunk_bytes": "ff25dc547b02"
+      },
+      {
+        "name": "memset",
+        "address": "0x2701e08",
+        "import_slot": "0x27b54e0",
+        "library": "msvcrt.dll",
+        "signature": [
+          "void *",
+          "void *",
+          "int",
+          "unsigned int"
+        ],
+        "thunk_bytes": "ff25e0547b02"
+      },
+      {
+        "name": "realloc",
+        "address": "0x2701df8",
+        "import_slot": "0x27b54e8",
+        "library": "msvcrt.dll",
+        "signature": [
+          "void *",
+          "void *",
+          "unsigned int"
+        ],
+        "thunk_bytes": "ff25e8547b02"
+      },
+      {
+        "name": "strcat",
+        "address": "0x2701de8",
+        "import_slot": "0x27b54f4",
+        "library": "msvcrt.dll",
+        "signature": [
+          "char *",
+          "char *",
+          "char *"
+        ],
+        "thunk_bytes": "ff25f4547b02"
+      },
+      {
+        "name": "strchr",
+        "address": "0x2701de0",
+        "import_slot": "0x27b54f8",
+        "library": "msvcrt.dll",
+        "signature": [
+          "char *",
+          "char *",
+          "int"
+        ],
+        "thunk_bytes": "ff25f8547b02"
+      },
+      {
+        "name": "strcmp",
+        "address": "0x2701dd8",
+        "import_slot": "0x27b54fc",
+        "library": "msvcrt.dll",
+        "signature": [
+          "int",
+          "char *",
+          "char *"
+        ],
+        "thunk_bytes": "ff25fc547b02"
+      },
+      {
+        "name": "strcpy",
+        "address": "0x2701dd0",
+        "import_slot": "0x27b5500",
+        "library": "msvcrt.dll",
+        "signature": [
+          "char *",
+          "char *",
+          "char *"
+        ],
+        "thunk_bytes": "ff2500557b02"
+      },
+      {
+        "name": "strlen",
+        "address": "0x2701dc0",
+        "import_slot": "0x27b5508",
+        "library": "msvcrt.dll",
+        "signature": [
+          "unsigned int",
+          "char *"
+        ],
+        "thunk_bytes": "ff2508557b02"
+      },
+      {
+        "name": "strncmp",
+        "address": "0x2701db8",
+        "import_slot": "0x27b550c",
+        "library": "msvcrt.dll",
+        "signature": [
+          "int",
+          "char *",
+          "char *",
+          "unsigned int"
+        ],
+        "thunk_bytes": "ff250c557b02"
+      },
+      {
+        "name": "strncpy",
+        "address": "0x2701db0",
+        "import_slot": "0x27b5510",
+        "library": "msvcrt.dll",
+        "signature": [
+          "char *",
+          "char *",
+          "char *",
+          "unsigned int"
+        ],
+        "thunk_bytes": "ff2510557b02"
+      },
+      {
+        "name": "strstr",
+        "address": "0x2701da0",
+        "import_slot": "0x27b5518",
+        "library": "msvcrt.dll",
+        "signature": [
+          "char *",
+          "char *",
+          "char *"
+        ],
+        "thunk_bytes": "ff2518557b02"
+      }
+    ],
+    "deferred_exports_refreshed": 1860
+  },
+  "source_aware_counters": {
+    "source": "functions/counters.c",
+    "public_interface": "void add_counters_from_source(int player, int card, int t_player, int t_card, counter_t type, int num)",
+    "implementations": [
+      {
+        "address": "26d4540",
+        "original": "get_updated_counters_number_as_cost",
+        "recovered_as": "counter_number_as_cost_2022",
+        "line": "919"
+      },
+      {
+        "address": "26d45f0",
+        "original": "get_updated_counters_number",
+        "recovered_as": "counter_number_2022_impl",
+        "line": "933"
+      },
+      {
+        "address": "26d4810",
+        "original": "get_updated_counters_number",
+        "recovered_as": "counter_number_2022",
+        "line": "933"
+      },
+      {
+        "address": "26d0e90",
+        "original": "add_or_remove_counters_impl",
+        "recovered_as": "add_or_remove_counters_from_source_impl",
+        "line": "1012"
+      },
+      {
+        "address": "26d4840",
+        "original": "add_counters",
+        "recovered_as": "add_counters_from_source",
+        "line": "1266"
+      }
+    ],
+    "enum_values": {
+      "XTRIGGER_REPLACE_COUNTERS": 16778240,
+      "XTRIGGER_M1_M1_COUNTERS": 16780544,
+      "ENABLE_XTRIGGER_0": 0,
+      "ENABLE_XTRIGGER_COUNTERS": 4,
+      "ENABLE_XTRIGGER_M1_M1_COUNTERS": 64,
+      "XTRIGGER_1_1_COUNTERS": 16780288,
+      "ENABLE_XTRIGGER_1_1_COUNTERS": 32
+    },
+    "shared_enum_comparison": {
+      "compared": 15,
+      "mismatches": {},
+      "values": {
+        "COUNTER_M0_M1": 8,
+        "COUNTER_M0_M2": 9,
+        "COUNTER_M1_M0": 10,
+        "COUNTER_M1_M1": 1,
+        "COUNTER_M2_M1": 11,
+        "COUNTER_M2_M2": 12,
+        "COUNTER_P0_P1": 2,
+        "COUNTER_P0_P2": 3,
+        "COUNTER_P1_P0": 4,
+        "COUNTER_P1_P1": 0,
+        "COUNTER_P1_P2": 5,
+        "COUNTER_P2_P0": 6,
+        "COUNTER_P2_P2": 7,
+        "EVENT_COUNTERS": 22528,
+        "WAV_COUNTER": 37
+      },
+      "target_enable_masks_private_names": true
+    },
+    "counters_added_type": {
+      "type": "int",
+      "address": "0x02721d68",
+      "initial_value": -1,
+      "source_line": 7
+    },
+    "byte_pointer_views": "Counter position and label accesses are byte-wide. card_instance_t.special_counters has offset zero; no aggregate access is retained through these views.",
+    "integration": "Target replacement/plus/minus counter trigger numbers and enable masks differ from the old engine, including collisions. Distinct private COUNTERS_2022 names retain target values; migrate dispatchers and enable-mask writers before gameplay integration. Existing four-argument APIs and their callers are preserved."
+  },
+  "deck_label_interfaces": {
+    "signature": "show_deck final parameter remains the existing integer address.",
+    "bindings": {
+      "ENGINE_DONE_LABEL": "0x7375b0",
+      "ENGINE_OK_LABEL": "0x78f0a8"
+    },
+    "evidence": "Target COFF absolute symbols, DWARF char[12]/char[20], existing manalink.h show_deck comment. Rewrites restricted to argument 5 of six-argument show_deck calls."
+  },
+  "callback_interface_alias": {
+    "target_generated_name": "_func_int_int_int_event_t *",
+    "source_name": "CardFunction",
+    "dwarf_result": "int",
+    "dwarf_parameters": [
+      "int",
+      "int",
+      "event_t"
+    ],
+    "note": "func_ptr is a legitimate parameter, not an unnamed func_0xADDRESS call."
+  },
+  "aura_target_definition_blocker": {
+    "old_size": 80,
+    "target_size": 84,
+    "new_member": {
+      "name": "flags",
+      "offset": 80,
+      "type": "int32_t"
+    },
+    "note": "No target-definition layout extension was projected; default initialization and validation semantics need recovery. Original auras.c already identifies packed selected-card global 0x78fa30.",
+    "validation_core": {
+      "address": "0x0265d720",
+      "size": 6206,
+      "flags": "Bits control protection modes, including aura/equipment attachment. A field-only layout change would omit those consumers."
+    }
+  },
+  "unprototyped_engine_interfaces": {
+    "untyped_symbols": 64,
+    "recovered_signatures": 52,
+    "entries": [
+      {
+        "name": "another_copy_attached",
+        "address": "0x4baeb0",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "check_hand_for_type",
+        "address": "0x4e77dd",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "type_t"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "check_mana_multi",
+        "address": "0x402be0",
+        "signature": [
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "choose_a_color_exe",
+        "address": "0x4721c0",
+        "signature": [
+          "int",
+          "int",
+          "const char *",
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "char *",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "choose_a_number",
+        "address": "0x472120",
+        "signature": [
+          "int",
+          "int",
+          "const char *",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "char *",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "coin_flip",
+        "address": "0x470690",
+        "signature": [
+          "int",
+          "int",
+          "const char *",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "char *",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "damage_player",
+        "address": "0x4a68a0",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "declare_mana_available",
+        "address": "0x49d430",
+        "signature": [
+          "void",
+          "int",
+          "color_t",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "void",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "declare_mana_available_hex",
+        "address": "0x49d240",
+        "signature": [
+          "void",
+          "int",
+          "color_test_t",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "void",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "dispatch_event",
+        "address": "0x4359b0",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "event_t"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "do_dialog",
+        "address": "0x471eb0",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "int",
+          "int",
+          "int",
+          "const char *",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int",
+          "int",
+          "int",
+          "char *",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "draw_cards_exe",
+        "address": "0x41c190",
+        "signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "has_mana",
+        "address": "0x49d510",
+        "signature": [
+          "int",
+          "int",
+          "color_t",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "internal_rand",
+        "address": "0x44e050",
+        "signature": [
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "islandhome",
+        "address": "0x4c8d30",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "event_t"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "is_tapped",
+        "address": "0x4e81fe",
+        "signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "obliterate_top_card_of_stack",
+        "address": "0x436930",
+        "signature": [
+          "void"
+        ],
+        "applied_abi_signature": [
+          "void"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "produce_mana",
+        "address": "0x49d490",
+        "signature": [
+          "void",
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "void",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "real_lose_the_game",
+        "address": "0x4791f0",
+        "signature": [
+          "void",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "void",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "raw_put_iid_on_top_of_deck",
+        "address": "0x479d80",
+        "signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "redraw_libraries",
+        "address": "0x468750",
+        "signature": [
+          "void"
+        ],
+        "applied_abi_signature": [
+          "void"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "regenerate_target_exe",
+        "address": "0x4c59c0",
+        "signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "remove_card_from_deck",
+        "address": "0x479d10",
+        "signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "should_ai_play",
+        "address": "0x4377b0",
+        "signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "urzatron_parts",
+        "address": "0x459630",
+        "signature": [
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "create_a_card_type",
+        "address": "0x4a6500",
+        "signature": [
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "set_centerwindow_txt",
+        "address": "0x4386f0",
+        "signature": [
+          "int",
+          "const char *"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "char *"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "save_or_load_data",
+        "address": "0x49f500",
+        "signature": [
+          "int",
+          "void *",
+          "size_t"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "void *",
+          "unsigned int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "dispatch_trigger_twice_once_with_each_player_as_reason",
+        "address": "0x4371a0",
+        "signature": [
+          "int",
+          "int",
+          "trigger_t",
+          "const char *",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "char *",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "put_card_in_graveyard",
+        "address": "0x477ec0",
+        "signature": [
+          "void",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "void",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "call_sub_437E20_unless_ai_is_speculating",
+        "address": "0x471d60",
+        "signature": [
+          "void"
+        ],
+        "applied_abi_signature": [
+          "void"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "add_card_to_hand_exe",
+        "address": "0x479620",
+        "signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/deck.c",
+          "prototype": "int add_card_to_hand_exe(int player, int iid)"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "card_lich_exe",
+        "address": "0x432300",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "event_t"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "card_zombie_master_exe",
+        "address": "0x4e203f",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "event_t"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "card_fireball_exe",
+        "address": "0x40a980",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "event_t"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "card_spell_blast_exe",
+        "address": "0x40a740",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "event_t"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "card_detonate_exe",
+        "address": "0x41cec0",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "event_t"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "card_whimsy_exe",
+        "address": "0x473f50",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "event_t"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "card_winter_blast_exe",
+        "address": "0x4117c0",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "event_t"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "manalink.h"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "get_usertime_of_current_thread_in_ms",
+        "address": "0x472c90",
+        "signature": [
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/ai.c",
+          "prototype": "int get_usertime_of_current_thread_in_ms(void)"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "pay_mana_maximally_satisfied",
+        "address": "0x42f130",
+        "signature": [
+          "int",
+          "int *",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int *",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/ai.c",
+          "prototype": "int pay_mana_maximally_satisfied(int* pay_mana_array, int x_val, int max_x_val)"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "try_to_pay_for_mana_by_autotapping",
+        "address": "0x42f4a0",
+        "signature": [
+          "int",
+          "int",
+          "int *",
+          "int *",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int *",
+          "int *",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/ai.c",
+          "prototype": "int try_to_pay_for_mana_by_autotapping(int player, int* amt, int* unknown_v46, int autotap_flags, int unknown_v47)"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "real_put_on_top_of_deck",
+        "address": "0x410fb0",
+        "signature": [
+          "void",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "void",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/deck.c",
+          "prototype": "void real_put_on_top_of_deck(int player, int card)"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "sub_4378E0",
+        "address": "0x4378e0",
+        "signature": [
+          "int",
+          "int",
+          "int",
+          "const char *",
+          "int",
+          "int",
+          "int",
+          "int",
+          "int",
+          "int *",
+          "target_t *",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int",
+          "char *",
+          "int",
+          "int",
+          "int",
+          "int",
+          "int",
+          "int *",
+          "target_t *",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/targets.c",
+          "prototype": "int sub_4378E0(int, int, const char*, int, int, int, int, int, int*, target_t*, int, int)"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "sub_45CEC0",
+        "address": "0x45cec0",
+        "signature": [
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/targets.c",
+          "prototype": "int sub_45CEC0(void)"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "sub_45CF00",
+        "address": "0x45cf00",
+        "signature": [
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/targets.c",
+          "prototype": "int sub_45CF00(void)"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "sub_47E980",
+        "address": "0x47e980",
+        "signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/targets.c",
+          "prototype": "int sub_47E980(int, int)"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "sub_47EF10",
+        "address": "0x47ef10",
+        "signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/targets.c",
+          "prototype": "int sub_47EF10(int, int)"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "sub_47EF50",
+        "address": "0x47ef50",
+        "signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/targets.c",
+          "prototype": "int sub_47EF50(int, int)"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "sub_498F20",
+        "address": "0x498f20",
+        "signature": [
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/targets.c",
+          "prototype": "int sub_498F20(void)"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "sub_499050",
+        "address": "0x499050",
+        "signature": [
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/targets.c",
+          "prototype": "int sub_499050(void)"
+        },
+        "binding_source": "manalink.lds"
+      },
+      {
+        "name": "show_deck_exe",
+        "address": "0x479360",
+        "signature": [
+          "int",
+          "int",
+          "const int *",
+          "int",
+          "const char *",
+          "int",
+          "int"
+        ],
+        "applied_abi_signature": [
+          "int",
+          "int",
+          "int *",
+          "int",
+          "char *",
+          "int",
+          "int"
+        ],
+        "declaration": {
+          "source": "functions/tutors.c",
+          "prototype": "int show_deck_exe(int player, const int* deck, int num_cards, const char* prompt, int suppress_done_label, int done_label)"
+        },
+        "binding_source": "manalink.lds"
+      }
+    ],
+    "source_abi_check": {
+      "target": "i686-pc-windows-msvc",
+      "width": 4,
+      "types": [
+        "color_t",
+        "color_test_t",
+        "event_t",
+        "size_t",
+        "trigger_t",
+        "type_t",
+        "void *"
+      ]
+    },
+    "still_unresolved": [
+      "backend_of_control_magic",
+      "blt_pic",
+      "get_path_base",
+      "handle_palette_msgs",
+      "mana_producer_fixed_exe",
+      "network_rand_raw",
+      "raw_do_dialog",
+      "read_graphics_file",
+      "receive_network_packet",
+      "redisplay_all",
+      "send_network_packet",
+      "set_palette_and_stretch_mode"
+    ],
+    "reason": "Name-only absolute DWARF subprogram DIEs lack DW_AT_type, DW_AT_prototyped and parameter children. They do not describe void(void) functions.",
+    "proof": "Clang parses existing source declarations. Each corresponding manalink.lds binding must equal target COFF absolute address. Engine enum arguments and pointers were verified to occupy four-byte source ABI slots. Ghidra uses int ABI types where an old enum typedef name no longer resolves.",
+    "exports_refreshed": 1663,
+    "source_implementations_from_automatic_screen": 267
+  },
+  "stack_probe_model": {
+    "address": "0x026fc1d0",
+    "symbol": "___chkstk_ms",
+    "body_bytes": "51503d001000008d4c240c721581e9001000008309002d001000003d0010000077eb29c18309005859c3",
+    "callfixup": "ESP = ESP + 4;",
+    "register_behavior": "EAX and ECX saved/restored; other general registers untouched.",
+    "stack_behavior": "The helper probes pages and returns. CALL p-code pushed the return address, so the model pops four bytes. Allocation remains the caller SUB ESP,EAX (e.g. 0x0261991b). Guard-page touches are compiler machinery; this is a decompiler model, not a runtime replacement.",
+    "remaining_problem": "Variable-length stack arrays can still produce unresolved expressions and remain deferred."
+  },
+  "lexical_stack_alias_reconstruction": {
+    "name": "card_wrenn_and_six_emblem",
+    "address": "233e8b0",
+    "source": "cards/modern_horizons.c",
+    "variables": {
+      "test_hand": {
+        "type": "test_definition_t",
+        "location": [
+          145,
+          156,
+          112
+        ]
+      },
+      "iids": {
+        "type": "int[500]",
+        "location": [
+          145,
+          204,
+          96
+        ]
+      },
+      "positions": {
+        "type": "int[500]",
+        "location": [
+          145,
+          156,
+          112
+        ]
+      }
+    },
+    "adaptation": "DWARF-proven separate positions[500] array replaces two accesses through overlapping test_hand storage.",
+    "compiler_check": "Complete cards/modern_horizons.c unit, including strict uninitialized and interface diagnostics."
+  },
+  "local_inference_trial": {
+    "database_changes": "Discarded with headless -readOnly.",
+    "promoted": 0,
+    "decision": "Blanket removal of imported local hints can lose aggregate bounds. Final exports retain DWARF array/struct hints; the proven lexical overlap was reconstructed explicitly."
+  }
+}

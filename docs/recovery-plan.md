@@ -336,7 +336,7 @@ testing. Optimization removes some source distinctions and variable lifetimes;
 macros, comments and original formatting are not supplied by these debug sections.
 
 No reliable percentage of recoverable source follows from the current counts.
-Full DWARF-to-Ghidra import and the first 1,066 source implementations are now
+Full DWARF-to-Ghidra import and 2,788 source implementations are now
 complete; see [recovery progress](recovery-progress.md). This demonstrates batch
 recovery into the original source units. Changed interfaces/layouts, remaining
 implementations, downstream integration and game-behavior validation remain.

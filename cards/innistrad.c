@@ -7089,3 +7089,29 @@ Spells with the chosen name can't be cast. */
 
 	return global_enchantment(player, card, event);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2072420; original cards/innistrad.c:37. */
+static int turn_card_in_grave_face_up_src(int player, int source, int position_hint, int iid)
+{
+  int result;
+  int *piStack_14;
+
+  if ((iid == -1) || (iid_draw_a_card == iid))
+  {
+    backtrace_and_abort("cards/innistrad.c:39\niid != -1 && iid != iid_draw_a_card");
+  }
+  result = find_in_graveyard_by_source(player, source, position_hint);
+  piStack_14 = graveyard_ptr_mutable[player] + result;
+  if (*piStack_14 != iid_draw_a_card)
+  {
+    backtrace_and_abort(
+        "cards/innistrad.c:41\ngraveyard_ptr_mutable[player][position] == iid_draw_a_card");
+    piStack_14 = graveyard_ptr_mutable[player] + result;
+  }
+  types_of_cards_in_graveyard[player] =
+      types_of_cards_in_graveyard[player] | (unsigned int)cards_data[iid].type;
+  *piStack_14 = iid;
+  return result;
+}

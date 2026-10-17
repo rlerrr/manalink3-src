@@ -4969,3 +4969,87 @@ When ~ enters the battlefield, return a land you control to its owner's hand.
 	return karoo( player, card, event, COLOR_WHITE, COLOR_BLACK, CARD_ID_SCRUBLAND );
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2229e90; original cards/dissension.c:4966. */
+int card_wars_toll(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  int iVar4;
+  unsigned int uVar5;
+  int iVar6;
+  test_definition_t test;
+
+  pcVar1 = get_card_instance(player, card);
+  iVar6 = 1 - player;
+  if ((((trigger_condition == 0xd2) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (((pcVar1->info_slot != 0x42 && (trigger_cause_controller == iVar6)) &&
+        ((iVar3 = is_what(iVar6, trigger_cause, 1),
+          iVar3 != 0 && (iVar3 = is_humiliated_for_ability(player, card, AL_TRIG), iVar3 == 0))))))
+  {
+    if (event == EVENT_TRIGGER)
+    {
+      if (-1 < tapped_for_mana_color)
+      {
+        event_result = event_result | 2;
+      }
+    }
+    else if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      if ((player == 0) || (iVar3 = get_setting(0x16), iVar3 == 0))
+      {
+
+        iVar3 = active_cards_count[iVar6];
+        pcVar1->info_slot = 0x42;
+        if (0 < iVar3)
+        {
+          iVar3 = 0;
+          do
+          {
+            pcVar2 = in_play(iVar6, iVar3);
+            if ((pcVar2 != NULL) && (iVar4 = is_what(iVar6, iVar3, 1), iVar4 != 0))
+            {
+              iVar4 = get_id(iVar6, iVar3);
+              iVar4 = get_internal_card_id_from_csv_id(iVar4);
+              if ((cards_data[iVar4].extra_ability & 0x1000) != 0)
+              {
+                autotap_mana_source(iVar6, iVar3);
+              }
+            }
+            iVar3 = iVar3 + 1;
+          } while (iVar3 < active_cards_count[iVar6]);
+        }
+        pcVar1->info_slot = 0;
+      }
+      default_test_definition(&test, 1);
+      new_manipulate_all(player, card, iVar6, &test, ACT_TAP);
+    }
+  }
+  iVar6 = declare_attackers_trigger(player, card, event, 0, iVar6, -1);
+
+  if (((iVar6 != 0) && (iVar3 = is_humiliated_for_ability(player, card, AL_TRIG),
+                        iVar6 = current_turn, iVar3 == 0)) &&
+      (0 < active_cards_count[current_turn]))
+  {
+    iVar3 = 0;
+    do
+    {
+
+      pcVar1 = in_play(iVar6, iVar3);
+      if (((pcVar1 != NULL) && (iVar4 = can_attack(iVar6, iVar3), iVar4 != 0)) &&
+          ((pcVar1->state & 4) == 0))
+      {
+        uVar5 = get_special_abilities_by_instance(pcVar1);
+        pcVar1->state = pcVar1->state | (-(unsigned int)((uVar5 & 8) == 0) & 0x10) + 4;
+        choose_who_attack(iVar6, iVar3);
+        dispatch_event(iVar6, iVar3, 0x15);
+      }
+      iVar3 = iVar3 + 1;
+    } while (iVar3 < active_cards_count[iVar6]);
+  }
+  iVar6 = global_enchantment(player, card, event);
+  return iVar6;
+}

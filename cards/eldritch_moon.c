@@ -6517,3 +6517,41 @@ int card_hanweir_the_writhing_township(int player, int card, event_t event){
 
 /* Human Wizard	""	=>vanilla	0x401000
  * Creature - Human Wizard 1/1 */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2478630; original cards/eldritch_moon.c:2226. */
+int card_minds_dilation(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+
+  iVar1 = 1 - player;
+  iVar2 = get_specific_storm_count(iVar1);
+  if (iVar2 == 0)
+  {
+    iVar2 = new_specific_spell_played(player, card, event, iVar1, 2, NULL);
+    if ((iVar2 != 0) && (*deck_ptr[iVar1] != -1))
+    {
+
+      show_deck(player, deck_ptr[iVar1], 1, "This card will be exiled by Mind\'s Dilation.", 0,
+                ENGINE_DONE_LABEL);
+      iVar2 = *deck_ptr[iVar1];
+      rfg_top_card_of_deck(iVar1);
+      iVar3 = can_legally_play_iid(player, iVar2);
+      if ((iVar3 != 0) && ((cards_data[iVar2].type & 1) == 0))
+      {
+        iVar3 =
+            dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\002", "\001\003",
+                        "\001\012", iVar2, "Play this card", 1, 10, "Decline", 1, 1, 0, 0, 0, 0);
+        if (iVar3 == 1)
+        {
+          play_card_in_exile_for_free(player, iVar1, (unsigned int)cards_data[iVar2].id);
+        }
+      }
+    }
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
+}

@@ -1,6 +1,9 @@
 #include "manalink.h"
 #include <windows.h>
 
+/* Private callback recovered below; used by the October 2022 deflection helpers. */
+static char* has_only_1_target_and_could_legally_change_target(int who_chooses, int player, int card);
+
 int discard_controller = 0;
 
 unsigned int num_bits_set(unsigned int v){
@@ -1196,7 +1199,8 @@ int legacy_effect_pump_ability_until_eot(int player, int card, event_t event ){
 	return 0;
 }
 
-static void get_sleighted_hacked_suppressed_ability(int player, int card, int t_player, int* p_ability, int* p_sp_ability)
+/* Shared in October 2022 (COFF external); also used by recovered aura helpers. */
+void get_sleighted_hacked_suppressed_ability(int player, int card, int t_player, int* p_ability, int* p_sp_ability)
 {
   int ability = *p_ability;
   int sp_ability = *p_sp_ability;
@@ -17263,4 +17267,3279 @@ static int extra_combat_legacy(int player, int card, event_t event)
   }
   kill_card(player, card, KILL_EXILE);
   return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static card_instance_t *find_obliviation_legacy(int player, int card, int *out_player,
+                                                int *out_card, int *out_iid, int *out_owner);
+int deflect_one_target(int player, int card, event_t event, target_definition_t *td);
+int deflect_multi_targets(int player, int card, event_t event, target_definition_t *td);
+
+/* ManalinkEh 2022: 0x26774f0; original functions/functions.c:629. */
+static card_instance_t *find_obliviation_legacy(int player, int card, int *out_player,
+                                                int *out_card, int *out_iid, int *out_owner)
+{
+  card_instance_t *instance;
+  int card_00;
+  int player_00;
+
+  player_00 = 0;
+  do
+  {
+    card_00 = 0;
+    if (0 < active_cards_count[player_00])
+    {
+      do
+      {
+        instance = get_card_instance(player_00, card_00);
+        if ((((instance != NULL) && (instance->internal_card_id == LEGACY_EFFECT_ASWAN)) &&
+             (instance->damage_target_card == card)) &&
+            (((instance->damage_target_player == player && (-1 < instance->targets[7].card)) &&
+              (-1 < instance->targets[7].player))))
+        {
+          if (out_player != NULL)
+          {
+            *out_player = player_00;
+          }
+          if (out_card != NULL)
+          {
+            *out_card = card_00;
+          }
+          if (out_iid != NULL)
+          {
+            *out_iid = instance->targets[7].card;
+          }
+          *out_owner = instance->targets[7].player;
+          return instance;
+        }
+        card_00 = card_00 + 1;
+      } while (card_00 < active_cards_count[player_00]);
+    }
+    player_00 = player_00 + 1;
+    if (player_00 == 2)
+    {
+      return NULL;
+    }
+  } while (true);
+}
+
+/* ManalinkEh 2022: 0x2679a60; original functions/functions.c:691. */
+int owner_of_obliviated_card(int player, int card)
+{
+  int owner;
+
+  owner = -1;
+  find_obliviation_legacy(player, card, NULL, NULL, NULL, &owner);
+  return owner;
+}
+
+/* ManalinkEh 2022: 0x26792c0; original functions/functions.c:7324. */
+static int no_combat_damage_this_turn_to(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+
+  pcVar1 = combat_damage_being_prevented(event);
+  if (pcVar1 == NULL)
+  {
+    if (event == EVENT_CLEANUP)
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  else
+  {
+    pcVar2 = get_card_instance(player, card);
+    if ((pcVar1->damage_target_card == pcVar2->targets[0].card) &&
+        ((int)pcVar1->damage_target_player == pcVar2->targets[0].player))
+    {
+      pcVar1->info_slot = 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x26884f0; original functions/functions.c:8825. */
+void nobody_can_attack_this_turn_and_next_turn(int player, int card, int t_player)
+{
+  int legacycard;
+  card_instance_t *instance;
+
+  legacycard = create_legacy_effect(player, card, effect_nobody_can_attack_until_eot);
+  if (legacycard != -1)
+  {
+    if (-1 < legacycard)
+    {
+      alternate_legacy_text(2, player, legacycard);
+    }
+    instance = get_card_instance(player, legacycard);
+    instance->targets[1].player = t_player;
+    instance->targets[1].card = 0x10;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26934a0; original functions/functions.c:15212. */
+int deflect_one_target(int player, int card, event_t event, target_definition_t *td)
+{
+  int32_t iVar1;
+  int player_00;
+  card_instance_t *pcVar2;
+  int iVar3;
+  int iVar4;
+  card_instance_t *pcVar5;
+  target_definition_t td_default;
+
+  if (td == NULL)
+  {
+    td = &td_default;
+    counterspell_target_definition(player, card, td, 0xff);
+  }
+  if ((td->extra == 0) && (td->special == 0))
+  {
+    td->extra = (int32_t)has_only_1_target_and_could_legally_change_target;
+    td->special = 0x8000;
+  }
+  pcVar2 = get_card_instance(player, card);
+  player_00 = card_on_stack_controller;
+  iVar4 = card_on_stack;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        pcVar2->targets[0].player = card_on_stack_controller;
+        pcVar2->targets[0].card = iVar4;
+        pcVar2->number_of_targets = '\x01';
+        iVar3 = counterspell_validate(player, card, td, 0);
+        if (iVar3 == 0)
+        {
+          pcVar2->targets[0].player = -1;
+          pcVar2->targets[0].card = -1;
+          spell_fizzled = 1;
+        }
+        else
+        {
+          dispatch_event_arbitrary_to_one_card(player_00, iVar4, EVENT_CHANGE_TARGET, player_00,
+                                               iVar4, player, card);
+        }
+      }
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) &&
+             (iVar4 = counterspell_validate(player, card, td, 0), iVar4 != 0))
+    {
+      pcVar5 = get_card_instance(pcVar2->targets[0].player, pcVar2->targets[0].card);
+      iVar1 = pcVar2->targets[1].player;
+      pcVar5->targets[0].card = pcVar2->targets[1].card;
+      pcVar5->targets[0].player = iVar1;
+      iVar1 = pcVar2->targets[2].player;
+      pcVar5->targets[1].card = pcVar2->targets[2].card;
+      pcVar5->targets[1].player = iVar1;
+    }
+    return 0;
+  }
+  iVar4 = counterspell(player, card, EVENT_CAN_CAST, td, 0);
+  return iVar4;
+}
+
+/* ManalinkEh 2022: 0x2693670; original functions/functions.c:15290. */
+int deflect_multi_targets(int player, int card, event_t event, target_definition_t *td)
+{
+  unsigned char bVar1;
+  int32_t iVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  card_instance_t *pcVar6;
+  int iVar7;
+  target_definition_t td_default;
+  int iVar8;
+
+  if (td == NULL)
+  {
+    td = &td_default;
+    counterspell_target_definition(player, card, td, 0xff);
+  }
+  pcVar4 = get_card_instance(player, card);
+  iVar5 = card_on_stack_controller;
+  if (event == EVENT_CAN_CAST)
+  {
+    iVar5 = counterspell(player, card, EVENT_CAN_CAST, td, 0);
+    return iVar5;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      pcVar4->number_of_targets = '\x01';
+      pcVar4->targets[0].player = iVar5;
+      iVar8 = card_on_stack;
+      pcVar4->targets[0].card = card_on_stack;
+      iVar7 = counterspell_validate(player, card, td, 0);
+      if (iVar7 != 0)
+      {
+        set_special_flags2(iVar5, iVar8, 0x40000000);
+        pcVar6 = get_card_instance(iVar5, iVar8);
+        bVar1 = pcVar6->number_of_targets;
+        if (bVar1 == 10 || bVar1 < 10)
+        {
+          pcVar4->info_slot = (unsigned int)bVar1;
+        }
+        else
+        {
+          pcVar4->info_slot = 10;
+        }
+        iVar3 = attacking_card_controller;
+        iVar7 = attacking_card;
+        attacking_card_controller = player;
+        attacking_card = card;
+        call_card_function(iVar5, iVar8, EVENT_CHANGE_TARGET);
+        attacking_card = iVar7;
+        attacking_card_controller = iVar3;
+        remove_special_flags2(iVar5, iVar8, 0x40000000);
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) &&
+           (iVar5 = counterspell_validate(player, card, td, 0), iVar5 != 0))
+  {
+    pcVar6 = get_card_instance(pcVar4->targets[0].player, pcVar4->targets[0].card);
+    iVar5 = pcVar4->info_slot;
+    if (0 < iVar5)
+    {
+      iVar8 = 0;
+      do
+      {
+        iVar7 = iVar8 + 1;
+        iVar2 = pcVar4->targets[iVar8 + 1].player;
+        pcVar6->targets[iVar8].card = pcVar4->targets[iVar8 + 1].card;
+        pcVar6->targets[iVar8].player = iVar2;
+        iVar2 = pcVar4->targets[2].player;
+        pcVar6->targets[1].card = pcVar4->targets[2].card;
+        pcVar6->targets[1].player = iVar2;
+        iVar8 = iVar7;
+      } while (iVar7 != iVar5);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2693e80; original functions/functions.c:15742. */
+int create_card_name_legacy_unattached(int player, int card, int id)
+{
+  int card_00;
+  card_instance_t *instance;
+
+  card_00 = create_legacy_effect_exe(player, card, LEGACY_EFFECT_ASWAN, -1, -1);
+  instance = get_card_instance(player, card_00);
+  instance->info_slot = id ^ 0xffffffff;
+  return card_00;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void multi_x_spell(int player, int card, event_t event, int num_x);
+
+/* ManalinkEh 2022: 0x2681450; original functions/functions.c:7340. */
+void negate_combat_damage_this_turn_to(int player, int card, int t_player, int t_card,
+                                       int alternate_legacy_text_number)
+{
+  int legacycard;
+
+  legacycard =
+      create_targetted_legacy_effect(player, card, no_combat_damage_this_turn_to, t_player, t_card);
+  if ((-1 < legacycard) && (0 < alternate_legacy_text_number))
+  {
+    alternate_legacy_text(alternate_legacy_text_number, player, legacycard);
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x2694000; original functions/functions.c:12637. */
+void multi_x_spell(int player, int card, event_t event, int num_x)
+{
+  int result;
+
+  if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = played_for_free(player, card);
+    if (result == 0)
+    {
+      result = is_token(player, card);
+      if (result == 0)
+      {
+        x_value = x_value / num_x;
+        set_x_for_x_spells(player, card, EVENT_CAST_SPELL, x_value);
+        set_special_flags2(player, card, 0x20000);
+        return;
+      }
+    }
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26a81a0; original functions/functions.c:19973. */
+char *get_color_text(int player, char *buffer, int clr)
+{
+  int iVar1;
+  int iVar2;
+  char *buf;
+  size_t size;
+  int iVar3;
+  unsigned int uVar4;
+  bool bVar5;
+
+  if (ai_is_speculating != 1)
+  {
+    iVar1 = count_colors(player, clr);
+    bVar5 = (clr & 2U) != 0;
+    if (bVar5)
+    {
+      iVar3 = scnprintf(buffer, 100, "black");
+    }
+    else
+    {
+      iVar3 = 0;
+    }
+    uVar4 = (unsigned int)bVar5;
+    if ((clr & 4U) != 0)
+    {
+      if ((int)(iVar1 - uVar4) < 2)
+      {
+        iVar2 = scnprintf(buffer + iVar3, 100U - iVar3, " or ");
+      }
+      else
+      {
+        iVar2 = scnprintf(buffer + iVar3, 100U - iVar3, ", ");
+      }
+      iVar3 = iVar3 + iVar2;
+      uVar4 = uVar4 + 1;
+      iVar2 = scnprintf(buffer + iVar3, 100 - iVar3, "blue");
+      iVar3 = iVar3 + iVar2;
+    }
+    if ((clr & 8U) != 0)
+    {
+      if ((int)(iVar1 - uVar4) < 2)
+      {
+        iVar2 = scnprintf(buffer + iVar3, 100U - iVar3, " or ");
+      }
+      else
+      {
+        iVar2 = scnprintf(buffer + iVar3, 100U - iVar3, ", ");
+      }
+      iVar3 = iVar3 + iVar2;
+      uVar4 = uVar4 + 1;
+      iVar2 = scnprintf(buffer + iVar3, 100 - iVar3, "green");
+      iVar3 = iVar3 + iVar2;
+    }
+    if ((clr & 0x10U) != 0)
+    {
+      if ((int)(iVar1 - uVar4) < 2)
+      {
+        iVar2 = scnprintf(buffer + iVar3, 100U - iVar3, " or ");
+      }
+      else
+      {
+        iVar2 = scnprintf(buffer + iVar3, 100U - iVar3, ", ");
+      }
+      iVar3 = iVar3 + iVar2;
+      iVar2 = scnprintf(buffer + iVar3, 100 - iVar3, "red");
+      iVar3 = iVar3 + iVar2;
+    }
+    if ((clr & 0x20U) != 0)
+    {
+      buf = buffer + iVar3;
+      size = 100 - iVar3;
+      if (iVar1 != 1)
+      {
+        iVar1 = scnprintf(buf, size, "or ");
+        size = 100 - (iVar1 + iVar3);
+        buf = buffer + iVar1 + iVar3;
+      }
+      scnprintf(buf, size, "white");
+    }
+    return buffer;
+  }
+  return "";
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2678680; original functions/functions.c:15201. */
+static char *has_only_1_target_and_could_legally_change_target(int who_chooses, int player,
+                                                               int card)
+{
+  card_instance_t *instance;
+  char *pcVar2;
+  int result;
+
+  instance = get_card_instance(player, card);
+  pcVar2 = "must have only 1 target";
+  if (instance->number_of_targets == '\x01')
+  {
+
+    result = call_card_function(player, card, EVENT_CAN_CHANGE_TARGET);
+    pcVar2 = NULL;
+    if (result == 0)
+    {
+      return "this spell cannot change its target";
+    }
+  }
+  return pcVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void dat_ability(int player, int card, event_t event, declare_attackers_trigger_t mode,
+                 int skip_store_attackers);
+int dfc_front_to_back(int csvid);
+int dfc_back_to_front(int csvid);
+int count_basic_lands(int player, int subtype);
+int check_for_death_trigger_removal(int player, int card);
+int extra_combat_effect(int player, int card, event_t event, int untap,
+                        test_definition_t *this_test, int can_repeat);
+
+/* ManalinkEh 2022: 0x269f000; original functions/functions.c:531. */
+static int remove_until_upkeep_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+
+  upkeep_trigger_ability_mode(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    return 0;
+  }
+
+  instance = in_play(player, card);
+  if (instance == NULL)
+  {
+    return 0;
+  }
+  iVar2 = instance->targets[1].player;
+  if ((iVar2 != 2) && (iVar2 != current_turn))
+  {
+    return 0;
+  }
+  iVar2 = check_rfg(instance->targets[0].player,
+                    (unsigned int)cards_data[instance->targets[0].card].id);
+  if (iVar2 != 0)
+  {
+
+    iVar2 = add_card_to_hand(instance->targets[0].player, instance->targets[0].card);
+    iVar3 = has_subtype(instance->targets[0].player, iVar2, SUBTYPE_AURA);
+    if (iVar3 != 0)
+    {
+      iVar3 = call_card_function(instance->targets[0].player, iVar2, EVENT_CAN_CAST);
+      if (iVar3 == 0)
+      {
+        obliterate_card(instance->targets[0].player, iVar2);
+        goto LAB_0269f087;
+      }
+      set_special_flags3(instance->targets[0].player, iVar2, 0x40);
+    }
+    remove_card_from_rfg(instance->targets[0].player,
+                         (unsigned int)cards_data[instance->targets[0].card].id);
+    put_into_play(instance->targets[0].player, iVar2);
+    if (instance->targets[1].card == 0x42)
+    {
+      iVar2 = get_abilities(instance->targets[0].player, iVar2, EVENT_TOUGHNESS, -1);
+      new_multidiscard(player, iVar2, 0, player);
+    }
+  }
+LAB_0269f087:
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2682020; original functions/functions.c:717. */
+int check_for_death_trigger_removal(int player, int card)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int card_00;
+
+  iVar1 = is_what(player, card, 2);
+  if ((iVar1 != 0) && ((instance = get_card_instance(player, card),
+                        instance->kill_code < 4 || (instance = get_card_instance(player, card),
+                                                    instance->kill_code == '\x11'))))
+  {
+
+    iVar1 = 0;
+    do
+    {
+      card_00 = 0;
+      if (0 < active_cards_count[iVar1])
+      {
+        do
+        {
+          instance = in_play(iVar1, card_00);
+          if (((instance != NULL) &&
+               (iVar3 = is_humiliated_for_ability(iVar1, card_00, AL_STATIC), iVar3 == 0)) &&
+              (iVar3 = get_id(iVar1, card_00), iVar3 == 0x5097))
+          {
+            return 1;
+          }
+          card_00 = card_00 + 1;
+        } while (card_00 < active_cards_count[iVar1]);
+      }
+      iVar1 = iVar1 + 1;
+    } while (iVar1 != 2);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x267c470; original functions/functions.c:3170. */
+int split_cards_id_table(int csvid, int half_played)
+{
+  int result;
+
+  if (half_played == 0)
+  {
+    return -1;
+  }
+  if (csvid == 0x4208)
+  {
+    return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffe7) + 0x4af7;
+  }
+  if (0x4208 < csvid)
+  {
+    if (csvid == 0x4b79)
+    {
+      return (half_played & 1U) + 0x4b77;
+    }
+    if (0x4b79 < csvid)
+    {
+      if (csvid == 0x4c71)
+      {
+        return (half_played & 1U) + 0x4c6f;
+      }
+      if (csvid < 0x4c72)
+      {
+        if (csvid == 0x4bc9)
+        {
+          return (-(unsigned int)((half_played & 1U) == 0) & 2) + 0x4bc8;
+        }
+        if (csvid < 0x4bca)
+        {
+          if (csvid == 0x4ba2)
+          {
+            return (half_played & 1U) + 0x4ba0;
+          }
+          if (csvid < 0x4ba3)
+          {
+            if (csvid == 0x4b8b)
+            {
+              return (-(unsigned int)((half_played & 1U) == 0) & 3) + 0x4b8a;
+            }
+            if (csvid != 0x4b9c)
+            {
+              return -1;
+            }
+            return (-(unsigned int)((half_played & 1U) == 0) & 3) + 0x4b9b;
+          }
+          result = (half_played & 1U) + 0x4ba6;
+          if (csvid != 0x4ba8)
+          {
+            return -1;
+          }
+        }
+        else
+        {
+          if (csvid == 0x4c24)
+          {
+            return (half_played & 1U) + 0x4c22;
+          }
+          if (csvid < 0x4c25)
+          {
+            if (csvid == 0x4bce)
+            {
+              return (half_played & 1U) + 0x4bcc;
+            }
+            if (csvid != 0x4c0f)
+            {
+              return -1;
+            }
+            return (-(unsigned int)((half_played & 1U) == 0) & 2) + 0x4c0e;
+          }
+          result = (half_played & 1U) + 0x4c5f;
+          if (csvid != 0x4c61)
+          {
+            return -1;
+          }
+        }
+      }
+      else
+      {
+        if (csvid == 0x4cff)
+        {
+          return (half_played & 1U) + 0x4cfd;
+        }
+        if (csvid < 0x4d00)
+        {
+          if (csvid == 0x4c8f)
+          {
+            return (half_played & 1U) + 0x4c8d;
+          }
+          if (csvid < 0x4c90)
+          {
+            if (csvid == 0x4c7f)
+            {
+              return (-(unsigned int)((half_played & 1U) == 0) & 2) + 0x4c7e;
+            }
+            if (csvid != 0x4c83)
+            {
+              return -1;
+            }
+            return (-(unsigned int)((half_played & 1U) == 0) & 3) + 0x4c82;
+          }
+          result = (half_played & 1U) + 0x4ccc;
+          if (csvid != 0x4cce)
+          {
+            return -1;
+          }
+        }
+        else
+        {
+          if (csvid == 0x4d3f)
+          {
+            return (-(unsigned int)((half_played & 1U) == 0) & 2) + 0x4d3e;
+          }
+          if (csvid != 0x4d50)
+          {
+            if (csvid != 0x4d03)
+            {
+              return -1;
+            }
+            return (half_played & 1U) + 0x4d01;
+          }
+          result = (half_played & 1U) + 0x4d4e;
+        }
+      }
+      return result;
+    }
+    if (csvid == 0x42ce)
+    {
+      return (-(unsigned int)((half_played & 1U) == 0) & 0x39) + 0x4adf;
+    }
+    if (csvid < 0x42cf)
+    {
+      if (0x4289 < csvid)
+      {
+        if (csvid == 0x42bd)
+        {
+          return (-(unsigned int)((half_played & 1U) == 0) & 3) + 0x4aca;
+        }
+        if (csvid != 0x42cd)
+        {
+          return -1;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0x1d) + 0x4adc;
+      }
+      if (0x4262 < csvid)
+      {
+        switch (csvid)
+        {
+        case 0x4263:
+          return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffe0) + 0x4b1d;
+        default:
+          return -1;
+        case 0x426a:
+          return (-(unsigned int)((half_played & 1U) == 0) & 10) + 0x4b22;
+        case 0x426b:
+          return (-(unsigned int)((half_played & 1U) == 0) & 9) + 0x4b26;
+        case 0x4288:
+          return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffdd) + 0x4b35;
+        case 0x4289:
+          return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffc7) + 0x4b37;
+        }
+      }
+      if (csvid == 0x422b)
+      {
+        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffef) + 0x4b04;
+      }
+      if (csvid != 0x4259)
+      {
+        return -1;
+      }
+      return (-(unsigned int)((half_played & 1U) == 0) & 0x29) + 0x4b1a;
+    }
+    if (csvid == 0x4335)
+    {
+      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffac) + 0x4b25;
+    }
+    if (0x4335 < csvid)
+    {
+      if (csvid == 0x434e)
+      {
+        return (-(unsigned int)((half_played & 1U) == 0) & 3) + 0x4b38;
+      }
+      if (csvid != 0x4b55)
+      {
+        if (csvid != 0x4336)
+        {
+          return -1;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffb9) + 0x4b27;
+      }
+      return (half_played & 1U) + 0x4b53;
+    }
+    if (csvid == 0x42f9)
+    {
+      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffef) + 0x4b03;
+    }
+    if (0x42f9 < csvid)
+    {
+      if (csvid != 0x430f)
+      {
+        return -1;
+      }
+      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffce) + 0x4b0c;
+    }
+    if (csvid == 0x42e4)
+    {
+      return (-(unsigned int)((half_played & 1U) == 0) & 0xfffffffa) + 0x4af0;
+    }
+    if (csvid != 0x42eb)
+    {
+      return -1;
+    }
+    return (-(unsigned int)((half_played & 1U) == 0) & 0x15) + 0x4afb;
+  }
+  if (csvid == 0x206d)
+  {
+    return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffaf) + 0x4b3a;
+  }
+  if (0x206d < csvid)
+  {
+    if (csvid < 0x3393)
+    {
+      if (csvid < 0x3337)
+      {
+        if (csvid != 0x2072)
+        {
+          return -1;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffb7) + 0x4b3f;
+      }
+      switch (csvid)
+      {
+      case 0x3337:
+        goto code_r0x0267cbb7;
+      case 0x3338:
+        if ((half_played & 3U) == 3)
+        {
+          return csvid;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0x18) + 0x4acb;
+      default:
+        return -1;
+      case 0x333b:
+        if ((half_played & 3U) == 3)
+        {
+          return csvid;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffd4) + 0x4afa;
+      case 0x3340:
+        if ((half_played & 3U) == 3)
+        {
+          return csvid;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 8) + 0x4ad0;
+      case 0x3344:
+        if ((half_played & 3U) == 3)
+        {
+          return csvid;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffd2) + 0x4b00;
+      case 0x334a:
+        if ((half_played & 3U) == 3)
+        {
+          return csvid;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0x20) + 0x4ad5;
+      case 0x334d:
+        if ((half_played & 3U) == 3)
+        {
+          return csvid;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffff94) + 0x4b42;
+      case 0x334f:
+        if ((half_played & 3U) == 3)
+        {
+          return csvid;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0x4f) + 0x4ad9;
+      case 0x3357:
+        if ((half_played & 3U) == 3)
+        {
+          return csvid;
+        }
+        return (half_played & 1U) + 0x4aee;
+      case 0x335f:
+        if ((half_played & 3U) == 3)
+        {
+          return csvid;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0x3b) + 0x4b01;
+      case 0x3370:
+        if ((half_played & 3U) == 3)
+        {
+          return csvid;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0xfffffff0) + 0x4b1e;
+      case 0x338c:
+        if ((half_played & 3U) == 3)
+        {
+          return csvid;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0x13) + 0x4b1f;
+      case 0x3392:
+        if ((half_played & 3U) == 3)
+        {
+          return csvid;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0x2a) + 0x4b23;
+      }
+    }
+    if (csvid == 0x41f1)
+    {
+      return (-(unsigned int)((half_played & 1U) == 0) & 0x49) + 0x4ae2;
+    }
+    if (0x41f1 < csvid)
+    {
+      if (csvid != 0x41f8)
+      {
+        return -1;
+      }
+      return (-(unsigned int)((half_played & 1U) == 0) & 0x20) + 0x4aeb;
+    }
+    if (csvid != 0x33af)
+    {
+      if (csvid != 0x33b3)
+      {
+        return -1;
+      }
+      if ((half_played & 3U) == 3)
+      {
+        return 0x33b3;
+      }
+      return (-(unsigned int)((half_played & 1U) == 0) & 2) + 0x4b3e;
+    }
+    if ((half_played & 3U) == 3)
+    {
+      return 0x33af;
+    }
+    return (-(unsigned int)((half_played & 1U) == 0) & 0xfffffff7) + 0x4b46;
+  }
+  if (csvid == 0x1522)
+  {
+    return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffc0) + 0x4b1b;
+  }
+  if (0x1522 < csvid)
+  {
+    if (csvid == 0x2035)
+    {
+      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffdb) + 0x4b19;
+    }
+    if (0x2035 < csvid)
+    {
+      if (csvid == 0x2052)
+      {
+        return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffc4) + 0x4b29;
+      }
+      if (csvid != 0x2054)
+      {
+        if (csvid != 0x2048)
+        {
+          return -1;
+        }
+        return (-(unsigned int)((half_played & 1U) == 0) & 0x12) + 0x4b21;
+      }
+      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffcb) + 0x4b2d;
+    }
+    if (csvid == 0x201e)
+    {
+      return (-(unsigned int)((half_played & 1U) == 0) & 0x2c) + 0x4b05;
+    }
+    if (0x201e < csvid)
+    {
+      if (csvid != 0x201f)
+      {
+        return -1;
+      }
+      return (-(unsigned int)((half_played & 1U) == 0) & 0x2a) + 0x4b06;
+    }
+    if (csvid == 0x1ff3)
+    {
+      return (-(unsigned int)((half_played & 1U) == 0) & 0x18) + 0x4ad4;
+    }
+    if (csvid != 0x1ffd)
+    {
+      return -1;
+    }
+    return (-(unsigned int)((half_played & 1U) == 0) & 0x3f) + 0x4ae1;
+  }
+  if (csvid == 0x1443)
+  {
+    return (half_played & 1U) + 0x4b44;
+  }
+  if (csvid < 0x1444)
+  {
+    if (csvid == 0x1407)
+    {
+      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffdb) + 0x4b34;
+    }
+    if (0x1407 < csvid)
+    {
+      if (csvid != 0x140a)
+      {
+        return -1;
+      }
+      return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffb2) + 0x4b36;
+    }
+    if (csvid == 0x1348)
+    {
+      return (-(unsigned int)((half_played & 1U) == 0) & 3) + 0x4acc;
+    }
+    if (csvid != 0x13c0)
+    {
+      return -1;
+    }
+    return (-(unsigned int)((half_played & 1U) == 0) & 0x1d) + 0x4b1c;
+  }
+  if (csvid == 0x1513)
+  {
+    return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffda) + 0x4b0d;
+  }
+  if (0x1513 < csvid)
+  {
+    if (csvid != 0x1521)
+    {
+      return -1;
+    }
+    return (-(unsigned int)((half_played & 1U) == 0) & 0xffffffce) + 0x4b17;
+  }
+  if (csvid == 0x14f9)
+  {
+    return (-(unsigned int)((half_played & 1U) == 0) & 8) + 0x4aff;
+  }
+  if (csvid != 0x150a)
+  {
+    return -1;
+  }
+  return (-(unsigned int)((half_played & 1U) == 0) & 0x1c) + 0x4b08;
+code_r0x0267cbb7:
+  if ((half_played & 3U) == 3)
+  {
+    return csvid;
+  }
+  return (-(unsigned int)((half_played & 1U) == 0) & 0x7e) + 0x4ac9;
+}
+
+/* ManalinkEh 2022: 0x267cf50; original functions/functions.c:3417. */
+int dfc_front_to_back(int csvid)
+{
+  int result;
+
+  if (csvid == 0x5739)
+  {
+    return 0x573a;
+  }
+  if (csvid < 0x573a)
+  {
+    if (csvid < 0x3edd)
+    {
+      if (0x3eb9 < csvid)
+      {
+        switch (csvid)
+        {
+        case 0x3eba:
+          return 0x3ebb;
+        default:
+          return 0;
+        case 0x3ec1:
+          return 0x3ec2;
+        case 0x3ec4:
+          return 0x3ec5;
+        case 0x3ecf:
+          return 0x3ed0;
+        case 0x3edc:
+          return 0x3edd;
+        }
+      }
+      if (csvid == 0x3b40)
+      {
+        return 0x3b41;
+      }
+      if (csvid < 0x3b41)
+      {
+        if (0x2f77 < csvid)
+        {
+          if (csvid < 0x2fec)
+          {
+            if (0x2faf < csvid)
+            {
+              switch (csvid)
+              {
+              case 0x2fb0:
+                return 0x2fb1;
+              default:
+                return 0;
+              case 0x2fb5:
+                return 0x2fb6;
+              case 0x2fbf:
+                return 0x2fc0;
+              case 0x2fc3:
+                return 0x2fc4;
+              case 0x2fc9:
+                return 0x2fca;
+              case 0x2fd4:
+                return 0x2fd5;
+              case 0x2fdd:
+                return 0x2fde;
+              case 0x2feb:
+                return 0x2fec;
+              }
+            }
+            return (csvid != 0x2f89) - 1 & 0x2f8a;
+          }
+          if (csvid == 0x3af8)
+          {
+            return 0x3af9;
+          }
+          if (csvid == 0x3b37)
+          {
+            return 0x3b38;
+          }
+          return (csvid != 0x3004) - 1 & 0x3005;
+        }
+        if (0x2f3f < csvid)
+        {
+          switch (csvid)
+          {
+          case 0x2f40:
+            return 0x2f41;
+          default:
+            return 0;
+          case 0x2f42:
+            return 0x2f43;
+          case 0x2f4b:
+            return 0x2f4c;
+          case 0x2f57:
+            return 0x2f58;
+          case 0x2f59:
+            return 0x2f5a;
+          case 0x2f62:
+            return 0x2f63;
+          case 0x2f73:
+            return 0x2f74;
+          case 0x2f77:
+            return 0x2f78;
+          }
+        }
+        if (csvid < 0x2ef2)
+        {
+          if (0x2eb3 < csvid)
+          {
+            switch (csvid)
+            {
+            case 0x2eb4:
+              return 0x2eb5;
+            default:
+              return 0;
+            case 0x2eb6:
+              return 0x2eb7;
+            case 0x2ec7:
+              return 0x2ec8;
+            case 0x2ecc:
+              return 0x2ecd;
+            case 0x2ed6:
+              return 0x2ed7;
+            case 12000:
+              return 0x2ee1;
+            case 0x2ee6:
+              return 0x2ee7;
+            case 0x2ef1:
+              return 0x2ef2;
+            }
+          }
+          switch (csvid)
+          {
+          case 0x2e6f:
+            return 0x2e70;
+          case 0x2e70:
+          case 0x2e71:
+          case 0x2e72:
+          case 0x2e73:
+          case 0x2e74:
+          case 0x2e75:
+          case 0x2e76:
+          case 0x2e77:
+          case 0x2e78:
+          case 0x2e79:
+          case 0x2e7a:
+          case 0x2e7b:
+          case 0x2e7c:
+          case 0x2e7d:
+          case 0x2e7e:
+          case 0x2e80:
+          case 0x2e81:
+          case 0x2e82:
+          case 0x2e84:
+          case 0x2e85:
+          case 0x2e86:
+          case 0x2e87:
+          case 0x2e88:
+          case 0x2e89:
+          case 0x2e8a:
+          case 0x2e8b:
+          case 0x2e8c:
+          case 0x2e8d:
+          case 0x2e8e:
+          case 0x2e8f:
+          case 0x2e90:
+          case 0x2e92:
+          case 0x2e93:
+          case 0x2e94:
+            return 0;
+          case 0x2e7f:
+            return 0x2e80;
+          case 0x2e83:
+            return 0x2e84;
+          case 0x2e91:
+            return 0x2e92;
+          case 0x2e95:
+            return 0x2e96;
+          default:
+            return 0;
+          }
+        }
+        result = 0x2f16;
+        if (csvid != 0x2f15)
+        {
+          return (csvid != 0x2f1e) - 1 & 0x2f1f;
+        }
+      }
+      else
+      {
+        if (0x3e2e < csvid)
+        {
+          if (csvid == 0x3e42)
+          {
+            return 0x3e43;
+          }
+          switch (csvid)
+          {
+          case 0x3e55:
+            return 0x3e56;
+          case 0x3e56:
+          case 0x3e57:
+          case 0x3e58:
+          case 0x3e5a:
+          case 0x3e5b:
+          case 0x3e5c:
+          case 0x3e5d:
+          case 0x3e5e:
+          case 0x3e5f:
+          case 0x3e61:
+          case 0x3e62:
+          case 0x3e63:
+          case 0x3e64:
+          case 0x3e65:
+          case 0x3e66:
+          case 0x3e67:
+          case 0x3e68:
+          case 0x3e69:
+          case 0x3e6a:
+          case 0x3e6b:
+          case 0x3e6c:
+          case 0x3e6d:
+          case 0x3e6e:
+          case 0x3e6f:
+          case 0x3e70:
+          case 0x3e72:
+          case 0x3e73:
+          case 0x3e75:
+          case 0x3e76:
+          case 0x3e77:
+          case 0x3e78:
+          case 0x3e79:
+          case 0x3e7a:
+          case 0x3e7c:
+          case 0x3e7d:
+          case 0x3e7e:
+          case 15999:
+          case 16000:
+          case 0x3e81:
+          case 0x3e82:
+          case 0x3e83:
+          case 0x3e84:
+          case 0x3e85:
+          case 0x3e87:
+          case 0x3e88:
+          case 0x3e89:
+          case 0x3e8a:
+          case 0x3e8b:
+          case 0x3e8c:
+          case 0x3e8d:
+          case 0x3e8e:
+          case 0x3e90:
+          case 0x3e91:
+          case 0x3e92:
+          case 0x3e93:
+          case 0x3e94:
+          case 0x3e95:
+            return 0;
+          case 0x3e59:
+            return 0x3e5a;
+          case 0x3e60:
+            return 0x3e61;
+          case 0x3e71:
+            return 0x3e72;
+          case 0x3e74:
+            return 0x3e75;
+          case 0x3e7b:
+            return 0x3e7c;
+          case 0x3e86:
+            return 0x3e87;
+          case 0x3e8f:
+            return 0x3e90;
+          case 0x3e96:
+            return 0x3e97;
+          default:
+            return 0;
+          }
+        }
+        if (0x3dd1 < csvid)
+        {
+          switch (csvid)
+          {
+          case 0x3dd2:
+            return 0x3dd3;
+          default:
+            return 0;
+          case 0x3dd4:
+            return 0x3dd5;
+          case 0x3de1:
+            return 0x3de2;
+          case 0x3de4:
+            return 0x3de5;
+          case 0x3de7:
+            return 0x3de8;
+          case 0x3de9:
+            return 0x3dea;
+          case 0x3dec:
+            return 0x3ded;
+          case 0x3e03:
+            return 0x3e04;
+          case 0x3e05:
+            return 0x3e06;
+          case 0x3e07:
+            return 0x3e08;
+          case 0x3e1e:
+            return 0x3e1f;
+          case 0x3e2e:
+            return 0x3e2f;
+          }
+        }
+        if (0x3db6 < csvid)
+        {
+          return 0;
+        }
+        if (csvid < 0x3d6e)
+        {
+          result = 0x3b45;
+          if (csvid != 0x3b44)
+          {
+            return (csvid != 0x3b54) - 1 & 0x3b55;
+          }
+        }
+        else
+        {
+          switch (csvid)
+          {
+          case 0x3d6e:
+            return 0x3d6f;
+          default:
+            return 0;
+          case 0x3d70:
+            result = 0x3d71;
+            break;
+          case 0x3d7a:
+            return 0x3d7b;
+          case 0x3d7c:
+            return 0x3d7d;
+          case 0x3d80:
+            return 0x3d81;
+          case 0x3d83:
+            return 0x3d84;
+          case 0x3d8b:
+            return 0x3d8c;
+          case 0x3d9a:
+            return 0x3d9b;
+          case 0x3da3:
+            return 0x3da4;
+          case 0x3db3:
+            return 0x3db4;
+          case 0x3db6:
+            return 0x3db7;
+          }
+        }
+      }
+    }
+    else if (csvid < 0x5561)
+    {
+      if (0x5500 < csvid)
+      {
+        switch (csvid)
+        {
+        case 0x5501:
+          return 0x5502;
+        default:
+          return 0;
+        case 0x5505:
+          return 0x5506;
+        case 0x5513:
+          return 0x5514;
+        case 0x5516:
+          return 0x5517;
+        case 0x5518:
+          return 0x5519;
+        case 0x551d:
+          return 0x551e;
+        case 0x551f:
+          return 0x5520;
+        case 0x552c:
+          return 0x552d;
+        case 0x5536:
+          return 0x5537;
+        case 0x5544:
+          return 0x5545;
+        case 0x5556:
+          return 0x5557;
+        case 0x5560:
+          return 0x5561;
+        }
+      }
+      if (csvid == 0x4430)
+      {
+        return 0x4431;
+      }
+      if (csvid < 0x4431)
+      {
+        if (csvid < 0x3f69)
+        {
+          if (0x3f34 < csvid)
+          {
+            switch (csvid)
+            {
+            case 0x3f35:
+              return 0x3f36;
+            default:
+              return 0;
+            case 0x3f3b:
+              return 0x3f3c;
+            case 0x3f54:
+              return 0x3f55;
+            case 0x3f5e:
+              return 0x3f5f;
+            case 0x3f60:
+              return 0x3f61;
+            case 0x3f66:
+              return 0x3f67;
+            case 0x3f68:
+              return 0x3f69;
+            }
+          }
+          if (csvid != 0x3f0a)
+          {
+            if (csvid == 0x3f11)
+            {
+              return 0x3f12;
+            }
+            return (csvid != 0x3ef7) - 1 & 0x3ef8;
+          }
+          return 0x3f0b;
+        }
+        if (csvid == 0x43f5)
+        {
+          return 0x43f6;
+        }
+        if (0x43f5 < csvid)
+        {
+          return (csvid != 0x4412) - 1 & 0x4413;
+        }
+        result = 0x43c1;
+        if (csvid != 0x43c0)
+        {
+          return (csvid != 0x43dc) - 1 & 0x43dd;
+        }
+      }
+      else
+      {
+        if (csvid == 0x472b)
+        {
+          return 0x472c;
+        }
+        if (csvid < 0x472c)
+        {
+          if (csvid == 0x44a0)
+          {
+            return 0x44a1;
+          }
+          if (csvid < 0x44a1)
+          {
+            if (csvid == 0x446c)
+            {
+              return 0x446d;
+            }
+            if (csvid == 0x4497)
+            {
+              return 0x4498;
+            }
+            return (csvid != 0x444a) - 1 & 0x444b;
+          }
+          if (csvid == 0x46f0)
+          {
+            return 0x46f1;
+          }
+          if (csvid == 0x4727)
+          {
+            return 0x4728;
+          }
+          return (csvid != 0x44a6) - 1 & 0x44a7;
+        }
+        if (csvid == 0x477d)
+        {
+          return 0x477e;
+        }
+        if (csvid < 0x477e)
+        {
+          if (csvid == 0x4753)
+          {
+            return 0x4754;
+          }
+          if (csvid == 0x4759)
+          {
+            return 0x475a;
+          }
+          return (csvid != 0x4737) - 1 & 0x4738;
+        }
+        result = 0x4a1a;
+        if (csvid != 0x4a19)
+        {
+          return (csvid != 0x4a74) - 1 & 0x4a75;
+        }
+      }
+    }
+    else if (csvid < 0x562a)
+    {
+      result = 0;
+      if (0x556a < csvid)
+      {
+        switch (csvid)
+        {
+        case 0x556b:
+          return 0x556c;
+        default:
+          return 0;
+        case 0x556e:
+          return 0x556f;
+        case 0x5573:
+          return 0x5574;
+        case 0x5577:
+          return 0x5578;
+        case 0x5579:
+          return 0x557a;
+        case 0x558b:
+          return 0x558c;
+        case 0x558e:
+          return 0x558f;
+        case 0x55a3:
+          return 0x55a4;
+        case 0x55af:
+          return 0x55b0;
+        case 0x55b4:
+          return 0x55b5;
+        case 0x55c3:
+          return 0x55c4;
+        case 0x55d3:
+          return 0x55d4;
+        case 0x55d7:
+          return 0x55d8;
+        case 0x55dd:
+          return 0x55de;
+        case 0x55e1:
+          return 0x55e2;
+        case 0x55e5:
+          return 0x55e6;
+        case 0x55f1:
+          return 0x55f2;
+        case 0x55f5:
+          return 0x55f6;
+        case 0x5604:
+          return 0x5605;
+        case 0x5614:
+          return 0x5615;
+        case 0x5617:
+          return 0x5618;
+        case 0x561a:
+          return 0x561b;
+        case 0x561d:
+          return 0x561e;
+        case 0x5629:
+          return 0x562a;
+        }
+      }
+    }
+    else
+    {
+      if (csvid == 0x5706)
+      {
+        return 0x5707;
+      }
+      if (csvid < 0x5707)
+      {
+        if (csvid == 0x56f5)
+        {
+          return 0x56f6;
+        }
+        if (csvid == 0x5703)
+        {
+          return 0x5704;
+        }
+        return (csvid != 0x56e7) - 1 & 0x56e8;
+      }
+      result = 0x571a;
+      if (csvid != 0x5719)
+      {
+        return (csvid != 0x5721) - 1 & 0x5722;
+      }
+    }
+  }
+  else
+  {
+    if (0x5fc2 < csvid)
+    {
+      return 0;
+    }
+    if (0x5bfb < csvid)
+    {
+      switch (csvid)
+      {
+      case 0x5bfc:
+        return 0x5bfd;
+      default:
+        return 0;
+      case 0x5c01:
+        return 0x5c02;
+      case 0x5c05:
+        return 0x5c06;
+      case 0x5c07:
+        return 0x5c08;
+      case 0x5c0a:
+        return 0x5c0b;
+      case 0x5c0c:
+        return 0x5c0d;
+      case 0x5c0e:
+        return 0x5c0f;
+      case 0x5c1c:
+        return 0x5c1d;
+      case 0x5c1e:
+        return 0x5c1f;
+      case 0x5c2b:
+        return 0x5c2c;
+      case 0x5c33:
+        return 0x5c34;
+      case 0x5c35:
+        return 0x5c36;
+      case 0x5c3a:
+        return 0x5c3b;
+      case 0x5c42:
+        return 0x5c43;
+      case 0x5c44:
+        return 0x5c45;
+      case 0x5c48:
+        return 0x5c49;
+      case 0x5c4b:
+        return 0x5c4c;
+      case 0x5c57:
+        return 0x5c58;
+      case 0x5c5a:
+        return 0x5c5b;
+      case 0x5c62:
+        return 0x5c63;
+      case 0x5c67:
+        return 0x5c68;
+      case 0x5c6e:
+        return 0x5c6f;
+      case 0x5c7a:
+        return 0x5c7b;
+      case 0x5c7e:
+        return 0x5c7f;
+      case 0x5c83:
+        return 0x5c84;
+      case 0x5c87:
+        return 0x5c88;
+      case 0x5c89:
+        return 0x5c8a;
+      case 0x5c91:
+        return 0x5c92;
+      case 0x5c95:
+        return 0x5c96;
+      case 0x5c9f:
+        return 0x5ca0;
+      case 0x5ca2:
+        return 0x5ca3;
+      case 0x5ca4:
+        return 0x5ca5;
+      case 0x5caf:
+        return 0x5cb0;
+      case 0x5cb1:
+        return 0x5cb2;
+      case 0x5cb3:
+        return 0x5cb4;
+      case 0x5cc1:
+        return 0x5cc2;
+      case 0x5cc4:
+        return 0x5cc5;
+      case 0x5ccc:
+        return 0x5ccd;
+      case 0x5cd1:
+        return 0x5cd2;
+      case 0x5ce3:
+        return 0x5ce4;
+      case 0x5cf1:
+        return 0x5cf2;
+      case 0x5cf6:
+        return 0x5cf7;
+      case 0x5d03:
+        return 0x5d04;
+      case 0x5d07:
+        return 0x5d08;
+      case 0x5d0e:
+        return 0x5d0f;
+      case 0x5d10:
+        return 0x5d11;
+      case 0x5d12:
+        return 0x5d13;
+      case 0x5d1c:
+        return 0x5d1d;
+      case 0x5d1e:
+        return 0x5d1f;
+      case 0x5d50:
+        return 0x5d51;
+      case 0x5d5a:
+        return 0x5d5b;
+      case 0x5d5c:
+        return 0x5d5d;
+      case 0x5d5f:
+        return 0x5d60;
+      case 0x5d61:
+        return 0x5d62;
+      case 0x5d6a:
+        return 0x5d6b;
+      case 0x5d72:
+        return 0x5d73;
+      case 0x5d76:
+        return 0x5d77;
+      case 0x5d81:
+        return 0x5d82;
+      case 0x5d87:
+        return 0x5d88;
+      case 0x5d96:
+        return 0x5d97;
+      case 0x5d9a:
+        return 0x5d9b;
+      case 0x5d9f:
+        return 0x5da0;
+      case 0x5da1:
+        return 0x5da2;
+      case 0x5da9:
+        return 0x5daa;
+      case 0x5dad:
+        return 0x5dae;
+      case 0x5db2:
+        return 0x5db3;
+      case 0x5db7:
+        return 0x5db8;
+      case 0x5dbe:
+        return 23999;
+      case 0x5dcc:
+        return 0x5dcd;
+      case 0x5dd2:
+        return 0x5dd3;
+      case 0x5dd9:
+        return 0x5dda;
+      case 0x5ddd:
+        return 0x5dde;
+      case 0x5de1:
+        return 0x5de2;
+      case 0x5de3:
+        return 0x5de4;
+      case 0x5de5:
+        return 0x5de6;
+      case 0x5dea:
+        return 0x5deb;
+      case 0x5dec:
+        return 0x5ded;
+      case 0x5df1:
+        return 0x5df2;
+      case 0x5df5:
+        return 0x5df6;
+      case 0x5df7:
+        return 0x5df8;
+      case 0x5e05:
+        return 0x5e06;
+      case 0x5e07:
+        return 0x5e08;
+      case 0x5e0e:
+        return 0x5e0f;
+      case 0x5e17:
+        return 0x5e18;
+      case 0x5e21:
+        return 0x5e22;
+      case 0x5e23:
+        return 0x5e24;
+      case 0x5e2a:
+        return 0x5e2b;
+      case 0x5e2f:
+        return 0x5e30;
+      case 0x5e44:
+        return 0x5e45;
+      case 0x5e57:
+        return 0x5e58;
+      case 0x5e59:
+        return 0x5e5a;
+      case 0x5e64:
+        return 0x5e65;
+      case 0x5e66:
+        return 0x5e67;
+      case 0x5e6a:
+        return 0x5e6b;
+      case 0x5e6f:
+        return 0x5e70;
+      case 0x5e71:
+        return 0x5e72;
+      case 0x5e73:
+        return 0x5e74;
+      case 0x5e7d:
+        return 0x5e7e;
+      case 0x5eb4:
+        return 0x5eb5;
+      case 0x5eb9:
+        return 0x5eba;
+      case 0x5ebb:
+        return 0x5ebc;
+      case 0x5ec3:
+        return 0x5ec4;
+      case 0x5ee5:
+        return 0x5ee6;
+      case 0x5eea:
+        return 0x5eeb;
+      case 0x5f06:
+        return 0x5f07;
+      case 0x5f13:
+        return 0x5f14;
+      case 0x5f1f:
+        return 0x5f20;
+      case 0x5f33:
+        return 0x5f34;
+      case 0x5f39:
+        return 0x5f3a;
+      case 0x5f4a:
+        return 0x5f4b;
+      case 0x5f62:
+        return 0x5f63;
+      case 0x5f9f:
+        return 0x5fa0;
+      case 0x5fa7:
+        return 0x5fa8;
+      case 0x5fac:
+        return 0x5fad;
+      case 0x5fae:
+        return 0x5faf;
+      case 0x5fb0:
+        return 0x5fb1;
+      case 0x5fb2:
+        return 0x5fb3;
+      case 0x5fb4:
+        return 0x5fb5;
+      case 0x5fb7:
+        return 0x5fb8;
+      case 0x5fb9:
+        return 0x5fba;
+      case 0x5fc2:
+        return 0x5fc3;
+      }
+    }
+    if (csvid == 0x588a)
+    {
+      return 0x588b;
+    }
+    if (csvid < 0x588b)
+    {
+      if (csvid == 0x57f2)
+      {
+        return 0x57f3;
+      }
+      if (csvid < 0x57f3)
+      {
+        if (csvid == 0x5785)
+        {
+          return 0x5786;
+        }
+        if (csvid < 0x5786)
+        {
+          if (csvid == 0x576d)
+          {
+            return 0x576e;
+          }
+          if (csvid == 0x5772)
+          {
+            return 0x5773;
+          }
+          return (csvid != 0x5743) - 1 & 0x5744;
+        }
+        result = 0x5792;
+        if (csvid != 0x5791)
+        {
+          return (csvid != 0x57bb) - 1 & 0x57bc;
+        }
+      }
+      else
+      {
+        if (csvid == 0x5839)
+        {
+          return 0x583a;
+        }
+        if (csvid < 0x583a)
+        {
+          result = 0x57fe;
+          if (csvid != 0x57fd)
+          {
+            return (csvid != 0x5809) - 1 & 0x580a;
+          }
+        }
+        else
+        {
+          result = 0x5845;
+          if (csvid != 0x5844)
+          {
+            return (csvid != 0x5884) - 1 & 0x5885;
+          }
+        }
+      }
+    }
+    else
+    {
+      if (csvid == 0x5908)
+      {
+        return 0x5909;
+      }
+      if (csvid < 0x5909)
+      {
+        if (csvid == 0x58d9)
+        {
+          return 0x58da;
+        }
+        if (csvid < 0x58da)
+        {
+          if (csvid == 0x58b0)
+          {
+            return 0x58b1;
+          }
+          if (csvid == 0x58cb)
+          {
+            return 0x58cc;
+          }
+          return (csvid != 0x58ab) - 1 & 0x58ac;
+        }
+        result = 0x58e0;
+        if (csvid != 0x58df)
+        {
+          return (csvid != 0x5901) - 1 & 0x5902;
+        }
+      }
+      else
+      {
+        if (csvid == 0x5940)
+        {
+          return 0x5941;
+        }
+        if (csvid < 0x5941)
+        {
+          result = 0x590f;
+          if (csvid != 0x590e)
+          {
+            return (csvid != 0x593b) - 1 & 0x593c;
+          }
+        }
+        else
+        {
+          result = 0x5943;
+          if (csvid != 0x5942)
+          {
+            return (csvid != 0x594a) - 1 & 0x594b;
+          }
+        }
+      }
+    }
+  }
+  return result;
+}
+
+/* ManalinkEh 2022: 0x267dce0; original functions/functions.c:3759. */
+int dfc_back_to_front(int csvid)
+{
+  int result;
+
+  if (csvid == 0x573a)
+  {
+    return 0x5739;
+  }
+  if (csvid < 0x573b)
+  {
+    if (csvid < 0x3ede)
+    {
+      if (0x3eba < csvid)
+      {
+        switch (csvid)
+        {
+        case 0x3ebb:
+          return 0x3eba;
+        default:
+          return 0;
+        case 0x3ec2:
+          return 0x3ec1;
+        case 0x3ec5:
+          return 0x3ec4;
+        case 0x3ed0:
+          return 0x3ecf;
+        case 0x3edd:
+          return 0x3edc;
+        }
+      }
+      if (csvid == 0x3b41)
+      {
+        return 0x3b40;
+      }
+      if (csvid < 0x3b42)
+      {
+        if (0x2f78 < csvid)
+        {
+          if (csvid < 0x2fed)
+          {
+            if (0x2fb0 < csvid)
+            {
+              switch (csvid)
+              {
+              case 0x2fb1:
+                return 0x2fb0;
+              default:
+                return 0;
+              case 0x2fb6:
+                return 0x2fb5;
+              case 0x2fc0:
+                return 0x2fbf;
+              case 0x2fc4:
+                return 0x2fc3;
+              case 0x2fca:
+                return 0x2fc9;
+              case 0x2fd5:
+                return 0x2fd4;
+              case 0x2fde:
+                return 0x2fdd;
+              case 0x2fec:
+                return 0x2feb;
+              }
+            }
+            return (csvid != 0x2f8a) - 1 & 0x2f89;
+          }
+          if (csvid == 0x3af9)
+          {
+            return 0x3af8;
+          }
+          if (csvid == 0x3b38)
+          {
+            return 0x3b37;
+          }
+          return (csvid != 0x3005) - 1 & 0x3004;
+        }
+        if (0x2f40 < csvid)
+        {
+          switch (csvid)
+          {
+          case 0x2f41:
+            return 0x2f40;
+          default:
+            return 0;
+          case 0x2f43:
+            return 0x2f42;
+          case 0x2f4c:
+            return 0x2f4b;
+          case 0x2f58:
+            return 0x2f57;
+          case 0x2f5a:
+            return 0x2f59;
+          case 0x2f63:
+            return 0x2f62;
+          case 0x2f74:
+            return 0x2f73;
+          case 0x2f78:
+            return 0x2f77;
+          }
+        }
+        if (csvid < 0x2ef3)
+        {
+          if (0x2eb4 < csvid)
+          {
+            switch (csvid)
+            {
+            case 0x2eb5:
+              return 0x2eb4;
+            default:
+              return 0;
+            case 0x2eb7:
+              return 0x2eb6;
+            case 0x2ec8:
+              return 0x2ec7;
+            case 0x2ecd:
+              return 0x2ecc;
+            case 0x2ed7:
+              return 0x2ed6;
+            case 0x2ee1:
+              return 12000;
+            case 0x2ee7:
+              return 0x2ee6;
+            case 0x2ef2:
+              return 0x2ef1;
+            }
+          }
+          switch (csvid)
+          {
+          case 0x2e70:
+            return 0x2e6f;
+          case 0x2e71:
+          case 0x2e72:
+          case 0x2e73:
+          case 0x2e74:
+          case 0x2e75:
+          case 0x2e76:
+          case 0x2e77:
+          case 0x2e78:
+          case 0x2e79:
+          case 0x2e7a:
+          case 0x2e7b:
+          case 0x2e7c:
+          case 0x2e7d:
+          case 0x2e7e:
+          case 0x2e7f:
+          case 0x2e81:
+          case 0x2e82:
+          case 0x2e83:
+          case 0x2e85:
+          case 0x2e86:
+          case 0x2e87:
+          case 0x2e88:
+          case 0x2e89:
+          case 0x2e8a:
+          case 0x2e8b:
+          case 0x2e8c:
+          case 0x2e8d:
+          case 0x2e8e:
+          case 0x2e8f:
+          case 0x2e90:
+          case 0x2e91:
+          case 0x2e93:
+          case 0x2e94:
+          case 0x2e95:
+            return 0;
+          case 0x2e80:
+            return 0x2e7f;
+          case 0x2e84:
+            return 0x2e83;
+          case 0x2e92:
+            return 0x2e91;
+          case 0x2e96:
+            return 0x2e95;
+          default:
+            return 0;
+          }
+        }
+        result = 0x2f15;
+        if (csvid != 0x2f16)
+        {
+          return (csvid != 0x2f1f) - 1 & 0x2f1e;
+        }
+      }
+      else
+      {
+        if (0x3e2f < csvid)
+        {
+          if (csvid == 0x3e43)
+          {
+            return 0x3e42;
+          }
+          switch (csvid)
+          {
+          case 0x3e56:
+            return 0x3e55;
+          case 0x3e57:
+          case 0x3e58:
+          case 0x3e59:
+          case 0x3e5b:
+          case 0x3e5c:
+          case 0x3e5d:
+          case 0x3e5e:
+          case 0x3e5f:
+          case 0x3e60:
+          case 0x3e62:
+          case 0x3e63:
+          case 0x3e64:
+          case 0x3e65:
+          case 0x3e66:
+          case 0x3e67:
+          case 0x3e68:
+          case 0x3e69:
+          case 0x3e6a:
+          case 0x3e6b:
+          case 0x3e6c:
+          case 0x3e6d:
+          case 0x3e6e:
+          case 0x3e6f:
+          case 0x3e70:
+          case 0x3e71:
+          case 0x3e73:
+          case 0x3e74:
+          case 0x3e76:
+          case 0x3e77:
+          case 0x3e78:
+          case 0x3e79:
+          case 0x3e7a:
+          case 0x3e7b:
+          case 0x3e7d:
+          case 0x3e7e:
+          case 15999:
+          case 16000:
+          case 0x3e81:
+          case 0x3e82:
+          case 0x3e83:
+          case 0x3e84:
+          case 0x3e85:
+          case 0x3e86:
+          case 0x3e88:
+          case 0x3e89:
+          case 0x3e8a:
+          case 0x3e8b:
+          case 0x3e8c:
+          case 0x3e8d:
+          case 0x3e8e:
+          case 0x3e8f:
+          case 0x3e91:
+          case 0x3e92:
+          case 0x3e93:
+          case 0x3e94:
+          case 0x3e95:
+          case 0x3e96:
+            return 0;
+          case 0x3e5a:
+            return 0x3e59;
+          case 0x3e61:
+            return 0x3e60;
+          case 0x3e72:
+            return 0x3e71;
+          case 0x3e75:
+            return 0x3e74;
+          case 0x3e7c:
+            return 0x3e7b;
+          case 0x3e87:
+            return 0x3e86;
+          case 0x3e90:
+            return 0x3e8f;
+          case 0x3e97:
+            return 0x3e96;
+          default:
+            return 0;
+          }
+        }
+        if (0x3dd2 < csvid)
+        {
+          switch (csvid)
+          {
+          case 0x3dd3:
+            return 0x3dd2;
+          default:
+            return 0;
+          case 0x3dd5:
+            return 0x3dd4;
+          case 0x3de2:
+            return 0x3de1;
+          case 0x3de5:
+            return 0x3de4;
+          case 0x3de8:
+            return 0x3de7;
+          case 0x3dea:
+            return 0x3de9;
+          case 0x3ded:
+            return 0x3dec;
+          case 0x3e04:
+            return 0x3e03;
+          case 0x3e06:
+            return 0x3e05;
+          case 0x3e08:
+            return 0x3e07;
+          case 0x3e1f:
+            return 0x3e1e;
+          case 0x3e2f:
+            return 0x3e2e;
+          }
+        }
+        if (0x3db7 < csvid)
+        {
+          return 0;
+        }
+        if (csvid < 0x3d6f)
+        {
+          result = 0x3b44;
+          if (csvid != 0x3b45)
+          {
+            return (csvid != 0x3b55) - 1 & 0x3b54;
+          }
+        }
+        else
+        {
+          switch (csvid)
+          {
+          case 0x3d6f:
+            return 0x3d6e;
+          default:
+            return 0;
+          case 0x3d71:
+            result = 0x3d70;
+            break;
+          case 0x3d7b:
+            return 0x3d7a;
+          case 0x3d7d:
+            return 0x3d7c;
+          case 0x3d81:
+            return 0x3d80;
+          case 0x3d84:
+            return 0x3d83;
+          case 0x3d8c:
+            return 0x3d8b;
+          case 0x3d9b:
+            return 0x3d9a;
+          case 0x3da4:
+            return 0x3da3;
+          case 0x3db4:
+            return 0x3db3;
+          case 0x3db7:
+            return 0x3db6;
+          }
+        }
+      }
+    }
+    else if (csvid < 0x5562)
+    {
+      if (0x5501 < csvid)
+      {
+        switch (csvid)
+        {
+        case 0x5502:
+          return 0x5501;
+        default:
+          return 0;
+        case 0x5506:
+          return 0x5505;
+        case 0x5514:
+          return 0x5513;
+        case 0x5517:
+          return 0x5516;
+        case 0x5519:
+          return 0x5518;
+        case 0x551e:
+          return 0x551d;
+        case 0x5520:
+          return 0x551f;
+        case 0x552d:
+          return 0x552c;
+        case 0x5537:
+          return 0x5536;
+        case 0x5545:
+          return 0x5544;
+        case 0x5557:
+          return 0x5556;
+        case 0x5561:
+          return 0x5560;
+        }
+      }
+      if (csvid == 0x4431)
+      {
+        return 0x4430;
+      }
+      if (csvid < 0x4432)
+      {
+        if (csvid < 0x3f6a)
+        {
+          if (0x3f35 < csvid)
+          {
+            switch (csvid)
+            {
+            case 0x3f36:
+              return 0x3f35;
+            default:
+              return 0;
+            case 0x3f3c:
+              return 0x3f3b;
+            case 0x3f55:
+              return 0x3f54;
+            case 0x3f5f:
+              return 0x3f5e;
+            case 0x3f61:
+              return 0x3f60;
+            case 0x3f67:
+              return 0x3f66;
+            case 0x3f69:
+              return 0x3f68;
+            }
+          }
+          if (csvid != 0x3f0b)
+          {
+            if (csvid == 0x3f12)
+            {
+              return 0x3f11;
+            }
+            return (csvid != 0x3ef8) - 1 & 0x3ef7;
+          }
+          return 0x3f0a;
+        }
+        if (csvid == 0x43f6)
+        {
+          return 0x43f5;
+        }
+        if (0x43f6 < csvid)
+        {
+          return (csvid != 0x4413) - 1 & 0x4412;
+        }
+        result = 0x43c0;
+        if (csvid != 0x43c1)
+        {
+          return (csvid != 0x43dd) - 1 & 0x43dc;
+        }
+      }
+      else
+      {
+        if (csvid == 0x472c)
+        {
+          return 0x472b;
+        }
+        if (csvid < 0x472d)
+        {
+          if (csvid == 0x44a1)
+          {
+            return 0x44a0;
+          }
+          if (csvid < 0x44a2)
+          {
+            if (csvid == 0x446d)
+            {
+              return 0x446c;
+            }
+            if (csvid == 0x4498)
+            {
+              return 0x4497;
+            }
+            return (csvid != 0x444b) - 1 & 0x444a;
+          }
+          if (csvid == 0x46f1)
+          {
+            return 0x46f0;
+          }
+          if (csvid == 0x4728)
+          {
+            return 0x4727;
+          }
+          return (csvid != 0x44a7) - 1 & 0x44a6;
+        }
+        if (csvid == 0x477e)
+        {
+          return 0x477d;
+        }
+        if (csvid < 0x477f)
+        {
+          if (csvid == 0x4754)
+          {
+            return 0x4753;
+          }
+          if (csvid == 0x475a)
+          {
+            return 0x4759;
+          }
+          return (csvid != 0x4738) - 1 & 0x4737;
+        }
+        result = 0x4a19;
+        if (csvid != 0x4a1a)
+        {
+          return (csvid != 0x4a75) - 1 & 0x4a74;
+        }
+      }
+    }
+    else if (csvid < 0x562b)
+    {
+      result = 0;
+      if (0x556b < csvid)
+      {
+        switch (csvid)
+        {
+        case 0x556c:
+          return 0x556b;
+        default:
+          return 0;
+        case 0x556f:
+          return 0x556e;
+        case 0x5574:
+          return 0x5573;
+        case 0x5578:
+          return 0x5577;
+        case 0x557a:
+          return 0x5579;
+        case 0x558c:
+          return 0x558b;
+        case 0x558f:
+          return 0x558e;
+        case 0x55a4:
+          return 0x55a3;
+        case 0x55b0:
+          return 0x55af;
+        case 0x55b5:
+          return 0x55b4;
+        case 0x55c4:
+          return 0x55c3;
+        case 0x55d4:
+          return 0x55d3;
+        case 0x55d8:
+          return 0x55d7;
+        case 0x55de:
+          return 0x55dd;
+        case 0x55e2:
+          return 0x55e1;
+        case 0x55e6:
+          return 0x55e5;
+        case 0x55f2:
+          return 0x55f1;
+        case 0x55f6:
+          return 0x55f5;
+        case 0x5605:
+          return 0x5604;
+        case 0x5615:
+          return 0x5614;
+        case 0x5618:
+          return 0x5617;
+        case 0x561b:
+          return 0x561a;
+        case 0x561e:
+          return 0x561d;
+        case 0x562a:
+          return 0x5629;
+        }
+      }
+    }
+    else
+    {
+      if (csvid == 0x5707)
+      {
+        return 0x5706;
+      }
+      if (csvid < 0x5708)
+      {
+        if (csvid == 0x56f6)
+        {
+          return 0x56f5;
+        }
+        if (csvid == 0x5704)
+        {
+          return 0x5703;
+        }
+        return (csvid != 0x56e8) - 1 & 0x56e7;
+      }
+      result = 0x5719;
+      if (csvid != 0x571a)
+      {
+        return (csvid != 0x5722) - 1 & 0x5721;
+      }
+    }
+  }
+  else
+  {
+    if (0x5fc3 < csvid)
+    {
+      return 0;
+    }
+    if (0x5bfc < csvid)
+    {
+      switch (csvid)
+      {
+      case 0x5bfd:
+        return 0x5bfc;
+      default:
+        return 0;
+      case 0x5c02:
+        return 0x5c01;
+      case 0x5c06:
+        return 0x5c05;
+      case 0x5c08:
+        return 0x5c07;
+      case 0x5c0b:
+        return 0x5c0a;
+      case 0x5c0d:
+        return 0x5c0c;
+      case 0x5c0f:
+        return 0x5c0e;
+      case 0x5c1d:
+        return 0x5c1c;
+      case 0x5c1f:
+        return 0x5c1e;
+      case 0x5c2c:
+        return 0x5c2b;
+      case 0x5c34:
+        return 0x5c33;
+      case 0x5c36:
+        return 0x5c35;
+      case 0x5c3b:
+        return 0x5c3a;
+      case 0x5c43:
+        return 0x5c42;
+      case 0x5c45:
+        return 0x5c44;
+      case 0x5c49:
+        return 0x5c48;
+      case 0x5c4c:
+        return 0x5c4b;
+      case 0x5c58:
+        return 0x5c57;
+      case 0x5c5b:
+        return 0x5c5a;
+      case 0x5c63:
+        return 0x5c62;
+      case 0x5c68:
+        return 0x5c67;
+      case 0x5c6f:
+        return 0x5c6e;
+      case 0x5c7b:
+        return 0x5c7a;
+      case 0x5c7f:
+        return 0x5c7e;
+      case 0x5c84:
+        return 0x5c83;
+      case 0x5c88:
+        return 0x5c87;
+      case 0x5c8a:
+        return 0x5c89;
+      case 0x5c92:
+        return 0x5c91;
+      case 0x5c96:
+        return 0x5c95;
+      case 0x5ca0:
+        return 0x5c9f;
+      case 0x5ca3:
+        return 0x5ca2;
+      case 0x5ca5:
+        return 0x5ca4;
+      case 0x5cb0:
+        return 0x5caf;
+      case 0x5cb2:
+        return 0x5cb1;
+      case 0x5cb4:
+        return 0x5cb3;
+      case 0x5cc2:
+        return 0x5cc1;
+      case 0x5cc5:
+        return 0x5cc4;
+      case 0x5ccd:
+        return 0x5ccc;
+      case 0x5cd2:
+        return 0x5cd1;
+      case 0x5ce4:
+        return 0x5ce3;
+      case 0x5cf2:
+        return 0x5cf1;
+      case 0x5cf7:
+        return 0x5cf6;
+      case 0x5d04:
+        return 0x5d03;
+      case 0x5d08:
+        return 0x5d07;
+      case 0x5d0f:
+        return 0x5d0e;
+      case 0x5d11:
+        return 0x5d10;
+      case 0x5d13:
+        return 0x5d12;
+      case 0x5d1d:
+        return 0x5d1c;
+      case 0x5d1f:
+        return 0x5d1e;
+      case 0x5d51:
+        return 0x5d50;
+      case 0x5d5b:
+        return 0x5d5a;
+      case 0x5d5d:
+        return 0x5d5c;
+      case 0x5d60:
+        return 0x5d5f;
+      case 0x5d62:
+        return 0x5d61;
+      case 0x5d6b:
+        return 0x5d6a;
+      case 0x5d73:
+        return 0x5d72;
+      case 0x5d77:
+        return 0x5d76;
+      case 0x5d82:
+        return 0x5d81;
+      case 0x5d88:
+        return 0x5d87;
+      case 0x5d97:
+        return 0x5d96;
+      case 0x5d9b:
+        return 0x5d9a;
+      case 0x5da0:
+        return 0x5d9f;
+      case 0x5da2:
+        return 0x5da1;
+      case 0x5daa:
+        return 0x5da9;
+      case 0x5dae:
+        return 0x5dad;
+      case 0x5db3:
+        return 0x5db2;
+      case 0x5db8:
+        return 0x5db7;
+      case 23999:
+        return 0x5dbe;
+      case 0x5dcd:
+        return 0x5dcc;
+      case 0x5dd3:
+        return 0x5dd2;
+      case 0x5dda:
+        return 0x5dd9;
+      case 0x5dde:
+        return 0x5ddd;
+      case 0x5de2:
+        return 0x5de1;
+      case 0x5de4:
+        return 0x5de3;
+      case 0x5de6:
+        return 0x5de5;
+      case 0x5deb:
+        return 0x5dea;
+      case 0x5ded:
+        return 0x5dec;
+      case 0x5df2:
+        return 0x5df1;
+      case 0x5df6:
+        return 0x5df5;
+      case 0x5df8:
+        return 0x5df7;
+      case 0x5e06:
+        return 0x5e05;
+      case 0x5e08:
+        return 0x5e07;
+      case 0x5e0f:
+        return 0x5e0e;
+      case 0x5e18:
+        return 0x5e17;
+      case 0x5e22:
+        return 0x5e21;
+      case 0x5e24:
+        return 0x5e23;
+      case 0x5e2b:
+        return 0x5e2a;
+      case 0x5e30:
+        return 0x5e2f;
+      case 0x5e45:
+        return 0x5e44;
+      case 0x5e58:
+        return 0x5e57;
+      case 0x5e5a:
+        return 0x5e59;
+      case 0x5e65:
+        return 0x5e64;
+      case 0x5e67:
+        return 0x5e66;
+      case 0x5e6b:
+        return 0x5e6a;
+      case 0x5e70:
+        return 0x5e6f;
+      case 0x5e72:
+        return 0x5e71;
+      case 0x5e74:
+        return 0x5e73;
+      case 0x5e7e:
+        return 0x5e7d;
+      case 0x5eb5:
+        return 0x5eb4;
+      case 0x5eba:
+        return 0x5eb9;
+      case 0x5ebc:
+        return 0x5ebb;
+      case 0x5ec4:
+        return 0x5ec3;
+      case 0x5ee6:
+        return 0x5ee5;
+      case 0x5eeb:
+        return 0x5eea;
+      case 0x5f07:
+        return 0x5f06;
+      case 0x5f14:
+        return 0x5f13;
+      case 0x5f20:
+        return 0x5f1f;
+      case 0x5f34:
+        return 0x5f33;
+      case 0x5f3a:
+        return 0x5f39;
+      case 0x5f4b:
+        return 0x5f4a;
+      case 0x5f63:
+        return 0x5f62;
+      case 0x5fa0:
+        return 0x5f9f;
+      case 0x5fa8:
+        return 0x5fa7;
+      case 0x5fad:
+        return 0x5fac;
+      case 0x5faf:
+        return 0x5fae;
+      case 0x5fb1:
+        return 0x5fb0;
+      case 0x5fb3:
+        return 0x5fb2;
+      case 0x5fb5:
+        return 0x5fb4;
+      case 0x5fb8:
+        return 0x5fb7;
+      case 0x5fba:
+        return 0x5fb9;
+      case 0x5fc3:
+        return 0x5fc2;
+      }
+    }
+    if (csvid == 0x588b)
+    {
+      return 0x588a;
+    }
+    if (csvid < 0x588c)
+    {
+      if (csvid == 0x57f3)
+      {
+        return 0x57f2;
+      }
+      if (csvid < 0x57f4)
+      {
+        if (csvid == 0x5786)
+        {
+          return 0x5785;
+        }
+        if (csvid < 0x5787)
+        {
+          if (csvid == 0x576e)
+          {
+            return 0x576d;
+          }
+          if (csvid == 0x5773)
+          {
+            return 0x5772;
+          }
+          return (csvid != 0x5744) - 1 & 0x5743;
+        }
+        result = 0x5791;
+        if (csvid != 0x5792)
+        {
+          return (csvid != 0x57bc) - 1 & 0x57bb;
+        }
+      }
+      else
+      {
+        if (csvid == 0x583a)
+        {
+          return 0x5839;
+        }
+        if (csvid < 0x583b)
+        {
+          result = 0x57fd;
+          if (csvid != 0x57fe)
+          {
+            return (csvid != 0x580a) - 1 & 0x5809;
+          }
+        }
+        else
+        {
+          result = 0x5844;
+          if (csvid != 0x5845)
+          {
+            return (csvid != 0x5885) - 1 & 0x5884;
+          }
+        }
+      }
+    }
+    else
+    {
+      if (csvid == 0x5909)
+      {
+        return 0x5908;
+      }
+      if (csvid < 0x590a)
+      {
+        if (csvid == 0x58da)
+        {
+          return 0x58d9;
+        }
+        if (csvid < 0x58db)
+        {
+          if (csvid == 0x58b1)
+          {
+            return 0x58b0;
+          }
+          if (csvid == 0x58cc)
+          {
+            return 0x58cb;
+          }
+          return (csvid != 0x58ac) - 1 & 0x58ab;
+        }
+        result = 0x58df;
+        if (csvid != 0x58e0)
+        {
+          return (csvid != 0x5902) - 1 & 0x5901;
+        }
+      }
+      else
+      {
+        if (csvid == 0x5941)
+        {
+          return 0x5940;
+        }
+        if (csvid < 0x5942)
+        {
+          result = 0x590e;
+          if (csvid != 0x590f)
+          {
+            return (csvid != 0x593c) - 1 & 0x593b;
+          }
+        }
+        else
+        {
+          result = 0x5942;
+          if (csvid != 0x5943)
+          {
+            return (csvid != 0x594b) - 1 & 0x594a;
+          }
+        }
+      }
+    }
+  }
+  return result;
+}
+
+/* ManalinkEh 2022: 0x267eed0; original functions/functions.c:5054. */
+int grafdiggers_cages(int player, type_t type, tutor_from_t from)
+{
+  card_instance_t *instance;
+  int result;
+  int card;
+  int player_00;
+
+  player_00 = 0;
+
+  do
+  {
+    if (0 < active_cards_count[player_00])
+    {
+      card = 0;
+      do
+      {
+        if ((((player == 2 || player == player_00) &&
+              (instance = in_play(player_00, card), instance != NULL)) &&
+             (result = is_humiliated_for_ability(player_00, card, AL_STATIC), result == 0)) &&
+            (((type & (TYPE_SPELL | TYPE_CREATURE)) != TYPE_NONE &&
+              ((((from & TUTOR_FROM_RFG) != 0 &&
+                 (result = get_id(player_00, card), result == 0x2f9e)) ||
+                (((from & TUTOR_FROM_GRAVE) != 0 &&
+                  (result = get_id(player_00, card), result == 0x523d))))))))
+        {
+          return 1;
+        }
+        card = card + 1;
+      } while (card < active_cards_count[player_00]);
+    }
+    player_00 = player_00 + 1;
+    if (player_00 == 2)
+    {
+      return 0;
+    }
+  } while (true);
+}
+
+/* ManalinkEh 2022: 0x26817d0; original functions/functions.c:7590. */
+int count_basic_lands(int player, int subtype)
+{
+  card_instance_t *instance;
+  int result;
+  int card;
+  int player_00;
+  int iStack_14;
+
+  iStack_14 = 0;
+  player_00 = 0;
+  do
+  {
+
+    if (((player == player_00) || (player == 2)) && (0 < active_cards_count[player_00]))
+    {
+      card = 0;
+      do
+      {
+        instance = in_play(player_00, card);
+        if (((instance != NULL) && (result = is_basic_land(player_00, card), result != 0)) &&
+            ((subtype < 0 || (result = has_subtype(player_00, card, subtype), result != 0))))
+        {
+          iStack_14 = iStack_14 + 1;
+        }
+        card = card + 1;
+      } while (card < active_cards_count[player_00]);
+    }
+    player_00 = player_00 + 1;
+  } while (player_00 != 2);
+  return iStack_14;
+}
+
+/* ManalinkEh 2022: 0x268d9a0; original functions/functions.c:12547. */
+void dat_ability(int player, int card, event_t event, declare_attackers_trigger_t mode,
+                 int skip_store_attackers)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+
+  if (skip_store_attackers == 0)
+  {
+    store_attackers(player, card, event, mode, player, card, NULL);
+  }
+  iVar1 = resolve_declare_attackers_trigger(player, card, event, mode);
+  if (iVar1 != 0)
+  {
+
+    if ((mode & DAT_DONT_REPORT_VALUE) == 0)
+    {
+      iVar3 = is_what(player, card, 0x80);
+      if (iVar3 == 0)
+      {
+        instance = get_card_instance(player, card);
+        instance->info_slot = iVar1;
+      }
+      else
+      {
+        instance = get_card_instance(player, card);
+        instance->targets[1].player = iVar1;
+      }
+    }
+    iVar1 = count_cards_by_id(player, 0x5bf9);
+    for (iVar1 = iVar1 + 1; iVar1 != 0; iVar1 = iVar1 + -1)
+    {
+      call_card_function(player, card, EVENT_DAT_ABILITY);
+    }
+  }
+  if ((event == EVENT_CLEANUP) && ((mode & DAT_DONT_REPORT_VALUE) == 0))
+  {
+
+    instance = get_card_instance(player, card);
+    instance->info_slot = 0;
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x2691b80; original functions/functions.c:14308. */
+int get_toughness_sum(int player)
+{
+  card_instance_t *instance;
+  int result;
+  int player_00;
+  int card;
+  int iStack_14;
+
+  iStack_14 = 0;
+  player_00 = 0;
+  do
+  {
+
+    if (((player == player_00) || (player == 2)) && (0 < active_cards_count[player_00]))
+    {
+      card = 0;
+      do
+      {
+        instance = in_play(player_00, card);
+        if (instance != NULL)
+        {
+          result = is_what(player_00, card, 2);
+          if (result != 0)
+          {
+            result = get_abilities(player_00, card, EVENT_TOUGHNESS, -1);
+            iStack_14 = iStack_14 + result;
+          }
+        }
+        card = card + 1;
+      } while (card < active_cards_count[player_00]);
+    }
+    player_00 = player_00 + 1;
+  } while (player_00 != 2);
+  return iStack_14;
+}
+
+/* ManalinkEh 2022: 0x26939a0; original functions/functions.c:15661. */
+int extra_combat_effect(int player, int card, event_t event, int untap,
+                        test_definition_t *this_test, int can_repeat)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  bool bVar4;
+  test_definition_t default_test;
+
+  if (untap != 0)
+  {
+    if (this_test == NULL)
+    {
+      this_test = &default_test;
+      default_test_definition(this_test, 2);
+      iVar3 = player;
+    }
+    else
+    {
+      iVar3 = 2;
+    }
+    new_manipulate_all(player, card, iVar3, this_test, ACT_UNTAP);
+  }
+  if (0 < active_cards_count[player])
+  {
+    bVar4 = false;
+    iVar3 = 0;
+    do
+    {
+      while (((instance = in_play(player, iVar3),
+               instance == NULL || (iVar2 = is_what(player, iVar3, 0x80), iVar2 == 0)) ||
+              (instance = get_card_instance(player, iVar3),
+               instance->info_slot_fn != extra_combat_legacy)))
+      {
+        iVar3 = iVar3 + 1;
+        if (active_cards_count[player] <= iVar3)
+          goto LAB_02693a68;
+      }
+      if (can_repeat != 0)
+      {
+        instance = get_card_instance(player, iVar3);
+        instance->targets[1].player = instance->targets[1].player + 1;
+        if ((current_phase == 0x1e) &&
+            (instance = get_card_instance(player, iVar3), 0x41 < instance->targets[1].player))
+        {
+          instance = get_card_instance(player, iVar3);
+          land_can_be_played = land_can_be_played & 0xfffffff7;
+          current_phase = 0x15;
+          instance->targets[1].player = instance->targets[1].player + -1;
+        }
+      }
+      iVar3 = iVar3 + 1;
+      bVar4 = true;
+    } while (iVar3 < active_cards_count[player]);
+    bVar4 = true;
+  LAB_02693a68:
+    if (bVar4)
+    {
+      return 0;
+    }
+  }
+
+  iVar3 = create_legacy_effect(player, card, extra_combat_legacy);
+  if (-1 < iVar3)
+  {
+    set_legacy_image(player, 0x469, iVar3);
+  }
+  instance = get_card_instance(player, iVar3);
+  instance->targets[1].player = 0x42;
+  iVar2 = get_id(player, card);
+  bVar4 = current_phase != 0x1e;
+  instance->targets[1].card = iVar2;
+  if (bVar4)
+  {
+    return iVar3;
+  }
+  instance->targets[1].player = instance->targets[1].player + -1;
+  current_phase = 0x15;
+  land_can_be_played = land_can_be_played & 0xfffffff7;
+  return iVar3;
+}
+
+/* ManalinkEh 2022: 0x26780e0; original functions/functions.c:19052. */
+static int count_harmonic_prodigy(int player, int card)
+{
+  card_instance_t *instance;
+  int result;
+  int card_00;
+  int iStack_14;
+
+  if (active_cards_count[player] < 1)
+  {
+    return 0;
+  }
+  iStack_14 = 0;
+  card_00 = 0;
+  do
+  {
+    while (((instance = in_play(player, card_00), card != card_00 && (instance != NULL)) &&
+            (result = is_humiliated_for_ability(player, card_00, AL_TRIG), result == 0)))
+    {
+      result = get_id(player, card_00);
+      card_00 = card_00 + 1;
+      iStack_14 = iStack_14 + (unsigned int)(result == 0x5a16);
+      if (active_cards_count[player] <= card_00)
+      {
+        return iStack_14;
+      }
+    }
+    card_00 = card_00 + 1;
+  } while (card_00 < active_cards_count[player]);
+  return iStack_14;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int pump_until_eot_merge_previous_alt(int player, int card, int t_player, int t_card, int power,
+                                      int toughness, int alternate_txt);
+
+/* ManalinkEh 2022: 0x267ac00; original functions/functions.c:1247. */
+int pump_until_eot_merge_previous_alt(int player, int card, int t_player, int t_card, int power,
+                                      int toughness, int alternate_txt)
+{
+  uint16_t uVar1;
+  card_instance_t *instance;
+  int32_t iVar3;
+  int iVar4;
+  int iStack_14;
+
+  instance = get_card_instance(player, card);
+  if (instance->internal_card_id == activation_card)
+  {
+    iVar3 = instance->parent_controller;
+    iStack_14 = instance->parent_card;
+  }
+  else
+  {
+    iStack_14 = card;
+    iVar3 = player;
+  }
+  if (0 < active_cards_count[player])
+  {
+    iVar4 = 0;
+    do
+    {
+      instance = in_play(player, iVar4);
+      if (((((instance != NULL) && (instance->internal_card_id == LEGACY_EFFECT_CUSTOM)) &&
+            (instance->info_slot_fn == effect_pump_until_eot)) &&
+           ((instance->damage_source_player == iVar3 &&
+             (instance->damage_source_card == iStack_14)))) &&
+          ((instance->damage_target_player == t_player &&
+            ((instance->damage_target_card == t_card &&
+              (instance->eot_toughness == alternate_txt))))))
+      {
+        uVar1 = instance->counter_toughness;
+        instance->counter_power = instance->counter_power + (short)power;
+        instance->counter_toughness = uVar1 + (short)toughness;
+        return iVar4;
+      }
+      iVar4 = iVar4 + 1;
+    } while (iVar4 < active_cards_count[player]);
+  }
+  iVar4 = pump_until_eot(player, card, t_player, t_card, power, toughness);
+  instance = get_card_instance(player, iVar4);
+  instance->eot_toughness = alternate_txt;
+  return iVar4;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int create_legacy_activate_for_opponent(int player, int card, CardFunction func_ptr, int t_player,
+                                        int t_card);
+
+/* ManalinkEh 2022: 0x267b020; original functions/functions.c:2027. */
+int find_legacy_effect(int player, int card, CardFunction func_ptr)
+{
+  card_instance_t *instance;
+  int card_00;
+
+  if (0 < active_cards_count[player])
+  {
+    card_00 = 0;
+    do
+    {
+      while ((((instance = in_play(player, card_00),
+                instance == NULL || (instance->internal_card_id != LEGACY_EFFECT_CUSTOM)) ||
+               (func_ptr != (CardFunction)instance->info_slot)) ||
+              (instance->damage_source_player != player)))
+      {
+        card_00 = card_00 + 1;
+        if (active_cards_count[player] <= card_00)
+        {
+          return -1;
+        }
+      }
+      if (instance->damage_source_card == card)
+      {
+        return card_00;
+      }
+      card_00 = card_00 + 1;
+    } while (card_00 < active_cards_count[player]);
+  }
+  return -1;
+}
+
+/* ManalinkEh 2022: 0x267b5a0; original functions/functions.c:2135. */
+int create_legacy_activate_for_opponent(int player, int card, CardFunction func_ptr, int t_player,
+                                        int t_card)
+{
+  card_instance_t *pcVar1;
+  int result;
+  card_instance_t *argument2;
+  int card_00;
+  int player_00;
+
+  pcVar1 = get_card_instance(player, card);
+  player_00 = 1 - player;
+  result = add_card_to_hand(player_00, pcVar1->internal_card_id);
+  if (result == -1)
+  {
+    backtrace_and_abort("functions/functions.c:2138\ncard_added != -1");
+  }
+  pcVar1 = get_card_instance(player_00, result);
+  pcVar1->state = pcVar1->state & 0xffffffdd | 0x20;
+  hand_count[player_00] = hand_count[player_00] + -1;
+  argument2 = get_card_instance(player, card);
+  memcpy(pcVar1, argument2, 300);
+  pcVar1->state = pcVar1->state & 0xffffffdd | 0x20;
+  card_00 = create_legacy_activate(player_00, result, func_ptr);
+  obliterate_card(player_00, result);
+  pcVar1 = get_card_instance(player_00, card_00);
+  pcVar1->damage_source_player = (int8_t)player;
+  pcVar1->damage_source_card = card;
+  result = get_card_image_number((unsigned int)pcVar1->display_pic_csv_id, player, card);
+  pcVar1->display_pic_num = (uint16_t)result;
+  if (-1 < t_player)
+  {
+    pcVar1->number_of_targets = '\x01';
+    pcVar1->targets[0].player = t_player;
+    pcVar1->targets[0].card = t_card;
+  }
+  return card_00;
 }

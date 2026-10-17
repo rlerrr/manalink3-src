@@ -5437,3 +5437,284 @@ int card_vine_kami(int player, int card, event_t event)
   result = soulshift(player, card, event, 6, 1);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26095d0; original cards/champions_of_kamigawa.c:578. */
+static int boseiju_legacy(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  unsigned int uVar4;
+  bool bVar5;
+
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((((card != affected_card) || (affected_card_controller != player)) &&
+         (result = played_for_free(affected_card_controller, affected_card), result == 0)) &&
+        (((result = is_token(affected_card_controller, affected_card),
+           result == 0 &&
+               (result = check_special_flags2(affected_card_controller, affected_card, -0x80000000),
+                result == 0)) &&
+          ((result = get_cmc(affected_card_controller, affected_card),
+            0 < result && ((affected_card_controller == player &&
+                            (result = is_what(player, affected_card, 0x38), result != 0))))))))
+    {
+      instance = get_card_instance(player, card);
+      if (instance->targets[1].card == 0)
+      {
+        result = get_updated_casting_cost(affected_card_controller, affected_card, -1,
+                                          EVENT_CAST_SPELL, -1);
+        bVar5 = 0 < result;
+      }
+      else
+      {
+        uVar3 = get_color(affected_card_controller, affected_card);
+        instance = get_card_instance(player, card);
+        uVar4 = color_to_color_test(instance->targets[1].card);
+        bVar5 = (uVar3 & uVar4) != 0;
+      }
+      if (bVar5)
+      {
+        state_untargettable(affected_card_controller, affected_card, 1);
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  else if (((event == EVENT_STATIC_EFFECTS) && (stack_size == 0)) &&
+           (instance = get_card_instance(player, card),
+            mana_pool[player][instance->targets[1].card] < 1))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x260cf30; original cards/champions_of_kamigawa.c:598. */
+int card_boseiju_who_shelters_all(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  check_legend_rule(player, card, event);
+  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  if (result == 0)
+  {
+    comes_into_play_tapped(player, card, event);
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = can_pay_life(player, 2);
+    if (result == 0)
+    {
+      return 0;
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    if (life[player] < 7)
+    {
+      ai_modifier = ai_modifier + -0x19;
+    }
+    spell_fizzled = 0;
+    mana_producer(player, card, EVENT_ACTIVATE);
+    if (spell_fizzled == 1)
+    {
+      return 0;
+    }
+
+    lose_life(player, 2);
+    result = create_legacy_effect(player, card, boseiju_legacy);
+    instance = get_card_instance(player, result);
+    instance->targets[1].card = tapped_for_mana_color;
+    add_status(player, result, 0x10000);
+    return 0;
+  }
+  result = mana_producer(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x260a840; original cards/champions_of_kamigawa.c:3860. */
+static int card_petals_of_insight_impl(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  int num_cards;
+
+  if (event != EVENT_RESOLVE_SPELL)
+    goto LAB_0260a857;
+
+  iVar1 = count_deck(player);
+  if (iVar1 < 1)
+  {
+  LAB_0260a910:
+    kill_card(player, card, KILL_DESTROY);
+  }
+  else
+  {
+    num_cards = iVar1;
+    if (3 < iVar1)
+    {
+      num_cards = 3;
+    }
+    if ((player != 1) || (2 < iVar1))
+    {
+
+      iVar2 = show_deck(player, deck_ptr[player], num_cards,
+                        "Click on a \'cancel\' to draw 3 cards", 0, ENGINE_DONE_LABEL);
+      if (iVar2 == -1)
+      {
+        draw_cards(player, 3);
+        goto LAB_0260a910;
+      }
+    }
+    if (1 < iVar1)
+    {
+      put_top_x_on_bottom(player, player, num_cards);
+    }
+    bounce_permanent(player, card);
+  }
+LAB_0260a857:
+  iVar1 = basic_spell(player, card, event);
+  return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x260a930; original cards/champions_of_kamigawa.c:4020. */
+static int card_otherworldly_journey_impl(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  target_definition_t td2;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    default_target_definition(player, card, &td2, 2);
+    td2.preferred_controller = player;
+    td2.required_state = 0x4000;
+    get_card_instance(player, card);
+    if (player != 0)
+    {
+      result = generic_spell(player, card, EVENT_CAN_CAST, 0x11, &td2, NULL, 1, NULL);
+      return result;
+    }
+    result = generic_spell(0, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 2);
+      td.preferred_controller = player;
+      default_target_definition(player, card, &td2, 2);
+      td2.preferred_controller = player;
+      td2.required_state = 0x4000;
+      get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        if (player != 0)
+        {
+          result = generic_spell(player, card, EVENT_CAST_SPELL, 0x11, &td2, NULL, 1, NULL);
+          return result;
+        }
+        result = generic_spell(0, card, EVENT_CAST_SPELL, 0x81, &td,
+                               "Select target creature you control.", 1, NULL);
+        return result;
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    default_target_definition(player, card, &td2, 2);
+    td2.preferred_controller = player;
+    td2.required_state = 0x4000;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+
+      if (player == 0)
+      {
+        result = valid_target(&td);
+        if (result == 0)
+        {
+          return 0;
+        }
+      }
+      else
+      {
+        if (player != 1)
+        {
+          return 0;
+        }
+        result = valid_target(&td2);
+        if (result == 0)
+        {
+          return 0;
+        }
+        regenerate_target_exe(instance->targets[0].player, instance->targets[0].card);
+      }
+      remove_until_eot(player, card, instance->targets[0].player, instance->targets[0].card);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    default_target_definition(player, card, &td2, 2);
+    td2.preferred_controller = player;
+    td2.required_state = 0x4000;
+    get_card_instance(player, card);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x26157c0; original cards/champions_of_kamigawa.c:4264. */
+int card_reverse_the_sands(int player, int card, event_t event)
+{
+  int result;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = do_dialog(player, player, card, -1, -1,
+                         " Switch life totals\n Keep life totals as they are", 0);
+      if (result == 0)
+      {
+        exchange_life_totals(player, 1 - player);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}

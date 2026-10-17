@@ -158,3 +158,94 @@ int card_predict(int player, int card, event_t event)
   iVar2 = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
   return iVar2;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2510270; original cards/odyssey.c:4444. */
+int card_price_of_glory(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = in_play(player, card);
+  if ((((event == EVENT_TAP_CARD) && (instance != NULL)) && (-1 < tapped_for_mana_color)) &&
+      (current_turn != affected_card_controller))
+  {
+    result = is_what(affected_card_controller, affected_card, 1);
+    if (result != 0)
+    {
+      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      if (result == 0)
+      {
+        kill_card(affected_card_controller, affected_card, KILL_DESTROY);
+      }
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2511ec0; original cards/odyssey.c:4960. */
+int card_seize_the_day(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      default_target_definition(player, card, &td, 2);
+      td.allowed_controller = player;
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_0251206e;
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+    {
+      default_target_definition(player, card, &td, 2);
+      td.allowed_controller = player;
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+        instance = get_card_instance(player, card);
+        result = instance->targets[0].card;
+        instance = get_card_instance(player, card);
+        untap_card(instance->targets[0].player, result);
+        extra_combat_effect(player, card, EVENT_RESOLVE_SPELL, 0, NULL, 1);
+        result = get_flashback(player, card);
+        if (result == 0)
+        {
+          kill_card(player, card, KILL_DESTROY);
+        }
+        else
+        {
+          kill_card(player, card, KILL_EXILE);
+        }
+      }
+    }
+    else
+    {
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+      default_target_definition(player, card, &td, 2);
+      td.allowed_controller = player;
+    }
+    result = do_flashback(player, card, event, 2, 0, 0, 0, 1, 0);
+    return result;
+  }
+  default_target_definition(player, card, &td, 2);
+LAB_0251206e:
+  td.allowed_controller = player;
+  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  return result;
+}

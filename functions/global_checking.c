@@ -1190,3 +1190,22 @@ int check_battlefield_for_name(int player, int type, int name){
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26c1000; original functions/global_checking.c:1212. */
+int test_not_in_array(int iid, int arrptr, int player, int card)
+{
+  int result;
+
+  result = 0;
+  do
+  {
+    if (*(int *)arrptr == iid)
+    {
+      return 0;
+    }
+    result = result + 1;
+    arrptr = arrptr + 4;
+  } while ((result < 4) && (result != -1));
+  return 1;
+}

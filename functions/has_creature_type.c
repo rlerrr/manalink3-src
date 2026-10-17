@@ -1694,3 +1694,163 @@ int count_all_other_creatures_that_shares_a_creature_type_with_me(int player, in
 
 
 #undef NUM_SUBTYPES
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int add_a_subtype_until_eot(int player, int card, int t_player, int t_card, subtype_t subtype);
+int add_a_subtype_permanently(int player, int card, int t_player, int t_card, subtype_t subtype);
+static int add_force_a_subtype_until_eot_legacy(int player, int card, event_t event);
+static int add_force_a_subtype_permanently_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2672360; original functions/has_creature_type.c:505. */
+static int add_force_a_subtype_until_eot_legacy(int player, int card, event_t event)
+{
+  subtype_t subtype;
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    instance = in_play(player, card);
+    if ((((instance != NULL) && (instance->damage_target_card == affected_card)) &&
+         (instance->damage_target_player == affected_card_controller)) &&
+        (subtype = instance->targets[1].card, subtype - SUBTYPE_ALLY < 0xfff))
+    {
+
+      if ((land_can_be_played & 0x20000U) == 0)
+      {
+        land_can_be_played = land_can_be_played | 0x10000;
+      }
+      result = instance->targets[1].player;
+      if (result == 2)
+      {
+        attached_is_forced_subtype(player, card, EVENT_CHANGE_TYPE, subtype);
+      }
+      else if (result == 1)
+      {
+        attached_is_additional_subtype(player, card, EVENT_CHANGE_TYPE, subtype);
+      }
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2673040; original functions/has_creature_type.c:534. */
+int add_a_subtype_until_eot(int player, int card, int t_player, int t_card, subtype_t subtype)
+{
+  int card_00;
+  card_instance_t *instance;
+
+  card_00 = create_targetted_legacy_effect(player, card, add_force_a_subtype_until_eot_legacy,
+                                           t_player, t_card);
+  instance = get_card_instance(player, card_00);
+  instance->targets[1].player = 1;
+  instance = get_card_instance(player, card_00);
+  instance->targets[1].card = subtype;
+  return card_00;
+}
+
+/* ManalinkEh 2022: 0x26726f0; original functions/has_creature_type.c:538. */
+static int add_force_a_subtype_permanently_legacy(int player, int card, event_t event)
+{
+  subtype_t subtype;
+  int result;
+  card_instance_t *instance;
+  int32_t *piVar3;
+
+  if (event == EVENT_CHANGE_TYPE)
+  {
+
+    if ((land_can_be_played & 0x20000U) == 0)
+    {
+      land_can_be_played = land_can_be_played | 0x10000;
+    }
+
+    instance = get_card_instance(player, card);
+    subtype = instance->targets[1].card;
+    if (subtype - SUBTYPE_ALLY < 0xfff)
+    {
+
+      result = instance->targets[1].player;
+      if (result == 1)
+      {
+        piVar3 = &instance->targets[2].card;
+        attached_is_additional_subtype(player, card, EVENT_CHANGE_TYPE, subtype);
+        do
+        {
+          if (*piVar3 - SUBTYPE_ALLY < 0xfff)
+          {
+            attached_is_additional_subtype(player, card, EVENT_CHANGE_TYPE, *piVar3);
+          }
+          piVar3 = piVar3 + 2;
+        } while (piVar3 != &instance->targets[0xc].card);
+      }
+      else if (result == 2)
+      {
+        piVar3 = &instance->targets[2].card;
+        attached_is_forced_subtype(player, card, EVENT_CHANGE_TYPE, subtype);
+        do
+        {
+          if (*piVar3 - SUBTYPE_ALLY < 0xfff)
+          {
+            attached_is_additional_subtype(player, card, EVENT_CHANGE_TYPE, *piVar3);
+          }
+          piVar3 = piVar3 + 2;
+        } while (piVar3 != &instance->targets[0xc].card);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x26730b0; original functions/has_creature_type.c:578. */
+int add_a_subtype_permanently(int player, int card, int t_player, int t_card, subtype_t subtype)
+{
+  int card_00;
+  card_instance_t *instance;
+
+  card_00 = create_targetted_legacy_effect(player, card, add_force_a_subtype_permanently_legacy,
+                                           t_player, t_card);
+  instance = get_card_instance(player, card_00);
+  instance->targets[1].player = 1;
+  instance->targets[1].card = subtype;
+  instance->token_status = 0x10000;
+  return card_00;
+}
+
+/* ManalinkEh 2022: 0x2673110; original functions/has_creature_type.c:582. */
+void purge_add_force_a_subtype_permanently_legacy(int player, int card, int mode)
+{
+  card_instance_t *instance;
+  int card_00;
+  int player_00;
+
+  player_00 = 0;
+  do
+  {
+    card_00 = 0;
+    if (0 < active_cards_count[player_00])
+    {
+      do
+      {
+        instance = in_play(player_00, card_00);
+        if ((((instance != NULL) && (instance->internal_card_id == LEGACY_EFFECT_CUSTOM)) &&
+             (instance->info_slot_fn == add_force_a_subtype_permanently_legacy)) &&
+            (((instance->damage_target_player == player &&
+               (instance->damage_target_card == card)) &&
+              ((mode == -1 || (instance = get_card_instance(player_00, card_00),
+                               instance->targets[1].player == mode))))))
+        {
+          kill_card(player_00, card_00, KILL_EXILE);
+        }
+        card_00 = card_00 + 1;
+      } while (card_00 < active_cards_count[player_00]);
+    }
+    player_00 = player_00 + 1;
+  } while (player_00 != 2);
+  return;
+}

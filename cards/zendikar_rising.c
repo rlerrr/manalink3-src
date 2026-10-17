@@ -436,3 +436,2703 @@ int card_tajuru_paragon(int player, int card, event_t event)
                                          TUTOR_BOTTOM_OF_DECK_RANDOM, 1, &test);
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x230f290; original cards/zendikar_rising.c:3539. */
+int card_thieving_skydiver(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  target_definition_t td;
+  char buffer[100];
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  kicker(player, card, event, -1, 0, 0, 0, 0, 0);
+  if (event == EVENT_ETB)
+  {
+    iVar1 = kicked(player, card);
+    if (iVar1 != 0)
+    {
+      instance = get_card_instance(player, card);
+      if ((instance != NULL) && (0 < instance->info_slot))
+      {
+        default_target_definition(player, card, &td, 0x40);
+        td.extra = instance->info_slot;
+        td.special = 0x800;
+        iVar1 = can_target(&td);
+        if (iVar1 != 0)
+        {
+          scnprintf(buffer, 100, " Select an artifact with mana value %d or less.",
+                    instance->info_slot);
+          iVar1 = new_pick_target(&td, buffer, 0, 0x81);
+          if (iVar1 != 0)
+          {
+            iVar1 = gain_control_permanently(player, instance->targets[0].player,
+                                             instance->targets[0].card);
+            iVar3 = is_equipment(player, iVar1);
+            if (iVar3 != 0)
+            {
+              equip_target_creature(player, iVar1, player, card);
+            }
+          }
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x230fbc0; original cards/zendikar_rising.c:3839. */
+int card_yasharn_implacable_earth(int player, int card, event_t event)
+{
+  const char *pcVar1;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  pcVar1 = get_hacked_land_text(player, card, "Select a basic %s.", 0x5001);
+  new_default_test_definition(&test, 1, pcVar1);
+  test.subtype = get_hacked_subtype(player, card, 0x5001);
+  test.sub2 = 0x2000;
+  test.subtype_flag = 4;
+  test.no_shuffle = 1;
+  new_global_tutor(player, player, 1, 1, 0, 1, &test);
+  pcVar1 = get_hacked_land_text(player, card, "Select a basic %s.", 0x5007);
+  new_default_test_definition(&test, 1, pcVar1);
+  test.subtype = get_hacked_subtype(player, card, 0x5007);
+  test.sub2 = 0x2000;
+  test.subtype_flag = 4;
+  new_global_tutor(player, player, 1, 1, 0, 1, &test);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2308450; original cards/zendikar_rising.c:619. */
+int card_bloodchiefs_thirst(int player, int card, event_t event)
+{
+  int result;
+  const char *prompt;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 0x102);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 0x102);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        result = is_token(player, card);
+        if ((result == 0) && (result = check_special_flags(player, card, 0x40000), result == 0))
+        {
+          do_kicker(player, card, 2, 1, 0, 0, 0, 0);
+        }
+        result = kicked(player, card);
+        if (result == 0)
+        {
+          td.extra = 2;
+          td.special = 0x800;
+          result = can_target(&td);
+          if (result == 0)
+          {
+            spell_fizzled = 1;
+            ai_modifier = ai_modifier + -999;
+            return 0;
+          }
+        }
+        result = kicked(player, card);
+        prompt = "Select target permanent or player";
+        if (result == 0)
+        {
+          prompt = "Select target permanent or player with mana value 2 or less";
+        }
+        generic_spell(player, card, EVENT_CAST_SPELL, 0x81, &td, prompt, 1, NULL);
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 0x102);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        kill_target0(player, card, KILL_DESTROY);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 0x102);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2308ff0; original cards/zendikar_rising.c:1091. */
+int card_feed_the_swarm(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 6);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+
+            kill_target0(player, card, KILL_DESTROY);
+            instance = get_card_instance(player, card);
+            result = get_cmc(instance->targets[0].player, instance->targets[0].card);
+            lose_life(player, result);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02309045;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 6);
+LAB_02309045:
+  result = generic_spell(player, card, event, 0x81, &td, "Select target enchantment or creature.",
+                         1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230fe80; original cards/zendikar_rising.c:3889. */
+int card_zareth_san_the_trickster(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  unsigned int uVar5;
+  unsigned int *puVar6;
+  int times_damaged[2];
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  if (1 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    ninjutsu(player, card, event, 2, 1, 1, 0, 0, 0, 0x5628);
+    iVar2 = damage_dealt_by_me(player, card, event,
+                               DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_BE_COMBAT_DAMAGE |
+                                   DDBM_TRIGGER_OPTIONAL);
+    if (iVar2 != 0)
+    {
+
+      puVar6 = (unsigned int *)times_damaged;
+      default_test_definition((test_definition_t *)&td, 0x47);
+      iVar2 = 0;
+      instance = get_card_instance(player, card);
+      uVar1 = instance->targets[1].player;
+      instance->targets[1].player = 0;
+      uVar5 = uVar1 & 0xff;
+      times_damaged[1] = uVar1 >> 8 & 0xff;
+      times_damaged[0] = uVar5;
+      while (true)
+      {
+        while (uVar5 != 0)
+        {
+          iVar4 = any_in_graveyard_by_type(iVar2, 0x47);
+          if ((iVar4 == 0) || (iVar4 = new_select_target_from_grave(player, card, iVar2, SFG_0, 2,
+                                                                    (test_definition_t *)&td, 0),
+                               iVar4 < 0))
+          {
+            uVar5 = uVar5 - 1;
+            *puVar6 = uVar5;
+          }
+          else
+          {
+            reanimate_permanent(player, card, iVar2, instance->targets[0].player,
+                                REANIMATE_DEFAULT);
+            uVar5 = uVar5 - 1;
+            *puVar6 = uVar5;
+          }
+        }
+        iVar2 = iVar2 + 1;
+        puVar6 = puVar6 + 1;
+        if (iVar2 == 2)
+          break;
+        uVar5 = *puVar6;
+      }
+    }
+    iVar2 = flash(player, card, event);
+    return iVar2;
+  }
+  default_target_definition(player, card, &td, 2);
+  td.required_subtype = 0x9f;
+  iVar2 = ninjutsu_custom_target(player, card, event, 2, 1, 1, 0, 0, 0, &td, 0x5628);
+  return iVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int is_instant_sorcery_or_wizard(int iid, int unused, int player, int card);
+int mdfc_front(int player, int card, event_t event);
+static int malakir_rebirth_effect(int player, int card, event_t event);
+static int mdfc_front_impl(int player, int card, event_t event, int can_play_front,
+                           int suppress_charging_back_cost);
+int mdfc_back(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x23077a0; original cards/zendikar_rising.c:169. */
+int mdfc_back(int player, int card, event_t event)
+{
+  int result;
+
+  if (((event == EVENT_COUNTERSPELL) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_token(player, card);
+    if (result == 0)
+    {
+
+      result = get_id(player, card);
+      result = dfc_back_to_front(result);
+      mdfc_transform(player, card, result);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2306fe0; original cards/zendikar_rising.c:177. */
+static int mdfc_front_impl(int player, int card, event_t event, int can_play_front,
+                           int suppress_charging_back_cost)
+{
+  card_ptr_t *pcVar1;
+  unsigned char bVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  card_instance_t *instance;
+  const char *pcVar6;
+  int iVar7;
+  unsigned int csvid;
+  unsigned int uVar8;
+  bool bVar9;
+  unsigned int uStack_28;
+  unsigned int uStack_24;
+  const char *pcStack_1c;
+
+  if (((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) &&
+       event != EVENT_PLAY_FIRST_HALF) &&
+      (event != EVENT_CAN_CAST))
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
+             (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  iVar3 = get_original_internal_card_id(player, card);
+  csvid = (unsigned int)cards_data[iVar3].id;
+  bVar2 = cards_data[iVar3].type;
+  if ((bVar2 & 0x30) == 0)
+  {
+    iVar4 = can_sorcery_be_played(player, event);
+    if (iVar4 != 0)
+    {
+      bVar2 = cards_data[iVar3].type;
+      goto LAB_02307047;
+    }
+  LAB_0230705c:
+    can_play_front = 0;
+  }
+  else
+  {
+  LAB_02307047:
+    if (((bVar2 & 1) != 0) &&
+        ((((unsigned char)land_can_be_played & 1) != 0 || (player != current_turn))))
+      goto LAB_0230705c;
+  }
+  iVar4 = dfc_front_to_back(csvid);
+  if (((stack_size == 1) && (card_on_stack_controller == player)) &&
+      ((card_on_stack == card && (iVar5 = can_legally_play_csvid(player, iVar4), iVar5 != 0))))
+  {
+    bVar9 = true;
+  }
+  else
+  {
+    iVar5 = can_legally_play_csvid_now(player, iVar4, event);
+    bVar9 = iVar5 != 0;
+  }
+  if (event == EVENT_MODIFY_COST)
+  {
+    if ((((suppress_charging_back_cost == 0) &&
+          (iVar3 = has_mana_to_cast_id(player, EVENT_MODIFY_COST, iVar4), iVar3 == 0)) ||
+         (!bVar9)) &&
+        ((iVar3 = has_mana_to_cast_id(player, EVENT_MODIFY_COST, csvid),
+          iVar3 == 0 || (can_play_front == 0))))
+    {
+      infinite_casting_cost();
+      return 0;
+    }
+
+    iVar3 = get_id(player, card);
+    pcVar1 = cards_ptr[iVar3];
+    iVar3 = get_updated_casting_cost(player, card, -1, EVENT_MODIFY_COST, -1);
+    COST_COLORLESS = COST_COLORLESS - (char)iVar3;
+    iVar3 = get_id(player, card);
+    bVar9 = false;
+    if (iVar3 == 0x5560)
+    {
+      iVar3 = count_basic_lands(1 - player, -1);
+      bVar9 = iVar3 == 0;
+    }
+    COST_COLORLESS = COST_COLORLESS - bVar9;
+    COST_BLACK = COST_BLACK - pcVar1->req_black;
+    COST_BLUE = COST_BLUE - pcVar1->req_blue;
+    COST_GREEN = COST_GREEN - pcVar1->req_green;
+    COST_RED = COST_RED - pcVar1->req_red;
+    COST_WHITE = COST_WHITE - pcVar1->req_white;
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    iVar3 = instance->targets[0xc].card;
+    if (iVar3 < 0)
+    {
+      return 0;
+    }
+    event_result = iVar3;
+    instance->regen_status = instance->regen_status | 0x9000000;
+    return 0;
+  }
+  if (event == EVENT_CAN_CAST)
+  {
+
+    if ((suppress_charging_back_cost == 0) &&
+        (iVar3 = has_mana_to_cast_id(player, EVENT_CAN_CAST, iVar4), iVar3 == 0))
+    {
+      uVar8 = 0;
+    }
+    else
+    {
+      uVar8 = (unsigned int)bVar9;
+    }
+    iVar3 = has_mana_to_cast_id(player, EVENT_CAN_CAST, csvid);
+    if (can_play_front != 0)
+    {
+      if (iVar3 != 0)
+      {
+        return ((can_play_front == 99) - 1 & 0xffffff9e) + 99;
+      }
+      return uVar8;
+    }
+    return uVar8;
+  }
+  if (event != EVENT_CAST_SPELL)
+  {
+    return 0;
+  }
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+  iVar5 = check_special_flags3(player, card, 1);
+  if (iVar5 != 0)
+  {
+    return 0;
+  }
+
+  iVar5 = played_for_free(player, card);
+  if (iVar5 == 0)
+  {
+    iVar5 = is_token(player, card);
+    uStack_24 = (unsigned int)(iVar5 != 0);
+    iVar7 = check_special_flags2(player, card, -0x80000000);
+    if (iVar7 == 0)
+    {
+      uStack_24 = uStack_24 | suppress_charging_back_cost;
+      if (uStack_24 == 0)
+      {
+        iVar5 = has_mana_to_cast_id(player, EVENT_CAST_SPELL, iVar4);
+        if (iVar5 == 0)
+        {
+          uStack_28 = 0;
+        }
+        else
+        {
+          uStack_28 = (unsigned int)bVar9;
+        }
+        pcStack_1c = get_card_name_by_id(iVar4);
+      }
+      else
+      {
+        uStack_28 = (unsigned int)bVar9;
+        pcStack_1c = get_card_name_by_id(iVar4);
+        if (iVar5 != 0)
+          goto LAB_023073fc;
+      }
+      iVar5 = has_mana_to_cast_id(player, EVENT_CAST_SPELL, csvid);
+      uStack_24 = 0;
+      uVar8 = 0;
+      if (iVar5 != 0)
+        goto LAB_023073fc;
+      goto LAB_02307406;
+    }
+  }
+  else
+  {
+    iVar5 = check_special_flags2(player, card, -0x80000000);
+    if (iVar5 != 0)
+    {
+      if (instance->mode != '\x01')
+      {
+        if (instance->mode != '\x02')
+        {
+          return 0;
+        }
+        instance->targets[0xd].player = csvid;
+        instance->targets[0xd].card = csvid;
+        mdfc_transform(player, card, iVar4);
+        goto LAB_023074f5;
+      }
+      goto LAB_0230771c;
+    }
+
+    uStack_28 = (unsigned int)bVar9;
+    pcStack_1c = get_card_name_by_id(iVar4);
+    uStack_24 = 1;
+  LAB_023073fc:
+    uVar8 = (unsigned int)(can_play_front != 0);
+  LAB_02307406:
+    pcVar6 = get_card_name_by_instance(instance);
+    iVar5 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\033", "\001\016", pcVar6,
+                        uVar8, 1, pcStack_1c, uStack_28, 1, 0, 0, 0, 0);
+    if (iVar5 == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+  }
+  if (instance->mode != '\x01')
+  {
+    if (instance->mode != '\x02')
+    {
+      return 0;
+    }
+    instance->targets[0xd].player = csvid;
+    instance->targets[0xd].card = csvid;
+    mdfc_transform(player, card, iVar4);
+    if (uStack_24 == 0 && suppress_charging_back_cost == 0)
+    {
+      charge_mana_from_id(player, card, EVENT_CAST_SPELL, iVar4);
+    }
+  LAB_023074f5:
+    bVar9 = spell_fizzled != 1;
+    instance->targets[1].card = x_value;
+    if (bVar9)
+    {
+
+      iVar3 = get_internal_card_id_from_csv_id(iVar4);
+      call_card_fn(cards_data[iVar3].code_pointer, instance, player, card, EVENT_CAST_SPELL);
+      if (spell_fizzled != 1)
+      {
+        return 0;
+      }
+    }
+    mdfc_transform(player, card, csvid);
+    return 0;
+  }
+  if (uStack_24 == 0)
+  {
+    charge_mana_from_id(player, card, EVENT_CAST_SPELL, csvid);
+    iVar4 = is_x_spell(player, card);
+    if (iVar4 != 0)
+    {
+      set_x_for_x_spells(player, card, EVENT_CAST_SPELL, x_value);
+    }
+  }
+LAB_0230771c:
+  if (spell_fizzled == 1)
+  {
+    return 0;
+  }
+
+  call_card_fn(cards_data[iVar3].code_pointer, instance, player, card, EVENT_PLAY_FIRST_HALF);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2307820; original cards/zendikar_rising.c:270. */
+int mdfc_front_conditional(int player, int card, event_t event, int can_play_front)
+{
+  int result;
+
+  result = mdfc_front_impl(player, card, event, can_play_front, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2307840; original cards/zendikar_rising.c:273. */
+int mdfc_front_suppress_charging_mana(int player, int card, event_t event)
+{
+  int result;
+
+  result = mdfc_front_impl(player, card, event, 1, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2307860; original cards/zendikar_rising.c:277. */
+int mdfc_front(int player, int card, event_t event)
+{
+  int result;
+
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2307880; original cards/zendikar_rising.c:291. */
+int cmc_not_in_array(int iid, int arrptr, int player, int card)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+
+  iVar3 = 0;
+  do
+  {
+    iVar1 = get_cmc_by_id((unsigned int)cards_data[iid].id);
+    iVar2 = get_cmc_by_id((unsigned int)cards_data[*(int *)arrptr].id);
+    if (iVar1 == iVar2)
+    {
+      return 0;
+    }
+    iVar3 = iVar3 + 1;
+    arrptr = arrptr + 4;
+  } while ((iVar3 < 4) && (iVar3 != -1));
+  return 1;
+}
+
+/* ManalinkEh 2022: 0x2307c90; original cards/zendikar_rising.c:377. */
+int mdfc_back_etb_tapped_land(int player, int card, event_t event)
+{
+  int result;
+
+  mdfc_back(player, card, event);
+  result = plain_mana_producer_tapped(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2307d10; original cards/zendikar_rising.c:414. */
+int card_angel_of_destiny(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_DEAL_DAMAGE)
+  {
+    instance = get_card_instance(affected_card_controller, affected_card);
+    if (instance->internal_card_id != damage_card)
+    {
+      return 0;
+    }
+    if (instance->info_slot < 1)
+    {
+      return 0;
+    }
+    if (instance->damage_source_player != player)
+    {
+      return 0;
+    }
+    if ((instance->token_status & 0x140000) == 0)
+    {
+      return 0;
+    }
+    if ((instance->targets[3].player & 2) == 0)
+    {
+      return 0;
+    }
+
+    gain_life(current_turn, instance->info_slot);
+    gain_life(current_turn ^ 1, instance->info_slot);
+  }
+
+  result = declare_attackers_trigger(
+      player, card, event, DAT_ATTACKS_PLAYER | DAT_RESOLVE_TRIGGER_MANDATORY, player, card);
+  if (result == 0)
+  {
+    return 0;
+  }
+  create_legacy_effect_for_opponent(player, card, angel_of_destiny_legacy, -1, -1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2307f80; original cards/zendikar_rising.c:475. */
+int card_archon_of_emeria(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  if ((event == EVENT_CAST_SPELL) || (event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE))
+  {
+    default_test_definition(&test, 1);
+    test.subtype = 0x2000;
+    test.subtype_flag = 1;
+    permanents_enters_battlefield_tapped(player, card, event, 1 - player, 0, &test);
+  }
+  if ((((event == EVENT_MODIFY_COST_GLOBAL) &&
+        (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)) &&
+       (result = is_what(affected_card_controller, affected_card, 1), result == 0)) &&
+      (result = get_specific_storm_count(affected_card_controller), 0 < result))
+  {
+    infinite_casting_cost();
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2308080; original cards/zendikar_rising.c:521. */
+int card_bela_ged_recovery(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_t this_test;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+    default_test_definition(&this_test, 0xff);
+    this_test.ai_selection_mode = 1;
+    if (event == EVENT_PLAY_FIRST_HALF)
+    {
+      generic_spell(player, card, EVENT_CAST_SPELL, 8, NULL, NULL, 1, &this_test);
+      if (spell_fizzled != 1)
+      {
+
+        instance = get_card_instance(player, card);
+        ai_modifier =
+            ai_modifier +
+            cards_ptr[graveyard_ptr_mutable[player][instance->targets[0].player]]->ai_base_value;
+      }
+      return 0;
+    }
+  joined_r0x02308181:
+    this_test.ai_selection_mode = 1;
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+
+      this_test.ai_selection_mode = 1;
+      result = validate_target_from_grave_source(player, card, player, 0);
+      if (result != -1)
+      {
+        from_grave_to_hand(player, result, 1);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_test_definition(&this_test, 0xff);
+        goto joined_r0x02308181;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+    default_test_definition(&this_test, 0xff);
+    this_test.ai_selection_mode = 1;
+  }
+  result = generic_spell(player, card, EVENT_CAN_CAST, 8, NULL, NULL, 1, &this_test);
+  result = mdfc_front_impl(player, card, event, result, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23082c0; original cards/zendikar_rising.c:569. */
+int card_beyeen_veil(int player, int card, event_t event)
+{
+  int result;
+
+  if ((event == EVENT_PLAY_FIRST_HALF ||
+       (event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE)) ||
+      (event == EVENT_CAN_CAST))
+  {
+  LAB_023082f7:
+    if (event != EVENT_RESOLVE_SPELL)
+      goto LAB_023082fc;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+      {
+        return 0;
+      }
+      goto LAB_023082fc;
+    }
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      if (event != EVENT_CAN_CHANGE_TARGET)
+      {
+        if (event != EVENT_CHANGE_TARGET)
+        {
+          return 0;
+        }
+        goto LAB_023082fc;
+      }
+      goto LAB_023082f7;
+    }
+  }
+  pump_subtype_until_eot(player, card, 1 - player, -1, -2, 0, 0, 0);
+  kill_card(player, card, KILL_DESTROY);
+LAB_023082fc:
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23083c0; original cards/zendikar_rising.c:591. */
+int card_blackbloom_rogue(int player, int card, event_t event)
+{
+  int result;
+
+  menace(player, card, event);
+  if (((event == EVENT_POWER) && (card == affected_card)) && (player == affected_card_controller))
+  {
+    result = count_graveyard(1 - player);
+    if (7 < result)
+    {
+      event_result = event_result + 3;
+    }
+  }
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23086d0; original cards/zendikar_rising.c:659. */
+int mdfc_front_land(int player, int card, event_t event)
+{
+  int result;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    mdfc_front_impl(player, card, event, 1, 0);
+    result = plain_mana_producer(player, card, event);
+    return result;
+  }
+  result = mdfc_front_impl(player, card, EVENT_CAN_CAST, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2308740; original cards/zendikar_rising.c:691. */
+int mdfc_back_land(int player, int card, event_t event)
+{
+  int result;
+
+  mdfc_back(player, card, event);
+  result = plain_mana_producer(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2308780; original cards/zendikar_rising.c:726. */
+int card_brushfire_elemental(int player, int card, event_t event)
+{
+  int result;
+
+  result = is_humiliated_for_ability(player, card, AL_STATIC);
+  if ((((event == EVENT_BLOCK_LEGALITY) && (result == 0)) &&
+       (attacking_card_controller == player)) &&
+      (attacking_card == card))
+  {
+    result = get_power(affected_card_controller, affected_card);
+    if (result < 3)
+    {
+      event_result = 1;
+    }
+  }
+  result = card_steppe_lynx(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2308e40; original cards/zendikar_rising.c:1014. */
+int card_emerias_call(int player, int card, event_t event)
+{
+  int result;
+  pump_ability_t pump;
+  test_definition_t test;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+  LAB_02308e74:
+    if (event != EVENT_RESOLVE_SPELL)
+      goto LAB_02308e79;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      goto LAB_02308e79;
+    }
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      if (event != EVENT_CAN_CHANGE_TARGET)
+      {
+        if (event != EVENT_CHANGE_TARGET)
+        {
+          return 0;
+        }
+        goto LAB_02308e79;
+      }
+      goto LAB_02308e74;
+    }
+  }
+  generate_tokens_by_id(player, card, 0x5509, 2);
+  default_pump_ability_definition(player, card, &pump, 0, 0, 0, 0x800);
+  pump.paue_flags = 0x8000;
+  default_test_definition(&test, 2);
+  test.subtype = 2;
+  test.subtype_flag = 1;
+  pump_ability_by_test(player, card, player, &pump, &test);
+  kill_card(player, card, KILL_DESTROY);
+LAB_02308e79:
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23092f0; original cards/zendikar_rising.c:1189. */
+int card_glasspool_mimic(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.allow_cancel = 1;
+    result = enters_the_battlefield_as_copy_of_any(player, card, EVENT_RESOLVE_SPELL, &td,
+                                                   "ASHNODS_BATTLEGEAR");
+
+    if ((result != 0) &&
+        (result = add_a_subtype_permanently(player, card, player, card, SUBTYPE_ROGUE),
+         -1 < result))
+    {
+      instance = get_card_instance(player, result);
+      instance->targets[2].card = 0xac;
+    }
+    return 0;
+  }
+  enters_the_battlefield_as_copy_of_any(player, card, event, NULL, "ASHNODS_BATTLEGEAR");
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23093f0; original cards/zendikar_rising.c:1262. */
+int card_hagra_mauling(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td1;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+    default_target_definition(player, card, &td1, 2);
+    if (event == EVENT_PLAY_FIRST_HALF)
+    {
+      generic_spell(player, card, EVENT_CAST_SPELL, 1, &td1, "TARGET_CREATURE", 1, NULL);
+      goto LAB_02309459;
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
+             (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td1, 2);
+  }
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td1);
+    if (result != 0)
+    {
+      kill_target0(player, card, KILL_DESTROY);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+LAB_02309459:
+  result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td1, "TARGET_CREATURE", 1, NULL);
+  result = mdfc_front_impl(player, card, event, result, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230ade0; original cards/zendikar_rising.c:1645. */
+int card_jwari_disruption(int player, int card, event_t event)
+{
+  int result;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+    if (event == EVENT_PLAY_FIRST_HALF)
+    {
+      result = counterspell(player, card, EVENT_CAST_SPELL, NULL, 0);
+      return result;
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+      {
+        return 0;
+      }
+      goto LAB_0230ae29;
+    }
+    if (event == EVENT_RESOLVE_SPELL)
+      goto LAB_0230aeb0;
+    if (event != EVENT_CAN_CHANGE_TARGET)
+    {
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+      goto LAB_0230ae29;
+    }
+  }
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+  LAB_0230aeb0:
+    counterspell_resolve_unless_pay_x(player, card, NULL, 0, 1);
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+LAB_0230ae29:
+  result = counterspell(player, card, EVENT_CAN_CAST, NULL, 0);
+  result = mdfc_front_impl(player, card, event, result, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230af30; original cards/zendikar_rising.c:1676. */
+int card_kabira_takedown(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+    default_target_definition(player, card, &td, 0x102);
+    if (event == EVENT_PLAY_FIRST_HALF)
+    {
+      result = generic_spell(player, card, EVENT_CAST_SPELL, 1, &td,
+                             "TARGET_CREATURE_OR_PLANESWALKER", 1, NULL);
+      return result;
+    }
+  joined_r0x0230af93:
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        result = count_subtype(player, 2, -1);
+        damage_target0(player, card, result);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x102);
+        goto joined_r0x0230af93;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+    default_target_definition(player, card, &td, 0x102);
+  }
+  result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_CREATURE_OR_PLANESWALKER", 1,
+                         NULL);
+  result = mdfc_front_impl(player, card, event, result, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230b140; original cards/zendikar_rising.c:1724. */
+int card_kazandu_mammoth(int player, int card, event_t event)
+{
+  int result;
+
+  card_steppe_lynx(player, card, event);
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230b4a0; original cards/zendikar_rising.c:1800. */
+int card_khalni_ambush(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int can_play_front;
+  target_definition_t *ptStack_bc;
+  target_definition_t td;
+  target_definition_t td1;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    default_target_definition(player, card, &td1, 2);
+    td1.allowed_controller = 1 - player;
+    td1.preferred_controller = td1.allowed_controller;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_PLAY_FIRST_HALF)
+    {
+      instance->number_of_targets = '\0';
+      result = new_pick_target(&td, "Select target creature you control.", 0, 0x81);
+      if (result != 0)
+      {
+        new_pick_target(&td1, "Select target creature opponent controls.", 1, 0x81);
+      }
+      goto LAB_0230b55a;
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
+             (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    default_target_definition(player, card, &td1, 2);
+    td1.allowed_controller = 1 - player;
+    td1.preferred_controller = td1.allowed_controller;
+    instance = get_card_instance(player, card);
+  }
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    ptStack_bc = &td1;
+    result = validate_target(player, card, &td, 0);
+    if ((result != 0) && (result = validate_target(player, card, ptStack_bc, 1), result != 0))
+    {
+      fight(instance->targets[0].player, instance->targets[0].card, instance->targets[1].player,
+            instance->targets[1].card);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+LAB_0230b55a:
+  ptStack_bc = &td1;
+  result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+  can_play_front = 0;
+  if (result != 0)
+  {
+    result = can_target(ptStack_bc);
+    can_play_front = (unsigned int)(result != 0);
+  }
+  result = mdfc_front_impl(player, card, event, can_play_front, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230b830; original cards/zendikar_rising.c:1878. */
+int card_leyline_tyrant(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_MANA_POOL_DRAINING)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      mana_doesnt_drain_from_pool[player][4] = mana_doesnt_drain_from_pool[player][4] | 0x80;
+    }
+  }
+  result = duh_mode(player);
+  result = this_dies_trigger(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (result != 0)
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    result = new_pick_target(&td, "TARGET_ANY", 0, 1);
+    if (result != 0)
+    {
+
+      result =
+          charge_mana_for_activated_ability_while_resolving(player, card, event, 0, 0, 0, 0, -1, 0);
+      if (0 < result)
+      {
+        damage_target0(player, card, result);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x230bea0; original cards/zendikar_rising.c:2034. */
+int card_makindi_stampede(int player, int card, event_t event)
+{
+  int result;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+  LAB_0230bed4:
+    if (event != EVENT_RESOLVE_SPELL)
+      goto LAB_0230bed9;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+      {
+        return 0;
+      }
+      goto LAB_0230bed9;
+    }
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      if (event != EVENT_CAN_CHANGE_TARGET)
+      {
+        if (event != EVENT_CHANGE_TARGET)
+        {
+          return 0;
+        }
+        goto LAB_0230bed9;
+      }
+      goto LAB_0230bed4;
+    }
+  }
+  pump_creatures_until_eot(player, card, player, 0, 2, 2, 0, 0, NULL);
+  kill_card(player, card, KILL_DESTROY);
+LAB_0230bed9:
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2306700; original cards/zendikar_rising.c:2070. */
+static int malakir_rebirth_effect(int player, int card, event_t event)
+{
+  char cVar1;
+  card_instance_t *pcVar2;
+  int result;
+  card_instance_t *pcVar4;
+
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+
+    pcVar2 = in_play(player, card);
+    if ((((pcVar2 != NULL) && (cVar1 = pcVar2->damage_target_player, cVar1 != -1)) &&
+         (pcVar2->damage_target_card == affected_card)) &&
+        (cVar1 == affected_card_controller))
+    {
+      result = is_this_dying((int)cVar1, pcVar2->damage_target_card);
+      if (result != 0)
+      {
+        result = check_for_death_trigger_removal(affected_card_controller, affected_card);
+        if (result == 0)
+        {
+
+          result = create_legacy_effect(player, card, malakir_rebirth_legacy);
+          pcVar4 = get_card_instance(player, result);
+          result = get_owner((int)pcVar2->damage_target_player, pcVar2->damage_target_card);
+          pcVar4->targets[0].player = result;
+          result = get_original_internal_card_id((int)pcVar2->damage_target_player,
+                                                 pcVar2->damage_target_card);
+          pcVar4->targets[0xb].player = 1;
+          pcVar4->targets[0].card = result;
+        }
+      }
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x230bfa0; original cards/zendikar_rising.c:2089. */
+int card_malakir_rebirth(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+    default_target_definition(player, card, &td, 2);
+    if (event == EVENT_PLAY_FIRST_HALF)
+    {
+      result = generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_CREATURE", 1, NULL);
+      return result;
+    }
+  joined_r0x0230c003:
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+
+        instance = get_card_instance(player, card);
+        create_targetted_legacy_effect(player, card, malakir_rebirth_effect,
+                                       instance->targets[0].player, instance->targets[0].card);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        goto joined_r0x0230c003;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+    default_target_definition(player, card, &td, 2);
+  }
+  result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_CREATURE", 1, NULL);
+  result = mdfc_front_impl(player, card, event, result, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230c650; original cards/zendikar_rising.c:2317. */
+int card_nighthawk_scavenger(int player, int card, event_t event)
+{
+  int result;
+
+  deathtouch(player, card, event);
+  lifelink(player, card, event);
+  if (((event == EVENT_POWER) && (card == affected_card)) && (player == affected_card_controller))
+  {
+    result = count_types_in_grave(1 - player);
+    set_base_pt(result + 1);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x230d0f0; original cards/zendikar_rising.c:2542. */
+int card_ondu_inversion(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+  LAB_0230d123:
+    if (event != EVENT_RESOLVE_SPELL)
+      goto LAB_0230d128;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      goto LAB_0230d128;
+    }
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      if (event != EVENT_CAN_CHANGE_TARGET)
+      {
+        if (event != EVENT_CHANGE_TARGET)
+        {
+          return 0;
+        }
+        goto LAB_0230d128;
+      }
+      goto LAB_0230d123;
+    }
+  }
+  default_test_definition(&this_test, 1);
+  this_test.type_flag = 1;
+  new_manipulate_all(player, card, 2, &this_test, ACT_KILL_DESTROY);
+  kill_card(player, card, KILL_DESTROY);
+LAB_0230d128:
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230d1f0; original cards/zendikar_rising.c:2584. */
+int card_pelakka_predation(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  ec_definition_t ec;
+  target_definition_t td;
+  test_definition_t this_test;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+    if (event == EVENT_PLAY_FIRST_HALF)
+    {
+      target_opponent(player, card);
+      goto LAB_0230d239;
+    }
+  LAB_0230d234:
+    if (event != EVENT_RESOLVE_SPELL)
+      goto LAB_0230d239;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      goto LAB_0230d239;
+    }
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      if (event != EVENT_CAN_CHANGE_TARGET)
+      {
+        if (event != EVENT_CHANGE_TARGET)
+        {
+          return 0;
+        }
+        goto LAB_0230d239;
+      }
+      goto LAB_0230d234;
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.zone = 0x1000;
+  result = valid_target(&td);
+  if (result != 0)
+  {
+
+    instance = get_card_instance(player, card);
+    default_ec_definition(instance->targets[0].player, player, &ec);
+    new_default_test_definition(&this_test, 0xff, "Select a card with CMC 3 or greater.");
+    this_test.cmc = 2;
+    this_test.cmc_flag = 2;
+    new_effect_coercion(&ec, &this_test);
+  }
+  kill_card(player, card, KILL_DESTROY);
+LAB_0230d239:
+  result = opponent_is_valid_target(player, card);
+  result = mdfc_front_impl(player, card, event, result, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230d850; original cards/zendikar_rising.c:2839. */
+int card_scourge_of_the_skyclaves(int player, int card, event_t event)
+{
+  int iVar1;
+  unsigned int uVar2;
+  int iVar3;
+  unsigned int player_00;
+
+  kicker(player, card, event, 4, 1, 0, 0, 0, 0);
+  if (event - EVENT_POWER < 2)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      iVar3 = life[1 - player];
+      if (life[1 - player] < life[player])
+      {
+        iVar3 = life[player];
+      }
+      set_base_pt(0x14 - iVar3);
+    }
+  }
+  else if ((((event != EVENT_CAN_CAST) && (event == EVENT_CAST_SPELL)) &&
+            (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    iVar1 = kicked(player, card);
+    iVar3 = current_turn;
+    if (iVar1 != 0)
+    {
+
+      uVar2 = round_up_value(life[current_turn]);
+      lose_life(iVar3, uVar2);
+      player_00 = current_turn ^ 1;
+      uVar2 = round_up_value(life[player_00]);
+      lose_life(player_00, uVar2);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x230da20; original cards/zendikar_rising.c:2883. */
+int card_sea_gate_restoration(int player, int card, event_t event)
+{
+  int result;
+
+  if ((event == EVENT_PLAY_FIRST_HALF ||
+       (event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE)) ||
+      (event == EVENT_CAN_CAST))
+  {
+  LAB_0230da57:
+    if (event != EVENT_RESOLVE_SPELL)
+      goto LAB_0230da5c;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+      {
+        return 0;
+      }
+      goto LAB_0230da5c;
+    }
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      if (event != EVENT_CAN_CHANGE_TARGET)
+      {
+        if (event != EVENT_CHANGE_TARGET)
+        {
+          return 0;
+        }
+        goto LAB_0230da5c;
+      }
+      goto LAB_0230da57;
+    }
+  }
+  draw_cards(player, hand_count[player] + 1);
+  create_legacy_effect(player, card, card_spellbook);
+  kill_card(player, card, KILL_DESTROY);
+LAB_0230da5c:
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230dbe0; original cards/zendikar_rising.c:2964. */
+int card_sejiri_shelter(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  target_definition_t td;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_PLAY_FIRST_HALF)
+    {
+      result = generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_CREATURE", 1, NULL);
+      return result;
+    }
+  joined_r0x0230dd08:
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+
+        uVar3 = select_a_protection(player);
+        pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                               0, 0, uVar3 | 0x10000000, 0);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.allowed_controller = player;
+        td.preferred_controller = player;
+        instance = get_card_instance(player, card);
+        goto joined_r0x0230dd08;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    get_card_instance(player, card);
+  }
+  result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_CREATURE", 1, NULL);
+  result = mdfc_front_impl(player, card, event, result, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230e2d0; original cards/zendikar_rising.c:3085. */
+int card_silundi_vision(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+  LAB_0230e303:
+    if (event != EVENT_RESOLVE_SPELL)
+      goto LAB_0230e308;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      goto LAB_0230e308;
+    }
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      if (event != EVENT_CAN_CHANGE_TARGET)
+      {
+        if (event != EVENT_CHANGE_TARGET)
+        {
+          return 0;
+        }
+        goto LAB_0230e308;
+      }
+      goto LAB_0230e303;
+    }
+  }
+  new_default_test_definition(&test, 0x38, "Select an instant or sorcery card.");
+  reveal_top_cards_of_library_and_choose(player, card, player, 6, 0, TUTOR_HAND, 1,
+                                         TUTOR_BOTTOM_OF_DECK_RANDOM, 0, &test);
+  kill_card(player, card, KILL_DESTROY);
+LAB_0230e308:
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230e5d0; original cards/zendikar_rising.c:3147. */
+int card_skyclave_cleric(int player, int card, event_t event)
+{
+  int result;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    gain_life(player, 2);
+    return 0;
+  }
+  if (((event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE) &&
+       event != EVENT_PLAY_FIRST_HALF) &&
+      (event != EVENT_CAN_CAST))
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+      {
+        return 0;
+      }
+    }
+    else if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
+             (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230e6a0; original cards/zendikar_rising.c:3183. */
+int card_skyclave_relic(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+
+  indestructible(player, card, event);
+  kicker(player, card, event, 3, 0, 0, 0, 0, 0);
+  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_token(player, card);
+    if (result == 0)
+    {
+      etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    }
+  }
+  if (event == EVENT_ETB)
+  {
+    result = kicked(player, card);
+    if (result != 0)
+    {
+      copy_token_definition(player, card, &token, player, card);
+      token.action = TOKEN_ACTION_TAPPED;
+      token.qty = '\x02';
+      generate_token(&token);
+    }
+  }
+  result = plain_mana_producer(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230e960; original cards/zendikar_rising.c:3269. */
+int card_song_mad_treachery(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = 2;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_PLAY_FIRST_HALF)
+    {
+      generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_CREATURE", 1, NULL);
+      if (spell_fizzled != 1)
+      {
+        ai_modifier_for_act_of_treason(player, card);
+      }
+      return 0;
+    }
+  joined_r0x0230ea89:
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        effect_act_of_treason(player, card, instance->targets[0].player, instance->targets[0].card);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.preferred_controller = 2;
+        instance = get_card_instance(player, card);
+        goto joined_r0x0230ea89;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = 2;
+    get_card_instance(player, card);
+  }
+  result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_CREATURE", 1, NULL);
+  result = mdfc_front_impl(player, card, event, result, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230eba0; original cards/zendikar_rising.c:3306. */
+int card_soul_shatter(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  int iVar5;
+  int32_t player_00;
+  int32_t card_00;
+  int player_01;
+  int iStack_d0;
+  int iStack_cc;
+  target_definition_t td;
+  char msg[100];
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+
+      player_01 = 1 - player;
+      pcVar2 = get_card_instance(player, card);
+      iVar1 = active_cards_count[player_01] + -1;
+      pcVar2->targets[0].card = -1;
+      pcVar2->targets[0].player = -1;
+      if (iVar1 < 0)
+      {
+        player_00 = -1;
+        card_00 = -1;
+      }
+      else
+      {
+        iStack_d0 = 1;
+        iStack_cc = -1;
+        do
+        {
+          while (pcVar3 = in_play(player_01, iVar1), pcVar3 == NULL)
+          {
+          LAB_0230ec80:
+            iVar1 = iVar1 + -1;
+            if (iVar1 == -1)
+              goto LAB_0230ed08;
+          }
+          iVar4 = is_what(player_01, iVar1, 2);
+          iVar5 = is_planeswalker(player_01, iVar1);
+          if (iVar4 == 0 && iVar5 == 0)
+            goto LAB_0230ec80;
+          iVar4 = get_cmc(player_01, iVar1);
+          if (iVar4 <= iStack_cc)
+          {
+            iVar4 = get_cmc(player_01, iVar1);
+            iStack_d0 = iStack_d0 + (unsigned int)(iVar4 == iStack_cc);
+            goto LAB_0230ec80;
+          }
+          pcVar2->targets[0].card = iVar1;
+          pcVar2->targets[0].player = player_01;
+          iStack_cc = get_cmc(player_01, iVar1);
+          iVar1 = iVar1 + -1;
+          iStack_d0 = 1;
+        } while (iVar1 != -1);
+      LAB_0230ed08:
+        if (1 < iStack_d0)
+        {
+          default_target_definition(player, card, &td, 0x102);
+          td.illegal_abilities = 0;
+          td.allow_cancel = 0;
+          td.extra = iStack_cc;
+          td.special = 0x1000000;
+          td.who_chooses = player_01;
+          td.allowed_controller = player_01;
+          td.preferred_controller = player_01;
+          scnprintf(msg, 100, "Select a creature you control with CMC %d.", iStack_cc);
+          pcVar2->number_of_targets = '\0';
+          new_pick_target(&td, msg, 0, 0x80);
+        }
+        card_00 = pcVar2->targets[0].card;
+        player_00 = pcVar2->targets[0].player;
+      }
+      kill_card(player_00, card_00, KILL_SACRIFICE);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  iVar1 = basic_spell(player, card, event);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x230ee40; original cards/zendikar_rising.c:3363. */
+int card_spikefield_hazard(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    if (event == EVENT_PLAY_FIRST_HALF)
+    {
+      result = generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ANY", 1, NULL);
+      return result;
+    }
+  joined_r0x0230eeaa:
+    td.zone = 0x1200;
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      td.zone = 0x1200;
+      result = valid_target(&td);
+      if (result != 0)
+      {
+
+        result = damage_target0(player, card, 1);
+        instance = get_card_instance(player, result);
+        instance->targets[3].card = instance->targets[3].card | 0x80;
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x102);
+        goto joined_r0x0230eeaa;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+  }
+  result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_ANY", 1, NULL);
+  result = mdfc_front_impl(player, card, event, result, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230f1d0; original cards/zendikar_rising.c:3489. */
+int card_tangled_florahedron(int player, int card, event_t event)
+{
+  int result;
+
+  if ((event != EVENT_PLAY_FIRST_HALF &&
+       (event != EVENT_MODIFY_COST && event != EVENT_CHANGE_TYPE)) &&
+      (event != EVENT_CAN_CAST))
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+        goto LAB_0230f258;
+    }
+    else if ((event != EVENT_RESOLVE_SPELL) &&
+             ((event != EVENT_CAN_CHANGE_TARGET && (event != EVENT_CHANGE_TARGET))))
+    {
+    LAB_0230f258:
+      result = mana_producing_creature(player, card, event, 0x18, COLOR_GREEN, 1);
+      return result;
+    }
+  }
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23066a0; original cards/zendikar_rising.c:3646. */
+static int is_instant_sorcery_or_wizard(int iid, int unused, int player, int card)
+{
+  int result;
+  unsigned int uVar2;
+
+  result = is_what(player, card, 0x38);
+  uVar2 = 1;
+  if (result == 0)
+  {
+    result = has_subtype(player, card, SUBTYPE_WIZARD);
+    uVar2 = (unsigned int)(result != 0);
+  }
+  return uVar2;
+}
+
+/* ManalinkEh 2022: 0x230f550; original cards/zendikar_rising.c:3654. */
+int card_umara_wizard(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 0xff);
+    test.special_selection_function = is_instant_sorcery_or_wizard;
+    result = new_specific_spell_played(player, card, event, player, 2, &test);
+    if (result != 0)
+    {
+      pump_ability_until_eot_no_repeat(player, card, player, card, 0x20, 0);
+    }
+  }
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23100f0; original cards/zendikar_rising.c:3925. */
+int card_zof_consumption(int player, int card, event_t event)
+{
+  int result;
+
+  if ((event == EVENT_PLAY_FIRST_HALF ||
+       (event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE)) ||
+      (event == EVENT_CAN_CAST))
+  {
+  LAB_02310127:
+    if (event != EVENT_RESOLVE_SPELL)
+      goto LAB_0231012c;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+      {
+        return 0;
+      }
+      goto LAB_0231012c;
+    }
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      if (event != EVENT_CAN_CHANGE_TARGET)
+      {
+        if (event != EVENT_CHANGE_TARGET)
+        {
+          return 0;
+        }
+        goto LAB_0231012c;
+      }
+      goto LAB_02310127;
+    }
+  }
+  lose_life(1 - player, 4);
+  gain_life(player, 4);
+  kill_card(player, card, KILL_DESTROY);
+LAB_0231012c:
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2308bb0; original cards/zendikar_rising.c:906. */
+int card_crawling_barrens(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  unsigned int uVar5;
+  uint32_t uVar6;
+  uint32_t uVar7;
+  uint32_t uVar8;
+  uint32_t uVar9;
+  uint32_t uVar10;
+  uint32_t uVar11;
+  uint32_t uVar12;
+  uint32_t uVar13;
+  uint32_t uVar14;
+  uint32_t uVar15;
+
+  iVar2 = is_humiliated_for_ability(player, card, AL_TRIG);
+  if (iVar2 == 0)
+  {
+    comes_into_play_tapped(player, card, event);
+  }
+  if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_ACTIVATE))
+  {
+  LAB_02308beb:
+    has_subtype_if_animated_self(player, card, event, SUBTYPE_ELEMENTAL);
+    iVar2 = mana_producer(player, card, event);
+    return iVar2;
+  }
+
+  instance = get_card_instance(player, card);
+  uVar1 = instance->token_status;
+  iVar2 = paying_mana();
+  uVar5 = 0;
+  if (iVar2 == 0)
+  {
+    iVar2 = can_use_activated_abilities(player, card);
+    uVar5 = (unsigned int)(iVar2 != 0);
+  }
+  iVar2 = paying_mana();
+  iVar4 = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+  uVar15 = 0;
+  uVar14 = 0;
+  uVar13 = 0;
+  uVar12 = 0;
+  uVar11 = 0;
+  uVar10 = 0;
+  uVar9 = 0;
+  uVar8 = 0;
+  uVar7 = 0;
+  uVar6 = 4;
+  iVar2 = dialog_impl(player, card, event, "\001\016", "\001\026", "Produce mana", iVar4, iVar2,
+                      "Add counters", uVar5, (uVar1 >> 0xc ^ 1) & 1, "\001\020", 4, 0, 0, 0, 0, 0,
+                      0, 0, 0, 0);
+  if (event != EVENT_CAN_ACTIVATE)
+  {
+    if (iVar2 != 0)
+    {
+      if (iVar2 != 2)
+        goto LAB_02308beb;
+      if (event == EVENT_RESOLVE_ACTIVATION)
+      {
+
+        instance = get_card_instance(player, card);
+        add_counters_from_source(player, card, instance->parent_controller, instance->parent_card,
+                                 COUNTER_P1_P1, 2);
+        iVar2 = dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, "\001\002", "\001\026",
+                            "Animate", 1, 1, 0, 0, 0, 0, uVar6, uVar7, uVar8, uVar9, uVar10, uVar11,
+                            uVar12, uVar13, uVar14, uVar15);
+        if (iVar2 == 1)
+        {
+          animate_self(player, card, 0, 0, KEYWORD_0, SP_KEYWORD_0, COLOR_TEST_0, 0);
+          return 0;
+        }
+      }
+    }
+    iVar2 = 0;
+  }
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x2309150; original cards/zendikar_rising.c:1112. */
+int card_felidar_retreat(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int iStack_14;
+
+  landfall(player, card, event);
+  if (event == EVENT_ETB)
+  {
+
+    result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\003", "\001\014",
+                         "Cat Beast", 1, 1, "+1/+1 counters", 1, 1, 0, 0, 0, 0);
+    if (result == 1)
+    {
+      generate_token_by_id(player, card, 0x5527);
+    }
+    else
+    {
+
+      if ((result == 2) && (iStack_14 = active_cards_count[player] + -1, -1 < iStack_14))
+      {
+        do
+        {
+          instance = in_play(player, iStack_14);
+          if ((instance != NULL) && (result = is_what(player, iStack_14, 2), result != 0))
+          {
+            add_counters_from_source(player, card, player, iStack_14, COUNTER_P1_P1, 1);
+            pump_ability_until_eot_no_repeat(player, card, player, iStack_14, 0, 8);
+          }
+          iStack_14 = iStack_14 + -1;
+        } while (iStack_14 != -1);
+      }
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x230c6d0; original cards/zendikar_rising.c:2348. */
+int card_nissa_of_shadowed_boughs(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  int iVar4;
+  card_instance_t *pcVar5;
+  unsigned int uVar6;
+  target_definition_t *ptStack_144;
+  test_definition_t *ptStack_140;
+  target_definition_t td;
+  test_definition_t test;
+
+  landfall(player, card, event);
+  if (event == EVENT_ETB)
+  {
+    if ((trigger_cause_controller != player) || (trigger_cause != card))
+    {
+      add_counters_from_source(player, card, player, card, COUNTER_LOYALTY, 1);
+    }
+    check_legend_rule(player, card, EVENT_ETB);
+  }
+  else
+  {
+    check_legend_rule(player, card, event);
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      default_target_definition(player, card, &td, 1);
+      td.allowed_controller = player;
+      default_test_definition(&test, 2);
+      iVar1 = count_permanents_by_type(player, TYPE_LAND);
+      test.cmc = iVar1 + 1;
+      test.cmc_flag = 3;
+      test.zone = 0x100;
+      pcVar2 = get_card_instance(player, card);
+      if (event == EVENT_ACTIVATE)
+      {
+
+        pcVar2->number_of_targets = '\0';
+        pcVar2->info_slot = 0;
+        iVar1 = new_special_count_grave(player, &test);
+        uVar6 = 1;
+        if (iVar1 == 0)
+        {
+          iVar1 = check_battlefield_for_special_card(player, card, player, 0, &test);
+          uVar6 = (unsigned int)(iVar1 != 0);
+        }
+        iVar1 = can_target(&td);
+        iVar1 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017",
+                            "Untap & animate a land", iVar1, 5, 1, "Put a creature into play",
+                            uVar6, 10, 0xfffffffb, 0, 0, 0, 0);
+        if (iVar1 == 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        if (iVar1 == 1)
+        {
+          new_pick_target(&td, "Select a land you control.", 0, 0x81);
+        }
+        goto LAB_0230c7c0;
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+        goto LAB_0230c7c0;
+      default_target_definition(player, card, &td, 1);
+      td.allowed_controller = player;
+      default_test_definition(&test, 2);
+      iVar1 = count_permanents_by_type(player, TYPE_LAND);
+      test.cmc = iVar1 + 1;
+      test.cmc_flag = 3;
+      test.zone = 0x100;
+      pcVar2 = get_card_instance(player, card);
+    }
+    ptStack_140 = &test;
+    ptStack_144 = &td;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+
+      if (pcVar2->info_slot == 1)
+      {
+        iVar1 = valid_target(ptStack_144);
+        if (iVar1 != 0)
+        {
+          untap_card(pcVar2->targets[0].player, pcVar2->targets[0].card);
+          iVar1 = dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, "\001\002", "\001\003",
+                              "Animate", 1, 10, "Do not animate", 1, 1, 0, 0, 0, 0);
+          if (iVar1 == 1)
+          {
+
+            pcVar2 = get_card_instance(player, card);
+            iVar1 = land_animation2(player, card, pcVar2->targets[0].player,
+                                    pcVar2->targets[0].card, 1, 3, 3, 0, 0x10004, 0, NULL);
+            pcVar5 = get_card_instance(player, iVar1);
+            pcVar5->targets[9].card = 0x3a;
+            pcVar5 = get_card_instance(player, iVar1);
+            pcVar5->targets[9].player = 1;
+            pcVar2 = get_card_instance(pcVar2->targets[0].player, pcVar2->targets[0].card);
+            pcVar2->regen_status = pcVar2->regen_status | 0x1f000000;
+          }
+        }
+      }
+      else if (pcVar2->info_slot == 2)
+      {
+
+        iVar1 = check_battlefield_for_special_card(player, card, player, 0, ptStack_140);
+        iVar3 = new_special_count_grave(player, ptStack_140);
+        if (iVar1 == 0 && iVar3 == 0)
+        {
+          return 0;
+        }
+        do
+        {
+          if ((iVar1 != 0) &&
+              (iVar4 = new_select_a_card(player, player, 4, 0, 2, -1, ptStack_140), -1 < iVar4))
+          {
+            put_into_play(player, iVar4);
+            goto LAB_0230ca8c;
+          }
+        } while ((iVar3 == 0) ||
+                 (iVar4 = new_select_a_card(player, player, 2, 0, 2, -1, ptStack_140), iVar4 < 0));
+
+        iVar4 = reanimate_permanent(player, card, player, iVar4, REANIMATE_DEFAULT);
+      LAB_0230ca8c:
+        hack_silent_counters = 1;
+        add_counters_from_source(player, card, player, iVar4, COUNTER_P1_P1, 2);
+        hack_silent_counters = 0;
+      }
+    }
+  }
+LAB_0230c7c0:
+  iVar1 = planeswalker(player, card, event, 4);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x230d390; original cards/zendikar_rising.c:2622. */
+int card_phylath_world_sculptor(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  landfall(player, card, event);
+  if (event == EVENT_ETB)
+  {
+    if ((trigger_cause_controller == player) && (trigger_cause == card))
+    {
+      result = count_basic_lands(player, -1);
+      generate_tokens_by_id(player, card, 0x4973, result);
+    }
+    else
+    {
+      default_target_definition(player, card, &td, 0xff);
+      td.required_subtype = 0x96;
+      td.allowed_controller = player;
+      td.allow_cancel = 0;
+      result = can_target(&td);
+      if (result != 0)
+      {
+        result = new_pick_target(&td, "Select a plant you control.", 0, 0x81);
+        if (result != 0)
+        {
+
+          instance = get_card_instance(player, card);
+          add_counters_from_source(player, card, instance->targets[0].player,
+                                   instance->targets[0].card, COUNTER_P1_P1, 4);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x230d4d0; original cards/zendikar_rising.c:2655. */
+int card_prowling_felidar(int player, int card, event_t event)
+{
+  vigilance(player, card, event);
+  landfall(player, card, event);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x230d5b0; original cards/zendikar_rising.c:2780. */
+int card_scale_the_heights(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  test_definition_t test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      default_target_definition(player, card, &td, 2);
+      td.preferred_controller = player;
+      td.allow_cancel = 3;
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        result = can_target(&td);
+        if (result != 0)
+        {
+          new_pick_target(&td, "TARGET_CREATURE", 0, 0);
+        }
+        default_test_definition(&test, 1);
+        test.zone = 0x100;
+        result = check_battlefield_for_special_card(player, card, player, 4, &test);
+        ai_modifier = ai_modifier + result * 0xc;
+      }
+      goto LAB_0230d61e;
+    }
+    if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+    {
+      default_target_definition(player, card, &td, 2);
+      td.preferred_controller = player;
+      td.allow_cancel = 3;
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+
+        instance = get_card_instance(player, card);
+        if ((instance->number_of_targets != '\0') && (result = valid_target(&td), result != 0))
+        {
+          add_counters_from_source(player, card, instance->targets[0].player,
+                                   instance->targets[0].card, COUNTER_P1_P1, 1);
+        }
+        gain_life(player, 2);
+        result = create_legacy_effect(player, card, check_playable_lands_legacy);
+        instance = get_card_instance(player, result);
+        result = get_id(player, card);
+        instance->targets[2].card = result;
+        draw_cards(player, 1);
+        kill_card(player, card, KILL_DESTROY);
+      }
+      goto LAB_0230d61e;
+    }
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = player;
+  td.allow_cancel = 3;
+LAB_0230d61e:
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2306bc0; original cards/zendikar_rising.c:3608. */
+static int three_counters_for_mv_less_than_three(int player, int card)
+{
+  int result;
+
+  result = get_cmc(player, card);
+  if (3 < result)
+  {
+    return 0;
+  }
+  hack_silent_counters = hack_silent_counters + 1;
+  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 3);
+  hack_silent_counters = hack_silent_counters + -1;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x230f940; original cards/zendikar_rising.c:3757. */
+int card_vastwood_fortification(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+    default_target_definition(player, card, &td, 2);
+    if (event == EVENT_PLAY_FIRST_HALF)
+    {
+      result = generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_CREATURE", 1, NULL);
+      return result;
+    }
+  joined_r0x0230f9a3:
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+
+        instance = get_card_instance(player, card);
+        add_counters_from_source(player, card, instance->targets[0].player,
+                                 instance->targets[0].card, COUNTER_P1_P1, 1);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        goto joined_r0x0230f9a3;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+    default_target_definition(player, card, &td, 2);
+  }
+  result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_ANY", 1, NULL);
+  result = mdfc_front_impl(player, card, event, result, 0);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2308870; original cards/zendikar_rising.c:790. */
+int card_cleansing_wildfire(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+  LAB_0230891c:
+    default_target_definition(player, card, &td, 1);
+    if (player != 1)
+      goto LAB_023088d0;
+  LAB_0230893f:
+    td.required_subtype = 0x2000;
+    td.special = 0x1000;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      goto LAB_0230891c;
+    }
+    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+    {
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+      goto LAB_0230891c;
+    }
+    default_target_definition(player, card, &td, 1);
+    if (player == 1)
+      goto LAB_0230893f;
+  }
+  if (event != EVENT_RESOLVE_SPELL)
+    goto LAB_023088d0;
+  result = valid_target(&td);
+  if (result != 0)
+  {
+
+    kill_target0(player, card, KILL_DESTROY);
+    instance = get_card_instance(player, card);
+    result = instance->targets[0].player;
+    if (result == 0)
+    {
+      result = do_dialog(0, player, card, -1, -1, " Tutor a basic land\n Pass", 0);
+      if (result != 1)
+      {
+        result = instance->targets[0].player;
+        goto LAB_02308a1a;
+      }
+    }
+    else
+    {
+    LAB_02308a1a:
+      tutor_basic_land(result, 1, 0);
+    }
+    draw_a_card(player);
+  }
+  kill_card(player, card, KILL_DESTROY);
+LAB_023088d0:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_LAND", 1, NULL);
+  return result;
+}

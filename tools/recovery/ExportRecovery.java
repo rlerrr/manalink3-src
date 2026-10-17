@@ -14,6 +14,9 @@ import ghidra.program.model.listing.*;
 public class ExportRecovery extends GhidraScript {
     @Override
     public void run() throws Exception {
+        if (!currentProgram.getOptions("Manalink recovery").getBoolean("ExternalInterfacesReady", true)) {
+            throw new Exception("External interface application did not complete; refusing export");
+        }
         String[] args = getScriptArgs();
         Path directory = Paths.get(args[0]);
         Files.createDirectories(directory);
@@ -25,8 +28,10 @@ public class ExportRecovery extends GhidraScript {
         decompiler.openProgram(currentProgram);
         int success = 0;
         int failed = 0;
-        try (PrintWriter manifest = new PrintWriter(Files.newBufferedWriter(directory.resolve("export.tsv")))) {
+        try (PrintWriter manifest = new PrintWriter(Files.newBufferedWriter(directory.resolve("export.tsv")));
+             PrintWriter tailCalls = new PrintWriter(Files.newBufferedWriter(directory.resolve("tail-calls.tsv")))) {
             manifest.println("address\tsource\tname\tstatus\tprototype");
+            tailCalls.println("instruction\tcaller\tcallee_address\tcallee");
             for (String request : requests) {
                 monitor.checkCancelled();
                 String[] fields = request.split("\t");
@@ -40,6 +45,23 @@ public class ExportRecovery extends GhidraScript {
                 }
                 new DisassembleCommand(start, new AddressSet(start, end), true).applyTo(currentProgram, monitor);
                 function.setBody(new AddressSet(start, end));
+                // GCC sibling calls end in a direct JMP to another function.
+                // Explicit CALL_RETURN flow keeps the decompiler from absorbing
+                // that callee's body into this function. Only exact known entry
+                // points outside the caller's DWARF extent qualify.
+                for (Instruction instruction : currentProgram.getListing().getInstructions(function.getBody(), true)) {
+                    Address[] flows = instruction.getFlows();
+                    if (instruction.getFlowType().isJump() && !instruction.getFlowType().isConditional() &&
+                        !instruction.getFlowType().isComputed() && flows.length == 1 &&
+                        !function.getBody().contains(flows[0])) {
+                        Function callee = getFunctionAt(flows[0]);
+                        if (callee != null && !callee.equals(function)) {
+                            instruction.setFlowOverride(FlowOverride.CALL_RETURN);
+                            tailCalls.println(instruction.getAddress() + "\t" + fields[2] + "\t" + flows[0] + "\t" + callee.getName());
+                        }
+                    }
+                }
+                decompiler.flushCache();
                 DecompileResults result = decompiler.decompileFunction(function, 45, monitor);
                 String prototype = function.getSignature().getPrototypeString();
                 if (result.decompileCompleted()) {

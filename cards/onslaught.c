@@ -5349,3 +5349,103 @@ int card_towering_baloth(int player, int card, event_t event)
   result = morph(player, card, event, 6, 0, 0, 1, 0, 0);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25f5540; original cards/onslaught.c:4434. */
+int card_slipstream_eel(int player, int card, event_t event)
+{
+  int result;
+
+  if (((event == EVENT_ATTACK_LEGALITY) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      result = get_hacked_color(player, card, 2);
+      if (basiclandtypes_controlled[1 - player][result] == 0)
+      {
+        event_result = 1;
+      }
+    }
+  }
+  result = cycling(player, card, event, 1, 0, 1, 0, 0, 0);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25ec730; original cards/onslaught.c:1425. */
+int card_chain_of_vapor(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  test_definition_t test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x47);
+        td.illegal_type = 1;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+            result = count_permanents_by_type(instance->targets[0].player, TYPE_LAND);
+            if ((0 < result) && (result = can_legally_play_iid(instance->targets[0].player,
+                                                               instance->internal_card_id),
+                                 result != 0))
+            {
+
+              result = count_permanents_by_type(1 - player, TYPE_LAND);
+              result = do_dialog(instance->targets[0].player, player, card, -1, -1,
+                                 " Copy Chain of Vapor\n Pass", (unsigned int)(result < 4));
+              if (result == 0)
+              {
+                new_default_test_definition(&test, 1, "Select a land to sacrifice.");
+                result = new_sacrifice(player, card, instance->targets[0].player, 0, &test);
+                if (result != 0)
+                {
+                  result = get_id(player, card);
+                  copy_spell(instance->targets[0].player, result);
+                }
+              }
+            }
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_025ec7ad;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.illegal_type = 1;
+  get_card_instance(player, card);
+LAB_025ec7ad:
+  result =
+      generic_spell(player, card, event, 0x81, &td, "Select target nonland permanent.", 1, NULL);
+  return result;
+}

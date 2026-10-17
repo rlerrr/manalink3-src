@@ -2942,3 +2942,794 @@ LAB_0209c558:
                          "Select target creature with the greatest power.", 1, NULL);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2098360; original cards/nemesis.c:2556. */
+int card_submerge(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_MODIFY_COST)
+  {
+    result = get_hacked_subtype(player, card, 0x5001);
+    result = check_battlefield_for_subtype(1 - player, 1, result);
+    if (result != 0)
+    {
+      result = get_hacked_subtype(player, card, 0x5002);
+      result = check_battlefield_for_subtype(player, 1, result);
+      if (result != 0)
+      {
+        null_casting_cost(player, card);
+        instance = get_card_instance(player, card);
+        instance->info_slot = 1;
+        return 0;
+      }
+    }
+    instance = get_card_instance(player, card);
+    instance->info_slot = 0;
+  }
+  else
+  {
+    if (event == EVENT_CAN_CAST)
+    {
+      default_target_definition(player, card, &td, 2);
+      td.preferred_controller = 1 - player;
+      get_card_instance(player, card);
+      result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+      return result;
+    }
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.preferred_controller = 1 - player;
+        instance = get_card_instance(player, card);
+        if ((card == affected_card) && (player == affected_card_controller))
+        {
+          instance->number_of_targets = '\0';
+          result = nemesis_freespell(player, card, 0x6c);
+          if (result != 0)
+          {
+            result =
+                generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_CREATURE", 1, NULL);
+            return result;
+          }
+          spell_fizzled = 1;
+        }
+      }
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+    {
+      default_target_definition(player, card, &td, 2);
+      td.preferred_controller = 1 - player;
+      instance = get_card_instance(player, card);
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+        result = valid_target(&td);
+        if (result != 0)
+        {
+          put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
+        }
+        kill_card(player, card, KILL_DESTROY);
+        return 0;
+      }
+    }
+    else if (event == EVENT_CHANGE_TARGET)
+    {
+      default_target_definition(player, card, &td, 2);
+      td.preferred_controller = 1 - player;
+      get_card_instance(player, card);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x209a6c0; original cards/nemesis.c:3285. */
+int card_lawbringer(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  const char *prompt;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    get_card_instance(player, card);
+    default_target_definition(player, card, &td, 2);
+    td.required_color = get_sleighted_color_test(player, card, 0x10);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 2);
+    td.required_color = get_sleighted_color_test(player, card, 0x10);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+    }
+  }
+  prompt = get_sleighted_color_text(player, card, "Select target %s creature card.", 4);
+  result = generic_activated_ability(player, card, event, 0xf, 0, 0, 0, 0, 0, 0, 0, &td, prompt);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209a840; original cards/nemesis.c:3311. */
+int card_lightbringer(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  const char *prompt;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    get_card_instance(player, card);
+    default_target_definition(player, card, &td, 2);
+    td.required_color = get_sleighted_color_test(player, card, 2);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 2);
+    td.required_color = get_sleighted_color_test(player, card, 2);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+    }
+  }
+  prompt = get_sleighted_color_text(player, card, "Select target %s creature card.", 1);
+  result = generic_activated_ability(player, card, event, 0xf, 0, 0, 0, 0, 0, 0, 0, &td, prompt);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2099670; original cards/nemesis.c:2949. */
+int card_battlefield_percher(int player, int card, event_t event)
+{
+  int result;
+
+  if (((event == EVENT_BLOCK_LEGALITY) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      result = check_for_ability(attacking_card_controller, attacking_card, 0x20);
+      if (result == 0)
+      {
+        event_result = 1;
+      }
+    }
+  }
+  result = generic_shade_merge_pt(player, card, event, 0, 1, 1, 0, 0, 0, 0, 1, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2099750; original cards/nemesis.c:2965. */
+int card_coiling_woodworm(int player, int card, event_t event)
+{
+  int result;
+
+  if ((((event == EVENT_POWER) && (card == affected_card)) &&
+       (affected_card_controller == player)) &&
+      (player != -1))
+  {
+    result = get_hacked_subtype(player, card, 0x5001);
+    result = count_subtype(2, 0x47, result);
+    set_characteristic_pt(result);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20997c0; original cards/nemesis.c:2983. */
+int card_downhill_charge(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  test_definition_t test;
+
+  if (event == EVENT_MODIFY_COST)
+  {
+    default_test_definition(&test, 0x47);
+    test.subtype = 0x5006;
+    result = new_can_sacrifice_as_cost(player, card, &test);
+    if (result != 0)
+    {
+      instance = get_card_instance(player, card);
+      instance->info_slot = 1;
+      null_casting_cost(player, card);
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    instance->info_slot = 0;
+    return 0;
+  }
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    get_card_instance(player, card);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    return result;
+  }
+  if (event != EVENT_CAST_SPELL)
+  {
+    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+    {
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+      default_target_definition(player, card, &td, 2);
+      get_card_instance(player, card);
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    instance = get_card_instance(player, card);
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      return 0;
+    }
+    result = valid_target(&td);
+    if (result != 0)
+    {
+
+      result = get_hacked_subtype(player, card, 0x5006);
+      result = count_subtype(player, 1, result);
+      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, result,
+                     0);
+    }
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 2);
+  instance = get_card_instance(player, card);
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+  result = played_for_free(player, card);
+  if (((result == 0) && (result = is_token(player, card), result == 0)) &&
+      (instance->info_slot == 1))
+  {
+
+    result = has_mana_to_cast_iid(player, EVENT_CAST_SPELL, instance->internal_card_id);
+    if (result != 0)
+    {
+      result = count_subtype(player, 1, -1);
+      result =
+          dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014",
+                      "Sacrifice a mountain", 1, result * 2, "Cast normally", 1, 5, 0, 0, 0, 0);
+      if (result != 1)
+      {
+        if (result == 2)
+        {
+          result = get_id(player, card);
+          charge_mana_from_id(player, card, EVENT_CAST_SPELL, result);
+        }
+        else
+        {
+          spell_fizzled = 1;
+        }
+        goto LAB_020999aa;
+      }
+    }
+    new_default_test_definition(&test, 0x47, "Select a Mountain to sacrifice.");
+    test.subtype = 0x5006;
+    new_sacrifice(player, card, player, SAC_AS_COST, &test);
+  }
+LAB_020999aa:
+  pick_target(&td, "TARGET_CREATURE");
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2099e20; original cards/nemesis.c:3087. */
+int card_flint_golem(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_DECLARE_BLOCKERS)
+  {
+    result = is_attacking(player, card);
+    if (result != 0)
+    {
+      result = is_unblocked(player, card);
+      if (result == 0)
+      {
+        result = is_humiliated_for_ability(player, card, AL_TRIG);
+        if (result == 0)
+        {
+          mill(1 - current_turn, 3);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x209b5d0; original cards/nemesis.c:3600. */
+int card_noble_stand(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+
+  if (((event == EVENT_DECLARE_BLOCKERS) &&
+       (iVar1 = is_humiliated_for_ability(player, card, AL_TRIG), iVar1 == 0)) &&
+      (iVar1 = active_cards_count[1 - current_turn] + -1, -1 < iVar1))
+  {
+    do
+    {
+      instance = in_play(1 - current_turn, iVar1);
+      if (((instance != NULL) && (iVar3 = is_what(1 - current_turn, iVar1, 2), iVar3 != 0)) &&
+          ((iVar3 = blocking(1 - current_turn, iVar1, EVENT_DECLARE_BLOCKERS),
+            iVar3 != 0 && (1 - current_turn == player))))
+      {
+        gain_life(player, 2);
+      }
+      iVar1 = iVar1 + -1;
+    } while (iVar1 != -1);
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x209bd80; original cards/nemesis.c:3753. */
+int card_rusting_golem(int player, int card, event_t event)
+{
+  int newval;
+
+  fading(player, card, event, 5);
+  if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
+       (affected_card_controller == player)) &&
+      (player != -1))
+  {
+    if (card == -1)
+    {
+      set_characteristic_pt(0);
+    }
+    else
+    {
+      newval = count_counters(player, card, COUNTER_FADE);
+      set_characteristic_pt(newval);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x209be10; original cards/nemesis.c:3772. */
+int card_silkenfist_fighter(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_DECLARE_BLOCKERS)
+  {
+    result = is_attacking(player, card);
+    if (result != 0)
+    {
+      result = is_unblocked(player, card);
+      if (result == 0)
+      {
+        result = is_humiliated_for_ability(player, card, AL_TRIG);
+        if (result == 0)
+        {
+          untap_card(player, card);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2099bf0; original cards/nemesis.c:3053. */
+int card_eye_of_yawgmoth(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int argument2;
+  char msg[100];
+  test_definition_t test_sac;
+  test_definition_t test;
+
+  new_default_test_definition(&test_sac, 2, "Select a creature to sacrifice.");
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    instance = get_card_instance(player, card);
+
+    result = count_deck(player);
+    if (instance->info_slot <= result)
+    {
+      result = instance->info_slot;
+    }
+    if (result != 0)
+    {
+
+      show_deck(player, deck_ptr[player], result, "Cards revealed by Eye of Yawgmoth", 0,
+                ENGINE_DONE_LABEL);
+      scnprintf(msg, 100, "Select a card to put into your hand.", result);
+      new_default_test_definition(&test, 0x47, msg);
+      argument2 = select_card_from_zone(player, player, deck_ptr[player], result, 0, 1, -1, &test);
+      if (argument2 != -1)
+      {
+        add_card_to_hand(player, deck_ptr[player][argument2]);
+        remove_card_from_deck(player, argument2);
+        result = result + -1;
+      }
+      rfg_top_n_cards_of_deck(player, result);
+    }
+  }
+  result = generic_activated_ability_with_sacrifice_as_cost(player, card, event, GAA_UNTAPPED, 3, 0,
+                                                            0, 0, 0, 0, 0, NULL, NULL, TYPE_NONE,
+                                                            &test_sac, SARV_REPORT_POWER);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209a090; original cards/nemesis.c:3137. */
+int card_flowstone_thopter(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_POW_BOOST)
+  {
+    result = has_mana(player, 7, 1);
+    if (result != 0)
+    {
+      event_result = event_result + 1;
+    }
+  LAB_0209a161:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      if (event != EVENT_CLEANUP)
+      {
+        return 0;
+      }
+      goto LAB_0209a0be;
+    }
+  }
+  else
+  {
+    if (event == EVENT_TOU_BOOST)
+    {
+      result = has_mana(player, 7, 1);
+      if (result == 0)
+      {
+        return 0;
+      }
+      event_result = event_result + -1;
+      return 0;
+    }
+    if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+      goto LAB_0209a161;
+  LAB_0209a0be:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_0209a0c7;
+  }
+
+  instance = get_card_instance(player, card);
+  pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                         instance->parent_controller, instance->parent_card, 1, -1, 0x20, 0);
+LAB_0209a0c7:
+  result = generic_activated_ability(player, card, event, 0, 1, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209ae60; original cards/nemesis.c:3438. */
+int card_mind_swords(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int player_00;
+  unsigned int uVar3;
+  test_definition_t test;
+
+  instance = get_card_instance(player, card);
+  if (event == EVENT_MODIFY_COST)
+  {
+    new_default_test_definition(&test, 2, "Select a creature to sacrifice.");
+    result = check_battlefield_for_subtype(player, 1, 0x5009);
+    if ((result == 0) || (result = new_can_sacrifice_as_cost(player, card, &test), result == 0))
+    {
+      instance->info_slot = 0;
+    }
+    else
+    {
+      instance->info_slot = 1;
+      null_casting_cost(player, card);
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAN_CAST)
+    {
+      result = basic_spell(player, card, EVENT_CAN_CAST);
+      return result;
+    }
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((((card == affected_card) && (player == affected_card_controller)) &&
+           (result = played_for_free(player, card), result == 0)) &&
+          ((result = is_token(player, card), result == 0 && (instance->info_slot == 1))))
+      {
+
+        result = get_id(player, card);
+        result = has_mana_to_cast_id(player, EVENT_CAST_SPELL, result);
+        if ((result == 0) || (result = do_dialog(player, player, card, -1, -1,
+                                                 " Sac a creature\n Play normally\n Cancel", 0),
+                              result == 0))
+        {
+          new_default_test_definition(&test, 2, "Select a creature to sacrifice.");
+          result = new_sacrifice(player, card, player, 0, &test);
+          if (result != 0)
+          {
+            return 0;
+          }
+        }
+        else if (result == 1)
+        {
+          result = get_id(player, card);
+          charge_mana_from_id(player, card, EVENT_CAST_SPELL, result);
+          return 0;
+        }
+        spell_fizzled = 1;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+
+      uVar3 = 0;
+      do
+      {
+
+        player_00 = current_turn ^ uVar3;
+        uVar3 = uVar3 + 1;
+        new_default_test_definition(&test, 0xff, "Select a card to exile.");
+        new_global_tutor(player_00, player_00, 4, 6, 1, 3, &test);
+        new_global_tutor(player_00, player_00, 4, 6, 1, 3, &test);
+      } while (uVar3 != 2);
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x209b190; original cards/nemesis.c:3502. */
+int card_mogg_alarm(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  unsigned int uVar4;
+  unsigned int player_00;
+  unsigned int player_01;
+  test_definition_t test;
+
+  if (event == EVENT_MODIFY_COST)
+  {
+
+    new_default_test_definition(&test, 0x47, "Select a Mountain to sacrifice.");
+    test.subtype = 0x5006;
+    test.qty = 2;
+    instance = get_card_instance(player, card);
+    result = new_can_sacrifice_as_cost(player, card, &test);
+    if (result == 0)
+    {
+      instance->info_slot = 0;
+    }
+    else
+    {
+      instance->info_slot = 1;
+      null_casting_cost(player, card);
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAN_CAST)
+    {
+      result = basic_spell(player, card, EVENT_CAN_CAST);
+      return result;
+    }
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+
+        instance = get_card_instance(player, card);
+        result = played_for_free(player, card);
+        if ((result == 0) &&
+            ((result = is_token(player, card), result == 0 && (instance->info_slot == 1))))
+        {
+
+          instance = get_card_instance(player, card);
+          result = has_mana_to_cast_iid(player, instance->internal_card_id, 0x6c);
+          if ((result == 0) ||
+              (result = do_dialog(player, player, card, -1, -1,
+                                  " Sacrifice 2 Mountains\n Play normally\n Cancel", 0),
+               result == 0))
+          {
+
+            new_default_test_definition(&test, 0x47, "Select a Mountain to sacrifice.");
+            test.subtype = 0x5006;
+            uVar3 = new_sacrifice(player, card, player,
+                                  SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK, &test);
+            if (uVar3 != 0)
+            {
+              uVar4 = new_sacrifice(player, card, player,
+                                    SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK, &test);
+              if (uVar4 != 0)
+              {
+
+                player_01 = (int)uVar3 >> 0x10 & 0xff;
+                state_untargettable(player_01, uVar3 >> 0x18, 0);
+                player_00 = (int)uVar4 >> 0x10 & 0xff;
+                kill_card(player_01, uVar3 >> 0x18, KILL_SACRIFICE);
+                state_untargettable(player_00, uVar4 >> 0x18, 0);
+                kill_card(player_00, uVar4 >> 0x18, KILL_SACRIFICE);
+                return 0;
+              }
+              state_untargettable((int)uVar3 >> 0x10 & 0xff, uVar3 >> 0x18, 0);
+              spell_fizzled = 1;
+              return 0;
+            }
+          }
+          else if (result == 1)
+          {
+            result = get_id(player, card);
+            charge_mana_from_id(player, card, EVENT_CAST_SPELL, result);
+            return 0;
+          }
+          spell_fizzled = 1;
+        }
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      generate_tokens_by_id(player, card, 0x493a, 2);
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x209bc50; original cards/nemesis.c:3728. */
+int card_rootwater_thief(int player, int card, event_t event)
+{
+  int result;
+  int pos;
+  test_definition_t this_test;
+
+  result = damage_dealt_by_me(player, card, event,
+                              DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE |
+                                  DDBM_TRIGGER_OPTIONAL);
+  if (result != 0)
+  {
+    result = has_mana(player, 0, 2);
+    if (result != 0)
+    {
+      result = charge_mana_while_resolving(player, card, event, player, COLOR_COLORLESS, 2);
+
+      if ((result != 0) && (result = 1 - player, *deck_ptr[result] != -1))
+      {
+
+        new_default_test_definition(&this_test, 0xff, "Select a card to exile.");
+        pos = new_select_a_card(player, result, 1, 0, 1, -1, &this_test);
+        if (pos != -1)
+        {
+          rfg_card_in_deck(result, pos);
+        }
+      }
+    }
+  }
+  result = card_gust_skimmer(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209c190; original cards/nemesis.c:3872. */
+int card_terrain_generator(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_t test;
+
+  if (event != EVENT_CAN_ACTIVATE)
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      new_default_test_definition(&test, 1, "Select a basic land card.");
+      test.subtype = 0x2000;
+      test.zone = 0x100;
+      instance = get_card_instance(player, card);
+      instance->info_slot = 0;
+      result = paying_mana();
+      if (((result == 0) && (result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 3,
+                                                                2, 0, 0, 0, 0, 0, 0, NULL, NULL),
+                             result != 0)) &&
+          (result = do_dialog(player, player, card, -1, -1,
+                              " Generate mana\n Basic land to battlefield\n Cancel", 1),
+           result != 0))
+      {
+        if (result == 1)
+        {
+          add_state(player, card, 0x10);
+          result = generic_activated_ability(player, card, EVENT_ACTIVATE, 1, 2, 0, 0, 0, 0, 0, 0,
+                                             NULL, NULL);
+          if (result == 0)
+          {
+            remove_state(player, card, 0x10);
+          }
+          else
+          {
+            result = check_battlefield_for_special_card(player, card, player, 0, &test);
+            if (result != 0)
+            {
+              instance->info_slot = 1;
+            }
+          }
+          tapped_for_mana_color = -1;
+        }
+        else if (result == 2)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        return 0;
+      }
+      event = EVENT_ACTIVATE;
+    }
+    else if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+    {
+      new_default_test_definition(&test, 1, "Select a basic land card.");
+      test.subtype = 0x2000;
+      test.zone = 0x100;
+      instance = get_card_instance(player, card);
+      if (event != EVENT_RESOLVE_ACTIVATION)
+      {
+        return 0;
+      }
+      if (0 < instance->info_slot)
+      {
+        result = check_battlefield_for_special_card(player, card, player, 0, &test);
+        if (result != 0)
+        {
+          new_global_tutor(player, player, 4, 5, 0, 5, &test);
+          return 0;
+        }
+        return 0;
+      }
+      return 0;
+    }
+  }
+
+  result = mana_producer(player, card, event);
+  return result;
+}

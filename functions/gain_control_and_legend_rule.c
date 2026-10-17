@@ -594,4 +594,22 @@ void get_back_your_permanents(int player, int card, type_t typ)
 	}
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
+/* ManalinkEh 2022: 0x2664aa0; original functions/gain_control_and_legend_rule.c:577. */
+int gain_control_until_eot_haste(int player, int card, int t_player, int t_card)
+{
+  int result;
+
+  result = gain_control_until_clause(player, card, t_player, t_card, 1, 0, 0, 0, 4);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2664c10; original functions/gain_control_and_legend_rule.c:611. */
+int gain_control_until_eoyt(int player, int card, int t_player, int t_card)
+{
+  int result;
+
+  result = gain_control_until_clause(player, card, t_player, t_card, 0x80, 0, 0, 0, 0);
+  return result;
+}

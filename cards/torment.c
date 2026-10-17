@@ -2936,3 +2936,60 @@ int card_violent_eruption(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET | GS_ONE_OR_MULTIPLE_TARGETS, &td, "TARGET_ANY", 4, NULL);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23102a0; original cards/torment.c:493. */
+static int effect_prevent_combat_damage_to_or_from(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+
+  pcVar1 = combat_damage_being_prevented(event);
+  if (((pcVar1 != NULL) && (pcVar2 = get_card_instance(player, card), pcVar2 != NULL)) &&
+      (((pcVar1->damage_source_card == pcVar2->damage_target_card &&
+         (pcVar1->damage_source_player == pcVar2->damage_target_player)) ||
+        ((pcVar2->damage_target_card == pcVar1->damage_target_card &&
+          (pcVar1->damage_target_player == pcVar2->damage_target_player))))))
+  {
+    prevent_damage(affected_card_controller, affected_card, pcVar1->info_slot);
+  }
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2310350; original cards/torment.c:2258. */
+static int prevent_all_damage_of_a_source_until_eot_legacy(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+
+  if (event == EVENT_PREVENT_DAMAGE)
+  {
+    instance = in_play(player, card);
+    if ((instance != NULL) && (iVar1 = instance->targets[0].player, iVar1 != -1))
+    {
+
+      iVar2 = instance->targets[0].card;
+      instance = get_card_instance(affected_card_controller, affected_card);
+      if ((instance->internal_card_id == damage_card) &&
+          (((0 < instance->info_slot && (iVar1 == instance->damage_source_player)) &&
+            (instance->damage_source_card == iVar2))))
+      {
+        prevent_damage(affected_card_controller, affected_card, -1);
+      }
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}

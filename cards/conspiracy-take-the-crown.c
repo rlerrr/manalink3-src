@@ -2086,4 +2086,37 @@ int card_throne_of_the_high_city(int player, int card, event_t event){
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
+/* ManalinkEh 2022: 0x220cad0; original cards/conspiracy-take-the-crown.c:16. */
+static int check_for_jared_carthalion_legacy(int player)
+{
+  card_instance_t *instance;
+  int result;
+  int card;
+
+  if (active_cards_count[player] < 1)
+  {
+    return 0;
+  }
+  card = 0;
+  do
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      result = is_what(player, card, 0x80);
+      if (result != 0)
+      {
+
+        instance = get_card_instance(player, card);
+        if (instance->info_slot_fn == jared_carthalion_effect)
+        {
+          return 1;
+        }
+      }
+    }
+    card = card + 1;
+  } while (card < active_cards_count[player]);
+  return 0;
+}

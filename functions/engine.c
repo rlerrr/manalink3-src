@@ -2075,3 +2075,56 @@ static int qsort_cardvalue_ascending(void *lhs, void *rhs)
 {
   return (unsigned int)(*(int *)rhs < *(int *)lhs) - (unsigned int)(*(int *)lhs < *(int *)rhs);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26abfd0; original functions/engine.c:2502. */
+void undeclare_attacker(int player, int card)
+{
+  card_instance_t *instance;
+  int result;
+  int card_00;
+  int iStack_14;
+
+  instance = get_card_instance(player, card);
+  instance->state = instance->state & 0xfffffffb;
+
+  if ((instance->blocking != 0xff) && (instance->blocking = 0xff, 0 < active_cards_count[player]))
+  {
+    result = 0;
+    iStack_14 = -1;
+    card_00 = 0;
+    do
+    {
+      while (true)
+      {
+        instance = in_play(player, card_00);
+        if (((instance == NULL) || ((instance->state & 4) == 0)) ||
+            (card != (unsigned int)instance->blocking))
+          break;
+        if (iStack_14 == -1)
+        {
+          instance->blocking = (uint8_t)card_00;
+          iStack_14 = card_00;
+        }
+        else
+        {
+          instance->blocking = (uint8_t)card_00;
+        }
+        result = result + 1;
+        card_00 = card_00 + 1;
+        if (active_cards_count[player] <= card_00)
+          goto LAB_026ac058;
+      }
+      card_00 = card_00 + 1;
+    } while (card_00 < active_cards_count[player]);
+  LAB_026ac058:
+    if (result == 1)
+    {
+      instance = get_card_instance(player, iStack_14);
+      instance->blocking = 0xff;
+      return;
+    }
+  }
+  return;
+}

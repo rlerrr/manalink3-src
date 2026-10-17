@@ -1509,3 +1509,73 @@ color_test_t basic_subtype_to_color_test(subtype_t subtype)
   }
   return cVar1;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int plain_mana_producer(int player, int card, event_t event);
+int plain_mana_producer_tapped(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x266f0c0; original functions/produce_mana.c:123. */
+int plain_mana_producer(int player, int card, event_t event)
+{
+  int result;
+
+  if ((event == EVENT_QUERY) && (attacking_card == 3))
+  {
+    return 1;
+  }
+  result = mana_producer(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x266f160; original functions/produce_mana.c:161. */
+int plain_mana_producer_tapped(int player, int card, event_t event)
+{
+  int result;
+
+  if ((event == EVENT_QUERY) && (attacking_card == 3))
+  {
+    return 1;
+  }
+  result = mana_producer_tapped(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x266c040; original functions/produce_mana.c:2137. */
+int mana_doublers(int player, type_t type)
+{
+  card_instance_t *instance;
+  int result;
+  int card;
+  int iStack_14;
+
+  if (active_cards_count[player] < 1)
+  {
+    return 1;
+  }
+  card = 0;
+  iStack_14 = 1;
+  do
+  {
+    instance = in_play(player, card);
+    if (((instance != NULL) &&
+         (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)) &&
+        ((type & TYPE_PERMANENT) != TYPE_NONE))
+    {
+      result = get_id(player, card);
+      if (result == 0x2579)
+      {
+        iStack_14 = iStack_14 * 2;
+      }
+      else
+      {
+        result = get_id(player, card);
+        if (result == 0x525c)
+        {
+          iStack_14 = iStack_14 * 3;
+        }
+      }
+    }
+    card = card + 1;
+  } while (card < active_cards_count[player]);
+  return iStack_14;
+}

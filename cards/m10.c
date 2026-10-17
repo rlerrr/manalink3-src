@@ -1089,3 +1089,33 @@ int effect_must_attack_on_next_combat(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2500fb0; original cards/m10.c:937. */
+int card_sanguine_bond(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+
+  iVar1 = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (iVar1 != 0)
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      iVar3 = check_battlefield_for_id(player, 0x304d);
+      if (iVar3 == 0)
+      {
+        lose_life(1 - player, iVar1);
+      }
+      else
+      {
+        lose_the_game(1 - player);
+      }
+    }
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
+}

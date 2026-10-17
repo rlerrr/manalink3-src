@@ -114,7 +114,8 @@ static int totally_bletcherous_hack_put_card_on_stack0_without_resetting_x_value
   return rval;
 }
 
-static int real_play_spell_for_free(int player, int card, int special_flags){
+/* Shared in October 2022 (COFF external); also used by newer sets. */
+int real_play_spell_for_free(int player, int card, int special_flags){
 
 	free_spell_player = player;
 	free_spell_card = card;
@@ -839,3 +840,31 @@ int check_for_special_effect_card(int player, int csvid){
 	return -1;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2669160; original functions/play_spell_for_free.c:277. */
+int escape_spell(int player, int g_pos)
+{
+  int iVar1;
+  int iVar2;
+
+  iVar2 = graveyard_ptr_mutable[player][g_pos];
+  if ((iVar2 != -1) && (iVar1 = can_legally_play_iid(player, iVar2), iVar1 != 0))
+  {
+    remove_card_from_grave(player, g_pos);
+    iVar2 = add_card_to_hand(player, iVar2);
+    set_special_flags3(player, iVar2, 0x80000);
+    iVar1 = is_what(player, iVar2, 1);
+    if (iVar1 != 0)
+    {
+      set_special_flags3(player, iVar2, 0x20000);
+    }
+    iVar1 = real_play_spell_for_free(player, iVar2, 0x10000000);
+    if (iVar1 != 0)
+    {
+      return iVar2;
+    }
+    obliterate_card(player, iVar2);
+  }
+  return -1;
+}

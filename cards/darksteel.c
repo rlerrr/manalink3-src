@@ -3475,3 +3475,196 @@ int card_arcbound_lancer(int player, int card, event_t event)
   result = modular(player, card, event, 4);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2255bf0; original cards/darksteel.c:2758. */
+int card_slobad_goblin_tinkerer(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  test_definition_t test;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0x40);
+    new_default_test_definition(&test, 0x40, "Select an artifact to sacrifice.");
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x40);
+    new_default_test_definition(&test, 0x40, "Select an artifact to sacrifice.");
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      instance = get_card_instance(player, card);
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                               instance->targets[0].player, instance->targets[0].card, 0, 0, 0,
+                               0x800);
+      }
+    }
+  }
+  result = generic_activated_ability_with_sacrifice_as_cost(
+      player, card, event, GAA_CAN_TARGET, 0, 0, 0, 0, 0, 0, 0, &td, "TARGET_ARTIFACT", TYPE_NONE,
+      &test, SARV_0);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x224d6b0; original cards/darksteel.c:5. */
+static char *not_already_dying(int who_chooses, int player, int card)
+{
+  card_instance_t *instance;
+  char *pcVar2;
+
+  instance = get_card_instance(player, card);
+  pcVar2 = NULL;
+  if (instance->kill_code != '\0')
+  {
+    pcVar2 = "already dying";
+  }
+  return pcVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x224df30; original cards/darksteel.c:120. */
+int card_ageless_entity(int player, int card, event_t event)
+{
+  int num;
+  card_instance_t *instance;
+
+  num = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (num != 0)
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, num);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2255e40; original cards/darksteel.c:2802. */
+int card_spawning_pit(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  test_definition_t test;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    new_default_test_definition(&test, 2, "Select a creature to acrifice.");
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar2 = generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_CAN_ACTIVATE,
+                                                               GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL,
+                                                               NULL, TYPE_NONE, &test, SARV_0);
+      if (iVar2 == 0)
+      {
+        iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0, 0,
+                                          0x17b0200, NULL, NULL);
+        return iVar2;
+      }
+      return 1;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+
+      iVar2 = generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_CAN_ACTIVATE,
+                                                               GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL,
+                                                               NULL, TYPE_NONE, &test, SARV_0);
+      iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0, 0,
+                                        0x17b0200, NULL, NULL);
+      iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016",
+                          "Put a charge counter", iVar2, 5, "Create Token", iVar3, 10, 0, 0, 0, 0);
+      if (iVar2 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (iVar2 != 1)
+      {
+        if (iVar2 != 2)
+        {
+          return 0;
+        }
+        generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 1, 0, 0, 0, 0, 0, 0x17b0200,
+                                  NULL, NULL);
+        return 0;
+      }
+      generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_ACTIVATE, GAA_NONE, 0, 0,
+                                                       0, 0, 0, 0, 0, NULL, NULL, TYPE_NONE, &test,
+                                                       SARV_0);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    new_default_test_definition(&test, 2, "Select a creature to acrifice.");
+    instance = get_card_instance(player, card);
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    iVar2 = instance->info_slot;
+    if (iVar2 == 1)
+    {
+      add_counters_from_source(player, card, player, card, COUNTER_CHARGE, 1);
+      iVar2 = instance->info_slot;
+    }
+    if (iVar2 == 2)
+    {
+      generate_token_by_id(instance->parent_controller, instance->parent_card, 0x4988);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2258f00; original cards/darksteel.c:3682. */
+int card_well_of_lost_dreams(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *instance;
+  int iVar5;
+
+  iVar3 = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  iVar1 = max_x_value;
+  iVar2 = x_value;
+
+  if ((((iVar3 != 0) && (instance = in_play(player, card), iVar1 = max_x_value, iVar2 = x_value,
+                         instance != NULL)) &&
+       (iVar5 = has_mana(player, 0, 1), iVar1 = max_x_value, iVar2 = x_value, iVar5 != 0)) &&
+      ((iVar5 = do_dialog(player, player, card, -1, -1, " Activate the Well\n Pass", 0),
+        iVar2 = x_value, iVar1 = max_x_value,
+        iVar5 == 0 && (max_x_value = iVar3,
+                       iVar3 = charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER,
+                                                           player, COLOR_COLORLESS, -1),
+                       iVar3 != 0))))
+  {
+    draw_cards(player, x_value);
+  }
+  x_value = iVar2;
+  max_x_value = iVar1;
+  return 0;
+}

@@ -1758,3 +1758,27 @@ static int qsort_compare_target_player_descending(void *lhs, void *rhs)
 {
   return *(int *)rhs - *(int *)lhs;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int select_multiple_cards_from_graveyard_to_array(int player, int targ_player, int must_select_all,
+                                                  int ai_selection_mode,
+                                                  test_definition_t *this_test, int max_targets,
+                                                  target_t *ret_location);
+
+/* ManalinkEh 2022: 0x2652b90; original functions/tutors.c:1180. */
+int select_multiple_cards_from_graveyard_to_array(int player, int targ_player, int must_select_all,
+                                                  int ai_selection_mode,
+                                                  test_definition_t *this_test, int max_targets,
+                                                  target_t *ret_location)
+{
+  int result;
+
+  if (max_targets != 0)
+  {
+    result = select_multiple_cards_from_graveyard_to_array(player, targ_player, must_select_all,
+                                                           ai_selection_mode, this_test,
+                                                           max_targets, ret_location);
+    return result;
+  }
+  return 0;
+}

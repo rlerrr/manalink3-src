@@ -3543,3 +3543,372 @@ int card_ronom_hulk(int player, int card, event_t event)
   cumulative_upkeep(player, card, event, 1, 0, 0, 0, 0, 0);
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2162120; original cards/coldsnap.c:586. */
+int card_commandeer(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *pcVar2;
+  int card_00;
+  target_definition_t *ptStack_144;
+  card_instance_t *pcStack_140;
+  target_definition_t td;
+  test_definition_t this_test;
+
+  if ((event == EVENT_CAN_CAST) || (event == EVENT_MODIFY_COST))
+  {
+    counterspell_target_definition(player, card, &td, 0xff);
+    td.illegal_type = 2;
+    new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
+    this_test.color = 4;
+    this_test.zone = 0x100;
+    this_test.id = 0x615a;
+    this_test.id_flag = 1;
+    pcStack_140 = get_card_instance(player, card);
+    cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
+    if (event == EVENT_CAN_CAST)
+    {
+      result = counterspell(player, card, EVENT_CAN_CAST, &td, -1);
+      return result;
+    }
+    if (event == EVENT_CAST_SPELL)
+      goto LAB_021622a0;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      counterspell_target_definition(player, card, &td, 0xff);
+      td.illegal_type = 2;
+      new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
+      this_test.color = 4;
+      this_test.zone = 0x100;
+      this_test.id = 0x615a;
+      this_test.id_flag = 1;
+      pcStack_140 = get_card_instance(player, card);
+      cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
+    LAB_021622a0:
+      ptStack_144 = &td;
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      result = casting_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      pcVar2 = get_card_instance(card_on_stack_controller, card_on_stack);
+      if (pcVar2->number_of_targets == '\x01')
+      {
+        pcStack_140->info_slot = 1;
+        result = deflect_one_target(player, card, EVENT_CAST_SPELL, NULL);
+        return result;
+      }
+      pcVar2 = get_card_instance(card_on_stack_controller, card_on_stack);
+      if (pcVar2->number_of_targets < 2)
+      {
+        result = counterspell(player, card, EVENT_CAST_SPELL, ptStack_144, 0);
+        return result;
+      }
+      pcStack_140->info_slot = 2;
+      result = deflect_multi_targets(player, card, EVENT_CAST_SPELL, NULL);
+      return result;
+    }
+    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+    {
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+      counterspell_target_definition(player, card, &td, 0xff);
+      td.illegal_type = 2;
+      new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
+      this_test.color = 4;
+      this_test.zone = 0x100;
+      this_test.id = 0x615a;
+      this_test.id_flag = 1;
+      get_card_instance(player, card);
+      cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CHANGE_TARGET, &this_test);
+      return 0;
+    }
+    counterspell_target_definition(player, card, &td, 0xff);
+    td.illegal_type = 2;
+    new_default_test_definition(&this_test, 0xff, "Select a blue card to exile");
+    this_test.color = 4;
+    this_test.zone = 0x100;
+    this_test.id = 0x615a;
+    this_test.id_flag = 1;
+    pcStack_140 = get_card_instance(player, card);
+    cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
+  }
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    return 0;
+  }
+  result = counterspell_validate(player, card, NULL, 0);
+  if (result != 0)
+  {
+    result = pcStack_140->info_slot;
+    if (result == 1)
+    {
+      deflect_one_target(player, card, EVENT_RESOLVE_SPELL, NULL);
+      result = pcStack_140->info_slot;
+    }
+    if (result == 2)
+    {
+      deflect_multi_targets(player, card, EVENT_RESOLVE_SPELL, NULL);
+    }
+    result = is_what(pcStack_140->targets[0].player, pcStack_140->targets[0].card, 0x144);
+    if (result != 0)
+    {
+      pcVar2 = get_card_instance(pcStack_140->targets[0].player, pcStack_140->targets[0].card);
+      result = pcVar2->internal_card_id;
+      if (result != -1)
+      {
+        obliterate_card(pcStack_140->targets[0].player, pcStack_140->targets[0].card);
+        card_00 = add_card_to_hand(player, result);
+        put_into_play(player, card_00);
+        result = pcStack_140->targets[0].player;
+        if (result != player)
+        {
+          if (result == 1)
+          {
+            add_state(player, card_00, 0x1000);
+          }
+          else
+          {
+            remove_state(player, card_00, 0x1000);
+          }
+        }
+      }
+    }
+  }
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2163d80; original cards/coldsnap.c:1151. */
+int card_fury_of_the_horde(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  test_definition_t this_test1;
+
+  if ((event == EVENT_CAN_CAST) || (event == EVENT_MODIFY_COST))
+  {
+    new_default_test_definition(&this_test, 0xff, "Select a red card to exile");
+    this_test.id = (int)cards_data[iid_draw_a_card].id;
+    this_test.color = 0x10;
+    this_test.zone = 0x100;
+    this_test.id_flag = 1;
+    cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
+    if (event == EVENT_CAN_CAST)
+    {
+      result = basic_spell(player, card, EVENT_CAN_CAST);
+      return result;
+    }
+    if (event == EVENT_CAST_SPELL)
+      goto LAB_02163eaf;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      new_default_test_definition(&this_test, 0xff, "Select a red card to exile");
+      this_test.id = (int)cards_data[iid_draw_a_card].id;
+      this_test.color = 0x10;
+      this_test.zone = 0x100;
+      this_test.id_flag = 1;
+      cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
+    LAB_02163eaf:
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      result = -0x30;
+      if (current_turn == player)
+      {
+        result = ((current_phase == 0x1e) - 1 & 0xffffffa0) + 0x30;
+      }
+      ai_modifier = ai_modifier + result;
+      result = casting_coldsnap_pitchspell(player, card, EVENT_CAST_SPELL, &this_test);
+      if (result != 0)
+      {
+        return 0;
+      }
+      spell_fizzled = 1;
+      return 0;
+    }
+    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+    {
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+      new_default_test_definition(&this_test, 0xff, "Select a red card to exile");
+      this_test.id = (int)cards_data[iid_draw_a_card].id;
+      this_test.color = 0x10;
+      this_test.zone = 0x100;
+      this_test.id_flag = 1;
+      cost_mod_for_coldsnap_pitchspell(player, card, EVENT_CHANGE_TARGET, &this_test);
+      return 0;
+    }
+    new_default_test_definition(&this_test, 0xff, "Select a red card to exile");
+    this_test.id = (int)cards_data[iid_draw_a_card].id;
+    this_test.color = 0x10;
+    this_test.zone = 0x100;
+    this_test.id_flag = 1;
+    cost_mod_for_coldsnap_pitchspell(player, card, event, &this_test);
+  }
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    return 0;
+  }
+  default_test_definition(&this_test1, 2);
+  this_test1.state = 0x44;
+  extra_combat_effect(player, card, EVENT_RESOLVE_SPELL, 1, &this_test1, 1);
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21646a0; original cards/coldsnap.c:1306. */
+int card_gristle_grinner(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
+  }
+  result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      pump_until_eot_merge_previous(player, card, player, card, 2, 2);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2160760; original cards/coldsnap.c:3061. */
+static char *can_have_counters_placed_on_it_shim(int who_chooses, int player, int card,
+                                                 int targeting_player, int targeting_card)
+{
+  int result;
+  char *pcVar2;
+
+  result = can_have_counters_placed_on_it(player, card);
+  pcVar2 = NULL;
+  if (result == 0)
+  {
+    pcVar2 = "can\'t have counters";
+  }
+  return pcVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21674a0; original cards/coldsnap.c:2325. */
+int card_mishras_bauble(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+
+      instance = get_card_instance(player, card);
+      if (*deck_ptr[instance->targets[0].player] != -1)
+      {
+        show_deck(player, deck_ptr[instance->targets[0].player], 1,
+                  "Here\'s the first card of deck.", 0, ENGINE_DONE_LABEL);
+      }
+      cantrip(player, card, 1);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0xc, 0, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_PLAYER");
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2163780; original cards/coldsnap.c:1035. */
+int card_drelnoch(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if ((event == EVENT_DECLARE_BLOCKERS) && (result == 0))
+    {
+      result = is_attacking(player, card);
+      if (result != 0)
+      {
+        result = is_unblocked(player, card);
+        if (result == 0)
+        {
+          result = count_deck(player);
+          result = do_dialog(player, player, card, -1, -1, " Draw two cards\n Pass",
+                             (unsigned int)(0x10 < result));
+          if (result == 0)
+          {
+            draw_cards(player, 2);
+          }
+        }
+      }
+    }
+  }
+  return 0;
+}

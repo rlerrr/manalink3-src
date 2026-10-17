@@ -3143,3 +3143,404 @@ LAB_02135ece:
       generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td, "TARGET_LAND");
   return iVar3;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x212b380; original cards/stronghold.c:3509. */
+static int source_type_spell_damage_prevented(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+
+  pcVar1 = damage_being_dealt(event);
+  pcVar2 = get_card_instance(player, card);
+  if ((((pcVar1 != NULL) && ((int)pcVar1->damage_source_player == pcVar2->targets[0].player)) &&
+       (pcVar1->damage_source_card == pcVar2->targets[0].card)) &&
+      (-1 < pcVar1->info_slot))
+  {
+    pcVar1->info_slot = 0;
+  }
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2135c20; original cards/stronghold.c:3717. */
+int card_temper(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    get_card_instance(player, card);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 5, &td, "TARGET_CREATURE", 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 2);
+      td.preferred_controller = player;
+      get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        charge_mana(player, COLOR_COLORLESS, -1);
+        if (spell_fizzled != 1)
+        {
+          generic_spell(player, card, EVENT_CAST_SPELL, 5, &td, "TARGET_CREATURE", 1, NULL);
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        prevent_the_next_n_damage(player, card, instance->targets[0].player,
+                                  instance->targets[0].card, instance->info_slot,
+                                  PREVENT_ADD_1_1_COUNTER, 0, 0);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    get_card_instance(player, card);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2136010; original cards/stronghold.c:3802. */
+int card_verdant_touch(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 1);
+    td.preferred_controller = player;
+    td.illegal_type = 2;
+    get_card_instance(player, card);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 1);
+      td.illegal_type = 2;
+      td.preferred_controller = player;
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) &&
+          ((player == affected_card_controller &&
+            (generic_spell(player, card, EVENT_CAST_SPELL, 0x81, &td,
+                           "Select target land it becomes a 2/2 creature land.", 1, NULL),
+             spell_fizzled != 1))))
+      {
+        result = buyback(player, card, 3, 0, 0, 0, 0, 0);
+        instance->info_slot = result;
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 1);
+    td.illegal_type = 2;
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if ((result == 0) || (land_animation2(player, card, instance->targets[0].player,
+                                            instance->targets[0].card, 0, 2, 2, 0, 0, 0, NULL),
+                            instance->info_slot != 1))
+      {
+        kill_card(player, card, KILL_DESTROY);
+        return 0;
+      }
+      bounce_permanent(player, card);
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 1);
+    td.illegal_type = 2;
+    td.preferred_controller = player;
+    get_card_instance(player, card);
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2135300; original cards/stronghold.c:3466. */
+int card_duct_crawler(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = 1 - player;
+    if (event == EVENT_ACTIVATE)
+    {
+      result = -0x18;
+      if (current_turn == player)
+      {
+        result = ((current_phase < 0x17) - 1 & 0xffffffd0) + 0x18;
+      }
+      ai_modifier = ai_modifier + result;
+      goto LAB_02135365;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = 1 - player;
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+  {
+
+    instance = get_card_instance(player, card);
+    creature1_cant_block_creature2_until_eot(instance->parent_controller, instance->parent_card,
+                                             instance->targets[0].player, instance->targets[0].card,
+                                             instance->parent_controller, instance->parent_card);
+  }
+LAB_02135365:
+  result = generic_activated_ability(player, card, event, 6, 1, 0, 0, 0, 1, 0, 0, &td,
+                                     "Select target creature can\'t block Duct Crawler this turn");
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x212d5f0; original cards/stronghold.c:416. */
+int card_conviction(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    instance = get_card_instance(player, card);
+    if (-1 < instance->damage_target_player)
+    {
+
+      instance = get_card_instance(player, card);
+      if (event != EVENT_ACTIVATE)
+      {
+        if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+          goto LAB_0212d624;
+        if (event == EVENT_RESOLVE_ACTIVATION)
+        {
+          bounce_permanent(instance->parent_controller, instance->parent_card);
+        }
+      }
+      result = generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 0, 1, 0, NULL, NULL);
+      return result;
+    }
+  }
+LAB_0212d624:
+  result = generic_aura(player, card, event, player, 1, 3, 0, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x21352a0; original cards/stronghold.c:3452. */
+int card_dream_prowler(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_BLOCK_LEGALITY)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if ((((result == 0) && (attacking_card_controller == player)) && (attacking_card == card)) &&
+        (number_of_attackers_declared == 1))
+    {
+      event_result = 1;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21354a0; original cards/stronghold.c:3497. */
+int card_endangered_armodon(int player, int card, event_t event)
+{
+  int result;
+
+  if (((event == EVENT_STATIC_EFFECTS) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      result = count_creatures_by_toughness(player, 3, 2);
+      if (result != 0)
+      {
+        kill_card(player, card, KILL_SACRIFICE);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2135b40; original cards/stronghold.c:3700. */
+int card_stronghold_taskmaster(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  unsigned int uVar4;
+
+  if (((event - EVENT_POWER < 2) &&
+       (((card != affected_card || (player != affected_card_controller)) &&
+         (instance = in_play(player, card), instance != NULL)))) &&
+      ((instance = in_play(affected_card_controller, affected_card),
+        instance != NULL &&
+            (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))))
+  {
+    uVar3 = get_color(affected_card_controller, affected_card);
+    uVar4 = get_sleighted_color_test(player, card, 2);
+    if ((uVar3 & uVar4) != 0)
+    {
+      event_result = event_result + -1;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21362e0; original cards/stronghold.c:3843. */
+int card_walking_dream(int player, int card, event_t event)
+{
+  int result;
+
+  unblockable(player, card, event);
+  if (((event == EVENT_UNTAP) && (card == affected_card)) && (player == affected_card_controller))
+  {
+    result = count_subtype(1 - player, 2, -1);
+    if (1 < result)
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if (result == 0)
+      {
+        does_not_untap(player, card, EVENT_UNTAP);
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x212ad80; original cards/stronghold.c:833. */
+static int grave_pact_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  test_definition_t test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (iVar2 = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           iVar2 != pcVar1->targets[1].card))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (iVar2 = effect_follows_control_of_attachment(player, card, 0x4700), iVar2 != 0))
+    {
+      return 0;
+    }
+  LAB_0212adb8:
+    iVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (iVar2 == 0)
+      goto LAB_0212adda;
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (iVar2 = effect_follows_control_of_attachment(player, card, event), iVar2 != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_0212adb8;
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar3 = in_play(affected_card_controller, affected_card);
+    if ((pcVar3 != NULL) &&
+        (iVar2 = is_this_dying(affected_card_controller, affected_card), iVar2 != 0))
+    {
+
+      if ((pcVar1->damage_target_card == affected_card) &&
+          (pcVar1->damage_target_player == affected_card_controller))
+      {
+        pcVar1->damage_target_card = -1;
+        pcVar1->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar1->targets[0xb].player < 0)
+        {
+          pcVar1->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+      }
+      count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
+    }
+    iVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (iVar2 == 0)
+    {
+      return 0;
+    }
+  }
+  iVar4 = check_status(player, card, 0x10000);
+  if (iVar4 == 0)
+  {
+
+    new_default_test_definition(&test, 2, "Select a creature to sacrifice.");
+    test.qty = (unsigned short)iVar2 & 0xff;
+    new_sacrifice(player, card, 1 - player, SAC_CAUSED | SAC_NO_CANCEL, &test);
+    kill_card(player, card, KILL_EXILE);
+  }
+LAB_0212adda:
+  if ((event == EVENT_CLEANUP) && (iVar2 = check_status(player, card, 0x10000), iVar2 == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}

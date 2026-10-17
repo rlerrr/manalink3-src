@@ -2707,3 +2707,54 @@ int card_titanic_bulvox(int player, int card, event_t event)
   result = morph(player, card, event, 4, 0, 0, 3, 0, 0);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24fdb10; original cards/scourge.c:2563. */
+int card_temporal_fissure(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event == EVENT_QUERY)
+  {
+    return (unsigned int)(attacking_card == 4);
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event != EVENT_CAST_SPELL)
+    {
+      if ((event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET) &&
+          (event != EVENT_CHANGE_TARGET))
+      {
+        return 0;
+      }
+      default_target_definition(player, card, &td, 0x47);
+      instance = get_card_instance(player, card);
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+        result = valid_target(&td);
+        if (result != 0)
+        {
+          bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+        }
+        kill_card(player, card, KILL_DESTROY);
+      }
+      goto LAB_024fdb7d;
+    }
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+  get_card_instance(player, card);
+LAB_024fdb7d:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_PERMANENT", 1, NULL);
+  return result;
+}

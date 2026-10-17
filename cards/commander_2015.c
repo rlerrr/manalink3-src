@@ -2370,3 +2370,32 @@ int card_command_beacon(int player, int card, event_t event){
 }
 
 // And a bunch of reprints.
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2353520; original cards/commander_2015.c:345. */
+int card_illusory_ambusher(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  result = damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card);
+  if (result != 0)
+  {
+    instance = get_card_instance(player, card);
+    draw_cards(player, instance->targets[7].card);
+    instance->targets[7].card = 0;
+    instance->targets[7].player = 0;
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+        (player == affected_card_controller))
+    {
+      ai_modifier = ai_modifier + -0x10;
+      return 0;
+    }
+    return 0;
+  }
+  return 1;
+}

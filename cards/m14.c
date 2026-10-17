@@ -2824,3 +2824,27 @@ int card_encroaching_wastes(int player, int card, event_t event){
 
 	return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x206af10; original cards/m14.c:106. */
+int card_archangel_of_thune(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_t this_test;
+
+  lifelink(player, card, event);
+  result = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      default_test_definition(&this_test, 2);
+      new_manipulate_all(player, card, player, &this_test, ACT_ADD_COUNTERS_BASE | ACT_KILL_BURY);
+      return 0;
+    }
+  }
+  return 0;
+}

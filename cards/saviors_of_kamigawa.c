@@ -3503,3 +3503,245 @@ Whenever you cast a Spirit or Arcane spell, you may return ~ to its owner's hand
 	return card_uktabi_orangutan(player, card, event);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20b6fd0; original cards/saviors_of_kamigawa.c:2353. */
+int card_moonbow_llusionist(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  target_definition_t td;
+  target_definition_t td2;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 1);
+    default_target_definition(player, card, &td2, 1);
+    td2.allowed_controller = player;
+    td2.preferred_controller = player;
+    td2.illegal_abilities = 0;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar2 = can_target(&td2);
+      if (iVar2 != 0)
+      {
+        iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 2, 0, 0, 0, 0, 0, 0,
+                                          &td, NULL);
+        return iVar2;
+      }
+    }
+    else
+    {
+      instance->number_of_targets = '\0';
+      iVar2 = charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0);
+      if ((iVar2 != 0) &&
+          (iVar2 = new_pick_target(
+               &td2, "Select a land you control return it to its owner\'s hand.", 0, 0x81),
+           iVar2 != 0))
+      {
+        iVar2 = instance->targets[0].card;
+        instance->number_of_targets = '\0';
+        iVar3 = new_pick_target(
+            &td, "Select target land it becomes the basic land type of your choice.", 0, 0x80);
+        if (iVar3 != 0)
+        {
+          bounce_permanent(player, iVar2);
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+  {
+    default_target_definition(player, card, &td, 1);
+    default_target_definition(player, card, &td2, 1);
+    td2.allowed_controller = player;
+    td2.preferred_controller = player;
+    td2.illegal_abilities = 0;
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (iVar2 = valid_target(&td), iVar2 != 0))
+    {
+      iVar2 = recorded_rand(player, 5);
+      iVar2 = choose_a_land(player, iVar2 + 1);
+      iVar3 = create_targetted_legacy_effect(
+          player, card, fx_change_landtype, instance->targets[0].player, instance->targets[0].card);
+      instance = get_card_instance(player, iVar3);
+      instance->targets[1].player = iVar2;
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20b13b0; original cards/saviors_of_kamigawa.c:316. */
+static int card_choice_of_damnation_impl(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  size_t __n_1;
+  int iVar3;
+  unsigned int argument7;
+  target_definition_t td;
+  char buffer[100];
+  test_definition_t test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.zone = 0x1000;
+        instance = get_card_instance(player, card);
+        if ((event == EVENT_RESOLVE_SPELL) && (iVar2 = valid_target(&td), iVar2 != 0))
+        {
+
+          iVar2 = instance->targets[0].player;
+          if (iVar2 == 1)
+          {
+            __n_1 = count_subtype(1, 0x47, -1);
+            for (; (0 < (int)__n_1 && (life[instance->targets[0].player] <= (int)__n_1));
+                 __n_1 = __n_1 - 1)
+            {
+            }
+          }
+          else
+          {
+            __n_1 = choose_a_number(iVar2, "Choose a number.", life[player]);
+          }
+          snprintf(buffer, 100, "Opponent chooses %d.", __n_1);
+          do_dialog(player, player, card, -1, -1, buffer, 0);
+          iVar2 = count_subtype(instance->targets[0].player, 0x47, -1);
+          argument7 = 0;
+          if (5 < (int)(life[instance->targets[0].player] - __n_1))
+          {
+            argument7 = (unsigned int)((int)(iVar2 - __n_1) < 4);
+          }
+          snprintf(buffer, 100,
+                   " Opponent loses %d life\n Opponent sacrifices all but %d permanents", __n_1);
+          iVar3 = do_dialog(player, player, card, -1, -1, buffer, argument7);
+          if (iVar3 == 0)
+          {
+            lose_life(instance->targets[0].player, __n_1);
+          }
+          else
+          {
+            default_test_definition(&test, 0x47);
+            test.qty = (short)iVar2 - (short)__n_1;
+            new_sacrifice(player, card, instance->targets[0].player, SAC_CAUSED | SAC_NO_CANCEL,
+                          &test);
+          }
+        }
+        goto LAB_020b142d;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.zone = 0x1000;
+  get_card_instance(player, card);
+LAB_020b142d:
+  iVar2 = generic_spell(player, card, event, 0x40, &td, NULL, 1, NULL);
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x20b3030; original cards/saviors_of_kamigawa.c:943. */
+int card_freed_from_the_real(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+  int argument1;
+  uint32_t uVar4;
+
+  pcVar1 = get_card_instance(player, card);
+  pcVar2 = in_play(player, card);
+  if (((pcVar2 == NULL) ||
+       (pcVar2 = get_card_instance(player, card), pcVar2->damage_target_player < '\0')) ||
+      (result = is_humiliated_for_ability(player, card, AL_NM_NL_ACT), result != 0))
+  {
+  LAB_020b3073:
+    if (event == EVENT_CAN_CAST)
+      goto LAB_020b3097;
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_020b3097;
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) ||
+             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+      goto LAB_020b3097;
+  }
+  else
+  {
+
+    argument1 = (int)pcVar1->damage_target_player;
+    result = pcVar1->damage_target_card;
+    if ((-1 < pcVar1->damage_target_player) && (event == EVENT_CAN_ACTIVATE))
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 1, 0, 0, 0, 0,
+                                         NULL, NULL);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+
+      pcVar1->info_slot = 0;
+      result = is_tapped(argument1, result);
+      uVar4 = 0;
+      if (result != 0)
+      {
+        uVar4 = 10;
+      }
+      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Untap enchanted creature", 1,
+                           uVar4, "Tap enchanted creature", 1, 10, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 0, 0, 1, 0, 0, 0, 0, NULL,
+                                         NULL);
+      return result;
+    }
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_020b3073;
+
+    if (pcVar1->info_slot == 1)
+    {
+      untap_card(argument1, result);
+    }
+    else if (pcVar1->info_slot == 2)
+    {
+      tap_card(argument1, result);
+    }
+  }
+  if (((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+      (((((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
+          (event != EVENT_CHANGE_TYPE)) &&
+         ((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)))) &&
+        (event != EVENT_STATIC_EFFECTS))))
+  {
+    return 0;
+  }
+LAB_020b3097:
+  result = vanilla_aura(player, card, event, 2);
+  return result;
+}

@@ -2680,3 +2680,71 @@ void unmeld(int csvid, int *csvida, int *csvidb)
   *csvidb = 0x3efc;
   return;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void kill_target0(int player, int card, kill_t kill_mode);
+
+/* ManalinkEh 2022: 0x26b5a30; original functions/deck.c:1544. */
+void kill_target0(int player, int card, kill_t kill_mode)
+{
+  int card_00;
+  int player_00;
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  card_00 = instance->targets[0].card;
+  player_00 = instance->targets[0].player;
+
+  if ((-1 < player_00) && (-1 < card_00))
+  {
+    kill_card_impl(player_00, card_00, kill_mode, 0);
+    return;
+  }
+  return;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int count_iid_in_rfg(int player, int iid);
+
+/* ManalinkEh 2022: 0x26b2e90; original functions/deck.c:345. */
+int add_card_to_hand_invisible(int player, int iid)
+{
+  unsigned int uVar1;
+  int card;
+  card_instance_t *instance;
+
+  card = add_card_to_hand(player, iid);
+  if (-1 < card)
+  {
+
+    instance = get_card_instance(player, card);
+    uVar1 = instance->state;
+    hand_count[player] = hand_count[player] + -1;
+    instance->state = uVar1 | 0x20;
+  }
+  return card;
+}
+
+/* ManalinkEh 2022: 0x26b7650; original functions/deck.c:2108. */
+int count_iid_in_rfg(int player, int iid)
+{
+  int *piVar1;
+  int iVar2;
+  int iVar3;
+
+  piVar1 = rfg_ptr[player];
+  iVar2 = count_rfg(player);
+  iVar3 = 0;
+  if (-1 < iVar2)
+  {
+    do
+    {
+      if (piVar1[iVar2] == iid)
+      {
+        iVar3 = iVar3 + 1;
+      }
+      iVar2 = iVar2 + -1;
+    } while (iVar2 != -1);
+  }
+  return iVar3;
+}

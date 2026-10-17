@@ -38,7 +38,18 @@ extern stack_data_t stack_data[32];	// indexing same as stack_cards[].
 extern int stack_phase[32];			// trigger that put the ability or card on the stack, if there was one; else the phase when it was put there.  Indexing same as stack_cards[].
 extern int stack_size;				// number of cards on the stack
 
+/* Packed card/player used by EVENT_GET_SELECTED_CARD; see original auras.c. */
+#ifndef SHANDALAR
+#define engine_selected_card EXE_DWORD(0x78fa30)
+/* show_deck uses integer addresses for localized Done/OK labels. */
+#define ENGINE_DONE_LABEL 0x7375b0
+#define ENGINE_OK_LABEL 0x78f0a8
+#endif
+
 /* Global variables */
+/* October 2022 events.c globals; event-dispatch integration remains downstream. */
+extern int raw_characteristic_pt;
+extern int raw_base_pt;
 extern char ability_tooltip_names_exe[17][50];
 extern int active_cards_count[2];
 extern int active_player;
@@ -876,6 +887,10 @@ int can_use_activated_abilities(int player, int card);
 int can_use_activated_abilities_by_instance(card_instance_t* instance);
 int can_produce_mana(int player, int card);
 int is_humiliated(int player, int card);
+/* Recovered three-argument API, named separately from the legacy two-argument check. */
+int is_humiliated_for_ability(int player, int card, ability_loss_t mode);
+void get_sleighted_hacked_suppressed_ability(int player, int card, int t_player,
+                                           int* p_ability, int* p_sp_ability);
 int is_humiliated_by_instance(card_instance_t* instance);
 void disable_nonmana_activated_abilities(int player, int card, int mode);
 void disable_all_activated_abilities(int player, int card, int mode);
@@ -2260,6 +2275,229 @@ void counter_triggered_target_definition(int player, int card, target_definition
 void mdfc_transform(int player, int card, int csvid);
 void true_transform_to_csvid(int player, int card, int csvid);
 void unmeld(int csvid, int *csvida, int *csvidb);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int aftermath(int player, int card, event_t event, int colorless, int black, int blue, int green,
+              int red, int white, int interrupt);
+int card_copper_tablet(int player, int card, event_t event);
+int card_decompose(int player, int card, event_t event);
+int card_excoriate(int player, int card, event_t event);
+int card_undo(int player, int card, event_t event);
+int create_card_name_legacy_unattached(int player, int card, int id);
+int deflect_multi_targets(int player, int card, event_t event, target_definition_t *td);
+int deflect_one_target(int player, int card, event_t event, target_definition_t *td);
+int enrage(int player, int card, event_t event);
+int escape_spell(int player, int g_pos);
+int exiledby_count_cmcs(int player, int card, int owned_by);
+int fx_change_landtype(int player, int card, event_t event);
+int gain_control_until_eot_haste(int player, int card, int t_player, int t_card);
+int gain_control_until_eoyt(int player, int card, int t_player, int t_card);
+int liutenant(int player);
+int nemesis_freespell(int player, int card, int event);
+int owner_of_obliviated_card(int player, int card);
+int rebound(int player, int card);
+int soul_burn_legacy(int player, int card, event_t event);
+int source_damage_prevented(int player, int card, event_t event);
+int source_deals_double_damage(int player, int card, event_t event);
+int words_in_name(int player, int card);
+void investigate(int player, int card, int t_player);
+void nobody_can_attack_this_turn_and_next_turn(int player, int card, int t_player);
+void store_num_colors_paid_in_eot_toughness0(int player, int card, event_t event);
+
+/* Existing implementations exposed to match October 2022 shared linkage. */
+int reinforce(int player, int card, event_t event, int amount_counter, int colorless, int black,
+              int blue, int green, int red, int white);
+void pump_when_blocked(int player, int card, event_t event, int pow_plus, int tou_plus,
+                       int ability);
+int real_play_spell_for_free(int player, int card, int special_flags);
+
+/* Interfaces recovered from October 2022 DWARF. */
+char *get_color_text(int player, char *buffer, int clr);
+char *target_has_2_word_name(int who_chooses, int player, int card, int targeting_player,
+                             int targeting_card);
+int card_aether_chaser(int player, int card, event_t event);
+int card_ajanis_pridemate(int player, int card, event_t event);
+int card_archaeomancer(int player, int card, event_t event);
+int card_carrion(int player, int card, event_t event);
+int card_demolish(int player, int card, event_t event);
+int card_into_the_void(int player, int card, event_t event);
+int card_megrim(int player, int card, event_t event);
+int card_morbid_plunder(int player, int card, event_t event);
+int card_murder2(int player, int card, event_t event);
+int card_noose_constrictor(int player, int card, event_t event);
+int card_sandblast(int player, int card, event_t event);
+int card_talas_explorer(int player, int card, event_t event);
+int card_tangle_angler(int player, int card, event_t event);
+int card_tome_scour(int player, int card, event_t event);
+int card_tormods_crypt(int player, int card, event_t event);
+int card_trumpet_blast(int player, int card, event_t event);
+int card_viridian_acolyte(int player, int card, event_t event);
+int escape(int player, int card, event_t event, int colorless, int black, int blue, int green,
+           int red, int white, int num_exile);
+int ninjutsu_custom_target(int player, int card, event_t event, int cless, int black, int blue,
+                           int green, int red, int white, target_definition_t *td, int csvid);
+int player_sacrifices_the_creature_with_highest_power(int player, int card, int t_player);
+int select_multiple_cards_from_graveyard_to_array(int player, int targ_player, int must_select_all,
+                                                  int ai_selection_mode,
+                                                  test_definition_t *this_test, int max_targets,
+                                                  target_t *ret_location);
+int yusri_effect(int player, int card, event_t event);
+void attached_gets_pt(int player, int card, event_t event, int power, int toughness);
+void attached_set_pt(int player, int card, event_t event, int power, int toughness);
+void disabling_aura_ai(int player, int card, event_t event);
+void get_protection_source(int8_t can_return_dmg, int *eff_acc, int *eff_ac);
+void kill_target0(int player, int card, kill_t kill_mode);
+void misc_protection(int player, int card, event_t event);
+void multi_x_spell(int player, int card, event_t event, int num_x);
+void negate_combat_damage_this_turn_to(int player, int card, int t_player, int t_card,
+                                       int alternate_legacy_text_number);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int charge_mana_from_id_minus_two(int player, int card, event_t event, int csvid);
+
+/* Interfaces recovered from October 2022 DWARF. */
+char *black_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card);
+char *blue_damage_source(int who_chooses, int player, int card, int targeting_player,
+                         int targeting_card);
+char *green_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card);
+char *red_damage_source(int who_chooses, int player, int card, int targeting_player,
+                        int targeting_card);
+char *white_damage_source(int who_chooses, int player, int card, int targeting_player,
+                          int targeting_card);
+char *with_shadow(int who_chooses, int player, int card);
+int ability_decompose(int player, int card, event_t event);
+int add_a_subtype_permanently(int player, int card, int t_player, int t_card, subtype_t subtype);
+int add_a_subtype_until_eot(int player, int card, int t_player, int t_card, subtype_t subtype);
+int add_card_to_hand_invisible(int player, int iid);
+int adventure(int player, int card, event_t event, int csvid_creature);
+int aether_storm_effect(int player, int card, event_t event);
+int autotap_mana_source(int player, int card);
+int can_have_counters_placed_on_it(int player, int card);
+int card_generic_combat_1_mana_producing_creature(int player, int card, event_t event);
+int card_outland_boar(int player, int card, event_t event);
+int card_return_to_nature(int player, int card, event_t event);
+int card_steppe_lynx(int player, int card, event_t event);
+int check_for_death_trigger_removal(int player, int card);
+int cmc_not_in_array(int iid, int arrptr, int player, int card);
+int count_basic_lands(int player, int subtype);
+int count_creatures_with_p1_p1_counter(int player);
+int count_iid_in_rfg(int player, int iid);
+int count_permanents_you_control_but_you_dont_own(int player, int type);
+int dfc_back_to_front(int csvid);
+int dfc_front_to_back(int csvid);
+int dread_charge_effect(int player, int card, event_t event);
+int effect_squallmonger(int player, int card, event_t event);
+int effect_warmonger(int player, int card, event_t event);
+int enchanted_land_is_basic_land_type(int player, int card, event_t event, subtype_t subtype,
+                                      int hackable, target_definition_t *td);
+int etb_tapped_indestructible_land(int player, int card, event_t event);
+int extra_combat_effect(int player, int card, event_t event, int untap,
+                        test_definition_t *this_test, int can_repeat);
+int generic_adventurer(int player, int card, event_t event, int priority_creature,
+                       int priority_adventure, int csvid_adventure);
+int get_toughness_sum(int player);
+int gnr_locket(int player, int card, event_t event);
+int grafdiggers_cages(int player, type_t type, tutor_from_t from);
+int has_an_activated_ability(iid_t iid);
+int helper_for_carrion_like_effects(int p, int c, int mode, int modifier_for_instant_sorceries);
+int mana_doublers(int player, type_t type);
+int mdfc_back(int player, int card, event_t event);
+int mdfc_back_etb_tapped_land(int player, int card, event_t event);
+int mdfc_back_land(int player, int card, event_t event);
+int mdfc_front(int player, int card, event_t event);
+int mdfc_front_conditional(int player, int card, event_t event, int can_play_front);
+int mdfc_front_land(int player, int card, event_t event);
+int mdfc_front_suppress_charging_mana(int player, int card, event_t event);
+int notion_thief_effect(int player, int card, event_t event);
+int one_or_more_p1_p1_counters_are_putted_on_me(int player, int card, event_t event);
+int plain_mana_producer(int player, int card, event_t event);
+int plain_mana_producer_tapped(int player, int card, event_t event);
+int play_card_from_adventure(int player, int t_player, int iid);
+int ris_legacy(int player, int card, event_t event);
+int split_card_with_fuse(int player, int card, event_t event, int id_first_half,
+                         int can_play_first_half, int priority_first_half, int id_second_half,
+                         int can_play_second_half, int priority_second_half);
+int split_cards_id_table(int csvid, int half_played);
+int test_not_in_array(int iid, int arrptr, int player, int card);
+int thriving_land(int player, int card, event_t event);
+int time_of_ice_effect(int player, int card, event_t event);
+int triome(int player, int card, event_t event);
+int undying_legacy(int player, int card, event_t event);
+int vos_legacy(int player, int card, event_t event);
+void attached_is_additional_color(int player, int card, event_t event, color_test_t color);
+void attached_is_additional_subtype(int player, int card, event_t event, subtype_t subtype);
+void attached_is_forced_color(int player, int card, event_t event, color_test_t color);
+void attached_is_forced_subtype(int player, int card, event_t event, subtype_t subtype);
+void copy_all_tokens_both_players(int player, int card, int type, test_definition_t *test);
+void dat_ability(int player, int card, event_t event, declare_attackers_trigger_t mode,
+                 int skip_store_attackers);
+void disable_attached(int player, int card, event_t event, int disabling_mode);
+void protection_from_everything(int player, int card, event_t event);
+void purge_add_force_a_subtype_permanently_legacy(int player, int card, int mode);
+void remove_abilities(int player, int card, event_t event, ability_loss_t mode);
+void remove_abilities_by_test(int player, event_t event, test_definition_t *test,
+                              ability_loss_t mode);
+void set_base_pt(int newval);
+void set_characteristic_pt(int newval);
+void soi_need_subtype_land(int player, int card, event_t event, subtype_t subtype, subtype_t sub2);
+void undeclare_attacker(int player, int card);
+void ward_discard(int player, int card, event_t event);
+void ward_granted(int player, int card, event_t event, int t_player, int t_card, type_t type,
+                  subtype_t subtype, int flags, int cless, int black, int blue, int green, int red,
+                  int white, int life_to_pay);
+void ward_life(int player, int card, event_t event, int life_to_pay);
+void ward_mana(int player, int card, event_t event, int cless, int black, int blue, int green,
+               int red, int white);
+void ward_multidiscard(int player, int card, event_t event, int number_to_discard);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int not_marked(int iid, int markedptr, int player, int card);
+int pump_until_eot_merge_previous_alt(int player, int card, int t_player, int t_card, int power,
+                                      int toughness, int alternate_txt);
+int tiana_effect(int player, int card, event_t event);
+void attached_gets_kw(int player, int card, event_t event, keyword_t keyword,
+                      sp_keyword_t sp_keyword);
+
+/* October 2022 source-aware counter interface; engine trigger migration is pending. */
+extern int counters_added_type;
+void add_counters_from_source(int player, int card, int t_player, int t_card, counter_t type,
+                              int num);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int create_legacy_activate_for_opponent(int player, int card, CardFunction func_ptr, int t_player,
+                                        int t_card);
+int dovin_grand_arbiter_legacy(int player, int card, event_t event);
+int find_attached_legacy_effect_not_full(int player, int card, CardFunction func_ptr,
+                                         int target_player_id, int target_card);
+int find_legacy_effect(int player, int card, CardFunction func_ptr);
+int has_reminder_text(int player, int card);
+int saga(int player, int card, event_t event, int chapters);
+int tempered_sliver_legacy(int player, int card, event_t event);
+void riot(int player, int card, event_t event);
+void when_another_permanent_dies_add_counters_on_this(int player, int card, event_t event,
+                                                      int permanent_type, int counter_type,
+                                                      int number_of_counters);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int chaos_moon_legacy_odd(int player, int card, event_t event);
+int companion_effect(int player, int card, event_t event);
+int damage_controller_and_you(int player, int card, event_t event);
+int destroy_unless_pay_2(int player, int card, event_t event);
+int explore(int player, int card, event_t event);
+int gain_2_life_unless_they_pay_2(int player, int card, event_t event);
+int get_power_sum_of_untapped_creatures(int player);
+int glass_asp_legacy(int player, int card, event_t event);
+int lose_2_life_unless_pay_2(int player, int card, event_t event);
+int sabertooth_cobra_legacy(int player, int card, event_t event);
+void bellowing_fiend_effect(int player, int card, int t_player, int t_card);
+void death_charmer_effect(int player, int card, int t_player, int t_card);
+void do_multicascade(int player, int card, int override, int amount);
+void multicascade(int player, int card, event_t event, int amount);
+void plague_fiend_effect(int player, int card, int t_player, int t_card);
+void soul_charmer_effect(int player, int card, int t_player, int t_card);
+void warp_world_effect(int player, int card, int t_player, int tutor_rest);
 
 #ifdef __cplusplus
 }

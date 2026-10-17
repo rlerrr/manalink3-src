@@ -2815,3 +2815,98 @@ Whenever Wrexial, the Risen Deep deals combat damage to a player, you may cast t
 
 	return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2583370; original cards/worldwake.c:55. */
+static int zendikon_legacy(int player, int card, event_t event)
+{
+  uint16_t uVar1;
+  int player_00;
+  card_instance_t *instance;
+  int result;
+
+  instance = in_play(player, card);
+  if ((instance != NULL) && (instance->targets[0].player != -1))
+  {
+    result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result != 0)
+    {
+
+      result = count_graveyard(instance->targets[0].player);
+      result = result + -1;
+      if (-1 < result)
+      {
+        player_00 = instance->targets[0].player;
+        uVar1 = cards_data[instance->targets[0].card].id;
+        do
+        {
+          if (cards_data[graveyard_ptr_mutable[player_00][result]].id == uVar1)
+          {
+            from_grave_to_hand(player_00, result, 0);
+            break;
+          }
+          result = result + -1;
+        } while (result != -1);
+      }
+      kill_card(player, card, KILL_EXILE);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2589fc0; original cards/worldwake.c:2238. */
+int card_roiling_terrain(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 1);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+            result = count_graveyard_by_type(instance->targets[0].player, 1);
+            damage_player(instance->targets[0].player, result + 1, player, card);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0258a026;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 1);
+  get_card_instance(player, card);
+LAB_0258a026:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_LAND", 1, NULL);
+  return result;
+}

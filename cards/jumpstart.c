@@ -306,3 +306,779 @@ int card_witch_of_the_moors(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23730a0; original cards/jumpstart.c:56. */
+int card_blessed_sanctuary(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  test_definition_t this_test;
+
+  instance = noncombat_damage_being_prevented(event);
+  if ((instance != NULL) && (instance->damage_target_player == player))
+  {
+    prevent_damage(affected_card_controller, affected_card, instance->info_slot);
+  }
+  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&this_test, 2);
+    this_test.type_flag = 3;
+    this_test.not_me = 1;
+    etb_ability_global(player, event, 2, TYPE_NONE, &this_test, player, card);
+  }
+  if (event == EVENT_ETB)
+  {
+    generate_token_by_id(player, card, 0x54f2);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23750b0; original cards/jumpstart.c:740. */
+int card_scholar_of_the_lost_trove(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  result = duh_mode(player);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event == EVENT_ETB)
+  {
+    default_test_definition(&test, 0x78);
+    result = new_select_target_from_grave(player, card, player, SFG_0, 2, &test, 0);
+    if (result != -1)
+    {
+      play_card_in_grave_for_free_and_exile_it(player, player, result);
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int allosaurus_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2372700; original cards/jumpstart.c:3. */
+static int allosaurus_legacy(int player, int card, event_t event)
+{
+  int result;
+
+  attached_set_pt(player, card, event, 5, 5);
+  attached_is_additional_subtype(player, card, event, SUBTYPE_DINOSAUR);
+  result = eot_trigger(player, card, event);
+  if (result == 0)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2372e70; original cards/jumpstart.c:11. */
+int card_allosaurus_shepherd(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  test_definition_t test;
+
+  cannot_be_countered(player, card, event);
+  default_test_definition(&test, 0xff);
+  test.color = get_sleighted_color_test(player, card, 8);
+  type_uncounterable(player, card, event, player, 0, &test);
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (0 < active_cards_count[player]))
+    {
+      iVar2 = 0;
+      do
+      {
+        while ((iVar1 = is_what(player, iVar2, 2),
+                iVar1 != 0 && (iVar1 = has_subtype(player, iVar2, SUBTYPE_ELF), iVar1 != 0)))
+        {
+          iVar1 = iVar2 + 1;
+          create_targetted_legacy_effect(player, card, allosaurus_legacy, player, iVar2);
+          iVar2 = iVar1;
+          if (active_cards_count[player] <= iVar1)
+            goto LAB_02372f80;
+        }
+        iVar2 = iVar2 + 1;
+      } while (iVar2 < active_cards_count[player]);
+    }
+  }
+LAB_02372f80:
+  iVar2 = generic_activated_ability(player, card, event, 0, 4, 0, 0, 2, 0, 0, 0, NULL, NULL);
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x2373860; original cards/jumpstart.c:225. */
+int card_inniaz_the_gale_force(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  int target_number;
+  unsigned int ret_location;
+  unsigned int uVar3;
+  target_definition_t td;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_DECLARE_ATTACKERS)
+  {
+    default_test_definition(&test, 2);
+    test.keyword = 0x20;
+    test.qty = 3;
+    store_attackers(player, card, EVENT_DECLARE_ATTACKERS, DAT_RESOLVE_TRIGGER_MANDATORY, player,
+                    -1, &test);
+    dat_ability(player, card, EVENT_DECLARE_ATTACKERS, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  }
+  else
+  {
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+    if (event == EVENT_DAT_ABILITY)
+    {
+
+      uVar3 = 0;
+      default_target_definition(player, card, &td, 0x47);
+      td.illegal_type = 1;
+      td.illegal_abilities = 0;
+      instance = get_card_instance(player, card);
+      do
+      {
+        td.allow_cancel = 0;
+        ret_location = current_turn ^ uVar3;
+        td.allowed_controller = ret_location;
+        if (ai_is_speculating == 1)
+        {
+          test.message[0] = '\0';
+        }
+        else if (player == ret_location)
+        {
+          scnprintf(test.message, 0x96, "Select a nonland permanent you control");
+        }
+        else
+        {
+          scnprintf(test.message, 0x96, "Select a nonland permanent controlled by %s",
+                    opponent_name);
+        }
+        result = can_target(&td);
+        if (result != 0)
+        {
+          new_pick_target(&td, test.message, ret_location, 0x80);
+        }
+        uVar3 = uVar3 + 1;
+      } while (uVar3 != 2);
+
+      uVar3 = 0;
+      do
+      {
+        target_number = 1 - (current_turn ^ uVar3);
+        td.allowed_controller = target_number;
+        result = validate_target(player, card, &td, target_number);
+        if (result != 0)
+        {
+          give_control(player, card, *(int *)((int)instance + target_number * 8 + 0x74),
+                       *(int *)((int)instance + target_number * 8 + 0x78));
+        }
+        uVar3 = uVar3 + 1;
+      } while (uVar3 != 2);
+      instance->number_of_targets = '\0';
+      return 0;
+    }
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+
+      result = get_cost_mod_for_activated_abilities(player, card, 2, 0, 0, 0, 0, 1);
+      result = has_mana_hybrid(player, 1, 5, 2, result);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x800, 0, 0, 0, 0, 0, 0,
+                                         0, NULL, NULL);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+
+      result = get_cost_mod_for_activated_abilities(player, card, 2, 0, 0, 0, 0, 1);
+      charge_mana_hybrid(player, card, 1, 5, 2, result);
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0x800, 0, 0, 0, 0, 0, 0, 0,
+                                         NULL, NULL);
+      return result;
+    }
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    new_default_test_definition(&test, 2, "");
+    test.keyword = 0x20;
+    test.state = 4;
+    pump_creatures_until_eot_merge_pt(player, card, current_turn, 1, 1, &test);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2375750; original cards/jumpstart.c:942. */
+int card_steel_plume_marshal(int player, int card, event_t event)
+{
+  test_definition_t test;
+
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event != EVENT_DAT_ABILITY)
+  {
+    return 0;
+  }
+  default_test_definition(&test, 2);
+  test.keyword = 0x20;
+  test.state = 4;
+  test.not_me = 1;
+  pump_creatures_until_eot_merge_pt(player, card, player, 2, 2, &test);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2375800; original cards/jumpstart.c:963. */
+int card_stone_haven_pilgrim(int player, int card, event_t event)
+{
+  int result;
+
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    result = check_battlefield_for_subtype(player, 0x44, -1);
+    if (result != 0)
+    {
+      pump_ability_until_eot(player, card, player, card, 1, 1, 0, 2);
+    }
+  }
+  else if ((((event - EVENT_POW_BOOST < 2) && (current_turn == player)) &&
+            (current_phase < 0x16)) &&
+           (result = check_battlefield_for_subtype(player, 0x44, -1), result != 0))
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    return (unsigned int)(result == 0);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2375900; original cards/jumpstart.c:986. */
+int thriving_land(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  color_test_t cVar3;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+
+    instance = get_card_instance(player, card);
+    result = get_deck_color(player, player);
+    cVar3 = get_sleighted_color_test(player, card, (unsigned int)instance->card_color);
+    result = choose_a_color_from(player, result, (cVar3 ^ ~COLOR_TEST_0) & COLOR_TEST_ANY_COLORED);
+    create_card_name_legacy(player, card, result + 0x615a);
+    result = color_to_color_test(result);
+    instance->info_slot = result;
+  }
+  result = plain_mana_producer_tapped(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int kels_fight_fixer_effect(int player, int card, event_t event);
+static int spiteful_prankster_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2372790; original cards/jumpstart.c:306. */
+static int kels_fight_fixer_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int result;
+  unsigned int uVar3;
+  card_instance_t *pcVar4;
+  test_definition_t test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           result != 0x54da))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+    {
+      return 0;
+    }
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      pcVar4 = in_play(affected_card_controller, affected_card);
+      if ((pcVar4 != NULL) &&
+          (result = is_this_dying(affected_card_controller, affected_card), result != 0))
+      {
+
+        if ((pcVar1->damage_target_card == affected_card) &&
+            (affected_card_controller == pcVar1->damage_target_player))
+        {
+          pcVar1->damage_target_card = -1;
+          pcVar1->damage_target_player = -1;
+          remove_status(player, card, 0x10000);
+          if (pcVar1->targets[0xb].player < 0)
+          {
+            pcVar1->targets[0xb].player = 0;
+          }
+          *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+        }
+        pcVar1 = get_card_instance(affected_card_controller, affected_card);
+        if (pcVar1->kill_code == '\x03')
+        {
+          default_test_definition(&test, 2);
+          count_for_gfp_ability(player, card, 0x77, player, 0, &test);
+        }
+      }
+    }
+  }
+  result = duh_mode(player);
+  uVar3 = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if ((uVar3 != 0) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+
+    uVar3 = uVar3 & 0xff;
+    while (((uVar3 != 0 && (result = has_mana_hybrid(player, 1, 2, 1, 0), result != 0)) &&
+            (result = charge_mana_hybrid_while_resolving(player, card, event, 1, COLOR_BLUE,
+                                                         COLOR_BLACK, 0),
+             result != 0)))
+    {
+      draw_a_card(player);
+      uVar3 = uVar3 - 1;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2373d40; original cards/jumpstart.c:366. */
+int card_kels_fight_fixer(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *pcVar2;
+  unsigned int uVar3;
+  int iVar4;
+  card_instance_t *pcStack_f0;
+  test_definition_t test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      if (0 < active_cards_count[player])
+      {
+        iVar1 = 0;
+        do
+        {
+          pcVar2 = in_play(player, iVar1);
+
+          if ((((pcVar2 != NULL) && (iVar4 = is_what(player, iVar1, 0x80), iVar4 != 0)) &&
+               (pcVar2 = get_card_instance(player, iVar1),
+                pcVar2->info_slot_fn == kels_fight_fixer_effect)) &&
+              (((pcVar2->damage_target_player == player && (pcVar2->damage_target_card == card)) ||
+                ((pcVar2->targets[0].player == player && (pcVar2->targets[0].card == card))))))
+            goto LAB_02373e5c;
+          iVar1 = iVar1 + 1;
+        } while (iVar1 < active_cards_count[player]);
+      }
+
+      iVar1 = create_targetted_legacy_effect(player, card, kels_fight_fixer_effect, player, card);
+      pcVar2 = get_card_instance(player, iVar1);
+      pcVar2->targets[0].player = player;
+      pcVar2->targets[0].card = card;
+      pcVar2->number_of_targets = '\x01';
+      add_status(player, iVar1, 0x10000);
+    }
+  LAB_02373e5c:
+    pcStack_f0 = get_card_instance(player, card);
+    if (pcStack_f0->kill_code == '\0')
+      goto LAB_02373e78;
+  LAB_02373f38:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      if (event != EVENT_CLEANUP)
+      {
+        return 0;
+      }
+      goto LAB_02373d94;
+    }
+  }
+  else
+  {
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
+    {
+      pcVar2 = get_card_instance(affected_card_controller, affected_card);
+      if (pcVar2->kill_code == '\x03')
+      {
+        default_test_definition(&test, 2);
+        count_for_gfp_ability(player, card, 0x77, player, 0, &test);
+      }
+      pcStack_f0 = get_card_instance(player, card);
+      if (pcStack_f0->kill_code != '\0')
+      {
+        return 0;
+      }
+    LAB_02373e78:
+
+      iVar1 = duh_mode(player);
+      uVar3 = resolve_gfp_ability(player, card, event, (iVar1 != 0) + RESOLVE_TRIGGER_OPTIONAL);
+      uVar3 = uVar3 & 0xff;
+      while (((uVar3 != 0 && (iVar1 = has_mana_hybrid(player, 1, 2, 1, 0), iVar1 != 0)) &&
+              (iVar1 = charge_mana_hybrid_while_resolving(player, card, event, 1, COLOR_BLUE,
+                                                          COLOR_BLACK, 0),
+               iVar1 != 0)))
+      {
+        draw_a_card(player);
+        uVar3 = uVar3 - 1;
+      }
+    }
+    else
+    {
+      pcStack_f0 = get_card_instance(player, card);
+      if (pcStack_f0->kill_code == '\0')
+        goto LAB_02373e78;
+    }
+    if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+      goto LAB_02373f38;
+  LAB_02373d94:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_02373d9d;
+  }
+  pump_ability_until_eot_no_repeat(pcStack_f0->parent_controller, pcStack_f0->parent_card,
+                                   pcStack_f0->parent_controller, pcStack_f0->parent_card, 0,
+                                   0x800);
+LAB_02373d9d:
+  iVar1 = generic_activated_ability(player, card, event, 0x200, 1, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x2372ae0; original cards/jumpstart.c:807. */
+static int spiteful_prankster_legacy(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  unsigned int uVar3;
+  int result;
+  test_definition_t this_test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           result != 0x54e6))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, 0x4700), result != 0))
+    {
+      return 0;
+    }
+  LAB_02372c28:
+    uVar3 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar3 == 0)
+      goto LAB_02372c49;
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (result = effect_follows_control_of_attachment(player, card, event), result != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_02372c28;
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar2 = in_play(affected_card_controller, affected_card);
+
+    if ((pcVar2 != NULL) && (pcVar2 = get_card_instance(affected_card_controller, affected_card),
+                             pcVar2->kill_code != '\0'))
+    {
+
+      if ((-1 < pcVar1->damage_target_player) &&
+          ((pcVar1->damage_target_card == affected_card &&
+            (pcVar1->damage_target_player == affected_card_controller))))
+      {
+        pcVar1->damage_target_card = -1;
+        pcVar1->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar1->targets[0xb].player < 0)
+        {
+          pcVar1->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+        return 0;
+      }
+      default_test_definition(&this_test, 2);
+      count_for_gfp_ability(player, card, 0x77, 2, 0, &this_test);
+    }
+    uVar3 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar3 == 0)
+    {
+      return 0;
+    }
+  }
+  result = check_status(player, card, 0x10000);
+  if (result == 0)
+  {
+
+    default_target_definition(player, card, (target_definition_t *)&this_test, 0x102);
+    this_test.message[0xc] = '\0';
+    this_test.message[0xd] = '\x12';
+    this_test.message[0xe] = '\0';
+    this_test.message[0xf] = '\0';
+    this_test.message[0x44] = '\0';
+    this_test.message[0x45] = '\0';
+    this_test.message[0x46] = '\0';
+    this_test.message[0x47] = '\0';
+    pcVar1 = get_card_instance(player, card);
+    for (uVar3 = uVar3 & 0xff; uVar3 != 0; uVar3 = uVar3 - 1)
+    {
+      result = can_target((target_definition_t *)&this_test);
+      if ((result != 0) &&
+          (result = new_pick_target((target_definition_t *)&this_test, "TARGET_ANY", 1, 0),
+           result != 0))
+      {
+        damage_creature(pcVar1->targets[1].player, pcVar1->targets[1].card, 1, player, card);
+        pcVar1->number_of_targets = '\0';
+      }
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+LAB_02372c49:
+  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23754b0; original cards/jumpstart.c:874. */
+int card_spiteful_prankster(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  unsigned int uVar2;
+  int iVar3;
+  int iVar4;
+  test_definition_t this_test;
+
+  if (event == EVENT_ABILITIES)
+  {
+    if (((card == affected_card) && (player == affected_card_controller)) &&
+        (current_turn == player))
+    {
+      event_result = event_result | 0x100;
+    }
+  }
+  else if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      if (0 < active_cards_count[player])
+      {
+        iVar3 = 0;
+        do
+        {
+          instance = in_play(player, iVar3);
+
+          if ((((instance != NULL) && (iVar4 = is_what(player, iVar3, 0x80), iVar4 != 0)) &&
+               (instance = get_card_instance(player, iVar3),
+                instance->info_slot_fn == spiteful_prankster_legacy)) &&
+              (((instance->damage_target_player == player &&
+                 (instance->damage_target_card == card)) ||
+                ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
+            goto LAB_023754e1;
+          iVar3 = iVar3 + 1;
+        } while (iVar3 < active_cards_count[player]);
+      }
+
+      iVar3 = create_targetted_legacy_effect(player, card, spiteful_prankster_legacy, player, card);
+      instance = get_card_instance(player, iVar3);
+      instance->targets[0].player = player;
+      instance->targets[0].card = card;
+      instance->number_of_targets = '\x01';
+      add_status(player, iVar3, 0x10000);
+    }
+  }
+  else if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    default_test_definition(&this_test, 2);
+    this_test.not_me = 1;
+    count_for_gfp_ability(player, card, 0x77, 2, 0, &this_test);
+  }
+LAB_023754e1:
+  instance = get_card_instance(player, card);
+
+  if ((instance->kill_code == '\0') &&
+      (uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY), uVar2 != 0))
+  {
+
+    default_target_definition(player, card, (target_definition_t *)&this_test, 0x102);
+    this_test.message[0xc] = '\0';
+    this_test.message[0xd] = '\x12';
+    this_test.message[0xe] = '\0';
+    this_test.message[0xf] = '\0';
+    this_test.message[0x44] = '\0';
+    this_test.message[0x45] = '\0';
+    this_test.message[0x46] = '\0';
+    this_test.message[0x47] = '\0';
+    instance = get_card_instance(player, card);
+    for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
+    {
+      iVar3 = can_target((target_definition_t *)&this_test);
+      if ((iVar3 != 0) &&
+          (iVar3 = pick_target((target_definition_t *)&this_test, "TARGET_ANY"), iVar3 != 0))
+      {
+        damage_target0(player, card, 1);
+        instance->number_of_targets = '\0';
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23734d0; original cards/jumpstart.c:168. */
+int card_emiel_the_blessed(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (reason_for_trigger_controller == player))
+  {
+    default_test_definition((test_definition_t *)&td, 2);
+    result = duh_mode(player);
+    etb_ability_global(player, event, (result != 0) + 1, TYPE_NONE, (test_definition_t *)&td,
+                       player, card);
+  }
+  if (event == EVENT_ETB)
+  {
+    result = has_mana_hybrid(player, 1, 3, 5, 0);
+    if (result != 0)
+    {
+      result = charge_mana_hybrid_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, 1,
+                                                  COLOR_GREEN, COLOR_WHITE, 0);
+      if (result != 0)
+      {
+        result = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_UNICORN);
+        add_counters_from_source(player, card, trigger_cause_controller, trigger_cause,
+                                 COUNTER_P1_P1, (result != 0) + 1);
+      }
+    }
+  }
+  else if (((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
+           ((event == EVENT_RESOLVE_ACTIVATION || (event == EVENT_CLEANUP))))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    td.special = 0x4000;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+
+      instance = get_card_instance(player, card);
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        blink_effect(instance->targets[0].player, instance->targets[0].card, NULL);
+      }
+    }
+    result = generic_activated_ability(player, card, event, 4, 3, 0, 0, 0, 0, 0, 0, &td,
+                                       "ASHNODS_BATTLEGEAR");
+    return result;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2375c30; original cards/jumpstart.c:1082. */
+int card_trusty_retriever(int player, int card, event_t event)
+{
+  int result;
+  unsigned int uVar2;
+  test_definition_t this_test;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+
+    result = count_graveyard_by_type(player, 0x44);
+    uVar2 = 0;
+    if (result != 0)
+    {
+      result = graveyard_has_shroud(player);
+      uVar2 = (unsigned int)(result == 0);
+    }
+    result =
+        dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\003", "\001\016",
+                    "Add a +1/+1 counter", 1, 5, "Retrieve a card", uVar2, 5, 0, 0, 0, 0);
+    if (result == 1)
+    {
+      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    }
+    else if (result == 2)
+    {
+      new_default_test_definition(&this_test, 0x44, "Select target artifact or enchantment card.");
+      result = new_special_count_grave(player, &this_test);
+      if (0 < result)
+      {
+        result = graveyard_has_shroud(player);
+        if (result == 0)
+        {
+          new_global_tutor(player, player, 2, 1, 1, 1, &this_test);
+        }
+      }
+    }
+  }
+  return 0;
+}

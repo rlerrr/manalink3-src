@@ -2163,3 +2163,26 @@ int card_sootfeather_flock(int player, int card, event_t event)
   result = morph(player, card, event, 3, 1, 0, 0, 0, 0);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24a74c0; original cards/legions.c:423. */
+int card_crested_craghorn(int player, int card, event_t event)
+{
+  int result;
+
+  haste(player, card, event);
+  result = provoke(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24a5c50; original cards/legions.c:55. */
+static int test_shares_creature_subtype(int iid, int value, int player, int card)
+{
+  int result;
+
+  result = shares_creature_subtype((unsigned int)value >> 0x10, value & 0xffff, player, card);
+  return result;
+}

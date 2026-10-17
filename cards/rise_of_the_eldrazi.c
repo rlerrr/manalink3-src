@@ -5123,3 +5123,95 @@ int card_wildheart_invoker(int player, int card, event_t event)
                                      "TARGET_CREATURE");
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24b35e0; original cards/rise_of_the_eldrazi.c:2678. */
+int card_drana_kalastria_bloodchief(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    instance = get_card_instance(player, card);
+    instance->info_slot = x_value;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    instance = get_card_instance(player, card);
+    instance->info_slot = x_value;
+
+    if (((event == EVENT_RESOLVE_ACTIVATION) &&
+         (iVar3 = valid_target(&td), iVar2 = x_value, iVar3 != 0)) &&
+        (0 < x_value))
+    {
+      pump_until_eot_merge_previous_alt(player, card, instance->parent_controller,
+                                        instance->parent_card, x_value, 0, 2);
+      pump_until_eot_merge_previous_alt(player, card, instance->targets[0].player,
+                                        instance->targets[0].card, 0, -iVar2, 1);
+    }
+  }
+  iVar2 = generic_activated_ability(player, card, event, 4, -1, 2, 0, 0, 0, 0, 0, &td,
+                                    "TARGET_CREATURE");
+  return iVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24b6540; original cards/rise_of_the_eldrazi.c:3728. */
+int card_lust_for_war(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  int argument1;
+
+  instance = get_card_instance(player, card);
+  if ((-1 < instance->damage_target_player) &&
+      (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+  {
+
+    instance = get_card_instance(player, card);
+    result = instance->damage_target_card;
+    argument1 = (int)instance->damage_target_player;
+    if ((event == EVENT_TAP_CARD) &&
+        ((result == affected_card && (argument1 == affected_card_controller))))
+    {
+      damage_player(argument1, 3, player, card);
+      argument1 = (int)instance->damage_target_player;
+      result = instance->damage_target_card;
+    }
+    attack_if_able(argument1, result, event);
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_024b657f;
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) ||
+             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+      goto LAB_024b657f;
+    if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+         (((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
+           (event != EVENT_CHANGE_TYPE)))) &&
+        (((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)) &&
+          (event != EVENT_STATIC_EFFECTS))))
+    {
+      return 0;
+    }
+  }
+LAB_024b657f:
+  result = disabling_aura(player, card, event);
+  return result;
+}

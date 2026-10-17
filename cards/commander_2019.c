@@ -239,3 +239,620 @@ int card_sevinnes_reclamation(int player, int card, event_t event)
   result = generic_spell(player, card, event, 8, NULL, NULL, 0, &test);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23b32d0; original cards/commander_2019.c:622. */
+int card_greven_predator_captain(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  unsigned int card_00;
+  test_definition_t test_sac;
+
+  check_legend_rule(player, card, event);
+  menace(player, card, event);
+  if (event != EVENT_POWER)
+  {
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+    if (event == EVENT_DAT_ABILITY)
+    {
+      result = can_sacrifice_type_as_cost(player, 1, TYPE_CREATURE);
+      if (result != 0)
+      {
+
+        instance = get_card_instance(player, card);
+        instance->token_status = instance->token_status | 0x20000;
+        new_default_test_definition(&test_sac, 2, "Select another creature to sacrifice.");
+        test_sac.not_me = 1;
+        uVar3 = new_sacrifice(player, card, player, SAC_RETURN_CHOICE | SAC_JUST_MARK, &test_sac);
+        if (uVar3 == 0)
+        {
+          spell_fizzled = 1;
+          instance->token_status = instance->token_status & 0xfffdffff;
+        }
+        else
+        {
+          if (uVar3 == 0xffffffff)
+          {
+            backtrace_and_abort("cards/commander_2019.c:653\nsac != -1");
+          }
+          card_00 = uVar3 >> 0x18;
+          uVar3 = (int)uVar3 >> 0x10 & 0xff;
+          result = get_power(uVar3, card_00);
+          draw_cards(player, result);
+          result = get_toughness(uVar3, card_00);
+          lose_life(player, result);
+          kill_card(uVar3, card_00, KILL_SACRIFICE);
+          instance->token_status = instance->token_status & 0xfffdffff;
+        }
+      }
+    }
+    return 0;
+  }
+  if ((card == affected_card) && (player == affected_card_controller))
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      result = get_trap_condition(player, 2);
+      event_result = event_result + result;
+      instance = get_card_instance(player, card);
+      instance->regen_status = instance->regen_status | 0x4000000;
+    }
+  }
+  dat_ability(player, card, EVENT_POWER, DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23b3840; original cards/commander_2019.c:784. */
+int card_marisi_breaker_of_the_coil(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int card_00;
+  int num[2];
+  test_definition_t test;
+
+  if (event == EVENT_MODIFY_COST_GLOBAL)
+  {
+    iVar2 = affected_card_controller;
+    if (affected_card_controller == -1)
+    {
+      iVar2 = event_result;
+    }
+    if ((((1 - player == iVar2) && (current_phase - 0x15U < 7)) &&
+         (iVar2 = is_what(affected_card_controller, affected_card, 1), iVar2 == 0)) &&
+        (iVar2 = is_humiliated_for_ability(player, card, AL_STATIC), iVar2 == 0))
+    {
+      infinite_casting_cost();
+    }
+  }
+  default_test_definition(&test, 2);
+  check_damage_test(player, -1, event,
+                    DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
+                        DDBM_MUST_BE_COMBAT_DAMAGE,
+                    player, card, 0, &test);
+  iVar2 = resolve_damage_trigger(player, card, event,
+                                 DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
+                                     DDBM_MUST_BE_COMBAT_DAMAGE,
+                                 player, card);
+  if (iVar2 != 0)
+  {
+
+    iVar2 = 0;
+    instance = get_card_instance(player, card);
+    uVar1 = instance->targets[1].player;
+    instance->targets[1].player = 0;
+    num[0] = uVar1 & 0xff;
+    num[1] = uVar1 >> 8 & 0xff;
+    uVar1 = num[0];
+    while (true)
+    {
+      if ((uVar1 != 0) && (0 < active_cards_count[iVar2]))
+      {
+        card_00 = 0;
+        do
+        {
+          instance = in_play(iVar2, card_00);
+          if ((instance != NULL) && (iVar4 = is_what(iVar2, card_00, 2), iVar4 != 0))
+          {
+
+            create_targetted_legacy_effect(player, card, goad_effect, iVar2, card_00);
+          }
+          card_00 = card_00 + 1;
+        } while (card_00 < active_cards_count[iVar2]);
+      }
+      iVar2 = iVar2 + 1;
+      if (iVar2 == 2)
+        break;
+      uVar1 = num[iVar2];
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23b3a10; original cards/commander_2019.c:849. */
+int card_ohran_frostfang(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_ABILITIES)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if ((result == 0) && (affected_card_controller == player))
+    {
+      result = is_what(player, affected_card, 2);
+      if (result != 0)
+      {
+        result = is_attacking(affected_card_controller, affected_card);
+        if (result != 0)
+        {
+          instance = in_play(player, card);
+          if (instance != NULL)
+          {
+            deathtouch(affected_card_controller, affected_card, EVENT_ABILITIES);
+          }
+        }
+      }
+    }
+  }
+  result = subtype_deals_damage(player, card, event, player, -1, 0x14);
+  if (result == 0)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  draw_cards(player, instance->targets[1].card);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int atla_palani_effect(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x23b14c0; original cards/commander_2019.c:95. */
+static int atla_palani_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  unsigned int uVar2;
+  int result;
+  card_instance_t *pcVar4;
+  test_definition_t test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (result = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           result != 0x4fe3))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if (-1 < pcVar1->damage_target_player)
+    {
+      result = effect_follows_control_of_attachment(player, card, 0x4700);
+      if (result != 0)
+      {
+        return 0;
+      }
+      goto LAB_023b14ff;
+    }
+    uVar2 = resolve_gfp_ability(player, card, EVENT_STATIC_EFFECTS, RESOLVE_TRIGGER_MANDATORY);
+    result = check_status(player, card, 0x10000);
+    if (result != 0)
+    {
+      return 0;
+    }
+  LAB_023b153a:
+
+    uVar2 = uVar2 & 0xff;
+    if (uVar2 == 0)
+      goto LAB_023b158c;
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if (pcVar1->damage_target_player < '\0')
+    {
+      if (event == EVENT_GRAVEYARD_FROM_PLAY)
+        goto LAB_023b1640;
+    LAB_023b14ff:
+      uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      result = check_status(player, card, 0x10000);
+      if (result != 0)
+        goto LAB_023b158c;
+      goto LAB_023b153a;
+    }
+    result = effect_follows_control_of_attachment(player, card, event);
+    if (result != 0)
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_023b14ff;
+  LAB_023b1640:
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar4 = in_play(affected_card_controller, affected_card);
+
+    if ((pcVar4 != NULL) && (pcVar4 = get_card_instance(affected_card_controller, affected_card),
+                             pcVar4->kill_code != '\0'))
+    {
+
+      if ((-1 < pcVar1->damage_target_player) &&
+          ((pcVar1->damage_target_card == affected_card &&
+            (pcVar1->damage_target_player == affected_card_controller))))
+      {
+        pcVar1->damage_target_card = -1;
+        pcVar1->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar1->targets[0xb].player < 0)
+        {
+          pcVar1->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+      }
+      default_test_definition(&test, 0x47);
+      test.subtype = 0xfb;
+      count_for_gfp_ability(player, card, 0x77, player, 0, &test);
+    }
+    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    result = check_status(player, card, 0x10000);
+    if (result != 0)
+    {
+      return 0;
+    }
+    uVar2 = uVar2 & 0xff;
+    if (uVar2 == 0)
+    {
+      return 0;
+    }
+  }
+  do
+  {
+    default_test_definition(&test, 2);
+    uVar2 = uVar2 - 1;
+    reveal_card_until_you_reveal_test(player, player, &test, 0x44);
+    kill_card(player, card, KILL_EXILE);
+  } while (uVar2 != 0);
+LAB_023b158c:
+  if ((event == EVENT_CLEANUP) && (result = check_status(player, card, 0x10000), result == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23b22a0; original cards/commander_2019.c:154. */
+int card_atla_palani_nest_tender(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  unsigned int uStack_ec;
+  test_definition_t test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      if (0 < active_cards_count[player])
+      {
+        iVar2 = 0;
+        do
+        {
+          instance = in_play(player, iVar2);
+
+          if ((((instance != NULL) && (iVar3 = is_what(player, iVar2, 0x80), iVar3 != 0)) &&
+               (instance = get_card_instance(player, iVar2),
+                instance->info_slot_fn == atla_palani_effect)) &&
+              (((instance->damage_target_player == player &&
+                 (instance->damage_target_card == card)) ||
+                ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
+            goto LAB_023b23dc;
+          iVar2 = iVar2 + 1;
+        } while (iVar2 < active_cards_count[player]);
+      }
+
+      iVar2 = create_targetted_legacy_effect(player, card, atla_palani_effect, player, card);
+      instance = get_card_instance(player, iVar2);
+      instance->targets[0].player = player;
+      instance->targets[0].card = card;
+      instance->number_of_targets = '\x01';
+      add_status(player, iVar2, 0x10000);
+    }
+  LAB_023b23dc:
+    instance = get_card_instance(player, card);
+    if (instance->kill_code == '\0')
+    {
+    LAB_023b2408:
+
+      uStack_ec = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      if (uStack_ec != 0)
+      {
+      LAB_023b242b:
+
+        uStack_ec = uStack_ec & 0xff;
+        if (uStack_ec != 0)
+        {
+          do
+          {
+            default_test_definition(&test, 2);
+            reveal_card_until_you_reveal_test(player, player, &test, 0x44);
+            uStack_ec = uStack_ec - 1;
+          } while (uStack_ec != 0);
+        }
+      }
+      goto LAB_023b22df;
+    }
+  LAB_023b23ee:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      if (event != EVENT_CLEANUP)
+      {
+        return 0;
+      }
+      goto LAB_023b22ef;
+    }
+  }
+  else
+  {
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
+    {
+      default_test_definition(&test, 0x47);
+      test.subtype = 0xfb;
+      count_for_gfp_ability(player, card, 0x77, player, 0, &test);
+      instance = get_card_instance(player, card);
+      if (instance->kill_code != '\0')
+      {
+        return 0;
+      }
+      uStack_ec =
+          resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+      if (uStack_ec != 0)
+        goto LAB_023b242b;
+      goto LAB_023b23ee;
+    }
+    instance = get_card_instance(player, card);
+    if (instance->kill_code == '\0')
+      goto LAB_023b2408;
+  LAB_023b22df:
+    if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+      goto LAB_023b23ee;
+  LAB_023b22ef:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_023b22f9;
+  }
+  generate_token_by_id(player, card, 0x4fed);
+LAB_023b22f9:
+  iVar2 = generic_activated_ability(player, card, event, 1, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return iVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23b2a50; original cards/commander_2019.c:424. */
+int card_elsha_of_the_infinite(int player, int card, event_t event)
+{
+  int result;
+  uint32_t uVar2;
+  unsigned int uVar3;
+
+  check_legend_rule(player, card, event);
+  prowess(player, card, event);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    return (unsigned int)(*deck_ptr[player] != -1);
+  }
+  if (event != EVENT_ACTIVATE)
+  {
+    return 0;
+  }
+
+  result = *deck_ptr[player];
+  if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+  {
+    uVar2 = 0;
+    if (result != -1)
+      goto LAB_023b2acd;
+  }
+  else
+  {
+    uVar2 = 1;
+    if (result == -1)
+    {
+      uVar2 = 0;
+      uVar3 = 0;
+      goto LAB_023b2af7;
+    }
+  LAB_023b2acd:
+    result = is_what(-1, result, 2);
+    if (result == 0)
+    {
+      result = is_what(-1, *deck_ptr[player], 1);
+      uVar3 = 0;
+      if (result == 0)
+      {
+        result = has_mana_to_cast_iid(player, EVENT_ACTIVATE, *deck_ptr[player]);
+        uVar3 = (unsigned int)(result != 0);
+      }
+      goto LAB_023b2af7;
+    }
+  }
+  uVar3 = 0;
+LAB_023b2af7:
+  result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016",
+                       "Check top card of deck", uVar2, 0, "Play top card", uVar3, 10, 0, 0, 0, 0);
+  if (result != 0)
+  {
+    if (result != 1)
+    {
+      if (result == 2)
+      {
+        result = charge_mana_from_id(player, -1, EVENT_ACTIVATE,
+                                     (unsigned int)cards_data[*deck_ptr[player]].id);
+        if (result == 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        play_card_in_deck_for_free(player, player, 0);
+        cant_be_responded_to = 1;
+      }
+      return 0;
+    }
+    show_deck(player, deck_ptr[player], 1, "Here\'s the top card of your deck", 0,
+              ENGINE_DONE_LABEL);
+  }
+  spell_fizzled = 1;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23b3540; original cards/commander_2019.c:662. */
+int card_grismold_the_dreadsower(int player, int card, event_t event)
+{
+  int iVar1;
+  unsigned int uVar2;
+  int iVar3;
+  token_generation_t token;
+
+  check_legend_rule(player, card, event);
+  if ((current_turn == player) &&
+      (iVar3 = eot_trigger(player, card, event), iVar1 = current_turn, iVar3 != 0))
+  {
+
+    default_token_definition(player, card, 0x4973, &token);
+    token.t_player = iVar1;
+    token.pow = 1;
+    token.tou = 1;
+    generate_token(&token);
+    uVar2 = current_turn ^ 1;
+    default_token_definition(player, card, 0x4973, &token);
+    token.pow = 1;
+    token.tou = 1;
+    token.t_player = uVar2;
+    generate_token(&token);
+  }
+  count_for_gfp_ability_and_store_values(player, card, event, 2, 2, NULL, 0x400, 0);
+  uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (uVar2 != 0)
+  {
+
+    for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
+    {
+      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23b25b0; original cards/commander_2019.c:235. */
+int card_bone_miser(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+
+  iVar1 = discard_trigger(player, card, event, player, 2, 0);
+  if (iVar1 == 0)
+  {
+    return 0;
+  }
+
+  iVar1 = is_what(trigger_cause_controller, trigger_cause, 2);
+  iVar2 = is_what(trigger_cause_controller, trigger_cause, 1);
+  if (iVar1 == 0)
+  {
+    if (iVar2 == 0)
+    {
+      draw_a_card(player);
+      return 0;
+    }
+  }
+  else
+  {
+    generate_token_by_id(player, card, 0x49ac);
+    if (iVar2 == 0)
+    {
+      return 0;
+    }
+  }
+  produce_mana(player, 1, 2);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23b3b30; original cards/commander_2019.c:911. */
+int card_sanctum_of_eternity(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_ACTIVATE)
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      default_target_definition(player, card, &td, 0x47);
+      td.special = 0x8000;
+      td.extra = (int32_t)commander_you_own;
+      instance = get_card_instance(player, card);
+
+      instance->info_slot = 0;
+      result = paying_mana();
+      if (((result == 0) &&
+           (result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 7, 2, 0, 0, 0, 0,
+                                               0, 0, &td, "Select a commander you own."),
+            result != 0)) &&
+          (result = do_dialog(player, player, card, -1, -1,
+                              " Generate mana\n Bounce your commander\n Cancel", 1),
+           result != 0))
+      {
+        if (result != 1)
+        {
+          return 0;
+        }
+        add_state(player, card, 0x10);
+        result = generic_activated_ability(player, card, EVENT_ACTIVATE, 6, 2, 0, 0, 0, 0, 0, 0,
+                                           &td, "Select a commander you own.");
+        if (result == 0)
+        {
+          remove_state(player, card, 0x10);
+        }
+        else
+        {
+          instance->info_slot = 1;
+        }
+        tapped_for_mana_color = -1;
+        return 0;
+      }
+      result = mana_producer(player, card, EVENT_ACTIVATE);
+      return result;
+    }
+    if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+    {
+      default_target_definition(player, card, &td, 0x47);
+      td.special = 0x8000;
+      td.extra = (int32_t)commander_you_own;
+      instance = get_card_instance(player, card);
+      if ((event == EVENT_RESOLVE_ACTIVATION) && (0 < instance->info_slot))
+      {
+        bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+        return 0;
+      }
+      return 0;
+    }
+  }
+  result = mana_producer(player, card, event);
+  return result;
+}

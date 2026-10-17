@@ -3,6 +3,10 @@
 
 #include "manalink.h"
 
+/* October 2022 DWARF globals, original events.c:786-787; DLL .data contains 1. */
+int raw_base_pt = 1;              /* 0x02721d64 */
+int raw_characteristic_pt = 1;    /* 0x02721d60 */
+
 // These are fairly common here, but shouldn't be used elsewhere
 #define push_affected_card_stack	EXE_FN(void, 0x435C80, void)
 #define pop_affected_card_stack		EXE_FN(void, 0x435CD0, void)
@@ -1098,4 +1102,31 @@ int current_trigger_or_event_is_forced(void)
 	return 1;
 
   return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void set_base_pt(int newval);
+void set_characteristic_pt(int newval);
+
+/* ManalinkEh 2022: 0x26cd650; original functions/events.c:1190. */
+void set_base_pt(int newval)
+{
+  int result;
+
+  result = raw_base_pt;
+  raw_base_pt = newval;
+  raw_characteristic_pt = raw_characteristic_pt & 0xffffbfff;
+  event_result = event_result + (newval - result);
+  return;
+}
+
+/* ManalinkEh 2022: 0x26cd690; original functions/events.c:1200. */
+void set_characteristic_pt(int newval)
+{
+  if ((((unsigned int)raw_characteristic_pt >> 8 & 0xff) & 0x40) != 0)
+  {
+    event_result = event_result + (newval - raw_base_pt);
+    raw_base_pt = newval;
+  }
+  return;
 }

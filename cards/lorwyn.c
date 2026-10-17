@@ -6410,3 +6410,288 @@ int card_lammastide_weave(int player, int card, event_t event)
   iVar2 = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
   return iVar2;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2594ff0; original cards/lorwyn.c:2679. */
+int card_fire_belly_changeling(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+
+  iVar1 = generic_shade_merge_pt(player, card, event, 0, 0, 0, 0, 0, 1, 0, 1, 0);
+  if ((event == EVENT_CAN_ACTIVATE) && (iVar1 != 0))
+  {
+    instance = get_card_instance(player, card);
+    if (1 < instance->info_slot)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      instance = get_card_instance(player, card);
+      if (1 < instance->info_slot)
+      {
+        return iVar1;
+      }
+      instance = get_card_instance(player, card);
+      if (spell_fizzled == 1)
+      {
+        return iVar1;
+      }
+      instance->info_slot_fn = instance->info_slot_fn + 1;
+      return iVar1;
+    }
+    if (event == EVENT_POW_BOOST)
+    {
+      instance = get_card_instance(player, card);
+      iVar3 = 2 - instance->info_slot;
+      if (iVar1 <= iVar3)
+      {
+        return iVar1;
+      }
+      return iVar3;
+    }
+  }
+  if (event == EVENT_CLEANUP)
+  {
+    instance = get_card_instance(player, card);
+    instance->info_slot = 0;
+  }
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x259ec10; original cards/lorwyn.c:6345. */
+int card_tideshaper_mystic(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  int card_00;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    get_card_instance(player, card);
+    default_target_definition(player, card, &td, 1);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 1);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      result = recorded_rand(player, 5);
+      result = choose_a_land(player, result + 1);
+      card_00 = create_targetted_legacy_effect(
+          player, card, fx_change_landtype, instance->targets[0].player, instance->targets[0].card);
+      instance = get_card_instance(player, card_00);
+      instance->targets[1].player = result;
+    }
+  }
+  result = generic_activated_ability(
+      player, card, event, 0x10007, 0, 0, 0, 0, 0, 0, 0, &td,
+      "Select target land it becomes the basic land type of your choice.");
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2591c90; original cards/lorwyn.c:1432. */
+int card_cairn_wanderer(int player, int card, event_t event)
+{
+  int card_00;
+  card_instance_t *instance;
+  unsigned int uVar2;
+  unsigned int uVar3;
+  unsigned int sp_abilities;
+  int result;
+
+  if (event == EVENT_ABILITIES)
+  {
+    instance = in_play(player, card);
+    if (((instance != NULL) && (card == affected_card)) && (player == affected_card_controller))
+    {
+      result = 0;
+      sp_abilities = 0;
+      uVar3 = 0;
+      do
+      {
+        card_00 = *(int *)((int)graveyard_ptr_mutable[player] + result);
+        if (card_00 == -1)
+          break;
+        if ((cards_data[card_00].type & 2) != 0)
+        {
+          uVar3 = uVar3 | cards_data[card_00].static_ability & 0x4003fdbf;
+          uVar2 = check_for_special_ability(-1, card_00, 0x20f);
+          sp_abilities = sp_abilities | uVar2;
+        }
+
+        result = result + 4;
+      } while (result != 2000);
+      special_abilities(player, card, EVENT_ABILITIES, sp_abilities, player, card);
+      event_result = event_result | uVar3;
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x258cde0; original cards/lorwyn.c:1754. */
+static int colfenors_urn_effect(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  int *piVar4;
+  int *piVar5;
+  int iVar6;
+  int iVar7;
+  int *piStack_118;
+  int iStack_114;
+  int dead[10];
+  test_definition_t test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar2 = get_card_instance(player, card);
+      if ((-1 < pcVar2->damage_target_player) &&
+          (iVar6 = get_id((int)pcVar2->damage_target_player, pcVar2->damage_target_card),
+           iVar6 != 0x238d))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar2 = get_card_instance(player, card);
+    if ((-1 < pcVar2->damage_target_player) &&
+        (iVar6 = effect_follows_control_of_attachment(player, card, 0x4700), iVar6 != 0))
+    {
+      return 0;
+    }
+  LAB_0258ce17:
+    iStack_114 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (iStack_114 == 0)
+      goto LAB_0258ce3f;
+  }
+  else
+  {
+    pcVar2 = get_card_instance(player, card);
+    if ((-1 < pcVar2->damage_target_player) &&
+        (iVar6 = effect_follows_control_of_attachment(player, card, event), iVar6 != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_0258ce17;
+
+    pcVar2 = get_card_instance(player, card);
+    pcVar3 = in_play(affected_card_controller, affected_card);
+    if ((pcVar3 != NULL) &&
+        (iVar6 = is_this_dying(affected_card_controller, affected_card), iVar6 != 0))
+    {
+
+      if ((pcVar2->damage_target_card == affected_card) &&
+          (pcVar2->damage_target_player == affected_card_controller))
+      {
+        pcVar2->damage_target_card = -1;
+        pcVar2->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar2->targets[0xb].player < 0)
+        {
+          pcVar2->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar2->targets[0xb].player + 2) = 1;
+      }
+      default_test_definition(&test, 2);
+      test.toughness = 3;
+      test.toughness_flag = 2;
+      count_for_gfp_ability_and_store_values(player, card, 0x77, player, 0, &test, 0xf0, 0);
+    }
+    iStack_114 =
+        resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (iStack_114 == 0)
+    {
+      return 0;
+    }
+  }
+  iVar6 = check_status(player, card, 0x10000);
+  if (iVar6 == 0)
+  {
+
+    pcVar2 = get_card_instance(player, card);
+    if (iStack_114 < 1)
+    {
+      new_default_test_definition(&test, 2,
+                                  "Select a creature card to exile with Colfenor\'s Urn.");
+    }
+    else
+    {
+      iVar6 = 0;
+      do
+      {
+        dead[iVar6] = pcVar2->targets[iVar6].card;
+        iVar6 = iVar6 + 1;
+      } while (iVar6 != iStack_114);
+      new_default_test_definition(&test, 2,
+                                  "Select a creature card to exile with Colfenor\'s Urn.");
+      piStack_118 = dead + iStack_114;
+      do
+      {
+
+        iVar6 = select_card_from_zone(player, player, dead, iStack_114, 0, 2, -1, &test);
+        if (iVar6 == -1)
+          break;
+        iVar1 = dead[iVar6];
+        if (iVar6 < iStack_114)
+        {
+          piVar4 = dead + iVar6;
+          do
+          {
+            piVar5 = piVar4 + 1;
+            *piVar4 = piVar4[1];
+            piVar4 = piVar5;
+          } while (piVar5 != piStack_118);
+        }
+        iStack_114 = iStack_114 + -1;
+        piVar4 = graveyard_ptr_mutable[player];
+        iVar6 = count_graveyard(player);
+        iVar6 = iVar6 + -1;
+        if (-1 < iVar6)
+        {
+          do
+          {
+            while (piVar4[iVar6] == iVar1)
+            {
+              iVar7 = iVar6 + -1;
+              rfg_card_from_grave(player, iVar6);
+              iVar6 = iVar7;
+              if (iVar7 == -1)
+                goto LAB_0258d0ab;
+            }
+            iVar6 = iVar6 + -1;
+          } while (iVar6 != -1);
+        }
+      LAB_0258d0ab:
+        piStack_118 = piStack_118 + -1;
+      } while (iStack_114 != 0);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+LAB_0258ce3f:
+  if ((event == EVENT_CLEANUP) && (iVar6 = check_status(player, card, 0x10000), iVar6 == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}

@@ -1,6 +1,7 @@
 """Export absolute EXE interfaces and entry-register ABI evidence from DWARF."""
 import csv
 import functools
+import json
 import re
 import struct
 from pathlib import Path
@@ -51,7 +52,7 @@ def main():
     absolute = {name: address for name, address, section, kind, storage in image.symbols if section == -1 and address >= 0x400000}
     dwarf = image.dwarf()
     parser = LocationParser(dwarf.location_lists())
-    interfaces, conventions = {}, {}
+    interfaces, conventions, unprototyped = {}, {}, {}
     for cu in dwarf.iter_CUs():
         top = cu.get_top_DIE()
         if not value(top, "DW_AT_name", "").startswith(("cards/", "functions/")):
@@ -68,6 +69,11 @@ def main():
                 else:
                     params = [type_name(type_of(c)) for c in die.iter_children() if c.tag == "DW_TAG_formal_parameter"]
                     row = [hex(absolute["_" + name]), name, "function", type_name(type_of(die)), *params]
+                    if not params and type_of(die) is None and not value(die, "DW_AT_prototyped", False):
+                        # Name-only absolute DIEs provide neither a return type
+                        # nor an argument list. Do not manufacture void(void).
+                        unprototyped[name] = row
+                        continue
                 if not any("UNRESOLVED" in field or "::" in field for field in row):
                     interfaces[name] = row
             low = value(die, "DW_AT_low_pc")
@@ -106,6 +112,8 @@ def main():
         cu._dielist.clear()
         cu._diemap.clear()
     (output / "absolute-interfaces.tsv").write_text("".join("\t".join(row) + "\n" for row in interfaces.values()))
+    (output / "unprototyped-absolute-interfaces.tsv").write_text(
+        "".join("\t".join(row) + "\n" for name, row in unprototyped.items() if name not in interfaces))
     (output / "register-conventions.tsv").write_text("".join("\t".join(row) + "\n" for row in conventions.values()))
     magic = Image((output / "2022-Magic.exe").read_bytes())
     segments = []
@@ -127,6 +135,13 @@ def main():
         low, high = int(row["low_pc"], 16), int(row["high_pc"], 16)
         if low > 0 and high > low and "_" + row["name"] not in old_names and not row["name"].startswith(("_GLOBAL", "__", "std::")):
             requests.append((low, row["source"], row["name"], high))
+    # A repeated private name may already exist in an older, different unit.
+    # Keep focused dependency requests reproducible without selecting all old
+    # functions or requiring a behavioral diff.
+    evidence = root / "docs/recovery-evidence/interface-recovery.json"
+    if evidence.exists():
+        for row in json.loads(evidence.read_text()).get("supplemental_exports", []):
+            requests.append((int(row["address"], 16), row["source"], row["name"], int(row["end"], 16)))
     first = {"magecraft_trigger", "sp_ability_trigger", "sp_ability_trigger_impl", "dat_ability"}
     requests.sort(key=lambda f: (0 if f[2] in first else 1 if f[1] == "cards/strixhaven.c" else 2 if f[3]-f[0] <= 100 else 3, f[1], f[0]))
     seen = set()

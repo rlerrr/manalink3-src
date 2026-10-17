@@ -7330,3 +7330,249 @@ int card_perilous_forays(int player, int card, event_t event)
   result = generic_activated_ability(player, card, event, 0x200, 1, 0, 0, 0, 0, 0, 0, NULL, NULL);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24ed7f0; original cards/ravnica.c:4742. */
+int card_perplex(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = counterspell_validate(player, card, NULL, 0);
+      if (result != 0)
+      {
+
+        instance = get_card_instance(player, card);
+        result = do_dialog(instance->targets[0].player, player, card, -1, -1,
+                           " Discard your hand\n Pass", 0);
+        if (result == 0)
+        {
+          new_discard_all(instance->targets[0].player, player);
+        }
+        else if (result == 1)
+        {
+          real_counter_a_spell(player, card, instance->targets[0].player,
+                               instance->targets[0].card);
+        }
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+    result = generic_spell(player, card, event, 2, NULL, NULL, 1, NULL);
+    return result;
+  }
+  result = transmute(player, card, event, 1, 1, 1, 0, 0, 0, 3);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x24ef7a0; original cards/ravnica.c:5550. */
+int card_searing_meditation(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  result = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      result = has_mana(player, 0, 2);
+      if (result != 0)
+      {
+        default_target_definition(player, card, &td, 0x102);
+        td.zone = 0x1200;
+        td.allow_cancel = 0;
+        result = can_target(&td);
+        if (result != 0)
+        {
+
+          result =
+              do_dialog(player, player, card, -1, -1, " Activate Searing Meditation\n Pass", 0);
+          if (result == 0)
+          {
+            charge_mana(player, COLOR_COLORLESS, 2);
+            if (spell_fizzled != 1)
+            {
+              pick_target(&td, "TARGET_ANY");
+              damage_target0(player, card, 2);
+            }
+          }
+        }
+      }
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x24f58a0; original cards/ravnica.c:7394. */
+void warp_world_effect(int player, int card, int t_player, int tutor_rest)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  unsigned int player_00;
+  int *piVar5;
+  int *piVar6;
+  unsigned int t_player_00;
+  int *piVar7;
+  unsigned int uVar8;
+  int *piVar9;
+  unsigned int uStack_614;
+  int rc[2];
+  char buffer[100];
+  test_definition_t test;
+  int revealed[2][151];
+
+  rc[0] = 0;
+  iVar4 = 0x12e;
+  piVar5 = revealed[0];
+  for (; iVar4 != 0; iVar4 = iVar4 + -1)
+  {
+    *piVar5 = 0;
+    piVar5 = piVar5 + 1;
+  }
+  revealed[0][0] = -1;
+  rc[1] = 0;
+
+  uVar8 = 0;
+  player_00 = current_turn;
+  do
+  {
+    t_player_00 = uVar8 ^ player_00;
+    if ((t_player == t_player_00) || (t_player == 2))
+    {
+      default_test_definition(&test, 4);
+      iVar1 = new_manipulate_all(player, card, t_player_00, &test, ACT_PUT_ON_TOP);
+      default_test_definition(&test, 0x47);
+      iVar2 = new_manipulate_all(player, card, t_player_00, &test, ACT_PUT_ON_TOP);
+
+      iVar3 = count_deck(t_player_00);
+      iVar4 = iVar1 + iVar2;
+      if (iVar3 < iVar1 + iVar2)
+      {
+        iVar4 = iVar3;
+      }
+      rc[t_player_00] = iVar4;
+      shuffle(t_player_00);
+      player_00 = current_turn;
+      if (iVar4 != 0)
+      {
+
+        iVar1 = get_id(player, card);
+        scnprintf(buffer, 100, "Cards revealed by %s", cards_ptr[iVar1]->name);
+        show_deck(0, deck_ptr[t_player_00], iVar4, buffer, 0, ENGINE_DONE_LABEL);
+        show_deck(1, deck_ptr[t_player_00], iVar4, buffer, 0, ENGINE_DONE_LABEL);
+        player_00 = current_turn;
+        if (0 < iVar4)
+        {
+          piVar5 = revealed[t_player_00];
+          do
+          {
+            piVar6 = piVar5 + 1;
+            *piVar5 = *deck_ptr[t_player_00];
+            remove_card_from_deck(t_player_00, 0);
+            piVar5 = piVar6;
+            player_00 = current_turn;
+          } while (piVar6 != revealed[t_player_00] + iVar4);
+        }
+      }
+    }
+    uVar8 = uVar8 + 1;
+  } while (uVar8 != 2);
+
+  uStack_614 = 0;
+  if (player_00 == t_player)
+    goto LAB_024f595b;
+  do
+  {
+    if (t_player == 2)
+      goto LAB_024f595b;
+    while (true)
+    {
+      uStack_614 = uStack_614 + 1;
+      if (uStack_614 == 2)
+      {
+        return;
+      }
+      player_00 = current_turn ^ uStack_614;
+      if (player_00 != t_player)
+        break;
+    LAB_024f595b:
+
+      if (rc[player_00] < 1)
+      {
+        iVar4 = 0;
+      }
+      else
+      {
+        piVar5 = revealed[player_00];
+        piVar6 = revealed[player_00] + rc[player_00];
+        piVar7 = piVar5;
+        do
+        {
+          while (true)
+          {
+            iVar4 = *piVar7;
+            iVar1 = is_what(-1, iVar4, 0x43);
+            piVar9 = piVar5;
+            if (iVar1 == 0)
+              break;
+
+            iVar4 = add_card_to_hand(player_00, iVar4);
+            *piVar7 = -1;
+            set_special_flags(player_00, iVar4, 0x10000);
+            piVar7 = piVar7 + 1;
+            put_into_play(player_00, iVar4);
+            if (piVar7 == piVar6)
+              goto LAB_024f5a1b;
+          }
+          piVar7 = piVar7 + 1;
+        } while (piVar7 != piVar6);
+      LAB_024f5a1b:
+        do
+        {
+          iVar4 = *piVar9;
+          if ((iVar4 < 0) || (iVar1 = is_what(-1, iVar4, 4), iVar1 == 0))
+          {
+            piVar9 = piVar9 + 1;
+            if (piVar9 == piVar6)
+              break;
+            goto LAB_024f5a1b;
+          }
+
+          iVar4 = add_card_to_hand(player_00, iVar4);
+          *piVar9 = -1;
+          set_special_flags(player_00, iVar4, 0x10000);
+          piVar9 = piVar9 + 1;
+          put_into_play(player_00, iVar4);
+        } while (piVar9 != piVar6);
+        iVar4 = 0;
+        do
+        {
+          if (-1 < *piVar5)
+          {
+            raw_put_iid_on_top_of_deck(player_00, *piVar5);
+            iVar4 = iVar4 + 1;
+          }
+          piVar5 = piVar5 + 1;
+        } while (piVar5 != piVar6);
+      }
+      if (tutor_rest == 10)
+      {
+        put_top_x_on_bottom(player_00, player_00, iVar4);
+      }
+      else if (tutor_rest == 0xc)
+      {
+        put_top_x_on_bottom_in_random_order(player_00, iVar4);
+      }
+    }
+  } while (true);
+}

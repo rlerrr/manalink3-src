@@ -3710,3 +3710,123 @@ int card_whip_spine_drake(int player, int card, event_t event)
   result = morph(player, card, event, 2, 0, 0, 0, 0, 1);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25758c0; original cards/future_sight.c:1305. */
+int card_grave_scrabbler(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  test_definition_t this_test;
+
+  if (event - EVENT_CAN_PAY_MADNESS_COST < 2)
+  {
+    result = madness(player, card, event, 1, 1, 0, 0, 0, 0);
+    return result;
+  }
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    new_default_test_definition(&this_test, 2, "Select target creature.");
+    instance = get_card_instance(player, card);
+    result = check_special_flags3(player, card, 0x1000);
+    if (result != 0)
+    {
+      select_target_from_either_grave(player, card, SFG_0, 1, 3, &this_test, 0, 1);
+      result = validate_target_from_grave_source(player, card, instance->targets[0].player, 1);
+      if (result != -1)
+      {
+        from_grave_to_hand(instance->targets[0].player, result, 1);
+      }
+    }
+    return 0;
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x257a6c0; original cards/future_sight.c:2864. */
+int card_second_wind(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+  int argument1;
+  uint32_t uVar4;
+
+  pcVar1 = get_card_instance(player, card);
+  pcVar2 = in_play(player, card);
+  if (((pcVar2 == NULL) ||
+       (pcVar2 = get_card_instance(player, card), pcVar2->damage_target_player < '\0')) ||
+      (result = is_humiliated_for_ability(player, card, AL_NM_NL_ACT), result != 0))
+  {
+  LAB_0257a703:
+    if (event == EVENT_CAN_CAST)
+      goto LAB_0257a727;
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_0257a727;
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) ||
+             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+      goto LAB_0257a727;
+  }
+  else
+  {
+
+    argument1 = (int)pcVar1->damage_target_player;
+    result = pcVar1->damage_target_card;
+    if ((-1 < pcVar1->damage_target_player) && (event == EVENT_CAN_ACTIVATE))
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0,
+                                         NULL, NULL);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+
+      pcVar1->info_slot = 0;
+      result = is_tapped(argument1, result);
+      uVar4 = 0;
+      if (result != 0)
+      {
+        uVar4 = 10;
+      }
+      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Untap enchanted creature", 1,
+                           uVar4, "Tap enchanted creature", 1, 10, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      result = generic_activated_ability(player, card, EVENT_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0, NULL,
+                                         NULL);
+      return result;
+    }
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_0257a703;
+
+    if (pcVar1->info_slot == 1)
+    {
+      untap_card(argument1, result);
+    }
+    else if (pcVar1->info_slot == 2)
+    {
+      tap_card(argument1, result);
+    }
+  }
+  if (((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+      (((((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
+          (event != EVENT_CHANGE_TYPE)) &&
+         ((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)))) &&
+        (event != EVENT_STATIC_EFFECTS))))
+  {
+    return 0;
+  }
+LAB_0257a727:
+  result = vanilla_aura(player, card, event, 2);
+  return result;
+}

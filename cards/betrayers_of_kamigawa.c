@@ -3634,3 +3634,22 @@ static int card_uproot_impl(int player, int card, event_t event)
                          "Select target land, put it on top of its owner\'s library.", 1, NULL);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int ninjutsu_custom_target(int player, int card, event_t event, int cless, int black, int blue,
+                           int green, int red, int white, target_definition_t *td, int csvid);
+
+/* ManalinkEh 2022: 0x25696b0; original cards/betrayers_of_kamigawa.c:315. */
+int ninjutsu_custom_target(int player, int card, event_t event, int cless, int black, int blue,
+                           int green, int red, int white, target_definition_t *td, int csvid)
+{
+  int result;
+
+  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    return 0;
+  }
+  result =
+      ninjutsu_custom_target(player, card, event, cless, black, blue, green, red, white, td, csvid);
+  return result;
+}
