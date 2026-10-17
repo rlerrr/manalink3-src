@@ -5306,3 +5306,73 @@ int card_mage_ring_network(int player, int card, event_t event){
  * Creature - Beast 8/8
  * ~ can't be countered.
  * Trample */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20d9b40; original cards/origins.c:5171. */
+static int pyromancers_goggles_legacy(int player, int card, event_t event)
+{
+  int result;
+  unsigned int uVar2;
+  card_instance_t *instance;
+  unsigned int uVar4;
+  if (event == EVENT_CAST_SPELL)
+  {
+    result = played_for_free(affected_card_controller, affected_card);
+    if (result != 0)
+    {
+      return 0;
+    }
+    result = is_token(affected_card_controller, affected_card);
+    if (result != 0)
+    {
+      return 0;
+    }
+    result = check_special_flags(affected_card_controller, affected_card, 0x40000);
+    if (result != 0)
+    {
+      return 0;
+    }
+    if (affected_card_controller != player)
+    {
+      return 0;
+    }
+    result = is_what(player, affected_card, 0x38);
+    if (result == 0)
+    {
+      return 0;
+    }
+    uVar2 = get_color(affected_card_controller, affected_card);
+    instance = get_card_instance(player, card);
+    result = instance->targets[6].card;
+    instance = get_card_instance(player, card);
+    uVar4 = get_sleighted_color_test(instance->targets[6].player, result, 0x10);
+    if ((uVar2 & uVar4) == 0)
+    {
+      return 0;
+    }
+    if (mana_paid[4] < 1)
+    {
+      return 0;
+    }
+    result = get_id(affected_card_controller, affected_card);
+    copy_spell(player, result);
+  }
+  else
+  {
+    if (event != EVENT_STATIC_EFFECTS)
+    {
+      return 0;
+    }
+    if (stack_size != 0)
+    {
+      return 0;
+    }
+    if (0 < mana_pool[player][4])
+    {
+      return 0;
+    }
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}

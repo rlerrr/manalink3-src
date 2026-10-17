@@ -2121,4 +2121,45 @@ Creature - Zombie Cleric 2/2
 															0, &test, GS_GRAVE_RECYCLER_BOTH_GRAVES);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
+/* ManalinkEh 2022: 0x24a6af0; original cards/legions.c:205. */
+int card_branchsnap_lorian(int player, int card, event_t event)
+{
+  int result;
+  result = morph(player, card, event, 0, 0, 0, 1, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x24a8d20; original cards/legions.c:1066. */
+int card_hundroog(int player, int card, event_t event, int trigger_mode)
+{
+  int result;
+  result = cycling(player, card, event, 3, 0, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x24a96e0; original cards/legions.c:1282. */
+int card_macetail_hystrodon(int player, int card, event_t event)
+{
+  int result;
+  haste(player, card, event);
+  result = cycling(player, card, event, 3, 0, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x24aa720; original cards/legions.c:1647. */
+int card_rockshard_elemental(int player, int card, event_t event)
+{
+  int result;
+  result = morph(player, card, event, 4, 0, 0, 0, 2, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x24aafe0; original cards/legions.c:1872. */
+int card_sootfeather_flock(int player, int card, event_t event)
+{
+  int result;
+  result = morph(player, card, event, 3, 1, 0, 0, 0, 0);
+  return result;
+}

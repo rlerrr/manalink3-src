@@ -2689,3 +2689,64 @@ Whenever a creature you control is put into your graveyard from the battlefield,
 Vanguard (+1/+3)
 Sacrifice a permanent: Regenerate target creature.
 */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22c3610; original cards/vanguard.c:1662. */
+static int general_in_rfg_comm_zone(int player, int card, int commander_code)
+{
+  int result;
+  card_instance_t *instance;
+  if (commander_code == 1)
+  {
+    result = count_counters(player, card, COUNTER_VORTEX);
+    if (result < 1)
+    {
+      return 1;
+    }
+    instance = get_card_instance(player, card);
+    result = instance->targets[3].player;
+    if (result != -1)
+    {
+      return (unsigned int)((char)result == '\x01');
+    }
+  }
+  else
+  {
+    result = count_counters(player, card, COUNTER_VELOCITY);
+    if (result < 1)
+    {
+      return 1;
+    }
+    instance = get_card_instance(player, card);
+    if (instance->targets[3].card != -1)
+    {
+      return (unsigned int)(*(char *)((int)&instance->targets[3].player + 1) == '\x01');
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22c3b20; original cards/vanguard.c:1919. */
+static int prismatic_piper_check(int player, int card, int card_color, int to_compare)
+{
+  card_instance_t *instance;
+  unsigned int uVar2;
+  unsigned int uVar3;
+
+  instance = get_card_instance(player, card);
+  if ((player == 1) && ((cards_data[instance->targets[2].player].id == 0x56c6 ||
+                         (cards_data[instance->targets[2].card].id == 0x56c6))))
+  {
+    uVar2 = num_bits_set(card_color);
+    uVar3 = num_bits_set(to_compare);
+    if (uVar2 - 1 <= uVar3)
+    {
+      uVar2 = card_color & (to_compare ^ 0xffffffffU);
+      instance = get_card_instance(1, card);
+      instance->targets[6].card = uVar2;
+      return uVar2;
+    }
+  }
+  return 0;
+}

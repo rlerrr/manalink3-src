@@ -5064,4 +5064,62 @@ Land
  * Land
  * |T, Sacrifice ~: Search your library for a basic land card and put it onto the battlefield tapped. Then shuffle your library. */
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
+/* ManalinkEh 2022: 0x24ae4d0; original cards/rise_of_the_eldrazi.c:842. */
+int card_affa_guard_hound(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    td.allow_cancel = 0;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "TARGET_CREATURE", 0, 0);
+      if (result != 0)
+      {
+        instance = get_card_instance(player, card);
+        pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 3);
+      }
+    }
+  }
+  result = flash(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x24b9a10; original cards/rise_of_the_eldrazi.c:4874. */
+int card_wildheart_invoker(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      instance = get_card_instance(player, card);
+      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                             5, 5, 0x80, 0);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 4, 8, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_CREATURE");
+  return result;
+}

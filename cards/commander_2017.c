@@ -357,3 +357,351 @@ int card_fortunate_few(int player, int card, event_t event)
  * Land
  * ~ enters the battlefield tapped.
  * |T: Add one mana of any color in your commander's color identity. When that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1. */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x228db60; original cards/commander_2017.c:159. */
+int card_galecaster_colossus(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  target_definition_t td_subtype;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      instance = get_card_instance(player, card);
+      result = instance->targets[0].card;
+      instance = get_card_instance(player, card);
+      bounce_permanent(instance->targets[0].player, result);
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.allowed_controller = 1 - player;
+  td.illegal_type = 1;
+  default_target_definition(player, card, &td_subtype, 0x47);
+  td_subtype.allowed_controller = player;
+  td_subtype.preferred_controller = player;
+  td_subtype.illegal_state = 1;
+  td_subtype.illegal_abilities = 0;
+  td_subtype.required_subtype = 0xd6;
+  result = generic_activated_ability_with_tapsubtype_as_cost(
+      player, card, event, GAA_CAN_TARGET | GAA_LITERAL_PROMPT, 0, 0, 0, 0, 0, 0, 0, &td,
+      "Select target nonland permanent you don\'t control", &td_subtype, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x228deb0; original cards/commander_2017.c:230. */
+int card_bloodline_necromancer(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  lifelink(player, card, event);
+  result = duh_mode(player);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event == EVENT_ETB)
+  {
+    new_default_test_definition(&test, 2, "Select target Vampire or Wizard creature card.");
+    test.subtype = 0xcd;
+    test.sub2 = 0xd6;
+    test.subtype_flag = 3;
+    result = new_special_count_grave(player, &test);
+    if (result != 0)
+    {
+      result = graveyard_has_shroud(player);
+      if (result == 0)
+      {
+        new_global_tutor(player, player, 2, 4, 0, 2, &test);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x228ec90; original cards/commander_2017.c:523. */
+int card_shifting_shadow(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_t test;
+  if ((current_turn == player) && (result = upkeep_trigger(player, card, event), result != 0))
+  {
+    default_test_definition(&test, 2);
+    instance = get_card_instance(player, card);
+    kill_card((int)instance->damage_target_player, instance->damage_target_card, KILL_DESTROY);
+    result = reveal_card_until_you_reveal_test(player, player, &test, 0x244);
+    if (result < 0)
+    {
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else
+    {
+      instance->targets[0].player = player;
+      instance->targets[0].card = result;
+      call_card_function(player, card, EVENT_RESOLVE_MOVING_AURA);
+    }
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_0228ecd0;
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) ||
+             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+      goto LAB_0228ecd0;
+    if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+         (((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
+           (event != EVENT_CHANGE_TYPE)))) &&
+        (((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)) &&
+          (event != EVENT_STATIC_EFFECTS))))
+    {
+      return 0;
+    }
+  }
+LAB_0228ecd0:
+  result = generic_aura(player, card, event, 1 - player, 0, 0, 0, 4, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x228ee90; original cards/commander_2017.c:570. */
+int card_qasali_slingers(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  test_definition_t test;
+  default_test_definition(&test, 2);
+  test.subtype = 0x1f;
+  result = duh_mode(player);
+  etb_ability_global(player, event, (result != 0) + 1, TYPE_CREATURE, &test, player, card);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &td, 0x44);
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = pick_target(&td, "DISENCHANT");
+      if (result != 0)
+      {
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      }
+    }
+    instance->number_of_targets = '\0';
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x228efb0; original cards/commander_2017.c:597. */
+int card_traverse_the_outlands(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = get_highest_power(player);
+    if (0 < result)
+    {
+      default_test_definition(&this_test, 1);
+      this_test.subtype = 0x2000;
+      this_test.qty = (unsigned short)result;
+      new_global_tutor(player, player, 1, 5, 0, 5, &this_test);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x228f600; original cards/commander_2017.c:706. */
+int card_fractured_identity(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  token_generation_t token;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x47);
+        td.illegal_type = 1;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            copy_token_definition(player, card, &token, instance->targets[0].player,
+                                  instance->targets[0].card);
+            result = instance->targets[0].player;
+            token.t_player = 1 - result;
+            kill_card(result, instance->targets[0].card, KILL_EXILE);
+            generate_token(&token);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0228f677;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.illegal_type = 1;
+  get_card_instance(player, card);
+LAB_0228f677:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_NONLAND_PERMANENT", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22903a0; original cards/commander_2017.c:1009. */
+int card_wasitora_nekoru_queen(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  int times_damaged[2];
+  token_generation_t token;
+  test_definition_t test;
+  check_legend_rule(player, card, event);
+  result = damage_dealt_by_me(player, card, event,
+                              DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
+                                  DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (result != 0)
+  {
+    new_default_test_definition(&test, 2, "Select a creature to sacrifice.");
+    instance = get_card_instance(player, card);
+    times_damaged[0] = (int)(unsigned char)instance->targets[1].player;
+    instance = get_card_instance(player, card);
+    times_damaged[1] = (int)*(unsigned char *)((int)&instance->targets[1].player + 1);
+    instance = get_card_instance(player, card);
+    uVar3 = 0;
+    instance->targets[1].player = 0;
+    do
+    {
+      if ((times_damaged[current_turn ^ uVar3] != 0) &&
+          (result = new_sacrifice(player, card, current_turn ^ uVar3,
+                                  SAC_RETURN_CHOICE | SAC_CAUSED | SAC_NO_CANCEL, &test),
+           result == 0))
+      {
+        default_token_definition(player, card, 0x4911, &token);
+        generate_token(&token);
+      }
+      uVar3 = uVar3 + 1;
+    } while (uVar3 != 2);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22904e0; original cards/commander_2017.c:1040. */
+int card_bloodforged_battle_axe(int player, int card, event_t event)
+{
+  int result;
+  result = equipped_creature_deals_damage(player, card, event,
+                                          DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (result != 0)
+  {
+    copy_token(player, card, player, card);
+  }
+  result = vanilla_equipment(player, card, event, 2, 2, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2290570; original cards/commander_2017.c:1053. */
+int card_hammer_of_nazahn(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  check_legend_rule(player, card, event);
+  if ((trigger_condition == 0xdb) && (reason_for_trigger_controller == player))
+  {
+    result = is_equipment(trigger_cause_controller, trigger_cause);
+    if (result != 0)
+    {
+      etb_ability_global(player, event, 2, TYPE_PERMANENT, NULL, player, card);
+    }
+  }
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(trigger_cause_controller, trigger_cause, &td, 2);
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "Attaching equipment: select target creature.", 0, 0x80);
+      if (result != 0)
+      {
+        instance = get_card_instance(trigger_cause_controller, trigger_cause);
+        equip_target_creature(trigger_cause_controller, trigger_cause, instance->targets[0].player,
+                              instance->targets[0].card);
+        instance->number_of_targets = '\0';
+      }
+    }
+  }
+  result = vanilla_equipment(player, card, event, 4, 2, 0, 0, 0x800);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x228d2e0; original cards/commander_2017.c:1158. */
+static int path_of_ancestry_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (((((card != affected_card) || (affected_card_controller != player)) &&
+          (result = played_for_free(affected_card_controller, affected_card), result == 0)) &&
+         (((result = is_token(affected_card_controller, affected_card),
+            result == 0 && (result = check_special_flags2(affected_card_controller, affected_card,
+                                                          -0x80000000),
+                            result == 0)) &&
+           ((affected_card_controller == player &&
+             ((result = is_what(player, affected_card, 2),
+               result != 0 && (0 < mana_paid[instance->targets[0].player])))))))) &&
+        ((result = shares_creature_subtype(-1, instance->targets[2].player,
+                                           affected_card_controller, affected_card),
+          result != 0 || ((result = instance->targets[2].card,
+                           -1 < result && (result = shares_creature_subtype(
+                                               -1, result, affected_card_controller, affected_card),
+                                           result != 0))))))
+    {
+      scry(player, 1);
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  else if (((event == EVENT_STATIC_EFFECTS) && (stack_size == 0)) &&
+           (mana_pool[player][instance->targets[0].player] < 1))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}

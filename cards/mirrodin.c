@@ -5955,3 +5955,53 @@ Target player discards two cards unless he or she discards an artifact card. */
 
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x253fd90; original cards/mirrodin.c:2847. */
+int card_leveler(int player, int card, event_t event)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  rfg_whole_library(player);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2546fe0; original cards/mirrodin.c:5282. */
+int card_tel_jilad_stylus(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.allowed_controller = player | 4;
+    td.illegal_abilities = 0;
+    td.preferred_controller = td.allowed_controller;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x47);
+    td.allowed_controller = player | 4;
+    td.illegal_abilities = 0;
+    td.preferred_controller = td.allowed_controller;
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      put_on_bottom_of_deck(instance->targets[0].player, instance->targets[0].card);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_PERMANENT_YOU_OWN");
+  return result;
+}

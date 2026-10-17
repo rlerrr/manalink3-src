@@ -936,3 +936,748 @@
  * |T: Add |U, |B, or |R. */
 
 // Cinder Barrens => reprint from OGW
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int hou_finality_effect(int player, int card, event_t event);
+static int hou_god(int player, int card, event_t event);
+static int hou_god_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x20cd6f0; original cards/hour_of_devastation.c:37. */
+static int hou_god_legacy(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  result = eot_trigger(player, card, event);
+  if (result == 0)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  result = instance->targets[0].player;
+  seek_grave_for_id_to_reanimate(result, -1, result,
+                                 (unsigned int)cards_data[instance->targets[0].card].id,
+                                 REANIMATE_RETURN_TO_HAND);
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20cd640; original cards/hour_of_devastation.c:50. */
+static int hou_god(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  iVar1 = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (iVar1 == 0)
+  {
+    return 0;
+  }
+  iVar1 = create_legacy_effect(player, card, hou_god_legacy);
+  instance = get_card_instance(player, iVar1);
+  iVar3 = get_owner(player, card);
+  instance->targets[0].player = iVar3;
+  instance = get_card_instance(player, iVar1);
+  iVar3 = get_original_internal_card_id(player, card);
+  instance->targets[0].card = iVar3;
+  instance = get_card_instance(player, iVar1);
+  instance->targets[0xb].player = 1;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20cd4e0; original cards/hour_of_devastation.c:62. */
+static int hou_finality_effect(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  if (((current_phase == 1) && (event == EVENT_UNTAP)) && (affected_card_controller == player))
+  {
+    result = is_what(player, affected_card, 1);
+    if (result != 0)
+    {
+      instance = get_card_instance(affected_card_controller, affected_card);
+      instance->untap_status = instance->untap_status & 0xfffffffc;
+    }
+  }
+  if ((trigger_condition == 0xc9) && (current_turn == player))
+  {
+    instance = get_card_instance(player, card);
+    result = instance->targets[1].card + -1;
+    instance->targets[1].card = result;
+    if (result < 1)
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20cdc30; original cards/hour_of_devastation.c:276. */
+int card_crested_sunmare(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+  boost_subtype(player, card, event, SUBTYPE_HORSE, 0, 0, 0, 0x800, BCT_CONTROLLER_ONLY);
+  result = eot_trigger(player, card, event);
+  if (result != 0)
+  {
+    result = get_trap_condition(player, 1);
+    if (result != 0)
+    {
+      default_token_definition(player, card, 0x494a, &token);
+      token.tou = 5;
+      token.pow = 5;
+      token.color_forced = ' ';
+      generate_token(&token);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20cddd0; original cards/hour_of_devastation.c:349. */
+int card_hour_of_revelation(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  if (event == EVENT_MODIFY_COST)
+  {
+    result = count_subtype(2, 0x146, -1);
+    if (9 < result)
+    {
+      COST_COLORLESS = COST_COLORLESS + -3;
+    }
+    return 0;
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      default_test_definition(&this_test, 1);
+      this_test.type_flag = 1;
+      new_manipulate_all(player, card, 2, &this_test, ACT_KILL_DESTROY);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20cdf20; original cards/hour_of_devastation.c:382. */
+int card_oketras_last_mercy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = get_starting_life_total(player);
+      set_life_total(player, result);
+      result = create_legacy_effect(player, card, hou_finality_effect);
+      instance = get_card_instance(player, result);
+      instance->targets[1].card = 1;
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20ce920; original cards/hour_of_devastation.c:647. */
+int card_kefnets_last_word(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x47);
+        td.illegal_type = 0x101;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            instance = get_card_instance(player, card);
+            result = instance->targets[0].card;
+            instance = get_card_instance(player, card);
+            gain_control_permanently(player, instance->targets[0].player, result);
+          }
+          result = create_legacy_effect(player, card, hou_finality_effect);
+          instance = get_card_instance(player, result);
+          instance->targets[1].card = 1;
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_020ce97c;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.illegal_type = 0x101;
+LAB_020ce97c:
+  result = generic_spell(player, card, event, 0x81, &td,
+                         "Select target artifact, creature, or enchantment", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20cf200; original cards/hour_of_devastation.c:740. */
+int card_striped_riverwinder(int player, int card, event_t event)
+{
+  int result;
+  hexproof(player, card, event);
+  result = cycling(player, card, event, 0, 0, 1, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20cf9c0; original cards/hour_of_devastation.c:900. */
+int card_accursed_horde(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.required_subtype = 0xde;
+    td.required_state = 2;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.required_subtype = 0xde;
+    td.required_state = 2;
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                             instance->targets[0].player, instance->targets[0].card, 0, 0, 0,
+                             0x800);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 6, 1, 1, 0, 0, 0, 0, 0, &td,
+                                     "Select target attacking Zombie");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20cfb50; original cards/hour_of_devastation.c:938. */
+int card_bontus_last_reckoning(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_t test;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = create_legacy_effect(player, card, hou_finality_effect);
+      instance = get_card_instance(player, result);
+      instance->targets[1].card = 1;
+      default_test_definition(&test, 2);
+      new_manipulate_all(player, card, 2, &test, ACT_KILL_DESTROY);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20d0210; original cards/hour_of_devastation.c:1068. */
+int card_hour_of_glory(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  ec_definition_t this_definition;
+  target_definition_t td;
+  test_definition_t this_test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          iVar2 = valid_target(&td);
+          if (iVar2 != 0)
+          {
+            iVar3 =
+                has_subtype(instance->targets[0].player, instance->targets[0].card, SUBTYPE_GOD);
+            iVar2 = instance->targets[0].card;
+            iVar4 = instance->targets[0].player;
+            if ((iVar3 != 0) && (0 < hand_count[iVar4]))
+            {
+              iVar2 = get_card_name(iVar4, iVar2);
+              if (-1 < iVar2)
+              {
+                default_test_definition(&this_test, 0xff);
+                iVar4 = instance->targets[0].player;
+                this_test.id = iVar2;
+                default_ec_definition(iVar4, iVar4, &this_definition);
+                this_definition.effect = 0x82;
+                new_effect_coercion(&this_definition, &this_test);
+              }
+              iVar4 = instance->targets[0].player;
+              iVar2 = instance->targets[0].card;
+            }
+            kill_card(iVar4, iVar2, KILL_EXILE);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_020d0283;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  get_card_instance(player, card);
+LAB_020d0283:
+  iVar2 = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x20d0470; original cards/hour_of_devastation.c:1121. */
+int card_lurching_rotbeast(int player, int card, event_t event)
+{
+  int result;
+  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    return 0;
+  }
+  result = cycling(player, card, event, 0, 1, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20d04d0; original cards/hour_of_devastation.c:1146. */
+int card_razaketh_the_foulblooded(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  check_legend_rule(player, card, event);
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      new_default_test_definition(&test, 0xff, "Select a card.");
+      new_global_tutor(player, player, 1, 1, 0, 1, &test);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0x40200, 0, 0, 0, 0, 0, 0, 2, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20d0e60; original cards/hour_of_devastation.c:1358. */
+int card_granitic_titan(int player, int card, event_t event)
+{
+  int result;
+  menace(player, card, event);
+  result = cycling(player, card, event, 2, 0, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20d14b0; original cards/hour_of_devastation.c:1479. */
+int card_inferno_jet(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  if (event - EVENT_CAN_ACTIVATE_FROM_HAND < 3)
+  {
+    result = cycling(player, card, event, 2, 0, 0, 0, 0, 0);
+    return result;
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        opponent_or_pw_target_definition(player, card, &td);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            damage_target0(player, card, 6);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_020d1508;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  opponent_or_pw_target_definition(player, card, &td);
+LAB_020d1508:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_OPPONENT_OR_PLANESWALKER", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20d17e0; original cards/hour_of_devastation.c:1627. */
+int card_hour_of_promise(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+  test_definition_t this_test;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      default_test_definition(&this_test, 1);
+      this_test.qty = 2;
+      new_global_tutor(player, player, 1, 5, 0, 5, &this_test);
+      result = count_subtype(player, 1, 0x5000);
+      if (2 < result)
+      {
+        default_token_definition(player, card, 0x49ac, &token);
+        token.tou = 2;
+        token.pow = 2;
+        token.qty = '\x02';
+        generate_token(&token);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20d1b20; original cards/hour_of_devastation.c:1736. */
+int card_rhonass_last_stand(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  token_generation_t token;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      default_token_definition(player, card, 0x4985, &token);
+      token.pow = 5;
+      token.tou = 4;
+      generate_token(&token);
+      result = create_legacy_effect(player, card, hou_finality_effect);
+      instance = get_card_instance(player, result);
+      instance->targets[1].card = 1;
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20d1e80; original cards/hour_of_devastation.c:1836. */
+int card_bloodwater_entity(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  prowess(player, card, event);
+  if (event == EVENT_ETB)
+  {
+    new_default_test_definition(&this_test, 0x38, "Select target instant or sorcery card.");
+    result = new_special_count_grave(player, &this_test);
+    if (result != 0)
+    {
+      result = graveyard_has_shroud(player);
+      if (result == 0)
+      {
+        new_global_tutor(player, player, 2, 2, 0, 1, &this_test);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20d1f50; original cards/hour_of_devastation.c:1856. */
+int card_the_locust_god(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+  check_legend_rule(player, card, event);
+  if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+  {
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      draw_a_card(player);
+      discard(player, 0, player);
+    }
+    result = card_drawn_trigger(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+    if (result != 0)
+    {
+      default_token_definition(player, card, 0x4952, &token);
+      token.tou = 1;
+      token.pow = 1;
+      token.color_forced = '\x14';
+      token.key_plus = 0x20;
+      token.s_key_plus = 4;
+      generate_token(&token);
+    }
+    result = hou_god(player, card, event);
+    return result;
+  }
+  result = generic_activated_ability(player, card, event, 0, 2, 0, 1, 0, 1, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20d2b10; original cards/hour_of_devastation.c:2106. */
+int card_the_scarab_god(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  token_generation_t token;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  instance = get_card_instance(player, card);
+  new_default_test_definition(&test, 2, "Select a creature card to exile.");
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    result = count_subtype(player, 0x47, 0xde);
+    lose_life(1 - player, result);
+    scry(player, result);
+  }
+  else
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+    LAB_020d2c90:
+      result = generic_activated_ability_with_target_in_grave(
+          player, card, event, GAA_NONE, 2, 1, 1, 0, 0, 0, 0, NULL, NULL, TYPE_NONE, &test, 0x1000);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_020d2c90;
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = validate_target_from_grave_source(player, card, instance->targets[0].player, 1);
+      if (result == -1)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      default_token_definition(
+          instance->parent_controller, instance->parent_card,
+          (unsigned int)cards_data[graveyard_ptr_mutable[instance->targets[0].player][result]].id,
+          &token);
+      token.action = TOKEN_ACTION_ADD_SUBTYPE;
+      token.pow = 4;
+      token.tou = 4;
+      token.action_argument = 0xde;
+      token.color_forced = '\x02';
+      generate_token(&token);
+      rfg_card_from_grave(instance->targets[0].player, result);
+    }
+  }
+  result = hou_god(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20cd3f0; original cards/hour_of_devastation.c:2785. */
+static int effect_driven(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  modify_pt_and_abilities((int)instance->damage_target_player, instance->damage_target_card, event,
+                          0, 0, 0x80);
+  result = damage_dealt_by_me_arbitrary(
+      (int)instance->damage_target_player, instance->damage_target_card, event,
+      DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER, player, card);
+  if (result != 0)
+  {
+    uVar1 = instance->targets[1].player;
+    instance->targets[1].player = 0;
+    draw_cards(player, uVar1 & 0xff);
+    draw_cards(player, uVar1 >> 8 & 0xff);
+  }
+  if ((event != EVENT_CLEANUP) && (event != EVENT_SHOULD_AI_PLAY))
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20cd2e0; original cards/hour_of_devastation.c:2799. */
+static int effect_despair(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  special_abilities((int)instance->damage_target_player, instance->damage_target_card, event,
+                    0x10000, player, card);
+  result = damage_dealt_by_me_arbitrary(
+      (int)instance->damage_target_player, instance->damage_target_card, event,
+      DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER, player, card);
+  if (result != 0)
+  {
+    uVar1 = instance->targets[1].player;
+    instance->targets[1].player = 0;
+    new_multidiscard(0, uVar1 & 0xff, 0, player);
+    new_multidiscard(1, uVar1 >> 8 & 0xff, 0, player);
+  }
+  if ((event != EVENT_CLEANUP) && (event != EVENT_SHOULD_AI_PLAY))
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20d5e60; original cards/hour_of_devastation.c:3056. */
+int card_hollow_one(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_MODIFY_COST)
+  {
+    result = get_trap_condition(player, 0x203);
+    COST_COLORLESS = COST_COLORLESS + (char)result * -2;
+    return 0;
+  }
+  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    return 0;
+  }
+  result = cycling(player, card, event, 2, 0, 0, 0, 0, 0);
+  return result;
+}

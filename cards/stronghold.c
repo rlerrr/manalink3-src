@@ -2955,3 +2955,191 @@ int card_gliding_licid(int player, int card, event_t event){
 int card_tempting_licid(int player, int card, event_t event){
 	return generic_licid(player, card, event, MANACOST_G(1), 0, 0, 0, SP_KEYWORD_LURE, player);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int tidal_warrior_effect(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x212d9e0; original cards/stronghold.c:499. */
+int card_dauthi_trapper(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = player;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                             0, 0, 0, 0x100);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_CREATURE");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2135220; original cards/stronghold.c:3439. */
+int card_crossbow_ambush(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    pump_subtype_until_eot(player, card, player, -1, 0, 0, 0x400, 0);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x21358b0; original cards/stronghold.c:3647. */
+int card_samite_blessing(int player, int card, event_t event)
+{
+  char cVar1;
+  int card_00;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  target_definition_t td1;
+
+  instance = get_card_instance(player, card);
+  cVar1 = instance->damage_target_player;
+  card_00 = instance->damage_target_card;
+  default_target_definition(player, card, &td1, 2);
+  iVar3 = aura_granting_activated_ability(
+      player, card, event, (int)cVar1, 7, 0, 0, 0, 0, 0, 0, 0, &td1,
+      "Select target creature, prevent all damage the next source would deal to it.");
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    iVar4 = validate_target(player, card, &td1, 0);
+    if (iVar4 != 0)
+    {
+      prevent_the_next_n_damage((int)cVar1, card_00, instance->targets[0].player,
+                                instance->targets[0].card, 0, PREVENT_INFINITE, 0, 0);
+    }
+  }
+  return iVar3;
+}
+
+/* ManalinkEh 2022: 0x21359f0; original cards/stronghold.c:3674. */
+int card_smite(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.required_state = 8;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            instance = get_card_instance(player, card);
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02135a4c;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.required_state = 8;
+LAB_02135a4c:
+  result = generic_spell(player, card, event, 0x81, &td,
+                         "Select target blocked creature to destroy.", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x212c210; original cards/stronghold.c:3751. */
+static int tidal_warrior_effect(int player, int card, event_t event)
+{
+  int basic_land_type_to_become;
+  card_instance_t *instance;
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    instance = get_card_instance(player, card);
+    if ((instance->damage_target_card == affected_card) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+      basic_land_type_to_become = get_hacked_subtype(player, card, 0x5002);
+      event_result = land_into_new_basic_land_type(event_result, basic_land_type_to_become);
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    instance = get_card_instance(player, card);
+    if (-1 < instance->targets[0].player)
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2135e70; original cards/stronghold.c:3769. */
+int card_tidal_warrior(int player, int card, event_t event)
+{
+  int32_t iVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  target_definition_t td;
+
+  if (((event != EVENT_ACTIVATE) && (1 < event - EVENT_RESOLVE_ACTIVATION)) &&
+      (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 1);
+  if (ai_is_speculating == 1)
+  {
+    if (player != 1)
+      goto LAB_02135ece;
+  }
+  else if ((player != 1) || (((unsigned char)trace_mode & 2) != 0))
+    goto LAB_02135ece;
+  td.required_subtype = get_hacked_subtype(1, card, 0x5002);
+  td.special = 0x1000;
+LAB_02135ece:
+  pcVar2 = get_card_instance(player, card);
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (iVar3 = valid_target(&td), iVar3 != 0))
+  {
+    iVar3 = create_targetted_legacy_effect(pcVar2->parent_controller, pcVar2->parent_card,
+                                           tidal_warrior_effect, pcVar2->targets[0].player,
+                                           pcVar2->targets[0].card);
+    pcVar4 = get_card_instance(player, iVar3);
+    iVar1 = pcVar2->parent_card;
+    pcVar4->targets[0].player = pcVar2->parent_controller;
+    pcVar4->targets[0].card = iVar1;
+    pcVar4->number_of_targets = '\x01';
+  }
+  iVar3 =
+      generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td, "TARGET_LAND");
+  return iVar3;
+}

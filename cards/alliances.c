@@ -3525,3 +3525,687 @@ int card_yavimaya_ants(int player, int card, event_t event){
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20a91b0; original cards/alliances.c:3847. */
+int card_yavimaya_ancients(int player, int card, event_t event)
+{
+  int result;
+  result = generic_shade_merge_pt(player, card, event, 0, 0, 0, 0, 1, 0, 0, 1, -2);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20a9640; original cards/alliances.c:3937. */
+int card_benthic_explorers(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  color_test_t available;
+  target_definition_t td;
+  default_target_definition(player, card, &td, 1);
+  td.required_state = 1;
+  td.allowed_controller = 1 - player;
+  td.illegal_abilities = 0;
+  td.preferred_controller = td.allowed_controller;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0, 0, 0, 0,
+                                       &td, NULL);
+    return (unsigned int)(result != 0);
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+    instance = get_card_instance(player, card);
+    result = generic_activated_ability(player, card, EVENT_ACTIVATE, 7, 0, 0, 0, 0, 0, 0, 0, &td,
+                                       "Select a tapped land an opponent controls.");
+    if (result != 0)
+    {
+      untap_card(instance->targets[0].player, instance->targets[0].card);
+      available = get_colors_of_mana_land_could_produce_ignoring_costs(instance->targets[0].player,
+                                                                       instance->targets[0].card);
+      if ((available & COLOR_TEST_ARTIFACT) == COLOR_TEST_0)
+      {
+        if (available == COLOR_TEST_0)
+        {
+          return 0;
+        }
+      }
+      else
+      {
+        available = available & ~COLOR_TEST_ARTIFACT | COLOR_TEST_COLORLESS;
+      }
+      produce_mana_all_one_color(player, available, 1);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20a9810; original cards/alliances.c:3984. */
+int card_burnout(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td_spell;
+  if (event == EVENT_CAN_CAST)
+  {
+    counterspell_target_definition(player, card, &td_spell, 0x30);
+    result = counterspell(player, card, EVENT_CAN_CAST, &td_spell, 0);
+    if (result != 0)
+    {
+      return 99;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      counterspell_target_definition(player, card, &td_spell, 0x30);
+      if ((card == affected_card) &&
+          ((player == affected_card_controller &&
+            (result = counterspell(player, card, EVENT_CAN_CAST, &td_spell, 0), result != 0))))
+      {
+        result = counterspell(player, card, EVENT_CAST_SPELL, &td_spell, 0);
+        return result;
+      }
+    }
+  }
+  else if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+           (event == EVENT_CHANGE_TARGET))
+  {
+    counterspell_target_definition(player, card, &td_spell, 0x30);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      instance = get_card_instance(player, card);
+      td_spell.required_color = get_sleighted_color_test(player, card, 4);
+      result = counterspell_validate(player, card, &td_spell, 0);
+      if (result != 0)
+      {
+        real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
+        cantrip(player, card, 1);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20a9e30; original cards/alliances.c:4106. */
+int card_enslaved_scout(int player, int card, event_t event)
+{
+  int result;
+  result = get_hacked_walk(player, card, 8);
+  result = generic_shade(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, 0, result, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20a9ec0; original cards/alliances.c:4115. */
+int card_errand_of_duty(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    default_token_definition(player, card, 0x4958, &token);
+    token.key_plus = 0x40;
+    token.pow = 1;
+    token.tou = 1;
+    token.qty = '\x01';
+    generate_token(&token);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20a9f50; original cards/alliances.c:4135. */
+int card_fevered_strength(int player, int card, event_t event)
+{
+  int result;
+  int legacycard;
+
+  result = vanilla_instant_pump(player, card, event, 2, player, 2, 0, 0x4000000, 0);
+  if ((result != 0) && (event == EVENT_RESOLVE_SPELL))
+  {
+    legacycard = cantrip(player, card, 1);
+    alternate_legacy_text(2, player, legacycard);
+    kill_card(player, card, KILL_DESTROY);
+    return result;
+  }
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20aa000; original cards/alliances.c:4150. */
+int card_floodwater_dam(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  target_t *ptVar4;
+  target_t *ptVar5;
+  target_definition_t td;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 1);
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar3 = has_mana_for_activated_ability(player, card, 3, 0, 0, 0, 0, 0);
+      if (iVar3 == 0)
+      {
+        return 0;
+      }
+      iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, -1, 0, 0, 0, 0, 0, 0,
+                                        &td, NULL);
+      return iVar3;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = '\0';
+      iVar3 = 0;
+      while (
+          ((iVar2 = can_target(&td), iVar2 != 0 && (iVar2 = has_mana_for_activated_ability(
+                                                        player, card, iVar3 * 2 + 1, 0, 0, 0, 0, 0),
+                                                    iVar2 != 0)) &&
+           (iVar2 = new_pick_target(&td, "TARGET_LAND", iVar3, 0), iVar2 != 0)))
+      {
+        ptVar5 = instance->targets + iVar3;
+        ptVar4 = instance->targets + iVar3;
+        iVar3 = iVar3 + 1;
+        state_untargettable(ptVar4->player, ptVar5->card, 1);
+      }
+      if (iVar3 < 1)
+      {
+        return 0;
+      }
+      ptVar4 = instance->targets;
+      do
+      {
+        ptVar5 = ptVar4 + 1;
+        state_untargettable(ptVar4->player, ptVar4->card, 0);
+        ptVar4 = ptVar5;
+      } while (ptVar5 != instance->targets + iVar3);
+      iVar3 = charge_mana_for_activated_ability(player, card, iVar3 * 2 + 1, 0, 0, 0, 0, 0);
+      if (iVar3 == 0)
+      {
+        return 0;
+      }
+      tap_card(player, card);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 1);
+    instance = get_card_instance(player, card);
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (instance->number_of_targets != '\0'))
+  {
+    iVar3 = 0;
+    do
+    {
+      while (iVar2 = validate_target(player, card, &td, iVar3), iVar2 != 0)
+      {
+        ptVar5 = instance->targets + iVar3;
+        ptVar4 = instance->targets + iVar3;
+        iVar3 = iVar3 + 1;
+        tap_card(ptVar4->player, ptVar5->card);
+        if ((int)(unsigned int)instance->number_of_targets <= iVar3)
+        {
+          return 0;
+        }
+      }
+      iVar3 = iVar3 + 1;
+    } while (iVar3 < (int)(unsigned int)instance->number_of_targets);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20aa310; original cards/alliances.c:4206. */
+int card_foresight(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  if (event != EVENT_RESOLVE_SPELL)
+    goto LAB_020aa328;
+  if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+  {
+    result = count_subtype(player, 1, -1);
+    if (4 < result)
+    {
+      result = count_deck_by_type(player, 1);
+      if (0 < result)
+      {
+        new_default_test_definition(&test, 1, "Select a card to exile.");
+        ai_modifier = ai_modifier + 0x40;
+        goto LAB_020aa3e6;
+      }
+    }
+    new_default_test_definition(&test, 0xff, "Select a card to exile.");
+    ai_modifier = ai_modifier + 0x20;
+  }
+  else
+  {
+    new_default_test_definition(&test, 0xff, "Select a card to exile.");
+  }
+LAB_020aa3e6:
+  test.qty = 3;
+  new_global_tutor(player, player, 1, 6, 0, 3, &test);
+  cantrip(player, card, 1);
+  kill_card(player, card, KILL_DESTROY);
+LAB_020aa328:
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20aa740; original cards/alliances.c:4325. */
+int card_insidious_bookworms(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  duh_mode(player);
+  result = has_mana_multi(player, 1, 1, 0, 0, 0, 0);
+  result = this_dies_trigger(player, card, event, (unsigned int)(result != 0));
+  if (result != 0)
+  {
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = charge_mana_multi_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, 1, 1,
+                                                 0, 0, 0, 0);
+      if (result != 0)
+      {
+        result = pick_target(&td, "TARGET_PLAYER");
+        if (result != 0)
+        {
+          instance = get_card_instance(player, card);
+          discard(instance->targets[0].player, 1, player);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20aaf20; original cards/alliances.c:4461. */
+int card_mishras_groundbreaker(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 1);
+    td.illegal_type = 2;
+    td.preferred_controller = player;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 1);
+    td.illegal_type = 2;
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      land_animation2(instance->parent_controller, instance->parent_card,
+                      instance->targets[0].player, instance->targets[0].card, 0, 3, 3, 0, 0, 0,
+                      NULL);
+      recalculate_all_cards_in_play();
+      turn_into_artifact(instance->parent_controller, instance->parent_card,
+                         instance->targets[0].player, instance->targets[0].card, 0);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0xf, 0, 0, 0, 0, 0, 0, 0, &td,
+                                     "Select target land it becomes a 3/3 artifact creature.");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20ab0e0; original cards/alliances.c:4492. */
+int card_misinformation(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
+             (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  new_default_test_definition(&this_test, 0xff,
+                              "Select up to 3 cards to put on top off opponent\'s library.");
+  result = spell_puts_up_to_x_target_cards_from_graveyard_on_top_of_deck(
+      player, card, event, 1 - player, 3, &this_test, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209d490; original cards/alliances.c:4630. */
+static int is_land_or_white_permanent(int unused, int unused2, int player, int card)
+{
+  int result;
+  subtype_t subtype;
+  result = is_what(player, card, 1);
+  if (result != 0)
+  {
+    subtype = get_hacked_subtype(player, card, 0x5007);
+    result = has_subtype(player, card, subtype);
+    if (result != 0)
+    {
+      return 1;
+    }
+  }
+  result = get_sleighted_color_test(player, card, 0x20);
+  return (unsigned int)(result != 0);
+}
+
+/* ManalinkEh 2022: 0x20abf90; original cards/alliances.c:4745. */
+int card_royal_herbalist(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = can_use_activated_abilities(player, card);
+    if (((result != 0) &&
+         (result = has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0), result != 0)) &&
+        (*deck_ptr[player] != -1))
+    {
+      return 1;
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    result = charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0);
+    if (result != 0)
+    {
+      rfg_top_card_of_deck(player);
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    gain_life(player, 1);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20ac0c0; original cards/alliances.c:4774. */
+int card_scarab_of_the_unseen(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  test_definition_t this_test;
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.allowed_controller = player | 4;
+    td.preferred_controller = td.allowed_controller;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x47);
+    td.allowed_controller = player | 4;
+    td.preferred_controller = td.allowed_controller;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      instance = get_card_instance(player, card);
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        new_default_test_definition(&this_test, 4, "");
+        this_test.owner = (unsigned char)player | 4;
+        manipulate_auras_enchanting_target(player, card, instance->targets[0].player,
+                                           instance->targets[0].card, NULL, ACT_BOUNCE);
+        cantrip(player, card, 1);
+      }
+    }
+  }
+  result = generic_activated_ability(
+      player, card, event, 0xf, 0, 0, 0, 0, 0, 0, 0, &td,
+      "Select target permanent you own, return all auras attached to it to their owners\' hands.");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20ac5d0; original cards/alliances.c:4864. */
+int card_seasoned_tactician(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 0xff);
+    td.extra = damage_card;
+    td.special = 0x20;
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = can_use_activated_abilities(player, card);
+      if ((((result != 0) && (result = can_target(&td), result != 0)) &&
+           (result = has_mana_for_activated_ability(player, card, 3, 0, 0, 0, 0, 0),
+            result != 0)) &&
+          (result = count_deck(player), 3 < result))
+      {
+        return 99;
+      }
+      get_card_instance(player, card);
+      return 0;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0x1000004, 3, 0, 0, 0, 0, 0,
+                                         0, &td, "TARGET_DAMAGE");
+      if (result != 0)
+      {
+        rfg_top_card_of_deck(player);
+        rfg_top_card_of_deck(player);
+        rfg_top_card_of_deck(player);
+        rfg_top_card_of_deck(player);
+      }
+      get_card_instance(player, card);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0xff);
+  }
+  td.special = 0x20;
+  td.extra = damage_card;
+  instance = get_card_instance(player, card);
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+  {
+    prevent_damage(instance->targets[0].player, instance->targets[0].card, -1);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x209cb70; original cards/alliances.c:4905. */
+static int is_black_or_artifact_creature(int unused, int unused2, int player, int card)
+{
+  int result;
+  result = is_what(player, card, 2);
+  if (result != 0)
+  {
+    result = get_sleighted_color_test(player, card, 2);
+    if (result != 0)
+    {
+      return 1;
+    }
+  }
+  result = is_what(player, card, 2);
+  if (result == 0)
+  {
+    return 0;
+  }
+  result = is_what(player, card, 0x40);
+  return (unsigned int)(result != 0);
+}
+
+/* ManalinkEh 2022: 0x20aca60; original cards/alliances.c:4951. */
+int card_soldevi_heretic(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  target_definition_t td2;
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.extra = damage_card;
+    td.required_type = 0;
+    td.special = 0x100000;
+    default_target_definition(player, card, &td2, 0);
+    td2.zone = 0x1000;
+    instance = get_card_instance(player, card);
+    instance->targets[1].player = 1 - player;
+    instance->targets[1].card = -1;
+    instance->number_of_targets = '\x01';
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.extra = damage_card;
+    td.required_type = 0;
+    td.special = 0x100000;
+    default_target_definition(player, card, &td2, 0);
+    td2.zone = 0x1000;
+    instance = get_card_instance(player, card);
+    instance->targets[1].player = 1 - player;
+    instance->targets[1].card = -1;
+    instance->number_of_targets = '\x01';
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        prevent_damage(instance->targets[0].player, instance->targets[0].card, 2);
+        result = would_validate_arbitrary_target(&td2, 1 - player, -1);
+        if (result != 0)
+        {
+          draw_some_cards_if_you_want(instance->parent_controller, instance->parent_card,
+                                      instance->targets[1].player, 1);
+        }
+      }
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0x4000005, 0, 0, 0, 0, 0, 1, 0, &td,
+                                     "TARGET_DAMAGE");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20ad430; original cards/alliances.c:5140. */
+int card_stench_of_decay(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    default_test_definition(&test, 2);
+    test.type_flag = 9;
+    pump_creatures_until_eot(player, card, 2, 0, -1, -1, 0, 0, &test);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209d350; original cards/alliances.c:5284. */
+static char *is_blocking_sd(int who_chooses, int player, int card, int targeting_player,
+                            int targeting_card)
+{
+  int result;
+  result = is_blocking(card, targeting_card);
+  if (result == 0)
+  {
+    return "must be blocking Sworn Defender";
+  }
+  return NULL;
+}
+
+/* ManalinkEh 2022: 0x209d320; original cards/alliances.c:5292. */
+static char *sd_is_blocking_him(int who_chooses, int player, int card, int targeting_player,
+                                int targeting_card)
+{
+  int result;
+  result = is_blocking(targeting_card, card);
+  if (result == 0)
+  {
+    return "must be blocked by Sworn Defender";
+  }
+  return NULL;
+}
+
+/* ManalinkEh 2022: 0x209d780; original cards/alliances.c:5501. */
+static int sac_next_endstep(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if ((event != EVENT_CLEANUP) && (event != EVENT_SHOULD_AI_PLAY))
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  kill_card((int)instance->damage_target_player, instance->damage_target_card, KILL_SACRIFICE);
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x209d5c0; original cards/alliances.c:5725. */
+static char *damage_to_cleric_or_wizard(int who_chooses, int player, int card, int targeting_player,
+                                        int targeting_card)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if ((((instance->internal_card_id == damage_card) && (instance->damage_target_card != -1)) &&
+       (result = is_what((int)instance->damage_target_player, instance->damage_target_card, 2),
+        result != 0)) &&
+      ((result = has_subtype((int)instance->damage_target_player, instance->damage_target_card,
+                             SUBTYPE_CLERIC),
+        result != 0 || (result = has_subtype((int)instance->damage_target_player,
+                                             instance->damage_target_card, SUBTYPE_WIZARD),
+                        result != 0))))
+  {
+    return NULL;
+  }
+  return "must be damage to a Cleric or Wizard creature";
+}

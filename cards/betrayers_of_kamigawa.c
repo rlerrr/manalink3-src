@@ -3592,3 +3592,45 @@ When ~ leaves the battlefield, sacrifice all non-Ogre creatures you control. */
 	}
 	return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int card_uproot_impl(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x256a4e0; original cards/betrayers_of_kamigawa.c:721. */
+int card_crawling_filth(int player, int card, event_t event)
+{
+  int result;
+  fear(player, card, event);
+  result = soulshift(player, card, event, 5, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2571030; original cards/betrayers_of_kamigawa.c:3584. */
+int card_uproot(int player, int card, event_t event)
+{
+  int result;
+  result = arcane(player, card, event, card_uproot_impl);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2568b50; original cards/betrayers_of_kamigawa.c:3584. */
+static int card_uproot_impl(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, 1);
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
+    }
+  }
+  result = generic_spell(player, card, event, 0x81, &td,
+                         "Select target land, put it on top of its owner\'s library.", 1, NULL);
+  return result;
+}

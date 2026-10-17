@@ -3693,3 +3693,52 @@ Target player draws two cards, then discards four cards. */
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23b4100; original cards/planar_chaos.c:539. */
+static char *player_or_planeswalker_or_sliver_creature(int who_chooses, int player, int card,
+                                                       int targeting_player, int targeting_card)
+{
+  int result;
+  result = is_planeswalker(player, card);
+  if (result != 0)
+  {
+    return NULL;
+  }
+  result = is_what(player, card, 2);
+  if ((result != 0) && (result = has_subtype(player, card, SUBTYPE_SLIVER), result != 0))
+  {
+    return NULL;
+  }
+  return "target must be a player, a planeswalker, or a Sliver creature";
+}
+
+/* ManalinkEh 2022: 0x23b9cc0; original cards/planar_chaos.c:1698. */
+int card_ghost_tactician(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_ACTIVATE)
+  {
+    if ((current_turn == player) && (current_phase == 0x18))
+    {
+      result = count_attackers(player);
+      ai_modifier = ai_modifier + result * 8;
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    instance = get_card_instance(player, card);
+    pump_subtype_until_eot(instance->parent_controller, instance->parent_card, player, -1, 1, 0, 0,
+                           0);
+  }
+  result = generic_activated_ability(player, card, event, 0x21, 0, 0, 0, 0, 0, 1, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23c0360; original cards/planar_chaos.c:3815. */
+int card_waning_wurm(int player, int card, event_t event)
+{
+  vanishing(player, card, event, 2);
+  return 0;
+}

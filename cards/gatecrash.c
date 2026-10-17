@@ -6652,3 +6652,45 @@ Draw a card. */
 	}
 	return card_negate(player, card, event);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2515d80; original cards/gatecrash.c:6022. */
+static int vizkopa_guildmage_legacy(int player, int card, event_t event)
+{
+  int amount;
+  int result;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    event_flags = event_flags | 0x200000;
+    amount =
+        trigger_gain_life(player, card, EVENT_STATIC_EFFECTS, player, RESOLVE_TRIGGER_MANDATORY);
+    if (amount == 0)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    amount = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+    if (amount == 0)
+      goto joined_r0x02515e30;
+  }
+  result = check_battlefield_for_id(player, 0x304d);
+  if (result == 0)
+  {
+    lose_life(1 - player, amount);
+  }
+  else
+  {
+    lose_the_game(1 - player);
+  }
+joined_r0x02515e30:
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+}

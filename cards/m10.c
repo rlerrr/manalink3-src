@@ -1067,3 +1067,25 @@ At the beginning of your upkeep, sacrifice a creature other than Xathrid Demon, 
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24feed0; original cards/m10.c:78. */
+int effect_must_attack_on_next_combat(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_card)
+  {
+    instance = get_card_instance(player, card);
+    attack_if_able((int)instance->damage_target_player, instance->damage_target_card, event);
+  }
+  if ((event == EVENT_PHASE_CHANGED) && (0x1d < current_phase))
+  {
+    instance = get_card_instance(player, card);
+    if (instance->damage_target_player == current_turn)
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  return 0;
+}

@@ -7735,3 +7735,13 @@ Servo	0x20076a4 (Rhino token, the "basic" token form)
 Token Artifact Creature - Servo
 1/1
 */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23afec0; original cards/kaladesh.c:7356. */
+int card_weldfast_monitor(int player, int card, event_t event)
+{
+  int result;
+  result = generic_shade(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0x10000);
+  return result;
+}

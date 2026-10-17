@@ -427,3 +427,105 @@
  * Partner with Okaun, Eye of Chaos
  * At the beginning of combat on your turn, flip a coin until you lose a flip.
  * Whenever a player wins a coin flip, draw a card. */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int bonus_round_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2025f40; original cards/battlebond.c:148. */
+static int archon_of_valors_reach_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_STATIC_EFFECTS) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    if (instance->damage_target_player < '\0')
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2025e30; original cards/battlebond.c:240. */
+int bonus_round_legacy(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_token(trigger_cause_controller, trigger_cause);
+    if (result == 0)
+    {
+      default_test_definition(&test, 0x38);
+      test.type_flag = 2;
+      result = new_specific_spell_played(player, card, event, 2, 2, &test);
+      if (result != 0)
+      {
+        copy_spell_from_stack(trigger_cause_controller, trigger_cause_controller, trigger_cause);
+      }
+    }
+  }
+  result = eot_trigger(player, card, event);
+  if (result == 0)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20267c0; original cards/battlebond.c:256. */
+int card_bonus_round(int player, int card, event_t event)
+{
+  int result;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      create_legacy_effect(player, card, bonus_round_legacy);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20282d0; original cards/battlebond.c:882. */
+int card_rushblade_commander(int player, int card, event_t event)
+{
+  boost_subtype(player, card, event, SUBTYPE_WARRIOR, 0, 0, 0, 4,
+                BCT_INCLUDE_SELF | BCT_CONTROLLER_ONLY);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2028330; original cards/battlebond.c:930. */
+int card_spellseeker(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  result = duh_mode(player);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  new_default_test_definition(
+      &this_test, 0x38, "Select an instant or sorcery card with converted mana cost 2 or less");
+  this_test.cmc = 3;
+  this_test.cmc_flag = 3;
+  new_global_tutor(player, player, 1, 1, 0, 1, &this_test);
+  return 0;
+}

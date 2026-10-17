@@ -2075,3 +2075,84 @@ int kill_attachment_when_creature_is_targeted_by_spell(int player, int card, eve
 	}
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x265d540; original functions/targets.c:16. */
+keyword_t color_to_protection(color_t color) { return (color & 0x3e) << 10; }
+
+/* ManalinkEh 2022: 0x2660480; original functions/targets.c:1385. */
+void counter_triggered_target_definition(int player, int card, target_definition_t *td, int type)
+{
+  default_target_definition(player, card, td, type);
+  td->zone = 0;
+  td->special = 0x8000000;
+  return;
+}
+
+/* ManalinkEh 2022: 0x2661490; original functions/targets.c:1795. */
+int choose_player(int player, int card, int preferred_controller, int allow_cancel)
+{
+  card_instance_t *instance;
+  int result;
+  target_t chosen_player;
+  target_definition_t td;
+
+  instance = get_card_instance(player, card);
+  default_target_definition(player, card, &td, 0);
+  td.preferred_controller = preferred_controller;
+  td.zone = 0x1000;
+  td.allow_cancel = allow_cancel;
+  td.illegal_abilities = 0;
+  result = duh_mode(player);
+  if (result != 0)
+  {
+    instance->number_of_targets = '\x01';
+    instance->targets[0].player = preferred_controller;
+    instance->targets[0].card = -1;
+    result = would_validate_target(td.player, td.card, &td, 0);
+    if (result != 0)
+    {
+      return 1;
+    }
+    if ((allow_cancel & 1U) != 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+  }
+  instance->number_of_targets = '\0';
+  result = can_target(&td);
+  if (result != 0)
+  {
+    select_target(player, card, &td, "Choose a player.", &chosen_player);
+  }
+  if (chosen_player.card != -1)
+  {
+    backtrace_and_abort("functions/targets.c:1824\nchosen_player.card == -1");
+  }
+  return chosen_player.player;
+}
+
+/* ManalinkEh 2022: 0x2661860; original functions/targets.c:2034. */
+int can_legally_target(int targeting_player, int targeting_card, target_t *targeted)
+{
+  int32_t iVar1;
+  card_instance_t *instance;
+  int iVar3;
+
+  instance = get_card_instance(targeting_player, targeting_card);
+  iVar3 = 0;
+  if (instance->number_of_targets != '\0')
+  {
+    iVar1 = targeted->card;
+    instance->targets[9].player = targeted->player;
+    instance->targets[9].card = iVar1;
+    set_special_flags2(targeting_player, targeting_card, 0x10000);
+    iVar3 = call_card_function(targeting_player, targeting_card, EVENT_CAN_CAST);
+    instance->targets[9].player = -1;
+    instance->targets[9].card = -1;
+    remove_special_flags2(targeting_player, targeting_card, 0x10000);
+  }
+  return iVar3;
+}

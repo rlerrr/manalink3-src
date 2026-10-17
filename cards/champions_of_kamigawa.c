@@ -5327,3 +5327,113 @@ Whenever a land enters the battlefield, ~ deals 2 damage to that land's controll
 
 	return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x260cef0; original cards/champions_of_kamigawa.c:568. */
+int card_body_of_jukai(int player, int card, event_t event)
+{
+  int result;
+  result = soulshift(player, card, event, 8, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x260efa0; original cards/champions_of_kamigawa.c:1491. */
+int card_gale_force(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    default_test_definition(&this_test, 2);
+    this_test.keyword = 0x20;
+    new_damage_all(player, card, 2, 5, 0, &this_test);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x260f0f0; original cards/champions_of_kamigawa.c:1530. */
+int card_gibbering_kami(int player, int card, event_t event)
+{
+  int result;
+  result = soulshift(player, card, event, 3, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2610d80; original cards/champions_of_kamigawa.c:2261. */
+int card_hundred_talon_kami(int player, int card, event_t event)
+{
+  int result;
+  result = soulshift(player, card, event, 4, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2612120; original cards/champions_of_kamigawa.c:2727. */
+int card_kitsune_riftwalker(int player, int card, event_t event)
+{
+  protection_from_subtype(player, card, event, SUBTYPE_SPIRIT);
+  protection_from_subtype(player, card, event, SUBTYPE_ARCANE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2609e40; original cards/champions_of_kamigawa.c:5023. */
+static int card_swallowing_plague_impl(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        if ((event == EVENT_RESOLVE_SPELL) && (result = valid_target(&td), result != 0))
+        {
+          damage_target0(player, card, x_value);
+          gain_life(player, x_value);
+        }
+        goto LAB_02609e91;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+LAB_02609e91:
+  result = generic_spell(player, card, event, 5, &td, "TARGET_CREATURE", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2618300; original cards/champions_of_kamigawa.c:5256. */
+int card_torii_watchguard(int player, int card, event_t event)
+{
+  int result;
+  vigilance(player, card, event);
+  result = soulshift(player, card, event, 4, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2618810; original cards/champions_of_kamigawa.c:5359. */
+int card_vine_kami(int player, int card, event_t event)
+{
+  int result;
+  menace(player, card, event);
+  result = soulshift(player, card, event, 6, 1);
+  return result;
+}

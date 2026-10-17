@@ -7479,3 +7479,80 @@ If you do, shuffle your library. */
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20ee6c0; original cards/time_spiral.c:1372. */
+int card_corpulent_corpse(int player, int card, event_t event)
+{
+  int result;
+  fear(player, card, event);
+  result = suspend(player, card, event, 5, 0, 1, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20f0580; original cards/time_spiral.c:1974. */
+int card_fallen_ideal(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  unsigned int uVar5;
+  unsigned int player_00;
+  int granted_to_player;
+  test_definition_t test;
+
+  immortal_enchantment(player, card, event);
+  instance = get_card_instance(player, card);
+  granted_to_player = (int)instance->damage_target_player;
+  iVar4 = instance->damage_target_card;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    iVar3 = can_sacrifice_type_as_cost(player, 1, TYPE_CREATURE);
+    iVar2 = 0;
+    if (iVar3 != 0)
+    {
+      iVar2 =
+          granted_generic_activated_ability(player, card, granted_to_player, iVar4,
+                                            EVENT_CAN_ACTIVATE, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+    }
+  }
+  else
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      granted_generic_activated_ability(player, card, granted_to_player, iVar4, EVENT_ACTIVATE, 0,
+                                        0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+      new_default_test_definition(&test, 2, "Select creature to sacrifice.");
+      uVar5 = new_sacrifice(granted_to_player, iVar4, player,
+                            SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK, &test);
+      if (uVar5 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      player_00 = (int)uVar5 >> 0x10 & 0xff;
+      state_untargettable(player_00, uVar5 >> 0x18, 0);
+      if (spell_fizzled != 1)
+      {
+        kill_card(player_00, uVar5 >> 0x18, KILL_SACRIFICE);
+      }
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      iVar4 =
+          pump_until_eot_merge_previous(granted_to_player, iVar4, granted_to_player, iVar4, 2, 1);
+      return iVar4;
+    }
+    iVar2 = generic_aura(player, card, event, player, 0, 0, 0x20, 0, 0, 0, 0);
+  }
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x20f4170; original cards/time_spiral.c:3286. */
+int card_keldon_halberdier(int player, int card, event_t event)
+{
+  int result;
+  result = suspend(player, card, event, 4, 0, 0, 0, 0, 1, 0, NULL, NULL);
+  return result;
+}

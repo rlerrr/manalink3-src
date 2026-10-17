@@ -1221,3 +1221,37 @@
  * Whenever you crank ~, it assembles a Contraption. (Put the top card of your Contraption deck face up onto one of your sprockets.) */
 
 // Plains, Island, Swamp, Mountain, Forest.
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25c4930; original cards/unstable.c:107. */
+static int fx_0(int player, int card, event_t event) { return 0; }
+
+/* ManalinkEh 2022: 0x25c5700; original cards/unstable.c:442. */
+int card_crow_storm(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      result = check_special_flags(player, card, 0x40000);
+      if (result == 0)
+      {
+        result = get_storm_count();
+        if (0 < result)
+        {
+          generate_tokens_by_id(player, card, 0x48a, result);
+        }
+      }
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    generate_token_by_id(player, card, 0x48a);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}

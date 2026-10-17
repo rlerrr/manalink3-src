@@ -2687,3 +2687,258 @@ int card_woodripper(int player, int card, event_t event){
 
 	return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_X(1), GVC_COUNTER(COUNTER_FADE), &td, "TARGET_ARTIFACT");
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *greatest_power_among_creatures(int who_chooses, int player, int card);
+
+/* ManalinkEh 2022: 0x20994e0; original cards/nemesis.c:2923. */
+int card_animate_land(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 1);
+        td.preferred_controller = player;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            land_animation2(player, card, instance->targets[0].player, instance->targets[0].card, 1,
+                            3, 3, 0, 0, 0, NULL);
+          }
+          kill_card(player, card, KILL_SACRIFICE);
+        }
+        goto LAB_0209954c;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 1);
+  td.preferred_controller = player;
+  get_card_instance(player, card);
+LAB_0209954c:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_LAND", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209a030; original cards/nemesis.c:3128. */
+int card_flowstone_strike(int player, int card, event_t event)
+{
+  int result;
+  result = vanilla_instant_pump(player, card, event, 2, 1 - player, 1, -1, 0, 4);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209b6d0; original cards/nemesis.c:3617. */
+int card_off_balance(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  pump_ability_t pump;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          instance = get_card_instance(player, card);
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            default_pump_ability_definition(player, card, &pump, 0, 0, 0, 0x20);
+            pump.paue_flags = 0x210;
+            pump_ability(player, card, instance->targets[0].player, instance->targets[0].card,
+                         &pump);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0209b728;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+LAB_0209b728:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209b950; original cards/nemesis.c:3663. */
+int card_phyrexian_driver(int player, int card, event_t event)
+{
+  test_definition_t test;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  new_default_test_definition(&test, 2, "");
+  test.subtype = 0x73;
+  test.not_me = 1;
+  pump_creatures_until_eot(player, card, player, 0, 1, 1, 0, 0, &test);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x209bba0; original cards/nemesis.c:3711. */
+int card_rejuvenation_chamber(int player, int card, event_t event)
+{
+  int result;
+  fading(player, card, event, 2);
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    gain_life(player, 2);
+  }
+  result = generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209c040; original cards/nemesis.c:3831. */
+int card_sliptide_serpent(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    instance = get_card_instance(player, card);
+    bounce_permanent(instance->parent_controller, instance->parent_card);
+  }
+  result = generic_activated_ability(player, card, event, 0, 3, 0, 1, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209c0f0; original cards/nemesis.c:3845. */
+int card_spiteful_bully(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allow_cancel = 0;
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = pick_target(&td, "TARGET_CREATURE_YOU_CONTROL");
+      if (result != 0)
+      {
+        damage_target0(player, card, 3);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2090920; original cards/nemesis.c:3929. */
+static char *greatest_power_among_creatures(int who_chooses, int player, int card)
+{
+  int iVar1;
+  int iVar2;
+  char *pcVar3;
+  iVar1 = get_power(player, card);
+  iVar2 = get_highest_power(2);
+  pcVar3 = NULL;
+  if (iVar1 != iVar2)
+  {
+    pcVar3 = "Target has not the greatest power among creatures on the battlefield.";
+  }
+  return pcVar3;
+}
+
+/* ManalinkEh 2022: 0x209c4e0; original cards/nemesis.c:3936. */
+int card_topple(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.special = 0x8000;
+        td.extra = (int32_t)greatest_power_among_creatures;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0209c558;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.special = 0x8000;
+  td.extra = (int32_t)greatest_power_among_creatures;
+  get_card_instance(player, card);
+LAB_0209c558:
+  result = generic_spell(player, card, event, 0x81, &td,
+                         "Select target creature with the greatest power.", 1, NULL);
+  return result;
+}

@@ -1531,3 +1531,1390 @@ int card_sparring_mummy(int player, int card, event_t event)
 // Tranquil Expanse => produce_mana.c:mana_producer_tapped(), first printed in OGW
 
 // Woodland Stream => produce_mana.c:mana_producer_tapped(), first printed in SOI
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22d8470; original cards/amonkhet.c:409. */
+int card_gideon_of_the_trials_emblem(int player, int card, event_t event)
+{
+  int result;
+  result = check_battlefield_for_subtype(player, 0x100, 0x7005);
+  if (result == 0)
+  {
+    return 0;
+  }
+  cannot_lose_the_game(player, card, event, player);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d93a0; original cards/amonkhet.c:789. */
+int card_trial_of_solidarity(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    pump_subtype_until_eot(player, card, player, -1, 2, 1, 0, 8);
+  }
+  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 4);
+    test.subtype = 0x4011;
+    result = new_specific_cip(player, card, event, player, 2, &test);
+    if (result != 0)
+    {
+      bounce_permanent(player, card);
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22d96e0; original cards/amonkhet.c:864. */
+int card_vizier_of_remedies(int player, int card, event_t event) { return 0; }
+
+/* ManalinkEh 2022: 0x22d96f0; original cards/amonkhet.c:873. */
+int card_winged_shepherd(int player, int card, event_t event)
+{
+  int result;
+  vigilance(player, card, event);
+  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    return 0;
+  }
+  result = cycling(player, card, event, 0, 0, 0, 0, 0, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22d9e20; original cards/amonkhet.c:1017. */
+int card_censor(int player, int card, event_t event)
+{
+  int result;
+  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      counterspell_resolve_unless_pay_x(player, card, NULL, 0, 1);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    result = generic_spell(player, card, event, 2, NULL, NULL, 1, NULL);
+    return result;
+  }
+  result = cycling(player, card, event, 0, 0, 1, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22d9f00; original cards/amonkhet.c:1042. */
+int card_cryptic_serpent(int player, int card, event_t event)
+{
+  int result;
+  if (event != EVENT_MODIFY_COST)
+  {
+    return 0;
+  }
+  result = count_graveyard_by_type(player, 0x38);
+  COST_COLORLESS = COST_COLORLESS - (char)result;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d9f40; original cards/amonkhet.c:1053. */
+int card_curator_of_mysteries(int player, int card, event_t event)
+{
+  int result;
+  result = discard_trigger(player, card, event, player, 2, 0);
+  if (result != 0)
+  {
+    scry(player, 1);
+  }
+  result = cycling(player, card, event, 0, 0, 1, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22da0f0; original cards/amonkhet.c:1103. */
+int card_galestrike(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.required_state = 1;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+            draw_a_card(player);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_022da15d;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.required_state = 1;
+  get_card_instance(player, card);
+LAB_022da15d:
+  result = generic_spell(player, card, event, 0x81, &td, "Select target tapped creature.", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22da250; original cards/amonkhet.c:1135. */
+int card_hekma_sentinels(int player, int card, event_t event)
+{
+  int result;
+  result = discard_trigger(player, card, event, player, 2, 0);
+  if (result == 0)
+  {
+    return 0;
+  }
+  pump_until_eot_merge_previous(player, card, player, card, 1, 1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22da2d0; original cards/amonkhet.c:1146. */
+int card_hieroglyphic_illumination(int player, int card, event_t event)
+{
+  int result;
+  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      draw_cards(player, 2);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+    return result;
+  }
+  result = cycling(player, card, event, 0, 0, 1, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22da6a0; original cards/amonkhet.c:1233. */
+int card_naga_oracle(int player, int card, event_t event)
+{
+  int result;
+  int number;
+  test_definition_t this_test;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    result = count_deck(player);
+    number = result;
+    if (3 < result)
+    {
+      number = 3;
+    }
+    new_default_test_definition(&this_test, 0xff, "Select a card to put into your graveyard.");
+    this_test.no_shuffle = 1;
+    while (result != 0)
+    {
+      this_test.create_minideck = (unsigned short)number;
+      result = new_global_tutor(player, player, 1, 3, 0, 3, &this_test);
+      if (result < 0)
+      {
+        if (number < 2)
+        {
+          return 0;
+        }
+        rearrange_top_x(player, player, number);
+        return 0;
+      }
+      number = number + -1;
+      result = number;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22da7b0; original cards/amonkhet.c:1263. */
+int card_new_perspectives(int player, int card, event_t event)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    draw_cards(player, 3);
+  }
+  if (event != EVENT_SHOULD_AI_PLAY)
+  {
+    return (unsigned int)(event == EVENT_CAN_CAST);
+  }
+  ai_modifier = ai_modifier + (-(unsigned int)(player == 0) & 0xfffffff0) + 8;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22dad30; original cards/amonkhet.c:1405. */
+int card_scribe_of_the_mindful(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  if (event == EVENT_ACTIVATE)
+  {
+    new_default_test_definition(&this_test, 0x38, "Select an instant or sorcery card.");
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    new_default_test_definition(&this_test, 0x38, "Select an instant or sorcery card.");
+    if ((event == EVENT_RESOLVE_ACTIVATION) &&
+        (result = validate_target_from_grave_source(player, card, player, 0), result != -1))
+    {
+      from_grave_to_hand(player, result, 1);
+    }
+  }
+  result = generic_activated_ability_with_target_in_grave(
+      player, card, event, GAA_SACRIFICE_ME | GAA_LITERAL_PROMPT | GAA_UNTAPPED, 1, 0, 0, 0, 0, 0,
+      0, NULL, NULL, TYPE_NONE, &this_test, 8);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22dae70; original cards/amonkhet.c:1428. */
+int card_seeker_of_insight(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    draw_cards(player, 1);
+    discard(player, 0, player);
+    iVar1 = generic_activated_ability(player, card, EVENT_RESOLVE_ACTIVATION, 1, 0, 0, 0, 0, 0, 0,
+                                      0, NULL, NULL);
+    return iVar1;
+  }
+  iVar1 = generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  if ((event == EVENT_CAN_ACTIVATE) && (iVar1 != 0))
+  {
+    iVar2 = get_specific_storm_count(player);
+    iVar3 = get_stormcreature_count(player);
+    if (iVar2 <= iVar3)
+    {
+      return 0;
+    }
+  }
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x22db020; original cards/amonkhet.c:1463. */
+int card_trial_of_knowledge(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    draw_cards(player, 3);
+    discard(player, 0, player);
+  }
+  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 4);
+    test.subtype = 0x4011;
+    result = new_specific_cip(player, card, event, player, 2, &test);
+    if (result != 0)
+    {
+      bounce_permanent(player, card);
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22db3a0; original cards/amonkhet.c:1540. */
+int card_winds_of_rebuke(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x47);
+        td.illegal_type = 1;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+            mill(current_turn, 2);
+            mill(current_turn ^ 1, 2);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_022db40d;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.illegal_type = 1;
+  get_card_instance(player, card);
+LAB_022db40d:
+  result = generic_spell(player, card, event, 0x81, &td,
+                         "Select target nonland permanent to bounce.", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22db520; original cards/amonkhet.c:1566. */
+int card_zenith_seeker(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  result = discard_trigger(player, card, event, player, 2, 0);
+  if (result != 0)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allow_cancel = 0;
+    instance = get_card_instance(player, card);
+    instance->number_of_targets = '\0';
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = pick_target(&td, "TARGET_CREATURE");
+      if (result != 0)
+      {
+        pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                               0, 0, 0x20, 0);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22db610; original cards/amonkhet.c:1586. */
+int card_arcfiend_of_ifnir(int player, int card, event_t event)
+{
+  int result;
+  result = discard_trigger(player, card, event, player, 2, 0);
+  if (result != 0)
+  {
+    manipulate_type(player, card, 1 - player, TYPE_CREATURE, 0x1010001);
+  }
+  result = cycling(player, card, event, 2, 0, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22db7d0; original cards/amonkhet.c:1627. */
+int card_blighted_bat(int player, int card, event_t event)
+{
+  int result;
+  result = generic_shade(player, card, event, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22db850; original cards/amonkhet.c:1636. */
+int card_bone_picker(int player, int card, event_t event)
+{
+  deathtouch(player, card, event);
+  if ((event == EVENT_MODIFY_COST) && (0 < creatures_dead_this_turn))
+  {
+    COST_COLORLESS = COST_COLORLESS + -3;
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22dc0a0; original cards/amonkhet.c:1817. */
+int card_doomed_dissenter(int player, int card, event_t event)
+{
+  int result;
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0)
+  {
+    return 0;
+  }
+  generate_token_by_id(player, card, 0x49ac);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22dc100; original cards/amonkhet.c:1829. */
+int card_dread_wanderer(int player, int card, event_t event)
+{
+  int result;
+  comes_into_play_tapped(player, card, event);
+  if (event == EVENT_GRAVEYARD_ABILITY)
+  {
+    result = has_mana_multi(player, 2, 1, 0, 0, 0, 0);
+    if (((result != 0) &&
+         (result = can_sorcery_be_played(player, EVENT_GRAVEYARD_ABILITY), result != 0)) &&
+        (hand_count[player] < 2))
+    {
+      return 0x88;
+    }
+  }
+  else if (event == EVENT_PAY_FLASHBACK_COSTS)
+  {
+    charge_mana_multi(player, 2, 1, 0, 0, 0, 0);
+    return (unsigned int)(spell_fizzled != 1);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22dc340; original cards/amonkhet.c:1894. */
+int card_horror_of_the_broken_lands(int player, int card, event_t event)
+{
+  int result;
+  result = discard_trigger(player, card, event, player, 2, 0);
+  if (result != 0)
+  {
+    pump_until_eot_merge_previous(player, card, player, card, 2, 1);
+  }
+  result = cycling(player, card, event, 0, 1, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22dc3f0; original cards/amonkhet.c:1907. */
+int card_lay_bare_the_heart(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  ec_definition_t ec;
+  target_definition_t td;
+  test_definition_t this_test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.zone = 0x1000;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            default_ec_definition(instance->targets[0].player, player, &ec);
+            new_default_test_definition(&this_test, 1, "Select a nonlegendary, nonland card.");
+            this_test.subtype = 0x2001;
+            this_test.type_flag = 1;
+            this_test.subtype_flag = 1;
+            new_effect_coercion(&ec, &this_test);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_022dc46d;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.zone = 0x1000;
+  get_card_instance(player, card);
+LAB_022dc46d:
+  result = generic_spell(player, card, event, 0x40, &td, NULL, 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22dc980; original cards/amonkhet.c:2020. */
+int card_lilianas_mastery(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_token_definition(player, card, 0x49ac, &token);
+    token.qty = '\x02';
+    generate_token(&token);
+  }
+  boost_creature_type(player, card, event, SUBTYPE_ZOMBIE, 1, 1, 0,
+                      BCT_INCLUDE_SELF | BCT_CONTROLLER_ONLY);
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22dca40; original cards/amonkhet.c:2040. */
+int card_lord_of_the_accursed(int player, int card, event_t event)
+{
+  int result;
+  boost_creature_type(player, card, event, SUBTYPE_ZOMBIE, 1, 1, 0, BCT_CONTROLLER_ONLY);
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    pump_subtype_until_eot(player, card, 2, 0xde, 0, 0, 0, 0x10000);
+  }
+  result = generic_activated_ability(player, card, event, 1, 1, 1, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22dcc00; original cards/amonkhet.c:2081. */
+int card_pitiless_vizier(int player, int card, event_t event)
+{
+  int result;
+  result = discard_trigger(player, card, event, player, 2, 0);
+  if (result == 0)
+  {
+    return 0;
+  }
+  pump_ability_until_eot(player, card, player, card, 0, 0, 0, 0x800);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22dd770; original cards/amonkhet.c:2421. */
+int card_trial_of_ambition(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_t test;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    result = target_opponent(player, card);
+    if (result != 0)
+    {
+      instance = get_card_instance(player, card);
+      player_sacrifices_a_permanent(player, card, instance->targets[0].player, 2, SAC_NO_CANCEL);
+    }
+  }
+  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 4);
+    test.subtype = 0x4011;
+    result = new_specific_cip(player, card, event, player, 2, &test);
+    if (result != 0)
+    {
+      bounce_permanent(player, card);
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22dd8f0; original cards/amonkhet.c:2461. */
+int card_wasteland_scorpion(int player, int card, event_t event)
+{
+  int result;
+  deathtouch(player, card, event);
+  result = cycling(player, card, event, 2, 0, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22ddbe0; original cards/amonkhet.c:2518. */
+int card_blazing_volley(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    new_damage_all(player, card, 1 - player, 1, 1, NULL);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22ddc60; original cards/amonkhet.c:2535. */
+int card_bloodrage_brawler(int player, int card, event_t event)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  discard(player, 0, player);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22de680; original cards/amonkhet.c:2734. */
+int card_desert_cerodon(int player, int card, event_t event)
+{
+  int result;
+  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    return 0;
+  }
+  result = cycling(player, card, event, 0, 0, 0, 0, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22de7c0; original cards/amonkhet.c:2763. */
+int card_flameblade_adept(int player, int card, event_t event)
+{
+  int result;
+  result = discard_trigger(player, card, event, player, 2, 0);
+  if (result == 0)
+  {
+    return 0;
+  }
+  pump_until_eot_merge_previous(player, card, player, card, 1, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d7410; original cards/amonkhet.c:2777. */
+static int glorious_end_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if ((((current_turn == player) && (trigger_condition == 0xcd)) && (card == affected_card)) &&
+      ((player == affected_card_controller && (reason_for_trigger_controller == player))))
+  {
+    result = instance->targets[1].player;
+    if (result < 1)
+    {
+      result = eot_trigger(player, card, event);
+      if (result != 0)
+      {
+        lose_the_game(player);
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    else
+    {
+      instance->targets[1].player = result + -1;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22df3b0; original cards/amonkhet.c:3049. */
+int card_sweltering_suns(int player, int card, event_t event)
+{
+  int result;
+  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      new_damage_all(player, card, 2, 3, 1, NULL);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+    return result;
+  }
+  result = cycling(player, card, event, 3, 0, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22df520; original cards/amonkhet.c:3083. */
+int card_trial_of_zeal(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    td.allow_cancel = 0;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = pick_target(&td, "TARGET_ANY");
+      if (result != 0)
+      {
+        damage_target0(player, card, 3);
+      }
+    }
+    instance = get_card_instance(player, card);
+    instance->number_of_targets = '\0';
+  }
+  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition((test_definition_t *)&td, 4);
+    result = new_specific_cip(player, card, event, player, 2, (test_definition_t *)&td);
+    if (result != 0)
+    {
+      bounce_permanent(player, card);
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22df6f0; original cards/amonkhet.c:3135. */
+int card_warfire_javelineer(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = 1 - player;
+  td.allow_cancel = 0;
+  td.preferred_controller = td.allowed_controller;
+  instance = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    result = new_pick_target(&td, "Select target creature an opponent controls.", 0, 0x80);
+    if (result != 0)
+    {
+      result = count_graveyard_by_type(player, 0x38);
+      damage_creature(instance->targets[0].player, instance->targets[0].card, result, player, card);
+    }
+  }
+  instance->number_of_targets = '\0';
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22df7f0; original cards/amonkhet.c:3160. */
+int card_benefaction_of_rhonas(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  unsigned int uVar3;
+  test_definition_t test;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      ai_modifier = ai_modifier + 0x30;
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (*deck_ptr[player] != -1)
+    {
+      iVar1 = count_deck(player);
+      if (5 < iVar1)
+      {
+        iVar1 = 5;
+      }
+      new_default_test_definition(&test, 2, "Select a creature card.");
+      test.create_minideck = (unsigned short)iVar1;
+      test.no_shuffle = 1;
+      iVar2 = new_global_tutor(player, player, 1, 1, 0, 1, &test);
+      iVar1 = iVar1 - (unsigned int)(iVar2 != -1);
+      if (*deck_ptr[player] != -1)
+      {
+        new_default_test_definition(&test, 4, "Select an enchantment card.");
+        test.create_minideck = (unsigned short)iVar1;
+        test.no_shuffle = 1;
+        uVar3 = new_global_tutor(player, player, 1, 1, 0, 1, &test);
+        iVar1 = iVar1 - (unsigned int)(uVar3 < 0x80000000);
+      }
+      if (0 < iVar1)
+      {
+        mill(player, iVar1);
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  iVar1 = basic_spell(player, card, event);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x22e04c0; original cards/amonkhet.c:3433. */
+int card_gift_of_paradise(int player, int card, event_t event)
+{
+  int result;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    gain_life(player, 3);
+  }
+  result = enchanted_land_has_T_add_n_mana_of_any_one_color(player, card, event, 2);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22e0740; original cards/amonkhet.c:3488. */
+int card_harvest_season(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  test_definition_t this_test2;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    default_test_definition(&this_test, 2);
+    this_test.state = 0x10;
+    result = check_battlefield_for_special_card(player, card, player, 4, &this_test);
+    if (0 < result)
+    {
+      new_default_test_definition(&this_test2, 1, "Select a basic land card.");
+      this_test2.subtype = 0x2000;
+      this_test2.qty = (unsigned short)result;
+      new_global_tutor(player, player, 1, 5, 0, 5, &this_test2);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22e0850; original cards/amonkhet.c:3513. */
+int card_haze_of_pollen(int player, int card, event_t event)
+{
+  int result;
+  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (((card == affected_card) && (player == affected_card_controller)) &&
+          ((current_turn == player ||
+            ((current_phase != 0x18 || (result = count_attackers(current_turn), result < 1))))))
+      {
+        ai_modifier = ai_modifier + -0x30;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      fog_effect(player, card);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+    return result;
+  }
+  result = cycling(player, card, event, 3, 0, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22e09f0; original cards/amonkhet.c:3548. */
+int card_initiates_companion(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  result =
+      damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (result == 0)
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 7);
+  td.preferred_controller = player;
+  td.allow_cancel = 0;
+  instance = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    result = new_pick_target(&td, "Select a creature or land to untap.", 0, 0x80);
+    if (result != 0)
+    {
+      untap_card(instance->targets[0].player, instance->targets[0].card);
+    }
+  }
+  instance->number_of_targets = '\0';
+  spell_fizzled = 0;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22e0ac0; original cards/amonkhet.c:3570. */
+int card_manglehorn(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &td, 0x40);
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = pick_target(&td, "TARGET_ARTIFACT");
+      if (result != 0)
+      {
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      }
+    }
+    instance->number_of_targets = '\0';
+  }
+  permanents_enters_battlefield_tapped(player, card, event, 1 - player, 0x40, NULL);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22e0bb0; original cards/amonkhet.c:3595. */
+int card_naga_vitalist(int player, int card, event_t event)
+{
+  int result;
+  color_test_t available;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = get_id(player, card);
+    get_color_of_mana_produced_by_id(result, 0x3e, player);
+  }
+  result = get_id(player, card);
+  available = get_color_of_mana_produced_by_id(result, 0x3e, player);
+  result = mana_producing_creature_all_one_color(player, card, event, 0, available, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22e0c40; original cards/amonkhet.c:3611. */
+int card_oashra_cultivator(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_ACTIVATE)
+  {
+    if (1 - player == current_turn)
+    {
+      result = count_subtype(player, 1, -1);
+      if (result < 4)
+      {
+        result = count_subtype(player, 2, -1);
+        ai_modifier = ai_modifier + result * 8;
+      }
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    tutor_basic_lands(player, TUTOR_PLAY_TAPPED, 1);
+  }
+  result = generic_activated_ability(player, card, event, 9, 2, 0, 0, 1, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22e1810; original cards/amonkhet.c:3859. */
+int card_sixth_sense(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_player)
+  {
+    result = duh_mode(player);
+    result = attached_creature_deals_damage(
+        player, card, event,
+        (result != 0) + (DDBM_MUST_DAMAGE_PLAYER | DDBM_REPORT_DAMAGE_DEALT |
+                         DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_TRIGGER_OPTIONAL));
+    if (result != 0)
+    {
+      draw_cards(player, 1);
+    }
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_022e1850;
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) ||
+             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+      goto LAB_022e1850;
+    if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+         (((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
+           (event != EVENT_CHANGE_TYPE)))) &&
+        (((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)) &&
+          (event != EVENT_STATIC_EFFECTS))))
+    {
+      return 0;
+    }
+  }
+LAB_022e1850:
+  result = vanilla_aura(player, card, event, player);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22e1b10; original cards/amonkhet.c:3911. */
+int card_synchronized_strike(int player, int card, event_t event)
+{
+  target_t *ptVar1;
+  target_t *ptVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int iVar5;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allow_cancel = 3;
+    get_card_instance(player, card);
+    iVar5 = generic_spell(player, card, EVENT_CAN_CAST, 0x20, &td, "TARGET_CREATURE", 1, NULL);
+    return iVar5;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 2);
+      td.allow_cancel = 3;
+      instance = get_card_instance(player, card);
+      iVar5 = check_special_flags2(player, card, 0x2000);
+      if (iVar5 == 0)
+      {
+        check_special_flags2(player, card, 0x8000);
+      }
+      iVar5 = new_pick_target(&td, "TARGET_CREATURE", 0, 0);
+      if (iVar5 != 0)
+      {
+        state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
+      }
+      iVar5 = can_target(&td);
+      if (iVar5 != 0)
+      {
+        new_pick_target(&td, "TARGET_CREATURE", 1, 0);
+        state_untargettable(instance->targets[0].player, instance->targets[0].card, 0);
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allow_cancel = 3;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      iVar5 = 0;
+      if (instance->number_of_targets != '\0')
+      {
+        do
+        {
+          while ((instance->targets[iVar5].card == -1 ||
+                  (iVar4 = validate_target(player, card, &td, iVar5), iVar4 == 0)))
+          {
+            iVar5 = iVar5 + 1;
+            if ((int)(unsigned int)instance->number_of_targets <= iVar5)
+              goto LAB_022e1c18;
+          }
+          untap_card(instance->targets[iVar5].player, instance->targets[iVar5].card);
+          ptVar2 = instance->targets + iVar5;
+          ptVar1 = instance->targets + iVar5;
+          iVar5 = iVar5 + 1;
+          pump_until_eot(player, card, ptVar1->player, ptVar2->card, 2, 2);
+        } while (iVar5 < (int)(unsigned int)instance->number_of_targets);
+      }
+    LAB_022e1c18:
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allow_cancel = 3;
+    get_card_instance(player, card);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22e1e30; original cards/amonkhet.c:3996. */
+int card_trial_of_strength(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_token_definition(player, card, 0x4907, &token);
+    token.pow = 4;
+    token.tou = 2;
+    generate_token(&token);
+  }
+  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition((test_definition_t *)&token, 4);
+    result = new_specific_cip(player, card, event, player, 2, (test_definition_t *)&token);
+    if (result != 0)
+    {
+      bounce_permanent(player, card);
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22e2bf0; original cards/amonkhet.c:4283. */
+int card_khenra_charioteer(int player, int card, event_t event)
+{
+  boost_creature_type(player, card, event, ~SUBTYPE_INVALID, 0, 0, 0x80, BCT_CONTROLLER_ONLY);
+  return (unsigned int)(event == EVENT_CAN_CAST);
+}
+
+/* ManalinkEh 2022: 0x22e2de0; original cards/amonkhet.c:4318. */
+int card_neheb_the_worthy(int player, int card, event_t event)
+{
+  int result;
+  check_legend_rule(player, card, event);
+  boost_subtype(player, card, event, SUBTYPE_MINOTAUR, 0, 0, 0x100, 0, BCT_CONTROLLER_ONLY);
+  if (hand_count[player] < 2)
+  {
+    boost_subtype(player, card, event, SUBTYPE_MINOTAUR, 2, 0, 0, 0,
+                  BCT_INCLUDE_SELF | BCT_CONTROLLER_ONLY);
+  }
+  result =
+      damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (result != 0)
+  {
+    discard(current_turn, 0, player);
+    discard(current_turn ^ 1, 0, player);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22e33e0; original cards/amonkhet.c:4435. */
+int card_samut_voice_of_dissent(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  check_legend_rule(player, card, event);
+  if (event == EVENT_ABILITIES)
+  {
+    vigilance(player, card, EVENT_ABILITIES);
+    haste(player, card, EVENT_ABILITIES);
+    boost_subtype(player, card, EVENT_ABILITIES, ~SUBTYPE_INVALID, 0, 0, 0, 4, BCT_CONTROLLER_ONLY);
+  }
+  else if ((((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
+            (event == EVENT_RESOLVE_ACTIVATION)) ||
+           (event == EVENT_CLEANUP))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    td.illegal_abilities = 0;
+    td.special = 0x4000;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        instance = get_card_instance(player, card);
+        result = instance->targets[0].card;
+        instance = get_card_instance(player, card);
+        untap_card(instance->targets[0].player, result);
+      }
+    }
+    result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 1, 0, &td,
+                                       "SELECT_ANOTHER_CREATURE");
+    return result;
+  }
+  result = flash(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22e36e0; original cards/amonkhet.c:4510. */
+int card_wayward_servant(int player, int card, event_t event)
+{
+  test_definition_t test;
+  if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (reason_for_trigger_controller == player))
+  {
+    new_default_test_definition(&test, 0x47, "");
+    test.subtype = 0xde;
+    test.not_me = 1;
+    etb_ability_global(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  lose_life(1 - player, 1);
+  gain_life(player, 1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22e8210; original cards/amonkhet.c:5836. */
+int card_throne_of_the_god_pharaoh(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  check_legend_rule(player, card, event);
+  if (current_turn == player)
+  {
+    result = eot_trigger(player, card, event);
+    if (result != 0)
+    {
+      default_test_definition(&this_test, 2);
+      this_test.state = 0x10;
+      result = check_battlefield_for_special_card(player, card, player, 4, &this_test);
+      lose_life(1 - player, result);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22e8be0; original cards/amonkhet.c:6062. */
+int card_sunscorched_desert(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &td, 0x100);
+    td.zone = 0x1200;
+    td.allow_cancel = 0;
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = pick_target(&td, "TARGET_PLAYER_OR_PLANESWALKER");
+      if (result != 0)
+      {
+        damage_target0(player, card, 1);
+      }
+    }
+    instance->number_of_targets = '\0';
+  }
+  result = mana_producer(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22e9080; original cards/amonkhet.c:6166. */
+int card_companion_of_the_trials(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = count_subtype(player, 0x47, 0x7005);
+      if (result < 1)
+      {
+        return 0;
+      }
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 1, 0, 0, 0, 0, 1, 0,
+                                         &td, "TARGET_CREATURE");
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      result = count_subtype(player, 0x47, 0x7005);
+      if (0 < result)
+      {
+        result = generic_activated_ability(player, card, EVENT_ACTIVATE, 4, 1, 0, 0, 0, 0, 1, 0,
+                                           &td, "TARGET_CREATURE");
+        return result;
+      }
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      ai_mod_for_untap_effects(player, card, 0, 0);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+  {
+    untap_card(instance->targets[0].player, instance->targets[0].card);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22e92a0; original cards/amonkhet.c:6207. */
+int card_gideons_resolve(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    new_default_test_definition(&test, 0xff, "Select a card named Gideon, Martial Paragon.");
+    test.id = 0x4217;
+    result = new_global_tutor(player, player, 1, 1, 0, 5, &test);
+    if (result < 0)
+    {
+      new_global_tutor(player, player, 2, 1, 0, 5, &test);
+    }
+  }
+  boost_creature_type(player, card, event, ~SUBTYPE_INVALID, 1, 1, 0, BCT_CONTROLLER_ONLY);
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22e9a10; original cards/amonkhet.c:6359. */
+int card_lilianas_influence(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    manipulate_type(player, card, 1 - player, TYPE_CREATURE, 0x1010001);
+    new_default_test_definition(&test, 0xff, "Select a card named Liliana, Death Wielder.");
+    test.id = 0x4241;
+    result = new_global_tutor(player, player, 1, 1, 0, 5, &test);
+    if (result < 0)
+    {
+      new_global_tutor(player, player, 2, 1, 0, 5, &test);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}

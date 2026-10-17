@@ -3684,3 +3684,29 @@ Regenerate each creature you control. */
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25737f0; original cards/future_sight.c:515. */
+int card_bogardan_lancer(int player, int card, event_t event)
+{
+  bloodthirst(player, card, event, 1);
+  flanking(player, card, event);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25765e0; original cards/future_sight.c:1562. */
+int card_infiltrator_il_kor(int player, int card, event_t event)
+{
+  int result;
+  shadow(player, card, event);
+  result = suspend(player, card, event, 2, 1, 0, 1, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x257d550; original cards/future_sight.c:3949. */
+int card_whip_spine_drake(int player, int card, event_t event)
+{
+  int result;
+  result = morph(player, card, event, 2, 0, 0, 0, 0, 1);
+  return result;
+}

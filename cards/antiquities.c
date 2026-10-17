@@ -3076,7 +3076,37 @@ At the beginning of your upkeep, you may sacrifice an artifact. If you don't, ta
 
 // Yotian Soldier --> Serra Angel
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int triskelion_like_creature(int player, int card, event_t event, int amount_of_starting_counters,
+                             int c, int b, int u, int g, int r, int w);
 
-
-
-
+/* ManalinkEh 2022: 0x224caf0; original cards/antiquities.c:2728. */
+int triskelion_like_creature(int player, int card, event_t event, int amount_of_starting_counters,
+                             int c, int b, int u, int g, int r, int w)
+{
+  int result;
+  target_definition_t td;
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1,
+                                       amount_of_starting_counters);
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      damage_target0(player, card, 1);
+    }
+  }
+  result =
+      generic_activated_ability(player, card, event, 0x44, c, b, u, g, r, w, 0, &td, "TARGET_ANY");
+  return result;
+}

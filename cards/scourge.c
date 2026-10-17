@@ -2665,3 +2665,45 @@ Morph-Pay 5 life. (You may cast this card face down as a 2/2 creature for |3. Tu
   return morph(player, card, event, MANACOST_X(0));
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24fc7b0; original cards/scourge.c:2100. */
+int card_raven_guild_initiate(int player, int card, event_t event)
+{
+  int result;
+  target_t tgt;
+  target_definition_t td;
+  if (event - EVENT_CAN_UNMORPH < 2)
+  {
+    base_target_definition(player, card, &td, 0x47);
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    td.required_subtype = 0x16;
+    if (event == EVENT_CAN_UNMORPH)
+    {
+      result = can_target(&td);
+      return result;
+    }
+    result = select_target(player, card + -1000, &td, "Select a Bird you control.", &tgt);
+    if (result == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    bounce_permanent(tgt.player, tgt.card);
+    result = 0;
+  }
+  else
+  {
+    result = morph(player, card, event, 0, 0, 0, 0, 0, 0);
+  }
+  return result;
+}
+
+/* ManalinkEh 2022: 0x24fde00; original cards/scourge.c:2623. */
+int card_titanic_bulvox(int player, int card, event_t event)
+{
+  int result;
+  result = morph(player, card, event, 4, 0, 0, 3, 0, 0);
+  return result;
+}

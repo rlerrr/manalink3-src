@@ -1736,3 +1736,25 @@ void tutor_multiple_card_from_hand(int who_chooses, int t_player, int who_gets_t
 		}
 	}
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2650b50; original functions/tutors.c:313. */
+static int effect_leonin_arbiter(int player, int card, event_t event)
+{
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2650b10; original functions/tutors.c:1154. */
+static int qsort_compare_int_descending(void *lhs, void *rhs) { return *(int *)rhs - *(int *)lhs; }
+
+/* ManalinkEh 2022: 0x2650b30; original functions/tutors.c:1162. */
+static int qsort_compare_target_player_descending(void *lhs, void *rhs)
+{
+  return *(int *)rhs - *(int *)lhs;
+}

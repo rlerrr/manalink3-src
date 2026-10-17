@@ -765,3 +765,27 @@ void generate_custom_token_from_subtype(int player, int card, int subtype, int c
 	}
 	generate_token(&token);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2664e30; original functions/token_generation.c:945. */
+static int legacy_negate_static_abilities(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  if (event == EVENT_ABILITIES)
+  {
+    if ((instance->damage_target_card == affected_card) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+      event_result = event_result & 0xffffffdf;
+    }
+  }
+  else if (((event == EVENT_CHANGE_TYPE) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    instance->regen_status = instance->regen_status | 0x1f000000;
+  }
+  return 0;
+}

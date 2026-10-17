@@ -3663,3 +3663,462 @@ Exile the top creature card of your graveyard: Regenerate ~. */
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *is_blocking_master_of_arms(int who_chooses, int player, int card, int targeting_player,
+                                        int targeting_card);
+static int sawtooth_ogre_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x22e9b50; original cards/weatherlight.c:54. */
+static int abduction_effect(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0)
+  {
+    return 0;
+  }
+  result = instance->targets[0].player;
+  seek_grave_for_id_to_reanimate(result, card, result,
+                                 (unsigned int)cards_data[instance->targets[0].card].id,
+                                 REANIMATE_DEFAULT);
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22eabc0; original cards/weatherlight.c:2436. */
+static int has_same_mana_type(int unused, int color, int player, int card)
+{
+  unsigned int uVar1;
+  uVar1 = get_colors_of_mana_land_could_produce_ignoring_costs(player, card);
+  return uVar1 & color;
+}
+
+/* ManalinkEh 2022: 0x22f6810; original cards/weatherlight.c:4016. */
+int card_arctic_wolves(int player, int card, event_t event)
+{
+  cumulative_upkeep(player, card, event, 2, 0, 0, 0, 0, 0);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  draw_a_card(player);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22f6a70; original cards/weatherlight.c:4055. */
+int card_benalish_missionary(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.required_state = 8;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 1, 0, 0, 0, 0, 1, 0,
+                                         &td, NULL);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 5, 1, 0, 0, 0, 0, 1, 0, &td,
+                                "TARGET_CREATURE");
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      result = is_attacking(instance->targets[0].player, instance->targets[0].card);
+      ai_modifier = ai_modifier + (-(unsigned int)(result == 0) & 0xffffffa0) + 0x30;
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.required_state = 8;
+    instance = get_card_instance(player, card);
+  }
+  if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    return 0;
+  }
+  negate_combat_damage_this_turn(player, card, instance->targets[0].player,
+                                 instance->targets[0].card, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22f6c60; original cards/weatherlight.c:4088. */
+int card_bogardan_Firefiend(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allow_cancel = 0;
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = pick_target(&td, "TARGET_CREATURE");
+      if (result != 0)
+      {
+        damage_creature(instance->targets[0].player, instance->targets[0].card, 2, player, card);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22f6f90; original cards/weatherlight.c:4154. */
+int card_cinder_giant(int player, int card, event_t event)
+{
+  test_definition_t this_test;
+  upkeep_trigger_ability(player, card, event, player);
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    return 0;
+  }
+  default_test_definition(&this_test, 2);
+  this_test.not_me = 1;
+  new_damage_all(player, card, player, 2, 0, &this_test);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22f7770; original cards/weatherlight.c:4371. */
+int card_fit_of_rage(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.preferred_controller = player;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            pump_ability_until_eot(player, card, instance->targets[0].player,
+                                   instance->targets[0].card, 3, 3, 0x100, 0);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_022f77d9;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = player;
+  get_card_instance(player, card);
+LAB_022f77d9:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22f7ba0; original cards/weatherlight.c:4436. */
+int card_guided_strike(int player, int card, event_t event)
+{
+  int result;
+  result = vanilla_instant_pump(player, card, event, 2, player, 1, 0, 0x1000100, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22f7ce0; original cards/weatherlight.c:4470. */
+int card_hurloon_shaman(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0)
+  {
+    return 0;
+  }
+  new_default_test_definition(&test, 1, "Select a land to sacrifice.");
+  new_sacrifice(player, card, current_turn, SAC_CAUSED | SAC_NO_CANCEL, &test);
+  new_sacrifice(player, card, current_turn ^ 1, SAC_CAUSED | SAC_NO_CANCEL, &test);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22f8300; original cards/weatherlight.c:4584. */
+int card_llanowar_druid(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      default_test_definition(&this_test, 1);
+      this_test.subtype = get_hacked_subtype(player, card, 0x5001);
+      new_manipulate_all(player, card, 2, &this_test, ACT_UNTAP);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 9, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22eada0; original cards/weatherlight.c:4648. */
+static char *is_blocking_master_of_arms(int who_chooses, int player, int card, int targeting_player,
+                                        int targeting_card)
+{
+  int result;
+  result = is_blocking(card, targeting_card);
+  if (result == 0)
+  {
+    return "must be blocking Master of Arms";
+  }
+  return NULL;
+}
+
+/* ManalinkEh 2022: 0x22f8680; original cards/weatherlight.c:4655. */
+int card_master_of_arms(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td2;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td2, 2);
+    td2.allowed_controller = 1 - player;
+    td2.special = 0x8000;
+    td2.extra = (int32_t)is_blocking_master_of_arms;
+    td2.preferred_controller = td2.allowed_controller;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td2, 2);
+    td2.allowed_controller = 1 - player;
+    td2.special = 0x8000;
+    td2.extra = (int32_t)is_blocking_master_of_arms;
+    td2.preferred_controller = td2.allowed_controller;
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td2), result != 0))
+    {
+      tap_card(instance->targets[0].player, instance->targets[0].card);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 6, 1, 0, 0, 0, 0, 1, 0, &td2,
+                                     "Select target creature blocking Master of Arms.");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22eadd0; original cards/weatherlight.c:4814. */
+static int sawtooth_ogre_legacy(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  result = end_of_combat_trigger(player, card, event, 2);
+  if (result == 0)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  damage_creature((int)instance->damage_target_player, instance->damage_target_card, 1,
+                  (int)instance->damage_source_player, instance->damage_source_card);
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22e9d10; original cards/weatherlight.c:4825. */
+static void damage_blocked_blocking_creature(int player, int card, int t_player, int t_card)
+{
+  create_targetted_legacy_effect(player, card, sawtooth_ogre_legacy, t_player, t_card);
+  return;
+}
+
+/* ManalinkEh 2022: 0x22f8fc0; original cards/weatherlight.c:4846. */
+int card_soul_shepherd(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = can_use_activated_abilities(player, card);
+    if ((result != 0) &&
+        (result = has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 1), result != 0))
+    {
+      result = any_in_graveyard_by_type(player, 2);
+      return (unsigned int)(result != 0);
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 1);
+    if (spell_fizzled != 1)
+    {
+      new_default_test_definition(&test, 2, "Select a creature card to exile.");
+      result = new_select_a_card(player, player, 2, 0, 3, -1, &test);
+      if (result != -1)
+      {
+        rfg_card_from_grave(player, result);
+        return 0;
+      }
+      spell_fizzled = 1;
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    gain_life(player, 1);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22f9160; original cards/weatherlight.c:4879. */
+int card_tendrils_of_despair(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0);
+        td.zone = 0x1000;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            new_multidiscard(1 - player, 2, 0, player);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_022f91bc;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0);
+  td.zone = 0x1000;
+LAB_022f91bc:
+  result = generic_spell(player, card, event, 0x440, &td, NULL, 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22f92b0; original cards/weatherlight.c:4904. */
+int card_thran_forge(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_CHECK_PUMP)
+  {
+    result = card_thran_forge(player, card, EVENT_CAN_ACTIVATE);
+    if (result != 0)
+    {
+      pumpable_power[player] = pumpable_power[player] + 1;
+    }
+  }
+  else if ((((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
+            (event == EVENT_RESOLVE_ACTIVATION)) ||
+           (event == EVENT_CLEANUP))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    td.illegal_type = 0x40;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        pump_until_eot_merge_previous(instance->parent_controller, instance->parent_card,
+                                      instance->targets[0].player, instance->targets[0].card, 1, 0);
+        turn_into_artifact(instance->parent_controller, instance->parent_card,
+                           instance->targets[0].player, instance->targets[0].card, 1);
+      }
+    }
+    result = generic_activated_ability(
+        player, card, event, 6, 2, 0, 0, 0, 0, 0, 0, &td,
+        "Select target nonartifact creature gets +1/+0 & becomes artifact");
+    return result;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22f9450; original cards/weatherlight.c:4937. */
+int card_timid_drake(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  if (trigger_condition != 0xdb)
+  {
+    return 0;
+  }
+  if (((card == affected_card) && (player == affected_card_controller)) &&
+      ((trigger_cause_controller != player || (trigger_cause != card))))
+  {
+    default_test_definition(&test, 2);
+    test.not_me = 1;
+    result = new_specific_cip_global(2, event, 2, TYPE_NONE, &test, player, card);
+    if (result != 0)
+    {
+      bounce_permanent(player, card);
+    }
+  }
+  return 0;
+}

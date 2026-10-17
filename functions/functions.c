@@ -17130,3 +17130,137 @@ void return_cards_exiled_by_me_to_play(int player, int card){
 	}
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int life_total_can_change(int player);
+
+/* ManalinkEh 2022: 0x268f070; original functions/functions.c:11362. */
+int life_total_can_change(int player)
+{
+  int result;
+  unsigned int uVar2;
+  result = check_battlefield_for_id(player, 0x2c48);
+  if (result != 0)
+  {
+    return 0;
+  }
+  uVar2 = check_for_id_legacy(player, 0x43b3);
+  return uVar2 >> 0x1f;
+}
+
+/* ManalinkEh 2022: 0x26910e0; original functions/functions.c:12271. */
+int how_much_life_can_i_pay(int player)
+{
+  int result;
+  result = life_total_can_change(player);
+  if (result != 0)
+  {
+    result = check_battlefield_for_id(2, 0x3010);
+    if (result == 0)
+    {
+      return life[player];
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x26930f0; original functions/functions.c:15061. */
+int cast_counter_triggered_ability(int player, int card, int target_pos)
+{
+  int iVar1;
+  int32_t iVar2;
+  card_instance_t *pcVar3;
+  card_instance_t *pcVar4;
+  unsigned int uVar5;
+  if (stack_size < 1)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+  pcVar3 = get_card_instance(player, card);
+  iVar1 = stack_size + -2;
+  iVar2 = stack_cards[iVar1].card;
+  pcVar3->targets[target_pos].player = stack_cards[iVar1].player;
+  pcVar3->targets[target_pos].card = iVar2;
+  pcVar3->number_of_targets = pcVar3->number_of_targets + '\x01';
+  pcVar3->targets[9].player = stack_phase[iVar1];
+  pcVar4 = get_card_instance(pcVar3->targets[target_pos].player, pcVar3->targets[target_pos].card);
+  uVar5 = pcVar4->internal_card_id;
+  if (uVar5 == 0xffffffff)
+  {
+    pcVar4 =
+        get_card_instance(pcVar3->targets[target_pos].player, pcVar3->targets[target_pos].card);
+    uVar5 = (unsigned int)pcVar4->backup_internal_card_id;
+  }
+  pcVar3->targets[9].card = uVar5;
+  ai_modifier = ai_modifier + 100;
+  return 1;
+}
+
+/* ManalinkEh 2022: 0x2677990; original functions/functions.c:15108. */
+static int counter_triggered_ability_legacy(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+
+  pcVar1 = get_card_instance(player, card);
+  if (0 < stack_size)
+  {
+    result = 0;
+    do
+    {
+      while (((pcVar2 = get_card_instance(stack_cards[result].player, stack_cards[result].card),
+               pcVar2->original_internal_card_id != pcVar1->targets[9].card ||
+                   (-1 < (int)pcVar2->token_status)) ||
+              (stack_phase[result] != pcVar1->targets[9].player)))
+      {
+        result = result + 1;
+        if (stack_size <= result)
+          goto LAB_02677a30;
+      }
+      result = result + 1;
+      pcVar2->state = pcVar2->state | 0x40000000;
+      kill_card(player, card, KILL_EXILE);
+    } while (result < stack_size);
+  }
+LAB_02677a30:
+  if (event == EVENT_PHASE_CHANGED)
+  {
+    if (pcVar1->targets[2].player < current_phase)
+      goto LAB_02677a48;
+  }
+  else if (event == EVENT_CAN_SKIP_TURN)
+    goto LAB_02677a48;
+  if (stack_size != 0)
+  {
+    return 0;
+  }
+LAB_02677a48:
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x26835b0; original functions/functions.c:15649. */
+static int extra_combat_legacy(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (((event == EVENT_PHASE_CHANGED) && (0x1d < current_phase)) && (current_turn == player))
+  {
+    instance = get_card_instance(player, card);
+    if (0x41 < instance->targets[1].player)
+    {
+      instance = get_card_instance(player, card);
+      land_can_be_played = land_can_be_played & 0xfffffff7;
+      current_phase = 0x15;
+      instance->targets[1].player = instance->targets[1].player + -1;
+    }
+  }
+  result = eot_trigger(player, card, event);
+  if (result == 0)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}

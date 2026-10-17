@@ -6245,3 +6245,27 @@ int card_wastes(int player, int card, event_t event){
 	 * |T: Add |C to your mana pool. */
 	return mana_producer(player, card, event);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2259dc0; original cards/oath_of_the_gatewatch.c:2521. */
+static int effect_flaying_tendrils(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_CAST_SPELL)
+  {
+    result = is_what(affected_card_controller, affected_card, 2);
+    if (result != 0)
+    {
+      exile_if_would_be_put_into_graveyard(player, card, affected_card_controller, affected_card,
+                                           1);
+    }
+  }
+  result = eot_trigger(player, card, event);
+  if (result == 0)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}

@@ -2225,6 +2225,42 @@ int* UnorderedMapIntInt_fetch(UnorderedMapIntInt* m, int key);	// Returns a poin
 int* UnorderedMapIntInt_set(UnorderedMapIntInt* m, int key);	// Returns a pointer to the value for key in the map described by m, creating the map first if m is NULL.  If key isn't in the map, inserts it first.
 void UnorderedMapIntInt_delete(UnorderedMapIntInt* m);	// Destroys the map described by m.
 
+/* Interfaces recovered from October 2022 DWARF. */
+char *not_indestructible(int who_chooses, int player, int card);
+color_test_t basic_subtype_to_color_test(subtype_t subtype);
+int blossoming_calm_effect(int player, int card, event_t event);
+int bonus_round_legacy(int player, int card, event_t event);
+int can_legally_target(int targeting_player, int targeting_card, target_t *targeted);
+int cast_counter_triggered_ability(int player, int card, int target_pos);
+int choose_player(int player, int card, int preferred_controller, int allow_cancel);
+int destroy_target_blocking_creature_at_end_of_combat(int player, int card, event_t event);
+int doublecast_legacy(int player, int card, event_t event);
+int doublecast_legacy_mana_value_2_or_less(int player, int card, event_t event);
+int effect_must_attack_on_next_combat(int player, int card, event_t event);
+int garruk_cursed_huntsman_emblem(int player, int card, event_t event);
+int get_aftermath(int player, int card);
+int how_much_life_can_i_pay(int player);
+int insist_until_eot(int player, int card, event_t event);
+int jared_carthalion_effect(int player, int card, event_t event);
+int jumpstart(int player, int card, event_t event, int id);
+int life_total_can_change(int player);
+int prosperity_legacy(int player, int card, event_t event);
+int put_this_on_top_of_owners_library_at_end_of_combat(int player, int card, event_t event);
+int special_count_zone(int player, int *zone, test_definition_t *this_test);
+int spiteful_sliver_legacy(int player, int card, event_t event);
+int target_becomes_enchantentment_loses_ablilities(int player, int card, event_t event);
+int taunt_force_attack(int player, int card, event_t event);
+int triplecast_legacy_mana_value_2_or_less(int player, int card, event_t event);
+int triskelion_like_creature(int player, int card, event_t event, int amount_of_starting_counters,
+                             int c, int b, int u, int g, int r, int w);
+int txtfx(int player, int card, event_t event, card_id_t marker);
+keyword_t color_to_protection(color_t color);
+void adventure_transform(int player, int card, int csvid);
+void counter_triggered_target_definition(int player, int card, target_definition_t *td, int type);
+void mdfc_transform(int player, int card, int csvid);
+void true_transform_to_csvid(int player, int card, int csvid);
+void unmeld(int csvid, int *csvida, int *csvidb);
+
 #ifdef __cplusplus
 }
 #endif

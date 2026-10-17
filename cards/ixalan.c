@@ -1209,3 +1209,806 @@
  * When ~ enters the battlefield, you may search your library and/or graveyard for a card named Huatli, Dinosaur Knight, reveal it, then put it into your hand. If you searched your library this way, shuffle it. */
 
 // Stone Quarry: reprint from Shadows over Innistrad
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2212ae0; original cards/ixalan.c:41. */
+int card_adanto_vanguard(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  if (event == EVENT_POWER)
+  {
+    instance = get_card_instance(player, card);
+    if ((instance->state & 4) != 0)
+    {
+      event_result = event_result + 2;
+    }
+    return 0;
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+  LAB_02212b61:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_02212b66;
+  }
+  else if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    if (event != EVENT_CLEANUP)
+    {
+      return 0;
+    }
+    goto LAB_02212b61;
+  }
+  instance = get_card_instance(player, card);
+  pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                         instance->parent_controller, instance->parent_card, 0, 0, 0, 0x800);
+LAB_02212b66:
+  result = generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 0, 0, 4, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2213730; original cards/ixalan.c:428. */
+int card_chart_a_course(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      ai_modifier = ai_modifier + ((current_turn != player) - 1 & 0xffffffd0) + 0x18;
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    draw_cards(player, 2);
+    result = get_trap_condition(player, 0x606);
+    if (result < 1)
+    {
+      discard(player, 0, player);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2213800; original cards/ixalan.c:475. */
+int card_entrancing_melody(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            gain_control_permanently(player, instance->targets[0].player,
+                                     instance->targets[0].card);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02213866;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  get_card_instance(player, card);
+LAB_02213866:
+  result = generic_spell(player, card, event, 5, &td, "TARGET_CREATURE", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2213a30; original cards/ixalan.c:563. */
+int card_prosperous_pirates(int player, int card, event_t event)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  generate_tokens_by_id(player, card, 0x4998, 2);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2213aa0; original cards/ixalan.c:581. */
+int card_rivers_rebuke(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  test_definition_t this_test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.zone = 0x1000;
+        td.preferred_controller = player;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          default_test_definition(&this_test, 4);
+          new_manipulate_all(player, card, instance->targets[0].player, &this_test, ACT_BOUNCE);
+          default_test_definition(&this_test, 1);
+          this_test.type_flag = 1;
+          new_manipulate_all(player, card, instance->targets[0].player, &this_test, ACT_BOUNCE);
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02213bbf;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.zone = 0x1000;
+  td.preferred_controller = player;
+  get_card_instance(player, card);
+LAB_02213bbf:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2213c70; original cards/ixalan.c:615. */
+int card_sailor_of_means(int player, int card, event_t event)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  generate_token_by_id(player, card, 0x4998);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2214060; original cards/ixalan.c:733. */
+int card_siren_stormtamer(int player, int card, event_t event)
+{
+  int card_00;
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    iVar1 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x408, 0, 0, 1, 0, 0, 0, 0,
+                                      NULL, NULL);
+    if ((iVar1 != 0) && (instance = get_card_instance(card_on_stack_controller, card_on_stack),
+                         instance->number_of_targets != '\0'))
+    {
+      iVar1 = 0;
+      do
+      {
+        iVar3 = instance->targets[iVar1].player;
+        card_00 = instance->targets[iVar1].card;
+        if (iVar3 == player)
+        {
+          if (card_00 == -1)
+          {
+            return 99;
+          }
+        LAB_0221421c:
+          iVar3 = is_what(iVar3, card_00, 2);
+          if ((iVar3 != 0) && (instance->targets[iVar1].player == player))
+          {
+            return 99;
+          }
+        }
+        else if (card_00 != -1)
+          goto LAB_0221421c;
+        iVar1 = iVar1 + 1;
+      } while (iVar1 < (int)(unsigned int)instance->number_of_targets);
+    }
+    return 0;
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+  LAB_022140a1:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_022140a6;
+  }
+  else if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    if (event != EVENT_CLEANUP)
+    {
+      return 0;
+    }
+    goto LAB_022140a1;
+  }
+  instance = get_card_instance(player, card);
+  iVar1 = counterspell_validate(player, card, NULL, 0);
+  if (iVar1 != 0)
+  {
+    real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
+  }
+  kill_card(player, card, KILL_SACRIFICE);
+LAB_022140a6:
+  iVar1 = generic_activated_ability(player, card, event, 0x408, 0, 0, 1, 0, 0, 0, 0, NULL, NULL);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x22143b0; original cards/ixalan.c:831. */
+int card_arguels_blood_fast(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  double_faced_card(player, card, event);
+  check_legend_rule(player, card, event);
+  iVar1 = duh_mode(player);
+  upkeep_trigger_ability_mode(player, card, event, player, (iVar1 != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    if (life[player] < 6)
+    {
+      transform(player, card);
+    }
+  LAB_0221450a:
+    if (event != EVENT_SHOULD_AI_PLAY)
+    {
+      return (unsigned int)(event == EVENT_CAN_CAST);
+    }
+    ai_modifier = ai_modifier + (-(unsigned int)(player == 0) & 0xfffffff0) + 8;
+    return 0;
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+  LAB_0221446d:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_02214472;
+  }
+  else
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      iVar1 = life[player];
+      iVar2 = count_subtype(player, 1, -1);
+      ai_modifier = ai_modifier + iVar1 + -0xe + iVar2 * 2;
+      goto LAB_02214472;
+    }
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      if (event != EVENT_CLEANUP)
+        goto LAB_0221450a;
+      goto LAB_0221446d;
+    }
+  }
+  draw_cards(player, 1);
+LAB_02214472:
+  iVar1 = generic_activated_ability(player, card, event, 0, 1, 1, 0, 0, 0, 0, 2, NULL, NULL);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x2214d00; original cards/ixalan.c:1188. */
+int card_skymarch_bloodletter(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.zone = 0x1000;
+    result = would_validate_arbitrary_target(&td, 1 - player, -1);
+    if (result != 0)
+    {
+      lose_life(1 - player, 1);
+      gain_life(player, 1);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2214db0; original cards/ixalan.c:1225. */
+int card_vraskas_contempt(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x102);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = validate_target(player, card, &td, 0);
+          if (result != 0)
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+            gain_life(player, 2);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02214e16;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x102);
+  get_card_instance(player, card);
+LAB_02214e16:
+  result = generic_spell(player, card, event, 0x81, &td, "Select target creature or planeswalker.",
+                         1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2214f20; original cards/ixalan.c:1249. */
+int card_walk_the_plank(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.required_subtype = 0x74;
+        td.special = 0x1000;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          instance = get_card_instance(player, card);
+          result = validate_target(player, card, &td, 0);
+          if (result != 0)
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02214f83;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.required_subtype = 0x74;
+  td.special = 0x1000;
+LAB_02214f83:
+  result =
+      generic_spell(player, card, event, 0x81, &td, "Select target non-Merfolk creature.", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2215260; original cards/ixalan.c:1345. */
+int card_fiery_cannonade(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      default_test_definition(&this_test, 2);
+      this_test.subtype = 0x95;
+      this_test.subtype_flag = 1;
+      new_damage_all(player, card, 2, 2, 0, &this_test);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2215c10; original cards/ixalan.c:1627. */
+int card_vances_blasting_cannons(int player, int card, event_t event)
+{
+  unsigned short uVar1;
+  int iVar2;
+  int iVar3;
+  double_faced_card(player, card, event);
+  check_legend_rule(player, card, event);
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    uVar1 = cards_data[*deck_ptr[player]].id;
+    rfg_top_card_of_deck(player);
+    iVar2 = is_what(-1, (unsigned int)uVar1, 1);
+    if (iVar2 == 0)
+    {
+      create_may_play_card_from_exile_effect(player, card, player, (unsigned int)uVar1,
+                                             MPCFE_UNTIL_EOT);
+    }
+  }
+  iVar2 = get_specific_storm_count(player);
+  if (iVar2 == 2)
+  {
+    iVar3 = duh_mode(player);
+    iVar2 = 2;
+    if (iVar3 == 0)
+    {
+      iVar2 = 1;
+    }
+    iVar2 = new_specific_spell_played(player, card, event, player, iVar2, NULL);
+    if (iVar2 != 0)
+    {
+      transform(player, card);
+    }
+  }
+  if (event != EVENT_SHOULD_AI_PLAY)
+  {
+    return (unsigned int)(event == EVENT_CAN_CAST);
+  }
+  ai_modifier = ai_modifier + (-(unsigned int)(player == 0) & 0xfffffff0) + 8;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2215fe0; original cards/ixalan.c:1721. */
+int card_carnage_tyrant(int player, int card, event_t event)
+{
+  cannot_be_countered(player, card, event);
+  hexproof(player, card, event);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2216860; original cards/ixalan.c:1914. */
+int card_growing_rites_of_itlimoc(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  test_definition_t test;
+  double_faced_card(player, card, event);
+  check_legend_rule(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if ((event == EVENT_ETB) && (iVar1 = count_deck(player), 0 < iVar1))
+  {
+    if (4 < iVar1)
+    {
+      iVar1 = 4;
+    }
+    new_default_test_definition(&test, 2, "Select a creature card.");
+    test.create_minideck = (unsigned short)iVar1;
+    test.no_shuffle = 1;
+    iVar2 = new_global_tutor(player, player, 1, 1, 0, 1, &test);
+    if ((iVar2 < 0) || (iVar1 = iVar1 + -1, 0 < iVar1))
+    {
+      put_top_x_on_bottom(player, player, iVar1);
+    }
+  }
+  if (((current_turn == player) && (iVar1 = eot_trigger(player, card, event), iVar1 != 0)) &&
+      (iVar1 = count_permanents_by_type(player, TYPE_CREATURE), 3 < iVar1))
+  {
+    transform(player, card);
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x2216d20; original cards/ixalan.c:2095. */
+int card_thundering_spineback(int player, int card, event_t event)
+{
+  int result;
+  boost_creature_type(player, card, event, SUBTYPE_DINOSAUR, 1, 1, 0, BCT_CONTROLLER_ONLY);
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      generate_token_by_id(player, card, 0x491d);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0, 5, 0, 0, 1, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22174d0; original cards/ixalan.c:2275. */
+int card_hostage_taker(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int csvid;
+  int result;
+  target_definition_t td;
+  return_from_oblivion(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &td, 0x42);
+    td.special = 0x4000;
+    td.allow_cancel = 0;
+    result = can_target(&td);
+    if ((result != 0) && (result = new_pick_target(&td, "PUTREFY", 0, 0), result != 0))
+    {
+      instance = get_card_instance(player, card);
+      result = instance->targets[0].card;
+      instance = get_card_instance(player, card);
+      csvid = get_id(instance->targets[0].player, result);
+      instance = get_card_instance(player, card);
+      result = instance->targets[0].card;
+      instance = get_card_instance(player, card);
+      obliviation(player, card, instance->targets[0].player, result);
+      instance = get_card_instance(player, card);
+      create_may_play_card_from_exile_effect(player, card, instance->targets[0].player, csvid,
+                                             MPCFE_FOR_CMC);
+    }
+    return 0;
+  }
+  if (event == EVENT_CAN_CAST)
+  {
+    result = basic_spell(player, card, EVENT_CAN_CAST);
+    return result;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2217b50; original cards/ixalan.c:2411. */
+int card_raging_swordtooth(int player, int card, event_t event)
+{
+  test_definition_t this_test;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  default_test_definition(&this_test, 2);
+  this_test.not_me = 1;
+  new_damage_all(player, card, 2, 1, 0, &this_test);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2217bf0; original cards/ixalan.c:2428. */
+int card_regisaur_alpha(int player, int card, event_t event)
+{
+  token_generation_t token;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_token_definition(player, card, 0x491d, &token);
+    token.tou = 3;
+    token.pow = 3;
+    token.color_forced = '\b';
+    generate_token(&token);
+    return 0;
+  }
+  if (event != EVENT_ABILITIES)
+  {
+    return 0;
+  }
+  boost_subtype(player, card, EVENT_ABILITIES, SUBTYPE_DINOSAUR, 0, 0, 0, 4, BCT_CONTROLLER_ONLY);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2217dd0; original cards/ixalan.c:2480. */
+int card_vona_butcher_of_magan(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  check_legend_rule(player, card, event);
+  vigilance(player, card, event);
+  lifelink(player, card, event);
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = 1;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = 1;
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      instance = get_card_instance(player, card);
+      result = instance->targets[0].card;
+      instance = get_card_instance(player, card);
+      kill_card(instance->targets[0].player, result, KILL_DESTROY);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0x10005, 0, 0, 0, 0, 0, 0, 7, &td,
+                                     "TARGET_PERMANENT");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2218d00; original cards/ixalan.c:2783. */
+int card_dusk_legion_dreadnought(int player, int card, event_t event)
+{
+  int result;
+  vigilance(player, card, event);
+  result = vehicle(player, card, event, 2);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2218d50; original cards/ixalan.c:2818. */
+int card_pirates_cutlass(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.required_subtype = 0x95;
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    td.allow_cancel = 0;
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "Select target Pirate you control.", 0, 0x80);
+      if (result != 0)
+      {
+        equip_target_creature(player, card, instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+    instance->number_of_targets = '\0';
+  }
+  result = vanilla_equipment(player, card, event, 2, 2, 1, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22126f0; original cards/ixalan.c:2843. */
+static int primal_wellspring_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if (event == EVENT_CAST_SPELL)
+  {
+    result = played_for_free(affected_card_controller, affected_card);
+    if (result == 0)
+    {
+      result = is_token(affected_card_controller, affected_card);
+      if (result == 0)
+      {
+        result = check_special_flags(affected_card_controller, affected_card, 0x40000);
+        if ((result == 0) && (affected_card_controller == player))
+        {
+          result = is_what(player, affected_card, 0x38);
+          if ((result != 0) && (0 < mana_paid[instance->targets[6].player]))
+          {
+            result = get_id(affected_card_controller, affected_card);
+            copy_spell(player, result);
+            kill_card(player, card, KILL_EXILE);
+          }
+        }
+      }
+    }
+  }
+  else if (((event == EVENT_STATIC_EFFECTS) && (stack_size == 0)) &&
+           (mana_pool[player][instance->targets[6].player] < 1))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2219160; original cards/ixalan.c:2949. */
+int card_thaumatic_compass(int player, int card, event_t event)
+{
+  int result;
+  double_faced_card(player, card, event);
+  if (((current_turn == player) && (result = eot_trigger(player, card, event), result != 0)) &&
+      (result = count_permanents_by_type(player, TYPE_LAND), 6 < result))
+  {
+    if (event != EVENT_TRIGGER)
+    {
+      if (event == EVENT_RESOLVE_TRIGGER)
+      {
+        transform(player, card);
+        return 0;
+      }
+      goto LAB_0221918e;
+    }
+    event_result = event_result | 2;
+  LAB_02219198:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      if (event != EVENT_CLEANUP)
+      {
+        return 0;
+      }
+      goto LAB_022191a8;
+    }
+  }
+  else
+  {
+  LAB_0221918e:
+    if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+      goto LAB_02219198;
+  LAB_022191a8:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_022191b1;
+  }
+  tutor_basic_land(player, 0, 0);
+LAB_022191b1:
+  result = generic_activated_ability(player, card, event, 1, 3, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}

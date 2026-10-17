@@ -3534,3 +3534,12 @@ Whenever Zur the Enchanter attacks, you may search your library for an enchantme
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2168a60; original cards/coldsnap.c:2781. */
+int card_ronom_hulk(int player, int card, event_t event)
+{
+  protection_from_subtype(player, card, event, SUBTYPE_SNOW);
+  cumulative_upkeep(player, card, event, 1, 0, 0, 0, 0, 0);
+  return 0;
+}

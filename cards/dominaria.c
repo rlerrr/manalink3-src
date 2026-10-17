@@ -1114,3 +1114,1325 @@
  * Land
  * When ~ enters the battlefield, scry 1.
  * |T: Add |C. */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int give_token_haste_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x22cb240; original cards/dominaria.c:241. */
+int card_arvad_the_cursed(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  deathtouch(player, card, event);
+  lifelink(player, card, event);
+  boost_creature_type(player, card, event, SUBTYPE_LEGEND, 2, 2, 0, BCT_CONTROLLER_ONLY);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22cbb50; original cards/dominaria.c:390. */
+int card_baird_steward_of_argive(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  vigilance(player, card, event);
+  tax_attack(player, card, event);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22cbba0; original cards/dominaria.c:406. */
+int card_befuddle(int player, int card, event_t event)
+{
+  int result;
+  result = vanilla_instant_pump(player, card, event, 2, 1 - player, -4, 0, 0x1000000, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22cbc00; original cards/dominaria.c:420. */
+int card_benalish_marshal(int player, int card, event_t event)
+{
+  boost_subtype(player, card, event, ~SUBTYPE_INVALID, 1, 1, 0, 0, BCT_CONTROLLER_ONLY);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22cc4a0; original cards/dominaria.c:550. */
+int card_broken_bond(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  test_definition_t test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x44);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = validate_target(player, card, &td, 0);
+          if (result != 0)
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+            new_default_test_definition(&test, 1, "Select a land card.");
+            new_global_tutor(player, player, 4, 4, 0, 1, &test);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_022cc513;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x44);
+  get_card_instance(player, card);
+LAB_022cc513:
+  result = generic_spell(player, card, event, 1, &td, "DISENCHANT", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22ccaa0; original cards/dominaria.c:662. */
+int card_cast_down(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.required_subtype = 0x2001;
+        td.special = 0x1000;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          instance = get_card_instance(player, card);
+          result = validate_target(player, card, &td, 0);
+          if (result != 0)
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_022ccb03;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.required_subtype = 0x2001;
+  td.special = 0x1000;
+LAB_022ccb03:
+  result = generic_spell(player, card, event, 0x81, &td, "Select target non-Legendary creature.", 1,
+                         NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22cd560; original cards/dominaria.c:937. */
+int card_divest(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  ec_definition_t this_definition;
+  target_definition_t td;
+  test_definition_t this_test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event != EVENT_CAST_SPELL)
+    {
+      if ((event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET) &&
+          (event != EVENT_CHANGE_TARGET))
+      {
+        return 0;
+      }
+      default_target_definition(player, card, &td, 0);
+      td.zone = 0x1000;
+      instance = get_card_instance(player, card);
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+        result = valid_target(&td);
+        if (result != 0)
+        {
+          new_default_test_definition(&this_test, 0x42, "Select target artifact or creature.");
+          default_ec_definition(instance->targets[0].player, player, &this_definition);
+          new_effect_coercion(&this_definition, &this_test);
+        }
+        kill_card(player, card, KILL_DESTROY);
+      }
+      goto LAB_022cd5dd;
+    }
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+  }
+  default_target_definition(player, card, &td, 0);
+  td.zone = 0x1000;
+  get_card_instance(player, card);
+LAB_022cd5dd:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22cde70; original cards/dominaria.c:1122. */
+int card_final_parting(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    new_default_test_definition(&this_test, 0xff, "Select a card to put into your hand.");
+    this_test.no_shuffle = 1;
+    new_global_tutor(player, player, 1, 1, 0, 1, &this_test);
+    new_default_test_definition(&this_test, 0xff, "Select a card to put into your graveyard.");
+    new_global_tutor(player, player, 1, 3, 0, 2, &this_test);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22ce170; original cards/dominaria.c:1210. */
+int card_garna_the_bloodflame(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  boost_subtype(player, card, event, ~SUBTYPE_INVALID, 0, 0, 0, 4, BCT_CONTROLLER_ONLY);
+  if (event == EVENT_ETB)
+  {
+    return_all_dead_this_turn_to_hand(player, 2);
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+        (player == affected_card_controller))
+    {
+      ai_modifier = ai_modifier + -0x10;
+      return 0;
+    }
+    return 0;
+  }
+  return 1;
+}
+
+/* ManalinkEh 2022: 0x22ce2b0; original cards/dominaria.c:1261. */
+int card_goblin_chainwhirler(int player, int card, event_t event)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  new_damage_all(player, card, 1 - player, 1, 0x23, NULL);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22ce330; original cards/dominaria.c:1280. */
+int card_grow_from_the_ashes(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  kicker(player, card, event, 2, 0, 0, 0, 0, 0);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    new_default_test_definition(&this_test, 1, "Select a basic land card.");
+    this_test.subtype = 0x2000;
+    result = kicked(player, card);
+    if (result != 0)
+    {
+      this_test.qty = 2;
+    }
+    new_global_tutor(player, player, 1, 4, 0, 5, &this_test);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22ca270; original cards/dominaria.c:1340. */
+static int give_token_haste_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_player)
+  {
+    instance = get_card_instance(player, card);
+    haste((int)instance->damage_target_player, instance->damage_target_card, event);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22c95e0; original cards/dominaria.c:1352. */
+static void give_token_haste(token_generation_t *token, int beast, int number)
+{
+  int card;
+  card_instance_t *instance;
+
+  card = create_targetted_legacy_effect(token->s_player, token->s_card, give_token_haste_legacy,
+                                        token->t_player, beast);
+  instance = get_card_instance(token->t_player, card);
+  instance->token_status = instance->token_status | 0x10000;
+  return;
+}
+
+/* ManalinkEh 2022: 0x22ce740; original cards/dominaria.c:1415. */
+int card_invoke_the_divine(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x44);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+            gain_life(player, 4);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_022ce7a6;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x44);
+  get_card_instance(player, card);
+LAB_022ce7a6:
+  result = generic_spell(player, card, event, 1, &td, "DISENCHANT", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22ceec0; original cards/dominaria.c:1562. */
+int card_josu_vess_lich_knight(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+  check_legend_rule(player, card, event);
+  kicker(player, card, event, 5, 1, 0, 0, 0, 0);
+  menace(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    result = kicked(player, card);
+    if (result != 0)
+    {
+      default_token_definition(player, card, 0x49af, &token);
+      token.s_key_plus = 0x10000;
+      token.qty = '\b';
+      generate_token(&token);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22cf390; original cards/dominaria.c:1667. */
+int card_karns_temporal_sundering(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  target_definition_t td1;
+  if (event == EVENT_CAN_CAST)
+  {
+    result = check_battlefield_for_subtype(player, 2, 0x2001);
+    if (result != 0)
+    {
+      return 1;
+    }
+    result = check_battlefield_for_subtype(player, 0x100, -1);
+    return (unsigned int)(result != 0);
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+    default_target_definition(player, card, &td1, 0x47);
+    td1.illegal_type = 1;
+    td1.allow_cancel = 1;
+    new_pick_target(&td, "TARGET_PLAYER", 0, 0);
+    result = can_target(&td1);
+    if (result != 0)
+    {
+      new_pick_target(&td1, "TARGET_NONLAND_PERMANENT", 1, 0);
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+    {
+      if (event == EVENT_CHANGE_TARGET)
+      {
+        default_target_definition(player, card, &td, 0);
+        td.zone = 0x1000;
+        default_target_definition(player, card, &td1, 0x47);
+        td1.illegal_type = 1;
+        td1.allow_cancel = 1;
+        result = basic_spell(player, card, EVENT_CHANGE_TARGET);
+        return result;
+      }
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+    default_target_definition(player, card, &td1, 0x47);
+    td1.illegal_type = 1;
+    td1.allow_cancel = 1;
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      instance = get_card_instance(player, card);
+      time_walk_effect(instance->targets[0].player, card);
+      result = validate_target(player, card, &td1, 1);
+      if (result != 0)
+      {
+        instance = get_card_instance(player, card);
+        result = instance->targets[1].card;
+        instance = get_card_instance(player, card);
+        bounce_permanent(instance->targets[1].player, result);
+      }
+      kill_card(player, card, KILL_EXILE);
+      result = basic_spell(player, card, EVENT_RESOLVE_SPELL);
+      return result;
+    }
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22d0610; original cards/dominaria.c:2059. */
+int card_lyra_dawnbringer(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  lifelink(player, card, event);
+  boost_subtype(player, card, event, SUBTYPE_ANGEL, 1, 1, 0, 2, BCT_CONTROLLER_ONLY);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22c9680; original cards/dominaria.c:2131. */
+static void memorial_to_glory_impl(int player, int card, target_definition_t *td)
+{
+  generate_tokens_by_id(player, card, 0x4986, 2);
+  return;
+}
+
+/* ManalinkEh 2022: 0x22c94f0; original cards/dominaria.c:2143. */
+static void memorial_to_unity_impl(int player, int card, target_definition_t *td)
+{
+  int amount;
+  int revealed_card;
+  test_definition_t this_test;
+
+  amount = count_deck(player);
+  if (amount != 0)
+  {
+    if (5 < amount)
+    {
+      amount = 5;
+    }
+    new_default_test_definition(&this_test, 2, "Select a creature card.");
+    this_test.create_minideck = (unsigned short)amount;
+    this_test.no_shuffle = 1;
+    revealed_card = new_global_tutor(player, player, 1, 1, 0, 1, &this_test);
+    if (-1 < revealed_card)
+    {
+      amount = amount + -1;
+      reveal_card(player, card, player, revealed_card);
+    }
+    if (0 < amount)
+    {
+      put_top_x_on_bottom_in_random_order(player, amount);
+      return;
+    }
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x22d0a60; original cards/dominaria.c:2186. */
+int card_merfolk_trickster(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = 1 - player;
+  td.allow_cancel = 0;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_ETB)
+  {
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS");
+      if (result != 0)
+      {
+        tap_card(instance->targets[0].player, instance->targets[0].card);
+        humiliate_and_set_pt_abilities(player, card, instance->targets[0].player,
+                                       instance->targets[0].card, 4, NULL);
+      }
+    }
+  }
+  result = flash(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22c96b0; original cards/dominaria.c:2248. */
+static int muldrotha_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      instance = get_card_instance(player, card);
+      if (instance->damage_target_player < '\0')
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+      result = check_status(player, card, 0x10000);
+      if (result == 0)
+      {
+        add_status(player, card, 0x10000);
+      }
+    }
+    instance = get_card_instance(player, card);
+    if (instance->damage_target_player < '\0')
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    instance = get_card_instance(player, card);
+    if (instance->damage_target_player < '\0')
+    {
+      if (event != EVENT_CLEANUP)
+      {
+        return 0;
+      }
+      goto LAB_022c9723;
+    }
+  }
+  result = effect_follows_control_of_attachment(player, card, event);
+  if ((result != 0) || (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+LAB_022c9723:
+  instance = get_card_instance(player, card);
+  instance->targets[1].player = 0;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d1880; original cards/dominaria.c:2513. */
+int card_niambi_faithful_healer(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  check_legend_rule(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  new_default_test_definition(&test, 0xff, "Select a card named Teferi, Timebender.");
+  test.id = 0x485c;
+  result = new_special_count_grave(player, &test);
+  if ((result != 0) && (result = new_global_tutor(player, player, 2, 1, 0, 5, &test), -1 < result))
+  {
+    return 0;
+  }
+  new_global_tutor(player, player, 1, 1, 0, 5, &test);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d1c40; original cards/dominaria.c:2578. */
+int card_on_serras_wings(int player, int card, event_t event)
+{
+  int result;
+  result = generic_aura(player, card, event, player, 1, 1, 0x20, 10, 0x2001, 0, 8);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22d2320; original cards/dominaria.c:2694. */
+int card_primevals_glorious_rebirth(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int result;
+  test_definition_t test;
+  if (event == EVENT_CAN_CAST)
+  {
+    result = check_battlefield_for_subtype(player, 2, 0x2001);
+    uVar1 = 1;
+    if (result == 0)
+    {
+      result = check_battlefield_for_subtype(player, 0x100, -1);
+      uVar1 = (unsigned int)(result != 0);
+    }
+  }
+  else
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      default_test_definition(&test, 0x47);
+      test.subtype = 0x2001;
+      new_reanimate_all(player, -1, player, &test, REANIMATE_DEFAULT);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    uVar1 = basic_spell(player, card, event);
+  }
+  return uVar1;
+}
+
+/* ManalinkEh 2022: 0x22d25b0; original cards/dominaria.c:2809. */
+int card_run_amok(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    goto LAB_022d2624;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+  LAB_022d26ae:
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+    {
+      default_target_definition(player, card, &td, 2);
+      if (event == EVENT_CHECK_PUMP)
+        goto LAB_022d2738;
+    }
+    else
+    {
+      if ((event != EVENT_CHANGE_TARGET) && (event != EVENT_CHECK_PUMP))
+      {
+        return 0;
+      }
+      default_target_definition(player, card, &td, 2);
+      if (event == EVENT_CHECK_PUMP)
+      {
+      LAB_022d2738:
+        td.required_state = 2;
+        td.preferred_controller = player;
+        instance = get_card_instance(player, card);
+        result = has_mana_to_cast_iid(player, EVENT_CAN_CAST, instance->internal_card_id);
+        if (result == 0)
+        {
+          return 0;
+        }
+        result = can_target(&td);
+        if (result == 0)
+        {
+          return 0;
+        }
+        pumpable_power[player] = pumpable_power[player] + 3;
+        pumpable_toughness[player] = pumpable_toughness[player] + 3;
+        return 0;
+      }
+      if (event == EVENT_CAST_SPELL)
+        goto LAB_022d26ae;
+    }
+    if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
+        (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+LAB_022d2624:
+  td.required_state = 2;
+  td.preferred_controller = player;
+  result = vanilla_pump(player, card, event, &td, 3, 3, 0x80, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22d27d0; original cards/dominaria.c:2844. */
+int card_saproling_migration(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+  kicker(player, card, event, 4, 0, 0, 0, 0, 0);
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      default_token_definition(player, card, 0x497d, &token);
+      result = kicked(player, card);
+      token.qty = (-(result == 0) & 0xfeU) + 4;
+      generate_token(&token);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22d28e0; original cards/dominaria.c:2863. */
+int card_seal_away(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  return_from_oblivion(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = 1 - player;
+    td.allow_cancel = 0;
+    td.required_state = 1;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "Select target tapped creature an opponent controls.", 0, 0x81);
+      if (result != 0)
+      {
+        instance = get_card_instance(player, card);
+        obliviation(player, card, instance->targets[0].player, instance->targets[0].card);
+        goto LAB_022d2922;
+      }
+    }
+    if (player == 1)
+    {
+      ai_modifier = ai_modifier + -0x30;
+    }
+  }
+LAB_022d2922:
+  result = flash(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22d2e60; original cards/dominaria.c:2996. */
+int card_shivan_fire(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = 1 - player;
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_CREATURE", 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 2);
+      td.preferred_controller = 1 - player;
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_CREATURE", 1, NULL);
+        if (spell_fizzled != 1)
+        {
+          do_kicker(player, card, 4, 0, 0, 0, 0, 0);
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = 1 - player;
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        result = kicked(player, card);
+        damage_target0(player, card, (-(unsigned int)(result == 0) & 0xfffffffe) + 4);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 2);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22ca9a0; original cards/dominaria.c:3187. */
+static int song_of_freyalise_legacy(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  result = permanents_you_control_can_tap_for_mana_all_one_color(player, card, event, TYPE_CREATURE,
+                                                                 0, COLOR_TEST_ANY_COLORED, 1);
+  if ((event != EVENT_CAN_ACTIVATE) && (result = 0, event == EVENT_CLEANUP))
+  {
+    instance = get_card_instance(player, card);
+    if (instance->targets[2].player < 1)
+    {
+      kill_card(player, card, KILL_EXILE);
+      cant_be_responded_to = 1;
+    }
+    else
+    {
+      instance = get_card_instance(player, card);
+      instance->targets[2].player = instance->targets[2].player + -1;
+    }
+  }
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22d37f0; original cards/dominaria.c:3264. */
+int card_squee_the_immortal(int player, int card, event_t event)
+{
+  int result;
+  check_legend_rule(player, card, event);
+  if (event == EVENT_GRAVEYARD_ABILITY)
+  {
+    result = can_sorcery_be_played(player, EVENT_GRAVEYARD_ABILITY);
+    if (result != 0)
+    {
+      result = get_original_internal_card_id(player, card);
+      result = has_mana_to_cast_iid(player, EVENT_GRAVEYARD_ABILITY, result);
+      if (result != 0)
+      {
+        return 2;
+      }
+    }
+  }
+  else if (event == EVENT_PAY_FLASHBACK_COSTS)
+  {
+    result = get_id(player, card);
+    result = charge_mana_from_id(player, -1, EVENT_PAY_FLASHBACK_COSTS, result);
+    return (unsigned int)(result != 0);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d3a30; original cards/dominaria.c:3319. */
+int card_tatyova_benthic_druid(int player, int card, event_t event)
+{
+  landfall(player, card, event);
+  check_legend_rule(player, card, event);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  gain_life(player, 1);
+  draw_a_card(player);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d3aa0; original cards/dominaria.c:3338. */
+int card_teferi_hero_of_dominaria_emblem(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  result = card_drawn_trigger(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0)
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.allowed_controller = 1 - player;
+  td.allow_cancel = 0;
+  instance = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    result = new_pick_target(&td, "TARGET_PERMANENT", 0, 0);
+    if (result != 0)
+    {
+      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+    }
+  }
+  instance->number_of_targets = '\0';
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22caa60; original cards/dominaria.c:3358. */
+static int teferi_hero_of_dominaria_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if ((((current_turn == player) && (trigger_condition == 0xcd)) && (card == affected_card)) &&
+      ((player == affected_card_controller && (reason_for_trigger_controller == player))))
+  {
+    result = instance->targets[1].player;
+    if (result < 1)
+    {
+      result = eot_trigger(player, card, event);
+      if (result != 0)
+      {
+        untap_lands(player, card, 2);
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    else
+    {
+      instance->targets[1].player = result + -1;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d43f0; original cards/dominaria.c:3593. */
+int card_thallid_soothsayer(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    draw_a_card(player);
+  }
+  result = generic_activated_ability(player, card, event, 0x200, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22ca150; original cards/dominaria.c:3820. */
+static int tiana_reanimation_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  result = duh_mode(player);
+  result = eot_trigger_mode(player, card, event, 2, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (result != 0)
+  {
+    seek_grave_for_id_to_reanimate(player, card, instance->targets[0].player,
+                                   (unsigned int)cards_data[instance->targets[0].card].id,
+                                   REANIMATEXTRA_RETURN_TO_HAND2);
+    kill_card(player, card, KILL_EXILE);
+  }
+  if (event == EVENT_CAN_SKIP_TURN)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22ca230; original cards/dominaria.c:4107. */
+static char *has_highest_power(int who_chooses, int player, int card, int targeting_player,
+                               int targeting_card)
+{
+  int iVar1;
+  int iVar2;
+  char *pcVar3;
+  iVar1 = get_power(player, card);
+  iVar2 = get_highest_power(player);
+  pcVar3 = NULL;
+  if (iVar1 != iVar2)
+  {
+    pcVar3 = "must have the greatest power among creatures you control";
+  }
+  return pcVar3;
+}
+
+/* ManalinkEh 2022: 0x22d58d0; original cards/dominaria.c:4156. */
+int card_unwind(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  counterspell_target_definition(player, card, &td, 0xff);
+  td.illegal_type = 2;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    counterspell(player, card, EVENT_RESOLVE_SPELL, &td, 0);
+    untap_lands(player, card, 3);
+  }
+  result = generic_spell(player, card, event, 2, &td, NULL, 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22d5980; original cards/dominaria.c:4172. */
+int card_urgoros_the_empty_one(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  unsigned int uVar4;
+  int iVar5;
+  int amount;
+  unsigned int uVar6;
+  int iStack_14;
+  check_legend_rule(player, card, event);
+  iVar1 =
+      damage_dealt_by_me(player, card, event, DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER);
+  if (iVar1 == 0)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  iVar1 = hand_count[0];
+  iStack_14 = 0;
+  uVar6 = instance->targets[1].player;
+  instance->targets[1].player = 0;
+  uVar4 = uVar6 >> 8 & 0xff;
+  amount = 0;
+  uVar6 = uVar6 & 0xff;
+  if (uVar6 != 0)
+  {
+    uVar3 = 0;
+    do
+    {
+      while (iVar1 == 0)
+      {
+        uVar3 = uVar3 + 1;
+        amount = amount + 1;
+        if (uVar6 == uVar3)
+          goto LAB_022d5a1b;
+      }
+      uVar3 = uVar3 + 1;
+      iStack_14 = iStack_14 + 1;
+      iVar1 = iVar1 + -1;
+    } while (uVar6 != uVar3);
+  }
+LAB_022d5a1b:
+  iVar1 = 0;
+  if (uVar4 != 0)
+  {
+    uVar6 = 0;
+    iVar5 = hand_count[1];
+    do
+    {
+      while (iVar5 == 0)
+      {
+        uVar6 = uVar6 + 1;
+        amount = amount + 1;
+        if (uVar4 == uVar6)
+          goto LAB_022d5a39;
+      }
+      uVar6 = uVar6 + 1;
+      iVar1 = iVar1 + 1;
+      iVar5 = iVar5 + -1;
+    } while (uVar4 != uVar6);
+  }
+LAB_022d5a39:
+  new_multidiscard(0, iStack_14, 1, player);
+  new_multidiscard(1, iVar1, 1, player);
+  draw_cards(player, amount);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22c94c0; original cards/dominaria.c:4212. */
+static int is_not_legendary_test(int unused1, int unused2, int player, int card)
+{
+  int result;
+  result = is_legendary(player, card);
+  return (unsigned int)(result == 0);
+}
+
+/* ManalinkEh 2022: 0x22d5c80; original cards/dominaria.c:4267. */
+int card_verix_bladewing(int player, int card, event_t event)
+{
+  int result;
+  check_legend_rule(player, card, event);
+  kicker(player, card, event, 3, 0, 0, 0, 0, 0);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    result = kicked(player, card);
+    if (result != 0)
+    {
+      generate_token_by_id(player, card, 0x4954);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d5ef0; original cards/dominaria.c:4349. */
+int card_whisper_blood_liturgist(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  unsigned int uVar2;
+  int result;
+  test_definition_t test;
+  test_definition_t sac_test;
+  check_legend_rule(player, card, event);
+  if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    new_default_test_definition(&test, 2, "Select target creature card to reanimate.");
+  LAB_022d5f47:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      return 0;
+    }
+    result = validate_target_from_grave_source(player, card, player, 0);
+    if (result == -1)
+    {
+      return 0;
+    }
+    reanimate_permanent(player, card, player, result, REANIMATE_DEFAULT);
+    return 0;
+  }
+  new_default_test_definition(&test, 2, "Select target creature card to reanimate.");
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = can_sacrifice_type_as_cost(player, 2, TYPE_CREATURE);
+    if (result == 0)
+    {
+      return 0;
+    }
+    result = generic_activated_ability_with_target_in_grave(player, card, EVENT_CAN_ACTIVATE,
+                                                            GAA_UNTAPPED, 0, 0, 0, 0, 0, 0, 0, NULL,
+                                                            NULL, TYPE_NONE, &test, 8);
+    return (unsigned int)(result != 0);
+  }
+  if (event != EVENT_ACTIVATE)
+    goto LAB_022d5f47;
+  new_default_test_definition(&sac_test, 2, "Select a creature to sacrifice.");
+  uVar1 = new_sacrifice(player, card, player, SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK,
+                        &sac_test);
+  if (uVar1 == 0)
+  {
+    uVar2 = 0xffffffff;
+  }
+  else
+  {
+    uVar2 = new_sacrifice(player, card, player, SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK,
+                          &sac_test);
+    if (uVar2 != 0)
+      goto LAB_022d6000;
+  }
+  spell_fizzled = 1;
+LAB_022d6000:
+  if (-1 < (int)uVar1)
+  {
+    state_untargettable((int)uVar1 >> 0x10 & 0xff, uVar1 >> 0x18, 0);
+  }
+  if (-1 < (int)uVar2)
+  {
+    state_untargettable((int)uVar2 >> 0x10 & 0xff, uVar2 >> 0x18, 0);
+  }
+  generic_activated_ability_with_target_in_grave(player, card, EVENT_ACTIVATE, GAA_UNTAPPED, 0, 0,
+                                                 0, 0, 0, 0, 0, NULL, NULL, TYPE_NONE, &test, 8);
+  if (spell_fizzled != 1)
+  {
+    kill_card((int)uVar1 >> 0x10 & 0xff, uVar1 >> 0x18, KILL_SACRIFICE);
+    kill_card((int)uVar2 >> 0x10 & 0xff, uVar2 >> 0x18, KILL_SACRIFICE);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d62a0; original cards/dominaria.c:4426. */
+int card_wizards_retort(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_MODIFY_COST)
+  {
+    result = check_battlefield_for_subtype(player, -1, 0xd6);
+    if (result != 0)
+    {
+      COST_COLORLESS = COST_COLORLESS + -1;
+    }
+  }
+  result = counterspell(player, card, event, NULL, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22d6300; original cards/dominaria.c:4442. */
+int card_yavimaya_sapherd(int player, int card, event_t event)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  generate_token_by_id(player, card, 0x497d);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d6360; original cards/dominaria.c:4455. */
+int card_yawgmoths_vile_offering(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  test_definition_t test;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    result = check_battlefield_for_subtype(player, 2, 0x2001);
+    if (result != 0)
+    {
+      return 1;
+    }
+    result = check_battlefield_for_subtype(player, 0x100, -1);
+    return (unsigned int)(result != 0);
+  }
+  if (event != EVENT_CAST_SPELL)
+  {
+    if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+    {
+      new_default_test_definition(&test, 0x102, "Select target creature or planeswalker card.");
+      default_target_definition(player, card, &td, 0x102);
+      instance = get_card_instance(player, card);
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+        result = validate_target_from_grave_source(player, card, instance->targets[1].player, 2);
+        if (result != -1)
+        {
+          reanimate_permanent(player, card, instance->targets[1].player, result, REANIMATE_DEFAULT);
+        }
+        result = validate_target(player, card, &td, 0);
+        if (result != 0)
+        {
+          kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+        }
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    else
+    {
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+      new_default_test_definition(&test, 0x102, "Select target creature or planeswalker card.");
+      default_target_definition(player, card, &td, 0x102);
+      get_card_instance(player, card);
+    }
+    goto LAB_022d63ed;
+  }
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+  new_default_test_definition(&test, 0x102, "Select target creature or planeswalker card.");
+  default_target_definition(player, card, &td, 0x102);
+  get_card_instance(player, card);
+  result = new_special_count_grave(player, &test);
+  if ((result == 0) || (result = graveyard_has_shroud(player), result != 0))
+  {
+    result = new_special_count_grave(1 - player, &test);
+    if ((result != 0) && (result = graveyard_has_shroud(1 - player), result == 0))
+      goto LAB_022d669e;
+  }
+  else
+  {
+  LAB_022d669e:
+    select_target_from_either_grave(player, card, SFG_NO_SPELL_FIZZLED, 2, 2, &test, 1, 2);
+  }
+  result = generic_spell(player, card, EVENT_CAN_CAST, 0x20, &td, "TARGET_CREATURE_OR_PLANESWALKER",
+                         1, NULL);
+  if (result != 0)
+  {
+    generic_spell(player, card, EVENT_CAST_SPELL, 0x20, &td, "TARGET_CREATURE_OR_PLANESWALKER", 1,
+                  NULL);
+  }
+LAB_022d63ed:
+  result = basic_spell(player, card, event);
+  return result;
+}

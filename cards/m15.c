@@ -4913,3 +4913,93 @@ int card_sliver_hive(int player, int card, event_t event){
 
 	return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21a9e30; original cards/m15.c:3123. */
+static int generator_servant_legacy(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (affected_card_controller == player))
+    {
+      return 0;
+    }
+    iVar1 = played_for_free(affected_card_controller, affected_card);
+    if (iVar1 != 0)
+    {
+      return 0;
+    }
+    iVar1 = is_token(affected_card_controller, affected_card);
+    if (iVar1 != 0)
+    {
+      return 0;
+    }
+    iVar1 = check_special_flags2(affected_card_controller, affected_card, -0x80000000);
+    if (iVar1 != 0)
+    {
+      return 0;
+    }
+    iVar1 = get_cmc(affected_card_controller, affected_card);
+    if (iVar1 < 1)
+    {
+      return 0;
+    }
+    if (affected_card_controller != player)
+    {
+      return 0;
+    }
+    iVar1 = is_what(player, affected_card, 2);
+    if (iVar1 == 0)
+    {
+      return 0;
+    }
+    iVar1 =
+        get_updated_casting_cost(affected_card_controller, affected_card, -1, EVENT_CAST_SPELL, -1);
+    if (iVar1 < 1)
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    pump_ability_until_eot_no_repeat(instance->targets[0].player, instance->targets[0].card,
+                                     affected_card_controller, affected_card, 0, 4);
+    iVar1 = instance->targets[1].player;
+    iVar4 = mana_paid[0];
+    if (iVar1 < mana_paid[0])
+    {
+      iVar4 = iVar1;
+    }
+    iVar2 = iVar1 - iVar4;
+    if (mana_pool[player][0] < iVar1 - iVar4)
+    {
+      iVar2 = mana_pool[player][0];
+    }
+    instance->targets[1].player = iVar2;
+  }
+  else
+  {
+    if (event != EVENT_STATIC_EFFECTS)
+    {
+      return 0;
+    }
+    if (stack_size != 0)
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    if (mana_pool[player][0] < 1)
+      goto LAB_021a9fc0;
+    iVar2 = instance->targets[1].player;
+  }
+  if (0 < iVar2)
+  {
+    return 0;
+  }
+LAB_021a9fc0:
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}

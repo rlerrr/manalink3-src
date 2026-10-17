@@ -4716,3 +4716,102 @@ Land
 
 	return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x210a2b0; original cards/dark_ascension.c:1169. */
+static char *you_own(int who_chooses, int player, int card, int targeting_player,
+                     int targeting_card)
+{
+  int result;
+  char *pcVar2;
+  result = get_owner(player, card);
+  pcVar2 = NULL;
+  if (result != targeting_player)
+  {
+    pcVar2 = "owner";
+  }
+  return pcVar2;
+}
+
+/* ManalinkEh 2022: 0x2112500; original cards/dark_ascension.c:2641. */
+int card_increasing_vengeance(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  counterspell_target_definition(player, card, &td, 0x38);
+  td.preferred_controller = player;
+  td.allowed_controller = player;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = counterspell_validate(player, card, &td, 0);
+      if (result != 0)
+      {
+        instance = get_card_instance(player, card);
+        copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
+        result = get_flashback(player, card);
+        if (result != 0)
+        {
+          copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
+          kill_card(player, card, KILL_EXILE);
+        }
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+    result = do_flashback(player, card, event, 3, 0, 0, 0, 2, 0);
+    return result;
+  }
+  result = twincast(player, card, 0x74, &td, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x210a600; original cards/dark_ascension.c:3707. */
+static int havengul_lich_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      instance = get_card_instance(player, card);
+      if (instance->damage_target_player < '\0')
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+      result = check_status(player, card, 0x10000);
+      if (result == 0)
+      {
+        add_status(player, card, 0x10000);
+      }
+    }
+    instance = get_card_instance(player, card);
+    if (instance->damage_target_player < '\0')
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    instance = get_card_instance(player, card);
+    if (instance->damage_target_player < '\0')
+    {
+      if (event != EVENT_CLEANUP)
+      {
+        return 0;
+      }
+      goto LAB_0210a673;
+    }
+  }
+  result = effect_follows_control_of_attachment(player, card, event);
+  if ((result != 0) || (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+LAB_0210a673:
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}

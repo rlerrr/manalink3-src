@@ -1591,3 +1591,439 @@ int card_withdraw(int player, int card, event_t event){
 
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_CREATURE", 2, NULL);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int was_dealt_damage_this_turn(int unused, int unused2, int player, int card);
+static int mirror_strike_effect(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2600670; original cards/prophecy.c:1709. */
+int card_agent_of_shauku(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  unsigned int uVar2;
+  int result;
+  unsigned int player_00;
+  target_definition_t td;
+  test_definition_t test;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = can_sacrifice_type_as_cost(player, 1, TYPE_LAND);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 1, 1, 0, 0, 0, 0, 0,
+                                         &td, NULL);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      new_default_test_definition(&test, 1, "Select a land to sacrifice.");
+      uVar2 = new_sacrifice(player, card, player, SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK,
+                            &test);
+      if (uVar2 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 4, 1, 1, 0, 0, 0, 0, 0, &td,
+                                "TARGET_CREATURE");
+      player_00 = (int)uVar2 >> 0x10 & 0xff;
+      if (spell_fizzled != 1)
+      {
+        kill_card(player_00, uVar2 >> 0x18, KILL_SACRIFICE);
+        if (current_phase != 0x17)
+        {
+          return 0;
+        }
+        ai_modifier = ai_modifier + 0x18;
+        return 0;
+      }
+      state_untargettable(player_00, uVar2 >> 0x18, 0);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+  {
+    pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                           instance->targets[0].player, instance->targets[0].card, 2, 0, 0, 0);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2600ba0; original cards/prophecy.c:1803. */
+int card_bog_elemental(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test2;
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    new_default_test_definition(&test2, 1, "Select a land to sacrifice.");
+    result = new_sacrifice(player, card, player, 0, &test2);
+    if (result == 0)
+    {
+      kill_card(player, card, KILL_SACRIFICE);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2600f60; original cards/prophecy.c:1897. */
+int card_chilling_apparition(int player, int card, event_t event)
+{
+  int result;
+  whenever_i_deal_damage_to_a_player_he_discards_a_card(player, card, event,
+                                                        DDBM_MUST_BE_COMBAT_DAMAGE, 0);
+  result = regeneration(player, card, event, 0, 1, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2601500; original cards/prophecy.c:2033. */
+int card_despoil(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 1);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = validate_target(player, card, &td, 0);
+          if (result != 0)
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+            lose_life(instance->targets[0].player, 2);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02601566;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 1);
+  get_card_instance(player, card);
+LAB_02601566:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_LAND", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2601670; original cards/prophecy.c:2058. */
+int card_devastate(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 1);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = validate_target(player, card, &td, 0);
+          if (result != 0)
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+            new_damage_all(player, card, 2, 1, 3, NULL);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_026016d6;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 1);
+  get_card_instance(player, card);
+LAB_026016d6:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_LAND", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2601880; original cards/prophecy.c:2102. */
+int card_elephant_resurgence(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int result;
+  token_generation_t token;
+  result = current_turn;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    default_token_definition(player, card, 0x4929, &token);
+    token.t_player = result;
+    token.special_infos = 0x42;
+    token.tou = 0x4000;
+    token.pow = 0x4000;
+    generate_token(&token);
+    uVar1 = current_turn ^ 1;
+    default_token_definition(player, card, 0x4929, &token);
+    token.special_infos = 0x42;
+    token.tou = 0x4000;
+    token.pow = 0x4000;
+    token.t_player = uVar1;
+    generate_token(&token);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25fb150; original cards/prophecy.c:2975. */
+static int was_dealt_damage_this_turn(int unused, int unused2, int player, int card)
+{
+  int result;
+  card_instance_t *instance;
+  result = is_what(player, card, 2);
+  if (result == 0)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  return (unsigned int)(instance->damage_on_card != 0);
+}
+
+/* ManalinkEh 2022: 0x2603a90; original cards/prophecy.c:2982. */
+int card_inflame(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    new_default_test_definition(&test, 2, "");
+    test.special_selection_function = was_dealt_damage_this_turn;
+    new_damage_all(player, card, 2, 2, 0, &test);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2604a00; original cards/prophecy.c:3274. */
+int card_mine_bearer(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.required_state = 2;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.required_state = 2;
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0xf, 0, 0, 0, 0, 0, 0, 0, &td,
+                                     "Select target attacking creature to destroy.");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25facb0; original cards/prophecy.c:3300. */
+static int mirror_strike_effect(int player, int card, event_t event)
+{
+  char cVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_player)
+  {
+    instance = get_card_instance(player, card);
+    cVar1 = instance->damage_target_player;
+    iVar4 = instance->damage_target_card;
+    iVar2 = instance->targets[1].player;
+    instance = damage_being_dealt(event);
+    if ((((instance != NULL) && (cVar1 == instance->damage_source_player)) &&
+         (instance->damage_source_card == iVar4)) &&
+        ((instance->damage_target_player == iVar2 && (instance->damage_target_card == -1))))
+    {
+      iVar4 = damage_is_to_planeswalker(instance);
+      if ((iVar4 == 0) && ((instance->token_status & 0x140000) != 0))
+      {
+        instance->damage_target_player = cVar1;
+        instance->damage_target_card = -1;
+      }
+    }
+  }
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2604b50; original cards/prophecy.c:3328. */
+int card_mirror_strike(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.required_state = 2;
+    td.illegal_state = 8;
+    get_card_instance(player, card);
+    if ((current_phase != 0x18) && (result = can_target(&td), result != 0))
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.required_state = 2;
+        td.illegal_state = 8;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            result = create_targetted_legacy_effect(player, card, mirror_strike_effect,
+                                                    instance->targets[0].player,
+                                                    instance->targets[0].card);
+            instance = get_card_instance(player, result);
+            instance->targets[1].player = player;
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02604c32;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+    default_target_definition(player, card, &td, 2);
+    td.required_state = 2;
+    td.illegal_state = 8;
+    get_card_instance(player, card);
+  }
+LAB_02604c32:
+  result =
+      generic_spell(player, card, event, 0x81, &td, "Select target unblocked creature.", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2605450; original cards/prophecy.c:3501. */
+int card_pit_raptor(int player, int card, event_t event)
+{
+  basic_upkeep(player, card, event, 2, 2, 0, 0, 0, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2606c50; original cards/prophecy.c:4173. */
+int card_silt_crawler(int player, int card, event_t event)
+{
+  test_definition_t this_test;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  default_test_definition(&this_test, 1);
+  new_manipulate_all(player, card, player, &this_test, ACT_TAP);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2607920; original cards/prophecy.c:4488. */
+int card_trenching_steed(int player, int card, event_t event)
+{
+  int result;
+  result = generic_husk(player, card, event, 1, 0, 3, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x26084e0; original cards/prophecy.c:4842. */
+int card_whipstitched_zombie(int player, int card, event_t event)
+{
+  basic_upkeep(player, card, event, 0, 1, 0, 0, 0, 0);
+  return 0;
+}

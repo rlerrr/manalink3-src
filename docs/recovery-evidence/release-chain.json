@@ -1,0 +1,72 @@
+[
+  {
+    "release": "Oct-2020",
+    "zip": "G:\\Manalink\\downloads\\Manalink-3_0-Oct-2020.zip",
+    "debug": "G:\\Manalink\\downloads\\ManalinkEh_10_20_1_1.dbg",
+    "dll_sha256": "4f4224be9953599c72a9e1afaa660ee7b7ad12d13d2f0cc0219652abfaefc139",
+    "dbg_sha256": "82688d553fd76fe84c7a0d6544676fa90eb369e79f436e05a92c34fcaaadcd7a",
+    "layout_equal": true,
+    "function_symbols_equal": true,
+    "function_symbols_difference": 0,
+    "producers": {
+      "GNU C 4.8.1 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp": 146,
+      "GNU C++ 4.8.1 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -std=gnu++11 -fno-omit-frame-pointer -fno-tree-vrp": 1
+    }
+  },
+  {
+    "release": "Dec-2020",
+    "zip": "G:\\Manalink\\Manalink-3_0-Dec-2020.zip",
+    "debug": "G:\\Manalink\\downloads\\ManalinkEh_12-20_patch.dbg",
+    "dll_sha256": "0f2547b82004b251a361290c8f0d9933ad23c36c1e8eb282c8de5bececbcf3d6",
+    "dbg_sha256": "6d6f83188d3ecad40d6ceab6ace2735b2b3736a0592bc7771645ab77d82d2d8a",
+    "layout_equal": true,
+    "function_symbols_equal": true,
+    "function_symbols_difference": 0,
+    "producers": {
+      "GNU C 4.8.1 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp": 146,
+      "GNU C++ 4.8.1 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -std=gnu++11 -fno-omit-frame-pointer -fno-tree-vrp": 1
+    }
+  },
+  {
+    "release": "Mar-2021",
+    "zip": "G:\\Manalink\\Manalink-3_0-Mar-2021_v1_1.zip",
+    "debug": "G:\\Manalink\\downloads\\ManalinkEh_3_21_1_1.dbg",
+    "dll_sha256": "da97cb28a207f8cf03aa2da6059ea4d55526d41f4d7158c0572db4ac12a4df46",
+    "dbg_sha256": "82929e80b64f433e44f861335d0f27471ffb9cef948e82f723e985ce725b9b8b",
+    "layout_equal": true,
+    "function_symbols_equal": true,
+    "function_symbols_difference": 0,
+    "producers": {
+      "GNU C 4.8.1 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp": 150,
+      "GNU C++ 4.8.1 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -std=gnu++11 -fno-omit-frame-pointer -fno-tree-vrp": 1
+    }
+  },
+  {
+    "release": "July-2021",
+    "zip": "G:\\Manalink\\Manalink-3_0-July-2021_v1_1.zip",
+    "debug": "G:\\Manalink\\downloads\\ManalinkEh_7_21_1_1.dbg",
+    "dll_sha256": "4dbc6925b090d2dc20c2aeedf8971408f7d70a73a5229e5d710f3868fa4e1e5f",
+    "dbg_sha256": "de23463bc1e7ff96b4a3f2470d1c025275254c1b15c17e7c6d8749302d9f586e",
+    "layout_equal": true,
+    "function_symbols_equal": true,
+    "function_symbols_difference": 0,
+    "producers": {
+      "GNU C17 9.3-win32 20200320 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp": 161,
+      "GNU C++11 9.3-win32 20200320 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -std=gnu++11 -fno-omit-frame-pointer -fno-tree-vrp": 1
+    }
+  },
+  {
+    "release": "Dec-2021",
+    "zip": "G:\\Manalink\\Manalink-3_0-Dec-2021.zip",
+    "debug": "G:\\Manalink\\downloads\\ManalinkEh_12_21.dbg",
+    "dll_sha256": "c5e271bf35d5232743835ab25bdcf6ad23c7ce45ee8290c7713ca0a86a6b3250",
+    "dbg_sha256": "0e3ff8194ac516a01d777f73cfb225dfc4a4b62c10991201f24222f3a6bb72c7",
+    "layout_equal": true,
+    "function_symbols_equal": true,
+    "function_symbols_difference": 0,
+    "producers": {
+      "GNU C99 9.3-win32 20200320 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -std=gnu99 -fno-omit-frame-pointer -fno-tree-vrp": 164,
+      "GNU C++11 9.3-win32 20200320 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -std=gnu++11 -fno-omit-frame-pointer -fno-tree-vrp": 2
+    }
+  }
+]

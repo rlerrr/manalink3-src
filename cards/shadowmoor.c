@@ -6732,3 +6732,84 @@ At the beginning of each end step, each opponent loses life equal to the life he
 	return global_enchantment(player, card, event);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x254a6e0; original cards/shadowmoor.c:1528. */
+static int dire_undercurrents_blue_trig(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  etb_ability_global(player, event, 2, TYPE_NONE, NULL, player, card);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  default_target_definition(player, card, &td, 2);
+  td.zone = 0x1000;
+  td.preferred_controller = player;
+  result = new_pick_target(&td, "Select target player to draw a card.", 0, 0x80);
+  if (result != 0)
+  {
+    draw_a_card(instance->targets[0].player);
+  }
+  instance->number_of_targets = '\0';
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x254a5f0; original cards/shadowmoor.c:1549. */
+static int dire_undercurrents_black_trig(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  etb_ability_global(player, event, 2, TYPE_NONE, NULL, player, card);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  default_target_definition(player, card, &td, 2);
+  td.zone = 0x1000;
+  result = new_pick_target(&td, "Select target player to discard a card.", 0, 0x80);
+  if (result != 0)
+  {
+    discard(instance->targets[0].player, 0, player);
+  }
+  instance->number_of_targets = '\0';
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25517a0; original cards/shadowmoor.c:2524. */
+int card_guttural_response(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  hybrid(player, card, event);
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
+             (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  counterspell_target_definition(player, card, &td, 0x30);
+  td.required_color = get_sleighted_color_test(player, card, 4);
+  result = counterspell(player, card, event, &td, 0);
+  return result;
+}

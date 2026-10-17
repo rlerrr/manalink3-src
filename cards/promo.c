@@ -1220,3 +1220,13 @@ Vigilance
  * This spell costs |1 less to cast for each opponent you have.
  * Trample
  * When ~ enters the battlefield, each player searches their library for up to two basic land cards, puts them onto the battlefield, then shuffles their library. */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x240d300; original cards/promo.c:1398. */
+static int has_globe_counter(int unused, int unused2, int player, int card)
+{
+  int result;
+  result = count_counters(player, card, COUNTER_GLOBE);
+  return (unsigned int)(result != 0);
+}

@@ -7214,3 +7214,660 @@ int card_zurs_weirding(int player, int card, event_t event){
 
 	return global_enchantment(player, card, event);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static void add_venomous_breath_effect(int player, int card, int t_player, int t_card);
+static int kjeldoran_frostbeast_legacy(int player, int card, event_t event);
+static int venomous_breath_effect(int player, int card, event_t event);
+static int orcish_farmer_effect(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x23f40c0; original cards/ice_age.c:2217. */
+int card_crown_of_the_ages(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td1;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td1, 4);
+    td1.required_subtype = 0x4002;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 4, 0, 0, 0, 0, 0, 0,
+                                         &td1, NULL);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = '\0';
+      add_state(player, card, 0x10);
+      tapped_for_mana_color = -1;
+      result = charge_mana_for_activated_ability(player, card, 4, 0, 0, 0, 0, 0);
+      if (result != 0)
+      {
+        result = new_pick_target(&td1, "Select target Aura attached to a creature.", 0, 0x81);
+        if (result != 0)
+        {
+          call_card_function(instance->targets[0].player, instance->targets[0].card,
+                             EVENT_CAN_MOVE_AURA);
+        }
+        set_special_flags3(instance->targets[0].player, instance->targets[0].card,
+                           (-(unsigned int)(player == 0) & 0xffff8000) + 0x10000);
+        call_card_function(instance->targets[0].player, instance->targets[0].card, EVENT_MOVE_AURA);
+      }
+      tapped_for_mana_color = -1;
+      if (spell_fizzled != 1)
+      {
+        tapped_for_mana_color = -1;
+        return 0;
+      }
+      remove_state(player, card, 0x10);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td1, 4);
+    td1.required_subtype = 0x4002;
+    instance = get_card_instance(player, card);
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td1), result != 0))
+  {
+    call_card_function(instance->targets[0].player, instance->targets[0].card,
+                       EVENT_RESOLVE_MOVING_AURA);
+    remove_special_flags3(instance->targets[0].player, instance->targets[0].card, 0);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23ed060; original cards/ice_age.c:3254. */
+char *not_indestructible(int who_chooses, int player, int card)
+{
+  int result;
+  char *pcVar2;
+  result = check_for_special_ability(player, card, 0x800);
+  pcVar2 = NULL;
+  if (result != 0)
+  {
+    pcVar2 = "This is indestructible";
+  }
+  return pcVar2;
+}
+
+/* ManalinkEh 2022: 0x23fadf0; original cards/ice_age.c:4312. */
+int card_grizzled_wolverine(int player, int card, event_t event)
+{
+  int result;
+  event_t event_00;
+  if (event == EVENT_POW_BOOST)
+  {
+    result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x2000, 0, 0, 0, 0, 0, 0,
+                                       0, NULL, NULL);
+    if (result != 0)
+    {
+      event_00 = EVENT_POW_BOOST;
+      goto LAB_023fafd8;
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    event_00 = EVENT_RESOLVE_ACTIVATION;
+  LAB_023fafd8:
+    result = generic_shade_merge_pt(player, card, event_00, 0, 0, 0, 0, 0, 1, 0, 2, 0);
+    return result;
+  }
+  if (((current_phase == 0x18) &&
+       (result =
+            generic_activated_ability(player, card, event, 0x2000, 0, 0, 0, 0, 1, 0, 0, NULL, NULL),
+        result != 0)) &&
+      (current_turn == player))
+  {
+    result = count_my_blockers(player, card);
+    return (unsigned int)(0 < result);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23ed010; original cards/ice_age.c:5001. */
+static int lose_1_life_b_thunk(int player, int card, int number_of_age_counters)
+{
+  charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_BLACK,
+                              number_of_age_counters);
+  lose_life(player, number_of_age_counters);
+  return 1;
+}
+
+/* ManalinkEh 2022: 0x23fed20; original cards/ice_age.c:5542. */
+int card_kjeldoran_elite_guard(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      if ((event == EVENT_CAN_ACTIVATE) && (8 < current_phase - 0x15U))
+      {
+        return 0;
+      }
+      goto LAB_023fed93;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_023fed93;
+  }
+  result = valid_target(&td);
+  if (result != 0)
+  {
+    instance = get_card_instance(player, card);
+    result =
+        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                               instance->targets[0].player, instance->targets[0].card, 2, 2, 0, 0);
+    if (result != -1)
+    {
+      instance = get_card_instance(player, result);
+      instance->targets[3].player = 0x220;
+      instance->targets[3].card = 3;
+    }
+  }
+LAB_023fed93:
+  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_CREATURE");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23ede70; original cards/ice_age.c:5576. */
+static int kjeldoran_frostbeast_legacy(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  result = end_of_combat_trigger(player, card, event, 2);
+  if (result == 0)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23eb8a0; original cards/ice_age.c:5587. */
+static void attach_kjeldoran_frostbeast_legacy(int player, int card, int t_player, int t_card)
+{
+  create_targetted_legacy_effect(player, card, kjeldoran_frostbeast_legacy, t_player, t_card);
+  return;
+}
+
+/* ManalinkEh 2022: 0x23ed8d0; original cards/ice_age.c:6331. */
+static int effect_tap_when_lose_control(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  if (event == EVENT_CARDCONTROLLED)
+  {
+    instance = get_card_instance(player, card);
+    if (((instance != NULL) && (instance->damage_target_card == affected_card)) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+      tap_card((int)instance->damage_target_player, instance->damage_target_card);
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2402410; original cards/ice_age.c:6736. */
+int card_mistfolk(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x400, 0, 0, 1, 0, 0, 0, 0,
+                                       NULL, NULL);
+    if (result != 0)
+    {
+      instance = get_card_instance(card_on_stack_controller, card_on_stack);
+      if (instance->number_of_targets != 0)
+      {
+        uVar3 = 0;
+        do
+        {
+          if ((instance->targets[uVar3].player == player) &&
+              (instance->targets[uVar3].card == card))
+          {
+            return 99;
+          }
+          uVar3 = uVar3 + 1;
+        } while (uVar3 != instance->number_of_targets);
+      }
+    }
+    return 0;
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+  LAB_02402451:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_02402456;
+  }
+  else if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    if (event != EVENT_CLEANUP)
+    {
+      return 0;
+    }
+    goto LAB_02402451;
+  }
+  instance = get_card_instance(player, card);
+  result = counterspell_validate(player, card, NULL, 0);
+  if (result != 0)
+  {
+    real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
+  }
+LAB_02402456:
+  result = generic_activated_ability(player, card, event, 0x400, 0, 0, 1, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23ee1d0; original cards/ice_age.c:7317. */
+static int orcish_farmer_effect(int player, int card, event_t event)
+{
+  int basic_land_type_to_become;
+  card_instance_t *instance;
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    instance = get_card_instance(player, card);
+    if ((instance->damage_target_card == affected_card) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+      basic_land_type_to_become = get_hacked_subtype(player, card, 0x5009);
+      event_result = land_into_new_basic_land_type(event_result, basic_land_type_to_become);
+    }
+  }
+  else if (event == EVENT_BEGIN_TURN)
+  {
+    instance = get_card_instance(player, card);
+    if (instance->damage_target_player == current_turn)
+    {
+      instance = get_card_instance(player, card);
+      if (-1 < instance->targets[0].player)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2404320; original cards/ice_age.c:7336. */
+int card_orcish_farmer(int player, int card, event_t event)
+{
+  int32_t iVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  target_definition_t td;
+
+  if (((event != EVENT_ACTIVATE) && (1 < event - EVENT_RESOLVE_ACTIVATION)) &&
+      (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 1);
+  if (ai_is_speculating == 1)
+  {
+    if (player != 1)
+      goto LAB_0240437e;
+  }
+  else if ((player != 1) || (((unsigned char)trace_mode & 2) != 0))
+    goto LAB_0240437e;
+  td.required_subtype = get_hacked_subtype(1, card, 0x5009);
+  td.special = 0x1000;
+LAB_0240437e:
+  pcVar2 = get_card_instance(player, card);
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (iVar3 = valid_target(&td), iVar3 != 0))
+  {
+    iVar3 = create_targetted_legacy_effect(pcVar2->parent_controller, pcVar2->parent_card,
+                                           orcish_farmer_effect, pcVar2->targets[0].player,
+                                           pcVar2->targets[0].card);
+    pcVar4 = get_card_instance(player, iVar3);
+    iVar1 = pcVar2->parent_card;
+    pcVar4->targets[0].player = pcVar2->parent_controller;
+    pcVar4->targets[0].card = iVar1;
+    pcVar4->number_of_targets = '\x01';
+  }
+  iVar3 =
+      generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td, "TARGET_LAND");
+  return iVar3;
+}
+
+/* ManalinkEh 2022: 0x2405820; original cards/ice_age.c:7630. */
+int card_order_of_the_sacred_torch(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    counterspell_target_definition(player, card, &td, 0xff);
+    td.required_color = get_sleighted_color_test(player, card, 2);
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    counterspell_target_definition(player, card, &td, 0xff);
+    td.required_color = get_sleighted_color_test(player, card, 2);
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) &&
+        (result = counterspell_validate(player, card, &td, 0), result != 0))
+    {
+      real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0x401, 0, 0, 0, 0, 0, 0, 1, &td, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2405d90; original cards/ice_age.c:7742. */
+int card_phantasmal_mount(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.toughness_requirement = 0x2002;
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.toughness_requirement = 0x2002;
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0)) &&
+        (result = pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                                         instance->targets[0].player, instance->targets[0].card, 1,
+                                         1, 0x20, 0),
+         result != -1))
+    {
+      instance = get_card_instance(player, result);
+      instance->targets[3].player = 0x228;
+      instance->targets[3].card = 3;
+    }
+  }
+  result =
+      generic_activated_ability(player, card, event, 7, 0, 0, 0, 0, 0, 0, 0, &td,
+                                "Select target creature you control with toughness 2 or less.");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2408ac0; original cards/ice_age.c:8620. */
+int card_soldevi_golem(int player, int card, event_t event)
+{
+  resolve_trigger_t trigger_mode;
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  target_definition_t td;
+  does_not_untap(player, card, event);
+  if ((((current_turn != player) || (trigger_condition != 0xc9)) || (card != affected_card)) ||
+      (player != affected_card_controller))
+    goto LAB_02408aea;
+  default_target_definition(player, card, &td, 2);
+  td.required_state = 1;
+  result = can_target(&td);
+  if (result == 0)
+  {
+  LAB_02408c87:
+    trigger_mode = RESOLVE_TRIGGER_0;
+  }
+  else
+  {
+    if (player == 1)
+    {
+      result = check_state(1, card, 0x10);
+      if (result == 0)
+        goto LAB_02408c87;
+    }
+    result = duh_mode(player);
+    trigger_mode = (result != 0) + RESOLVE_TRIGGER_OPTIONAL;
+  }
+  upkeep_trigger_ability_mode(player, card, event, player, trigger_mode);
+LAB_02408aea:
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = 1 - player;
+  td.required_state = 1;
+  td.preferred_controller = td.allowed_controller;
+  if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+  {
+    uVar3 = get_toughness(player, card);
+    td.power_requirement = uVar3 | 0x2000;
+  }
+  instance = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    result = new_pick_target(&td, "Select target tapped creature an opponent controls.", 0, 0x80);
+    if (result != 0)
+    {
+      untap_card(instance->targets[0].player, instance->targets[0].card);
+      untap_card(player, card);
+    }
+  }
+  instance->number_of_targets = '\0';
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x240a380; original cards/ice_age.c:9164. */
+int card_stromgald_cabal(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    counterspell_target_definition(player, card, &td, 0xff);
+    td.required_color = get_sleighted_color_test(player, card, 0x20);
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    counterspell_target_definition(player, card, &td, 0xff);
+    td.required_color = get_sleighted_color_test(player, card, 0x20);
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) &&
+        (result = counterspell_validate(player, card, &td, 0), result != 0))
+    {
+      real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0x401, 0, 0, 0, 0, 0, 0, 1, &td, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23ed670; original cards/ice_age.c:9511. */
+static int effect_touch_of_vitae(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  result = attachment_granting_activated_ability(player, card, event, 0x2000, 0, 0, 0, 0, 0, 0, 0,
+                                                 NULL, NULL);
+  if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    return result;
+  }
+  instance = get_card_instance(player, card);
+  untap_card((int)instance->damage_target_player, instance->damage_target_card);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23edef0; original cards/ice_age.c:9636. */
+static int venomous_breath_effect(int player, int card, event_t event)
+{
+  char cVar1;
+  int card_00;
+  card_instance_t *instance;
+  int result;
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_player)
+  {
+    instance = get_card_instance(player, card);
+    cVar1 = instance->damage_target_player;
+    card_00 = instance->damage_target_card;
+    result = end_of_combat_trigger(player, card, event, 2);
+    if (result != 0)
+    {
+      kill_card((int)cVar1, card_00, KILL_DESTROY);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23eb8d0; original cards/ice_age.c:9650. */
+static void add_venomous_breath_effect(int player, int card, int t_player, int t_card)
+{
+  create_targetted_legacy_effect(player, card, venomous_breath_effect, t_player, t_card);
+  return;
+}
+
+/* ManalinkEh 2022: 0x240ba20; original cards/ice_age.c:9654. */
+int card_venomous_breath(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.preferred_controller = player;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            instance = get_card_instance(player, card);
+            for_each_creature_blocked_by_me(instance->targets[0].player, instance->targets[0].card,
+                                            add_venomous_breath_effect, player, card);
+            for_each_creature_blocking_me(instance->targets[0].player, instance->targets[0].card,
+                                          add_venomous_breath_effect, player, card);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0240ba78;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = player;
+LAB_0240ba78:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x240c520; original cards/ice_age.c:9899. */
+int card_whiteout(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test2;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    negate_ability_until_eot(player, card, 2, -1, KEYWORD_FLYING);
+    kill_card(player, card, KILL_DESTROY);
+    goto LAB_0240c5a0;
+  }
+  if (event == EVENT_GRAVEYARD_ABILITY)
+  {
+    new_default_test_definition(&test2, 1, "Select a snow land to sacrifice.");
+    test2.subtype = 0x2003;
+    result = new_can_sacrifice(player, card, player, &test2);
+    if (result == 0)
+      goto LAB_0240c5a0;
+    result = 4;
+  }
+  else
+  {
+    if (event != EVENT_PAY_FLASHBACK_COSTS)
+      goto LAB_0240c5a0;
+    new_default_test_definition(&test2, 1, "Select a snow land to sacrifice.");
+    test2.subtype = 0x2003;
+    result = new_sacrifice(player, card, player, SAC_AS_COST, &test2);
+    if (result == 0)
+      goto LAB_0240c5a0;
+    result = 1;
+  }
+  if (spell_fizzled != 1)
+  {
+    return result;
+  }
+LAB_0240c5a0:
+  result = basic_spell(player, card, event);
+  return result;
+}

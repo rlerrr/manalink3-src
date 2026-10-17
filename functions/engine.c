@@ -2060,3 +2060,18 @@ int sub_495BE0(int plr)
 
   return highest_idx;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26a83e0; original functions/engine.c:2539. */
+static int qsort_compare_attacker_effectiveness(void *lhs, void *rhs)
+{
+  return (unsigned int)(*(int *)((int)lhs + 4) < *(int *)((int)rhs + 4)) -
+         (unsigned int)(*(int *)((int)rhs + 4) < *(int *)((int)lhs + 4));
+}
+
+/* ManalinkEh 2022: 0x26a8410; original functions/engine.c:2547. */
+static int qsort_cardvalue_ascending(void *lhs, void *rhs)
+{
+  return (unsigned int)(*(int *)rhs < *(int *)lhs) - (unsigned int)(*(int *)lhs < *(int *)rhs);
+}

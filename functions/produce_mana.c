@@ -1478,3 +1478,34 @@ void mana_burn(void)
 		}
 	}
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x266bbc0; original functions/produce_mana.c:2035. */
+color_test_t basic_subtype_to_color_test(subtype_t subtype)
+{
+  color_test_t cVar1;
+
+  if (subtype == SUBTYPE_SWAMP)
+  {
+    return COLOR_TEST_BLACK;
+  }
+  cVar1 = COLOR_TEST_BLUE;
+  if (subtype != SUBTYPE_ISLAND)
+  {
+    if (subtype == SUBTYPE_FOREST)
+    {
+      return COLOR_TEST_GREEN;
+    }
+    cVar1 = COLOR_TEST_0;
+    if (subtype == SUBTYPE_MOUNTAIN)
+    {
+      return COLOR_TEST_RED;
+    }
+    if (subtype == SUBTYPE_PLAINS)
+    {
+      return COLOR_TEST_WHITE;
+    }
+  }
+  return cVar1;
+}

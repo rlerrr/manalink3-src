@@ -2034,3 +2034,1588 @@ Haste
 Whenever a creature an opponent controls dies, put a +1/+1 counter on ~.
 Sacrifice another creature: ~ gains indestructible until end of turn.
 */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *non_mana_source(int who_chooses, int player, int card);
+static int aer_implement(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x20ba7d0; original cards/aether_revolt.c:120. */
+static char *non_mana_source(int who_chooses, int player, int card)
+{
+  card_instance_t *instance;
+  char *pcVar2;
+  instance = get_card_instance(player, card);
+  pcVar2 = NULL;
+  if ((cards_data[instance->internal_card_id].extra_ability & 0x1000) != 0)
+  {
+    pcVar2 = "must not be a mana source.";
+  }
+  return pcVar2;
+}
+
+/* ManalinkEh 2022: 0x20ba6c0; original cards/aether_revolt.c:127. */
+static void modify_cost_for_improvise(int player, int card, event_t event)
+{
+  card_ptr_t *pcVar1;
+  int iVar2;
+  int iVar3;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, 0x40);
+  td.illegal_state = 1;
+  td.illegal_abilities = 0;
+  if (player == 1)
+  {
+    td.special = 0x8000;
+    td.extra = (int32_t)non_mana_source;
+  }
+  td.allowed_controller = player;
+  iVar2 = get_id(player, card);
+  pcVar1 = cards_ptr[iVar2];
+  iVar2 = get_updated_casting_cost(player, card, -1, event, -1);
+  iVar3 = target_available(player, card, &td);
+  iVar2 = has_mana_multi(player, iVar2 - iVar3 & (int)(iVar2 - iVar3 ^ 0xffffffffU) >> 0x1f,
+                         (unsigned int)pcVar1->req_black, (unsigned int)pcVar1->req_blue,
+                         (unsigned int)pcVar1->req_green, (unsigned int)pcVar1->req_red,
+                         (unsigned int)pcVar1->req_white);
+  if (iVar2 == 0)
+  {
+    return;
+  }
+  null_casting_cost(player, card);
+  return;
+}
+
+/* ManalinkEh 2022: 0x20bf7d0; original cards/aether_revolt.c:1249. */
+int card_countless_gears_renegade(int player, int card, event_t event)
+{
+  int result;
+  result = duh_mode(player);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event == EVENT_ETB)
+  {
+    result = get_trap_condition(player, 0x60c);
+    if (result != 0)
+    {
+      make_servo(player, card, 1);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20bf940; original cards/aether_revolt.c:1287. */
+int card_cruel_finality(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      default_target_definition(player, card, &td, 2);
+      scry(player, 1);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = vanilla_instant_pump(player, card, event, 2, 1 - player, -2, -2, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20bfd10; original cards/aether_revolt.c:1365. */
+int card_dark_intimations(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        new_default_test_definition(&test, 0x102, "Select a creature or planeswalker.");
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          new_sacrifice(player, card, 1 - player, SAC_CAUSED | SAC_NO_CANCEL, &test);
+          discard(1 - player, 0, player);
+          result = count_graveyard_by_type(player, 0x1006);
+          if (0 < result)
+          {
+            new_global_tutor(player, player, 2, 1, 1, 1, &test);
+          }
+          draw_a_card(player);
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_020bfd60;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  new_default_test_definition(&test, 0x102, "Select a creature or planeswalker.");
+LAB_020bfd60:
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20bfe80; original cards/aether_revolt.c:1392. */
+int card_dawnfeather_eagle(int player, int card, event_t event)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  pump_subtype_until_eot(player, card, player, -1, 1, 1, 0, 8);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20bff10; original cards/aether_revolt.c:1410. */
+int card_deadeye_harpooner(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  instance = get_card_instance(player, card);
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = 1 - player;
+  td.required_state = 1;
+  td.preferred_controller = td.allowed_controller;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "Select target tapped creature an opponent controls.", 0, 0x80);
+      if (result != 0)
+      {
+        result = get_trap_condition(player, 0x60c);
+        if (result != 0)
+        {
+          kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+        }
+      }
+    }
+  }
+  instance->number_of_targets = '\0';
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c0000; original cards/aether_revolt.c:1435. */
+int card_decommission(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x44);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+            result = get_trap_condition(player, 0x60c);
+            if (result != 0)
+            {
+              gain_life(player, 3);
+            }
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_020c0066;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x44);
+  get_card_instance(player, card);
+LAB_020c0066:
+  result = generic_spell(player, card, event, 1, &td, "DISENCHANT", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c0630; original cards/aether_revolt.c:1546. */
+int card_dispersal_technician(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  result = duh_mode(player);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 0x40);
+  instance = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    result = new_pick_target(&td, "TARGET_ARTIFACT", 0, 0);
+    if (result != 0)
+    {
+      bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+    }
+  }
+  instance->number_of_targets = '\0';
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c0bc0; original cards/aether_revolt.c:1669. */
+int card_fatal_push(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  char *prompt;
+  target_definition_t td;
+  if (event == EVENT_CAN_CAST)
+  {
+  LAB_020c0c6c:
+    result = get_trap_condition(player, 0x60c);
+    if (result == 0)
+    {
+      default_target_definition(player, card, &td, 2);
+      td.extra = 2;
+      td.special = 0x800;
+    LAB_020c0d3c:
+      prompt = "Select target creature with CMC 2 or less.";
+      goto LAB_020c0cc8;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.extra = 4;
+    td.special = 0x800;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      goto LAB_020c0c6c;
+    }
+    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+    {
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+      goto LAB_020c0c6c;
+    }
+    result = get_trap_condition(player, 0x60c);
+    if (result == 0)
+    {
+      default_target_definition(player, card, &td, 2);
+      td.extra = 2;
+      td.special = 0x800;
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+        result = valid_target(&td);
+        if (result != 0)
+        {
+          instance = get_card_instance(player, card);
+          kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+        }
+        kill_card(player, card, KILL_DESTROY);
+      }
+      goto LAB_020c0d3c;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.extra = 4;
+    td.special = 0x800;
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        instance = get_card_instance(player, card);
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  prompt = "Select target creature with CMC 4 or less.";
+LAB_020c0cc8:
+  result = generic_spell(player, card, event, 0x81, &td, prompt, 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c0e10; original cards/aether_revolt.c:1715. */
+int card_felidar_guardian(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  result = duh_mode(player);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  td.special = 0x4000;
+  instance = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    result = new_pick_target(&td, "Select target permanent you control.", 0, 0x80);
+    if (result != 0)
+    {
+      blink_effect_controller(instance->targets[0].player, instance->targets[0].card, NULL);
+    }
+  }
+  instance->number_of_targets = '\0';
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c1010; original cards/aether_revolt.c:1783. */
+int card_foundry_hornet(int player, int card, event_t event)
+{
+  int result;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    result = has_any_counters(player, COUNTER_P1_P1, TYPE_CREATURE);
+    if (result != 0)
+    {
+      pump_subtype_until_eot(player, card, 1 - player, -1, -1, -1, 0, 0);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c10b0; original cards/aether_revolt.c:1801. */
+int card_fourth_bridge_prowler(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 2);
+  instance = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    result = new_pick_target(&td, "TARGET_CREATURE", 0, 0);
+    if (result != 0)
+    {
+      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -1, -1);
+    }
+  }
+  instance->number_of_targets = '\0';
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c1660; original cards/aether_revolt.c:1941. */
+int card_greenwheel_liberator(int player, int card, event_t event)
+{
+  int result;
+  result = get_trap_condition(player, 0x60c);
+  if (result == 0)
+  {
+    return 0;
+  }
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 2);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c20b0; original cards/aether_revolt.c:2148. */
+int card_highspire_infusion(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.preferred_controller = player;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 3,
+                           3);
+            add_energy(player, 2);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_020c2119;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = player;
+  get_card_instance(player, card);
+LAB_020c2119:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c22c0; original cards/aether_revolt.c:2200. */
+int card_hope_of_ghirapur(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  check_legend_rule(player, card, event);
+  check_damage(player, card, event, DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER, player,
+               card);
+  if (event == EVENT_CLEANUP)
+  {
+    instance = get_card_instance(player, card);
+    instance->targets[1].card = 0;
+    instance->targets[1].player = 0;
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) && (player == 1))
+    {
+      instance = get_card_instance(1, card);
+      if (instance->targets[1].player < 1)
+      {
+        return 0;
+      }
+      result = generic_activated_ability(1, card, EVENT_CAN_ACTIVATE, 8, 0, 0, 0, 0, 0, 0, 0, NULL,
+                                         NULL);
+      return result;
+    }
+    if ((event == EVENT_RESOLVE_ACTIVATION) &&
+        (instance = get_card_instance(player, card), 0 < instance->targets[1].player))
+    {
+      result = generate_reserved_token_by_id(player, 0x6160);
+      instance = get_card_instance(player, result);
+      instance->targets[0].player = 1 - player;
+      instance->targets[0].card = 5;
+      instance->targets[1].player = 0x38;
+      instance->targets[1].card = 0x4153;
+      instance->targets[2].player = 1;
+      put_into_play(player, result);
+      create_card_name_legacy(player, result, 0x4153);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 8, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c2b30; original cards/aether_revolt.c:2328. */
+int card_illusionists_strategem(int player, int card, event_t event)
+{
+  target_t *ptVar1;
+  target_t *ptVar2;
+  int iVar3;
+  card_instance_t *instance;
+  int iVar5;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.preferred_controller = player;
+        td.allowed_controller = player;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          instance = get_card_instance(player, card);
+          if (instance->number_of_targets != '\0')
+          {
+            iVar3 = 0;
+            do
+            {
+              while (iVar5 = validate_target(player, card, &td, iVar3), iVar5 == 0)
+              {
+                iVar3 = iVar3 + 1;
+                if ((int)(unsigned int)instance->number_of_targets <= iVar3)
+                  goto LAB_020c2c91;
+              }
+              ptVar2 = instance->targets + iVar3;
+              ptVar1 = instance->targets + iVar3;
+              iVar3 = iVar3 + 1;
+              blink_effect(ptVar1->player, ptVar2->card, NULL);
+            } while (iVar3 < (int)(unsigned int)instance->number_of_targets);
+          }
+        LAB_020c2c91:
+          draw_cards(player, 1);
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_020c2b8d;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+LAB_020c2b8d:
+  iVar3 = generic_spell(player, card, event, 0x21, &td, "ASHNODS_BATTLEGEAR", 2, NULL);
+  return iVar3;
+}
+
+/* ManalinkEh 2022: 0x20ba990; original cards/aether_revolt.c:2358. */
+static int aer_implement(int player, int card, event_t event)
+{
+  int result;
+  result = graveyard_from_play(player, card, event);
+  if (result == 0)
+  {
+    return 0;
+  }
+  draw_cards(player, 1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c2cd0; original cards/aether_revolt.c:2367. */
+int card_implement_of_combustion(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0x100);
+    td.zone = 0x1000;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = aer_implement(player, card, event);
+      return result;
+    }
+    default_target_definition(player, card, &td, 0x100);
+    td.zone = 0x1000;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        damage_target0(player, card, 1);
+      }
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0xc, 0, 0, 0, 0, 1, 0, 0, &td,
+                                     "TARGET_PLAYER_OR_PLANESWALKER");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c2e10; original cards/aether_revolt.c:2388. */
+int card_implement_of_examination(int player, int card, event_t event)
+{
+  int result;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = graveyard_from_play(player, card, event);
+      if (result == 0)
+      {
+        return 0;
+      }
+      draw_cards(player, 1);
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      draw_a_card(player);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 8, 0, 0, 1, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c3050; original cards/aether_revolt.c:2432. */
+int card_implement_of_improvement(int player, int card, event_t event)
+{
+  int result;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = graveyard_from_play(player, card, event);
+      if (result == 0)
+      {
+        return 0;
+      }
+      draw_cards(player, 1);
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      gain_life(player, 2);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 8, 0, 0, 0, 0, 0, 1, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c3120; original cards/aether_revolt.c:2450. */
+int card_implement_of_malice(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    get_card_instance(player, card);
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = aer_implement(player, card, event);
+      return result;
+    }
+    instance = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        discard(instance->targets[0].player, 0, player);
+      }
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0x1c, 0, 1, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_PLAYER");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c3a50; original cards/aether_revolt.c:2638. */
+int card_inspiring_roar(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    manipulate_type(player, card, player, TYPE_CREATURE, ACT_ADD_COUNTERS_BASE | ACT_KILL_BURY);
+    kill_card(player, card, KILL_SACRIFICE);
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c4160; original cards/aether_revolt.c:2762. */
+int card_irontread_crusher(int player, int card, event_t event)
+{
+  int result;
+  result = vehicle(player, card, event, 3);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c44c0; original cards/aether_revolt.c:2839. */
+int card_leave_in_the_dust(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x47);
+        td.illegal_type = 1;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+            draw_cards(player, 1);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_020c452d;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.illegal_type = 1;
+  get_card_instance(player, card);
+LAB_020c452d:
+  result =
+      generic_spell(player, card, event, 0x81, &td, "Select target nonland permanent.", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c5e40; original cards/aether_revolt.c:3386. */
+int card_narnam_renegade(int player, int card, event_t event)
+{
+  int result;
+  deathtouch(player, card, event);
+  result = get_trap_condition(player, 0x60c);
+  if (result == 0)
+  {
+    return 0;
+  }
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c5eb0; original cards/aether_revolt.c:3403. */
+int card_natural_obsolescence(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x40);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            put_on_bottom_of_deck(instance->targets[0].player, instance->targets[0].card);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_020c5f16;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x40);
+  get_card_instance(player, card);
+LAB_020c5f16:
+  result = generic_spell(player, card, event, 0x81, &td, "Select target artifact.", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c6160; original cards/aether_revolt.c:3468. */
+int card_pacification_array(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 0x42);
+    if (event != EVENT_ACTIVATE)
+      goto LAB_020c61be;
+    generic_activated_ability(player, card, EVENT_ACTIVATE, 7, 2, 0, 0, 0, 0, 0, 0, &td,
+                              "Choose target artifact or creature");
+    if (spell_fizzled != 1)
+    {
+      ai_mod_for_tap_effects(player, card, 0);
+    }
+  }
+  else if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+  {
+    default_target_definition(player, card, &td, 0x42);
+  LAB_020c61be:
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        instance = get_card_instance(player, card);
+        tap_card(instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+    result = generic_activated_ability(player, card, event, 5, 2, 0, 0, 0, 0, 0, 0, &td,
+                                       "Choose target artifact or creature");
+    return result;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c6a30; original cards/aether_revolt.c:3619. */
+int card_pendulum_of_patterns(int player, int card, event_t event)
+{
+  int result;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    gain_life(player, 3);
+  }
+  else if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 5, 0, 0, 0, 0, 0, 0,
+                                       NULL, NULL);
+    if (result != 0)
+    {
+      return 1;
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    draw_a_card(player);
+  }
+  result = generic_activated_ability(player, card, event, 9, 5, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c6b80; original cards/aether_revolt.c:3646. */
+int card_perilous_predicament(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    new_default_test_definition(&this_test, 0x42, "Select an artifact creature to sacrifice.");
+    this_test.type_flag = 0xb;
+    new_sacrifice(player, card, 1 - player, SAC_CAUSED | SAC_NO_CANCEL, &this_test);
+    new_default_test_definition(&this_test, 2, "Select a nonartifact creature.");
+    this_test.type_flag = 9;
+    new_sacrifice(player, card, 1 - player, SAC_CAUSED | SAC_NO_CANCEL, &this_test);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c71e0; original cards/aether_revolt.c:3875. */
+int card_planar_bridge(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  check_legend_rule(player, card, event);
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    new_default_test_definition(&this_test, 0x47, "Select a permanent card.");
+    new_global_tutor(player, player, 1, 4, 0, 2, &this_test);
+  }
+  result = generic_activated_ability(player, card, event, 1, 8, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c7d40; original cards/aether_revolt.c:4130. */
+int card_renegade_map(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  comes_into_play_tapped(player, card, event);
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    new_default_test_definition(&this_test, 1, "Select a basic land card.");
+    this_test.subtype = 0x2000;
+    new_global_tutor(player, player, 1, 1, 0, 5, &this_test);
+  }
+  result = generic_activated_ability(player, card, event, 9, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c7e40; original cards/aether_revolt.c:4149. */
+int card_renegade_rallier(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    result = get_trap_condition(player, 0x60c);
+    if (result != 0)
+    {
+      new_default_test_definition(&this_test, 0x47, "Select a permanent with CMC 2 or less.");
+      this_test.cmc = 3;
+      this_test.cmc_flag = 3;
+      result = new_special_count_grave(player, &this_test);
+      if (0 < result)
+      {
+        result = graveyard_has_shroud(player);
+        if (result == 0)
+        {
+          new_global_tutor(player, player, 2, 4, 0, 1, &this_test);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c8020; original cards/aether_revolt.c:4200. */
+int card_renegades_getaway(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      default_target_definition(player, card, &td, 0x47);
+      td.preferred_controller = player;
+      get_card_instance(player, card);
+      goto LAB_020c80e7;
+    }
+    if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+    {
+      default_target_definition(player, card, &td, 0x47);
+      td.preferred_controller = player;
+      instance = get_card_instance(player, card);
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+        result = valid_target(&td);
+        if (result != 0)
+        {
+          pump_ability_until_eot(player, card, instance->targets[0].player,
+                                 instance->targets[0].card, 0, 0, 0, 0x800);
+          make_servo(player, card, 1);
+        }
+        kill_card(player, card, KILL_DESTROY);
+      }
+      goto LAB_020c80e7;
+    }
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.preferred_controller = player;
+  get_card_instance(player, card);
+LAB_020c80e7:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_PERMANENT", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c81d0; original cards/aether_revolt.c:4232. */
+int card_reservoir_walker(int player, int card, event_t event)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  add_energy(player, 3);
+  gain_life(player, 3);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c8240; original cards/aether_revolt.c:4249. */
+int card_resourceful_return(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_t this_test;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        new_default_test_definition(&this_test, 2, "Select a creature card.");
+        if ((card != affected_card) || (player != affected_card_controller))
+          goto LAB_020c829b;
+        generic_spell(player, card, EVENT_CAST_SPELL, 8, NULL, NULL, 1, &this_test);
+        if (spell_fizzled != 1)
+        {
+          instance = get_card_instance(player, card);
+          ai_modifier =
+              ai_modifier +
+              cards_ptr[graveyard_ptr_mutable[player][instance->targets[0].player]]->ai_base_value;
+        }
+      }
+      return 0;
+    }
+    if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+    {
+      new_default_test_definition(&this_test, 2, "Select a creature card.");
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+        result = validate_target_from_grave_source(player, card, player, 0);
+        if (result != -1)
+        {
+          from_grave_to_hand(player, result, 1);
+        }
+        result = check_battlefield_for_subtype(player, 0x40, -1);
+        if (result != 0)
+        {
+          draw_a_card(player);
+        }
+        kill_card(player, card, KILL_DESTROY);
+      }
+      goto LAB_020c829b;
+    }
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+  }
+  new_default_test_definition(&this_test, 2, "Select a creature card.");
+LAB_020c829b:
+  result = generic_spell(player, card, event, 8, NULL, NULL, 1, &this_test);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c8890; original cards/aether_revolt.c:4364. */
+int card_ridgescale_tusker(int player, int card, event_t event)
+{
+  test_definition_t test;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  new_default_test_definition(&test, 2, "");
+  test.not_me = 1;
+  new_manipulate_all(player, card, player, &test, ACT_ADD_COUNTERS_BASE | ACT_KILL_BURY);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c8d30; original cards/aether_revolt.c:4485. */
+int card_rogue_refiner(int player, int card, event_t event)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  draw_a_card(player);
+  add_energy(player, 2);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c96e0; original cards/aether_revolt.c:4774. */
+int card_servo_schematic(int player, int card, event_t event)
+{
+  int result;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    make_servo(player, card, 1);
+  }
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0)
+  {
+    return 0;
+  }
+  make_servo(player, card, 1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c9d00; original cards/aether_revolt.c:4872. */
+int card_silkweaver_elite(int player, int card, event_t event)
+{
+  int result;
+  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = get_trap_condition(player, 0x60c);
+    if (result != 0)
+    {
+      etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    }
+  }
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  draw_a_card(player);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20ca560; original cards/aether_revolt.c:5160. */
+int card_take_into_custody(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            effect_frost_titan(player, card, instance->targets[0].player,
+                               instance->targets[0].card);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_020ca5c6;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  get_card_instance(player, card);
+LAB_020ca5c6:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20cabe0; original cards/aether_revolt.c:5300. */
+int card_tezzerets_betrayal(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  test_definition_t test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        instance = get_card_instance(player, card);
+        default_target_definition(player, card, &td, 2);
+        td.illegal_abilities = 0;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+            new_default_test_definition(&test, 0xff,
+                                        "Select a card named Tezzeret, Master of Metal.");
+            test.id = 0x41ad;
+            result = new_special_count_grave(player, &test);
+            if ((result == 0) ||
+                (result = new_global_tutor(player, player, 2, 1, 0, 5, &test), result < 0))
+            {
+              new_global_tutor(player, player, 1, 1, 0, 5, &test);
+            }
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_020cac5d;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  get_card_instance(player, card);
+  default_target_definition(player, card, &td, 2);
+  td.illegal_abilities = 0;
+LAB_020cac5d:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20cafa0; original cards/aether_revolt.c:5370. */
+int card_tezzerets_touch(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int player_00;
+  int owner;
+  target_definition_t td;
+  result = attached_creature_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    instance = get_card_instance(player, card);
+    result = instance->damage_target_card;
+    player_00 = get_owner((int)instance->damage_target_player, result);
+    result = find_in_owners_graveyard(player_00, result, &owner, &td.who_chooses);
+    if (result != 0)
+    {
+      result = graveyard_ptr_mutable[owner][td.who_chooses];
+      remove_card_from_grave(owner, td.who_chooses);
+      add_card_to_hand(owner, result);
+    }
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_020caff8;
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) ||
+             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+      goto LAB_020caff8;
+    if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+         (((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
+           (event != EVENT_CHANGE_TYPE)))) &&
+        (((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)) &&
+          (event != EVENT_STATIC_EFFECTS))))
+    {
+      return 0;
+    }
+  }
+LAB_020caff8:
+  default_target_definition(player, card, &td, 0x40);
+  td.preferred_controller = player;
+  result = generic_animating_aura(player, card, event, &td, "TARGET_ARTIFACT", 5, 5, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20cb4f0; original cards/aether_revolt.c:5475. */
+int card_thopter_arrest(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  return_from_oblivion(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &td, 0x42);
+    td.allowed_controller = 1 - player;
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(
+          &td, "Select target target creature or artifact an opponent controls.", 0, 0x80);
+      if (result != 0)
+      {
+        obliviation(player, card, instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+    instance->number_of_targets = '\0';
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20cb5f0; original cards/aether_revolt.c:5504. */
+int card_treasure_keeper(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0)
+  {
+    return 0;
+  }
+  default_test_definition(&this_test, 1);
+  this_test.type_flag = 1;
+  this_test.cmc = 4;
+  this_test.cmc_flag = 3;
+  reveal_card_until_you_reveal_test(player, player, &this_test, 0x2004);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20cb680; original cards/aether_revolt.c:5525. */
+int card_trophy_mage(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  result = duh_mode(player);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  new_default_test_definition(&this_test, 0x40, "Select an artifact card with CMC 3");
+  this_test.cmc = 3;
+  this_test.cmc_flag = 0;
+  new_global_tutor(player, player, 1, 1, 0, 1, &this_test);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20cbd20; original cards/aether_revolt.c:5622. */
+int card_universal_solvent(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0x47);
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x47);
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0xd, 7, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_PERMANENT");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20cbef0; original cards/aether_revolt.c:5664. */
+int card_vengeful_rebel(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = 1 - player;
+    td.allow_cancel = 0;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS");
+      if (result != 0)
+      {
+        result = get_trap_condition(player, 0x60c);
+        if (result != 0)
+        {
+          instance = get_card_instance(player, card);
+          pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -3,
+                         -3);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20cc690; original cards/aether_revolt.c:5783. */
+int card_watchful_automaton(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    scry(player, 1);
+  }
+  result = generic_activated_ability(player, card, event, 0, 2, 0, 1, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20ccaa0; original cards/aether_revolt.c:5861. */
+int card_wrangle(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = 1 - player;
+    td.power_requirement = 0x2004;
+    get_card_instance(player, card);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 2);
+      td.preferred_controller = 1 - player;
+      td.power_requirement = 0x2004;
+      get_card_instance(player, card);
+      if ((card != affected_card) || (player != affected_card_controller))
+        goto LAB_020ccb81;
+      generic_spell(player, card, EVENT_CAST_SPELL, 0x81, &td,
+                    "Select target creature with power 4 or less", 1, NULL);
+      if (spell_fizzled != 1)
+      {
+        ai_modifier_for_act_of_treason(player, card);
+      }
+    }
+    return 0;
+  }
+  if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = 1 - player;
+    td.power_requirement = 0x2004;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        effect_act_of_treason(player, card, instance->targets[0].player, instance->targets[0].card);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  else
+  {
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = 1 - player;
+    td.power_requirement = 0x2004;
+    get_card_instance(player, card);
+  }
+LAB_020ccb81:
+  result = generic_spell(player, card, event, 1, &td, NULL, 1, NULL);
+  return result;
+}

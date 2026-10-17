@@ -9124,3 +9124,13 @@ Flying
 }
 
 // zephyr falcon --> serra angel
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21f3eb0; original cards/legends.c:2732. */
+int card_giant_strength(int player, int card, event_t event)
+{
+  int result;
+  result = generic_aura(player, card, event, player, 2, 2, 0, 0, 0, 0, 0);
+  return result;
+}

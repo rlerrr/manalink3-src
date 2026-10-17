@@ -1,0 +1,960 @@
+{
+  "inputs": {
+    "library": "G:\\Manalink",
+    "archive": "G:\\Manalink\\Manalink-3_0-Oct-2022_Hotfix.zip",
+    "archive_sha256": "6ba126c2795db8a472239ce37b93cc4a388082fe4a471f3aa51f7ffc8263c178",
+    "baseline": "G:\\Manalink\\test build 12-1-2020\\ManalinkEh.dll",
+    "debug": "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg"
+  },
+  "images": {
+    "2020-dll": {
+      "sha256": "927d076ca9e6a46b8a2bde0aeeed5e3b847ec8f55d22cebc9f92744bea460759",
+      "bytes": 7243307,
+      "machine": "0x14c",
+      "timestamp": 1578838755,
+      "image_base": "0x2000000",
+      "entry_rva": "0x1000",
+      "coff_records_including_aux": 21283,
+      "coff_function_records": 15416,
+      "sections": {
+        ".text": {
+          "rva": "0x1000",
+          "virtual_size": 5322640,
+          "raw_size": 5322752
+        },
+        ".text.startup._GLOBAL__sub_I___cxa_allocate_exception": {
+          "rva": "0x515000",
+          "virtual_size": 48,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZN9__gnu_cxxL21__atomic_add_dispatchEPii.constprop.37": {
+          "rva": "0x516000",
+          "virtual_size": 16,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZNSs4_Rep10_M_disposeERKSaIcE.part.18": {
+          "rva": "0x517000",
+          "virtual_size": 48,
+          "raw_size": 512
+        },
+        ".text.startup._GLOBAL__sub_I__ZNSt14error_categoryC2Ev": {
+          "rva": "0x518000",
+          "virtual_size": 64,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZN10__cxxabiv1L30throw_recursive_init_exceptionEv": {
+          "rva": "0x519000",
+          "virtual_size": 48,
+          "raw_size": 512
+        },
+        ".text.unlikely": {
+          "rva": "0x51a000",
+          "virtual_size": 104,
+          "raw_size": 512
+        },
+        ".text.startup": {
+          "rva": "0x51b000",
+          "virtual_size": 32,
+          "raw_size": 512
+        },
+        ".data": {
+          "rva": "0x51c000",
+          "virtual_size": 22404,
+          "raw_size": 22528
+        },
+        ".rdata": {
+          "rva": "0x522000",
+          "virtual_size": 974740,
+          "raw_size": 974848
+        },
+        ".eh_frame": {
+          "rva": "0x610000",
+          "virtual_size": 12632,
+          "raw_size": 12800
+        },
+        ".bss": {
+          "rva": "0x614000",
+          "virtual_size": 58020,
+          "raw_size": 0
+        },
+        ".edata": {
+          "rva": "0x623000",
+          "virtual_size": 98,
+          "raw_size": 512
+        },
+        ".idata": {
+          "rva": "0x624000",
+          "virtual_size": 3288,
+          "raw_size": 3584
+        },
+        ".CRT": {
+          "rva": "0x625000",
+          "virtual_size": 24,
+          "raw_size": 512
+        },
+        ".tls": {
+          "rva": "0x626000",
+          "virtual_size": 32,
+          "raw_size": 512
+        },
+        ".reloc": {
+          "rva": "0x627000",
+          "virtual_size": 120924,
+          "raw_size": 121344
+        }
+      }
+    },
+    "2020-dbg": {
+      "sha256": "b49af15964635442a12416b993764d70c3b31866418b12c8ee4af0ef027cf4f3",
+      "bytes": 80227041,
+      "machine": "0x14c",
+      "timestamp": 1578838744,
+      "image_base": "0x2000000",
+      "entry_rva": "0x1000",
+      "coff_records_including_aux": 23849,
+      "coff_function_records": 15416,
+      "sections": {
+        ".text": {
+          "rva": "0x1000",
+          "virtual_size": 5322640,
+          "raw_size": 0
+        },
+        ".text.startup._GLOBAL__sub_I___cxa_allocate_exception": {
+          "rva": "0x515000",
+          "virtual_size": 48,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZN9__gnu_cxxL21__atomic_add_dispatchEPii.constprop.37": {
+          "rva": "0x516000",
+          "virtual_size": 16,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZNSs4_Rep10_M_disposeERKSaIcE.part.18": {
+          "rva": "0x517000",
+          "virtual_size": 48,
+          "raw_size": 0
+        },
+        ".text.startup._GLOBAL__sub_I__ZNSt14error_categoryC2Ev": {
+          "rva": "0x518000",
+          "virtual_size": 64,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZN10__cxxabiv1L30throw_recursive_init_exceptionEv": {
+          "rva": "0x519000",
+          "virtual_size": 48,
+          "raw_size": 0
+        },
+        ".text.unlikely": {
+          "rva": "0x51a000",
+          "virtual_size": 104,
+          "raw_size": 0
+        },
+        ".text.startup": {
+          "rva": "0x51b000",
+          "virtual_size": 32,
+          "raw_size": 0
+        },
+        ".data": {
+          "rva": "0x51c000",
+          "virtual_size": 22404,
+          "raw_size": 0
+        },
+        ".rdata": {
+          "rva": "0x522000",
+          "virtual_size": 974740,
+          "raw_size": 0
+        },
+        ".eh_frame": {
+          "rva": "0x610000",
+          "virtual_size": 12632,
+          "raw_size": 0
+        },
+        ".bss": {
+          "rva": "0x614000",
+          "virtual_size": 58020,
+          "raw_size": 0
+        },
+        ".edata": {
+          "rva": "0x623000",
+          "virtual_size": 98,
+          "raw_size": 0
+        },
+        ".idata": {
+          "rva": "0x624000",
+          "virtual_size": 3288,
+          "raw_size": 0
+        },
+        ".CRT": {
+          "rva": "0x625000",
+          "virtual_size": 24,
+          "raw_size": 0
+        },
+        ".tls": {
+          "rva": "0x626000",
+          "virtual_size": 32,
+          "raw_size": 0
+        },
+        ".reloc": {
+          "rva": "0x627000",
+          "virtual_size": 120924,
+          "raw_size": 0
+        },
+        ".debug_aranges": {
+          "rva": "0x645000",
+          "virtual_size": 5256,
+          "raw_size": 5632
+        },
+        ".debug_info": {
+          "rva": "0x647000",
+          "virtual_size": 76464064,
+          "raw_size": 76464128
+        },
+        ".debug_abbrev": {
+          "rva": "0x4f33000",
+          "virtual_size": 171932,
+          "raw_size": 172032
+        },
+        ".debug_line": {
+          "rva": "0x4f5d000",
+          "virtual_size": 829423,
+          "raw_size": 829440
+        },
+        ".debug_str": {
+          "rva": "0x5028000",
+          "virtual_size": 34914,
+          "raw_size": 35328
+        },
+        ".debug_loc": {
+          "rva": "0x5031000",
+          "virtual_size": 1663508,
+          "raw_size": 1664000
+        },
+        ".debug_ranges": {
+          "rva": "0x51c8000",
+          "virtual_size": 215464,
+          "raw_size": 215552
+        }
+      }
+    },
+    "2022-dll": {
+      "sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "bytes": 8922311,
+      "machine": "0x14c",
+      "timestamp": 0,
+      "image_base": "0x2000000",
+      "entry_rva": "0x1000",
+      "coff_records_including_aux": 25647,
+      "coff_function_records": 19774,
+      "sections": {
+        ".text": {
+          "rva": "0x1000",
+          "virtual_size": 7400752,
+          "raw_size": 7400960
+        },
+        ".text.unlikely": {
+          "rva": "0x710000",
+          "virtual_size": 184,
+          "raw_size": 512
+        },
+        ".text.startup": {
+          "rva": "0x711000",
+          "virtual_size": 64,
+          "raw_size": 512
+        },
+        ".text.startup._GLOBAL__sub_I___cxa_get_globals_fast": {
+          "rva": "0x712000",
+          "virtual_size": 80,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZSt21__throw_bad_exceptionv": {
+          "rva": "0x713000",
+          "virtual_size": 48,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZSt17__throw_bad_allocv": {
+          "rva": "0x714000",
+          "virtual_size": 48,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZSt16__throw_bad_castv": {
+          "rva": "0x715000",
+          "virtual_size": 48,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZSt18__throw_bad_typeidv": {
+          "rva": "0x716000",
+          "virtual_size": 48,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZSt19__throw_logic_errorPKc": {
+          "rva": "0x717000",
+          "virtual_size": 156,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZSt20__throw_domain_errorPKc": {
+          "rva": "0x718000",
+          "virtual_size": 156,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZSt24__throw_invalid_argumentPKc": {
+          "rva": "0x719000",
+          "virtual_size": 156,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZSt20__throw_length_errorPKc": {
+          "rva": "0x71a000",
+          "virtual_size": 156,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZSt20__throw_out_of_rangePKc": {
+          "rva": "0x71b000",
+          "virtual_size": 156,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZSt21__throw_runtime_errorPKc": {
+          "rva": "0x71c000",
+          "virtual_size": 156,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZSt19__throw_range_errorPKc": {
+          "rva": "0x71d000",
+          "virtual_size": 156,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZSt22__throw_overflow_errorPKc": {
+          "rva": "0x71e000",
+          "virtual_size": 156,
+          "raw_size": 512
+        },
+        ".text.unlikely._ZSt23__throw_underflow_errorPKc": {
+          "rva": "0x71f000",
+          "virtual_size": 156,
+          "raw_size": 512
+        },
+        ".text.startup._GLOBAL__sub_I__ZN9__gnu_cxx9__freeresEv": {
+          "rva": "0x720000",
+          "virtual_size": 128,
+          "raw_size": 512
+        },
+        ".data": {
+          "rva": "0x721000",
+          "virtual_size": 7516,
+          "raw_size": 7680
+        },
+        ".rdata": {
+          "rva": "0x723000",
+          "virtual_size": 330784,
+          "raw_size": 331264
+        },
+        ".bss": {
+          "rva": "0x774000",
+          "virtual_size": 259896,
+          "raw_size": 0
+        },
+        ".edata": {
+          "rva": "0x7b4000",
+          "virtual_size": 98,
+          "raw_size": 512
+        },
+        ".idata": {
+          "rva": "0x7b5000",
+          "virtual_size": 4724,
+          "raw_size": 5120
+        },
+        ".CRT": {
+          "rva": "0x7b7000",
+          "virtual_size": 44,
+          "raw_size": 512
+        },
+        ".tls": {
+          "rva": "0x7b8000",
+          "virtual_size": 8,
+          "raw_size": 512
+        },
+        ".reloc": {
+          "rva": "0x7b9000",
+          "virtual_size": 185956,
+          "raw_size": 186368
+        }
+      }
+    },
+    "2022-dbg": {
+      "sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "bytes": 129795835,
+      "machine": "0x14c",
+      "timestamp": 0,
+      "image_base": "0x2000000",
+      "entry_rva": "0x1000",
+      "coff_records_including_aux": 29161,
+      "coff_function_records": 19774,
+      "sections": {
+        ".text": {
+          "rva": "0x1000",
+          "virtual_size": 7400752,
+          "raw_size": 0
+        },
+        ".text.unlikely": {
+          "rva": "0x710000",
+          "virtual_size": 184,
+          "raw_size": 0
+        },
+        ".text.startup": {
+          "rva": "0x711000",
+          "virtual_size": 64,
+          "raw_size": 0
+        },
+        ".text.startup._GLOBAL__sub_I___cxa_get_globals_fast": {
+          "rva": "0x712000",
+          "virtual_size": 80,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZSt21__throw_bad_exceptionv": {
+          "rva": "0x713000",
+          "virtual_size": 48,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZSt17__throw_bad_allocv": {
+          "rva": "0x714000",
+          "virtual_size": 48,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZSt16__throw_bad_castv": {
+          "rva": "0x715000",
+          "virtual_size": 48,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZSt18__throw_bad_typeidv": {
+          "rva": "0x716000",
+          "virtual_size": 48,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZSt19__throw_logic_errorPKc": {
+          "rva": "0x717000",
+          "virtual_size": 156,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZSt20__throw_domain_errorPKc": {
+          "rva": "0x718000",
+          "virtual_size": 156,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZSt24__throw_invalid_argumentPKc": {
+          "rva": "0x719000",
+          "virtual_size": 156,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZSt20__throw_length_errorPKc": {
+          "rva": "0x71a000",
+          "virtual_size": 156,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZSt20__throw_out_of_rangePKc": {
+          "rva": "0x71b000",
+          "virtual_size": 156,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZSt21__throw_runtime_errorPKc": {
+          "rva": "0x71c000",
+          "virtual_size": 156,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZSt19__throw_range_errorPKc": {
+          "rva": "0x71d000",
+          "virtual_size": 156,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZSt22__throw_overflow_errorPKc": {
+          "rva": "0x71e000",
+          "virtual_size": 156,
+          "raw_size": 0
+        },
+        ".text.unlikely._ZSt23__throw_underflow_errorPKc": {
+          "rva": "0x71f000",
+          "virtual_size": 156,
+          "raw_size": 0
+        },
+        ".text.startup._GLOBAL__sub_I__ZN9__gnu_cxx9__freeresEv": {
+          "rva": "0x720000",
+          "virtual_size": 128,
+          "raw_size": 0
+        },
+        ".data": {
+          "rva": "0x721000",
+          "virtual_size": 7516,
+          "raw_size": 0
+        },
+        ".rdata": {
+          "rva": "0x723000",
+          "virtual_size": 330784,
+          "raw_size": 0
+        },
+        ".bss": {
+          "rva": "0x774000",
+          "virtual_size": 259896,
+          "raw_size": 0
+        },
+        ".edata": {
+          "rva": "0x7b4000",
+          "virtual_size": 98,
+          "raw_size": 0
+        },
+        ".idata": {
+          "rva": "0x7b5000",
+          "virtual_size": 4724,
+          "raw_size": 0
+        },
+        ".CRT": {
+          "rva": "0x7b7000",
+          "virtual_size": 44,
+          "raw_size": 0
+        },
+        ".tls": {
+          "rva": "0x7b8000",
+          "virtual_size": 8,
+          "raw_size": 0
+        },
+        ".reloc": {
+          "rva": "0x7b9000",
+          "virtual_size": 185956,
+          "raw_size": 0
+        },
+        ".debug_aranges": {
+          "rva": "0x7e7000",
+          "virtual_size": 6400,
+          "raw_size": 6656
+        },
+        ".debug_info": {
+          "rva": "0x7e9000",
+          "virtual_size": 120059124,
+          "raw_size": 120059392
+        },
+        ".debug_abbrev": {
+          "rva": "0x7a69000",
+          "virtual_size": 260630,
+          "raw_size": 261120
+        },
+        ".debug_line": {
+          "rva": "0x7aa9000",
+          "virtual_size": 3535305,
+          "raw_size": 3535360
+        },
+        ".debug_frame": {
+          "rva": "0x7e09000",
+          "virtual_size": 970956,
+          "raw_size": 971264
+        },
+        ".debug_str": {
+          "rva": "0x7ef7000",
+          "virtual_size": 560280,
+          "raw_size": 560640
+        },
+        ".debug_loc": {
+          "rva": "0x7f80000",
+          "virtual_size": 2964328,
+          "raw_size": 2964480
+        },
+        ".debug_ranges": {
+          "rva": "0x8254000",
+          "virtual_size": 371224,
+          "raw_size": 371712
+        }
+      }
+    }
+  },
+  "pair_checks": {
+    "2020": {
+      "runtime_sections": 17,
+      "all_layouts_equal": true,
+      "function_records_equal": true,
+      "symmetric_function_record_difference": 0
+    },
+    "2022": {
+      "runtime_sections": 26,
+      "all_layouts_equal": true,
+      "function_records_equal": true,
+      "symmetric_function_record_difference": 0
+    }
+  },
+  "coff_name_comparison": {
+    "old": 15392,
+    "new": 19704,
+    "shared": 14936,
+    "added": 4768,
+    "removed": 456,
+    "old_card_names": 11809,
+    "new_card_names": 15095
+  },
+  "dwarf": {
+    "2020": {
+      "total_units": 166,
+      "project_units": 145,
+      "sources": [
+        "cards/odissey.c",
+        "cards/theros.c",
+        "cards/morningtide.c",
+        "cards/unglued_unhinged.c",
+        "cards/alara_reborn.c",
+        "cards/weatherlight.c",
+        "cards/amonkhet.c",
+        "cards/vanguard.c",
+        "cards/arabian_nights.c",
+        "cards/m13.c",
+        "cards/shadows_over_innistrad.c",
+        "cards/dragons_maze.c",
+        "cards/commander_2017.c",
+        "cards/avacyn_restored.c",
+        "cards/new_phyrexia.c",
+        "cards/oath_of_the_gatewatch.c",
+        "cards/antiquities.c",
+        "cards/dissension.c",
+        "cards/ixalan.c",
+        "cards/conspiracy-take-the-crown.c",
+        "cards/m19.c",
+        "cards/legends.c",
+        "cards/conflux.c",
+        "cards/commander_2014.c",
+        "cards/portal_1_2_3k.c",
+        "cards/m15.c",
+        "cards/khans_of_tarkir.c",
+        "cards/rivals_of_ixalan.c",
+        "cards/planeshift.c",
+        "cards/mercadian_masques.c",
+        "cards/coldsnap.c",
+        "cards/planeswalker.c",
+        "cards/innistrad.c",
+        "cards/tempest.c",
+        "cards/shards_of_alara.c",
+        "cards/conspiracy.c",
+        "cards/dark_ascension.c",
+        "cards/unstable.c",
+        "cards/urza_destiny.c",
+        "cards/time_spiral.c",
+        "cards/nemesis.c",
+        "cards/origins.c",
+        "cards/aether_revolt.c",
+        "cards/saviors_of_kamigawa.c",
+        "cards/alliances.c",
+        "cards/m14.c",
+        "cards/apocalypse.c",
+        "cards/judgement.c",
+        "cards/darksteel.c",
+        "cards/born_of_the_gods.c",
+        "cards/fifth_dawn.c",
+        "cards/battlebond.c",
+        "cards/exodus.c",
+        "cards/guildpact.c",
+        "cards/fate_reforged.c",
+        "cards/prophecy.c",
+        "cards/onslaught.c",
+        "cards/homelands.c",
+        "cards/zendikar.c",
+        "cards/m11.c",
+        "cards/urza_saga.c",
+        "cards/urza_legacy.c",
+        "cards/visions.c",
+        "cards/lorwyn.c",
+        "cards/worldwake.c",
+        "cards/torment.c",
+        "cards/tokens.c",
+        "cards/archenemy.c",
+        "cards/future_sight.c",
+        "cards/betrayers_of_kamigawa.c",
+        "cards/commander_2018.c",
+        "cards/shadowmoor.c",
+        "cards/mirrodin.c",
+        "cards/gatecrash.c",
+        "cards/champions_of_kamigawa.c",
+        "cards/m10.c",
+        "cards/draft.c",
+        "cards/stronghold.c",
+        "cards/commander_2016.c",
+        "cards/scourge.c",
+        "cards/dominaria.c",
+        "cards/the_dark.c",
+        "cards/hour_of_devastation.c",
+        "cards/journey_into_nyx.c",
+        "cards/unlimited.c",
+        "cards/rise_of_the_eldrazi.c",
+        "cards/legions.c",
+        "cards/invasion.c",
+        "cards/archenemy_nicol_bolas.c",
+        "cards/eldritch_moon.c",
+        "cards/return_to_ravnica.c",
+        "cards/battle_for_zendikar.c",
+        "cards/scars_of_mirrodin.c",
+        "cards/m12.c",
+        "cards/gargaroz.c",
+        "cards/fallen_empires.c",
+        "cards/planechase.c",
+        "cards/global_series_jiang_yanggu_and_mu_yanling.c",
+        "cards/mirage.c",
+        "cards/promo.c",
+        "cards/ice_age.c",
+        "cards/commander.c",
+        "cards/commander_2013.c",
+        "cards/equipment.c",
+        "cards/planar_chaos.c",
+        "cards/kaladesh.c",
+        "cards/eventide.c",
+        "cards/commander_2015.c",
+        "cards/mirrodin_besieged.c",
+        "cards/ravnica.c",
+        "cards/dragons_of_tarkir.c",
+        "functions/boost_creature_type.c",
+        "functions/dialog.c",
+        "functions/count_graveyard.c",
+        "functions/sacrifices.c",
+        "functions/damage_effects.c",
+        "functions/abilities.c",
+        "functions/exiledby.c",
+        "functions/helper_functions.c",
+        "functions/multiblock.c",
+        "functions/rules_engine.c",
+        "functions/has_threshold.c",
+        "functions/global_checking.c",
+        "functions/challenge_mode.c",
+        "functions/deck.c",
+        "functions/targets.c",
+        "functions/ai.c",
+        "functions/engine.c",
+        "functions/functions.c",
+        "functions/events.c",
+        "functions/equipments.c",
+        "functions/upkeep.c",
+        "functions/auras.c",
+        "functions/has_creature_type.c",
+        "functions/deadbox.c",
+        "functions/produce_mana.c",
+        "functions/token_generation.c",
+        "functions/play_spell_for_free.c",
+        "functions/manipulate_and_damage_all.c",
+        "functions/show_backtrace.c",
+        "functions/windows.c",
+        "functions/counters.c",
+        "functions/tutors.c",
+        "functions/gain_control_and_legend_rule.c",
+        "functions/utility.cpp"
+      ],
+      "producers": {
+        "GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp": 144,
+        "GNU C++ 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -std=gnu++11 -fno-omit-frame-pointer -fno-tree-vrp": 1
+      },
+      "file_scope_subprogram_dies": 36473,
+      "file_scope_subprograms_with_low_pc": 14689,
+      "file_scope_subprograms_with_ranges": 0
+    },
+    "2022": {
+      "total_units": 200,
+      "project_units": 170,
+      "sources": [
+        "cards/visions.c",
+        "cards/battlebond.c",
+        "cards/fifth_dawn.c",
+        "cards/born_of_the_gods.c",
+        "cards/urza_saga.c",
+        "cards/judgement.c",
+        "cards/apocalypse.c",
+        "cards/m14.c",
+        "cards/innistrad.c",
+        "cards/m11.c",
+        "cards/nemesis.c",
+        "cards/alliances.c",
+        "cards/saviors_of_kamigawa.c",
+        "cards/aether_revolt.c",
+        "cards/hour_of_devastation.c",
+        "cards/origins.c",
+        "cards/time_spiral.c",
+        "cards/urza_destiny.c",
+        "cards/dark_ascension.c",
+        "cards/conspiracy.c",
+        "cards/homelands.c",
+        "cards/stronghold.c",
+        "cards/forgotten_realms.c",
+        "cards/shards_of_alara.c",
+        "cards/tempest.c",
+        "cards/planeswalker.c",
+        "cards/coldsnap.c",
+        "cards/mercadian_masques.c",
+        "cards/planeshift.c",
+        "cards/rivals_of_ixalan.c",
+        "cards/global_series_jiang_yanggu_and_mu_yanling.c",
+        "cards/khans_of_tarkir.c",
+        "cards/m15.c",
+        "cards/portal_1_2_3k.c",
+        "cards/war_of_the_spark.c",
+        "cards/commander_2014.c",
+        "cards/conflux.c",
+        "cards/legends.c",
+        "cards/m19.c",
+        "cards/conspiracy-take-the-crown.c",
+        "cards/ixalan.c",
+        "cards/dissension.c",
+        "cards/modern_horizons_2.c",
+        "cards/antiquities.c",
+        "cards/darksteel.c",
+        "cards/oath_of_the_gatewatch.c",
+        "cards/new_phyrexia.c",
+        "cards/stubs.c",
+        "cards/morningtide.c",
+        "cards/ikoria.c",
+        "cards/commander_2017.c",
+        "cards/dragons_maze.c",
+        "cards/shadows_over_innistrad.c",
+        "cards/m13.c",
+        "cards/arabian_nights.c",
+        "cards/vanguard.c",
+        "cards/dominaria.c",
+        "cards/amonkhet.c",
+        "cards/weatherlight.c",
+        "cards/alara_reborn.c",
+        "cards/unglued_unhinged.c",
+        "cards/zendikar_rising.c",
+        "cards/torment.c",
+        "cards/dragons_of_tarkir.c",
+        "cards/m21.c",
+        "cards/mirrodin_besieged.c",
+        "cards/modern_horizons.c",
+        "cards/avacyn_restored.c",
+        "cards/commander_2015.c",
+        "cards/theros_beyond_death.c",
+        "cards/eventide.c",
+        "cards/jumpstart.c",
+        "cards/mirage.c",
+        "cards/m20.c",
+        "cards/kaladesh.c",
+        "cards/commander_2019.c",
+        "cards/planar_chaos.c",
+        "cards/commander_2013.c",
+        "cards/strixhaven.c",
+        "cards/commander.c",
+        "cards/commander_2016.c",
+        "cards/ice_age.c",
+        "cards/promo.c",
+        "cards/planechase.c",
+        "cards/fallen_empires.c",
+        "cards/gargaroz.c",
+        "cards/the_dark.c",
+        "cards/scars_of_mirrodin.c",
+        "cards/battle_for_zendikar.c",
+        "cards/return_to_ravnica.c",
+        "cards/eldritch_moon.c",
+        "cards/archenemy_nicol_bolas.c",
+        "cards/invasion.c",
+        "cards/m12.c",
+        "cards/legions.c",
+        "cards/rise_of_the_eldrazi.c",
+        "cards/unlimited.c",
+        "cards/journey_into_nyx.c",
+        "cards/ravnica.c",
+        "cards/scourge.c",
+        "cards/m10.c",
+        "cards/odyssey.c",
+        "cards/gatecrash.c",
+        "cards/guildpact.c",
+        "cards/mirrodin.c",
+        "cards/shadowmoor.c",
+        "cards/commander_2018.c",
+        "cards/betrayers_of_kamigawa.c",
+        "cards/future_sight.c",
+        "cards/archenemy.c",
+        "cards/tokens.c",
+        "cards/worldwake.c",
+        "cards/lorwyn.c",
+        "cards/commander_legends.c",
+        "cards/commander_2021.c",
+        "cards/urza_legacy.c",
+        "cards/kaldheim.c",
+        "cards/ravnica_allegiance.c",
+        "cards/unstable.c",
+        "cards/throne_of_eldraine.c",
+        "cards/zendikar.c",
+        "cards/midnight_hunt.c",
+        "cards/commander_2020.c",
+        "cards/onslaught.c",
+        "cards/prophecy.c",
+        "cards/champions_of_kamigawa.c",
+        "cards/guilds_of_ravnica.c",
+        "cards/fate_reforged.c",
+        "cards/crimson_vow.c",
+        "cards/theros.c",
+        "cards/exodus.c",
+        "functions/dice.c",
+        "functions/tutors.c",
+        "functions/windows.c",
+        "functions/targets.c",
+        "functions/draft.c",
+        "functions/gain_control_and_legend_rule.c",
+        "functions/token_generation.c",
+        "functions/manipulate_and_damage_all.c",
+        "functions/play_spell_for_free.c",
+        "functions/produce_mana.c",
+        "functions/deadbox.c",
+        "functions/has_creature_type.c",
+        "functions/load_text.c",
+        "functions/upkeep.c",
+        "functions/functions.c",
+        "functions/engine.c",
+        "functions/ai.c",
+        "functions/deck.c",
+        "functions/challenge_mode.c",
+        "functions/global_checking.c",
+        "functions/show_backtrace.c",
+        "functions/has_threshold.c",
+        "functions/rules_engine.c",
+        "functions/events.c",
+        "functions/multiblock.c",
+        "functions/helper_functions.c",
+        "functions/counters.c",
+        "functions/exiledby.c",
+        "functions/abilities.c",
+        "functions/damage_effects.c",
+        "functions/sacrifices.c",
+        "functions/count_graveyard.c",
+        "functions/auras.c",
+        "functions/dialog.c",
+        "functions/boost_creature_type.c",
+        "functions/packs.c",
+        "functions/equipments.c",
+        "functions/utility.cpp",
+        "functions/choose_a_card.cpp"
+      ],
+      "producers": {
+        "GNU C99 9.3-win32 20200320 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -std=gnu99 -fno-omit-frame-pointer -fno-tree-vrp": 168,
+        "GNU C++11 9.3-win32 20200320 -m32 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -std=gnu++11 -fno-omit-frame-pointer -fno-tree-vrp": 2
+      },
+      "file_scope_subprogram_dies": 48453,
+      "file_scope_subprograms_with_low_pc": 18849,
+      "file_scope_subprograms_with_ranges": 5
+    },
+    "added_sources": [
+      "cards/commander_2019.c",
+      "cards/commander_2020.c",
+      "cards/commander_2021.c",
+      "cards/commander_legends.c",
+      "cards/crimson_vow.c",
+      "cards/forgotten_realms.c",
+      "cards/guilds_of_ravnica.c",
+      "cards/ikoria.c",
+      "cards/jumpstart.c",
+      "cards/kaldheim.c",
+      "cards/m20.c",
+      "cards/m21.c",
+      "cards/midnight_hunt.c",
+      "cards/modern_horizons.c",
+      "cards/modern_horizons_2.c",
+      "cards/odyssey.c",
+      "cards/ravnica_allegiance.c",
+      "cards/strixhaven.c",
+      "cards/stubs.c",
+      "cards/theros_beyond_death.c",
+      "cards/throne_of_eldraine.c",
+      "cards/war_of_the_spark.c",
+      "cards/zendikar_rising.c",
+      "functions/choose_a_card.cpp",
+      "functions/dice.c",
+      "functions/draft.c",
+      "functions/load_text.c",
+      "functions/packs.c"
+    ]
+  }
+}

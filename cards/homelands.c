@@ -2915,3 +2915,73 @@ int card_wizards_school(int player, int card, event_t event)
    * |2, |T: Add |W or |B to your mana pool. */
   return homelands_triple_land(player, card, event, COLOR_TEST_BLUE, COLOR_TEST_WHITE|COLOR_TEST_BLACK);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2128b20; original cards/homelands.c:2870. */
+int card_samite_alchemist(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td_prev;
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td_prev, 2);
+    td_prev.allowed_controller = player;
+    td_prev.preferred_controller = player;
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0, 0, 2, 0,
+                                         &td_prev, NULL);
+      if (result == 0)
+      {
+        return 0;
+      }
+      return (-(unsigned int)((land_can_be_played & 4U) == 0) & 0xffffff9e) + 99;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance = get_card_instance(player, card);
+      instance->number_of_targets = '\0';
+      result = generic_activated_ability(
+          player, card, EVENT_ACTIVATE, 7, 0, 0, 0, 0, 0, 2, 0, &td_prev,
+          "Select target creature you control to prevent up to 4 damage.");
+      if (player != 1)
+      {
+        return 0;
+      }
+      if (result == 0)
+      {
+        return 0;
+      }
+      if (instance->targets[0].player == 1)
+      {
+        return 0;
+      }
+      ai_modifier = ai_modifier + -0x60;
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td_prev, 2);
+  }
+  td_prev.allowed_controller = player;
+  if ((event == EVENT_RESOLVE_ACTIVATION) &&
+      (td_prev.preferred_controller = td_prev.allowed_controller, result = valid_target(&td_prev),
+       result != 0))
+  {
+    instance = get_card_instance(player, card);
+    prevent_the_next_n_damage(player, card, instance->targets[0].player, instance->targets[0].card,
+                              4, 0, 0, 0);
+    result = does_not_untap_effect(player, card, instance->targets[0].player,
+                                   instance->targets[0].card, 8, 1);
+    alternate_legacy_text(2, player, result);
+    return 0;
+  }
+  return 0;
+}

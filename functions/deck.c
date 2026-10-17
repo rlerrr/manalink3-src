@@ -2651,3 +2651,32 @@ int count_types_in_grave(int player){
 	}
 	return pump;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void unmeld(int csvid, int *csvida, int *csvidb);
+
+/* ManalinkEh 2022: 0x26b3680; original functions/deck.c:516. */
+void unmeld(int csvid, int *csvida, int *csvidb)
+{
+  if (csvid == 0x3ef4)
+  {
+    *csvida = 0x3ef3;
+    *csvidb = 0x3f1b;
+    return;
+  }
+  if (csvid != 0x3efb)
+  {
+    if (csvid != 0x3eae)
+    {
+      *csvida = csvid;
+      *csvidb = -1;
+      return;
+    }
+    *csvida = 0x3eef;
+    *csvidb = 0x3ead;
+    return;
+  }
+  *csvida = 0x3efa;
+  *csvidb = 0x3efc;
+  return;
+}

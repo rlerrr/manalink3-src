@@ -4620,3 +4620,51 @@ int card_waves_of_aggression(int player, int card, event_t event){
 
 	return hybrid(player, card, event);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x236ad60; original cards/eventide.c:2459. */
+int card_lingering_tormentor(int player, int card, event_t event)
+{
+  fear(player, card, event);
+  persist(player, card, event);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x236d3e0; original cards/eventide.c:3281. */
+int card_rendclaw_trow(int player, int card, event_t event)
+{
+  int result;
+  wither(player, card, event);
+  persist(player, card, event);
+  if (event != EVENT_MODIFY_COST)
+  {
+    if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+        (player == affected_card_controller))
+    {
+      result = hybrid_casting(player, card, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+      }
+    }
+    return (unsigned int)(event == EVENT_CAN_CAST);
+  }
+  modify_cost_for_hybrid_spells(player, card, EVENT_MODIFY_COST, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23700f0; original cards/eventide.c:4086. */
+int card_springjack_shepherd(int player, int card, event_t event)
+{
+  int result;
+  result = player;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  result = chroma(player, 5, 0, result);
+  generate_tokens_by_id(player, card, 0x4939, result);
+  return 0;
+}

@@ -5286,3 +5286,21 @@ int card_worldheart_phoenix(int player, int card, event_t event){
 	}
 	return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x213d9d0; original cards/shards_of_alara.c:2043. */
+int card_goblin_champion(int player, int card, event_t event)
+{
+  haste(player, card, event);
+  exalted(player, card, event, 0, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x213fb20; original cards/shards_of_alara.c:2705. */
+int card_kathari_screecher(int player, int card, event_t event)
+{
+  int result;
+  result = unearth(player, event, 2, 0, 1, 0, 0, 0);
+  return result;
+}

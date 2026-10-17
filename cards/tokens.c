@@ -488,3 +488,108 @@ int card_angel_token(int player, int card, event_t event){
 
 	return generic_token(player, card, event);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2582e50; original cards/tokens.c:589. */
+int card_etherium_cell(int player, int card, event_t event)
+{
+  int result;
+  result = artifact_mana_all_one_color(player, card, event, 1, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2582eb0; original cards/tokens.c:604. */
+int card_dinosaur_token(int player, int card, event_t event)
+{
+  int result;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = get_special_infos(player, card);
+    if (result == 0x42)
+    {
+      event_result = event_result | 0x80;
+    }
+  }
+  result = token_characteristic_setting_effects(player, card, event, player, card);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2582fd0; original cards/tokens.c:632. */
+int card_devil(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  result = get_special_infos(player, card);
+  if (result == 0x42)
+  {
+    result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result != 0)
+    {
+      default_target_definition(player, card, &td, 0x102);
+      td.zone = 0x1200;
+      td.allow_cancel = 0;
+      result = can_target(&td);
+      if (result != 0)
+      {
+        result = pick_target(&td, "TARGET_ANY");
+        if (result != 0)
+        {
+          damage_target0(player, card, 1);
+        }
+      }
+    }
+  }
+  result = generic_token(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2583130; original cards/tokens.c:658. */
+int card_food(int player, int card, event_t event)
+{
+  int result;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = token_characteristic_setting_effects(player, card, event, player, card);
+      return result;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      gain_life(player, 3);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25831f0; original cards/tokens.c:666. */
+int card_satyr(int player, int card, event_t event)
+{
+  int result;
+  result = get_special_infos(player, card);
+  if (result == 0x42)
+  {
+    cannot_block(player, card, event);
+  }
+  result = token_characteristic_setting_effects(player, card, event, player, card);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2583310; original cards/tokens.c:691. */
+int card_pest_token(int player, int card, event_t event)
+{
+  int result;
+  result = get_special_infos(player, card);
+  if (result == 0x42)
+  {
+    result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (result != 0)
+    {
+      gain_life(player, 1);
+    }
+  }
+  return 0;
+}

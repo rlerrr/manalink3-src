@@ -4951,3 +4951,715 @@ int card_stinging_licid(int player, int card, event_t event){
 
 	return generic_licid(player, card, event, MANACOST_XU(1, 1), 0, 0, 0, 0, 1-player);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21546c0; original cards/tempest.c:4205. */
+int card_sacred_guide(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    default_test_definition(&this_test, 0xff);
+    this_test.color = get_sleighted_color_test(player, card, 0x20);
+    reveal_card_until_you_reveal_test(player, player, &this_test, 0x28);
+  }
+  result = generic_activated_ability(player, card, event, 8, 1, 0, 0, 0, 0, 1, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2159660; original cards/tempest.c:5848. */
+int card_avenging_angel(int player, int card, event_t event)
+{
+  int result;
+  int owner;
+  int position;
+  result = duh_mode(player);
+  result = this_dies_trigger(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (result != 0)
+  {
+    result = find_in_owners_graveyard(player, card, &owner, &position);
+    if (result != 0)
+    {
+      result = graveyard_ptr_mutable[owner][position];
+      remove_card_from_grave(owner, position);
+      put_iid_under_the_first_x_cards_of_library(owner, result, 0);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2159f70; original cards/tempest.c:6017. */
+int card_canyon_drake(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_POW_BOOST)
+  {
+    if (0 < hand_count[player])
+    {
+      result = generic_shade_amt_can_pump(player, card, 2, 0, 1, 0, 0, 0, 0, 0, hand_count[player]);
+      return result;
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x20, 1, 0, 0, 0, 0, 0,
+                                         0, NULL, NULL);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      generic_shade_merge_pt(player, card, EVENT_ACTIVATE, 0, 1, 0, 0, 0, 0, 0, 0, 0);
+      if (spell_fizzled != 1)
+      {
+        discard(player, 1, player);
+      }
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result =
+          generic_shade_merge_pt(player, card, EVENT_RESOLVE_ACTIVATION, 0, 0, 0, 0, 0, 0, 0, 2, 0);
+      return result;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x215a260; original cards/tempest.c:6074. */
+int card_chill(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  if (event == EVENT_MODIFY_COST_GLOBAL)
+  {
+    uVar1 = get_color(affected_card_controller, affected_card);
+    if ((uVar1 & 0x10) != 0)
+    {
+      COST_COLORLESS = COST_COLORLESS + '\x02';
+    }
+  }
+  if (event != EVENT_SHOULD_AI_PLAY)
+  {
+    return (unsigned int)(event == EVENT_CAN_CAST);
+  }
+  ai_modifier = ai_modifier + (-(unsigned int)(player == 0) & 0xfffffff0) + 8;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2147c10; original cards/tempest.c:6094. */
+static char *prevent_damage_from_shadow_creature(int who_chooses, int player, int card)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if ((((instance->internal_card_id == damage_card) &&
+        (instance->damage_target_player == player)) &&
+       (result = is_what((int)instance->damage_source_player, instance->damage_source_card, 2),
+        result != 0)) &&
+      (result = check_for_special_ability((int)instance->damage_source_player,
+                                          instance->damage_source_card, 0x100),
+       result != 0))
+  {
+    return NULL;
+  }
+  return "must be combat damage from a creature with shadow";
+}
+
+/* ManalinkEh 2022: 0x215a850; original cards/tempest.c:6194. */
+int card_deadshot(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    get_card_instance(player, card);
+    iVar2 = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 2, NULL);
+    return iVar2;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 2);
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance->number_of_targets = '\0';
+        iVar2 = pick_target(&td, "TARGET_CREATURE");
+        if (iVar2 != 0)
+        {
+          iVar2 = is_token(player, card);
+          if (iVar2 == 0)
+          {
+            state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
+            iVar2 = can_target(&td);
+            if (iVar2 != 0)
+            {
+              new_pick_target(&td, "TARGET_ANOTHER_CREATURE", 1, 1);
+            }
+            state_untargettable(instance->targets[0].player, instance->targets[0].card, 0);
+          }
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 2);
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      iVar2 = valid_target(&td);
+      if (iVar2 != 0)
+      {
+        tap_card(instance->targets[0].player, instance->targets[0].card);
+        iVar2 = get_power(instance->targets[0].player, instance->targets[0].card);
+        iVar3 = validate_target(player, card, &td, 1);
+        if (iVar3 != 0)
+        {
+          damage_creature(instance->targets[1].player, instance->targets[1].card, iVar2, player,
+                          card);
+        }
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 2);
+    get_card_instance(player, card);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2147610; original cards/tempest.c:6300. */
+static void blocked_by_me_or_my_blocker_gets_1_1(int player, int card, int t_player, int t_card)
+{
+  pump_ability_until_eot(player, card, t_player, t_card, 1, 1, 0, 0);
+  return;
+}
+
+/* ManalinkEh 2022: 0x215b450; original cards/tempest.c:6458. */
+int card_gallantry(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event != EVENT_CHECK_PUMP)
+  {
+    if (event != EVENT_CAN_CAST)
+    {
+      if (event == EVENT_CAST_SPELL)
+      {
+        if ((card != affected_card) || (player != affected_card_controller))
+        {
+          return 0;
+        }
+      }
+      else if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
+               (event != EVENT_CHANGE_TARGET))
+      {
+        return 0;
+      }
+    }
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    td.required_state = 0x10;
+    result = vanilla_pump(player, card, event, &td, 4, 4, 0x1000000, 0);
+    return result;
+  }
+  instance = get_card_instance(player, card);
+  result = has_mana_to_cast_iid(player, EVENT_CAN_CAST, instance->internal_card_id);
+  if (result == 0)
+  {
+    return 0;
+  }
+  if (current_turn != player)
+  {
+    pumpable_power[player] = pumpable_power[player] + 4;
+    pumpable_toughness[player] = pumpable_toughness[player] + 4;
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x215ba50; original cards/tempest.c:6577. */
+int card_heartwood_dryad(int player, int card, event_t event)
+{
+  if (event != EVENT_ABILITIES)
+  {
+    return 0;
+  }
+  special_abilities(player, card, EVENT_ABILITIES, 0x8000000, player, card);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x215be60; original cards/tempest.c:6664. */
+int card_legerdemain(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  target_definition_t td2;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 0x42);
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    default_target_definition(player, card, &td2, 0x42);
+    td.preferred_controller = 1 - player;
+    td2.allowed_controller = td.preferred_controller;
+    get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+      return (unsigned int)(result != 0);
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 0x42);
+      td.preferred_controller = player;
+      td.allowed_controller = player;
+      default_target_definition(player, card, &td2, 0x42);
+      td.preferred_controller = 1 - player;
+      td2.allowed_controller = td.preferred_controller;
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance->number_of_targets = '\0';
+        result = new_pick_target(&td, "Select target artifact or creature you control.", 0, 0x81);
+        if (result != 0)
+        {
+          new_pick_target(&td2, "Select target artifact or creature controlled by opponent.", 1,
+                          0x81);
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 0x42);
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    default_target_definition(player, card, &td2, 0x42);
+    td.preferred_controller = 1 - player;
+    td2.allowed_controller = td.preferred_controller;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = validate_target(player, card, &td, 0);
+      if ((result != 0) && (result = validate_target(player, card, &td2, 1), result != 0))
+      {
+        exchange_control_of_target_permanents(
+            player, card, instance->targets[0].player, instance->targets[0].card,
+            instance->targets[1].player, instance->targets[1].card);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 0x42);
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    default_target_definition(player, card, &td2, 0x42);
+    td.preferred_controller = 1 - player;
+    td2.allowed_controller = td.preferred_controller;
+    get_card_instance(player, card);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x215ca50; original cards/tempest.c:6893. */
+int card_mogg_cannon(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      result = pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                                      instance->targets[0].player, instance->targets[0].card, 1, 0,
+                                      0x20, 0x10000000);
+      instance = get_card_instance(player, result);
+      instance->targets[3].card = 2;
+    }
+  }
+  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_CREATURE");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x215ce60; original cards/tempest.c:7014. */
+int card_rats_of_rath(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 0x43);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    if (event == EVENT_ACTIVATE)
+    {
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 6, 0, 1, 0, 0, 0, 0, 0, &td,
+                                "Select target artifact, creature, or land you control.");
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x43);
+  }
+  td.allowed_controller = player;
+  td.preferred_controller = td.allowed_controller;
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+  {
+    instance = get_card_instance(player, card);
+    kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+  }
+  result = generic_activated_ability(player, card, event, 4, 0, 1, 0, 0, 0, 0, 0, &td, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x215d260; original cards/tempest.c:7082. */
+int card_reap(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  target_definition_t td;
+  target_definition_t td_opp;
+  test_definition_t this_test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if ((event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET) &&
+             (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  default_target_definition(player, card, &td, 0xff);
+  default_target_definition(player, card, &td_opp, 0);
+  td_opp.zone = 0x1000;
+  td_opp.allowed_controller = 1 - player;
+  iVar1 = get_sleighted_color_test(player, card, 2);
+  iVar1 = count_permanents_by_color(1 - player, 0x47, iVar1);
+  new_default_test_definition(&this_test, 0xff,
+                              "Select a card to return from your graveyard to your hand.");
+  iVar1 = spell_return_up_to_n_target_cards_from_your_graveyard_to_your_hand(player, card, event,
+                                                                             iVar1, &this_test, 0);
+  iVar2 = can_target(&td_opp);
+  if (iVar2 == 0)
+  {
+    return 0;
+  }
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x215d3d0; original cards/tempest.c:7115. */
+int card_rootwater_diver(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  if (event == EVENT_ACTIVATE)
+  {
+    new_default_test_definition(&this_test, 0x40, "Select an artifact card.");
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    new_default_test_definition(&this_test, 0x40, "Select an artifact card.");
+    if ((event == EVENT_RESOLVE_ACTIVATION) &&
+        (result = validate_target_from_grave_source(player, card, player, 0), result != -1))
+    {
+      from_grave_to_hand(player, result, 1);
+    }
+  }
+  result = generic_activated_ability_with_target_in_grave(
+      player, card, event, GAA_SACRIFICE_ME | GAA_UNTAPPED, 0, 0, 0, 0, 0, 0, 0, NULL, NULL,
+      TYPE_NONE, &this_test, 8);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x215d700; original cards/tempest.c:7185. */
+int card_shadowstorm(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    new_default_test_definition(&test, 2, "");
+    test.keyword = 0x100;
+    test.keyword_flag = 2;
+    new_damage_all(player, card, 2, 2, 0, &test);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x215dab0; original cards/tempest.c:7266. */
+int card_spontaneous_combustion(int player, int card, event_t event)
+{
+  int result;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      new_damage_all(player, card, 2, 3, 1, NULL);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = generic_spell(player, card, event, 0x400, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x215db90; original cards/tempest.c:7285. */
+int card_squees_toy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, 0xff);
+  td.extra = damage_card;
+  td.special = 0x100000;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    result = validate_target(player, card, &td, 0);
+    if (result != 0)
+    {
+      prevent_damage(instance->targets[0].player, instance->targets[0].card, 1);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0x1000005, 0, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_DAMAGE");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x215df40; original cards/tempest.c:7356. */
+int card_thalakos_dreamsower(int player, int card, event_t event)
+{
+  int iVar1;
+  int32_t iVar2;
+  unsigned int uVar3;
+  card_instance_t *pcVar4;
+  card_instance_t *pcVar5;
+  int iVar6;
+  int times_damaged[2];
+  target_definition_t td;
+
+  shadow(player, card, event);
+  choose_to_untap(player, card, event);
+  uVar3 = whenever_i_deal_damage_to_a_player(player, card, event, DDBM_MUST_DAMAGE_OPPONENT);
+  if (uVar3 != 0)
+  {
+    times_damaged[1] = uVar3 >> 8 & 0xff;
+    times_damaged[0] = uVar3 & 0xff;
+    default_target_definition(player, card, &td, 2);
+    td.allow_cancel = 0;
+    pcVar4 = get_card_instance(player, card);
+    iVar1 = times_damaged[1 - player];
+    while (((iVar1 != 0 && (iVar6 = can_target(&td), iVar6 != 0)) &&
+            (iVar6 = new_pick_target(&td, "Select target creature to tap.", 0, 0x80), iVar6 != 0)))
+    {
+      tap_card(pcVar4->targets[0].player, pcVar4->targets[0].card);
+      does_not_untap_until_im_tapped(player, card, pcVar4->targets[0].player,
+                                     pcVar4->targets[0].card);
+      pcVar5 = get_card_instance(player, card);
+      iVar1 = iVar1 + -1;
+      iVar2 = pcVar4->targets[0].player;
+      pcVar5->targets[1].card = pcVar4->targets[0].card;
+      pcVar5->targets[1].player = iVar2;
+    }
+    pcVar4->number_of_targets = '\0';
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x215e2f0; original cards/tempest.c:7441. */
+int card_twitch(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x43);
+        td.preferred_controller = 2;
+        if (event != EVENT_RESOLVE_SPELL)
+        {
+          result = generic_spell(player, card, event, 1, &td, "TWIDDLE", 1, NULL);
+          return result;
+        }
+        result = valid_target(&td);
+        if (result != 0)
+        {
+          twiddle(player, card, 0);
+          draw_a_card(player);
+        }
+        kill_card(player, card, KILL_DESTROY);
+        result = generic_spell(player, card, EVENT_RESOLVE_SPELL, 1, &td, "TWIDDLE", 1, NULL);
+        return result;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x43);
+  td.preferred_controller = 2;
+  result = generic_spell(player, card, event, 1, &td, "TWIDDLE", 1, NULL);
+  if ((((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+       (affected_card_controller == player)) &&
+      ((player == 1 && (spell_fizzled != 1))))
+  {
+    ai_modifier_twiddle(1, card, 0);
+  }
+  return result;
+}
+
+/* ManalinkEh 2022: 0x215e690; original cards/tempest.c:7528. */
+int card_bandage(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.preferred_controller = player;
+    td.zone = 0x1200;
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_ANY", 1, NULL);
+    if (result != 0)
+    {
+      return (-(unsigned int)((land_can_be_played & 4U) == 0) & 0xffffff9e) + 99;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 0x102);
+      td.preferred_controller = player;
+      td.zone = 0x1200;
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance = get_card_instance(player, card);
+        instance->number_of_targets = '\0';
+        generic_spell(player, card, EVENT_CAST_SPELL, 0x81, &td,
+                      "Select any target to prevent the next 1 damage to it", 1, NULL);
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.preferred_controller = player;
+    td.zone = 0x1200;
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        instance = get_card_instance(player, card);
+        prevent_the_next_n_damage(player, card, instance->targets[0].player,
+                                  instance->targets[0].card, 1, 0, 0, 0);
+        draw_a_card(player);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 0x102);
+  }
+  return 0;
+}

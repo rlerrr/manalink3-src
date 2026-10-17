@@ -6443,3 +6443,26 @@ int card_palladium_myr(int player, int card, event_t event){
 
 	return mana_producing_creature(player, card, event, 18, COLOR_COLORLESS, 2);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int imprint_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2436e90; original cards/scars_of_mirrodin.c:308. */
+static int imprint_legacy(int player, int card, event_t event) { return 0; }
+
+/* ManalinkEh 2022: 0x24372c0; original cards/scars_of_mirrodin.c:314. */
+static void imprint(int player, int card, int store_player, int store_card)
+{
+  uint8_t uVar1;
+  int card_00;
+  card_instance_t *instance;
+
+  card_00 = create_legacy_effect(player, card, imprint_legacy);
+  instance = get_card_instance(player, card_00);
+  instance->targets[0].card = store_card;
+  uVar1 = instance->number_of_targets;
+  instance->targets[0].player = store_player;
+  instance->number_of_targets = uVar1 + '\x01';
+  add_status(player, card_00, 0x10000);
+  return;
+}

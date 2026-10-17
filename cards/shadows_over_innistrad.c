@@ -7586,3 +7586,63 @@ int card_devil_token(int player, int card, event_t event){
 /* Vampire Knight	""(B) --> Beast token	0x2001d0d
  * Creature - Vampire Knight 1/1
  * Lifelink */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x229e6b0; original cards/shadows_over_innistrad.c:3416. */
+static int lilianas_indignation_legacy(int player, int card, event_t event)
+{
+  xtrigger_t xVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  int amount;
+  enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_MILLED;
+  xVar1 = trigger_condition;
+  if (trigger_condition == 0xe5)
+  {
+    xVar1 = xtrigger_impl_value_dont_use_directly;
+  }
+  if (xVar1 != XTRIGGER_MILLED)
+  {
+    return 0;
+  }
+  if (((card == affected_card) && (player == affected_card_controller)) &&
+      (reason_for_trigger_controller == player))
+  {
+    instance = get_card_instance(player, card);
+    if (player == trigger_cause_controller)
+    {
+      if (event == EVENT_TRIGGER)
+      {
+        event_result = event_result | 2;
+      }
+      else if (event == EVENT_RESOLVE_TRIGGER)
+      {
+        amount = 0;
+        iVar4 = 0;
+        if (0 < num_cards_milled)
+        {
+          do
+          {
+            if (cards_milled[iVar4].source != -1)
+            {
+              iVar3 = is_what(-1, cards_milled[iVar4].internal_card_id, 2);
+              if (iVar3 != 0)
+              {
+                amount = amount + 2;
+              }
+            }
+            iVar4 = iVar4 + 1;
+          } while (iVar4 < num_cards_milled);
+          if (amount != 0)
+          {
+            lose_life(instance->targets[0].player, amount);
+          }
+        }
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  return 0;
+}

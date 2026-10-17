@@ -1,0 +1,2474 @@
+{
+  "2020": {
+    "event_t": {
+      "source": "cards/odissey.c",
+      "tag": "DW_TAG_enumeration_type",
+      "name": null,
+      "size": 4,
+      "members": [
+        {
+          "name": "EVENT_UNTAP_PHASE",
+          "offset": null,
+          "value": 1
+        },
+        {
+          "name": "EVENT_UPKEEP_PHASE",
+          "offset": null,
+          "value": 4
+        },
+        {
+          "name": "EVENT_UPKEEP",
+          "offset": null,
+          "value": 4
+        },
+        {
+          "name": "EVENT_DRAW_PHASE",
+          "offset": null,
+          "value": 10
+        },
+        {
+          "name": "EVENT_MAIN_PHASE1",
+          "offset": null,
+          "value": 20
+        },
+        {
+          "name": "EVENT_DECLARE_ATTACKERS",
+          "offset": null,
+          "value": 21
+        },
+        {
+          "name": "EVENT_DECLARE_BLOCKERS",
+          "offset": null,
+          "value": 26
+        },
+        {
+          "name": "EVENT_MAIN_PHASE2",
+          "offset": null,
+          "value": 30
+        },
+        {
+          "name": "EVENT_MAX_HAND_SIZE",
+          "offset": null,
+          "value": 31
+        },
+        {
+          "name": "EVENT_PREVENT_DAMAGE",
+          "offset": null,
+          "value": 33
+        },
+        {
+          "name": "EVENT_CLEANUP",
+          "offset": null,
+          "value": 34
+        },
+        {
+          "name": "EVENT_DAMAGE_PREVENTION",
+          "offset": null,
+          "value": 37
+        },
+        {
+          "name": "EVENT_DAMAGE_REDUCTION",
+          "offset": null,
+          "value": 38
+        },
+        {
+          "name": "EVENT_POWER",
+          "offset": null,
+          "value": 50
+        },
+        {
+          "name": "EVENT_TOUGHNESS",
+          "offset": null,
+          "value": 51
+        },
+        {
+          "name": "EVENT_ABILITIES",
+          "offset": null,
+          "value": 52
+        },
+        {
+          "name": "EVENT_RECALC_DAMAGE",
+          "offset": null,
+          "value": 53
+        },
+        {
+          "name": "EVENT_SET_COLOR",
+          "offset": null,
+          "value": 54
+        },
+        {
+          "name": "EVENT_CAN_COUNTER",
+          "offset": null,
+          "value": 56
+        },
+        {
+          "name": "EVENT_POW_BOOST",
+          "offset": null,
+          "value": 57
+        },
+        {
+          "name": "EVENT_TOU_BOOST",
+          "offset": null,
+          "value": 58
+        },
+        {
+          "name": "EVENT_CHECK_PUMP",
+          "offset": null,
+          "value": 59
+        },
+        {
+          "name": "EVENT_CHANGE_TYPE",
+          "offset": null,
+          "value": 60
+        },
+        {
+          "name": "EVENT_CAN_SKIP_TURN",
+          "offset": null,
+          "value": 106
+        },
+        {
+          "name": "EVENT_CAST_SPELL",
+          "offset": null,
+          "value": 108
+        },
+        {
+          "name": "EVENT_ACTIVATE",
+          "offset": null,
+          "value": 109
+        },
+        {
+          "name": "EVENT_DEAL_DAMAGE",
+          "offset": null,
+          "value": 110
+        },
+        {
+          "name": "EVENT_REGENERATE",
+          "offset": null,
+          "value": 112
+        },
+        {
+          "name": "EVENT_RESOLVE_SPELL",
+          "offset": null,
+          "value": 113
+        },
+        {
+          "name": "EVENT_RESOLVE_ACTIVATION",
+          "offset": null,
+          "value": 114
+        },
+        {
+          "name": "EVENT_CAN_ACTIVATE",
+          "offset": null,
+          "value": 115
+        },
+        {
+          "name": "EVENT_CAN_CAST",
+          "offset": null,
+          "value": 116
+        },
+        {
+          "name": "EVENT_GRAVEYARD_FROM_PLAY",
+          "offset": null,
+          "value": 119
+        },
+        {
+          "name": "EVENT_BLOCK_LEGALITY",
+          "offset": null,
+          "value": 120
+        },
+        {
+          "name": "EVENT_ATTACK_LEGALITY",
+          "offset": null,
+          "value": 121
+        },
+        {
+          "name": "EVENT_TRIGGER",
+          "offset": null,
+          "value": 125
+        },
+        {
+          "name": "EVENT_RESOLVE_TRIGGER",
+          "offset": null,
+          "value": 126
+        },
+        {
+          "name": "EVENT_COUNT_MANA",
+          "offset": null,
+          "value": 127
+        },
+        {
+          "name": "EVENT_UNKNOWN80",
+          "offset": null,
+          "value": 128
+        },
+        {
+          "name": "EVENT_TAP_CARD",
+          "offset": null,
+          "value": 129
+        },
+        {
+          "name": "EVENT_UNTAP",
+          "offset": null,
+          "value": 130
+        },
+        {
+          "name": "EVENT_UNTAP_CARD",
+          "offset": null,
+          "value": 131
+        },
+        {
+          "name": "EVENT_SET_UNTAP_COST",
+          "offset": null,
+          "value": 132
+        },
+        {
+          "name": "EVENT_SETUP_UPKEEP_COSTS",
+          "offset": null,
+          "value": 133
+        },
+        {
+          "name": "EVENT_UPKEEP_COSTS_UNPAID",
+          "offset": null,
+          "value": 134
+        },
+        {
+          "name": "EVENT_CHECK_UPK_PAYMENT",
+          "offset": null,
+          "value": 135
+        },
+        {
+          "name": "EVENT_CHECK_UNTAP_PAYMENT",
+          "offset": null,
+          "value": 136
+        },
+        {
+          "name": "EVENT_MUST_ATTACK",
+          "offset": null,
+          "value": 137
+        },
+        {
+          "name": "EVENT_BEGIN_COMBAT",
+          "offset": null,
+          "value": 137
+        },
+        {
+          "name": "EVENT_ATTACK_RATING",
+          "offset": null,
+          "value": 138
+        },
+        {
+          "name": "EVENT_BLOCK_RATING",
+          "offset": null,
+          "value": 139
+        },
+        {
+          "name": "EVENT_CHECK_ABILITIES",
+          "offset": null,
+          "value": 140
+        },
+        {
+          "name": "EVENT_DISCARD",
+          "offset": null,
+          "value": 141
+        },
+        {
+          "name": "EVENT_UNKNOWN8E",
+          "offset": null,
+          "value": 142
+        },
+        {
+          "name": "EVENT_CAN_WASTE_MANA",
+          "offset": null,
+          "value": 143
+        },
+        {
+          "name": "EVENT_GET_SELECTED_CARD",
+          "offset": null,
+          "value": 144
+        },
+        {
+          "name": "EVENT_PLAY_ABILITY",
+          "offset": null,
+          "value": 145
+        },
+        {
+          "name": "EVENT_BEFORE_COMBAT",
+          "offset": null,
+          "value": 146
+        },
+        {
+          "name": "EVENT_VARIABLE_MANA_SRC",
+          "offset": null,
+          "value": 147
+        },
+        {
+          "name": "EVENT_CARDCONTROLLED",
+          "offset": null,
+          "value": 148
+        },
+        {
+          "name": "EVENT_DISABLE_ABILITIES",
+          "offset": null,
+          "value": 160
+        },
+        {
+          "name": "EVENT_ENABLE_ABILITIES",
+          "offset": null,
+          "value": 161
+        },
+        {
+          "name": "EVENT_MODIFY_COST_GLOBAL",
+          "offset": null,
+          "value": 162
+        },
+        {
+          "name": "EVENT_MODIFY_AB_COST_GL",
+          "offset": null,
+          "value": 163
+        },
+        {
+          "name": "EVENT_MODIFY_COST",
+          "offset": null,
+          "value": 164
+        },
+        {
+          "name": "EVENT_PAY_MODIFIED_COST",
+          "offset": null,
+          "value": 165
+        },
+        {
+          "name": "EVENT_MODIFY_MANA_PROD",
+          "offset": null,
+          "value": 166
+        },
+        {
+          "name": "EVENT_AFTER_DAMAGE",
+          "offset": null,
+          "value": 167
+        },
+        {
+          "name": "EVENT_GRAVEYARD_ABILITY",
+          "offset": null,
+          "value": 176
+        },
+        {
+          "name": "EVENT_CAN_ACTIVATE_FROM_HAND",
+          "offset": null,
+          "value": 177
+        },
+        {
+          "name": "EVENT_ACTIVATE_FROM_HAND",
+          "offset": null,
+          "value": 178
+        },
+        {
+          "name": "EVENT_RESOLVE_ACTIVATION_FROM_HAND",
+          "offset": null,
+          "value": 179
+        },
+        {
+          "name": "EVENT_GRAVEYARD_ABILITY_UPKEEP",
+          "offset": null,
+          "value": 180
+        },
+        {
+          "name": "EVENT_PAY_FLASHBACK_COSTS",
+          "offset": null,
+          "value": 181
+        },
+        {
+          "name": "EVENT_CAN_SPLICE",
+          "offset": null,
+          "value": 182
+        },
+        {
+          "name": "EVENT_SPLICE",
+          "offset": null,
+          "value": 183
+        },
+        {
+          "name": "EVENT_CAN_UNMORPH",
+          "offset": null,
+          "value": 184
+        },
+        {
+          "name": "EVENT_UNMORPH",
+          "offset": null,
+          "value": 185
+        },
+        {
+          "name": "EVENT_HAUNT",
+          "offset": null,
+          "value": 186
+        },
+        {
+          "name": "EVENT_TURNED_FACE_UP",
+          "offset": null,
+          "value": 187
+        },
+        {
+          "name": "EVENT_CAN_PAY_MADNESS_COST",
+          "offset": null,
+          "value": 188
+        },
+        {
+          "name": "EVENT_PAY_MADNESS_COST",
+          "offset": null,
+          "value": 189
+        },
+        {
+          "name": "EVENT_CHAOS",
+          "offset": null,
+          "value": 191
+        },
+        {
+          "name": "EVENT_PLANESWALK_IN",
+          "offset": null,
+          "value": 192
+        },
+        {
+          "name": "EVENT_PLANESWALK_OUT",
+          "offset": null,
+          "value": 193
+        },
+        {
+          "name": "EVENT_RESOLVE_SPLICE",
+          "offset": null,
+          "value": 194
+        },
+        {
+          "name": "EVENT_SHOULD_AI_PLAY",
+          "offset": null,
+          "value": 199
+        },
+        {
+          "name": "EVENT_SET_LEGACY_EFFECT_NAME",
+          "offset": null,
+          "value": 256
+        },
+        {
+          "name": "EVENT_SET_LEGACY_EFFECT_TEXT",
+          "offset": null,
+          "value": 512
+        },
+        {
+          "name": "EVENT_TRIGGER_RESOLVED",
+          "offset": null,
+          "value": 768
+        },
+        {
+          "name": "EVENT_CAN_CHANGE_TARGET",
+          "offset": null,
+          "value": 1024
+        },
+        {
+          "name": "EVENT_CAN_MOVE_AURA",
+          "offset": null,
+          "value": 1536
+        },
+        {
+          "name": "EVENT_MOVE_AURA",
+          "offset": null,
+          "value": 1792
+        },
+        {
+          "name": "EVENT_RESOLVE_MOVING_AURA",
+          "offset": null,
+          "value": 2048
+        },
+        {
+          "name": "EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE",
+          "offset": null,
+          "value": 2304
+        },
+        {
+          "name": "EVENT_UPKEEP_TRIGGER_ABILITY",
+          "offset": null,
+          "value": 2560
+        },
+        {
+          "name": "EVENT_RESOLVE_THIS_DIES_TRIGGER",
+          "offset": null,
+          "value": 2816
+        },
+        {
+          "name": "EVENT_TAPPED_TO_PLAY_ABILITY",
+          "offset": null,
+          "value": 3072
+        },
+        {
+          "name": "EVENT_RESOLVE_ACTIVATED_GRAVEYARD_ABILITY",
+          "offset": null,
+          "value": 3328
+        },
+        {
+          "name": "EVENT_RETURN_TO_PLAY_FROM_GRAVE_MODIFIED",
+          "offset": null,
+          "value": 3584
+        },
+        {
+          "name": "EVENT_ANOTHER_PERMANENT_HAS_TRANSFORMED",
+          "offset": null,
+          "value": 3840
+        },
+        {
+          "name": "EVENT_PLAY_FIRST_HALF",
+          "offset": null,
+          "value": 4096
+        },
+        {
+          "name": "EVENT_PLAY_SECOND_HALF",
+          "offset": null,
+          "value": 4352
+        },
+        {
+          "name": "EVENT_HAS_MORPH",
+          "offset": null,
+          "value": 4608
+        },
+        {
+          "name": "EVENT_SUBTYPE",
+          "offset": null,
+          "value": 4864
+        },
+        {
+          "name": "EVENT_UNATTACH",
+          "offset": null,
+          "value": 5120
+        },
+        {
+          "name": "EVENT_EQUIPMENT_ATTACHED",
+          "offset": null,
+          "value": 5376
+        },
+        {
+          "name": "EVENT_DAMAGE_TRIGGER_ABILITY",
+          "offset": null,
+          "value": 5632
+        },
+        {
+          "name": "EVENT_CAN_ACTIVATE_HIDEAWAY_LAND",
+          "offset": null,
+          "value": 5888
+        },
+        {
+          "name": "EVENT_BECAME_MONSTROUS",
+          "offset": null,
+          "value": 16384
+        },
+        {
+          "name": "EVENT_PHASING",
+          "offset": null,
+          "value": 16640
+        },
+        {
+          "name": "EVENT_END_TRIGGER",
+          "offset": null,
+          "value": 16896
+        },
+        {
+          "name": "EVENT_END_OF_UNTAP_STEP",
+          "offset": null,
+          "value": 17152
+        },
+        {
+          "name": "EVENT_PHASE_CHANGED",
+          "offset": null,
+          "value": 17408
+        },
+        {
+          "name": "EVENT_CHECK_DESTROY_IF_BLOCKED",
+          "offset": null,
+          "value": 17664
+        },
+        {
+          "name": "EVENT_BEGIN_TURN",
+          "offset": null,
+          "value": 17920
+        },
+        {
+          "name": "EVENT_STATIC_EFFECTS",
+          "offset": null,
+          "value": 18176
+        },
+        {
+          "name": "EVENT_MANA_POOL_DRAINING",
+          "offset": null,
+          "value": 18432
+        },
+        {
+          "name": "EVENT_CHOOSING_TO_UNTAP",
+          "offset": null,
+          "value": 18688
+        },
+        {
+          "name": "EVENT_TRANSFORMED",
+          "offset": null,
+          "value": 18944
+        },
+        {
+          "name": "EVENT_EFFECT_CREATED",
+          "offset": null,
+          "value": 19200
+        },
+        {
+          "name": "EVENT_RESOLVE_GENERAL_EFFECT",
+          "offset": null,
+          "value": 19456
+        },
+        {
+          "name": "EVENT_FIGHT",
+          "offset": null,
+          "value": 19712
+        },
+        {
+          "name": "EVENT_QUERY_AWAKEN",
+          "offset": null,
+          "value": 19968
+        },
+        {
+          "name": "EVENT_CANT_CREW",
+          "offset": null,
+          "value": 20224
+        },
+        {
+          "name": "EVENT_HIDDEN_AGENDA",
+          "offset": null,
+          "value": 20480
+        },
+        {
+          "name": "EVENT_ETB_ABILITY",
+          "offset": null,
+          "value": 20736
+        },
+        {
+          "name": "EVENT_ETB",
+          "offset": null,
+          "value": 20736
+        },
+        {
+          "name": "EVENT_DREDGE",
+          "offset": null,
+          "value": 20992
+        },
+        {
+          "name": "EVENT_SURVEIL",
+          "offset": null,
+          "value": 21248
+        },
+        {
+          "name": "EVENT_CHANGE_TARGET",
+          "offset": null,
+          "value": 21504
+        },
+        {
+          "name": "EVENT_SET_IN_MOTION",
+          "offset": null,
+          "value": 21760
+        }
+      ]
+    },
+    "target_t": {
+      "source": "cards/odissey.c",
+      "tag": "DW_TAG_structure_type",
+      "name": "target_struct",
+      "size": 8,
+      "members": [
+        {
+          "name": "player",
+          "offset": 0,
+          "value": null
+        },
+        {
+          "name": "card",
+          "offset": 4,
+          "value": null
+        }
+      ]
+    },
+    "card_instance_t": {
+      "source": "cards/odissey.c",
+      "tag": "DW_TAG_structure_type",
+      "name": "card_instance_struct",
+      "size": 300,
+      "members": [
+        {
+          "name": "special_counters",
+          "offset": 0,
+          "value": null
+        },
+        {
+          "name": "counters2",
+          "offset": 1,
+          "value": null
+        },
+        {
+          "name": "counters3",
+          "offset": 2,
+          "value": null
+        },
+        {
+          "name": "counters4",
+          "offset": 3,
+          "value": null
+        },
+        {
+          "name": "damage_target_card",
+          "offset": 4,
+          "value": null
+        },
+        {
+          "name": "state",
+          "offset": 8,
+          "value": null
+        },
+        {
+          "name": "damage_source_player",
+          "offset": 12,
+          "value": null
+        },
+        {
+          "name": "unused0",
+          "offset": 13,
+          "value": null
+        },
+        {
+          "name": "toughness",
+          "offset": 14,
+          "value": null
+        },
+        {
+          "name": "damage_on_card",
+          "offset": 16,
+          "value": null
+        },
+        {
+          "name": "counter_power",
+          "offset": 18,
+          "value": null
+        },
+        {
+          "name": "unknown0x14",
+          "offset": 20,
+          "value": null
+        },
+        {
+          "name": "token_status",
+          "offset": 24,
+          "value": null
+        },
+        {
+          "name": "counter_toughness",
+          "offset": 28,
+          "value": null
+        },
+        {
+          "name": "color",
+          "offset": 30,
+          "value": null
+        },
+        {
+          "name": "destroys_if_blocked",
+          "offset": 31,
+          "value": null
+        },
+        {
+          "name": "dummy3",
+          "offset": 32,
+          "value": null
+        },
+        {
+          "name": "blocking",
+          "offset": 36,
+          "value": null
+        },
+        {
+          "name": "initial_color",
+          "offset": 37,
+          "value": null
+        },
+        {
+          "name": "unused0x26",
+          "offset": 38,
+          "value": null
+        },
+        {
+          "name": "regen_status",
+          "offset": 40,
+          "value": null
+        },
+        {
+          "name": "mana_to_untap",
+          "offset": 44,
+          "value": null
+        },
+        {
+          "name": "power",
+          "offset": 52,
+          "value": null
+        },
+        {
+          "name": "number_of_targets",
+          "offset": 54,
+          "value": null
+        },
+        {
+          "name": "unknown0x37",
+          "offset": 55,
+          "value": null
+        },
+        {
+          "name": "info_slot",
+          "offset": 56,
+          "value": null
+        },
+        {
+          "name": "original_internal_card_id",
+          "offset": 60,
+          "value": null
+        },
+        {
+          "name": "color_id",
+          "offset": 64,
+          "value": null
+        },
+        {
+          "name": "backup_internal_card_id",
+          "offset": 70,
+          "value": null
+        },
+        {
+          "name": "damage_source_card",
+          "offset": 72,
+          "value": null
+        },
+        {
+          "name": "eot_toughness",
+          "offset": 76,
+          "value": null
+        },
+        {
+          "name": "damage_target_player",
+          "offset": 80,
+          "value": null
+        },
+        {
+          "name": "special_counter_type",
+          "offset": 81,
+          "value": null
+        },
+        {
+          "name": "unk52",
+          "offset": 82,
+          "value": null
+        },
+        {
+          "name": "unk53",
+          "offset": 83,
+          "value": null
+        },
+        {
+          "name": "timestamp",
+          "offset": 84,
+          "value": null
+        },
+        {
+          "name": "mana_color",
+          "offset": 88,
+          "value": null
+        },
+        {
+          "name": "card_color",
+          "offset": 89,
+          "value": null
+        },
+        {
+          "name": "unk5a",
+          "offset": 90,
+          "value": null
+        },
+        {
+          "name": "unk5b",
+          "offset": 91,
+          "value": null
+        },
+        {
+          "name": "upkeep_flags",
+          "offset": 92,
+          "value": null
+        },
+        {
+          "name": "attack_rating",
+          "offset": 96,
+          "value": null
+        },
+        {
+          "name": "display_pic_csv_id",
+          "offset": 100,
+          "value": null
+        },
+        {
+          "name": "display_pic_num",
+          "offset": 102,
+          "value": null
+        },
+        {
+          "name": "kill_code",
+          "offset": 104,
+          "value": null
+        },
+        {
+          "name": "unk69",
+          "offset": 105,
+          "value": null
+        },
+        {
+          "name": "unk6A",
+          "offset": 106,
+          "value": null
+        },
+        {
+          "name": "unk6B",
+          "offset": 107,
+          "value": null
+        },
+        {
+          "name": "internal_card_id",
+          "offset": 108,
+          "value": null
+        },
+        {
+          "name": "unknown0x70",
+          "offset": 112,
+          "value": null
+        },
+        {
+          "name": "targets",
+          "offset": 116,
+          "value": null
+        },
+        {
+          "name": "parent_controller",
+          "offset": 268,
+          "value": null
+        },
+        {
+          "name": "parent_card",
+          "offset": 272,
+          "value": null
+        },
+        {
+          "name": "hack_mode",
+          "offset": 276,
+          "value": null
+        },
+        {
+          "name": "unknown0x11a",
+          "offset": 282,
+          "value": null
+        },
+        {
+          "name": "untap_status",
+          "offset": 284,
+          "value": null
+        },
+        {
+          "name": "counters",
+          "offset": 288,
+          "value": null
+        },
+        {
+          "name": "counters5",
+          "offset": 289,
+          "value": null
+        },
+        {
+          "name": "unknown0x122",
+          "offset": 290,
+          "value": null
+        },
+        {
+          "name": "upkeep_colorless",
+          "offset": 292,
+          "value": null
+        },
+        {
+          "name": "upkeep_black",
+          "offset": 293,
+          "value": null
+        },
+        {
+          "name": "upkeep_blue",
+          "offset": 294,
+          "value": null
+        },
+        {
+          "name": "upkeep_green",
+          "offset": 295,
+          "value": null
+        },
+        {
+          "name": "upkeep_red",
+          "offset": 296,
+          "value": null
+        },
+        {
+          "name": "upkeep_white",
+          "offset": 297,
+          "value": null
+        },
+        {
+          "name": "upkeep_artmana",
+          "offset": 298,
+          "value": null
+        },
+        {
+          "name": "counters_m1m1",
+          "offset": 299,
+          "value": null
+        }
+      ]
+    },
+    "card_id_t": {
+      "source": "cards/amonkhet.c",
+      "tag": "DW_TAG_enumeration_type",
+      "name": null,
+      "size": 4,
+      "members": [
+        {
+          "name": "CARD_ID_AIR_ELEMENTAL",
+          "offset": null,
+          "value": 0
+        },
+        {
+          "name": "CARD_ID_ANCESTRAL_RECALL",
+          "offset": null,
+          "value": 1
+        },
+        {
+          "name": "CARD_ID_ANIMATE_ARTIFACT",
+          "offset": null,
+          "value": 2
+        },
+        {
+          "name": "CARD_ID_ANIMATE_DEAD",
+          "offset": null,
+          "value": 3
+        },
+        {
+          "name": "CARD_ID_ANIMATE_WALL",
+          "offset": null,
+          "value": 4
+        },
+        {
+          "name": "CARD_ID_ANKH_OF_MISHRA",
+          "offset": null,
+          "value": 5
+        }
+      ],
+      "member_count": 19739,
+      "members_truncated": true
+    },
+    "card_black_lotus": {
+      "source": "cards/unlimited.c",
+      "address": "0x2356440",
+      "size": 49,
+      "line": 759,
+      "parameters": [
+        "player",
+        "card",
+        "event"
+      ],
+      "locals": [],
+      "line_table_rows": 3,
+      "line_examples": [
+        {
+          "address": "0x2356440",
+          "line": 759
+        },
+        {
+          "address": "0x2356446",
+          "line": 767
+        },
+        {
+          "address": "0x235646f",
+          "line": 768
+        }
+      ]
+    },
+    "card_winter_orb": {
+      "source": "cards/unlimited.c",
+      "address": "0x23654f0",
+      "size": 51,
+      "line": 6716,
+      "parameters": [
+        "player",
+        "card",
+        "event"
+      ],
+      "locals": [],
+      "line_table_rows": 3,
+      "line_examples": [
+        {
+          "address": "0x23654f0",
+          "line": 6716
+        },
+        {
+          "address": "0x23654f6",
+          "line": 6723
+        },
+        {
+          "address": "0x236551f",
+          "line": 6725
+        }
+      ]
+    },
+    "dispatch_trigger": {
+      "source": "functions/events.c",
+      "address": "0x24d9ef0",
+      "size": 52,
+      "line": 488,
+      "parameters": [
+        "player",
+        "trig",
+        "prompt",
+        "TENTATIVE_allow_response"
+      ],
+      "locals": [
+        "old_xtrigger"
+      ],
+      "line_table_rows": 8,
+      "line_examples": [
+        {
+          "address": "0x24d9ef0",
+          "line": 489
+        },
+        {
+          "address": "0x24d9ef1",
+          "line": 491
+        },
+        {
+          "address": "0x24d9ef3",
+          "line": 489
+        },
+        {
+          "address": "0x24d9ef9",
+          "line": 491
+        },
+        {
+          "address": "0x24d9efc",
+          "line": 490
+        }
+      ]
+    }
+  },
+  "2022": {
+    "event_t": {
+      "source": "cards/visions.c",
+      "tag": "DW_TAG_enumeration_type",
+      "name": null,
+      "size": 4,
+      "members": [
+        {
+          "name": "EVENT_0",
+          "offset": null,
+          "value": 0
+        },
+        {
+          "name": "EVENT_UNTAP_PHASE",
+          "offset": null,
+          "value": 1
+        },
+        {
+          "name": "EVENT_UPKEEP_PHASE",
+          "offset": null,
+          "value": 4
+        },
+        {
+          "name": "EVENT_UPKEEP",
+          "offset": null,
+          "value": 4
+        },
+        {
+          "name": "EVENT_DRAW_PHASE",
+          "offset": null,
+          "value": 10
+        },
+        {
+          "name": "EVENT_MAIN_PHASE1",
+          "offset": null,
+          "value": 20
+        },
+        {
+          "name": "EVENT_DECLARE_ATTACKERS",
+          "offset": null,
+          "value": 21
+        },
+        {
+          "name": "EVENT_DECLARE_BLOCKERS",
+          "offset": null,
+          "value": 26
+        },
+        {
+          "name": "EVENT_MAIN_PHASE2",
+          "offset": null,
+          "value": 30
+        },
+        {
+          "name": "EVENT_MAX_HAND_SIZE",
+          "offset": null,
+          "value": 31
+        },
+        {
+          "name": "EVENT_PREVENT_DAMAGE",
+          "offset": null,
+          "value": 33
+        },
+        {
+          "name": "EVENT_CLEANUP",
+          "offset": null,
+          "value": 34
+        },
+        {
+          "name": "EVENT_DAMAGE_PREVENTION",
+          "offset": null,
+          "value": 37
+        },
+        {
+          "name": "EVENT_DAMAGE_REDUCTION",
+          "offset": null,
+          "value": 38
+        },
+        {
+          "name": "EVENT_POWER",
+          "offset": null,
+          "value": 50
+        },
+        {
+          "name": "EVENT_TOUGHNESS",
+          "offset": null,
+          "value": 51
+        },
+        {
+          "name": "EVENT_ABILITIES",
+          "offset": null,
+          "value": 52
+        },
+        {
+          "name": "EVENT_RECALC_DAMAGE",
+          "offset": null,
+          "value": 53
+        },
+        {
+          "name": "EVENT_SET_COLOR",
+          "offset": null,
+          "value": 54
+        },
+        {
+          "name": "EVENT_CAN_COUNTER",
+          "offset": null,
+          "value": 56
+        },
+        {
+          "name": "EVENT_POW_BOOST",
+          "offset": null,
+          "value": 57
+        },
+        {
+          "name": "EVENT_TOU_BOOST",
+          "offset": null,
+          "value": 58
+        },
+        {
+          "name": "EVENT_CHECK_PUMP",
+          "offset": null,
+          "value": 59
+        },
+        {
+          "name": "EVENT_CHANGE_TYPE",
+          "offset": null,
+          "value": 60
+        },
+        {
+          "name": "EVENT_CAN_SKIP_TURN",
+          "offset": null,
+          "value": 106
+        },
+        {
+          "name": "EVENT_CAST_SPELL",
+          "offset": null,
+          "value": 108
+        },
+        {
+          "name": "EVENT_ACTIVATE",
+          "offset": null,
+          "value": 109
+        },
+        {
+          "name": "EVENT_DEAL_DAMAGE",
+          "offset": null,
+          "value": 110
+        },
+        {
+          "name": "EVENT_REGENERATE",
+          "offset": null,
+          "value": 112
+        },
+        {
+          "name": "EVENT_RESOLVE_SPELL",
+          "offset": null,
+          "value": 113
+        },
+        {
+          "name": "EVENT_RESOLVE_ACTIVATION",
+          "offset": null,
+          "value": 114
+        },
+        {
+          "name": "EVENT_CAN_ACTIVATE",
+          "offset": null,
+          "value": 115
+        },
+        {
+          "name": "EVENT_CAN_CAST",
+          "offset": null,
+          "value": 116
+        },
+        {
+          "name": "EVENT_GRAVEYARD_FROM_PLAY",
+          "offset": null,
+          "value": 119
+        },
+        {
+          "name": "EVENT_BLOCK_LEGALITY",
+          "offset": null,
+          "value": 120
+        },
+        {
+          "name": "EVENT_ATTACK_LEGALITY",
+          "offset": null,
+          "value": 121
+        },
+        {
+          "name": "EVENT_TRIGGER",
+          "offset": null,
+          "value": 125
+        },
+        {
+          "name": "EVENT_RESOLVE_TRIGGER",
+          "offset": null,
+          "value": 126
+        },
+        {
+          "name": "EVENT_COUNT_MANA",
+          "offset": null,
+          "value": 127
+        },
+        {
+          "name": "EVENT_UNKNOWN80",
+          "offset": null,
+          "value": 128
+        },
+        {
+          "name": "EVENT_TAP_CARD",
+          "offset": null,
+          "value": 129
+        },
+        {
+          "name": "EVENT_UNTAP",
+          "offset": null,
+          "value": 130
+        },
+        {
+          "name": "EVENT_UNTAP_CARD",
+          "offset": null,
+          "value": 131
+        },
+        {
+          "name": "EVENT_MUST_ATTACK",
+          "offset": null,
+          "value": 137
+        },
+        {
+          "name": "EVENT_BEGIN_COMBAT",
+          "offset": null,
+          "value": 137
+        },
+        {
+          "name": "EVENT_ATTACK_RATING",
+          "offset": null,
+          "value": 138
+        },
+        {
+          "name": "EVENT_BLOCK_RATING",
+          "offset": null,
+          "value": 139
+        },
+        {
+          "name": "EVENT_CHECK_ABILITIES",
+          "offset": null,
+          "value": 140
+        },
+        {
+          "name": "EVENT_DISCARD",
+          "offset": null,
+          "value": 141
+        },
+        {
+          "name": "EVENT_UNKNOWN8E",
+          "offset": null,
+          "value": 142
+        },
+        {
+          "name": "EVENT_CAN_WASTE_MANA",
+          "offset": null,
+          "value": 143
+        },
+        {
+          "name": "EVENT_GET_SELECTED_CARD",
+          "offset": null,
+          "value": 144
+        },
+        {
+          "name": "EVENT_PLAY_ABILITY",
+          "offset": null,
+          "value": 145
+        },
+        {
+          "name": "EVENT_BEFORE_COMBAT",
+          "offset": null,
+          "value": 146
+        },
+        {
+          "name": "EVENT_VARIABLE_MANA_SRC",
+          "offset": null,
+          "value": 147
+        },
+        {
+          "name": "EVENT_CARDCONTROLLED",
+          "offset": null,
+          "value": 148
+        },
+        {
+          "name": "EVENT_DISABLE_ABILITIES",
+          "offset": null,
+          "value": 160
+        },
+        {
+          "name": "EVENT_ENABLE_ABILITIES",
+          "offset": null,
+          "value": 161
+        },
+        {
+          "name": "EVENT_MODIFY_COST_GLOBAL",
+          "offset": null,
+          "value": 162
+        },
+        {
+          "name": "EVENT_MODIFY_AB_COST_GL",
+          "offset": null,
+          "value": 163
+        },
+        {
+          "name": "EVENT_MODIFY_COST",
+          "offset": null,
+          "value": 164
+        },
+        {
+          "name": "EVENT_PAY_MODIFIED_COST",
+          "offset": null,
+          "value": 165
+        },
+        {
+          "name": "EVENT_MODIFY_MANA_PROD",
+          "offset": null,
+          "value": 166
+        },
+        {
+          "name": "EVENT_AFTER_DAMAGE",
+          "offset": null,
+          "value": 167
+        },
+        {
+          "name": "EVENT_GRAVEYARD_ABILITY",
+          "offset": null,
+          "value": 176
+        },
+        {
+          "name": "EVENT_CAN_ACTIVATE_FROM_HAND",
+          "offset": null,
+          "value": 177
+        },
+        {
+          "name": "EVENT_ACTIVATE_FROM_HAND",
+          "offset": null,
+          "value": 178
+        },
+        {
+          "name": "EVENT_RESOLVE_ACTIVATION_FROM_HAND",
+          "offset": null,
+          "value": 179
+        },
+        {
+          "name": "EVENT_GRAVEYARD_ABILITY_UPKEEP",
+          "offset": null,
+          "value": 180
+        },
+        {
+          "name": "EVENT_PAY_FLASHBACK_COSTS",
+          "offset": null,
+          "value": 181
+        },
+        {
+          "name": "EVENT_CAN_SPLICE",
+          "offset": null,
+          "value": 182
+        },
+        {
+          "name": "EVENT_SPLICE",
+          "offset": null,
+          "value": 183
+        },
+        {
+          "name": "EVENT_CAN_UNMORPH",
+          "offset": null,
+          "value": 184
+        },
+        {
+          "name": "EVENT_UNMORPH",
+          "offset": null,
+          "value": 185
+        },
+        {
+          "name": "EVENT_HAUNT",
+          "offset": null,
+          "value": 186
+        },
+        {
+          "name": "EVENT_TURNED_FACE_UP",
+          "offset": null,
+          "value": 187
+        },
+        {
+          "name": "EVENT_CAN_PAY_MADNESS_COST",
+          "offset": null,
+          "value": 188
+        },
+        {
+          "name": "EVENT_PAY_MADNESS_COST",
+          "offset": null,
+          "value": 189
+        },
+        {
+          "name": "EVENT_CHAOS",
+          "offset": null,
+          "value": 191
+        },
+        {
+          "name": "EVENT_PLANESWALK_IN",
+          "offset": null,
+          "value": 192
+        },
+        {
+          "name": "EVENT_PLANESWALK_OUT",
+          "offset": null,
+          "value": 193
+        },
+        {
+          "name": "EVENT_RESOLVE_SPLICE",
+          "offset": null,
+          "value": 194
+        },
+        {
+          "name": "EVENT_SHOULD_AI_PLAY",
+          "offset": null,
+          "value": 199
+        },
+        {
+          "name": "EVENT_SET_LEGACY_EFFECT_NAME",
+          "offset": null,
+          "value": 256
+        },
+        {
+          "name": "EVENT_SET_LEGACY_EFFECT_TEXT",
+          "offset": null,
+          "value": 512
+        },
+        {
+          "name": "EVENT_TRIGGER_RESOLVED",
+          "offset": null,
+          "value": 768
+        },
+        {
+          "name": "EVENT_CAN_CHANGE_TARGET",
+          "offset": null,
+          "value": 1024
+        },
+        {
+          "name": "EVENT_GRAVEYARD_ABILITY_EOT",
+          "offset": null,
+          "value": 1280
+        },
+        {
+          "name": "EVENT_CAN_MOVE_AURA",
+          "offset": null,
+          "value": 1536
+        },
+        {
+          "name": "EVENT_MOVE_AURA",
+          "offset": null,
+          "value": 1792
+        },
+        {
+          "name": "EVENT_RESOLVE_MOVING_AURA",
+          "offset": null,
+          "value": 2048
+        },
+        {
+          "name": "EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE",
+          "offset": null,
+          "value": 2304
+        },
+        {
+          "name": "EVENT_UPKEEP_TRIGGER_ABILITY",
+          "offset": null,
+          "value": 2560
+        },
+        {
+          "name": "EVENT_RESOLVE_THIS_DIES_TRIGGER",
+          "offset": null,
+          "value": 2816
+        },
+        {
+          "name": "EVENT_TAPPED_TO_PLAY_ABILITY",
+          "offset": null,
+          "value": 3072
+        },
+        {
+          "name": "EVENT_RESOLVE_ACTIVATED_GRAVEYARD_ABILITY",
+          "offset": null,
+          "value": 3328
+        },
+        {
+          "name": "EVENT_RETURN_TO_PLAY_FROM_GRAVE_MODIFIED",
+          "offset": null,
+          "value": 3584
+        },
+        {
+          "name": "EVENT_ANOTHER_PERMANENT_HAS_TRANSFORMED",
+          "offset": null,
+          "value": 3840
+        },
+        {
+          "name": "EVENT_PLAY_FIRST_HALF",
+          "offset": null,
+          "value": 4096
+        },
+        {
+          "name": "EVENT_PLAY_SECOND_HALF",
+          "offset": null,
+          "value": 4352
+        },
+        {
+          "name": "EVENT_HAS_MORPH",
+          "offset": null,
+          "value": 4608
+        },
+        {
+          "name": "EVENT_SUBTYPE",
+          "offset": null,
+          "value": 4864
+        },
+        {
+          "name": "EVENT_UNATTACH",
+          "offset": null,
+          "value": 5120
+        },
+        {
+          "name": "EVENT_EQUIPMENT_ATTACHED",
+          "offset": null,
+          "value": 5376
+        },
+        {
+          "name": "EVENT_DAMAGE_TRIGGER_ABILITY",
+          "offset": null,
+          "value": 5632
+        },
+        {
+          "name": "EVENT_CAN_ACTIVATE_HIDEAWAY_LAND",
+          "offset": null,
+          "value": 5888
+        },
+        {
+          "name": "EVENT_CHAPTER1",
+          "offset": null,
+          "value": 6144
+        },
+        {
+          "name": "EVENT_CHAPTER2",
+          "offset": null,
+          "value": 6400
+        },
+        {
+          "name": "EVENT_CHAPTER3",
+          "offset": null,
+          "value": 6656
+        },
+        {
+          "name": "EVENT_CHAPTER4",
+          "offset": null,
+          "value": 6912
+        },
+        {
+          "name": "EVENT_COMMANDER_TO_COMMAND_ZONE",
+          "offset": null,
+          "value": 7168
+        },
+        {
+          "name": "EVENT_CANT_CREW",
+          "offset": null,
+          "value": 7424
+        },
+        {
+          "name": "EVENT_SP_ABILITY",
+          "offset": null,
+          "value": 7680
+        },
+        {
+          "name": "EVENT_SPA",
+          "offset": null,
+          "value": 7680
+        },
+        {
+          "name": "EVENT_DAT_ABILITY",
+          "offset": null,
+          "value": 7936
+        },
+        {
+          "name": "EVENT_CARD_TO_EXILE",
+          "offset": null,
+          "value": 8192
+        },
+        {
+          "name": "EVENT_BECAME_MONSTROUS",
+          "offset": null,
+          "value": 16384
+        },
+        {
+          "name": "EVENT_PHASING",
+          "offset": null,
+          "value": 16640
+        },
+        {
+          "name": "EVENT_END_TRIGGER",
+          "offset": null,
+          "value": 16896
+        },
+        {
+          "name": "EVENT_END_OF_UNTAP_STEP",
+          "offset": null,
+          "value": 17152
+        },
+        {
+          "name": "EVENT_PHASE_CHANGED",
+          "offset": null,
+          "value": 17408
+        },
+        {
+          "name": "EVENT_CHECK_DESTROY_IF_BLOCKED",
+          "offset": null,
+          "value": 17664
+        },
+        {
+          "name": "EVENT_BEGIN_TURN",
+          "offset": null,
+          "value": 17920
+        },
+        {
+          "name": "EVENT_STATIC_EFFECTS",
+          "offset": null,
+          "value": 18176
+        },
+        {
+          "name": "EVENT_MANA_POOL_DRAINING",
+          "offset": null,
+          "value": 18432
+        },
+        {
+          "name": "EVENT_CHOOSING_TO_UNTAP",
+          "offset": null,
+          "value": 18688
+        },
+        {
+          "name": "EVENT_TRANSFORMED",
+          "offset": null,
+          "value": 18944
+        },
+        {
+          "name": "EVENT_EFFECT_CREATED",
+          "offset": null,
+          "value": 19200
+        },
+        {
+          "name": "EVENT_RESOLVE_GENERAL_EFFECT",
+          "offset": null,
+          "value": 19456
+        },
+        {
+          "name": "EVENT_FIGHT",
+          "offset": null,
+          "value": 19712
+        },
+        {
+          "name": "EVENT_QUERY_AWAKEN",
+          "offset": null,
+          "value": 19968
+        },
+        {
+          "name": "EVENT_HIDDEN_AGENDA",
+          "offset": null,
+          "value": 20480
+        },
+        {
+          "name": "EVENT_ETB_ABILITY",
+          "offset": null,
+          "value": 20736
+        },
+        {
+          "name": "EVENT_ETB",
+          "offset": null,
+          "value": 20736
+        },
+        {
+          "name": "EVENT_DREDGE",
+          "offset": null,
+          "value": 20992
+        },
+        {
+          "name": "EVENT_SURVEIL",
+          "offset": null,
+          "value": 21248
+        },
+        {
+          "name": "EVENT_CHANGE_TARGET",
+          "offset": null,
+          "value": 21504
+        },
+        {
+          "name": "EVENT_SET_IN_MOTION",
+          "offset": null,
+          "value": 21760
+        },
+        {
+          "name": "EVENT_COUNTERSPELL",
+          "offset": null,
+          "value": 22016
+        },
+        {
+          "name": "EVENT_EXPLORE",
+          "offset": null,
+          "value": 22272
+        },
+        {
+          "name": "EVENT_COUNTERS",
+          "offset": null,
+          "value": 22528
+        },
+        {
+          "name": "EVENT_QUERY_CUMULATIVE_UPKEEP",
+          "offset": null,
+          "value": 22784
+        },
+        {
+          "name": "EVENT_REMOVED_FROM_GRAVEYARD",
+          "offset": null,
+          "value": 23040
+        },
+        {
+          "name": "EVENT_COIN_FLIP_WON_OR_LOST",
+          "offset": null,
+          "value": 23296
+        },
+        {
+          "name": "EVENT_SPELL_COPIED",
+          "offset": null,
+          "value": 23552
+        },
+        {
+          "name": "EVENT_QUERY",
+          "offset": null,
+          "value": 23808
+        },
+        {
+          "name": "EVENT_QUERY_AFF",
+          "offset": null,
+          "value": 24064
+        },
+        {
+          "name": "EVENT_LEAVES_PLAY_ABILITY",
+          "offset": null,
+          "value": 24320
+        },
+        {
+          "name": "EVENT_LTB",
+          "offset": null,
+          "value": 24320
+        },
+        {
+          "name": "EVENT_ATTACK_LEGALITY_ALL",
+          "offset": null,
+          "value": 24576
+        },
+        {
+          "name": "EVENT_PROT_MISC",
+          "offset": null,
+          "value": 24832
+        },
+        {
+          "name": "EVENT_SPELL_CAST",
+          "offset": null,
+          "value": 25088
+        },
+        {
+          "name": "EVENT_LAND_PLAYED",
+          "offset": null,
+          "value": 25344
+        },
+        {
+          "name": "EVENT_THIS_SPELL_CAST",
+          "offset": null,
+          "value": 25600
+        }
+      ]
+    },
+    "target_t": {
+      "source": "cards/visions.c",
+      "tag": "DW_TAG_structure_type",
+      "name": "target_struct",
+      "size": 8,
+      "members": [
+        {
+          "name": "player",
+          "offset": 0,
+          "value": null
+        },
+        {
+          "name": "card",
+          "offset": 4,
+          "value": null
+        }
+      ]
+    },
+    "card_instance_t": {
+      "source": "cards/visions.c",
+      "tag": "DW_TAG_structure_type",
+      "name": "card_instance_struct",
+      "size": 300,
+      "members": [
+        {
+          "name": "special_counters",
+          "offset": 0,
+          "value": null
+        },
+        {
+          "name": "counters2",
+          "offset": 1,
+          "value": null
+        },
+        {
+          "name": "counters3",
+          "offset": 2,
+          "value": null
+        },
+        {
+          "name": "counters4",
+          "offset": 3,
+          "value": null
+        },
+        {
+          "name": "damage_target_card",
+          "offset": 4,
+          "value": null
+        },
+        {
+          "name": "state",
+          "offset": 8,
+          "value": null
+        },
+        {
+          "name": "damage_source_player",
+          "offset": 12,
+          "value": null
+        },
+        {
+          "name": "unused0",
+          "offset": 13,
+          "value": null
+        },
+        {
+          "name": "toughness",
+          "offset": 14,
+          "value": null
+        },
+        {
+          "name": "damage_on_card",
+          "offset": 16,
+          "value": null
+        },
+        {
+          "name": "counter_power",
+          "offset": 18,
+          "value": null
+        },
+        {
+          "name": "unknown0x14",
+          "offset": 20,
+          "value": null
+        },
+        {
+          "name": "token_status",
+          "offset": 24,
+          "value": null
+        },
+        {
+          "name": "counter_toughness",
+          "offset": 28,
+          "value": null
+        },
+        {
+          "name": "color",
+          "offset": 30,
+          "value": null
+        },
+        {
+          "name": "destroys_if_blocked",
+          "offset": 31,
+          "value": null
+        },
+        {
+          "name": "dummy3",
+          "offset": 32,
+          "value": null
+        },
+        {
+          "name": "blocking",
+          "offset": 36,
+          "value": null
+        },
+        {
+          "name": "initial_color",
+          "offset": 37,
+          "value": null
+        },
+        {
+          "name": "unused0x26",
+          "offset": 38,
+          "value": null
+        },
+        {
+          "name": "regen_status",
+          "offset": 40,
+          "value": null
+        },
+        {
+          "name": null,
+          "offset": 44,
+          "value": null
+        },
+        {
+          "name": "unused30",
+          "offset": 48,
+          "value": null
+        },
+        {
+          "name": "power",
+          "offset": 52,
+          "value": null
+        },
+        {
+          "name": "number_of_targets",
+          "offset": 54,
+          "value": null
+        },
+        {
+          "name": "mode",
+          "offset": 55,
+          "value": null
+        },
+        {
+          "name": null,
+          "offset": 56,
+          "value": null
+        },
+        {
+          "name": "original_internal_card_id",
+          "offset": 60,
+          "value": null
+        },
+        {
+          "name": "color_id",
+          "offset": 64,
+          "value": null
+        },
+        {
+          "name": "backup_internal_card_id",
+          "offset": 70,
+          "value": null
+        },
+        {
+          "name": "damage_source_card",
+          "offset": 72,
+          "value": null
+        },
+        {
+          "name": null,
+          "offset": 76,
+          "value": null
+        },
+        {
+          "name": "damage_target_player",
+          "offset": 80,
+          "value": null
+        },
+        {
+          "name": "special_counter_type",
+          "offset": 81,
+          "value": null
+        },
+        {
+          "name": "unk52",
+          "offset": 82,
+          "value": null
+        },
+        {
+          "name": "unk53",
+          "offset": 83,
+          "value": null
+        },
+        {
+          "name": "timestamp",
+          "offset": 84,
+          "value": null
+        },
+        {
+          "name": "mana_color",
+          "offset": 88,
+          "value": null
+        },
+        {
+          "name": "card_color",
+          "offset": 89,
+          "value": null
+        },
+        {
+          "name": "unk5a",
+          "offset": 90,
+          "value": null
+        },
+        {
+          "name": "unk5b",
+          "offset": 91,
+          "value": null
+        },
+        {
+          "name": "upkeep_flags",
+          "offset": 92,
+          "value": null
+        },
+        {
+          "name": "attack_rating",
+          "offset": 96,
+          "value": null
+        },
+        {
+          "name": "display_pic_csv_id",
+          "offset": 100,
+          "value": null
+        },
+        {
+          "name": "display_pic_num",
+          "offset": 102,
+          "value": null
+        },
+        {
+          "name": "kill_code",
+          "offset": 104,
+          "value": null
+        },
+        {
+          "name": "unk69",
+          "offset": 105,
+          "value": null
+        },
+        {
+          "name": "unk6A",
+          "offset": 106,
+          "value": null
+        },
+        {
+          "name": "unk6B",
+          "offset": 107,
+          "value": null
+        },
+        {
+          "name": "internal_card_id",
+          "offset": 108,
+          "value": null
+        },
+        {
+          "name": "unknown0x70",
+          "offset": 112,
+          "value": null
+        },
+        {
+          "name": "targets",
+          "offset": 116,
+          "value": null
+        },
+        {
+          "name": "parent_controller",
+          "offset": 268,
+          "value": null
+        },
+        {
+          "name": "parent_card",
+          "offset": 272,
+          "value": null
+        },
+        {
+          "name": "hack_mode",
+          "offset": 276,
+          "value": null
+        },
+        {
+          "name": "unknown0x11a",
+          "offset": 282,
+          "value": null
+        },
+        {
+          "name": "untap_status",
+          "offset": 284,
+          "value": null
+        },
+        {
+          "name": "counters",
+          "offset": 288,
+          "value": null
+        },
+        {
+          "name": "counters5",
+          "offset": 289,
+          "value": null
+        },
+        {
+          "name": "unknown0x122",
+          "offset": 290,
+          "value": null
+        },
+        {
+          "name": "unused0x124",
+          "offset": 292,
+          "value": null
+        },
+        {
+          "name": "unused0x128",
+          "offset": 296,
+          "value": null
+        },
+        {
+          "name": "unused0x12a",
+          "offset": 298,
+          "value": null
+        },
+        {
+          "name": "counters_m1m1",
+          "offset": 299,
+          "value": null
+        }
+      ]
+    },
+    "card_id_t": {
+      "source": "cards/hour_of_devastation.c",
+      "tag": "DW_TAG_enumeration_type",
+      "name": null,
+      "size": 4,
+      "members": [
+        {
+          "name": "CARD_ID_AIR_ELEMENTAL",
+          "offset": null,
+          "value": 0
+        },
+        {
+          "name": "CARD_ID_ANCESTRAL_RECALL",
+          "offset": null,
+          "value": 1
+        },
+        {
+          "name": "CARD_ID_ANIMATE_ARTIFACT",
+          "offset": null,
+          "value": 2
+        },
+        {
+          "name": "CARD_ID_ANIMATE_DEAD",
+          "offset": null,
+          "value": 3
+        },
+        {
+          "name": "CARD_ID_ANIMATE_WALL",
+          "offset": null,
+          "value": 4
+        },
+        {
+          "name": "CARD_ID_ANKH_OF_MISHRA",
+          "offset": null,
+          "value": 5
+        }
+      ],
+      "member_count": 24862,
+      "members_truncated": true
+    },
+    "card_professor_onyx": {
+      "source": "cards/strixhaven.c",
+      "address": "0x23d7d50",
+      "size": 948,
+      "line": 5351,
+      "parameters": [
+        "player",
+        "card",
+        "event"
+      ],
+      "locals": [],
+      "line_table_rows": 70,
+      "line_examples": [
+        {
+          "address": "0x23d7d50",
+          "line": 5351
+        },
+        {
+          "address": "0x23d7d50",
+          "line": 5359
+        },
+        {
+          "address": "0x23d7d50",
+          "line": 5351
+        },
+        {
+          "address": "0x23d7d5c",
+          "line": 5351
+        },
+        {
+          "address": "0x23d7d65",
+          "line": 5359
+        }
+      ]
+    },
+    "card_winter_orb": {
+      "source": "cards/unlimited.c",
+      "address": "0x24cff90",
+      "size": 84,
+      "line": 7080,
+      "parameters": [
+        "player",
+        "card",
+        "event"
+      ],
+      "locals": [],
+      "line_table_rows": 11,
+      "line_examples": [
+        {
+          "address": "0x24cff90",
+          "line": 7080
+        },
+        {
+          "address": "0x24cff90",
+          "line": 7087
+        },
+        {
+          "address": "0x24cff90",
+          "line": 7080
+        },
+        {
+          "address": "0x24cff98",
+          "line": 7080
+        },
+        {
+          "address": "0x24cff9e",
+          "line": 7087
+        }
+      ]
+    },
+    "card_black_lotus": {
+      "source": "cards/unlimited.c",
+      "address": "0x24bf4e0",
+      "size": 49,
+      "line": 849,
+      "parameters": [
+        "player",
+        "card",
+        "event"
+      ],
+      "locals": [],
+      "line_table_rows": 5,
+      "line_examples": [
+        {
+          "address": "0x24bf4e0",
+          "line": 849
+        },
+        {
+          "address": "0x24bf4e0",
+          "line": 857
+        },
+        {
+          "address": "0x24bf4e0",
+          "line": 849
+        },
+        {
+          "address": "0x24bf4e6",
+          "line": 857
+        },
+        {
+          "address": "0x24bf50f",
+          "line": 858
+        }
+      ]
+    },
+    "dispatch_trigger": {
+      "source": "functions/events.c",
+      "address": "0x26cb930",
+      "size": 52,
+      "line": 507,
+      "parameters": [
+        "player",
+        "trig",
+        "prompt",
+        "TENTATIVE_allow_response"
+      ],
+      "locals": [
+        "old_xtrigger"
+      ],
+      "line_table_rows": 13,
+      "line_examples": [
+        {
+          "address": "0x26cb930",
+          "line": 508
+        },
+        {
+          "address": "0x26cb930",
+          "line": 509
+        },
+        {
+          "address": "0x26cb930",
+          "line": 508
+        },
+        {
+          "address": "0x26cb931",
+          "line": 510
+        },
+        {
+          "address": "0x26cb933",
+          "line": 508
+        }
+      ]
+    }
+  }
+}

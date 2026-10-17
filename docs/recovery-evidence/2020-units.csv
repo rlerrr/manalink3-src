@@ -1,0 +1,167 @@
+source,directory,producer,version
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/crt/dllcrt1.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+cards/odissey.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/theros.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/morningtide.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/unglued_unhinged.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/alara_reborn.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/weatherlight.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/amonkhet.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/vanguard.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/arabian_nights.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/m13.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/shadows_over_innistrad.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/dragons_maze.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/commander_2017.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/avacyn_restored.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/new_phyrexia.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/oath_of_the_gatewatch.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/antiquities.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/dissension.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/ixalan.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/conspiracy-take-the-crown.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/m19.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/legends.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/conflux.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/commander_2014.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/portal_1_2_3k.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/m15.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/khans_of_tarkir.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/rivals_of_ixalan.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/planeshift.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/mercadian_masques.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/coldsnap.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/planeswalker.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/innistrad.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/tempest.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/shards_of_alara.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/conspiracy.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/dark_ascension.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/unstable.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/urza_destiny.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/time_spiral.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/nemesis.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/origins.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/aether_revolt.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/saviors_of_kamigawa.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/alliances.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/m14.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/apocalypse.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/judgement.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/darksteel.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/born_of_the_gods.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/fifth_dawn.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/battlebond.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/exodus.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/guildpact.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/fate_reforged.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/prophecy.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/onslaught.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/homelands.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/zendikar.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/m11.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/urza_saga.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/urza_legacy.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/visions.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/lorwyn.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/worldwake.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/torment.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/tokens.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/archenemy.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/future_sight.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/betrayers_of_kamigawa.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/commander_2018.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/shadowmoor.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/mirrodin.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/gatecrash.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/champions_of_kamigawa.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/m10.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/draft.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/stronghold.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/commander_2016.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/scourge.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/dominaria.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/the_dark.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/hour_of_devastation.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/journey_into_nyx.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/unlimited.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/rise_of_the_eldrazi.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/legions.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/invasion.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/archenemy_nicol_bolas.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/eldritch_moon.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/return_to_ravnica.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/battle_for_zendikar.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/scars_of_mirrodin.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/m12.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/gargaroz.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/fallen_empires.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/planechase.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/global_series_jiang_yanggu_and_mu_yanling.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/mirage.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/promo.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/ice_age.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/commander.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/commander_2013.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/equipment.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/planar_chaos.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/kaladesh.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/eventide.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/commander_2015.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/mirrodin_besieged.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/ravnica.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+cards/dragons_of_tarkir.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/boost_creature_type.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/dialog.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/count_graveyard.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/sacrifices.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/damage_effects.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/abilities.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/exiledby.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/helper_functions.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/multiblock.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/rules_engine.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/has_threshold.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/global_checking.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/challenge_mode.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/deck.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/targets.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/ai.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/engine.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/functions.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/events.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/equipments.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/upkeep.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/auras.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/has_creature_type.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/deadbox.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/produce_mana.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/token_generation.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/play_spell_for_free.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/manipulate_and_damage_all.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/show_backtrace.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/windows.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/counters.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/tutors.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/gain_control_and_legend_rule.c,D:\dev_git\src,GNU C 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -fno-omit-frame-pointer -fno-tree-vrp,4
+functions/utility.cpp,D:\dev_git\src,GNU C++ 4.8.1 -march=i586 -mpreferred-stack-boundary=2 -ggdb2 -O2 -std=gnu++11 -fno-omit-frame-pointer -fno-tree-vrp,4
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/crt/tlssup.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/crt/dllmain.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/crt/pseudo-reloc.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/crt/gccmain.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/crt/crtst.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/crt/tlsthrd.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/crt/pseudo-reloc-list.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/stdio/snprintf.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/misc/src/libcrt/math/pow.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/stdio/vsnprintf.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/math/fpclassify.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/misc/src/libcrt/math/powi.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/misc/src/libcrt/stdio/pformat.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/misc/src/libcrt/gdtoa/gdtoa.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/wchar/wcrtomb.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/wchar/mbrtowc.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/misc/src/libcrt/gdtoa/dmisc.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/misc/src/libcrt/gdtoa/misc.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/misc/src/libcrt/gdtoa/gmisc.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4
+../mingwrt-4.0.3-1-mingw32-src/src/libcrt/crt/tlsmthread.c,e:\p\giaw\src\pkg\mingwrt-4.0.3-1-mingw32-src\bld,GNU C 4.8.1 -mtune=generic -march=pentiumpro -g -O2,4

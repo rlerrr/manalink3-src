@@ -3902,3 +3902,29 @@ Artifact
 	}
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_SACRIFICE_ME, MANACOST_X(2), 0, NULL, NULL);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x202ae40; original cards/fifth_dawn.c:955. */
+int card_blinkmoth_infusion(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  affinity(player, card, event, 0x40, -1);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    default_test_definition(&test, 0x40);
+    new_manipulate_all(player, card, 2, &test, ACT_UNTAP);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x202ff70; original cards/fifth_dawn.c:2632. */
+int card_iron_barb_hellion(int player, int card, event_t event)
+{
+  cannot_block(player, card, event);
+  haste(player, card, event);
+  return 0;
+}

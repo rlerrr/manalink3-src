@@ -243,3 +243,32 @@ int card_rebound(int player, int card, event_t event){
   return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24279f0; original cards/gargaroz.c:234. */
+static char *
+has_only_1_target_and_could_legally_change_target_and_targets_a_creature(int who_chooses,
+                                                                         int player, int card)
+{
+  card_instance_t *instance;
+  int result;
+  char *pcVar3;
+
+  instance = get_card_instance(player, card);
+  pcVar3 = "must have only 1 target";
+  if (instance->number_of_targets == '\x01')
+  {
+    result = is_what(instance->targets[0].player, instance->targets[0].card, 2);
+    pcVar3 = "must target a creature";
+    if (result != 0)
+    {
+      result = call_card_function(player, card, EVENT_CAN_CHANGE_TARGET);
+      pcVar3 = NULL;
+      if (result == 0)
+      {
+        pcVar3 = "has only 1 legal target";
+      }
+    }
+  }
+  return pcVar3;
+}

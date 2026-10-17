@@ -3104,6 +3104,379 @@ int card_limited_resources(int player, int card, event_t event){
 	return global_enchantment(player, card, event);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
+/* ManalinkEh 2022: 0x2647ee0; original cards/exodus.c:1895. */
+int card_reconnaissance(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
 
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.required_state = 2;
+    td.allowed_controller = player;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = global_enchantment(player, card, event);
+      return result;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.required_state = 2;
+    td.allowed_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = can_target(&td);
+      if (result != 0)
+      {
+        result = valid_target(&td);
+        if (result != 0)
+        {
+          remove_state(instance->targets[0].player, instance->targets[0].card, 0x44);
+          untap_card(instance->targets[0].player, instance->targets[0].card);
+        }
+      }
+    }
+  }
+  result = generic_activated_ability(player, card, event, 4, 0, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_ATTACKING_CREATURE");
+  return result;
+}
 
+/* ManalinkEh 2022: 0x264cfe0; original cards/exodus.c:3422. */
+int card_avenging_druid(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int times_damage[2];
+  test_definition_t test;
+
+  uVar1 = whenever_i_deal_damage_to_a_player(player, card, event,
+                                             DDBM_MUST_DAMAGE_OPPONENT | DDBM_TRIGGER_OPTIONAL);
+  if (uVar1 == 0)
+  {
+    return 0;
+  }
+  times_damage[0] = uVar1 & 0xff;
+  times_damage[1] = uVar1 >> 8 & 0xff;
+  default_test_definition(&test, 1);
+  test.qty = (unsigned short)times_damage[1 - player];
+  reveal_card_until_you_reveal_test(player, player, &test, 0x41);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x264d130; original cards/exodus.c:3456. */
+int card_cat_burglar(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      instance = get_card_instance(player, card);
+      discard(instance->targets[0].player, 0, player);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0x15, 2, 1, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_PLAYER");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x264d270; original cards/exodus.c:3478. */
+int card_cinder_crawler(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = count_my_blockers(player, card);
+    if (result < 1)
+    {
+      return 0;
+    }
+  }
+  else if ((event - EVENT_POW_BOOST < 2) && (current_turn != player))
+  {
+    return 0;
+  }
+  result = generic_shade_merge_pt(player, card, event, 0, 0, 0, 0, 0, 1, 0, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2642920; original cards/exodus.c:3521. */
+static int cunning_effect(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  kill_card(instance->targets[0].player, instance->targets[0].card, KILL_SACRIFICE);
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x264dfa0; original cards/exodus.c:3753. */
+int card_fugue(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td1;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td1, 0);
+        td1.zone = 0x1000;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td1);
+          if (result != 0)
+          {
+            new_multidiscard(instance->targets[0].player, 3, 0, player);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0264e00d;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td1, 0);
+  td1.zone = 0x1000;
+  get_card_instance(player, card);
+LAB_0264e00d:
+  result = generic_spell(player, card, event, 1, &td1, "TARGET_PLAYER", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x264e350; original cards/exodus.c:3822. */
+int card_mage_il_vec(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x25, 0, 0, 0, 0, 0, 0,
+                                         0, &td, NULL);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = '\0';
+      result = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = pick_target(&td, "TARGET_ANY");
+      if (result == 0)
+      {
+        return 0;
+      }
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      add_state(player, card, 0x10);
+      discard(player, 1, player);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    get_card_instance(player, card);
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+  {
+    damage_target0(player, card, 1);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x264e7d0; original cards/exodus.c:3915. */
+int card_mogg_assassin(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  target_definition_t td2;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    result = 1 - player;
+    td.allowed_controller = result;
+    td.preferred_controller = result;
+    default_target_definition(player, card, &td2, 2);
+    td2.preferred_controller = player;
+    td2.who_chooses = result;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = can_target(&td2);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0, 0, 0, 0,
+                                         &td, NULL);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      result = can_target(&td2);
+      if (result == 0)
+      {
+        return 0;
+      }
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 7, 0, 0, 0, 0, 0, 0, 0, &td,
+                                "Select target creature an opponent controls.");
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      new_pick_target(&td2, "Select target creature.", 1, 0x81);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    result = 1 - player;
+    td.allowed_controller = result;
+    td.preferred_controller = result;
+    default_target_definition(player, card, &td2, 2);
+    td2.preferred_controller = player;
+    td2.who_chooses = result;
+    instance = get_card_instance(player, card);
+  }
+  if (((event == EVENT_RESOLVE_ACTIVATION) &&
+       (result = validate_target(player, card, &td, 0), result != 0)) &&
+      (result = validate_target(player, card, &td2, 1), result != 0))
+  {
+    result = flip_a_coin(player, card);
+    if (result == 0)
+    {
+      kill_card(instance->targets[1].player, instance->targets[1].card, KILL_DESTROY);
+      return 0;
+    }
+    kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x264f330; original cards/exodus.c:4159. */
+int card_plated_rootwalla(int player, int card, event_t event)
+{
+  int result;
+  if (event - EVENT_POW_BOOST < 2)
+  {
+    result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x2000, 2, 0, 0, 1, 0, 0,
+                                       0, NULL, NULL);
+    if (result != 0)
+    {
+      return 2;
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    result = generic_shade(player, card, EVENT_RESOLVE_ACTIVATION, 0, 1, 0, 0, 1, 0, 0, 3, 3, 0, 0);
+    return result;
+  }
+  result = generic_activated_ability(player, card, event, 0x2000, 2, 0, 0, 1, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x264f810; original cards/exodus.c:4252. */
+int card_shield_mate(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_CHECK_PUMP)
+  {
+    result = card_shield_mate(player, card, EVENT_CAN_ACTIVATE);
+    if (result != 0)
+    {
+      pumpable_toughness[player] = pumpable_toughness[player] + 4;
+    }
+  }
+  else if ((((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
+            (event == EVENT_RESOLVE_ACTIVATION)) ||
+           (event == EVENT_CLEANUP))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 4);
+      }
+    }
+    result = generic_activated_ability(player, card, event, 0xc, 0, 0, 0, 0, 0, 0, 0, &td,
+                                       "TARGET_CREATURE");
+    return result;
+  }
+  return 0;
+}

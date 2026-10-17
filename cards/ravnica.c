@@ -7305,4 +7305,28 @@ When ~ enters the battlefield, return a land you control to its owner's hand.
 	return karoo( player, card, event, COLOR_BLACK, COLOR_BLUE, CARD_ID_UNDERGROUND_SEA );
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
+/* ManalinkEh 2022: 0x24ed720; original cards/ravnica.c:4725. */
+int card_perilous_forays(int player, int card, event_t event)
+{
+  int result;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      if (event != EVENT_SHOULD_AI_PLAY)
+      {
+        return (unsigned int)(event == EVENT_CAN_CAST);
+      }
+      ai_modifier = ai_modifier + (-(unsigned int)(player == 0) & 0xfffffff0) + 8;
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      tutor_basic_land(player, 1, 1);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0x200, 1, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}

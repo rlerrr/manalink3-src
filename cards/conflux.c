@@ -2314,5 +2314,42 @@ Put one of those cards into your hand and the rest on the bottom of your library
 
 // zombie outlander --> vanilla
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
-
+/* ManalinkEh 2022: 0x21e3e60; original cards/conflux.c:442. */
+int card_elder_mastery(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int player_00;
+  card_instance_t *instance;
+  int result;
+  int times_damaged[2];
+  instance = get_card_instance(player, card);
+  if ((-1 < instance->damage_target_player) &&
+      (result = attached_creature_deals_damage(
+           player, card, event, DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER),
+       result != 0))
+  {
+    instance = get_card_instance(player, card);
+    player_00 = current_turn;
+    uVar1 = instance->targets[1].player;
+    instance->targets[1].player = 0;
+    times_damaged[0] = uVar1 & 0xff;
+    times_damaged[1] = uVar1 >> 8 & 0xff;
+    result = times_damaged[player_00];
+    uVar1 = player_00;
+    while (result != 0)
+    {
+      new_multidiscard(player_00, 2, 0, player);
+      result = result + -1;
+      times_damaged[player_00] = result;
+      uVar1 = current_turn;
+    }
+    for (result = times_damaged[uVar1 ^ 1]; result != 0; result = result + -1)
+    {
+      new_multidiscard(uVar1 ^ 1, 2, 0, player);
+    }
+  }
+  result = generic_aura(player, card, event, player, 3, 3, 0x20, 0, 0, 0, 0);
+  return result;
+}

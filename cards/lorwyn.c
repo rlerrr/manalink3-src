@@ -6353,4 +6353,60 @@ Flying
 	return flash(player, card, event);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
+/* ManalinkEh 2022: 0x2592550; original cards/lorwyn.c:1662. */
+int card_changeling_titan(int player, int card, event_t event)
+{
+  champion(player, card, event, -1, -1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2598630; original cards/lorwyn.c:4018. */
+int card_lammastide_weave(int player, int card, event_t event)
+{
+  int t_player;
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  target_definition_t td;
+  test_definition_t test;
+  default_target_definition(player, card, &td, 0);
+  td.zone = 0x1000;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    iVar2 = valid_target(&td);
+    if (iVar2 != 0)
+    {
+      new_default_test_definition(&test, 0xff, "Choose a card name.");
+      if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+      {
+        iVar2 = ai_name_a_random_csvid(player, card, 1 - player, TYPE_NONE, &test);
+      }
+      else
+      {
+        iVar2 = new_card_from_list(player, 3, &test);
+      }
+      if (-1 < iVar2)
+      {
+        instance = get_card_instance(player, card);
+        t_player = instance->targets[0].player;
+        iVar1 = *deck_ptr[t_player];
+        if (iVar1 != -1)
+        {
+          mill(t_player, 1);
+          iVar2 = has_same_name(-1, iVar2, -1, (unsigned int)cards_data[iVar1].id);
+          if (iVar2 != 0)
+          {
+            iVar2 = get_cmc_by_id((unsigned int)cards_data[iVar1].id);
+            gain_life(player, iVar2);
+          }
+        }
+      }
+      draw_a_card(player);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  iVar2 = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
+  return iVar2;
+}

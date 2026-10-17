@@ -5216,3 +5216,136 @@ int card_words_of_worship(int player, int card, event_t event){
 	return global_enchantment(player, card, event);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25e9cb0; original cards/onslaught.c:604. */
+int card_aphetto_alchemist(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td1;
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td1, 0x42);
+    td1.preferred_controller = player;
+    td1.illegal_abilities = 0;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = morph(player, card, event, 0, 0, 1, 0, 0, 0);
+      return result;
+    }
+    default_target_definition(player, card, &td1, 0x42);
+    td1.preferred_controller = player;
+    td1.illegal_abilities = 0;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target(&td1);
+      if (result != 0)
+      {
+        untap_card(instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+  }
+  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td1, "PUTREFY");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25eb1c0; original cards/onslaught.c:994. */
+int card_barkhide_mauler(int player, int card, event_t event)
+{
+  int result;
+  result = cycling(player, card, event, 2, 0, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25eb290; original cards/onslaught.c:1022. */
+int card_battering_craghorn(int player, int card, event_t event)
+{
+  int result;
+  result = morph(player, card, event, 1, 0, 0, 0, 2, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25ec9b0; original cards/onslaught.c:1467. */
+int card_charging_slateback(int player, int card, event_t event)
+{
+  int result;
+  cannot_block(player, card, event);
+  result = morph(player, card, event, 4, 0, 0, 0, 1, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25edd30; original cards/onslaught.c:1828. */
+int card_daru_lancer(int player, int card, event_t event)
+{
+  int result;
+  result = morph(player, card, event, 2, 0, 0, 0, 0, 2);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25f4310; original cards/onslaught.c:3951. */
+int card_searing_flesh(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        opponent_or_pw_target_definition(player, card, &td);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            damage_target0(player, card, 7);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_025f4355;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  opponent_or_pw_target_definition(player, card, &td);
+LAB_025f4355:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_OPPONENT_OR_PLANESWALKER", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25f5c70; original cards/onslaught.c:4575. */
+int card_spined_basher(int player, int card, event_t event)
+{
+  int result;
+  result = morph(player, card, event, 2, 1, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25f6a40; original cards/onslaught.c:4861. */
+int card_towering_baloth(int player, int card, event_t event)
+{
+  int result;
+  result = morph(player, card, event, 6, 0, 0, 1, 0, 0);
+  return result;
+}

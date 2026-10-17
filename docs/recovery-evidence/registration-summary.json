@@ -1,0 +1,160 @@
+{
+  "analysis": "Static registration inventory, not a playability or correctness claim",
+  "input_hashes": {
+    "2020": {
+      "dll": "927d076ca9e6a46b8a2bde0aeeed5e3b847ec8f55d22cebc9f92744bea460759",
+      "exe": "c5b06fea9efd314553fedb680802343b89adc952e858231587779ff6d3c78c8c"
+    },
+    "2022": {
+      "dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+      "exe": "0170f02b1c381a20a97ca0c12e99c8d338453ce4edbfc99148e726d565bee0de"
+    }
+  },
+  "baseline_source_table_exact_match": true,
+  "veneer_entries": {
+    "2020": 11814,
+    "2022": 15169
+  },
+  "retargeted_existing_slots": 44,
+  "appended_slots": 3355,
+  "populated_card_records": {
+    "2020": 19796,
+    "2022": 24920
+  },
+  "target_records_using_veneers": 17120,
+  "target_new_id_records_using_veneers": 1435,
+  "target_new_id_coded_records_using_veneers": 1269,
+  "new_registered_handler_symbols": 3310,
+  "new_registered_handler_symbols_marked_coded": 3217,
+  "card_database_entries": {
+    "2020": 19818,
+    "2022": 24941
+  },
+  "new_registered_handlers_with_contiguous_dwarf_ranges": 3306,
+  "roots_without_contiguous_range": [
+    "_card_cat_dragon_token",
+    "_card_pirate_token",
+    "_card_professor_of_symbology",
+    "_card_treasure"
+  ],
+  "new_noncard_helpers_directly_called": 243,
+  "top_new_helper_priorities": [
+    {
+      "helper": "_dat_ability",
+      "new_handler_callers": 125,
+      "examples": "_card_aetherwind_basker;_card_altar_of_the_goyf;_card_anointer_of_valor;_card_archon_of_cruelty;_card_armix_filigree_thrasher"
+    },
+    {
+      "helper": "_sp_ability_trigger",
+      "new_handler_callers": 79,
+      "examples": "_card_adeliz_the_cinder_wind;_card_alela_artful_provocateur;_card_arcbound_tracker;_card_aria_of_flame;_card_beast_whisperer"
+    },
+    {
+      "helper": "_aura",
+      "new_handler_callers": 61,
+      "examples": "_card_air_bladder;_card_archery_training;_card_armor_of_thorns;_card_bequeathal;_card_bravado"
+    },
+    {
+      "helper": "_attached_gets_pt",
+      "new_handler_callers": 33,
+      "examples": "_card_armor_of_thorns;_card_capashen_standard;_card_cartouche_of_ambition;_card_cartouche_of_knowledge;_card_cartouche_of_strength"
+    },
+    {
+      "helper": "_inst_info",
+      "new_handler_callers": 31,
+      "examples": "_card_agadeems_awakening;_card_arcane_adaptation;_card_arcbound_javelineer;_card_bell_borca_spectral_sergeant;_card_commanders_plate"
+    },
+    {
+      "helper": "_set_inst_info",
+      "new_handler_callers": 28,
+      "examples": "_card_agadeems_awakening;_card_arcane_adaptation;_card_arcbound_javelineer;_card_bell_borca_spectral_sergeant;_card_commanders_plate"
+    },
+    {
+      "helper": "_aftermath",
+      "new_handler_callers": 25,
+      "examples": "_card_appeal_authority;_card_claim_fame;_card_commit_memory;_card_consign_oblivion;_card_cut_ribbons"
+    },
+    {
+      "helper": "_attached_gets_kw",
+      "new_handler_callers": 25,
+      "examples": "_card_air_bladder;_card_cartouche_of_ambition;_card_cartouche_of_knowledge;_card_cartouche_of_strength;_card_cartouche_of_zeal"
+    },
+    {
+      "helper": "_get_aftermath",
+      "new_handler_callers": 25,
+      "examples": "_card_appeal_authority;_card_claim_fame;_card_commit_memory;_card_consign_oblivion;_card_cut_ribbons"
+    },
+    {
+      "helper": "_saga",
+      "new_handler_callers": 25,
+      "examples": "_card_chainers_torment;_card_elspeth_conquers_death;_card_elspeths_nightmare;_card_fall_of_the_thran;_card_history_of_benalia"
+    },
+    {
+      "helper": "_magecraft_trigger",
+      "new_handler_callers": 23,
+      "examples": "_card_archmage_emeritus;_card_clever_lumimancer;_card_dragonsguard_elite;_card_elemental_expressionist;_card_extus_oriq_overlord"
+    },
+    {
+      "helper": "_aura_pref_controller",
+      "new_handler_callers": 22,
+      "examples": "_card_cave_sense;_card_cho_mannos_blessing;_card_essence_leak;_card_ferocity;_card_flaming_sword"
+    },
+    {
+      "helper": "_set_characteristic_pt",
+      "new_handler_callers": 22,
+      "examples": "_card_anax_hardened_in_the_forge;_card_beanstalk_giant;_card_caller_of_the_hunt;_card_coiling_woodworm;_card_crackling_drake"
+    },
+    {
+      "helper": "_mdfc_front_impl",
+      "new_handler_callers": 21,
+      "examples": "_card_agadeems_awakening;_card_bela_ged_recovery;_card_emerias_call;_card_glasspool_mimic;_card_hagra_mauling"
+    },
+    {
+      "helper": "_create_legacy_activate_for_opponent",
+      "new_handler_callers": 17,
+      "examples": "_card_endbringers_revel;_card_excavation;_card_flailing_manticore;_card_flailing_ogre;_card_flailing_soldier"
+    },
+    {
+      "helper": "_learn",
+      "new_handler_callers": 17,
+      "examples": "_card_arcane_subtraction;_card_cram_session;_card_divide_by_zero;_card_dream_strix;_card_enthusiastic_study"
+    },
+    {
+      "helper": "_mdfc_back",
+      "new_handler_callers": 16,
+      "examples": "_card_augusta_dean_of_order;_card_deadly_vanity;_card_echoing_equation;_card_embrose_dean_of_shadow;_card_explore_the_vastlands"
+    },
+    {
+      "helper": "_encore",
+      "new_handler_callers": 15,
+      "examples": "_card_amphin_mutineer;_card_briarblade_adept;_card_coastline_marauders;_card_elvish_dreadlord;_card_exquisite_huntmaster"
+    },
+    {
+      "helper": "_kill_target0",
+      "new_handler_callers": 15,
+      "examples": "_card_bloodchiefs_thirst;_card_cleansing_wildfire;_card_dakkon_shadow_slayer;_card_dark_impostor;_card_dire_tactics"
+    },
+    {
+      "helper": "_mdfc_front",
+      "new_handler_callers": 14,
+      "examples": "_card_augmenter_pugilist;_card_blex_vexing_pest;_card_flamescroll_celebrant;_card_jadzi_oracle_of_arcavios;_card_kianne_dean_of_substance"
+    }
+  ],
+  "examples": [
+    {
+      "iid": 22698,
+      "csvid": 22761,
+      "name": "Professor Onyx",
+      "code_pointer": "0x2013328",
+      "slot": 14906,
+      "target": "0x23d7d50",
+      "symbol": "_card_professor_onyx",
+      "dummy": false,
+      "id_absent_in_baseline": true,
+      "handler_absent_in_baseline": true,
+      "baseline_handlers": "",
+      "full_name": "Professor Onyx",
+      "coded": true
+    }
+  ]
+}

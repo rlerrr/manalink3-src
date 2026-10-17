@@ -5862,3 +5862,466 @@ Enchanted creature gets +2/+2 and has flying and shroud. (It can't be the target
 
 	return generic_aura(player, card, event, player, 2, 2, KEYWORD_FLYING | KEYWORD_SHROUD, 0, 0, 0, 0);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int target_becomes_enchantentment_loses_ablilities(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2046c30; original cards/urza_saga.c:962. */
+int card_citanul_centaurs(int player, int card, event_t event)
+{
+  echo(player, card, event, 3, 0, 0, 1, 0, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20496d0; original cards/urza_saga.c:1999. */
+int card_flamecore_elemental(int player, int card, event_t event)
+{
+  echo(player, card, event, 2, 0, 0, 0, 2, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20533e0; original cards/urza_saga.c:5670. */
+int card_viashino_outrider(int player, int card, event_t event)
+{
+  echo(player, card, event, 2, 0, 0, 0, 1, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2053be0; original cards/urza_saga.c:5826. */
+int card_vug_lizard(int player, int card, event_t event)
+{
+  echo(player, card, event, 1, 0, 0, 0, 2, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20541f0; original cards/urza_saga.c:5962. */
+int card_winding_wurm(int player, int card, event_t event)
+{
+  echo(player, card, event, 4, 0, 0, 1, 0, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2054b70; original cards/urza_saga.c:6252. */
+int card_brand(int player, int card, event_t event)
+{
+  int result;
+  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      get_back_your_permanents(player, card, TYPE_PERMANENT);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+    return result;
+  }
+  result = cycling(player, card, event, 2, 0, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2054d20; original cards/urza_saga.c:6296. */
+int card_breach(int player, int card, event_t event)
+{
+  int result;
+  result = vanilla_instant_pump(player, card, event, 2, player, 2, 0, 0, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2054d70; original cards/urza_saga.c:6305. */
+int card_clear(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event - EVENT_CAN_ACTIVATE_FROM_HAND < 3)
+  {
+    result = cycling(player, card, event, 2, 0, 0, 0, 0, 0);
+    return result;
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 4);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02054dea;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 4);
+  get_card_instance(player, card);
+LAB_02054dea:
+  result = generic_spell(player, card, event, 0x81, &td, "Select target enchantment to destroy.", 1,
+                         NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2054f30; original cards/urza_saga.c:6335. */
+int card_cloak_of_mists(int player, int card, event_t event)
+{
+  int result;
+  result = generic_aura(player, card, event, player, 0, 0, 0, 0x10, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20550a0; original cards/urza_saga.c:6369. */
+int card_douse(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    counterspell_target_definition(player, card, &td, 0xff);
+    td.required_color = get_sleighted_color_test(player, card, 0x10);
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = global_enchantment(player, card, event);
+      return result;
+    }
+    counterspell_target_definition(player, card, &td, 0xff);
+    td.required_color = get_sleighted_color_test(player, card, 0x10);
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = counterspell_validate(player, card, &td, 0);
+      if (result != 0)
+      {
+        real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0x400, 1, 0, 1, 0, 0, 0, 0, &td, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2055240; original cards/urza_saga.c:6394. */
+int card_electryte(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test2;
+  result = damage_dealt_by_me(player, card, event,
+                              DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_MUST_DAMAGE_OPPONENT);
+  if (result == 0)
+  {
+    return 0;
+  }
+  default_test_definition(&this_test2, 2);
+  this_test2.state = 8;
+  result = get_power(player, card);
+  new_damage_all(player, card, 2, result, 0, &this_test2);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2055870; original cards/urza_saga.c:6506. */
+int card_headlong_rush(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    new_default_test_definition(&test, 2, "");
+    test.state = 4;
+    pump_creatures_until_eot(player, card, 2, 0, 0, 0, 0x100, 0, &test);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2055930; original cards/urza_saga.c:6522. */
+int card_hopping_automaton(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    instance = get_card_instance(player, card);
+    pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                           instance->parent_controller, instance->parent_card, -1, -1, 0x20, 0);
+  }
+  result = generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2055ab0; original cards/urza_saga.c:6550. */
+int card_opal_archangel_animated(int player, int card, event_t event)
+{
+  vigilance(player, card, event);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2055f90; original cards/urza_saga.c:6666. */
+int card_reclusive_wight(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    default_test_definition(&test, 0x146);
+    test.not_me = 1;
+    result = check_battlefield_for_special_card(player, card, player, 0, &test);
+    if (result != 0)
+    {
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20429c0; original cards/urza_saga.c:6687. */
+static void retaliation_legacy(int player, int card, int t_player, int t_card)
+{
+  pump_until_eot(player, card, player, card, 1, 1);
+  return;
+}
+
+/* ManalinkEh 2022: 0x2056f40; original cards/urza_saga.c:6975. */
+int card_sanctum_custodian(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0);
+    td.extra = damage_card;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0);
+    td.extra = damage_card;
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      prevent_damage(instance->targets[0].player, instance->targets[0].card, 2);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0x1000005, 0, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_DAMAGE");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2057560; original cards/urza_saga.c:7088. */
+int card_shower_of_sparks(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  target_definition_t td1;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    default_target_definition(player, card, &td1, 0x100);
+    td1.zone = 0x1200;
+    get_card_instance(player, card);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    if (result != 0)
+    {
+      result = can_target(&td1);
+      return result;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 2);
+      default_target_definition(player, card, &td1, 0x100);
+      td1.zone = 0x1200;
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance->number_of_targets = '\0';
+        result = pick_target(&td, "TARGET_CREATURE");
+        if (result != 0)
+        {
+          new_pick_target(&td1, "TARGET_PLAYER_OR_PLANESWALKER", 1, 1);
+        }
+      }
+    }
+  }
+  else if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+           (event == EVENT_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 2);
+    default_target_definition(player, card, &td1, 0x100);
+    td1.zone = 0x1200;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        damage_target0(player, card, 1);
+      }
+      result = validate_target(player, card, &td1, 1);
+      if (result != 0)
+      {
+        damage_creature(instance->targets[1].player, instance->targets[1].card, 1, player, card);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2042890; original cards/urza_saga.c:7180. */
+int target_becomes_enchantentment_loses_ablilities(int player, int card, event_t event)
+{
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2057a00; original cards/urza_saga.c:7185. */
+int card_soul_sculptor(int player, int card, event_t event)
+{
+  int32_t iVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    pcVar2 = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (iVar3 = valid_target(&td), iVar3 != 0))
+    {
+      iVar3 = create_targetted_legacy_effect(player, card,
+                                             target_becomes_enchantentment_loses_ablilities,
+                                             pcVar2->targets[0].player, pcVar2->targets[0].card);
+      pcVar4 = get_card_instance(player, iVar3);
+      pcVar4->targets[0].player = player;
+      pcVar4->targets[0].card = card;
+      iVar1 = pcVar2->targets[0].card;
+      pcVar4->targets[1].player = pcVar2->targets[0].player;
+      pcVar4->targets[1].card = iVar1;
+      pcVar4->number_of_targets = '\0';
+    }
+  }
+  iVar3 = generic_activated_ability(player, card, event, 5, 1, 0, 0, 0, 0, 1, 0, &td,
+                                    "TARGET_CREATURE");
+  return iVar3;
+}
+
+/* ManalinkEh 2022: 0x2058040; original cards/urza_saga.c:7362. */
+int card_tolarian_winds(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = hand_count[player];
+    discard_all(player);
+    draw_cards(player, result);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20580b0; original cards/urza_saga.c:7377. */
+int card_unnerve(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    new_multidiscard(1 - player, 2, 0, player);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2058810; original cards/urza_saga.c:7502. */
+int card_viashino_sandswimmer(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_ACTIVATE)
+  {
+    ai_modifier = ai_modifier + ((current_turn != player) - 1 & 0xffffffe8) + 0xc;
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    instance = get_card_instance(player, card);
+    result = flip_a_coin(instance->parent_controller, instance->parent_card);
+    if (result == 1)
+    {
+      bounce_permanent(instance->parent_controller, instance->parent_card);
+    }
+    else
+    {
+      kill_card(instance->parent_controller, instance->parent_card, KILL_SACRIFICE);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2058a10; original cards/urza_saga.c:7550. */
+int card_waylay(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    default_token_definition(player, card, 0x4958, &token);
+    token.legacy = '\x01';
+    token.qty = '\x03';
+    token.special_code_for_legacy = haste_and_remove_eot;
+    generate_token(&token);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}

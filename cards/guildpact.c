@@ -3720,4 +3720,18 @@ int card_azorius_chancery(int player, int card, event_t event){
 	return karoo( player, card, event, COLOR_WHITE, COLOR_BLUE, CARD_ID_TUNDRA );
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
+/* ManalinkEh 2022: 0x252a420; original cards/guildpact.c:2767. */
+static char *not_already_dying(int who_chooses, int player, int card)
+{
+  card_instance_t *instance;
+  char *pcVar2;
+  instance = get_card_instance(player, card);
+  pcVar2 = NULL;
+  if (instance->kill_code != '\0')
+  {
+    pcVar2 = "already dying";
+  }
+  return pcVar2;
+}

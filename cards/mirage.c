@@ -5738,3 +5738,1084 @@ Other Griffin creatures get +1/+1. */
 	check_legend_rule(player, card, event);
 	return boost_creature_type(player, card, event, SUBTYPE_GRIFFIN, 1, 1, 0, 0);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *target_must_be_damage_targeting_this_ethereal_champion(int who_chooses, int player,
+                                                                    int card, int targeting_player,
+                                                                    int targeting_card);
+
+/* ManalinkEh 2022: 0x237fef0; original cards/mirage.c:3002. */
+int card_jolt(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x43);
+        td.preferred_controller = 2;
+        td.illegal_abilities = 0;
+        if (event != EVENT_RESOLVE_SPELL)
+        {
+          result = generic_spell(player, card, event, 1, &td, "TWIDDLE", 1, NULL);
+          return result;
+        }
+        result = valid_target(&td);
+        if (result != 0)
+        {
+          twiddle(player, card, 0);
+          cantrip(player, card, 1);
+        }
+        kill_card(player, card, KILL_DESTROY);
+        result = generic_spell(player, card, EVENT_RESOLVE_SPELL, 1, &td, "TWIDDLE", 1, NULL);
+        return result;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x43);
+  td.preferred_controller = 2;
+  td.illegal_abilities = 0;
+  result = generic_spell(player, card, event, 1, &td, "TWIDDLE", 1, NULL);
+  if ((((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+       (affected_card_controller == player)) &&
+      ((player == 1 && (spell_fizzled != 1))))
+  {
+    ai_modifier_twiddle(1, card, 0);
+  }
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23868d0; original cards/mirage.c:5182. */
+int card_telimtors_edict(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x47);
+        td.allowed_controller = player | 4;
+        td.illegal_abilities = 0;
+        td.preferred_controller = td.allowed_controller;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            instance = get_card_instance(player, card);
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+            cantrip(player, card, 1);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02386937;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.allowed_controller = player | 4;
+  td.illegal_abilities = 0;
+  td.preferred_controller = td.allowed_controller;
+LAB_02386937:
+  result = generic_spell(player, card, event, 0x81, &td,
+                         "Select target permanent you own or control.", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2388f70; original cards/mirage.c:5976. */
+int card_agility(int player, int card, event_t event)
+{
+  int result;
+  result = generic_aura(player, card, event, player, 1, 1, 0, 0x2000, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2388fd0; original cards/mirage.c:5986. */
+int card_alarum(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event == EVENT_CHECK_PUMP)
+  {
+    if ((current_turn == player) && (0x14 < current_phase))
+    {
+      return 0;
+    }
+    result = vanilla_instant_pump(player, card, EVENT_CHECK_PUMP, 2, player, 1, 3, 0, 0);
+    return result;
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.preferred_controller = player;
+        td.illegal_state = 2;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            instance = get_card_instance(player, card);
+            untap_card(instance->targets[0].player, instance->targets[0].card);
+            pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 1,
+                           3);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02389094;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = player;
+  td.illegal_state = 2;
+LAB_02389094:
+  result = generic_spell(player, card, event, 0x81, &td, "Select target non-attacking creature.", 1,
+                         NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23891c0; original cards/mirage.c:6018. */
+int card_ancestral_memories(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  int iStack_ec;
+  test_definition_t this_test;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    iVar2 = count_deck(player);
+    if (iVar2 != 0)
+    {
+      if (7 < iVar2)
+      {
+        iVar2 = 7;
+      }
+      iStack_ec = iVar2;
+      if (2 < iVar2)
+      {
+        iStack_ec = 2;
+      }
+      iVar1 = iStack_ec;
+      do
+      {
+        iStack_ec = iVar1;
+        iVar3 = iVar2;
+        new_default_test_definition(&this_test, 0xff, "Select a card to add to your hand");
+        this_test.create_minideck = (unsigned short)iVar3;
+        this_test.no_shuffle = 1;
+        new_global_tutor(player, player, 1, 1, 1, 1, &this_test);
+        if (iStack_ec + -1 == 0)
+          break;
+        iVar2 = iVar3 + -1;
+        iVar1 = iStack_ec + -1;
+      } while (iVar3 + -1 != 0);
+      if (0 < iVar3 - iStack_ec)
+      {
+        mill(player, iVar3 - iStack_ec);
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  iVar2 = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x2389640; original cards/mirage.c:6103. */
+int card_azimaet_drake(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_POW_BOOST)
+  {
+    result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x2000, 0, 0, 1, 0, 0, 0,
+                                       0, NULL, NULL);
+    if (result != 0)
+    {
+      return 1;
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    result = generic_shade(player, card, EVENT_RESOLVE_ACTIVATION, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0);
+    return result;
+  }
+  result = generic_activated_ability(player, card, event, 0x2000, 0, 0, 1, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x238a540; original cards/mirage.c:6373. */
+int card_blinding_light(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    default_test_definition(&this_test, 2);
+    this_test.color = get_sleighted_color_test(player, card, 0x20);
+    this_test.color_flag = 1;
+    new_manipulate_all(player, card, 2, &this_test, ACT_TAP);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x238c500; original cards/mirage.c:6952. */
+int card_dirtwater_wraith(int player, int card, event_t event)
+{
+  int result;
+  if (1 < event - EVENT_POW_BOOST)
+  {
+    result = generic_shade_merge_pt(player, card, event, 0, 0, 1, 0, 0, 0, 0, 1, 0);
+    return result;
+  }
+  result = generic_shade(player, card, event, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x238c5f0; original cards/mirage.c:6966. */
+int card_disempower(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x44);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0238c656;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x44);
+  get_card_instance(player, card);
+LAB_0238c656:
+  result = generic_spell(
+      player, card, event, 0x81, &td,
+      "Select target artifact or enchantment to put on top of its owner\'s library.", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23760a0; original cards/mirage.c:7223. */
+static char *target_must_be_damage_targeting_this_ethereal_champion(int who_chooses, int player,
+                                                                    int card, int targeting_player,
+                                                                    int targeting_card)
+{
+  card_instance_t *instance;
+  char *pcVar2;
+
+  instance = get_card_instance(player, card);
+  pcVar2 = "must be damaging Ethereal Champion";
+  if (((instance->internal_card_id == damage_card) &&
+       (instance->damage_target_player == targeting_player)) &&
+      (instance->damage_target_card == targeting_card))
+  {
+    pcVar2 = NULL;
+  }
+  return pcVar2;
+}
+
+/* ManalinkEh 2022: 0x238d340; original cards/mirage.c:7234. */
+int card_ethereal_champion(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 0);
+    td.special = 0x8000;
+    td.extra = (int32_t)target_must_be_damage_targeting_this_ethereal_champion;
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x1000004, 0, 0, 0, 0, 0,
+                                         0, 1, &td, NULL);
+      if (result == 0)
+      {
+        return 0;
+      }
+      return 99;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 0x1000006, 0, 0, 0, 0, 0, 0, 1, &td,
+                                "Select damage made to Ethereal Champion.");
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0);
+  }
+  td.special = 0x8000;
+  td.extra = (int32_t)target_must_be_damage_targeting_this_ethereal_champion;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    instance = get_card_instance(player, card);
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      prevent_damage(instance->targets[0].player, instance->targets[0].card, 1);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x238d510; original cards/mirage.c:7269. */
+int card_fallow_earth(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, 1);
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 0x81, &td,
+                         "Select target land, put it on top of its owner\'s library.", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x238d800; original cards/mirage.c:7322. */
+int card_flame_elemental(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  default_target_definition(player, card, &td, 2);
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    instance = get_card_instance(player, card);
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      result = get_power(player, card);
+      damage_creature(instance->targets[0].player, instance->targets[0].card, result, player, card);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0xd, 0, 0, 0, 0, 1, 0, 0, &td,
+                                     "TARGET_CREATURE");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x238df40; original cards/mirage.c:7500. */
+int card_horrible_hordes(int player, int card, event_t event)
+{
+  rampage(player, card, event, 1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x238df70; original cards/mirage.c:7510. */
+int card_igneous_golem(int player, int card, event_t event)
+{
+  int result;
+  result = generic_shade(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0x80, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x238e5f0; original cards/mirage.c:7610. */
+int card_kaerveks_hex(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  test_definition_t this_test2;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    default_test_definition(&this_test, 2);
+    this_test.color = get_sleighted_color_test(player, card, 2);
+    this_test.color_flag = 1;
+    default_test_definition(&this_test2, 2);
+    this_test2.color = get_sleighted_color_test(player, card, 8);
+    new_damage_all(player, card, 2, 1, 0, &this_test2);
+    new_damage_all(player, card, 2, 1, 0, &this_test);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2377350; original cards/mirage.c:7686. */
+static int kukemssa_serpent_effect(int player, int card, event_t event)
+{
+  int basic_land_type_to_become;
+  card_instance_t *instance;
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    instance = get_card_instance(player, card);
+    if ((instance->damage_target_card == affected_card) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+      basic_land_type_to_become = get_hacked_subtype(player, card, 0x5002);
+      event_result = land_into_new_basic_land_type(event_result, basic_land_type_to_become);
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    instance = get_card_instance(player, card);
+    if (-1 < instance->targets[0].player)
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x238f0a0; original cards/mirage.c:7836. */
+int card_mangaras_blessing(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    gain_life(player, 5);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x238f100; original cards/mirage.c:7866. */
+int card_merfolk_seer(int player, int card, event_t event)
+{
+  int result;
+  result = duh_mode(player);
+  result = this_dies_trigger(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (result != 0)
+  {
+    result = has_mana_multi(player, 1, 1, 0, 0, 0, 0);
+    if (result != 0)
+    {
+      result = charge_mana_multi_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, 1, 0,
+                                                 1, 0, 0, 0);
+      if (result != 0)
+      {
+        draw_a_card(player);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x238f6b0; original cards/mirage.c:7943. */
+int card_nocturnal_raid(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = get_sleighted_color_test(player, card, 2);
+    pump_color_until_eot(player, card, 2, result, 2, 2, 0, 0);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x238f750; original cards/mirage.c:7957. */
+int card_painful_memories(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  ec_definition_t ec;
+  target_definition_t td;
+  test_definition_t this_test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0);
+        td.allowed_controller = 1 - player;
+        td.zone = 0x1000;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            default_ec_definition(instance->targets[0].player, player, &ec);
+            ec.effect = 0x20;
+            default_test_definition(&this_test, 0xff);
+            new_effect_coercion(&ec, &this_test);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0238f7da;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0);
+  td.allowed_controller = 1 - player;
+  td.zone = 0x1000;
+  get_card_instance(player, card);
+LAB_0238f7da:
+  result = generic_spell(player, card, event, 0x81, &td,
+                         "Select target opponent, put a card from his hand on top of his library.",
+                         1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2376ef0; original cards/mirage.c:8025. */
+static int prismatic_lace_legacy(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_player)
+  {
+    instance = get_card_instance(player, card);
+    result = instance->targets[1].card;
+    if ((result < 0) || (event != EVENT_SET_COLOR))
+    {
+      if (event == EVENT_CLEANUP)
+      {
+        instance->targets[2].player = 0;
+        return 0;
+      }
+    }
+    else if ((instance->damage_target_card == affected_card) &&
+             (instance->damage_target_player == affected_card_controller))
+    {
+      event_result = result;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2390090; original cards/mirage.c:8151. */
+int card_raging_spirit(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      change_color(instance->parent_controller, instance->parent_card, instance->parent_controller,
+                   instance->parent_card, COLOR_TEST_COLORLESS,
+                   CHANGE_COLOR_END_AT_EOT | CHANGE_COLOR_SET);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2390340; original cards/mirage.c:8212. */
+int card_reckless_embermage(int player, int card, event_t event)
+{
+  unsigned short uVar1;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  int iVar4;
+  int iVar5;
+  target_definition_t td;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar4 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 1, 0, 0, 0, 1, 0, 0,
+                                        &td, NULL);
+      return iVar4;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 4, 1, 0, 0, 0, 1, 0, 0, &td,
+                                "TARGET_ANY");
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      if (((instance->targets[0].player == 1 - player) && (instance->targets[0].card == -1)) &&
+          (life[1 - player] < 4))
+      {
+        ai_modifier = ai_modifier + 0x18;
+      }
+      iVar4 = get_toughness(player, card);
+      uVar1 = instance->damage_on_card;
+      iVar5 = 1;
+      uVar3 = get_color(player, card);
+      do
+      {
+        if (((1 << ((unsigned char)iVar5 & 0x1f) & uVar3) != 0) &&
+            ((instance->regen_status & 1 << ((unsigned char)iVar5 + 10 & 0x1f)) != 0))
+          goto LAB_023905cd;
+        iVar5 = iVar5 + 1;
+      } while (iVar5 != 6);
+      if ((int)(iVar4 - (unsigned int)uVar1) < 2)
+      {
+        ai_modifier = ai_modifier + -0x30;
+        return 0;
+      }
+    LAB_023905cd:
+      ai_modifier = ai_modifier + 0x30;
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    instance = get_card_instance(player, card);
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (iVar4 = valid_target(&td), iVar4 != 0))
+  {
+    damage_target0(player, card, 1);
+    damage_creature(instance->parent_controller, instance->parent_card, 1,
+                    instance->parent_controller, instance->parent_card);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23908b0; original cards/mirage.c:8327. */
+int card_ritual_of_steel(int player, int card, event_t event)
+{
+  int result;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    cantrip(player, card, 1);
+  }
+  result = generic_aura(player, card, event, player, 0, 2, 0, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2391c00; original cards/mirage.c:8701. */
+int card_searing_spear_askari(int player, int card, event_t event)
+{
+  int result;
+  flanking(player, card, event);
+  result = generic_shade(player, card, event, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0x10000);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2392400; original cards/mirage.c:8828. */
+int card_shadowbane(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  unsigned int uVar4;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0);
+        td.extra = damage_card;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            result = prevent_damage(instance->targets[0].player, instance->targets[0].card, -1);
+            instance = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+            if (instance->internal_card_id == damage_card)
+            {
+              uVar3 = get_color((int)instance->damage_source_player, instance->damage_source_card);
+              uVar4 = get_sleighted_color_test(player, card, 2);
+              if ((uVar3 & uVar4) != 0)
+              {
+                gain_life(player, result);
+              }
+            }
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0239246e;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0);
+  td.extra = damage_card;
+  get_card_instance(player, card);
+LAB_0239246e:
+  result = generic_spell(player, card, event, 0x101, &td, "TARGET_DAMAGE", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2392e40; original cards/mirage.c:9083. */
+int card_teferis_curse(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_02392e70;
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) ||
+             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+      goto LAB_02392e70;
+    if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+         (((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
+           (event != EVENT_CHANGE_TYPE)))) &&
+        (((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)) &&
+          (event != EVENT_STATIC_EFFECTS))))
+    {
+      if (event == EVENT_PHASING)
+      {
+        instance = get_card_instance(player, card);
+        if (current_turn == instance->damage_target_player)
+        {
+          result =
+              phasing((int)instance->damage_target_player, instance->damage_target_card, player);
+          return result;
+        }
+      }
+      return 0;
+    }
+  }
+LAB_02392e70:
+  default_target_definition(player, card, &td, 0x42);
+  td.preferred_controller = 1 - player;
+  result =
+      disabling_targeted_aura(player, card, event, &td, "Select target artifact or creature.", 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2393360; original cards/mirage.c:9237. */
+int card_unyaro_griffin(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  if (event == EVENT_ACTIVATE)
+  {
+    counterspell_target_definition(player, card, &td, 0x38);
+    td.required_color = get_sleighted_color_test(player, card, 0x10);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    counterspell_target_definition(player, card, &td, 0x38);
+    td.required_color = get_sleighted_color_test(player, card, 0x10);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      instance = get_card_instance(player, card);
+      real_counter_a_spell(instance->parent_controller, instance->parent_card,
+                           instance->targets[0].player, instance->targets[0].card);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0x408, 0, 0, 0, 0, 0, 0, 0, &td, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2376a80; original cards/mirage.c:9260. */
+static char *is_blocking_urborg_panther(int who_chooses, int player, int card, int targeting_player,
+                                        int targeting_card)
+{
+  int result;
+  result = is_blocking(card, targeting_card);
+  if (result == 0)
+  {
+    return "must be blocking Urborg Panther";
+  }
+  return NULL;
+}
+
+/* ManalinkEh 2022: 0x2377400; original cards/mirage.c:9268. */
+static int check_for_feral_shadow_and_breathstealer(int player)
+{
+  int result;
+  result = check_battlefield_for_id(player, 0x9ad);
+  if (result == 0)
+  {
+    return 0;
+  }
+  result = check_battlefield_for_id(player, 0x971);
+  return (unsigned int)(result != 0);
+}
+
+/* ManalinkEh 2022: 0x2393de0; original cards/mirage.c:9435. */
+int card_wave_elemental(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, 2);
+  td.illegal_abilities = td.illegal_abilities | 0x20;
+  td.allow_cancel = 3;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0xd, 0, 0, 1, 0, 0, 0, 0,
+                                      &td, "TARGET_CREATURE");
+    return iVar3;
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+    instance->number_of_targets = '\0';
+    iVar3 = can_sacrifice_this_as_cost(player, card);
+    if ((iVar3 != 0) && (iVar3 = generic_activated_ability(player, card, EVENT_ACTIVATE, 1, 0, 0, 1,
+                                                           0, 0, 0, 0, NULL, NULL),
+                         iVar3 != 0))
+    {
+      iVar3 = pick_up_to_n_targets_noload(&td, "Select target creature without flying to tap.", 3);
+      if (iVar3 != 0)
+      {
+        kill_card(player, card, KILL_SACRIFICE);
+        return 1;
+      }
+      remove_state(player, card, 0x10);
+    }
+  }
+  else if ((event == EVENT_RESOLVE_ACTIVATION) && (instance->number_of_targets != '\0'))
+  {
+    iVar3 = 0;
+    do
+    {
+      iVar2 = validate_target(player, card, &td, iVar3);
+      if (iVar2 != 0)
+      {
+        tap_card(instance->targets[iVar3].player, instance->targets[iVar3].card);
+      }
+      iVar3 = iVar3 + 1;
+    } while (iVar3 < (int)(unsigned int)instance->number_of_targets);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2394010; original cards/mirage.c:9479. */
+int card_wellspring(int player, int card, event_t event)
+{
+  char cVar1;
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    instance = get_card_instance(player, card);
+    gain_control_until_eot(player, card, (int)instance->damage_target_player,
+                           instance->damage_target_card);
+    upkeep_trigger_ability(player, card, EVENT_ETB, player);
+  LAB_0239411f:
+    if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+        (event == EVENT_CHANGE_TARGET))
+      goto LAB_02394090;
+  }
+  else
+  {
+    upkeep_trigger_ability(player, card, event, player);
+    if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+    {
+      instance = get_card_instance(player, card);
+      cVar1 = instance->damage_target_player;
+      result = instance->damage_target_card;
+      untap_card((int)cVar1, result);
+      gain_control_until_eot(player, card, (int)cVar1, result);
+    }
+    else
+    {
+      if (event == EVENT_CAN_CAST)
+        goto LAB_02394090;
+      if (event != EVENT_CAST_SPELL)
+        goto LAB_0239411f;
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_02394090;
+    }
+  }
+  if (((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+        ((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)))) &&
+       (event != EVENT_CHANGE_TYPE)) &&
+      (((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)) &&
+        (event != EVENT_STATIC_EFFECTS))))
+  {
+    return 0;
+  }
+LAB_02394090:
+  default_target_definition(player, card, &td, 1);
+  td.preferred_controller = 1 - player;
+  result = targeted_aura_custom_prompt(player, card, event, &td, "Select target land.");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23941e0; original cards/mirage.c:9519. */
+int card_zombie_mob(int player, int card, event_t event)
+{
+  int *piVar1;
+  int iVar2;
+  int iVar3;
+  iVar2 = count_graveyard_by_type(player, 2);
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, iVar2);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    piVar1 = graveyard_ptr_mutable[player];
+    iVar2 = count_graveyard(player);
+    iVar2 = iVar2 + -1;
+    if (-1 < iVar2)
+    {
+      do
+      {
+        iVar3 = is_what(-1, piVar1[iVar2], 2);
+        if (iVar3 != 0)
+        {
+          rfg_card_from_grave(player, iVar2);
+        }
+        iVar2 = iVar2 + -1;
+      } while (iVar2 != -1);
+    }
+  }
+  return 0;
+}

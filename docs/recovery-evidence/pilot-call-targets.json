@@ -1,0 +1,51 @@
+{
+  "2020": {
+    "0x23550b0": [
+      "_untap_only_one_permanent_type"
+    ],
+    "0x24e5e90": [
+      "_artifact_mana_all_one_color"
+    ]
+  },
+  "2022": {
+    "0x4e81fe": [
+      "_is_tapped"
+    ],
+    "0x215f420": [
+      "_planeswalker"
+    ],
+    "0x21a3da0": [
+      "_player_sacrifices_the_creature_with_highest_power"
+    ],
+    "0x24bdef0": [
+      "_untap_only_one_permanent_type"
+    ],
+    "0x2655580": [
+      "_reveal_top_cards_of_library_and_choose"
+    ],
+    "0x2663890": [
+      "_check_legend_rule"
+    ],
+    "0x266c7a0": [
+      "_artifact_mana_all_one_color"
+    ],
+    "0x268f1b0": [
+      "_lose_life"
+    ],
+    "0x268f900": [
+      "_gain_life"
+    ],
+    "0x269a440": [
+      "_discard"
+    ],
+    "0x26a8160": [
+      "_magecraft_trigger"
+    ],
+    "0x26bea60": [
+      "_new_default_test_definition"
+    ],
+    "0x26e9c50": [
+      "_dialog_impl"
+    ]
+  }
+}

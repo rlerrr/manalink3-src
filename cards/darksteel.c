@@ -3457,3 +3457,21 @@ int card_wand_of_the_elements(int player, int card, event_t event){
 
 	return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x224e000; original cards/darksteel.c:141. */
+int card_arcbound_bruiser(int player, int card, event_t event)
+{
+  int result;
+  result = modular(player, card, event, 3);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x224e260; original cards/darksteel.c:202. */
+int card_arcbound_lancer(int player, int card, event_t event)
+{
+  int result;
+  result = modular(player, card, event, 4);
+  return result;
+}

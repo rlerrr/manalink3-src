@@ -2953,3 +2953,35 @@ int card_zealous_persecution(int player, int card, event_t event){
 	return basic_spell(player, card, event);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22fcc40; original cards/alara_reborn.c:1026. */
+int card_etherium_abomination(int player, int card, event_t event)
+{
+  int result;
+  result = unearth(player, event, 1, 1, 1, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22fe8f0; original cards/alara_reborn.c:1708. */
+int card_magefire_wings(int player, int card, event_t event)
+{
+  int result;
+  result = generic_aura(player, card, event, player, 2, 0, 0x20, 0, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22fece0; original cards/alara_reborn.c:1803. */
+int card_marrow_chomper(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  devour(player, card, event, 2);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  gain_life(player, instance->targets[1].card * 2);
+  return 0;
+}

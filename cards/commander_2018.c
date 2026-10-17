@@ -309,3 +309,131 @@
  * Legendary Creature - Human Ninja 1/3
  * Commander ninjutsu |U|B (|U|B, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand or the command zone tapped and attacking.)
  * Whenever a Ninja you control deals combat damage to a player, reveal the top card of your library and put that card into your hand. Each opponent loses life equal to that card's converted mana cost. */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int effect_estrids_invocation(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2560da0; original cards/commander_2018.c:283. */
+int card_ancient_stone_idol(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+  if (event == EVENT_MODIFY_COST)
+  {
+    result = count_attackers(current_turn);
+    COST_COLORLESS = COST_COLORLESS - (char)result;
+  }
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    default_token_definition(player, card, 0x4918, &token);
+    token.pow = 6;
+    token.tou = 0xc;
+    token.key_plus = 0x80;
+    generate_token(&token);
+  }
+  result = flash(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x255f760; original cards/commander_2018.c:373. */
+static char *is_token_targ(int who_chooses, int player, int card)
+{
+  int result;
+  char *pcVar2;
+  result = is_token(player, card);
+  pcVar2 = NULL;
+  if (result == 0)
+  {
+    pcVar2 = "must be a token.";
+  }
+  return pcVar2;
+}
+
+/* ManalinkEh 2022: 0x255f730; original cards/commander_2018.c:380. */
+static int is_token_test(int unused1, int unused2, int player, int card)
+{
+  int result;
+  result = is_token(player, card);
+  return (unsigned int)(result != 0);
+}
+
+/* ManalinkEh 2022: 0x2561630; original cards/commander_2018.c:454. */
+int card_crash_of_rhino_beetles(int player, int card, event_t event)
+{
+  int result;
+  if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = count_permanents_by_type(player, TYPE_LAND);
+    if (9 < result)
+    {
+      event_result = event_result + 10;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25603e0; original cards/commander_2018.c:674. */
+static int effect_estrids_invocation(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int player_00;
+
+  iVar1 = effect_follows_control_of_attachment(player, card, event);
+  if (iVar1 == 0)
+  {
+    instance = get_card_instance(player, card);
+    if (player == current_turn)
+    {
+      player_00 = (int)instance->damage_target_player;
+      iVar1 = instance->damage_target_card;
+      iVar3 = duh_mode(player_00);
+      iVar3 = upkeep_trigger_mode(player_00, iVar1, event, (iVar3 != 0) + RESOLVE_TRIGGER_OPTIONAL);
+      if (iVar3 != 0)
+      {
+        blink_effect(player_00, iVar1, NULL);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25621a0; original cards/commander_2018.c:686. */
+int card_estrids_invocation(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  default_target_definition(player, card, &td, 4);
+  td.allowed_controller = player;
+  result = enters_the_battlefield_as_copy_of_any(player, card, event, &td,
+                                                 "SELECT_AN_ENCHANTMENT_YOU_CONTROL");
+  if (result != 0)
+  {
+    create_targetted_legacy_effect(player, card, effect_estrids_invocation, player, card);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x255f790; original cards/commander_2018.c:732. */
+static int is_enchanted_test(int unused1, int unused2, int player, int card)
+{
+  int result;
+  result = is_enchanted(player, card);
+  return (unsigned int)(result != 0);
+}
+
+/* ManalinkEh 2022: 0x2564120; original cards/commander_2018.c:1366. */
+int card_nesting_dragon(int player, int card, event_t event)
+{
+  landfall(player, card, event);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  generate_token_by_id(player, card, 0x33e2);
+  return 0;
+}

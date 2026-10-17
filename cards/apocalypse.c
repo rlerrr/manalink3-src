@@ -2825,3 +2825,103 @@ Enchantment, 2R (3)
 
 	return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int card_whirlpool_rider(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2063090; original cards/apocalypse.c:757. */
+int card_credit_voucher(int player, int card, event_t event)
+{
+  int result;
+  int card_00;
+  test_definition_t test;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    new_default_test_definition(&test, 0xff, "Select a card to shuffle into library.");
+    result = 0;
+    if (hand_count[player] != 0)
+    {
+      result = 0;
+      do
+      {
+        card_00 = new_select_a_card(player, player, 4, 0, 2, -1, &test);
+        if (card_00 < 0)
+          break;
+        put_on_top_of_deck(player, card_00);
+        result = result + 1;
+      } while (hand_count[player] != 0);
+    }
+    shuffle(player);
+    draw_cards(player, result);
+  }
+  result = generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2069960; original cards/apocalypse.c:2829. */
+int card_whirlpool_rider(int player, int card, event_t event)
+{
+  int card_00;
+  card_00 = player;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  card_whirlpool_rider(player, card_00, card);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20699b0; original cards/apocalypse.c:2844. */
+int card_whirlpool_drake(int player, int card, event_t event)
+{
+  int result;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    result = player;
+    etb_ability(player, card, EVENT_ETB, RESOLVE_TRIGGER_MANDATORY);
+    card_whirlpool_rider(player, result, card);
+    return 0;
+  }
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0)
+  {
+    return 0;
+  }
+  result = reshuffle_hand_into_deck(player, 0);
+  draw_cards(player, result);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2069a60; original cards/apocalypse.c:2866. */
+int card_whirlpool_warrior(int player, int card, event_t event)
+{
+  int amount;
+  int result;
+  unsigned int player_00;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  result = current_turn;
+  if (event == EVENT_ETB)
+  {
+    result = player;
+    etb_ability(player, card, EVENT_ETB, RESOLVE_TRIGGER_MANDATORY);
+    card_whirlpool_rider(player, result, card);
+    return 0;
+  }
+  if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+  {
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      return 0;
+    }
+    amount = reshuffle_hand_into_deck(current_turn, 0);
+    draw_cards(result, amount);
+    player_00 = current_turn ^ 1;
+    result = reshuffle_hand_into_deck(player_00, 0);
+    draw_cards(player_00, result);
+    return 0;
+  }
+  result = generic_activated_ability(player, card, event, 8, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
+  return result;
+}

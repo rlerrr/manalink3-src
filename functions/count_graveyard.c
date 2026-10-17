@@ -169,3 +169,29 @@ int special_count_grave(int player, int type, int flag1, int subtype, int flag2,
 	}
 	return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26e6370; original functions/count_graveyard.c:211. */
+int special_count_zone(int player, int *zone, test_definition_t *this_test)
+{
+  int *piVar1;
+  int test_type;
+  int iVar2;
+  int iVar3;
+
+  iVar3 = 0;
+  test_type = new_get_test_score(this_test);
+  piVar1 = zone + 500;
+  do
+  {
+    if (*zone == -1)
+    {
+      return iVar3;
+    }
+    iVar2 = new_make_test(player, *zone, test_type, this_test);
+    iVar3 = (iVar3 + 1) - (unsigned int)(iVar2 == 0);
+    zone = zone + 1;
+  } while (zone != piVar1);
+  return iVar3;
+}

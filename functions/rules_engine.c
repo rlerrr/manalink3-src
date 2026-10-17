@@ -3586,3 +3586,12 @@ int card_rules_engine(int player, int card, event_t event ){
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26c7f10; original functions/rules_engine.c:1534. */
+int get_aftermath(int player, int card)
+{
+  int result;
+  result = check_special_flags(player, card, 0x200000);
+  return (unsigned int)(result != 0);
+}

@@ -1148,3 +1148,230 @@ int card_duh(int player, int card, event_t event)
  * Artifact
  * Premium spells cost |1 less to cast.
  * Premium creatures get +1/+1. */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2303230; original cards/unglued_unhinged.c:227. */
+int txtfx(int player, int card, event_t event, card_id_t marker)
+{
+  unsigned int uVar1;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  if (event != EVENT_SET_LEGACY_EFFECT_NAME)
+  {
+    return 0x7fffffff;
+  }
+  instance = get_displayed_card_instance(player, card);
+  instance = get_displayed_card_instance((int)instance->damage_target_player,
+                                         instance->damage_target_card);
+  uVar1 = instance->targets[5].player;
+  uVar3 = uVar1 & 0xffff;
+  if (uVar1 >> 0x10 != marker)
+  {
+    uVar3 = 0x7fffffff;
+  }
+  return uVar3;
+}
+
+/* ManalinkEh 2022: 0x2303df0; original cards/unglued_unhinged.c:755. */
+int card_strategy_schmategy(int player, int card, event_t event)
+{
+  int result;
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2304240; original cards/unglued_unhinged.c:976. */
+int card_team_spirit(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0);
+        td.zone = 0x1000;
+        td.preferred_controller = player;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            instance = get_card_instance(player, card);
+            pump_subtype_until_eot(player, card, instance->targets[0].player, -1, 1, 1, 0, 0);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0230429f;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0);
+  td.zone = 0x1000;
+  td.preferred_controller = player;
+LAB_0230429f:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23043b0; original cards/unglued_unhinged.c:1001. */
+int card_timmy_power_gamer(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    new_default_test_definition(&test, 2, "Select a creature card.");
+    new_global_tutor(player, player, 4, 4, 0, 2, &test);
+  }
+  result = generic_activated_ability(player, card, event, 0, 4, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23048a0; original cards/unglued_unhinged.c:1229. */
+int card_awol(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  unsigned int csvid;
+  int csvids[2];
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.required_state = 2;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          iVar1 = valid_target(&td);
+          if (iVar1 != 0)
+          {
+            instance = get_card_instance(player, card);
+            iVar1 = is_token(instance->targets[0].player, instance->targets[0].card);
+            if (iVar1 == 0)
+            {
+              iVar1 = get_owner(instance->targets[0].player, instance->targets[0].card);
+              iVar3 = get_original_internal_card_id(instance->targets[0].player,
+                                                    instance->targets[0].card);
+              csvid = (unsigned int)cards_data[iVar3].id;
+              if ((csvid == 0x3eae || csvid == 0x3ef4) || (csvid == 0x3efb))
+              {
+                unmeld(csvid, csvids, csvids + 1);
+                kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+                remove_card_from_rfg(iVar1, csvids[0]);
+                remove_card_from_rfg(iVar1, csvids[1]);
+              }
+              else
+              {
+                kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+                remove_card_from_rfg(iVar1, csvid);
+              }
+            }
+            else
+            {
+              kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+            }
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_023048ff;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.required_state = 2;
+LAB_023048ff:
+  iVar1 = generic_spell(player, card, event, 1, &td, "TARGET_ATTACKING_CREATURE", 1, NULL);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x2304d50; original cards/unglued_unhinged.c:1470. */
+int card_johnny_combo_player(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    new_default_test_definition(&test, 0xff, "Select a card.");
+    new_global_tutor(player, player, 1, 1, 0, 1, &test);
+  }
+  result = generic_activated_ability(player, card, event, 0, 4, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2305f10; original cards/unglued_unhinged.c:2238. */
+int card_uktabi_kong(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+  target_definition_t td;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    if ((((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
+         (event == EVENT_RESOLVE_ACTIVATION)) ||
+        (event == EVENT_CLEANUP))
+    {
+      base_target_definition(player, card, &td, 0x47);
+      td.illegal_state = 1;
+      td.required_subtype = 5;
+      td.allowed_controller = player;
+      td.preferred_controller = player;
+      if (event == EVENT_RESOLVE_ACTIVATION)
+      {
+        default_token_definition(player, card, 0x4901, &token);
+        token.tou = 1;
+        token.pow = 1;
+        generate_token(&token);
+      }
+      result = generic_activated_ability_with_tapsubtype_as_cost(
+          player, card, event, GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, &td, 2);
+    }
+    else
+    {
+      result = 0;
+    }
+    return result;
+  }
+  default_test_definition((test_definition_t *)&td, 0x40);
+  new_manipulate_all(player, card, 2, (test_definition_t *)&td, ACT_KILL_DESTROY);
+  return 0;
+}

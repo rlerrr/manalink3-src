@@ -2412,4 +2412,278 @@ Pay 1 life: Draw a card. */
 	return generic_activated_ability(player, card, event, 0, MANACOST0, 1, NULL, NULL);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
+/* ManalinkEh 2022: 0x2107ff0; original cards/urza_destiny.c:2433. */
+int card_blizzard_elemental(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      instance = get_card_instance(player, card);
+      untap_card(instance->parent_controller, instance->parent_card);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0, 3, 0, 1, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x21080b0; original cards/urza_destiny.c:2451. */
+int card_braidwood_sextant(int player, int card, event_t event)
+{
+  int result;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      tutor_basic_land(player, 0, 0);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x21087f0; original cards/urza_destiny.c:2599. */
+int card_disease_carriers(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.special = 0x4000;
+    td.allow_cancel = 0;
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      pick_target(&td, "TARGET_CREATURE");
+      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, -2, -2);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21089e0; original cards/urza_destiny.c:2646. */
+int card_encroach(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  ec_definition_t this_definition;
+  target_definition_t td;
+  test_definition_t this_test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event != EVENT_CAST_SPELL)
+    {
+      if ((event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET) &&
+          (event != EVENT_CHANGE_TARGET))
+      {
+        return 0;
+      }
+      default_target_definition(player, card, &td, 0);
+      td.zone = 0x1000;
+      instance = get_card_instance(player, card);
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+        result = valid_target(&td);
+        if (result != 0)
+        {
+          new_default_test_definition(&this_test, 1, "Choose a nonbasic land card.");
+          this_test.subtype = 0x2000;
+          this_test.subtype_flag = 1;
+          default_ec_definition(instance->targets[0].player, player, &this_definition);
+          new_effect_coercion(&this_definition, &this_test);
+        }
+        kill_card(player, card, KILL_DESTROY);
+      }
+      goto LAB_02108a5d;
+    }
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+  }
+  default_target_definition(player, card, &td, 0);
+  td.zone = 0x1000;
+  get_card_instance(player, card);
+LAB_02108a5d:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2108d90; original cards/urza_destiny.c:2719. */
+int card_goblin_festival(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = global_enchantment(player, card, event);
+      return result;
+    }
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        damage_target0(player, card, 1);
+        result = flip_a_coin(player, card);
+        if (result == 0)
+        {
+          give_control_of_self(instance->parent_controller, instance->parent_card);
+        }
+      }
+    }
+  }
+  result =
+      generic_activated_ability(player, card, event, 4, 2, 0, 0, 0, 0, 0, 0, &td, "TARGET_ANY");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2108f30; original cards/urza_destiny.c:2746. */
+int card_goblin_masons(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.required_subtype = 0xd1;
+    td.allow_cancel = 0;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "Select target wall.", 0, 0x80);
+      if (result != 0)
+      {
+        action_on_target(player, card, 0, ACT_KILL_DESTROY);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2109550; original cards/urza_destiny.c:2869. */
+int card_magnify(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    pump_creatures_until_eot(player, card, 2, 0, 1, 1, 0, 0, NULL);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2109bd0; original cards/urza_destiny.c:2985. */
+int card_plague_dogs(int player, int card, event_t event)
+{
+  int result;
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    pump_subtype_until_eot(player, card, 2, -1, -1, -1, 0, 0);
+  }
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      draw_cards(player, 1);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 8, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2109e10; original cards/urza_destiny.c:3026. */
+int card_rescue(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x47);
+        td.preferred_controller = player;
+        td.allowed_controller = player;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            instance = get_card_instance(player, card);
+            bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02109e6b;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+LAB_02109e6b:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_PERMANENT_YOU_CONTROL", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x210a1d0; original cards/urza_destiny.c:3097. */
+int card_storage_matrix(int player, int card, event_t event) { return 0; }
