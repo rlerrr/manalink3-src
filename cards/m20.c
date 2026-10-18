@@ -63,18 +63,26 @@ int card_cavalier_of_dawn(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   token_generation_t token;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
+
   vigilance(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    default_target_definition(player, card, &td, 0x47);
-    td.illegal_type = 1;
-    td.allow_cancel = 1;
-    result = can_target(&td);
+    default_target_definition(player, card, &recovered_stack_td.target, 0x47);
+    recovered_stack_td.target.illegal_type = 1;
+    recovered_stack_td.target.allow_cancel = 1;
+    result = can_target(&recovered_stack_td.target);
     if (result != 0)
     {
-      result = new_pick_target(&td, "TARGET_NONLAND_PERMANENT", 0, 0);
+      result = new_pick_target(&recovered_stack_td.target, "TARGET_NONLAND_PERMANENT", 0, 0);
       if (result != 0)
       {
         instance = get_card_instance(player, card);
@@ -94,9 +102,9 @@ int card_cavalier_of_dawn(int player, int card, event_t event)
       result = graveyard_has_shroud(player);
       if (result == 0)
       {
-        new_default_test_definition((test_definition_t *)&td, 0x44,
+        new_default_test_definition(&recovered_stack_td.test, 0x44,
                                     "Select an Artifact or Enchantment card.");
-        new_global_tutor(player, player, 2, 1, 0, 1, (test_definition_t *)&td);
+        new_global_tutor(player, player, 2, 1, 0, 1, &recovered_stack_td.test);
       }
     }
   }
@@ -1939,26 +1947,33 @@ LAB_023966e0:
 int card_kykar_winds_fury(int player, int card, event_t event)
 {
   int result;
-  token_generation_t token;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_token;
 
   prowess_mode(player, card, event, 2);
   if (event == EVENT_SPA)
   {
-    default_token_definition(player, card, 0x498d, &token);
-    token.pow = 1;
-    token.tou = 1;
-    token.color_forced = ' ';
-    token.key_plus = 0x20;
-    generate_token(&token);
+    default_token_definition(player, card, 0x498d, &recovered_stack_token.token);
+    recovered_stack_token.token.pow = 1;
+    recovered_stack_token.token.tou = 1;
+    recovered_stack_token.token.color_forced = ' ';
+    recovered_stack_token.token.key_plus = 0x20;
+    generate_token(&recovered_stack_token.token);
   }
   else if (event == EVENT_COUNT_MANA)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      default_test_definition((test_definition_t *)&token, 0x47);
+      default_test_definition(&recovered_stack_token.test, 0x47);
       result = can_produce_mana(player, card);
       if ((result != 0) &&
-          (result = new_can_sacrifice_as_cost(player, card, (test_definition_t *)&token),
+          (result = new_can_sacrifice_as_cost(player, card, &recovered_stack_token.test),
            result != 0))
       {
         result = count_subtype(player, -1, 0xbc);
@@ -1968,10 +1983,10 @@ int card_kykar_winds_fury(int player, int card, event_t event)
   }
   else if (event == EVENT_CAN_ACTIVATE)
   {
-    default_test_definition((test_definition_t *)&token, 0x47);
+    default_test_definition(&recovered_stack_token.test, 0x47);
     result = can_produce_mana(player, card);
     if ((result != 0) &&
-        (result = new_can_sacrifice_as_cost(player, card, (test_definition_t *)&token),
+        (result = new_can_sacrifice_as_cost(player, card, &recovered_stack_token.test),
          result != 0))
     {
       return 1;
@@ -1979,8 +1994,8 @@ int card_kykar_winds_fury(int player, int card, event_t event)
   }
   else if (event == EVENT_ACTIVATE)
   {
-    new_default_test_definition((test_definition_t *)&token, 0x47, "Select a spirit to sacrifice.");
-    result = new_sacrifice(player, card, player, SAC_AS_COST, (test_definition_t *)&token);
+    new_default_test_definition(&recovered_stack_token.test, 0x47, "Select a spirit to sacrifice.");
+    result = new_sacrifice(player, card, player, SAC_AS_COST, &recovered_stack_token.test);
     if (result == 0)
     {
       spell_fizzled = 1;
@@ -2356,6 +2371,195 @@ int card_yarok_the_desecrated(int player, int card, event_t event)
   if (event == EVENT_STATIC_EFFECTS)
   {
     card_counts[player][4] = card_counts[player][4] + '\x01';
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2397310; original cards/m20.c:1377. */
+int card_kaalia_zenith_seeker(int player, int card, event_t event)
+{
+  unsigned char bVar1;
+  bool bVar2;
+  int amount;
+  int iVar3;
+  unsigned int uVar4;
+  int iVar5;
+  bool bVar6;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  vigilance(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if ((event == EVENT_ETB) && (*deck_ptr[player] != -1))
+  {
+
+    show_deck(0, deck_ptr[player], 4, "Revealed", 0, ENGINE_DONE_LABEL);
+
+    amount = count_deck(player);
+    if (4 < amount)
+    {
+      amount = 4;
+    }
+    if (0 < amount + -1)
+    {
+      iVar5 = 0;
+      bVar1 = 0;
+      bVar2 = false;
+      bVar6 = false;
+      do
+      {
+        iVar3 = has_subtype_by_id_2022(
+            player, (unsigned int)cards_data[*(int *)((int)deck_ptr[player] + iVar5)].id,
+            SUBTYPE_ANGEL);
+        if (iVar3 != 0)
+        {
+          bVar6 = true;
+        }
+        iVar3 = has_subtype_by_id_2022(
+            player, (unsigned int)cards_data[*(int *)((int)deck_ptr[player] + iVar5)].id,
+            SUBTYPE_DEMON);
+        if (iVar3 != 0)
+        {
+          bVar2 = true;
+        }
+        iVar3 = has_subtype_by_id_2022(
+            player, (unsigned int)cards_data[*(int *)((int)deck_ptr[player] + iVar5)].id,
+            SUBTYPE_DRAGON);
+        if (iVar3 != 0)
+        {
+          bVar1 = 1;
+        }
+        iVar5 = iVar5 + 4;
+      } while (amount * 4 + -4 != iVar5);
+      if (bVar6)
+      {
+        new_default_test_definition(&test, 0xff, "Select an Angel card.");
+        test.subtype = 2;
+        test.no_shuffle = 2;
+        test.create_minideck = (unsigned short)amount;
+        iVar5 = new_global_tutor(player, player, 1, 1, 0, 1, &test);
+        if (-1 < iVar5)
+        {
+          amount = amount + -1;
+        }
+      }
+      bVar6 = *deck_ptr[player] != -1;
+      if ((bVar2) && (bVar6))
+      {
+        new_default_test_definition(&test, 0xff, "Select a Demon card.");
+        test.subtype = 0x2c;
+        test.no_shuffle = 2;
+        test.create_minideck = (unsigned short)amount;
+        iVar5 = new_global_tutor(player, player, 1, 1, 0, 1, &test);
+        if (-1 < iVar5)
+        {
+          amount = amount + -1;
+        }
+        bVar6 = *deck_ptr[player] != -1;
+      }
+      if ((bool)(bVar1 & bVar6))
+      {
+        new_default_test_definition(&test, 0xff, "Select a Dragon card.");
+        test.create_minideck = (unsigned short)amount;
+        test.subtype = 0x30;
+        test.no_shuffle = 2;
+        uVar4 = new_global_tutor(player, player, 1, 1, 0, 1, &test);
+        amount = amount - (unsigned int)(uVar4 < 0x80000000);
+      }
+    }
+    put_top_x_on_bottom_in_random_order(player, amount);
+    return 0;
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2399e40; original cards/m20.c:2613. */
+int card_tales_end(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td_spell;
+
+  instance = get_card_instance(player, card);
+  counterspell_target_definition(player, card, &td_spell, 0);
+  td_spell.special = 0x8000;
+  td_spell.extra = (int32_t)is_legendary_by_iid;
+  if (event == EVENT_CAN_CAST)
+  {
+    result = counterspell(player, card, EVENT_CAN_CAST, &td_spell, 0);
+    if (result != 0)
+    {
+      instance->info_slot = 1;
+      return 99;
+    }
+    result = can_counter_activated_ability(player, card, EVENT_CAN_CAST, NULL);
+    if (result != 0)
+    {
+      instance->info_slot = 2;
+      return 99;
+    }
+    result = can_counter_triggered_ability(player, card, EVENT_CAN_CAST, NULL);
+    if (result != 0)
+    {
+      instance->info_slot = 3;
+      return 99;
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        result = instance->info_slot;
+        instance->number_of_targets = '\0';
+        if (result == 1)
+        {
+          counterspell(player, card, EVENT_CAST_SPELL, &td_spell, 0);
+          return 0;
+        }
+        if (result != 2)
+        {
+          if (result != 3)
+          {
+            return 0;
+          }
+          cast_counter_triggered_ability(player, card, 0);
+          return 0;
+        }
+        cast_counter_activated_ability(player, card, 0);
+        return 0;
+      }
+    LAB_02399ed4:
+      result = counterspell(player, card, event, &td_spell, 0);
+      return result;
+    }
+    if (event != EVENT_RESOLVE_SPELL)
+      goto LAB_02399ed4;
+    result = instance->info_slot;
+    if (result == 1)
+    {
+      counterspell(player, card, EVENT_RESOLVE_SPELL, &td_spell, 0);
+      return 0;
+    }
+    if (result == 2)
+    {
+      result = resolve_counter_activated_ability(player, card, NULL, 0);
+      if (result != 0)
+        goto LAB_0239a024;
+      result = instance->info_slot;
+    }
+    if ((result == 3) &&
+        (result = resolve_counter_triggered_ability(player, card, NULL, 0), result != 0))
+    {
+    LAB_0239a024:
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
   }
   return 0;
 }

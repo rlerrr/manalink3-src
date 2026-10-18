@@ -666,7 +666,14 @@ int card_najeela_the_blade_blossom(int player, int card, event_t event)
   xtrigger_t xVar2;
   int iVar3;
   card_instance_t *instance;
-  test_definition_t test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_test;
 
   check_legend_rule(player, card, event);
   xVar2 = trigger_condition;
@@ -676,9 +683,9 @@ int card_najeela_the_blade_blossom(int player, int card, event_t event)
   }
   if ((event == EVENT_DECLARE_ATTACKERS) || (xVar2 == XTRIGGER_ATTACKING))
   {
-    default_test_definition(&test, 2);
-    test.subtype = 0xd2;
-    store_attackers(player, card, event, 0, 2, -1, &test);
+    default_test_definition(&recovered_stack_test.test, 2);
+    recovered_stack_test.test.subtype = 0xd2;
+    store_attackers(player, card, event, 0, 2, -1, &recovered_stack_test.test);
   }
   iVar3 = duh_mode(player);
   dat_ability(player, card, event, (iVar3 != 0) + DAT_RESOLVE_TRIGGER_OPTIONAL, 1);
@@ -687,14 +694,14 @@ int card_najeela_the_blade_blossom(int player, int card, event_t event)
 
     instance = get_card_instance(player, card);
     iVar1 = instance->info_slot;
-    default_token_definition(current_turn, card, 0x49a4, (token_generation_t *)&test);
-    test.message[0x2b] = (char)iVar1;
-    test.message[0x30] = '\x03';
-    test.message[0x31] = '\0';
-    test.message[0x32] = '\0';
-    test.message[0x33] = '\0';
-    test.message[0x28] = ' ';
-    generate_token((token_generation_t *)&test);
+    default_token_definition(current_turn, card, 0x49a4, &recovered_stack_test.token);
+    recovered_stack_test.test.message[0x2b] = (char)iVar1;
+    recovered_stack_test.test.message[0x30] = '\x03';
+    recovered_stack_test.test.message[0x31] = '\0';
+    recovered_stack_test.test.message[0x32] = '\0';
+    recovered_stack_test.test.message[0x33] = '\0';
+    recovered_stack_test.test.message[0x28] = ' ';
+    generate_token(&recovered_stack_test.token);
     return 0;
   }
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -711,10 +718,10 @@ int card_najeela_the_blade_blossom(int player, int card, event_t event)
     }
     goto LAB_02027d11;
   }
-  default_test_definition(&test, 2);
-  test.state = 4;
-  new_manipulate_all(player, card, 2, &test, ACT_UNTAP);
-  pump_creatures_until_eot_no_repeat(player, card, 2, 1, 0x80, 6, &test);
+  default_test_definition(&recovered_stack_test.test, 2);
+  recovered_stack_test.test.state = 4;
+  new_manipulate_all(player, card, 2, &recovered_stack_test.test, ACT_UNTAP);
+  pump_creatures_until_eot_no_repeat(player, card, 2, 1, 0x80, 6, &recovered_stack_test.test);
   extra_combat_effect(player, card, EVENT_RESOLVE_ACTIVATION, 0, NULL, 1);
 LAB_02027d1a:
   iVar3 = generic_activated_ability(player, card, event, 0x1000, 0, 1, 1, 1, 1, 1, 0, NULL, NULL);
@@ -1341,5 +1348,118 @@ int card_toothy_imaginary_friend(int player, int card, event_t event)
   }
   result = count_counters(player, card, COUNTER_P1_P1);
   draw_cards(player, result);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2027f60; original cards/battlebond.c:790. */
+int card_pirs_whim(int player, int card, event_t event)
+{
+  int result;
+  unsigned int player_00;
+  char *buf;
+  unsigned int uVar2;
+  int foe[2];
+  char buffer_caster[50];
+  char buffer_opp[50];
+  char buffer_player[50];
+  test_definition_t this_test;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    buf = buffer_opp;
+    foe[0] = -1;
+    foe[1] = -1;
+    scnprintf(buffer_caster, 0x32, "Which are you?");
+    scnprintf(buf, 0x32, "Which is %s?", opponent_name);
+    scnprintf(buffer_player, 0x32, "Which is the player?");
+    result = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\011", buffer_caster, "\001\002",
+                         "\001\003", "\001\014", "Friend", 1, 10, "Foe", 1, 0xfffffff6, 0, 0, 0, 0);
+    foe[player] = result + -1;
+    if (player != 0)
+    {
+      buf = buffer_player;
+    }
+    result = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\011", buf, "\001\002", "\001\003",
+                         "\001\014", "Friend", 1, 0xfffffff6, "Foe", 1, 10, 0, 0, 0, 0);
+
+    uVar2 = 0;
+    foe[1 - player] = result + -1;
+    do
+    {
+      player_00 = current_turn ^ uVar2;
+      if (foe[player_00] == 0)
+      {
+        tutor_lands(player_00, TUTOR_PLAY_TAPPED, 1);
+      }
+      else
+      {
+        default_test_definition(&this_test, 0x44);
+        new_sacrifice(player, card, player_00, SAC_CAUSED | SAC_NO_CANCEL, &this_test);
+      }
+      uVar2 = uVar2 + 1;
+    } while (uVar2 != 2);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2026870; original cards/battlebond.c:274. */
+int card_bramble_sovereign(int player, int card, event_t event)
+{
+  int result;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_test;
+
+  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = has_mana_multi(player, 1, 0, 0, 1, 0, 0);
+    if (result != 0)
+    {
+      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      if (result == 0)
+      {
+        default_test_definition(&recovered_stack_test.test, 2);
+        recovered_stack_test.test.not_me = 1;
+        recovered_stack_test.test.type_flag = 3;
+        result = duh_mode(player);
+        etb_ability_global(2, event, (result != 0) + 1, TYPE_NONE, &recovered_stack_test.test,
+                           player, card);
+      }
+    }
+  }
+  if (event == EVENT_ETB)
+  {
+    result = has_mana_multi(player, 1, 0, 0, 1, 0, 0);
+    if (result != 0)
+    {
+      result = charge_mana_multi_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, 1, 0,
+                                                 0, 1, 0, 0);
+      if (result != 0)
+      {
+        copy_token_definition(player, card, &recovered_stack_test.token, trigger_cause_controller,
+                              trigger_cause);
+        recovered_stack_test.test.message[0x14] = (uint8_t)trigger_cause_controller;
+        recovered_stack_test.test.message[0x15] =
+            ((unsigned int)trigger_cause_controller >> 8 & 0xff);
+        recovered_stack_test.test.message[0x16] =
+            ((unsigned int)trigger_cause_controller >> 16 & 0xff);
+        recovered_stack_test.test.message[0x17] =
+            ((unsigned int)trigger_cause_controller >> 24 & 0xff);
+        generate_token(&recovered_stack_test.token);
+      }
+    }
+  }
   return 0;
 }

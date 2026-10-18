@@ -2080,7 +2080,14 @@ int card_kiora_behemoth_beckoner(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
 
   check_legend_rule(player, card, event);
   hybrid(player, card, event);
@@ -2088,8 +2095,8 @@ int card_kiora_behemoth_beckoner(int player, int card, event_t event)
        (player == affected_card_controller)) &&
       (reason_for_trigger_controller == player))
   {
-    default_test_definition((test_definition_t *)&td, 2);
-    etb_ability_global(player, event, 2, TYPE_NONE, (test_definition_t *)&td, player, card);
+    default_test_definition(&recovered_stack_td.test, 2);
+    etb_ability_global(player, event, 2, TYPE_NONE, &recovered_stack_td.test, player, card);
   }
   if (event == EVENT_ETB)
   {
@@ -2104,11 +2111,11 @@ int card_kiora_behemoth_beckoner(int player, int card, event_t event)
     if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
     {
       instance = get_card_instance(player, card);
-      default_target_definition(player, card, &td, 0x47);
-      td.allow_cancel = 1;
+      default_target_definition(player, card, &recovered_stack_td.target, 0x47);
+      recovered_stack_td.target.allow_cancel = 1;
       if (event == EVENT_CAN_ACTIVATE)
       {
-        result = can_target(&td);
+        result = can_target(&recovered_stack_td.target);
         if (result == 0)
         {
           return 0;
@@ -2121,15 +2128,15 @@ int card_kiora_behemoth_beckoner(int player, int card, event_t event)
       if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
         goto LAB_021d0794;
       instance = get_card_instance(player, card);
-      default_target_definition(player, card, &td, 0x47);
+      default_target_definition(player, card, &recovered_stack_td.target, 0x47);
     }
-    td.allow_cancel = 1;
+    recovered_stack_td.target.allow_cancel = 1;
     if (event == EVENT_ACTIVATE)
     {
 
       instance->number_of_targets = '\0';
       instance->info_slot = 0;
-      result = can_target(&td);
+      result = can_target(&recovered_stack_td.target);
       result =
           dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "\001\003", "\001\014",
                       "\001\017", "Untap a permanent", result, 5, 0xffffffff, 0, 0, 0, 0);
@@ -2138,9 +2145,10 @@ int card_kiora_behemoth_beckoner(int player, int card, event_t event)
         spell_fizzled = 1;
         return 0;
       }
-      new_pick_target(&td, "TARGET_PERMANENT", 0, 1);
+      new_pick_target(&recovered_stack_td.target, "TARGET_PERMANENT", 0, 1);
     }
-    else if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    else if ((event == EVENT_RESOLVE_ACTIVATION) &&
+             (result = valid_target(&recovered_stack_td.target), result != 0))
     {
       untap_card(instance->targets[0].player, instance->targets[0].card);
     }
@@ -5996,5 +6004,573 @@ int card_ugin_the_ineffable(int player, int card, event_t event)
   }
 LAB_021d87c7:
   result = planeswalker(player, card, event, 4);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21cbdd0; original cards/war_of_the_spark.c:1588. */
+int card_dreadhorde_butcher(int player, int card, event_t event)
+{
+  enum
+  {
+    DDBM_MAY_DAMAGE_PLANESWALKER = 64
+  };
+
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  haste(player, card, event);
+  result = damage_dealt_by_me(player, card, event,
+                              DDBM_MAY_DAMAGE_PLANESWALKER | DDBM_MUST_DAMAGE_PLAYER);
+  if (result != 0)
+  {
+    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  }
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    td.allow_cancel = 0;
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = pick_target(&td, "TARGET_ANY");
+      if (result != 0)
+      {
+        result = get_power(player, card);
+        damage_target_creature_or_player(instance->targets[0].player, instance->targets[0].card,
+                                         result, player, card);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21d2250; original cards/war_of_the_spark.c:4294. */
+int card_neheb_dreadhorde_champion(int player, int card, event_t event)
+{
+  enum
+  {
+    DDBM_MAY_DAMAGE_PLANESWALKER = 64
+  };
+
+  int result;
+  int card_00;
+  int amount;
+  test_definition_t this_test;
+
+  check_legend_rule(player, card, event);
+  result = damage_dealt_by_me(player, card, event,
+                              DDBM_MAY_DAMAGE_PLANESWALKER | DDBM_MUST_DAMAGE_PLAYER);
+  if (result == 0)
+  {
+    return 0;
+  }
+
+  new_default_test_definition(&this_test, 0xff, "Select a card to discard.");
+  result = hand_count[player];
+  amount = 0;
+  this_test.zone = 0x100;
+  if (0 < result)
+  {
+    do
+    {
+      card_00 = new_select_a_card(player, player, 4, 0, 3, -1, &this_test);
+      if (card_00 == -1)
+        break;
+
+      amount = amount + 1;
+      discard_card(player, card_00);
+    } while (result != amount);
+  }
+  draw_cards(player, amount);
+  produce_mana(player, 4, amount);
+  mana_doesnt_drain_until_eot(player, COLOR_RED, amount);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21d9130; original cards/war_of_the_spark.c:7043. */
+int card_vraska_swarms_eminence(int player, int card, event_t event)
+{
+  enum
+  {
+    DDBM_MAY_DAMAGE_PLANESWALKER = 64
+  };
+
+  card_instance_t *instance;
+  int result;
+  target_t *ptVar3;
+  target_t *ptVar4;
+  token_generation_t token;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  hybrid(player, card, event);
+  default_test_definition(&test, 2);
+  test.special_selection_function = has_deathtouch;
+  instance = get_card_instance(player, card);
+  check_damage_test(player, -1, event,
+                    DDBM_TRACE_DAMAGING_SOURCES | DDBM_MAY_DAMAGE_PLANESWALKER |
+                        DDBM_MUST_DAMAGE_PLAYER,
+                    player, card, 0, &test);
+  result = resolve_damage_trigger(player, card, event, DDBM_TRACE_DAMAGING_SOURCES, player, card);
+
+  if (0 < result)
+  {
+    ptVar3 = instance->targets;
+    do
+    {
+      ptVar4 = ptVar3 + 1;
+      add_counters_from_source(player, card, ptVar3->player, ptVar3->card, COUNTER_P1_P1, 1);
+      ptVar3 = ptVar4;
+    } while (ptVar4 != instance->targets + result);
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = count_counters(player, card, COUNTER_LOYALTY);
+    if (result < 2)
+    {
+      return 0;
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+
+    instance->number_of_targets = '\0';
+    instance->info_slot = 0;
+    result =
+        dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "\001\003", "\001\014",
+                    "\001\017", "Create an assassin", 1, 5, 0xfffffffe, 0, 0, 0, 0);
+    if (result == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    default_token_definition(player, card, 0x4903, &token);
+    token.s_key_plus = 0x200;
+    token.special_infos = 0x43;
+    generate_token(&token);
+  }
+  result = planeswalker(player, card, event, 5);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21cc900; original cards/war_of_the_spark.c:1896. */
+int card_fblthp_the_lost(int player, int card, event_t event)
+{
+  const target_t *ptVar1;
+  card_instance_t *instance;
+  int result;
+
+  check_legend_rule(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    result = check_special_flags(player, card, 0x10000);
+    draw_cards(player, (result != 0) + 1);
+  }
+  ptVar1 = becomes_target_of_spell(player, card, event, player, card, 2, RESOLVE_TRIGGER_MANDATORY);
+  if (ptVar1 != NULL)
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      if (result == 0)
+      {
+        shuffle_into_library(player, card);
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21cbef0; original cards/war_of_the_spark.c:1618. */
+int card_dreadhorde_invasion(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  test_definition_t this_test;
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    lose_life(player, 1);
+    amass(player, card, 1);
+    dat_ability(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  }
+  else if (event == EVENT_DECLARE_ATTACKERS)
+  {
+    default_test_definition(&this_test, 2);
+    this_test.subtype = 0xde;
+    this_test.type_flag = 6;
+    this_test.power = 5;
+    this_test.power_flag = 2;
+    store_attackers(player, card, EVENT_DECLARE_ATTACKERS,
+                    DAT_TRACK | DAT_RESOLVE_TRIGGER_MANDATORY, player, -1, &this_test);
+    dat_ability(player, card, EVENT_DECLARE_ATTACKERS, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  }
+  else
+  {
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+    if (event == EVENT_DAT_ABILITY)
+    {
+
+      pcVar2 = get_card_instance(player, card);
+      result = pcVar2->info_slot + -1;
+      if (-1 < result)
+      {
+        do
+        {
+          pcVar3 =
+              in_play(current_turn,
+                      (unsigned int)*(unsigned char *)((int)&pcVar2->targets[2].player + result));
+          if (pcVar3 != NULL)
+          {
+            pump_ability_until_eot(
+                player, card, current_turn,
+                (unsigned int)*(unsigned char *)((int)&pcVar2->targets[2].player + result), 0, 0, 0,
+                2);
+          }
+          result = result + -1;
+        } while (result != -1);
+      }
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x21d5ac0; original cards/war_of_the_spark.c:5564. */
+int card_sarkhan_the_masterless(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  token_generation_t token;
+
+  check_legend_rule(player, card, event);
+  iVar5 = 1 - player;
+  if (event == EVENT_CHECK_PUMP)
+  {
+    if ((current_turn == iVar5) && (current_phase < 0x16))
+    {
+      iVar4 = count_subtype(player, 2, 0x30);
+      pumpable_toughness[current_turn] = pumpable_toughness[current_turn] - iVar4;
+    }
+    store_attackers(player, card, EVENT_CHECK_PUMP, DAT_TRACK, iVar5, -1, NULL);
+    dat_ability(player, card, EVENT_CHECK_PUMP, DAT_TRACK | DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  LAB_021d5d6e:
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_021d5d8f;
+    pcVar1 = get_card_instance(player, card);
+  }
+  else
+  {
+    store_attackers(player, card, event, DAT_TRACK, iVar5, -1, NULL);
+    dat_ability(player, card, event, DAT_TRACK | DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+    if (event == EVENT_DAT_ABILITY)
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      iVar5 = pcVar1->info_slot + -1;
+      if (-1 < iVar5)
+      {
+        do
+        {
+          pcVar2 =
+              in_play(current_turn,
+                      (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + iVar5));
+
+          if ((pcVar2 != NULL) && (iVar4 = active_cards_count[player] + -1, -1 < iVar4))
+          {
+            do
+            {
+              pcVar2 = in_play(player, iVar4);
+              if ((pcVar2 != NULL) &&
+                  ((iVar3 = is_what(player, iVar4, 2),
+                    iVar3 != 0 &&
+                        (iVar3 = has_subtype(player, iVar4, SUBTYPE_DRAGON), iVar3 != 0))))
+              {
+                damage_creature(
+                    current_turn,
+                    (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + iVar5), 1,
+                    player, iVar4);
+              }
+              iVar4 = iVar4 + -1;
+            } while (iVar4 != -1);
+          }
+          iVar5 = iVar5 + -1;
+        } while (iVar5 != -1);
+      }
+      goto LAB_021d5d8f;
+    }
+    if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+      goto LAB_021d5d6e;
+    pcVar1 = get_card_instance(player, card);
+    if (event == EVENT_ACTIVATE)
+    {
+
+      pcVar1->number_of_targets = '\0';
+      pcVar1->info_slot = 0;
+      iVar5 =
+          dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "PWs become dragons", 1,
+                      5, 1, "Create a dragon token", 1, 5, 0xfffffffd, 0, 0, 0, 0);
+      if (iVar5 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      goto LAB_021d5d8f;
+    }
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    if (pcVar1->info_slot == 1)
+    {
+
+      if (0 < active_cards_count[player])
+      {
+        iVar5 = 0;
+        do
+        {
+          pcVar1 = in_play(player, iVar5);
+          if ((pcVar1 != NULL) && (iVar4 = is_what(player, iVar5, 0x100), iVar4 != 0))
+          {
+
+            iVar4 = animate_other(player, card, player, iVar5, 4, 4, KEYWORD_FLYING, SP_KEYWORD_0,
+                                  COLOR_TEST_RED, 0);
+            pcVar1 = get_card_instance(player, iVar4);
+            pcVar1->targets[9].card = 0x30;
+          }
+          iVar5 = iVar5 + 1;
+        } while (iVar5 < active_cards_count[player]);
+      }
+    }
+    else if (pcVar1->info_slot == 2)
+    {
+      default_token_definition(player, card, 0x491f, &token);
+      token.tou = 4;
+      token.pow = 4;
+      generate_token(&token);
+    }
+  }
+LAB_021d5d8f:
+  iVar5 = planeswalker(player, card, event, 5);
+  return iVar5;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21d5ef0; original cards/war_of_the_spark.c:5670. */
+int card_single_combat(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  card_instance_t *pcVar4;
+  unsigned int uVar5;
+  unsigned int t_player;
+  bool bVar6;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_this_test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      pcVar3 = get_card_instance(player, card);
+      uVar5 = 0;
+      do
+      {
+        t_player = current_turn ^ uVar5;
+        iVar2 = can_sacrifice(player, t_player, 1, TARGET_TYPE_PLANESWALKER | TYPE_CREATURE,
+                              SUBTYPE_INVALID);
+        if (iVar2 != 0)
+        {
+          default_target_definition(player, card, &recovered_stack_this_test.target, 0x102);
+          recovered_stack_this_test.test.message[0x1c] = '\0';
+          recovered_stack_this_test.test.message[0x1d] = '\0';
+          recovered_stack_this_test.test.message[0x1e] = '\0';
+          recovered_stack_this_test.test.message[0x1f] = '\0';
+          recovered_stack_this_test.target.who_chooses = (int32_t)(t_player);
+          recovered_stack_this_test.target.allowed_controller = (int32_t)(t_player);
+          iVar2 = can_target(&recovered_stack_this_test.target);
+          if ((iVar2 != 0) && (iVar2 = new_pick_target(&recovered_stack_this_test.target,
+                                                       "Select a creature or planeswalker to keep.",
+                                                       t_player, 0x80),
+                               iVar2 != 0))
+          {
+            state_untargettable(pcVar3->targets[t_player].player, pcVar3->targets[t_player].card,
+                                1);
+          }
+        }
+        iVar2 = target_player_cant_cast_type(player, card, t_player, 0x102);
+        bVar6 = current_turn == player;
+        pcVar4 = get_card_instance(player, iVar2);
+        uVar5 = uVar5 + 1;
+        pcVar4->targets[2].player = bVar6 + 1;
+      } while (uVar5 != 2);
+      default_test_definition(&recovered_stack_this_test.test, 0x102);
+      new_manipulate_all(player, card, 2, &recovered_stack_this_test.test, ACT_KILL_SACRIFICE);
+      iVar2 = pcVar3->targets[0].player;
+      if ((iVar2 != -1) && (iVar1 = pcVar3->targets[0].card, iVar1 != -1))
+      {
+        state_untargettable(iVar2, iVar1, 0);
+      }
+      iVar2 = pcVar3->targets[1].player;
+      if ((iVar2 != -1) && (iVar1 = pcVar3->targets[1].card, iVar1 != -1))
+      {
+        state_untargettable(iVar2, iVar1, 0);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  iVar2 = basic_spell(player, card, event);
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x21d80a0; original cards/war_of_the_spark.c:6542. */
+int card_tolsimir_friend_to_wolves(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_test;
+
+  check_legend_rule(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    if ((trigger_cause_controller == player) && (trigger_cause == card))
+    {
+      generate_token_by_id(player, card, 0x4e4f);
+    }
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if ((result != 0) || (trigger_condition != 0xdb))
+      goto LAB_021d8160;
+  }
+  else
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result != 0)
+    {
+      return 0;
+    }
+    if (trigger_condition != 0xdb)
+    {
+      return 0;
+    }
+  }
+  if ((card == affected_card) && (player == affected_card_controller))
+  {
+    default_test_definition(&recovered_stack_test.test, 2);
+    recovered_stack_test.test.subtype = 0xd7;
+    etb_ability_global(player, event, 2, TYPE_NONE, &recovered_stack_test.test, player, card);
+  }
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+LAB_021d8160:
+  if (trigger_cause != card)
+  {
+    gain_life(player, 3);
+    default_target_definition(trigger_cause_controller, trigger_cause, &recovered_stack_test.target,
+                              2);
+    recovered_stack_test.target.allowed_controller = (int32_t)(1 - player);
+    recovered_stack_test.test.message[0x44] = '\x01';
+    recovered_stack_test.test.message[0x45] = '\0';
+    recovered_stack_test.test.message[0x46] = '\0';
+    recovered_stack_test.test.message[0x47] = '\0';
+    recovered_stack_test.target.who_chooses = (int32_t)(player);
+    recovered_stack_test.target.preferred_controller =
+        (int32_t)((uint32_t)(recovered_stack_test.target.allowed_controller));
+    result = can_target(&recovered_stack_test.target);
+    if ((result != 0) &&
+        (result = new_pick_target(&recovered_stack_test.target, "TARGET_CREATURE", 0, 0),
+         result != 0))
+    {
+      instance = get_card_instance(trigger_cause_controller, trigger_cause);
+      fight(trigger_cause_controller, trigger_cause, instance->targets[0].player,
+            instance->targets[0].card);
+      instance->number_of_targets = '\0';
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21cded0; original cards/war_of_the_spark.c:2348. */
+int card_god_eternal_bontu(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int iStack_ec;
+  test_definition_t test;
+  check_legend_rule(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    new_default_test_definition(&test, 0x47, "");
+    test.not_me = 1;
+    instance = get_card_instance(player, card);
+    iStack_ec = 0;
+    instance->state = instance->state | STATE_OUBLIETTED;
+    while (true)
+    {
+      result = new_sacrifice(player, card, player, SAC_DONE, &test);
+      if (result == 0)
+        break;
+      iStack_ec = iStack_ec + 1;
+    }
+    instance->state = instance->state & 0xff7fffff;
+    draw_cards(player, iStack_ec);
+  }
+  result = war_god_eternal(player, card, event);
   return result;
 }

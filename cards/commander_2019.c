@@ -1014,3 +1014,106 @@ int card_volrath_the_shapestealer(int player, int card, event_t event)
   result = volrath_the_shapestealer_impl(player, card, event, 0);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23b2920; original cards/commander_2019.c:397. */
+int card_doomed_artisan(int player, int card, event_t event)
+{
+  enum
+  {
+    SUBTYPE_SCULPTURE = 257
+  };
+
+  int result;
+  token_generation_t token;
+
+  if (((((event - EVENT_BLOCK_LEGALITY < 2) || (event == EVENT_ABILITIES)) &&
+        (result = has_subtype(affected_card_controller, affected_card, SUBTYPE_SCULPTURE),
+         result != 0)) &&
+       ((affected_card_controller == player &&
+         (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)))) &&
+      ((1 < event - EVENT_BLOCK_LEGALITY || (event_result = 1, event == EVENT_ABILITIES))))
+  {
+    cannot_attack(affected_card_controller, affected_card, EVENT_ABILITIES);
+    cannot_block(affected_card_controller, affected_card, EVENT_ABILITIES);
+  }
+  if ((current_turn == player) && (result = eot_trigger(player, card, event), result != 0))
+  {
+    default_token_definition(player, card, 0x500b, &token);
+    token.special_infos = 0x42;
+    generate_token(&token);
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23b2d40; original cards/commander_2019.c:546. */
+int card_ghired_conclave_exile(int player, int card, event_t event)
+{
+  int result;
+  target_t tgt;
+  token_generation_t token_1;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_token;
+
+  check_legend_rule(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_token_definition(player, card, 0x4978, &recovered_stack_token.token);
+    recovered_stack_token.token.tou = 4;
+    recovered_stack_token.token.pow = 4;
+    recovered_stack_token.token.key_plus = 0x80;
+    generate_token(&recovered_stack_token.token);
+    dat_ability(player, card, EVENT_ETB, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+    return 0;
+  }
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    if ((player == 1) || (ai_is_speculating == 1))
+    {
+      default_test_definition(&recovered_stack_token.test, 2);
+      tgt.card =
+          check_battlefield_for_special_card(player, card, player, 1, &recovered_stack_token.test);
+      tgt.player = player;
+      if (tgt.card < 0)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      base_target_definition(player, card, &recovered_stack_token.target, 2);
+      recovered_stack_token.token.s_player = player;
+      recovered_stack_token.token.s_card = player;
+      recovered_stack_token.token.special_flags2 = 0;
+      recovered_stack_token.token.keep_track_of_tokens_generated = 0x8000;
+      recovered_stack_token.target.extra = (int32_t)(target_is_token_too_2022);
+      result = can_target(&recovered_stack_token.target);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = select_target(player, card + -1000, &recovered_stack_token.target,
+                             "Select a creature token you control.", &tgt);
+      if (result == 0)
+      {
+        return 0;
+      }
+    }
+    copy_token_definition(player, card, &token_1, tgt.player, tgt.card);
+    token_1.action = TOKEN_ACTION_ATTACKING;
+    generate_token(&token_1);
+  }
+  return 0;
+}

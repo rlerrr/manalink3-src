@@ -1201,7 +1201,14 @@ static int judith_the_scourge_diva_effect(int player, int card, event_t event)
   unsigned int uVar2;
   card_instance_t *pcVar3;
   int result;
-  test_definition_t test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_test;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -1258,9 +1265,10 @@ static int judith_the_scourge_diva_effect(int player, int card, event_t event)
         }
         *(uint8_t *)((int)&pcVar1->targets[0xb].player + 1) = 1;
       }
-      default_test_definition(&test, 2);
-      test.type_flag = 3;
-      count_for_gfp_ability_and_store_values(player, card, 0x77, player, 0, &test, 0x40, 0);
+      default_test_definition(&recovered_stack_test.test, 2);
+      recovered_stack_test.test.type_flag = 3;
+      count_for_gfp_ability_and_store_values(player, card, 0x77, player, 0,
+                                             &recovered_stack_test.test, 0x40, 0);
     }
     uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
@@ -1271,21 +1279,21 @@ static int judith_the_scourge_diva_effect(int player, int card, event_t event)
   result = check_status(player, card, 0x10000);
   if (result == 0)
   {
-    default_target_definition(player, card, (target_definition_t *)&test, 0x102);
-    test.message[0xc] = '\0';
-    test.message[0xd] = '\x12';
-    test.message[0xe] = '\0';
-    test.message[0xf] = '\0';
-    test.message[0x44] = '\0';
-    test.message[0x45] = '\0';
-    test.message[0x46] = '\0';
-    test.message[0x47] = '\0';
+    default_target_definition(player, card, &recovered_stack_test.target, 0x102);
+    recovered_stack_test.test.message[0xc] = '\0';
+    recovered_stack_test.test.message[0xd] = '\x12';
+    recovered_stack_test.test.message[0xe] = '\0';
+    recovered_stack_test.test.message[0xf] = '\0';
+    recovered_stack_test.test.message[0x44] = '\0';
+    recovered_stack_test.test.message[0x45] = '\0';
+    recovered_stack_test.test.message[0x46] = '\0';
+    recovered_stack_test.test.message[0x47] = '\0';
 
     for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
     {
-      result = can_target((target_definition_t *)&test);
+      result = can_target(&recovered_stack_test.target);
       if ((result != 0) &&
-          (result = pick_target((target_definition_t *)&test, "TARGET_ANY"), result != 0))
+          (result = pick_target(&recovered_stack_test.target, "TARGET_ANY"), result != 0))
       {
         damage_target0(player, card, 1);
       }
@@ -2305,13 +2313,20 @@ int card_cindervines(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
 
   if (((trigger_condition == 0xd3) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    default_test_definition((test_definition_t *)&td, 2);
-    sp_ability_trigger(1 - player, event, 2, TYPE_NONE, (test_definition_t *)&td, player, card);
+    default_test_definition(&recovered_stack_td.test, 2);
+    sp_ability_trigger(1 - player, event, 2, TYPE_NONE, &recovered_stack_td.test, player, card);
   }
   if (event == EVENT_SPA)
   {
@@ -2320,11 +2335,11 @@ int card_cindervines(int player, int card, event_t event)
   else if (((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
            ((event == EVENT_RESOLVE_ACTIVATION || (event == EVENT_CLEANUP))))
   {
-    default_target_definition(player, card, &td, 0x44);
+    default_target_definition(player, card, &recovered_stack_td.target, 0x44);
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
-      result = valid_target(&td);
+      result = valid_target(&recovered_stack_td.target);
       if (result != 0)
       {
         kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
@@ -2332,8 +2347,8 @@ int card_cindervines(int player, int card, event_t event)
       }
       ai_modifier = ai_modifier + -0xc;
     }
-    result =
-        generic_activated_ability(player, card, event, 0xc, 1, 0, 0, 0, 0, 0, 0, &td, "DISENCHANT");
+    result = generic_activated_ability(player, card, event, 0xc, 1, 0, 0, 0, 0, 0, 0,
+                                       &recovered_stack_td.target, "DISENCHANT");
     return result;
   }
   result = global_enchantment(player, card, event);
@@ -2948,12 +2963,19 @@ int card_biomancers_familiar(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
 
   if (event == EVENT_RESOLVE_SPELL)
   {
-    default_test_definition((test_definition_t *)&td, 2);
-    set_cost_mod_for_activated_abilities(player, -1, 2, (test_definition_t *)&td);
+    default_test_definition(&recovered_stack_td.test, 2);
+    set_cost_mod_for_activated_abilities(player, -1, 2, &recovered_stack_td.test);
     leaves_play_2022(player, card, EVENT_RESOLVE_SPELL, 0, 0);
   LAB_025bc6ef:
     if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -2966,8 +2988,8 @@ int card_biomancers_familiar(int player, int card, event_t event)
       leaves_play_2022(player, card, event, 0, 0);
       if (event == EVENT_LEAVES_PLAY_ABILITY)
       {
-        default_test_definition((test_definition_t *)&td, 2);
-        remove_cost_mod_for_activated_abilities(player, -1, 2, (test_definition_t *)&td);
+        default_test_definition(&recovered_stack_td.test, 2);
+        remove_cost_mod_for_activated_abilities(player, -1, 2, &recovered_stack_td.test);
         return 0;
       }
       goto LAB_025bc6ef;
@@ -2984,8 +3006,8 @@ int card_biomancers_familiar(int player, int card, event_t event)
     return 0;
   }
 LAB_025bc73e:
-  default_target_definition(player, card, &td, 2);
-  td.preferred_controller = player;
+  default_target_definition(player, card, &recovered_stack_td.target, 2);
+  recovered_stack_td.target.preferred_controller = player;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
     instance = get_card_instance(player, card);
@@ -2994,8 +3016,8 @@ LAB_025bc73e:
     create_targetted_legacy_effect(player, card, biomancers_familiar_legacy,
                                    instance->targets[0].player, result);
   }
-  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td,
-                                     "TARGET_CREATURE");
+  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0,
+                                     &recovered_stack_td.target, "TARGET_CREATURE");
   return result;
 }
 
@@ -3261,4 +3283,289 @@ int card_tithe_taker(int player, int card, event_t event)
 LAB_025c3ee4:
   afterlife(player, card, event, 1);
   return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25bcb70; original cards/ravnica_allegiance.c:546. */
+int card_cavalcade_of_calamity(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int tgt_card;
+  test_definition_t test;
+
+  if (event == EVENT_DECLARE_ATTACKERS)
+  {
+    default_test_definition(&test, 2);
+    test.power = 2;
+    test.power_flag = 3;
+    store_attackers(player, card, EVENT_DECLARE_ATTACKERS, DAT_TRACK, player, -1, &test);
+    dat_ability(player, card, EVENT_DECLARE_ATTACKERS, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  }
+  else
+  {
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+    if (event == EVENT_DAT_ABILITY)
+    {
+
+      instance = get_card_instance(player, card);
+      result = instance->info_slot + -1;
+      if (-1 < result)
+      {
+        do
+        {
+
+          tgt_card = planeswalker_its_attacking(
+              player, (unsigned int)*(unsigned char *)((int)&instance->targets[2].player + result));
+          if (tgt_card != -2)
+          {
+            damage_creature(1 - current_turn, tgt_card, 1, player, card);
+          }
+          result = result + -1;
+        } while (result != -1);
+      }
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25bfd60; original cards/ravnica_allegiance.c:2023. */
+int card_incubation_incongruity(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  unsigned int uVar2;
+  int iVar3;
+  int iVar4;
+  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_this_test;
+
+  default_target_definition(player, card, &td, 2);
+  if (event == EVENT_PLAY_SECOND_HALF)
+  {
+    generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_CREATURE", 1, NULL);
+    goto LAB_025bfe0e;
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+        goto LAB_025bfe0e;
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        instance = get_card_instance(player, card);
+        if (event != EVENT_RESOLVE_SPELL)
+          goto LAB_025bfe0e;
+        uVar2 = instance->info_slot;
+        if ((uVar2 & 1) != 0)
+        {
+          iVar3 = count_deck(player);
+          if (iVar3 != 0)
+          {
+            if (5 < iVar3)
+            {
+              iVar3 = 5;
+            }
+            new_default_test_definition(&recovered_stack_this_test.test, 2,
+                                        "Select a creature card.");
+            recovered_stack_this_test.test.create_minideck = (unsigned short)iVar3;
+            recovered_stack_this_test.test.no_shuffle = 1;
+            iVar4 = new_global_tutor(player, player, 1, 1, 0, 1, &recovered_stack_this_test.test);
+            if ((ai_is_speculating == 1) ||
+                ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+            {
+              if (iVar4 < 0)
+              {
+                recovered_stack_this_test.test.type = 0xff;
+                iVar4 =
+                    new_global_tutor(player, player, 1, 1, 0, 1, &recovered_stack_this_test.test);
+                goto LAB_025c0046;
+              }
+            LAB_025c007c:
+              reveal_card(player, card, player, iVar4);
+              iVar3 = iVar3 + -1;
+            }
+            else
+            {
+            LAB_025c0046:
+              if (-1 < iVar4)
+                goto LAB_025c007c;
+            }
+            if (0 < iVar3)
+            {
+              put_top_x_on_bottom_in_random_order(player, iVar3);
+            }
+          }
+          uVar2 = instance->info_slot;
+        }
+        if (((uVar2 & 2) != 0) && (iVar3 = valid_target(&td), iVar3 != 0))
+        {
+          kill_card(instance->targets[0].player, instance->targets[0].card, KILL_BURY);
+          default_token_definition(player, card, 0x4933, &recovered_stack_this_test.token);
+          recovered_stack_this_test.token.t_player = (int32_t)(instance->targets[0].player);
+          recovered_stack_this_test.test.message[0x18] = '\x03';
+          recovered_stack_this_test.test.message[0x19] = '\0';
+          recovered_stack_this_test.test.message[0x1a] = '\0';
+          recovered_stack_this_test.test.message[0x1b] = '\0';
+          recovered_stack_this_test.test.message[0x1c] = '\x03';
+          recovered_stack_this_test.test.message[0x1d] = '\0';
+          recovered_stack_this_test.test.message[0x1e] = '\0';
+          recovered_stack_this_test.test.message[0x1f] = '\0';
+          generate_token(&recovered_stack_this_test.token);
+        }
+        kill_card(player, card, KILL_DESTROY);
+        goto LAB_025bfe0e;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+        goto LAB_025bfe0e;
+    }
+  }
+  get_card_instance(player, card);
+LAB_025bfe0e:
+  iVar3 = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_CREATURE", 1, NULL);
+  iVar4 = can_sorcery_be_played(player, event);
+  iVar3 = hybrid_split_card(player, card, event, 0x4ccd, iVar4, 5, 0x4ccc, iVar3, 10);
+  return iVar3;
+}
+
+/* ManalinkEh 2022: 0x25c1150; original cards/ravnica_allegiance.c:2515. */
+int card_mirror_march(int player, int card, event_t event)
+{
+  int result;
+  char cVar2;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_test;
+
+  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&recovered_stack_test.test, 2);
+    recovered_stack_test.test.type_flag = 3;
+    etb_ability_global(player, event, 2, TYPE_NONE, &recovered_stack_test.test, player, card);
+  }
+  if (event == EVENT_ETB)
+  {
+    cVar2 = '\0';
+    do
+    {
+      result = flip_a_coin(player, card);
+      if (result == 0)
+        break;
+      cVar2 = cVar2 + '\x01';
+    } while (result == 1);
+    copy_token_definition(player, card, &recovered_stack_test.token, trigger_cause_controller,
+                          trigger_cause);
+    recovered_stack_test.test.message[0x2a] = '\x01';
+    recovered_stack_test.token.special_code_for_legacy = haste_and_remove_eot;
+    recovered_stack_test.test.message[0x2b] = cVar2;
+    generate_token(&recovered_stack_test.token);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25c1f60; original cards/ravnica_allegiance.c:3004. */
+int card_repudiate_replicate(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_PLAY_FIRST_HALF)
+  {
+    result = instance->targets[9].card;
+    if (result == 1)
+    {
+      cast_counter_activated_ability(player, card, 0);
+    }
+    else if (result == 2)
+    {
+      cast_counter_triggered_ability(player, card, 0);
+    }
+  }
+  else
+  {
+    if (event == EVENT_PLAY_SECOND_HALF)
+    {
+      result = generic_spell(player, card, EVENT_CAST_SPELL, 0x81, &td,
+                             "Select target creature you control.", 1, NULL);
+      return result;
+    }
+    if (event == EVENT_CAN_CAST)
+    {
+      result = can_counter_activated_ability(player, card, EVENT_CAN_CAST, NULL);
+      if (result != 0)
+      {
+        instance->targets[9].card = 1;
+      }
+      result = can_counter_triggered_ability(player, card, EVENT_CAN_CAST, NULL);
+      if (result != 0)
+      {
+        instance->targets[9].card = 2;
+      }
+    }
+    else if ((event != EVENT_CAST_SPELL) && (event == EVENT_RESOLVE_SPELL))
+    {
+      uVar3 = instance->info_slot;
+      if ((uVar3 & 1) != 0)
+      {
+        result = instance->targets[9].card;
+        if (result == 1)
+        {
+          resolve_counter_activated_ability(player, card, NULL, 0);
+          uVar3 = instance->info_slot;
+        }
+        else if (result == 2)
+        {
+          resolve_counter_triggered_ability(player, card, NULL, 0);
+          uVar3 = instance->info_slot;
+        }
+      }
+      if (((uVar3 & 2) != 0) && (result = valid_target(&td), result != 0))
+      {
+        copy_token(player, card, player, instance->targets[0].card);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      result = can_target(&td);
+      goto joined_r0x025c20f2;
+    }
+  }
+  result = can_target(&td);
+joined_r0x025c20f2:
+  uVar3 = 0;
+  if (result != 0)
+  {
+    result = can_sorcery_be_played(player, event);
+    uVar3 = (unsigned int)(result != 0);
+  }
+  result = can_counter_activated_or_triggered_ability(player, card, event);
+  result = hybrid_split_card(player, card, event, 0x4cfe, result, 10, 0x4cfd, uVar3, 8);
+  return result;
 }

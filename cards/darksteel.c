@@ -3668,3 +3668,41 @@ int card_well_of_lost_dreams(int player, int card, event_t event)
   max_x_value = iVar1;
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x224e120; original cards/darksteel.c:174. */
+int card_arcbound_fiend(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  fear(player, card, event);
+  result = duh_mode(player);
+  upkeep_trigger_ability_mode(player, card, event, player,
+                              (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+
+    default_target_definition(player, card, &td, 2);
+    if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+    {
+      td.special = 0x44000;
+      td.extra = 0;
+    }
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = pick_target(&td, "TARGET_CREATURE");
+      if (result != 0)
+      {
+        move_counters_from_source(player, card, player, card, instance->targets[0].player,
+                                  instance->targets[0].card, COUNTER_P1_P1, 1);
+      }
+    }
+  }
+  result = modular(player, card, event, 3);
+  return result;
+}

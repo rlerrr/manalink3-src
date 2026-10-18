@@ -6813,3 +6813,43 @@ int card_guttural_response(int player, int card, event_t event)
   result = counterspell(player, card, event, &td, 0);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x254cf30; original cards/shadowmoor.c:888. */
+int card_boon_reflection(int player, int card, event_t event)
+{
+  enum
+  {
+    XTRIGGER_REPLACE_GAIN_LIFE = 16778752
+  };
+
+  xtrigger_t xVar1;
+  int result;
+
+  xVar1 = trigger_condition;
+  if (trigger_condition == 0xe5)
+  {
+    xVar1 = xtrigger_impl_value_dont_use_directly;
+  }
+  if ((((xVar1 == XTRIGGER_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (((reason_for_trigger_controller == player && (trigger_cause_controller == player)) &&
+        (0 < life_gained))))
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      if (event == EVENT_TRIGGER)
+      {
+        event_result = event_result | 2;
+      }
+      else if (event == EVENT_RESOLVE_TRIGGER)
+      {
+        life_gained = life_gained << 1;
+      }
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}

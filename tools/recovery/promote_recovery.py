@@ -18,6 +18,16 @@ from pathlib import Path
 UNRESOLVED = re.compile(r"\b(?:undefined\w*|in_(?!play(?:_and_attacking)?\b|hand\b)\w+|extraout_\w+|unaff_\w+|_?DAT_[0-9a-fA-F]{8}\w*|UNK_\w+|PTR_\w+|func_0x[0-9a-fA-F]+|field_\w+|CONCAT\w*|SUB\d+|ZEXT\w*|SEXT\w*)\b")
 LITERAL = r'"(?:\\.|[^"\\\r\n])*"|\'(?:\\.|[^\'\\\r\n])*\''
 FUNCTION_DEFINITION = re.compile(r"\b([A-Za-z_]\w*)\s*\([^;{}()]*\)\s*\{")
+STACK_AGGREGATES = ('test_definition_t', 'target_definition_t', 'token_generation_t')
+
+
+def aggregate_stack_aliases(body):
+    """Cross-type addresses of small locals need verified storage reconstruction."""
+    declarations = {m[2]: m[1] for m in re.finditer(
+        r'(?m)^\s+([A-Za-z_]\w*)\s+(\w+)\s*(?:\[[^]\n]*\])?\s*;', body)}
+    return [(m[1], m[2], declarations[m[2]]) for m in re.finditer(
+        r'\((' + '|'.join(STACK_AGGREGATES) + r')\s*\*\)\s*&\s*(\w+)\b', body)
+        if m[2] in declarations and declarations[m[2]] != m[1]]
 
 
 def strip_comments(text):
@@ -80,24 +90,32 @@ def rewrite_argument(text, name, arity, argument, replacements):
                 arguments.append((start, at))
                 start = at + 1
                 if char == ")":
-                    if len(arguments) == arity:
-                        begin, end = arguments[argument]
-                        token = text[begin:end].strip()
-                        if token in replacements:
-                            edits.append((begin, end, replacements[token]))
+                    if arity is None or len(arguments) == arity:
+                        for index in (range(len(arguments)) if argument is None else [argument]):
+                            begin, end = arguments[index]
+                            token = text[begin:end].strip()
+                            if token in replacements:
+                                edits.append((begin, end, replacements[token]))
                     break
     for begin, end, replacement in reversed(edits):
         text = text[:begin] + replacement + text[end:]
     return text
 
 
-def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=()):
+def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=(), state_mask_replacements=()):
     text = strip_comments(text).strip()
+    for replacement in state_mask_replacements:
+        text = text.replace(replacement['original'], replacement['replacement'])
     literals = []
     def save_literal(match):
         literals.append(match[0])
         return f"RECOVERY_LITERAL_{len(literals)-1}"
     text = re.sub(LITERAL, save_literal, text)
+    if re.search(r'\bload_text_2022\s*\(', text):
+        # Both spellings point at the first byte of the verified 249x300
+        # native buffer. A string formatter needs the first char row.
+        for formatter in ('scnprintf', 'snprintf', '_snprintf', 'sprintf'):
+            text = rewrite_argument(text, formatter, None, None, {'text_lines':'text_lines[0]'})
     for boundary in array_boundaries:
         text = text.replace(boundary["original"], boundary["replacement"])
     # DWARF callback int (*)(int, int, event_t) is the existing CardFunction.
@@ -130,10 +148,30 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
                      ("byte", "unsigned char"), ("uchar", "unsigned char"), ("ulonglong", "unsigned long long"),
                      ("longlong", "long long")):
         text = re.sub(r"\b" + old + r"\b", new, text)
+    # The corrected EDX:EAX return can still expose the packed low word.
+    # Its two uint16_t fields are fixed at offsets zero and two.
+    for local in set(re.findall(r'\binst_info_t\s+(\w+)\s*;', text)):
+        for suffix, member in [('_0_2_', 'id'), ('_2_2_', 'data2'), ('_4_4_', 'data')]:
+            text = re.sub(r'\b' + re.escape(local) + r'\.' + suffix + r'\b', local + '.' + member, text)
+        text = re.sub(r'\b' + re.escape(local) + r'\._0_4_\b(?!\s*(?:=(?!=)|[+*/%&|^-]=))',
+            '((uint32_t)' + local + '.id | ((uint32_t)' + local + '.data2 << 16))', text)
+    def damage_word(match):
+        name, instance = match[1], match[2]
+        if not re.search(r'\b(?:unsigned int|uint32_t)\s+' + re.escape(name) + r'\s*;', text):
+            return match[0]
+        return '\n  ' + name + ' = (uint32_t)' + instance + '->damage_on_card | ((uint32_t)(uint16_t)' + instance + '->counter_power << 16);'
+    text = re.sub(r'(?m)^\s*(\w+)\._0_2_\s*=\s*(\w+)->damage_on_card\s*;\s*'
+                  r'\1\._2_2_\s*=\s*\2->counter_power\s*;', damage_word, text)
     # Verified anonymous card_instance_t unions: offset 0x38 contains
     # info_slot/info_slot_fn; offset 0x4c contains eot_toughness and its bytes.
     # Retain the real member names rather than Ghidra's generated containers.
     text = re.sub(r"\((\w+)->field_26\)\.(info_slot(?:_fn)?)\b", r"\1->\2", text)
+    # The four-byte slot union copied into the first word of a target entry
+    # is a bit-preserving scalar copy on the verified 32-bit instance layout.
+    text = re.sub(r"\*\(anon_union_4_2_[0-9a-f]+_for_card_instance_struct_26\s*\*\)"
+                  r"\((\w+)->targets\s*\+\s*(\w+)\)\s*=\s*(\w+)->field_26\s*;",
+                  r"\1->targets[\2].player = \3->info_slot;", text)
+    text = re.sub(r"\(int32_t\)\s*(\w+)->field_26\b", r"\1->info_slot", text)
     text = re.sub(r"\((\w+)->field_31\)\.field_1\.(eot_toughness[0-3])\b", r"\1->\2", text)
     text = re.sub(r"\((\w+)->field_31\)\.(eot_toughness)\b", r"\1->\2", text)
     text = re.sub(r"\(code\s*\*\)\s*(\w+)->info_slot\b", r"\1->info_slot_fn", text)
@@ -143,7 +181,7 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
     # DWARF + matching executable bindings prove these are four-byte ints.
     # Only scalar reads are representable here; writes to an extracted value
     # remain invalid C and are rejected by the compiler.
-    for word in ("event_flags", "land_can_be_played"):
+    for word in ("event_flags", "land_can_be_played", "trigger_cause_controller", "event_result"):
         def partial_word(match):
             offset, size = int(match[1]), int(match[2])
             assert offset + size <= 4
@@ -152,6 +190,8 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
     # stack_data records are four bytes; generating_event is at offset two.
     text = text.replace("*(char *)(stack_size * 4 + 0x50962e)",
                         "(char)stack_data[stack_size - 1].generating_event")
+    text = text.replace("*(short *)(stack_size * 4 + 0x50962c)",
+                        "stack_data[stack_size - 1].internal_card_id")
     text = rewrite_arity_call(text, "is_humiliated", 3, "is_humiliated_for_ability")
     # Verified EXE interface player_bits[2] at 0x4ef1a4, four bytes per
     # element; this load selects byte 3 of player_bits[player].
@@ -169,14 +209,30 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
                          ("undefined4", "uint32_t"), ("undefined8", "uint64_t")):
             body = re.sub(r"\b" + old + r"\b", new, body)
         if not re.match(r"\s*char\s*\*", signature):
-            body = re.sub(r"(?m)^(\s+)char\s*\*\s*(\w+)\s*;", r"\1const char *\2;", body)
+            def character_pointer(match):
+                name = re.escape(match[2])
+                # Byte views used by lowered copies/clears must stay writable.
+                # Header signatures still reject writes through borrowed const
+                # pointers and uses that require a mutable string argument.
+                direct_write = re.search(r"(?:\*\s*" + name + r"\b|\b" + name +
+                    r"\s*\[[^]\n]*\])\s*(?:=(?!=)|[+*/%&|^-]=)", body)
+                buffer_writer = re.search(r"\b(?:scnprintf|snprintf|sprintf|vsnprintf|strcpy|strncpy|"
+                    r"strcat|strncat|memcpy|memmove|memset)\s*\(\s*" + name + r"\b", body)
+                return match[0] if direct_write or buffer_writer else match[1] + "const char *" + match[2] + ";"
+            body = re.sub(r"(?m)^(\s+)char\s*\*\s*(\w+)\s*;", character_pointer, body)
         # These source APIs return borrowed, read-only target lists. Restore
         # const only on the locals assigned their results; writes still fail.
         target_readers = ("any_becomes_target", "becomes_target_of_spell_or_effect",
-                          "any_creature_becomes_target_of_spell_or_effect")
+                          "any_creature_becomes_target_of_spell_or_effect", "becomes_target_of_spell")
         for local in set(re.findall(r"\b(\w+)\s*=\s*(?:" + "|".join(target_readers) + r")\s*\(", body)):
             body = re.sub(r"(?m)^(\s+)target_t\s*\*\s*" + re.escape(local) + r"\s*;",
                           r"\1const target_t *" + local + ";", body)
+            # Taking the address of a member of the borrowed const list also
+            # yields a pointer to const. Writes remain compiler errors.
+            aliases = set(re.findall(r"\b(\w+)\s*=\s*&" + re.escape(local) + r"->(?:card|player)\b", body))
+            for alias in aliases:
+                body = re.sub(r"(?m)^(\s+)(int32_t|int)\s*\*\s*" + re.escape(alias) + r"\s*;",
+                              r"\1const \2 *" + alias + ";", body)
         text = signature + "{" + body
     text = re.sub(r"\([\w\s]+\*\)0x0\b", "NULL", text)
     text = re.sub(r"\n[ \t]+\n", "\n", text)
@@ -254,6 +310,10 @@ def main():
     overlapping_globals = [f[1] for line in (analysis / "absolute-interfaces.tsv").read_text().splitlines()
                            if (f := line.split("\t"))[2] == "global"]
     candidates, rejected = {}, {}
+    storage_path = root / 'docs/recovery-evidence/stack-storage.json'
+    storage_evidence = json.loads(storage_path.read_text()) if storage_path.exists() else {}
+    masks_path = root / 'docs/recovery-evidence/state-masks.json'
+    state_masks = json.loads(masks_path.read_text())['functions'] if masks_path.exists() else {}
     for row in csv.DictReader((exports / "export.tsv").open(), delimiter="\t"):
         name = row["name"]
         if row["status"] != "ok" or not row["source"].endswith(".c"):
@@ -275,8 +335,35 @@ def main():
         local = local_types.get(row["address"], {})
         if local:
             assert local["source"] == row["source"] and local["name"] == name
-        body = clean(resolved, overlapping_globals, local.get("declarations", []), local.get("array_boundaries", []))
-        code = code_only(body)
+        state_proof = state_masks.get(row['address'])
+        if state_proof:
+            assert state_proof['name'] == name and state_proof['source'] == row['source']
+            assert state_proof['raw_sha256'] == hashlib.sha256(raw.encode()).hexdigest()
+        body = clean(resolved, overlapping_globals, local.get("declarations", []), local.get("array_boundaries", []),
+                     state_proof['replacements'] if state_proof else [])
+        storage_proof = None
+        prepared_storage = storage_evidence.get('candidates', {}).get(row['address'])
+        if prepared_storage:
+            assert prepared_storage['source'] == row['source'] and prepared_storage['name'] == name
+            assert prepared_storage['raw_sha256'] == hashlib.sha256(raw.encode()).hexdigest()
+            assert aggregate_stack_aliases(body) == [tuple(a) for a in prepared_storage['expected_aliases']]
+            from recover_stack_storage import rewrite
+            previous_body = body
+            body, views = rewrite(body, aggregate_stack_aliases(body), prepared_storage['groups'], prepared_storage['target_sizes'])
+            from resolve_stack_partials import resolve_partials
+            body, partials, unresolved_partials = resolve_partials(body, views, storage_evidence['target_layouts'])
+            body = subprocess.run(["C:/Program Files/LLVM/bin/clang-format.exe",
+                '-style={BasedOnStyle: LLVM, IndentWidth: 2, BreakBeforeBraces: Allman, ColumnLimit: 100}'],
+                input=body.encode(), capture_output=True, check=True).stdout.decode()
+            from audit_source import function_body
+            storage_proof = dict(storage=views, frame_base=prepared_storage['frame_base'],
+                previous_body_sha256=hashlib.sha256(function_body(previous_body, name).encode()).hexdigest(),
+                body_sha256=hashlib.sha256(function_body(body, name).encode()).hexdigest(), scope=prepared_storage['scope'],
+                resolved_partial_views=partials, unresolved_partial_views=unresolved_partials)
+        code = code_only(strip_comments(body))
+        if aggregate_stack_aliases(code):
+            rejected[name] = "overlapping stack objects awaiting verified storage"
+            continue
         if UNRESOLVED.search(code) or re.search(r"::|\bthis\b|\._\d|\.field_", code):
             rejected[name] = "unresolved machine state or layout"
             continue
@@ -288,6 +375,10 @@ def main():
         if len(body) > args.max_characters:
             rejected[name] = "larger function awaiting focused reconstruction"
             continue
+        if state_proof:
+            body = subprocess.run(['C:/Program Files/LLVM/bin/clang-format.exe',
+                '-style={BasedOnStyle: LLVM, IndentWidth: 2, BreakBeforeBraces: Allman, ColumnLimit: 100}'],
+                input=body.encode(), capture_output=True, check=True).stdout.decode().replace('\r\n', '\n')
         if static:
             body = "static " + body
         signature = body[:body.index("{")].strip()
@@ -296,6 +387,14 @@ def main():
                                 line=metadata.get("line", ""), static=static,
                                 body=body, prototype=signature + ";", raw_sha256=hashlib.sha256(raw.encode()).hexdigest(),
                                 recovered_literals=recovered_literals)
+        if state_proof:
+            from audit_source import function_body
+            candidates[name].update(state_mask_evidence=state_proof,
+                reconstruction='State masks named from verified per-unit DWARF enumerators and machine operands; numeric value and operators preserved.',
+                reconstruction_body_sha256=hashlib.sha256(function_body(body,name).encode()).hexdigest())
+        if storage_proof:
+            candidates[name]['stack_storage_reconstruction'] = storage_proof
+            candidates[name]['reconstruction'] = storage_proof['scope']
         if local:
             candidates[name]["local_type_declarations"] = local["declarations"]
             candidates[name]["local_enum_evidence"] = local["types"]
@@ -309,6 +408,8 @@ def main():
             adaptations.append("Localized show_deck label pointers use the legacy integer-address argument.")
         if "builtin_strncpy(" in raw:
             adaptations.append("Ghidra fixed-length builtin_strncpy uses the standard C strncpy interface.")
+        if re.search(r"anon_union_4_2_[0-9a-f]+_for_card_instance_struct_26|\(int32_t\)\s*\w+->field_26", raw):
+            adaptations.append("Four-byte info-slot union payloads copy through the scalar member into the corresponding target word.")
         if re.search(r"\bconst target_t\s*\*", body):
             adaptations.append("Borrowed target-list locals preserve the existing APIs' const qualifier.")
         if not adaptations:
@@ -343,6 +444,19 @@ def main():
         if not candidates:
             break
         parts = ['#include "manalink.h"\n']
+        # A verified private global belongs only to its original source unit.
+        # Make it visible in the scratch check when all candidate users share
+        # that owner, as they will in the complete recovered source file.
+        manifest_path = root / 'docs/recovery-evidence/recovered-functions.json'
+        globals_evidence = json.loads(manifest_path.read_text()).get('source_globals', [])
+        for declaration in globals_evidence:
+            if declaration.get('linkage') != 'static':
+                continue
+            users = [c for c in candidates.values() if re.search(
+                r'\b' + re.escape(declaration['name']) + r'\b', code_only(c['body']))]
+            if (users and all(c['source'] == declaration['source'] for c in users) and
+                source_text[declaration['source']].count(declaration['declaration']) == 1):
+                parts.append(declaration['declaration'] + '\n')
         watermark_users = [c for c in candidates.values() if re.search(r"\bwatermarks\b", code_only(c["body"]))]
         if watermark_users and all(c["source"] == "cards/unstable.c" for c in watermark_users):
             # This private cache was recovered with COFF/.bss and DWARF layout
@@ -358,6 +472,13 @@ def main():
             for name in set(re.findall(r"\b[A-Za-z_]\w*\b", code_only(c["body"]))) - set(candidates) - bound_variables(c["body"]):
                 matches = [p for p in source_prototypes.get(name, [])
                            if not p["static"] or p["source"] == c["source"]]
+                # Historical source units can contain duplicate public
+                # definitions. Their identical declarations still establish
+                # one interface; keep conflicting signatures ambiguous.
+                if matches and all(not p['static'] for p in matches):
+                    unique = {re.sub(r'\s+', '', p['prototype']):p for p in matches}
+                    if len(unique) == 1:
+                        matches = [next(iter(unique.values()))]
                 if len(matches) == 1:
                     p = matches[0]
                     (private_interfaces if p["static"] else existing_interfaces)[name] = p["prototype"]
@@ -423,7 +544,7 @@ def main():
                 if not c["static"] and (not c["name"].startswith("card_") or
                                         referenced_from[c["name"]] - {relative}):
                     public.append(c["prototype"])
-            destination.write_bytes((content.rstrip() + addition.encode()).replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+            destination.write_bytes((content.rstrip() + addition.encode()).replace(b"\r\n", b"\n").replace(b"\n", b"\r\n").rstrip(b"\r\n") + b"\r\n")
         if public:
             header = root / "manalink.h"
             content = header.read_bytes()
@@ -466,6 +587,12 @@ def main():
         saved["tests"] = "Deferred by user request; no tests added or run."
         saved["native_build"] = "Not run; downstream integration and behavioral validation remain."
         manifest.write_text(json.dumps(saved, indent=2))
+        if storage_evidence:
+            for c in candidates.values():
+                if c.get('stack_storage_reconstruction'):
+                    storage_evidence.setdefault('functions', {})[c['address']] = dict(
+                        name=c['name'], source=c['source'], **c['stack_storage_reconstruction'])
+            storage_path.write_text(json.dumps(storage_evidence, indent=2))
     print(json.dumps({k:v for k,v in report.items() if k not in ("accepted_functions", "deferred")}, indent=2))
 
 

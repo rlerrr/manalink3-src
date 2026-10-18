@@ -1,5 +1,19 @@
 #include "manalink.h"
 
+/* October 2022 extension storage; fixed banks and original template. */
+static char backup_card_ext[57600];
+static char backup0_card_ext[57600];
+
+/* October 2022 dice modifier cache storage. */
+static uint8_t backup_add_to_die_rolls[8];
+static uint8_t backup_roll_extra_dice[8];
+static uint8_t backup0_add_to_die_rolls[8];
+static uint8_t backup0_roll_extra_dice[8];
+
+/* October 2022 private subtype-table snapshots. */
+static uint8_t backup_added_subtypes_not_in_play[256];
+static uint8_t backup0_added_subtypes_not_in_play[256];
+
 /* October 2022 private AI snapshots of the 14-byte card-count cache. */
 static uint8_t backup_card_counts[2][7];
 static uint8_t backup0_card_counts[2][7];
@@ -152,6 +166,13 @@ BACKUP_AND_SAVE_LIST
 #undef BACKUP_CMD_S
 void backup_data_for_ai(void)
 {
+  /* Recovered 2022 dice-cache fragment: backup_data_for_ai @ 0x26b1700. */
+  memcpy(backup_add_to_die_rolls, add_to_die_rolls, sizeof(add_to_die_rolls));
+  memcpy(backup_roll_extra_dice, roll_extra_dice, sizeof(roll_extra_dice));
+  /* End recovered 2022 dice-cache fragment: backup_data_for_ai. */
+  /* Recovered 2022 subtype-table fragment: backup_data_for_ai @ 0x26b1700. */
+  memcpy(backup_added_subtypes_not_in_play, added_subtypes_not_in_play, sizeof(added_subtypes_not_in_play));
+  /* End recovered 2022 subtype-table fragment: backup_data_for_ai. */
   /* Recovered 2022 card-count fragment: backup_data_for_ai @ 0x26b1700. */
   memcpy(backup_card_counts, card_counts, sizeof(card_counts));
   /* End recovered 2022 card-count fragment: backup_data_for_ai. */
@@ -162,6 +183,9 @@ void backup_data_for_ai(void)
   memcpy((void*)0x5265b0, &cards_data[EXE_DWORD(0x7a5380)], 16 * sizeof(card_data_t));
   EXE_DWORD(0x5b9b3c) = ai_modifier;
 
+  /* Recovered 2022 extension fragment: backup_data_for_ai @ 0x26b1700. */
+  memcpy(backup_card_ext, card_ext, sizeof(card_ext));
+  /* End recovered 2022 extension fragment: backup_data_for_ai. */
 #define BACKUP_CMD_A(data)	memcpy(backup_##data, data, sizeof(data))
 #define BACKUP_CMD_S(data)	backup_##data = data
   BACKUP_AND_SAVE_LIST
@@ -171,6 +195,13 @@ void backup_data_for_ai(void)
 
 void restore_data_for_ai(void)
 {
+  /* Recovered 2022 dice-cache fragment: restore_data_for_ai @ 0x26b1900. */
+  memcpy(add_to_die_rolls, backup_add_to_die_rolls, sizeof(add_to_die_rolls));
+  memcpy(roll_extra_dice, backup_roll_extra_dice, sizeof(roll_extra_dice));
+  /* End recovered 2022 dice-cache fragment: restore_data_for_ai. */
+  /* Recovered 2022 subtype-table fragment: restore_data_for_ai @ 0x26b1900. */
+  memcpy(added_subtypes_not_in_play, backup_added_subtypes_not_in_play, sizeof(added_subtypes_not_in_play));
+  /* End recovered 2022 subtype-table fragment: restore_data_for_ai. */
   /* Recovered 2022 card-count fragment: restore_data_for_ai @ 0x26b1900. */
   memcpy(card_counts, backup_card_counts, sizeof(card_counts));
   /* End recovered 2022 card-count fragment: restore_data_for_ai. */
@@ -180,6 +211,9 @@ void restore_data_for_ai(void)
   memcpy(&cards_data[EXE_DWORD(0x7a5380)], (void*)0x5265b0, 16 * sizeof(card_data_t));
   ai_modifier = EXE_DWORD(0x5b9b3c);
 
+  /* Recovered 2022 extension fragment: restore_data_for_ai @ 0x26b1900. */
+  memcpy(card_ext, backup_card_ext, sizeof(card_ext));
+  /* End recovered 2022 extension fragment: restore_data_for_ai. */
 #define BACKUP_CMD_A(data)	memcpy(data, backup_##data, sizeof(data))
 #define BACKUP_CMD_S(data)	data = backup_##data
   BACKUP_AND_SAVE_LIST
@@ -200,6 +234,13 @@ BACKUP_AND_SAVE_LIST
 #undef BACKUP_CMD_S
 void backup_data_for_ai_0(void)
 {
+  /* Recovered 2022 dice-cache fragment: backup_data_for_ai_0 @ 0x26b1b00. */
+  memcpy(backup0_add_to_die_rolls, add_to_die_rolls, sizeof(add_to_die_rolls));
+  memcpy(backup0_roll_extra_dice, roll_extra_dice, sizeof(roll_extra_dice));
+  /* End recovered 2022 dice-cache fragment: backup_data_for_ai_0. */
+  /* Recovered 2022 subtype-table fragment: backup_data_for_ai_0 @ 0x26b1b00. */
+  memcpy(backup0_added_subtypes_not_in_play, added_subtypes_not_in_play, sizeof(added_subtypes_not_in_play));
+  /* End recovered 2022 subtype-table fragment: backup_data_for_ai_0. */
   /* Recovered 2022 card-count fragment: backup_data_for_ai_0 @ 0x26b1b00. */
   memcpy(backup0_card_counts, card_counts, sizeof(card_counts));
   /* End recovered 2022 card-count fragment: backup_data_for_ai_0. */
@@ -213,6 +254,9 @@ void backup_data_for_ai_0(void)
   // Immediately followed by displayed_mana_pool[][].
   ASSERT(stack_size >= 0);
 
+  /* Recovered 2022 extension fragment: backup_data_for_ai_0 @ 0x26b1b00. */
+  memcpy(backup0_card_ext, card_ext, sizeof(card_ext));
+  /* End recovered 2022 extension fragment: backup_data_for_ai_0. */
 #define BACKUP_CMD_A(data)	memcpy(backup0_##data, data, sizeof(data))
 #define BACKUP_CMD_S(data)	backup0_##data = data
   BACKUP_AND_SAVE_LIST
@@ -222,6 +266,13 @@ void backup_data_for_ai_0(void)
 
 void restore_data_for_ai_0(void)
 {
+  /* Recovered 2022 dice-cache fragment: restore_data_for_ai_0 @ 0x26b1d20. */
+  memcpy(add_to_die_rolls, backup0_add_to_die_rolls, sizeof(add_to_die_rolls));
+  memcpy(roll_extra_dice, backup0_roll_extra_dice, sizeof(roll_extra_dice));
+  /* End recovered 2022 dice-cache fragment: restore_data_for_ai_0. */
+  /* Recovered 2022 subtype-table fragment: restore_data_for_ai_0 @ 0x26b1d20. */
+  memcpy(added_subtypes_not_in_play, backup0_added_subtypes_not_in_play, sizeof(added_subtypes_not_in_play));
+  /* End recovered 2022 subtype-table fragment: restore_data_for_ai_0. */
   /* Recovered 2022 card-count fragment: restore_data_for_ai_0 @ 0x26b1d20. */
   memcpy(card_counts, backup0_card_counts, sizeof(card_counts));
   /* End recovered 2022 card-count fragment: restore_data_for_ai_0. */
@@ -229,6 +280,9 @@ void restore_data_for_ai_0(void)
   memcpy_suppress_size_warning(&must_attack, (void*)0x526a30, 0x1cd00);
   STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
   memcpy(&cards_data[EXE_DWORD(0x7a5380)], (void*)0x543730, 16 * sizeof(card_data_t));
+  /* Recovered 2022 extension fragment: restore_data_for_ai_0 @ 0x26b1d20. */
+  memcpy(card_ext, backup0_card_ext, sizeof(card_ext));
+  /* End recovered 2022 extension fragment: restore_data_for_ai_0. */
 #define BACKUP_CMD_A(data)	memcpy(data, backup0_##data, sizeof(data))
 #define BACKUP_CMD_S(data)	data = backup0_##data
   BACKUP_AND_SAVE_LIST
@@ -607,4 +661,20 @@ int ai_decision_phase(int player, int *phase_code_to_go_to, int *becomes_second_
 	}
 
   return 0;
+}
+
+/* ManalinkEh 2022: 0x26b2200; original functions/ai.c:377. */
+int network_rand(int player, int upperbound)
+{
+  int result;
+  if (((unsigned char)trace_mode & 2) != 0)
+  {
+    result = EXE_FN(int, 0x44e070, int, int)(player, upperbound);
+    if ((-1 < result) && (result < upperbound))
+    {
+      return result;
+    }
+  }
+  result = internal_rand(upperbound);
+  return result;
 }

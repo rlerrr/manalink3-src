@@ -796,7 +796,14 @@ static int spiteful_prankster_legacy(int player, int card, event_t event)
   card_instance_t *pcVar2;
   unsigned int uVar3;
   int result;
-  test_definition_t this_test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_this_test;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -854,8 +861,8 @@ static int spiteful_prankster_legacy(int player, int card, event_t event)
         *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
         return 0;
       }
-      default_test_definition(&this_test, 2);
-      count_for_gfp_ability(player, card, 0x77, 2, 0, &this_test);
+      default_test_definition(&recovered_stack_this_test.test, 2);
+      count_for_gfp_ability(player, card, 0x77, 2, 0, &recovered_stack_this_test.test);
     }
     uVar3 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar3 == 0)
@@ -867,21 +874,21 @@ static int spiteful_prankster_legacy(int player, int card, event_t event)
   if (result == 0)
   {
 
-    default_target_definition(player, card, (target_definition_t *)&this_test, 0x102);
-    this_test.message[0xc] = '\0';
-    this_test.message[0xd] = '\x12';
-    this_test.message[0xe] = '\0';
-    this_test.message[0xf] = '\0';
-    this_test.message[0x44] = '\0';
-    this_test.message[0x45] = '\0';
-    this_test.message[0x46] = '\0';
-    this_test.message[0x47] = '\0';
+    default_target_definition(player, card, &recovered_stack_this_test.target, 0x102);
+    recovered_stack_this_test.test.message[0xc] = '\0';
+    recovered_stack_this_test.test.message[0xd] = '\x12';
+    recovered_stack_this_test.test.message[0xe] = '\0';
+    recovered_stack_this_test.test.message[0xf] = '\0';
+    recovered_stack_this_test.test.message[0x44] = '\0';
+    recovered_stack_this_test.test.message[0x45] = '\0';
+    recovered_stack_this_test.test.message[0x46] = '\0';
+    recovered_stack_this_test.test.message[0x47] = '\0';
     pcVar1 = get_card_instance(player, card);
     for (uVar3 = uVar3 & 0xff; uVar3 != 0; uVar3 = uVar3 - 1)
     {
-      result = can_target((target_definition_t *)&this_test);
+      result = can_target(&recovered_stack_this_test.target);
       if ((result != 0) &&
-          (result = new_pick_target((target_definition_t *)&this_test, "TARGET_ANY", 1, 0),
+          (result = new_pick_target(&recovered_stack_this_test.target, "TARGET_ANY", 1, 0),
            result != 0))
       {
         damage_creature(pcVar1->targets[1].player, pcVar1->targets[1].card, 1, player, card);
@@ -905,7 +912,14 @@ int card_spiteful_prankster(int player, int card, event_t event)
   unsigned int uVar2;
   int iVar3;
   int iVar4;
-  test_definition_t this_test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_this_test;
 
   if (event == EVENT_ABILITIES)
   {
@@ -948,9 +962,9 @@ int card_spiteful_prankster(int player, int card, event_t event)
   }
   else if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
-    default_test_definition(&this_test, 2);
-    this_test.not_me = 1;
-    count_for_gfp_ability(player, card, 0x77, 2, 0, &this_test);
+    default_test_definition(&recovered_stack_this_test.test, 2);
+    recovered_stack_this_test.test.not_me = 1;
+    count_for_gfp_ability(player, card, 0x77, 2, 0, &recovered_stack_this_test.test);
   }
 LAB_023754e1:
   instance = get_card_instance(player, card);
@@ -959,21 +973,21 @@ LAB_023754e1:
       (uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY), uVar2 != 0))
   {
 
-    default_target_definition(player, card, (target_definition_t *)&this_test, 0x102);
-    this_test.message[0xc] = '\0';
-    this_test.message[0xd] = '\x12';
-    this_test.message[0xe] = '\0';
-    this_test.message[0xf] = '\0';
-    this_test.message[0x44] = '\0';
-    this_test.message[0x45] = '\0';
-    this_test.message[0x46] = '\0';
-    this_test.message[0x47] = '\0';
+    default_target_definition(player, card, &recovered_stack_this_test.target, 0x102);
+    recovered_stack_this_test.test.message[0xc] = '\0';
+    recovered_stack_this_test.test.message[0xd] = '\x12';
+    recovered_stack_this_test.test.message[0xe] = '\0';
+    recovered_stack_this_test.test.message[0xf] = '\0';
+    recovered_stack_this_test.test.message[0x44] = '\0';
+    recovered_stack_this_test.test.message[0x45] = '\0';
+    recovered_stack_this_test.test.message[0x46] = '\0';
+    recovered_stack_this_test.test.message[0x47] = '\0';
     instance = get_card_instance(player, card);
     for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
     {
-      iVar3 = can_target((target_definition_t *)&this_test);
+      iVar3 = can_target(&recovered_stack_this_test.target);
       if ((iVar3 != 0) &&
-          (iVar3 = pick_target((target_definition_t *)&this_test, "TARGET_ANY"), iVar3 != 0))
+          (iVar3 = pick_target(&recovered_stack_this_test.target, "TARGET_ANY"), iVar3 != 0))
       {
         damage_target0(player, card, 1);
         instance->number_of_targets = '\0';
@@ -990,16 +1004,23 @@ int card_emiel_the_blessed(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
 
   check_legend_rule(player, card, event);
   if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (reason_for_trigger_controller == player))
   {
-    default_test_definition((test_definition_t *)&td, 2);
+    default_test_definition(&recovered_stack_td.test, 2);
     result = duh_mode(player);
-    etb_ability_global(player, event, (result != 0) + 1, TYPE_NONE, (test_definition_t *)&td,
+    etb_ability_global(player, event, (result != 0) + 1, TYPE_NONE, &recovered_stack_td.test,
                        player, card);
   }
   if (event == EVENT_ETB)
@@ -1020,22 +1041,22 @@ int card_emiel_the_blessed(int player, int card, event_t event)
   else if (((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
            ((event == EVENT_RESOLVE_ACTIVATION || (event == EVENT_CLEANUP))))
   {
-    default_target_definition(player, card, &td, 2);
-    td.allowed_controller = player;
-    td.preferred_controller = player;
-    td.special = 0x4000;
+    default_target_definition(player, card, &recovered_stack_td.target, 2);
+    recovered_stack_td.target.allowed_controller = player;
+    recovered_stack_td.target.preferred_controller = player;
+    recovered_stack_td.target.special = 0x4000;
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
 
       instance = get_card_instance(player, card);
-      result = valid_target(&td);
+      result = valid_target(&recovered_stack_td.target);
       if (result != 0)
       {
         blink_effect(instance->targets[0].player, instance->targets[0].card, NULL);
       }
     }
-    result = generic_activated_ability(player, card, event, 4, 3, 0, 0, 0, 0, 0, 0, &td,
-                                       "ASHNODS_BATTLEGEAR");
+    result = generic_activated_ability(player, card, event, 4, 3, 0, 0, 0, 0, 0, 0,
+                                       &recovered_stack_td.target, "ASHNODS_BATTLEGEAR");
     return result;
   }
   return 0;
@@ -1079,6 +1100,147 @@ int card_trusty_retriever(int player, int card, event_t event)
         }
       }
     }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2374400; original cards/jumpstart.c:504. */
+int card_muxus_goblin_grandee(int player, int card, event_t event)
+{
+  int *deck;
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  int iStack_f0;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+
+    deck = deck_ptr[player];
+
+    iStack_f0 = count_deck(player);
+    if (0 < iStack_f0)
+    {
+      if (6 < iStack_f0)
+      {
+        iStack_f0 = 6;
+      }
+
+      show_deck(0, deck, iStack_f0, "Here\'s the first 6 card of your deck", 0, ENGINE_DONE_LABEL);
+      iVar1 = iStack_f0 + -1;
+      do
+      {
+
+        iVar3 = deck[iVar1];
+        iVar2 = is_what(-1, iVar3, 2);
+        if (iVar2 != 0)
+        {
+          iVar2 =
+              has_subtype_by_id_2022(player, (unsigned int)cards_data[iVar3].id, SUBTYPE_GOBLIN);
+          if (iVar2 != 0)
+          {
+            iVar2 = get_cmc_by_internal_id(iVar3);
+            if (iVar2 < 6)
+            {
+
+              iVar3 = add_card_to_hand(player, iVar3);
+              put_into_play(player, iVar3);
+              remove_card_from_deck(player, iVar1);
+              iStack_f0 = iStack_f0 + -1;
+            }
+          }
+        }
+        iVar1 = iVar1 + -1;
+      } while (iVar1 != -1);
+      put_top_x_on_bottom_in_random_order(player, iStack_f0);
+    }
+    dat_ability(player, card, EVENT_ETB, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+    return 0;
+  }
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event != EVENT_DAT_ABILITY)
+  {
+    return 0;
+  }
+
+  default_test_definition(&test, 0xff);
+  test.subtype = 0x4b;
+  test.not_me = 1;
+  iVar1 = check_battlefield_for_special_card(player, card, player, 4, &test);
+  pump_until_eot(player, card, player, card, iVar1, iVar1);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23732b0; original cards/jumpstart.c:116. */
+int card_bruvac_the_grandiloquent(int player, int card, event_t event)
+{
+  enum
+  {
+    XTRIGGER_REPLACE_MILL_CARDS = 16778496
+  };
+
+  xtrigger_t xVar1;
+  int result;
+
+  check_legend_rule(player, card, event);
+  enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_REPLACE_MILL;
+  xVar1 = trigger_condition;
+  if (trigger_condition == 0xe5)
+  {
+    xVar1 = xtrigger_impl_value_dont_use_directly;
+  }
+  if ((((xVar1 == XTRIGGER_REPLACE_MILL_CARDS) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (((reason_for_trigger_controller == player && (1 - player == trigger_cause_controller)) &&
+        (0 < replace_milled))))
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      if (event == EVENT_TRIGGER)
+      {
+        event_result = event_result | 2;
+      }
+      else if (event == EVENT_RESOLVE_TRIGGER)
+      {
+        replace_milled = replace_milled << 1;
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23740f0; original cards/jumpstart.c:433. */
+int card_lightning_phoenix(int player, int card, event_t event)
+{
+  enum
+  {
+    EVENT_GRAVEYARD_ABILITY_EOT = 1280
+  };
+
+  int result;
+
+  haste(player, card, event);
+  cannot_block(player, card, event);
+
+  if ((((event == EVENT_GRAVEYARD_ABILITY_EOT) &&
+        (result = get_trap_condition(1 - player, 0), 2 < result)) &&
+       (result = has_mana(player, 4, 1), result != 0)) &&
+      (((result = do_dialog(player, player, card, -1, -1,
+                            " Return Lightning Phoenix\n Do not return Lightning Phoenix", 0),
+         result == 0 && (charge_mana(player, COLOR_RED, 1), spell_fizzled != 1)) &&
+        (result = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM_GRAVE), result == 0))))
+  {
+    remove_state(player, card, 0x20);
+    put_into_play(player, card);
+    return -1;
   }
   return 0;
 }

@@ -5769,8 +5769,22 @@ int card_gusthas_scepter(int player, int card, event_t event)
   unsigned int uVar7;
   int leg_1;
   int idx_1;
-  int leg;
-  int idx;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    char buffer[100];
+    int value;
+    uint8_t bytes[100];
+  } recovered_stack_leg;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    int value;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_idx;
 
   instance = get_card_instance(player, card);
   leaves_play_2022(player, card, event, 1, 0);
@@ -5780,9 +5794,11 @@ int card_gusthas_scepter(int player, int card, event_t event)
       goto LAB_020a1c48;
   LAB_020a1b18:
 
-    leg = 0;
-    idx = 0;
-    while (puVar4 = (unsigned int *)exiledby_find_any(player, card, &leg, &idx), puVar4 != NULL)
+    recovered_stack_leg.value = 0;
+    recovered_stack_idx.value = 0;
+    while (puVar4 = (unsigned int *)exiledby_find_any(player, card, &recovered_stack_leg.value,
+                                                      &recovered_stack_idx.value),
+           puVar4 != NULL)
     {
 
       uVar7 = *puVar4;
@@ -5866,9 +5882,9 @@ LAB_020a1c48:
 
       leg_1 = 0;
       idx_1 = 0;
-      scnprintf((char *)&leg, 100, "Select a card to exile");
-      new_default_test_definition((test_definition_t *)&idx, 0xff, (char *)&leg);
-      iVar2 = new_select_a_card(player, player, 4, 1, 3, -1, (test_definition_t *)&idx);
+      scnprintf(recovered_stack_leg.buffer, 100, "Select a card to exile");
+      new_default_test_definition(&recovered_stack_idx.test, 0xff, recovered_stack_leg.buffer);
+      iVar2 = new_select_a_card(player, player, 4, 1, 3, -1, &recovered_stack_idx.test);
       iVar3 = get_original_internal_card_id(player, iVar2);
       exiledby_remember(player, instance->parent_card, player, iVar3, &leg_1, &idx_1);
       play_sound_effect(WAV_DESTROY);
@@ -6006,4 +6022,123 @@ int card_phantasmal_sphere(int player, int card, event_t event)
 LAB_020abd00:
   leaves_play_2022(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, 1, 1);
   return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20ab320; original cards/alliances.c:4535. */
+int card_natures_wrath(int player, int card, event_t event)
+{
+  int t_player;
+  int iVar1;
+  card_instance_t *instance;
+  const char *pcVar3;
+  int iVar4;
+  test_definition_t *ptVar5;
+  test_definition_t test;
+  test_definition_t test2;
+  test_definition_t test3;
+  test_definition_t test4;
+
+  basic_upkeep(player, card, event, 0, 0, 0, 1, 0, 0);
+  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 1);
+    test.subtype = get_hacked_subtype(player, card, 0x5002);
+    iVar1 = new_make_test_in_play(trigger_cause_controller, trigger_cause, -1, &test);
+    if (iVar1 != 0)
+    {
+      instance = get_card_instance(player, card);
+      instance->info_slot = 1;
+      etb_ability_global(2, event, 2, TYPE_NONE, &test, player, card);
+    }
+    default_test_definition(&test2, 0x47);
+    test2.color = get_sleighted_color_test(player, card, 4);
+    iVar1 = new_make_test_in_play(trigger_cause_controller, trigger_cause, -1, &test2);
+    if (iVar1 != 0)
+    {
+      instance = get_card_instance(player, card);
+      instance->info_slot = 2;
+      etb_ability_global(2, event, 2, TYPE_NONE, &test2, player, card);
+    }
+    default_test_definition(&test3, 1);
+    test3.subtype = get_hacked_subtype(player, card, 0x5009);
+    iVar1 = new_make_test_in_play(trigger_cause_controller, trigger_cause, -1, &test3);
+    if (iVar1 != 0)
+    {
+      instance = get_card_instance(player, card);
+      instance->info_slot = 3;
+      etb_ability_global(2, event, 2, TYPE_NONE, &test3, player, card);
+    }
+    default_test_definition(&test4, 0x47);
+    test4.color = get_sleighted_color_test(player, card, 2);
+    iVar1 = new_make_test_in_play(trigger_cause_controller, trigger_cause, -1, &test4);
+    if (iVar1 != 0)
+    {
+      instance = get_card_instance(player, card);
+      instance->info_slot = 4;
+      etb_ability_global(2, event, 2, TYPE_NONE, &test4, player, card);
+    }
+  }
+  if (event != EVENT_ETB)
+    goto LAB_020ab38d;
+
+  instance = get_card_instance(player, card);
+  t_player = trigger_cause_controller;
+  iVar1 = instance->info_slot;
+  if (iVar1 - 1U < 2)
+  {
+
+    pcVar3 = get_hacked_land_text(player, card, "Select %a land to sacrifice.", 0x5002);
+    new_default_test_definition(&test3, 1, pcVar3);
+    test3.subtype = get_hacked_subtype(player, card, 0x5002);
+    pcVar3 = get_sleighted_color_text(player, card, "Select a %s permanent card to sacrifice.", 2);
+    new_default_test_definition(&test4, 0x47, pcVar3);
+    test4.color = get_sleighted_color_test(player, card, 4);
+    iVar1 = new_can_sacrifice(player, card, t_player, &test4);
+    iVar4 = new_can_sacrifice(player, card, t_player, &test3);
+    iVar1 = dialog_impl(t_player, card, EVENT_ACTIVATE, "\001\002", "\001\003", "Sac Island", iVar4,
+                        5, "Sac Blue permanent", iVar1, 5, 0, 0, 0, 0);
+    if (iVar1 == 1)
+    {
+      ptVar5 = &test3;
+    LAB_020ab8ec:
+      new_sacrifice(t_player, card, t_player, SAC_CAUSED | SAC_NO_CANCEL, ptVar5);
+    }
+    else if (iVar1 == 2)
+    {
+      ptVar5 = &test4;
+      goto LAB_020ab8ec;
+    }
+    iVar1 = instance->info_slot;
+  }
+  if (iVar1 - 3U < 2)
+  {
+
+    pcVar3 = get_hacked_land_text(player, card, "Select %a land to sacrifice.", 0x5009);
+    new_default_test_definition(&test3, 1, pcVar3);
+    test3.subtype = get_hacked_subtype(player, card, 0x5009);
+    pcVar3 = get_sleighted_color_text(player, card, "Select a %s permanent card to sacrifice.", 1);
+    new_default_test_definition(&test4, 0x47, pcVar3);
+    test4.color = get_sleighted_color_test(player, card, 2);
+    iVar1 = new_can_sacrifice(player, card, t_player, &test4);
+    iVar4 = new_can_sacrifice(player, card, t_player, &test3);
+    iVar1 = dialog_impl(t_player, card, EVENT_ACTIVATE, "\001\002", "\001\003", "Sac Swamp", iVar4,
+                        5, "Sac Black permanent", iVar1, 5, 0, 0, 0, 0);
+    if (iVar1 == 1)
+    {
+      ptVar5 = &test3;
+    }
+    else
+    {
+      if (iVar1 != 2)
+        goto LAB_020ab38d;
+      ptVar5 = &test4;
+    }
+    new_sacrifice(t_player, card, t_player, SAC_CAUSED | SAC_NO_CANCEL, ptVar5);
+  }
+LAB_020ab38d:
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
 }

@@ -3572,31 +3572,39 @@ int card_breyas_apprentice(int player, int card, event_t event)
   unsigned int player_00;
   target_definition_t *ptStack_140;
   target_definition_t td;
-  test_definition_t test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_test;
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    default_token_definition(player, card, 0x4995, (token_generation_t *)&test);
-    test.message[0x1c] = '\x01';
-    test.message[0x1d] = '\0';
-    test.message[0x1e] = '\0';
-    test.message[0x1f] = '\0';
-    test.message[0x18] = '\x01';
-    test.message[0x19] = '\0';
-    test.message[0x1a] = '\0';
-    test.message[0x1b] = '\0';
-    test.message[0x20] = ' ';
-    test.message[0x21] = '\0';
-    test.message[0x22] = '\0';
-    test.message[0x23] = '\0';
-    generate_token((token_generation_t *)&test);
+    default_token_definition(player, card, 0x4995, &recovered_stack_test.token);
+    recovered_stack_test.test.message[0x1c] = '\x01';
+    recovered_stack_test.test.message[0x1d] = '\0';
+    recovered_stack_test.test.message[0x1e] = '\0';
+    recovered_stack_test.test.message[0x1f] = '\0';
+    recovered_stack_test.test.message[0x18] = '\x01';
+    recovered_stack_test.test.message[0x19] = '\0';
+    recovered_stack_test.test.message[0x1a] = '\0';
+    recovered_stack_test.test.message[0x1b] = '\0';
+    recovered_stack_test.test.message[0x20] = ' ';
+    recovered_stack_test.test.message[0x21] = '\0';
+    recovered_stack_test.test.message[0x22] = '\0';
+    recovered_stack_test.test.message[0x23] = '\0';
+    generate_token(&recovered_stack_test.token);
   }
   else
   {
     if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
     {
-      new_default_test_definition(&test, 0x40, "Select an artifact to sacrifice.");
+      new_default_test_definition(&recovered_stack_test.test, 0x40,
+                                  "Select an artifact to sacrifice.");
       default_target_definition(player, card, &td, 2);
       td.preferred_controller = player;
       instance = get_card_instance(player, card);
@@ -3604,7 +3612,7 @@ int card_breyas_apprentice(int player, int card, event_t event)
       {
         iVar3 = generic_activated_ability_with_sacrifice_as_cost(
             player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, 0, 0, 0, 0, 0, 0, 0, NULL, NULL,
-            TYPE_ARTIFACT, &test, SARV_REPORT_CMC);
+            TYPE_ARTIFACT, &recovered_stack_test.test, SARV_REPORT_CMC);
         return iVar3;
       }
       if (event == EVENT_ACTIVATE)
@@ -3623,7 +3631,7 @@ int card_breyas_apprentice(int player, int card, event_t event)
           return 0;
         }
         uVar2 = new_sacrifice(player, card, player, SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK,
-                              &test);
+                              &recovered_stack_test.test);
         if (uVar2 != 0)
         {
           if (iVar3 == 1)
@@ -3669,7 +3677,8 @@ int card_breyas_apprentice(int player, int card, event_t event)
       {
         return 0;
       }
-      new_default_test_definition(&test, 0x40, "Select an artifact to sacrifice.");
+      new_default_test_definition(&recovered_stack_test.test, 0x40,
+                                  "Select an artifact to sacrifice.");
       default_target_definition(player, card, &td, 2);
       td.preferred_controller = player;
       instance = get_card_instance(player, card);
@@ -5187,7 +5196,14 @@ int card_territorial_kavu(int player, int card, event_t event)
   int player_00;
   int32_t targ_player;
   unsigned int uVar4;
-  test_definition_t test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_test;
 
   if (event - EVENT_POWER < 2)
   {
@@ -5255,13 +5271,13 @@ LAB_02240a95:
     else
     {
 
-      default_target_definition(player, card, (target_definition_t *)&test, 2);
-      test.message[0xc] = '\0';
-      test.message[0xd] = '\x10';
-      test.message[0xe] = '\0';
-      test.message[0xf] = '\0';
+      default_target_definition(player, card, &recovered_stack_test.target, 2);
+      recovered_stack_test.test.message[0xc] = '\0';
+      recovered_stack_test.test.message[0xd] = '\x10';
+      recovered_stack_test.test.message[0xe] = '\0';
+      recovered_stack_test.test.message[0xf] = '\0';
       instance = get_card_instance(player, card);
-      iVar2 = new_pick_target((target_definition_t *)&test,
+      iVar2 = new_pick_target(&recovered_stack_test.target,
                               "Select the owner of the graveyard you want to look.", 0, 0x80);
       if (iVar2 == 0)
       {
@@ -5270,8 +5286,8 @@ LAB_02240a95:
       targ_player = instance->targets[0].player;
       instance->number_of_targets = '\0';
     }
-    new_default_test_definition(&test, 0xff, "Select a card to exile.");
-    iVar2 = new_select_a_card(player, targ_player, 2, 0, 1, -1, &test);
+    new_default_test_definition(&recovered_stack_test.test, 0xff, "Select a card to exile.");
+    iVar2 = new_select_a_card(player, targ_player, 2, 0, 1, -1, &recovered_stack_test.test);
     if (iVar2 != -1)
     {
       rfg_card_from_grave(targ_player, iVar2);
@@ -5739,7 +5755,14 @@ static int magus_of_the_bridge_effect(int player, int card, event_t event)
   card_instance_t *pcVar1;
   int result;
   card_instance_t *pcVar3;
-  test_definition_t this_test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_this_test;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -5782,8 +5805,8 @@ static int magus_of_the_bridge_effect(int player, int card, event_t event)
     if ((pcVar3 != NULL) && (pcVar3 = get_card_instance(affected_card_controller, affected_card),
                              pcVar3->kill_code != '\0'))
     {
-      default_test_definition(&this_test, 2);
-      this_test.type_flag = 3;
+      default_test_definition(&recovered_stack_this_test.test, 2);
+      recovered_stack_this_test.test.type_flag = 3;
 
       if ((-1 < pcVar1->damage_target_player) &&
           ((pcVar1->damage_target_card == affected_card &&
@@ -5798,7 +5821,7 @@ static int magus_of_the_bridge_effect(int player, int card, event_t event)
         }
         *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
       }
-      count_for_gfp_ability(player, card, 0x77, player, 0, &this_test);
+      count_for_gfp_ability(player, card, 0x77, player, 0, &recovered_stack_this_test.test);
     }
     result = check_status(player, card, 0x10000);
     if (result != 0)
@@ -5811,18 +5834,18 @@ static int magus_of_the_bridge_effect(int player, int card, event_t event)
   if (result != 0)
   {
 
-    default_token_definition(player, card, 0x49ac, (token_generation_t *)&this_test);
-    this_test.message[0x1c] = '\x02';
-    this_test.message[0x1d] = '\0';
-    this_test.message[0x1e] = '\0';
-    this_test.message[0x1f] = '\0';
-    this_test.message[0x18] = '\x02';
-    this_test.message[0x19] = '\0';
-    this_test.message[0x1a] = '\0';
-    this_test.message[0x1b] = '\0';
-    this_test.message[0x28] = '\x02';
-    this_test.message[0x2b] = (char)result;
-    generate_token((token_generation_t *)&this_test);
+    default_token_definition(player, card, 0x49ac, &recovered_stack_this_test.token);
+    recovered_stack_this_test.test.message[0x1c] = '\x02';
+    recovered_stack_this_test.test.message[0x1d] = '\0';
+    recovered_stack_this_test.test.message[0x1e] = '\0';
+    recovered_stack_this_test.test.message[0x1f] = '\0';
+    recovered_stack_this_test.test.message[0x18] = '\x02';
+    recovered_stack_this_test.test.message[0x19] = '\0';
+    recovered_stack_this_test.test.message[0x1a] = '\0';
+    recovered_stack_this_test.test.message[0x1b] = '\0';
+    recovered_stack_this_test.test.message[0x28] = '\x02';
+    recovered_stack_this_test.test.message[0x2b] = (char)result;
+    generate_token(&recovered_stack_this_test.token);
     kill_card(player, card, KILL_EXILE);
   }
 LAB_0222ac14:
@@ -5839,7 +5862,14 @@ int card_magus_of_the_bridge(int player, int card, event_t event)
   card_instance_t *instance;
   int iVar2;
   int iVar3;
-  test_definition_t this_test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_this_test;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -5875,9 +5905,10 @@ int card_magus_of_the_bridge(int player, int card, event_t event)
   }
   else if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
-    default_test_definition(&this_test, 2);
-    this_test.type_flag = 3;
-    count_for_gfp_ability_and_store_values(player, card, 0x77, 2, 0, &this_test, 0x200, 0);
+    default_test_definition(&recovered_stack_this_test.test, 2);
+    recovered_stack_this_test.test.type_flag = 3;
+    count_for_gfp_ability_and_store_values(player, card, 0x77, 2, 0,
+                                           &recovered_stack_this_test.test, 0x200, 0);
   }
 LAB_022399a5:
   instance = get_card_instance(player, card);
@@ -5886,18 +5917,18 @@ LAB_022399a5:
       (iVar3 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY), iVar3 != 0))
   {
 
-    default_token_definition(player, card, 0x49ac, (token_generation_t *)&this_test);
-    this_test.message[0x2b] = (char)iVar3;
-    this_test.message[0x1c] = '\x02';
-    this_test.message[0x1d] = '\0';
-    this_test.message[0x1e] = '\0';
-    this_test.message[0x1f] = '\0';
-    this_test.message[0x18] = '\x02';
-    this_test.message[0x19] = '\0';
-    this_test.message[0x1a] = '\0';
-    this_test.message[0x1b] = '\0';
-    this_test.message[0x28] = '\x02';
-    generate_token((token_generation_t *)&this_test);
+    default_token_definition(player, card, 0x49ac, &recovered_stack_this_test.token);
+    recovered_stack_this_test.test.message[0x2b] = (char)iVar3;
+    recovered_stack_this_test.test.message[0x1c] = '\x02';
+    recovered_stack_this_test.test.message[0x1d] = '\0';
+    recovered_stack_this_test.test.message[0x1e] = '\0';
+    recovered_stack_this_test.test.message[0x1f] = '\0';
+    recovered_stack_this_test.test.message[0x18] = '\x02';
+    recovered_stack_this_test.test.message[0x19] = '\0';
+    recovered_stack_this_test.test.message[0x1a] = '\0';
+    recovered_stack_this_test.test.message[0x1b] = '\0';
+    recovered_stack_this_test.test.message[0x28] = '\x02';
+    generate_token(&recovered_stack_this_test.token);
     if ((char)((unsigned int)iVar3 >> 8) != '\0')
     {
       kill_card(player, card, KILL_EXILE);
@@ -7969,4 +8000,1318 @@ int card_mount_velus_manticore(int player, int card, event_t event)
   }
   iVar1 = global_enchantment(player, card, event);
   return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22305e0; original cards/modern_horizons_2.c:1596. */
+int card_chatterfang_squirrel_general(int player, int card, event_t event)
+{
+  enum
+  {
+    SARV_REPORT_COUNT = 8
+  };
+
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  target_definition_t td;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_ACTIVATE)
+  {
+    new_default_test_definition(&test, 0x47, "Select a Squirrel to sacrifice.");
+    test.subtype = 0xc0;
+    default_target_definition(player, card, &td, 2);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    new_default_test_definition(&test, 0x47, "Select a Squirrel to sacrifice.");
+    test.subtype = 0xc0;
+    default_target_definition(player, card, &td, 2);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+
+      instance = get_card_instance(player, card);
+      iVar1 = instance->info_slot;
+      instance->info_slot = 0;
+      iVar3 = valid_target(&td);
+      if (iVar3 != 0)
+      {
+        pump_until_eot_merge_previous(player, card, instance->targets[0].player,
+                                      instance->targets[0].card, iVar1, -iVar1);
+      }
+    }
+  }
+  iVar1 = generic_activated_ability_with_sacrifice_as_cost(
+      player, card, event, GAA_CAN_TARGET, 0, 1, 0, 0, 0, 0, 0, &td, "TARGET_CREATURE", TYPE_NONE,
+      &test, SARV_REPORT_CMC | SARV_REPORT_COUNT);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x2230860; original cards/modern_horizons_2.c:1655. */
+int card_chitterspitter(int player, int card, event_t event)
+{
+  enum
+  {
+    COUNTER_ACORN = 160
+  };
+
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  test_definition_t test;
+
+  result = duh_mode(player);
+  upkeep_trigger_ability_mode(player, card, event, player,
+                              (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    new_default_test_definition(&test, 0x47, "Select a token to sacrifice.");
+    test.type_flag = 6;
+    result = new_can_sacrifice(player, card, player, &test);
+    if (result != 0)
+    {
+
+      uVar3 = new_sacrifice(player, card, player, SAC_RETURN_CHOICE | SAC_JUST_MARK, &test);
+      if (uVar3 != 0)
+      {
+        add_counters_from_source(player, card, player, card, COUNTER_ACORN, 1);
+        kill_card(player, uVar3 >> 0x18, KILL_SACRIFICE);
+      }
+    }
+  }
+  else if (event - EVENT_POWER < 2)
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if ((result == 0) && (affected_card_controller == player))
+      {
+        result = has_subtype(player, affected_card, SUBTYPE_SQUIRREL);
+        if (result != 0)
+        {
+          result = count_counters(player, card, COUNTER_ACORN);
+          event_result = event_result + result;
+        }
+      }
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    generate_token_by_id(player, card, 0x4991);
+  }
+  result = generic_activated_ability(player, card, event, 1, 0, 0, 0, 1, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x222ba50; original cards/modern_horizons_2.c:1961. */
+static int card_exiled_with_void_counter(int player, int card, event_t event)
+{
+  enum
+  {
+    COUNTER_VOID = 170
+  };
+
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int card_00;
+  int iStack_14;
+
+  if (event == EVENT_SET_LEGACY_EFFECT_NAME)
+  {
+    instance = get_card_instance(player, card);
+    if (-1 < instance->targets[0].card)
+    {
+
+      instance = get_card_instance(player, card);
+      scnprintf(set_legacy_effect_name_addr, 0x33, "%s",
+                cards_ptr[cards_data[instance->targets[0].card].id]->name);
+    }
+  }
+  else
+  {
+    if (event == EVENT_SET_LEGACY_EFFECT_TEXT)
+    {
+      scnprintf(set_legacy_effect_name_addr, 0x33, "Exiled with a void counter.");
+      return 0;
+    }
+    if (event == EVENT_STATIC_EFFECTS)
+    {
+
+      instance = get_card_instance(player, card);
+      iStack_14 = 0;
+      iVar3 = instance->targets[0].card;
+      if (0 < active_cards_count[player])
+      {
+        card_00 = 0;
+        do
+        {
+          instance = in_play(player, card_00);
+          if (instance != NULL)
+          {
+            iVar2 = is_what(player, card_00, 0x80);
+            if (iVar2 != 0)
+            {
+
+              instance = get_card_instance(player, card_00);
+              if (instance->info_slot_fn == card_exiled_with_void_counter)
+              {
+                iVar2 = count_counters(player, card_00, COUNTER_VOID);
+                if ((iVar2 != 0) && (iVar3 == instance->targets[0].card))
+                {
+                  iStack_14 = iStack_14 + 1;
+                }
+              }
+            }
+          }
+          card_00 = card_00 + 1;
+        } while (card_00 < active_cards_count[player]);
+      }
+      iVar3 = count_iid_in_rfg(player, iVar3);
+      if (iVar3 < iStack_14)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2235ad0; original cards/modern_horizons_2.c:3134. */
+int card_galvanic_relay(int player, int card, event_t event)
+{
+  enum
+  {
+    MPCFE_DURING_YOUR_NEXT_TURN = 1024
+  };
+
+  int result;
+  card_instance_t *instance;
+  bool bVar3;
+
+  if (event == EVENT_QUERY)
+  {
+    if (attacking_card == 4)
+    {
+      return 1;
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    result = exile_top_x_card_you_may_play_them(player, card, 1, NULL, player,
+                                                MPCFE_DURING_YOUR_NEXT_TURN |
+                                                    MPCFE_UNTIL_END_OF_YOUR_NEXT_TURN);
+    bVar3 = current_turn == player;
+    instance = get_card_instance(player, result);
+    instance->targets[1].card = (unsigned int)bVar3;
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22419b0; original cards/modern_horizons_2.c:6955. */
+int card_tizerus_charger(int player, int card, event_t event)
+{
+  enum
+  {
+    COUNTER_FLYING = 147
+  };
+
+  int result;
+
+  if ((((event == EVENT_CAST_SPELL) || (event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE)) &&
+       (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = check_special_flags3(player, card, 0x80000);
+    if (result != 0)
+    {
+
+      result = dialog_impl(player, card, event, "\001\002", "\001\014", "\001\003", "+1/+1 counter",
+                           1, 10, "Flying counter", 1, 0x14, 0, 0, 0, 0);
+      if (result == 1)
+      {
+        enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 1);
+      }
+      else if (result == 2)
+      {
+        enters_the_battlefield_with_counters(player, card, event, COUNTER_FLYING, 1);
+      }
+    }
+  }
+  result = escape(player, card, event, 4, 1, 0, 0, 0, 0, 5);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x223f5c0; original cards/modern_horizons_2.c:6239. */
+int card_steel_dromedary(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  comes_into_play_tapped(player, card, event);
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 2);
+  if (event == EVENT_UNTAP)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+  }
+  else if ((event != EVENT_CHANGE_TYPE) && (event != EVENT_BEGIN_COMBAT))
+  {
+    return 0;
+  }
+  result = count_counters(player, card, COUNTER_P1_P1);
+  if (result != 0)
+  {
+    does_not_untap(player, card, event);
+    result = beginning_of_combat_2022(player, card, event, player);
+    if (result != 0)
+    {
+      default_target_definition(player, card, &td, 2);
+      td.preferred_controller = player;
+      result = can_target(&td);
+      if ((result != 0) &&
+          (result = new_pick_target(&td, "Select target creature which will get a +1/+1 counter.",
+                                    0, 0x80),
+           result != 0))
+      {
+
+        instance = get_card_instance(player, card);
+        move_counters_from_source(player, card, instance->targets[0].player,
+                                  instance->targets[0].card, player, card, COUNTER_P1_P1, 1);
+        instance->number_of_targets = '\0';
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2238260; original cards/modern_horizons_2.c:3874. */
+int card_junk_winder(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_test;
+
+  if (event == EVENT_MODIFY_COST)
+  {
+    if ((card != affected_card) || (player != affected_card_controller))
+    {
+      if (trigger_condition != 0xdb)
+      {
+        return 0;
+      }
+      goto LAB_0223828c;
+    }
+    default_test_definition(&recovered_stack_test.test, 0x47);
+    recovered_stack_test.test.type_flag = 6;
+    result =
+        check_battlefield_for_special_card(player, card, player, 4, &recovered_stack_test.test);
+    COST_COLORLESS = COST_COLORLESS - (char)result;
+    if (trigger_condition != 0xdb)
+    {
+      return 0;
+    }
+  }
+  else if (trigger_condition != 0xdb)
+    goto LAB_0223828c;
+  if ((card == affected_card) && (affected_card_controller == player))
+  {
+    default_test_definition(&recovered_stack_test.test, 0x47);
+    recovered_stack_test.test.type_flag = 6;
+    etb_ability_global(player, event, 2, TYPE_NONE, &recovered_stack_test.test, player, card);
+  }
+LAB_0223828c:
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &recovered_stack_test.target, 0x47);
+    recovered_stack_test.target.allowed_controller = (int32_t)(1 - player);
+    recovered_stack_test.test.message[0x14] = '\x01';
+    recovered_stack_test.test.message[0x15] = '\0';
+    recovered_stack_test.test.message[0x16] = '\0';
+    recovered_stack_test.test.message[0x17] = '\0';
+    instance = get_card_instance(player, card);
+    result = can_target(&recovered_stack_test.target);
+    if ((result != 0) &&
+        (result = new_pick_target(&recovered_stack_test.target,
+                                  "Select target nonland permanent an opponent controls.", 0, 0x80),
+         result != 0))
+    {
+      effect_frost_titan(player, card, instance->targets[0].player, instance->targets[0].card);
+      instance->number_of_targets = '\0';
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22361d0; original cards/modern_horizons_2.c:3234. */
+int card_geyadrone_dihada(int player, int card, event_t event)
+{
+  enum
+  {
+    COUNTER_CORRUPTION = 163
+  };
+
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int *piVar5;
+  bool bVar6;
+  int iStack_574;
+  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    int value;
+    target_definition_t target;
+    uint8_t bytes[84];
+  } recovered_stack_p;
+
+  int aiStack_4d0[2];
+  int c;
+  int aiStack_4c4[301];
+  check_legend_rule(player, card, event);
+  misc_protection(player, card, event);
+  if (event == EVENT_PROT_MISC)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      if (((unsigned int)event_result >> 24 & 0xff) == '\x06')
+      {
+        event_result = event_result | 1;
+        return 0;
+      }
+      get_protection_source('\0', &recovered_stack_p.value, &c);
+      if ((((-1 < recovered_stack_p.value) && (-1 < c)) &&
+           (iVar2 = is_what(recovered_stack_p.value, c, 0x47), iVar2 != 0)) &&
+          (iVar2 = count_counters(recovered_stack_p.value, c, COUNTER_CORRUPTION), iVar2 != 0))
+      {
+        event_result = event_result | 1;
+      }
+    }
+  }
+  else if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    instance = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 0x102);
+    td.special = 0x4000;
+    default_target_definition(player, card, &recovered_stack_p.target, 0x102);
+    iVar2 = can_target(&recovered_stack_p.target);
+    iVar2 = dialog_impl(player, card, event, "\001\002", "\001\017", "\001\033",
+                        "Drain 2 and corrupt", 1, 0x14 - life[player], 1, "Borrow target", iVar2,
+                        10, 0xfffffffd, "Steal all corrupted", 1, 0x1e, 0xfffffff9, 0, 0, 0, 0);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (iVar2 == 0)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      instance->number_of_targets = '\0';
+      if (iVar2 == 1)
+      {
+        td.allow_cancel = 2;
+        new_pick_target(&td, "Select another target creature or planeswalker.", 0, 0x80);
+      }
+      else if (iVar2 == 2)
+      {
+        new_pick_target(&recovered_stack_p.target, "Select target creature or planeswalker.", 0,
+                        0x81);
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+  {
+    instance = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 0x102);
+    td.special = 0x4000;
+    default_target_definition(player, card, &recovered_stack_p.target, 0x102);
+    iVar2 = can_target(&recovered_stack_p.target);
+    iVar3 = dialog_impl(player, card, event, "\001\002", "\001\017", "\001\033",
+                        "Drain 2 and corrupt", 1, 0x14 - life[player], 1, "Borrow target", iVar2,
+                        10, 0xfffffffd, "Steal all corrupted", 1, 0x1e, 0xfffffff9, 0, 0, 0, 0);
+    iVar2 = current_turn;
+    if (iVar3 == 1)
+    {
+      lose_life(1 - player, 2);
+      gain_life(player, 2);
+      iVar2 = validate_target(player, card, &td, 0);
+      if (iVar2 != 0)
+      {
+        add_counters_from_source(player, card, instance->targets[0].player,
+                                 instance->targets[0].card, COUNTER_CORRUPTION, 1);
+      }
+    }
+    else if (iVar3 == 2)
+    {
+      iVar2 = validate_target(player, card, &recovered_stack_p.target, 0);
+      if (iVar2 != 0)
+      {
+        add_counters_from_source(player, card, instance->targets[0].player,
+                                 instance->targets[0].card, COUNTER_CORRUPTION, 1);
+        effect_act_of_treason(player, card, instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+    else if (iVar3 == 3)
+    {
+      iVar3 = active_cards_count[current_turn] + -1;
+      if (iVar3 < 0)
+      {
+        iStack_574 = 0;
+        iVar3 = 1 - current_turn;
+        iVar2 = active_cards_count[iVar3] + -1;
+        if (-1 < iVar2)
+          goto LAB_022366eb;
+      }
+      else
+      {
+        iStack_574 = 0;
+        do
+        {
+          instance = in_play(iVar2, iVar3);
+          if (((instance != NULL) && (iVar4 = is_what(iVar2, iVar3, 0x47), iVar4 != 0)) &&
+              (iVar4 = count_counters(iVar2, iVar3, COUNTER_CORRUPTION), iVar4 != 0))
+          {
+            aiStack_4c4[iStack_574 * 2 + -1] = iVar2;
+            aiStack_4c4[iStack_574 * 2] = iVar3;
+            iStack_574 = iStack_574 + 1;
+          }
+          iVar3 = iVar3 + -1;
+        } while (iVar3 != -1);
+        iVar3 = 1 - current_turn;
+        iVar2 = active_cards_count[iVar3];
+        while (iVar2 = iVar2 + -1, -1 < iVar2)
+        {
+        LAB_022366eb:
+          instance = in_play(iVar3, iVar2);
+          if (((instance != NULL) && (iVar4 = is_what(iVar3, iVar2, 0x47), iVar4 != 0)) &&
+              (iVar4 = count_counters(iVar3, iVar2, COUNTER_CORRUPTION), iVar4 != 0))
+          {
+            aiStack_4c4[iStack_574 * 2 + -1] = iVar3;
+            aiStack_4c4[iStack_574 * 2] = iVar2;
+            iStack_574 = iStack_574 + 1;
+          }
+        }
+        if (0 < iStack_574)
+        {
+          piVar5 = aiStack_4d0 + iStack_574 * 2;
+          do
+          {
+            gain_control_permanently(player, *piVar5, piVar5[1]);
+            bVar6 = &c != piVar5;
+            piVar5 = piVar5 + -2;
+          } while (bVar6);
+        }
+      }
+    }
+  }
+  iVar2 = planeswalker(player, card, event, 4);
+  return iVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2237ff0; original cards/modern_horizons_2.c:3814. */
+int card_inevitable_betrayal(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+    instance = get_card_instance(player, card);
+    if (instance->info_slot == 1)
+    {
+      result = basic_spell(player, card, EVENT_CAN_CAST);
+      return result;
+    }
+    result = generic_spell(player, card, EVENT_CAN_CAST, 0x40, &td, NULL, 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    result = played_for_free(player, card);
+    if ((result != 0) || (result = is_token(player, card), result != 0))
+    {
+      default_target_definition(player, card, &td, 0);
+      td.zone = 0x1000;
+      result = generic_spell(player, card, EVENT_CAST_SPELL, 0x40, &td, NULL, 1, NULL);
+      return result;
+    }
+  }
+  else
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = card_bribery(player, card, EVENT_RESOLVE_SPELL);
+      return result;
+    }
+    if (((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET)) &&
+        (event != EVENT_MODIFY_COST))
+    {
+      return 0;
+    }
+  }
+  result = suspend_only(player, card, event, 3, 1, 0, 2, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x222a950; original cards/modern_horizons_2.c:1364. */
+static int devouring_type(int player, int card, int type)
+{
+  int iVar1;
+  const char *pcVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int iVar5;
+  unsigned int uVar6;
+  const char *puVar7;
+  int iVar8;
+  int *piVar9;
+  bool bVar10;
+  int iStack_404;
+  target_definition_t td;
+  char msg[100];
+  test_definition_t test;
+  int devoured[151];
+
+  base_target_definition(player, card, &td, type);
+  td.illegal_abilities = 0;
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  default_test_definition(&test, type);
+  pcVar2 = type_text(msg, 100, test.type, 0);
+  if ((test.type == 4) || (test.type == 0x40))
+  {
+    puVar7 = "n";
+  }
+  else
+  {
+    puVar7 = "";
+  }
+  sprintf(test.message, "Select a%s %s to sacrifice.", puVar7, pcVar2);
+  instance = get_card_instance(player, card);
+  if ((ai_is_speculating == 1) ||
+      ((iStack_404 = -1, player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+  {
+    iStack_404 = count_subtype(player, type, -1);
+    iStack_404 = iStack_404 / 3;
+  }
+  instance->targets[1].player = 0;
+  instance->targets[1].card = 0;
+  iVar4 = get_id(player, card);
+  iVar8 = 0;
+  do
+  {
+    iVar5 = can_target(&td);
+    if ((iVar5 == 0) ||
+        (uVar6 = new_sacrifice(player, card, player,
+                               SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK, &test),
+         uVar6 == 0))
+    {
+      iVar5 = iVar8 + -1;
+      iStack_404 = iVar8;
+      break;
+    }
+    instance->targets[1].card = instance->targets[1].card + 1;
+    if ((iVar4 == 0x27f5) &&
+        (iVar5 = has_subtype(player, uVar6 >> 0x18, SUBTYPE_GOBLIN), iVar5 != 0))
+    {
+      instance->targets[1].player = instance->targets[1].player + 1;
+    }
+    iVar1 = iVar8 + 1;
+    devoured[iVar8] = uVar6 >> 0x18;
+    iVar5 = iVar8;
+    iVar8 = iVar1;
+  } while (iStack_404 != iVar1);
+  if (-1 < iVar5)
+  {
+    piVar9 = devoured + iVar5;
+    do
+    {
+      kill_card(player, *piVar9, KILL_SACRIFICE);
+      bVar10 = piVar9 != devoured;
+      piVar9 = piVar9 + -1;
+    } while (bVar10);
+  }
+  return iStack_404;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void devour_type(int player, int card, event_t event, int type, int number);
+
+/* ManalinkEh 2022: 0x2230120; original cards/modern_horizons_2.c:1409. */
+void devour_type(int player, int card, event_t event, int type, int number)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = can_sacrifice_type_as_cost(player, 1, type);
+    if (result != 0)
+    {
+      instance = get_card_instance(player, card);
+      instance->state = instance->state | STATE_OUBLIETTED;
+      result = devouring_type(player, card, type);
+      instance->state = instance->state & 0xff7fffff;
+      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, number * result);
+      if (0 < result)
+      {
+        instance = get_card_instance(player, card);
+        instance->targets[2].player = 0x42;
+      }
+    }
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x22301f0; original cards/modern_horizons_2.c:1430. */
+int card_caprichrome(int player, int card, event_t event)
+{
+  int result;
+
+  vigilance(player, card, event);
+  devour_type(player, card, event, 0x40, 1);
+  result = flash(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x222b300; original cards/modern_horizons_2.c:2140. */
+int dermotaxi_legacy(int player, int card, event_t event)
+{
+  char cVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  card_instance_t *pcVar4;
+  unsigned char bVar5;
+  uint32_t argument1;
+  inst_info_t iVar6;
+  uint32_t uStack_14;
+
+  if (event != EVENT_CHANGE_TYPE)
+  {
+    attached_is_additional_subtype(player, card, event, SUBTYPE_VEHICLE);
+    if (event != EVENT_CLEANUP)
+    {
+      return 0;
+    }
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  pcVar3 = get_card_instance(player, card);
+  if (-1 < pcVar3->damage_target_player)
+  {
+
+    pcVar3 = get_card_instance(player, card);
+    pcVar4 = get_card_instance((int)pcVar3->damage_target_player, pcVar3->damage_target_card);
+    iVar2 = pcVar3->damage_target_card;
+    cVar1 = pcVar3->damage_target_player;
+    iVar6 = inst_info(pcVar3, 0x59dd);
+    argument1 = iVar6.data;
+    if ((((iVar2 == affected_card) && (affected_card_controller == cVar1)) &&
+         (argument1 != 0xffffffff)) &&
+        ((((unsigned int)land_can_be_played >> 16 & 0xff) & 2) == 0))
+    {
+
+      bVar5 = cards_data[argument1].type | 0x40;
+      if (cards_data[argument1].type == bVar5)
+      {
+        pcVar3->targets[7].player = argument1;
+        pcVar3->dummy3 = argument1;
+        pcVar4->regen_status = pcVar4->regen_status | 0x1000000;
+        uStack_14 = argument1;
+      }
+      else if ((pcVar3->targets[7].player != argument1) ||
+               (uStack_14 = pcVar3->dummy3, cards_data[pcVar3->dummy3].type != bVar5))
+      {
+
+        uStack_14 = create_a_card_type(argument1);
+        if (uStack_14 == 0xffffffff)
+        {
+          return 0;
+        }
+        cards_data[uStack_14].type = bVar5;
+        pcVar3->dummy3 = uStack_14;
+        pcVar3->targets[7].player = argument1;
+        pcVar4->regen_status = pcVar4->regen_status | 0x1000000;
+      }
+      event_result = uStack_14;
+    }
+  }
+  attached_is_additional_subtype(player, card, EVENT_CHANGE_TYPE, SUBTYPE_VEHICLE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22378f0; original cards/modern_horizons_2.c:3666. */
+int card_grist_the_hunger_tide(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  unsigned int uVar4;
+  card_instance_t *inst;
+  unsigned int player_00;
+  int player_01;
+  inst_info_t iVar5;
+  uint32_t uVar6;
+  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_this_test;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE)
+  {
+    pcVar2 = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 0x102);
+    iVar1 = life[1 - player];
+    iVar3 = count_graveyard_by_type(1 - player, 2);
+    if (iVar1 - iVar3 < 6)
+    {
+      iVar1 = can_target(&td);
+      uVar6 = 100;
+    }
+    else
+    {
+      iVar1 = can_target(&td);
+      uVar6 = 10;
+    }
+    iVar1 = dialog_impl(player, card, event, "\001\002", "\001\017", "\001\033",
+                        "Insect and mill a card", 1, 10, 1, "Destroy creature or PW", iVar1, 0x14,
+                        0xfffffffe, "Opponent loses life", 1, uVar6, 0xfffffffb, 0, 0, 0, 0);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (iVar1 == 0)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      pcVar2->number_of_targets = '\0';
+      if (iVar1 == 2)
+      {
+        new_default_test_definition(&recovered_stack_this_test.test, 2,
+                                    "Select a creature to sacrifice.");
+        uVar4 = new_sacrifice(player, card, player, SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK,
+                              &recovered_stack_this_test.test);
+        if (uVar4 != 0)
+        {
+          iVar1 = new_pick_target(&td, "Select target creature or planeswalker.", 0, 0x81);
+          player_00 = (int)uVar4 >> 0x10 & 0xff;
+          if (iVar1 == 0)
+          {
+            state_untargettable(player_00, uVar4 >> 0x18, 0);
+          }
+          else
+          {
+            kill_card(player_00, uVar4 >> 0x18, KILL_SACRIFICE);
+          }
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+  {
+    pcVar2 = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 0x102);
+    player_01 = 1 - player;
+    iVar1 = life[player_01];
+    iVar3 = count_graveyard_by_type(player_01, 2);
+    if (iVar1 - iVar3 < 6)
+    {
+      iVar1 = can_target(&td);
+      uVar6 = 100;
+    }
+    else
+    {
+      iVar1 = can_target(&td);
+      uVar6 = 10;
+    }
+    iVar1 = dialog_impl(player, card, event, "\001\002", "\001\017", "\001\033",
+                        "Insect and mill a card", 1, 10, 1, "Destroy creature or PW", iVar1, 0x14,
+                        0xfffffffe, "Opponent loses life", 1, uVar6, 0xfffffffb, 0, 0, 0, 0);
+    if (iVar1 == 1)
+    {
+      default_token_definition(player, card, 0x4952, &recovered_stack_this_test.token);
+      recovered_stack_this_test.test.message[0x28] = '\n';
+      generate_token(&recovered_stack_this_test.token);
+      while (true)
+      {
+        inst = get_card_instance(pcVar2->parent_controller, pcVar2->parent_card);
+        inst->info_slot = 0;
+        special_mill(pcVar2->parent_controller, pcVar2->parent_card, 0x5a13, player, 1);
+        iVar5 = inst_info(inst, 0x5a13);
+        if (iVar5.data2 != 0x42)
+          break;
+        add_counters_from_source(player, card, pcVar2->parent_controller, pcVar2->parent_card,
+                                 COUNTER_LOYALTY, 1);
+      }
+    }
+    else if (iVar1 == 2)
+    {
+      iVar1 = validate_target(player, card, &td, 0);
+      if (iVar1 != 0)
+      {
+        kill_card(pcVar2->targets[0].player, pcVar2->targets[0].card, KILL_DESTROY);
+      }
+    }
+    else if (iVar1 == 3)
+    {
+      iVar1 = count_graveyard_by_type(player, 2);
+      lose_life(player_01, iVar1);
+    }
+  }
+  iVar1 = planeswalker(player, card, event, 3);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x2239520; original cards/modern_horizons_2.c:4243. */
+int card_lonis_cryptozoologist(int player, int card, event_t event)
+{
+  enum
+  {
+    SARV_REPORT_COUNT = 8
+  };
+
+  card_instance_t *instance;
+  int iVar1;
+  uint32_t num_cards;
+  inst_info_t iVar2;
+  target_definition_t td;
+  char buffer[100];
+  test_definition_t test2;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((trigger_cause_controller != player || (trigger_cause != card))))
+  {
+    default_test_definition(&test, 2);
+    test.type_flag = 3;
+    etb_ability_global(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_ETB)
+  {
+    investigate(player, card, player);
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      new_default_test_definition(&test2, 0x47, "Select a Clue to sacrifice,");
+      test2.subtype = 0x3004;
+      instance = get_card_instance(player, card);
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        iVar1 = generic_activated_ability_with_sacrifice_as_cost(
+            player, card, EVENT_CAN_ACTIVATE, GAA_CAN_ONLY_TARGET_OPPONENT | GAA_UNTAPPED, 0, 0, 0,
+            0, 0, 0, 0, NULL, NULL, TYPE_NONE, &test2, SARV_REPORT_COUNT);
+        return iVar1;
+      }
+      if (event == EVENT_ACTIVATE)
+      {
+        generic_activated_ability_with_sacrifice_as_cost(
+            player, card, EVENT_ACTIVATE, GAA_CAN_ONLY_TARGET_OPPONENT | GAA_UNTAPPED, 0, 0, 0, 0,
+            0, 0, 0, NULL, NULL, TYPE_NONE, &test2, SARV_REPORT_COUNT);
+        set_inst_info(instance, 0x5a2b, instance->info_slot, 0);
+        instance->info_slot = 0;
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      {
+        return 0;
+      }
+      new_default_test_definition(&test2, 0x47, "Select a Clue to sacrifice,");
+      test2.subtype = 0x3004;
+      instance = get_card_instance(player, card);
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      default_target_definition(player, card, &td, 0);
+      td.zone = 0x1000;
+      td.allowed_controller = 1 - player;
+      iVar1 = valid_target(&td);
+      if (iVar1 != 0)
+      {
+
+        iVar2 = inst_info(instance, 0x5a2b);
+        num_cards = iVar2.data;
+        clear_info(instance, 0x5a2b);
+        scnprintf(buffer, 100, "Select a nonland permanent with mana value %d or less.", num_cards);
+        new_default_test_definition(&test, 0x39, buffer);
+        test.cmc = num_cards + 1;
+        test.type_flag = 1;
+        test.cmc_flag = 3;
+        reveal_top_cards_of_library_and_choose(player, card, 1 - player, num_cards, 0, TUTOR_PLAY,
+                                               0, TUTOR_BOTTOM_OF_DECK_RANDOM, 1, &test);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x223a530; original cards/modern_horizons_2.c:4645. */
+int card_murktide_regent(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  inst_info_t result;
+
+  delve(player, card, event);
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      instance = get_card_instance(player, card);
+      result = inst_info(instance, 0x5a37);
+      enters_the_battlefield_with_counters(player, card, EVENT_CAST_SPELL, COUNTER_P1_P1,
+                                           result.data);
+      clear_info(instance, 0x5a37);
+    }
+  }
+  else if ((event == EVENT_REMOVED_FROM_GRAVEYARD) && (affected_card_controller == player))
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      add_counters_from_source(player, card, player, card, COUNTER_P1_P1,
+                               (unsigned int)((unsigned int)event_result >> 8 & 0xff));
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x223abd0; original cards/modern_horizons_2.c:4789. */
+int card_nykthos_paragon(int player, int card, event_t event)
+{
+  int result;
+  actions_t aVar2;
+  card_instance_t *instance;
+
+  result = duh_mode(player);
+  aVar2 = trigger_gain_life(player, card, event, player, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (aVar2 != 0)
+  {
+    instance = get_card_instance(player, card);
+    if (instance->info_slot != 0x42)
+    {
+      instance = in_play(player, card);
+      if (instance != NULL)
+      {
+        manipulate_type(player, card, 2, TYPE_CREATURE, aVar2 & 0xffff | ACT_ADD_COUNTERS_BASE);
+        instance = get_card_instance(player, card);
+        set_inst_info(instance, 0x5a3e, 0, 0x42);
+      }
+    }
+  }
+  if (event == EVENT_CLEANUP)
+  {
+    instance = get_card_instance(player, card);
+    clear_info(instance, 0x5a3e);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x222ca50; original cards/modern_horizons_2.c:382. */
+int card_arcbound_javelineer(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  card_instance_t *inst;
+  card_instance_t *pcVar2;
+  uint32_t uVar3;
+  int iVar4;
+  uint32_t data;
+  inst_info_t iVar5;
+  target_definition_t td;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.required_state = 0x20;
+    inst = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar4 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0, 0, 0, 0,
+                                        &td, NULL);
+      return iVar4;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 0x84, 0, 0, 0, 0, 0, 0, 0, &td,
+                                "Select target attacking or blocking creature.");
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+
+      iVar4 = get_toughness(inst->targets[0].player, inst->targets[0].card);
+      pcVar2 = get_card_instance(inst->targets[0].player, inst->targets[0].card);
+
+      uVar1 = (uint32_t)pcVar2->damage_on_card | ((uint32_t)(uint16_t)pcVar2->counter_power << 16);
+
+      uVar3 = count_counters(player, card, COUNTER_P1_P1);
+      if (player == 0)
+      {
+        iVar4 = count_counters(0, card, COUNTER_P1_P1);
+        data = choose_a_number(0, "How many +1/+1 counters you want to remove?", iVar4);
+      }
+      else
+      {
+        data = iVar4 - (uVar1 & 0xffff);
+        if ((int)uVar3 < (int)data)
+        {
+          data = uVar3;
+        }
+      }
+      if ((-1 < (int)data) &&
+          (iVar4 = count_counters(player, card, COUNTER_P1_P1), (int)data <= iVar4))
+      {
+        set_inst_info(inst, 0x59ac, data, 0);
+        remove_counters_from_source(player, card, player, card, COUNTER_P1_P1, data);
+        return 0;
+      }
+      spell_fizzled = 1;
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      iVar4 = modular(player, card, event, 1);
+      return iVar4;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.required_state = 0x20;
+    inst = get_card_instance(player, card);
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (iVar4 = valid_target(&td), iVar4 != 0))
+  {
+    iVar5 = inst_info(inst, 0x59ac);
+    damage_target0(player, card, iVar5.data);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2232c90; original cards/modern_horizons_2.c:2191. */
+int card_dermotaxi(int player, int card, event_t event)
+{
+  target_t *ret_location;
+  unsigned short uVar1;
+  uint32_t data;
+  int iVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  int32_t player_00;
+  target_t *ptVar5;
+  target_t *ptVar6;
+  inst_info_t iVar7;
+  int iStack_f4;
+  unsigned int uStack_f0;
+  card_instance_t *pcStack_ec;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    iVar2 = count_graveyard_by_type(player, 2);
+    player_00 = 1 - player;
+    iVar4 = count_graveyard_by_type(player_00, 2);
+    pcVar3 = get_card_instance(player, card);
+    if (iVar4 == 0)
+    {
+      if (iVar2 != 0)
+      {
+        player_00 = player;
+      }
+    }
+    else if (iVar2 != 0)
+    {
+      default_target_definition(player, card, &recovered_stack_td.target, 0xff);
+      recovered_stack_td.target.zone = 0x1000;
+      recovered_stack_td.target.allow_cancel = 0;
+      recovered_stack_td.target.illegal_abilities = 0;
+      iVar2 = new_pick_target(&recovered_stack_td.target,
+                              "Select the owner of the graveyard you want to search.", 0, 0x80);
+      if (iVar2 != 0)
+      {
+        player_00 = pcVar3->targets[0].player;
+        pcVar3->number_of_targets = '\0';
+      }
+    }
+    new_default_test_definition(&recovered_stack_td.test, 2,
+                                "Select a creature card to imprint on Dermotaxi.");
+    iVar2 = new_select_a_card(player, player_00, 2, 1, 2, -1, &recovered_stack_td.test);
+    data = graveyard_ptr_mutable[player_00][iVar2];
+    rfg_card_from_grave(player_00, iVar2);
+    set_inst_info(pcVar3, 0x59dd, data, (uint16_t)player_00);
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      pcStack_ec = get_card_instance(player, card);
+      default_target_definition(player, card, &recovered_stack_td.target, 2);
+      recovered_stack_td.target.illegal_abilities = 0;
+      recovered_stack_td.target.allowed_controller = player;
+      recovered_stack_td.target.preferred_controller = player;
+      recovered_stack_td.target.illegal_state = 1;
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 0, 0, 0, 0, 0,
+                                          NULL, NULL);
+        if (iVar2 == 0)
+        {
+          return 0;
+        }
+        iVar2 = target_available(player, card, &recovered_stack_td.target);
+        return (unsigned int)(1 < iVar2);
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      {
+        return 0;
+      }
+      pcStack_ec = get_card_instance(player, card);
+      default_target_definition(player, card, &recovered_stack_td.target, 2);
+    }
+    recovered_stack_td.target.allowed_controller = player;
+    recovered_stack_td.target.illegal_state = 1;
+    recovered_stack_td.target.illegal_abilities = 0;
+    recovered_stack_td.target.preferred_controller = recovered_stack_td.target.allowed_controller;
+    if (event == EVENT_ACTIVATE)
+    {
+      pcStack_ec->number_of_targets = '\0';
+      iVar2 = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
+      if (iVar2 != 0)
+      {
+        ret_location = pcStack_ec->targets;
+        iStack_f4 = -1;
+        iVar2 = select_target(player, card, &recovered_stack_td.target, "Select a creature to tap.",
+                              ret_location);
+        if (iVar2 != 0)
+        {
+          state_untargettable(pcStack_ec->targets[0].player, pcStack_ec->targets[0].card, 1);
+          iVar2 = pcStack_ec->targets[0].card;
+          iVar4 = select_target(player, card, &recovered_stack_td.target,
+                                "Select a creature to tap.", pcStack_ec->targets + 1);
+          if (iVar4 == 0)
+          {
+            uStack_f0 = 1;
+          }
+          else
+          {
+            state_untargettable(pcStack_ec->targets[1].player, pcStack_ec->targets[1].card, 1);
+            iStack_f4 = pcStack_ec->targets[1].card;
+            uStack_f0 = 2;
+          }
+          ptVar5 = ret_location;
+          do
+          {
+            ptVar6 = ptVar5 + 1;
+            state_untargettable(ptVar5->player, ptVar5->card, 0);
+            ptVar5 = ptVar6;
+          } while (ptVar6 != ret_location + uStack_f0);
+          if (1 < uStack_f0)
+          {
+            pcStack_ec->number_of_targets = '\0';
+            tap_card(player, iVar2);
+            tap_card(player, iStack_f4);
+            return 0;
+          }
+        }
+        spell_fizzled = 1;
+        return 0;
+      }
+    }
+    else if ((event == EVENT_RESOLVE_ACTIVATION) &&
+             (iVar7 = inst_info(pcStack_ec, 0x59dd), iVar7.data != 0))
+    {
+      iVar7 = inst_info(pcStack_ec, 0x59dd);
+      uVar1 = cards_data[iVar7.data].id;
+      iVar7 = inst_info(pcStack_ec, 0x59dd);
+      iVar2 = check_rfg(((uint32_t)iVar7.id | ((uint32_t)iVar7.data2 << 16)) >> 0x10,
+                        (unsigned int)uVar1);
+      if (iVar2 != 0)
+      {
+        iVar2 = create_targetted_legacy_effect(
+            player, card, dermotaxi_legacy, pcStack_ec->parent_controller, pcStack_ec->parent_card);
+        pcVar3 = get_card_instance(player, iVar2);
+        iVar7 = inst_info(pcStack_ec, 0x59dd);
+        set_inst_info(pcVar3, 0x59dd, iVar7.data, 0);
+        return 0;
+      }
+    }
+  }
+  return 0;
 }

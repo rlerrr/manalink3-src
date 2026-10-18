@@ -3737,7 +3737,14 @@ int card_torgaar_famine_incarnate(int player, int card, event_t event)
   unsigned int uVar3;
   card_instance_t *instance;
   char sac[151];
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
 
   check_legend_rule(player, card, event);
   iVar1 = duh_mode(player);
@@ -3745,11 +3752,12 @@ int card_torgaar_famine_incarnate(int player, int card, event_t event)
   if (event == EVENT_ETB)
   {
 
-    default_target_definition(player, card, &td, 0);
-    td.zone = 0x1000;
+    default_target_definition(player, card, &recovered_stack_td.target, 0);
+    recovered_stack_td.target.zone = 0x1000;
     instance = get_card_instance(player, card);
-    iVar1 = can_target(&td);
-    if ((iVar1 != 0) && (iVar1 = new_pick_target(&td, "TARGET_PLAYER", 0, 0), iVar1 != 0))
+    iVar1 = can_target(&recovered_stack_td.target);
+    if ((iVar1 != 0) &&
+        (iVar1 = new_pick_target(&recovered_stack_td.target, "TARGET_PLAYER", 0, 0), iVar1 != 0))
     {
       uVar3 = get_starting_life_total(instance->targets[0].player);
       uVar3 = round_down_value(uVar3);
@@ -3761,9 +3769,9 @@ int card_torgaar_famine_incarnate(int player, int card, event_t event)
     if (event == EVENT_MODIFY_COST)
     {
 
-      default_test_definition((test_definition_t *)&td, 2);
+      default_test_definition(&recovered_stack_td.test, 2);
       iVar1 = get_updated_casting_cost(player, card, -1, EVENT_MODIFY_COST, -1);
-      iVar2 = max_can_sacrifice_as_cost(player, card, (test_definition_t *)&td);
+      iVar2 = max_can_sacrifice_as_cost(player, card, &recovered_stack_td.test);
       uVar3 = iVar1 + iVar2 * -2;
       iVar1 = has_mana_multi(player, uVar3 & (int)(uVar3 ^ 0xffffffff) >> 0x1f, 2, 0, 0, 0, 0);
       if (iVar1 == 0)
@@ -3792,11 +3800,11 @@ int card_torgaar_famine_incarnate(int player, int card, event_t event)
       {
 
         round_up_value(uVar3);
-        new_default_test_definition((test_definition_t *)&td, 2, "Select a creature to sacrifice.");
+        new_default_test_definition(&recovered_stack_td.test, 2, "Select a creature to sacrifice.");
 
-        max_can_sacrifice_as_cost(player, card, (test_definition_t *)&td);
+        max_can_sacrifice_as_cost(player, card, &recovered_stack_td.test);
         iVar1 = mark_sacrifice(player, card, player, SAC_AS_COST | SAC_JUST_MARK,
-                               (test_definition_t *)&td, sac);
+                               &recovered_stack_td.test, sac);
         if (spell_fizzled != 1)
         {
 
@@ -4431,16 +4439,23 @@ int card_phyrexian_scriptures(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
 
   if (event == EVENT_CHAPTER1)
   {
-    default_target_definition(player, card, &td, 2);
-    td.preferred_controller = player;
-    result = can_target(&td);
+    default_target_definition(player, card, &recovered_stack_td.target, 2);
+    recovered_stack_td.target.preferred_controller = player;
+    result = can_target(&recovered_stack_td.target);
     if (result != 0)
     {
-      result = new_pick_target(&td, "TARGET_CREATURE", 0, 1);
+      result = new_pick_target(&recovered_stack_td.target, "TARGET_CREATURE", 0, 1);
       if (result != 0)
       {
 
@@ -4453,8 +4468,8 @@ int card_phyrexian_scriptures(int player, int card, event_t event)
   }
   else if (event == EVENT_CHAPTER2)
   {
-    default_test_definition((test_definition_t *)&td, 2);
-    new_manipulate_all(player, card, 2, (test_definition_t *)&td, ACT_KILL_DESTROY);
+    default_test_definition(&recovered_stack_td.test, 2);
+    new_manipulate_all(player, card, 2, &recovered_stack_td.test, ACT_KILL_DESTROY);
   }
   else if (event == EVENT_CHAPTER3)
   {
@@ -4875,19 +4890,26 @@ int card_time_of_ice(int player, int card, event_t event)
   int result;
   card_instance_t *pcVar2;
   card_instance_t *pcVar3;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
 
   if ((event & ~EVENT_SET_LEGACY_EFFECT_NAME) == EVENT_CHAPTER1)
   {
 
-    default_target_definition(player, card, &td, 2);
-    td.allowed_controller = 1 - player;
-    td.preferred_controller = td.allowed_controller;
+    default_target_definition(player, card, &recovered_stack_td.target, 2);
+    recovered_stack_td.target.allowed_controller = 1 - player;
+    recovered_stack_td.target.preferred_controller = recovered_stack_td.target.allowed_controller;
     pcVar2 = get_card_instance(player, card);
-    result = can_target(&td);
+    result = can_target(&recovered_stack_td.target);
     if (result != 0)
     {
-      result = pick_target(&td, "TARGET_CREATURE");
+      result = pick_target(&recovered_stack_td.target, "TARGET_CREATURE");
       if (result != 0)
       {
 
@@ -4904,8 +4926,8 @@ int card_time_of_ice(int player, int card, event_t event)
   }
   else if (event == EVENT_CHAPTER3)
   {
-    default_test_definition((test_definition_t *)&td, 2);
-    new_manipulate_all(player, card, 2, (test_definition_t *)&td, ACT_BOUNCE);
+    default_test_definition(&recovered_stack_td.test, 2);
+    new_manipulate_all(player, card, 2, &recovered_stack_td.test, ACT_BOUNCE);
   }
   result = saga(player, card, event, 3);
   return result;
@@ -5092,7 +5114,14 @@ int card_karn_scion_of_urza(int player, int card, event_t event)
   int leg;
   int idx;
   target_definition_t td;
-  test_definition_t test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_test;
 
   check_legend_rule(player, card, event);
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -5151,10 +5180,10 @@ int card_karn_scion_of_urza(int player, int card, event_t event)
         idx = 0;
         show_deck(player, deck_ptr[player], iStack_148, "Cards revealed by Karn", 0,
                   ENGINE_DONE_LABEL);
-        new_default_test_definition(&test, 0xff, "Select a card.");
-        test.create_minideck = (unsigned short)iStack_148;
-        test.no_shuffle = 1;
-        pos = new_select_a_card(1 - player, player, 1, 1, 3, -1, &test);
+        new_default_test_definition(&recovered_stack_test.test, 0xff, "Select a card.");
+        recovered_stack_test.test.create_minideck = (unsigned short)iStack_148;
+        recovered_stack_test.test.no_shuffle = 1;
+        pos = new_select_a_card(1 - player, player, 1, 1, 3, -1, &recovered_stack_test.test);
         exiledby_remember(player, instance->parent_card, player, deck_ptr[player][pos], &leg, &idx);
         play_sound_effect(WAV_DESTROY);
         rfg_card_in_deck(player, pos);
@@ -5170,20 +5199,20 @@ int card_karn_scion_of_urza(int player, int card, event_t event)
     {
       if (result == 3)
       {
-        default_token_definition(player, card, 0x4918, (token_generation_t *)&test);
-        test.message[0x1c] = '\0';
-        test.message[0x1d] = '\0';
-        test.message[0x1e] = '\0';
-        test.message[0x1f] = '\0';
-        test.message[0x18] = '\0';
-        test.message[0x19] = '\0';
-        test.message[0x1a] = '\0';
-        test.message[0x1b] = '\0';
-        test.message[0x2c] = 'B';
-        test.message[0x2d] = '\0';
-        test.message[0x2e] = '\0';
-        test.message[0x2f] = '\0';
-        generate_token((token_generation_t *)&test);
+        default_token_definition(player, card, 0x4918, &recovered_stack_test.token);
+        recovered_stack_test.test.message[0x1c] = '\0';
+        recovered_stack_test.test.message[0x1d] = '\0';
+        recovered_stack_test.test.message[0x1e] = '\0';
+        recovered_stack_test.test.message[0x1f] = '\0';
+        recovered_stack_test.test.message[0x18] = '\0';
+        recovered_stack_test.test.message[0x19] = '\0';
+        recovered_stack_test.test.message[0x1a] = '\0';
+        recovered_stack_test.test.message[0x1b] = '\0';
+        recovered_stack_test.test.message[0x2c] = 'B';
+        recovered_stack_test.test.message[0x2d] = '\0';
+        recovered_stack_test.test.message[0x2e] = '\0';
+        recovered_stack_test.test.message[0x2f] = '\0';
+        generate_token(&recovered_stack_test.token);
       }
       goto LAB_022cf702;
     }
@@ -5941,4 +5970,265 @@ int card_valduk_keeper_of_the_flame(int player, int card, event_t event)
   token.special_code_on_generation = haste_and_remove_token_at_end_of_next_turn;
   generate_token(&token);
   return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int is_historic_by_internal_id(int iid, int unused, int player, int card);
+
+/* ManalinkEh 2022: 0x22ca500; original cards/dominaria.c:3. */
+static int is_historic_by_internal_id(int iid, int unused, int player, int card)
+{
+  int result;
+
+  if ((cards_data[iid].type & 0x40) == 0)
+  {
+    result = is_legendary(-1, iid);
+    if (result == 0)
+    {
+      result = has_subtype_by_id_2022(player, (unsigned int)cards_data[iid].id, SUBTYPE_SAGA);
+      return (unsigned int)(result != 0);
+    }
+  }
+  return 1;
+}
+
+/* ManalinkEh 2022: 0x22cc2b0; original cards/dominaria.c:514. */
+int card_board_the_weatherlight(int player, int card, event_t event)
+{
+  int result;
+  int revealed_card;
+  test_definition_t this_test;
+
+  if (event == EVENT_CAN_CAST)
+    goto LAB_022cc2e8;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    goto LAB_022cc2e8;
+  }
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+    goto LAB_022cc2e8;
+  }
+
+  result = count_deck(player);
+  if (result != 0)
+  {
+    if (5 < result)
+    {
+      result = 5;
+    }
+
+    new_default_test_definition(&this_test, 0xff, "Select an historic card.");
+    this_test.create_minideck = (unsigned short)result;
+    this_test.special_selection_function = is_historic_by_internal_id;
+    this_test.no_shuffle = 1;
+    revealed_card = new_global_tutor(player, player, 1, 1, 0, 1, &this_test);
+    if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+    {
+      if (revealed_card < 0)
+      {
+        this_test.type = 0xff;
+        revealed_card = new_global_tutor(player, player, 1, 1, 0, 1, &this_test);
+        goto LAB_022cc3e8;
+      }
+    LAB_022cc425:
+      reveal_card(player, card, player, revealed_card);
+      result = result + -1;
+    }
+    else
+    {
+    LAB_022cc3e8:
+      if (-1 < revealed_card)
+        goto LAB_022cc425;
+    }
+    if (0 < result)
+    {
+      put_top_x_on_bottom_in_random_order(player, result);
+    }
+  }
+  kill_card(player, card, KILL_DESTROY);
+LAB_022cc2e8:
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22d5d40; original cards/dominaria.c:4310. */
+int card_weatherlight(int player, int card, event_t event)
+{
+  int result;
+  int revealed_card;
+  test_definition_t this_test;
+
+  check_legend_rule(player, card, event);
+  result =
+      damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (result == 0)
+    goto LAB_022d5d81;
+
+  result = count_deck(player);
+  if (result == 0)
+    goto LAB_022d5d81;
+  if (5 < result)
+  {
+    result = 5;
+  }
+
+  new_default_test_definition(&this_test, 0xff, "Select an historic card.");
+  this_test.create_minideck = (unsigned short)result;
+  this_test.special_selection_function = is_historic_by_internal_id;
+  this_test.no_shuffle = 1;
+  revealed_card = new_global_tutor(player, player, 1, 1, 0, 1, &this_test);
+  if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+  {
+    if (revealed_card < 0)
+    {
+      this_test.type = 0xff;
+      revealed_card = new_global_tutor(player, player, 1, 1, 0, 1, &this_test);
+      goto LAB_022d5e45;
+    }
+  LAB_022d5e75:
+    reveal_card(player, card, player, revealed_card);
+    result = result + -1;
+  }
+  else
+  {
+  LAB_022d5e45:
+    if (-1 < revealed_card)
+      goto LAB_022d5e75;
+  }
+  if (0 < result)
+  {
+    put_top_x_on_bottom(player, player, result);
+  }
+LAB_022d5d81:
+  result = vehicle(player, card, event, 3);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *can_cast_historic_spell(int who_chooses, int player, int card, int targeting_player,
+                                     int targeting_card);
+
+/* ManalinkEh 2022: 0x22ce550; original cards/dominaria.c:1356. */
+int card_helm_of_the_host(int player, int card, event_t event)
+{
+  enum
+  {
+    TOKEN_ACTION_ISNT_LEGENDARY = 256
+  };
+
+  int result;
+  card_instance_t *instance;
+  token_generation_t token;
+
+  result = beginning_of_combat_2022(player, card, event, player);
+  if (result != 0)
+  {
+    instance = is_equipping(player, card);
+    if (instance != NULL)
+    {
+      copy_token_definition(player, card, &token, (int)instance->damage_target_player,
+                            instance->damage_target_card);
+      token.special_code_on_generation = give_token_haste;
+      token.action = TOKEN_ACTION_ISNT_LEGENDARY;
+      generate_token(&token);
+    }
+  }
+  result = basic_equipment(player, card, event, 5);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22c97b0; original cards/dominaria.c:2728. */
+static char *can_cast_historic_spell(int who_chooses, int player, int card, int targeting_player,
+                                     int targeting_card)
+{
+  enum
+  {
+    EVENT_0 = 0
+  };
+
+  int result;
+  char *pcVar2;
+
+  result = is_what(player, card, 0x40);
+  if (result == 0)
+  {
+    result = is_legendary(player, card);
+    if (result == 0)
+    {
+      result = has_subtype(player, card, SUBTYPE_SAGA);
+      if (result == 0)
+      {
+        return "must be historic";
+      }
+    }
+  }
+  result = get_id(player, card);
+  result = has_mana_to_cast_id(who_chooses, EVENT_0, result);
+  if (result == 0)
+  {
+    pcVar2 = "not enough mana";
+  }
+  else
+  {
+    result = get_id(player, card);
+    result = can_legally_play_csvid(who_chooses, result);
+    pcVar2 = "can\'t play this card";
+    if (result != 0)
+    {
+      result = is_what(player, card, 1);
+      pcVar2 = "not a spell";
+      if (result == 0)
+      {
+        pcVar2 = NULL;
+      }
+    }
+  }
+  return pcVar2;
+}
+
+/* ManalinkEh 2022: 0x22d2410; original cards/dominaria.c:2740. */
+int card_raff_capashen_ships_mage(int player, int card, event_t event)
+{
+  int result;
+  const char *prompt;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  result = flash(player, card, event);
+  if (result == 0)
+  {
+    if ((event - EVENT_RESOLVE_ACTIVATION < 2) || (result = 0, event == EVENT_ACTIVATE))
+    {
+      base_target_definition(player, card, &td, 0xff);
+      td.preferred_controller = player;
+      td.allowed_controller = player;
+      td.special = 0x8000;
+      td.extra = (int32_t)can_cast_historic_spell;
+      td.zone = 0x100;
+      if (event == EVENT_ACTIVATE)
+      {
+        prompt = "Select an historic card.";
+      }
+      else
+      {
+        prompt = NULL;
+      }
+      result = can_play_cards_as_though_they_had_flash(player, card, event, &td, prompt, 1);
+    }
+    return result;
+  }
+  return 1;
 }

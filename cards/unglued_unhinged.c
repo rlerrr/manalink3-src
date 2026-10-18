@@ -1342,7 +1342,15 @@ int card_uktabi_kong(int player, int card, event_t event)
 {
   int result;
   token_generation_t token;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
+
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
@@ -1350,11 +1358,11 @@ int card_uktabi_kong(int player, int card, event_t event)
          (event == EVENT_RESOLVE_ACTIVATION)) ||
         (event == EVENT_CLEANUP))
     {
-      base_target_definition(player, card, &td, 0x47);
-      td.illegal_state = 1;
-      td.required_subtype = 5;
-      td.allowed_controller = player;
-      td.preferred_controller = player;
+      base_target_definition(player, card, &recovered_stack_td.target, 0x47);
+      recovered_stack_td.target.illegal_state = 1;
+      recovered_stack_td.target.required_subtype = 5;
+      recovered_stack_td.target.allowed_controller = player;
+      recovered_stack_td.target.preferred_controller = player;
       if (event == EVENT_RESOLVE_ACTIVATION)
       {
         default_token_definition(player, card, 0x4901, &token);
@@ -1362,8 +1370,9 @@ int card_uktabi_kong(int player, int card, event_t event)
         token.pow = 1;
         generate_token(&token);
       }
-      result = generic_activated_ability_with_tapsubtype_as_cost(
-          player, card, event, GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, &td, 2);
+      result = generic_activated_ability_with_tapsubtype_as_cost(player, card, event, GAA_NONE, 0,
+                                                                 0, 0, 0, 0, 0, 0, NULL, NULL,
+                                                                 &recovered_stack_td.target, 2);
     }
     else
     {
@@ -1371,8 +1380,8 @@ int card_uktabi_kong(int player, int card, event_t event)
     }
     return result;
   }
-  default_test_definition((test_definition_t *)&td, 0x40);
-  new_manipulate_all(player, card, 2, (test_definition_t *)&td, ACT_KILL_DESTROY);
+  default_test_definition(&recovered_stack_td.test, 0x40);
+  new_manipulate_all(player, card, 2, &recovered_stack_td.test, ACT_KILL_DESTROY);
   return 0;
 }
 
@@ -2102,4 +2111,301 @@ int card_rare_b_gone(int player, int card, event_t event)
   }
   result = basic_spell(player, card, event);
   return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int roll_d6_shim(int player, int card);
+
+/* ManalinkEh 2022: 0x2302b40; original cards/unglued_unhinged.c:197. */
+static int roll_d6_shim(int player, int card)
+{
+  int result;
+
+  result = roll_d6t(player, player, card, -1, -1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2303590; original cards/unglued_unhinged.c:486. */
+int card_jumbo_imp(int player, int card, event_t event)
+{
+  int result;
+
+  enters_the_battlefield_with_counters_fn(player, card, event, COUNTER_P1_P1, roll_d6_shim);
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    result = roll_d6t(player, player, card, -1, -1);
+    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, result);
+  }
+  if ((current_turn == player) && (result = eot_trigger(player, card, event), result != 0))
+  {
+    result = roll_d6t(player, player, card, -1, -1);
+    remove_counters_from_source(player, card, player, card, COUNTER_P1_P1, result);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2303760; original cards/unglued_unhinged.c:531. */
+int card_poultrygeist(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
+  }
+  iVar1 = duh_mode(player);
+  iVar1 = resolve_gfp_ability(player, card, event, (iVar1 != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (0 < iVar1)
+  {
+    do
+    {
+      while (true)
+      {
+        iVar2 = roll_d6t(player, player, card, -1, -1);
+        instance = in_play(player, card);
+        if (instance != NULL)
+          break;
+      LAB_023037d4:
+        iVar1 = iVar1 + -1;
+        if (iVar1 == 0)
+        {
+          return 0;
+        }
+      }
+      if (iVar2 != 1)
+      {
+
+        add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+        goto LAB_023037d4;
+      }
+      kill_card(player, card, KILL_SACRIFICE);
+      iVar1 = iVar1 + -1;
+    } while (iVar1 != 0);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2303870; original cards/unglued_unhinged.c:559. */
+int card_temp_of_the_damned(int player, int card, event_t event)
+{
+  int result;
+
+  enters_the_battlefield_with_counters_fn(player, card, event, COUNTER_FUNK, roll_d6_shim);
+  upkeep_trigger_ability(player, card, event, player);
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    return 0;
+  }
+  result = count_counters(player, card, COUNTER_FUNK);
+  if (result != 0)
+  {
+    remove_counters_from_source(player, card, player, card, COUNTER_FUNK, 1);
+    return 0;
+  }
+  kill_card(player, card, KILL_SACRIFICE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2303930; original cards/unglued_unhinged.c:591. */
+int card_chicken_egg(int player, int card, event_t event)
+{
+  int result;
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    result = roll_d6t(player, player, card, -1, -1);
+    if (result == 6)
+    {
+      kill_card(player, card, KILL_SACRIFICE);
+      generate_token_by_id(player, card, 0x45ed);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2303b60; original cards/unglued_unhinged.c:666. */
+int card_krazy_kow(int player, int card, event_t event)
+{
+  int result;
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    result = roll_d6t(player, player, card, -1, -1);
+    if (result == 1)
+    {
+      kill_card(player, card, KILL_SACRIFICE);
+      new_damage_all(player, card, 2, 3, 3, NULL);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2303e00; original cards/unglued_unhinged.c:818. */
+int card_elvish_impersonators(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  unsigned int newval;
+  unsigned int uVar4;
+
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+
+    if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
+         (affected_card_controller == player)) &&
+        (card != -1))
+    {
+      instance = get_card_instance(player, card);
+      if (event == EVENT_POWER)
+      {
+        uVar4 = instance->targets[5].player;
+      }
+      else
+      {
+        uVar4 = instance->targets[5].card;
+      }
+      newval = 0;
+      if ((short)(uVar4 >> 0x10) == 0x454e)
+      {
+        newval = uVar4 & 0xffff;
+      }
+      set_characteristic_pt(newval);
+    }
+    return 0;
+  }
+
+  iVar1 = roll_d6t(player, player, card, -1, -1);
+  iVar2 = roll_d6t(player, player, card, -1, -1);
+  instance = get_card_instance(player, card);
+  instance->targets[5].player = (int)(short)iVar1 | 0x454e0000;
+  instance->targets[5].card = (int)(short)iVar2 | 0x454e0000;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2304010; original cards/unglued_unhinged.c:892. */
+int card_growth_spurt(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    result = vanilla_instant_pump(player, card, event, 2, player, 4, 4, 0, 0);
+    return result;
+  }
+  default_target_definition(player, card, &td, 2);
+  result = valid_target(&td);
+  if (result != 0)
+  {
+
+    instance = get_card_instance(player, card);
+    result = roll_d6t(player, player, card, instance->targets[0].player, instance->targets[0].card);
+    pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, result,
+                   result);
+  }
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23046e0; original cards/unglued_unhinged.c:1163. */
+int card_urzas_science_fair_project(int player, int card, event_t event)
+{
+  int card_00;
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int alternate_legacy_text_number;
+
+  if (event != EVENT_RESOLVE_ACTIVATION)
+    goto LAB_023046f5;
+
+  iVar2 = roll_d6t(player, player, card, -1, -1);
+  instance = get_card_instance(player, card);
+  iVar1 = instance->parent_controller;
+  card_00 = instance->parent_card;
+  instance = in_play(iVar1, card_00);
+  if (instance == NULL)
+  {
+    return 0;
+  }
+  switch (iVar2)
+  {
+  default:
+    goto LAB_023046f5;
+  case 1:
+    iVar4 = -2;
+    iVar2 = -2;
+    goto code_r0x023047e4;
+  case 2:
+    negate_combat_damage_this_turn(player, card, iVar1, card_00, 2);
+    goto LAB_023046f5;
+  case 3:
+    alternate_legacy_text_number = 3;
+    iVar4 = 8;
+    iVar2 = 0;
+    break;
+  case 4:
+    alternate_legacy_text_number = 4;
+    iVar4 = 0;
+    iVar2 = 0x100;
+    break;
+  case 5:
+    alternate_legacy_text_number = 5;
+    iVar4 = 0;
+    iVar2 = 0x20;
+    break;
+  case 6:
+    iVar4 = 2;
+    iVar2 = 2;
+  code_r0x023047e4:
+    pump_until_eot_merge_previous_alt(player, card, iVar1, card_00, iVar2, iVar4, 1);
+    goto LAB_023046f5;
+  }
+  pump_ability_until_eot_no_repeat_alt(player, card, iVar1, card_00, iVar2, iVar4,
+                                       alternate_legacy_text_number);
+LAB_023046f5:
+  iVar1 = generic_activated_ability(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x23059c0; original cards/unglued_unhinged.c:1946. */
+int card_goblin_secret_agent(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  int upperbound;
+  int indices[151];
+
+  upkeep_trigger_ability(player, card, event, player);
+
+  if ((event == EVENT_UPKEEP_TRIGGER_ABILITY) && (0 < active_cards_count[player]))
+  {
+    result = 0;
+    upperbound = 0;
+    do
+    {
+      instance = in_hand(player, result);
+      if (instance != NULL)
+      {
+        indices[upperbound] = result;
+        upperbound = upperbound + 1;
+      }
+      result = result + 1;
+    } while (result < active_cards_count[player]);
+    if (0 < upperbound)
+    {
+      result = network_rand(player, upperbound);
+      reveal_card(player, card, player, indices[result]);
+      return 0;
+    }
+  }
+  return 0;
 }

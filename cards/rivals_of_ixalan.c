@@ -3225,7 +3225,14 @@ int card_pitiless_plunderer(int player, int card, event_t event)
   int iVar1;
   card_instance_t *instance;
   int iVar3;
-  test_definition_t this_test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_this_test;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -3261,18 +3268,18 @@ int card_pitiless_plunderer(int player, int card, event_t event)
   else if ((event == EVENT_GRAVEYARD_FROM_PLAY) &&
            (instance = in_play(player, card), instance != NULL))
   {
-    default_test_definition(&this_test, 2);
-    this_test.not_me = 1;
-    count_for_gfp_ability(player, card, 0x77, player, 0, &this_test);
+    default_test_definition(&recovered_stack_this_test.test, 2);
+    recovered_stack_this_test.test.not_me = 1;
+    count_for_gfp_ability(player, card, 0x77, player, 0, &recovered_stack_this_test.test);
   }
 LAB_021911d5:
   iVar1 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (iVar1 != 0)
   {
 
-    default_token_definition(player, card, 0x4998, (token_generation_t *)&this_test);
-    this_test.message[0x2b] = (char)iVar1;
-    generate_token((token_generation_t *)&this_test);
+    default_token_definition(player, card, 0x4998, &recovered_stack_this_test.token);
+    recovered_stack_this_test.test.message[0x2b] = (char)iVar1;
+    generate_token(&recovered_stack_this_test.token);
     return 0;
   }
   return 0;
@@ -3871,22 +3878,30 @@ int card_baffling_end(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    token_generation_t token;
+    uint8_t bytes[84];
+  } recovered_stack_td;
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   instance = get_card_instance(player, card);
   if (event == EVENT_ETB)
   {
-    default_target_definition(player, card, &td, 2);
-    td.allowed_controller = 1 - player;
-    td.special = 0x800;
-    td.extra = 3;
-    td.allow_cancel = 0;
-    result = can_target(&td);
+    default_target_definition(player, card, &recovered_stack_td.target, 2);
+    recovered_stack_td.target.allowed_controller = 1 - player;
+    recovered_stack_td.target.special = 0x800;
+    recovered_stack_td.target.extra = 3;
+    recovered_stack_td.target.allow_cancel = 0;
+    result = can_target(&recovered_stack_td.target);
     if (result != 0)
     {
       result = new_pick_target(
-          &td, "Select target creature an opponent controls with converted mana cost 3 or less.", 0,
+          &recovered_stack_td.target,
+          "Select target creature an opponent controls with converted mana cost 3 or less.", 0,
           0x80);
       if (result != 0)
       {
@@ -3901,9 +3916,9 @@ int card_baffling_end(int player, int card, event_t event)
     if (event == EVENT_LEAVES_PLAY_ABILITY)
     {
       target_opponent(player, card);
-      default_token_definition(player, card, 0x491d, (token_generation_t *)&td);
-      td.illegal_type = instance->targets[0].player;
-      generate_token((token_generation_t *)&td);
+      default_token_definition(player, card, 0x491d, &recovered_stack_td.token);
+      recovered_stack_td.target.illegal_type = instance->targets[0].player;
+      generate_token(&recovered_stack_td.token);
     }
   }
   result = global_enchantment(player, card, event);
@@ -4107,4 +4122,237 @@ int card_golden_guardian(int player, int card, event_t event)
   result = generic_activated_ability(player, card, event, 4, 2, 0, 0, 0, 0, 0, 0, &td,
                                      "SELECT_A_CREATURE_YOU_CONTROL");
   return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2191bf0; original cards/rivals_of_ixalan.c:1199. */
+int card_dire_fleet_daredevil(int player, int card, event_t event)
+{
+  enum
+  {
+    MPCFE_EXILE_ON_RESOLUTION = 128
+  };
+
+  unsigned short uVar1;
+  int result;
+  int player_00;
+  test_definition_t this_test;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    player_00 = 1 - player;
+    new_default_test_definition(&this_test, 0x38, "Select an instant or sorcery card to exile.");
+    this_test.type_flag = 2;
+    result = new_special_count_grave(player_00, &this_test);
+    if (0 < result)
+    {
+      result = graveyard_has_shroud(player_00);
+      if (result == 0)
+      {
+
+        result = new_select_a_card(player, player_00, 2, 1, 2, -1, &this_test);
+        if (-1 < result)
+        {
+
+          uVar1 = cards_data[graveyard_ptr_mutable[player_00][result]].id;
+          rfg_card_from_grave(player_00, result);
+          create_may_play_card_from_exile_effect(player, card, player_00, (unsigned int)uVar1,
+                                                 MPCFE_EXILE_ON_RESOLUTION | MPCFE_UNTIL_EOT |
+                                                     MPCFE_FOR_CMC);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x218fcf0; original cards/rivals_of_ixalan.c:244. */
+int card_slaughter_the_strong(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  card_instance_t *pcVar4;
+  unsigned int uVar5;
+  char *pcVar6;
+  unsigned int uVar7;
+  bool bVar8;
+  unsigned char bVar9;
+  unsigned int uStack_270;
+  target_definition_t td;
+  char msg[100];
+  char marked[2][151];
+
+  bVar9 = 0;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+
+      pcVar6 = marked[0];
+      uVar5 = 0x12e;
+      pcVar3 = get_card_instance(player, card);
+      bVar8 = ((unsigned int)pcVar6 & 2) != 0;
+      if (bVar8)
+      {
+        marked[0][0] = '\0';
+        marked[0][1] = '\0';
+        pcVar6 = marked[0] + 2;
+        uVar5 = 300;
+      }
+      for (uVar5 = uVar5 >> 2; uVar5 != 0; uVar5 = uVar5 - 1)
+      {
+        pcVar6[0] = '\0';
+        pcVar6[1] = '\0';
+        pcVar6[2] = '\0';
+        pcVar6[3] = '\0';
+        pcVar6 = pcVar6 + (unsigned int)bVar9 * -8 + 4;
+      }
+      if (!bVar8)
+      {
+        pcVar6[0] = '\0';
+        pcVar6[1] = '\0';
+      }
+
+      uStack_270 = 0;
+      do
+      {
+        uVar7 = uStack_270 ^ current_turn;
+
+        uVar5 = 4;
+        do
+        {
+          default_target_definition(player, card, &td, 2);
+          td.power_requirement = uVar5 | 0x2000;
+          td.allow_cancel = 2;
+          td.illegal_abilities = 0;
+          td.who_chooses = uVar7;
+          td.allowed_controller = uVar7;
+          td.preferred_controller = uVar7;
+          scnprintf(msg, 100, "Select a creature card with pow %d or less.", uVar5);
+          iVar2 = can_target(&td);
+          if ((iVar2 == 0) || (iVar2 = new_pick_target(&td, msg, 0, 0x80), iVar2 == 0))
+            break;
+
+          marked[pcVar3->targets[0].player][pcVar3->targets[0].card] = '\x01';
+          pcVar4 = get_card_instance(pcVar3->targets[0].player, pcVar3->targets[0].card);
+          pcVar4->state = pcVar4->state | 0x100000;
+          iVar2 = get_power(pcVar3->targets[0].player, pcVar3->targets[0].card);
+          uVar5 = uVar5 - iVar2;
+        } while (0 < (int)uVar5);
+        if (0 < active_cards_count[uVar7])
+        {
+          iVar2 = 0;
+          do
+          {
+            while (marked[uVar7][iVar2] == '\0')
+            {
+              iVar2 = iVar2 + 1;
+              if (active_cards_count[uVar7] <= iVar2)
+                goto LAB_0218ff48;
+            }
+            pcVar4 = get_card_instance(uVar7, iVar2);
+            iVar2 = iVar2 + 1;
+            iVar1 = active_cards_count[uVar7];
+            pcVar4->state = pcVar4->state & 0xffefffff;
+          } while (iVar2 < iVar1);
+        }
+      LAB_0218ff48:
+        uStack_270 = uStack_270 + 1;
+      } while (uStack_270 != 2);
+
+      uVar5 = 0;
+      do
+      {
+        uVar7 = current_turn ^ uVar5;
+        iVar2 = can_sacrifice(player, uVar7, 1, TYPE_CREATURE, SUBTYPE_INVALID);
+        if (iVar2 != 0)
+        {
+          default_test_definition((test_definition_t *)msg, 2);
+          new_manipulate_all(player, card, uVar7, (test_definition_t *)msg, ACT_KILL_SACRIFICE);
+        }
+        uVar5 = uVar5 + 1;
+      } while (uVar5 != 2);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  iVar2 = basic_spell(player, card, event);
+  return iVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x218f890; original cards/rivals_of_ixalan.c:102. */
+int card_forerunner_of_the_legion(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_test;
+
+  result = duh_mode(player);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&recovered_stack_test.test, 0x47);
+    recovered_stack_test.test.subtype = 0xcd;
+    recovered_stack_test.test.not_me = 1;
+    etb_ability_global(player, event, 2, TYPE_NONE, &recovered_stack_test.test, player, card);
+  }
+  if (event == EVENT_ETB)
+  {
+    if ((trigger_cause_controller != player) || (trigger_cause != card))
+    {
+      instance = get_card_instance(player, card);
+      default_target_definition(player, card, &recovered_stack_test.target, 2);
+      recovered_stack_test.target.preferred_controller = (int32_t)(player);
+      recovered_stack_test.test.message[0x44] = '\0';
+      recovered_stack_test.test.message[0x45] = '\0';
+      recovered_stack_test.test.message[0x46] = '\0';
+      recovered_stack_test.test.message[0x47] = '\0';
+      result = can_target(&recovered_stack_test.target);
+      if (result != 0)
+      {
+        result = pick_target(&recovered_stack_test.target, "TARGET_CREATURE");
+        if (result != 0)
+        {
+          pump_until_eot_merge_previous(player, card, instance->targets[0].player,
+                                        instance->targets[0].card, 1, 1);
+        }
+      }
+      spell_fizzled = 0;
+      instance->number_of_targets = '\0';
+      return 0;
+    }
+    new_default_test_definition(&recovered_stack_test.test, 0xff, "Select a Vampire card.");
+    recovered_stack_test.test.subtype = 0xcd;
+    new_global_tutor(player, player, 1, 2, 0, 1, &recovered_stack_test.test);
+  }
+  return 0;
 }

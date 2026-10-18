@@ -3906,3 +3906,22 @@ int card_dust_of_moments(int player, int card, event_t event)
   iVar1 = basic_spell(player, card, event);
   return iVar1;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2578540; original cards/future_sight.c:2213. */
+int card_mistmeadow_skulk(int player, int card, event_t event)
+{
+  int result;
+
+  lifelink(player, card, event);
+  misc_protection(player, card, event);
+  if ((((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((((unsigned int)event_result >> 24 & 0xff) == '\x06' ||
+        (result = get_cmc(attacking_card_controller, attacking_card), 2 < result))))
+  {
+    event_result = event_result | 1;
+  }
+  return 0;
+}

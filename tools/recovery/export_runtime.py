@@ -31,6 +31,15 @@ def main():
         'calloc': ['void *', 'unsigned int', 'unsigned int'],
         'realloc': ['void *', 'void *', 'unsigned int'],
         'free': ['void', 'void *'],
+        'fopen': ['FILE *', 'char *', 'char *'],
+        'fclose': ['int', 'FILE *'],
+        'fseek': ['int', 'FILE *', 'long', 'int'],
+        'ftell': ['long', 'FILE *'],
+        'fread': ['unsigned int', 'void *', 'unsigned int', 'unsigned int', 'FILE *'],
+        'atoi': ['int', 'char *'],
+        'strerror': ['char *', 'int'],
+        '_errno': ['int *'],
+        '_vsnprintf': ['int', 'char *', 'unsigned int', 'char *', 'char *'],
     }
     rows, evidence = [], []
     for symbol, offset, section, kind, storage in sorted(image.functions()):

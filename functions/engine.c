@@ -1,6 +1,10 @@
 // -*- c-basic-offset:2 -*-
 #include "manalink.h"
 
+/* October 2022 dice modifier cache storage. */
+int add_to_die_rolls[2];
+int roll_extra_dice[2];
+
 /* October 2022 .bss cache @ 0x2797200; declared in target manalink.h. */
 uint8_t card_counts[2][7];
 
@@ -117,6 +121,10 @@ void count_colors_of_lands_in_play(void)
 
 void recalculate_all_cards_in_play(void)
 {
+  /* Recovered 2022 dice-cache fragment: recalculate_all_cards_in_play @ 0x26a9e40. */
+  memset(add_to_die_rolls, 0, sizeof(add_to_die_rolls));
+  memset(roll_extra_dice, 0, sizeof(roll_extra_dice));
+  /* End recovered 2022 dice-cache fragment: recalculate_all_cards_in_play. */
   /* Recovered 2022 card-count fragment: recalculate_all_cards_in_play @ 0x26a9e40. */
   memset(card_counts, 0, sizeof(card_counts));
   /* End recovered 2022 card-count fragment: recalculate_all_cards_in_play. */
@@ -141,6 +149,16 @@ void recalculate_all_cards_in_play(void)
 						PB_NONMANA_ACTIVATE_ABILITIES_OF_CREATURES_DISABLED | PB_NONMANA_ACTIVATE_ABILITIES_OF_ARTIFACTS_DISABLED;
   player_bits[0] &= ~disabling_mask;
   player_bits[1] &= ~disabling_mask;
+
+  /* Recovered 2022 subtype-table fragment: recalculate_all_cards_in_play @ 0x26a9e40. */
+  for (int i = 0; i < 15; ++i)
+  {
+    added_subtypes_not_in_play[1][i].subtype = SUBTYPE_INVALID;
+    added_subtypes_not_in_play[0][i].subtype = SUBTYPE_INVALID;
+    added_subtypes_not_in_play[1][i].added_forced = 0;
+    added_subtypes_not_in_play[0][i].added_forced = 0;
+  }
+  /* End recovered 2022 subtype-table fragment: recalculate_all_cards_in_play. */
 
   minimize_nondraining_mana();
 
@@ -2133,4 +2151,60 @@ void undeclare_attacker(int player, int card)
     }
   }
   return;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int is_being_cast(int player, int card);
+
+/* ManalinkEh 2022: 0x26adb20; original functions/engine.c:3232. */
+int is_being_cast(int player, int card)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+  bool bVar4;
+
+  pcVar1 = get_card_instance(player, card);
+  if (pcVar1 == NULL)
+  {
+    return 0;
+  }
+  if (pcVar1->internal_card_id == damage_card)
+  {
+    return pcVar1->targets[7].player & 2;
+  }
+  pcVar2 = on_stack(player, card);
+  if (pcVar2 == NULL)
+  {
+    pcVar1 = in_hand(player, card);
+    if (pcVar1 != NULL)
+    {
+      return (unsigned int)((((unsigned int)land_can_be_played >> 16 & 0xff) & 0x40) == 0);
+    }
+    pcVar1 = in_play(player, card);
+    if (pcVar1 == NULL)
+    {
+      return 0;
+    }
+    result = is_what(player, card, 199);
+    bVar4 = result == 0;
+  }
+  else
+  {
+    bVar4 = pcVar1->internal_card_id != activation_card;
+  }
+  return (unsigned int)bVar4;
+}
+
+
+/* ManalinkEh 2022: 0x26a8b30; original functions/engine.c:226. */
+void hook_helper_for_startduel(void)
+{
+  EXE_FN(void, 0x432f80, void)();
+  for (int player = 0; player < 2; ++player)
+    for (int card = 0; card < 150; ++card)
+    {
+      get_card_instance(player, card)->ext = &card_ext[player][card];
+      get_displayed_card_instance(player, card)->ext = &disp_card_ext[player][card];
+    }
 }

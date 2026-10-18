@@ -1,4 +1,7 @@
 #include "manalink.h"
+
+/* October 2022 .bss subtype table @ 0x2797020. */
+subtypes_not_in_play_t added_subtypes_not_in_play[2][16];
 #define NUM_SUBTYPES 26
 
 static const subtype_t arr_from_hardcoded_subtype_to_subtype[] =
@@ -1887,4 +1890,296 @@ int animate_self_remove_type(int player, int card, int pow, int tgh, type_t type
       add_or_remove_types_legacy_impl(player, card, player, card, types_to_remove, TYPE_CREATURE,
                                       pow, tgh, kws_to_add, sp_kws_to_add, color_00, permanent);
   return result;
+}
+
+/* ManalinkEh 2022: 0x2673320; original functions/has_creature_type.c:644. */
+void get_subtypes_by_csvid_2022(int player, int csvid, reported_subtypes_t *my_subtypes)
+{
+  for (int i = 0; i < 26; ++i)
+    my_subtypes->reported_subtypes[i] = 0;
+  card_ptr_t *cp = cards_ptr[csvid];
+  for (int i = 0; i < 7; ++i)
+    my_subtypes->reported_subtypes[i] = (int)cp->types[i];
+  int count = 7;
+  if (player >= 0 && is_what(-1, get_internal_card_id_from_csv_id(csvid), TYPE_CREATURE))
+    for (int i = 0; i < 15; ++i)
+    {
+      unsigned int subtype = added_subtypes_not_in_play[player][i].subtype;
+      if (subtype - 1u > 0xffeU)
+        break;
+      int slot = count;
+      if (added_subtypes_not_in_play[player][i].added_forced == '\x02')
+      {
+        for (int j = 0; j < 26; ++j)
+          my_subtypes->reported_subtypes[j] = 0;
+        slot = 0;
+        count = 1;
+      }
+      else
+        ++count;
+      my_subtypes->reported_subtypes[slot] = subtype;
+    }
+  if (csvid == 0x5a13)
+    my_subtypes->reported_subtypes[count] = 0x61;
+}
+
+
+/* ManalinkEh 2022: 0x26736e0; original functions/has_creature_type.c:721. */
+int has_subtype_by_id_2022(int player, int id, subtype_t subtype)
+{
+  unsigned int uVar1;
+  int iVar2;
+  int iVar3;
+  unsigned int *puVar4;
+  subtype_t sVar5;
+  unsigned int *my_subtypes;
+  reported_subtypes_t stypes;
+  iVar2 = get_internal_card_id_from_csv_id(id);
+  iVar2 = is_what(-1, iVar2, 2);
+  sVar5 = subtype;
+  if (((iVar2 == 0) || (0xffeU < (unsigned int)subtype - SUBTYPE_ALLY)) || (player < 0))
+  {
+    if (subtype == SUBTYPE_LEGEND)
+    {
+      iVar2 = get_internal_card_id_from_csv_id(id);
+      sVar5 = SUBTYPE_LEGEND;
+      if ((unsigned char)(cards_data[iVar2].subtype - 0xe) < 2)
+      {
+        return 1;
+      }
+      goto LAB_0267374c;
+    }
+    if (0xffeU < (unsigned int)subtype - SUBTYPE_ALLY)
+    {
+      if (subtype == SUBTYPE_AURA_CREATURE)
+      {
+        if (cards_ptr[id]->subtype1 != 0x2c)
+        {
+          return 0;
+        }
+        iVar2 = has_new_types(id, 0x4000);
+        return (unsigned int)(iVar2 != 0);
+      }
+      goto LAB_0267374c;
+    }
+  }
+  else
+  {
+    my_subtypes = stypes.reported_subtypes;
+    get_subtypes_by_csvid_2022(player, id, (reported_subtypes_t *)my_subtypes);
+    iVar2 = 5;
+    do
+    {
+      uVar1 = added_subtypes_not_in_play[player][iVar2 - 5].subtype;
+      if (0xffe < uVar1 - 1)
+        break;
+      puVar4 = my_subtypes;
+      if (added_subtypes_not_in_play[player][iVar2 - 5].added_forced == '\x02')
+      {
+        do
+        {
+          *puVar4 = 0;
+          puVar4 = puVar4 + 1;
+        } while (stypes.reported_subtypes + 26 != puVar4);
+      }
+      iVar3 = 0;
+      if (-1 < iVar2)
+      {
+        do
+        {
+          if (my_subtypes[iVar3] == 0)
+          {
+            stypes.reported_subtypes[iVar3] = uVar1;
+            break;
+          }
+          iVar3 = iVar3 + 1;
+        } while (iVar3 <= iVar2);
+      }
+      iVar2 = iVar2 + 1;
+    } while (iVar2 != 0x14);
+    do
+    {
+      if (*my_subtypes == SUBTYPE_ALL_CREATURES)
+      {
+        return 1;
+      }
+      if (*my_subtypes == subtype)
+      {
+        return 1;
+      }
+      my_subtypes = my_subtypes + 1;
+    } while (stypes.reported_subtypes + 0x14 != my_subtypes);
+  }
+  iVar2 = get_internal_card_id_from_csv_id(id);
+  if ((cards_data[iVar2].static_ability & 0x80000) != 0)
+  {
+    return 1;
+  }
+LAB_0267374c:
+  if ((id == 0x5a13) && (subtype == SUBTYPE_INSECT))
+  {
+    return 1;
+  }
+  iVar2 = has_new_types(id, sVar5);
+  return iVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2673220; original functions/has_creature_type.c:636. */
+int add_a_subtype_not_in_play(int player, event_t event, subtype_t subtype)
+{
+  int result;
+
+  if (event != EVENT_CHANGE_TYPE)
+  {
+    return 0;
+  }
+  if ((land_can_be_played & 0x20000U) != 0)
+  {
+
+    result = 0;
+    do
+    {
+      if (added_subtypes_not_in_play[player][result].subtype == SUBTYPE_INVALID)
+      {
+        added_subtypes_not_in_play[player][result].subtype = subtype;
+        added_subtypes_not_in_play[player][result].added_forced = '\x01';
+        return 1;
+      }
+      result = result + 1;
+    } while (result != 0xf);
+    return 0;
+  }
+  land_can_be_played = land_can_be_played | 0x10000;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x26732a0; original functions/has_creature_type.c:640. */
+int force_a_subtype_not_in_play(int player, event_t event, subtype_t subtype)
+{
+  int result;
+
+  if (event != EVENT_CHANGE_TYPE)
+  {
+    return 0;
+  }
+  if ((land_can_be_played & 0x20000U) != 0)
+  {
+
+    result = 0;
+    do
+    {
+      if (added_subtypes_not_in_play[player][result].subtype == SUBTYPE_INVALID)
+      {
+        added_subtypes_not_in_play[player][result].subtype = subtype;
+        added_subtypes_not_in_play[player][result].added_forced = '\x02';
+        return 1;
+      }
+      result = result + 1;
+    } while (result != 0xf);
+    return 0;
+  }
+  land_can_be_played = land_can_be_played | 0x10000;
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2673b90; original functions/has_creature_type.c:913. */
+int shares_creature_subtype_by_iid(int p0, int c0, int p1, int iid)
+{
+  bool bVar1;
+  int result;
+  int *piVar3;
+  int *piVar4;
+  unsigned char bVar5;
+  reported_subtypes_t stypes;
+  int subtypes[2][26];
+
+  bVar5 = 0;
+  result = is_what(p0, c0, 2);
+  if (((result != 0) || (result = has_subtype(p0, c0, SUBTYPE_TRIBAL), result != 0)) &&
+      ((result = is_what(-1, iid, 2),
+        result != 0 ||
+            (result = has_subtype_by_id_2022(p1, (unsigned int)cards_data[iid].id, SUBTYPE_TRIBAL),
+             result != 0))))
+  {
+    piVar4 = subtypes[0];
+    piVar3 = piVar4;
+    for (result = 0x34; result != 0; result = result + -1)
+    {
+      (*(int (*)[26])piVar3)[0] = 0;
+      piVar3 = (int *)((int)piVar3 + ((unsigned int)bVar5 * -2 + 1) * 4);
+    }
+    result = is_changeling(p0, c0);
+    if (result == 0)
+    {
+      get_subtypes(p0, c0, &stypes);
+      result = 0;
+      do
+      {
+        piVar4[result] = stypes.reported_subtypes[result];
+        result = result + 1;
+      } while (result != 0x1a);
+      bVar1 = false;
+      if ((cards_data[iid].static_ability & 0x80000) != 0)
+      {
+        do
+        {
+          if (*piVar4 - 1U < 0xfff)
+          {
+            return 1;
+          }
+          piVar4 = piVar4 + 1;
+        } while ((int (*)[26])piVar4 != subtypes + 1);
+        return 0;
+      }
+    }
+    else
+    {
+      if ((cards_data[iid].static_ability & 0x80000) != 0)
+      {
+        return 1;
+      }
+      bVar1 = true;
+    }
+    get_subtypes_by_csvid_2022(p1, (unsigned int)cards_data[iid].id, &stypes);
+    result = 0;
+    do
+    {
+      subtypes[1][result] = stypes.reported_subtypes[result];
+      result = result + 1;
+    } while (result != 0x1a);
+    if (bVar1)
+    {
+      piVar4 = subtypes[1];
+      do
+      {
+        if (*piVar4 - 1U < 0xfff)
+        {
+          return 1;
+        }
+        piVar4 = piVar4 + 1;
+      } while (piVar4 != (subtypes[1] + 26));
+    }
+    else
+    {
+      do
+      {
+        piVar3 = subtypes[1];
+        if (*piVar4 - 1U < 0xfff)
+        {
+          do
+          {
+            if (*piVar4 == *piVar3)
+            {
+              return 1;
+            }
+            piVar3 = piVar3 + 1;
+          } while (piVar3 != (subtypes[1] + 26));
+        }
+        piVar4 = piVar4 + 1;
+      } while ((int (*)[26])piVar4 != subtypes + 1);
+    }
+  }
+  return 0;
 }

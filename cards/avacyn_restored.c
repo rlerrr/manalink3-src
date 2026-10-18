@@ -6427,3 +6427,226 @@ int card_slayers_stronghold(int player, int card, event_t event){
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2347c00; original cards/avacyn_restored.c:2759. */
+int card_dark_impostor(int player, int card, event_t event)
+{
+  int16_t *piVar1;
+  short sVar2;
+  unsigned short uVar3;
+  unsigned int uVar4;
+  int iVar5;
+  card_instance_t *pcVar6;
+  int iVar7;
+  int16_t *piVar8;
+  unsigned int uVar9;
+  inst_info_t iVar10;
+  unsigned int uStack_578;
+  unsigned int uStack_574;
+  unsigned int uStack_570;
+  unsigned int uStack_56c;
+  unsigned int uStack_568;
+  unsigned int uStack_564;
+  unsigned int uStack_560;
+  unsigned int uStack_55c;
+  int16_t *piStack_558;
+  target_definition_t *ptStack_554;
+  unsigned int uStack_550;
+  card_instance_t *pcStack_54c;
+  unsigned int uStack_548;
+  int16_t iids_1[12];
+  int16_t stolen_abilities[12];
+  target_definition_t td;
+  int16_t iids[12];
+  uint8_t auStack_45c[100];
+  uint8_t auStack_3f8[100];
+  uint8_t auStack_394[100];
+  uint8_t auStack_330[100];
+  uint8_t auStack_2cc[100];
+  uint8_t auStack_268[100];
+  uint8_t auStack_204[100];
+  uint8_t auStack_1a0[100];
+  uint8_t auStack_13c[100];
+  uint8_t auStack_d8[100];
+  uint8_t auStack_74[100];
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    pcVar6 = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar5 = can_use_activated_abilities(player, card);
+      if (iVar5 == 0)
+      {
+        return 0;
+      }
+
+      piVar8 = iids;
+      pcStack_54c = (card_instance_t *)generic_activated_ability(player, card, EVENT_CAN_ACTIVATE,
+                                                                 4, 4, 2, 0, 0, 0, 0, 0, &td, NULL);
+      iVar5 = retrieve_stored_iids(pcVar6, 0x3032, piVar8);
+      if (0 < iVar5)
+      {
+        piVar1 = piVar8 + iVar5;
+        do
+        {
+
+          iVar5 = dispatch_event_to_single_card_overriding_function(
+              player, card, EVENT_CAN_ACTIVATE, (int)*piVar8);
+          if (iVar5 != 0)
+          {
+            if (iVar5 == 99)
+            {
+              return 99;
+            }
+            pcStack_54c = (card_instance_t *)0x1;
+          }
+          piVar8 = piVar8 + 1;
+        } while (piVar1 != piVar8);
+        return (int)pcStack_54c;
+      }
+      return (int)pcStack_54c;
+    }
+    pcStack_54c = pcVar6;
+    if (event == EVENT_ACTIVATE)
+    {
+
+      piVar8 = iids_1;
+      pcVar6->number_of_targets = '\0';
+      iVar5 = retrieve_stored_iids(pcVar6, 0x3032, piVar8);
+      if (iVar5 < 1)
+      {
+        uVar4 = 0;
+        uStack_578 = 0;
+        uStack_574 = 0;
+        uStack_570 = 0;
+        uStack_56c = 0;
+        uStack_568 = 0;
+        uStack_564 = 0;
+        uStack_560 = 0;
+        uStack_55c = 0;
+        uStack_550 = 0;
+        uStack_548 = 0;
+        uVar9 = 0;
+      }
+      else
+      {
+        piVar1 = piVar8 + iVar5;
+        uStack_550 = 0;
+        do
+        {
+          while (true)
+          {
+
+            sVar2 = *piVar8;
+            iVar5 = dispatch_event_to_single_card_overriding_function(
+                player, card, EVENT_CAN_ACTIVATE, (int)sVar2);
+            if (iVar5 == 0)
+              break;
+            piVar8 = piVar8 + 1;
+            uVar3 = cards_data[sVar2].id;
+            iVar5 = uStack_550 + 1;
+            stolen_abilities[uStack_550] = sVar2;
+            strcpy((char *)(iids + uStack_550 * 0x32), cards_ptr[uVar3]->name);
+            uStack_550 = iVar5;
+            if (piVar1 == piVar8)
+              goto LAB_02347da6;
+          }
+          piVar8 = piVar8 + 1;
+        } while (piVar1 != piVar8);
+      LAB_02347da6:
+        uVar9 = (unsigned int)(0xb < (int)uStack_550);
+        uStack_548 = (unsigned int)(10 < (int)uStack_550);
+        uStack_55c = (unsigned int)(8 < (int)uStack_550);
+        uStack_560 = (unsigned int)(7 < (int)uStack_550);
+        uStack_564 = (unsigned int)(6 < (int)uStack_550);
+        uStack_568 = (unsigned int)(5 < (int)uStack_550);
+        uStack_56c = (unsigned int)(4 < (int)uStack_550);
+        uStack_570 = (unsigned int)(3 < (int)uStack_550);
+        uStack_574 = (unsigned int)(2 < (int)uStack_550);
+        uStack_578 = (unsigned int)(1 < (int)uStack_550);
+        uVar4 = (unsigned int)(0 < (int)uStack_550);
+        uStack_550 = (unsigned int)(9 < (int)uStack_550);
+      }
+      piStack_558 = iids;
+      iVar5 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 4, 2, 0, 0, 0, 0, 0,
+                                        &td, NULL);
+      iVar5 = dialog_impl(
+          player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\004", "Kill & steal ability",
+          iVar5, 5, piStack_558, uVar4, 1, auStack_45c, uStack_578, 1, auStack_3f8, uStack_574, 1,
+          auStack_394, uStack_570, 1, auStack_330, uStack_56c, 1, auStack_2cc, uStack_568, 1,
+          auStack_268, uStack_564, 1, auStack_204, uStack_560, 1, auStack_1a0, uStack_55c, 1,
+          auStack_13c, uStack_550, 1, auStack_d8, uStack_548, 1, auStack_74, uVar9, 1, 0, 0, 0, 0);
+      if (iVar5 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (iVar5 != 1)
+      {
+
+        sVar2 = iids_1[iVar5 + 10];
+        dispatch_event_to_single_card_overriding_function(player, card, EVENT_ACTIVATE, (int)sVar2);
+        if (spell_fizzled == 1)
+        {
+          return 0;
+        }
+        set_inst_info(pcVar6, 0x3032, (int)sVar2, (uint16_t)iVar5);
+        return 0;
+      }
+
+      iVar5 = generic_activated_ability(player, card, EVENT_ACTIVATE, 4, 4, 2, 0, 0, 0, 0, 0, &td,
+                                        "TARGET_CREATURE");
+      if (spell_fizzled != 1)
+      {
+        set_inst_info(pcVar6, 0x3032, 0, 1);
+        return iVar5;
+      }
+      return iVar5;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    pcStack_54c = get_card_instance(player, card);
+  }
+  ptStack_554 = &td;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    iVar10 = inst_info(pcStack_54c, 0x3032);
+    uVar4 = ((uint32_t)iVar10.id | ((uint32_t)iVar10.data2 << 16)) >> 0x10;
+    if (uVar4 == 1)
+    {
+      iVar5 = valid_target(ptStack_554);
+      if (iVar5 != 0)
+      {
+
+        pcVar6 = get_card_instance(pcStack_54c->parent_controller, pcStack_54c->parent_card);
+        iVar5 = get_original_internal_card_id(pcStack_54c->targets[0].player,
+                                              pcStack_54c->targets[0].card);
+        kill_target0(player, card, KILL_EXILE);
+        add_counters_from_source(player, card, pcStack_54c->parent_controller,
+                                 pcStack_54c->parent_card, COUNTER_P1_P1, 1);
+        iVar7 = has_an_activated_ability(iVar5);
+        if (iVar7 != 0)
+        {
+          store_iid(pcVar6, 0x3032, (int16_t)iVar5);
+        }
+      }
+    }
+    else if (1 < uVar4)
+    {
+
+      dispatch_event_to_single_card_overriding_function(player, card, EVENT_RESOLVE_ACTIVATION,
+                                                        iVar10.data);
+    }
+  }
+  return 0;
+}

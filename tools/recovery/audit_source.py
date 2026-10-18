@@ -6,7 +6,7 @@ import struct
 from pathlib import Path
 
 from inspect_release import Image
-from promote_recovery import LITERAL, strip_comments
+from promote_recovery import LITERAL, strip_comments, aggregate_stack_aliases
 from recover_literals import recover_strings, readonly_string, byte_literal
 
 
@@ -49,6 +49,8 @@ def main():
     sources = {p:(root / p).read_bytes().decode("utf-8", errors="replace") for p in manifest["source_files"]}
     issues = []
     recovered_strings = 0
+    literal_pointer_stores = 0
+    literal_constants = 0
     def machine_bytes(address, length):
         rva = address - image.pe.OPTIONAL_HEADER.ImageBase
         for section in image.pe.sections:
@@ -71,6 +73,62 @@ def main():
                 if readonly_string(image, int(entry["address"], 16)) != bytes.fromhex(entry["bytes"]):
                     raise ValueError("Read-only string byte mismatch")
             literal_input = strip_comments(raw)
+            for entry in function.get("reconstructed_literal_constants", []):
+                # Manually reconstructed VLA call frames can lose typed string
+                # arguments. The raw pointer spelling, read-only bytes and all
+                # recorded immediate materializations must agree. These are
+                # explicit per-function reconstructions, never a global cast.
+                from capstone import Cs, CS_ARCH_X86, CS_MODE_32
+                from capstone.x86_const import X86_OP_IMM
+                address = int(entry['address'], 16)
+                token = '&' + entry['symbol']
+                literal = readonly_string(image, address)
+                if (entry['symbol'] not in {f'UNK_{address:08x}', '_rdata'} or
+                    (entry['symbol'] == '_rdata' and entry['raw_occurrences'] != 1) or
+                    literal != bytes.fromhex(entry['bytes']) or
+                    literal_input.count(token) != entry['raw_occurrences'] or
+                    not entry['materializations']):
+                    raise ValueError('VLA literal pointer provenance mismatch')
+                for site in entry['materializations']:
+                    at, code = int(site['address'],16), bytes.fromhex(site['bytes'])
+                    decoder = Cs(CS_ARCH_X86, CS_MODE_32);decoder.detail = True
+                    instructions = list(decoder.disasm(code, at))
+                    if (machine_bytes(at,len(code)) != code or len(instructions) != 1 or
+                        not int(function['address'],16) <= at < int(entry['function_end'],16)):
+                        raise ValueError('VLA literal instruction mismatch')
+                    ins = instructions[0]
+                    if (ins.mnemonic != 'mov' or ins.operands[1].type != X86_OP_IMM or
+                        ins.operands[1].imm != address or ins.operands[0].size != 4):
+                        raise ValueError('VLA literal immediate mismatch')
+                literal_input = literal_input.replace(token,byte_literal(literal))
+                literal_constants += entry['raw_occurrences']
+            for entry in function.get("reconstructed_literal_pointers", []):
+                # Typed pointer fields may still print as &UNK. Require each
+                # materialization to be a four-byte immediate MOV to memory,
+                # inside this function, pointing at the exact read-only bytes.
+                from capstone import Cs, CS_ARCH_X86, CS_MODE_32
+                from capstone.x86_const import X86_OP_MEM, X86_OP_IMM
+                address = int(entry["address"], 16)
+                literal = readonly_string(image, address)
+                token = '&' + entry["symbol"]
+                if (entry["symbol"] != f'UNK_{address:08x}' or
+                    literal != bytes.fromhex(entry["bytes"]) or
+                    literal_input.count(token) != len(entry["materializations"])):
+                    raise ValueError("Reconstructed literal pointer provenance mismatch")
+                for site in entry["materializations"]:
+                    at, code = int(site["address"], 16), bytes.fromhex(site["bytes"])
+                    decoded = Cs(CS_ARCH_X86, CS_MODE_32); decoded.detail = True
+                    instructions = list(decoded.disasm(code, at))
+                    if (machine_bytes(at, len(code)) != code or len(instructions) != 1 or
+                        not int(function["address"], 16) <= at < int(entry["function_end"], 16)):
+                        raise ValueError("Reconstructed literal pointer machine range mismatch")
+                    ins = instructions[0]
+                    if (ins.mnemonic != 'mov' or ins.operands[0].type != X86_OP_MEM or
+                        ins.operands[0].size != 4 or ins.operands[1].type != X86_OP_IMM or
+                        ins.operands[1].imm != address):
+                        raise ValueError("Reconstructed literal pointer MOV mismatch")
+                literal_input = literal_input.replace(token, byte_literal(literal))
+                literal_pointer_stores += len(entry["materializations"])
             for entry in function.get("reconstructed_literal_loads", []):
                 # VLA stack state can obscure a direct constant argument. Accept
                 # its explicit reconstruction only with the x86 ESP-relative
@@ -105,6 +163,41 @@ def main():
             if source.count(marker) != 1:
                 raise ValueError("Missing or repeated source provenance marker")
             body = function_body(source[source.index(marker):], function["name"])
+            native_string = function.get('native_string_view')
+            if native_string:
+                address = int(native_string['address'],16)
+                argument = native_string['argument']
+                expected_load = b'\xc7\x44\x24' + bytes([argument * 4]) + struct.pack('<I',address)
+                if (native_string['type'] != 'const char *' or
+                    expected_load.hex() != native_string['load_bytes'] or
+                    machine_bytes(int(native_string['load_address'],16),len(expected_load)) != expected_load):
+                    raise ValueError('Native runtime-string argument mismatch')
+            masks = function.get('state_mask_evidence')
+            if masks:
+                if (masks['raw_sha256'] != function['raw_sha256'] or masks['source'] != function['source'] or
+                    masks['unit_evidence']['state_member']['offset'] != 8 or
+                    masks['unit_evidence']['state_member']['bytes'] != 4):
+                    raise ValueError('State-mask type provenance mismatch')
+                for replacement in masks['replacements']:
+                    match = re.fullmatch(r'\b\w+->state\s*[&|]\s*(0x[0-9a-fA-F]+)', replacement['original'])
+                    if (not match or int(match[1],16) != replacement['mask'] or
+                        sum(replacement['bits'].values()) != replacement['mask']):
+                        raise ValueError('State-mask value mismatch')
+                    for name,number in replacement['bits'].items():
+                        if masks['unit_evidence']['enumerators'][name]['value'] != number:
+                            raise ValueError('State-mask enumerator mismatch')
+                    for site in replacement['machine_sites']:
+                        code=bytes.fromhex(site['bytes'])
+                        if machine_bytes(int(site['address'],16),len(code)) != code:
+                            raise ValueError('State-mask instruction mismatch')
+            if function.get("reconstruction_body_sha256") and hashlib.sha256(
+                    body.replace("\r\n", "\n").encode()).hexdigest() != function["reconstruction_body_sha256"]:
+                raise ValueError("Manual reconstruction body hash mismatch")
+            if aggregate_stack_aliases(body):
+                raise ValueError("Cross-type stack cast remains without verified storage")
+            storage = function.get("stack_storage_reconstruction")
+            if storage and hashlib.sha256(body.replace("\r\n", "\n").encode()).hexdigest() != storage["body_sha256"]:
+                raise ValueError("Reconstructed stack-storage body hash mismatch")
             if literal_tokens(expected) != literal_tokens(body):
                 raise ValueError("Source literal mismatch")
             compact = re.sub(r"\s+", "", body)
@@ -122,7 +215,7 @@ def main():
         except (ValueError, OSError) as error:
             issues.append(dict(source=function["source"], name=function["name"], error=str(error)))
     for declaration in manifest.get("source_globals", []):
-        source = strip_comments(sources[declaration["source"]])
+        source = strip_comments(sources[declaration["source"]]).replace('\r\n', '\n')
         if source.count(declaration["declaration"]) != 1:
             issues.append(dict(source=declaration["source"], name=declaration["name"],
                                error="Missing or repeated recovered global declaration"))
@@ -140,10 +233,14 @@ def main():
                 raise ValueError("Source fragment hash mismatch")
         except (ValueError, OSError) as error:
             issues.append(dict(source=fragment["source"], name=fragment["original_function"], error=str(error)))
-    report = dict(functions=len(manifest["accepted_functions"]), source_fragments=len(manifest.get("source_fragments", [])), recovered_literal_arguments=recovered_strings,
+    report = dict(functions=len(manifest["accepted_functions"]), source_fragments=len(manifest.get("source_fragments", [])),
+                  stack_storage_functions=sum(bool(f.get("stack_storage_reconstruction")) for f in manifest["accepted_functions"]),
+                  recovered_literal_arguments=recovered_strings,
+                  reconstructed_literal_pointer_stores=literal_pointer_stores,
+                  reconstructed_literal_constants=literal_constants,
                   source_markers="All unique and present." if not issues else "See issues.",
                   raw_export_hashes="All match." if not issues else "See issues.",
-                  literal_values="Checked, including byte-exact read-only argument recovery and adjacent C strings.",
+                  literal_values="Checked, including byte-exact read-only arguments, verified pointer constants/stores and adjacent C strings.",
                   issues=issues)
     (analysis / "recovery-audit.json").write_text(json.dumps(report, indent=2))
     if not issues:

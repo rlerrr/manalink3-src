@@ -8260,3 +8260,120 @@ int card_armored_guardian(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2496770; original cards/invasion.c:5011. */
+int card_blind_seer(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  event_t event_00;
+  target_definition_t *td_00;
+  const char *prompt;
+  target_definition_t td;
+  target_definition_t td_spell;
+
+  if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x47);
+    counterspell_target_definition(player, card, &td_spell, 0xff);
+  LAB_024967d8:
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+
+      instance = get_card_instance(player, card);
+      result = instance->info_slot;
+      if (result - 2U < 2)
+      {
+        result = counterspell_validate(player, card, &td_spell, 0);
+        if (result != 0)
+        {
+          result = get_deck_color(player, 1 - player);
+          result = choose_a_color(player, result);
+          change_color(player, card, instance->targets[0].player, instance->targets[0].card,
+                       1 << ((unsigned char)result & 0x1f),
+                       CHANGE_COLOR_END_AT_EOT | CHANGE_COLOR_SET);
+        }
+        result = instance->info_slot;
+      }
+      if ((result == 1) && (result = valid_target(&td), result != 0))
+      {
+        result = get_deck_color(player, 1 - player);
+        result = choose_a_color(player, result);
+        change_color(instance->parent_controller, instance->parent_card,
+                     instance->targets[0].player, instance->targets[0].card,
+                     1 << ((unsigned char)result & 0x1f),
+                     CHANGE_COLOR_END_AT_EOT | CHANGE_COLOR_SET);
+      }
+    }
+    return 0;
+  }
+  td_00 = &td;
+  default_target_definition(player, card, td_00, 0x47);
+  counterspell_target_definition(player, card, &td_spell, 0xff);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+
+    result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x400, 1, 0, 1, 0, 0, 0, 0,
+                                       &td_spell, NULL);
+    if (result != 0)
+    {
+      return result;
+    }
+    prompt = NULL;
+    event_00 = EVENT_CAN_ACTIVATE;
+  }
+  else
+  {
+    if (event != EVENT_ACTIVATE)
+      goto LAB_024967d8;
+
+    instance = get_card_instance(player, card);
+    instance->info_slot = 0;
+    instance->number_of_targets = '\0';
+    result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x400, 1, 0, 1, 0, 0, 0, 0,
+                                       &td_spell, NULL);
+    if (result != 0)
+    {
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 0x400, 1, 0, 1, 0, 0, 0, 0, td_00,
+                                NULL);
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      instance->info_slot = 3;
+      return 0;
+    }
+
+    result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 1, 0, 1, 0, 0, 0, 0,
+                                       td_00, NULL);
+    if ((result == 0) || (result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\004",
+                                               "Target permanent", result, 1, 0, 0, 0, 0),
+                          result == 0))
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (result == 1)
+    {
+      prompt = "TARGET_PERMANENT";
+    }
+    else
+    {
+      if (result != 2)
+      {
+        return 0;
+      }
+      prompt = "TARGET_ANY";
+      td_00 = &td_spell;
+    }
+    event_00 = EVENT_ACTIVATE;
+  }
+  result = generic_activated_ability(player, card, event_00, 4, 1, 0, 1, 0, 0, 0, 0, td_00, prompt);
+  return result;
+}

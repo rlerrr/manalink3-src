@@ -1751,33 +1751,40 @@ int card_hammer_boomtacular(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  test_definition_t test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_test;
 
   if (((trigger_condition == 0xd3) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    default_test_definition(&test, 0xff);
-    test.special_selection_function = test_has_watermark_val;
-    test.value_for_special_selection_function = 3;
-    sp_ability_trigger(player, event, 2, TYPE_NONE, &test, player, card);
+    default_test_definition(&recovered_stack_test.test, 0xff);
+    recovered_stack_test.test.special_selection_function = test_has_watermark_val;
+    recovered_stack_test.test.value_for_special_selection_function = 3;
+    sp_ability_trigger(player, event, 2, TYPE_NONE, &recovered_stack_test.test, player, card);
   }
   if (event == EVENT_SPA)
   {
 
-    default_target_definition(player, card, (target_definition_t *)&test, 0x102);
-    test.message[0xc] = '\0';
-    test.message[0xd] = '\x12';
-    test.message[0xe] = '\0';
-    test.message[0xf] = '\0';
-    test.message[0x44] = '\0';
-    test.message[0x45] = '\0';
-    test.message[0x46] = '\0';
-    test.message[0x47] = '\0';
+    default_target_definition(player, card, &recovered_stack_test.target, 0x102);
+    recovered_stack_test.test.message[0xc] = '\0';
+    recovered_stack_test.test.message[0xd] = '\x12';
+    recovered_stack_test.test.message[0xe] = '\0';
+    recovered_stack_test.test.message[0xf] = '\0';
+    recovered_stack_test.test.message[0x44] = '\0';
+    recovered_stack_test.test.message[0x45] = '\0';
+    recovered_stack_test.test.message[0x46] = '\0';
+    recovered_stack_test.test.message[0x47] = '\0';
     instance = get_card_instance(player, card);
-    result = can_target((target_definition_t *)&test);
+    result = can_target(&recovered_stack_test.target);
     if (result != 0)
     {
-      result = new_pick_target((target_definition_t *)&test, "TARGET_ANY", 0, 0);
+      result = new_pick_target(&recovered_stack_test.target, "TARGET_ANY", 0, 0);
       if (result != 0)
       {
         damage_creature(instance->targets[0].player, instance->targets[0].card, 2, player, card);
@@ -2235,5 +2242,353 @@ int card_border_guardian(int player, int card, event_t event)
       goto LAB_025c8595;
     }
   }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25c4940; original cards/unstable.c:1229. */
+static int test_has_been_banned_or_restricted(int iid, int val, int player, int card)
+{
+  enum
+  {
+    CPF_EVER_BANNED_OR_RESTRICTED = 1
+  };
+
+  return cards_ptr[cards_data[iid].id]->flags & CPF_EVER_BANNED_OR_RESTRICTED;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int roll_xd6_shim(int player, int card);
+
+/* ManalinkEh 2022: 0x25c5150; original cards/unstable.c:199. */
+int card_go_to_jail(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  return_from_oblivion(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = 1 - player;
+    td.allow_cancel = 0;
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "TARGET_CREATURE", 0, 0);
+      if (result != 0)
+      {
+        obliviation(player, card, instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+    instance->number_of_targets = '\0';
+  }
+  else if ((trigger_condition == 0xc9) && (event - EVENT_TRIGGER < 2))
+  {
+    result = owner_of_obliviated_card(player, card);
+    upkeep_trigger_ability(player, card, event, result);
+  }
+  else if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    roll_2d6t(current_turn, player, card, -1, -1, &td.who_chooses, &td.allowed_controller);
+    if (td.who_chooses == td.allowed_controller)
+    {
+      kill_card(player, card, KILL_SACRIFICE);
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25c57c0; original cards/unstable.c:541. */
+int card_time_out(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+
+            instance = get_card_instance(player, card);
+            result = roll_d6t(player, player, card, instance->targets[0].player,
+                              instance->targets[0].card);
+            put_permanent_under_the_first_x_card_of_its_owners_library(
+                instance->targets[0].player, instance->targets[0].card, result);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_025c5815;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+LAB_025c5815:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25c69d0; original cards/unstable.c:1005. */
+int card_inhumaniac(int player, int card, event_t event)
+{
+  int result;
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    return 0;
+  }
+
+  result = roll_d6t(player, player, card, -1, -1);
+  if (result - 3U < 2)
+  {
+    result = 1;
+  }
+  else
+  {
+    if (result < 5)
+    {
+      if (result != 1)
+      {
+        return 0;
+      }
+      remove_all_counters_from_source(player, card, player, card, COUNTER_P1_P1);
+      return 0;
+    }
+    result = 2;
+  }
+  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, result);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c7090; original cards/unstable.c:1204. */
+int card_sly_spy_f(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int amount;
+  int iVar3;
+  unsigned int uVar4;
+  unsigned int uStack_20;
+  int times_damaged[2];
+
+  iVar1 = damage_dealt_by_me(player, card, event,
+                             DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
+                                 DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (iVar1 == 0)
+  {
+    return 0;
+  }
+
+  instance = get_card_instance(player, card);
+
+  uStack_20 = 0;
+  uVar4 = instance->targets[1].player;
+  instance->targets[1].player = 0;
+  times_damaged[0] = uVar4 & 0xff;
+  times_damaged[1] = uVar4 >> 8 & 0xff;
+  do
+  {
+    uVar4 = uStack_20 ^ current_turn;
+
+    iVar1 = times_damaged[uVar4];
+    if (0 < iVar1)
+    {
+      iVar3 = 0;
+      do
+      {
+        amount = roll_d6t(player, player, card, uVar4, -1);
+        iVar3 = iVar3 + 1;
+        lose_life(uVar4, amount);
+      } while (iVar3 != iVar1);
+    }
+    uStack_20 = uStack_20 + 1;
+  } while (uStack_20 != 2);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c73a0; original cards/unstable.c:1263. */
+int card_squirrel_powered_scheme(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      add_to_die_rolls[player] = add_to_die_rolls[player] + 2;
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c73f0; original cards/unstable.c:1308. */
+int card_box_of_free_range_goblins(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = roll_d6t(player, player, card, -1, -1);
+    generate_tokens_by_id(player, card, 0x493a, result);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25c7510; original cards/unstable.c:1370. */
+int card_garbage_elemental_d(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  cascade_2022(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+
+  opponent_or_pw_target_definition(player, card, &td);
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = 1 - player;
+  td.allow_cancel = 0;
+  instance = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    result = new_pick_target(&td, "TARGET_CREATURE", 0, 0);
+    if (result != 0)
+    {
+
+      result =
+          roll_d6t(player, player, card, instance->targets[0].player, instance->targets[0].card);
+      damage_creature(instance->targets[0].player, instance->targets[0].card, result, player, card);
+    }
+  }
+  instance->number_of_targets = '\0';
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c7630; original cards/unstable.c:1422. */
+int card_hammer_helper(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+
+            instance = get_card_instance(player, card);
+            result = roll_d6t(player, player, card, instance->targets[0].player,
+                              instance->targets[0].card);
+            effect_act_of_treason_and_modify_pt_or_abilities(
+                player, card, instance->targets[0].player, instance->targets[0].card, result, 0, 0,
+                0);
+          }
+          kill_card(player, card, KILL_DESTROY);
+          return 0;
+        }
+        goto LAB_025c767d;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+LAB_025c767d:
+  result = aot_like_spell(player, card, event, &td, "TARGET_CREATURE", 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25c7910; original cards/unstable.c:1497. */
+int card_painiac(int player, int card, event_t event)
+{
+  int power;
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    return 0;
+  }
+  power = roll_d6t(player, player, card, -1, -1);
+  pump_until_eot_merge_previous(player, card, player, card, power, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c4be0; original cards/unstable.c:1641. */
+static int roll_xd6_shim(int player, int card)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  result = roll_xd6t(player, instance->info_slot, player, card, -1, -1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25c7bb0; original cards/unstable.c:1645. */
+int card_hydradoodle(int player, int card, event_t event)
+{
+  multi_x_spell(player, card, event, 2);
+  enters_the_battlefield_with_counters_fn(player, card, event, COUNTER_P1_P1, roll_xd6_shim);
   return 0;
 }

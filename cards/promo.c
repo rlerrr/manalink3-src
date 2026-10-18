@@ -1288,3 +1288,175 @@ int card_fruitcake_elemental(int player, int card, event_t event)
       generic_activated_ability(player, card, event, 4, 3, 0, 0, 0, 0, 0, 0, &td, "TARGET_PLAYER");
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24108e0; original cards/promo.c:1353. */
+int card_seasons_beatings(int player, int card, event_t event)
+{
+  int card_00;
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int amt;
+  int iVar4;
+  int iVar5;
+  target_definition_t td;
+  int creatures[151];
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0);
+        td.zone = 0x1000;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          iVar1 = valid_target(&td);
+          if (iVar1 != 0)
+          {
+
+            instance = get_card_instance(player, card);
+
+            iVar1 = instance->targets[0].player;
+            if (0 < active_cards_count[iVar1])
+            {
+              iVar4 = 0;
+              iVar5 = 0;
+              do
+              {
+                instance = in_play(iVar1, iVar5);
+                if ((instance != NULL) && (iVar3 = is_what(iVar1, iVar5, 2), iVar3 != 0))
+                {
+                  creatures[iVar4] = iVar5;
+                  iVar4 = iVar4 + 1;
+                }
+                iVar5 = iVar5 + 1;
+              } while (iVar5 < active_cards_count[iVar1]);
+              if (1 < iVar4)
+              {
+
+                iVar5 = 0;
+                do
+                {
+
+                  iVar3 = network_rand(player, iVar4 + -1);
+                  iVar3 = iVar3 + 1;
+                  if (iVar3 == iVar5)
+                  {
+                    iVar3 = 0;
+                  }
+                  card_00 = creatures[iVar5];
+                  amt = get_power(iVar1, card_00);
+                  iVar5 = iVar5 + 1;
+                  damage_creature(iVar1, creatures[iVar3], amt, iVar1, card_00);
+                } while (iVar4 != iVar5);
+              }
+            }
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02410949;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0);
+  td.zone = 0x1000;
+LAB_02410949:
+  iVar1 = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x2410fc0; original cards/promo.c:1482. */
+int card_yule_ooze(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  int iStack_4cc;
+  target_t nlperms[151];
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    iVar1 = regeneration(player, card, event, 0, 0, 0, 1, 1, 0);
+    if ((event == EVENT_ACTIVATE) && (spell_fizzled != 1))
+    {
+      play_sound_effect(WAV_DEVOUR);
+      return iVar1;
+    }
+    return iVar1;
+  }
+
+  iStack_4cc = 0;
+  iVar1 = 0;
+  do
+  {
+
+    if (0 < active_cards_count[iVar1])
+    {
+      iVar4 = 0;
+    LAB_02411092:
+      do
+      {
+        if ((card != iVar4) || (player != iVar1))
+        {
+          instance = in_play(iVar1, iVar4);
+          if (instance != NULL)
+          {
+            iVar3 = is_what(iVar1, iVar4, 1);
+            if (iVar3 == 0)
+            {
+              iVar3 = is_what(iVar1, iVar4, 0x47);
+              if (iVar3 != 0)
+              {
+                nlperms[iStack_4cc].card = iVar4;
+                nlperms[iStack_4cc].player = iVar1;
+                iVar4 = iVar4 + 1;
+                iStack_4cc = iStack_4cc + 1;
+                if (active_cards_count[iVar1] <= iVar4)
+                  break;
+                goto LAB_02411092;
+              }
+            }
+          }
+        }
+        iVar4 = iVar4 + 1;
+      } while (iVar4 < active_cards_count[iVar1]);
+    }
+    iVar1 = iVar1 + 1;
+    if (iVar1 == 2)
+    {
+      if (0 < iStack_4cc)
+      {
+
+        iVar4 = network_rand(player, iStack_4cc);
+        iVar1 = nlperms[iVar4].player;
+        iVar4 = nlperms[iVar4].card;
+        iVar3 = get_cmc(iVar1, iVar4);
+        kill_card(iVar1, iVar4, KILL_DESTROY);
+        add_counters_from_source(player, card, player, card, COUNTER_P1_P1, iVar3);
+      }
+      iVar1 = regeneration(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, 0, 0, 0, 1, 1, 0);
+      return iVar1;
+    }
+  } while (true);
+}

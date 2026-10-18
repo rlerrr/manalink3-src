@@ -10773,3 +10773,163 @@ int card_arcums_sleigh(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23f59c0; original cards/ice_age.c:2711. */
+int card_elkin_bottle(int player, int card, event_t event)
+{
+  enum
+  {
+    MPCFE_UNTIL_YOUR_NEXT_UPKEEP = 64
+  };
+
+  unsigned short uVar1;
+  int result;
+
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (*deck_ptr[player] != -1))
+    {
+
+      uVar1 = cards_data[*deck_ptr[player]].id;
+      rfg_top_card_of_deck(player);
+      create_may_play_card_from_exile_effect(player, card, player, (unsigned int)uVar1,
+                                             MPCFE_UNTIL_YOUR_NEXT_UPKEEP);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 1, 3, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23f1bf0; original cards/ice_age.c:1489. */
+int card_breath_of_dreams(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *instance;
+  unsigned int uVar5;
+  char *pcVar6;
+  bool bVar7;
+  unsigned char bVar8;
+  char marked[151];
+  test_definition_t this_test;
+
+  bVar8 = 0;
+  upkeep_trigger_ability(player, card, event, 2);
+  iVar3 = current_turn;
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    if (current_turn == player)
+    {
+
+      add_counters_from_source(current_turn, card, current_turn, card, COUNTER_AGE, 1);
+      iVar1 = count_counters(iVar3, card, COUNTER_AGE);
+      iVar2 = has_mana_multi(iVar3, 0, 0, iVar1, 0, 0, 0);
+      iVar2 = dialog_impl(iVar3, card, EVENT_ACTIVATE, "\001\006", iVar3, card, "\001\007", iVar3,
+                          card, "\001\010", iVar3, "\001\002", "\001\014", "\001\016", "\001\003",
+                          "Pay cumulative upkeep", iVar2, 1, "Decline", 1, 1, 0, 0, 0, 0);
+      if ((iVar2 != 1) || (iVar3 = charge_mana_multi_while_resolving(
+                               iVar3, card, EVENT_RESOLVE_TRIGGER, iVar3, 0, 0, iVar1, 0, 0, 0),
+                           iVar3 == 0))
+      {
+        spell_fizzled = 0;
+        kill_card(player, card, KILL_SACRIFICE);
+        return 1;
+      }
+    }
+
+    iVar3 = current_turn;
+    pcVar6 = marked + 5;
+    marked[0] = '\0';
+    marked[1] = '\0';
+    marked[2] = '\0';
+    marked[3] = '\0';
+    marked[4] = '\0';
+    uVar5 = 0x92;
+    bVar7 = ((unsigned int)pcVar6 & 2) != 0;
+    if (bVar7)
+    {
+      marked[5] = '\0';
+      marked[6] = '\0';
+      uVar5 = 0x90;
+      pcVar6 = marked + 7;
+    }
+    for (uVar5 = uVar5 >> 2; uVar5 != 0; uVar5 = uVar5 - 1)
+    {
+      pcVar6[0] = '\0';
+      pcVar6[1] = '\0';
+      pcVar6[2] = '\0';
+      pcVar6[3] = '\0';
+      pcVar6 = pcVar6 + (unsigned int)bVar8 * -8 + 4;
+    }
+    if (!bVar7)
+    {
+      pcVar6[0] = '\0';
+      pcVar6[1] = '\0';
+    }
+    iVar1 = 0;
+    if (0 < active_cards_count[current_turn])
+    {
+      do
+      {
+        instance = in_play(iVar3, iVar1);
+        if ((instance != NULL) && (iVar2 = is_what(iVar3, iVar1, 2), iVar2 != 0))
+        {
+          marked[iVar1] = '\x01';
+        }
+        iVar1 = iVar1 + 1;
+      } while (iVar1 < active_cards_count[iVar3]);
+    }
+    default_test_definition(&this_test, 2);
+    iVar1 = 0;
+    this_test.color = get_sleighted_color_test(player, card, 8);
+    if (0 < active_cards_count[iVar3])
+    {
+      do
+      {
+        if ((((marked[iVar1] != '\0') && (instance = in_play(iVar3, iVar1), instance != NULL)) &&
+             ((instance->token_status & 0x80) == 0)) &&
+            ((iVar2 = new_make_test_in_play(iVar3, iVar1, -1, &this_test),
+              iVar2 != 0 &&
+                  (iVar2 = cumulative_upkeep_arbitrary(
+                       player, card, iVar3, iVar1, EVENT_UPKEEP_TRIGGER_ABILITY, 1, 0, 0, 0, 0, 0),
+                   iVar2 != 0))))
+        {
+          kill_card(iVar3, iVar1, KILL_SACRIFICE);
+        }
+        iVar1 = iVar1 + 1;
+      } while (iVar1 < active_cards_count[iVar3]);
+    }
+  }
+  else if (event == EVENT_QUERY_CUMULATIVE_UPKEEP)
+  {
+
+    default_test_definition(&this_test, 2);
+    this_test.color = get_sleighted_color_test(player, card, 8);
+    if (0 < active_cards_count[0])
+    {
+      iVar3 = 0;
+      do
+      {
+        if ((((iVar3 == affected_card) && (affected_card_controller == 0)) &&
+             (instance = in_play(0, iVar3), instance != NULL)) &&
+            (iVar1 = new_make_test_in_play(0, iVar3, -1, &this_test), iVar1 != 0))
+        {
+          event_result = event_result | 1;
+        }
+        iVar3 = iVar3 + 1;
+      } while (iVar3 < active_cards_count[0]);
+    }
+  }
+  iVar3 = global_enchantment(player, card, event);
+  return iVar3;
+}

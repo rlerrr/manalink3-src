@@ -3653,3 +3653,25 @@ int ninjutsu_custom_target(int player, int card, event_t event, int cless, int b
       ninjutsu_custom_target(player, card, event, cless, black, blue, green, red, white, td, csvid);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x256b130; original cards/betrayers_of_kamigawa.c:1124. */
+int card_harbinger_of_spring(int player, int card, event_t event)
+{
+  int result;
+
+  misc_protection(player, card, event);
+  if ((((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((((unsigned int)event_result >> 24 & 0xff) == '\x06' ||
+        ((result = is_what(attacking_card_controller, attacking_card, 2),
+          result != 0 &&
+              (result = has_subtype(attacking_card_controller, attacking_card, SUBTYPE_SPIRIT),
+               result == 0))))))
+  {
+    event_result = event_result | 1;
+  }
+  result = soulshift(player, card, event, 4, 1);
+  return result;
+}

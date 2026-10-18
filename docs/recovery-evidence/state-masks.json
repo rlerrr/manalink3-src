@@ -1,0 +1,567 @@
+{
+  "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "functions": {
+    "26b33d0": {
+      "name": "on_stack",
+      "source": "functions/deck.c",
+      "raw_sha256": "5f4608ee737e5761f6e674aa1947b255882e2ff459c91a59f79cfa2758a32d6b",
+      "replacements": [
+        {
+          "original": "pcVar1->state & 0x800022",
+          "replacement": "pcVar1->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)",
+          "mask": 8388642,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608,
+            "STATE_INVISIBLE": 32,
+            "STATE_IN_PLAY": 2
+          },
+          "machine_sites": [
+            {
+              "address": "26b33eb",
+              "bytes": "81e222008000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "3041c415187daf6b05ffab60a3f5ddcf47a1ada2eadd035568f1bdfee1b0f843",
+      "unit_evidence": {
+        "enumerators": {
+          "STATE_IN_PLAY": {
+            "value": 2,
+            "die": "0x672aa81",
+            "enum_die": "0x672aa50"
+          },
+          "STATE_INVISIBLE": {
+            "value": 32,
+            "die": "0x672aac3",
+            "enum_die": "0x672aa50"
+          },
+          "STATE_OUBLIETTED": {
+            "value": 8388608,
+            "die": "0x672ac50",
+            "enum_die": "0x672aa50"
+          }
+        },
+        "state_member": {
+          "offset": 8,
+          "bytes": 4,
+          "die": "0x672c6a0"
+        }
+      }
+    },
+    "25af4b0": {
+      "name": "card_sakashimas_protege",
+      "source": "cards/commander_legends.c",
+      "raw_sha256": "eb76516a0c2c573aa29d200bb3b1011eb411741338f317a418670f567c6dbde1",
+      "replacements": [
+        {
+          "original": "pcVar2->state | 0x800000",
+          "replacement": "pcVar2->state | STATE_OUBLIETTED",
+          "mask": 8388608,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "25af553",
+              "bytes": "0d00008000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "4f71c49e55a834e6b3ddd95a87d5d1cc015c1daade228c68f9416094aead7cd8",
+      "unit_evidence": {
+        "enumerators": {
+          "STATE_OUBLIETTED": {
+            "value": 8388608,
+            "die": "0x535a4f7",
+            "enum_die": "0x535a2f7"
+          }
+        },
+        "state_member": {
+          "offset": 8,
+          "bytes": 4,
+          "die": "0x535c0e2"
+        }
+      }
+    },
+    "2230120": {
+      "name": "devour_type",
+      "source": "cards/modern_horizons_2.c",
+      "raw_sha256": "5bb7c3e2df1a36242d97ec2b7c4b3b479c0a1599a7bd2c98218bd807c3320661",
+      "replacements": [
+        {
+          "original": "pcVar2->state | 0x800000",
+          "replacement": "pcVar2->state | STATE_OUBLIETTED",
+          "mask": 8388608,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "2230173",
+              "bytes": "0d00008000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "999efca465622346bc06c52f25daad86e7d78d2ca0a60f9ae0dbe478aa77d516",
+      "unit_evidence": {
+        "enumerators": {
+          "STATE_OUBLIETTED": {
+            "value": 8388608,
+            "die": "0x1f57a9e",
+            "enum_die": "0x1f5789e"
+          }
+        },
+        "state_member": {
+          "offset": 8,
+          "bytes": 4,
+          "die": "0x1f59730"
+        }
+      }
+    },
+    "21cded0": {
+      "name": "card_god_eternal_bontu",
+      "source": "cards/war_of_the_spark.c",
+      "raw_sha256": "9ae0c7822edd39b533a1a7eaa160688096be3c2dd31e6cd792edd40f2eed555a",
+      "replacements": [
+        {
+          "original": "pcVar2->state | 0x800000",
+          "replacement": "pcVar2->state | STATE_OUBLIETTED",
+          "mask": 8388608,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "21cdf73",
+              "bytes": "81ca00008000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "1edc729707011ee56180905b594da06a9c3d6e6e99dcef6ce4c1799ef450dcad",
+      "unit_evidence": {
+        "enumerators": {
+          "STATE_OUBLIETTED": {
+            "value": 8388608,
+            "die": "0x1942261",
+            "enum_die": "0x1942061"
+          }
+        },
+        "state_member": {
+          "offset": 8,
+          "bytes": 4,
+          "die": "0x1943e5f"
+        }
+      }
+    },
+    "24ddd70": {
+      "name": "land_pay_life_or_etb_tapped",
+      "source": "cards/ravnica.c",
+      "raw_sha256": "083b2756edbabfaeb6a69beec9aae96495107a4f9e3d19841cd87706cda4608e",
+      "replacements": [
+        {
+          "original": "pcVar2->state & 0x800032",
+          "replacement": "pcVar2->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_TAPPED | STATE_IN_PLAY)",
+          "mask": 8388658,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608,
+            "STATE_INVISIBLE": 32,
+            "STATE_TAPPED": 16,
+            "STATE_IN_PLAY": 2
+          },
+          "machine_sites": [
+            {
+              "address": "24dde33",
+              "bytes": "2532008000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "89a0fe04c99ad632fc9b3ffbe0323592804bd9758df57644d67b3f1e6418b215",
+      "unit_evidence": {
+        "enumerators": {
+          "STATE_IN_PLAY": {
+            "value": 2,
+            "die": "0x47e735b",
+            "enum_die": "0x47e732a"
+          },
+          "STATE_TAPPED": {
+            "value": 16,
+            "die": "0x47e738e",
+            "enum_die": "0x47e732a"
+          },
+          "STATE_INVISIBLE": {
+            "value": 32,
+            "die": "0x47e739d",
+            "enum_die": "0x47e732a"
+          },
+          "STATE_OUBLIETTED": {
+            "value": 8388608,
+            "die": "0x47e752a",
+            "enum_die": "0x47e732a"
+          }
+        },
+        "state_member": {
+          "offset": 8,
+          "bytes": 4,
+          "die": "0x47e9118"
+        }
+      }
+    },
+    "2024970": {
+      "name": "card_time_and_tide",
+      "source": "cards/visions.c",
+      "raw_sha256": "aac694f60f2afb23f3a935ea198ba4545b07eec9f5672bf5432e6a2269469f71",
+      "replacements": [
+        {
+          "original": "pcVar3->state & 0x800022",
+          "replacement": "pcVar3->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)",
+          "mask": 8388642,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608,
+            "STATE_INVISIBLE": 32,
+            "STATE_IN_PLAY": 2
+          },
+          "machine_sites": [
+            {
+              "address": "2024a0c",
+              "bytes": "2522008000"
+            },
+            {
+              "address": "2024aa1",
+              "bytes": "2522008000"
+            },
+            {
+              "address": "2024b48",
+              "bytes": "2522008000"
+            },
+            {
+              "address": "2024c3c",
+              "bytes": "2522008000"
+            }
+          ]
+        },
+        {
+          "original": "pcVar3->state & 0x800022",
+          "replacement": "pcVar3->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)",
+          "mask": 8388642,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608,
+            "STATE_INVISIBLE": 32,
+            "STATE_IN_PLAY": 2
+          },
+          "machine_sites": [
+            {
+              "address": "2024a0c",
+              "bytes": "2522008000"
+            },
+            {
+              "address": "2024aa1",
+              "bytes": "2522008000"
+            },
+            {
+              "address": "2024b48",
+              "bytes": "2522008000"
+            },
+            {
+              "address": "2024c3c",
+              "bytes": "2522008000"
+            }
+          ]
+        },
+        {
+          "original": "pcVar3->state & 0x800022",
+          "replacement": "pcVar3->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)",
+          "mask": 8388642,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608,
+            "STATE_INVISIBLE": 32,
+            "STATE_IN_PLAY": 2
+          },
+          "machine_sites": [
+            {
+              "address": "2024a0c",
+              "bytes": "2522008000"
+            },
+            {
+              "address": "2024aa1",
+              "bytes": "2522008000"
+            },
+            {
+              "address": "2024b48",
+              "bytes": "2522008000"
+            },
+            {
+              "address": "2024c3c",
+              "bytes": "2522008000"
+            }
+          ]
+        },
+        {
+          "original": "pcVar3->state & 0x800022",
+          "replacement": "pcVar3->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)",
+          "mask": 8388642,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608,
+            "STATE_INVISIBLE": 32,
+            "STATE_IN_PLAY": 2
+          },
+          "machine_sites": [
+            {
+              "address": "2024a0c",
+              "bytes": "2522008000"
+            },
+            {
+              "address": "2024aa1",
+              "bytes": "2522008000"
+            },
+            {
+              "address": "2024b48",
+              "bytes": "2522008000"
+            },
+            {
+              "address": "2024c3c",
+              "bytes": "2522008000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "f891670362f03cbc9f502edebaac89da030a2441817a044429af3fa7bc13ad26",
+      "unit_evidence": {
+        "enumerators": {
+          "STATE_IN_PLAY": {
+            "value": 2,
+            "die": "0xafc35",
+            "enum_die": "0xafc04"
+          },
+          "STATE_INVISIBLE": {
+            "value": 32,
+            "die": "0xafc77",
+            "enum_die": "0xafc04"
+          },
+          "STATE_OUBLIETTED": {
+            "value": 8388608,
+            "die": "0xafe04",
+            "enum_die": "0xafc04"
+          }
+        },
+        "state_member": {
+          "offset": 8,
+          "bytes": 4,
+          "die": "0xb1a05"
+        }
+      }
+    },
+    "26b53d0": {
+      "name": "kill_card_impl",
+      "source": "functions/deck.c",
+      "raw_sha256": "dcd4a3a9b0c1e4ededa8b5cb902b970013fa228a7e962d6745236e1744fc9593",
+      "replacements": [
+        {
+          "original": "pcVar2->state & 0x800022",
+          "replacement": "pcVar2->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)",
+          "mask": 8388642,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608,
+            "STATE_INVISIBLE": 32,
+            "STATE_IN_PLAY": 2
+          },
+          "machine_sites": [
+            {
+              "address": "26b5623",
+              "bytes": "2522008000"
+            }
+          ]
+        },
+        {
+          "original": "pcVar2->state & 0x800020",
+          "replacement": "pcVar2->state & (STATE_OUBLIETTED | STATE_INVISIBLE)",
+          "mask": 8388640,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608,
+            "STATE_INVISIBLE": 32
+          },
+          "machine_sites": [
+            {
+              "address": "26b581a",
+              "bytes": "a920008000"
+            },
+            {
+              "address": "26b5841",
+              "bytes": "f7430820008000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "10734bf410837ec97d73ebe3829f0198a0d40920e4afccd53a9724d927ee6bdd",
+      "unit_evidence": {
+        "enumerators": {
+          "STATE_IN_PLAY": {
+            "value": 2,
+            "die": "0x672aa81",
+            "enum_die": "0x672aa50"
+          },
+          "STATE_INVISIBLE": {
+            "value": 32,
+            "die": "0x672aac3",
+            "enum_die": "0x672aa50"
+          },
+          "STATE_OUBLIETTED": {
+            "value": 8388608,
+            "die": "0x672ac50",
+            "enum_die": "0x672aa50"
+          }
+        },
+        "state_member": {
+          "offset": 8,
+          "bytes": 4,
+          "die": "0x672c6a0"
+        }
+      }
+    },
+    "26b5e90": {
+      "name": "pre_counterspell",
+      "source": "functions/deck.c",
+      "raw_sha256": "5dadf2d8552e907732e16b31b860a83577aca737b74f5918c6caf4bd5e5a20ef",
+      "replacements": [
+        {
+          "original": "pcVar3->state & 0x800022",
+          "replacement": "pcVar3->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)",
+          "mask": 8388642,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608,
+            "STATE_INVISIBLE": 32,
+            "STATE_IN_PLAY": 2
+          },
+          "machine_sites": [
+            {
+              "address": "26b5ed4",
+              "bytes": "81e122008000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "bd4fb899071e1bb956e501536b8f55da865a799c23c372ef9f4923c69186f2f8",
+      "unit_evidence": {
+        "enumerators": {
+          "STATE_IN_PLAY": {
+            "value": 2,
+            "die": "0x672aa81",
+            "enum_die": "0x672aa50"
+          },
+          "STATE_INVISIBLE": {
+            "value": 32,
+            "die": "0x672aac3",
+            "enum_die": "0x672aa50"
+          },
+          "STATE_OUBLIETTED": {
+            "value": 8388608,
+            "die": "0x672ac50",
+            "enum_die": "0x672aa50"
+          }
+        },
+        "state_member": {
+          "offset": 8,
+          "bytes": 4,
+          "die": "0x672c6a0"
+        }
+      }
+    },
+    "26a9e40": {
+      "name": "recalculate_all_cards_in_play",
+      "source": "functions/engine.c",
+      "raw_sha256": "c21918684318cdcff1f67a6e36beda0be3bbefd57194e8cd3820399a4b675cb0",
+      "replacements": [
+        {
+          "original": "pcVar4->state & 0x800002",
+          "replacement": "pcVar4->state & (STATE_OUBLIETTED | STATE_IN_PLAY)",
+          "mask": 8388610,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608,
+            "STATE_IN_PLAY": 2
+          },
+          "machine_sites": [
+            {
+              "address": "26a9f53",
+              "bytes": "2502008000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "5f749149faa56b8b7913d7cebdd746ba4bbeb6f61ea440132f1efc51620489d8",
+      "unit_evidence": {
+        "enumerators": {
+          "STATE_IN_PLAY": {
+            "value": 2,
+            "die": "0x6665e3e",
+            "enum_die": "0x6665e0d"
+          },
+          "STATE_OUBLIETTED": {
+            "value": 8388608,
+            "die": "0x666600d",
+            "enum_die": "0x6665e0d"
+          }
+        },
+        "state_member": {
+          "offset": 8,
+          "bytes": 4,
+          "die": "0x6667c41"
+        }
+      }
+    },
+    "26b2b50": {
+      "name": "create_card_instance",
+      "source": "functions/deck.c",
+      "raw_sha256": "5adb293e30fadf5b635b63a6c65970099d55f50467206569e9e038846de807fb",
+      "replacements": [
+        {
+          "original": "pcVar6->state & 0x800000",
+          "replacement": "pcVar6->state & STATE_OUBLIETTED",
+          "mask": 8388608,
+          "bits": {
+            "STATE_OUBLIETTED": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "26b2c2c",
+              "bytes": "f6460a80"
+            },
+            {
+              "address": "26b2ce7",
+              "bytes": "f745f000008000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "1dfc60048ab3c92b17e69af3939e5f052bb176b9d059efd2d7b7e6ad02646f21",
+      "unit_evidence": {
+        "enumerators": {
+          "STATE_IN_PLAY": {
+            "value": 2,
+            "die": "0x672aa81",
+            "enum_die": "0x672aa50"
+          },
+          "STATE_INVISIBLE": {
+            "value": 32,
+            "die": "0x672aac3",
+            "enum_die": "0x672aa50"
+          },
+          "STATE_OUBLIETTED": {
+            "value": 8388608,
+            "die": "0x672ac50",
+            "enum_die": "0x672aa50"
+          }
+        },
+        "state_member": {
+          "offset": 8,
+          "bytes": 4,
+          "die": "0x672c6a0"
+        }
+      }
+    }
+  },
+  "scope": "Only numeric bit masks applied directly to the verified four-byte state member. Preserve each bit and operator; never reinterpret numeric addresses or other fields."
+}

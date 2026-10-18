@@ -1106,16 +1106,24 @@ int card_inalla_archmage_ritualist(int player, int card, event_t event)
   card_instance_t *instance;
   int result;
   target_definition_t td1;
-  target_definition_t td2;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_td2;
 
   check_legend_rule(player, card, event);
   if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (reason_for_trigger_controller == player))
   {
-    default_test_definition((test_definition_t *)&td2, 2);
+    default_test_definition(&recovered_stack_td2.test, 2);
     result = duh_mode(player);
-    etb_ability_global(player, event, (result != 0) + 1, TYPE_NONE, (test_definition_t *)&td2,
+    etb_ability_global(player, event, (result != 0) + 1, TYPE_NONE, &recovered_stack_td2.test,
                        player, card);
   }
   if (event == EVENT_ETB)
@@ -1127,10 +1135,11 @@ int card_inalla_archmage_ritualist(int player, int card, event_t event)
                                            COLOR_COLORLESS, 1);
       if (result != 0)
       {
-        copy_token_definition(player, card, (token_generation_t *)&td2, trigger_cause_controller,
+        copy_token_definition(player, card, &recovered_stack_td2.token, trigger_cause_controller,
                               trigger_cause);
-        td2.illegal_state = (int32_t)haste_and_remove_token_at_end_of_next_turn;
-        generate_token((token_generation_t *)&td2);
+        recovered_stack_td2.target.illegal_state =
+            (int32_t)haste_and_remove_token_at_end_of_next_turn;
+        generate_token(&recovered_stack_td2.token);
       }
     }
   }
@@ -1143,19 +1152,20 @@ int card_inalla_archmage_ritualist(int player, int card, event_t event)
     td1.preferred_controller = player;
     td1.allowed_controller = player;
     td1.illegal_abilities = 0;
-    default_target_definition(player, card, &td2, 2);
-    td2.zone = 0x1000;
+    default_target_definition(player, card, &recovered_stack_td2.target, 2);
+    recovered_stack_td2.target.zone = 0x1000;
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
-      result = valid_target(&td2);
+      result = valid_target(&recovered_stack_td2.target);
       if (result != 0)
       {
         lose_life(instance->targets[0].player, 7);
       }
     }
     result = generic_activated_ability_with_tapsubtype_as_cost(
-        player, card, event, GAA_CAN_TARGET, 0, 0, 0, 0, 0, 0, 0, &td2, "TARGET_PLAYER", &td1, 5);
+        player, card, event, GAA_CAN_TARGET, 0, 0, 0, 0, 0, 0, 0, &recovered_stack_td2.target,
+        "TARGET_PLAYER", &td1, 5);
     return result;
   }
   return 0;
@@ -1166,16 +1176,23 @@ int card_inalla_archmage_ritualist(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x228f460; original cards/commander_2017.c:670. */
 int card_edgar_markov(int player, int card, event_t event)
 {
-  test_definition_t test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_test;
 
   check_legend_rule(player, card, event);
   haste(player, card, event);
   if (((trigger_condition == 0xd3) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    default_test_definition(&test, 0x47);
-    test.subtype = 0xcd;
-    sp_ability_trigger(player, event, 2, TYPE_NONE, &test, player, card);
+    default_test_definition(&recovered_stack_test.test, 0x47);
+    recovered_stack_test.test.subtype = 0xcd;
+    sp_ability_trigger(player, event, 2, TYPE_NONE, &recovered_stack_test.test, player, card);
   }
   if (event != EVENT_SPA)
   {
@@ -1184,21 +1201,22 @@ int card_edgar_markov(int player, int card, event_t event)
     {
       return 0;
     }
-    default_test_definition(&test, 0x47);
-    test.subtype = 0xcd;
-    new_manipulate_all(player, card, player, &test, ACT_ADD_COUNTERS_BASE | ACT_KILL_BURY);
+    default_test_definition(&recovered_stack_test.test, 0x47);
+    recovered_stack_test.test.subtype = 0xcd;
+    new_manipulate_all(player, card, player, &recovered_stack_test.test,
+                       ACT_ADD_COUNTERS_BASE | ACT_KILL_BURY);
     return 0;
   }
-  default_token_definition(player, card, 0x49a0, (token_generation_t *)&test);
-  test.message[0x1c] = '\x01';
-  test.message[0x1d] = '\0';
-  test.message[0x1e] = '\0';
-  test.message[0x1f] = '\0';
-  test.message[0x18] = '\x01';
-  test.message[0x19] = '\0';
-  test.message[0x1a] = '\0';
-  test.message[0x1b] = '\0';
-  generate_token((token_generation_t *)&test);
+  default_token_definition(player, card, 0x49a0, &recovered_stack_test.token);
+  recovered_stack_test.test.message[0x1c] = '\x01';
+  recovered_stack_test.test.message[0x1d] = '\0';
+  recovered_stack_test.test.message[0x1e] = '\0';
+  recovered_stack_test.test.message[0x1f] = '\0';
+  recovered_stack_test.test.message[0x18] = '\x01';
+  recovered_stack_test.test.message[0x19] = '\0';
+  recovered_stack_test.test.message[0x1a] = '\0';
+  recovered_stack_test.test.message[0x1b] = '\0';
+  generate_token(&recovered_stack_test.token);
   dat_ability(player, card, EVENT_SPA, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
   return 0;
 }
@@ -1233,4 +1251,115 @@ int card_ramos_dragon_engine(int player, int card, event_t event)
     }
   }
   return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x228eaa0; original cards/commander_2017.c:494. */
+int card_kindred_charge(int player, int card, event_t event)
+{
+  int iVar1;
+  subtype_t subtype;
+  card_instance_t *instance;
+  int iVar3;
+  unsigned int uVar4;
+  char *pcVar5;
+  bool bVar6;
+  unsigned char bVar7;
+  token_generation_t token;
+  char marked[151];
+
+  bVar7 = 0;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+
+      pcVar5 = marked + 5;
+      subtype = select_a_subtype(player, card);
+      uVar4 = 0x92;
+      bVar6 = ((unsigned int)pcVar5 & 2) != 0;
+      if (bVar6)
+      {
+        marked[5] = '\0';
+        marked[6] = '\0';
+        uVar4 = 0x90;
+        pcVar5 = marked + 7;
+      }
+      for (uVar4 = uVar4 >> 2; uVar4 != 0; uVar4 = uVar4 - 1)
+      {
+        pcVar5[0] = '\0';
+        pcVar5[1] = '\0';
+        pcVar5[2] = '\0';
+        pcVar5[3] = '\0';
+        pcVar5 = pcVar5 + (unsigned int)bVar7 * -8 + 4;
+      }
+      if (!bVar6)
+      {
+        pcVar5[0] = '\0';
+        pcVar5[1] = '\0';
+      }
+      marked[4] = '\0';
+      marked[0] = '\0';
+      marked[1] = '\0';
+      marked[2] = '\0';
+      marked[3] = '\0';
+      iVar1 = 0;
+      if (0 < active_cards_count[player])
+      {
+        do
+        {
+          while (((instance = in_play(player, iVar1),
+                   instance == NULL || (iVar3 = is_what(player, iVar1, 2), iVar3 == 0)) ||
+                  (iVar3 = has_creature_type(player, iVar1, subtype), iVar3 == 0)))
+          {
+            iVar1 = iVar1 + 1;
+            iVar3 = active_cards_count[player];
+            if (iVar3 <= iVar1)
+              goto LAB_0228ebf0;
+          }
+          marked[iVar1] = '\x01';
+          iVar3 = active_cards_count[player];
+          iVar1 = iVar1 + 1;
+        } while (iVar1 < iVar3);
+      LAB_0228ebf0:
+        if (0 < iVar3)
+        {
+          iVar1 = 0;
+          do
+          {
+            while (marked[iVar1] == '\0')
+            {
+              iVar1 = iVar1 + 1;
+              if (active_cards_count[player] <= iVar1)
+                goto LAB_0228ec58;
+            }
+            copy_token_definition(player, card, &token, player, iVar1);
+            iVar1 = iVar1 + 1;
+            token.special_code_on_generation = haste_and_remove_token_at_end_of_next_turn;
+            generate_token(&token);
+          } while (iVar1 < active_cards_count[player]);
+        }
+      }
+    LAB_0228ec58:
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  iVar1 = basic_spell(player, card, event);
+  return iVar1;
 }

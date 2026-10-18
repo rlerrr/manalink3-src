@@ -1751,12 +1751,15 @@ static int effect_leonin_arbiter(int player, int card, event_t event)
 }
 
 /* ManalinkEh 2022: 0x2650b10; original functions/tutors.c:1154. */
-static int qsort_compare_int_descending(void *lhs, void *rhs) { return *(int *)rhs - *(int *)lhs; }
+static int qsort_compare_int_descending(const void *lhs, const void *rhs)
+{
+  return *(const int *)rhs - *(const int *)lhs;
+}
 
 /* ManalinkEh 2022: 0x2650b30; original functions/tutors.c:1162. */
-static int qsort_compare_target_player_descending(void *lhs, void *rhs)
+static int qsort_compare_target_player_descending(const void *lhs, const void *rhs)
 {
-  return *(int *)rhs - *(int *)lhs;
+  return *(const int *)rhs - *(const int *)lhs;
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -1781,4 +1784,18 @@ int select_multiple_cards_from_graveyard_to_array(int player, int targ_player, i
     return result;
   }
   return 0;
+}
+
+/* ManalinkEh 2022: 0x2652ab0; original functions/tutors.c:1158. */
+void descending_qsort(int number, int *array)
+{
+  qsort(array, number, 4, qsort_compare_int_descending);
+  return;
+}
+
+/* ManalinkEh 2022: 0x2652ae0; original functions/tutors.c:1166. */
+void descending_qsort_on_player(int number, target_t *array)
+{
+  qsort(array, number, 8, qsort_compare_target_player_descending);
+  return;
 }

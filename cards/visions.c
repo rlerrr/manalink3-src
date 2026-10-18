@@ -4092,7 +4092,15 @@ int card_ovinomancer(int player, int card, event_t event)
   int iVar5;
   card_instance_t *instance;
   target_definition_t *ptStack_cc;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    token_generation_t token;
+    uint8_t bytes[84];
+  } recovered_stack_td;
+
   target_definition_t td2;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
@@ -4126,25 +4134,25 @@ int card_ovinomancer(int player, int card, event_t event)
     }
     instance = get_card_instance(player, card);
     kill_card(instance->targets[0].player, instance->targets[0].card, KILL_BURY);
-    default_token_definition(player, card, 0x4982, (token_generation_t *)&td);
-    td.illegal_type = instance->targets[0].player;
-    generate_token((token_generation_t *)&td);
+    default_token_definition(player, card, 0x4982, &recovered_stack_td.token);
+    recovered_stack_td.target.illegal_type = instance->targets[0].player;
+    generate_token(&recovered_stack_td.token);
     return 0;
   }
-  default_target_definition(player, card, &td, 1);
-  td.required_subtype = 0x2000;
-  td.preferred_controller = player;
-  td.allowed_controller = player;
-  td.illegal_abilities = 0;
+  default_target_definition(player, card, &recovered_stack_td.target, 1);
+  recovered_stack_td.target.required_subtype = 0x2000;
+  recovered_stack_td.target.preferred_controller = player;
+  recovered_stack_td.target.allowed_controller = player;
+  recovered_stack_td.target.illegal_abilities = 0;
   instance = get_card_instance(player, card);
-  iVar5 = target_available(player, card, &td);
+  iVar5 = target_available(player, card, &recovered_stack_td.target);
   if (2 < iVar5)
   {
     scnprintf((char *)&td2, 100, "Select a basic land return it to it\'s owner\'s hand");
     iVar5 = 0;
     do
     {
-      iVar4 = new_pick_target(&td, (char *)&td2, iVar5, 0x80);
+      iVar4 = new_pick_target(&recovered_stack_td.target, (char *)&td2, iVar5, 0x80);
       if (iVar4 == 0)
         break;
       ptVar2 = instance->targets + iVar5;
@@ -5780,4 +5788,145 @@ int card_solfatara(int player, int card, event_t event)
 LAB_020243d6:
   result = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
   return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2023fa0; original cards/visions.c:4967. */
+int card_remedy(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  target_t *ptVar5;
+  int32_t card_00;
+  int32_t player_00;
+  target_t *ptVar6;
+  int iVar7;
+  int iStack_130;
+  target_definition_t td;
+  char prompt[200];
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.preferred_controller = player;
+    td.zone = 0x1200;
+    td.allow_cancel = 0;
+    get_card_instance(player, card);
+    iVar3 = can_target(&td);
+    if (iVar3 != 0)
+    {
+      return (-(unsigned int)((land_can_be_played & 4U) == 0) & 0xffffff9e) + 99;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 0x102);
+      td.preferred_controller = player;
+      td.zone = 0x1200;
+      td.allow_cancel = 0;
+      pcVar1 = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        pcVar1->number_of_targets = '\0';
+        iVar3 = 0;
+        do
+        {
+          iVar7 = iVar3 + 1;
+          if (ai_is_speculating == 1)
+          {
+            prompt[0] = '\0';
+          }
+          else
+          {
+            load_text_2022(NULL, "TARGET_ANY");
+            scnprintf(prompt, 200, "%s (%d of 5)", text_lines[0], iVar7);
+          }
+          iVar2 = can_target(&td);
+          if (((iVar2 != 0) && (iVar2 = pick_next_target_noload(&td, prompt), iVar2 != 0)) &&
+              (iVar2 = pcVar1->targets[iVar3].card, iVar2 != -1))
+          {
+            pcVar4 = get_card_instance(pcVar1->targets[iVar3].player, iVar2);
+            pcVar4->state = pcVar4->state | 0x200000;
+          }
+          iVar3 = iVar7;
+        } while (iVar7 != 5);
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.preferred_controller = player;
+    td.zone = 0x1200;
+    td.allow_cancel = 0;
+    pcVar1 = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      iVar3 = valid_target(&td);
+      if (iVar3 != 0)
+      {
+        ptVar6 = pcVar1->targets;
+        iVar3 = 0;
+        do
+        {
+          ptVar6 = ptVar6 + 1;
+          player_00 = ptVar6[-1].player;
+          iVar3 = iVar3 + 1;
+          if (player_00 != -1)
+          {
+
+            card_00 = ptVar6[-1].card;
+            if (card_00 != -1)
+            {
+              pcVar4 = get_card_instance(player_00, card_00);
+              pcVar4->state = pcVar4->state & 0xffdfffff;
+              player_00 = ptVar6[-1].player;
+              card_00 = ptVar6[-1].card;
+            }
+            if (iVar3 < 5)
+            {
+              iStack_130 = 1;
+              ptVar5 = ptVar6;
+              do
+              {
+                while ((ptVar5->player == player_00 && (ptVar5->card == card_00)))
+                {
+                  ptVar5->player = -1;
+                  iStack_130 = iStack_130 + 1;
+                  ptVar5 = ptVar5 + 1;
+                  card_00 = ptVar6[-1].card;
+                  player_00 = ptVar6[-1].player;
+                  if (pcVar1->targets + 5 == ptVar5)
+                    goto LAB_02024238;
+                }
+                ptVar5 = ptVar5 + 1;
+              } while (pcVar1->targets + 5 != ptVar5);
+            }
+            else
+            {
+              iStack_130 = 1;
+            }
+          LAB_02024238:
+            prevent_the_next_n_damage(player, card, player_00, card_00, iStack_130, 0, -1, -1);
+          }
+        } while (iVar3 != 5);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.preferred_controller = player;
+    td.zone = 0x1200;
+    td.allow_cancel = 0;
+    get_card_instance(player, card);
+  }
+  return 0;
 }

@@ -1,13 +1,15 @@
 # October 2022 source recovery
 
-Implemented directly in the `cards/` and `functions/` source files on 2026-10-17.
+Implemented directly in the `cards/` and `functions/` source files, starting
+2026-10-17. Latest recovery pass: 2026-10-18.
 Missing target set files were created with `#include "manalink.h"`; implementations
-already present in the source were preserved.
+already present in the source were retained, with scoped repairs and lifecycle
+fragments recorded separately.
 
 ## Recovered source
 
-- **3,255 function implementations:** 2,647 functions named `card_*` and 608
-  helpers, in **130 checked C source units**, including units containing only
+- **3,496 function implementations:** 2,815 functions named `card_*` and 681
+  helpers, in **136 checked C source units**, including units containing only
   recovered engine/AI fragments.
 - The second pass added **340 implementations: 273 `card_*` functions and 67
   helpers**. The first pass contributed 1,066 implementations.
@@ -49,16 +51,49 @@ already present in the source were preserved.
 - The fourteenth pass added **53 implementations: 37 `card_*` functions and 16
   helpers**, including three incompatible helper APIs recovered under distinct
   names for Cascade, beginning of combat and another permanent leaving play.
-- 18 previously missing C files were created. They include Strixhaven, Modern
+- The fifteenth pass added **21 implementations: nine `card_*` functions and 12
+  helpers**, including player-aware subtype lookup, out-of-play subtype modifiers
+  and subtype comparison by internal card ID. Five reset/AI-copy fragments and
+  three global declarations recover the subtype cache separately from functions.
+- The sixteenth pass added **47 implementations: 39 `card_*` functions and eight
+  helpers**, using verified missing enum values and the query-selector type.
+  It also corrected a previously recovered protection wrapper whose private
+  worker had been confused with its public entry point.
+- The seventeenth pass added **30 implementations: 22 `card_*` functions and eight
+  helpers**, including source-aware counter copying/movement, generalized death
+  triggers and bounded name-based exile. A cleanup fix also recovers writable
+  byte views and const-qualified borrowed target lists correctly.
+- The eighteenth pass added **eight `card_*` implementations** through scoped
+  integer union-field hints. It also corrected overlapping local storage in
+  **60 earlier implementations**, separately from the new-function count.
+- The nineteenth pass added **34 implementations: 32 `card_*` functions and two
+  helpers**, including choice/count field hints, verified stack-member views,
+  the shared token-target predicate and a set-private basic-land predicate.
+- The twentieth pass added **ten implementations: four `card_*` functions and
+  six helpers**, including the resource-text cache and Party helper. Six private
+  global declarations restore their cache storage.
+- The twenty-first pass added **38 implementations: 21 `card_*` functions and
+  17 helpers**, including the dice worker, wrappers and random/sort dependencies.
+  Six global declarations and five reset/AI-copy fragments restore dice-modifier
+  storage. Two existing sort callbacks regain their DWARF const qualifiers.
+- The twenty-second pass added **17 implementations: ten `card_*` functions and
+  seven helpers**, including triggered-ability countering, the Devour selector
+  and refreshed text-loader callers. Four accepted functions use verified scoped
+  state-mask names; thirteen expressions in nine candidates were prepared.
+- The twenty-third pass added **36 implementations: 23 `card_*` functions and
+  13 helpers**, including extension lifecycle and the complete eight-function
+  information/stored-ID API. Eight declarations and six scoped fragments restore
+  storage, creation binding, AI snapshots and the ownership-transfer copy.
+- 21 previously missing C files were created. They include Strixhaven, Modern
   Horizons 1/2, Commander Legends, Throne of Eldraine, War of the Spark,
   Zendikar Rising, Commander 2020, and `functions/draft.c`.
-- 398 recovered functions retain private/static linkage, including six private
-  implementation helpers whose names begin with `card_`. There are 216 recovered
+- 421 recovered functions retain private/static linkage, including nine private
+  implementation helpers whose names begin with `card_`. There are 269 recovered
   public helpers; shared declarations live in the existing `manalink.h`.
 - Every function has its target address and original DWARF source unit/line
   recorded immediately above its implementation.
-- Of the recovered symbols, 2,636 are referenced by the target registration
-  records; 2,559 serve at least one record marked CODED. The remaining functions
+- Of the recovered symbols, 2,800 are referenced by the target registration
+  records; 2,722 serve at least one record marked CODED. The remaining functions
   include callbacks and helper entry points. Counts are functions, not unique
   playable cards or completed mechanics. `cards/stubs.c::card_crab` preserves
   the target's no-op placeholder and is labeled accordingly.
@@ -539,14 +574,343 @@ The helper retains its target event/flag behavior; full event-engine integration
 is still separate. Three supplemental helper entries bring the raw cache to
 4,307 rows and 4,287 original names.
 
+The fifteenth pass recovers `get_subtypes_by_csvid_2022` and
+`has_subtype_by_id_2022` with their player argument, preserving the old lookup
+interfaces and bodies. DWARF and instructions establish a 26-entry target report
+buffer, seven natural subtype slots, and a two-player table of sixteen eight-byte
+modifier records. Only fifteen records per player are reset and populated. The
+record contains a four-byte subtype and a byte-sized add/force mode at offset
+four; padding and the last record are preserved. The global has zero-initialized
+storage, and both AI backup/restore pairs copy all 256 bytes into separate private
+snapshots. Reset and copy fragments were placed in the existing engine/AI bodies.
+The newer supplemental save record still needs downstream migration.
+
+The lookup adapters use the first 26 entries of the existing 100-entry source
+buffer. The ID predicate deliberately retains the target's repeated modifier
+pass and its final scan of only twenty entries. Machine instructions verify
+those different bounds and the unsigned creature-subtype range checks.
+`shares_creature_subtype_by_iid` retains the target's changeling handling and
+two 26-element rows; its two unresolved stack endpoints were replaced using
+the verified frame offsets and 104-byte row stride. Battlefield lookup still
+uses the existing `get_subtypes` body; full extension-backed subtype handling
+remains deferred.
+
+Eighteen dependent implementations passed promotion after the two lookup APIs
+and cache were recovered. They include Muxus, Goblin Grandee; Kaheera, the
+Orphanguard; Kaalia, Zenith Seeker; Quandrix Cultivator; Armored Skyhunter;
+Board the Weatherlight; Weatherlight; Commune with Dinosaurs; and Acclaimed
+Contender, plus selection predicates and callbacks. The final comparison helper
+brings this pass to 21 functions. Two supplemental lookup entries bring the raw
+cache to 4,309 rows and 4,289 original names.
+
+The sixteenth pass checks missing constant names against explicit enumeration
+DIEs in each caller's own compilation unit. Forty-seven distinct values were
+prepared for 66 function scopes; 39 newly recovered functions use 31 of those
+values. Constants without a unique matching declaration remain unresolved.
+These aliases live inside their recovered functions, preserving the existing
+engine enums and the separate conditional Shandalar values. This recovers target
+counter IDs, trigger values, token actions and flags; it does not establish
+their downstream dispatcher, display or token-generator support. Forty-three
+implementations passed promotion after these declarations were restored.
+They include Helm of the Host, Bruvac, the Grandiloquent, Doomed Artisan,
+Chitterspitter, Luminous Broodmoth, Athreos, Shroud-Veiled, and the Zendikon helper
+with four card handlers.
+
+DWARF also supplies the four-byte `event_query_t` and its five explicit selector
+values for Adventure, Companion, plain mana producers, Storm and Gravestorm.
+Restoring the type in `defs.h` enables the query dispatcher, the Adventure
+predicate and Edgewall Innkeeper. The dispatcher temporarily stores its selector
+in `attacking_card`, calls the appropriate card function and restores that global.
+
+An audit of an earlier protection helper found a name collision: public
+`get_protection_source` and its private GCC `.part.0` worker were both imported
+under the same C name. The wrapper's decompilation consequently appeared to call
+itself. The instructions instead pass a signed byte in EAX and two pointers in
+EDX/ECX, then jump to the distinct worker. COFF verifies private worker linkage.
+The recovered `get_protection_source_impl` follows damage, activation and legacy
+sources, and the public wrapper now calls it. Its combined ID/reserved-field load
+is represented by the ID field alone because all uses observe only the low
+sixteen bits. Both refreshed exports, instruction checks and the correction's
+previous raw hash are recorded. This adds one worker implementation and corrects
+one already-counted wrapper. Source-prefix verification confirms that this is
+the only pre-existing function body changed during the sixteenth pass.
+
+The seventeenth pass separates the newer seven-argument counter copy,
+six-argument predoubled placement and eight-argument counter movement interfaces
+from the older APIs. The new calls preserve the card responsible for the effect,
+the recipient and the counter donor. The copy helper snapshots up to nine
+counter types before placement; DWARF verifies its local record as an eight-byte
+pair of `counter_t` and `int`. Placement uses the previously recovered source-aware
+counter core. Nesting Grounds, Scrounging Bandar, Arcbound Fiend and Steel
+Dromedary now have recovered handlers using these interfaces.
+
+The generalized dies-trigger core adds a required kill-code argument and uses
+the recovered card-count cache for duplicate triggers. Its new callback is
+recovered alongside it under a distinct name. The core reads the exile flag
+through the existing flag accessor; the target flag value is verified as
+`0x10000000`, without projecting the extension pointer onto old instance storage.
+The lowered target-array copy is reconstructed as a 152-byte `memcpy`, using the
+verified nineteen eight-byte target entries. The callback retains its player-bit
+check and trigger-mode byte. Sacrifice/exile wrappers and Daemogoth Woe-Eater
+are recovered through this core. The five-argument `lobotomy_effect_2022` also
+retains the target's maximum-card limit, enabling Test of Talents, Unmoored Ego
+and Cranial Extraction with its private implementation helper.
+
+Seventeen focused exports supply the changed interfaces and callers, including
+six supplemental entries. The raw cache now contains 4,315 rows and 4,295
+original names. Six implementations were placed with explicit reconstruction
+evidence; eleven more passed ordinary promotion after those helpers were present.
+
+The cleanup tool had incorrectly made every local `char*` read-only in many
+functions. It now retains writable pointers for direct byte stores and known
+buffer-output calls. It also restores const qualifiers on borrowed lists from
+`becomes_target_of_spell` and on addresses of members in borrowed target lists.
+The compiler continues to reject writes through those const pointers. These
+corrections unlock thirteen more handlers, including Pirs Whim, Kindred Charge,
+Saheeli the Gifted, Bonecrusher Giant, Fblthp, Myriad Construct and Cowardice.
+Formatting checks confirm code tokens are unchanged in all earlier additions,
+and every previous source prefix remains byte-for-byte intact in this pass.
+
+The eighteenth pass resolves `info_slot` as a signed four-byte integer at eight
+specific accesses, using Ghidra's union-facet mechanism. DWARF identifies the
+original `amt` locals as integers and the attacker lists as unsigned-byte
+pointers. Instructions independently verify the count loads at instance offset
+`0x38` and byte-indexed attacker reads beginning at `0x84`. The union hints apply
+only to these functions; genuine callback uses and the shared union remain.
+The refreshed decompilations recover Master Symmetrist, Mila, Tenured Inkcaster,
+Anointer of Valor, Keleth, Cavalcade of Calamity, Dreadhorde Invasion and Sarkhan
+the Masterless.
+
+Tenured Inkcaster exposed another importer problem: different source locals
+sharing a stack offset had been represented by one small C declaration, with
+casts to larger structures. Such code could pass syntax checks while an
+initializer wrote beyond the declared local. A broader scan identified sixty
+already accepted functions with this pattern, including casts between target,
+test and token structures. DWARF verifies the shared frame offsets and each
+original local type in all sixty cases and in the new Tenured handler.
+
+Those functions now use explicit union members for their verified typed views,
+plus byte storage sized to the exact target extent. Calls use the appropriate
+member address. This preserves decoded field/byte accesses while allocating
+enough space for each overlapping view. Gustha's Scepter also receives its
+verified 100-byte prompt buffer instead of formatting into a scalar local.
+The changes cover 62 storage objects across 61 functions. Their original and
+corrected body hashes, frame offsets and DWARF references live in
+[`recovery-evidence/stack-storage.json`](recovery-evidence/stack-storage.json).
+The audit checks the corrected hashes and rejects the known cross-type local
+cast pattern; promotion now holds new occurrences for storage reconstruction.
+
+This storage repair does not upgrade aggregate APIs. Source checks preserve the
+existing 208-byte test, 80-byte target and 72-byte token structures, verifying
+the common view offsets against DWARF. The target versions are 216, 84 and 76
+bytes respectively. Its test structure inserts special-keyword fields at offsets
+140/144, shifting subsequent fields; full support needs the initializer and
+selection consumers migrated together. The existing source APIs and named fields
+remain the downstream compatibility boundary. Previous source prefixes were
+verified unchanged after accounting for only the sixty recorded corrections.
+
+The nineteenth pass extends scoped union hints to fourteen choice/count accesses
+in twelve handlers. Three Flailing creature handlers also contain genuine legacy
+callback comparisons in the same word. Their distinct accesses are selected as
+function pointers, with instruction addresses and comparisons to the exact legacy
+entries recorded. Reproducible hint requests now select individual instructions,
+so a scalar correction cannot replace the callback interpretation elsewhere.
+Nature's Wrath, Blind Seer, Hungering Hydra, Morophon and the three Flailing
+creatures are among the recovered handlers. Two bit-preserving damage-word copies
+also have direct load/store instruction evidence, enabling Spiteful Sliver.
+
+Thirty-one deferred handlers received verified shared-stack view preparations.
+Where a synthetic partial field has exactly one matching member at the same
+offset and width, it is replaced by that typed member. Ambiguous views and fields
+requiring aggregate API migration remain deferred. Standalone four-byte stores
+retain their bit pattern; pointer members keep their source callback types so
+the compiler can check assignments. Integer reads preserve the unsigned slice
+value. Byte reads of the four-byte `event_result` and `trigger_cause_controller`
+globals also have matching DWARF/COFF types and linker addresses.
+
+Nineteen prepared stack handlers passed the remaining screening, contributing
+26 verified partial-member replacements. They include Hofri, Geyadrone Dihada,
+Ayula, Bramble Sovereign, Hapatra, Tolsimir, Wicked Wolf, Ghired and The Birth of
+Meletis. Geyadrone's otherwise missing Corruption-counter constant is recovered
+as a function-local value, 163, from its own DWARF unit. Other newly recovered
+handlers include Devastating Mastery, Mirror March, Incubation/Incongruity and
+Syr Konrad. The normalizer screens code after excluding comments; reconstruction
+comments previously caused false unresolved-C++ matches.
+
+The shared token-target predicate is recovered in its original Amonkhet unit as
+`target_is_token_too_2022`. Its distinct name avoids collision with older
+set-private predicates. The borrowed diagnostic return and local pointer are
+const-qualified, preserving the pointer ABI and literal bytes. The basic-land
+predicate remains private to Theros Beyond Death, matching its COFF linkage and
+four-argument selection-callback interface. These helpers enable Team Pennant,
+Ghired and The Birth of Meletis. Five focused predicate/caller exports add two
+entries, bringing the raw cache to 4,317 rows and 4,297 original names.
+
+All previous source prefixes were preserved in this pass. The cumulative storage
+audit now checks eighty function bodies; the new preparations continue to use
+the existing source aggregate APIs and do not complete the engine migrations
+described above.
+
+The twentieth pass recovers `functions/load_text.c`: the private resource parser,
+main and file-specific lookup functions, and the copy wrapper `load_text_2022`.
+The existing native `load_text` interface remains available to older callers.
+The parser retains its original 12-byte records, five private zero-initialized
+caches, in-place escape decoding, retained raw/line buffers and 250-entry empty
+sentinel. Full DWARF pointer chains establish `const char *` keys and
+`const char **` returned lines; the earlier ABI exporter omits these qualifiers.
+The 500-byte path uses the verified one-buffer native helper at `0x466020`.
+Twenty-five CRT import thunks now have verified interfaces, nine added here.
+
+The reconstructed allocator growth uses truncation after multiplication by 1.5,
+matching the x87 control-word changes. Two empty-string pointer assignments have
+read-only byte checks and exact immediate-MOV evidence, separately from string
+arguments. The public fatal formatter is appended to its original
+`functions/show_backtrace.c`, using a 2,000-byte buffer and the Microsoft
+`_vsnprintf` contract. All five manually reconstructed bodies have audit hashes.
+The released code's quirks are preserved: the file-cache miss uses the main
+cache's count, and the copy wrapper caps at 250 rows despite the native
+`text_lines` declaration containing 249 rows. These need downstream review;
+recovery does not silently repair them or add resource cleanup.
+
+A sixth private global restores Zendikar Rising's 64-byte bit-count table.
+Its DWARF `int[16]` type and private COFF `.bss` address enable `party_size`,
+Veteran Adventurer and Zagras, Thief of Heartbeats. The promotion check now supplies
+verified private declarations only to candidates in their owning unit. It also
+recognizes identical public signatures repeated in historical source files,
+while keeping conflicting signatures ambiguous. Exposing the existing Crucible
+of Worlds and Bribery declarations enables Ancient Greenwarden and Inevitable
+Betrayal without counting their retained helper bodies as new implementations.
+All 131 previous source prefixes remain intact; the existing backtrace source
+only gains `stdarg.h` and the appended formatter.
+
+The twenty-first pass reconstructs the private `roll_xdy` worker in its original
+`functions/dice.c`, with its file-local presentation enum. DWARF identifies the
+1,500-byte prompt buffer and a dynamically bounded `int` array. The apparent
+huge array bound in earlier exports is a misread DIE reference. Machine code
+confirms allocation of four bytes per adjusted die count, the stack probe and
+array alignment. Explicit typed calls restore the outgoing arguments obscured
+by this variable-length allocation. Fourteen symbolic string references have
+verified read-only bytes and immediate materialization instructions; their
+literal order remains identical to the refreshed export.
+
+The worker preserves extra-dice sorting, pre-modifier natural results, per-die
+adjustments, total/difference presentation and the final two-die output. The
+native random function at `0x44e070` takes player and upper bound and returns
+the recorded result; the dialog at `0x471b60` uses the existing six-argument
+source binding. The released assertion only checks a positive dice count,
+despite mentioning positive sides in its message. Prompt selection uses
+`ai_is_speculating != 0`, while most logging/dialog checks compare against one;
+highest-dice headings are formatted even during speculation. These details
+remain intact. Unsigned word arithmetic preserves x86 wraparound where needed,
+and signed formatting arguments preserve the original bit patterns.
+
+`network_rand` and two descending-sort wrappers are recovered in AI and tutor
+units. The CRT import table proves the callback-aware `qsort` binding; its two
+previously recovered callbacks now have the original `const void *` parameters.
+The dice wrappers enable Hydradoodle, Squirrel-Powered Scheme, Chicken Egg,
+Inhumaniac, Painiac, Hammer Helper, Season's Beatings and other handlers.
+
+The two eight-byte modifier arrays have verified `.bss` storage, four exact
+reset stores and two complete pairs of AI snapshots. Every copied word is
+traced from its source load to its destination store. Six global declarations
+and five scoped fragments implement those paths. Serialization is recorded as
+part of the target's larger supplemental save record; save-format migration
+remains deferred. The 130 unaffected previous source prefixes are byte-for-byte
+preserved. Removing the new cache declarations/fragments and restoring the two
+callback signatures reproduces the other three prior prefixes.
+
+The twenty-second pass distinguishes verified state masks from executable
+addresses. Only numeric masks applied directly to the four-byte `state` member
+qualify. Each caller's DWARF supplies the selected enumerators and member offset;
+the corresponding AND/OR/TEST instructions confirm the masks. Composite names
+preserve every bit and operator. The normal unresolved-address screen remains
+in place. Four accepted functions use these substitutions, and their complete
+body hashes are audited. New helpers include `on_stack`, `is_being_cast` and
+protection from colored spells, enabling Sakashima's Protege and God-Eternal Bontu.
+
+Seven refreshed callers now resolve to `load_text_2022`. String formatters pass
+`text_lines[0]`, the same native address with the correct character-pointer type.
+This enables Blazing Sunsteel, Serra's Hymn and Remedy. The stack's signed card-ID
+word is recovered as `stack_data[stack_size - 1].internal_card_id`, with matching
+absolute bindings and four-byte record layout. The validation/resolution helpers
+for countering triggered abilities enable Tale's End, Diplomatic Escort and
+Repudiate/Replicate, retaining the released validation logic.
+
+The private Devour selector regains two grammatical suffix pointers from exact
+immediate loads. Its type-description call passes zero; the missing enum spelling
+was synthetic decompiler output, so the native zero argument is retained. This
+enables the shared Devour wrapper and Caprichrome. Syr Carah, the Bold uses an
+explicit read view of the engine's live prefix buffer at `0x738f34`; the recovery
+preserves the pointer without inventing literal text or initialization.
+All 134 previous C source prefixes remain byte-for-byte intact in this pass.
+
+The extension investigation records three exact record layouts, eight global
+storage objects/template/snapshots and seven refreshed lifecycle helpers in
+`recovery-evidence/extension-foundation.json`. Machine references identify creation,
+display-copy start/end, duel startup, both AI snapshot pairs and serialization.
+The 192-byte extension has six eight-byte information records and two fixed
+150-card player banks. `inst_info` returns an eight-byte value in EDX:EAX; its
+old pointer-shaped decompilation is unsuitable for promotion. Creation installs
+the extension pointer, while instance copying preserves the destination's own
+extension storage. This is preparation for a coherent migration, not a recovered
+implementation count or a completed extension-storage change.
+
+The twenty-third pass implements the extension's C storage and lifecycle in the
+original source units. The instance still occupies 300 bytes, with its extension
+pointer at `0x2c` and the unused word at `0x30`. A byte view preserves the existing
+zero initializer; it is no longer presented as runtime untap-cost storage. The
+192-byte extension, its eight-byte information records and four-byte stored-ID
+records have every member offset and width checked against DWARF. The complete
+signed `CardFromWhere` enum is recovered with the types.
+
+Creation binds each instance to its fixed `card_ext[2][150]` slot and copies the
+original extension template. Duel startup binds all live/displayed slots. Display
+start temporarily selects live extension records, while display end compares and
+copies the 57,600-byte bank, restores displayed-bank pointers and leaves the
+existing display critical section. Both AI snapshot pairs copy the complete live
+bank. The ownership-transfer fragment uses `memcpy_inst_and_ext`, which copies the
+192-byte extension and 300-byte instance while retaining the destination's own
+extension pointer. Other legacy shallow copies remain as in the release; they
+are not indiscriminately converted. No heap fallback or new ownership policy is
+introduced. The matching executable already disables the old untap-cost setup
+routine; the retained legacy code is recorded separately from the C migration.
+
+The reconstructed extension initializer compiles to exactly the release's 192
+bytes. The existing instance initializer also matches all 300 release bytes after
+the pointer-layout change. These are compilation/data-provenance checks, without
+linking or running the game. All 131 unaffected previous source prefixes remain
+byte-for-byte intact. Removing the recorded declarations/fragments and restoring
+initializer braces reproduces the other three prior prefixes. The pre-existing
+Windows source is preserved before its appended helpers.
+
+`inst_info` now returns the actual eight-byte value through EDX:EAX. Its lookup
+stops at the first empty record and overwrites slot five when full, whereas
+`set_inst_info` searches all six entries before an empty slot and can fail. Both
+increment functions preserve their two information reads; the 16-bit and 32-bit
+increments retain native wraparound. Clearing compacts matching records but only
+zeros the final ID. Stored-ID helpers preserve twelve signed 16-bit ID pairs and
+their `-1` sentinel. Packed return-word reads are reconstructed from the exact
+`id`/`data2` fields; a neighboring damage/counter halfword load also has an explicit
+word representation with checked offsets and widths.
+
+Thirty-four refreshed API callers unlock Grist, Lonis, Murktide Regent, Omnath,
+Lord Windgrace, Jeska, Dina, Draconic Intervention, Dramatic Finale, Silverquill
+Silencer, Laboratory Drudge, Arcane Adaptation, Conspiracy, Nykthos Paragon,
+Agadeem's Awakening, Shatterskull Smashing, Skyclave Apparition and other handlers.
+The canonical raw cache now contains 4,318 rows and 4,298 original names. Preparation
+tools discard stale unaccepted hints after re-exporting while retaining accepted
+proofs. Native hook/jump-table integration, complete supplemental serialization
+and extension-backed flag/keyword reader/writer migration remain separate work.
+
 These declarations and adapters do not complete engine integration. The newer
 ability check expects bitmask writers rather than the legacy nibble counters;
 new event constants still need their dispatch pathways; the power/toughness
 globals need the newer dispatcher updates. The existing shared `EVENT_CANT_CREW`
 value also still differs from the target release. Twenty-two recovered string
 arguments use the newer `DLGIMPL_MODE` dialog control (`0x1b`); its parser support
-is not present in the existing dialog implementation. The extension pointer at
-`0x2c` remains unprojected, and no allocation/ownership behavior was invented.
+is not present in the existing dialog implementation. Extension storage and its
+information API are now recovered, while the remaining native hooks and flag
+consumers still require integration.
 The Aura core also remains deferred: its target-definition struct is 84 bytes,
 with a new `flags` field at offset 80, versus the existing 80-byte definition.
 Its initialization and validation consumers need recovery together.
@@ -562,21 +926,41 @@ original formatting, original macros or proven behavioral equivalence.
   the current `manalink.h` and `defs.h`. This also rejected missing dependencies,
   incompatible argument lists, unresolved identifiers and uninitialized locals
   reported by the checker.
-- All 130 complete modified/new source units passed Clang's 32-bit C syntax
+- All 136 complete modified/new source units passed Clang's 32-bit C syntax
   checks. `functions/rules_engine.c` needs the checker-only Windows compatibility
   definition `strncasecmp=_strnicmp` for existing configuration parsing code.
   Its game source was not changed for that portability issue.
 - Recovered string/character literals were checked against the raw exports.
-- All 3,255 recorded raw-export hashes and source provenance markers were checked,
-  along with supporting exports, six source fragments, recovered global
-  declarations, local enum values, array endpoint replacements and 1,304
-  recovered literal arguments.
+- All 3,496 recorded raw-export hashes and source provenance markers were checked,
+  along with supporting exports, twenty-two source fragments, twenty-six recovered global
+  declarations, local enum values, array endpoint replacements and 1,441
+  recovered literal arguments, plus two independently verified literal pointer
+  stores, sixteen reconstructed literal references and twenty-nine manually
+  reconstructed/qualified function body hashes.
+- Reconstructed stack-storage body hashes were checked for all 83 affected
+  functions, and the known cross-type local cast pattern is rejected.
 - Compile-time layout checks confirm the 300-byte card instance and recovered
   member offsets, including `mode` at `0x37` and `targets` at `0x74`.
 - Compile-time checks also confirm the card-count cache is 14 bytes with a
   seven-byte row stride. The pump specialization checks all nine common member
   offsets and the retained 36-byte source structure.
-- Source whitespace was checked, and original implementations were retained.
+- The subtype cache checks confirm an eight-byte modifier record, its mode byte
+  at offset four, a 128-byte player row and a 256-byte table.
+- The query selector type is checked as four bytes.
+- The resource-cache record is checked as 12 bytes with fields at offsets
+  zero, four and eight.
+- The dice selector is checked as four bytes and each live modifier array as
+  eight bytes.
+- The stack card-ID word is checked at offset zero in a four-byte record;
+  native text storage is checked as 249 rows of 300 bytes. Selected source state
+  masks are checked against the verified target values.
+- The stack-storage checks verify the retained source aggregate sizes and common
+  target/test/token member offsets used by the reconstructed views.
+- Extension checks verify all three record sizes, every member offset/width,
+  both 57,600-byte banks and the pointer/unused-word positions. Separate object
+  probes verify both the 192-byte and 300-byte initializers against release data.
+- Source whitespace was checked; existing bodies were retained apart from
+  recorded scoped repairs and lifecycle fragments.
 
 **No tests were added or run, as requested. No native DLL build, game execution,
 link verification or gameplay validation was performed.** Syntax success is
@@ -594,11 +978,12 @@ It lists accepted functions with source locations, linkage, signatures and raw
 export hashes, plus deferred functions with reasons.
 
 The largest remaining group needs resolution of machine state or changed
-layouts, particularly the newer `card_instance_t` extension pointer and storage.
+layouts, particularly target-definition flags and extension-backed keyword/flag
+consumers. The extension storage and packed information API now have source.
 Others require new types/constants, changed helper signatures, C++ recovery,
 or dependencies that were not ready for promotion. The spell/Magecraft core now
-has a narrow flag-accessor adaptation, but broader extension-backed helpers
-such as `inst_info` remain deferred. Source compatibility does not validate
+has a narrow flag-accessor adaptation; broader flag storage and reader/writer
+migration remains. Source compatibility does not validate
 copied-spell trigger delivery or complete the ability-mask writer migration.
 
 The final screening accepted no further functions under the current checks.
@@ -607,6 +992,13 @@ recover their dependent card groups. This does not require a whole-program diff.
 The tools preserve source-unit placement and retain unresolved work for the
 next pass. Static helpers with repeated names must be resolved in their own
 source unit, and optimized split/ranged functions need their full range lists.
+
+Further scalar `info_slot` values are still inferred through the union's
+function-pointer member in some choice and damage-count handlers. The attacker
+count group is now recovered; the remaining accesses need the same focused
+instruction/type verification. Real callback comparisons, such as those in the
+Flailing creature handlers, must retain function-pointer interpretation at their
+own accesses.
 
 ## Recovery tooling and cached analysis
 
@@ -653,6 +1045,62 @@ source unit, and optimized split/ranged functions need their full range lists.
   and recover Amass, the two shared helper aliases, and the color-count clone,
   checking the maximum-selection instructions rather than copying its faulty
   aggregate-hinted decompilation.
+- `recover_subtype_cache.py`: verifies the modifier layout, zero-initialized
+  globals, field-only reset and four complete AI copies before placing fragments.
+- `recover_subtype_interfaces.py` and `ApplyRecoverySubtypeInterfaces.java`:
+  separate the player-aware lookup APIs and verify their distinct loop bounds.
+- `recover_subtype_comparison.py`: restores the two 26-entry array endpoints
+  using DWARF and machine frame offsets.
+- `recover_target_enums.py`: recovers missing constant declarations from each
+  caller's own DWARF unit and keeps the aliases local to that function.
+- `recover_query_type.py`: restores the five query selectors and their type.
+- `recover_protection_worker.py` and `ApplyRecoveryProtectionWorker.java`:
+  distinguish the protection wrapper from its register-call worker, recover
+  the worker and repair the earlier wrapper reconstruction.
+- `recover_batch17_interfaces.py`, `recover_batch17_wrappers.py` and
+  `ApplyRecoveryBatch17Interfaces.java`: verify the changed counter, death-trigger
+  and bounded exile interfaces, recover the local counter snapshot and target
+  copy, and retain distinct APIs for old callers.
+- `ApplyRecoveryScalarInfoSlots.java` and `recover_scalar_info_slots.py`: apply
+  per-access scalar union hints and verify original local types, count loads
+  and byte-indexed attacker accesses before merging refreshed exports.
+- `recover_stack_storage.py`: verifies shared DWARF frame offsets and aggregate
+  layouts, repairs undersized local allocations with explicit typed union views,
+  and records hashes for subsequent audits.
+- `prepare_stack_storage_candidates.py` and `resolve_stack_partials.py`: prepare
+  deferred handlers' verified stack views, resolve unique offset/width member
+  matches and leave normal dependency/compiler screening in control of promotion.
+- `recover_scalar_choices.py`: verifies scalar choices and distinct callback
+  comparisons, and regenerates instruction-specific hints for a fresh project.
+- `record_scalar_word_views.py`: verifies two engine-word bindings and direct
+  four-byte info-slot-to-target copies, with persistent source layout checks.
+- `recover_token_predicate.py` and `ApplyRecoveryTokenPredicate.java`: recover
+  the public token predicate with a separate name and export the private
+  basic-land predicate in its own set unit.
+- `recover_text_loader.py`, `ApplyRecoveryTextInterfaces.java` and
+  `ApplyRecoveryTextLocals.java`: recover qualified resource-cache interfaces,
+  the parser's typed table local, native path binding and fatal formatter;
+  verify allocator rounding and Microsoft formatter behavior.
+- `recover_party_cache.py`: verifies the set-private 16-entry bit-count cache
+  before normal promotion of the Party helper and card callers.
+- `recover_dice_helpers.py` and `ApplyRecoveryDiceInterfaces.java`: restore the
+  VLA worker's typed calls, private enum/linkage, native random/dialog interfaces
+  and CRT sort callback contract, with instruction and literal provenance.
+- `recover_dice_caches.py`: verifies six globals, four reset stores and sixteen
+  source-to-destination word copies before recovering both AI snapshot pairs.
+- `recover_state_masks.py`: prepares per-function mask substitutions with DWARF
+  enum/member proofs and matching machine operands, keeping address screening.
+- `recover_devouring_type.py` and `recover_damage_choice_label.py`: recover
+  grammatical suffix pointers and a native live-string view with exact operand
+  checks before appending the private helper and card handler.
+- `inspect_extension_foundation.py`: records exact extension layouts, globals,
+  templates, lifecycle exports and machine references for the pending migration.
+- `recover_extension_foundation.py`, `extension_bodies.py` and
+  `ApplyRecoveryInstInfoReturn.java`: recover typed storage, creation/display/AI
+  lifecycle, ownership-copy behavior and the eight-byte information return;
+  compare both compiled initializers against the release before applying.
+- `recover_increment_info.py`: completes the 32-bit information-data increment
+  while preserving the two original reads and unsigned wraparound.
 - `ExportRecovery.java`: exports requested functions with source provenance.
 - `ExportRecoveryStrings.java`: resolves uniquely identified `.rdata` aliases
   from caller operands; `recover_literals.py` validates and renders their bytes.
@@ -704,6 +1152,11 @@ the focused request list; its `--apply` mode appends the verified helper once.
 The focused counter exports and adaptations are recorded
 in `recovery-evidence/interface-recovery.json`; `recover_counter_api.py` uses
 those cached raw exports and refuses to append the API twice.
+For information-API callers, apply `ApplyRecoveryInstInfoReturn.java` after the
+base ABI import and before exporting. Its explicit EDX:EAX result storage must
+not be replaced by a pointer-shaped or hidden-result prototype. The foundation
+tool checks the whole source units and both compiled initializer objects before
+placing its declarations, fragments and helper bodies.
 The prior [recovery plan](recovery-plan.md) and
 [registration trace](registration-trace.md) contain the input identities and
 registration details.

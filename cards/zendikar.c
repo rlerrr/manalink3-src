@@ -5490,7 +5490,14 @@ int card_lullmage_mentor(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    token_generation_t token;
+    uint8_t bytes[84];
+  } recovered_stack_td;
 
   if (event == EVENT_COUNTERSPELL)
   {
@@ -5499,28 +5506,28 @@ int card_lullmage_mentor(int player, int card, event_t event)
       result = do_dialog(player, player, card, -1, -1, " Create a Merfolk\n Pass", 0);
       if (result == 0)
       {
-        default_token_definition(player, card, 0x4961, (token_generation_t *)&td);
-        td.illegal_abilities = 1;
-        td.required_abilities = 1;
-        generate_token((token_generation_t *)&td);
+        default_token_definition(player, card, 0x4961, &recovered_stack_td.token);
+        recovered_stack_td.target.illegal_abilities = 1;
+        recovered_stack_td.target.required_abilities = 1;
+        generate_token(&recovered_stack_td.token);
       }
     }
-    default_target_definition(player, card, &td, 2);
-    td.allowed_controller = player;
-    td.preferred_controller = player;
-    td.illegal_state = 1;
-    td.required_subtype = 0x74;
-    td.illegal_abilities = 0;
+    default_target_definition(player, card, &recovered_stack_td.target, 2);
+    recovered_stack_td.target.allowed_controller = player;
+    recovered_stack_td.target.preferred_controller = player;
+    recovered_stack_td.target.illegal_state = 1;
+    recovered_stack_td.target.required_subtype = 0x74;
+    recovered_stack_td.target.illegal_abilities = 0;
     get_card_instance(player, card);
   }
   else
   {
-    default_target_definition(player, card, &td, 2);
-    td.allowed_controller = player;
-    td.preferred_controller = player;
-    td.illegal_state = 1;
-    td.required_subtype = 0x74;
-    td.illegal_abilities = 0;
+    default_target_definition(player, card, &recovered_stack_td.target, 2);
+    recovered_stack_td.target.allowed_controller = player;
+    recovered_stack_td.target.preferred_controller = player;
+    recovered_stack_td.target.illegal_state = 1;
+    recovered_stack_td.target.required_subtype = 0x74;
+    recovered_stack_td.target.illegal_abilities = 0;
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
@@ -5532,6 +5539,7 @@ int card_lullmage_mentor(int player, int card, event_t event)
     }
   }
   result = generic_activated_ability_with_tapsubtype_as_cost(
-      player, card, event, GAA_SPELL_ON_STACK, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, &td, 7);
+      player, card, event, GAA_SPELL_ON_STACK, 0, 0, 0, 0, 0, 0, 0, NULL, NULL,
+      &recovered_stack_td.target, 7);
   return result;
 }

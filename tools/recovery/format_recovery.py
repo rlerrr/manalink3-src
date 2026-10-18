@@ -102,6 +102,11 @@ def main():
         formatted_eof = False
         for function in functions:
             marker = "/* ManalinkEh 2022: 0x" + function["address"] + ";"
+            if marker not in staged and function.get("reconstruction"):
+                at = text.index(marker)
+                _, _, end = definition_span(text[at:], function["name"])
+                if not text[at + end:].strip():
+                    formatted_eof = True
             if marker in staged or function.get("reconstruction"):
                 continue
             at = text.index(marker)

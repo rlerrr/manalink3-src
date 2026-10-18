@@ -1345,13 +1345,14 @@ void misc_protection(int player, int card, event_t event)
   return;
 }
 
+static void get_protection_source_impl(int8_t can_return_dmg, int *eff_acc, int *eff_ac);
+
 /* ManalinkEh 2022: 0x26e09a0; original functions/abilities.c:2930. */
 void get_protection_source(int8_t can_return_dmg, int *eff_acc, int *eff_ac)
 {
-
   if (-1 < attacking_card)
   {
-    get_protection_source(can_return_dmg, eff_acc, eff_ac);
+    get_protection_source_impl(can_return_dmg, eff_acc, eff_ac);
     return;
   }
   return;
@@ -2024,6 +2025,166 @@ void protection_from_everything(int player, int card, event_t event)
   {
     event_result = event_result | 1;
     return;
+  }
+  return;
+}
+
+
+/* ManalinkEh 2022: 0x26dd200; original functions/abilities.c:2930. */
+static void get_protection_source_impl(int8_t can_return_dmg, int *eff_acc, int *eff_ac)
+{
+  char cVar1;
+  int result;
+  unsigned int uVar3;
+  card_instance_t *instance;
+  int32_t card;
+  int32_t player;
+
+  *eff_acc = attacking_card_controller;
+  result = attacking_card;
+  *eff_ac = attacking_card;
+  instance = get_card_instance(*eff_acc, result);
+  if (instance == NULL)
+  {
+    return;
+  }
+  do
+  {
+    while (result = instance->internal_card_id, result == damage_card)
+    {
+      if (can_return_dmg != '\0')
+      {
+        return;
+      }
+      cVar1 = instance->damage_source_player;
+      result = instance->damage_source_card;
+      instance = get_card_instance((int)cVar1, result);
+      if (instance == NULL)
+      {
+        return;
+      }
+      *eff_acc = (int)cVar1;
+      *eff_ac = result;
+    }
+    if (result == activation_card)
+    {
+      player = instance->parent_controller;
+      card = instance->parent_card;
+    }
+    else
+    {
+      uVar3 = (unsigned int)cards_data[result].id;
+      if ((uint16_t)uVar3 == 0x386)
+      {
+        player = (int32_t)instance->damage_target_player;
+        if (-1 < instance->damage_target_player)
+        {
+          card = instance->damage_target_card;
+          goto LAB_026dd2b7;
+        }
+      }
+      else if (1 < (uVar3 & 0xffff) - 0x386)
+      {
+        return;
+      }
+      if (result == LEGACY_EFFECT_ALADDIN)
+      {
+        player = instance->targets[0].player;
+        card = instance->targets[0].card;
+      }
+      else
+      {
+        player = (int32_t)instance->damage_source_player;
+        card = instance->damage_source_card;
+      }
+    }
+  LAB_026dd2b7:
+    instance = get_card_instance(player, card);
+    if (instance == NULL)
+    {
+      return;
+    }
+    *eff_acc = player;
+    *eff_ac = card;
+  } while (true);
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26e0e10; original functions/abilities.c:3070. */
+void protection_from_colored_spells(int player, int card, event_t event)
+{
+  int player_00;
+  char cVar1;
+  int iVar2;
+  unsigned int uVar3;
+  card_instance_t *instance;
+  int iVar5;
+
+  player_00 = attacking_card_controller;
+  iVar2 = attacking_card;
+  if (event == EVENT_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      misc_protection(player, card, player);
+      return;
+    }
+  }
+  else if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    cVar1 = (char)((unsigned int)event_result >> 0x18);
+    if (cVar1 == '\x06')
+    {
+      event_result = event_result | 1;
+    }
+    else
+    {
+      if (cVar1 == '\x01')
+      {
+
+        instance = get_card_instance(attacking_card_controller, attacking_card);
+        if (instance->internal_card_id != damage_card)
+        {
+          backtrace_and_abort("functions/abilities.c:3078\nget_card_instance(p, "
+                              "c)->internal_card_id == damage_card");
+        }
+        uVar3 = get_color(player_00, iVar2);
+        if ((uVar3 & 0x3e) == 0)
+        {
+          return;
+        }
+        iVar5 = is_being_cast(player_00, iVar2);
+        if (iVar5 == 0)
+        {
+          return;
+        }
+        instance = get_card_instance(player_00, iVar2);
+        if ((instance->targets[3].player & 0x47) != 0)
+        {
+          return;
+        }
+      }
+      else
+      {
+        if (cVar1 != '\x05')
+        {
+          return;
+        }
+        iVar2 = is_being_cast(attacking_card_controller, attacking_card);
+        if (iVar2 == 0)
+        {
+          return;
+        }
+        uVar3 = get_color(attacking_card_controller, attacking_card);
+        if ((uVar3 & 0x3e) == 0)
+        {
+          return;
+        }
+      }
+      event_result = event_result | 1;
+    }
   }
   return;
 }

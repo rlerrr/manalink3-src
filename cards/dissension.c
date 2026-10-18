@@ -5108,14 +5108,21 @@ int card_rise_fall(int player, int card, event_t event)
   ec_definition_t this_definition;
   target_definition_t td;
   target_definition_t td2;
-  target_definition_t td2_1;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td2_1;
 
   if (event == EVENT_MODIFY_COST)
   {
 
     default_target_definition(player, card, &td2, 2);
-    default_target_definition(player, card, &td2_1, 0);
-    td2_1.zone = 0x1000;
+    default_target_definition(player, card, &recovered_stack_td2_1.target, 0);
+    recovered_stack_td2_1.target.zone = 0x1000;
     result = can_target(&td2);
     if ((result == 0) || (result = count_graveyard_by_type(2, 2), result == 0))
     {
@@ -5126,7 +5133,7 @@ int card_rise_fall(int player, int card, event_t event)
       result = graveyard_has_shroud(2);
       uVar3 = (unsigned int)(result == 0);
     }
-    result = can_target(&td2_1);
+    result = can_target(&recovered_stack_td2_1.target);
     result = generic_split_card_2022(player, card, EVENT_MODIFY_COST, 0x4b2d, uVar3, 0, 0x4af8,
                                      result, 0);
     return result;
@@ -5139,9 +5146,9 @@ int card_rise_fall(int player, int card, event_t event)
                              0, 0x80);
     if (result != 0)
     {
-      new_default_test_definition((test_definition_t *)&td2_1, 2,
+      new_default_test_definition(&recovered_stack_td2_1.test, 2,
                                   "Select target creature card to return to it\'s owners\' hand.");
-      select_target_from_either_grave(player, card, SFG_0, 1, 3, (test_definition_t *)&td2_1, 1, 2);
+      select_target_from_either_grave(player, card, SFG_0, 1, 3, &recovered_stack_td2_1.test, 1, 2);
     }
   LAB_0221fe80:
     if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
@@ -5165,9 +5172,9 @@ int card_rise_fall(int player, int card, event_t event)
   {
     if (event == EVENT_PLAY_SECOND_HALF)
     {
-      default_target_definition(player, card, &td2_1, 0);
-      td2_1.zone = 0x1000;
-      pick_target(&td2_1, "TARGET_PLAYER");
+      default_target_definition(player, card, &recovered_stack_td2_1.target, 0);
+      recovered_stack_td2_1.target.zone = 0x1000;
+      pick_target(&recovered_stack_td2_1.target, "TARGET_PLAYER");
       return 0;
     }
     if (event != EVENT_CAN_CAST)
@@ -5218,11 +5225,11 @@ int card_rise_fall(int player, int card, event_t event)
     }
     if (((uVar3 & 2) != 0) && (result = validate_target(player, card, ptStack_1b4, 1), result != 0))
     {
-      default_test_definition((test_definition_t *)&td2_1, 1);
+      default_test_definition(&recovered_stack_td2_1.test, 1);
       default_ec_definition(instance->targets[0].player, player, &this_definition);
       this_definition.cards_to_reveal = 2;
       this_definition.effect = 0x81;
-      new_effect_coercion(&this_definition, (test_definition_t *)&td2_1);
+      new_effect_coercion(&this_definition, &recovered_stack_td2_1.test);
     }
     kill_card(player, card, KILL_DESTROY);
   }
@@ -5230,5 +5237,108 @@ LAB_0221ff06:
   ptStack_1b4 = &td2;
   result = can_target(ptStack_1b4);
   result = generic_split_card_2022(player, card, event, 0x4b2d, uStack_1b0, 0, 0x4af8, result, 0);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2225650; original cards/dissension.c:3430. */
+int card_rain_of_gore(int player, int card, event_t event)
+{
+  enum
+  {
+    XTRIGGER_REPLACE_GAIN_LIFE = 16778752
+  };
+
+  xtrigger_t xVar1;
+  int result;
+
+  xVar1 = trigger_condition;
+  if (trigger_condition == 0xe5)
+  {
+    xVar1 = xtrigger_impl_value_dont_use_directly;
+  }
+  if ((((xVar1 == XTRIGGER_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (((reason_for_trigger_controller == player && (0 < life_gained)) &&
+        (((unsigned char)trigger_cause & 1) == 0))))
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      if (event == EVENT_TRIGGER)
+      {
+        event_result = event_result | 2;
+      }
+      else if (event == EVENT_RESOLVE_TRIGGER)
+      {
+        life_gained = -life_gained;
+      }
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2221cf0; original cards/dissension.c:2241. */
+int card_leafdrake_roost(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    token_generation_t token;
+    uint8_t bytes[84];
+  } recovered_stack_td;
+
+  instance = in_play(player, card);
+  if ((((instance != NULL) &&
+        (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)) &&
+       (instance = get_card_instance(player, card), -1 < instance->damage_target_player)) &&
+      ((instance = get_card_instance(player, card),
+        event == EVENT_CAN_ACTIVATE || (event == EVENT_ACTIVATE))))
+  {
+    result = granted_generic_activated_ability(player, card, (int)instance->damage_target_player,
+                                               instance->damage_target_card, event, 1, 0, 0, 1, 1,
+                                               0, 0, 0, NULL, NULL);
+    return result;
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    default_token_definition(player, card, 0x4921, &recovered_stack_td.token);
+    recovered_stack_td.token.color_forced = 0xc;
+    generate_token(&recovered_stack_td.token);
+  }
+  else
+  {
+    if (event == EVENT_CAN_CAST)
+      goto LAB_02221d50;
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_02221d50;
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) ||
+             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+      goto LAB_02221d50;
+  }
+  if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+       ((((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
+          (event != EVENT_CHANGE_TYPE)) &&
+         ((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)))))) &&
+      (event != EVENT_STATIC_EFFECTS))
+  {
+    return 0;
+  }
+LAB_02221d50:
+  default_target_definition(player, card, &recovered_stack_td.target, 1);
+  recovered_stack_td.target.preferred_controller = player;
+  result = targeted_aura_custom_prompt(player, card, event, &recovered_stack_td.target,
+                                       "Select target land.");
   return result;
 }

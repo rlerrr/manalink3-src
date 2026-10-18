@@ -3,6 +3,61 @@
 
 #include "manalink.h"
 
+/* October 2022 extension storage; fixed banks and original template. */
+card_ext_t card_ext_buffer1;
+card_ext_t card_ext[2][150];
+card_ext_t card_ext_buffer2;
+card_ext_t disp_card_ext[2][150];
+card_ext_t card_ext_buffer3;
+static const card_ext_t card_ext_template = {
+    .sp_keywords = 0,
+    .sp_keywords2 = 0,
+    .subtype = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    .inst_info_data = {{.id = 0, .data2 = 0, .data = 0},
+                       {.id = 0, .data2 = 0, .data = 0},
+                       {.id = 0, .data2 = 0, .data = 0},
+                       {.id = 0, .data2 = 0, .data = 0},
+                       {.id = 0, .data2 = 0, .data = 0},
+                       {.id = 0, .data2 = 0, .data = 0}},
+    .mana_paid_to_cast = {0, 0, 0, 0, 0, 0, 0, 0},
+    .phyrexian_mana_spent_to_cast = 0,
+    .snow_mana_spent_to_cast = 0,
+    .any_snow_mana_of_color_spent_to_cast_raw = 0,
+    .treasure_mana_spent_to_cast = 0,
+    .inst_stored_iids = {{.generating_id = -1, .stored_iid = -1},
+                         {.generating_id = -1, .stored_iid = -1},
+                         {.generating_id = -1, .stored_iid = -1},
+                         {.generating_id = -1, .stored_iid = -1},
+                         {.generating_id = -1, .stored_iid = -1},
+                         {.generating_id = -1, .stored_iid = -1},
+                         {.generating_id = -1, .stored_iid = -1},
+                         {.generating_id = -1, .stored_iid = -1},
+                         {.generating_id = -1, .stored_iid = -1},
+                         {.generating_id = -1, .stored_iid = -1},
+                         {.generating_id = -1, .stored_iid = -1},
+                         {.generating_id = -1, .stored_iid = -1}},
+    .cardfromwhere = 0,
+    .turn_etb = 0,
+    .became_player = -1,
+    .became_card = 255,
+    .base_power = 0,
+    .base_toughness = 0,
+    .pow_mod_unblocked = 0,
+    .pow_before_attack = 0,
+    .raw_power = 0,
+    .raw_toughness = 0,
+    .soulbond = 255,
+    .times_regenerated = 0,
+    .times_conspire_paid = 0,
+    .times_replicate_paid = 0,
+    .invis_counters = {0, 0, 0, 0, 0, 0, 0, 0},
+    .invis_counter_types = {0, 0, 0, 0, 0, 0, 0, 0},
+    .copy_iid_ = -1,
+    .change_name_csvid_ = -1,
+    .special_flags = 0,
+    .special_flags2 = 0,
+    .special_flags3 = 0};
+
 /* Each element {p,c} in graveyard_source[p][n] corresponds to the card at get_grave(p)[n] (itself storing the card's original_internal_card_id).
  * As in deck_ptr[][], rfg_ptr[][], and get_grave()[], an element of -1 means there's no card in that position.  Otherwise, it's a 32-bit int, containing:
  *
@@ -160,7 +215,7 @@ static card_instance_t card_instance_template =
   0,	// initial_color
   0,	// unused0x26
   KEYWORD_RECALC_ABILITIES,	// regen_status
-  {0,0,0,0,0,0,0,0},	// mana_to_untap[8]		// [7] is left uninitialized
+  {{0,0,0,0,0,0,0,0}},	// extension pointer and unused30
   0,	// power
   0,	// number_of_targets
   0,	// unknown0x37
@@ -219,6 +274,10 @@ void create_card_instance(int player, unsigned int iid, int card)
 
   card_instance_t* instance = get_card_instance(player, card);
   memcpy(instance, &card_instance_template, sizeof(card_instance_t));
+  /* Recovered 2022 extension fragment: create_card_instance @ 0x26b2b50. */
+  instance->ext = &card_ext[player][card];
+  memcpy(instance->ext, &card_ext_template, sizeof(*instance->ext));
+  /* End recovered 2022 extension fragment: create_card_instance. */
 
   instance->backup_internal_card_id = instance->original_internal_card_id = instance->internal_card_id = iid;
 
@@ -2747,4 +2806,150 @@ int count_iid_in_rfg(int player, int iid)
     } while (iVar2 != -1);
   }
   return iVar3;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+card_instance_t *on_stack(int player, int card);
+
+/* ManalinkEh 2022: 0x26b33d0; original functions/deck.c:417. */
+card_instance_t *on_stack(int player, int card)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  if (((instance->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)) == 0x20) &&
+      (-1 < instance->internal_card_id))
+  {
+    return instance;
+  }
+  return NULL;
+}
+
+
+/* ManalinkEh 2022: 0x26b2a10; original functions/deck.c:147. */
+void memcpy_inst_and_ext(card_instance_t *dest, const card_instance_t *src)
+{
+  card_ext_t *ext = dest->ext;
+  memcpy(ext, src->ext, sizeof(*ext));
+  memcpy(dest, src, sizeof(*dest));
+  dest->ext = ext;
+}
+
+
+/* ManalinkEh 2022: 0x26b36e0; original functions/deck.c:542. */
+int set_inst_info(card_instance_t *inst, int cid, uint32_t data, uint16_t data2)
+{
+  inst_info_t *entries = inst->ext->inst_info_data;
+  int slot;
+  for (slot = 0; slot < 6; ++slot)
+    if ((uint32_t)entries[slot].id == (uint32_t)cid)
+      break;
+  if (slot == 6)
+  {
+    for (slot = 0; slot < 6; ++slot)
+      if (entries[slot].id == 0)
+        break;
+    if (slot == 6)
+      return 0;
+  }
+  entries[slot].id = (uint16_t)cid;
+  entries[slot].data2 = data2;
+  entries[slot].data = data;
+  return 1;
+}
+
+
+/* ManalinkEh 2022: 0x26b3740; original functions/deck.c:584. */
+inst_info_t inst_info(card_instance_t *inst, int cid)
+{
+  inst_info_t *entries = inst->ext->inst_info_data;
+  int slot;
+  for (slot = 0; slot < 6; ++slot)
+  {
+    if ((uint32_t)entries[slot].id == (uint32_t)cid)
+      return entries[slot];
+    if (entries[slot].id == 0)
+      break;
+  }
+  if (slot == 6)
+    slot = 5;
+  entries[slot].id = (uint16_t)cid;
+  entries[slot].data2 = 0;
+  entries[slot].data = 0;
+  return entries[slot];
+}
+
+
+/* ManalinkEh 2022: 0x26b3870; original functions/deck.c:608. */
+int increment_data2(card_instance_t *inst, int cid)
+{
+  inst_info_t initial = inst_info(inst, cid);
+  inst_info_t second = inst_info(inst, cid);
+  return set_inst_info(inst, cid, initial.data, (uint16_t)(second.data2 + 1));
+}
+
+
+/* ManalinkEh 2022: 0x26b38f0; original functions/deck.c:615. */
+void clear_info(card_instance_t *inst, int cid)
+{
+  inst_info_t *entries = inst->ext->inst_info_data;
+  for (int slot = 0; slot < 6; ++slot)
+  {
+    if (entries[slot].id == 0)
+      return;
+    while ((uint32_t)entries[slot].id == (uint32_t)cid)
+    {
+      if (slot < 5)
+        memmove(&entries[slot], &entries[slot + 1], (5 - slot) * sizeof(*entries));
+      entries[5].id = 0;
+    }
+  }
+}
+
+
+/* ManalinkEh 2022: 0x26b3990; original functions/deck.c:625. */
+int store_iid(card_instance_t *inst, int16_t generating_id, int16_t stored_iid)
+{
+  inst_stored_iid_t *entries = inst->ext->inst_stored_iids;
+  for (int slot = 0; slot < 12; ++slot)
+    if (entries[slot].generating_id == -1)
+    {
+      entries[slot].generating_id = generating_id;
+      entries[slot].stored_iid = stored_iid;
+      return slot;
+    }
+  return -1;
+}
+
+
+/* ManalinkEh 2022: 0x26b39d0; original functions/deck.c:638. */
+int retrieve_stored_iids(card_instance_t *inst, int16_t generating_id, int16_t *iids)
+{
+  int count = 0;
+  inst_stored_iid_t *entries = inst->ext->inst_stored_iids;
+  for (int slot = 0; slot < 12; ++slot)
+    if (entries[slot].generating_id == generating_id)
+      iids[count++] = entries[slot].stored_iid;
+  return count;
+}
+
+
+/* ManalinkEh 2022: 0x26b3a10; original functions/deck.c:650. */
+void clear_stored_iids(card_instance_t *inst, int16_t generating_id)
+{
+  inst_stored_iid_t *entries = inst->ext->inst_stored_iids;
+  for (int slot = 0; slot < 12; ++slot)
+    if (entries[slot].generating_id == generating_id)
+    {
+      entries[slot].generating_id = -1;
+      entries[slot].stored_iid = -1;
+    }
+}
+
+/* ManalinkEh 2022: 0x26b37f0; original functions/deck.c:603. */
+int increment_data(card_instance_t *inst, int cid)
+{
+  inst_info_t initial = inst_info(inst, cid);
+  inst_info_t second = inst_info(inst, cid);
+  return set_inst_info(inst, cid, initial.data + 1u, second.data2);
 }

@@ -112,7 +112,9 @@ static int real_switch_control(int player, int card)
     {
       v4 = v2;
       v5 = get_card_instance(v15, v3);
-      memcpy(v5, v4, 0x12Cu);
+  /* Recovered 2022 extension fragment: gain_control_impl @ 0x2663990. */
+  memcpy_inst_and_ext(v5, (const card_instance_t *)v4);
+  /* End recovered 2022 extension fragment: gain_control_impl. */
       v5->state |= STATE_SUMMON_SICK;
       v5->state &= 0xFFFFFFF3u;                 // ~(STATE_ATTACKING|STATE_BLOCKING)
       timestamp_player[v13] = v15;

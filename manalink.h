@@ -2645,6 +2645,125 @@ int new_generic_creature_with_bestow(int player, int card, event_t event, int co
                                      int blue, int green, int red, int white, int pow, int tou,
                                      int key, int s_key);
 
+/* October 2022 per-player subtype modifiers outside the battlefield. */
+extern subtypes_not_in_play_t added_subtypes_not_in_play[2][16];
+
+/* October 2022 player-aware subtype lookup interfaces. */
+void get_subtypes_by_csvid_2022(int player, int csvid, reported_subtypes_t *my_subtypes);
+int has_subtype_by_id_2022(int player, int id, subtype_t subtype);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int add_a_subtype_not_in_play(int player, event_t event, subtype_t subtype);
+int force_a_subtype_not_in_play(int player, event_t event, subtype_t subtype);
+
+/* October 2022 subtype comparison. */
+int shares_creature_subtype_by_iid(int p0, int c0, int p1, int iid);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int zendikon(int player, int card, event_t event, int pow, int tgh, color_test_t cols,
+             subtype_t styp, keyword_t kws, sp_keyword_t spkws);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int query(int player, int card, iid_t iid, event_query_t quer);
+
+/* October 2022 counter-copy and dies callback interfaces. */
+void copy_counters_from_source(int player, int card, int t_player, int t_card, int src_player,
+                               int src_card, int raw);
+int effect_this_dies_2022(int player, int card, event_t event);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int this_is_exiled_trigger(int player, int card, event_t event, resolve_trigger_t trigger_mode);
+int this_is_sacrificed_trigger(int player, int card, event_t event, resolve_trigger_t trigger_mode);
+
+/* October 2022 counter movement and bounded name-exile APIs. */
+void add_counters_predoubled_from_source(int player, int card, int t_player, int t_card,
+                                         counter_t type, int num);
+void move_counters_from_source(int player, int card, int t_player, int t_card, int src_player,
+                               int src_card, counter_t counter_type, int number);
+int lobotomy_effect_2022(int player, int t_player, int csvid, int max, int flags);
+
+/* October 2022 shared token-target predicate. */
+const char *target_is_token_too_2022(int who_chooses, int player, int card, int targeting_player,
+                                     int targeting_card);
+
+/* October 2022 resource-cache interfaces. */
+const char **load_text_nocopy(const char *header, int *num_lines);
+const char **load_text_nocopy_from_file(const char *filename, const char *header, int *num_lines);
+int load_text_2022(const char *ignored, const char *header);
+void fatal(const char *fmt, ...) __attribute__((noreturn));
+
+/* Interfaces recovered from October 2022 DWARF. */
+int party_size(int player);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int card_bribery(int player, int card, event_t event);
+int card_crucible_of_worlds(int player, int card, event_t event);
+
+/* October 2022 dice interfaces; modifier caches reset during recalculation. */
+extern int add_to_die_rolls[2];
+extern int roll_extra_dice[2];
+int network_rand(int player, int upperbound);
+void descending_qsort(int number, int *array);
+void descending_qsort_on_player(int number, target_t *array);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int roll_2d6t_difference(int player, int src_player, int src_card, int tgt_player, int tgt_card);
+int roll_d10t(int player, int src_player, int src_card, int tgt_player, int tgt_card);
+int roll_d12t(int player, int src_player, int src_card, int tgt_player, int tgt_card);
+int roll_d20t(int player, int src_player, int src_card, int tgt_player, int tgt_card);
+int roll_d20t_nat(int player, int src_player, int src_card, int tgt_player, int tgt_card,
+                  int *natural_result);
+int roll_d20t_plus(int player, int plus, int src_player, int src_card, int tgt_player,
+                   int tgt_card);
+int roll_d4t(int player, int src_player, int src_card, int tgt_player, int tgt_card);
+int roll_d6t(int player, int src_player, int src_card, int tgt_player, int tgt_card);
+int roll_d8t(int player, int src_player, int src_card, int tgt_player, int tgt_card);
+int roll_xd6t(int player, int x, int src_player, int src_card, int tgt_player, int tgt_card);
+void roll_2d6t(int player, int src_player, int src_card, int tgt_player, int tgt_card, int *r1,
+               int *r2);
+
+/* Interfaces recovered from October 2022 DWARF. */
+card_instance_t *on_stack(int player, int card);
+int is_being_cast(int player, int card);
+void protection_from_colored_spells(int player, int card, event_t event);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int resolve_counter_triggered_ability(int player, int card, target_definition_t *td,
+                                      int target_pos);
+int validate_counter_triggered_ability(int player, int card, target_definition_t *td,
+                                       int target_pos);
+
+/* Interfaces recovered from October 2022 DWARF. */
+void devour_type(int player, int card, event_t event, int type, int number);
+#ifndef SHANDALAR
+
+/* October 2022 extension lifecycle and information interfaces. */
+extern card_ext_t card_ext_buffer1;
+extern card_ext_t card_ext[2][150];
+extern card_ext_t card_ext_buffer2;
+extern card_ext_t disp_card_ext[2][150];
+extern card_ext_t card_ext_buffer3;
+void memcpy_inst_and_ext(card_instance_t *dest, const card_instance_t *src);
+void hook_helper_for_startduel(void);
+void copy_to_display_start(void);
+int copy_to_display_end(int any_changes);
+int set_inst_info(card_instance_t *inst, int cid, uint32_t data, uint16_t data2);
+inst_info_t inst_info(card_instance_t *inst, int cid);
+int increment_data2(card_instance_t *inst, int cid);
+void clear_info(card_instance_t *inst, int cid);
+int store_iid(card_instance_t *inst, int16_t generating_id, int16_t stored_iid);
+int retrieve_stored_iids(card_instance_t *inst, int16_t generating_id, int16_t *iids);
+void clear_stored_iids(card_instance_t *inst, int16_t generating_id);
+#endif
+
+/* Interfaces recovered from October 2022 DWARF. */
+int dermotaxi_legacy(int player, int card, event_t event);
+#ifndef SHANDALAR
+
+/* October 2022 information-data increment. */
+int increment_data(card_instance_t *inst, int cid);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

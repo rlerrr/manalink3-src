@@ -2516,7 +2516,14 @@ int card_doomfall(int player, int card, event_t event)
   int iVar3;
   ec_definition_t this_definition;
   target_definition_t td;
-  target_definition_t td1;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td1;
 
   if (event == EVENT_CAN_CAST)
   {
@@ -2570,22 +2577,23 @@ int card_doomfall(int player, int card, event_t event)
         if (iVar3 != 0)
         {
           iVar3 = 1 - player;
-          base_target_definition(player, card, &td1, 2);
-          td1.allow_cancel = 0;
-          td1.who_chooses = iVar3;
-          td1.allowed_controller = iVar3;
-          td1.preferred_controller = iVar3;
-          new_pick_target(&td1, "Select a creature you control to exile.", 0, 0x80);
+          base_target_definition(player, card, &recovered_stack_td1.target, 2);
+          recovered_stack_td1.target.allow_cancel = 0;
+          recovered_stack_td1.target.who_chooses = iVar3;
+          recovered_stack_td1.target.allowed_controller = iVar3;
+          recovered_stack_td1.target.preferred_controller = iVar3;
+          new_pick_target(&recovered_stack_td1.target, "Select a creature you control to exile.", 0,
+                          0x80);
           kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
         }
       }
       else if ((instance->info_slot == 2) &&
                (iVar3 = opponent_is_valid_target(player, card), iVar3 != 0))
       {
-        default_test_definition((test_definition_t *)&td1, 0xff);
+        default_test_definition(&recovered_stack_td1.test, 0xff);
         default_ec_definition(instance->targets[0].player, player, &this_definition);
         this_definition.effect = 2;
-        new_effect_coercion(&this_definition, (test_definition_t *)&td1);
+        new_effect_coercion(&this_definition, &recovered_stack_td1.test);
       }
       kill_card(player, card, KILL_DESTROY);
       return 0;
@@ -4335,31 +4343,38 @@ int card_imminent_doom(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  test_definition_t test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_test;
 
   enters_the_battlefield_with_counters(player, card, event, COUNTER_DOOM, 1);
   if (((trigger_condition == 0xd3) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    default_test_definition(&test, 0xff);
-    test.cmc = count_counters(player, card, COUNTER_DOOM);
-    sp_ability_trigger(player, event, 2, TYPE_NONE, &test, player, card);
+    default_test_definition(&recovered_stack_test.test, 0xff);
+    recovered_stack_test.test.cmc = count_counters(player, card, COUNTER_DOOM);
+    sp_ability_trigger(player, event, 2, TYPE_NONE, &recovered_stack_test.test, player, card);
   }
   if (event == EVENT_SPA)
   {
-    default_target_definition(player, card, (target_definition_t *)&test, 0x102);
-    test.message[0xc] = '\0';
-    test.message[0xd] = '\x12';
-    test.message[0xe] = '\0';
-    test.message[0xf] = '\0';
-    test.message[0x44] = '\0';
-    test.message[0x45] = '\0';
-    test.message[0x46] = '\0';
-    test.message[0x47] = '\0';
-    result = can_target((target_definition_t *)&test);
+    default_target_definition(player, card, &recovered_stack_test.target, 0x102);
+    recovered_stack_test.test.message[0xc] = '\0';
+    recovered_stack_test.test.message[0xd] = '\x12';
+    recovered_stack_test.test.message[0xe] = '\0';
+    recovered_stack_test.test.message[0xf] = '\0';
+    recovered_stack_test.test.message[0x44] = '\0';
+    recovered_stack_test.test.message[0x45] = '\0';
+    recovered_stack_test.test.message[0x46] = '\0';
+    recovered_stack_test.test.message[0x47] = '\0';
+    result = can_target(&recovered_stack_test.target);
     if (result != 0)
     {
-      result = pick_target((target_definition_t *)&test, "TARGET_ANY");
+      result = pick_target(&recovered_stack_test.target, "TARGET_ANY");
       if (result != 0)
       {
         result = count_counters(player, card, COUNTER_DOOM);

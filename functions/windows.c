@@ -2064,3 +2064,28 @@ void draw_smallcard_normal(HDC hdc, RECT* card_rect, int player, int card, int u
 
   RestoreDC(hdc, saved_dc);
 }
+
+
+/* ManalinkEh 2022: 0x2658e40; original functions/windows.c:2172. */
+void copy_to_display_start(void)
+{
+  for (int player = 0; player < 2; ++player)
+    for (int card = 0; card < 150; ++card)
+      get_displayed_card_instance(player, card)->ext = &card_ext[player][card];
+}
+
+
+/* ManalinkEh 2022: 0x2658eb0; original functions/windows.c:2189. */
+int copy_to_display_end(int any_changes)
+{
+  if (memcmp(disp_card_ext, card_ext, sizeof(card_ext)) != 0)
+  {
+    memcpy(disp_card_ext, card_ext, sizeof(card_ext));
+    any_changes = 1;
+  }
+  for (int player = 0; player < 2; ++player)
+    for (int card = 0; card < 150; ++card)
+      get_displayed_card_instance(player, card)->ext = &disp_card_ext[player][card];
+  LeaveCriticalSection(critical_section_for_display);
+  return any_changes;
+}

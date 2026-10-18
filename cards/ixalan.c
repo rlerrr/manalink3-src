@@ -4252,3 +4252,103 @@ int card_kitesail_freebooter(int player, int card, event_t event)
   return_cards_exiled_by_me_to_hand(player, card);
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int test_dinosaur_or_land(int iid, int value, int player, int card);
+
+/* ManalinkEh 2022: 0x2212840; original cards/ixalan.c:1737. */
+static int test_dinosaur_or_land(int iid, int value, int player, int card)
+{
+  int result;
+
+  result = is_what(-1, iid, 1);
+  if (result != 0)
+  {
+    return 1;
+  }
+  result = has_subtype_by_id_2022(player, (unsigned int)cards_data[iid].id, SUBTYPE_DINOSAUR);
+  return (unsigned int)(result != 0);
+}
+
+/* ManalinkEh 2022: 0x2216020; original cards/ixalan.c:1740. */
+int card_commune_with_dinosaurs(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  test_definition_t test;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    iVar1 = count_deck(player);
+    if (0 < iVar1)
+    {
+      if (5 < iVar1)
+      {
+        iVar1 = 5;
+      }
+      new_default_test_definition(&test, 0, "Select a Dinosaur or land card.");
+      test.special_selection_function = test_dinosaur_or_land;
+      test.create_minideck = (unsigned short)iVar1;
+      test.no_shuffle = 1;
+      iVar2 = new_global_tutor(player, player, 1, 1, 0, 1, &test);
+      if ((iVar2 < 0) || (iVar1 = iVar1 + -1, 0 < iVar1))
+      {
+        put_top_x_on_bottom(player, player, iVar1);
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  iVar1 = basic_spell(player, card, event);
+  return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22135a0; original cards/ixalan.c:409. */
+int card_arcane_adaptation(int player, int card, event_t event)
+{
+  int iVar1;
+  uint32_t data;
+  card_instance_t *instance;
+  inst_info_t iVar3;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    data = select_a_subtype(player, card);
+    instance = get_card_instance(player, card);
+    set_inst_info(instance, 0x43bf, data, 0);
+  }
+  else if (event == EVENT_CHANGE_TYPE)
+  {
+    instance = in_play(player, card);
+    if ((instance != NULL) && (affected_card_controller == player))
+    {
+      instance = in_play(player, affected_card);
+      if (instance != NULL)
+      {
+        iVar1 = is_what(affected_card_controller, affected_card, 2);
+        if (iVar1 != 0)
+        {
+          iVar1 = is_humiliated_for_ability(player, card, AL_STATIC);
+          if (iVar1 == 0)
+          {
+
+            instance = get_card_instance(player, card);
+            iVar3 = inst_info(instance, 0x43bf);
+            add_a_subtype_not_in_play(player, EVENT_CHANGE_TYPE, iVar3.data);
+            iVar3 = inst_info(instance, 0x43bf);
+            iVar1 = has_subtype(affected_card_controller, affected_card, iVar3.data);
+            if (iVar1 == 0)
+            {
+              iVar3 = inst_info(instance, 0x43bf);
+              add_a_subtype(affected_card_controller, affected_card, iVar3.data);
+            }
+          }
+        }
+      }
+    }
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
+}

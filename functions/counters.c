@@ -3257,3 +3257,263 @@ LAB_026d5433:
     }
   } while (true);
 }
+
+void copy_counters_from_source(int player, int card, int t_player, int t_card, int src_player,
+                               int src_card, int raw);
+
+
+/* ManalinkEh 2022: 0x26d4ca0; original functions/counters.c:1385. */
+void copy_counters_from_source(int player, int card, int t_player, int t_card, int src_player,
+                               int src_card, int raw)
+{
+  typedef struct
+  {
+    counter_t typ;
+    int num;
+  } counter_copy_entry_2022;
+
+  unsigned char bVar1;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  counter_t cVar4;
+  int iVar5;
+  counter_copy_entry_2022 *paVar6;
+  counter_copy_entry_2022 *paVar7;
+  int iVar8;
+  counter_copy_entry_2022 counters[9];
+
+  pcVar2 = get_card_instance(src_player, src_card);
+  if (pcVar2->internal_card_id == activation_card)
+  {
+    pcVar2 = get_card_instance(pcVar2->parent_controller, pcVar2->parent_card);
+  }
+  pcVar3 = get_card_instance(t_player, t_card);
+  if (pcVar3->internal_card_id == activation_card)
+  {
+    t_player = pcVar3->parent_controller;
+    t_card = pcVar3->parent_card;
+  }
+  if ((pcVar2->special_counters == 0) ||
+      (counters[0].typ = (unsigned int)pcVar2->special_counter_type,
+       pcVar2->special_counter_type == COUNTER_invalid))
+  {
+    bVar1 = pcVar2->counters2;
+    iVar8 = 0;
+    if (bVar1 != 0)
+      goto LAB_026d4e85;
+  }
+  else
+  {
+    iVar8 = 1;
+    counters[0].num = (unsigned int)pcVar2->special_counters;
+    bVar1 = pcVar2->counters2;
+    if (bVar1 == 0)
+    {
+      iVar8 = 1;
+    }
+    else
+    {
+    LAB_026d4e85:
+      cVar4 = (counter_t)(unsigned char)pcVar2->targets[0x12].player;
+      counters[iVar8].typ = cVar4;
+      if (cVar4 != COUNTER_invalid)
+      {
+        counters[iVar8].num = (unsigned int)bVar1;
+        iVar8 = iVar8 + 1;
+      }
+    }
+  }
+  bVar1 = pcVar2->counters3;
+  if ((bVar1 != 0) &&
+      (cVar4 = (counter_t) * (unsigned char *)((int)&pcVar2->targets[0x12].player + 1),
+       counters[iVar8].typ = cVar4, cVar4 != COUNTER_invalid))
+  {
+    counters[iVar8].num = (unsigned int)bVar1;
+    iVar8 = iVar8 + 1;
+  }
+  bVar1 = pcVar2->counters4;
+  if ((bVar1 != 0) &&
+      (cVar4 = (counter_t) * (unsigned char *)((int)&pcVar2->targets[0x12].player + 2),
+       counters[iVar8].typ = cVar4, cVar4 != COUNTER_invalid))
+  {
+    counters[iVar8].num = (unsigned int)bVar1;
+    iVar8 = iVar8 + 1;
+  }
+  bVar1 = pcVar2->counters5;
+  if ((bVar1 != 0) &&
+      (cVar4 = (counter_t) * (unsigned char *)((int)&pcVar2->targets[0x12].player + 3),
+       counters[iVar8].typ = cVar4, cVar4 != COUNTER_invalid))
+  {
+    counters[iVar8].num = (unsigned int)bVar1;
+    iVar8 = iVar8 + 1;
+  }
+  bVar1 = pcVar2->counters;
+  if (bVar1 != 0)
+  {
+    counters[iVar8].typ = COUNTER_P1_P1;
+    counters[iVar8].num = (unsigned int)bVar1;
+    iVar8 = iVar8 + 1;
+  }
+  bVar1 = pcVar2->counters_m1m1;
+  if (bVar1 != 0)
+  {
+    counters[iVar8].typ = COUNTER_M1_M1;
+    counters[iVar8].num = (unsigned int)bVar1;
+    iVar8 = iVar8 + 1;
+  }
+  bVar1 = (unsigned char)pcVar2->targets[0x12].card;
+  if ((bVar1 != 0) &&
+      (cVar4 = (counter_t) * (unsigned char *)((int)&pcVar2->targets[0x12].card + 2),
+       counters[iVar8].typ = cVar4, cVar4 != COUNTER_invalid))
+  {
+    counters[iVar8].num = (unsigned int)bVar1;
+    iVar8 = iVar8 + 1;
+  }
+  bVar1 = *(unsigned char *)((int)&pcVar2->targets[0x12].card + 1);
+  if ((bVar1 == 0) ||
+      (cVar4 = (counter_t) * (unsigned char *)((int)&pcVar2->targets[0x12].card + 3),
+       counters[iVar8].typ = cVar4, cVar4 == COUNTER_invalid))
+  {
+    if (raw == 0)
+    {
+      if (iVar8 == 0)
+      {
+        return;
+      }
+      goto LAB_026d4ebb;
+    }
+    if (iVar8 == 0)
+    {
+      return;
+    }
+  }
+  else
+  {
+    counters[iVar8].num = (unsigned int)bVar1;
+    iVar8 = iVar8 + 1;
+    if (raw == 0)
+    {
+    LAB_026d4ebb:
+      paVar6 = counters;
+      do
+      {
+        paVar7 = paVar6 + 1;
+        add_counters_from_source(player, card, t_player, t_card, paVar6->typ, paVar6->num);
+        paVar6 = paVar7;
+      } while (paVar7 != counters + iVar8);
+      return;
+    }
+  }
+  iVar5 = 0;
+  do
+  {
+    if (counters[iVar5].num != 0)
+    {
+      add_or_remove_counters_from_source_impl(player, card, t_player, t_card, counters[iVar5].typ,
+                                              counters[iVar5].num);
+    }
+    iVar5 = iVar5 + 1;
+  } while (iVar5 < iVar8);
+  return;
+}
+
+/* ManalinkEh 2022: 0x26d5970; original functions/counters.c:1281. */
+void add_counters_predoubled_from_source(int player, int card, int t_player, int t_card,
+                                         counter_t type, int num)
+{
+  int result;
+  result = is_what(t_player, t_card, 0x80);
+  if (result != 0)
+  {
+    backtrace_and_abort("functions/counters.c:1283\n!is_what(t_player, t_card, TYPE_EFFECT)");
+  }
+  result = can_have_counters_placed_on_it(t_player, t_card);
+  if ((result != 0) && (num != 0))
+  {
+    add_or_remove_counters_from_source_impl(player, card, t_player, t_card, type, num);
+    return;
+  }
+  return;
+}
+
+
+/* ManalinkEh 2022: 0x26d5a00; original functions/counters.c:1437. */
+void move_counters_from_source(int player, int card, int t_player, int t_card, int src_player,
+                               int src_card, counter_t counter_type, int number)
+{
+  uint8_t uVar1;
+  int result;
+  card_instance_t *instance;
+  char cStack_14;
+  if ((t_card != src_card) || (t_player != src_player))
+  {
+    result = can_have_counters_placed_on_it(t_player, t_card);
+    if (result != 0)
+    {
+      cStack_14 = (char)counter_type;
+      if (cStack_14 == -1)
+      {
+        result = check_battlefield_for_id(t_player, 0x2d73);
+        if (result != 0)
+        {
+          instance = get_card_instance(src_player, src_card);
+          uVar1 = instance->counters_m1m1;
+          instance->counters_m1m1 = '\0';
+          hack_silent_counters = hack_silent_counters + 1;
+          copy_counters_from_source(player, card, t_player, t_card, src_player, src_card, 1);
+          clear_all_counters_2022(src_player, src_card);
+          hack_silent_counters = hack_silent_counters + -1;
+          instance->counters_m1m1 = uVar1;
+        }
+        result = check_battlefield_for_id(1 - t_player, 0x4f3c);
+        if (result == 0)
+        {
+          hack_silent_counters = hack_silent_counters + 1;
+          copy_counters_from_source(player, card, t_player, t_card, src_player, src_card, 1);
+          clear_all_counters_2022(src_player, src_card);
+          hack_silent_counters = hack_silent_counters + -1;
+        }
+        else
+        {
+          result = count_counters(src_player, src_card, COUNTER_P1_P1);
+          remove_counters_from_source_2022_impl(player, card, src_player, src_card, COUNTER_P1_P1,
+                                                0xff);
+          hack_silent_counters = hack_silent_counters + 1;
+          copy_counters_from_source(player, card, t_player, t_card, src_player, src_card, 1);
+          clear_all_counters_2022(src_player, src_card);
+          add_counters_from_source(player, card, src_player, src_card, COUNTER_P1_P1, result);
+          hack_silent_counters = hack_silent_counters + -1;
+        }
+      }
+      else
+      {
+        result = check_battlefield_for_id(t_player, 0x2d73);
+        if ((counter_type != COUNTER_M1_M1) || (result == 0))
+        {
+          result = check_battlefield_for_id(1 - t_player, 0x4f3c);
+          if ((counter_type != COUNTER_P1_P1) || (result == 0))
+          {
+            if (number < 0)
+            {
+              number = 0xff;
+            }
+            result = count_counters(src_player, src_card, counter_type);
+            if (result < number)
+            {
+              number = result;
+            }
+            if (0 < number)
+            {
+              remove_counters_from_source_2022_impl(player, card, src_player, src_card,
+                                                    counter_type, number);
+            }
+            add_counters_predoubled_from_source(player, card, t_player, t_card, counter_type,
+                                                number);
+            return;
+          }
+        }
+      }
+    }
+  }
+  return;
+}

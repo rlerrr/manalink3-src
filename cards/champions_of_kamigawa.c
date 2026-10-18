@@ -5734,3 +5734,78 @@ int card_time_stop(int player, int card, event_t event)
   result = basic_spell(player, card, event);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int card_cranial_extraction_impl(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x260de00; original cards/champions_of_kamigawa.c:940. */
+int card_cranial_extraction(int player, int card, event_t event)
+{
+  int result;
+
+  result = arcane(player, card, event, card_cranial_extraction_impl);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x26099d0; original cards/champions_of_kamigawa.c:940. */
+static int card_cranial_extraction_impl(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  test_definition_t test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      default_target_definition(player, card, &td, 2);
+      td.zone = 0x1000;
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        ai_modifier = ai_modifier + 0x30;
+      }
+      goto LAB_02609a3c;
+    }
+    if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+    {
+      default_target_definition(player, card, &td, 2);
+      td.zone = 0x1000;
+      if ((event == EVENT_RESOLVE_SPELL) && (result = valid_target(&td), result != 0))
+      {
+
+        instance = get_card_instance(player, card);
+        new_default_test_definition(&test, 1, "Name a nonland card.");
+        test.type_flag = 1;
+        if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+        {
+          result =
+              ai_name_a_random_csvid(player, card, instance->targets[0].player, TYPE_NONE, &test);
+        }
+        else
+        {
+          result = new_card_from_list(player, 3, &test);
+        }
+        lobotomy_effect_2022(player, instance->targets[0].player, result, -1, 0);
+      }
+      goto LAB_02609a3c;
+    }
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.zone = 0x1000;
+LAB_02609a3c:
+  result = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
+  return result;
+}

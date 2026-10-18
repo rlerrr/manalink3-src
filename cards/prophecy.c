@@ -5992,3 +5992,69 @@ int card_shrouded_serpent(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2602e70; original cards/prophecy.c:2622. */
+int card_forgotten_harvest(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  char *pcVar3;
+  char *pcVar4;
+  unsigned char bVar5;
+  target_definition_t td;
+  char msg[100];
+  test_definition_t this_test;
+
+  bVar5 = 0;
+  result = duh_mode(player);
+  upkeep_trigger_ability_mode(player, card, event, player,
+                              (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+
+    instance = get_card_instance(player, card);
+    msg[0x1d] = '\0';
+    pcVar3 = "Select a land card to exile.";
+    pcVar4 = msg;
+    for (result = 7; result != 0; result = result + -1)
+    {
+      *(uint32_t *)pcVar4 = *(uint32_t *)pcVar3;
+      pcVar3 = pcVar3 + (unsigned int)bVar5 * -8 + 4;
+      pcVar4 = pcVar4 + (unsigned int)bVar5 * -8 + 4;
+    }
+    *pcVar4 = *pcVar3;
+    pcVar3 = msg + 0x20;
+    for (result = 0x11; result != 0; result = result + -1)
+    {
+      pcVar3[0] = '\0';
+      pcVar3[1] = '\0';
+      pcVar3[2] = '\0';
+      pcVar3[3] = '\0';
+      pcVar3 = pcVar3 + (unsigned int)bVar5 * -8 + 4;
+    }
+    msg[0x1e] = '\0';
+    msg[0x1f] = '\0';
+    new_default_test_definition(&this_test, 1, msg);
+    result = new_global_tutor(player, player, 2, 6, 0, 3, &this_test);
+    if (-1 < result)
+    {
+      default_target_definition(player, card, &td, 2);
+      td.preferred_controller = player;
+      result = can_target(&td);
+      if (result != 0)
+      {
+        result = pick_target(&td, "TARGET_CREATURE");
+        if (result != 0)
+        {
+          add_counters_from_source(player, card, instance->targets[0].player,
+                                   instance->targets[0].card, COUNTER_P1_P1, 1);
+        }
+      }
+    }
+    instance->number_of_targets = '\0';
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}

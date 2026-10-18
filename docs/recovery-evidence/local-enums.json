@@ -244,6 +244,2363 @@
           ]
         }
       }
+    },
+    "23c8860": {
+      "source": "cards/strixhaven.c",
+      "name": "uvilda_legacy",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_HONE": 167
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_HONE": {
+              "value": 167,
+              "die": "0x3936f2c",
+              "enum_die": "0x39363f6",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_HONE = 167 };"
+      ]
+    },
+    "23d0b50": {
+      "source": "cards/strixhaven.c",
+      "name": "card_honor_troll",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": 16778752
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": {
+              "value": 16778752,
+              "die": "0x3935425",
+              "enum_die": "0x393535b",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { XTRIGGER_REPLACE_GAIN_LIFE = 16778752 };"
+      ]
+    },
+    "23d8f80": {
+      "source": "cards/strixhaven.c",
+      "name": "card_radiant_scrollwielder",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "MPCFE_EXILE_ON_RESOLUTION": 128
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "MPCFE_EXILE_ON_RESOLUTION": {
+              "value": 128,
+              "die": "0x393c708",
+              "enum_die": "0x393c658",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { MPCFE_EXILE_ON_RESOLUTION = 128 };"
+      ]
+    },
+    "23dcb20": {
+      "source": "cards/strixhaven.c",
+      "name": "card_spell_satchel",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_BOOK": 161
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_BOOK": {
+              "value": 161,
+              "die": "0x3936eb8",
+              "enum_die": "0x39363f6",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_BOOK = 161 };"
+      ]
+    },
+    "23dd0c0": {
+      "source": "cards/strixhaven.c",
+      "name": "card_strixhaven_stadium",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_POINT": 169
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_POINT": {
+              "value": 169,
+              "die": "0x3936f4b",
+              "enum_die": "0x39363f6",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_POINT = 169 };"
+      ]
+    },
+    "23de890": {
+      "source": "cards/strixhaven.c",
+      "name": "card_uvilda_dean_of_perfection",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_HONE": 167
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_HONE": {
+              "value": 167,
+              "die": "0x3936f2c",
+              "enum_die": "0x39363f6",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_HONE = 167 };"
+      ]
+    },
+    "23dfc10": {
+      "source": "cards/strixhaven.c",
+      "name": "card_explore_the_vastlands",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "TUTOR_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "TUTOR_0": {
+              "value": 0,
+              "die": "0x3939dfd",
+              "enum_die": "0x3939def",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { TUTOR_0 = 0 };"
+      ]
+    },
+    "25c90e0": {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "has_adventure",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "QUERY_ADVENTURER": 1
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "QUERY_ADVENTURER": {
+              "value": 1,
+              "die": "0x567051d",
+              "enum_die": "0x567050e",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { QUERY_ADVENTURER = 1 };"
+      ]
+    },
+    "25c4940": {
+      "source": "cards/unstable.c",
+      "name": "test_has_been_banned_or_restricted",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CPF_EVER_BANNED_OR_RESTRICTED": 1
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "CPF_EVER_BANNED_OR_RESTRICTED": {
+              "value": 1,
+              "die": "0x55b41d3",
+              "enum_die": "0x55b41bc",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { CPF_EVER_BANNED_OR_RESTRICTED = 1 };"
+      ]
+    },
+    "26ec840": {
+      "source": "functions/packs.c",
+      "name": "is_valid_pack",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EXPANSION_ADVENTURES_IN_THE_FORGOTTEN_REALMS": 188,
+            "EXPANSION_COMMANDER_LEGENDS": 182,
+            "EXPANSION_CORE_SET_2021": 179,
+            "EXPANSION_INNISTRAD_CRIMSON_VOW": 192,
+            "EXPANSION_INNISTRAD_MIDNIGHT_HUNT": 190,
+            "EXPANSION_KALDHEIM": 183,
+            "EXPANSION_KAMIGAWA_NEON_DYNASTY": 194,
+            "EXPANSION_MODERN_HORIZONS_2": 187,
+            "EXPANSION_STREETS_OF_NEW_CAPENNA": 196,
+            "EXPANSION_STRIXHAVEN_SCHOOL_OF_MAGES": 185,
+            "EXPANSION_ZENDIKAR_RISING": 181,
+            "XNONE": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EXPANSION_ADVENTURES_IN_THE_FORGOTTEN_REALMS": {
+              "value": 188,
+              "die": "0x6fe3e55",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "EXPANSION_COMMANDER_LEGENDS": {
+              "value": 182,
+              "die": "0x6fe3da3",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "EXPANSION_CORE_SET_2021": {
+              "value": 179,
+              "die": "0x6fe3d57",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "EXPANSION_INNISTRAD_CRIMSON_VOW": {
+              "value": 192,
+              "die": "0x6fe3f0f",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "EXPANSION_INNISTRAD_MIDNIGHT_HUNT": {
+              "value": 190,
+              "die": "0x6fe3ebd",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "EXPANSION_KALDHEIM": {
+              "value": 183,
+              "die": "0x6fe3dc1",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "EXPANSION_KAMIGAWA_NEON_DYNASTY": {
+              "value": 194,
+              "die": "0x6fe3f5d",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "EXPANSION_MODERN_HORIZONS_2": {
+              "value": 187,
+              "die": "0x6fe3e37",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "EXPANSION_STREETS_OF_NEW_CAPENNA": {
+              "value": 196,
+              "die": "0x6fe3fab",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "EXPANSION_STRIXHAVEN_SCHOOL_OF_MAGES": {
+              "value": 185,
+              "die": "0x6fe3df5",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "EXPANSION_ZENDIKAR_RISING": {
+              "value": 181,
+              "die": "0x6fe3d87",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "XNONE": {
+              "value": 0,
+              "die": "0x6fe93ae",
+              "enum_die": "0x6fe93a0",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EXPANSION_ADVENTURES_IN_THE_FORGOTTEN_REALMS = 188, EXPANSION_COMMANDER_LEGENDS = 182, EXPANSION_CORE_SET_2021 = 179, EXPANSION_INNISTRAD_CRIMSON_VOW = 192, EXPANSION_INNISTRAD_MIDNIGHT_HUNT = 190, EXPANSION_KALDHEIM = 183, EXPANSION_KAMIGAWA_NEON_DYNASTY = 194, EXPANSION_MODERN_HORIZONS_2 = 187, EXPANSION_STREETS_OF_NEW_CAPENNA = 196, EXPANSION_STRIXHAVEN_SCHOOL_OF_MAGES = 185, EXPANSION_ZENDIKAR_RISING = 181, XNONE = 0 };"
+      ]
+    },
+    "2650ca0": {
+      "source": "functions/tutors.c",
+      "name": "show_deck_force_expansion",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EXPANSION_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EXPANSION_0": {
+              "value": 0,
+              "die": "0x5e2a0ea",
+              "enum_die": "0x5e2a0dc",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EXPANSION_0 = 0 };"
+      ]
+    },
+    "22e00d0": {
+      "source": "cards/amonkhet.c",
+      "name": "card_defiant_greatmaw",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "ENABLE_XTRIGGER_M1_M1_COUNTERS": 64,
+            "XTRIGGER_M1_M1_COUNTERS": 16780544
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "ENABLE_XTRIGGER_M1_M1_COUNTERS": {
+              "value": 64,
+              "die": "0x2a00379",
+              "enum_die": "0x2a0026e",
+              "enum_bytes": 4
+            },
+            "XTRIGGER_M1_M1_COUNTERS": {
+              "value": 16780544,
+              "die": "0x2a00222",
+              "enum_die": "0x2a00087",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { ENABLE_XTRIGGER_M1_M1_COUNTERS = 64, XTRIGGER_M1_M1_COUNTERS = 16780544 };"
+      ]
+    },
+    "244d4c0": {
+      "source": "cards/battle_for_zendikar.c",
+      "name": "process_as_cost",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EVENT_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EVENT_0": {
+              "value": 0,
+              "die": "0x402d3ac",
+              "enum_die": "0x402d39e",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EVENT_0 = 0 };"
+      ]
+    },
+    "25686b0": {
+      "source": "cards/betrayers_of_kamigawa.c",
+      "name": "toshiro_effect",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EVENT_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EVENT_0": {
+              "value": 0,
+              "die": "0x4edc555",
+              "enum_die": "0x4edc547",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EVENT_0 = 0 };"
+      ]
+    },
+    "23b2920": {
+      "source": "cards/commander_2019.c",
+      "name": "card_doomed_artisan",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "SUBTYPE_SCULPTURE": 257
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "SUBTYPE_SCULPTURE": {
+              "value": 257,
+              "die": "0x365b9e1",
+              "enum_die": "0x365a84a",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { SUBTYPE_SCULPTURE = 257 };"
+      ]
+    },
+    "25a20f0": {
+      "source": "cards/commander_legends.c",
+      "name": "card_exiled_with_aegis_counter",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_AEGIS": 173
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_AEGIS": {
+              "value": 173,
+              "die": "0x535bb05",
+              "enum_die": "0x535af72",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_AEGIS = 173 };"
+      ]
+    },
+    "25a32b0": {
+      "source": "cards/commander_legends.c",
+      "name": "card_amareth_the_lustrous",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "TUTOR_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "TUTOR_0": {
+              "value": 0,
+              "die": "0x535e8e8",
+              "enum_die": "0x535e8da",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { TUTOR_0 = 0 };"
+      ]
+    },
+    "25abb10": {
+      "source": "cards/commander_legends.c",
+      "name": "card_livio_oathsworn_sentinel",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_AEGIS": 173
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_AEGIS": {
+              "value": 173,
+              "die": "0x535bb05",
+              "enum_die": "0x535af72",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_AEGIS = 173 };"
+      ]
+    },
+    "25afcb0": {
+      "source": "cards/commander_legends.c",
+      "name": "card_seraphic_greatsword",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "TOKEN_ACTION_SKIP_ATTACK_CHECK": 2097152
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "TOKEN_ACTION_SKIP_ATTACK_CHECK": {
+              "value": 2097152,
+              "die": "0x536040a",
+              "enum_die": "0x5360247",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { TOKEN_ACTION_SKIP_ATTACK_CHECK = 2097152 };"
+      ]
+    },
+    "2225650": {
+      "source": "cards/dissension.c",
+      "name": "card_rain_of_gore",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": 16778752
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": {
+              "value": 16778752,
+              "die": "0x1e8fbe3",
+              "enum_die": "0x1e8fb19",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { XTRIGGER_REPLACE_GAIN_LIFE = 16778752 };"
+      ]
+    },
+    "22c97b0": {
+      "source": "cards/dominaria.c",
+      "name": "can_cast_historic_spell",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EVENT_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EVENT_0": {
+              "value": 0,
+              "die": "0x2939ac9",
+              "enum_die": "0x2939abb",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EVENT_0 = 0 };"
+      ]
+    },
+    "22ce550": {
+      "source": "cards/dominaria.c",
+      "name": "card_helm_of_the_host",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "TOKEN_ACTION_ISNT_LEGENDARY": 256
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "TOKEN_ACTION_ISNT_LEGENDARY": {
+              "value": 256,
+              "die": "0x294129a",
+              "enum_die": "0x294118c",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { TOKEN_ACTION_ISNT_LEGENDARY = 256 };"
+      ]
+    },
+    "23f59c0": {
+      "source": "cards/ice_age.c",
+      "name": "card_elkin_bottle",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "MPCFE_UNTIL_YOUR_NEXT_UPKEEP": 64
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "MPCFE_UNTIL_YOUR_NEXT_UPKEEP": {
+              "value": 64,
+              "die": "0x3b84612",
+              "enum_die": "0x3b84581",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { MPCFE_UNTIL_YOUR_NEXT_UPKEEP = 64 };"
+      ]
+    },
+    "2288080": {
+      "source": "cards/ikoria.c",
+      "name": "luminous_broodmoth_effect",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_FLYING": 147
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_FLYING": {
+              "value": 147,
+              "die": "0x240844e",
+              "enum_die": "0x2407a90",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_FLYING = 147 };"
+      ]
+    },
+    "228ad20": {
+      "source": "cards/ikoria.c",
+      "name": "card_lukka_coppercoat_outcast",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "MPCFE_LUKKA": 512
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "MPCFE_LUKKA": {
+              "value": 512,
+              "die": "0x240d322",
+              "enum_die": "0x240d23b",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { MPCFE_LUKKA = 512 };"
+      ]
+    },
+    "228b0d0": {
+      "source": "cards/ikoria.c",
+      "name": "card_luminous_broodmoth",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_FLYING": 147
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_FLYING": {
+              "value": 147,
+              "die": "0x240844e",
+              "enum_die": "0x2407a90",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_FLYING = 147 };"
+      ]
+    },
+    "23732b0": {
+      "source": "cards/jumpstart.c",
+      "name": "card_bruvac_the_grandiloquent",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "XTRIGGER_REPLACE_MILL_CARDS": 16778496
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "XTRIGGER_REPLACE_MILL_CARDS": {
+              "value": 16778496,
+              "die": "0x33e7531",
+              "enum_die": "0x33e7488",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { XTRIGGER_REPLACE_MILL_CARDS = 16778496 };"
+      ]
+    },
+    "23740f0": {
+      "source": "cards/jumpstart.c",
+      "name": "card_lightning_phoenix",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EVENT_GRAVEYARD_ABILITY_EOT": 1280
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EVENT_GRAVEYARD_ABILITY_EOT": {
+              "value": 1280,
+              "die": "0x33e6b66",
+              "enum_die": "0x33e63e9",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EVENT_GRAVEYARD_ABILITY_EOT = 1280 };"
+      ]
+    },
+    "22b8670": {
+      "source": "cards/m13.c",
+      "name": "card_rhox_faithmender",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": 16778752
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": {
+              "value": 16778752,
+              "die": "0x270a858",
+              "enum_die": "0x270a78e",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { XTRIGGER_REPLACE_GAIN_LIFE = 16778752 };"
+      ]
+    },
+    "222b230": {
+      "source": "cards/modern_horizons_2.c",
+      "name": "create_dauthi_voidwalker_legacy",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_VOID": 170
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_VOID": {
+              "value": 170,
+              "die": "0x1f59112",
+              "enum_die": "0x1f585ad",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_VOID = 170 };"
+      ]
+    },
+    "222ba50": {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_exiled_with_void_counter",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_VOID": 170
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_VOID": {
+              "value": 170,
+              "die": "0x1f59112",
+              "enum_die": "0x1f585ad",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_VOID = 170 };"
+      ]
+    },
+    "22305e0": {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_chatterfang_squirrel_general",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "SARV_REPORT_COUNT": 8
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "SARV_REPORT_COUNT": {
+              "value": 8,
+              "die": "0x1f5ee72",
+              "enum_die": "0x1f5ee19",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { SARV_REPORT_COUNT = 8 };"
+      ]
+    },
+    "2230860": {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_chitterspitter",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_ACORN": 160
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_ACORN": {
+              "value": 160,
+              "die": "0x1f5905f",
+              "enum_die": "0x1f585ad",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_ACORN = 160 };"
+      ]
+    },
+    "2231790": {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_dauthi_voidwalker",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_VOID": 170
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_VOID": {
+              "value": 170,
+              "die": "0x1f59112",
+              "enum_die": "0x1f585ad",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_VOID = 170 };"
+      ]
+    },
+    "2235ad0": {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_galvanic_relay",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "MPCFE_DURING_YOUR_NEXT_TURN": 1024
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "MPCFE_DURING_YOUR_NEXT_TURN": {
+              "value": 1024,
+              "die": "0x1f5f0e7",
+              "enum_die": "0x1f5eff1",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { MPCFE_DURING_YOUR_NEXT_TURN = 1024 };"
+      ]
+    },
+    "2239520": {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_lonis_cryptozoologist",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "SARV_REPORT_COUNT": 8
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "SARV_REPORT_COUNT": {
+              "value": 8,
+              "die": "0x1f5ee72",
+              "enum_die": "0x1f5ee19",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { SARV_REPORT_COUNT = 8 };"
+      ]
+    },
+    "22419b0": {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_tizerus_charger",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_FLYING": 147
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_FLYING": {
+              "value": 147,
+              "die": "0x1f58f6b",
+              "enum_die": "0x1f585ad",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_FLYING = 147 };"
+      ]
+    },
+    "25e7440": {
+      "source": "cards/onslaught.c",
+      "name": "false_cure_legacy",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": 16778752
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": {
+              "value": 16778752,
+              "die": "0x58addf9",
+              "enum_die": "0x58add2f",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { XTRIGGER_REPLACE_GAIN_LIFE = 16778752 };"
+      ]
+    },
+    "2411220": {
+      "source": "cards/promo.c",
+      "name": "card_stocking_tiger",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EXPANSION_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EXPANSION_0": {
+              "value": 0,
+              "die": "0x3c57fd9",
+              "enum_die": "0x3c57fcb",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EXPANSION_0 = 0 };"
+      ]
+    },
+    "2191bf0": {
+      "source": "cards/rivals_of_ixalan.c",
+      "name": "card_dire_fleet_daredevil",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "MPCFE_EXILE_ON_RESOLUTION": 128
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "MPCFE_EXILE_ON_RESOLUTION": {
+              "value": 128,
+              "die": "0x162cccd",
+              "enum_die": "0x162cc1d",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { MPCFE_EXILE_ON_RESOLUTION = 128 };"
+      ]
+    },
+    "254cf30": {
+      "source": "cards/shadowmoor.c",
+      "name": "card_boon_reflection",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": 16778752
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": {
+              "value": 16778752,
+              "die": "0x4d52b4f",
+              "enum_die": "0x4d52a85",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { XTRIGGER_REPLACE_GAIN_LIFE = 16778752 };"
+      ]
+    },
+    "2358760": {
+      "source": "cards/theros_beyond_death.c",
+      "name": "athreos_effect",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_COIN": 142
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_COIN": {
+              "value": 142,
+              "die": "0x32621ac",
+              "enum_die": "0x3261850",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_COIN = 142 };"
+      ]
+    },
+    "235afb0": {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_athreos_shroud_veiled",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_COIN": 142
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_COIN": {
+              "value": 142,
+              "die": "0x32621ac",
+              "enum_die": "0x3261850",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_COIN = 142 };"
+      ]
+    },
+    "2361a10": {
+      "source": "cards/theros_beyond_death.c",
+      "name": "card_towering_wave_mystic",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "DDBM_MAY_DAMAGE_PLANESWALKER": 64
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "DDBM_MAY_DAMAGE_PLANESWALKER": {
+              "value": 64,
+              "die": "0x3265f58",
+              "enum_die": "0x3265e78",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { DDBM_MAY_DAMAGE_PLANESWALKER = 64 };"
+      ]
+    },
+    "25d0610": {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_grumgully_the_generous",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "ENABLE_XTRIGGER_REPLACE_ETB": 128,
+            "XTRIGGER_REPLACE_ETB": 16780800
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "ENABLE_XTRIGGER_REPLACE_ETB": {
+              "value": 128,
+              "die": "0x5669681",
+              "enum_die": "0x5669555",
+              "enum_bytes": 4
+            },
+            "XTRIGGER_REPLACE_ETB": {
+              "value": 16780800,
+              "die": "0x5669526",
+              "enum_die": "0x566936e",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { ENABLE_XTRIGGER_REPLACE_ETB = 128, XTRIGGER_REPLACE_ETB = 16780800 };"
+      ]
+    },
+    "25d3970": {
+      "source": "cards/throne_of_eldraine.c",
+      "name": "card_robber_of_the_rich",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "MPCFE_ATTACK_WITH_ROGUE": 256
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "MPCFE_ATTACK_WITH_ROGUE": {
+              "value": 256,
+              "die": "0x5670369",
+              "enum_die": "0x567029d",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { MPCFE_ATTACK_WITH_ROGUE = 256 };"
+      ]
+    },
+    "2305250": {
+      "source": "cards/unglued_unhinged.c",
+      "name": "card_booster_tutor",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EXPANSION_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EXPANSION_0": {
+              "value": 0,
+              "die": "0x2c51703",
+              "enum_die": "0x2c516f5",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EXPANSION_0 = 0 };"
+      ]
+    },
+    "21cbdd0": {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_dreadhorde_butcher",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "DDBM_MAY_DAMAGE_PLANESWALKER": 64
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "DDBM_MAY_DAMAGE_PLANESWALKER": {
+              "value": 64,
+              "die": "0x1947ca2",
+              "enum_die": "0x1947bc2",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { DDBM_MAY_DAMAGE_PLANESWALKER = 64 };"
+      ]
+    },
+    "21d2250": {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_neheb_dreadhorde_champion",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "DDBM_MAY_DAMAGE_PLANESWALKER": 64
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "DDBM_MAY_DAMAGE_PLANESWALKER": {
+              "value": 64,
+              "die": "0x1947ca2",
+              "enum_die": "0x1947bc2",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { DDBM_MAY_DAMAGE_PLANESWALKER = 64 };"
+      ]
+    },
+    "21d9130": {
+      "source": "cards/war_of_the_spark.c",
+      "name": "card_vraska_swarms_eminence",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "DDBM_MAY_DAMAGE_PLANESWALKER": 64
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "DDBM_MAY_DAMAGE_PLANESWALKER": {
+              "value": 64,
+              "die": "0x1947ca2",
+              "enum_die": "0x1947bc2",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { DDBM_MAY_DAMAGE_PLANESWALKER = 64 };"
+      ]
+    },
+    "2583ed0": {
+      "source": "cards/worldwake.c",
+      "name": "zendikon",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "SP_KEYWORD_NOT_SIMPLE_BITS": 357809216
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "SP_KEYWORD_NOT_SIMPLE_BITS": {
+              "value": 357809216,
+              "die": "0x51d2bda",
+              "enum_die": "0x51d2878",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { SP_KEYWORD_NOT_SIMPLE_BITS = 357809216 };"
+      ]
+    },
+    "230bc20": {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_magmatic_channeler",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "TUTOR_EXILE": 6
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "TUTOR_EXILE": {
+              "value": 6,
+              "die": "0x2d1039d",
+              "enum_die": "0x2d10330",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { TUTOR_EXILE = 6 };"
+      ]
+    },
+    "230c310": {
+      "source": "cards/zendikar_rising.c",
+      "name": "card_nahiri_heir_of_the_ancients",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "TOKEN_ACTION_EQUIP_ANY": 8
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "TOKEN_ACTION_EQUIP_ANY": {
+              "value": 8,
+              "die": "0x2d11d2c",
+              "enum_die": "0x2d11cb7",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { TOKEN_ACTION_EQUIP_ANY = 8 };"
+      ]
+    },
+    "26b12c0": {
+      "source": "functions/ai.c",
+      "name": "can_autotap",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "QUERY_IS_PLAIN_MANA_PRODUCER": 3
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "QUERY_IS_PLAIN_MANA_PRODUCER": {
+              "value": 3,
+              "die": "0x667db8f",
+              "enum_die": "0x667db5b",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { QUERY_IS_PLAIN_MANA_PRODUCER = 3 };"
+      ]
+    },
+    "26a9b30": {
+      "source": "functions/engine.c",
+      "name": "count_mana",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EVENT_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EVENT_0": {
+              "value": 0,
+              "die": "0x66649bd",
+              "enum_die": "0x66649af",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EVENT_0 = 0 };"
+      ]
+    },
+    "268f730": {
+      "source": "functions/functions.c",
+      "name": "gain_life_impl",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": 16778752
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": {
+              "value": 16778752,
+              "die": "0x6568805",
+              "enum_die": "0x656873b",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { XTRIGGER_REPLACE_GAIN_LIFE = 16778752 };"
+      ]
+    },
+    "26eb8e0": {
+      "source": "functions/packs.c",
+      "name": "make_pack_normal",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EXPANSION_INNISTRAD_CRIMSON_VOW": 192,
+            "EXPANSION_INNISTRAD_MIDNIGHT_HUNT": 190,
+            "EXPANSION_KAMIGAWA_NEON_DYNASTY": 194,
+            "XNONE": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EXPANSION_INNISTRAD_CRIMSON_VOW": {
+              "value": 192,
+              "die": "0x6fe3f0f",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "EXPANSION_INNISTRAD_MIDNIGHT_HUNT": {
+              "value": 190,
+              "die": "0x6fe3ebd",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "EXPANSION_KAMIGAWA_NEON_DYNASTY": {
+              "value": 194,
+              "die": "0x6fe3f5d",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            },
+            "XNONE": {
+              "value": 0,
+              "die": "0x6fe93ae",
+              "enum_die": "0x6fe93a0",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EXPANSION_INNISTRAD_CRIMSON_VOW = 192, EXPANSION_INNISTRAD_MIDNIGHT_HUNT = 190, EXPANSION_KAMIGAWA_NEON_DYNASTY = 194, XNONE = 0 };"
+      ]
+    },
+    "26ec8a0": {
+      "source": "functions/packs.c",
+      "name": "pack_size",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "XNONE": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "XNONE": {
+              "value": 0,
+              "die": "0x6fe93ae",
+              "enum_die": "0x6fe93a0",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { XNONE = 0 };"
+      ]
+    },
+    "26eca90": {
+      "source": "functions/packs.c",
+      "name": "test_packs",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EXPANSION_STREETS_OF_NEW_CAPENNA": 196
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EXPANSION_STREETS_OF_NEW_CAPENNA": {
+              "value": 196,
+              "die": "0x6fe3fab",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EXPANSION_STREETS_OF_NEW_CAPENNA = 196 };"
+      ]
+    },
+    "26ecc50": {
+      "source": "functions/packs.c",
+      "name": "dlgproc_choose_a_pack",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EXPANSION_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EXPANSION_0": {
+              "value": 0,
+              "die": "0x6fe2966",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EXPANSION_0 = 0 };"
+      ]
+    },
+    "26ed790": {
+      "source": "functions/packs.c",
+      "name": "choose_packs",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EXPANSION_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EXPANSION_0": {
+              "value": 0,
+              "die": "0x6fe2966",
+              "enum_die": "0x6fe2958",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EXPANSION_0 = 0 };"
+      ]
+    },
+    "26e3a30": {
+      "source": "functions/sacrifices.c",
+      "name": "get_sacrifice_prompt_text",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "TYPETEXT_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "TYPETEXT_0": {
+              "value": 0,
+              "die": "0x6d0e010",
+              "enum_die": "0x6d0e001",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { TYPETEXT_0 = 0 };"
+      ]
+    },
+    "2664f30": {
+      "source": "functions/token_generation.c",
+      "name": "resolve_iid",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "TOKEN_ACTION_ISNT_LEGENDARY": 256
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "TOKEN_ACTION_ISNT_LEGENDARY": {
+              "value": 256,
+              "die": "0x61c77d9",
+              "enum_die": "0x61c76cb",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { TOKEN_ACTION_ISNT_LEGENDARY = 256 };"
+      ]
+    },
+    "2654d60": {
+      "source": "functions/tutors.c",
+      "name": "reveal_top_cards_of_library_and_choose_fn_who_chooses",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EXPANSION_0": 0,
+            "TUTOR_EXILE": 6
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EXPANSION_0": {
+              "value": 0,
+              "die": "0x5e2a0ea",
+              "enum_die": "0x5e2a0dc",
+              "enum_bytes": 4
+            },
+            "TUTOR_EXILE": {
+              "value": 6,
+              "die": "0x5e30d98",
+              "enum_die": "0x5e30d2b",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EXPANSION_0 = 0, TUTOR_EXILE = 6 };"
+      ]
+    },
+    "26590a0": {
+      "source": "functions/windows.c",
+      "name": "legacy_name_or_text",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EVENT_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EVENT_0": {
+              "value": 0,
+              "die": "0x5ee92ed",
+              "enum_die": "0x5ee92df",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EVENT_0 = 0 };"
+      ]
+    },
+    "265c8f0": {
+      "source": "functions/windows.c",
+      "name": "wndproc_FullCardClass_hook",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "EXPANSION_0": 0
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "EXPANSION_0": {
+              "value": 0,
+              "die": "0x5ee7b3e",
+              "enum_die": "0x5ee7b30",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { EXPANSION_0 = 0 };"
+      ]
+    },
+    "22361d0": {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_geyadrone_dihada",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "COUNTER_CORRUPTION": 163
+          },
+          "recovery": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+          "dwarf_enumerators": {
+            "COUNTER_CORRUPTION": {
+              "value": 163,
+              "die": "0x1f59092",
+              "enum_die": "0x1f585ad",
+              "enum_bytes": 4
+            }
+          }
+        }
+      ],
+      "declarations": [
+        "enum { COUNTER_CORRUPTION = 163 };"
+      ]
     }
-  }
+  },
+  "target_constant_recoveries": [
+    {
+      "scope": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+      "functions": {
+        "23c8860": {
+          "source": "cards/strixhaven.c",
+          "name": "uvilda_legacy",
+          "enumerators": {
+            "COUNTER_HONE": 167
+          }
+        },
+        "23d0b50": {
+          "source": "cards/strixhaven.c",
+          "name": "card_honor_troll",
+          "enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": 16778752
+          }
+        },
+        "23d8f80": {
+          "source": "cards/strixhaven.c",
+          "name": "card_radiant_scrollwielder",
+          "enumerators": {
+            "MPCFE_EXILE_ON_RESOLUTION": 128
+          }
+        },
+        "23dcb20": {
+          "source": "cards/strixhaven.c",
+          "name": "card_spell_satchel",
+          "enumerators": {
+            "COUNTER_BOOK": 161
+          }
+        },
+        "23dd0c0": {
+          "source": "cards/strixhaven.c",
+          "name": "card_strixhaven_stadium",
+          "enumerators": {
+            "COUNTER_POINT": 169
+          }
+        },
+        "23de890": {
+          "source": "cards/strixhaven.c",
+          "name": "card_uvilda_dean_of_perfection",
+          "enumerators": {
+            "COUNTER_HONE": 167
+          }
+        },
+        "23dfc10": {
+          "source": "cards/strixhaven.c",
+          "name": "card_explore_the_vastlands",
+          "enumerators": {
+            "TUTOR_0": 0
+          }
+        },
+        "25c90e0": {
+          "source": "cards/throne_of_eldraine.c",
+          "name": "has_adventure",
+          "enumerators": {
+            "QUERY_ADVENTURER": 1
+          }
+        },
+        "25c4940": {
+          "source": "cards/unstable.c",
+          "name": "test_has_been_banned_or_restricted",
+          "enumerators": {
+            "CPF_EVER_BANNED_OR_RESTRICTED": 1
+          }
+        },
+        "26ec840": {
+          "source": "functions/packs.c",
+          "name": "is_valid_pack",
+          "enumerators": {
+            "EXPANSION_ADVENTURES_IN_THE_FORGOTTEN_REALMS": 188,
+            "EXPANSION_COMMANDER_LEGENDS": 182,
+            "EXPANSION_CORE_SET_2021": 179,
+            "EXPANSION_INNISTRAD_CRIMSON_VOW": 192,
+            "EXPANSION_INNISTRAD_MIDNIGHT_HUNT": 190,
+            "EXPANSION_KALDHEIM": 183,
+            "EXPANSION_KAMIGAWA_NEON_DYNASTY": 194,
+            "EXPANSION_MODERN_HORIZONS_2": 187,
+            "EXPANSION_STREETS_OF_NEW_CAPENNA": 196,
+            "EXPANSION_STRIXHAVEN_SCHOOL_OF_MAGES": 185,
+            "EXPANSION_ZENDIKAR_RISING": 181,
+            "XNONE": 0
+          }
+        },
+        "2650ca0": {
+          "source": "functions/tutors.c",
+          "name": "show_deck_force_expansion",
+          "enumerators": {
+            "EXPANSION_0": 0
+          }
+        },
+        "22e00d0": {
+          "source": "cards/amonkhet.c",
+          "name": "card_defiant_greatmaw",
+          "enumerators": {
+            "ENABLE_XTRIGGER_M1_M1_COUNTERS": 64,
+            "XTRIGGER_M1_M1_COUNTERS": 16780544
+          }
+        },
+        "244d4c0": {
+          "source": "cards/battle_for_zendikar.c",
+          "name": "process_as_cost",
+          "enumerators": {
+            "EVENT_0": 0
+          }
+        },
+        "25686b0": {
+          "source": "cards/betrayers_of_kamigawa.c",
+          "name": "toshiro_effect",
+          "enumerators": {
+            "EVENT_0": 0
+          }
+        },
+        "23b2920": {
+          "source": "cards/commander_2019.c",
+          "name": "card_doomed_artisan",
+          "enumerators": {
+            "SUBTYPE_SCULPTURE": 257
+          }
+        },
+        "25a20f0": {
+          "source": "cards/commander_legends.c",
+          "name": "card_exiled_with_aegis_counter",
+          "enumerators": {
+            "COUNTER_AEGIS": 173
+          }
+        },
+        "25a32b0": {
+          "source": "cards/commander_legends.c",
+          "name": "card_amareth_the_lustrous",
+          "enumerators": {
+            "TUTOR_0": 0
+          }
+        },
+        "25abb10": {
+          "source": "cards/commander_legends.c",
+          "name": "card_livio_oathsworn_sentinel",
+          "enumerators": {
+            "COUNTER_AEGIS": 173
+          }
+        },
+        "25afcb0": {
+          "source": "cards/commander_legends.c",
+          "name": "card_seraphic_greatsword",
+          "enumerators": {
+            "TOKEN_ACTION_SKIP_ATTACK_CHECK": 2097152
+          }
+        },
+        "2225650": {
+          "source": "cards/dissension.c",
+          "name": "card_rain_of_gore",
+          "enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": 16778752
+          }
+        },
+        "22c97b0": {
+          "source": "cards/dominaria.c",
+          "name": "can_cast_historic_spell",
+          "enumerators": {
+            "EVENT_0": 0
+          }
+        },
+        "22ce550": {
+          "source": "cards/dominaria.c",
+          "name": "card_helm_of_the_host",
+          "enumerators": {
+            "TOKEN_ACTION_ISNT_LEGENDARY": 256
+          }
+        },
+        "23f59c0": {
+          "source": "cards/ice_age.c",
+          "name": "card_elkin_bottle",
+          "enumerators": {
+            "MPCFE_UNTIL_YOUR_NEXT_UPKEEP": 64
+          }
+        },
+        "2288080": {
+          "source": "cards/ikoria.c",
+          "name": "luminous_broodmoth_effect",
+          "enumerators": {
+            "COUNTER_FLYING": 147
+          }
+        },
+        "228ad20": {
+          "source": "cards/ikoria.c",
+          "name": "card_lukka_coppercoat_outcast",
+          "enumerators": {
+            "MPCFE_LUKKA": 512
+          }
+        },
+        "228b0d0": {
+          "source": "cards/ikoria.c",
+          "name": "card_luminous_broodmoth",
+          "enumerators": {
+            "COUNTER_FLYING": 147
+          }
+        },
+        "23732b0": {
+          "source": "cards/jumpstart.c",
+          "name": "card_bruvac_the_grandiloquent",
+          "enumerators": {
+            "XTRIGGER_REPLACE_MILL_CARDS": 16778496
+          }
+        },
+        "23740f0": {
+          "source": "cards/jumpstart.c",
+          "name": "card_lightning_phoenix",
+          "enumerators": {
+            "EVENT_GRAVEYARD_ABILITY_EOT": 1280
+          }
+        },
+        "22b8670": {
+          "source": "cards/m13.c",
+          "name": "card_rhox_faithmender",
+          "enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": 16778752
+          }
+        },
+        "222b230": {
+          "source": "cards/modern_horizons_2.c",
+          "name": "create_dauthi_voidwalker_legacy",
+          "enumerators": {
+            "COUNTER_VOID": 170
+          }
+        },
+        "222ba50": {
+          "source": "cards/modern_horizons_2.c",
+          "name": "card_exiled_with_void_counter",
+          "enumerators": {
+            "COUNTER_VOID": 170
+          }
+        },
+        "22305e0": {
+          "source": "cards/modern_horizons_2.c",
+          "name": "card_chatterfang_squirrel_general",
+          "enumerators": {
+            "SARV_REPORT_COUNT": 8
+          }
+        },
+        "2230860": {
+          "source": "cards/modern_horizons_2.c",
+          "name": "card_chitterspitter",
+          "enumerators": {
+            "COUNTER_ACORN": 160
+          }
+        },
+        "2231790": {
+          "source": "cards/modern_horizons_2.c",
+          "name": "card_dauthi_voidwalker",
+          "enumerators": {
+            "COUNTER_VOID": 170
+          }
+        },
+        "2235ad0": {
+          "source": "cards/modern_horizons_2.c",
+          "name": "card_galvanic_relay",
+          "enumerators": {
+            "MPCFE_DURING_YOUR_NEXT_TURN": 1024
+          }
+        },
+        "2239520": {
+          "source": "cards/modern_horizons_2.c",
+          "name": "card_lonis_cryptozoologist",
+          "enumerators": {
+            "SARV_REPORT_COUNT": 8
+          }
+        },
+        "22419b0": {
+          "source": "cards/modern_horizons_2.c",
+          "name": "card_tizerus_charger",
+          "enumerators": {
+            "COUNTER_FLYING": 147
+          }
+        },
+        "25e7440": {
+          "source": "cards/onslaught.c",
+          "name": "false_cure_legacy",
+          "enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": 16778752
+          }
+        },
+        "2411220": {
+          "source": "cards/promo.c",
+          "name": "card_stocking_tiger",
+          "enumerators": {
+            "EXPANSION_0": 0
+          }
+        },
+        "2191bf0": {
+          "source": "cards/rivals_of_ixalan.c",
+          "name": "card_dire_fleet_daredevil",
+          "enumerators": {
+            "MPCFE_EXILE_ON_RESOLUTION": 128
+          }
+        },
+        "254cf30": {
+          "source": "cards/shadowmoor.c",
+          "name": "card_boon_reflection",
+          "enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": 16778752
+          }
+        },
+        "2358760": {
+          "source": "cards/theros_beyond_death.c",
+          "name": "athreos_effect",
+          "enumerators": {
+            "COUNTER_COIN": 142
+          }
+        },
+        "235afb0": {
+          "source": "cards/theros_beyond_death.c",
+          "name": "card_athreos_shroud_veiled",
+          "enumerators": {
+            "COUNTER_COIN": 142
+          }
+        },
+        "2361a10": {
+          "source": "cards/theros_beyond_death.c",
+          "name": "card_towering_wave_mystic",
+          "enumerators": {
+            "DDBM_MAY_DAMAGE_PLANESWALKER": 64
+          }
+        },
+        "25d0610": {
+          "source": "cards/throne_of_eldraine.c",
+          "name": "card_grumgully_the_generous",
+          "enumerators": {
+            "ENABLE_XTRIGGER_REPLACE_ETB": 128,
+            "XTRIGGER_REPLACE_ETB": 16780800
+          }
+        },
+        "25d3970": {
+          "source": "cards/throne_of_eldraine.c",
+          "name": "card_robber_of_the_rich",
+          "enumerators": {
+            "MPCFE_ATTACK_WITH_ROGUE": 256
+          }
+        },
+        "2305250": {
+          "source": "cards/unglued_unhinged.c",
+          "name": "card_booster_tutor",
+          "enumerators": {
+            "EXPANSION_0": 0
+          }
+        },
+        "21cbdd0": {
+          "source": "cards/war_of_the_spark.c",
+          "name": "card_dreadhorde_butcher",
+          "enumerators": {
+            "DDBM_MAY_DAMAGE_PLANESWALKER": 64
+          }
+        },
+        "21d2250": {
+          "source": "cards/war_of_the_spark.c",
+          "name": "card_neheb_dreadhorde_champion",
+          "enumerators": {
+            "DDBM_MAY_DAMAGE_PLANESWALKER": 64
+          }
+        },
+        "21d9130": {
+          "source": "cards/war_of_the_spark.c",
+          "name": "card_vraska_swarms_eminence",
+          "enumerators": {
+            "DDBM_MAY_DAMAGE_PLANESWALKER": 64
+          }
+        },
+        "2583ed0": {
+          "source": "cards/worldwake.c",
+          "name": "zendikon",
+          "enumerators": {
+            "SP_KEYWORD_NOT_SIMPLE_BITS": 357809216
+          }
+        },
+        "230bc20": {
+          "source": "cards/zendikar_rising.c",
+          "name": "card_magmatic_channeler",
+          "enumerators": {
+            "TUTOR_EXILE": 6
+          }
+        },
+        "230c310": {
+          "source": "cards/zendikar_rising.c",
+          "name": "card_nahiri_heir_of_the_ancients",
+          "enumerators": {
+            "TOKEN_ACTION_EQUIP_ANY": 8
+          }
+        },
+        "26b12c0": {
+          "source": "functions/ai.c",
+          "name": "can_autotap",
+          "enumerators": {
+            "QUERY_IS_PLAIN_MANA_PRODUCER": 3
+          }
+        },
+        "26a9b30": {
+          "source": "functions/engine.c",
+          "name": "count_mana",
+          "enumerators": {
+            "EVENT_0": 0
+          }
+        },
+        "268f730": {
+          "source": "functions/functions.c",
+          "name": "gain_life_impl",
+          "enumerators": {
+            "XTRIGGER_REPLACE_GAIN_LIFE": 16778752
+          }
+        },
+        "26eb8e0": {
+          "source": "functions/packs.c",
+          "name": "make_pack_normal",
+          "enumerators": {
+            "EXPANSION_INNISTRAD_CRIMSON_VOW": 192,
+            "EXPANSION_INNISTRAD_MIDNIGHT_HUNT": 190,
+            "EXPANSION_KAMIGAWA_NEON_DYNASTY": 194,
+            "XNONE": 0
+          }
+        },
+        "26ec8a0": {
+          "source": "functions/packs.c",
+          "name": "pack_size",
+          "enumerators": {
+            "XNONE": 0
+          }
+        },
+        "26eca90": {
+          "source": "functions/packs.c",
+          "name": "test_packs",
+          "enumerators": {
+            "EXPANSION_STREETS_OF_NEW_CAPENNA": 196
+          }
+        },
+        "26ecc50": {
+          "source": "functions/packs.c",
+          "name": "dlgproc_choose_a_pack",
+          "enumerators": {
+            "EXPANSION_0": 0
+          }
+        },
+        "26ed790": {
+          "source": "functions/packs.c",
+          "name": "choose_packs",
+          "enumerators": {
+            "EXPANSION_0": 0
+          }
+        },
+        "26e3a30": {
+          "source": "functions/sacrifices.c",
+          "name": "get_sacrifice_prompt_text",
+          "enumerators": {
+            "TYPETEXT_0": 0
+          }
+        },
+        "2664f30": {
+          "source": "functions/token_generation.c",
+          "name": "resolve_iid",
+          "enumerators": {
+            "TOKEN_ACTION_ISNT_LEGENDARY": 256
+          }
+        },
+        "2654d60": {
+          "source": "functions/tutors.c",
+          "name": "reveal_top_cards_of_library_and_choose_fn_who_chooses",
+          "enumerators": {
+            "EXPANSION_0": 0,
+            "TUTOR_EXILE": 6
+          }
+        },
+        "26590a0": {
+          "source": "functions/windows.c",
+          "name": "legacy_name_or_text",
+          "enumerators": {
+            "EVENT_0": 0
+          }
+        },
+        "265c8f0": {
+          "source": "functions/windows.c",
+          "name": "wndproc_FullCardClass_hook",
+          "enumerators": {
+            "EXPANSION_0": 0
+          }
+        }
+      },
+      "constants": {
+        "COUNTER_HONE": 167,
+        "XTRIGGER_REPLACE_GAIN_LIFE": 16778752,
+        "MPCFE_EXILE_ON_RESOLUTION": 128,
+        "COUNTER_BOOK": 161,
+        "COUNTER_POINT": 169,
+        "TUTOR_0": 0,
+        "QUERY_ADVENTURER": 1,
+        "CPF_EVER_BANNED_OR_RESTRICTED": 1,
+        "EXPANSION_ADVENTURES_IN_THE_FORGOTTEN_REALMS": 188,
+        "EXPANSION_COMMANDER_LEGENDS": 182,
+        "EXPANSION_CORE_SET_2021": 179,
+        "EXPANSION_INNISTRAD_CRIMSON_VOW": 192,
+        "EXPANSION_INNISTRAD_MIDNIGHT_HUNT": 190,
+        "EXPANSION_KALDHEIM": 183,
+        "EXPANSION_KAMIGAWA_NEON_DYNASTY": 194,
+        "EXPANSION_MODERN_HORIZONS_2": 187,
+        "EXPANSION_STREETS_OF_NEW_CAPENNA": 196,
+        "EXPANSION_STRIXHAVEN_SCHOOL_OF_MAGES": 185,
+        "EXPANSION_ZENDIKAR_RISING": 181,
+        "XNONE": 0,
+        "EXPANSION_0": 0,
+        "ENABLE_XTRIGGER_M1_M1_COUNTERS": 64,
+        "XTRIGGER_M1_M1_COUNTERS": 16780544,
+        "EVENT_0": 0,
+        "SUBTYPE_SCULPTURE": 257,
+        "COUNTER_AEGIS": 173,
+        "TOKEN_ACTION_SKIP_ATTACK_CHECK": 2097152,
+        "TOKEN_ACTION_ISNT_LEGENDARY": 256,
+        "MPCFE_UNTIL_YOUR_NEXT_UPKEEP": 64,
+        "COUNTER_FLYING": 147,
+        "MPCFE_LUKKA": 512,
+        "XTRIGGER_REPLACE_MILL_CARDS": 16778496,
+        "EVENT_GRAVEYARD_ABILITY_EOT": 1280,
+        "COUNTER_VOID": 170,
+        "SARV_REPORT_COUNT": 8,
+        "COUNTER_ACORN": 160,
+        "MPCFE_DURING_YOUR_NEXT_TURN": 1024,
+        "COUNTER_COIN": 142,
+        "DDBM_MAY_DAMAGE_PLANESWALKER": 64,
+        "ENABLE_XTRIGGER_REPLACE_ETB": 128,
+        "XTRIGGER_REPLACE_ETB": 16780800,
+        "MPCFE_ATTACK_WITH_ROGUE": 256,
+        "SP_KEYWORD_NOT_SIMPLE_BITS": 357809216,
+        "TUTOR_EXILE": 6,
+        "TOKEN_ACTION_EQUIP_ANY": 8,
+        "QUERY_IS_PLAIN_MANA_PRODUCER": 3,
+        "TYPETEXT_0": 0
+      },
+      "unresolved_names": [
+        "HDC",
+        "LEGACY_EFFECT_BLAZE_OF_GLORY",
+        "LPCDLGTEMPLATE",
+        "SYSTEMTIME"
+      ]
+    },
+    {
+      "scope": "Function-local aliases for target enum values, verified in this function's own compilation unit. Full counter, event, token-action and engine integration remains deferred.",
+      "functions": {
+        "22361d0": {
+          "source": "cards/modern_horizons_2.c",
+          "name": "card_geyadrone_dihada",
+          "enumerators": {
+            "COUNTER_CORRUPTION": 163
+          }
+        }
+      },
+      "constants": {
+        "COUNTER_CORRUPTION": 163
+      },
+      "unresolved_names": [
+        "HDC",
+        "LEGACY_EFFECT_BLAZE_OF_GLORY",
+        "LPCDLGTEMPLATE",
+        "SYSTEMTIME",
+        "TYPETEXT_0"
+      ]
+    }
+  ]
 }

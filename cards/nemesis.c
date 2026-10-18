@@ -3983,3 +3983,120 @@ int card_mossdog(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2099200; original cards/nemesis.c:2847. */
+int card_angelic_favor(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    token_generation_t token;
+    uint8_t bytes[84];
+  } recovered_stack_td2;
+
+  if (event == EVENT_MODIFY_COST)
+  {
+    pcVar1 = get_card_instance(player, card);
+    base_target_definition(player, card, &recovered_stack_td2.target, 2);
+    recovered_stack_td2.target.allowed_controller = player;
+    recovered_stack_td2.target.preferred_controller = player;
+    recovered_stack_td2.target.illegal_state = 1;
+    result = check_battlefield_for_subtype(player, 1, 0x5007);
+    if ((result == 0) || (result = can_target(&recovered_stack_td2.target), result == 0))
+    {
+      pcVar1->info_slot = 0;
+      get_card_instance(player, card);
+      return 0;
+    }
+    pcVar1->info_slot = 1;
+    null_casting_cost(player, card);
+  }
+  else
+  {
+    if (event != EVENT_CAN_CAST)
+    {
+      pcVar1 = get_card_instance(player, card);
+      if (event != EVENT_CAST_SPELL)
+      {
+        if (event != EVENT_RESOLVE_SPELL)
+        {
+          return 0;
+        }
+        default_token_definition(player, card, 0x48ff, &recovered_stack_td2.token);
+        recovered_stack_td2.token.legacy = 1;
+        recovered_stack_td2.target.illegal_state =
+            (int32_t)haste_and_remove_token_at_end_of_next_turn;
+        generate_token(&recovered_stack_td2.token);
+        kill_card(player, card, KILL_DESTROY);
+        return 0;
+      }
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      pcVar1->number_of_targets = '\0';
+      result = played_for_free(player, card);
+      if (result != 0)
+      {
+        return 0;
+      }
+      result = is_token(player, card);
+      if (result != 0)
+      {
+        return 0;
+      }
+      if (pcVar1->info_slot != 1)
+      {
+        return 0;
+      }
+      pcVar2 = get_card_instance(player, card);
+      result = has_mana_to_cast_iid(player, pcVar2->internal_card_id, 0x6c);
+      if ((result != 0) &&
+          (result = do_dialog(player, player, card, -1, -1,
+                              " Tap a creature you control\n Play normally\n Cancel", 0),
+           result != 0))
+      {
+        if (result == 1)
+        {
+          result = get_id(player, card);
+          charge_mana_from_id(player, card, EVENT_CAST_SPELL, result);
+          return 0;
+        }
+        spell_fizzled = 1;
+        return 0;
+      }
+      base_target_definition(player, card, &recovered_stack_td2.target, 2);
+      recovered_stack_td2.target.allowed_controller = player;
+      recovered_stack_td2.target.preferred_controller = player;
+      recovered_stack_td2.target.illegal_state = 1;
+      result = new_pick_target(&recovered_stack_td2.target, "Select a creature you control to tap.",
+                               0, 0x81);
+      if (result != 0)
+      {
+        action_on_target(player, card, 0, ACT_TAP);
+        pcVar1->number_of_targets = '\0';
+        return 0;
+      }
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (current_phase - 0x15U < 9)
+    {
+      result = basic_spell(player, card, EVENT_CAN_CAST);
+      return result;
+    }
+  }
+  get_card_instance(player, card);
+  return 0;
+}

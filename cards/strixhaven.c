@@ -2251,13 +2251,20 @@ int card_awaken_the_blood_avatar(int player, int card, event_t event)
   unsigned int uVar5;
   card_instance_t *instance;
   char sac[151];
-  test_definition_t test;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_test;
 
   if (event == EVENT_CAN_CAST)
   {
 
-    default_test_definition(&test, 2);
-    iVar1 = max_can_sacrifice_as_cost(player, card, &test);
+    default_test_definition(&recovered_stack_test.test, 2);
+    iVar1 = max_can_sacrifice_as_cost(player, card, &recovered_stack_test.test);
 
     iVar4 = get_updated_casting_cost(player, card, -1, EVENT_CAN_CAST, -1);
     uVar2 = iVar4 + iVar1 * -2;
@@ -2269,8 +2276,8 @@ int card_awaken_the_blood_avatar(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
 
-      new_default_test_definition(&test, 2, "Select a creature to sacrifice");
-      uVar2 = max_can_sacrifice_as_cost(player, card, &test);
+      new_default_test_definition(&recovered_stack_test.test, 2, "Select a creature to sacrifice");
+      uVar2 = max_can_sacrifice_as_cost(player, card, &recovered_stack_test.test);
       uVar3 = get_updated_casting_cost(player, card, -1, EVENT_CAST_SPELL, -1);
       iVar1 = has_mana_multi(player, uVar3, 1, 0, 0, 1, 0);
       iVar1 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\016", "\001\014",
@@ -2289,9 +2296,9 @@ int card_awaken_the_blood_avatar(int player, int card, event_t event)
         {
           uVar5 = uVar2;
         }
-        test.qty = (unsigned short)uVar5;
-        iVar1 = mark_sacrifice(player, card, player, SAC_AS_COST | SAC_JUST_MARK | SAC_DONE, &test,
-                               sac);
+        recovered_stack_test.test.qty = (unsigned short)uVar5;
+        iVar1 = mark_sacrifice(player, card, player, SAC_AS_COST | SAC_JUST_MARK | SAC_DONE,
+                               &recovered_stack_test.test, sac);
         if (spell_fizzled != 1)
         {
 
@@ -2330,21 +2337,21 @@ int card_awaken_the_blood_avatar(int player, int card, event_t event)
   else if (event == EVENT_RESOLVE_SPELL)
   {
     player_sacrifices_a_permanent(player, card, 1 - player, 2, SAC_CAUSED);
-    default_token_definition(player, card, 0x4904, (token_generation_t *)&test);
-    test.message[0x18] = '\x03';
-    test.message[0x19] = '\0';
-    test.message[0x1a] = '\0';
-    test.message[0x1b] = '\0';
-    test.message[0x1c] = '\x06';
-    test.message[0x1d] = '\0';
-    test.message[0x1e] = '\0';
-    test.message[0x1f] = '\0';
-    test.message[0x28] = '\x12';
-    test.message[0x2c] = 'C';
-    test.message[0x2d] = '\0';
-    test.message[0x2e] = '\0';
-    test.message[0x2f] = '\0';
-    generate_token((token_generation_t *)&test);
+    default_token_definition(player, card, 0x4904, &recovered_stack_test.token);
+    recovered_stack_test.test.message[0x18] = '\x03';
+    recovered_stack_test.test.message[0x19] = '\0';
+    recovered_stack_test.test.message[0x1a] = '\0';
+    recovered_stack_test.test.message[0x1b] = '\0';
+    recovered_stack_test.test.message[0x1c] = '\x06';
+    recovered_stack_test.test.message[0x1d] = '\0';
+    recovered_stack_test.test.message[0x1e] = '\0';
+    recovered_stack_test.test.message[0x1f] = '\0';
+    recovered_stack_test.test.message[0x28] = '\x12';
+    recovered_stack_test.test.message[0x2c] = 'C';
+    recovered_stack_test.test.message[0x2d] = '\0';
+    recovered_stack_test.test.message[0x2e] = '\0';
+    recovered_stack_test.test.message[0x2f] = '\0';
+    generate_token(&recovered_stack_test.token);
     kill_card(player, card, KILL_DESTROY);
   }
   iVar1 = basic_spell(player, card, event);
@@ -9775,4 +9782,1259 @@ int card_rushed_rebirth(int player, int card, event_t event)
 LAB_023da4f4:
   result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
   return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int is_basic_forest_or_island(int iid, int unused2, int player, int card);
+
+/* ManalinkEh 2022: 0x23c7c00; original cards/strixhaven.c:5659. */
+static int is_basic_forest_or_island(int iid, int unused2, int player, int card)
+{
+  subtype_t subtype;
+  subtype_t subtype_00;
+  int iVar1;
+  int iVar2;
+
+  subtype = get_hacked_subtype(player, card, 0x5001);
+  subtype_00 = get_hacked_subtype(player, card, 0x5002);
+  iVar1 = has_subtype_by_id_2022(player, (unsigned int)cards_data[iid].id, SUBTYPE_BASIC);
+  iVar2 = 0;
+  if (iVar1 != 0)
+  {
+    iVar1 = has_subtype_by_id_2022(player, (unsigned int)cards_data[iid].id, subtype);
+    iVar2 = 1;
+    if (iVar1 == 0)
+    {
+      iVar2 = has_subtype_by_id_2022(player, (unsigned int)cards_data[iid].id, subtype_00);
+      return (unsigned int)(iVar2 != 0);
+    }
+  }
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x23d8cc0; original cards/strixhaven.c:5668. */
+int card_quandrix_cultivator(int player, int card, event_t event)
+{
+  int result;
+  const char *pcVar2;
+  char buffer[100];
+  test_definition_t test3;
+
+  result = duh_mode(player);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event == EVENT_ETB)
+  {
+
+    pcVar2 = get_hacked_land_text(player, card, "Select a %s ", 0x5001);
+    result = scnprintf(buffer, 100, "%s", pcVar2);
+    pcVar2 = get_hacked_land_text(player, card, "or %s card.", 0x5002);
+    scnprintf(buffer + result, 100 - result, "%s", pcVar2);
+    new_default_test_definition(&test3, 0xff, buffer);
+    test3.special_selection_function = is_basic_forest_or_island;
+    new_global_tutor(player, player, 1, 4, 0, 5, &test3);
+  }
+  result = hybrid(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23d0b50; original cards/strixhaven.c:3047. */
+int card_honor_troll(int player, int card, event_t event)
+{
+  enum
+  {
+    XTRIGGER_REPLACE_GAIN_LIFE = 16778752
+  };
+
+  xtrigger_t xVar1;
+  int result;
+
+  vigilance(player, card, event);
+  xVar1 = trigger_condition;
+  if (trigger_condition == 0xe5)
+  {
+    xVar1 = xtrigger_impl_value_dont_use_directly;
+  }
+  if (xVar1 == XTRIGGER_REPLACE_GAIN_LIFE)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player == affected_card_controller)
+    {
+      if (((reason_for_trigger_controller != player) || (trigger_cause_controller != player)) ||
+          (life_gained < 1))
+      {
+        if (1 < event - EVENT_POWER)
+        {
+          return 0;
+        }
+        goto LAB_023d0bb1;
+      }
+      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      if (result == 0)
+      {
+        if (event == EVENT_TRIGGER)
+        {
+          event_result = event_result | 2;
+          return 0;
+        }
+        if (event == EVENT_RESOLVE_TRIGGER)
+        {
+          life_gained = life_gained + 1;
+          return 0;
+        }
+      }
+      goto LAB_023d0b8a;
+    }
+    if (1 < event - EVENT_POWER)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+  LAB_023d0b8a:
+    if (1 < event - EVENT_POWER)
+    {
+      return 0;
+    }
+    if (card != affected_card)
+    {
+      return 0;
+    }
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+LAB_023d0bb1:
+  result = is_humiliated_for_ability(player, card, AL_STATIC);
+  if ((result == 0) && (0x18 < life[player]))
+  {
+    if (event == EVENT_POWER)
+    {
+      event_result = event_result + 2;
+    }
+    else if (event == EVENT_TOUGHNESS)
+    {
+      event_result = event_result + 1;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23d8f80; original cards/strixhaven.c:5724. */
+int card_radiant_scrollwielder(int player, int card, event_t event)
+{
+  enum
+  {
+    MPCFE_EXILE_ON_RESOLUTION = 128
+  };
+
+  unsigned short uVar1;
+  int *piVar2;
+  int iVar3;
+  int argument1;
+  int iVar4;
+  int found[151];
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+
+    piVar2 = graveyard_ptr_mutable[player];
+    iVar3 = *piVar2;
+    if (iVar3 != -1)
+    {
+      argument1 = 0;
+      iVar4 = 0;
+      do
+      {
+        iVar3 = is_what(-1, iVar3, 0x38);
+        if (iVar3 != 0)
+        {
+          found[argument1] = iVar4;
+          argument1 = argument1 + 1;
+        }
+        iVar4 = iVar4 + 1;
+        iVar3 = piVar2[iVar4];
+      } while (iVar3 != -1);
+      if (argument1 != 0)
+      {
+        iVar3 = internal_rand(argument1);
+        uVar1 = cards_data[piVar2[found[iVar3]]].id;
+        rfg_card_from_grave(player, found[iVar3]);
+        create_may_play_card_from_exile_effect(player, card, player, (unsigned int)uVar1,
+                                               MPCFE_EXILE_ON_RESOLUTION | MPCFE_UNTIL_EOT);
+        return 0;
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23dcb20; original cards/strixhaven.c:7116. */
+int card_spell_satchel(int player, int card, event_t event)
+{
+  enum
+  {
+    COUNTER_BOOK = 161
+  };
+
+  card_instance_t *instance;
+  int result;
+
+  magecraft_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    add_counters_from_source(player, card, player, card, COUNTER_BOOK, 1);
+  LAB_023dcccf:
+
+    result = mana_producer(player, card, event);
+    return result;
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = count_counters(player, card, COUNTER_BOOK);
+      if ((result == 0) || (result = mana_producer(player, card, EVENT_CAN_ACTIVATE), result == 0))
+      {
+        result = count_counters(player, card, COUNTER_BOOK);
+        if (result < 3)
+        {
+          return 0;
+        }
+        result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 4, 0, 0, 0, 0, 0, 0,
+                                           NULL, NULL);
+        if (result == 0)
+        {
+          return 0;
+        }
+      }
+      return 1;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_023dcccf;
+    instance = get_card_instance(player, card);
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+    instance->mode = '\0';
+    result = paying_mana();
+    if ((((result != 0) || (result = count_counters(player, card, COUNTER_BOOK), result == 0)) ||
+         (result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 4, 0, 0, 0, 0, 0,
+                                             0, NULL, NULL),
+          result == 0)) ||
+        (result =
+             do_dialog(player, player, card, -1, -1, " Produce mana\n Draw a card\n Cancel", 1),
+         result == 0))
+    {
+      remove_counters_from_source(player, card, player, card, COUNTER_BOOK, 1);
+      event = EVENT_ACTIVATE;
+      goto LAB_023dcccf;
+    }
+    if (result == 1)
+    {
+      add_state(player, card, 0x10);
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 1, 3, 0, 0, 0, 0, 0, 0, NULL, NULL);
+      if (spell_fizzled == 1)
+      {
+        remove_state(player, card, 0x10);
+      }
+      else
+      {
+        remove_counters_from_source(player, card, player, card, COUNTER_BOOK, 3);
+        result = hand_count[player];
+        instance->mode = '\x01';
+        ai_modifier = ai_modifier + result * -10 + 0x46;
+      }
+    }
+    else if (result == 2)
+    {
+      spell_fizzled = 1;
+    }
+  }
+  else if ((event == EVENT_RESOLVE_ACTIVATION) && (instance->mode == '\x01'))
+  {
+    draw_a_card(player);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23dd0c0; original cards/strixhaven.c:7277. */
+int card_strixhaven_stadium(int player, int card, event_t event)
+{
+  enum
+  {
+    COUNTER_POINT = 169
+  };
+
+  unsigned int uVar1;
+  int iVar2;
+  unsigned int num;
+  int iVar3;
+  int times_damaged[2];
+
+  uVar1 = damage_dealt_to_me_arbitrary(
+      2, -1, event, DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_BE_COMBAT_DAMAGE, player, card);
+  if (uVar1 != 0)
+  {
+
+    iVar3 = 0;
+    num = uVar1 & 0xff;
+    times_damaged[1] = uVar1 >> 8 & 0xff;
+    times_damaged[0] = num;
+    while (true)
+    {
+      if (num != 0)
+      {
+        if (1 - player == iVar3)
+        {
+          add_counters_from_source(player, card, player, card, COUNTER_POINT, num);
+          iVar2 = count_counters(player, card, COUNTER_POINT);
+          if (9 < iVar2)
+          {
+            lose_the_game(1 - player);
+          }
+        }
+        if (player == iVar3)
+        {
+          remove_counters_from_source(player, card, player, card, COUNTER_POINT, num);
+        }
+      }
+      iVar3 = iVar3 + 1;
+      if (iVar3 == 2)
+        break;
+      num = times_damaged[iVar3];
+    }
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+    add_counters_from_source(player, card, player, card, COUNTER_POINT, 1);
+    ai_modifier = ai_modifier + 0x100;
+  }
+  iVar3 = mana_producer(player, card, event);
+  return iVar3;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23cbf60; original cards/strixhaven.c:1273. */
+int card_daemogoth_woe_eater(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    new_default_test_definition(&test, 2, "Select a creature to sacrifice.");
+    new_sacrifice(player, card, player, SAC_AS_COST, &test);
+  }
+  result = this_is_sacrificed_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    discard(1 - player, 0, player);
+    draw_a_card(player);
+    gain_life(player, 2);
+  }
+  result = hybrid(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23ddf40; original cards/strixhaven.c:7567. */
+int card_test_of_talents(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        counterspell_target_definition(player, card, &td, 0x38);
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+
+            result = get_id(instance->targets[0].player, instance->targets[0].card);
+            real_counter_a_spell(player, card, instance->targets[0].player,
+                                 instance->targets[0].card);
+            result = lobotomy_effect_2022(player, instance->targets[0].player, result, -1, 0);
+            draw_cards(player, result);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_023ddfa6;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  counterspell_target_definition(player, card, &td, 0x38);
+  get_card_instance(player, card);
+LAB_023ddfa6:
+  result = generic_spell(player, card, event, 2, &td, NULL, 1, NULL);
+  return result;
+}
+
+
+/* ManalinkEh 2022: 0x23ddcf0; original cards/strixhaven.c:7520. */
+int card_tenured_inkcaster(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &recovered_stack_td.target, 2);
+    recovered_stack_td.target.preferred_controller = player;
+    recovered_stack_td.target.allow_cancel = 0;
+    instance = get_card_instance(player, card);
+    result = can_target(&recovered_stack_td.target);
+    if (result != 0)
+    {
+      result = new_pick_target(&recovered_stack_td.target, "TARGET_CREATURE", 0, 0);
+      if (result != 0)
+      {
+        add_counters_from_source(player, card, instance->targets[0].player,
+                                 instance->targets[0].card, COUNTER_P1_P1, 1);
+      }
+    }
+    instance->number_of_targets = '\0';
+    dat_ability(player, card, EVENT_ETB, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+    return 0;
+  }
+  if (event != EVENT_DECLARE_ATTACKERS)
+  {
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+    if (event == EVENT_DAT_ABILITY)
+    {
+      instance = get_card_instance(player, card);
+      result = instance->info_slot + -1;
+      if (-1 < result)
+      {
+        do
+        {
+          lose_life(1 - player, 1);
+          result = result + -1;
+          gain_life(player, 1);
+        } while (result != -1);
+        return 0;
+      }
+    }
+    return 0;
+  }
+  new_default_test_definition(&recovered_stack_td.test, 2, "");
+  store_attackers(player, card, EVENT_DECLARE_ATTACKERS, 0, player, -1, &recovered_stack_td.test);
+  dat_ability(player, card, EVENT_DECLARE_ATTACKERS, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23d4150; original cards/strixhaven.c:4258. */
+int card_master_symmetrist(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+
+  store_attackers(player, card, event, DAT_TRACK, player, -1, NULL);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  if (event == EVENT_DAT_ABILITY)
+  {
+
+    pcVar1 = get_card_instance(player, card);
+    iVar5 = pcVar1->info_slot + -1;
+    if (-1 < iVar5)
+    {
+      do
+      {
+        pcVar2 = in_play(current_turn,
+                         (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + iVar5));
+        if (pcVar2 != NULL)
+        {
+          iVar3 =
+              get_power(current_turn,
+                        (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + iVar5));
+          iVar4 = get_toughness(
+              current_turn,
+              (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + iVar5));
+          if (iVar3 == iVar4)
+          {
+            pump_ability_until_eot_no_repeat(
+                player, card, current_turn,
+                (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + iVar5), 0x80, 0);
+          }
+        }
+        iVar5 = iVar5 + -1;
+      } while (iVar5 != -1);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23d4840; original cards/strixhaven.c:4367. */
+int card_mila_crafty_companion(int player, int card, event_t event)
+{
+  int iVar1;
+  const target_t *ptVar2;
+  card_instance_t *pcVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  mdfc_front(player, card, event);
+  store_attackers(player, card, event, DAT_TRACK, 1 - player, -1, NULL);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  if (event == EVENT_DAT_ABILITY)
+  {
+
+    pcVar3 = get_card_instance(player, card);
+    iVar1 = pcVar3->info_slot + -1;
+    if (-1 < iVar1)
+    {
+      do
+      {
+        pcVar4 = in_play(current_turn,
+                         (unsigned int)*(unsigned char *)((int)&pcVar3->targets[2].player + iVar1));
+        if ((pcVar4 != NULL) &&
+            (iVar5 = planeswalker_its_attacking(
+                 current_turn,
+                 (unsigned int)*(unsigned char *)((int)&pcVar3->targets[2].player + iVar1)),
+             -1 < iVar5))
+        {
+          default_test_definition(&test, 0x100);
+          new_manipulate_all(player, card, player, &test, 0x1420001);
+          break;
+        }
+        iVar1 = iVar1 + -1;
+      } while (iVar1 != -1);
+    }
+  }
+  iVar1 = duh_mode(player);
+  ptVar2 = any_becomes_target(player, card, event, player, -1, TYPE_PERMANENT, -1, TYPE_ANY,
+                              1 - player, (iVar1 != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (((ptVar2 != NULL) && (pcVar3 = in_play(player, card), pcVar3 != NULL)) &&
+      (iVar1 = is_humiliated_for_ability(player, card, AL_TRIG), iVar1 == 0))
+  {
+    draw_cards(player, 1);
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23cc710; original cards/strixhaven.c:1412. */
+int card_devastating_mastery(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  int iStack_ec;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_this_test;
+
+  if (event == EVENT_MODIFY_COST)
+  {
+    iVar2 = has_mana_multi(player, 2, 0, 0, 0, 0, 2);
+    if (iVar2 != 0)
+    {
+      null_casting_cost(player, card);
+      pcVar1 = get_card_instance(player, card);
+      pcVar1->info_slot = 1;
+      return 0;
+    }
+    pcVar1 = get_card_instance(player, card);
+    pcVar1->info_slot = 0;
+    return 0;
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      pcVar1 = get_card_instance(player, card);
+      if ((card != affected_card) || (player != affected_card_controller))
+        goto LAB_023cc7c9;
+      pcVar1->targets[1].player = 0;
+      pcVar3 = get_card_instance(player, card);
+      if ((pcVar3->info_slot != 1) || (iVar2 = is_token(player, card), iVar2 != 0))
+        goto LAB_023cc7c9;
+      iVar2 = has_mana_to_cast_id(player, EVENT_CAST_SPELL, 0x5866);
+      if (iVar2 == 0)
+      {
+      LAB_023cca7e:
+        iVar2 = get_updated_casting_cost(player, card, -1, EVENT_CAST_SPELL, 2);
+        charge_mana_multi(player, iVar2, 0, 0, 0, 0, 2);
+        iVar4 = spell_fizzled;
+        if (spell_fizzled == 1)
+        {
+          return 0;
+        }
+        pcVar1->targets[1].player = 0x42;
+      }
+      else
+      {
+        iVar2 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014",
+                            "Pay alternate mana cost", 1, 0x14, "Pay full mana cost", 1, 10, 0, 0,
+                            0, 0);
+        if (iVar2 == 0)
+        {
+          spell_fizzled = 1;
+          iVar4 = spell_fizzled;
+        }
+        else
+        {
+          if (iVar2 == 1)
+            goto LAB_023cca7e;
+          iVar4 = spell_fizzled;
+          if (iVar2 == 2)
+          {
+            charge_mana_from_id(player, -1, EVENT_CAST_SPELL, 0x5866);
+            iVar4 = spell_fizzled;
+          }
+        }
+      }
+      if (iVar4 != 0)
+      {
+        return 0;
+      }
+      goto LAB_023cc7c9;
+    }
+    if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
+        (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  pcVar1 = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (pcVar1->targets[1].player == 0x42)
+    {
+      default_target_definition(player, card, &recovered_stack_this_test.target, 0x47);
+      recovered_stack_this_test.target.who_chooses = (int32_t)(1 - player);
+      recovered_stack_this_test.test.message[0x14] = '\x01';
+      recovered_stack_this_test.test.message[0x15] = '\0';
+      recovered_stack_this_test.test.message[0x16] = '\0';
+      recovered_stack_this_test.test.message[0x17] = '\0';
+      recovered_stack_this_test.test.message[0x1c] = '\0';
+      recovered_stack_this_test.test.message[0x1d] = '\0';
+      recovered_stack_this_test.test.message[0x1e] = '\0';
+      recovered_stack_this_test.test.message[0x1f] = '\0';
+      recovered_stack_this_test.test.message[0x44] = '\x03';
+      recovered_stack_this_test.test.message[0x45] = '\0';
+      recovered_stack_this_test.test.message[0x46] = '\0';
+      recovered_stack_this_test.test.message[0x47] = '\0';
+      iStack_ec = 2;
+      recovered_stack_this_test.target.allowed_controller =
+          (int32_t)((uint32_t)(recovered_stack_this_test.target.who_chooses));
+      do
+      {
+        iVar2 = can_target(&recovered_stack_this_test.target);
+        if ((iVar2 == 0) ||
+            (iVar2 = new_pick_target(&recovered_stack_this_test.target,
+                                     "Select a nonland permanent you control.", 0, 0x80),
+             iVar2 == 0))
+          break;
+        action_on_target(player, card, 0, ACT_BOUNCE);
+        iStack_ec = iStack_ec + -1;
+      } while (iStack_ec != 0);
+    }
+    default_test_definition(&recovered_stack_this_test.test, 1);
+    recovered_stack_this_test.test.type_flag = 1;
+    new_manipulate_all(player, card, 2, &recovered_stack_this_test.test, ACT_KILL_DESTROY);
+    kill_card(player, card, KILL_DESTROY);
+  }
+LAB_023cc7c9:
+  iVar2 = basic_spell(player, card, event);
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x23d0750; original cards/strixhaven.c:2957. */
+int card_hofri_ghostforge(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  unsigned int uVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int iVar5;
+  int grave_id;
+  unsigned int player_00;
+  target_t *ptVar6;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_test;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      if (0 < active_cards_count[player])
+      {
+        iVar4 = 0;
+        do
+        {
+          instance = in_play(player, iVar4);
+          if ((((instance != NULL) && (iVar5 = is_what(player, iVar4, 0x80), iVar5 != 0)) &&
+               (instance = get_card_instance(player, iVar4),
+                instance->info_slot_fn == hofri_effect)) &&
+              (((instance->damage_target_player == player &&
+                 (instance->damage_target_card == card)) ||
+                ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
+            goto LAB_023d0982;
+          iVar4 = iVar4 + 1;
+        } while (iVar4 < active_cards_count[player]);
+      }
+      iVar4 = create_targetted_legacy_effect(player, card, hofri_effect, player, card);
+      instance = get_card_instance(player, iVar4);
+      instance->targets[0].player = player;
+      instance->targets[0].card = card;
+      instance->number_of_targets = '\x01';
+      add_status(player, iVar4, 0x10000);
+    }
+  LAB_023d0982:
+    uVar2 = resolve_gfp_ability(player, card, EVENT_STATIC_EFFECTS, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar2 == 0)
+    {
+      return 0;
+    }
+  LAB_023d09aa:
+    instance = get_card_instance(player, card);
+    if (instance->kill_code != '\0')
+      goto LAB_023d07b4;
+  }
+  else
+  {
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+    {
+      uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      if (uVar2 == 0)
+        goto LAB_023d07b4;
+      goto LAB_023d09aa;
+    }
+    default_test_definition(&recovered_stack_test.test, 2);
+    recovered_stack_test.test.not_me = 1;
+    count_for_gfp_ability_and_store_values(player, card, 0x77, player, 2,
+                                           &recovered_stack_test.test, 0x10d0, 0);
+    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar2 == 0)
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    if (instance->kill_code != '\0')
+    {
+      return 0;
+    }
+  }
+  if ((uVar2 & 0xff) != 0)
+  {
+    ptVar6 = instance->targets;
+    do
+    {
+      uVar1 = ptVar6->player;
+      iVar4 = ptVar6->card;
+      ptVar6->card = 0;
+      player_00 = uVar1 & 0xf;
+      ptVar6->player = 0;
+      iVar5 = *graveyard_ptr_mutable[player_00];
+      if (iVar5 != -1)
+      {
+        grave_id = 0;
+        do
+        {
+          if (iVar4 == iVar5)
+          {
+            rfg_card_from_grave(player_00, grave_id);
+            default_token_definition(player, card, (unsigned int)cards_data[iVar4].id,
+                                     &recovered_stack_test.token);
+            recovered_stack_test.token.special_code_on_generation = add_hofry_legacy;
+            recovered_stack_test.token.action_argument = (int32_t)(uVar1);
+            generate_token(&recovered_stack_test.token);
+            break;
+          }
+          grave_id = grave_id + 1;
+          iVar5 = graveyard_ptr_mutable[player_00][grave_id];
+        } while (iVar5 != -1);
+      }
+      ptVar6 = ptVar6 + 1;
+    } while (ptVar6 != instance->targets + (uVar2 & 0xff));
+  }
+LAB_023d07b4:
+  if ((((event - EVENT_POWER < 3) && (instance = in_play(player, card), instance != NULL)) &&
+       ((iVar4 = is_humiliated_for_ability(player, card, AL_STATIC),
+         iVar4 == 0 && (((affected_card_controller == player && (affected_card != card)) &&
+                         (instance = in_play(player, affected_card), instance != NULL)))))) &&
+      (iVar4 = has_subtype(affected_card_controller, affected_card, SUBTYPE_SPIRIT), iVar4 != 0))
+  {
+    if (event < EVENT_ABILITIES)
+    {
+      event_result = event_result + 1;
+    }
+    else
+    {
+      haste(affected_card_controller, affected_card, EVENT_ABILITIES);
+      event_result = event_result | 0x80;
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23dd6d0; original cards/strixhaven.c:7432. */
+int card_team_pennant(int player, int card, event_t event)
+{
+  uint8_t uVar1;
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar4;
+  unsigned int uVar5;
+  target_definition_t *td_00;
+  const char *prompt;
+  target_definition_t *ptStack_c0;
+  target_definition_t *ptStack_bc;
+  target_definition_t td;
+  target_definition_t td1;
+
+  attached_gets_pt(player, card, event, 1, 1);
+  attached_gets_kw(player, card, event, KEYWORD_TRAMPLE, SP_KEYWORD_VIGILANCE);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    td_00 = &td;
+    default_target_definition(player, card, td_00, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    default_target_definition(player, card, &td1, 2);
+    td1.special = 0x8000;
+    td1.extra = (int32_t)target_is_token_too_2022;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x100, 3, 0, 0, 0, 0, 0,
+                                         0, td_00, NULL);
+      if (result == 0)
+      {
+        result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x100, 1, 0, 0, 0, 0,
+                                           0, 0, &td1, NULL);
+        return result;
+      }
+      return 1;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 3, 0, 0, 0, 0, 0, 0,
+                                         td_00, NULL);
+      uVar5 = 0;
+      if (result != 0)
+      {
+        result = can_sorcery_be_played(player, EVENT_ACTIVATE);
+        uVar5 = (unsigned int)(result != 0);
+      }
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 1, 0, 0, 0, 0, 0, 0,
+                                         &td1, NULL);
+      uVar4 = 0;
+      if (result != 0)
+      {
+        result = can_sorcery_be_played(player, EVENT_ACTIVATE);
+        uVar4 = (unsigned int)(result != 0);
+      }
+      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "\001\033",
+                           "Normal equip", uVar5, 1, "Token equip", uVar4, 5, 0, 0, 0, 0);
+      if (result != 0)
+      {
+        if (result == 1)
+        {
+          prompt = "Select target creature you control.";
+          result = 3;
+        }
+        else
+        {
+          if (result != 2)
+          {
+            return 0;
+          }
+          prompt = "Select target creature token you control.";
+          result = 1;
+          td_00 = &td1;
+        }
+        result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0x102, result, 0, 0, 0, 0,
+                                           0, 0, td_00, prompt);
+        return result;
+      }
+      spell_fizzled = 1;
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    default_target_definition(player, card, &td1, 2);
+    td1.special = 0x8000;
+    td1.extra = (int32_t)target_is_token_too_2022;
+    instance = get_card_instance(player, card);
+  }
+  ptStack_bc = &td;
+  ptStack_c0 = &td1;
+  if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    return 0;
+  }
+  uVar1 = instance->mode;
+  if (uVar1 == '\x01')
+  {
+    result = validate_target(player, card, ptStack_bc, 0);
+    if (result != 0)
+      goto LAB_023dda65;
+    uVar1 = instance->mode;
+  }
+  if (uVar1 != '\x02')
+  {
+    return 0;
+  }
+  result = validate_target(player, card, ptStack_c0, 0);
+  if (result == 0)
+  {
+    return 0;
+  }
+LAB_023dda65:
+  equip_target_creature(instance->parent_controller, instance->parent_card,
+                        instance->targets[0].player, instance->targets[0].card);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23ccb40; original cards/strixhaven.c:1496. */
+int card_dina_soul_steeper(int player, int card, event_t event)
+{
+  int iVar1;
+  unsigned int uVar2;
+  card_instance_t *instance;
+  uint32_t data;
+  unsigned int card_00;
+  inst_info_t iVar4;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  iVar1 = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if ((iVar1 != 0) && (instance = in_play(player, card), instance != NULL))
+  {
+    iVar1 = check_battlefield_for_id(player, 0x304d);
+    if (iVar1 == 0)
+    {
+      lose_life(1 - player, 1);
+    }
+    else
+    {
+      lose_the_game(1 - player);
+    }
+  }
+  if (event != EVENT_CAN_ACTIVATE)
+  {
+    if (event != EVENT_ACTIVATE)
+    {
+      if (event != EVENT_RESOLVE_ACTIVATION)
+      {
+        return 0;
+      }
+
+      instance = get_card_instance(player, card);
+      iVar4 = inst_info(instance, 0x5868);
+      pump_until_eot(instance->parent_controller, instance->parent_card,
+                     instance->parent_controller, instance->parent_card, iVar4.data, 0);
+      return 0;
+    }
+
+    new_default_test_definition(&test, 2, "Select another creature to sacrifice.");
+    test.not_me = 1;
+    uVar2 =
+        new_sacrifice(player, card, player, SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK, &test);
+    if (uVar2 == 0)
+    {
+      spell_fizzled = 1;
+    }
+    else
+    {
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 1, 0, 0, 0, 0, 0, 0, NULL, NULL);
+      card_00 = uVar2 >> 0x18;
+      uVar2 = (int)uVar2 >> 0x10 & 0xff;
+      if (spell_fizzled == 1)
+      {
+        state_untargettable(uVar2, card_00, 0);
+        return 0;
+      }
+      data = get_power(uVar2, card_00);
+      instance = get_card_instance(player, card);
+      set_inst_info(instance, 0x5868, data, 0);
+      kill_card(uVar2, card_00, KILL_SACRIFICE);
+    }
+    return 0;
+  }
+  iVar1 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x40200, 0, 1, 0, 0, 0, 0, 0,
+                                    NULL, NULL);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x23cd420; original cards/strixhaven.c:1638. */
+int card_draconic_intervention(int player, int card, event_t event)
+{
+  int id;
+  card_instance_t *instance;
+  int iVar2;
+  uint32_t data;
+  inst_info_t iVar3;
+  test_definition_t test;
+  test_definition_t test2;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    new_default_test_definition(&test, 0x38, "Select an instant or sorcery card.");
+    get_card_instance(player, card);
+    iVar2 = new_special_count_grave(player, &test);
+    if (iVar2 != 0)
+    {
+      iVar2 = basic_spell(player, card, EVENT_CAN_CAST);
+      return iVar2;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      new_default_test_definition(&test, 0x38, "Select an instant or sorcery card.");
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+
+        instance->info_slot = 0;
+        iVar2 = new_select_a_card(player, player, 2, 0, 2, -1, &test);
+        if (iVar2 < 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        id = graveyard_ptr_mutable[player][iVar2];
+        rfg_card_from_grave(player, iVar2);
+        data = get_cmc_by_internal_id(id);
+        set_inst_info(instance, 0x586b, data, 0);
+      }
+    }
+  }
+  else if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+           (event == EVENT_CHANGE_TARGET))
+  {
+    new_default_test_definition(&test, 0x38, "Select an instant or sorcery card.");
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      default_test_definition(&test2, 2);
+      test2.subtype = 0x30;
+      test2.subtype_flag = 1;
+      iVar3 = inst_info(instance, 0x586b);
+      new_damage_all(player, card, 2, iVar3.data, 8, &test2);
+      kill_card(player, card, KILL_EXILE);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23cda20; original cards/strixhaven.c:1799. */
+int card_dramatic_finale(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  inst_info_t iVar4;
+
+  if (event - EVENT_POWER < 2)
+  {
+    if ((((affected_card_controller == player) &&
+          (iVar2 = is_token(player, affected_card), iVar2 != 0)) &&
+         (instance = in_play(player, card), instance != NULL)) &&
+        (iVar2 = is_humiliated_for_ability(player, card, AL_STATIC), iVar2 == 0))
+    {
+      event_result = event_result + 1;
+    }
+  }
+  else
+  {
+    if ((event == EVENT_CAN_CAST) || (event == EVENT_SHOULD_AI_PLAY))
+    {
+      iVar2 = global_enchantment(player, card, event);
+      return iVar2;
+    }
+    if (((event == EVENT_STATIC_EFFECTS) && (card == affected_card)) &&
+        (player == affected_card_controller))
+    {
+
+      if (0 < active_cards_count[player])
+      {
+        iVar2 = 0;
+        do
+        {
+          instance = in_play(player, iVar2);
+
+          if ((((instance != NULL) && (iVar3 = is_what(player, iVar2, 0x80), iVar3 != 0)) &&
+               (instance = get_card_instance(player, iVar2),
+                instance->info_slot_fn == dramatic_finale_effect)) &&
+              (((instance->damage_target_player == player &&
+                 (instance->damage_target_card == card)) ||
+                ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
+            goto LAB_023cda67;
+          iVar2 = iVar2 + 1;
+        } while (iVar2 < active_cards_count[player]);
+      }
+
+      iVar2 = create_targetted_legacy_effect(player, card, dramatic_finale_effect, player, card);
+      instance = get_card_instance(player, iVar2);
+      instance->targets[0].player = player;
+      instance->targets[0].card = card;
+      instance->number_of_targets = '\x01';
+      add_status(player, iVar2, 0x10000);
+    }
+  }
+LAB_023cda67:
+  count_for_gfp_ability_and_store_values(player, card, event, player, 2, NULL, 0x40, 0);
+  instance = get_card_instance(player, card);
+  iVar4 = inst_info(instance, 0x586e);
+  iVar2 = resolve_gfp_ability(player, card, event, (unsigned int)(iVar4.data2 != 0x42) * 2);
+  if ((iVar2 != 0) && (instance = get_card_instance(player, card), instance->kill_code == '\0'))
+  {
+    instance = get_card_instance(player, card);
+    set_inst_info(instance, 0x586e, 0, 0x42);
+    make_inkling(player, card, 1, 0);
+  }
+  if (event == EVENT_CLEANUP)
+  {
+    instance = get_card_instance(player, card);
+    clear_info(instance, 0x586e);
+  }
+  iVar2 = hybrid(player, card, event);
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x23dc610; original cards/strixhaven.c:6996. */
+int card_silverquill_silencer(int player, int card, event_t event)
+{
+  uint32_t data;
+  card_instance_t *instance;
+  inst_info_t result;
+  test_definition_t test;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    instance = get_card_instance(player, card);
+    new_default_test_definition(&test, 1, "Select a nonland card.");
+    test.type_flag = 1;
+    if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+    {
+      data = ai_name_a_random_csvid(player, card, 1 - player, TYPE_NONE, &test);
+    }
+    else
+    {
+      data = new_card_from_list(player, 3, &test);
+    }
+    if (-1 < (int)data)
+    {
+      set_inst_info(instance, 0x5916, data, 0);
+      create_card_name_legacy(player, card, data);
+    }
+    if (trigger_condition != 0xd3)
+    {
+      return 0;
+    }
+  }
+  else if (trigger_condition != 0xd3)
+    goto LAB_023dc635;
+  if ((card == affected_card) && (player == affected_card_controller))
+  {
+    default_test_definition(&test, 0xff);
+    instance = get_card_instance(player, card);
+    result = inst_info(instance, 0x5916);
+    test.id = result.data;
+    sp_ability_trigger(1 - player, event, 2, TYPE_ANY, &test, player, card);
+  }
+LAB_023dc635:
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  lose_life(1 - player, 3);
+  draw_a_card(player);
+  return 0;
 }

@@ -544,6 +544,16 @@ typedef enum
 #endif
 } event_t;
 
+/* October 2022 EVENT_QUERY selectors. */
+typedef enum
+{
+  QUERY_ADVENTURER = 1,
+  QUERY_COMPANION = 2,
+  QUERY_IS_PLAIN_MANA_PRODUCER = 3,
+  QUERY_STORM = 4,
+  QUERY_GRAVESTORM = 5
+} event_query_t;
+
 /* Trigger conditions */
 typedef enum
 {
@@ -1336,6 +1346,10 @@ typedef int (*CardFunction)(int, int, event_t);
 /* October 2022 callback: int (*)(int player, int card). */
 typedef int (*CardPairFunction)(int, int);
 
+#ifndef SHANDALAR
+typedef struct card_ext_struct card_ext_t;
+#endif
+
 /* Info struct */
 typedef struct card_instance_struct
 {
@@ -1365,7 +1379,15 @@ typedef struct card_instance_struct
   struct card_aux_t* aux;
   uint32_t	unused30;
 #else
-  uint8_t	mana_to_untap[8];	/*  0x2C */	// No longer used in Manalink, but still read by the exe in one place and still written in one place.  To reclaim, make check_untap_payment() just return 0, and rewrite setup_upkeep_costs_and_set_untap_cost() to not touch it.
+  union
+  {
+    uint8_t extension_init_bytes[8]; /* Byte view for the existing zero initializer. */
+    struct
+    {
+      card_ext_t *ext;               /* October 2022: 0x2c. */
+      uint32_t unused30;             /* October 2022: 0x30. */
+    };
+  };
 #endif
   int16_t	power;				/*  0x34 */
   uint8_t	number_of_targets;	/*  0x36 */
@@ -3513,6 +3535,13 @@ typedef struct
 	unsigned int reported_subtypes[100];
 } reported_subtypes_t;
 
+/* October 2022 out-of-play subtype modifiers: eight-byte records. */
+typedef struct
+{
+  subtype_t subtype;
+  int8_t added_forced;
+} subtypes_not_in_play_t;
+
 typedef enum
 {
 	SET_PT_END_AT_EOT 					= 1<<0,
@@ -3723,5 +3752,93 @@ typedef enum
 #define SET_SBYTE2(l)	(*((int8_t*)(&(l)) + 2))
 #define SBYTE3(l)		((int8_t)(((l) >> 24) & 0xFF))
 #define SET_SBYTE3(l)	(*((int8_t*)(&(l)) + 3))
+
+
+#ifndef SHANDALAR
+/* October 2022 extension records, verified against DWARF. */
+typedef enum
+{
+  CFW_0 = 0,
+  CFW_HAND = 1,
+  CFW_EXILE = 2,
+  CFW_CLONED_AURA = 4,
+  CFW_GRAVEYARD = 8,
+  CFW_LIBRARY = 16,
+  CFW_OUTSIDE_THE_GAME = 32,
+  CFW_COMMAND_ZONE = 64,
+  CFW_SOURCE_ZONE = 127,
+  CFW_IGNORE_SORCERY_TIMING = 1024,
+  CFW_CLEAVE_COST_PAID = 2048,
+  CFW_DASH_COST_PAID = 4096,
+  CFW_EVOKE_COST_PAID = 8192,
+  CFW_KICKER_COST_PAID = 16384,
+  CFW_MADNESS_COST_PAID = 32768,
+  CFW_MANIFEST = 65536,
+  CFW_MORPH = 131072,
+  CFW_PROWL_COST_PAID = 262144,
+  CFW_SURGE_COST_PAID = 524288,
+  CFW_MIRACLE_COST_PAID = 1048576,
+  CFW_UNEARTH_COST_PAID = 2097152,
+  CFW_SPECTACLE_COST_PAID = 4194304,
+  CFW_FORETOLD = 8388608,
+  CFW_CREATED_TOKEN = 16777216,
+  CFW_EPIC = 33554432,
+  CFW_COPY_SPELL = 67108864,
+  CFW_PUT_INTO_PLAY = 134217728,
+  CFW_CAST = 268435456,
+  CFW_CAST_BY_NONOWNER = 536870912,
+  CFW_ALTERNATIVE_COST = 1073741824,
+  CFW_ADDITIONAL_COST = -2147483648,
+  CFW_COPIABLE_CARD_FROM = -1023411200
+} CardFromWhere;
+
+typedef struct
+{
+  uint16_t id;
+  uint16_t data2;
+  uint32_t data;
+} inst_info_t;
+
+typedef struct
+{
+  int16_t generating_id;
+  int16_t stored_iid;
+} inst_stored_iid_t;
+
+struct card_ext_struct
+{
+  uint32_t sp_keywords;
+  uint32_t sp_keywords2;
+  uint16_t subtype[12];
+  inst_info_t inst_info_data[6];
+  uint8_t mana_paid_to_cast[8];
+  uint8_t phyrexian_mana_spent_to_cast;
+  uint8_t snow_mana_spent_to_cast;
+  uint8_t any_snow_mana_of_color_spent_to_cast_raw;
+  uint8_t treasure_mana_spent_to_cast;
+  inst_stored_iid_t inst_stored_iids[12];
+  CardFromWhere cardfromwhere;
+  int16_t turn_etb;
+  int8_t became_player;
+  uint8_t became_card;
+  int8_t base_power;
+  int8_t base_toughness;
+  int8_t pow_mod_unblocked;
+  int8_t pow_before_attack;
+  int16_t raw_power;
+  int16_t raw_toughness;
+  uint8_t soulbond;
+  uint8_t times_regenerated;
+  uint8_t times_conspire_paid;
+  uint8_t times_replicate_paid;
+  uint8_t invis_counters[8];
+  uint8_t invis_counter_types[8];
+  int16_t copy_iid_;
+  int16_t change_name_csvid_;
+  special_flags_t special_flags;
+  special_flags2_t special_flags2;
+  special_flags3_t special_flags3;
+};
+#endif
 
 #endif

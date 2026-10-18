@@ -2300,3 +2300,42 @@ int card_xathrid_gorgon(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_XB(2, 1), 0, &td, "TARGET_CREATURE");
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22b8670; original cards/m13.c:1539. */
+int card_rhox_faithmender(int player, int card, event_t event)
+{
+  enum
+  {
+    XTRIGGER_REPLACE_GAIN_LIFE = 16778752
+  };
+
+  xtrigger_t xVar1;
+  int result;
+
+  lifelink(player, card, event);
+  xVar1 = trigger_condition;
+  if (trigger_condition == 0xe5)
+  {
+    xVar1 = xtrigger_impl_value_dont_use_directly;
+  }
+  if ((((xVar1 == XTRIGGER_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (((reason_for_trigger_controller == player && (trigger_cause_controller == player)) &&
+        (0 < life_gained))))
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      if (event == EVENT_TRIGGER)
+      {
+        event_result = event_result | 2;
+      }
+      else if (event == EVENT_RESOLVE_TRIGGER)
+      {
+        life_gained = life_gained << 1;
+      }
+    }
+  }
+  return 0;
+}

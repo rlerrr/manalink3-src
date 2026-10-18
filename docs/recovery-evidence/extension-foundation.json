@@ -1,0 +1,807 @@
+{
+  "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "types": {
+    "inst_info_t": {
+      "bytes": 8,
+      "members": [
+        {
+          "name": "id",
+          "offset": 0,
+          "type": "uint16_t",
+          "bytes": 2
+        },
+        {
+          "name": "data2",
+          "offset": 2,
+          "type": "uint16_t",
+          "bytes": 2
+        },
+        {
+          "name": "data",
+          "offset": 4,
+          "type": "uint32_t",
+          "bytes": 4
+        }
+      ]
+    },
+    "inst_stored_iid_t": {
+      "bytes": 4,
+      "members": [
+        {
+          "name": "generating_id",
+          "offset": 0,
+          "type": "int16_t",
+          "bytes": 2
+        },
+        {
+          "name": "stored_iid",
+          "offset": 2,
+          "type": "int16_t",
+          "bytes": 2
+        }
+      ]
+    },
+    "card_ext_t": {
+      "bytes": 192,
+      "members": [
+        {
+          "name": "sp_keywords",
+          "offset": 0,
+          "type": "uint32_t",
+          "bytes": 4
+        },
+        {
+          "name": "sp_keywords2",
+          "offset": 4,
+          "type": "uint32_t",
+          "bytes": 4
+        },
+        {
+          "name": "subtype",
+          "offset": 8,
+          "type": "uint16_t[12]",
+          "bytes": 24
+        },
+        {
+          "name": "inst_info_data",
+          "offset": 32,
+          "type": "inst_info_t[6]",
+          "bytes": 48
+        },
+        {
+          "name": "mana_paid_to_cast",
+          "offset": 80,
+          "type": "uint8_t[8]",
+          "bytes": 8
+        },
+        {
+          "name": "phyrexian_mana_spent_to_cast",
+          "offset": 88,
+          "type": "uint8_t",
+          "bytes": 1
+        },
+        {
+          "name": "snow_mana_spent_to_cast",
+          "offset": 89,
+          "type": "uint8_t",
+          "bytes": 1
+        },
+        {
+          "name": "any_snow_mana_of_color_spent_to_cast_raw",
+          "offset": 90,
+          "type": "uint8_t",
+          "bytes": 1
+        },
+        {
+          "name": "treasure_mana_spent_to_cast",
+          "offset": 91,
+          "type": "uint8_t",
+          "bytes": 1
+        },
+        {
+          "name": "inst_stored_iids",
+          "offset": 92,
+          "type": "inst_stored_iid_t[12]",
+          "bytes": 48
+        },
+        {
+          "name": "cardfromwhere",
+          "offset": 140,
+          "type": "CardFromWhere",
+          "bytes": 4
+        },
+        {
+          "name": "turn_etb",
+          "offset": 144,
+          "type": "int16_t",
+          "bytes": 2
+        },
+        {
+          "name": "became_player",
+          "offset": 146,
+          "type": "int8_t",
+          "bytes": 1
+        },
+        {
+          "name": "became_card",
+          "offset": 147,
+          "type": "uint8_t",
+          "bytes": 1
+        },
+        {
+          "name": "base_power",
+          "offset": 148,
+          "type": "int8_t",
+          "bytes": 1
+        },
+        {
+          "name": "base_toughness",
+          "offset": 149,
+          "type": "int8_t",
+          "bytes": 1
+        },
+        {
+          "name": "pow_mod_unblocked",
+          "offset": 150,
+          "type": "int8_t",
+          "bytes": 1
+        },
+        {
+          "name": "pow_before_attack",
+          "offset": 151,
+          "type": "int8_t",
+          "bytes": 1
+        },
+        {
+          "name": "raw_power",
+          "offset": 152,
+          "type": "int16_t",
+          "bytes": 2
+        },
+        {
+          "name": "raw_toughness",
+          "offset": 154,
+          "type": "int16_t",
+          "bytes": 2
+        },
+        {
+          "name": "soulbond",
+          "offset": 156,
+          "type": "uint8_t",
+          "bytes": 1
+        },
+        {
+          "name": "times_regenerated",
+          "offset": 157,
+          "type": "uint8_t",
+          "bytes": 1
+        },
+        {
+          "name": "times_conspire_paid",
+          "offset": 158,
+          "type": "uint8_t",
+          "bytes": 1
+        },
+        {
+          "name": "times_replicate_paid",
+          "offset": 159,
+          "type": "uint8_t",
+          "bytes": 1
+        },
+        {
+          "name": "invis_counters",
+          "offset": 160,
+          "type": "uint8_t[8]",
+          "bytes": 8
+        },
+        {
+          "name": "invis_counter_types",
+          "offset": 168,
+          "type": "uint8_t[8]",
+          "bytes": 8
+        },
+        {
+          "name": "copy_iid_",
+          "offset": 176,
+          "type": "int16_t",
+          "bytes": 2
+        },
+        {
+          "name": "change_name_csvid_",
+          "offset": 178,
+          "type": "int16_t",
+          "bytes": 2
+        },
+        {
+          "name": "special_flags",
+          "offset": 180,
+          "type": "special_flags_t",
+          "bytes": 4
+        },
+        {
+          "name": "special_flags2",
+          "offset": 184,
+          "type": "special_flags2_t",
+          "bytes": 4
+        },
+        {
+          "name": "special_flags3",
+          "offset": 188,
+          "type": "special_flags3_t",
+          "bytes": 4
+        }
+      ]
+    }
+  },
+  "globals": {
+    "backup_card_ext": {
+      "type": "char[57600]",
+      "dwarf_die": "0x667f889",
+      "source": "functions/ai.c",
+      "address": "2785f00",
+      "coff_storage_class": 3,
+      "section": ".bss"
+    },
+    "backup0_card_ext": {
+      "type": "char[57600]",
+      "dwarf_die": "0x667fc65",
+      "source": "functions/ai.c",
+      "address": "2776c60",
+      "coff_storage_class": 3,
+      "section": ".bss"
+    },
+    "card_ext_buffer1": {
+      "type": "card_ext_t",
+      "dwarf_die": "0x67327c0",
+      "source": "functions/deck.c",
+      "address": "27b3420",
+      "coff_storage_class": 2,
+      "section": ".bss"
+    },
+    "card_ext": {
+      "type": "card_ext_t[2][150]",
+      "dwarf_die": "0x67327df",
+      "source": "functions/deck.c",
+      "address": "27a5320",
+      "coff_storage_class": 2,
+      "section": ".bss"
+    },
+    "card_ext_buffer2": {
+      "type": "card_ext_t",
+      "dwarf_die": "0x67327ed",
+      "source": "functions/deck.c",
+      "address": "27b34e0",
+      "coff_storage_class": 2,
+      "section": ".bss"
+    },
+    "disp_card_ext": {
+      "type": "card_ext_t[2][150]",
+      "dwarf_die": "0x673280c",
+      "source": "functions/deck.c",
+      "address": "2797220",
+      "coff_storage_class": 2,
+      "section": ".bss"
+    },
+    "card_ext_buffer3": {
+      "type": "card_ext_t",
+      "dwarf_die": "0x673281a",
+      "source": "functions/deck.c",
+      "address": "27b35a0",
+      "coff_storage_class": 2,
+      "section": ".bss"
+    },
+    "card_ext_template": {
+      "type": "card_ext_t",
+      "dwarf_die": "0x673287a",
+      "source": "functions/deck.c",
+      "address": "2764fe0",
+      "coff_storage_class": 3,
+      "section": ".rdata",
+      "bytes": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff000000000000ffff0000000000000000ff00000000000000000000000000000000000000ffffffff000000000000000000000000"
+    }
+  },
+  "exports": [
+    {
+      "address": "26b3a10",
+      "source": "functions/deck.c",
+      "name": "clear_stored_iids",
+      "status": "ok",
+      "prototype": "void clear_stored_iids(card_instance_t * inst, int16_t generating_id)",
+      "raw_sha256": "cc336e287333adc55d5f47161e3e4afceae085d0affc23949c9a73739037dd53"
+    },
+    {
+      "address": "26b39d0",
+      "source": "functions/deck.c",
+      "name": "retrieve_stored_iids",
+      "status": "ok",
+      "prototype": "int retrieve_stored_iids(card_instance_t * inst, int16_t generating_id, int16_t * iids)",
+      "raw_sha256": "7339ae7d2280989dc96b1d4c3ececbf580e4c924d078b8c94d4cb14e9b86ad53"
+    },
+    {
+      "address": "26b3990",
+      "source": "functions/deck.c",
+      "name": "store_iid",
+      "status": "ok",
+      "prototype": "int store_iid(card_instance_t * inst, int16_t generating_id, int16_t stored_iid)",
+      "raw_sha256": "a6748e6fcd86e58bd30d7b753e20198cd5eca9bbc3e00230c76e569fb1ef062e"
+    },
+    {
+      "address": "26b3230",
+      "source": "functions/deck.c",
+      "name": "get_displayed_card_instance",
+      "status": "ok",
+      "prototype": "card_instance_t * get_displayed_card_instance(int player, int card)",
+      "raw_sha256": "649bb426ce43554ffba11ebcb5b352eed5edea16c905fa303264bf38603f6143"
+    },
+    {
+      "address": "26b2ab0",
+      "source": "functions/deck.c",
+      "name": "get_card_instance",
+      "status": "ok",
+      "prototype": "card_instance_t * get_card_instance(int player, int card)",
+      "raw_sha256": "8a082f00006a41ac67e59df0f21862e478fd2e2ae1f37468de4bdf6f4d057b08"
+    },
+    {
+      "address": "26b2b50",
+      "source": "functions/deck.c",
+      "name": "create_card_instance",
+      "status": "ok",
+      "prototype": "void create_card_instance(int player, uint iid, int card)",
+      "raw_sha256": "5adb293e30fadf5b635b63a6c65970099d55f50467206569e9e038846de807fb"
+    },
+    {
+      "address": "26b2a10",
+      "source": "functions/deck.c",
+      "name": "memcpy_inst_and_ext",
+      "status": "ok",
+      "prototype": "void memcpy_inst_and_ext(card_instance_t * dest, card_instance_t * src)",
+      "raw_sha256": "f3d0b4209373e322b1d2c44e6aad225e99d6ea525737dcd8bce1b914a62845cf"
+    }
+  ],
+  "references": [
+    {
+      "function": "copy_to_display_end",
+      "source": "functions/windows.c",
+      "function_address": "2658eb0",
+      "instruction_address": "2658ec0",
+      "bytes": "c744240420537a02",
+      "instruction": "mov dword ptr [esp + 4], 0x27a5320",
+      "global_name": "card_ext"
+    },
+    {
+      "function": "copy_to_display_end",
+      "source": "functions/windows.c",
+      "function_address": "2658eb0",
+      "instruction_address": "2658ec8",
+      "bytes": "c7042420727902",
+      "instruction": "mov dword ptr [esp], 0x2797220",
+      "global_name": "disp_card_ext"
+    },
+    {
+      "function": "copy_to_display_end",
+      "source": "functions/windows.c",
+      "function_address": "2658eb0",
+      "instruction_address": "2658ed8",
+      "bytes": "be20727902",
+      "instruction": "mov esi, 0x2797220",
+      "global_name": "disp_card_ext"
+    },
+    {
+      "function": "copy_to_display_end",
+      "source": "functions/windows.c",
+      "function_address": "2658eb0",
+      "instruction_address": "2658f52",
+      "bytes": "c744240420537a02",
+      "instruction": "mov dword ptr [esp + 4], 0x27a5320",
+      "global_name": "card_ext"
+    },
+    {
+      "function": "copy_to_display_end",
+      "source": "functions/windows.c",
+      "function_address": "2658eb0",
+      "instruction_address": "2658f5a",
+      "bytes": "c7042420727902",
+      "instruction": "mov dword ptr [esp], 0x2797220",
+      "global_name": "disp_card_ext"
+    },
+    {
+      "function": "copy_to_display_start",
+      "source": "functions/windows.c",
+      "function_address": "2658e40",
+      "instruction_address": "2658e45",
+      "bytes": "be20537a02",
+      "instruction": "mov esi, 0x27a5320",
+      "global_name": "card_ext"
+    },
+    {
+      "function": "hook_helper_for_startduel",
+      "source": "functions/engine.c",
+      "function_address": "26a8b30",
+      "instruction_address": "26a8b5c",
+      "bytes": "8d9620537a02",
+      "instruction": "lea edx, [esi + 0x27a5320]",
+      "global_name": "card_ext"
+    },
+    {
+      "function": "hook_helper_for_startduel",
+      "source": "functions/engine.c",
+      "function_address": "26a8b30",
+      "instruction_address": "26a8b72",
+      "bytes": "8d9620727902",
+      "instruction": "lea edx, [esi + 0x2797220]",
+      "global_name": "disp_card_ext"
+    },
+    {
+      "function": "save_or_load_supplement",
+      "source": "functions/ai.c",
+      "function_address": "26b1f10",
+      "instruction_address": "26b1f1f",
+      "bytes": "c7042420537a02",
+      "instruction": "mov dword ptr [esp], 0x27a5320",
+      "global_name": "card_ext"
+    },
+    {
+      "function": "restore_data_for_ai_0",
+      "source": "functions/ai.c",
+      "function_address": "26b1d20",
+      "instruction_address": "26b1d7d",
+      "bytes": "c7442404606c7702",
+      "instruction": "mov dword ptr [esp + 4], 0x2776c60",
+      "global_name": "backup0_card_ext"
+    },
+    {
+      "function": "restore_data_for_ai_0",
+      "source": "functions/ai.c",
+      "function_address": "26b1d20",
+      "instruction_address": "26b1d85",
+      "bytes": "c7042420537a02",
+      "instruction": "mov dword ptr [esp], 0x27a5320",
+      "global_name": "card_ext"
+    },
+    {
+      "function": "backup_data_for_ai_0",
+      "source": "functions/ai.c",
+      "function_address": "26b1b00",
+      "instruction_address": "26b1b6a",
+      "bytes": "c744240420537a02",
+      "instruction": "mov dword ptr [esp + 4], 0x27a5320",
+      "global_name": "card_ext"
+    },
+    {
+      "function": "backup_data_for_ai_0",
+      "source": "functions/ai.c",
+      "function_address": "26b1b00",
+      "instruction_address": "26b1b72",
+      "bytes": "c70424606c7702",
+      "instruction": "mov dword ptr [esp], 0x2776c60",
+      "global_name": "backup0_card_ext"
+    },
+    {
+      "function": "restore_data_for_ai",
+      "source": "functions/ai.c",
+      "function_address": "26b1900",
+      "instruction_address": "26b1962",
+      "bytes": "c7442404005f7802",
+      "instruction": "mov dword ptr [esp + 4], 0x2785f00",
+      "global_name": "backup_card_ext"
+    },
+    {
+      "function": "restore_data_for_ai",
+      "source": "functions/ai.c",
+      "function_address": "26b1900",
+      "instruction_address": "26b196a",
+      "bytes": "c7042420537a02",
+      "instruction": "mov dword ptr [esp], 0x27a5320",
+      "global_name": "card_ext"
+    },
+    {
+      "function": "backup_data_for_ai",
+      "source": "functions/ai.c",
+      "function_address": "26b1700",
+      "instruction_address": "26b1767",
+      "bytes": "c744240420537a02",
+      "instruction": "mov dword ptr [esp + 4], 0x27a5320",
+      "global_name": "card_ext"
+    },
+    {
+      "function": "backup_data_for_ai",
+      "source": "functions/ai.c",
+      "function_address": "26b1700",
+      "instruction_address": "26b176f",
+      "bytes": "c70424005f7802",
+      "instruction": "mov dword ptr [esp], 0x2785f00",
+      "global_name": "backup_card_ext"
+    },
+    {
+      "function": "create_card_instance",
+      "source": "functions/deck.c",
+      "function_address": "26b2b50",
+      "instruction_address": "26b2bb4",
+      "bytes": "bee04f7602",
+      "instruction": "mov esi, 0x2764fe0",
+      "global_name": "card_ext_template"
+    },
+    {
+      "function": "create_card_instance",
+      "source": "functions/deck.c",
+      "function_address": "26b2b50",
+      "instruction_address": "26b2bbc",
+      "bytes": "8d840120537a02",
+      "instruction": "lea eax, [ecx + eax + 0x27a5320]",
+      "global_name": "card_ext"
+    }
+  ],
+  "migration_requirements": [
+    "Recover the complete 192-byte record and its five live/display/scratch storage objects plus template and both AI snapshots.",
+    "Migrate card_instance_t offset 0x2c together with creation, copying, displayed data, scratch buffers and native untap accesses; do not overlay a live pointer onto the old eight-byte field without those consumers.",
+    "Preserve destination extension identity when copying a 300-byte instance and its 192-byte extension.",
+    "Model inst_info as an eight-byte EDX:EAX value before exporting callers, not as a pointer.",
+    "Recover initialization/reset, AI backup/restore and native hook sites coherently. Decide save-format integration only with the complete target supplemental record.",
+    "Migrate special-flag and keyword readers/writers together rather than keeping incompatible old and new storage pathways."
+  ],
+  "status": "C storage, creation binding, AI snapshots, display lifecycle, ownership-copy fragment and packed information APIs recovered. Native hook/jump-table integration, flag-storage migration and complete save-format migration remain.",
+  "source_recovered": true,
+  "compiled_template_sha256": "d2c999e5e120d666cbad2c2969c3358d7f6c9a7269143576eb9f0ba85d37e565",
+  "card_from_where_enum": {
+    "CFW_0": 0,
+    "CFW_HAND": 1,
+    "CFW_EXILE": 2,
+    "CFW_CLONED_AURA": 4,
+    "CFW_GRAVEYARD": 8,
+    "CFW_LIBRARY": 16,
+    "CFW_OUTSIDE_THE_GAME": 32,
+    "CFW_COMMAND_ZONE": 64,
+    "CFW_SOURCE_ZONE": 127,
+    "CFW_IGNORE_SORCERY_TIMING": 1024,
+    "CFW_CLEAVE_COST_PAID": 2048,
+    "CFW_DASH_COST_PAID": 4096,
+    "CFW_EVOKE_COST_PAID": 8192,
+    "CFW_KICKER_COST_PAID": 16384,
+    "CFW_MADNESS_COST_PAID": 32768,
+    "CFW_MANIFEST": 65536,
+    "CFW_MORPH": 131072,
+    "CFW_PROWL_COST_PAID": 262144,
+    "CFW_SURGE_COST_PAID": 524288,
+    "CFW_MIRACLE_COST_PAID": 1048576,
+    "CFW_UNEARTH_COST_PAID": 2097152,
+    "CFW_SPECTACLE_COST_PAID": 4194304,
+    "CFW_FORETOLD": 8388608,
+    "CFW_CREATED_TOKEN": 16777216,
+    "CFW_EPIC": 33554432,
+    "CFW_COPY_SPELL": 67108864,
+    "CFW_PUT_INTO_PLAY": 134217728,
+    "CFW_CAST": 268435456,
+    "CFW_CAST_BY_NONOWNER": 536870912,
+    "CFW_ALTERNATIVE_COST": 1073741824,
+    "CFW_ADDITIONAL_COST": -2147483648,
+    "CFW_COPIABLE_CARD_FROM": -1023411200
+  },
+  "ai_copy_proof": {
+    "backup_data_for_ai": {
+      "source": "27a5320",
+      "destination": "2785f00",
+      "bytes": 57600,
+      "stores": [
+        {
+          "address": "26b175f",
+          "bytes": "c744240800e10000"
+        },
+        {
+          "address": "26b1767",
+          "bytes": "c744240420537a02"
+        },
+        {
+          "address": "26b176f",
+          "bytes": "c70424005f7802"
+        }
+      ]
+    },
+    "restore_data_for_ai": {
+      "source": "2785f00",
+      "destination": "27a5320",
+      "bytes": 57600,
+      "stores": [
+        {
+          "address": "26b195a",
+          "bytes": "c744240800e10000"
+        },
+        {
+          "address": "26b1962",
+          "bytes": "c7442404005f7802"
+        },
+        {
+          "address": "26b196a",
+          "bytes": "c7042420537a02"
+        }
+      ]
+    },
+    "backup_data_for_ai_0": {
+      "source": "27a5320",
+      "destination": "2776c60",
+      "bytes": 57600,
+      "stores": [
+        {
+          "address": "26b1b62",
+          "bytes": "c744240800e10000"
+        },
+        {
+          "address": "26b1b6a",
+          "bytes": "c744240420537a02"
+        },
+        {
+          "address": "26b1b72",
+          "bytes": "c70424606c7702"
+        }
+      ]
+    },
+    "restore_data_for_ai_0": {
+      "source": "2776c60",
+      "destination": "27a5320",
+      "bytes": 57600,
+      "stores": [
+        {
+          "address": "26b1d75",
+          "bytes": "c744240800e10000"
+        },
+        {
+          "address": "26b1d7d",
+          "bytes": "c7442404606c7702"
+        },
+        {
+          "address": "26b1d85",
+          "bytes": "c7042420537a02"
+        }
+      ]
+    }
+  },
+  "compiled_instance_template_sha256": "f645c3ee6cfff6201f1130b972219a0430189e4ee3b5626aaab2db917f6cec84",
+  "instance_template_bytes_checked": 300,
+  "packed_word_views": {
+    "little_endian": true,
+    "info_fields": {
+      "id": [
+        0,
+        2
+      ],
+      "data2": [
+        2,
+        2
+      ],
+      "data": [
+        4,
+        4
+      ]
+    },
+    "damage_halfwords": {
+      "damage_on_card": [
+        16,
+        2
+      ],
+      "counter_power": [
+        18,
+        2
+      ]
+    },
+    "functions": [
+      {
+        "name": "inst_info",
+        "source": "functions/deck.c",
+        "address": "26b3740",
+        "raw_sha256": "5adaca9c9e5a3ef1da1e9cd3ba8273cce10c32be151ab239598321e5ba2dc59c",
+        "views": [
+          "inst_info_t packed word/field view"
+        ]
+      },
+      {
+        "name": "card_dark_impostor",
+        "source": "cards/avacyn_restored.c",
+        "address": "2347c00",
+        "raw_sha256": "9fbe44c4fbeaf6edd2a26fd6be7ed501549bc12fe8b5a65490a72580fdb2b2c6",
+        "views": [
+          "inst_info_t packed word/field view"
+        ]
+      },
+      {
+        "name": "card_lord_windgrace",
+        "source": "cards/commander_2018.c",
+        "address": "25632a0",
+        "raw_sha256": "e87e5da9f82c8f028456c13a194a5d6d66df7ceba32dec9d1bb4a04146582c61",
+        "views": [
+          "inst_info_t packed word/field view"
+        ]
+      },
+      {
+        "name": "card_bell_borca_spectral_sergeant",
+        "source": "cards/commander_legends.c",
+        "address": "25a45b0",
+        "raw_sha256": "e875460d88693a4af10086c6e0eb1c74ec1d7938ca8d6ceb337237b45835c365",
+        "views": [
+          "inst_info_t packed word/field view"
+        ]
+      },
+      {
+        "name": "card_jeska_thrice_reborn",
+        "source": "cards/commander_legends.c",
+        "address": "25a94b0",
+        "raw_sha256": "1f5ad1b39289aa2de31ad614cf727f9952695dbc21d68bda4dfc602f3bfa0c80",
+        "views": [
+          "inst_info_t packed word/field view"
+        ]
+      },
+      {
+        "name": "card_the_prismatic_piper",
+        "source": "cards/commander_legends.c",
+        "address": "25b0ee0",
+        "raw_sha256": "0406a7a5928ba4dc51ef51a7e13acb5471d03c081f46b8bf62213ae4c42fc783",
+        "views": [
+          "inst_info_t packed word/field view"
+        ]
+      },
+      {
+        "name": "card_arcbound_javelineer",
+        "source": "cards/modern_horizons_2.c",
+        "address": "222ca50",
+        "raw_sha256": "2923047f283d846e41ca774255eef77d59f125a94975fe1e6378fd730b8c6e5c",
+        "views": [
+          "inst_info_t packed word/field view",
+          "adjacent damage/counter halfword load"
+        ]
+      },
+      {
+        "name": "card_dermotaxi",
+        "source": "cards/modern_horizons_2.c",
+        "address": "2232c90",
+        "raw_sha256": "fbba81d1ff081b8f5135ae65a1b2bafb575cd5b8f62f4a278ee50bb0fb71aca3",
+        "views": [
+          "inst_info_t packed word/field view"
+        ]
+      },
+      {
+        "name": "card_agadeems_awakening",
+        "source": "cards/zendikar_rising.c",
+        "address": "2307900",
+        "raw_sha256": "1cd57d4277ce1a8ea610b7491aeb3ca4d652a85bbe9efdbf90095de644a15d43",
+        "views": [
+          "inst_info_t packed word/field view"
+        ]
+      },
+      {
+        "name": "card_shatterskull_smashing",
+        "source": "cards/zendikar_rising.c",
+        "address": "230de40",
+        "raw_sha256": "97ffe695db1de6bcf4ac4bb3fceaf5ac7ecd6b638bd347a11adcf5538389ed68",
+        "views": [
+          "inst_info_t packed word/field view"
+        ]
+      },
+      {
+        "name": "card_skyclave_apparition",
+        "source": "cards/zendikar_rising.c",
+        "address": "230e400",
+        "raw_sha256": "f0d2245aad21b4191ba71f4930f36f3181e32b610d0ac0c36d0fd7cef828a498",
+        "views": [
+          "inst_info_t packed word/field view"
+        ]
+      }
+    ]
+  },
+  "native_untap_precondition": {
+    "address": "437670",
+    "bytes": "558becc9c3",
+    "scope": "Matching executable returns immediately from the old untap-cost setup routine; retained legacy readers are not rewritten by this source recovery."
+  },
+  "completed_source_steps": [
+    "record layouts and CardFromWhere enum",
+    "eight storage declarations and byte-exact templates",
+    "creation and initial pointer binding",
+    "display start/end rebinding",
+    "both AI snapshot pairs",
+    "destination identity during ownership transfer",
+    "eight packed information/stored-ID API functions"
+  ],
+  "remaining_steps": [
+    "native hook/jump-table integration for the recovered entry points",
+    "complete supplemental save-format migration",
+    "special-flag and keyword reader/writer migration"
+  ]
+}

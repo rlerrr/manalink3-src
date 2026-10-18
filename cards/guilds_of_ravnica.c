@@ -264,7 +264,15 @@ int card_guild_summit(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   int iStack_ec;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
+
   result = duh_mode(player);
   etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_ETB)
@@ -282,18 +290,18 @@ int card_guild_summit(int player, int card, event_t event)
     }
     if (trigger_cause == card)
     {
-      default_target_definition(player, card, &td, 0x47);
-      td.required_subtype = 0x500c;
-      td.preferred_controller = player;
-      td.allowed_controller = player;
-      td.illegal_abilities = 0;
-      td.illegal_state = 1;
-      td.allow_cancel = 3;
+      default_target_definition(player, card, &recovered_stack_td.target, 0x47);
+      recovered_stack_td.target.required_subtype = 0x500c;
+      recovered_stack_td.target.preferred_controller = player;
+      recovered_stack_td.target.allowed_controller = player;
+      recovered_stack_td.target.illegal_abilities = 0;
+      recovered_stack_td.target.illegal_state = 1;
+      recovered_stack_td.target.allow_cancel = 3;
       iStack_ec = 0;
-      while (
-          (result = can_target(&td),
-           result != 0 && (result = new_pick_target(&td, "Choose an untapped Gate to tap", 0, 0x80),
-                           result != 0)))
+      while ((result = can_target(&recovered_stack_td.target),
+              result != 0 && (result = new_pick_target(&recovered_stack_td.target,
+                                                       "Choose an untapped Gate to tap", 0, 0x80),
+                              result != 0)))
       {
         instance = get_card_instance(player, card);
         result = instance->targets[0].card;
@@ -317,8 +325,8 @@ int card_guild_summit(int player, int card, event_t event)
   LAB_0261d668:
     if (player == affected_card_controller)
     {
-      default_test_definition((test_definition_t *)&td, 0x47);
-      etb_ability_global(player, event, 2, TYPE_NONE, (test_definition_t *)&td, player, card);
+      default_test_definition(&recovered_stack_td.test, 0x47);
+      etb_ability_global(player, event, 2, TYPE_NONE, &recovered_stack_td.test, player, card);
     }
     if (event != EVENT_ETB)
       goto LAB_0261d644;
@@ -3692,4 +3700,111 @@ int card_aurelia_exemplar_of_justice(int player, int card, event_t event)
     }
   }
   return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2621530; original cards/guilds_of_ravnica.c:3913. */
+int card_unmoored_ego(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  unsigned int csvid;
+  int iVar4;
+  int32_t player_00;
+  int iVar5;
+  target_definition_t td;
+  test_definition_t test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0);
+        td.zone = 0x1000;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          iVar3 = valid_target(&td);
+          if (iVar3 != 0)
+          {
+
+            if (player == 1)
+            {
+              iVar3 = count_deck(instance->targets[0].player);
+              iVar3 = internal_rand(iVar3);
+              player_00 = instance->targets[0].player;
+              iVar5 = 0;
+              do
+              {
+                iVar1 = deck_ptr[player_00][iVar3];
+                if (iVar1 == -1)
+                {
+                  iVar5 = iVar5 + 1;
+                  iVar3 = 0;
+                }
+                else
+                {
+                  iVar4 =
+                      has_subtype_by_id_2022(1, (unsigned int)cards_data[iVar1].id, SUBTYPE_BASIC);
+                  if (iVar4 == 0)
+                  {
+
+                    csvid = (unsigned int)cards_data[iVar1].id;
+                    goto LAB_026216e7;
+                  }
+                  iVar3 = iVar3 + 1;
+                  player_00 = instance->targets[0].player;
+                }
+              } while (iVar5 < 2);
+              iVar3 = 0;
+            }
+            else
+            {
+              new_default_test_definition(&test, 0xff, "Choose a card name.");
+              csvid = new_card_from_list(player, 3, &test);
+              if ((int)csvid < 0)
+              {
+                player_00 = instance->targets[0].player;
+                iVar3 = 0;
+              }
+              else
+              {
+              LAB_026216e7:
+                iVar3 = lobotomy_effect_2022(player, instance->targets[0].player, csvid, 4, 4);
+                player_00 = instance->targets[0].player;
+              }
+            }
+            draw_cards(player_00, iVar3);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_026215ad;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0);
+  td.zone = 0x1000;
+  get_card_instance(player, card);
+LAB_026215ad:
+  iVar3 = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
+  return iVar3;
 }

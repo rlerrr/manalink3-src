@@ -2910,3 +2910,127 @@ LAB_0258a026:
   result = generic_spell(player, card, event, 1, &td, "TARGET_LAND", 1, NULL);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int zendikon(int player, int card, event_t event, int pow, int tgh, color_test_t cols,
+             subtype_t styp, keyword_t kws, sp_keyword_t spkws);
+
+/* ManalinkEh 2022: 0x2583ed0; original cards/worldwake.c:72. */
+int zendikon(int player, int card, event_t event, int pow, int tgh, color_test_t cols,
+             subtype_t styp, keyword_t kws, sp_keyword_t spkws)
+{
+  enum
+  {
+    SP_KEYWORD_NOT_SIMPLE_BITS = 357809216
+  };
+
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int player_00;
+  target_definition_t td;
+
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    instance = in_play(player, card);
+    if ((instance != NULL) &&
+        (instance = get_card_instance(player, card), instance->damage_target_player != -1))
+    {
+
+      instance = get_card_instance(player, card);
+      player_00 = (int)instance->damage_target_player;
+      iVar1 = instance->damage_target_card;
+      instance = get_card_instance(player_00, iVar1);
+      if (((iVar1 == affected_card) &&
+           (((player_00 == affected_card_controller &&
+              ((unsigned char)(instance->kill_code - 2) < 2)) &&
+             (iVar3 = check_special_flags2(player_00, iVar1, 0x10000000), iVar3 == 0)))) &&
+          (iVar3 = check_for_death_trigger_removal(player_00, iVar1), iVar3 == 0))
+      {
+
+        iVar3 = create_legacy_effect(player, card, zendikon_legacy);
+        instance = get_card_instance(player, iVar3);
+        iVar3 = get_owner(player_00, iVar1);
+        instance->targets[0].player = iVar3;
+        iVar1 = get_original_internal_card_id(player_00, iVar1);
+        instance->targets[0xb].player = 1;
+        instance->targets[0].card = iVar1;
+      }
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAN_CAST)
+      goto LAB_02583f00;
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_02583f00;
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) ||
+             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+      goto LAB_02583f00;
+  }
+  if (((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+      (((((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
+          (event != EVENT_CHANGE_TYPE)) &&
+         ((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)))) &&
+        (event != EVENT_STATIC_EFFECTS))))
+  {
+    return 0;
+  }
+LAB_02583f00:
+  default_target_definition(player, card, &td, 1);
+  td.preferred_controller = player;
+  attached_is_additional_subtype(player, card, event, styp);
+  if (cols != COLOR_TEST_0)
+  {
+    attached_is_additional_color(player, card, event, cols);
+  }
+  if ((spkws & SP_KEYWORD_NOT_SIMPLE_BITS) != SP_KEYWORD_0)
+  {
+    backtrace_and_abort("cards/worldwake.c:109\n!(spkws & SP_KEYWORD_NOT_SIMPLE_BITS)");
+  }
+  iVar1 = generic_animating_aura(player, card, event, &td, "TARGET_LAND", pow, tgh, kws, spkws);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x2586250; original cards/worldwake.c:858. */
+int card_corrupted_zendikon(int player, int card, event_t event)
+{
+  int result;
+
+  result =
+      zendikon(player, card, event, 3, 3, COLOR_TEST_BLACK, SUBTYPE_OOZE, KEYWORD_0, SP_KEYWORD_0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25863b0; original cards/worldwake.c:887. */
+int card_crusher_zendikon(int player, int card, event_t event)
+{
+  int result;
+
+  result = zendikon(player, card, event, 4, 2, COLOR_TEST_RED, SUBTYPE_BEAST, KEYWORD_TRAMPLE,
+                    SP_KEYWORD_0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x258c250; original cards/worldwake.c:2926. */
+int card_vastwood_zendikon(int player, int card, event_t event)
+{
+  int result;
+
+  result = zendikon(player, card, event, 6, 4, COLOR_TEST_GREEN, SUBTYPE_ELEMENTAL, KEYWORD_0,
+                    SP_KEYWORD_0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x258c2b0; original cards/worldwake.c:2939. */
+int card_wind_zendikon(int player, int card, event_t event)
+{
+  int result;
+
+  result = zendikon(player, card, event, 2, 2, COLOR_TEST_BLUE, SUBTYPE_ELEMENTAL, KEYWORD_FLYING,
+                    SP_KEYWORD_0);
+  return result;
+}

@@ -7649,3 +7649,149 @@ LAB_02057c19:
   iVar1 = global_enchantment(player, card, event);
   return iVar1;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2057160; original cards/urza_saga.c:7015. */
+int card_serras_hymn(int player, int card, event_t event)
+{
+  target_t *ptVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  target_t *ptVar5;
+  int32_t card_00;
+  int32_t player_00;
+  int iVar6;
+  target_t *ptVar7;
+  card_instance_t *pcStack_134;
+  int iStack_130;
+  target_definition_t td;
+  char prompt[200];
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.preferred_controller = player;
+    td.zone = 0x1200;
+    td.allow_cancel = 0;
+    pcStack_134 = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar2 = can_target(&td);
+      if (iVar2 == 0)
+      {
+        return 0;
+      }
+      return (-(unsigned int)((land_can_be_played & 4U) == 0) & 0xffffff9e) + 99;
+    }
+    iStack_130 = count_counters(player, card, COUNTER_VERSE);
+    if (event == EVENT_ACTIVATE)
+    {
+      pcStack_134->number_of_targets = '\0';
+      if (0 < iStack_130)
+      {
+        iVar2 = 0;
+        do
+        {
+          while (true)
+          {
+            iVar6 = iVar2 + 1;
+            if (ai_is_speculating == 1)
+            {
+              prompt[0] = '\0';
+              iVar3 = can_target(&td);
+            }
+            else
+            {
+              load_text_2022(NULL, "TARGET_ANY");
+              scnprintf(prompt, 200, "%s (%d of amount)", text_lines[0], iVar6);
+              iVar3 = can_target(&td);
+            }
+            if (((iVar3 != 0) && (iVar3 = pick_next_target_noload(&td, prompt), iVar3 != 0)) &&
+                (iVar3 = pcStack_134->targets[iVar2].card, iVar3 != -1))
+              break;
+            iVar2 = iVar6;
+            if (iStack_130 == iVar6)
+              goto LAB_0205720a;
+          }
+          pcVar4 = get_card_instance(pcStack_134->targets[iVar2].player, iVar3);
+          pcVar4->state = pcVar4->state | 0x200000;
+          iVar2 = iVar6;
+        } while (iStack_130 != iVar6);
+      }
+      goto LAB_0205720a;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      iVar2 = generic_growing_enchantment(player, card, event);
+      return iVar2;
+    }
+    default_target_definition(player, card, &td, 0x102);
+    td.preferred_controller = player;
+    td.zone = 0x1200;
+    td.allow_cancel = 0;
+    pcStack_134 = get_card_instance(player, card);
+    iStack_130 = count_counters(player, card, COUNTER_VERSE);
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    iVar2 = valid_target(&td);
+    if ((iVar2 != 0) && (0 < iStack_130))
+    {
+      iVar2 = 0;
+      ptVar1 = pcStack_134->targets;
+      ptVar7 = pcStack_134->targets;
+      do
+      {
+        ptVar7 = ptVar7 + 1;
+        player_00 = ptVar7[-1].player;
+        iVar2 = iVar2 + 1;
+        if (player_00 != -1)
+        {
+
+          card_00 = ptVar7[-1].card;
+          if (card_00 != -1)
+          {
+            pcVar4 = get_card_instance(player_00, card_00);
+            pcVar4->state = pcVar4->state & 0xffdfffff;
+            player_00 = ptVar7[-1].player;
+            card_00 = ptVar7[-1].card;
+          }
+          if (iVar2 < iStack_130)
+          {
+            pcStack_134 = (card_instance_t *)0x1;
+            ptVar5 = ptVar7;
+            do
+            {
+              while ((ptVar5->player != player_00 || (ptVar5->card != card_00)))
+              {
+                ptVar5 = ptVar5 + 1;
+                if (ptVar5 == ptVar1 + iStack_130)
+                  goto LAB_020574d0;
+              }
+              ptVar5->player = -1;
+              pcStack_134 = (card_instance_t *)((int)pcStack_134 + 1);
+              ptVar5 = ptVar5 + 1;
+              card_00 = ptVar7[-1].card;
+              player_00 = ptVar7[-1].player;
+            } while (ptVar5 != ptVar1 + iStack_130);
+          }
+          else
+          {
+            pcStack_134 = (card_instance_t *)0x1;
+          }
+        LAB_020574d0:
+          prevent_the_next_n_damage(player, card, player_00, card_00, (int)pcStack_134, 0, -1, -1);
+        }
+      } while (iVar2 != iStack_130);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+LAB_0205720a:
+  iVar2 = generic_activated_ability(player, card, event, 8, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return iVar2;
+}

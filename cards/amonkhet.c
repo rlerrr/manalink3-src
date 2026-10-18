@@ -2259,17 +2259,25 @@ int card_trial_of_zeal(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
+
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    default_target_definition(player, card, &td, 0x102);
-    td.zone = 0x1200;
-    td.allow_cancel = 0;
-    result = can_target(&td);
+    default_target_definition(player, card, &recovered_stack_td.target, 0x102);
+    recovered_stack_td.target.zone = 0x1200;
+    recovered_stack_td.target.allow_cancel = 0;
+    result = can_target(&recovered_stack_td.target);
     if (result != 0)
     {
-      result = pick_target(&td, "TARGET_ANY");
+      result = pick_target(&recovered_stack_td.target, "TARGET_ANY");
       if (result != 0)
       {
         damage_target0(player, card, 3);
@@ -2281,8 +2289,8 @@ int card_trial_of_zeal(int player, int card, event_t event)
   if (((trigger_condition == 0xdb) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    default_test_definition((test_definition_t *)&td, 4);
-    result = new_specific_cip(player, card, event, player, 2, (test_definition_t *)&td);
+    default_test_definition(&recovered_stack_td.test, 4);
+    result = new_specific_cip(player, card, event, player, 2, &recovered_stack_td.test);
     if (result != 0)
     {
       bounce_permanent(player, card);
@@ -2658,20 +2666,28 @@ int card_synchronized_strike(int player, int card, event_t event)
 int card_trial_of_strength(int player, int card, event_t event)
 {
   int result;
-  token_generation_t token;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_token;
+
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    default_token_definition(player, card, 0x4907, &token);
-    token.pow = 4;
-    token.tou = 2;
-    generate_token(&token);
+    default_token_definition(player, card, 0x4907, &recovered_stack_token.token);
+    recovered_stack_token.token.pow = 4;
+    recovered_stack_token.token.tou = 2;
+    generate_token(&recovered_stack_token.token);
   }
   if (((trigger_condition == 0xdb) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    default_test_definition((test_definition_t *)&token, 4);
-    result = new_specific_cip(player, card, event, player, 2, (test_definition_t *)&token);
+    default_test_definition(&recovered_stack_token.test, 4);
+    result = new_specific_cip(player, card, event, player, 2, &recovered_stack_token.test);
     if (result != 0)
     {
       bounce_permanent(player, card);
@@ -3414,7 +3430,14 @@ int card_insult_injury(int player, int card, event_t event)
 int card_mouth_feed(int player, int card, event_t event)
 {
   int result;
-  token_generation_t token;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_token;
 
   if (event == EVENT_CAN_CAST)
   {
@@ -3435,17 +3458,17 @@ int card_mouth_feed(int player, int card, event_t event)
     result = get_aftermath(player, card);
     if (result == 0)
     {
-      default_token_definition(player, card, 0x4946, &token);
-      token.tou = 3;
-      token.pow = 3;
-      generate_token(&token);
+      default_token_definition(player, card, 0x4946, &recovered_stack_token.token);
+      recovered_stack_token.token.tou = 3;
+      recovered_stack_token.token.pow = 3;
+      generate_token(&recovered_stack_token.token);
     }
     result = get_aftermath(player, card);
     if (result != 0)
     {
-      default_test_definition((test_definition_t *)&token, 2);
+      default_test_definition(&recovered_stack_token.test, 2);
       result =
-          check_battlefield_for_special_card(player, card, player, 4, (test_definition_t *)&token);
+          check_battlefield_for_special_card(player, card, player, 4, &recovered_stack_token.test);
       draw_cards(player, result);
       kill_card(player, card, KILL_EXILE);
     }
@@ -4803,7 +4826,14 @@ int card_rhonas_the_indomitable(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
 
   check_legend_rule(player, card, event);
   indestructible(player, card, event);
@@ -4813,9 +4843,9 @@ int card_rhonas_the_indomitable(int player, int card, event_t event)
     if (((card == affected_card) && (player == affected_card_controller)) &&
         (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
     {
-      default_test_definition((test_definition_t *)&td, 2);
+      default_test_definition(&recovered_stack_td.test, 2);
       result =
-          check_battlefield_for_special_card(player, card, player, 0, (test_definition_t *)&td);
+          check_battlefield_for_special_card(player, card, player, 0, &recovered_stack_td.test);
       if (result == 0)
       {
         event_result = 1;
@@ -4839,9 +4869,9 @@ int card_rhonas_the_indomitable(int player, int card, event_t event)
       {
         return 0;
       }
-      default_test_definition((test_definition_t *)&td, 2);
+      default_test_definition(&recovered_stack_td.test, 2);
       result =
-          check_battlefield_for_special_card(player, card, player, 0, (test_definition_t *)&td);
+          check_battlefield_for_special_card(player, card, player, 0, &recovered_stack_td.test);
       if (result != 0)
       {
         return 0;
@@ -4857,8 +4887,8 @@ int card_rhonas_the_indomitable(int player, int card, event_t event)
     return 0;
   }
 LAB_022e1039:
-  default_target_definition(player, card, &td, 2);
-  td.special = 0x4000;
+  default_target_definition(player, card, &recovered_stack_td.target, 2);
+  recovered_stack_td.target.special = 0x4000;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
 
@@ -4866,8 +4896,8 @@ LAB_022e1039:
     pump_ability_until_eot(instance->parent_controller, instance->parent_card,
                            instance->targets[0].player, instance->targets[0].card, 2, 0, 0x80, 0);
   }
-  result = generic_activated_ability(player, card, event, 4, 2, 0, 0, 1, 0, 0, 0, &td,
-                                     "TARGET_CREATURE");
+  result = generic_activated_ability(player, card, event, 4, 2, 0, 0, 1, 0, 0, 0,
+                                     &recovered_stack_td.target, "TARGET_CREATURE");
   return result;
 }
 
@@ -5523,21 +5553,29 @@ int card_plague_belcher(int player, int card, event_t event)
   int iVar2;
   unsigned int uVar3;
   int iVar4;
-  target_definition_t td;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
 
   menace(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
 
-    default_target_definition(player, card, &td, 2);
-    td.preferred_controller = player;
-    td.allowed_controller = player;
-    td.allow_cancel = 0;
+    default_target_definition(player, card, &recovered_stack_td.target, 2);
+    recovered_stack_td.target.preferred_controller = player;
+    recovered_stack_td.target.allowed_controller = player;
+    recovered_stack_td.target.allow_cancel = 0;
     instance = get_card_instance(player, card);
-    iVar4 = can_target(&td);
+    iVar4 = can_target(&recovered_stack_td.target);
     if ((iVar4 != 0) &&
-        (iVar4 = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0), iVar4 != 0))
+        (iVar4 = new_pick_target(&recovered_stack_td.target, "TARGET_CREATURE_YOU_CONTROL", 0, 0),
+         iVar4 != 0))
     {
       add_counters_from_source(player, card, instance->targets[0].player, instance->targets[0].card,
                                COUNTER_M1_M1, 2);
@@ -5578,8 +5616,8 @@ int card_plague_belcher(int player, int card, event_t event)
   else if ((event == EVENT_GRAVEYARD_FROM_PLAY) &&
            ((card != affected_card || (player != affected_card_controller))))
   {
-    default_test_definition((test_definition_t *)&td, 0x47);
-    count_for_gfp_ability(player, card, 0x77, player, 0, (test_definition_t *)&td);
+    default_test_definition(&recovered_stack_td.test, 0x47);
+    count_for_gfp_ability(player, card, 0x77, player, 0, &recovered_stack_td.test);
   }
 LAB_022dcd49:
   instance = get_card_instance(player, card);
@@ -8270,4 +8308,151 @@ int card_hazorets_favor(int player, int card, event_t event)
   }
   result = global_enchantment(player, card, event);
   return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22e00d0; original cards/amonkhet.c:3339. */
+int card_defiant_greatmaw(int player, int card, event_t event)
+{
+  enum
+  {
+    ENABLE_XTRIGGER_M1_M1_COUNTERS = 64,
+    XTRIGGER_M1_M1_COUNTERS = 16780544
+  };
+
+  xtrigger_t xVar1;
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+
+    default_target_definition(player, card, &td, 2);
+    td.allow_cancel = 0;
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    instance = get_card_instance(player, card);
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
+      if (result != 0)
+      {
+        add_counters_from_source(player, card, instance->targets[0].player,
+                                 instance->targets[0].card, COUNTER_M1_M1, 2);
+      }
+    }
+    instance->number_of_targets = '\0';
+  }
+  enable_xtrigger_flags = enable_xtrigger_flags | ENABLE_XTRIGGER_M1_M1_COUNTERS;
+  xVar1 = trigger_condition;
+  if (trigger_condition == 0xe5)
+  {
+    xVar1 = xtrigger_impl_value_dont_use_directly;
+  }
+  if ((((xVar1 == XTRIGGER_M1_M1_COUNTERS) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((reason_for_trigger_controller == player && (trigger_cause == card))))
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      if (event == EVENT_TRIGGER)
+      {
+        event_result = event_result | 2;
+      }
+      else if (event == EVENT_RESOLVE_TRIGGER)
+      {
+
+        default_target_definition(player, card, &td, 2);
+        td.allowed_controller = player;
+        td.special = 0x4000;
+        instance = get_card_instance(player, card);
+        result = can_target(&td);
+        if (result != 0)
+        {
+          result = new_pick_target(&td, "Select another target creature you control.", 0, 0x80);
+          if (result != 0)
+          {
+            remove_counters_from_source(player, card, instance->targets[0].player,
+                                        instance->targets[0].card, COUNTER_M1_M1, 1);
+          }
+        }
+        instance->number_of_targets = '\0';
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22e2a60; original cards/amonkhet.c:4247. */
+int card_hapatra_vizier_of_poisons(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    token_generation_t token;
+    uint8_t bytes[84];
+  } recovered_stack_td;
+
+  check_legend_rule(player, card, event);
+  instance = get_card_instance(player, card);
+  result =
+      damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (result != 0)
+  {
+    default_target_definition(player, card, &recovered_stack_td.target, 2);
+    result = can_target(&recovered_stack_td.target);
+    if (result != 0)
+    {
+      result = new_pick_target(&recovered_stack_td.target, "TARGET_CREATURE", 0, 0);
+      if (result != 0)
+      {
+        add_counters_from_source(player, card, instance->targets[0].player,
+                                 instance->targets[0].card, COUNTER_M1_M1, 1);
+      }
+    }
+  }
+  if ((event == EVENT_COUNTERS) && (attacking_card_controller == player))
+  {
+    result = is_what(affected_card_controller, affected_card, 2);
+    if ((result != 0) && (counters_added_type == 1))
+    {
+      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      if (result == 0)
+      {
+        default_token_definition(player, card, 0x4985, &recovered_stack_td.token);
+        recovered_stack_td.target.illegal_abilities = 1;
+        recovered_stack_td.target.required_abilities = 1;
+        recovered_stack_td.token.color_forced = 8;
+        recovered_stack_td.target.illegal_color = 0x200;
+        generate_token(&recovered_stack_td.token);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d6fa0; original cards/amonkhet.c:4475. */
+const char *target_is_token_too_2022(int who_chooses, int player, int card, int targeting_player,
+                                     int targeting_card)
+{
+  int result;
+  const char *pcVar2;
+  result = is_token(player, card);
+  pcVar2 = NULL;
+  if (result == 0)
+  {
+    pcVar2 = "token";
+  }
+  return pcVar2;
 }
