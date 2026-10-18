@@ -232,7 +232,7 @@ int suspend(int player, int card, event_t event, int turns, int colorless, int b
 	return 0;
 }
 
-static int suspend_only(int player, int card, event_t event, int turns, int colorless, int black, int blue, int green, int red, int white)
+int suspend_only(int player, int card, event_t event, int turns, int colorless, int black, int blue, int green, int red, int white)
 {
 	card_instance_t *instance = get_card_instance(player, card);
 
@@ -7618,5 +7618,59 @@ int card_glass_asp(int player, int card, event_t event)
   iVar2 = create_legacy_effect(player, card, glass_asp_legacy);
   instance = get_card_instance(player, iVar2);
   instance->targets[0].player = (unsigned int)((char)iVar1 == '\0');
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20fef10; original cards/time_spiral.c:7330. */
+int card_voidmage_husher(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+
+  iVar1 = 1;
+  if (player == 1)
+  {
+    iVar2 = is_stolen(1, card);
+    iVar1 = 0;
+    if (iVar2 != 0)
+    {
+      iVar1 = 2;
+    }
+  }
+  sp_ability_trigger(player, event, iVar1, TYPE_ANY, NULL, player, card);
+  if (event != EVENT_SPA)
+  {
+    if (event == EVENT_CAN_CAST)
+    {
+      iVar1 = can_counter_activated_ability(player, card, EVENT_CAN_CAST, NULL);
+      return iVar1;
+    }
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance = get_card_instance(player, card);
+        instance->number_of_targets = '\0';
+        iVar1 = cast_counter_activated_ability(player, card, 0);
+        return iVar1;
+      }
+      etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
+    }
+    else
+    {
+      etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      if (event == EVENT_ETB)
+      {
+        resolve_counter_activated_ability(player, card, NULL, 0);
+        return 0;
+      }
+    }
+    return 0;
+  }
+  bounce_permanent(player, card);
+  etb_ability(player, card, EVENT_SPA, RESOLVE_TRIGGER_MANDATORY);
   return 0;
 }

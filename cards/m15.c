@@ -5099,3 +5099,56 @@ LAB_021a9b87:
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21b4360; original cards/m15.c:3393. */
+int card_might_makes_right(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  target_definition_t td;
+  test_definition_t test;
+
+  iVar1 = beginning_of_combat_2022(player, card, event, player);
+  if (iVar1 != 0)
+  {
+
+    default_test_definition(&test, 2);
+    iVar1 = check_battlefield_for_special_card(player, card, 2, 0x80, &test);
+    if (-1 < iVar1)
+    {
+      test.power = iVar1;
+    }
+    iVar1 = check_battlefield_for_special_card(player, card, player, 0, &test);
+    if (iVar1 != 0)
+    {
+      iVar1 = 1 - player;
+      iVar2 = check_battlefield_for_special_card(player, card, iVar1, 0, &test);
+      if (iVar2 == 0)
+      {
+
+        default_target_definition(player, card, &td, 2);
+        td.allow_cancel = 0;
+        td.allowed_controller = iVar1;
+        td.preferred_controller = iVar1;
+        instance = get_card_instance(player, card);
+        iVar1 = can_target(&td);
+        if (iVar1 != 0)
+        {
+          iVar1 = new_pick_target(
+              &td, "Might Makes Right: Select target creature an opponent controls.", 0, 0x80);
+          if (iVar1 != 0)
+          {
+            effect_act_of_treason(player, card, instance->targets[0].player,
+                                  instance->targets[0].card);
+          }
+        }
+        instance->number_of_targets = '\0';
+      }
+    }
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
+}

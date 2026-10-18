@@ -1,5 +1,9 @@
 #include "manalink.h"
 
+/* October 2022 private AI snapshots of the 14-byte card-count cache. */
+static uint8_t backup_card_counts[2][7];
+static uint8_t backup0_card_counts[2][7];
+
 int get_usertime_of_current_thread_in_ms(void);	// exe
 extern int start_usertime_of_current_thread_in_ms;
 
@@ -148,6 +152,9 @@ BACKUP_AND_SAVE_LIST
 #undef BACKUP_CMD_S
 void backup_data_for_ai(void)
 {
+  /* Recovered 2022 card-count fragment: backup_data_for_ai @ 0x26b1700. */
+  memcpy(backup_card_counts, card_counts, sizeof(card_counts));
+  /* End recovered 2022 card-count fragment: backup_data_for_ai. */
   // 0x498e30
   memcpy((void*)0x50be70, &must_attack, 0x1a740);
   STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
@@ -164,6 +171,9 @@ void backup_data_for_ai(void)
 
 void restore_data_for_ai(void)
 {
+  /* Recovered 2022 card-count fragment: restore_data_for_ai @ 0x26b1900. */
+  memcpy(card_counts, backup_card_counts, sizeof(card_counts));
+  /* End recovered 2022 card-count fragment: restore_data_for_ai. */
   // 0x498e70
   memcpy_suppress_size_warning(&must_attack, (void*)0x50be70, 0x1a740);
   STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
@@ -190,6 +200,9 @@ BACKUP_AND_SAVE_LIST
 #undef BACKUP_CMD_S
 void backup_data_for_ai_0(void)
 {
+  /* Recovered 2022 card-count fragment: backup_data_for_ai_0 @ 0x26b1b00. */
+  memcpy(backup0_card_counts, card_counts, sizeof(card_counts));
+  /* End recovered 2022 card-count fragment: backup_data_for_ai_0. */
   // 0x498d90
   // This target immediately follows 0x5265b0 in backup_data_for_ai()/restore_data_for_ai().
   memcpy((void*)0x526a30, &must_attack, 0x1cd00);
@@ -209,6 +222,9 @@ void backup_data_for_ai_0(void)
 
 void restore_data_for_ai_0(void)
 {
+  /* Recovered 2022 card-count fragment: restore_data_for_ai_0 @ 0x26b1d20. */
+  memcpy(card_counts, backup0_card_counts, sizeof(card_counts));
+  /* End recovered 2022 card-count fragment: restore_data_for_ai_0. */
   // 0x498df0
   memcpy_suppress_size_warning(&must_attack, (void*)0x526a30, 0x1cd00);
   STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);

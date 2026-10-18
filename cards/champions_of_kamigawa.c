@@ -5718,3 +5718,19 @@ int card_reverse_the_sands(int player, int card, event_t event)
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26182a0; original cards/champions_of_kamigawa.c:5241. */
+int card_time_stop(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    end_the_turn(player, card, EVENT_RESOLVE_SPELL);
+    kill_card(player, card, KILL_EXILE);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}

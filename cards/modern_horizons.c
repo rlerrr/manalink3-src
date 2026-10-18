@@ -2977,3 +2977,580 @@ int card_wrenn_and_six_emblem(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23363d0; original cards/modern_horizons.c:158. */
+int card_aria_of_flame(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    gain_life(1 - player, 10);
+    sp_ability_trigger(player, EVENT_ETB, 2, TYPE_SPELL, NULL, player, card);
+  }
+  else
+  {
+    sp_ability_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
+    if (event == EVENT_SPA)
+    {
+      add_counters_from_source(player, card, player, card, COUNTER_VERSE, 1);
+      default_target_definition(player, card, &td, 0x100);
+      td.zone = 0x1200;
+      td.allow_cancel = 0;
+      result = can_target(&td);
+      if (result != 0)
+      {
+        result = new_pick_target(&td, "TARGET_PLAYER_OR_PLANESWALKER", 0, 0);
+        if (result != 0)
+        {
+          result = count_counters(player, card, COUNTER_VERSE);
+          damage_target0(player, card, result);
+        }
+      }
+      instance = get_card_instance(player, card);
+      instance->number_of_targets = '\0';
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x233ada0; original cards/modern_horizons.c:2277. */
+int card_mirrodin_besieged(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    iVar2 = get_hand_sum(player, TYPE_ARTIFACT);
+    iVar3 = count_graveyard_by_type(player, 0x40);
+    iVar2 = do_dialog(player, player, card, -1, -1, " Mirran\n Phyrexian",
+                      (unsigned int)(iVar2 <= iVar3));
+    instance = get_card_instance(player, card);
+    instance->targets[1].player = iVar2;
+    instance = get_card_instance(player, card);
+    iVar2 = instance->targets[1].player;
+    if (iVar2 != 0)
+      goto LAB_0233add7;
+    sp_ability_trigger(player, EVENT_RESOLVE_SPELL, 2, TYPE_ARTIFACT, NULL, player, card);
+  }
+  else
+  {
+    instance = get_card_instance(player, card);
+    iVar2 = instance->targets[1].player;
+    if (iVar2 != 0)
+      goto LAB_0233add7;
+    sp_ability_trigger(player, event, 2, TYPE_ARTIFACT, NULL, player, card);
+    if (event == EVENT_SPA)
+    {
+      generate_token_by_id(player, card, 0x4968);
+    }
+  }
+  iVar2 = instance->targets[1].player;
+LAB_0233add7:
+  if ((iVar2 == 1) && (current_turn == player))
+  {
+    iVar2 = eot_trigger(player, card, event);
+    if (iVar2 != 0)
+    {
+      draw_a_card(player);
+      discard(player, 0, player);
+      iVar2 = count_graveyard_by_type(player, 0x40);
+      if (0xe < iVar2)
+      {
+        target_opponent(player, card);
+        lose_the_game(instance->targets[0].player);
+      }
+    }
+  }
+  iVar2 = global_enchantment(player, card, event);
+  return iVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x233b2e0; original cards/modern_horizons.c:2399. */
+int card_mox_tantalite(int player, int card, event_t event)
+{
+  int result;
+
+  result = suspend_only(player, card, event, 3, 0, 0, 0, 0, 0, 0);
+  if (result != 0)
+  {
+    return result;
+  }
+  result = artifact_mana_all_one_color(player, card, event, 1, 0);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int bladeback_sliver_shared_ability(int player, int card, event_t event);
+static int enduring_sliver_shared_ability(int player, int card, event_t event);
+static int hollowhead_sliver_shared_ability(int player, int card, event_t event);
+static int scuttling_sliver_shared_ability(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2334bb0; original cards/modern_horizons.c:372. */
+static int bladeback_sliver_shared_ability(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  target_definition_t td2;
+
+  pcVar1 = get_card_instance(player, card);
+  iVar4 = pcVar1->targets[1].player;
+  iVar2 = 0;
+  if (-1 < iVar4)
+  {
+
+    iVar2 = pcVar1->targets[1].card;
+    leaves_play_2022(iVar4, iVar2, event, 0, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+      add_status(player, card, 0x10000);
+      in_play(iVar4, iVar2);
+    }
+    else
+    {
+      pcVar3 = in_play(iVar4, iVar2);
+      if (pcVar3 == NULL)
+      {
+        if (event == EVENT_CAN_ACTIVATE)
+        {
+          return 0;
+        }
+        if (event == EVENT_CLEANUP)
+        {
+          kill_card(player, card, KILL_EXILE);
+        }
+      }
+    }
+    iVar4 = is_humiliated_for_ability(iVar4, iVar2, AL_NM_NL_ACT);
+    if ((iVar4 != 0) || (0 < hand_count[player]))
+    {
+      return 0;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      default_target_definition(player, card, &td2, 0x100);
+      td2.zone = 0x1200;
+      td2.allow_cancel = 0;
+    }
+    else
+    {
+      if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      {
+        return 0;
+      }
+      default_target_definition(player, card, &td2, 0x100);
+      td2.zone = 0x1200;
+      td2.allow_cancel = 0;
+      if ((event == EVENT_RESOLVE_ACTIVATION) &&
+          (iVar4 = would_validate_arbitrary_target(&td2, pcVar1->targets[2].player,
+                                                   pcVar1->targets[2].card),
+           iVar4 != 0))
+      {
+        damage_creature(pcVar1->targets[2].player, pcVar1->targets[2].card, 1,
+                        pcVar1->targets[0].player, pcVar1->targets[0].card);
+      }
+    }
+    iVar2 = shared_sliver_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td2,
+                                            "TARGET_ANY");
+  }
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x2336e00; original cards/modern_horizons.c:420. */
+int card_bladeback_sliver(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    result = create_legacy_activate(player, card, bladeback_sliver_shared_ability);
+    instance = get_card_instance(player, result);
+    instance->targets[1].player = player;
+    instance->targets[1].card = card;
+    instance->number_of_targets = '\x01';
+  }
+  result = slivercycling(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2334e10; original cards/modern_horizons.c:806. */
+static int enduring_sliver_shared_ability(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+
+  pcVar2 = get_card_instance(player, card);
+  iVar4 = pcVar2->targets[1].player;
+  if (iVar4 < 0)
+  {
+    return 0;
+  }
+
+  iVar1 = pcVar2->targets[1].card;
+  leaves_play_2022(iVar4, iVar1, event, 0, 0);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+    add_status(player, card, 0x10000);
+    in_play(iVar4, iVar1);
+    iVar4 = is_humiliated_for_ability(iVar4, iVar1, AL_NM_NL_ACT);
+    if (iVar4 != 0)
+    {
+      return 0;
+    }
+  LAB_02334eb0:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      if (event != EVENT_CLEANUP)
+      {
+        return 0;
+      }
+      goto LAB_02334ec4;
+    }
+  }
+  else
+  {
+    pcVar3 = in_play(iVar4, iVar1);
+    if (pcVar3 == NULL)
+    {
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        return 0;
+      }
+      if (event == EVENT_CLEANUP)
+      {
+        kill_card(player, card, KILL_EXILE);
+        iVar4 = is_humiliated_for_ability(iVar4, iVar1, AL_NM_NL_ACT);
+        if (iVar4 != 0)
+        {
+          return 0;
+        }
+        goto LAB_02334ece;
+      }
+    }
+    iVar4 = is_humiliated_for_ability(iVar4, iVar1, AL_NM_NL_ACT);
+    if (iVar4 != 0)
+    {
+      return 0;
+    }
+    if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+      goto LAB_02334eb0;
+  LAB_02334ec4:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_02334ece;
+  }
+  iVar4 = pcVar2->targets[0].card;
+  iVar1 = pcVar2->targets[0].player;
+  add_counters_from_source(iVar1, iVar4, iVar1, iVar4, COUNTER_P1_P1, 1);
+LAB_02334ece:
+  iVar4 =
+      shared_sliver_activated_ability(player, card, event, 0x11, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return iVar4;
+}
+
+/* ManalinkEh 2022: 0x2337bd0; original cards/modern_horizons.c:847. */
+int card_enduring_sliver(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    result = create_legacy_activate(player, card, enduring_sliver_shared_ability);
+    instance = get_card_instance(player, result);
+    instance->targets[1].player = player;
+    instance->targets[1].card = card;
+    instance->number_of_targets = '\x01';
+  }
+  result = slivercycling(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2335010; original cards/modern_horizons.c:1895. */
+static int hollowhead_sliver_shared_ability(int player, int card, event_t event)
+{
+  int card_00;
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  result = instance->targets[1].player;
+  if (result < 0)
+  {
+    return 0;
+  }
+
+  card_00 = instance->targets[1].card;
+  leaves_play_2022(result, card_00, event, 0, 0);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+    add_status(player, card, 0x10000);
+    in_play(result, card_00);
+    result = is_humiliated_for_ability(result, card_00, AL_NM_NL_ACT);
+    if (result != 0)
+    {
+      return 0;
+    }
+  LAB_023350ae:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      if (event != EVENT_CLEANUP)
+      {
+        return 0;
+      }
+      goto LAB_023350c2;
+    }
+  }
+  else
+  {
+    instance = in_play(result, card_00);
+    if (instance == NULL)
+    {
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        return 0;
+      }
+      if (event == EVENT_CLEANUP)
+      {
+        kill_card(player, card, KILL_EXILE);
+        result = is_humiliated_for_ability(result, card_00, AL_NM_NL_ACT);
+        if (result != 0)
+        {
+          return 0;
+        }
+        goto LAB_023350cc;
+      }
+    }
+    result = is_humiliated_for_ability(result, card_00, AL_NM_NL_ACT);
+    if (result != 0)
+    {
+      return 0;
+    }
+    if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+      goto LAB_023350ae;
+  LAB_023350c2:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_023350cc;
+  }
+  draw_a_card(player);
+LAB_023350cc:
+  result =
+      shared_sliver_activated_ability(player, card, event, 0x21, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x233a360; original cards/modern_horizons.c:1936. */
+int card_hollowhead_sliver(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    result = create_legacy_activate(player, card, hollowhead_sliver_shared_ability);
+    instance = get_card_instance(player, result);
+    instance->targets[1].player = player;
+    instance->targets[1].card = card;
+    instance->number_of_targets = '\x01';
+  }
+  result = slivercycling(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2335750; original cards/modern_horizons.c:2883. */
+static int scuttling_sliver_shared_ability(int player, int card, event_t event)
+{
+  int card_00;
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+
+  pcVar1 = get_card_instance(player, card);
+  result = pcVar1->targets[1].player;
+  if (result < 0)
+  {
+    return 0;
+  }
+
+  card_00 = pcVar1->targets[1].card;
+  leaves_play_2022(result, card_00, event, 0, 0);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+    add_status(player, card, 0x10000);
+    in_play(result, card_00);
+    result = is_humiliated_for_ability(result, card_00, AL_NM_NL_ACT);
+    if (result != 0)
+    {
+      return 0;
+    }
+  LAB_023357f0:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      if (event != EVENT_CLEANUP)
+      {
+        return 0;
+      }
+      goto LAB_02335804;
+    }
+  }
+  else
+  {
+    pcVar2 = in_play(result, card_00);
+    if (pcVar2 == NULL)
+    {
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        return 0;
+      }
+      if (event == EVENT_CLEANUP)
+      {
+        kill_card(player, card, KILL_EXILE);
+        result = is_humiliated_for_ability(result, card_00, AL_NM_NL_ACT);
+        if (result != 0)
+        {
+          return 0;
+        }
+        goto LAB_0233580e;
+      }
+    }
+    result = is_humiliated_for_ability(result, card_00, AL_NM_NL_ACT);
+    if (result != 0)
+    {
+      return 0;
+    }
+    if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+      goto LAB_023357f0;
+  LAB_02335804:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_0233580e;
+  }
+  untap_card(pcVar1->targets[0].player, pcVar1->targets[0].card);
+LAB_0233580e:
+  result = shared_sliver_activated_ability(player, card, event, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x233bfd0; original cards/modern_horizons.c:2924. */
+int card_scuttling_sliver(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    result = create_legacy_activate(player, card, scuttling_sliver_shared_ability);
+    instance = get_card_instance(player, result);
+    instance->targets[1].player = player;
+    instance->targets[1].card = card;
+    instance->number_of_targets = '\x01';
+  }
+  result = slivercycling(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x233cad0; original cards/modern_horizons.c:3205. */
+int card_soulherder(int player, int card, event_t event)
+{
+  int result;
+  resolve_trigger_t trig_mode;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (trigger_condition == 0xcd)
+  {
+    if (((card != affected_card) || (player != affected_card_controller)) ||
+        (current_turn != player))
+      goto LAB_0233cafe;
+
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    td.special = 0x4000;
+    instance = get_card_instance(player, card);
+    instance->number_of_targets = '\0';
+    result = can_target(&td);
+    trig_mode = RESOLVE_TRIGGER_0;
+    if (result != 0)
+    {
+      result = duh_mode(player);
+      trig_mode = (result != 0) + RESOLVE_TRIGGER_OPTIONAL;
+    }
+    result = eot_trigger_mode(player, card, event, player, trig_mode);
+    if ((result != 0) && (result = pick_target(&td, "ASHNODS_BATTLEGEAR"), result != 0))
+    {
+      blink_effect(instance->targets[0].player, instance->targets[0].card, NULL);
+    }
+  }
+  if (((trigger_condition == 0xd4) && (card == affected_card)) &&
+      ((player == affected_card_controller &&
+        ((reason_for_trigger_controller == player &&
+          (instance = get_card_instance(trigger_cause_controller, trigger_cause),
+           instance->kill_code == '\x04'))))))
+  {
+    default_test_definition((test_definition_t *)&td, 2);
+    test_leaves_play(player, card, event, 2, (test_definition_t *)&td, 1, 1);
+  }
+LAB_0233cafe:
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    return 0;
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x233d4d0; original cards/modern_horizons.c:3529. */
+int card_the_first_sliver(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  check_legend_rule(player, card, event);
+  cascade_2022(player, card, event);
+  if (event == EVENT_CAST_SPELL)
+  {
+    instance = in_play(player, card);
+    if ((instance != NULL) && (affected_card_controller == player))
+    {
+      result = has_subtype(player, affected_card, SUBTYPE_SLIVER);
+      if (result != 0)
+      {
+        result = is_token(affected_card_controller, affected_card);
+        if (result == 0)
+        {
+          result = check_special_flags(affected_card_controller, affected_card, 0x40000);
+          if (result == 0)
+          {
+            result = is_humiliated_for_ability(player, card, AL_TRIG);
+            if (result == 0)
+            {
+              do_cascade(affected_card_controller, affected_card, -1);
+            }
+          }
+        }
+      }
+    }
+  }
+  return 0;
+}

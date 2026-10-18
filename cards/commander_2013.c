@@ -1772,3 +1772,56 @@ int card_opal_palace(int player, int card, event_t event){
 
 	return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23c0880; original cards/commander_2013.c:1745. */
+static int opal_palace_legacy(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  unsigned int uVar4;
+  bool bVar5;
+
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (((((card != affected_card) || (affected_card_controller != player)) &&
+          (result = is_token(affected_card_controller, affected_card), result == 0)) &&
+         ((result = check_special_flags2(affected_card_controller, affected_card, -0x80000000),
+           result == 0 &&
+               (result = get_cmc(affected_card_controller, affected_card), 0 < result)))) &&
+        ((affected_card_controller == player &&
+          (result = check_special_flags2(player, affected_card, 0x1000000), result != 0))))
+    {
+      instance = get_card_instance(player, card);
+      if (instance->targets[1].card == 0)
+      {
+        result = get_updated_casting_cost(affected_card_controller, affected_card, -1,
+                                          EVENT_CAST_SPELL, -1);
+        bVar5 = 0 < result;
+      }
+      else
+      {
+        uVar3 = get_color(affected_card_controller, affected_card);
+        instance = get_card_instance(player, card);
+        uVar4 = color_to_color_test(instance->targets[1].card);
+        bVar5 = (uVar3 & uVar4) != 0;
+      }
+      if (bVar5)
+      {
+        result = get_commander_storm_count(player);
+        enters_the_battlefield_with_counters(affected_card_controller, affected_card,
+                                             EVENT_CAST_SPELL, COUNTER_P1_P1, result);
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  else if (((event == EVENT_STATIC_EFFECTS) && (stack_size == 0)) &&
+           (instance = get_card_instance(player, card),
+            mana_pool[player][instance->targets[1].card] < 1))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}

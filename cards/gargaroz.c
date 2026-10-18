@@ -903,3 +903,56 @@ LAB_02429210:
                                   "Select target creature you don\'t control.", 0);
   return iVar3;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24285e0; original cards/gargaroz.c:247. */
+int card_meddle(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td_spell;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    counterspell_target_definition(player, card, &td_spell, 0xff);
+    td_spell.special = td_spell.special | 0x8000;
+    td_spell.extra =
+        (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_creature;
+    result = deflect_one_target(player, card, EVENT_CAN_CAST, &td_spell);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      counterspell_target_definition(player, card, &td_spell, 0xff);
+      td_spell.special = td_spell.special | 0x8000;
+      td_spell.extra =
+          (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_creature;
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        set_special_flags2(card_on_stack_controller, card_on_stack, 0x4000);
+        deflect_one_target(player, card, EVENT_CAST_SPELL, &td_spell);
+        remove_special_flags2(card_on_stack_controller, card_on_stack, 0x4000);
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    counterspell_target_definition(player, card, &td_spell, 0xff);
+    td_spell.special = td_spell.special | 0x8000;
+    td_spell.extra =
+        (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_creature;
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      deflect_one_target(player, card, EVENT_RESOLVE_SPELL, &td_spell);
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    counterspell_target_definition(player, card, &td_spell, 0xff);
+  }
+  return 0;
+}

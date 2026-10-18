@@ -856,3 +856,161 @@ int card_sanctum_of_eternity(int player, int card, event_t event)
   result = mana_producer(player, card, event);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23b3f90; original cards/commander_2019.c:1032. */
+int card_song_of_the_worldsoul(int player, int card, event_t event)
+{
+  int result;
+
+  sp_ability_trigger(player, event, 2, TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    populate(player, card);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int effect_volrath_the_shapestealer(int player, int card, event_t event);
+static int volrath_the_shapestealer_impl(int player, int card, event_t event, int is_effect);
+
+/* ManalinkEh 2022: 0x23b1bd0; original cards/commander_2019.c:1106. */
+static int volrath_the_shapestealer_impl(int player, int card, event_t event, int is_effect)
+{
+  char cVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  int card_00;
+  int iStack_78;
+  int iStack_74;
+  target_definition_t td_copy;
+
+  pcVar2 = get_card_instance(player, card);
+  pcVar4 = pcVar2;
+  iStack_78 = player;
+  iStack_74 = card;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    iStack_78 = pcVar2->parent_controller;
+    iStack_74 = pcVar2->parent_card;
+    pcVar4 = get_card_instance(iStack_78, iStack_74);
+  }
+  if (is_effect == 0)
+  {
+    check_legend_rule(player, card, event);
+    cloning_card(player, card, event);
+    iVar3 = beginning_of_combat_2022(player, card, event, player);
+    if (iVar3 != 0)
+    {
+      default_target_definition(player, card, &td_copy, 2);
+      td_copy.preferred_controller = 1 - player;
+      iVar3 = can_target(&td_copy);
+      if ((iVar3 != 0) && (iVar3 = new_pick_target(&td_copy, "TARGET_CREATURE", 0, 1), iVar3 != 0))
+      {
+        add_counters_from_source(player, card, pcVar2->targets[0].player, pcVar2->targets[0].card,
+                                 COUNTER_M1_M1, 1);
+      }
+    }
+  LAB_023b1c57:
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+      goto LAB_023b1c75;
+  }
+  else
+  {
+    iStack_78 = (int)pcVar4->damage_target_player;
+    iStack_74 = pcVar4->damage_target_card;
+    cVar1 = pcVar2->damage_target_player;
+    if (cVar1 < '\0')
+      goto LAB_023b1c57;
+    if (event != EVENT_POWER)
+    {
+      if (event == EVENT_TOUGHNESS)
+      {
+        if (pcVar2->damage_target_card != affected_card)
+        {
+          return 0;
+        }
+        if (cVar1 != affected_card_controller)
+        {
+          return 0;
+        }
+        if (pcVar2->counter_toughness < 0)
+        {
+          return 0;
+        }
+        set_base_pt(5);
+        return 0;
+      }
+      goto LAB_023b1c57;
+    }
+    if (((pcVar2->damage_target_card == affected_card) && (cVar1 == affected_card_controller)) &&
+        (-1 < pcVar2->counter_power))
+    {
+      set_base_pt(7);
+    }
+  }
+  if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+LAB_023b1c75:
+  default_target_definition(player, card, &td_copy, 2);
+  td_copy.special = 0x40000;
+  td_copy.extra = 0;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    iVar3 = 0;
+    do
+    {
+      card_00 = active_cards_count[iVar3];
+      if (-1 < card_00)
+      {
+        do
+        {
+          pcVar4 = in_play(iVar3, card_00);
+          if ((((pcVar4 != NULL) && (pcVar4->damage_target_player == iStack_78)) &&
+               (pcVar4->damage_target_card == iStack_74)) &&
+              ((iVar5 = is_what(iVar3, card_00, 0x80),
+                iVar5 != 0 && (pcVar4->info_slot_fn == effect_volrath_the_shapestealer))))
+          {
+            kill_card(iVar3, card_00, KILL_EXILE);
+          }
+          card_00 = card_00 + -1;
+        } while (card_00 != -1);
+      }
+      iVar3 = iVar3 + 1;
+    } while (iVar3 != 2);
+    iVar3 = create_targetted_legacy_activate(iStack_78, iStack_74, effect_volrath_the_shapestealer,
+                                             iStack_78, iStack_74);
+    set_legacy_image(iStack_78, 0x5018, iVar3);
+    cloning_and_verify_legend(iStack_78, iStack_74, pcVar2->targets[0].player,
+                              pcVar2->targets[0].card);
+  }
+  iVar3 = generic_activated_ability(player, card, event, 6, 1, 0, 0, 0, 0, 0, 0, &td_copy,
+                                    "Select target creature with a counter on it");
+  return iVar3;
+}
+
+/* ManalinkEh 2022: 0x23b1f80; original cards/commander_2019.c:1176. */
+static int effect_volrath_the_shapestealer(int player, int card, event_t event)
+{
+  int result;
+
+  result = volrath_the_shapestealer_impl(player, card, event, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23b4000; original cards/commander_2019.c:1179. */
+int card_volrath_the_shapestealer(int player, int card, event_t event)
+{
+  int result;
+
+  result = volrath_the_shapestealer_impl(player, card, event, 0);
+  return result;
+}

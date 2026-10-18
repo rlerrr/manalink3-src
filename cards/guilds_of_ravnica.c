@@ -2640,3 +2640,1056 @@ LAB_02620415:
   iVar3 = generic_spell(player, card, event, 1, &td, "TARGET_OPPONENT", 1, NULL);
   return iVar3;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x261a5c0; original cards/guilds_of_ravnica.c:360. */
+int card_beast_whisperer(int player, int card, event_t event)
+{
+  sp_ability_trigger(player, event, 2, TYPE_CREATURE, NULL, player, card);
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  draw_cards(player, 1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x261bc60; original cards/guilds_of_ravnica.c:1137. */
+int card_electrostatic_field(int player, int card, event_t event)
+{
+  sp_ability_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  damage_player(1 - player, 1, player, card);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x261c980; original cards/guilds_of_ravnica.c:1414. */
+int card_fireminds_research(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  target_definition_t *ptStack_68;
+  target_definition_t td;
+
+  sp_ability_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
+  if (event != EVENT_SPA)
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      default_target_definition(player, card, &td, 0x102);
+      td.zone = 0x1200;
+      instance = get_card_instance(player, card);
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 1, 0, 0, 0,
+                                          0x17b0200, NULL, NULL);
+        if (iVar2 == 0)
+        {
+          iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 1, 0, 0, 0, 1, 0,
+                                            0x17b0500, &td, "TARGET_ANY");
+          return iVar2;
+        }
+        return 1;
+      }
+      if (event == EVENT_ACTIVATE)
+      {
+
+        iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 1, 0, 0, 0,
+                                          0x17b0200, NULL, NULL);
+        iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 1, 0, 0, 0, 1, 0,
+                                          0x17b0500, &td, "TARGET_ANY");
+        iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Draw a card", iVar2, 5,
+                            "Deal 5 damage", iVar3, 10, 0, 0, 0, 0);
+        if (iVar2 == 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        if (iVar2 != 1)
+        {
+          if (iVar2 != 2)
+          {
+            return 0;
+          }
+          iVar2 = generic_activated_ability(player, card, EVENT_ACTIVATE, 4, 1, 0, 0, 0, 1, 0,
+                                            0x17b0500, &td, "TARGET_ANY");
+          return iVar2;
+        }
+        iVar2 = generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 1, 0, 1, 0, 0, 0,
+                                          0x17b0200, NULL, NULL);
+        return iVar2;
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+        goto LAB_0261cbb4;
+      default_target_definition(player, card, &td, 0x102);
+      td.zone = 0x1200;
+      instance = get_card_instance(player, card);
+    }
+    ptStack_68 = &td;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      iVar2 = instance->info_slot;
+      if (iVar2 == 1)
+      {
+        draw_a_card(player);
+        iVar2 = instance->info_slot;
+      }
+      if ((iVar2 == 2) && (iVar2 = valid_target(ptStack_68), iVar2 != 0))
+      {
+        damage_target0(player, card, 5);
+      }
+    }
+    return 0;
+  }
+  add_counters_from_source(player, card, player, card, COUNTER_CHARGE, 1);
+LAB_0261cbb4:
+  iVar2 = global_enchantment(player, card, event);
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x261ee30; original cards/guilds_of_ravnica.c:2620. */
+int card_murmuring_mystic(int player, int card, event_t event)
+{
+  sp_ability_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  generate_token_by_id(player, card, 0x4b5e);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x261eee0; original cards/guilds_of_ravnica.c:2679. */
+int card_niv_mizzet_parun(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  cannot_be_countered(player, card, event);
+  result = card_drawn_trigger(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    td.allow_cancel = 0;
+    instance = get_card_instance(player, card);
+    instance->number_of_targets = '\0';
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = pick_target(&td, "TARGET_ANY");
+      if (result != 0)
+      {
+        damage_target0(player, card, 1);
+      }
+    }
+  }
+  sp_ability_trigger(2, event, 2, TYPE_SPELL, NULL, player, card);
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  draw_a_card(player);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2620070; original cards/guilds_of_ravnica.c:3259. */
+int card_ral_izzet_viceroy_emblem(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  sp_ability_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 0x102);
+  td.zone = 0x1200;
+  td.allow_cancel = 0;
+  result = can_target(&td);
+  if (result != 0)
+  {
+    result = new_pick_target(&td, "TARGET_ANY", 0, 0);
+    if (result != 0)
+    {
+      damage_target0(player, card, 4);
+      draw_cards(player, 2);
+    }
+  }
+  instance = get_card_instance(player, card);
+  instance->number_of_targets = '\0';
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2620680; original cards/guilds_of_ravnica.c:3436. */
+int card_runaway_steam_kin(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  if ((((trigger_condition == 0xd3) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (result = count_counters(player, card, COUNTER_P1_P1), result < 3))
+  {
+    default_test_definition(&test, 0xff);
+    test.color = get_sleighted_color_test(player, card, 0x10);
+    sp_ability_trigger(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_SPA)
+  {
+    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  }
+  else
+  {
+    if (event == EVENT_COUNT_MANA)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      result = can_produce_mana(player, card);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = count_counters(player, card, COUNTER_P1_P1);
+      if (result < 3)
+      {
+        return 0;
+      }
+      result = count_counters(player, card, COUNTER_P1_P1);
+      declare_mana_available(player, 4, (result / 3) * 3);
+      return 0;
+    }
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = can_produce_mana(player, card);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 0, 0, 0, 0,
+                                         0x1000300, NULL, NULL);
+      return (unsigned int)(result != 0);
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 0, 0, 0, 0, 0, 0, 0x1000300, NULL,
+                                NULL);
+      tapped_for_mana_color = -2;
+      return 0;
+    }
+  }
+  if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    return 0;
+  }
+  produce_mana(player, 4, 3);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x261a3e0; original cards/guilds_of_ravnica.c:324. */
+int card_beacon_bolt(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  target_definition_t td;
+
+  if ((event == EVENT_GRAVEYARD_ABILITY) || (event == EVENT_PAY_FLASHBACK_COSTS))
+  {
+    iVar1 = jumpstart(player, card, event, 0x4b5b);
+    return iVar1;
+  }
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    iVar1 = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_CREATURE", 1, NULL);
+    return iVar1;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+    {
+      default_target_definition(player, card, &td, 2);
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+
+        iVar1 = count_rfg_by_type(player, 0x38);
+        iVar2 = count_graveyard_by_type(player, 0x38);
+        damage_target0(player, card, iVar2 + iVar1);
+        kill_card(player, card, KILL_DESTROY);
+      }
+      goto LAB_0261a449;
+    }
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+LAB_0261a449:
+  iVar1 = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x261abf0; original cards/guilds_of_ravnica.c:699. */
+int card_crackling_drake(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    if (((event == EVENT_POWER) && (card == affected_card)) && (player == affected_card_controller))
+    {
+      iVar1 = count_rfg_by_type(player, 0x38);
+      iVar2 = count_graveyard_by_type(player, 0x38);
+      set_characteristic_pt(iVar1 + iVar2);
+    }
+    return 0;
+  }
+  draw_a_card(player);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x261fdf0; original cards/guilds_of_ravnica.c:3179. */
+int card_ral_izzet_viceroy(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  bool bVar5;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  bVar5 = event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE;
+  if ((event == EVENT_RESOLVE_ACTIVATION) || (bVar5))
+  {
+
+    instance = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 2);
+    iVar1 = count_counters(player, card, COUNTER_LOYALTY);
+    iVar3 = count_counters(player, card, COUNTER_LOYALTY);
+    iVar4 = can_target(&td);
+    iVar1 = dialog_impl(player, card, event, "\001\002", "\001\017",
+                        "Check the first two cards of your deck", 1, 5, 1, "Damage target creature",
+                        iVar4, ((3 < iVar3) - 1 & 0xfffffff2) + 0xf, 0xfffffffd, "Emblem", 1,
+                        ((8 < iVar1) - 1 & 0xffffffed) + 0x14, 0xfffffff8, 0, 0, 0, 0);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (iVar1 == 0)
+      {
+        return 0;
+      }
+    }
+    else if (bVar5)
+    {
+      instance->number_of_targets = '\0';
+      if (iVar1 == 2)
+      {
+        new_pick_target(&td, "TARGET_CREATURE", 0, 1);
+      }
+    }
+    else if (iVar1 == 2)
+    {
+      iVar1 = valid_target(&td);
+      if (iVar1 != 0)
+      {
+
+        iVar1 = count_rfg_by_type(player, 0x38);
+        iVar3 = count_graveyard_by_type(player, 0x38);
+        damage_target0(player, card, iVar3 + iVar1);
+      }
+    }
+    else if (iVar1 == 3)
+    {
+      generate_token_by_id(player, card, 0x4c0c);
+    }
+    else if (iVar1 == 1)
+    {
+      select_one_and_mill_the_rest(player, player, 2, 0xff);
+    }
+  }
+  iVar1 = planeswalker(player, card, event, 5);
+  return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int hybrid_split_card(int player, int card, event_t event, int card_id_first_half,
+                      int can_play_first_half, int priority_first_half, int id_second_half,
+                      int can_play_second_half, int priority_second_half);
+
+/* ManalinkEh 2022: 0x2619f70; original cards/guilds_of_ravnica.c:157. */
+int hybrid_split_card(int player, int card, event_t event, int card_id_first_half,
+                      int can_play_first_half, int priority_first_half, int id_second_half,
+                      int can_play_second_half, int priority_second_half)
+{
+  int result;
+
+  modify_cost_for_hybrid_spells(player, card, event, 0);
+  result = generic_split_card_2022(player, card, event, card_id_first_half, can_play_first_half,
+                                   priority_first_half, id_second_half, can_play_second_half,
+                                   priority_second_half);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x261bd70; original cards/guilds_of_ravnica.c:1215. */
+int card_expansion_explosion(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  unsigned int uVar2;
+  int result;
+  int can_play_first_half;
+  target_definition_t td_spell;
+  target_definition_t td_any;
+  target_definition_t td_player;
+
+  counterspell_target_definition(player, card, &td_spell, 0x18);
+  td_spell.special = td_spell.special | 0x800;
+  td_spell.extra = 4;
+  default_target_definition(player, card, &td_any, 0x102);
+  td_any.zone = 0x1200;
+  default_target_definition(player, card, &td_player, 0);
+  td_player.zone = 0x1000;
+  if (event == EVENT_PLAY_FIRST_HALF)
+  {
+    result = twincast(player, card, 0x6c, &td_spell, NULL);
+    return result;
+  }
+  if (event == EVENT_PLAY_SECOND_HALF)
+  {
+    new_pick_target(&td_any, "Select target for damage", 0, 0x81);
+    new_pick_target(&td_player, "Select target player to draw cards", 1, 0x81);
+    result = generic_spell(player, card, EVENT_CAST_SPELL, 4, NULL, NULL, 0, NULL);
+    return result;
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+        goto LAB_0261be7f;
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          uVar2 = instance->info_slot;
+          if ((uVar2 & 1) != 0)
+          {
+            twincast(player, card, 0x71, &td_spell, NULL);
+            uVar2 = instance->info_slot;
+          }
+          if (((uVar2 & 2) != 0) &&
+              ((result = validate_target(player, card, &td_any, 0),
+                result != 0 ||
+                    (result = validate_target(player, card, &td_player, 1), result != 0))))
+          {
+            damage_target0(player, card, x_value);
+            draw_cards(instance->targets[1].player, x_value);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0261be7f;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+        goto LAB_0261be7f;
+    }
+  }
+  get_card_instance(player, card);
+LAB_0261be7f:
+  result = can_target(&td_any);
+  can_play_first_half = counterspell(player, card, EVENT_CAN_CAST, &td_spell, 0);
+  result =
+      hybrid_split_card(player, card, event, 0x4b9b, can_play_first_half, 5, 0x4b9e, result, 8);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x261c660; original cards/guilds_of_ravnica.c:1358. */
+int card_find_finality(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  unsigned int uVar2;
+  int result;
+  target_definition_t td;
+  test_definition_t test;
+
+  new_default_test_definition(&test, 2, "Select up to two target creature cards.");
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = player;
+  td.illegal_abilities = 0;
+  td.allow_cancel = 2;
+  if (event == EVENT_PLAY_FIRST_HALF)
+  {
+    result = spell_return_up_to_n_target_cards_from_your_graveyard_to_your_hand(
+        player, card, EVENT_CAST_SPELL, 2, &test, 0);
+    return result;
+  }
+  if (event == EVENT_PLAY_SECOND_HALF)
+  {
+    new_pick_target(&td, "SELECT_A_CREATURE_YOU_CONTROL", 0, 0);
+    return 0;
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+        goto LAB_0261c744;
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          uVar2 = instance->info_slot;
+          if ((uVar2 & 1) != 0)
+          {
+            spell_return_up_to_n_target_cards_from_your_graveyard_to_your_hand(
+                player, card, EVENT_RESOLVE_SPELL, 2, &test, 0);
+            uVar2 = instance->info_slot;
+          }
+          if ((uVar2 & 2) != 0)
+          {
+            result = valid_target(&td);
+            if (result != 0)
+            {
+              add_counters_from_source(player, card, instance->targets[0].player,
+                                       instance->targets[0].card, COUNTER_P1_P1, 2);
+            }
+
+            pump_subtype_until_eot(player, card, current_turn, -1, -4, -4, 0, 0);
+            pump_subtype_until_eot(player, card, current_turn ^ 1, -1, -4, -4, 0, 0);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0261c744;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+        goto LAB_0261c744;
+    }
+  }
+  get_card_instance(player, card);
+LAB_0261c744:
+  result = spell_return_up_to_n_target_cards_from_your_graveyard_to_your_hand(
+      player, card, EVENT_CAN_CAST, 2, &test, 0);
+  result = hybrid_split_card(player, card, event, 0x4ba1, result, 10, 0x4ba0, 1, 8);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x261d990; original cards/guilds_of_ravnica.c:1961. */
+int card_invert_invent(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  unsigned int uVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  target_definition_t td;
+  test_definition_t test_instant;
+  test_definition_t test_sorcery;
+
+  default_target_definition(player, card, &td, 2);
+  td.allow_cancel = 3;
+  new_default_test_definition(&test_instant, 0x10, "Select an instant card.");
+  test_instant.no_shuffle = 1;
+  new_default_test_definition(&test_sorcery, 8, "Select a sorcery card.");
+  if (event == EVENT_PLAY_FIRST_HALF)
+  {
+    iVar3 = generic_spell(player, card, EVENT_CAST_SPELL, 0x20, &td, "TARGET_CREATURE", 2, NULL);
+    return iVar3;
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+        goto LAB_0261da82;
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        pcVar1 = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          uVar2 = pcVar1->info_slot;
+          if ((uVar2 & 1) != 0)
+          {
+
+            pcVar4 = get_card_instance(player, card);
+            if (pcVar4->number_of_targets != '\0')
+            {
+              iVar3 = 0;
+              do
+              {
+                iVar5 = validate_target(player, card, &td, iVar3);
+                if (iVar5 != 0)
+                {
+                  switch_power_and_toughness_until_eot(player, card, pcVar1->targets[iVar3].player,
+                                                       pcVar1->targets[iVar3].card);
+                }
+                iVar3 = iVar3 + 1;
+              } while (iVar3 < (int)(unsigned int)pcVar4->number_of_targets);
+            }
+            uVar2 = pcVar1->info_slot;
+          }
+          if ((uVar2 & 2) != 0)
+          {
+            new_global_tutor(player, player, 1, 1, 0, 1, &test_instant);
+            new_global_tutor(player, player, 1, 1, 0, 1, &test_sorcery);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0261da82;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+        goto LAB_0261da82;
+    }
+  }
+  get_card_instance(player, card);
+LAB_0261da82:
+  iVar3 = can_target(&td);
+  iVar3 = hybrid_split_card(player, card, event, 0x4bcd, iVar3, 8, 0x4bcc, 1, 10);
+  return iVar3;
+}
+
+/* ManalinkEh 2022: 0x2620160; original cards/guilds_of_ravnica.c:3300. */
+int card_response_resurgence(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  unsigned int uVar2;
+  int result;
+  int can_play_first_half;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, 2);
+  td.required_state = 0x20;
+  if (event == EVENT_PLAY_FIRST_HALF)
+  {
+    result = generic_spell(player, card, EVENT_CAST_SPELL, 1, &td,
+                           "TARGET_ATTACKING_BLOCKING_CREATURE", 1, NULL);
+    return result;
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+        goto LAB_02620203;
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          uVar2 = instance->info_slot;
+          if ((uVar2 & 1) != 0)
+          {
+            result = valid_target(&td);
+            if (result != 0)
+            {
+              damage_target0(player, card, 5);
+            }
+            uVar2 = instance->info_slot;
+          }
+          if ((uVar2 & 2) != 0)
+          {
+            pump_subtype_until_eot(player, card, player, -1, 0, 0, 0x100, 8);
+            extra_combat_effect(player, card, EVENT_RESOLVE_SPELL, 0, NULL, 1);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02620203;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+        goto LAB_02620203;
+    }
+  }
+  get_card_instance(player, card);
+LAB_02620203:
+  result = can_sorcery_be_played(player, event);
+  can_play_first_half = can_target(&td);
+  result =
+      hybrid_split_card(player, card, event, 0x4c0e, can_play_first_half, 5, 0x4c10, result, 8);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x26198e0; original cards/guilds_of_ravnica.c:4. */
+void surveil(int player, int number)
+{
+  int to_look = count_deck(player);
+  if (number < to_look)
+    to_look = number;
+  if (to_look != 0)
+  {
+    int added[to_look];
+    int ac = 0;
+    do
+    {
+      test_definition_t this_test;
+      new_default_test_definition(&this_test, TYPE_ANY, "Select a card to put into your graveyard");
+      this_test.create_minideck = (unsigned short)to_look;
+      int selected =
+          new_select_a_card(player, player, TUTOR_FROM_DECK, 0, AI_MIN_VALUE, -1, &this_test);
+      if (selected == -1)
+        break;
+      added[ac] = deck_ptr[player][selected];
+      remove_card_from_deck(player, selected);
+      ++ac;
+      --to_look;
+    } while (to_look != 0);
+    if (ac != 0)
+    {
+      for (int i = 0; i < ac; ++i)
+      {
+        int card_added = add_card_to_hand(player, added[i]);
+        put_on_top_of_deck(player, card_added);
+      }
+      mill(player, ac);
+    }
+    if (to_look != 0)
+      rearrange_top_x(player, player, to_look);
+  }
+  if (number > 0)
+    dispatch_event(player, -1, EVENT_SURVEIL);
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x261b800; original cards/guilds_of_ravnica.c:991. */
+int card_discovery_dispersal(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  unsigned int uVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  int iVar5;
+  int player_00;
+  int iStack_d4;
+  int iStack_d0;
+  target_definition_t td;
+  char msg[100];
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+        goto LAB_0261ba38;
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        pcVar1 = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          uVar2 = pcVar1->info_slot;
+          if ((uVar2 & 1) != 0)
+          {
+            surveil(player, 2);
+            draw_a_card(player);
+            uVar2 = pcVar1->info_slot;
+          }
+          if ((uVar2 & 2) != 0)
+          {
+
+            player_00 = 1 - player;
+            iStack_d4 = 1;
+            pcVar1->targets[0].card = -1;
+            pcVar1->targets[0].player = -1;
+            iStack_d0 = -1;
+            iVar5 = active_cards_count[player_00] + -1;
+            if (-1 < iVar5)
+            {
+              do
+              {
+                while ((pcVar3 = in_play(player_00, iVar5),
+                        pcVar3 == NULL || (iVar4 = is_what(player_00, iVar5, 2), iVar4 == 0)))
+                {
+                LAB_0261b8a8:
+                  iVar5 = iVar5 + -1;
+                  if (iVar5 == -1)
+                    goto LAB_0261b920;
+                }
+                iVar4 = get_cmc(player_00, iVar5);
+                if (iVar4 <= iStack_d0)
+                {
+                  iVar4 = get_cmc(player_00, iVar5);
+                  iStack_d4 = iStack_d4 + (unsigned int)(iVar4 == iStack_d0);
+                  goto LAB_0261b8a8;
+                }
+                pcVar1->targets[0].card = iVar5;
+                pcVar1->targets[0].player = player_00;
+                iStack_d0 = get_cmc(player_00, iVar5);
+                iVar5 = iVar5 + -1;
+                iStack_d4 = 1;
+              } while (iVar5 != -1);
+            LAB_0261b920:
+              if (1 < iStack_d4)
+              {
+                default_target_definition(player, card, &td, 2);
+                td.illegal_abilities = 0;
+                td.allow_cancel = 0;
+                td.extra = iStack_d0;
+                td.special = 0x1000000;
+                td.who_chooses = player_00;
+                td.allowed_controller = player_00;
+                td.preferred_controller = player_00;
+                scnprintf(msg, 100, "Select a creature you control with CMC %d.", iStack_d0);
+                pcVar1->number_of_targets = '\0';
+                new_pick_target(&td, msg, 0, 0x80);
+              }
+              iVar5 = pcVar1->targets[0].player;
+              if ((iVar5 != -1) && (iVar4 = pcVar1->targets[0].card, iVar4 != -1))
+              {
+                bounce_permanent(iVar5, iVar4);
+              }
+            }
+            discard(player_00, 0, player);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0261ba38;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+        goto LAB_0261ba38;
+    }
+  }
+  get_card_instance(player, card);
+LAB_0261ba38:
+  iVar5 = can_sorcery_be_played(player, event);
+  iVar5 = hybrid_split_card(player, card, event, 0x4b8a, iVar5, 6, 0x4b8d, 1, 10);
+  return iVar5;
+}
+
+/* ManalinkEh 2022: 0x261bbb0; original cards/guilds_of_ravnica.c:1098. */
+int card_doom_whisperer(int player, int card, event_t event)
+{
+  int result;
+
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      surveil(player, 2);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 0, 0, 2, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x261eb60; original cards/guilds_of_ravnica.c:2525. */
+int card_mission_briefing(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    surveil(player, 2);
+    result = count_graveyard_by_type(player, 0x38);
+    if (result != 0)
+    {
+
+      new_default_test_definition(&test, 0x38, "Select target instant or sorcery card.");
+      result = new_select_a_card(player, player, 2, 1, 1, -1, &test);
+      if (-1 < result)
+      {
+        create_spell_has_flashback_legacy(player, card, result, 0);
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x261f010; original cards/guilds_of_ravnica.c:2715. */
+int card_notion_rain(int player, int card, event_t event)
+{
+  int result;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      surveil(player, 2);
+      draw_cards(player, 2);
+      damage_player(player, 2, player, card);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2620b60; original cards/guilds_of_ravnica.c:3538. */
+int card_sinister_sabotage(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = counterspell_validate(player, card, NULL, 0);
+    if (result != 0)
+    {
+
+      instance = get_card_instance(player, card);
+      real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
+      surveil(player, 1);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 2, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2620eb0; original cards/guilds_of_ravnica.c:3742. */
+int card_thought_erasure(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  ec_definition_t ec;
+  target_definition_t td;
+  test_definition_t this_test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.zone = 0x1000;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            default_ec_definition(instance->targets[0].player, player, &ec);
+            new_default_test_definition(&this_test, 1, "Select a nonland card.");
+            this_test.type_flag = 1;
+            new_effect_coercion(&ec, &this_test);
+            surveil(player, 1);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02620f2d;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.zone = 0x1000;
+  get_card_instance(player, card);
+LAB_02620f2d:
+  result = generic_spell(player, card, event, 0x40, &td, NULL, 1, NULL);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x261a290; original cards/guilds_of_ravnica.c:268. */
+int card_aurelia_exemplar_of_justice(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  mentor(player, card, event);
+  result = beginning_of_combat_2022(player, card, event, player);
+  if (result != 0)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.allow_cancel = 2;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
+      if (result != 0)
+      {
+
+        instance = get_card_instance(player, card);
+        uVar3 = get_color(instance->targets[0].player, instance->targets[0].card);
+        pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                               2, 0, (uVar3 & 0x10) << 3, uVar3 >> 2 & 8);
+      }
+    }
+  }
+  return 0;
+}

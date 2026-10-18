@@ -1228,3 +1228,118 @@ int card_game_plan(int player, int card, event_t event)
   iVar2 = resolve_timetwister(player, card, event);
   return iVar2;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2026070; original cards/battlebond.c:67. */
+int card_arcane_artisan(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int iVar5;
+  token_generation_t token;
+  target_definition_t td;
+  test_definition_t this_test;
+
+  leaves_play_2022(player, card, event, 1, 0);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+
+    iVar1 = 0;
+    do
+    {
+      while (iVar1 == 0)
+      {
+        iVar4 = active_cards_count[player] + -1;
+        iVar5 = player;
+        if (-1 < iVar4)
+          goto LAB_020261c3;
+        iVar1 = 1;
+      }
+      iVar4 = active_cards_count[1 - player];
+      iVar5 = 1 - player;
+      while (iVar4 = iVar4 + -1, -1 < iVar4)
+      {
+      LAB_020261c3:
+        instance = in_play(iVar5, iVar4);
+        if (instance != NULL)
+        {
+          iVar2 = is_what(iVar5, iVar4, 2);
+          if (iVar2 != 0)
+          {
+
+            iVar2 = is_token(iVar5, iVar4);
+            if (iVar2 != 0)
+            {
+              instance = get_card_instance(iVar5, iVar4);
+              if (((-1 < instance->damage_source_player) &&
+                   (player == instance->damage_source_player)) &&
+                  (card == instance->damage_source_card))
+              {
+                kill_card(iVar5, iVar4, KILL_EXILE);
+              }
+            }
+          }
+        }
+      }
+
+      iVar1 = iVar1 + 1;
+    } while (iVar1 < 2);
+  }
+  else if (((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
+           ((event == EVENT_RESOLVE_ACTIVATION || (event == EVENT_CLEANUP))))
+  {
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+
+      instance = get_card_instance(player, card);
+      new_default_test_definition(&this_test, 0, "Select a card to exile.");
+      draw_a_card(instance->targets[0].player);
+      iVar1 = instance->targets[0].player;
+      iVar1 = new_select_a_card(iVar1, iVar1, 4, 1, 3, -1, &this_test);
+      if (-1 < iVar1)
+      {
+
+        iVar4 = is_what(instance->targets[0].player, iVar1, 2);
+        iVar5 = get_original_id(instance->targets[0].player, iVar1);
+        rfg_card_in_hand(instance->targets[0].player, iVar1);
+        if (iVar4 != 0)
+        {
+          default_token_definition(player, card, iVar5, &token);
+          token.t_player = instance->targets[0].player;
+          generate_token(&token);
+        }
+      }
+    }
+    iVar1 = generic_activated_ability(player, card, event, 5, 2, 0, 1, 0, 0, 0, 0, &td,
+                                      "TARGET_PLAYER");
+    return iVar1;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20285b0; original cards/battlebond.c:1024. */
+int card_toothy_imaginary_friend(int player, int card, event_t event)
+{
+  int result;
+
+  check_legend_rule(player, card, event);
+  partner_with(player, card, event, 0x48bd);
+  result = card_drawn_trigger(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (result != 0)
+  {
+    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  }
+  leaves_play_2022(player, card, event, 1, 1);
+  if (event != EVENT_LEAVES_PLAY_ABILITY)
+  {
+    return 0;
+  }
+  result = count_counters(player, card, COUNTER_P1_P1);
+  draw_cards(player, result);
+  return 0;
+}

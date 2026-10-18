@@ -7745,3 +7745,15 @@ int card_weldfast_monitor(int player, int card, event_t event)
   result = generic_shade(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0x10000);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23af410; original cards/kaladesh.c:7067. */
+int card_panharmonicon(int player, int card, event_t event)
+{
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    card_counts[player][2] = card_counts[player][2] + '\x01';
+  }
+  return 0;
+}

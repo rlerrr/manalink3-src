@@ -5573,3 +5573,372 @@ LAB_022d68a1:
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int the_mirari_conjecture_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x22caf90; original cards/dominaria.c:163. */
+int card_adeliz_the_cinder_wind(int player, int card, event_t event)
+{
+  test_definition_t wiz_test;
+
+  check_legend_rule(player, card, event);
+  haste(player, card, event);
+  sp_ability_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  default_test_definition(&wiz_test, 2);
+  wiz_test.subtype = 0xd6;
+  pump_creatures_until_eot_merge_pt(player, card, player, 1, 1, &wiz_test);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22c9b90; original cards/dominaria.c:3762. */
+int the_mirari_conjecture_legacy(int player, int card, event_t event)
+{
+  int result;
+
+  sp_ability_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    copy_spell_from_stack(player, trigger_cause_controller, trigger_cause);
+  }
+  result = eot_trigger(player, card, event);
+  if (result == 0)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d4ba0; original cards/dominaria.c:3774. */
+int card_the_mirari_conjecture(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  if ((event & ~EVENT_SET_LEGACY_EFFECT_NAME) == EVENT_CHAPTER1)
+  {
+    if (event == EVENT_CHAPTER1)
+    {
+      default_test_definition(&test, 0x30);
+      test.type_flag = 2;
+    }
+    else
+    {
+      default_test_definition(&test, 8);
+    }
+    result = new_special_count_grave(player, &test);
+    if (result != 0)
+    {
+      result = graveyard_has_shroud(player);
+      if (result == 0)
+      {
+        new_global_tutor(player, player, 2, 1, 0, 1, &test);
+      }
+    }
+  }
+  else if (event == EVENT_CHAPTER3)
+  {
+    create_legacy_effect(player, card, the_mirari_conjecture_legacy);
+  }
+  result = saga(player, card, event, 3);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22ca3f0; original cards/dominaria.c:11. */
+static void cast_historic_spell_2022(int player, int card, event_t event)
+{
+  int result;
+  if ((trigger_condition == 0xd3) && (affected_card == card))
+  {
+    if (((affected_card_controller == player) && (player == reason_for_trigger_controller)) &&
+        ((result = is_what(trigger_cause_controller, trigger_cause, 0x40),
+          result != 0 || ((result = is_legendary(trigger_cause_controller, trigger_cause),
+                           result != 0 || (result = has_subtype(trigger_cause_controller,
+                                                                trigger_cause, SUBTYPE_SAGA),
+                                           result != 0))))))
+    {
+      result = duh_mode(player);
+      sp_ability_trigger(player, event, (result != 0) + 1, TYPE_ANY, NULL, player, card);
+    }
+    return;
+  }
+  return;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22cb200; original cards/dominaria.c:229. */
+int card_artificers_assistant(int player, int card, event_t event)
+{
+  cast_historic_spell_2022(player, card, event);
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  scry(player, 1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22ceb10; original cards/dominaria.c:1491. */
+int card_jhoira_weatherlight_captain(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  cast_historic_spell_2022(player, card, event);
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  draw_a_card(player);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d4230; original cards/dominaria.c:3548. */
+int card_teshar_ancestors_apostle(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+
+  check_legend_rule(player, card, event);
+  cast_historic_spell_2022(player, card, event);
+  if ((event == EVENT_SPA) && (spell_fizzled != 1))
+  {
+
+    new_default_test_definition(&this_test, 2, "Select a creature card with CMC 3 or less.");
+    this_test.cmc = 4;
+    this_test.cmc_flag = 3;
+    result = new_special_count_grave(player, &this_test);
+    if (0 < result)
+    {
+      result = graveyard_has_shroud(player);
+      if (result == 0)
+      {
+        new_global_tutor(player, player, 2, 4, 1, 1, &this_test);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d56b0; original cards/dominaria.c:4090. */
+int card_traxos_scourge_of_kroog(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  comes_into_play_tapped(player, card, event);
+  does_not_untap(player, card, event);
+  cast_historic_spell_2022(player, card, event);
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  untap_card(player, card);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22d1690; original cards/dominaria.c:2465. */
+int card_naban_dean_of_iteration(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    card_counts[player][3] = card_counts[player][3] + '\x01';
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22d1980; original cards/dominaria.c:2535. */
+int card_oath_of_teferi(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+
+    default_target_definition(player, card, &td, 0x47);
+    td.allowed_controller = player;
+    td.allow_cancel = 0;
+    td.special = 0x4000;
+    instance = get_card_instance(player, card);
+    iVar1 = can_target(&td);
+    if ((iVar1 != 0) &&
+        (iVar1 = new_pick_target(&td, "Select another target permanent you control.", 0, 0x80),
+         iVar1 != 0))
+    {
+      remove_until_eot(player, card, instance->targets[0].player, instance->targets[0].card);
+    }
+    instance->number_of_targets = '\0';
+    leaves_play_2022(player, card, EVENT_ETB, 0, 0);
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    iVar1 = get_id(player, card);
+    iVar1 = count_cards_by_id(player, iVar1);
+
+    if ((iVar1 == 1) && (0 < active_cards_count[player]))
+    {
+      iVar1 = 0;
+      do
+      {
+        instance = in_play(player, iVar1);
+        if ((instance != NULL) && (iVar3 = is_what(player, iVar1, 0x100), iVar3 != 0))
+        {
+          instance = get_card_instance(player, iVar1);
+          instance->targets[9].card = instance->targets[9].card + 1;
+        }
+        iVar1 = iVar1 + 1;
+      } while (iVar1 < active_cards_count[player]);
+    }
+    leaves_play_2022(player, card, EVENT_RESOLVE_SPELL, 0, 0);
+  }
+  else
+  {
+    leaves_play_2022(player, card, event, 0, 0);
+
+    if ((((event == EVENT_LEAVES_PLAY_ABILITY) &&
+          (iVar1 = is_humiliated_for_ability(player, card, AL_STATIC), iVar1 == 0)) &&
+         (iVar1 = check_battlefield_for_id(player, 0x482a), iVar1 == 0)) &&
+        (iVar1 = 0, 0 < active_cards_count[player]))
+    {
+      do
+      {
+        instance = in_play(player, iVar1);
+        if ((instance != NULL) && (iVar3 = is_what(player, iVar1, 0x100), iVar3 != 0))
+        {
+          instance = get_card_instance(player, iVar1);
+          instance->targets[9].card = instance->targets[9].card + -1;
+        }
+        iVar1 = iVar1 + 1;
+      } while (iVar1 < active_cards_count[player]);
+    }
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22ccd40; original cards/dominaria.c:748. */
+int card_curators_ward(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+  target_definition_t td;
+
+  pcVar1 = get_card_instance(player, card);
+  other_leaves_play_2022(player, card, (int)pcVar1->damage_target_player,
+                         pcVar1->damage_target_card, event, 1, 1);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+    result = is_what((int)pcVar1->damage_target_player, pcVar1->damage_target_card, 0x40);
+    if (((result != 0) ||
+         (result = is_legendary((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+          result != 0)) ||
+        (result = has_subtype((int)pcVar1->damage_target_player, pcVar1->damage_target_card,
+                              SUBTYPE_SAGA),
+         result != 0))
+    {
+      draw_cards(player, 2);
+    }
+  LAB_022ccdb8:
+    if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) == EVENT_CAN_MOVE_AURA) ||
+         (event - EVENT_POWER < 3)) ||
+        (event == EVENT_RESOLVE_MOVING_AURA))
+    {
+    LAB_022cce23:
+      if (event == EVENT_ABILITIES)
+      {
+        if (((pcVar1->damage_target_card == affected_card) &&
+             (pcVar1->damage_target_player == affected_card_controller)) &&
+            ((pcVar2 = in_play(player, card),
+              pcVar2 != NULL &&
+                  (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))))
+        {
+          hexproof((int)pcVar1->damage_target_player, pcVar1->damage_target_card, EVENT_ABILITIES);
+        }
+        goto LAB_022cce88;
+      }
+    }
+    else if (((event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR)) &&
+             ((event != EVENT_GET_SELECTED_CARD && (event != EVENT_STATIC_EFFECTS))))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x47);
+    if (event != EVENT_CAST_SPELL)
+      goto LAB_022cceac;
+  LAB_022ccf02:
+    td.preferred_controller = player;
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_PERMANENT", 1, NULL);
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      result = get_cmc(pcVar1->targets[0].player, pcVar1->targets[0].card);
+      ai_modifier = ai_modifier + result * 8;
+      return 0;
+    }
+  }
+  else
+  {
+    if (event != EVENT_CAN_CAST)
+    {
+      if (event == EVENT_CAST_SPELL)
+      {
+        if ((card != affected_card) || (player != affected_card_controller))
+          goto LAB_022ccdb8;
+        default_target_definition(player, card, &td, 0x47);
+        goto LAB_022ccf02;
+      }
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+        goto LAB_022cce23;
+      if (event != EVENT_CHANGE_TARGET)
+        goto LAB_022ccdb8;
+    }
+  LAB_022cce88:
+    default_target_definition(player, card, &td, 0x47);
+  }
+LAB_022cceac:
+  td.preferred_controller = player;
+  result = targeted_aura(player, card, event, &td, "TARGET_PERMANENT");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22d5bc0; original cards/dominaria.c:4245. */
+int card_valduk_keeper_of_the_flame(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  token_generation_t token;
+
+  check_legend_rule(player, card, event);
+  iVar1 = beginning_of_combat_2022(player, card, event, player);
+  if (iVar1 == 0)
+  {
+    return 0;
+  }
+  default_token_definition(player, card, 0x4926, &token);
+  token.pow = 3;
+  token.tou = 1;
+  token.color_forced = '\x10';
+  token.key_plus = 0x80;
+  iVar1 = equipments_attached_to_me(player, card, 1);
+  iVar2 = count_auras_enchanting_me(player, card);
+  token.qty = (char)iVar2 + (char)iVar1;
+  token.special_code_on_generation = haste_and_remove_token_at_end_of_next_turn;
+  generate_token(&token);
+  return 0;
+}

@@ -2907,3 +2907,28 @@ int card_viashino_bey(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25bace0; original cards/urza_legacy.c:2905. */
+int card_tethered_skirge(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  const target_t *ptVar3;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      ptVar3 = becomes_target_of_spell_or_effect(player, card, event, player, card, 2);
+      if (ptVar3 != NULL)
+      {
+        lose_life(player, 1);
+      }
+    }
+  }
+  return 0;
+}

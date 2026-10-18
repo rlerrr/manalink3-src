@@ -2499,6 +2499,152 @@ void plague_fiend_effect(int player, int card, int t_player, int t_card);
 void soul_charmer_effect(int player, int card, int t_player, int t_card);
 void warp_world_effect(int player, int card, int t_player, int tutor_rest);
 
+
+/* Focused October 2022 flag helper interfaces. */
+int get_special_flags_by_instance(card_instance_t *instance);
+void enters_the_battlefield_with_counters_fn(int player, int card, event_t event, counter_t type,
+                                             CardPairFunction fn);
+void put_into_play_transformed(int player, int card);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int card_deeproot_champion(int player, int card, event_t event);
+int effect_flame_fusillade(int player, int card, event_t event);
+int the_mirari_conjecture_legacy(int player, int card, event_t event);
+void magecraft_trigger(int controller_of_trigger, event_t event, int trigger_mode, type_t type,
+                       test_definition_t *test, int triggering_player, int triggering_card);
+void sp_ability_trigger(int controller_of_trigger, event_t event, int trigger_mode, type_t type,
+                        test_definition_t *test, int triggering_player, int triggering_card);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int adapt(int player, int card, event_t event, int number, int cl, int b, int u, int g, int r,
+          int w);
+int count_rfg_by_type(int player, int type);
+int ee_legacy(int player, int card, event_t event);
+
+/* Existing Monarch helpers: public in the October 2022 symbols. */
+int who_is_the_monarch(void);
+void you_become_the_monarch(int player);
+
+/* October 2022 source-aware counter removal interfaces. */
+void remove_counters_from_source(int player, int card, int t_player, int t_card, counter_t type,
+                                 int num);
+void remove_all_counters_from_source(int player, int card, int t_player, int t_card,
+                                     counter_t type);
+
+/* Interfaces recovered from October 2022 DWARF. */
+void minus_proliferate_auto_single_permanent_or_player(int player, int card, int p, int c);
+void quarry_hauler_helper(int player, int card, int t_player, int t_card);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int animate_self_remove_type(int player, int card, int pow, int tgh, type_t types_to_remove,
+                             keyword_t kws_to_add, sp_keyword_t sp_kws_to_add, color_test_t color,
+                             int permanent);
+int animate_self_to_artifact_creature(int player, int card, int pow, int tgh, keyword_t kws_to_add,
+                                      sp_keyword_t sp_kws_to_add, color_test_t color,
+                                      int permanent);
+
+/* Existing Suspend helper: public in October 2022. */
+int suspend_only(int player, int card, event_t event, int turns, int colorless, int black, int blue,
+                 int green, int red, int white);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int can_counter_triggered_ability(int player, int card, event_t event, target_definition_t *td);
+int card_replenish(int player, int card, event_t event);
+
+/* Recovered by-value pair-return helper. */
+target_t find_repeat_legacy_effect_alt(int player, int card, CardFunction func_ptr,
+                                       int target_player_id, int target_card,
+                                       int alternate_legacy_text, int whose_control);
+
+/* Interfaces recovered from October 2022 DWARF. */
+void make_txtfx(int player, int card, CardFunction fxfn, card_id_t marker, int val);
+
+/* October 2022 split-card interface. */
+int generic_split_card_2022(int player, int card, event_t event, int id_first_half,
+                            int can_play_first_half, int priority_first_half, int id_second_half,
+                            int can_play_second_half, int priority_second_half);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int card_frost_breath(int player, int card, event_t event);
+int hybrid_split_card(int player, int card, event_t event, int card_id_first_half,
+                      int can_play_first_half, int priority_first_half, int id_second_half,
+                      int can_play_second_half, int priority_second_half);
+
+/* Focused October 2022 shared helpers. */
+void amass(int player, int card, int amount);
+int basic_landcycling_2022(int player, int card, event_t event, int cless, int black, int blue,
+                           int green, int red, int white);
+int locate_edh_card_2022(int player);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int get_commander_id(int player, int commander_code);
+int get_commander_storm_count(int player);
+int put_all_commanders_from_command_zone_to(int player, int where, int *rv);
+void put_commander_in_the_command_zone_from_play(int player, int card);
+
+/* Existing Drawcardlib APIs used by recovered card predicates. */
+__attribute__((dllimport)) const Rarities *get_rarity(int csvid);
+__attribute__((dllimport)) const Watermark *get_watermarks(void);
+__attribute__((dllimport)) border_t get_border_color(uint32_t csvid);
+
+/* Interfaces recovered from October 2022 DWARF. */
+char *target_has_black_border(int who_chooses, int player, int card, int targeting_player,
+                              int targeting_card);
+char *target_has_silver_border(int who_chooses, int player, int card, int targeting_player,
+                               int targeting_card);
+int test_has_border_val(int iid, int val, int player, int card);
+
+/* Recovered October 2022 Surveil helper. */
+void surveil(int player, int number);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int counter_activated_ability_resolve_unless_pay_x(int player, int card, target_definition_t *td,
+                                                   int target_num, int x);
+
+/* Recovered alternate-text keyword pump. */
+int pump_ability_until_eot_no_repeat_alt(int player, int card, int t_player, int t_card,
+                                         int ability, int sp_ability,
+                                         int alternate_legacy_text_number);
+
+/* October 2022 per-player card-count cache (14 bytes). */
+extern uint8_t card_counts[2][7];
+
+/* October 2022 five-argument leaves-play dispatcher. */
+int leaves_play_2022(int player, int card, event_t event, int can_be_suppressed,
+                     int can_be_duplicated);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int attached_leaves_play(int triggering_player, int triggering_card, event_t event,
+                         int can_be_suppressed, int can_be_duplicated);
+int attached_leaves_play_mode(int triggering_player, int triggering_card, event_t event,
+                              resolve_trigger_t mode, int can_be_suppressed, int can_be_duplicated);
+int end_the_turn(int player, int card, event_t event);
+int isareth_legacy(int player, int card, event_t event);
+int other_leaves_play_mode(int triggering_player, int triggering_card, int t_player, int t_card,
+                           event_t event, resolve_trigger_t mode, int can_be_suppressed,
+                           int can_be_duplicated);
+int rushed_rebirth_legacy(int player, int card, event_t event);
+int test_leaves_play(int triggering_player, int triggering_card, event_t event, int controller,
+                     test_definition_t *test, int can_be_suppressed, int can_be_duplicated);
+int test_leaves_play_mode(int triggering_player, int triggering_card, event_t event, int controller,
+                          resolve_trigger_t mode, test_definition_t *test, int can_be_suppressed,
+                          int can_be_duplicated);
+
+/* October 2022 interfaces with distinct source-compatible names. */
+void cascade_2022(int player, int card, event_t event);
+int beginning_of_combat_2022(int player, int card, event_t event, int aff_player);
+int other_leaves_play_2022(int triggering_player, int triggering_card, int t_player, int t_card,
+                           event_t event, int can_be_suppressed, int can_be_duplicated);
+
+/* Interfaces recovered from October 2022 DWARF. */
+int card_disenchant(int player, int card, event_t event);
+int new_creature_with_targeted_bestow(int player, int card, event_t event, target_definition_t *td,
+                                      int colorless, int black, int blue, int green, int red,
+                                      int white, int pow, int tou, int key, int s_key);
+int new_generic_creature_with_bestow(int player, int card, event_t event, int colorless, int black,
+                                     int blue, int green, int red, int white, int pow, int tou,
+                                     int key, int s_key);
+
 #ifdef __cplusplus
 }
 #endif

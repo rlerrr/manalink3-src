@@ -9651,3 +9651,247 @@ int card_sea_scryer(int player, int card, event_t event)
 
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x238fda0; original cards/mirage.c:8095. */
+int card_pyric_salamander(int player, int card, event_t event)
+{
+  CardFunction p_Var1;
+  int result;
+  card_instance_t *pcVar3;
+  card_instance_t *pcVar4;
+
+  if (event != EVENT_ACTIVATE)
+  {
+    if (((trigger_condition == 0xcd) && (card == affected_card)) &&
+        (player == affected_card_controller))
+    {
+
+      pcVar3 = get_card_instance(player, card);
+      result = eot_trigger(player, card, event);
+      if (result != 0)
+      {
+        pcVar4 = get_card_instance(player, card);
+        if (0 < pcVar4->info_slot)
+        {
+          result = check_state(player, card, STATE_OUBLIETTED);
+          if (result == 0)
+          {
+            result = is_humiliated_for_ability(player, card, AL_STATIC);
+            if (result == 0)
+            {
+              kill_card(player, card, KILL_SACRIFICE);
+            }
+          }
+        }
+        pcVar3->info_slot = 0;
+      }
+    }
+    result = generic_shade_merge_pt(player, card, event, 0, 0, 0, 0, 0, 1, 0, 1, 0);
+    return result;
+  }
+
+  pcVar3 = get_card_instance(player, card);
+  generic_shade(player, card, EVENT_ACTIVATE, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0);
+  if ((spell_fizzled != 1) && (p_Var1 = pcVar3->info_slot_fn,
+                               pcVar3->info_slot = (int32_t)(p_Var1 + 1), (int)(p_Var1 + 1) < 3))
+  {
+    ai_modifier = ai_modifier + -0x30;
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int effect_soul_echo(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2376dd0; original cards/mirage.c:8982. */
+static int effect_soul_echo(int player, int card, event_t event)
+{
+  int card_00;
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  int iVar4;
+  int num;
+
+  pcVar1 = get_card_instance(player, card);
+  iVar4 = pcVar1->targets[0].player;
+  card_00 = pcVar1->targets[0].card;
+  pcVar2 = damage_being_dealt(event);
+  if (((pcVar2 != NULL) && (pcVar2->damage_target_player == iVar4)) &&
+      (pcVar2->damage_target_card == -1))
+  {
+
+    iVar3 = count_counters(iVar4, card_00, COUNTER_ECHO);
+
+    num = pcVar2->info_slot;
+    if (iVar3 < pcVar2->info_slot)
+    {
+      num = iVar3;
+    }
+    if (0 < num)
+    {
+      remove_counters_from_source(iVar4, card_00, iVar4, card_00, COUNTER_ECHO, num);
+      pcVar2->info_slot_fn = pcVar2->info_slot_fn + -num;
+    }
+  }
+  if (current_turn == player)
+  {
+    iVar4 = upkeep_trigger(player, card, event);
+    if ((iVar4 != 0) && (pcVar1->targets[1].player == 1))
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  if (event == EVENT_CLEANUP)
+  {
+    pcVar1->targets[1].player = 1;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2392a80; original cards/mirage.c:9007. */
+int card_soul_echo(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      if ((player == 1) && (x_value < 3))
+      {
+        ai_modifier = ai_modifier + -0x24;
+      }
+      instance = get_card_instance(player, card);
+      instance->info_slot = x_value;
+    }
+    instance = get_card_instance(player, card);
+    enters_the_battlefield_with_counters(player, card, EVENT_CAST_SPELL, COUNTER_ECHO,
+                                         instance->info_slot);
+    cannot_lose_the_game_for_having_less_than_0_life(player, card, EVENT_CAST_SPELL, player);
+    upkeep_trigger_ability(player, card, EVENT_CAST_SPELL, player);
+  }
+  else
+  {
+    instance = get_card_instance(player, card);
+    enters_the_battlefield_with_counters(player, card, event, COUNTER_ECHO, instance->info_slot);
+    cannot_lose_the_game_for_having_less_than_0_life(player, card, event, player);
+    upkeep_trigger_ability(player, card, event, player);
+    if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+    {
+      result = count_counters(player, card, COUNTER_ECHO);
+      if (result < 1)
+      {
+        kill_card(player, card, KILL_SACRIFICE);
+      }
+      else
+      {
+
+        result =
+            do_dialog(1 - player, player, card, -1, -1, " Remove a counter per 1 damage\n Pass",
+                      (unsigned int)(1 < life[player]));
+        if (result == 0)
+        {
+
+          result = create_legacy_effect(player, card, effect_soul_echo);
+          instance = get_card_instance(player, result);
+          instance->targets[0].player = player;
+          instance->targets[0].card = card;
+          instance->number_of_targets = '\x01';
+        }
+      }
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x238f1f0; original cards/mirage.c:7882. */
+int card_mind_harness(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  unsigned int uVar4;
+  const char *prompt;
+  target_definition_t td;
+
+  cumulative_upkeep(player, card, event, 1, 0, 0, 0, 0, 0);
+  instance = in_play(player, card);
+  if (instance == NULL)
+  {
+  LAB_0238f274:
+    leaves_play_2022(player, card, event, 0, 0);
+    if (event != EVENT_CAN_CAST)
+    {
+      if (event == EVENT_CAST_SPELL)
+      {
+        if ((card != affected_card) || (player != affected_card_controller))
+          goto LAB_0238f318;
+        default_target_definition(player, card, &td, 2);
+        td.required_color = get_sleighted_color_test(player, card, 0x18);
+        goto LAB_0238f471;
+      }
+      if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+        goto LAB_0238f2ab;
+    }
+  }
+  else
+  {
+
+    instance = get_card_instance(player, card);
+    if ((event != EVENT_STATIC_EFFECTS) || (instance->damage_target_player < '\0'))
+      goto LAB_0238f274;
+    uVar3 = get_color((int)instance->damage_target_player, instance->damage_target_card);
+    uVar4 = get_sleighted_color_test((int)instance->damage_target_player,
+                                     instance->damage_target_card, 0x18);
+    if ((uVar3 & uVar4) == 0)
+    {
+      kill_card(player, card, KILL_STATE_BASED_ACTION);
+    }
+    leaves_play_2022(player, card, EVENT_STATIC_EFFECTS, 0, 0);
+  LAB_0238f2ab:
+    if (event != EVENT_CHANGE_TARGET)
+    {
+    LAB_0238f318:
+      if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) == EVENT_CAN_MOVE_AURA) ||
+           (event - EVENT_POWER < 3)) ||
+          (event == EVENT_RESOLVE_MOVING_AURA))
+      {
+      LAB_0238f430:
+        default_target_definition(player, card, &td, 2);
+        td.required_color = get_sleighted_color_test(player, card, 0x18);
+        if (event != EVENT_CAST_SPELL)
+          goto LAB_0238f2eb;
+      LAB_0238f471:
+        if ((card == affected_card) && (player == affected_card_controller))
+        {
+          prompt =
+              get_sleighted_color_text2(player, card, "Select target %s or %s creature.", 4, 3);
+          result = generic_spell(player, card, EVENT_CAST_SPELL, 0x281, &td, prompt, 1, NULL);
+          return result;
+        }
+        goto LAB_0238f2eb;
+      }
+      if ((event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
+      {
+        if (((event & ~EVENT_UPKEEP) == EVENT_GET_SELECTED_CARD) || (event == EVENT_STATIC_EFFECTS))
+          goto LAB_0238f430;
+        if (event != EVENT_LEAVES_PLAY_ABILITY)
+        {
+          return 0;
+        }
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.required_color = get_sleighted_color_test(player, card, 0x18);
+LAB_0238f2eb:
+  result = generic_stealing_aura(player, card, event, &td, "TARGET_CREATURE");
+  return result;
+}

@@ -3136,3 +3136,186 @@ LAB_023088d0:
   result = generic_spell(player, card, event, 1, &td, "TARGET_LAND", 1, NULL);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x230aab0; original cards/zendikar_rising.c:1560. */
+int card_jace_mirror_mage(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  kicker(player, card, event, 2, 0, 0, 0, 0, 0);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = kicked(player, card);
+    if (result != 0)
+    {
+      copy_token_definition(player, card, (token_generation_t *)&td, player, card);
+      td.power_requirement = 0x180;
+      generate_token((token_generation_t *)&td);
+    }
+  LAB_0230ab90:
+    if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+      goto LAB_0230ac98;
+    default_target_definition(player, card, &td, 2);
+    instance = get_card_instance(player, card);
+    if (event == EVENT_ACTIVATE)
+    {
+
+      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Scry 2", 1, 5, 1,
+                           "Draw and reveal", 1, 6, 0, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      goto LAB_0230ab27;
+    }
+  }
+  else
+  {
+    if (event != EVENT_STATIC_EFFECTS)
+    {
+      if (event == EVENT_CAST_SPELL)
+      {
+        if ((card == affected_card) && (player == affected_card_controller))
+        {
+
+          instance = get_card_instance(player, card);
+          result = planeswalker(player, card, EVENT_CAST_SPELL,
+                                (unsigned int)(instance->damage_source_card != 0x5568) * 3 + 1);
+          return result;
+        }
+        goto LAB_0230ab27;
+      }
+      goto LAB_0230ab90;
+    }
+    result = is_legendary(player, card);
+    if (result == 0)
+    {
+      check_legend_rule(player, card, EVENT_STATIC_EFFECTS);
+    }
+  LAB_0230ac98:
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_0230ab27;
+    default_target_definition(player, card, &td, 2);
+    instance = get_card_instance(player, card);
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    if (instance->info_slot == 1)
+    {
+      scry(player, 2);
+    }
+    else if (instance->info_slot == 2)
+    {
+
+      if (*graveyard_ptr_mutable[player] != -1)
+      {
+        reveal_card_iid(player, card, *graveyard_ptr_mutable[player]);
+      }
+      result = draw_a_card(player);
+      if (result != -1)
+      {
+
+        instance = get_card_instance(player, card);
+        result = get_cmc(player, result);
+        remove_counters_from_source(player, card, instance->parent_controller,
+                                    instance->parent_card, COUNTER_LOYALTY, result);
+      }
+    }
+  }
+LAB_0230ab27:
+  result = planeswalker(player, card, event, 4);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x230b970; original cards/zendikar_rising.c:1941. */
+int card_luminarch_aspirant(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  result = beginning_of_combat_2022(player, card, event, player);
+  if (result != 0)
+  {
+
+    instance = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 2);
+    td.allow_cancel = 0;
+    instance->number_of_targets = '\0';
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
+      if (result != 0)
+      {
+        add_counters_from_source(player, card, instance->targets[0].player,
+                                 instance->targets[0].card, COUNTER_P1_P1, 1);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x230ccf0; original cards/zendikar_rising.c:2464. */
+int card_obuun_mul_daya_ancestor(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  landfall(player, card, event);
+  result = beginning_of_combat_2022(player, card, event, player);
+  if (result != 0)
+  {
+
+    default_target_definition(player, card, &td, 1);
+    td.allowed_controller = player;
+    pcVar2 = get_card_instance(player, card);
+    result = can_target(&td);
+    if ((result != 0) &&
+        (result = new_pick_target(&td, "Select a land you control.", 0, 0x80), result != 0))
+    {
+
+      result = get_power(player, card);
+      result = land_animation2(player, card, pcVar2->targets[0].player, pcVar2->targets[0].card, 1,
+                               result, result, 0x80, 4, 0, NULL);
+      pcVar3 = get_card_instance(player, result);
+      pcVar3->targets[9].card = 0x3a;
+      pcVar3 = get_card_instance(player, result);
+      pcVar3->targets[9].player = 1;
+      pcVar3 = get_card_instance(pcVar2->targets[0].player, pcVar2->targets[0].card);
+      pcVar3->regen_status = pcVar3->regen_status | 0x1f000000;
+      get_abilities(pcVar2->targets[0].player, pcVar2->targets[0].card, EVENT_CHANGE_TYPE, -1);
+    }
+    pcVar2->number_of_targets = '\0';
+  }
+  if (event == EVENT_ETB)
+  {
+
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    td.allow_cancel = 0;
+    pcVar2 = get_card_instance(player, card);
+    result = can_target(&td);
+    if ((result != 0) && (result = new_pick_target(&td, "TARGET_CREATURE", 0, 0), result != 0))
+    {
+      add_counters_from_source(player, card, pcVar2->targets[0].player, pcVar2->targets[0].card,
+                               COUNTER_P1_P1, 1);
+    }
+    pcVar2->number_of_targets = '\0';
+    return 0;
+  }
+  return 0;
+}

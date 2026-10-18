@@ -4744,3 +4744,203 @@ Each creature you control is the chosen type in addition to its other types.
 	return global_enchantment(player, card, event);
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int deal_6_damage_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x226d1a0; original cards/new_phyrexia.c:492. */
+static int deal_6_damage_legacy(int player, int card, event_t event)
+{
+  int player_00;
+  int card_00;
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+
+  instance = get_card_instance(player, card);
+  if ((((event == EVENT_GRAVEYARD_FROM_PLAY) &&
+        (iVar2 = instance->targets[0].card, iVar2 == affected_card)) &&
+       (player_00 = instance->targets[0].player, player_00 == affected_card_controller)) &&
+      ((iVar3 = graveyard_from_play(player_00, iVar2, EVENT_GRAVEYARD_FROM_PLAY),
+        iVar3 != 0 && (iVar3 = check_for_death_trigger_removal(player_00, iVar2), iVar3 == 0))))
+  {
+
+    iVar3 = instance->targets[1].player;
+    card_00 = instance->targets[1].card;
+    instance = in_play(iVar3, card_00);
+    if (instance != NULL)
+    {
+
+      iVar4 = is_what(player_00, iVar2, 2);
+      if (iVar4 == 0)
+      {
+        damage_creature(iVar3, card_00, 6, player_00, iVar2);
+      }
+      else
+      {
+        iVar4 = card_counts[player_00][5] + 1;
+        do
+        {
+          damage_creature(iVar3, card_00, 6, player_00, iVar2);
+          iVar4 = iVar4 + -1;
+        } while (iVar4 != 0);
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  iVar2 = end_of_combat_trigger(player, card, event, 2);
+  if (iVar2 != 0)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x226d140; original cards/new_phyrexia.c:519. */
+static void cathedral_membrane_legacy(int player, int card, int t_player, int t_card)
+{
+  int card_00;
+  card_instance_t *instance;
+
+  card_00 = create_targetted_legacy_effect(player, card, deal_6_damage_legacy, t_player, t_card);
+  instance = get_card_instance(player, card_00);
+  instance->targets[0].player = player;
+  instance->targets[0].card = card;
+  instance->targets[1].player = t_player;
+  instance->targets[1].card = t_card;
+  return;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int bludgeon_brawl_effect(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x226ce90; original cards/new_phyrexia.c:418. */
+static int bludgeon_brawl_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int player_00;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  int iVar5;
+  target_definition_t td;
+
+  pcVar1 = get_card_instance(player, card);
+  player_00 = (int)pcVar1->damage_target_player;
+  iVar5 = pcVar1->damage_target_card;
+  pcVar2 = in_play(player_00, iVar5);
+  if ((pcVar2 != NULL) && (pcVar3 = is_equipping(player_00, iVar5), pcVar3 != NULL))
+  {
+    iVar4 = get_cmc(player_00, iVar5);
+    modify_pt_and_abilities((int)pcVar2->damage_target_player, pcVar2->damage_target_card, event,
+                            iVar4, 0, 0);
+  }
+  pcVar2 = get_card_instance(player, card);
+  if (pcVar2->targets[1].player < 0)
+  {
+  LAB_0226cf3f:
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+      goto LAB_0226cf5d;
+  }
+  else
+  {
+    other_leaves_play_2022(player, card, pcVar1->targets[1].player, pcVar1->targets[1].card, event,
+                           0, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+    LAB_0226d097:
+      unattach(player_00, iVar5);
+      kill_card(player, card, KILL_EXILE);
+      goto LAB_0226cf3f;
+    }
+    if (event != EVENT_CARDCONTROLLED)
+    {
+      if (event != EVENT_STATIC_EFFECTS)
+        goto LAB_0226cf3f;
+      iVar4 =
+          is_humiliated_for_ability(pcVar1->targets[1].player, pcVar1->targets[1].card, AL_STATIC);
+      if (iVar4 == 0)
+      {
+        return 0;
+      }
+      goto LAB_0226d097;
+    }
+    if ((pcVar1->targets[1].card == affected_card) &&
+        (pcVar1->targets[1].player == affected_card_controller))
+      goto LAB_0226d097;
+  }
+  if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+LAB_0226cf5d:
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  if ((event == EVENT_RESOLVE_ACTIVATION) &&
+      (iVar4 = validate_target(player, card, &td, 0), iVar4 != 0))
+  {
+    equip_target_creature(player_00, iVar5, pcVar1->targets[0].player, pcVar1->targets[0].card);
+  }
+  iVar4 = get_cmc(player_00, iVar5);
+  iVar5 =
+      granted_generic_activated_ability(player, card, player_00, iVar5, event, 0x102, iVar4, 0, 0,
+                                        0, 0, 0, 0, &td, "Select target creature you control.");
+  return iVar5;
+}
+
+/* ManalinkEh 2022: 0x226e590; original cards/new_phyrexia.c:458. */
+int card_bludgeon_brawl(int player, int card, event_t event)
+{
+  bool bVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+
+  if (((((event == EVENT_CHANGE_TYPE) && (instance = in_play(player, card), instance != NULL)) &&
+        (iVar2 = is_humiliated_for_ability(player, card, AL_STATIC), iVar2 == 0)) &&
+       ((iVar2 = is_what(affected_card_controller, affected_card, 0x40),
+         iVar2 != 0 &&
+             (iVar2 = is_what(affected_card_controller, affected_card, 2), iVar2 == 0)))) &&
+      (iVar2 = is_equipment(affected_card_controller, affected_card), iVar2 == 0))
+  {
+
+    add_a_subtype(affected_card_controller, affected_card, SUBTYPE_EQUIPMENT);
+    if (0 < active_cards_count[player])
+    {
+      iVar2 = 0;
+      bVar1 = false;
+      do
+      {
+        instance = in_play(player, iVar2);
+
+        if ((((instance != NULL) && (iVar4 = is_what(player, iVar2, 0x80), iVar4 != 0)) &&
+             (instance = get_card_instance(player, iVar2),
+              instance->info_slot_fn == bludgeon_brawl_effect)) &&
+            (((instance->damage_target_player == affected_card_controller &&
+               (instance->damage_target_card == affected_card)) ||
+              ((affected_card_controller == instance->targets[6].player &&
+                (instance->targets[6].card == affected_card))))))
+        {
+          bVar1 = true;
+        }
+        iVar2 = iVar2 + 1;
+      } while (iVar2 < active_cards_count[player]);
+      if (bVar1)
+        goto LAB_0226e5a7;
+    }
+
+    iVar2 = create_targetted_legacy_activate(player, card, bludgeon_brawl_effect,
+                                             affected_card_controller, affected_card);
+    instance = get_card_instance(player, iVar2);
+    instance->targets[6].player = affected_card_controller;
+    instance->targets[6].card = affected_card;
+    instance->targets[1].player = player;
+    instance->targets[1].card = card;
+    instance->number_of_targets = '\x01';
+  }
+LAB_0226e5a7:
+  iVar2 = global_enchantment(player, card, event);
+  return iVar2;
+}

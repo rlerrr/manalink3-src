@@ -2113,3 +2113,249 @@ int card_risen_reef(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2395f20; original cards/m20.c:683. */
+int card_chandra_awakened_inferno(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *pcVar2;
+  unsigned int uVar3;
+  int iVar4;
+  int iVar5;
+  int iStack_194;
+  target_definition_t *ptStack_190;
+  card_instance_t *pcStack_18c;
+  token_generation_t token;
+  target_definition_t td;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  cannot_be_countered(player, card, event);
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_02395fdf;
+    default_test_definition(&test, 2);
+    test.subtype = 0x3a;
+    test.subtype_flag = 1;
+    default_target_definition(player, card, &td, 0x102);
+    if (player == 1)
+    {
+      uVar3 = count_counters(1, card, COUNTER_LOYALTY);
+      td.toughness_requirement = uVar3 | 0x2000;
+      pcStack_18c = get_card_instance(1, card);
+    }
+    else
+    {
+      pcStack_18c = get_card_instance(player, card);
+      if (event == EVENT_ACTIVATE)
+        goto LAB_0239606a;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+
+      iVar1 = pcStack_18c->info_slot;
+      if (iVar1 == 1)
+      {
+        default_token_definition(player, card, 0x4f53, &token);
+        token.t_player = 1 - player;
+        generate_token(&token);
+      }
+      else if (iVar1 == 2)
+      {
+        new_damage_all(player, card, 2, 3, 0, &test);
+      }
+      else if ((iVar1 == 3) && (iVar1 = valid_target(&td), iVar1 != 0))
+      {
+
+        iVar1 = damage_target0(player, card, pcStack_18c->targets[1].player);
+        pcVar2 = get_card_instance(player, iVar1);
+        pcVar2->targets[3].card = pcVar2->targets[3].card | 0x80;
+      }
+    }
+    goto LAB_02395fdf;
+  }
+  default_test_definition(&test, 2);
+  test.subtype = 0x3a;
+  test.subtype_flag = 1;
+  default_target_definition(player, card, &td, 0x102);
+  if (player == 1)
+  {
+    uVar3 = count_counters(1, card, COUNTER_LOYALTY);
+    td.toughness_requirement = uVar3 | 0x2000;
+    pcStack_18c = get_card_instance(1, card);
+    pcStack_18c->number_of_targets = '\0';
+    pcStack_18c->info_slot = 0;
+    iVar5 = count_counters(1, card, COUNTER_LOYALTY);
+    iVar1 = current_turn;
+    if (iVar5 < 2)
+      goto LAB_0239607b;
+
+    iStack_194 = 0;
+    iVar5 = active_cards_count[current_turn] + -1;
+    if (-1 < iVar5)
+    {
+      do
+      {
+        pcVar2 = in_play(iVar1, iVar5);
+        if (((pcVar2 != NULL) &&
+             (iVar4 = has_subtype(iVar1, iVar5, SUBTYPE_ELEMENTAL), iVar4 == 0)) &&
+            (iVar4 = is_what(iVar1, iVar5, 2), iVar4 != 0))
+        {
+          iVar4 = get_toughness(iVar1, iVar5);
+          pcVar2 = get_card_instance(iVar1, iVar5);
+          if (((int)(iVar4 - (unsigned int)pcVar2->damage_on_card) < 4) &&
+              (iVar4 = check_for_special_ability(iVar1, iVar5, 0x800), iVar4 == 0))
+          {
+            if (iVar1 == 1)
+            {
+              iStack_194 = iStack_194 + -5;
+            }
+            else
+            {
+              iStack_194 = iStack_194 + 5;
+            }
+          }
+        }
+        iVar5 = iVar5 + -1;
+      } while (iVar5 != -1);
+    }
+    iVar1 = 1 - current_turn;
+    iVar5 = active_cards_count[iVar1] + -1;
+    if (-1 < iVar5)
+    {
+      do
+      {
+        pcVar2 = in_play(iVar1, iVar5);
+        if (((pcVar2 != NULL) &&
+             (iVar4 = has_subtype(iVar1, iVar5, SUBTYPE_ELEMENTAL), iVar4 == 0)) &&
+            (iVar4 = is_what(iVar1, iVar5, 2), iVar4 != 0))
+        {
+          iVar4 = get_toughness(iVar1, iVar5);
+          pcVar2 = get_card_instance(iVar1, iVar5);
+          if (((int)(iVar4 - (unsigned int)pcVar2->damage_on_card) < 4) &&
+              (iVar4 = check_for_special_ability(iVar1, iVar5, 0x800), iVar4 == 0))
+          {
+            if (iVar1 == 1)
+            {
+              iStack_194 = iStack_194 + -5;
+            }
+            else
+            {
+              iStack_194 = iStack_194 + 5;
+            }
+          }
+        }
+        iVar5 = iVar5 + -1;
+      } while (iVar5 != -1);
+    }
+  }
+  else
+  {
+    pcStack_18c = get_card_instance(player, card);
+  LAB_0239606a:
+
+    pcStack_18c->number_of_targets = '\0';
+    pcStack_18c->info_slot = 0;
+  LAB_0239607b:
+    iStack_194 = 0;
+  }
+  ptStack_190 = &td;
+  iVar1 = can_target(ptStack_190);
+  iVar1 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Emblem", 1,
+                      0xf - life[1 - player], 2, "Damage non-Elementals", 1, iStack_194, 0xfffffffd,
+                      "Damage creature or planeswalker", iVar1, 0xf, 0, 0, 0, 0, 0);
+  if (iVar1 == 0)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+  if (iVar1 != 3)
+    goto LAB_02395fdf;
+
+  iVar1 = pick_target(ptStack_190, "TARGET_CREATURE_OR_PLANESWALKER");
+  if (iVar1 == 0)
+  {
+    if (spell_fizzled == 1)
+      goto LAB_02395fdf;
+  }
+  else
+  {
+
+    iVar1 = count_counters(player, card, COUNTER_LOYALTY);
+    iVar5 = is_planeswalker(pcStack_18c->targets[0].player, pcStack_18c->targets[0].card);
+    if (iVar5 == 0)
+    {
+      iVar5 = get_toughness(pcStack_18c->targets[0].player, pcStack_18c->targets[0].card);
+    }
+    else
+    {
+      iVar5 = count_counters(pcStack_18c->targets[0].player, pcStack_18c->targets[0].card,
+                             COUNTER_LOYALTY);
+    }
+    if (iVar1 < iVar5)
+    {
+      iVar5 = iVar1;
+    }
+    if (player == 0)
+    {
+      iVar5 = choose_a_number(0, "Pay how much Loyalty ?", iVar5);
+    }
+    if (spell_fizzled == 1)
+      goto LAB_02395fdf;
+    if ((0 < iVar5) && (iVar1 = count_counters(player, card, COUNTER_LOYALTY), iVar5 <= iVar1))
+    {
+      remove_counters_from_source(player, card, player, card, COUNTER_LOYALTY, iVar5);
+      pcStack_18c->targets[1].player = iVar5;
+      goto LAB_02395fdf;
+    }
+  }
+  spell_fizzled = 1;
+LAB_02395fdf:
+  iVar1 = planeswalker(player, card, event, 6);
+  return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2398010; original cards/m20.c:1648. */
+int card_leyline_of_combustion(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  const target_t *ptVar3;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      ptVar3 = any_becomes_target(player, card, event, player, -1, TYPE_PERMANENT, -1, TYPE_ANY,
+                                  1 - player, RESOLVE_TRIGGER_MANDATORY);
+      if (ptVar3 != NULL)
+      {
+        damage_player(1 - player, 2, player, card);
+      }
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x239af40; original cards/m20.c:3124. */
+int card_yarok_the_desecrated(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  deathtouch(player, card, event);
+  lifelink(player, card, event);
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    card_counts[player][4] = card_counts[player][4] + '\x01';
+  }
+  return 0;
+}

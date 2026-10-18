@@ -3733,3 +3733,253 @@ int card_terrain_generator(int player, int card, event_t event)
   result = mana_producer(player, card, event);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int mana_cache_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x20906d0; original cards/nemesis.c:3337. */
+static int mana_cache_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int card_00;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      instance = get_card_instance(player, card);
+      iVar3 = instance->targets[0].player;
+      if (-1 < iVar3)
+      {
+        iVar3 = get_id(iVar3, instance->targets[0].card);
+        if (iVar3 != 0x126a)
+        {
+          kill_card(player, card, KILL_EXILE);
+        }
+        instance = in_play(instance->targets[0].player, instance->targets[0].card);
+        if (instance == NULL)
+        {
+          kill_card(player, card, KILL_EXILE);
+        }
+      }
+    }
+    instance = get_card_instance(player, card);
+    if (instance->targets[0].player == -1)
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    iVar3 = instance->targets[0].player;
+    card_00 = instance->targets[0].card;
+  }
+  else
+  {
+    instance = get_card_instance(player, card);
+    if (instance->targets[0].player == -1)
+    {
+      return 0;
+    }
+
+    instance = get_card_instance(player, card);
+    iVar3 = instance->targets[0].player;
+    card_00 = instance->targets[0].card;
+    if (event == EVENT_COUNT_MANA)
+    {
+      if (card_00 != affected_card)
+      {
+        return 0;
+      }
+      if (iVar3 != affected_card_controller)
+      {
+        return 0;
+      }
+      iVar2 = count_counters(iVar3, card_00, COUNTER_CHARGE);
+      if (iVar2 == 0)
+      {
+        return 0;
+      }
+      iVar2 = can_produce_mana(iVar3, card_00);
+      if (iVar2 == 0)
+      {
+        return 0;
+      }
+      iVar3 = count_counters(iVar3, card_00, COUNTER_CHARGE);
+      declare_mana_available(player, 0, iVar3);
+      return 0;
+    }
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar2 = count_counters(iVar3, card_00, COUNTER_CHARGE);
+      if (iVar2 < 1)
+      {
+        return 0;
+      }
+      if (current_turn != player)
+      {
+        return 0;
+      }
+      iVar3 = can_produce_mana(iVar3, card_00);
+      return iVar3;
+    }
+    if (event == EVENT_ACTIVATE)
+      goto LAB_02090832;
+  }
+  if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+LAB_02090832:
+  if (event == EVENT_ACTIVATE)
+  {
+    remove_counters_from_source(iVar3, card_00, iVar3, card_00, COUNTER_CHARGE, 1);
+    produce_mana(player, 0, 1);
+    tapped_for_mana_color = -2;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x209a9c0; original cards/nemesis.c:3377. */
+int card_mana_cache(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int card_00;
+  int iStack_ec;
+  int found[2];
+
+  iVar1 = current_turn;
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      found[0] = -1;
+      found[1] = -1;
+      iStack_ec = active_cards_count[current_turn] + -1;
+      if (-1 < iStack_ec)
+      {
+        do
+        {
+          instance = in_play(iVar1, iStack_ec);
+
+          if ((((instance != NULL) && (iVar3 = is_what(iVar1, iStack_ec, 0x80), iVar3 != 0)) &&
+               (instance = get_card_instance(iVar1, iStack_ec),
+                instance->info_slot_fn == mana_cache_legacy)) &&
+              ((instance->targets[0].player == player && (instance->targets[0].card == card))))
+          {
+            found[iVar1] = iStack_ec;
+          }
+          iStack_ec = iStack_ec + -1;
+        } while (iStack_ec != -1);
+      }
+      iVar1 = 1 - current_turn;
+      iStack_ec = active_cards_count[iVar1] + -1;
+      if (-1 < iStack_ec)
+      {
+        do
+        {
+          instance = in_play(iVar1, iStack_ec);
+
+          if (((instance != NULL) && (iVar3 = is_what(iVar1, iStack_ec, 0x80), iVar3 != 0)) &&
+              ((instance = get_card_instance(iVar1, iStack_ec),
+                instance->info_slot_fn == mana_cache_legacy &&
+                    ((instance->targets[0].player == player &&
+                      (instance->targets[0].card == card))))))
+          {
+            found[iVar1] = iStack_ec;
+          }
+          iStack_ec = iStack_ec + -1;
+        } while (iStack_ec != -1);
+      }
+      if (-1 < found[player])
+      {
+        kill_card(player, found[player], KILL_EXILE);
+      }
+      iVar1 = 1 - player;
+      if (found[iVar1] == -1)
+      {
+
+        instance = get_card_instance(player, card);
+        iVar3 = add_card_to_hand(iVar1, instance->internal_card_id);
+        card_00 = create_legacy_activate(iVar1, iVar3, mana_cache_legacy);
+        instance = get_card_instance(iVar1, card_00);
+        instance->targets[0].player = player;
+        instance->targets[0].card = card;
+        instance->number_of_targets = '\x01';
+        obliterate_card(iVar1, iVar3);
+      }
+    }
+    iVar1 = eot_trigger(player, card, EVENT_STATIC_EFFECTS);
+    if (iVar1 == 0)
+      goto LAB_0209aa68;
+  LAB_0209aaac:
+
+    new_default_test_definition((test_definition_t *)found, 1, "");
+    iVar1 = check_battlefield_for_special_card(player, card, current_turn, 4,
+                                               (test_definition_t *)found);
+    add_counters_from_source(player, card, player, card, COUNTER_CHARGE, iVar1);
+  }
+  else
+  {
+    iVar1 = eot_trigger(player, card, event);
+    if (iVar1 != 0)
+      goto LAB_0209aaac;
+  }
+  if (event == EVENT_COUNT_MANA)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (iVar1 = count_counters(player, card, COUNTER_CHARGE), iVar1 != 0)) &&
+        (iVar1 = can_produce_mana(player, card), iVar1 != 0))
+    {
+      iVar1 = count_counters(player, card, COUNTER_CHARGE);
+      declare_mana_available(player, 0, iVar1);
+    }
+  }
+  else if (event == EVENT_CAN_ACTIVATE)
+  {
+    iVar1 = count_counters(player, card, COUNTER_CHARGE);
+    if ((0 < iVar1) && (current_turn == player))
+    {
+      iVar1 = can_produce_mana(player, card);
+      return iVar1;
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    remove_counters_from_source(player, card, player, card, COUNTER_CHARGE, 1);
+    produce_mana(player, 0, 1);
+    tapped_for_mana_color = -2;
+  }
+LAB_0209aa68:
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x209b540; original cards/nemesis.c:3585. */
+int card_mossdog(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  const target_t *ptVar3;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      ptVar3 = becomes_target_of_spell_or_effect(player, card, event, player, card, 1 - player);
+      if (ptVar3 != NULL)
+      {
+        add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+      }
+    }
+  }
+  return 0;
+}

@@ -1,0 +1,456 @@
+{
+  "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "values": {
+    "CARD_ID_AMPHIN_MUTINEER": 22067,
+    "CARD_ID_BRIARBLADE_ADEPT": 22091,
+    "CARD_ID_COASTLINE_MARAUDERS": 22094,
+    "CARD_ID_ELVISH_DREADLORD": 22109,
+    "CARD_ID_EXQUISITE_HUNTMASTER": 22113,
+    "CARD_ID_FATHOM_FLEET_SWORDJACK": 22117,
+    "CARD_ID_FIN_CLADE_FUGITIVES": 22119,
+    "CARD_ID_IMPULSIVE_PILFERER": 22138,
+    "CARD_ID_KANGEES_LIEUTENANT": 22147,
+    "CARD_ID_KINSBAILE_COURIER": 22153,
+    "CARD_ID_KITESAIL_SKIRMISHER": 22154,
+    "CARD_ID_PHYREXIAN_TRINIFORM": 22179,
+    "CARD_ID_RAKSHASA_DEBASER": 22187,
+    "CARD_ID_SOUL_OF_ETERNITY": 22204,
+    "CARD_ID_TROVE_TRACKER": 22221,
+    "CARD_ID_TIMELESS_DRAGON": 23185,
+    "CARD_ID_TIMELESS_WITNESS": 23186
+  },
+  "dwarf_units": {
+    "cards/modern_horizons_2.c": {
+      "CARD_ID_AMPHIN_MUTINEER": {
+        "value": 22067,
+        "die": "0x1f4202e"
+      },
+      "CARD_ID_BRIARBLADE_ADEPT": {
+        "value": 22091,
+        "die": "0x1f42322"
+      },
+      "CARD_ID_COASTLINE_MARAUDERS": {
+        "value": 22094,
+        "die": "0x1f42382"
+      },
+      "CARD_ID_ELVISH_DREADLORD": {
+        "value": 22109,
+        "die": "0x1f4253a"
+      },
+      "CARD_ID_EXQUISITE_HUNTMASTER": {
+        "value": 22113,
+        "die": "0x1f425b6"
+      },
+      "CARD_ID_FATHOM_FLEET_SWORDJACK": {
+        "value": 22117,
+        "die": "0x1f42634"
+      },
+      "CARD_ID_FIN_CLADE_FUGITIVES": {
+        "value": 22119,
+        "die": "0x1f42675"
+      },
+      "CARD_ID_IMPULSIVE_PILFERER": {
+        "value": 22138,
+        "die": "0x1f428d8"
+      },
+      "CARD_ID_KANGEES_LIEUTENANT": {
+        "value": 22147,
+        "die": "0x1f429e4"
+      },
+      "CARD_ID_KINSBAILE_COURIER": {
+        "value": 22153,
+        "die": "0x1f42aac"
+      },
+      "CARD_ID_KITESAIL_SKIRMISHER": {
+        "value": 22154,
+        "die": "0x1f42ac9"
+      },
+      "CARD_ID_PHYREXIAN_TRINIFORM": {
+        "value": 22179,
+        "die": "0x1f42def"
+      },
+      "CARD_ID_RAKSHASA_DEBASER": {
+        "value": 22187,
+        "die": "0x1f42ee3"
+      },
+      "CARD_ID_SOUL_OF_ETERNITY": {
+        "value": 22204,
+        "die": "0x1f430ee"
+      },
+      "CARD_ID_TROVE_TRACKER": {
+        "value": 22221,
+        "die": "0x1f432f1"
+      },
+      "CARD_ID_TIMELESS_DRAGON": {
+        "value": 23185,
+        "die": "0x1f49d09"
+      },
+      "CARD_ID_TIMELESS_WITNESS": {
+        "value": 23186,
+        "die": "0x1f49d24"
+      }
+    },
+    "cards/commander_legends.c": {
+      "CARD_ID_AMPHIN_MUTINEER": {
+        "value": 22067,
+        "die": "0x5344a74"
+      },
+      "CARD_ID_BRIARBLADE_ADEPT": {
+        "value": 22091,
+        "die": "0x5344d68"
+      },
+      "CARD_ID_COASTLINE_MARAUDERS": {
+        "value": 22094,
+        "die": "0x5344dc8"
+      },
+      "CARD_ID_ELVISH_DREADLORD": {
+        "value": 22109,
+        "die": "0x5344f80"
+      },
+      "CARD_ID_EXQUISITE_HUNTMASTER": {
+        "value": 22113,
+        "die": "0x5344ffc"
+      },
+      "CARD_ID_FATHOM_FLEET_SWORDJACK": {
+        "value": 22117,
+        "die": "0x534507a"
+      },
+      "CARD_ID_FIN_CLADE_FUGITIVES": {
+        "value": 22119,
+        "die": "0x53450bb"
+      },
+      "CARD_ID_IMPULSIVE_PILFERER": {
+        "value": 22138,
+        "die": "0x534531e"
+      },
+      "CARD_ID_KANGEES_LIEUTENANT": {
+        "value": 22147,
+        "die": "0x534542a"
+      },
+      "CARD_ID_KINSBAILE_COURIER": {
+        "value": 22153,
+        "die": "0x53454f2"
+      },
+      "CARD_ID_KITESAIL_SKIRMISHER": {
+        "value": 22154,
+        "die": "0x534550f"
+      },
+      "CARD_ID_PHYREXIAN_TRINIFORM": {
+        "value": 22179,
+        "die": "0x5345835"
+      },
+      "CARD_ID_RAKSHASA_DEBASER": {
+        "value": 22187,
+        "die": "0x5345929"
+      },
+      "CARD_ID_SOUL_OF_ETERNITY": {
+        "value": 22204,
+        "die": "0x5345b34"
+      },
+      "CARD_ID_TROVE_TRACKER": {
+        "value": 22221,
+        "die": "0x5345d37"
+      },
+      "CARD_ID_TIMELESS_DRAGON": {
+        "value": 23185,
+        "die": "0x534c74f"
+      },
+      "CARD_ID_TIMELESS_WITNESS": {
+        "value": 23186,
+        "die": "0x534c76a"
+      }
+    }
+  },
+  "functions": {
+    "25a3450": {
+      "source": "cards/commander_legends.c",
+      "name": "card_amphin_mutineer",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_AMPHIN_MUTINEER": 22067
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_AMPHIN_MUTINEER = 22067 };"
+      ]
+    },
+    "25a4f90": {
+      "source": "cards/commander_legends.c",
+      "name": "card_briarblade_adept",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_BRIARBLADE_ADEPT": 22091
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_BRIARBLADE_ADEPT = 22091 };"
+      ]
+    },
+    "25a5280": {
+      "source": "cards/commander_legends.c",
+      "name": "card_coastline_marauders",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_COASTLINE_MARAUDERS": 22094
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_COASTLINE_MARAUDERS = 22094 };"
+      ]
+    },
+    "25a6f00": {
+      "source": "cards/commander_legends.c",
+      "name": "card_elvish_dreadlord",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_ELVISH_DREADLORD": 22109
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_ELVISH_DREADLORD = 22109 };"
+      ]
+    },
+    "25a7130": {
+      "source": "cards/commander_legends.c",
+      "name": "card_exquisite_huntmaster",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_EXQUISITE_HUNTMASTER": 22113
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_EXQUISITE_HUNTMASTER = 22113 };"
+      ]
+    },
+    "25a7490": {
+      "source": "cards/commander_legends.c",
+      "name": "card_fathom_fleet_swordjack",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_FATHOM_FLEET_SWORDJACK": 22117
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_FATHOM_FLEET_SWORDJACK = 22117 };"
+      ]
+    },
+    "25a7650": {
+      "source": "cards/commander_legends.c",
+      "name": "card_fin_clade_fugitives",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_FIN_CLADE_FUGITIVES": 22119
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_FIN_CLADE_FUGITIVES = 22119 };"
+      ]
+    },
+    "25a8eb0": {
+      "source": "cards/commander_legends.c",
+      "name": "card_impulsive_pilferer",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_IMPULSIVE_PILFERER": 22138
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_IMPULSIVE_PILFERER = 22138 };"
+      ]
+    },
+    "25aa7a0": {
+      "source": "cards/commander_legends.c",
+      "name": "card_kangees_lieutenant",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_KANGEES_LIEUTENANT": 22147
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_KANGEES_LIEUTENANT = 22147 };"
+      ]
+    },
+    "25ab110": {
+      "source": "cards/commander_legends.c",
+      "name": "card_kinsbaile_courier",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_KINSBAILE_COURIER": 22153
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_KINSBAILE_COURIER = 22153 };"
+      ]
+    },
+    "25ab240": {
+      "source": "cards/commander_legends.c",
+      "name": "card_kitesail_skirmisher",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_KITESAIL_SKIRMISHER": 22154
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_KITESAIL_SKIRMISHER = 22154 };"
+      ]
+    },
+    "25ada80": {
+      "source": "cards/commander_legends.c",
+      "name": "card_phyrexian_triniform",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_PHYREXIAN_TRINIFORM": 22179
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_PHYREXIAN_TRINIFORM = 22179 };"
+      ]
+    },
+    "25ae740": {
+      "source": "cards/commander_legends.c",
+      "name": "card_rakshasa_debaser",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_RAKSHASA_DEBASER": 22187
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_RAKSHASA_DEBASER = 22187 };"
+      ]
+    },
+    "25b0170": {
+      "source": "cards/commander_legends.c",
+      "name": "card_soul_of_eternity",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_SOUL_OF_ETERNITY": 22204
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_SOUL_OF_ETERNITY = 22204 };"
+      ]
+    },
+    "25b1480": {
+      "source": "cards/commander_legends.c",
+      "name": "card_trove_tracker",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_TROVE_TRACKER": 22221
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_TROVE_TRACKER = 22221 };"
+      ]
+    },
+    "2241730": {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_timeless_dragon",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_TIMELESS_DRAGON": 23185
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_TIMELESS_DRAGON = 23185 };"
+      ]
+    },
+    "22417d0": {
+      "source": "cards/modern_horizons_2.c",
+      "name": "card_timeless_witness",
+      "types": [
+        {
+          "name": null,
+          "bytes": 4,
+          "enumerators": {
+            "CARD_ID_TIMELESS_WITNESS": 23186
+          },
+          "recovery": "Function-local aliases for target-release IDs; live registration/ID tables are not upgraded."
+        }
+      ],
+      "declarations": [
+        "enum { CARD_ID_TIMELESS_WITNESS = 23186 };"
+      ]
+    }
+  },
+  "scope": "Function-local constants for otherwise undeclared target card IDs. No global IDs or registration records changed."
+}

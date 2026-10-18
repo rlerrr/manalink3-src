@@ -1,0 +1,249 @@
+{
+  "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "scope": "Each typedef is restored inside its own function; no global CHOICE_* names.",
+  "functions": {
+    "23dfe70": {
+      "source": "cards/strixhaven.c",
+      "name": "card_witherbloom_command",
+      "types": [
+        {
+          "name": "CommandChoices",
+          "bytes": 4,
+          "encoding": 7,
+          "typedef_die": "0x393ee57",
+          "enum_die": "0x393ee0d",
+          "enumerators": {
+            "CHOICE_INVALID_TARGET": 0,
+            "CHOICE_MILL": 1,
+            "CHOICE_KIL": 2,
+            "CHOICE_PUMP": 3,
+            "CHOICE_OPP_LOSE2": 4
+          }
+        }
+      ],
+      "declarations": [
+        "typedef enum { CHOICE_INVALID_TARGET = 0, CHOICE_MILL = 1, CHOICE_KIL = 2, CHOICE_PUMP = 3, CHOICE_OPP_LOSE2 = 4 } CommandChoices;"
+      ],
+      "array_boundaries": [
+        {
+          "original": "ptStack_1f0 == (target_definition_t *)pCVar6",
+          "replacement": "pCVar6 == choices + 2"
+        },
+        {
+          "original": "(target_definition_t *)pCVar6 == ptStack_1f0",
+          "replacement": "pCVar6 == choices + 2"
+        }
+      ],
+      "array_boundary_evidence": {
+        "td": {
+          "type": "target_definition_t",
+          "frame_offset": -488,
+          "die": "0x393edc6",
+          "expression": [
+            145,
+            152,
+            124
+          ]
+        },
+        "choices": {
+          "type": "CommandChoices[2]",
+          "frame_offset": -496,
+          "die": "0x393ee74",
+          "expression": [
+            145,
+            144,
+            124
+          ]
+        }
+      }
+    },
+    "23dbb20": {
+      "source": "cards/strixhaven.c",
+      "name": "card_silverquill_command",
+      "types": [
+        {
+          "name": "CommandChoices",
+          "bytes": 4,
+          "encoding": 7,
+          "typedef_die": "0x39447eb",
+          "enum_die": "0x39447ae",
+          "enumerators": {
+            "CHOICE_INVALID_TARGET": 0,
+            "CHOICE_PUMP": 1,
+            "CHOICE_REANIMATE": 2,
+            "CHOICE_DRAW1_LOSE1": 3,
+            "CHOICE_OPP_SAC": 4
+          }
+        }
+      ],
+      "declarations": [
+        "typedef enum { CHOICE_INVALID_TARGET = 0, CHOICE_PUMP = 1, CHOICE_REANIMATE = 2, CHOICE_DRAW1_LOSE1 = 3, CHOICE_OPP_SAC = 4 } CommandChoices;"
+      ],
+      "array_boundaries": [
+        {
+          "original": "ptStack_1a0 == (target_definition_t *)pCVar8",
+          "replacement": "pCVar8 == choices + 2"
+        },
+        {
+          "original": "(target_definition_t *)pCVar8 == ptStack_1a0",
+          "replacement": "pCVar8 == choices + 2"
+        }
+      ],
+      "array_boundary_evidence": {
+        "td": {
+          "type": "target_definition_t",
+          "frame_offset": -404,
+          "die": "0x3944767",
+          "expression": [
+            145,
+            236,
+            124
+          ]
+        },
+        "choices": {
+          "type": "CommandChoices[2]",
+          "frame_offset": -412,
+          "die": "0x3944808",
+          "expression": [
+            145,
+            228,
+            124
+          ]
+        }
+      }
+    },
+    "23d8240": {
+      "source": "cards/strixhaven.c",
+      "name": "card_quandrix_command",
+      "types": [
+        {
+          "name": "CommandChoices",
+          "bytes": 4,
+          "encoding": 7,
+          "typedef_die": "0x3949eb5",
+          "enum_die": "0x3949e60",
+          "enumerators": {
+            "CHOICE_INVALID_TARGET": 0,
+            "CHOICE_BOUNCE": 1,
+            "CHOICE_COUNTERSPELL": 2,
+            "CHOICE_P1_P1_COUNTERS": 3,
+            "CHOICE_RECYCLE": 4
+          }
+        }
+      ],
+      "declarations": [
+        "typedef enum { CHOICE_INVALID_TARGET = 0, CHOICE_BOUNCE = 1, CHOICE_COUNTERSPELL = 2, CHOICE_P1_P1_COUNTERS = 3, CHOICE_RECYCLE = 4 } CommandChoices;"
+      ]
+    },
+    "23d7480": {
+      "source": "cards/strixhaven.c",
+      "name": "card_prismari_command",
+      "types": [
+        {
+          "name": "CommandChoices",
+          "bytes": 4,
+          "encoding": 7,
+          "typedef_die": "0x394b0f9",
+          "enum_die": "0x394b09e",
+          "enumerators": {
+            "CHOICE_INVALID_TARGET": 0,
+            "CHOICE_DAMAGE": 1,
+            "CHOICE_DRAW_DISCARD": 2,
+            "CHOICE_TREASURE": 3,
+            "CHOICE_KILL_ARTIFACT": 4
+          }
+        }
+      ],
+      "declarations": [
+        "typedef enum { CHOICE_INVALID_TARGET = 0, CHOICE_DAMAGE = 1, CHOICE_DRAW_DISCARD = 2, CHOICE_TREASURE = 3, CHOICE_KILL_ARTIFACT = 4 } CommandChoices;"
+      ],
+      "array_boundaries": [
+        {
+          "original": "&token == (token_generation_t *)pCVar6",
+          "replacement": "pCVar6 == choices + 2"
+        },
+        {
+          "original": "(token_generation_t *)pCVar6 == &token",
+          "replacement": "pCVar6 == choices + 2"
+        }
+      ],
+      "array_boundary_evidence": {
+        "choices": {
+          "type": "CommandChoices[2]",
+          "frame_offset": -356,
+          "die": "0x394b116",
+          "expression": [
+            145,
+            156,
+            125
+          ]
+        },
+        "token": {
+          "type": "token_generation_t",
+          "frame_offset": -348,
+          "die": "0x394b381",
+          "expression": [
+            145,
+            164,
+            125
+          ]
+        }
+      }
+    },
+    "23d35a0": {
+      "source": "cards/strixhaven.c",
+      "name": "card_lorehold_command",
+      "types": [
+        {
+          "name": "CommandChoices",
+          "bytes": 4,
+          "encoding": 7,
+          "typedef_die": "0x394fc17",
+          "enum_die": "0x394fba3",
+          "enumerators": {
+            "CHOICE_INVALID_TARGET": 0,
+            "CHOICE_SPIRIT": 1,
+            "CHOICE_P1_AND_INDESTRUCTIBLE": 2,
+            "CHOICE_DAMAGE_AND_GAIN": 3,
+            "CHOICE_SAC_AND_DRAW": 4
+          }
+        }
+      ],
+      "declarations": [
+        "typedef enum { CHOICE_INVALID_TARGET = 0, CHOICE_SPIRIT = 1, CHOICE_P1_AND_INDESTRUCTIBLE = 2, CHOICE_DAMAGE_AND_GAIN = 3, CHOICE_SAC_AND_DRAW = 4 } CommandChoices;"
+      ],
+      "array_boundaries": [
+        {
+          "original": "ptStack_19c == (target_definition_t *)pCVar4",
+          "replacement": "pCVar4 == choices + 2"
+        },
+        {
+          "original": "(target_definition_t *)pCVar4 == ptStack_19c",
+          "replacement": "pCVar4 == choices + 2"
+        }
+      ],
+      "array_boundary_evidence": {
+        "td": {
+          "type": "target_definition_t",
+          "frame_offset": -404,
+          "die": "0x394fb5c",
+          "expression": [
+            145,
+            236,
+            124
+          ]
+        },
+        "choices": {
+          "type": "CommandChoices[2]",
+          "frame_offset": -412,
+          "die": "0x394fc34",
+          "expression": [
+            145,
+            228,
+            124
+          ]
+        }
+      }
+    }
+  }
+}

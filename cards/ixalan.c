@@ -3935,3 +3935,320 @@ LAB_02219d88:
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int card_deeproot_champion(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x22166c0; original cards/ixalan.c:1860. */
+int card_deeproot_champion(int player, int card, event_t event)
+{
+  test_definition_t test;
+
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 2);
+    test.type_flag = 1;
+    sp_ability_trigger(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2217650; original cards/ixalan.c:2300. */
+int card_huatli_warrior_poet(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  target_t *ptVar2;
+  card_instance_t *pcVar3;
+  uint32_t argument3;
+  unsigned char bVar4;
+  target_t *ptVar5;
+  int iVar6;
+  uint32_t ret_location;
+  int iVar7;
+  int iStack_bc;
+  target_definition_t *ptStack_b8;
+  card_instance_t *pcStack_b4;
+  token_generation_t token;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    pcStack_b4 = get_card_instance(player, card);
+    if (event != EVENT_ACTIVATE)
+      goto LAB_022176cc;
+
+    pcStack_b4->number_of_targets = '\0';
+    pcStack_b4->info_slot = 0;
+    iVar7 = can_target(&td);
+    iVar7 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Gain life", 1, 5, 2,
+                        "Dino Token", 1, 10, 0, "Target & Divide Damage", iVar7, 10, 0, 0, 0, 0, 0);
+    if (iVar7 == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (iVar7 == 3)
+    {
+
+      iVar7 = count_counters(player, card, COUNTER_LOYALTY);
+      argument3 = iVar7 - 1;
+      if (player == 0)
+      {
+        argument3 = choose_a_number(0, "Pay how much Loyalty ?", argument3);
+      }
+      if (spell_fizzled != 1)
+      {
+        if (((int)argument3 < 1) ||
+            (iVar7 = count_counters(player, card, COUNTER_LOYALTY), iVar7 < (int)argument3))
+        {
+          spell_fizzled = 1;
+        }
+        else
+        {
+
+          remove_counters_from_source(player, card, player, card, COUNTER_LOYALTY, argument3);
+          pcStack_b4->eot_toughness = argument3;
+          ret_location = 0;
+          pcStack_b4->number_of_targets = '\0';
+          do
+          {
+            new_pick_target(&td, "TARGET_ANY", ret_location, 1);
+            ptVar2 = pcStack_b4->targets + ret_location;
+            ptVar5 = pcStack_b4->targets + ret_location;
+            ret_location = ret_location + 1;
+            add_state(ptVar5->player, ptVar2->card, 0x200000);
+          } while (argument3 != ret_location);
+          if (pcStack_b4->number_of_targets != '\0')
+          {
+            iVar7 = 0;
+            do
+            {
+              iVar6 = pcStack_b4->targets[iVar7].card;
+              if (iVar6 != -1)
+              {
+                remove_state(pcStack_b4->targets[iVar7].player, iVar6, 0x200000);
+              }
+              iVar7 = iVar7 + 1;
+            } while (iVar7 < (int)(unsigned int)pcStack_b4->number_of_targets);
+          }
+        }
+      }
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      iVar7 = 3;
+      goto LAB_022176da;
+    }
+    default_target_definition(player, card, &td, 2);
+    pcStack_b4 = get_card_instance(player, card);
+  LAB_022176cc:
+    ptStack_b8 = &td;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+
+      iVar7 = pcStack_b4->info_slot;
+      if (iVar7 == 1)
+      {
+        iVar7 = get_highest_power(player);
+        gain_life(player, iVar7);
+      }
+      else if (iVar7 == 2)
+      {
+        default_token_definition(player, card, 0x491d, &token);
+        token.special_infos = 0x42;
+        generate_token(&token);
+      }
+      else if (iVar7 == 3)
+      {
+
+        bVar4 = pcStack_b4->number_of_targets;
+        uVar1 = (unsigned int)bVar4;
+        if (uVar1 != 0)
+        {
+          ptVar5 = pcStack_b4->targets;
+          iVar7 = 0;
+          do
+          {
+            ptVar5 = ptVar5 + 1;
+            iVar6 = iVar7 + 1;
+            if (-1 < ptVar5[-1].player)
+            {
+
+              if (iVar6 < (int)uVar1)
+              {
+                iStack_bc = 1;
+                ptVar2 = ptVar5;
+                do
+                {
+                  while ((ptVar2->card == ptVar5[-1].card && (ptVar2->player == ptVar5[-1].player)))
+                  {
+                    ptVar2->card = -1;
+                    ptVar2->player = -1;
+                    iStack_bc = iStack_bc + 1;
+                    ptVar2 = ptVar2 + 1;
+                    if (pcStack_b4->targets + uVar1 == ptVar2)
+                      goto LAB_022177be;
+                  }
+                  ptVar2 = ptVar2 + 1;
+                } while (pcStack_b4->targets + uVar1 != ptVar2);
+              }
+              else
+              {
+                iStack_bc = 1;
+              }
+            LAB_022177be:
+              iVar7 = validate_target(player, card, ptStack_b8, iVar7);
+              if (iVar7 == 0)
+              {
+                ptVar5[-1].card = -1;
+                ptVar5[-1].player = -1;
+                bVar4 = pcStack_b4->number_of_targets;
+              }
+              else
+              {
+
+                iVar7 =
+                    damage_creature(ptVar5[-1].player, ptVar5[-1].card, iStack_bc, player, card);
+                pcVar3 = get_card_instance(player, iVar7);
+                pcVar3->targets[10].card = 0x441d;
+                bVar4 = pcStack_b4->number_of_targets;
+              }
+            }
+            uVar1 = (unsigned int)bVar4;
+            iVar7 = iVar6;
+          } while (iVar6 < (int)uVar1);
+        }
+      }
+    }
+  }
+  iVar7 = 6;
+LAB_022176da:
+  iVar7 = planeswalker(player, card, event, iVar7);
+  return iVar7;
+}
+
+/* ManalinkEh 2022: 0x2218e70; original cards/ixalan.c:2864. */
+int card_primal_amulet(int player, int card, event_t event)
+{
+  int result;
+
+  double_faced_card(player, card, event);
+  if (event != EVENT_MODIFY_COST_GLOBAL)
+  {
+    sp_ability_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
+    if (event == EVENT_SPA)
+    {
+      add_counters_from_source(player, card, player, card, COUNTER_CHARGE, 1);
+      result = count_counters(player, card, COUNTER_CHARGE);
+      if (3 < result)
+      {
+        remove_all_counters_from_source(player, card, player, card, COUNTER_CHARGE);
+        transform(player, card);
+      }
+    }
+    return 0;
+  }
+  if (affected_card_controller == player)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      result = is_what(affected_card_controller, affected_card, 0x38);
+      if (result != 0)
+      {
+        COST_COLORLESS = COST_COLORLESS + -1;
+      }
+    }
+  }
+  sp_ability_trigger(player, EVENT_MODIFY_COST_GLOBAL, 2, TYPE_SPELL, NULL, player, card);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2219620; original cards/ixalan.c:3041. */
+int card_treasure_map(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  double_faced_card(player, card, event);
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      scry(player, 1);
+      add_counters_from_source(player, card, player, card, COUNTER_LANDMARK, 1);
+      result = count_counters(player, card, COUNTER_LANDMARK);
+      if (2 < result)
+      {
+        remove_all_counters_from_source(player, card, player, card, COUNTER_LANDMARK);
+        generate_tokens_by_id(player, card, 0x4998, 3);
+        instance = get_card_instance(player, card);
+        result = instance->parent_card;
+        instance = get_card_instance(player, card);
+        transform(instance->parent_controller, result);
+      }
+    }
+  }
+  result = generic_activated_ability(player, card, event, 1, 1, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2214900; original cards/ixalan.c:1006. */
+int card_kitesail_freebooter(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  int id;
+  test_definition_t this_test;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  instance = get_card_instance(player, card);
+  if (event == EVENT_ETB)
+  {
+    result = target_opponent(player, card);
+    if ((result != 0) && (hand_count[1 - player] != 0))
+    {
+
+      new_default_test_definition(&this_test, 3, "Select a nonland, noncreature card.");
+      this_test.type_flag = 1;
+      this_test.zone = 0x100;
+      result = check_battlefield_for_special_card(player, card, instance->targets[0].player, 0,
+                                                  &this_test);
+      result = new_select_a_card(player, instance->targets[0].player, 4, result, 1, -1, &this_test);
+      if (-1 < result)
+      {
+        id = get_id(instance->targets[0].player, result);
+        create_card_name_legacy(player, card, id);
+        exile_card_and_remember_it_on_exiledby(player, card, instance->targets[0].player, result);
+      }
+    }
+    leaves_play_2022(player, card, EVENT_ETB, 1, 0);
+    return 0;
+  }
+  leaves_play_2022(player, card, event, 1, 0);
+  if (event != EVENT_LEAVES_PLAY_ABILITY)
+  {
+    return 0;
+  }
+  return_cards_exiled_by_me_to_hand(player, card);
+  return 0;
+}

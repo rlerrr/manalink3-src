@@ -4312,3 +4312,64 @@ int card_hostile_desert(int player, int card, event_t event)
   iVar2 = mana_producer(player, card, event);
   return iVar2;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20cf580; original cards/hour_of_devastation.c:804. */
+int card_swarm_intelligence(int player, int card, event_t event)
+{
+  int result;
+
+  result = duh_mode(player);
+  sp_ability_trigger(player, event, (result != 0) + 1, TYPE_SPELL, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    copy_spell_from_stack(player, trigger_cause_controller, trigger_cause);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20d1310; original cards/hour_of_devastation.c:1448. */
+int card_imminent_doom(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_t test;
+
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_DOOM, 1);
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 0xff);
+    test.cmc = count_counters(player, card, COUNTER_DOOM);
+    sp_ability_trigger(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_SPA)
+  {
+    default_target_definition(player, card, (target_definition_t *)&test, 0x102);
+    test.message[0xc] = '\0';
+    test.message[0xd] = '\x12';
+    test.message[0xe] = '\0';
+    test.message[0xf] = '\0';
+    test.message[0x44] = '\0';
+    test.message[0x45] = '\0';
+    test.message[0x46] = '\0';
+    test.message[0x47] = '\0';
+    result = can_target((target_definition_t *)&test);
+    if (result != 0)
+    {
+      result = pick_target((target_definition_t *)&test, "TARGET_ANY");
+      if (result != 0)
+      {
+        result = count_counters(player, card, COUNTER_DOOM);
+        damage_target0(player, card, result);
+        instance = get_card_instance(player, card);
+        instance->number_of_targets = '\0';
+        add_counters_from_source(player, card, player, card, COUNTER_DOOM, 1);
+      }
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}

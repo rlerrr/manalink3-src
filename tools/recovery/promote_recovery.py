@@ -91,15 +91,19 @@ def rewrite_argument(text, name, arity, argument, replacements):
     return text
 
 
-def clean(text, overlapping_globals=()):
+def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=()):
     text = strip_comments(text).strip()
     literals = []
     def save_literal(match):
         literals.append(match[0])
         return f"RECOVERY_LITERAL_{len(literals)-1}"
     text = re.sub(LITERAL, save_literal, text)
+    for boundary in array_boundaries:
+        text = text.replace(boundary["original"], boundary["replacement"])
     # DWARF callback int (*)(int, int, event_t) is the existing CardFunction.
     text = re.sub(r"\b_func_int_int_int_event_t\s*\*", "CardFunction ", text)
+    # DWARF callback int (*)(int, int), used by quantity/predicate helpers.
+    text = re.sub(r"\b_func_int_int_int\s*\*", "CardPairFunction ", text)
     # Preserve the old four-argument ABI. New six-argument calls retain their
     # source/recipient pair through the separately recovered target core.
     text = rewrite_arity_call(text, "add_counters", 6, "add_counters_from_source")
@@ -116,7 +120,12 @@ def clean(text, overlapping_globals=()):
     # restricted to simple three-argument calls to this typed accessor.
     text = re.sub(r"(\bcheck_special_flags\([^(),]*,[^(),]*,)\s*0x800000(\s*\))",
                   r"\1SF_MOVE_AURA_LEGAL_TARGET\2", text)
+    # Both DWARF units and the existing header identify this state mask.
+    text = re.sub(r"(\bcheck_state\([^(),]*,[^(),]*,)\s*0x800000(\s*\))",
+                  r"\1STATE_OUBLIETTED\2", text)
     text = re.sub(r"\b__(?:cdecl|regparm[123])\b", "", text)
+    # Ghidra's fixed-length string-copy intrinsic has the C strncpy contract.
+    text = re.sub(r"\bbuiltin_strncpy\b", "strncpy", text)
     for old, new in (("uint", "unsigned int"), ("ushort", "unsigned short"),
                      ("byte", "unsigned char"), ("uchar", "unsigned char"), ("ulonglong", "unsigned long long"),
                      ("longlong", "long long")):
@@ -131,6 +140,18 @@ def clean(text, overlapping_globals=()):
     # DWARF identifies this events.c global as a four-byte int. Its second
     # byte is a Ghidra partial-value expression, not a real C struct member.
     text = text.replace("raw_characteristic_pt._1_1_", "((unsigned int)raw_characteristic_pt >> 8 & 0xff)")
+    # DWARF + matching executable bindings prove these are four-byte ints.
+    # Only scalar reads are representable here; writes to an extracted value
+    # remain invalid C and are rejected by the compiler.
+    for word in ("event_flags", "land_can_be_played"):
+        def partial_word(match):
+            offset, size = int(match[1]), int(match[2])
+            assert offset + size <= 4
+            return "((unsigned int)" + word + " >> " + str(offset * 8) + " & " + hex((1 << (size * 8)) - 1) + ")"
+        text = re.sub(r"\b" + word + r"\._([0-3])_([12])_", partial_word, text)
+    # stack_data records are four bytes; generating_event is at offset two.
+    text = text.replace("*(char *)(stack_size * 4 + 0x50962e)",
+                        "(char)stack_data[stack_size - 1].generating_event")
     text = rewrite_arity_call(text, "is_humiliated", 3, "is_humiliated_for_ability")
     # Verified EXE interface player_bits[2] at 0x4ef1a4, four bytes per
     # element; this load selects byte 3 of player_bits[player].
@@ -140,6 +161,8 @@ def clean(text, overlapping_globals=()):
     # unchanged; compilation still rejects uses that require writable buffers.
     if "{" in text:
         signature, body = text.split("{", 1)
+        if local_type_declarations:
+            body = "\n  " + "\n  ".join(local_type_declarations) + "\n" + body
         # Opaque scalar loads/stores have known machine widths. Do not infer
         # missing parameter/return types, pointers, aggregate layouts or state.
         for old, new in (("undefined1", "uint8_t"), ("undefined2", "uint16_t"),
@@ -147,6 +170,13 @@ def clean(text, overlapping_globals=()):
             body = re.sub(r"\b" + old + r"\b", new, body)
         if not re.match(r"\s*char\s*\*", signature):
             body = re.sub(r"(?m)^(\s+)char\s*\*\s*(\w+)\s*;", r"\1const char *\2;", body)
+        # These source APIs return borrowed, read-only target lists. Restore
+        # const only on the locals assigned their results; writes still fail.
+        target_readers = ("any_becomes_target", "becomes_target_of_spell_or_effect",
+                          "any_creature_becomes_target_of_spell_or_effect")
+        for local in set(re.findall(r"\b(\w+)\s*=\s*(?:" + "|".join(target_readers) + r")\s*\(", body)):
+            body = re.sub(r"(?m)^(\s+)target_t\s*\*\s*" + re.escape(local) + r"\s*;",
+                          r"\1const target_t *" + local + ";", body)
         text = signature + "{" + body
     text = re.sub(r"\([\w\s]+\*\)0x0\b", "NULL", text)
     text = re.sub(r"\n[ \t]+\n", "\n", text)
@@ -172,6 +202,18 @@ def main():
     root = Path(__file__).resolve().parents[2]
     analysis = root / ".recovery"
     exports = analysis / "decompiled-abi"
+    local_types_path = root / "docs/recovery-evidence/local-enums.json"
+    local_types = json.loads(local_types_path.read_text())["functions"] if local_types_path.exists() else {}
+    card_ids_path = root / "docs/recovery-evidence/local-card-ids.json"
+    if card_ids_path.exists():
+        for address, item in json.loads(card_ids_path.read_text())["functions"].items():
+            if address in local_types:
+                old = local_types[address]
+                assert old["name"] == item["name"] and old["source"] == item["source"]
+                old["types"] += item["types"]
+                old["declarations"] += item["declarations"]
+            else:
+                local_types[address] = item
     clang = Path("C:/Program Files/LLVM/bin/clang.exe")
     source_text = {p.relative_to(root).as_posix(): p.read_bytes().decode("utf-8", errors="replace")
                    for folder in ("cards", "functions") for p in (root / folder).glob("*.c")}
@@ -184,8 +226,10 @@ def main():
     # newer binary's potentially changed interfaces, to check new callers.
     source_prototypes = collections.defaultdict(list)
     for source, text in source_text.items():
-        for match in re.finditer(r"(?m)^[ \t]*([A-Za-z_][\w \t*]*?\b([A-Za-z_]\w*)\s*\([^;{}()]*\))\s*\{", strip_comments(text)):
+        for match in re.finditer(r"(?m)^[ \t]*([A-Za-z_][\w\s*]*?\b([A-Za-z_]\w*)\s*\([^;{}()]*\))\s*\{", strip_comments(text)):
             signature, name = match.groups()
+            if name in {"if", "for", "while", "switch", "return", "sizeof"}:
+                continue
             if name in file_definitions[source]:
                 source_prototypes[name].append(dict(source=source, prototype=signature.strip() + ";",
                                                     static=bool(re.search(r"\bstatic\b", signature))))
@@ -228,7 +272,10 @@ def main():
             rejected[name] = "decompiler control-flow warning"
             continue
         resolved, recovered_literals = recover_strings(strip_comments(raw), image, string_aliases[address])
-        body = clean(resolved, overlapping_globals)
+        local = local_types.get(row["address"], {})
+        if local:
+            assert local["source"] == row["source"] and local["name"] == name
+        body = clean(resolved, overlapping_globals, local.get("declarations", []), local.get("array_boundaries", []))
         code = code_only(body)
         if UNRESOLVED.search(code) or re.search(r"::|\bthis\b|\._\d|\.field_", code):
             rejected[name] = "unresolved machine state or layout"
@@ -249,6 +296,10 @@ def main():
                                 line=metadata.get("line", ""), static=static,
                                 body=body, prototype=signature + ";", raw_sha256=hashlib.sha256(raw.encode()).hexdigest(),
                                 recovered_literals=recovered_literals)
+        if local:
+            candidates[name]["local_type_declarations"] = local["declarations"]
+            candidates[name]["local_enum_evidence"] = local["types"]
+            candidates[name]["array_boundaries"] = local.get("array_boundaries", [])
         if "is_humiliated_for_ability(" in body:
             candidates[name]["interface_adaptations"] = ["Three-argument is_humiliated calls use is_humiliated_for_ability."]
         adaptations = candidates[name].setdefault("interface_adaptations", [])
@@ -256,6 +307,10 @@ def main():
             adaptations.append("Six-argument add_counters calls retain source/recipient through add_counters_from_source.")
         if "ENGINE_DONE_LABEL" in body or "ENGINE_OK_LABEL" in body:
             adaptations.append("Localized show_deck label pointers use the legacy integer-address argument.")
+        if "builtin_strncpy(" in raw:
+            adaptations.append("Ghidra fixed-length builtin_strncpy uses the standard C strncpy interface.")
+        if re.search(r"\bconst target_t\s*\*", body):
+            adaptations.append("Borrowed target-list locals preserve the existing APIs' const qualifier.")
         if not adaptations:
             candidates[name].pop("interface_adaptations", None)
 
@@ -288,6 +343,15 @@ def main():
         if not candidates:
             break
         parts = ['#include "manalink.h"\n']
+        watermark_users = [c for c in candidates.values() if re.search(r"\bwatermarks\b", code_only(c["body"]))]
+        if watermark_users and all(c["source"] == "cards/unstable.c" for c in watermark_users):
+            # This private cache was recovered with COFF/.bss and DWARF layout
+            # evidence. Check consumers in the declaration context they have
+            # in their complete source unit, without changing its linkage.
+            owner = (root / "cards/unstable.c").read_text()
+            declaration = "static const Watermark* watermarks = NULL;"
+            if declaration in owner:
+                parts.append(declaration + "\n")
         existing_interfaces = {}
         private_interfaces = {}
         for c in candidates.values():
@@ -308,6 +372,7 @@ def main():
                    "-ferror-limit=0", "-fno-color-diagnostics", "-Werror=implicit-function-declaration",
                    "-Werror=implicit-int", "-Werror=incompatible-pointer-types", "-Werror=return-type",
                    "-Werror=uninitialized", "-Werror=sometimes-uninitialized", "-Wno-ignored-attributes",
+                   "-Werror=format",
                    "-I", str(root), str(scratch)]
         result = subprocess.run(command, capture_output=True, text=True)
         compiler_diagnostics.append(result.stderr)
@@ -376,6 +441,8 @@ def main():
         saved["accepted"] = len(merged)
         saved["latest_batch_accepted"] = len(candidates)
         saved["source_files"] = dict(collections.Counter(f["source"] for f in merged.values()))
+        for fragment in saved.get("source_fragments", []):
+            saved["source_files"].setdefault(fragment["source"], 0)
         saved["card_handler_functions"] = sum(f["name"].startswith("card_") for f in merged.values())
         saved["helper_functions"] = len(merged) - saved["card_handler_functions"]
         saved["private_functions"] = sum(f["static"] for f in merged.values())

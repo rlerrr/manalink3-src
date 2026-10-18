@@ -1007,3 +1007,210 @@ int card_kinnan_bonder_prodigy(int player, int card, event_t event)
   iVar1 = generic_activated_ability(player, card, event, 0, 5, 0, 1, 1, 0, 0, 0, NULL, NULL);
   return iVar1;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x228bfc0; original cards/ikoria.c:2029. */
+int card_shark_typhoon(int player, int card, event_t event)
+{
+  int32_t iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  token_generation_t token;
+
+  if (event == EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    iVar2 = cycling(player, card, EVENT_CAN_ACTIVATE_FROM_HAND, 1, 0, 1, 0, 0, 0);
+    return iVar2;
+  }
+  if (event == EVENT_ACTIVATE_FROM_HAND)
+  {
+
+    iVar2 = cycling(player, card, EVENT_ACTIVATE_FROM_HAND, 1, 0, 1, 0, 0, 0);
+    charge_mana(player, COLOR_COLORLESS, -1);
+    if (spell_fizzled == 1)
+    {
+      return iVar2;
+    }
+    instance = get_card_instance(player, card);
+    instance->info_slot = x_value;
+    return iVar2;
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION_FROM_HAND)
+  {
+    if ((spell_fizzled == 0) && ((((unsigned int)player_bits[player] >> 24 & 0xff) & 2) == 0))
+    {
+
+      instance = get_card_instance(player, card);
+      iVar1 = instance->info_slot;
+      default_token_definition(player, card, 0x5394, &token);
+      token.key_plus = 0x20;
+      token.pow = iVar1;
+      token.tou = iVar1;
+      generate_token(&token);
+      iVar2 = cycling(player, card, EVENT_RESOLVE_ACTIVATION_FROM_HAND, 1, 0, 1, 0, 0, 0);
+      return iVar2;
+    }
+    if ((trigger_condition != 0xd3) || (card != affected_card))
+      goto LAB_0228c00d;
+  LAB_0228c068:
+    if (player == affected_card_controller)
+    {
+      default_test_definition((test_definition_t *)&token, 2);
+      sp_ability_trigger(player, event, 2, TYPE_NONE, (test_definition_t *)&token, player, card);
+    }
+  }
+  else if ((trigger_condition == 0xd3) && (card == affected_card))
+    goto LAB_0228c068;
+  if (event == EVENT_SPA)
+  {
+
+    iVar2 = get_cmc(trigger_cause_controller, trigger_cause);
+    default_token_definition(player, card, 0x5394, &token);
+    token.key_plus = 0x20;
+    token.pow = iVar2;
+    token.tou = iVar2;
+    generate_token(&token);
+  }
+LAB_0228c00d:
+  iVar2 = global_enchantment(player, card, event);
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x228c2c0; original cards/ikoria.c:2169. */
+int card_sprite_dragon(int player, int card, event_t event)
+{
+  int result;
+
+  haste(player, card, event);
+  result = card_deeproot_champion(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22883c0; original cards/ikoria.c:2425. */
+static int vivien_doubling_legacy(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  sp_ability_trigger(player, event, 2, TYPE_CREATURE, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+
+    result = get_cmc(trigger_cause_controller, trigger_cause);
+    default_test_definition(&test, 2);
+    test.cmc_flag = 3;
+    test.cmc = result;
+    sprintf(test.message, "Select a creature card with mana value %d or less.", result + -1);
+    new_global_tutor(player, player, 1, 4, 1, 2, &test);
+  }
+  else if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x228cf40; original cards/ikoria.c:2700. */
+int card_zirda_the_dawnwaker(int player, int card, event_t event)
+{
+  int *piVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int *piVar5;
+  target_definition_t td;
+
+  if (event == EVENT_QUERY)
+  {
+    if (attacking_card == 2)
+    {
+
+      piVar5 = deck_ptr[player];
+      piVar1 = piVar5 + 500;
+      do
+      {
+        iVar2 = *piVar5;
+        if (iVar2 == -1)
+          break;
+        if (((cards_data[iVar2].type & 0x47) != 0) &&
+            (iVar2 = has_an_activated_ability(iVar2), iVar2 == 0))
+        {
+          return 0;
+        }
+        piVar5 = piVar5 + 1;
+      } while (piVar5 != piVar1);
+      iVar2 = 0;
+      if (0 < active_cards_count[player])
+      {
+        do
+        {
+
+          iVar4 = get_original_internal_card_id(player, iVar2);
+          if (((cards_data[iVar4].type & 0x47) != 0) &&
+              (iVar4 = has_an_activated_ability(iVar4), iVar4 == 0))
+          {
+            return 0;
+          }
+          iVar2 = iVar2 + 1;
+        } while (iVar2 < active_cards_count[player]);
+      }
+      return 1;
+    }
+    check_legend_rule(player, card, EVENT_QUERY);
+  LAB_0228cf82:
+    leaves_play_2022(player, card, event, 0, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+      default_test_definition((test_definition_t *)&td, 0x47);
+      remove_cost_mod_for_activated_abilities(player, -1, 2, (test_definition_t *)&td);
+      goto LAB_0228d158;
+    }
+  LAB_0228cfae:
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+      goto LAB_0228cfc6;
+  }
+  else
+  {
+    check_legend_rule(player, card, event);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      default_test_definition((test_definition_t *)&td, 0x47);
+      set_cost_mod_for_activated_abilities(player, -1, 2, (test_definition_t *)&td);
+      leaves_play_2022(player, card, EVENT_RESOLVE_SPELL, 0, 0);
+      goto LAB_0228cfae;
+    }
+    if (event != EVENT_CAST_SPELL)
+      goto LAB_0228cf82;
+    iVar2 = is_what(affected_card_controller, affected_card, 0x47);
+    if (iVar2 != 0)
+    {
+      set_cost_mod_for_activated_abilities(affected_card_controller, affected_card, 2, NULL);
+    }
+    leaves_play_2022(player, card, EVENT_CAST_SPELL, 0, 0);
+  }
+  if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+  {
+  LAB_0228d158:
+    iVar2 = hybrid(player, card, event);
+    return iVar2;
+  }
+LAB_0228cfc6:
+  default_target_definition(player, card, &td, 2);
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (iVar2 = valid_target(&td), iVar2 != 0))
+  {
+
+    instance = get_card_instance(player, card);
+    iVar2 = pump_ability_until_eot_no_repeat(player, card, instance->targets[0].player,
+                                             instance->targets[0].card, 0, 0x20);
+    alternate_legacy_text(2, player, iVar2);
+  }
+  iVar2 = generic_activated_ability(player, card, event, 5, 1, 0, 0, 0, 0, 0, 0, &td,
+                                    "TARGET_CREATURE");
+  return iVar2;
+}

@@ -40,6 +40,8 @@ _Static_assert(offsetof(card_instance_t, eot_toughness1) == 0x4d, "byte 1");
 _Static_assert(offsetof(card_instance_t, eot_toughness2) == 0x4e, "byte 2");
 _Static_assert(offsetof(card_instance_t, eot_toughness3) == 0x4f, "byte 3");
 _Static_assert(offsetof(card_instance_t, targets) == 0x74, "targets slot");
+_Static_assert(sizeof(card_counts) == 14, "card-count cache size");
+_Static_assert(sizeof(card_counts[0]) == 7, "card-count row stride");
 ''')
     abi = subprocess.run(command + [str(layout)], capture_output=True, text=True)
     summary = dict(passed=sum(r["exit_code"] == 0 for r in results.values()),

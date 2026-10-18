@@ -5500,3 +5500,39 @@ joined_r0x020d968d:
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20dcd80; original cards/origins.c:1194. */
+int card_days_undoing(int player, int card, event_t event)
+{
+  int result;
+  unsigned int player_00;
+
+  result = current_turn;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      ai_modifier = ai_modifier + (hand_count[1 - player] - hand_count[player]) * 0xc + 0x18;
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    reshuffle_hand_into_deck(current_turn, 1);
+    reshuffle_grave_into_deck(result, 0);
+    draw_cards(result, 7);
+    player_00 = current_turn ^ 1;
+    reshuffle_hand_into_deck(player_00, 1);
+    reshuffle_grave_into_deck(player_00, 0);
+    draw_cards(player_00, 7);
+    if (current_turn == player)
+    {
+      end_the_turn(player, card, EVENT_RESOLVE_SPELL);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}

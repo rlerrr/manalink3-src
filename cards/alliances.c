@@ -5753,3 +5753,257 @@ int card_winters_night(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int fyndhorn_druid_dies_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x20a18b0; original cards/alliances.c:1359. */
+int card_gusthas_scepter(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  unsigned int *puVar4;
+  int *piVar5;
+  int32_t *piVar6;
+  unsigned int uVar7;
+  int leg_1;
+  int idx_1;
+  int leg;
+  int idx;
+
+  instance = get_card_instance(player, card);
+  leaves_play_2022(player, card, event, 1, 0);
+  if (event == EVENT_CARDCONTROLLED)
+  {
+    if ((card != affected_card) || (affected_card_controller != 2))
+      goto LAB_020a1c48;
+  LAB_020a1b18:
+
+    leg = 0;
+    idx = 0;
+    while (puVar4 = (unsigned int *)exiledby_find_any(player, card, &leg, &idx), puVar4 != NULL)
+    {
+
+      uVar7 = *puVar4;
+      *puVar4 = 0xffffffff;
+      iVar2 = add_card_to_rfg(uVar7 >> 0x1f, uVar7 & 0x7fffffff);
+      from_exile_to_graveyard(player, iVar2);
+    }
+  }
+  else if (event == EVENT_LEAVES_PLAY_ABILITY)
+    goto LAB_020a1b18;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if ((player == 0) &&
+        (iVar2 = exiledby_choose(0, card, 0x8f6, EXBY_FIRST_FOUND, 0, "Card", 0), iVar2 != 0))
+    {
+      return 1;
+    }
+    iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0,
+                                      NULL, NULL);
+    return iVar2;
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+
+    iVar2 = exiledby_count(player, card, player);
+    iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0,
+                                      NULL, NULL);
+    uVar7 = 0;
+    if (iVar3 != 0)
+    {
+      uVar7 = (unsigned int)(0 < hand_count[player]);
+    }
+    iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0,
+                                      NULL, NULL);
+    iVar2 =
+        dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Exile a card", uVar7, 5,
+                    "Pick a card from exile", (unsigned int)(0 < iVar2 && iVar3 != 0), 10,
+                    "Show exiled cards", (unsigned int)(player == 0 && 0 < iVar2), 0, 0, 0, 0, 0);
+    if (iVar2 == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (iVar2 == 3)
+    {
+      exiledby_choose(player, card, 0x8f6, EXBY_CHOOSE, 0, "Card", 0);
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (iVar2 != 1)
+    {
+      if (iVar2 != 2)
+      {
+        return 0;
+      }
+
+      piVar6 = (int32_t *)exiledby_choose(player, card, 0x8f6, EXBY_CHOOSE, 0, "Card", 0);
+      if (piVar6 == NULL)
+      {
+        spell_fizzled = 1;
+      }
+      else
+      {
+        instance->targets[6].player = -1;
+        instance->targets[6].card = *piVar6;
+      }
+    }
+    iVar2 =
+        generic_activated_ability(player, card, EVENT_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+    return iVar2;
+  }
+LAB_020a1c48:
+  if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    return 0;
+  }
+  if (instance->info_slot == 1)
+  {
+    if (0 < hand_count[player])
+    {
+
+      leg_1 = 0;
+      idx_1 = 0;
+      scnprintf((char *)&leg, 100, "Select a card to exile");
+      new_default_test_definition((test_definition_t *)&idx, 0xff, (char *)&leg);
+      iVar2 = new_select_a_card(player, player, 4, 1, 3, -1, (test_definition_t *)&idx);
+      iVar3 = get_original_internal_card_id(player, iVar2);
+      exiledby_remember(player, instance->parent_card, player, iVar3, &leg_1, &idx_1);
+      play_sound_effect(WAV_DESTROY);
+      obliterate_card(player, iVar2);
+      return 0;
+    }
+    return 0;
+  }
+  if (instance->info_slot != 2)
+  {
+    return 0;
+  }
+
+  piVar5 = exiledby_find(player, instance->parent_card, instance->targets[6].card, NULL, NULL);
+  if (piVar5 == NULL)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+
+  *piVar5 = -1;
+  add_card_to_hand(player, instance->targets[6].card & 0x7fffffff);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x209d380; original cards/alliances.c:4238. */
+static int fyndhorn_druid_dies_legacy(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    instance = get_card_instance(player, card);
+    iVar1 = instance->targets[0].card;
+    instance = get_card_instance(player, card);
+    if ((iVar1 == affected_card) && (instance->targets[0].player == affected_card_controller))
+    {
+
+      instance = get_card_instance(player, card);
+      iVar1 = instance->targets[0].player;
+      iVar4 = instance->targets[0].card;
+      iVar3 = is_this_dying(iVar1, iVar4);
+      if (iVar3 != 0)
+      {
+        iVar3 = check_for_death_trigger_removal(iVar1, iVar4);
+        if (iVar3 != 0)
+        {
+          iVar3 = is_what(iVar1, iVar4, 2);
+          iVar4 = 4;
+          if (iVar3 != 0)
+          {
+            iVar4 = (unsigned int)card_counts[iVar1][5] * 4 + 4;
+          }
+          gain_life(iVar1, iVar4);
+          goto LAB_0209d463;
+        }
+      }
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+  LAB_0209d463:
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20aa490; original cards/alliances.c:4256. */
+int card_fyndhorn_druid(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int card_00;
+
+  if (((event == EVENT_PHASE_CHANGED) && (current_phase == 0x18)) && (current_turn == player))
+  {
+
+    instance = get_card_instance(player, card);
+    if ((instance->state & 0x200) != 0)
+    {
+
+      card_00 = create_legacy_effect(player, card, fyndhorn_druid_dies_legacy);
+      instance = get_card_instance(player, card_00);
+      instance->targets[0].player = player;
+      instance = get_card_instance(player, card_00);
+      instance->targets[0].card = card;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20abc20; original cards/alliances.c:4677. */
+int card_phantasmal_sphere(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+  target_definition_t td;
+
+  upkeep_trigger_ability_mode(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    leaves_play_2022(player, card, event, 1, 1);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+      default_target_definition(player, card, &td, 0);
+      td.zone = 0x1000;
+      result = would_validate_arbitrary_target(&td, 1 - player, -1);
+      if (result != 0)
+      {
+        default_token_definition(player, card, 0x496d, &token);
+        token.t_player = 1 - player;
+        token.pow = count_counters(player, card, COUNTER_P1_P1);
+        token.tou = token.pow;
+        generate_token(&token);
+      }
+    }
+    return 0;
+  }
+
+  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  result = count_counters(player, card, COUNTER_P1_P1);
+  result = has_mana(player, 7, result);
+  if (result != 0)
+  {
+    result = count_counters(player, card, COUNTER_P1_P1);
+    result =
+        charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, result);
+    if (result != 0)
+      goto LAB_020abd00;
+  }
+  kill_card(player, card, KILL_SACRIFICE);
+LAB_020abd00:
+  leaves_play_2022(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, 1, 1);
+  return 0;
+}

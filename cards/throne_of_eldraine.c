@@ -5088,3 +5088,173 @@ LAB_025d5acd:
   iVar2 = global_enchantment(player, card, event);
   return iVar2;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25cab30; original cards/throne_of_eldraine.c:319. */
+int card_alela_artful_provocateur(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  check_legend_rule(player, card, event);
+  deathtouch(player, card, event);
+  lifelink(player, card, event);
+  if (event == EVENT_POWER)
+  {
+    if (affected_card_controller == player)
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if (result == 0)
+      {
+        instance = in_play(player, card);
+        if (instance != NULL)
+        {
+          result = check_for_ability(affected_card_controller, affected_card, 0x20);
+          if (result != 0)
+          {
+            event_result = event_result + 1;
+          }
+        }
+      }
+    }
+    sp_ability_trigger(player, EVENT_POWER, 2, TYPE_ARTIFACT | TYPE_ENCHANTMENT, NULL, player,
+                       card);
+    return 0;
+  }
+  sp_ability_trigger(player, event, 2, TYPE_ARTIFACT | TYPE_ENCHANTMENT, NULL, player, card);
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  generate_token_by_id(player, card, 0x492f);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25ccbf0; original cards/throne_of_eldraine.c:1118. */
+int card_chulane_teller_of_tales(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  vigilance(player, card, event);
+  sp_ability_trigger(player, event, 2, TYPE_CREATURE, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    draw_a_card(player);
+    new_default_test_definition((test_definition_t *)&td, 1, "Select a land card.");
+    new_global_tutor(player, player, 4, 4, 0, 1, (test_definition_t *)&td);
+    return 0;
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+  LAB_025cccb1:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_025cccb6;
+  }
+  else if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    if (event != EVENT_CLEANUP)
+    {
+      return 0;
+    }
+    goto LAB_025cccb1;
+  }
+  instance = get_card_instance(player, card);
+  result = instance->targets[0].card;
+  instance = get_card_instance(player, card);
+  bounce_permanent(instance->targets[0].player, result);
+LAB_025cccb6:
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = player;
+  result = generic_activated_ability(player, card, event, 5, 3, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_CREATURE_YOU_CONTROL");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25d2040; original cards/throne_of_eldraine.c:3275. */
+int card_lucky_clover(int player, int card, event_t event)
+{
+  test_definition_t test;
+
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 0x38);
+    test.subtype = 0x6002;
+    sp_ability_trigger(1 - player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  copy_spell_from_stack(player, trigger_cause_controller, trigger_cause);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25d5540; original cards/throne_of_eldraine.c:4850. */
+int card_the_circle_of_loyalty(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_MODIFY_COST)
+  {
+    result = count_subtype(player, -1, 0x67);
+    COST_COLORLESS = COST_COLORLESS - (char)result;
+    boost_creature_type(player, card, EVENT_MODIFY_COST, ~SUBTYPE_INVALID, 1, 1, 0,
+                        BCT_CONTROLLER_ONLY);
+    if (trigger_condition == 0xd3)
+      goto LAB_025d5700;
+  LAB_025d56b6:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      if (event != EVENT_CLEANUP)
+      {
+        return 0;
+      }
+      goto LAB_025d55d3;
+    }
+  }
+  else
+  {
+    boost_creature_type(player, card, event, ~SUBTYPE_INVALID, 1, 1, 0, BCT_CONTROLLER_ONLY);
+    if (trigger_condition == 0xd3)
+    {
+    LAB_025d5700:
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        default_test_definition(&test, 0xff);
+        test.subtype = 0x2001;
+        sp_ability_trigger(player, event, 2, TYPE_NONE, &test, player, card);
+      }
+    }
+    if (event == EVENT_SPA)
+    {
+      default_token_definition(player, card, 0x4958, (token_generation_t *)&test);
+      test.message[0x24] = '\b';
+      test.message[0x25] = '\0';
+      test.message[0x26] = '\0';
+      test.message[0x27] = '\0';
+      generate_token((token_generation_t *)&test);
+      return 0;
+    }
+    if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+      goto LAB_025d56b6;
+  LAB_025d55d3:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_025d55dc;
+  }
+  default_token_definition(player, card, 0x4958, (token_generation_t *)&test);
+  test.message[0x24] = '\b';
+  test.message[0x25] = '\0';
+  test.message[0x26] = '\0';
+  test.message[0x27] = '\0';
+  generate_token((token_generation_t *)&test);
+LAB_025d55dc:
+  result = generic_activated_ability(player, card, event, 1, 3, 0, 0, 0, 0, 1, 0, NULL, NULL);
+  return result;
+}

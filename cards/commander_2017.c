@@ -1160,3 +1160,77 @@ int card_inalla_archmage_ritualist(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x228f460; original cards/commander_2017.c:670. */
+int card_edgar_markov(int player, int card, event_t event)
+{
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  haste(player, card, event);
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 0x47);
+    test.subtype = 0xcd;
+    sp_ability_trigger(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event != EVENT_SPA)
+  {
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+    if (event != EVENT_DAT_ABILITY)
+    {
+      return 0;
+    }
+    default_test_definition(&test, 0x47);
+    test.subtype = 0xcd;
+    new_manipulate_all(player, card, player, &test, ACT_ADD_COUNTERS_BASE | ACT_KILL_BURY);
+    return 0;
+  }
+  default_token_definition(player, card, 0x49a0, (token_generation_t *)&test);
+  test.message[0x1c] = '\x01';
+  test.message[0x1d] = '\0';
+  test.message[0x1e] = '\0';
+  test.message[0x1f] = '\0';
+  test.message[0x18] = '\x01';
+  test.message[0x19] = '\0';
+  test.message[0x1a] = '\0';
+  test.message[0x1b] = '\0';
+  generate_token((token_generation_t *)&test);
+  dat_ability(player, card, EVENT_SPA, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22908a0; original cards/commander_2017.c:1127. */
+int card_ramos_dragon_engine(int player, int card, event_t event)
+{
+  int result;
+
+  check_legend_rule(player, card, event);
+  sp_ability_trigger(player, event, 2, TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    result = count_colors(trigger_cause_controller, trigger_cause);
+    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, result);
+  }
+  else
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x2000, 0, 0, 0, 0, 0, 0,
+                                         0x1000500, NULL, NULL);
+      return result;
+    }
+    if ((event == EVENT_ACTIVATE) &&
+        (result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0x2000, 0, 0, 0, 0, 0, 0,
+                                            0x1000500, NULL, NULL),
+         result != 0))
+    {
+      produce_mana_multi(player, 0, 2, 2, 2, 2, 2);
+      tapped_for_mana_color = -2;
+    }
+  }
+  return 0;
+}

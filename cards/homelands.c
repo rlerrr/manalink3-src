@@ -3295,3 +3295,62 @@ int card_chain_stasis(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2129110; original cards/homelands.c:2988. */
+int card_serra_bestiary(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  target_definition_t td;
+
+  basic_upkeep(player, card, event, 0, 0, 0, 0, 0, 2);
+  result = is_humiliated_for_ability(player, card, AL_STATIC);
+  if ((result == 0) &&
+      (pcVar3 = get_card_instance(player, card), -1 < pcVar3->damage_target_player))
+  {
+
+    pcVar3 = get_card_instance(player, card);
+    pcVar2 = in_play(player, card);
+    if (pcVar2 != NULL)
+    {
+      cannot_attack((int)pcVar3->damage_target_player, pcVar3->damage_target_card, event);
+      cannot_block((int)pcVar3->damage_target_player, pcVar3->damage_target_card, event);
+      set_special_flags2((int)pcVar3->damage_target_player, pcVar3->damage_target_card, 0x10);
+    }
+  }
+  leaves_play_2022(player, card, event, 0, 0);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+
+    pcVar3 = get_card_instance(player, card);
+    remove_special_flags2((int)pcVar3->damage_target_player, pcVar3->damage_target_card, 0x10);
+  }
+  else
+  {
+    if (event == EVENT_CAN_CAST)
+      goto LAB_021291c0;
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_021291c0;
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) ||
+             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+      goto LAB_021291c0;
+  }
+  if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+       (((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
+         (event != EVENT_CHANGE_TYPE)))) &&
+      (((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)) &&
+        (event != EVENT_STATIC_EFFECTS))))
+  {
+    return 0;
+  }
+LAB_021291c0:
+  default_target_definition(player, card, &td, 2);
+  result = disabling_targeted_aura(player, card, event, &td, "Select target creature.", 0);
+  return result;
+}

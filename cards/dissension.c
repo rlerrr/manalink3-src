@@ -5053,3 +5053,182 @@ int card_wars_toll(int player, int card, event_t event)
   iVar6 = global_enchantment(player, card, event);
   return iVar6;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x221dd00; original cards/dissension.c:997. */
+int card_supply_demand(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  test_definition_t this_test;
+
+  instance = get_card_instance(player, card);
+  result = x_value;
+  if (event == EVENT_MODIFY_COST)
+  {
+    result = generic_split_card_2022(player, card, EVENT_MODIFY_COST, 0x4b3a, 1, 0, 0x4ae9, 1, 0);
+    return result;
+  }
+  if (event != EVENT_PLAY_FIRST_HALF)
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      uVar3 = instance->info_slot;
+      if ((uVar3 & 1) != 0)
+      {
+        instance->targets[1].card = x_value;
+        generate_tokens_by_id(player, card, 0x497d, result);
+        uVar3 = instance->info_slot;
+      }
+      if ((uVar3 & 2) != 0)
+      {
+        default_test_definition(&this_test, 0xff);
+        this_test.color_flag = 2;
+        new_global_tutor(player, player, 1, 1, 0, 1, &this_test);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+    result = generic_split_card_2022(player, card, event, 0x4b3a, 1, 10, 0x4ae9, 8, 0);
+    return result;
+  }
+  result = generic_spell(player, card, EVENT_PLAY_FIRST_HALF, 4, NULL, NULL, 0, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x221fd70; original cards/dissension.c:1624. */
+int card_rise_fall(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  target_definition_t *ptStack_1b4;
+  unsigned int uStack_1b0;
+  ec_definition_t this_definition;
+  target_definition_t td;
+  target_definition_t td2;
+  target_definition_t td2_1;
+
+  if (event == EVENT_MODIFY_COST)
+  {
+
+    default_target_definition(player, card, &td2, 2);
+    default_target_definition(player, card, &td2_1, 0);
+    td2_1.zone = 0x1000;
+    result = can_target(&td2);
+    if ((result == 0) || (result = count_graveyard_by_type(2, 2), result == 0))
+    {
+      uVar3 = 0;
+    }
+    else
+    {
+      result = graveyard_has_shroud(2);
+      uVar3 = (unsigned int)(result == 0);
+    }
+    result = can_target(&td2_1);
+    result = generic_split_card_2022(player, card, EVENT_MODIFY_COST, 0x4b2d, uVar3, 0, 0x4af8,
+                                     result, 0);
+    return result;
+  }
+  instance = get_card_instance(player, card);
+  if (event == EVENT_PLAY_FIRST_HALF)
+  {
+    default_target_definition(player, card, &td2, 2);
+    result = new_pick_target(&td2, "Select target creature card to return to it\'s owners\' hand.",
+                             0, 0x80);
+    if (result != 0)
+    {
+      new_default_test_definition((test_definition_t *)&td2_1, 2,
+                                  "Select target creature card to return to it\'s owners\' hand.");
+      select_target_from_either_grave(player, card, SFG_0, 1, 3, (test_definition_t *)&td2_1, 1, 2);
+    }
+  LAB_0221fe80:
+    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+    {
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+      goto LAB_0221fea4;
+    }
+    default_target_definition(player, card, &td, 2);
+    default_target_definition(player, card, &td2, 0);
+    td2.zone = 0x1000;
+    result = can_target(&td);
+    if (result != 0)
+      goto LAB_02220000;
+  LAB_0221ffb8:
+    uStack_1b0 = 0;
+  }
+  else
+  {
+    if (event == EVENT_PLAY_SECOND_HALF)
+    {
+      default_target_definition(player, card, &td2_1, 0);
+      td2_1.zone = 0x1000;
+      pick_target(&td2_1, "TARGET_PLAYER");
+      return 0;
+    }
+    if (event != EVENT_CAN_CAST)
+    {
+      if (event != EVENT_CAST_SPELL)
+        goto LAB_0221fe80;
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+  LAB_0221fea4:
+    default_target_definition(player, card, &td, 2);
+    default_target_definition(player, card, &td2, 0);
+    td2.zone = 0x1000;
+    uStack_1b0 = can_target(&td);
+    if (uStack_1b0 == 0)
+      goto LAB_0221ff06;
+  LAB_02220000:
+    result = count_graveyard_by_type(2, 2);
+    if (result == 0)
+      goto LAB_0221ffb8;
+    result = graveyard_has_shroud(2);
+    uStack_1b0 = (unsigned int)(result == 0);
+  }
+  ptStack_1b4 = &td2;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    uVar3 = instance->info_slot;
+    if ((uVar3 & 1) != 0)
+    {
+
+      result = valid_target(&td);
+      if (result != 0)
+      {
+        bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+      }
+      result = validate_target_from_grave_source(player, card, instance->targets[1].player, 2);
+      if (result != -1)
+      {
+        from_grave_to_hand(instance->targets[1].player, result, 1);
+      }
+      uVar3 = instance->info_slot;
+    }
+    if (((uVar3 & 2) != 0) && (result = validate_target(player, card, ptStack_1b4, 1), result != 0))
+    {
+      default_test_definition((test_definition_t *)&td2_1, 1);
+      default_ec_definition(instance->targets[0].player, player, &this_definition);
+      this_definition.cards_to_reveal = 2;
+      this_definition.effect = 0x81;
+      new_effect_coercion(&this_definition, (test_definition_t *)&td2_1);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+LAB_0221ff06:
+  ptStack_1b4 = &td2;
+  result = can_target(ptStack_1b4);
+  result = generic_split_card_2022(player, card, event, 0x4b2d, uStack_1b0, 0, 0x4af8, result, 0);
+  return result;
+}

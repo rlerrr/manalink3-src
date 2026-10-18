@@ -5351,3 +5351,650 @@ LAB_021d72d3:
   iVar3 = planeswalker(player, card, event, 5);
   return iVar3;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21d1b30; original cards/war_of_the_spark.c:4147. */
+int card_nahiri_storm_of_stone(int player, int card, event_t event)
+{
+  int iVar1;
+  unsigned int uVar2;
+  int iVar3;
+  card_instance_t *instance;
+  target_definition_t *ptStack_68;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  hybrid(player, card, event);
+  if (current_turn == player)
+  {
+    boost_subtype(player, card, event, ~SUBTYPE_INVALID, 0, 0, 0x100, 0,
+                  BCT_INCLUDE_SELF | BCT_CONTROLLER_ONLY);
+  }
+  if (event == EVENT_ETB)
+  {
+    draw_cards(player, 1);
+    goto LAB_021d1bea;
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    instance = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 2);
+    td.required_state = 1;
+    if (player == 1)
+    {
+    LAB_021d1ce8:
+      td.required_state = 1;
+      uVar2 = count_counters(1, card, COUNTER_LOYALTY);
+      td.toughness_requirement = uVar2 | 0x2000;
+    }
+    ptStack_68 = &td;
+    td.allow_cancel = 1;
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar1 = can_target(ptStack_68);
+      if (iVar1 == 0)
+      {
+        return 0;
+      }
+      goto LAB_021d1bea;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_021d1bea;
+    instance = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 2);
+    td.required_state = 1;
+    if (player == 1)
+      goto LAB_021d1ce8;
+  }
+  ptStack_68 = &td;
+  td.allow_cancel = 1;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (iVar1 = valid_target(ptStack_68), iVar1 != 0))
+    {
+      damage_target0(player, card, instance->targets[1].player);
+    }
+    goto LAB_021d1bea;
+  }
+
+  instance->number_of_targets = '\0';
+  instance->info_slot = 0;
+  iVar1 = can_target(ptStack_68);
+  iVar1 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "\001\003", "\001\014",
+                      "\001\017", "Damage a creature", iVar1, 5, 0, 0, 0, 0, 0);
+  if (iVar1 == 0)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+
+  iVar1 = pick_target(ptStack_68, "ROYAL_ASSASSIN");
+  if (iVar1 == 0)
+  {
+    if (spell_fizzled == 1)
+      goto LAB_021d1bea;
+  }
+  else
+  {
+
+    iVar1 = count_counters(player, card, COUNTER_LOYALTY);
+    iVar3 = get_toughness(instance->targets[0].player, instance->targets[0].card);
+    if (iVar3 < iVar1)
+    {
+      iVar1 = iVar3;
+    }
+    if (player == 0)
+    {
+      iVar1 = choose_a_number(0, "Pay how much Loyalty?", iVar1);
+    }
+    if (spell_fizzled == 1)
+      goto LAB_021d1bea;
+    if ((0 < iVar1) && (iVar3 = count_counters(player, card, COUNTER_LOYALTY), iVar1 <= iVar3))
+    {
+      remove_counters_from_source(player, card, player, card, COUNTER_LOYALTY, iVar1);
+      instance->targets[1].player = iVar1;
+      goto LAB_021d1bea;
+    }
+  }
+  spell_fizzled = 1;
+LAB_021d1bea:
+  iVar1 = planeswalker(player, card, event, 6);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x21c7f50; original cards/war_of_the_spark.c:2. */
+void amass(int player, int card, int amount)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  target_definition_t td;
+  token_generation_t token;
+  enum
+  {
+    SUBTYPE_ARMY = 254
+  };
+
+  iVar1 = count_subtype(player, -1, 0xfe);
+  if (iVar1 == 1)
+  {
+    iVar1 = 0;
+    if (0 < active_cards_count[player])
+    {
+      do
+      {
+        instance = in_play(player, iVar1);
+        if (((instance != NULL) && (iVar2 = is_what(player, iVar1, 2), iVar2 != 0)) &&
+            (iVar2 = has_subtype(player, iVar1, SUBTYPE_ARMY), iVar2 != 0))
+        {
+          add_counters_from_source(player, card, player, iVar1, COUNTER_P1_P1, amount);
+        }
+        iVar1 = iVar1 + 1;
+      } while (iVar1 < active_cards_count[player]);
+    }
+  }
+  else
+  {
+    if (iVar1 < 2)
+    {
+      default_token_definition(player, card, 0x4e58, &token);
+      token.action = TOKEN_ACTION_ADD_COUNTERS;
+      token.action_argument = amount;
+      generate_token(&token);
+      return;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.required_subtype = 0xfe;
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    td.allow_cancel = 0;
+    iVar1 = can_target(&td);
+    if ((iVar1 != 0) &&
+        (iVar1 = new_pick_target(&td, "Select target Army you control.", 0, 0x80), iVar1 != 0))
+    {
+      instance = get_card_instance(player, card);
+      iVar1 = instance->targets[0].card;
+      instance = get_card_instance(player, card);
+      add_counters_from_source(player, card, instance->targets[0].player, iVar1, COUNTER_P1_P1,
+                               amount);
+    }
+  }
+  return;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21c8760; original cards/war_of_the_spark.c:199. */
+int card_angrath_captain_of_chaos(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  check_legend_rule(player, card, event);
+  hybrid(player, card, event);
+  boost_subtype(player, card, event, ~SUBTYPE_INVALID, 0, 0, 0, 0x10000,
+                BCT_INCLUDE_SELF | BCT_CONTROLLER_ONLY);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = count_counters(player, card, COUNTER_LOYALTY);
+      if (result < 2)
+      {
+        return 0;
+      }
+      goto LAB_021c87fb;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+
+      instance->number_of_targets = '\0';
+      instance->info_slot = 0;
+      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "\001\003",
+                           "\001\014", "\001\017", "Amass 2", 1, 5, 0xfffffffe, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      goto LAB_021c87fb;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_021c87fb;
+    get_card_instance(player, card);
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    amass(player, card, 2);
+  }
+LAB_021c87fb:
+  result = planeswalker(player, card, event, 5);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x21cc520; original cards/war_of_the_spark.c:1798. */
+int card_enter_the_god_eternals(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  target_definition_t td1;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    default_target_definition(player, card, &td1, 0x100);
+    td1.zone = 0x1200;
+    get_card_instance(player, card);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    if (result == 0)
+    {
+      return 0;
+    }
+    result = can_target(&td1);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    default_target_definition(player, card, &td1, 0x100);
+    td1.zone = 0x1200;
+    instance = get_card_instance(player, card);
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    instance->number_of_targets = '\0';
+    result = pick_target(&td, "TARGET_CREATURE");
+    if (result == 0)
+    {
+      return 0;
+    }
+    new_pick_target(&td1, "TARGET_PLAYER_OR_PLANESWALKER", 1, 1);
+    return 0;
+  }
+  if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
+      (event != EVENT_CHANGE_TARGET))
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 2);
+  default_target_definition(player, card, &td1, 0x100);
+  td1.zone = 0x1200;
+  instance = get_card_instance(player, card);
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    return 0;
+  }
+
+  result = valid_target(&td);
+  if (result == 0)
+  {
+    result = validate_target(player, card, &td1, 1);
+    if (result == 0)
+      goto LAB_021cc6c6;
+  LAB_021cc7c8:
+    mill(instance->targets[1].player, 4);
+  }
+  else
+  {
+    damage_target0(player, card, 4);
+    gain_life(player, 4);
+    result = validate_target(player, card, &td1, 1);
+    if (result != 0)
+      goto LAB_021cc7c8;
+  }
+  amass(player, card, 4);
+LAB_021cc6c6:
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21cdde0; original cards/war_of_the_spark.c:2314. */
+int card_gleaming_overseer(int player, int card, event_t event)
+{
+  int result;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    if ((event == EVENT_ABILITIES) && (affected_card_controller == player))
+    {
+      result = has_subtype(player, affected_card, SUBTYPE_ZOMBIE);
+      if (result != 0)
+      {
+        result = is_token(affected_card_controller, affected_card);
+        if (result != 0)
+        {
+          hexproof(affected_card_controller, affected_card, EVENT_ABILITIES);
+          menace(affected_card_controller, affected_card, EVENT_ABILITIES);
+        }
+      }
+    }
+    return 0;
+  }
+  amass(player, card, 1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21d0d50; original cards/war_of_the_spark.c:3606. */
+int card_lazotep_reaver(int player, int card, event_t event)
+{
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  amass(player, card, 1);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int war_god_eternal(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x21c6fc0; original cards/war_of_the_spark.c:29. */
+static int war_god_eternal(int player, int card, event_t event)
+{
+  unsigned char bVar1;
+  card_instance_t *instance;
+  int result;
+  uint32_t iid;
+  int owner;
+  int position;
+
+  leaves_play_2022(player, card, event, 1, 0);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+    instance = get_card_instance(player, card);
+    bVar1 = instance->kill_code;
+    if (bVar1 != 0)
+    {
+
+      if (bVar1 < 4)
+      {
+        result = find_in_owners_graveyard(player, card, &owner, &position);
+        if (result == 0)
+        {
+          return 0;
+        }
+        result = do_dialog(player, player, card, -1, -1, " Put into library\n Pass", 0);
+        if (result != 0)
+        {
+          return 0;
+        }
+        iid = graveyard_ptr_mutable[owner][position];
+        remove_card_from_grave(owner, position);
+      }
+      else
+      {
+        if (bVar1 != 4)
+        {
+          return 0;
+        }
+        iid = instance->original_internal_card_id;
+        owner = get_owner(player, card);
+        position = find_iid_in_rfg(owner, iid);
+        if (position < 0)
+        {
+          return 0;
+        }
+        result = do_dialog(player, player, card, -1, -1, " Put into library\n Pass", 0);
+        if (result != 0)
+        {
+          return 0;
+        }
+        remove_card_from_rfg_by_position(owner, position);
+      }
+      put_iid_under_the_first_x_cards_of_library(owner, iid, 2);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21cebb0; original cards/war_of_the_spark.c:2568. */
+int card_god_eternal_oketra(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+
+  check_legend_rule(player, card, event);
+  sp_ability_trigger(player, event, 2, TYPE_CREATURE, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    default_token_definition(player, card, 0x4e59, &token);
+    token.tou = 4;
+    token.pow = 4;
+    token.s_key_plus = 8;
+    generate_token(&token);
+  }
+  result = war_god_eternal(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x21cec60; original cards/war_of_the_spark.c:2592. */
+int card_god_eternal_rhonas(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+
+  check_legend_rule(player, card, event);
+  deathtouch(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+
+  if ((event == EVENT_ETB) && (0 < active_cards_count[player]))
+  {
+    iVar1 = 0;
+    do
+    {
+      instance = in_play(player, iVar1);
+      if (((instance != NULL) && (iVar3 = is_what(player, iVar1, 2), card != iVar1)) &&
+          (iVar3 != 0))
+      {
+        iVar3 = get_power(player, iVar1);
+        pump_ability_until_eot(player, card, player, iVar1, iVar3, 0, 0, 8);
+      }
+      iVar1 = iVar1 + 1;
+    } while (iVar1 < active_cards_count[player]);
+  }
+  iVar1 = war_god_eternal(player, card, event);
+  return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static void ugins_token_processing(token_generation_t *token, int beast, int number);
+static int ugin_the_ineffable_effect(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x21c76e0; original cards/war_of_the_spark.c:6686. */
+static int ugin_the_ineffable_effect(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  int iid;
+
+  instance = get_card_instance(player, card);
+  other_leaves_play_2022(player, card, (int)instance->damage_target_player,
+                         instance->damage_target_card, event, 1, 0);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+    result = instance->targets[9].card;
+    if (result != -1)
+    {
+
+      add_card_to_hand(player, result);
+    }
+    return 0;
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (ai_is_speculating == 1)
+    {
+      return 0;
+    }
+    if ((player == 1) && (((unsigned char)trace_mode & 2) == 0))
+    {
+      return 0;
+    }
+    if (instance->targets[9].card != -1)
+    {
+      return 0;
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    result = instance->targets[9].card;
+    if (result != -1)
+    {
+      iid = result;
+      show_deck(player, &iid, 1, "Card exiled by Ugin, the Ineffable", 0, ENGINE_OK_LABEL);
+      spell_fizzled = 1;
+    }
+  }
+  else if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+  result = generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x21c7140; original cards/war_of_the_spark.c:6711. */
+static void ugins_token_processing(token_generation_t *token, int beast, int number)
+{
+  int *piVar1;
+  int card;
+  card_instance_t *instance;
+
+  if (*deck_ptr[token->s_player] == -1)
+  {
+    return;
+  }
+
+  card = create_targetted_legacy_activate(token->s_player, token->s_card, ugin_the_ineffable_effect,
+                                          token->t_player, beast);
+  if (card == -1)
+  {
+    backtrace_and_abort("cards/war_of_the_spark.c:6714\nlegacy != -1");
+  }
+  piVar1 = deck_ptr[token->s_player];
+  instance = get_card_instance(token->t_player, card);
+  instance->targets[9].card = *piVar1;
+  return;
+}
+
+/* ManalinkEh 2022: 0x21d8740; original cards/war_of_the_spark.c:6719. */
+int card_ugin_the_ineffable(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  target_definition_t *ptStack_b4;
+  token_generation_t token;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_MODIFY_COST_GLOBAL)
+  {
+    uVar3 = get_color_real_or_iid(event_result, affected_card_controller, affected_card);
+    if (((uVar3 & 0x3e) == 0) &&
+        (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+    {
+      COST_COLORLESS = COST_COLORLESS + -2;
+    }
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      default_target_definition(player, card, &td, 0x47);
+      td.required_color = 0x3e;
+      instance = get_card_instance(player, card);
+      if (event == EVENT_ACTIVATE)
+      {
+
+        instance->number_of_targets = '\0';
+        instance->info_slot = 0;
+        result =
+            dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Create a Spirit", 1,
+                        5, 1, "Destroy a colored permanent", 1, 10, 0xfffffffd, 0, 0, 0, 0);
+        if (result == 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        if (result == 2)
+        {
+          new_pick_target(&td, "Select target permanent that\'s one or more colors.", 0, 0x81);
+        }
+        goto LAB_021d87c7;
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+        goto LAB_021d87c7;
+      default_target_definition(player, card, &td, 0x47);
+      td.required_color = 0x3e;
+      instance = get_card_instance(player, card);
+    }
+    ptStack_b4 = &td;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+
+      if (instance->info_slot == 1)
+      {
+
+        if (*deck_ptr[player] == -1)
+        {
+          default_token_definition(player, card, 0x498d, &token);
+          token.tou = 2;
+          token.pow = 2;
+          token.color_forced = '\x01';
+          token.no_sleight = '\x01';
+          generate_token(&token);
+        }
+        else
+        {
+          show_deck(player, deck_ptr[player], 1, "Here\'s the top card of your deck", 0,
+                    ENGINE_DONE_LABEL);
+          default_token_definition(player, card, 0x498d, &token);
+          token.tou = 2;
+          token.pow = 2;
+          token.color_forced = '\x01';
+          token.no_sleight = '\x01';
+          token.special_code_on_generation = ugins_token_processing;
+          generate_token(&token);
+          obliterate_top_card_of_deck(player);
+          play_sound_effect(WAV_DESTROY);
+        }
+      }
+      else if ((instance->info_slot == 2) && (result = valid_target(ptStack_b4), result != 0))
+      {
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      }
+    }
+  }
+LAB_021d87c7:
+  result = planeswalker(player, card, event, 4);
+  return result;
+}

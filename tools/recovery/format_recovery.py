@@ -115,7 +115,8 @@ def main():
             # Keep the export's intentional paragraph breaks: clean() otherwise
             # collapses lines containing only indentation along with their break.
             resolved = re.sub(r"(?m)^[ \t]+$", "", resolved)
-            candidate = ("static " if function["static"] else "") + clean(resolved, overlapping)
+            candidate = ("static " if function["static"] else "") + clean(
+                resolved, overlapping, function.get("local_type_declarations", []), function.get("array_boundaries", []))
             formatted = format_bytes(candidate.encode("utf-8"))
             if tokens(current) != tokens(formatted) or comments(current) != comments(formatted):
                 skipped.append(relative + "::" + function["name"])

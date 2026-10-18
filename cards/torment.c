@@ -2993,3 +2993,65 @@ static int prevent_all_damage_of_a_source_until_eot_legacy(int player, int card,
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2312470; original cards/torment.c:511. */
+int card_cephalid_illusionist(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  const target_t *ptVar3;
+  target_definition_t td;
+
+  instance = in_play(player, card);
+  if (((instance != NULL) &&
+       (result = is_humiliated_for_ability(player, card, AL_TRIG), result == 0)) &&
+      (ptVar3 = becomes_target_of_spell_or_effect(player, card, event, player, card, 2),
+       ptVar3 != NULL))
+  {
+    mill(player, 3);
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 2, 0, 1, 0, 0, 0, 0,
+                                         &td, NULL);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 5, 2, 0, 1, 0, 0, 0, 0, &td,
+                                "TARGET_CREATURE_YOU_CONTROL");
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    instance = get_card_instance(player, card);
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+  {
+    result = create_targetted_legacy_effect(player, card, effect_prevent_combat_damage_to_or_from,
+                                            instance->targets[0].player, instance->targets[0].card);
+    alternate_legacy_text(1, instance->parent_controller, result);
+    if (((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+        (result = is_what(instance->targets[0].player, instance->targets[0].card, 2), result != 0))
+    {
+      result = get_power(instance->targets[0].player, instance->targets[0].card);
+      ai_modifier = ai_modifier + result * 0xc;
+      return 0;
+    }
+  }
+  return 0;
+}

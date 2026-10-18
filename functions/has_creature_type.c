@@ -1854,3 +1854,37 @@ void purge_add_force_a_subtype_permanently_legacy(int player, int card, int mode
   } while (player_00 != 2);
   return;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int animate_self_remove_type(int player, int card, int pow, int tgh, type_t types_to_remove,
+                             keyword_t kws_to_add, sp_keyword_t sp_kws_to_add, color_test_t color,
+                             int permanent);
+
+/* ManalinkEh 2022: 0x2675a90; original functions/has_creature_type.c:1848. */
+int animate_self_to_artifact_creature(int player, int card, int pow, int tgh, keyword_t kws_to_add,
+                                      sp_keyword_t sp_kws_to_add, color_test_t color, int permanent)
+{
+  color_test_t color_00;
+  int result;
+
+  color_00 = get_sleighted_color_test(player, card, color);
+  result = add_or_remove_types_legacy_impl(player, card, player, card, TYPE_NONE,
+                                           TYPE_ARTIFACT | TYPE_CREATURE, pow, tgh, kws_to_add,
+                                           sp_kws_to_add, color_00, permanent);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2675b90; original functions/has_creature_type.c:1863. */
+int animate_self_remove_type(int player, int card, int pow, int tgh, type_t types_to_remove,
+                             keyword_t kws_to_add, sp_keyword_t sp_kws_to_add, color_test_t color,
+                             int permanent)
+{
+  color_test_t color_00;
+  int result;
+
+  color_00 = get_sleighted_color_test(player, card, color);
+  result =
+      add_or_remove_types_legacy_impl(player, card, player, card, types_to_remove, TYPE_CREATURE,
+                                      pow, tgh, kws_to_add, sp_kws_to_add, color_00, permanent);
+  return result;
+}

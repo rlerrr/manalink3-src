@@ -5400,3 +5400,19 @@ int card_vial_of_dragonfire(int player, int card, event_t event)
 
 /* Forest	""	=>magic.exe:card_forest
  * Basic Land - |H2Forest */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23232b0; original cards/dragons_of_tarkir.c:3221. */
+int card_thunderbreak_regent(int player, int card, event_t event)
+{
+  const target_t *ptVar1;
+
+  ptVar1 = any_becomes_target(player, card, event, player, -1, TYPE_PERMANENT, 0x30, TYPE_ANY,
+                              1 - player, RESOLVE_TRIGGER_MANDATORY);
+  if (ptVar1 != NULL)
+  {
+    damage_player(1 - player, 3, player, card);
+  }
+  return 0;
+}

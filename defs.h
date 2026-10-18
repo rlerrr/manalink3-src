@@ -1333,6 +1333,8 @@ struct info_t;
 #endif
 
 typedef int (*CardFunction)(int, int, event_t);
+/* October 2022 callback: int (*)(int player, int card). */
+typedef int (*CardPairFunction)(int, int);
 
 /* Info struct */
 typedef struct card_instance_struct
@@ -2374,6 +2376,7 @@ typedef enum
 	TOKEN_ACTION_PUMP_POWER	= 1<<17,	// Token gets +X/+0 until end of turn.  X is action_argument.  (Not actually used by anything.)
 	TOKEN_ACTION_PUMP_TOUGHNESS	= 1<<18,	// Token gets +0/+X until end of turn.  X is action_argument.  (Not actually used by anything.)
 	TOKEN_ACTION_ADD_SUBTYPE= 1<<19,	// Add subtype in action_argument to token.
+	TOKEN_ACTION_ADD_COUNTERS = 1<<20, // 2022: counter type in high 16 bits, quantity in low 16 bits; added after put_into_play.
 } token_action_t;
 
 /* Parameters for "generate_token" and such */

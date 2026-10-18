@@ -3764,3 +3764,81 @@ static char *is_permanent_or_suspended_legacy(int who_chooses, int player, int c
   }
   return NULL;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23be760; original cards/planar_chaos.c:3321. */
+int card_timebender(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int card_00;
+  target_definition_t td;
+
+  if (event == EVENT_TURNED_FACE_UP)
+  {
+
+    default_target_definition(player, card, &td, 199);
+    td.preferred_controller = 2;
+    td.special = 0x8000;
+    td.extra = (int32_t)is_permanent_or_suspended_legacy;
+    instance = get_card_instance(player, card);
+    result =
+        do_dialog(player, player, card, -1, -1, " Add 2 Time Counters\n Remove 2 Time Counters", 0);
+    if (result == 0)
+    {
+      result = can_target(&td);
+      if (result != 0)
+      {
+        result = new_pick_target(
+            &td, "Select target permanent or suspended legacy with a time counter.", 0, 0x80);
+        if (result != 0)
+        {
+          result =
+              count_counters(instance->targets[0].player, instance->targets[0].card, COUNTER_TIME);
+          if (0 < result)
+          {
+            add_counters_from_source(player, card, instance->targets[0].player,
+                                     instance->targets[0].card, COUNTER_TIME, 2);
+          }
+        }
+      }
+    }
+    else
+    {
+      result = can_target(&td);
+      if (result != 0)
+      {
+        result = new_pick_target(
+            &td, "Select target permanent or Suspend legacy card-remove counters.", 0, 0x80);
+        if (result != 0)
+        {
+          remove_counters_from_source(player, card, instance->targets[0].player,
+                                      instance->targets[0].card, COUNTER_TIME, 2);
+          result =
+              count_counters(instance->targets[0].player, instance->targets[0].card, COUNTER_TIME);
+          if (result == 0)
+          {
+            ai_modifier = ai_modifier + -0x60;
+          }
+          result = instance->targets[0].player;
+          card_00 = instance->targets[0].card;
+          if (result == player)
+          {
+            result = is_what(player, card_00, 0x80);
+            ai_modifier = ai_modifier + (-(unsigned int)(result == 0) & 0xffffffa0) + 0x30;
+            result = instance->targets[0].player;
+            if (result == player)
+              goto LAB_023be778;
+            card_00 = instance->targets[0].card;
+          }
+          result = is_what(result, card_00, 0x80);
+          ai_modifier = ai_modifier + ((-(unsigned int)(result == 0) & 0x60) - 0x30);
+        }
+      }
+    }
+  }
+LAB_023be778:
+  result = morph(player, card, event, 0, 0, 1, 0, 0, 0);
+  return result;
+}

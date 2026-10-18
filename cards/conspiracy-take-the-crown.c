@@ -2,7 +2,7 @@
 
 // FUNCTIONS
 
-static int who_is_the_monarch(void){
+int who_is_the_monarch(void){
 	int result = -1;
 	CYCLE_ALL_CARDS(p, c, 	{
 								if( in_play(p, c) && get_id(p, c) == CARD_ID_THE_MONARCH ){
@@ -14,7 +14,7 @@ static int who_is_the_monarch(void){
 }
 
 
-static void you_become_the_monarch(int player){
+void you_become_the_monarch(int player){
 	int monarch_player = -1;
 	int monarch_card = -1;
 	CYCLE_ALL_CARDS(p, c, 	{

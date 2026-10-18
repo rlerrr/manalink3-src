@@ -6,3 +6,6 @@ EXPORTS
   DrawSmallCardTitle
   draw_special_counters
   draw_standard_counters
+  get_rarity
+  get_watermarks
+  get_border_color

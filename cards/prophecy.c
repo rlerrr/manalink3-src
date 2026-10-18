@@ -5826,3 +5826,169 @@ int card_wing_storm(int player, int card, event_t event)
   result = basic_spell(player, card, event);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2600da0; original cards/prophecy.c:1854. */
+int card_celestial_convergence(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_OMEN, 7);
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    remove_counters_from_source(player, card, player, card, COUNTER_OMEN, 1);
+  }
+  else if (event == EVENT_STATIC_EFFECTS)
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+
+      instance = get_card_instance(player, card);
+      iVar2 = count_counters(player, card, COUNTER_OMEN);
+      if (iVar2 < 1)
+      {
+        if (instance->info_slot == 0x12c7)
+        {
+          iVar2 = is_humiliated_for_ability(player, card, AL_STATIC);
+          if (iVar2 == 0)
+          {
+            iVar2 = life[1 - player];
+            iVar1 = life[player];
+            if (iVar2 < iVar1)
+            {
+              lose_the_game(1 - player);
+            }
+            else if (iVar1 < iVar2)
+            {
+              lose_the_game(player);
+            }
+            else if (iVar1 == iVar2)
+            {
+              lose_the_game(2);
+            }
+          }
+          else
+          {
+            instance->info_slot = 0;
+          }
+        }
+      }
+      else
+      {
+        instance->info_slot_fn = (CardFunction)0x12c7;
+      }
+    }
+  }
+  else if ((event == EVENT_SHOULD_AI_PLAY) &&
+           (((ai_is_speculating == 1 ||
+              ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+             (life[0] < life[1]))))
+  {
+    ai_modifier = ai_modifier + 0x18;
+  }
+  iVar2 = global_enchantment(player, card, event);
+  return iVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2605900; original cards/prophecy.c:3679. */
+int card_rhystic_cave(int player, int card, event_t event)
+{
+  bool bVar1;
+  card_instance_t *instance;
+  int result;
+  unsigned int argument1;
+  unsigned int uVar4;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if ((((unsigned int)land_can_be_played >> 16 & 0xff) & 4) == 0)
+      {
+        result = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+        return result;
+      }
+    }
+    else
+    {
+
+      if ((ai_is_speculating == 1) ||
+          ((result = 0, player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+      {
+        result = get_deck_color(player, player);
+      }
+      add_state(player, card, 0x10);
+
+      uVar4 = 0;
+      result = choose_a_color(player, result);
+      instance->info_slot = 1 << ((unsigned char)result & 0x1f);
+      bVar1 = true;
+      do
+      {
+        argument1 = current_turn ^ uVar4;
+        result = has_mana(argument1, 7, 1);
+        if ((bVar1) && (result != 0))
+        {
+
+          result = do_dialog(argument1, player, card, -1, -1, " Pay 1 stop mana\n Pass",
+                             (unsigned int)(player == argument1));
+          if (result == 0)
+          {
+            charge_mana_while_resolving(player, card, EVENT_ACTIVATE, argument1, COLOR_COLORLESS,
+                                        1);
+            if (spell_fizzled != 1)
+            {
+              tapped_for_mana_color = -1;
+              bVar1 = false;
+            }
+          }
+        }
+        uVar4 = uVar4 + 1;
+      } while (uVar4 != 2);
+      if (bVar1)
+      {
+        produce_mana_all_one_color(player, instance->info_slot, 1);
+      }
+    }
+  }
+  else if (((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP)) ||
+           ((event == EVENT_COUNT_MANA &&
+             ((card == affected_card && (player == affected_card_controller))))))
+  {
+
+    get_card_instance(player, card);
+    return 0;
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2606b30; original cards/prophecy.c:4150. */
+int card_shrouded_serpent(int player, int card, event_t event)
+{
+  int result;
+
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if ((event == EVENT_DAT_ABILITY) &&
+      (((result = has_mana(1 - current_turn, 7, 4),
+         result == 0 || (result = do_dialog(1 - current_turn, player, card, -1, -1,
+                                            " Pay 4 or this ublocked\n Decline", 0),
+                         result != 0)) ||
+        (result = charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, 1 - current_turn,
+                                              COLOR_ANY, 4),
+         result == 0))))
+  {
+    pump_ability_until_eot_no_repeat_alt(player, card, player, card, 0, 0x10, 1);
+    return 0;
+  }
+  return 0;
+}

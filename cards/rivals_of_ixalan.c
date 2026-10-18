@@ -3794,3 +3794,317 @@ int card_vault_of_catlacan(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2190650; original cards/rivals_of_ixalan.c:502. */
+int card_nezahal_primal_tide(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+  test_definition_t this_test;
+
+  check_legend_rule(player, card, event);
+  cannot_be_countered(player, card, event);
+  if (event == EVENT_MAX_HAND_SIZE)
+  {
+    if ((current_turn == player) &&
+        (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+    {
+      event_result = 1000;
+    }
+    if (trigger_condition != 0xd3)
+    {
+      return 0;
+    }
+  }
+  else if (trigger_condition != 0xd3)
+    goto LAB_0219069e;
+  if ((card == affected_card) && (player == affected_card_controller))
+  {
+    default_test_definition(&this_test, 2);
+    this_test.type_flag = 1;
+    sp_ability_trigger(1 - player, event, 2, TYPE_NONE, &this_test, player, card);
+  }
+LAB_0219069e:
+  if (event == EVENT_SPA)
+  {
+    draw_a_card(player);
+  }
+  else if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (2 < hand_count[player])
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 0, 0, 0, 0, 0,
+                                         NULL, NULL);
+      return result;
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    result = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
+    if (result != 0)
+    {
+      new_multidiscard(player, 3, 0, player);
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar2 = in_play(pcVar1->parent_controller, pcVar1->parent_card);
+    if (pcVar2 != NULL)
+    {
+      remove_until_eot(pcVar1->parent_controller, pcVar1->parent_card, pcVar1->parent_controller,
+                       pcVar1->parent_card);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x218f700; original cards/rivals_of_ixalan.c:39. */
+int card_baffling_end(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  instance = get_card_instance(player, card);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = 1 - player;
+    td.special = 0x800;
+    td.extra = 3;
+    td.allow_cancel = 0;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(
+          &td, "Select target creature an opponent controls with converted mana cost 3 or less.", 0,
+          0x80);
+      if (result != 0)
+      {
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+      }
+    }
+    leaves_play_2022(player, card, EVENT_ETB, 1, 1);
+  }
+  else
+  {
+    leaves_play_2022(player, card, event, 1, 1);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+      target_opponent(player, card);
+      default_token_definition(player, card, 0x491d, (token_generation_t *)&td);
+      td.illegal_type = instance->targets[0].player;
+      generate_token((token_generation_t *)&td);
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2196c50; original cards/rivals_of_ixalan.c:3033. */
+int card_captains_hook(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  leaves_play_2022(player, card, event, 1, 0);
+  if ((event == EVENT_UNATTACH) || (event == EVENT_LEAVES_PLAY_ABILITY))
+  {
+    instance = is_equipping(player, card);
+    if (instance != NULL)
+    {
+
+      instance = get_card_instance(player, card);
+      if (instance->damage_target_player == player)
+      {
+        kill_card(player, instance->damage_target_card, KILL_SACRIFICE);
+      }
+    }
+  }
+  attached_is_additional_subtype(player, card, event, SUBTYPE_PIRATE);
+  result = vanilla_equipment(player, card, event, 1, 2, 0, 0, 0x10000);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int golden_guardian_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x21936a0; original cards/rivals_of_ixalan.c:1985. */
+int card_hadanas_climb(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  double_faced_card(player, card, event);
+  check_legend_rule(player, card, event);
+  result = beginning_of_combat_2022(player, card, event, player);
+  if (result != 0)
+  {
+
+    instance = get_card_instance(player, card);
+    if (current_turn == player)
+    {
+      default_target_definition(player, card, &td, 2);
+      td.allow_cancel = 0;
+      instance->number_of_targets = '\0';
+      td.preferred_controller = player;
+      td.allowed_controller = player;
+      result = can_target(&td);
+      if (result != 0)
+      {
+        result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
+        if (result != 0)
+        {
+          add_counters_from_source(player, card, instance->targets[0].player,
+                                   instance->targets[0].card, COUNTER_P1_P1, 1);
+          result =
+              count_counters(instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1);
+          if (2 < result)
+          {
+            transform(player, card);
+          }
+        }
+      }
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x218f0d0; original cards/rivals_of_ixalan.c:2155. */
+static int journey_to_eternity_legacy(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+
+  instance = get_card_instance(player, card);
+  iVar3 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (iVar3 != 0)
+  {
+
+    seek_grave_for_id_to_reanimate(player, card, instance->targets[0].player,
+                                   instance->targets[0].card, REANIMATE_DEFAULT);
+  }
+  other_leaves_play_2022(player, card, instance->targets[1].player, instance->targets[1].card,
+                         event, 1, 0);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+
+    iVar3 = instance->targets[2].player;
+    iVar1 = instance->targets[2].card;
+    iVar4 = count_graveyard(iVar3);
+    iVar4 = iVar4 + -1;
+    if (-1 < iVar4)
+    {
+      do
+      {
+        if (graveyard_ptr_mutable[iVar3][iVar4] == iVar1)
+        {
+          reanimate_permanent(player, card, iVar3, iVar4, REANIMATE_RETURN_TO_PLAY_TRANSFORMED);
+          break;
+        }
+        iVar4 = iVar4 + -1;
+      } while (iVar4 != -1);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+  iVar3 = eot_trigger(player, card, event);
+  if (iVar3 == 0)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x218f350; original cards/rivals_of_ixalan.c:3061. */
+static int golden_guardian_legacy(int player, int card, event_t event)
+{
+  char cVar1;
+  card_instance_t *instance;
+  int result;
+  int owner;
+  int position;
+
+  instance = get_card_instance(player, card);
+  other_leaves_play_2022(player, card, (int)instance->damage_target_player,
+                         instance->damage_target_card, event, 1, 0);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+    cVar1 = instance->damage_target_player;
+    result = instance->damage_target_card;
+    instance->targets[6].player = (int)cVar1;
+    instance->targets[6].card = result;
+    result = find_in_owners_graveyard((int)cVar1, result, &owner, &position);
+    if (result != 0)
+    {
+
+      remove_card_from_grave(owner, position);
+      result = get_internal_card_id_from_csv_id(0x4728);
+      result = add_card_to_hand(player, result);
+      set_special_flags3(player, result, 0x201);
+      put_into_play(player, result);
+      dispatch_event_with_initial_event_result(player, result,
+                                               EVENT_ANOTHER_PERMANENT_HAS_TRANSFORMED, 0);
+      verify_legend_rule(player, result, (unsigned int)cards_data[instance->targets[0xc].card].id);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+  result = eot_trigger(player, card, event);
+  if (result == 0)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2196d40; original cards/rivals_of_ixalan.c:3084. */
+int card_golden_guardian(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  double_faced_card(player, card, event);
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.special = 0x4000;
+    td.allowed_controller = player;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.special = 0x4000;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+
+      instance = get_card_instance(player, card);
+      fight(instance->parent_controller, instance->parent_card, instance->targets[0].player,
+            instance->targets[0].card);
+      create_targetted_legacy_effect_no_repeat(player, card, golden_guardian_legacy,
+                                               instance->parent_controller, instance->parent_card);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 4, 2, 0, 0, 0, 0, 0, 0, &td,
+                                     "SELECT_A_CREATURE_YOU_CONTROL");
+  return result;
+}

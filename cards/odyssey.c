@@ -249,3 +249,142 @@ LAB_0251206e:
   result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2501eb0; original cards/odyssey.c:5852. */
+static int verdant_succession_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  target_t *ptVar5;
+  int (*paiVar6)[2];
+  int iStack_198;
+  int added[9][2];
+  char msg[100];
+  test_definition_t this_test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      pcVar1 = get_card_instance(player, card);
+      if ((-1 < pcVar1->damage_target_player) &&
+          (iVar2 = get_id((int)pcVar1->damage_target_player, pcVar1->damage_target_card),
+           iVar2 != 0x1673))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (iVar2 = effect_follows_control_of_attachment(player, card, 0x4700), iVar2 != 0))
+    {
+      return 0;
+    }
+  LAB_02501ee7:
+    iVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (iVar2 == 0)
+      goto LAB_02501f10;
+  }
+  else
+  {
+    pcVar1 = get_card_instance(player, card);
+    if ((-1 < pcVar1->damage_target_player) &&
+        (iVar2 = effect_follows_control_of_attachment(player, card, event), iVar2 != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_02501ee7;
+
+    pcVar1 = get_card_instance(player, card);
+    pcVar3 = in_play(affected_card_controller, affected_card);
+    if ((pcVar3 != NULL) &&
+        (iVar2 = is_this_dying(affected_card_controller, affected_card), iVar2 != 0))
+    {
+
+      if ((pcVar1->damage_target_card == affected_card) &&
+          (pcVar1->damage_target_player == affected_card_controller))
+      {
+        pcVar1->damage_target_card = -1;
+        pcVar1->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar1->targets[0xb].player < 0)
+        {
+          pcVar1->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar1->targets[0xb].player + 2) = 1;
+      }
+      default_test_definition(&this_test, 2);
+      this_test.color = get_sleighted_color_test(player, card, 8);
+      count_for_gfp_ability_and_store_values(player, card, 0x77, 2, 0, &this_test, 0x10, 1);
+    }
+    iVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (iVar2 == 0)
+    {
+      return 0;
+    }
+  }
+  iVar2 = check_status(player, card, 0x10000);
+  if (iVar2 == 0)
+  {
+
+    pcVar1 = get_card_instance(player, card);
+    ptVar5 = pcVar1->targets + 1;
+    iVar2 = 0;
+    do
+    {
+      if (ptVar5->player != -1)
+      {
+        added[iVar2][0] = ptVar5->player;
+        iVar4 = get_card_name(-1, ptVar5->card);
+        ptVar5->card = -1;
+        added[iVar2][1] = iVar4;
+        ptVar5->player = -1;
+        iVar2 = iVar2 + 1;
+      }
+      ptVar5 = ptVar5 + 1;
+    } while (ptVar5 != pcVar1->targets + 10);
+
+    if (0 < iVar2)
+    {
+
+      paiVar6 = added;
+      do
+      {
+        iVar4 = (*paiVar6)[1];
+        iStack_198 = card_counts[player][5] + 1;
+        do
+        {
+          if (iVar4 == -1)
+          {
+            scnprintf(msg, 100,
+                      "You won\'t be able to tutor any card as you\'re searching for a card with "
+                      "no name.");
+          }
+          else
+          {
+
+            scnprintf(msg, 100, "Select a card named %s", cards_ptr[iVar4]->name);
+          }
+          new_default_test_definition(&this_test, 0xff, msg);
+          this_test.id = iVar4;
+          new_global_tutor((*paiVar6)[0], (*paiVar6)[0], 1, 4, 0, 5, &this_test);
+          iStack_198 = iStack_198 + -1;
+        } while (iStack_198 != 0);
+        paiVar6 = paiVar6 + 1;
+      } while (paiVar6 != added + iVar2);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+LAB_02501f10:
+  if ((event == EVENT_CLEANUP) && (iVar2 = check_status(player, card, 0x10000), iVar2 == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}

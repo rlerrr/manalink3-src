@@ -1432,3 +1432,808 @@ int card_old_guard(int player, int card, event_t event)
                                      "TARGET_CREATURE");
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25c88d0; original cards/unstable.c:2183. */
+int card_everythingamajig_c(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  bool bVar4;
+  target_definition_t td;
+
+  if ((event - EVENT_RESOLVE_ACTIVATION < 2) || (event == EVENT_ACTIVATE))
+  {
+    bVar4 = current_turn == player;
+    default_target_definition(player, card, &td, 0);
+    td.zone = 0x1000;
+    instance = get_card_instance(player, card);
+    iVar2 =
+        dialog_impl(player, card, event, "\001\002", "\001\023", &instance->targets[5].card, "Mana",
+                    1, 1, "\001\020", 1, 0, 0, 0, 0, 0, "Discard", (unsigned int)bVar4, 1,
+                    "\001\020", 3, 0, 0, 0, 0, 0, "\001\025", "\001\024", &td, "TARGET_PLAYER",
+                    "Becomes Construct", 1, 1, "\001\020", 0xffffffff, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if ((((unsigned int)land_can_be_played >> 16 & 0xff) & 4) == 0)
+      {
+        iVar3 = can_use_activated_abilities(player, card);
+        return (unsigned int)(iVar3 != 0 && iVar2 != 0);
+      }
+    }
+    else if (event == EVENT_ACTIVATE)
+    {
+      if (iVar2 == 1)
+      {
+        iVar2 = flip_a_coin(player, card);
+        if (iVar2 != 0)
+        {
+          produce_mana(player, 0, 2);
+        }
+        tapped_for_mana_color = -2;
+      }
+      else if (iVar2 == 3)
+      {
+        instance->info_slot = x_value;
+      }
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      if (iVar2 == 2)
+      {
+        discard(instance->targets[0].player, 0, player);
+        return 0;
+      }
+      if (iVar2 == 3)
+      {
+        artifact_animation(player, card, instance->parent_controller, instance->parent_card, 1,
+                           instance->info_slot, instance->info_slot, 0, 0);
+        return 0;
+      }
+    }
+  }
+  return 0;
+}
+
+/* October 2022 private .bss cache @ 0x2774140, original line 17. */
+static const Watermark* watermarks = NULL;
+
+
+/* ManalinkEh 2022: 0x25c49b0; original cards/unstable.c:1761. */
+static int test_has_rarity_val(int iid, int val, int player, int card)
+{
+  const Rarities *pRVar1;
+
+  pRVar1 = get_rarity((unsigned int)cards_data[iid].id);
+  return (unsigned int)((unsigned int)pRVar1->default_rarity == val);
+}
+
+
+/* ManalinkEh 2022: 0x25c49f0; original cards/unstable.c:113. */
+static watermark_t get_watermark_by_iid(int iid)
+{
+  const Rarities *pRVar1;
+  watermark_t wVar2;
+
+  pRVar1 = get_rarity((unsigned int)cards_data[iid].id);
+  wVar2 = (watermark_t)pRVar1->watermark;
+  if (wVar2 != WMARK_NONE)
+  {
+    if (watermarks == NULL)
+    {
+      watermarks = get_watermarks();
+    }
+    if (watermarks[wVar2].saturation != '\0')
+    {
+      return wVar2;
+    }
+  }
+  return WMARK_NONE;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *target_has_league_watermark(int who_chooses, int player, int card,
+                                         int targeting_player, int targeting_card);
+static int test_has_watermark_val(int iid, int val, int player, int card);
+
+/* ManalinkEh 2022: 0x25c4af0; original cards/unstable.c:150. */
+static int test_has_watermark_val(int iid, int val, int player, int card)
+{
+  watermark_t wVar1;
+
+  wVar1 = get_watermark_by_iid(iid);
+  return (unsigned int)(val == wVar1);
+}
+
+/* ManalinkEh 2022: 0x25c5300; original cards/unstable.c:274. */
+int card_knight_of_the_widget(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  unsigned int iid;
+  watermark_t wVar3;
+  int iVar4;
+  int card_00;
+
+  vigilance(player, card, event);
+  if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
+       (affected_card_controller == player)) &&
+      (player != -1))
+  {
+    iVar1 = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (iVar1 == 0)
+    {
+
+      iVar1 = 0;
+      if (0 < active_cards_count[player])
+      {
+        card_00 = 0;
+        do
+        {
+          instance = in_play(player, card_00);
+          if (instance != NULL)
+          {
+            iid = instance->internal_card_id;
+
+            if ((int)iid < 0)
+            {
+              iid = (unsigned int)instance->backup_internal_card_id;
+            }
+            wVar3 = get_watermark_by_iid(iid);
+            if (wVar3 == WMARK_ORDER_OF_THE_WIDGET)
+            {
+              iVar4 = is_what(player, card_00, 0x47);
+              iVar1 = (iVar1 + 1) - (unsigned int)(iVar4 == 0);
+            }
+          }
+          card_00 = card_00 + 1;
+        } while (card_00 < active_cards_count[player]);
+      }
+      set_characteristic_pt(iVar1);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c4bb0; original cards/unstable.c:752. */
+char *target_has_black_border(int who_chooses, int player, int card, int targeting_player,
+                              int targeting_card)
+{
+  uint32_t csvid;
+  border_t bVar1;
+  char *pcVar2;
+
+  csvid = get_id(player, card);
+  bVar1 = get_border_color(csvid);
+  pcVar2 = NULL;
+  if (bVar1 != BORDER_BLACK)
+  {
+    pcVar2 = "black-bordered";
+  }
+  return pcVar2;
+}
+
+/* ManalinkEh 2022: 0x25c4a60; original cards/unstable.c:756. */
+static int test_has_any_watermark(int iid, int val, int player, int card)
+{
+  card_instance_t *instance;
+  unsigned int iid_00;
+  watermark_t wVar2;
+
+  instance = get_card_instance(player, card);
+  iid_00 = instance->internal_card_id;
+
+  if ((int)iid_00 < 0)
+  {
+    iid_00 = (unsigned int)instance->backup_internal_card_id;
+  }
+  wVar2 = get_watermark_by_iid(iid_00);
+  return (unsigned int)(wVar2 != WMARK_NONE);
+}
+
+/* ManalinkEh 2022: 0x25c4aa0; original cards/unstable.c:1067. */
+static char *target_has_league_watermark(int who_chooses, int player, int card,
+                                         int targeting_player, int targeting_card)
+{
+  card_instance_t *instance;
+  unsigned int iid;
+  watermark_t wVar2;
+
+  instance = get_card_instance(player, card);
+  iid = instance->internal_card_id;
+
+  if ((int)iid < 0)
+  {
+    iid = (unsigned int)instance->backup_internal_card_id;
+  }
+  wVar2 = get_watermark_by_iid(iid);
+  if (wVar2 != WMARK_LEAGUE_OF_DASTARDLY_DOOM)
+  {
+    return "watermark";
+  }
+  return NULL;
+}
+
+/* ManalinkEh 2022: 0x25c6b60; original cards/unstable.c:1072. */
+int card_rumors_of_my_death(int player, int card, event_t event)
+{
+  int result;
+  target_t sel;
+  target_definition_t td;
+  test_definition_t test;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    base_target_definition(player, card, &td, 0x47);
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    td.special = 0x8000;
+    td.extra = (int32_t)target_has_league_watermark;
+    new_default_test_definition(
+        &test, 0x47, "Select target permanent card with a League of Dastardly Doom watermark.");
+    test.special_selection_function = test_has_watermark_val;
+    test.value_for_special_selection_function = 2;
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 3, 1, 0, 0, 0, 0, 0,
+                                         &td, NULL);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = new_special_count_grave(player, &test);
+      if (0 < result)
+      {
+        result = graveyard_has_shroud(player);
+        return (unsigned int)(result == 0);
+      }
+      return 0;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 3, 1, 0, 0, 0, 0, 0, NULL, NULL);
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      result = select_target(
+          player, card + -1000, &td,
+          "Select a permanent you control with a League of Dastardly Doom watermark.", &sel);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      select_target_from_grave_source(player, card, player, SFG_0, 2, &test, 0);
+      if (spell_fizzled != 1)
+      {
+        kill_card(sel.player, sel.card, KILL_EXILE);
+        return 0;
+      }
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = global_enchantment(player, card, event);
+      return result;
+    }
+    base_target_definition(player, card, &td, 0x47);
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    td.special = 0x8000;
+    td.extra = (int32_t)target_has_league_watermark;
+    new_default_test_definition(
+        &test, 0x47, "Select target permanent card with a League of Dastardly Doom watermark.");
+  }
+  test.value_for_special_selection_function = 2;
+  test.special_selection_function = test_has_watermark_val;
+  if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    return 0;
+  }
+  result = validate_target_from_grave_source(player, card, player, 0);
+  if (result < 0)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+  reanimate_permanent(player, card, player, result, REANIMATE_DEFAULT);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c77a0; original cards/unstable.c:1456. */
+int card_hammer_boomtacular(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_t test;
+
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 0xff);
+    test.special_selection_function = test_has_watermark_val;
+    test.value_for_special_selection_function = 3;
+    sp_ability_trigger(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_SPA)
+  {
+
+    default_target_definition(player, card, (target_definition_t *)&test, 0x102);
+    test.message[0xc] = '\0';
+    test.message[0xd] = '\x12';
+    test.message[0xe] = '\0';
+    test.message[0xf] = '\0';
+    test.message[0x44] = '\0';
+    test.message[0x45] = '\0';
+    test.message[0x46] = '\0';
+    test.message[0x47] = '\0';
+    instance = get_card_instance(player, card);
+    result = can_target((target_definition_t *)&test);
+    if (result != 0)
+    {
+      result = new_pick_target((target_definition_t *)&test, "TARGET_ANY", 0, 0);
+      if (result != 0)
+      {
+        damage_creature(instance->targets[0].player, instance->targets[0].card, 2, player, card);
+      }
+    }
+    instance->number_of_targets = '\0';
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25c79a0; original cards/unstable.c:1573. */
+int card_druid_of_the_sacred_beaker(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  unsigned int iid;
+  watermark_t wVar2;
+  int iVar3;
+  int card_00;
+  int iVar4;
+
+  if (event == EVENT_COUNT_MANA)
+  {
+    iVar4 = 0;
+    if ((card != affected_card) || (player != affected_card_controller))
+      goto LAB_025c7a38;
+  }
+  else if ((event != EVENT_ACTIVATE) && ((event != EVENT_CAN_ACTIVATE || (player != 1))))
+  {
+    iVar4 = 0;
+    goto LAB_025c7a38;
+  }
+  iVar4 = 0;
+  card_00 = 0;
+  if (0 < active_cards_count[player])
+  {
+    do
+    {
+      while (instance = in_play(player, card_00), instance == NULL)
+      {
+      LAB_025c79e0:
+        card_00 = card_00 + 1;
+        if (active_cards_count[player] <= card_00)
+          goto LAB_025c7a38;
+      }
+      iid = instance->internal_card_id;
+
+      if ((int)iid < 0)
+      {
+        iid = (unsigned int)instance->backup_internal_card_id;
+      }
+      wVar2 = get_watermark_by_iid(iid);
+      if (wVar2 != WMARK_CROSSBREED_LABS)
+        goto LAB_025c79e0;
+      iVar3 = is_what(player, card_00, 0x47);
+      iVar4 = (iVar4 + 1) - (unsigned int)(iVar3 == 0);
+      card_00 = card_00 + 1;
+    } while (card_00 < active_cards_count[player]);
+  }
+LAB_025c7a38:
+  iVar4 = mana_producing_creature(player, card, event, 0x40, COLOR_GREEN, iVar4);
+  return iVar4;
+}
+
+/* ManalinkEh 2022: 0x25c7e00; original cards/unstable.c:1715. */
+int card_ineffable_blessing_c(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  test_definition_t test;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    uVar3 = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\002", "\001\014", "\001\003",
+                        "White-bordered", 1, 1, "Silver-bordered", 1, 1, 0, 0, 0, 0);
+    instance = get_card_instance(player, card);
+    instance->targets[5].player = uVar3 | 0x46570000;
+    result = create_targetted_legacy_effect(player, card, fx_0, player, card);
+    alternate_legacy_text(uVar3, player, result);
+  }
+  else if ((trigger_condition == 0xdb) && (event - EVENT_TRIGGER < 2))
+  {
+
+    instance = get_card_instance(player, card);
+    uVar3 = instance->targets[5].player;
+    if (((short)(uVar3 >> 0x10) != 0x4657) || (uVar3 = uVar3 & 0xffff, 1 < uVar3 - 1))
+    {
+      return 0;
+    }
+    default_test_definition(&test, 2);
+    test.special_selection_function = test_has_border_val;
+    test.value_for_special_selection_function = uVar3;
+    etb_ability_global(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  else if (event == EVENT_ETB)
+  {
+    draw_a_card(player);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25c7ff0; original cards/unstable.c:1767. */
+int card_ineffable_blessing_d(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  test_definition_t test;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    uVar3 =
+        dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\002", "\001\014", "\001\003", "Common",
+                    1, 1, "Uncommon", 1, 1, "Rare", 1, 1, "Mythic Rare", 1, 1, 0, 0, 0, 0);
+    instance = get_card_instance(player, card);
+    instance->targets[5].player = uVar3 | 0x46580000;
+    result = create_targetted_legacy_effect(player, card, fx_0, player, card);
+    alternate_legacy_text(uVar3, player, result);
+  }
+  else if ((trigger_condition == 0xdb) && (event - EVENT_TRIGGER < 2))
+  {
+
+    instance = get_card_instance(player, card);
+    uVar3 = instance->targets[5].player;
+    if (((short)(uVar3 >> 0x10) != 0x4658) || (uVar3 = uVar3 & 0xffff, uVar3 - 1 < 4))
+    {
+      return 0;
+    }
+    default_test_definition(&test, 2);
+    test.special_selection_function = test_has_rarity_val;
+    test.value_for_special_selection_function = uVar3;
+    etb_ability_global(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  else if (event == EVENT_ETB)
+  {
+    draw_a_card(player);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25c8610; original cards/unstable.c:2127. */
+int card_everythingamajig_b(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  test_definition_t test;
+
+  if ((event - EVENT_RESOLVE_ACTIVATION < 2) || (event == EVENT_ACTIVATE))
+  {
+    iVar2 = hand_count[player];
+    iVar1 = can_sacrifice_this_as_cost(player, card);
+    iVar2 = dialog_impl(player, card, event, "\001\002", "Draw", (unsigned int)(iVar2 < 1), 1,
+                        "\001\020", 2, 0, 0, 0, 0, 0, "\001\025", "Gain life", 1, 1, "\001\020", 8,
+                        0, 0, 0, 0, 0, "\001\025", "Hand to battlefield", iVar1, 1, "\001\020", 4,
+                        0, 0, 0, 0, 0, "\001\025", 0, 0, 0, 0);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar1 = can_use_activated_abilities(player, card);
+      return (unsigned int)(iVar1 != 0 && iVar2 != 0);
+    }
+    if ((event == EVENT_ACTIVATE) && (iVar2 == 3))
+    {
+      kill_card(player, card, KILL_SACRIFICE);
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      if (iVar2 == 2)
+      {
+        gain_life(player, 10);
+        return 0;
+      }
+      if (iVar2 != 3)
+      {
+        if (iVar2 != 1)
+        {
+          return 0;
+        }
+        draw_a_card(player);
+        return 0;
+      }
+      new_default_test_definition(&test, 0x47, "Select a silver-bordered permanent card.");
+      test.special_selection_function = test_has_border_val;
+      test.value_for_special_selection_function = 2;
+      new_global_tutor(player, player, 4, 4, 0, 2, &test);
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int fx_ineffable_blessing_f(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x25c4c30; original cards/unstable.c:1825. */
+static int fx_ineffable_blessing_f(int player, int card, event_t event)
+{
+  int result;
+
+  result = txtfx(player, card, event, CARD_ID_INEFFABLE_BLESSING_F);
+  if (result != 0x7fffffff)
+  {
+    sprintf(set_legacy_effect_name_addr, "%d", result);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c8210; original cards/unstable.c:1832. */
+int card_ineffable_blessing_f(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int result;
+  card_instance_t *instance;
+  test_definition_t test;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+    {
+      result = recorded_rand(player, 5);
+      result = result + 1;
+    }
+    else
+    {
+      result = choose_a_number(player, "Choose a number.", 0xfff);
+    }
+    make_txtfx(player, card, fx_ineffable_blessing_f, CARD_ID_INEFFABLE_BLESSING_F, result);
+  }
+  else if ((trigger_condition == 0xdb) && (event - EVENT_TRIGGER < 2))
+  {
+
+    instance = get_card_instance(player, card);
+    uVar1 = instance->targets[5].player;
+    if ((short)(uVar1 >> 0x10) != 0x465a)
+    {
+      return 0;
+    }
+    default_test_definition(&test, 2);
+    test.value_for_special_selection_function = uVar1 & 0xffff;
+    test.special_selection_function = test_words_in_name_val;
+    etb_ability_global(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  else if (event == EVENT_ETB)
+  {
+    draw_a_card(player);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25c4c80; original cards/unstable.c:2324. */
+static int fx_staff_of_the_letter_magus(int player, int card, event_t event)
+{
+  int argument2;
+  const char *pcVar1;
+
+  argument2 = txtfx(player, card, event, CARD_ID_STAFF_OF_THE_LETTER_MAGUS);
+  if ((argument2 != 0x7fffffff) && (argument2 - 0x42U < 0x19))
+  {
+    pcVar1 = strchr("AEIOUNRST", argument2);
+    if (pcVar1 == NULL)
+    {
+      sprintf(set_legacy_effect_name_addr, "%c", (int)(char)argument2);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c4d00; original cards/unstable.c:20. */
+static int do_dialog_lots_of_choices(int player, int src_player, int src_card, char **choices,
+                                     int num_choices)
+{
+  int iVar1;
+  int iVar2;
+  char *buffer;
+  int iStack_bd0;
+  char buf[3000];
+  do
+  {
+    iStack_bd0 = 0;
+    do
+    {
+      strncpy(buf, " (More)", 8);
+      if (iStack_bd0 < num_choices)
+      {
+        iVar1 = sprintf(buf + 7, "\n %s", choices[iStack_bd0]);
+        buffer = buf + iVar1 + 7;
+        iVar1 = 1;
+        do
+        {
+          if (num_choices - iStack_bd0 == iVar1)
+            break;
+          iVar2 = sprintf(buffer, "\n %s", (choices + iStack_bd0)[iVar1]);
+          iVar1 = iVar1 + 1;
+          buffer = buffer + iVar2;
+        } while (iVar1 != 10);
+      }
+      iVar1 = do_dialog(player, src_player, src_card, -1, -1, buf, 0);
+      if (iVar1 != 0)
+      {
+        return iStack_bd0 + -1 + iVar1;
+      }
+      iStack_bd0 = iStack_bd0 + 10;
+    } while (iStack_bd0 < num_choices);
+  } while (true);
+}
+
+
+/* ManalinkEh 2022: 0x25c4fd0; original cards/unstable.c:72. */
+static watermark_t choose_a_watermark(int player, int src_player, int src_card)
+{
+  if (watermarks == NULL)
+    watermarks = get_watermarks();
+  int idxs[256];
+  int num_idxs = 0;
+  for (int i = 0; i < 255; ++i)
+    if (watermarks[i].name != NULL && watermarks[i].saturation != '\0')
+      idxs[num_idxs++] = i;
+  if (num_idxs > 0)
+  {
+    int choice;
+    if (ai_is_speculating == 1 || (player == 1 && ((unsigned char)trace_mode & 2) == 0))
+    {
+      choice = recorded_rand(player, num_idxs);
+      if (ai_is_speculating != 1)
+      {
+        char buf[300];
+        sprintf(buf, " %s\n", watermarks[idxs[choice]].disp);
+        do_dialog(player, src_player, src_card, -1, -1, buf, 0);
+      }
+    }
+    else
+    {
+      char *choices[num_idxs];
+      for (int i = 0; i < num_idxs; ++i)
+        choices[i] = watermarks[idxs[i]].disp;
+      choice = do_dialog_lots_of_choices(player, src_player, src_card, choices, num_idxs);
+    }
+    return (watermark_t)idxs[choice];
+  }
+  return WMARK_NONE;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int fx_stamp_of_approval(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x25c4f50; original cards/unstable.c:2413. */
+static int fx_stamp_of_approval(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+
+  uVar1 = txtfx(player, card, event, CARD_ID_STAMP_OF_APPROVAL);
+  if ((uVar1 != 0x7fffffff) && (uVar1 < 0xff))
+  {
+    if (watermarks == NULL)
+    {
+      backtrace_and_abort("cards/unstable.c:2418\nwatermarks");
+    }
+    strcpy(set_legacy_effect_name_addr, watermarks[uVar1].disp);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c8e10; original cards/unstable.c:2423. */
+int card_stamp_of_approval(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int iid;
+  watermark_t wVar3;
+  watermark_t wVar4;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    wVar3 = choose_a_watermark(player, player, card);
+    if (wVar3 != WMARK_NONE)
+    {
+      make_txtfx(player, card, fx_stamp_of_approval, CARD_ID_STAMP_OF_APPROVAL, wVar3);
+    }
+  }
+  else if ((event - EVENT_POWER < 2) && (affected_card_controller == player))
+  {
+    result = is_what(player, affected_card, 2);
+    if (result != 0)
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if (result == 0)
+      {
+
+        instance = get_card_instance(player, card);
+        wVar3 = instance->targets[5].player;
+        wVar4 = wVar3 & 0xffff;
+        if (((short)(wVar3 >> 0x10) == 0x46b6) && (wVar4 < WMARK_NONE))
+        {
+          instance = get_card_instance(affected_card_controller, affected_card);
+          iid = instance->internal_card_id;
+
+          if ((int)iid < 0)
+          {
+            iid = (unsigned int)instance->backup_internal_card_id;
+          }
+          wVar3 = get_watermark_by_iid(iid);
+          if (wVar4 == wVar3)
+          {
+            event_result = event_result + 1;
+          }
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25c8500; original cards/unstable.c:2053. */
+int card_border_guardian(int player, int card, event_t event)
+{
+  uint32_t csvid;
+  border_t bVar1;
+  int ability;
+  int sp_ability;
+  int alternate_legacy_text_number;
+
+  sp_ability_trigger(player, event, 2, TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    csvid = get_id(trigger_cause_controller, trigger_cause);
+    bVar1 = get_border_color(csvid);
+    if (bVar1 == BORDER_WHITE)
+    {
+      alternate_legacy_text_number = 2;
+      sp_ability = 0;
+      ability = 0x40000000;
+    LAB_025c8595:
+      pump_ability_until_eot_no_repeat_alt(player, card, player, card, ability, sp_ability,
+                                           alternate_legacy_text_number);
+      return 0;
+    }
+    if (bVar1 == BORDER_SILVER)
+    {
+      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    }
+    else if (bVar1 == BORDER_BLACK)
+    {
+      alternate_legacy_text_number = 1;
+      sp_ability = 0x10;
+      ability = 0;
+      goto LAB_025c8595;
+    }
+  }
+  return 0;
+}

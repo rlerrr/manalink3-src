@@ -1902,3 +1902,204 @@ int card_organ_harvest(int player, int card, event_t event)
   result = basic_spell(player, card, event);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2306330; original cards/unglued_unhinged.c:2372. */
+int card_mana_screw(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if ((((unsigned int)land_can_be_played >> 16 & 0xff) & 4) == 0)
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x200000, 1, 0, 0, 0, 0,
+                                         0, 0, NULL, NULL);
+      return result;
+    }
+  }
+  else if ((event == EVENT_ACTIVATE) &&
+           (generic_activated_ability(player, card, EVENT_ACTIVATE, 0x200000, 1, 0, 0, 0, 0, 0, 0,
+                                      NULL, NULL),
+            spell_fizzled != 1))
+  {
+    result = flip_a_coin(player, card);
+    if (result != 0)
+    {
+      produce_mana(player, 0, 2);
+    }
+    tapped_for_mana_color = -2;
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2303170; original cards/unglued_unhinged.c:206. */
+void make_txtfx(int player, int card, CardFunction fxfn, card_id_t marker, int val)
+{
+  card_instance_t *instance;
+  int card_00;
+  target_t tVar2;
+
+  instance = get_card_instance(player, card);
+  instance->targets[5].player = marker << 0x10 | val & 0xffffU;
+  tVar2 = find_repeat_legacy_effect_alt(player, card, fxfn, player, card, -1, 2);
+  if (tVar2.player < 0)
+  {
+
+    card_00 = create_targetted_legacy_effect(player, card, fxfn, player, card);
+    if (-1 < card_00)
+    {
+      instance = get_card_instance(player, card_00);
+      instance->eot_toughness = 0x100;
+      return;
+    }
+  }
+  else
+  {
+    instance = get_card_instance(tVar2.player, tVar2.card);
+    instance->targets[0x12].card = instance->targets[0x12].card + 1;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x2302ba0; original cards/unglued_unhinged.c:2316. */
+static int test_rare_or_mythic(int iid, int val, int player, int card)
+{
+  const Rarities *pRVar1;
+
+  pRVar1 = get_rarity((unsigned int)cards_data[iid].id);
+  return (unsigned int)((uint32_t)pRVar1->default_rarity - 3u < 2u);
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int test_has_border_val(int iid, int val, int player, int card);
+char *target_has_silver_border(int who_chooses, int player, int card, int targeting_player,
+                               int targeting_card);
+
+/* ManalinkEh 2022: 0x2302910; original cards/unglued_unhinged.c:199. */
+int test_has_border_val(int iid, int val, int player, int card)
+{
+  border_t bVar1;
+
+  bVar1 = get_border_color((unsigned int)cards_data[iid].id);
+  return (unsigned int)(val == bVar1);
+}
+
+/* ManalinkEh 2022: 0x23045f0; original cards/unglued_unhinged.c:1137. */
+int card_spatula_of_the_ages(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    new_default_test_definition(&test, 0x47, "Select a silver-bordered permanent card.");
+    test.special_selection_function = test_has_border_val;
+    test.value_for_special_selection_function = 2;
+    new_global_tutor(player, player, 4, 4, 0, 2, &test);
+  }
+  result = generic_activated_ability(player, card, event, 9, 4, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2302940; original cards/unglued_unhinged.c:2279. */
+char *target_has_silver_border(int who_chooses, int player, int card, int targeting_player,
+                               int targeting_card)
+{
+  uint32_t csvid;
+  border_t bVar1;
+  char *pcVar2;
+
+  csvid = get_id(player, card);
+  bVar1 = get_border_color(csvid);
+  pcVar2 = NULL;
+  if (bVar1 != BORDER_SILVER)
+  {
+    pcVar2 = "silver-bordered";
+  }
+  return pcVar2;
+}
+
+/* ManalinkEh 2022: 0x23060d0; original cards/unglued_unhinged.c:2283. */
+int card_ass_whuppin(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 0x47);
+        td.special = 0x8000;
+        td.extra = (int32_t)target_has_silver_border;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+
+            instance = get_card_instance(player, card);
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02306133;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+  td.special = 0x8000;
+  td.extra = (int32_t)target_has_silver_border;
+LAB_02306133:
+  result = generic_spell(player, card, event, 0x81, &td, "Select target silver-bordered permanent.",
+                         1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2306230; original cards/unglued_unhinged.c:2321. */
+int card_rare_b_gone(int player, int card, event_t event)
+{
+  int result;
+  ec_definition_t hoop_to_jump_through;
+  test_definition_t test;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    default_test_definition(&test, 0x47);
+    test.special_selection_function = test_rare_or_mythic;
+    new_manipulate_all(player, card, 2, &test, ACT_KILL_SACRIFICE);
+    default_ec_definition(0, player, &hoop_to_jump_through);
+
+    hoop_to_jump_through.effect = 0x81;
+    test.type = 0xff;
+    hoop_to_jump_through.target_player = current_turn;
+    new_effect_coercion(&hoop_to_jump_through, &test);
+    hoop_to_jump_through.target_player = current_turn ^ 1;
+    new_effect_coercion(&hoop_to_jump_through, &test);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}

@@ -1,6 +1,9 @@
 // -*- c-basic-offset:2 -*-
 #include "manalink.h"
 
+/* October 2022 .bss cache @ 0x2797200; declared in target manalink.h. */
+uint8_t card_counts[2][7];
+
 // These are fairly common here, but shouldn't be used elsewhere
 #define push_affected_card_stack	EXE_FN(void, 0x435C80, void)
 #define pop_affected_card_stack		EXE_FN(void, 0x435CD0, void)
@@ -114,6 +117,9 @@ void count_colors_of_lands_in_play(void)
 
 void recalculate_all_cards_in_play(void)
 {
+  /* Recovered 2022 card-count fragment: recalculate_all_cards_in_play @ 0x26a9e40. */
+  memset(card_counts, 0, sizeof(card_counts));
+  /* End recovered 2022 card-count fragment: recalculate_all_cards_in_play. */
   // Original at 0x4351C0
 
   player_bits[0] &= ~PB_CANT_HAVE_OR_GAIN_ABILITIES_MASK;

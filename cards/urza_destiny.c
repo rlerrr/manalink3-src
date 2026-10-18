@@ -2853,3 +2853,29 @@ LAB_021084ef:
   iVar2 = global_enchantment(player, card, event);
   return iVar2;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2109460; original cards/urza_destiny.c:2853. */
+int card_lurking_jackals(int player, int card, event_t event)
+{
+  int result;
+
+  if ((((event == EVENT_STATIC_EFFECTS) && (life[1 - player] < 0xb)) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_what(player, card, 4);
+    if (result != 0)
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if (result == 0)
+      {
+        animate_self_remove_type(player, card, 3, 2, TYPE_ENCHANTMENT, KEYWORD_0, SP_KEYWORD_0,
+                                 COLOR_TEST_0, 1);
+      }
+    }
+  }
+  has_subtype_if_animated_self(player, card, event, SUBTYPE_JACKAL);
+  result = global_enchantment(player, card, event);
+  return result;
+}

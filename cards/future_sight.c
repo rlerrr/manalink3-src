@@ -3830,3 +3830,79 @@ LAB_0257a727:
   result = vanilla_aura(player, card, event, 2);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25748b0; original cards/future_sight.c:938. */
+int card_dust_of_moments(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  unsigned int uVar4;
+  unsigned int uStack_1c;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    iVar1 =
+        do_dialog(player, player, card, -1, -1, " Remove 2 Time Counters\n Add 2 Time Counters", 0);
+
+    uStack_1c = 0;
+    if (iVar1 == 0)
+    {
+      do
+      {
+        uVar4 = uStack_1c ^ current_turn;
+
+        if (0 < active_cards_count[uVar4])
+        {
+          iVar1 = 0;
+          do
+          {
+            instance = in_play(uVar4, iVar1);
+            if ((instance != NULL) && ((((instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
+                                          (instance->info_slot_fn == generic_suspend_legacy)) ||
+                                         (cards_data[instance->internal_card_id].id == 0x2178)) ||
+                                        (iVar3 = is_what(uVar4, iVar1, 0x47), iVar3 != 0))))
+            {
+              remove_counters_from_source(player, card, uVar4, iVar1, COUNTER_TIME, 2);
+            }
+            iVar1 = iVar1 + 1;
+          } while (iVar1 < active_cards_count[uVar4]);
+        }
+        uStack_1c = uStack_1c + 1;
+      } while (uStack_1c != 2);
+    }
+    else
+    {
+      do
+      {
+        uVar4 = uStack_1c ^ current_turn;
+
+        if (0 < active_cards_count[uVar4])
+        {
+          iVar1 = 0;
+          do
+          {
+            instance = in_play(uVar4, iVar1);
+            if (((instance != NULL) &&
+                 (iVar3 = count_counters(uVar4, iVar1, COUNTER_TIME), 0 < iVar3)) &&
+                (((instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
+                   (instance->info_slot_fn == generic_suspend_legacy)) ||
+                  ((cards_data[instance->internal_card_id].id == 0x2178 ||
+                    (iVar3 = is_what(uVar4, iVar1, 0x47), iVar3 != 0))))))
+            {
+              add_counters_from_source(player, card, uVar4, iVar1, COUNTER_TIME, 2);
+            }
+            iVar1 = iVar1 + 1;
+          } while (iVar1 < active_cards_count[uVar4]);
+        }
+        uStack_1c = uStack_1c + 1;
+      } while (uStack_1c != 2);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  iVar1 = basic_spell(player, card, event);
+  return iVar1;
+}

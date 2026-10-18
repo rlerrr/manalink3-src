@@ -6495,3 +6495,28 @@ static int find_imprint_legacy_next(int player, int card, int *index)
   }
   return -1;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2438330; original cards/scars_of_mirrodin.c:96. */
+void minus_proliferate_auto_single_permanent_or_player(int player, int card, int p, int c)
+{
+  int result;
+  counter_t type;
+
+  if (c != -1)
+  {
+    result = count_counters(p, c, ~COUNTER_P1_P1);
+    if (0 < result)
+    {
+
+      type = choose_existing_counter_type(player, player, card, p, c,
+                                          CECT_AI_NO_DIALOG | CECT_AI_CAN_CANCEL, -1, -1);
+      if (type != COUNTER_invalid)
+      {
+        remove_counters_from_source(player, card, p, c, type, 1);
+      }
+    }
+  }
+  return;
+}

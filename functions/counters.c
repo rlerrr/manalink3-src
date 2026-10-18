@@ -2797,3 +2797,463 @@ void add_counters_from_source(int player, int card, int t_player, int t_card, co
   }
   return;
 }
+
+/* Recovered October 2022 source-aware counter removal. */
+
+/* ManalinkEh 2022: 0x26ceef0; original functions/counters.c:1630. */
+static void clear_all_counters_2022(int t_player, int t_card)
+{
+  unsigned int uVar1;
+  card_instance_t *instance;
+
+  instance = get_card_instance(t_player, t_card);
+  uVar1 = instance->regen_status;
+  instance->special_counter_type = 0xff;
+  instance->special_counters = '\0';
+  instance->counters2 = '\0';
+  instance->counters3 = '\0';
+  instance->counters4 = '\0';
+  instance->counters = '\0';
+  instance->counters5 = '\0';
+  instance->counters_m1m1 = '\0';
+  instance->targets[0x12].player = -1;
+  instance->targets[0x12].card = -0x10000;
+  instance->counter_power = 0;
+  instance->counter_toughness = 0;
+  instance->regen_status = uVar1 | 0x6000000;
+  return;
+}
+
+/* ManalinkEh 2022: 0x26d48d0; original functions/counters.c:1304. */
+static void remove_counters_from_source_2022_impl(int player, int card, int t_player, int t_card,
+                                                  counter_t type, int num)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int32_t iVar3;
+  int iVar4;
+  int iStack_70;
+  target_definition_t td;
+  token_generation_t token;
+
+  instance = get_card_instance(t_player, t_card);
+  if (instance->internal_card_id == activation_card)
+  {
+    t_player = instance->parent_controller;
+    t_card = instance->parent_card;
+  }
+  iStack_70 = count_counters(t_player, t_card, type);
+  add_or_remove_counters_from_source_impl(player, card, t_player, t_card, type, -num);
+  if ((type == COUNTER_TIME) && (iVar2 = is_suspend_legacy(t_player, t_card), iVar2 != 0))
+  {
+    if (num < iStack_70)
+    {
+      iStack_70 = num;
+    }
+    iVar3 = instance->targets[9].card;
+    if (iVar3 == 0x2221)
+    {
+      draw_cards(t_player, iStack_70);
+      iVar3 = instance->targets[9].card;
+    }
+    if (iVar3 == 0x2228)
+    {
+      default_token_definition(t_player, t_card, 0x4986, &token);
+      token.qty = (uint8_t)iStack_70;
+      generate_token(&token);
+      iVar3 = instance->targets[9].card;
+    }
+    if (iVar3 == 0x223e)
+    {
+      default_target_definition(t_player, t_card, &td, 1);
+      td.required_subtype = 0x2000;
+      td.special = 0x1000;
+      td.allow_cancel = 0;
+      if (0 < iStack_70)
+      {
+        iVar2 = 0;
+        do
+        {
+          instance->number_of_targets = '\0';
+          iVar4 = can_target(&td);
+          if ((iVar4 != 0) &&
+              (iVar4 = new_pick_target(&td, "Select target nonbasic land.", 0, 0x80), iVar4 != 0))
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+          }
+          iVar2 = iVar2 + 1;
+        } while (iStack_70 != iVar2);
+      }
+      iVar3 = instance->targets[9].card;
+    }
+    if (iVar3 == 0x224f)
+    {
+      default_target_definition(player, card, &td, 2);
+      td.preferred_controller = player;
+      if (0 < iStack_70)
+      {
+        iVar2 = 0;
+        do
+        {
+          instance->number_of_targets = '\0';
+          iVar4 = can_target(&td);
+          if ((iVar4 != 0) && (iVar4 = pick_target(&td, "TARGET_CREATURE"), iVar4 != 0))
+          {
+            add_counters_from_source(t_player, t_card, instance->targets[0].player,
+                                     instance->targets[0].card, COUNTER_P1_P1, 1);
+          }
+          iVar2 = iVar2 + 1;
+        } while (iStack_70 != iVar2);
+      }
+      iVar3 = instance->targets[9].card;
+    }
+    if (iVar3 == 0x2287)
+    {
+      iVar2 = 0;
+      default_target_definition(player, card, &td, 2);
+      td.zone = 0x1000;
+      td.allow_cancel = 0;
+      if (0 < iStack_70)
+      {
+        do
+        {
+          instance->number_of_targets = '\0';
+          iVar4 = can_target(&td);
+          if ((iVar4 != 0) && (iVar4 = pick_target(&td, "TARGET_PLAYER"), iVar4 != 0))
+          {
+            lose_life(instance->targets[0].player, 1);
+            gain_life(player, 1);
+          }
+          iVar2 = iVar2 + 1;
+        } while (iStack_70 != iVar2);
+      }
+    }
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26d4c10; original functions/counters.c:1304. */
+void remove_counters_from_source(int player, int card, int t_player, int t_card, counter_t type,
+                                 int num)
+{
+  if (num < 1)
+  {
+    return;
+  }
+  remove_counters_from_source_2022_impl(player, card, t_player, t_card, type, num);
+  return;
+}
+
+/* ManalinkEh 2022: 0x26d4c50; original functions/counters.c:1630. */
+void remove_all_counters_from_source(int player, int card, int t_player, int t_card, counter_t type)
+{
+  if ((char)type != -1)
+  {
+    remove_counters_from_source_2022_impl(player, card, t_player, t_card, type, 0xff);
+    return;
+  }
+  clear_all_counters_2022(t_player, t_card);
+  return;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void quarry_hauler_helper(int player, int card, int t_player, int t_card);
+
+/* ManalinkEh 2022: 0x26d51e0; original functions/counters.c:2412. */
+void quarry_hauler_helper(int player, int card, int t_player, int t_card)
+{
+  char cVar1;
+  card_instance_t *instance;
+  uint32_t uVar3;
+  int iVar4;
+  int iVar5;
+  counter_t cVar6;
+  int iVar7;
+  uint32_t uVar8;
+  int iVar9;
+  unsigned int uVar10;
+  unsigned int uVar11;
+  uint32_t uVar12;
+  int *piVar13;
+  char (*pacVar14)[100];
+  unsigned char bVar15;
+  counter_t cVar16;
+  uint32_t uVar17;
+  char (*pacVar18)[100];
+  uint32_t uVar19;
+  char (*pacVar20)[100];
+  uint32_t uVar21;
+  char (*pacVar22)[100];
+  uint32_t uVar23;
+  char (*pacVar24)[100];
+  uint32_t uVar25;
+  uint32_t uVar26;
+  uint32_t uVar27;
+  uint32_t uVar28;
+  uint32_t uVar29;
+  uint32_t uVar30;
+  unsigned int uStack_3fc;
+  uint32_t uStack_3f8;
+  uint32_t uStack_3f4;
+  uint32_t uStack_3f0;
+  uint32_t uStack_3ec;
+  int iStack_3e8;
+  unsigned int uStack_3e4;
+  counter_t counter_types[9];
+  int choices[9];
+  char ctr_names[9][100];
+
+  bVar15 = 0;
+  cVar16 = t_player;
+  iVar4 = t_card;
+  instance = get_card_instance(t_player, t_card);
+  if (instance->internal_card_id == activation_card)
+  {
+    iVar4 = instance->parent_card;
+    cVar16 = instance->parent_controller;
+    instance = get_card_instance(cVar16, iVar4);
+  }
+  uVar10 = 0;
+  if (instance->special_counters != '\0')
+  {
+    counter_types[0] = (counter_t)instance->special_counter_type;
+    uVar10 = (unsigned int)(counter_types[0] != COUNTER_invalid);
+  }
+  if (instance->counters2 != '\0')
+  {
+    cVar6 = (counter_t)(unsigned char)instance->targets[0x12].player;
+    counter_types[uVar10] = cVar6;
+    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);
+  }
+  if (instance->counters3 != '\0')
+  {
+    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 1);
+    counter_types[uVar10] = cVar6;
+    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);
+  }
+  if (instance->counters4 != '\0')
+  {
+    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 2);
+    counter_types[uVar10] = cVar6;
+    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);
+  }
+  if (instance->counters5 != '\0')
+  {
+    cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 3);
+    counter_types[uVar10] = cVar6;
+    uVar10 = uVar10 + (cVar6 != COUNTER_invalid);
+  }
+  if (instance->counters != '\0')
+  {
+    counter_types[uVar10] = COUNTER_P1_P1;
+    uVar10 = uVar10 + 1;
+  }
+  if (instance->counters_m1m1 != '\0')
+  {
+    counter_types[uVar10] = COUNTER_M1_M1;
+    uVar10 = uVar10 + 1;
+  }
+  cVar1 = *(char *)((int)&instance->targets[0x12].card + 1);
+  if (((char)instance->targets[0x12].card == '\0') ||
+      (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 2),
+       counter_types[uVar10] = cVar6, cVar6 == COUNTER_invalid))
+  {
+    if ((cVar1 == '\0') ||
+        (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),
+         counter_types[uVar10] = cVar6, cVar6 == COUNTER_invalid))
+    {
+      uVar11 = uVar10;
+      if (uVar10 == 0)
+      {
+        return;
+      }
+    }
+    else
+    {
+      uVar11 = uVar10 + 1;
+    }
+  }
+  else
+  {
+    uVar11 = uVar10 + 1;
+    if ((cVar1 != '\0') &&
+        (cVar6 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),
+         counter_types[uVar11] = cVar6, cVar6 != COUNTER_invalid))
+    {
+      uVar11 = uVar10 + 2;
+    }
+  }
+  iVar9 = 0;
+  piVar13 = choices;
+  for (iVar7 = 9; iVar7 != 0; iVar7 = iVar7 + -1)
+  {
+    *piVar13 = 0;
+    piVar13 = piVar13 + (unsigned int)bVar15 * -2 + 1;
+  }
+  pacVar14 = ctr_names;
+  do
+  {
+    iVar9 = iVar9 + 1;
+    get_counter_name_by_type(*pacVar14, cVar16, iVar4);
+    pacVar14 = pacVar14 + 1;
+  } while (iVar9 < (int)uVar11);
+  uStack_3fc = uVar11;
+  if (uVar11 == 0)
+  {
+    uStack_3fc = 1;
+  }
+
+  iStack_3e8 = 0;
+  uStack_3e4 = uVar11;
+  if (uVar11 < 9)
+    goto LAB_026d5692;
+LAB_026d53b8:
+  uVar10 = (unsigned int)(choices[8] == 0);
+LAB_026d53c5:
+  if (choices[7] != 0)
+    goto LAB_026d56a1;
+  uStack_3ec = 1;
+LAB_026d53dd:
+  if (choices[6] != 0)
+    goto LAB_026d56b8;
+  uStack_3f0 = 1;
+LAB_026d53f5:
+  if (choices[5] != 0)
+    goto LAB_026d56cf;
+  uStack_3f4 = 1;
+LAB_026d540d:
+  if (choices[4] != 0)
+    goto LAB_026d56e6;
+  uVar12 = 1;
+LAB_026d5420:
+  if (choices[3] != 0)
+    goto LAB_026d56f5;
+  uVar8 = 1;
+LAB_026d5433:
+  if (choices[2] != 0)
+    goto LAB_026d5704;
+  uStack_3f8 = 1;
+  do
+  {
+    uVar3 = 1;
+    if (choices[1] != 0)
+      goto LAB_026d571b;
+    while (true)
+    {
+      pacVar14 = ctr_names + 8;
+      pacVar24 = ctr_names + 7;
+      pacVar22 = ctr_names + 6;
+      pacVar20 = ctr_names + 5;
+      pacVar18 = ctr_names + 4;
+      uVar30 = 0;
+      uVar29 = 0;
+      uVar28 = 0;
+      uVar27 = 0;
+      uVar26 = 1;
+      uVar25 = 1;
+      uVar23 = 1;
+      uVar21 = 1;
+      uVar19 = 1;
+      uVar17 = 1;
+      iVar9 = dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, "\001\002", "\001\003",
+                          "\001\014", "\001\004", "\001\006", t_player, t_card, "\001\026",
+                          ctr_names, (unsigned int)(iStack_3e8 == 0), 1, ctr_names + 1, uVar3, 1,
+                          ctr_names + 2, uStack_3f8, 1, ctr_names + 3, uVar8, 1, pacVar18, uVar12,
+                          1, pacVar20, uStack_3f4, 1, pacVar22, uStack_3f0, 1, pacVar24, uStack_3ec,
+                          1, pacVar14, uVar10, 1, 0, 0, 0, 0);
+      iVar7 = 1;
+      iVar4 = 1;
+      if (player == 1)
+      {
+
+        cVar16 = counter_types[uStack_3fc];
+        iVar4 = raw_counter_value(1, t_player, t_card, cVar16, 1);
+        iVar5 = raw_counter_value(1, t_player, t_card, cVar16, 0);
+        if (iVar4 < 0)
+        {
+          iVar7 = iVar4 / 3 + 0xd06;
+        }
+        else if (iVar4 < 1)
+        {
+          iVar7 = 0x168f;
+        }
+        else
+        {
+          iVar7 = iVar4 * 99 + 9999;
+        }
+        if (iVar5 < 0)
+        {
+          iVar4 = iVar5 / 3 + 0xd06;
+        }
+        else
+        {
+          iVar4 = 0x168f;
+          if (0 < iVar5)
+          {
+            iVar4 = iVar5 * 99 + 9999;
+          }
+        }
+        uStack_3fc = 2;
+      }
+      iVar4 =
+          dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, "\001\002", "\001\003", "\001\014",
+                      "\001\006", t_player, t_card, "\001\011", ctr_names + iVar9 + -1, "\001\026",
+                      "Add", 1, iVar7, "Remove", 1, iVar4, 0, 0, 0, 0, uVar17, pacVar18, uVar12,
+                      uVar19, pacVar20, uStack_3f4, uVar21, pacVar22, uStack_3f0, uVar23, pacVar24,
+                      uStack_3ec, uVar25, pacVar14, uVar10, uVar26, uVar27, uVar28, uVar29, uVar30);
+      choices[iVar9 + -1] = iVar4;
+      uStack_3e4 = uStack_3e4 - 1;
+      if ((int)uStack_3e4 < 1)
+      {
+        iVar4 = 0;
+        do
+        {
+          if (choices[iVar4] == 1)
+          {
+            add_counters_from_source(player, card, t_player, t_card, counter_types[iVar4], 1);
+          }
+          else if (choices[iVar4] == 2)
+          {
+            remove_counters_from_source_2022_impl(player, card, t_player, t_card,
+                                                  counter_types[iVar4], 1);
+          }
+          iVar4 = iVar4 + 1;
+        } while (iVar4 < (int)uVar11);
+        return;
+      }
+      iStack_3e8 = choices[0];
+      if (8 < uVar11)
+        goto LAB_026d53b8;
+    LAB_026d5692:
+      uVar10 = 0;
+      if (7 < uVar11)
+        goto LAB_026d53c5;
+    LAB_026d56a1:
+      uStack_3ec = 0;
+      if (6 < uVar11)
+        goto LAB_026d53dd;
+    LAB_026d56b8:
+      uStack_3f0 = 0;
+      if (5 < uVar11)
+        goto LAB_026d53f5;
+    LAB_026d56cf:
+      uStack_3f4 = 0;
+      if (4 < uVar11)
+        goto LAB_026d540d;
+    LAB_026d56e6:
+      uVar12 = 0;
+      if (3 < uVar11)
+        goto LAB_026d5420;
+    LAB_026d56f5:
+      uVar8 = 0;
+      if (2 < uVar11)
+        goto LAB_026d5433;
+    LAB_026d5704:
+      uStack_3f8 = 0;
+      if (1 < uVar11)
+        break;
+    LAB_026d571b:
+      uVar3 = 0;
+    }
+  } while (true);
+}

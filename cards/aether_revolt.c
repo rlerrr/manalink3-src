@@ -7041,3 +7041,651 @@ int card_welder_automaton(int player, int card, event_t event)
   result = generic_activated_ability(player, card, event, 0, 3, 0, 0, 0, 1, 0, 0, NULL, NULL);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20c48e0; original cards/aether_revolt.c:2906. */
+int card_lifecrafters_bestiary(int player, int card, event_t event)
+{
+  int result;
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    sp_ability_trigger(player, event, 2, TYPE_CREATURE, NULL, player, card);
+    if (event == EVENT_SPA)
+    {
+      result =
+          charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_GREEN, 1);
+      if (result != 0)
+      {
+        draw_cards(player, 1);
+      }
+    }
+    return 0;
+  }
+  scry(player, 1);
+  sp_ability_trigger(player, EVENT_UPKEEP_TRIGGER_ABILITY, 2, TYPE_CREATURE, NULL, player, card);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c6330; original cards/aether_revolt.c:3498. */
+int card_paradox_engine(int player, int card, event_t event)
+{
+  test_definition_t this_test;
+
+  check_legend_rule(player, card, event);
+  sp_ability_trigger(player, event, 2, TYPE_ANY, NULL, player, card);
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  default_test_definition(&this_test, 0x146);
+  new_manipulate_all(player, card, player, &this_test, ACT_UNTAP);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20ca430; original cards/aether_revolt.c:5125. */
+int card_sram_senior_edificer(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  if ((((trigger_condition == 0xd3) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (reason_for_trigger_controller == player))
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      default_test_definition(&test, 0x47);
+      test.special_selection_function = is_aura_equipment_or_vehicle;
+      sp_ability_trigger(player, event, 2, TYPE_NONE, &test, player, card);
+    }
+  }
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  draw_cards(player, 1);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20c18d0; original cards/aether_revolt.c:1991. */
+int card_heart_of_kiran(int player, int card, event_t event)
+{
+  int iVar1;
+  unsigned int uVar2;
+  int iVar3;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  vigilance(player, card, event);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    instance = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 0x100);
+    td.allowed_controller = player;
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 6, 0, 0, 0, 0, 0, 0, 0,
+                                        &td, "Choose a planeswalker you control");
+      if (iVar3 == 0)
+      {
+        iVar3 = vehicle(player, card, EVENT_CAN_ACTIVATE, 3);
+        return iVar3;
+      }
+      return 1;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+
+      instance->number_of_targets = '\0';
+      instance->info_slot = 0;
+      iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 6, 0, 0, 0, 0, 0, 0, 0,
+                                        &td, "Choose a planeswalker you control");
+      iVar1 = vehicle(player, card, EVENT_CAN_ACTIVATE, 3);
+      uVar2 = (current_phase != 0x14) - 1 & 10;
+      iVar3 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016",
+                          "Remove a loyalty counter from a Planeswalker you control", iVar3, uVar2,
+                          "Crew normally", iVar1, uVar2, 0, 0, 0, 0);
+      if (iVar3 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (iVar3 != 1)
+      {
+        if (iVar3 != 2)
+        {
+          return 0;
+        }
+        iVar3 = vehicle(player, card, EVENT_ACTIVATE, 3);
+        return iVar3;
+      }
+      iVar3 = generic_activated_ability(player, card, EVENT_ACTIVATE, 6, 0, 0, 0, 0, 0, 0, 0, &td,
+                                        "Choose a planeswalker you control");
+      return iVar3;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 0x100);
+  }
+  td.allowed_controller = player;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    iVar3 = instance->info_slot;
+    if (iVar3 == 1)
+    {
+      remove_counters_from_source(player, card, player, instance->targets[0].card, COUNTER_LOYALTY,
+                                  1);
+      turn_into_creature(instance->parent_controller, instance->parent_card,
+                         instance->parent_controller, instance->parent_card, 1, 0, 0);
+      iVar3 = instance->info_slot;
+    }
+    if (iVar3 == 2)
+    {
+      iVar3 = vehicle(player, card, EVENT_RESOLVE_ACTIVATION, 3);
+      return iVar3;
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static void make_thopter(int player, int card, int amount);
+
+/* ManalinkEh 2022: 0x20ba940; original cards/aether_revolt.c:289. */
+static void make_thopter(int player, int card, int amount)
+{
+  token_generation_t token;
+
+  default_token_definition(player, card, 0x4995, &token);
+  token.qty = (unsigned char)amount;
+  token.tou = 1;
+  token.pow = 1;
+  token.key_plus = 0x20;
+  generate_token(&token);
+  return;
+}
+
+/* ManalinkEh 2022: 0x20c0700; original cards/aether_revolt.c:1569. */
+int card_efficient_construction(int player, int card, event_t event)
+{
+  int result;
+
+  sp_ability_trigger(player, event, 2, TYPE_ARTIFACT, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    make_thopter(player, card, 1);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c0fb0; original cards/aether_revolt.c:1761. */
+int card_filigree_crawler(int player, int card, event_t event)
+{
+  int result;
+
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0)
+  {
+    return 0;
+  }
+  make_thopter(player, card, 1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c4ec0; original cards/aether_revolt.c:3019. */
+int card_maverick_thopterist(int player, int card, event_t event)
+{
+  int result;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    make_thopter(player, card, 2);
+  }
+  result = improvise(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int scrap_trawler_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x20bb010; original cards/aether_revolt.c:4528. */
+static int scrap_trawler_legacy(int player, int card, event_t event)
+{
+  int32_t *piVar1;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  unsigned int uVar4;
+  int iVar5;
+  int iVar6;
+  int32_t *piVar7;
+  test_definition_t this_test;
+
+  pcVar2 = get_card_instance(player, card);
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (-1 < pcVar2->damage_target_player)) &&
+        (iVar5 = get_id((int)pcVar2->damage_target_player, pcVar2->damage_target_card),
+         iVar5 != 0x4196))
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+    pcVar3 = get_card_instance(player, card);
+    if ((-1 < pcVar3->damage_target_player) &&
+        (iVar5 = effect_follows_control_of_attachment(player, card, 0x4700), iVar5 != 0))
+    {
+      return 0;
+    }
+  LAB_020bb0e0:
+    uVar4 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar4 == 0)
+      goto joined_r0x020bb108;
+  }
+  else
+  {
+    pcVar3 = get_card_instance(player, card);
+    if ((-1 < pcVar3->damage_target_player) &&
+        (iVar5 = effect_follows_control_of_attachment(player, card, event), iVar5 != 0))
+    {
+      return 0;
+    }
+    if (event != EVENT_GRAVEYARD_FROM_PLAY)
+      goto LAB_020bb0e0;
+    if ((((affected_card_controller == player) &&
+          (iVar5 = is_what(player, affected_card, 0x40), iVar5 != 0)) &&
+         (iVar5 = is_humiliated_for_ability((int)pcVar2->damage_target_player,
+                                            pcVar2->damage_target_card, AL_TRIG),
+          iVar5 == 0)) &&
+        ((iVar5 = check_for_death_trigger_removal(affected_card_controller, affected_card),
+          iVar5 == 0 &&
+              (pcVar3 = in_play(affected_card_controller, affected_card), pcVar3 != NULL))))
+    {
+
+      pcVar3 = get_card_instance(affected_card_controller, affected_card);
+
+      if (((pcVar3->kill_code != '\0') && ((-1 < pcVar2->damage_target_player &&
+                                            (affected_card == pcVar2->damage_target_card)))) &&
+          (affected_card_controller == pcVar2->damage_target_player))
+      {
+        pcVar2->damage_target_card = -1;
+        pcVar2->damage_target_player = -1;
+        remove_status(player, card, 0x10000);
+        if (pcVar2->targets[0xb].player < 0)
+        {
+          pcVar2->targets[0xb].player = 0;
+        }
+        *(uint8_t *)((int)&pcVar2->targets[0xb].player + 2) = 1;
+      }
+      pcVar3 = in_play(affected_card_controller, affected_card);
+      if (((pcVar3 != NULL) &&
+           ((iVar5 = is_what(affected_card_controller, affected_card, 0x40),
+             iVar5 != 0 || ((pcVar2->targets[0].card == affected_card &&
+                             (pcVar2->targets[0].player == affected_card_controller)))))) &&
+          (iVar5 = is_this_dying(affected_card_controller, affected_card), iVar5 != 0))
+      {
+
+        iVar5 = pcVar2->targets[0xb].player;
+        if (iVar5 < 0)
+        {
+          pcVar2->targets[0xb].player = 0;
+          iVar5 = 0;
+        }
+        else if (10 < iVar5)
+          goto LAB_020bb068;
+        iVar6 = get_cmc(affected_card_controller, affected_card);
+        pcVar2->targets[iVar5 + 1].card = iVar6;
+        pcVar2->targets[0xb].player = pcVar2->targets[0xb].player + 1;
+        if (((card_counts[player][5] != '\0') &&
+             (iVar5 = is_what(affected_card_controller, affected_card, 2), iVar5 != 0)) &&
+            (pcVar2->targets[0xb].player < 0xb))
+        {
+
+          uVar4 = (unsigned int)card_counts[player][5];
+          while ((uVar4 != 0 && (iVar5 = pcVar2->targets[0xb].player, iVar5 < 0xb)))
+          {
+            uVar4 = uVar4 - 1;
+            iVar6 = get_cmc(affected_card_controller, affected_card);
+            pcVar2->targets[iVar5 + 1].card = iVar6;
+            pcVar2->targets[0xb].player = pcVar2->targets[0xb].player + 1;
+          }
+        }
+      }
+    }
+  LAB_020bb068:
+    uVar4 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    if (uVar4 == 0)
+    {
+      return 0;
+    }
+  }
+  iVar5 = check_status(player, card, 0x10000);
+  if (iVar5 == 0)
+  {
+
+    if ((uVar4 & 0xff) != 0)
+    {
+      piVar1 = &pcVar2->targets[1].card;
+      piVar7 = &pcVar2->targets[(uVar4 & 0xff) + 1].card;
+      do
+      {
+        while (true)
+        {
+          default_test_definition(&this_test, 0x40);
+          scnprintf(this_test.message, 100, "Select an artifact card with CMC %d or less.",
+                    *piVar7 + -1);
+          this_test.cmc = *piVar7;
+          this_test.cmc_flag = 3;
+          iVar5 = new_special_count_grave(player, &this_test);
+          if (iVar5 == 0)
+            break;
+          piVar7 = piVar7 + -2;
+          new_global_tutor(player, player, 2, 1, 0, 1, &this_test);
+          if (piVar7 == piVar1)
+            goto LAB_020bb258;
+        }
+        piVar7 = piVar7 + -2;
+      } while (piVar7 != piVar1);
+    }
+  LAB_020bb258:
+    kill_card(player, card, KILL_EXILE);
+  }
+joined_r0x020bb108:
+  if ((event == EVENT_CLEANUP) && (iVar5 = check_status(player, card, 0x10000), iVar5 == 0))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c8e70; original cards/aether_revolt.c:4612. */
+int card_scrap_trawler(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  unsigned int uVar2;
+  int iVar3;
+  int iVar4;
+  int32_t *piVar5;
+  card_instance_t *pcStack_ec;
+  test_definition_t this_test;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      iVar3 = 0;
+      if (0 < active_cards_count[player])
+      {
+        do
+        {
+          pcVar1 = in_play(player, iVar3);
+
+          if ((((pcVar1 != NULL) && (iVar4 = is_what(player, iVar3, 0x80), iVar4 != 0)) &&
+               (pcVar1 = get_card_instance(player, iVar3),
+                pcVar1->info_slot_fn == scrap_trawler_legacy)) &&
+              (((pcVar1->damage_target_player == player && (pcVar1->damage_target_card == card)) ||
+                ((pcVar1->targets[0].player == player && (pcVar1->targets[0].card == card))))))
+            goto LAB_020c8edc;
+          iVar3 = iVar3 + 1;
+        } while (iVar3 < active_cards_count[player]);
+      }
+
+      iVar3 = create_targetted_legacy_effect(player, card, scrap_trawler_legacy, player, card);
+      pcVar1 = get_card_instance(player, iVar3);
+      pcVar1->targets[0].player = player;
+      pcVar1->targets[0].card = card;
+      pcVar1->number_of_targets = '\0';
+      add_status(player, iVar3, 0x10000);
+    }
+  LAB_020c8edc:
+    pcStack_ec = get_card_instance(player, card);
+  }
+  else
+  {
+    pcStack_ec = get_card_instance(player, card);
+    if (((event == EVENT_GRAVEYARD_FROM_PLAY) && (affected_card_controller == player)) &&
+        ((iVar3 = check_for_death_trigger_removal(player, affected_card),
+          iVar3 == 0 &&
+              (((pcVar1 = in_play(affected_card_controller, affected_card),
+                 pcVar1 != NULL && (iVar3 = is_what(affected_card_controller, affected_card, 0x40),
+                                    iVar3 != 0)) &&
+                (iVar3 = is_this_dying(affected_card_controller, affected_card), iVar3 != 0))))))
+    {
+
+      iVar3 = pcStack_ec->targets[0xb].player;
+      if (iVar3 < 0)
+      {
+        pcStack_ec->targets[0xb].player = 0;
+        iVar3 = 0;
+      }
+      else if (10 < iVar3)
+        goto LAB_020c8eaf;
+      iVar4 = get_cmc(affected_card_controller, affected_card);
+      pcStack_ec->targets[iVar3].card = iVar4;
+      pcStack_ec->targets[0xb].player = pcStack_ec->targets[0xb].player + 1;
+      if (((card_counts[player][5] != '\0') &&
+           (iVar3 = is_what(affected_card_controller, affected_card, 2), iVar3 != 0)) &&
+          (pcStack_ec->targets[0xb].player < 0xb))
+      {
+
+        uVar2 = (unsigned int)card_counts[player][5];
+        while ((uVar2 != 0 && (iVar3 = pcStack_ec->targets[0xb].player, iVar3 < 0xb)))
+        {
+          iVar4 = get_cmc(affected_card_controller, affected_card);
+          pcStack_ec->targets[iVar3].card = iVar4;
+          uVar2 = uVar2 - 1;
+          pcStack_ec->targets[0xb].player = pcStack_ec->targets[0xb].player + 1;
+        }
+      }
+    }
+  }
+LAB_020c8eaf:
+  pcVar1 = get_card_instance(player, card);
+  if (pcVar1->kill_code == '\0')
+  {
+
+    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if ((uVar2 & 0xff) != 0)
+    {
+      piVar5 = &pcStack_ec->targets[uVar2 & 0xff].card;
+      do
+      {
+        default_test_definition(&this_test, 0x40);
+        scnprintf(this_test.message, 100, "Select an artifact card with CMC %d or less.",
+                  *piVar5 + -1);
+        this_test.cmc = *piVar5;
+        this_test.cmc_flag = 3;
+        iVar3 = new_special_count_grave(player, &this_test);
+        if (iVar3 != 0)
+        {
+          new_global_tutor(player, player, 2, 1, 0, 1, &this_test);
+        }
+        piVar5 = piVar5 + -2;
+      } while (&pcStack_ec->targets[0].card != piVar5);
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int quicksmith_spy_effect(int player, int card, event_t event);
+static int quicksmith_rebel_effect(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x20bbcb0; original cards/aether_revolt.c:3891. */
+static int quicksmith_rebel_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+  target_definition_t td;
+
+  pcVar1 = get_card_instance(player, card);
+  pcVar2 = get_card_instance(player, card);
+  if (pcVar2->targets[1].player < 0)
+  {
+  LAB_020bbce3:
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      result = attachment_granting_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0,
+                                                     &td, "TARGET_ANY");
+      return result;
+    }
+    if ((event == EVENT_RESOLVE_ACTIVATION) &&
+        (result =
+             validate_arbitrary_target(&td, pcVar1->targets[0].player, pcVar1->targets[0].card),
+         result != 0))
+    {
+      damage_target0(player, card, 2);
+    }
+  }
+  else
+  {
+    other_leaves_play_2022(player, card, pcVar1->targets[1].player, pcVar1->targets[1].card, event,
+                           0, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+    LAB_020bbe78:
+      kill_card(player, card, KILL_EXILE);
+    }
+    else
+    {
+      if (event != EVENT_CARDCONTROLLED)
+        goto LAB_020bbce3;
+      if ((pcVar1->targets[1].card == affected_card) &&
+          (pcVar1->targets[1].player == affected_card_controller))
+        goto LAB_020bbe78;
+    }
+    default_target_definition(player, card, &td, 0x102);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c72e0; original cards/aether_revolt.c:3921. */
+int card_quicksmith_rebel(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int result;
+  card_instance_t *pcVar3;
+  target_definition_t td;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+
+  default_target_definition(player, card, &td, 0x40);
+  td.allow_cancel = 0;
+  td.preferred_controller = player;
+  pcVar1 = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    result = pick_target(&td, "TARGET_ARTIFACT");
+    if (result != 0)
+    {
+
+      result = create_targetted_legacy_activate(player, card, quicksmith_rebel_effect,
+                                                pcVar1->targets[0].player, pcVar1->targets[0].card);
+      pcVar3 = get_card_instance(player, result);
+      pcVar3->targets[1].player = player;
+      pcVar3->targets[1].card = card;
+    }
+  }
+  pcVar1->number_of_targets = '\0';
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20bbb00; original cards/aether_revolt.c:3949. */
+static int quicksmith_spy_effect(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+
+  pcVar1 = get_card_instance(player, card);
+  if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+  {
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      draw_a_card(player);
+      pcVar2 = get_card_instance(player, card);
+      if (-1 < pcVar2->targets[1].player)
+      {
+        other_leaves_play_2022(player, card, pcVar1->targets[1].player, pcVar1->targets[1].card,
+                               EVENT_RESOLVE_ACTIVATION, 0, 0);
+      }
+    }
+    else
+    {
+      pcVar2 = get_card_instance(player, card);
+      if ((-1 < pcVar2->targets[1].player) &&
+          ((other_leaves_play_2022(player, card, pcVar1->targets[1].player, pcVar1->targets[1].card,
+                                   event, 0, 0),
+            event == EVENT_LEAVES_PLAY_ABILITY ||
+                (((event == EVENT_CARDCONTROLLED && (pcVar1->targets[1].card == affected_card)) &&
+                  (pcVar1->targets[1].player == affected_card_controller))))))
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    return 0;
+  }
+  result = attachment_granting_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL,
+                                                 NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20c73d0; original cards/aether_revolt.c:3978. */
+int card_quicksmith_spy(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int result;
+  card_instance_t *pcVar3;
+  target_definition_t td;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+
+  default_target_definition(player, card, &td, 0x40);
+  td.allow_cancel = 0;
+  td.preferred_controller = player;
+  pcVar1 = get_card_instance(player, card);
+  result = can_target(&td);
+  if (result != 0)
+  {
+    result = pick_target(&td, "TARGET_ARTIFACT");
+    if (result != 0)
+    {
+
+      result = create_targetted_legacy_activate(player, card, quicksmith_spy_effect,
+                                                pcVar1->targets[0].player, pcVar1->targets[0].card);
+      pcVar3 = get_card_instance(player, result);
+      pcVar3->targets[1].player = player;
+      pcVar3->targets[1].card = card;
+    }
+  }
+  pcVar1->number_of_targets = '\0';
+  return 0;
+}

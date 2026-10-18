@@ -3395,3 +3395,10 @@ void multicascade(int player, int card, event_t event, int amount)
   }
   return;
 }
+
+/* ManalinkEh 2022: 0x22fabf0; original cards/alara_reborn.c:117. */
+void cascade_2022(int player, int card, event_t event)
+{
+  multicascade(player, card, event, 1);
+  return;
+}

@@ -195,3 +195,48 @@ int special_count_zone(int player, int *zone, test_definition_t *this_test)
   } while (zone != piVar1);
   return iVar3;
 }
+
+/* ManalinkEh 2022: 0x26e5c70; original functions/count_graveyard.c:119. */
+/* Concrete compiler clone: only EAX/EDX are ABI arguments. */
+static int count_zone_by_type_2022(int type, int *zone)
+{
+  int *piVar1;
+  int iVar2;
+  int iVar3;
+
+  piVar1 = zone + 500;
+  iVar3 = 0;
+  do
+  {
+    if (*zone == -1)
+    {
+      return iVar3;
+    }
+    iVar2 = is_what(-1, *zone, type);
+    iVar3 = (iVar3 + 1) - (unsigned int)(iVar2 == 0);
+    zone = zone + 1;
+  } while (zone != piVar1);
+  return iVar3;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int count_rfg_by_type(int player, int type);
+
+/* ManalinkEh 2022: 0x26e60e0; original functions/count_graveyard.c:143. */
+int count_rfg_by_type(int player, int type)
+{
+  int iVar1;
+  int iVar2;
+
+  iVar2 = 0;
+  if ((player & 0xfffffffdU) == 0)
+  {
+    iVar2 = count_zone_by_type_2022(type, rfg_ptr[player]);
+  }
+  if (player - 1U < 2)
+  {
+    iVar1 = count_zone_by_type_2022(type, rfg_ptr[player]);
+    return iVar2 + iVar1;
+  }
+  return iVar2;
+}

@@ -91,6 +91,13 @@
       "source": "functions/functions.c",
       "name": "has_only_1_target_and_could_legally_change_target",
       "reason": "Private callback required by recovered deflection helpers; same-named private function exists in a different source unit."
+    },
+    {
+      "address": "20ba940",
+      "end": "20ba98c",
+      "source": "cards/aether_revolt.c",
+      "name": "make_thopter",
+      "reason": "Private same-name helper is separate from the existing Kaladesh body."
     }
   ],
   "zero_flags": {
@@ -1698,5 +1705,1841 @@
     "database_changes": "Discarded with headless -readOnly.",
     "promoted": 0,
     "decision": "Blanket removal of imported local hints can lose aggregate bounds. Final exports retain DWARF array/struct hints; the proven lexical overlap was reconstructed explicitly."
+  },
+  "card_extension_lifecycle_evidence": {
+    "size": 192,
+    "instance_pointer_offset": 44,
+    "members": [
+      {
+        "name": "sp_keywords",
+        "offset": 0,
+        "type": "uint32_t"
+      },
+      {
+        "name": "sp_keywords2",
+        "offset": 4,
+        "type": "uint32_t"
+      },
+      {
+        "name": "subtype",
+        "offset": 8,
+        "type": "uint16_t[12]"
+      },
+      {
+        "name": "inst_info_data",
+        "offset": 32,
+        "type": "inst_info_t[6]"
+      },
+      {
+        "name": "mana_paid_to_cast",
+        "offset": 80,
+        "type": "uint8_t[8]"
+      },
+      {
+        "name": "phyrexian_mana_spent_to_cast",
+        "offset": 88,
+        "type": "uint8_t"
+      },
+      {
+        "name": "snow_mana_spent_to_cast",
+        "offset": 89,
+        "type": "uint8_t"
+      },
+      {
+        "name": "any_snow_mana_of_color_spent_to_cast_raw",
+        "offset": 90,
+        "type": "uint8_t"
+      },
+      {
+        "name": "treasure_mana_spent_to_cast",
+        "offset": 91,
+        "type": "uint8_t"
+      },
+      {
+        "name": "inst_stored_iids",
+        "offset": 92,
+        "type": "inst_stored_iid_t[12]"
+      },
+      {
+        "name": "cardfromwhere",
+        "offset": 140,
+        "type": "CardFromWhere"
+      },
+      {
+        "name": "turn_etb",
+        "offset": 144,
+        "type": "int16_t"
+      },
+      {
+        "name": "became_player",
+        "offset": 146,
+        "type": "int8_t"
+      },
+      {
+        "name": "became_card",
+        "offset": 147,
+        "type": "uint8_t"
+      },
+      {
+        "name": "base_power",
+        "offset": 148,
+        "type": "int8_t"
+      },
+      {
+        "name": "base_toughness",
+        "offset": 149,
+        "type": "int8_t"
+      },
+      {
+        "name": "pow_mod_unblocked",
+        "offset": 150,
+        "type": "int8_t"
+      },
+      {
+        "name": "pow_before_attack",
+        "offset": 151,
+        "type": "int8_t"
+      },
+      {
+        "name": "raw_power",
+        "offset": 152,
+        "type": "int16_t"
+      },
+      {
+        "name": "raw_toughness",
+        "offset": 154,
+        "type": "int16_t"
+      },
+      {
+        "name": "soulbond",
+        "offset": 156,
+        "type": "uint8_t"
+      },
+      {
+        "name": "times_regenerated",
+        "offset": 157,
+        "type": "uint8_t"
+      },
+      {
+        "name": "times_conspire_paid",
+        "offset": 158,
+        "type": "uint8_t"
+      },
+      {
+        "name": "times_replicate_paid",
+        "offset": 159,
+        "type": "uint8_t"
+      },
+      {
+        "name": "invis_counters",
+        "offset": 160,
+        "type": "uint8_t[8]"
+      },
+      {
+        "name": "invis_counter_types",
+        "offset": 168,
+        "type": "uint8_t[8]"
+      },
+      {
+        "name": "copy_iid_",
+        "offset": 176,
+        "type": "int16_t"
+      },
+      {
+        "name": "change_name_csvid_",
+        "offset": 178,
+        "type": "int16_t"
+      },
+      {
+        "name": "special_flags",
+        "offset": 180,
+        "type": "special_flags_t"
+      },
+      {
+        "name": "special_flags2",
+        "offset": 184,
+        "type": "special_flags2_t"
+      },
+      {
+        "name": "special_flags3",
+        "offset": 188,
+        "type": "special_flags3_t"
+      }
+    ],
+    "variables": {
+      "card_ext_template": {
+        "type": "card_ext_t",
+        "address": "0x2764fe0",
+        "line": 225
+      }
+    },
+    "template_bytes": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff000000000000ffff0000000000000000ff00000000000000000000000000000000000000ffffffff000000000000000000000000",
+    "creation": {
+      "source": "functions/deck.c",
+      "function": "create_card_instance",
+      "address": "0x026b2b50",
+      "line": 263,
+      "operations": [
+        "Copy 300-byte card_instance_template",
+        "Bind instance.ext to card_ext[player][card]",
+        "Copy 192-byte card_ext_template into the selected bank element"
+      ]
+    },
+    "integration": "Not adopted: existing eight-byte mana_to_untap storage at 0x2c still has native consumers; copy/display/save lifecycle also needs recovery."
+  },
+  "legacy_flag_accessor_adaptations": {
+    "core": "sp_ability_trigger_impl at 0x02684f40",
+    "target_copied_spell_flag": {
+      "name": "SF2_COPIED_FROM_STACK",
+      "bit": 31,
+      "value": -2147483648
+    },
+    "source_accessor": "get_special_flags2_by_instance",
+    "semantics": "Use existing legacy flag storage. Its -1 sentinel means no flags and is normalized to zero; target extension storage does not use that sentinel. The target signed-negative test identifies bit 31.",
+    "other_helpers": [
+      "get_special_flags_by_instance",
+      "enters_the_battlefield_with_counters_fn",
+      "put_into_play_transformed"
+    ],
+    "callback_and_flags": {
+      "flags": {
+        "SF2_0": 0,
+        "SF2_FACE_DOWN_DUE_TO_MANIFEST": 256,
+        "SF3_0": 0,
+        "SF3_CARD_IS_FLIPPED": 512
+      },
+      "callback": [
+        "int",
+        [
+          "int",
+          "int"
+        ]
+      ]
+    },
+    "callback_alias": "CardPairFunction is int (*)(int, int).",
+    "integration": "No extension pointer or banks were projected onto live source storage. Broader extension copy/display/save behavior and ability-mask writers still need migration."
+  },
+  "spirit_constant_specialization": {
+    "address": "23c8990",
+    "source": "cards/strixhaven.c",
+    "line": "50",
+    "original_name": "make_spirit_strixhaven",
+    "recovered_name": "make_one_spirit_strixhaven",
+    "symbols": [
+      "_make_spirit_strixhaven.constprop.0"
+    ],
+    "constant_parameters": {
+      "amount": 1
+    },
+    "machine_parameters": [
+      "player",
+      "card"
+    ],
+    "convention": "__regparm2",
+    "reexported_entries": 6,
+    "machine_storage": {
+      "player": "EAX:4",
+      "card": "EDX:4"
+    },
+    "scope": "Recover only the constant-quantity specialization. No arbitrary quantity API is inferred."
+  },
+  "fractal_constant_specialization": {
+    "COUNTER_P1_P1": 0,
+    "TOKEN_ACTION_ADD_COUNTERS": 1048576,
+    "line": "18",
+    "parameters": [
+      {
+        "name": "player",
+        "constant": null,
+        "entry_location": [
+          80
+        ]
+      },
+      {
+        "name": "card",
+        "constant": null,
+        "entry_location": [
+          82
+        ]
+      },
+      {
+        "name": "number_of_p1_p1_counters",
+        "constant": null,
+        "entry_location": [
+          81
+        ]
+      },
+      {
+        "name": "amount",
+        "constant": 1,
+        "entry_location": null
+      }
+    ],
+    "symbols": [
+      "_make_fractal.constprop.0"
+    ],
+    "recovered_name": "make_one_fractal",
+    "token_counter_action": {
+      "source": "functions/token_generation.c",
+      "original_function": "generate_token",
+      "address": "26659d0",
+      "raw_sha256": "d1408ebbc0a128ecf72c13e1c28ec1c1491501b76f2603026e019e2d06d62cdc",
+      "start_marker": "/* Recovered 2022 token counter action (0x26659d0); after put_into_play. */",
+      "end_marker": "/* End recovered 2022 token counter action. */",
+      "body_sha256": "7a852a6576574906b08311016fc89ec0be39e89b64a34b2b5f1b916450776b51",
+      "recovery": "Only the post-put_into_play counter action; existing token generation retained."
+    },
+    "ordering": "Counters added after put_into_play, before blocking processing, with silent-counter nesting restored.",
+    "counter_api": "Uses recovered six-argument add_counters_from_source; source is token s_player/s_card.",
+    "scope": "No full generate_token replacement; other 2022 token actions/replacements remain downstream integration work."
+  },
+  "additional_clone_specializations": [
+    {
+      "name": "make_one_elemental_strixhaven",
+      "original_name": "make_elemental",
+      "address": "23c89e0",
+      "source": "cards/strixhaven.c",
+      "line": "41",
+      "static": true,
+      "prototype": "static void  make_one_elemental_strixhaven(int player,int card);",
+      "raw_sha256": "586ed0483df8fd12eb0a2151d921b1c8faedbff46102232910e3062630bc8687",
+      "recovered_literals": [],
+      "reconstruction": "Recover the concrete two-register clone; removed parameter has no ABI storage.",
+      "specialization": {
+        "parameters": [
+          {
+            "name": "player",
+            "constant": null,
+            "entry_location": [
+              80
+            ]
+          },
+          {
+            "name": "card",
+            "constant": null,
+            "entry_location": [
+              82
+            ]
+          },
+          {
+            "name": "amount",
+            "constant": 1,
+            "entry_location": null
+          }
+        ],
+        "symbol": "_make_elemental.constprop.0",
+        "line": "41"
+      }
+    },
+    {
+      "name": "count_zone_by_type_2022",
+      "original_name": "count_zone_by_type",
+      "address": "26e5c70",
+      "source": "functions/count_graveyard.c",
+      "line": "119",
+      "static": true,
+      "prototype": "static int  count_zone_by_type_2022(int type,int *zone);",
+      "raw_sha256": "354dd2fe2a4a68e0d3238af32bf65c355d51c4d620c001f2a90d9480e21aa1c0",
+      "recovered_literals": [],
+      "reconstruction": "Recover the concrete two-register clone; removed parameter has no ABI storage.",
+      "specialization": {
+        "parameters": [
+          {
+            "name": "type",
+            "constant": null,
+            "entry_location": [
+              80
+            ]
+          },
+          {
+            "name": "zone",
+            "constant": null,
+            "entry_location": [
+              82
+            ]
+          },
+          {
+            "name": "player",
+            "constant": null,
+            "entry_location": [
+              250,
+              70,
+              228,
+              10,
+              0,
+              159
+            ]
+          }
+        ],
+        "symbol": "_count_zone_by_type.isra.0",
+        "line": "119"
+      }
+    },
+    {
+      "name": "can_adapt_without_fx",
+      "original_name": "can_adapt",
+      "address": "25bbcd0",
+      "source": "cards/ravnica_allegiance.c",
+      "line": "23",
+      "static": true,
+      "prototype": "static int  can_adapt_without_fx(int player,int card);",
+      "raw_sha256": "95a211f494279200de69a7bb152d81f15a888c1c671c84d3d89f7eb4576138ea",
+      "recovered_literals": [],
+      "reconstruction": "Recover the concrete two-register clone; removed parameter has no ABI storage.",
+      "specialization": {
+        "parameters": [
+          {
+            "name": "player",
+            "constant": null,
+            "entry_location": [
+              80
+            ]
+          },
+          {
+            "name": "card",
+            "constant": null,
+            "entry_location": [
+              82
+            ]
+          },
+          {
+            "name": "fx",
+            "constant": null,
+            "entry_location": [
+              250,
+              12,
+              217,
+              11,
+              0,
+              159
+            ]
+          }
+        ],
+        "symbol": "_can_adapt.part.0",
+        "line": "23"
+      }
+    }
+  ],
+  "command_local_types_and_array_bounds": {
+    "evidence_file": "docs/recovery-evidence/local-enums.json",
+    "restored_handlers": [
+      "card_lorehold_command",
+      "card_prismari_command",
+      "card_silverquill_command",
+      "card_witherbloom_command"
+    ],
+    "array_comparisons_repaired": 8,
+    "proof": "Four-byte CommandChoices[2] ends at the frame offset of the adjacent td/token object; use choices + 2.",
+    "deferred": "card_quandrix_command retains unresolved partial stack values."
+  },
+  "existing_monarch_interfaces": {
+    "source": "cards/conspiracy-take-the-crown.c",
+    "interfaces": {
+      "who_is_the_monarch": {
+        "address": "220d450",
+        "returns": "int",
+        "parameters": [],
+        "coff_storage": 2
+      },
+      "you_become_the_monarch": {
+        "address": "220d4f0",
+        "returns": "void",
+        "parameters": [
+          "int"
+        ],
+        "coff_storage": 2
+      }
+    },
+    "change": "Only static linkage removed and header declarations added; existing bodies retained and not counted as recovered target implementations.",
+    "integration_remaining": "The target public wrapper also checks Jared Carthalion; target worker dispatch/behavior is not supplied by this linkage adaptation."
+  },
+  "state_mask_normalization": {
+    "function": "check_state",
+    "argument": 3,
+    "value": 8388608,
+    "name": "STATE_OUBLIETTED",
+    "dwarf_units": {
+      "cards/conspiracy-take-the-crown.c": 8388608,
+      "cards/commander_legends.c": 8388608
+    },
+    "scope": "Only simple three-argument calls with this exact literal mask."
+  },
+  "source_aware_counter_removal": {
+    "functions": [
+      {
+        "name": "clear_all_counters_2022",
+        "original_name": "remove_all_counters",
+        "address": "26ceef0",
+        "source": "functions/counters.c",
+        "line": "1630",
+        "static": true,
+        "prototype": "static void clear_all_counters_2022(int t_player, int t_card);",
+        "raw_sha256": "14c24d154ef7528856e47fd7dfcdbee0710269d17ca73478a28f6d04099a121f",
+        "recovered_literals": [],
+        "reconstruction": "Source-aware compatibility API; concrete clone interfaces and shared stack objects verified from DWARF.",
+        "interface_evidence": {
+          "line": "1630",
+          "concrete_parameters": [
+            {
+              "name": "t_player",
+              "entry_location": [
+                80
+              ]
+            },
+            {
+              "name": "t_card",
+              "entry_location": [
+                82
+              ]
+            },
+            {
+              "name": "type",
+              "entry_location": [
+                250,
+                239,
+                38,
+                11,
+                0,
+                159
+              ]
+            },
+            {
+              "name": "card",
+              "entry_location": [
+                250,
+                200,
+                38,
+                11,
+                0,
+                159
+              ]
+            },
+            {
+              "name": "player",
+              "entry_location": [
+                250,
+                187,
+                38,
+                11,
+                0,
+                159
+              ]
+            }
+          ]
+        },
+        "enum_value_checks": {
+          "COUNTER_P1_P1": 0,
+          "COUNTER_TIME": 111
+        }
+      },
+      {
+        "name": "remove_counters_from_source_2022_impl",
+        "original_name": "remove_counters",
+        "address": "26d48d0",
+        "source": "functions/counters.c",
+        "line": "1304",
+        "static": true,
+        "prototype": "static void remove_counters_from_source_2022_impl(int player, int card, int t_player, int t_card,\n                                                  counter_t type, int num);",
+        "raw_sha256": "e7e318b31baccbcd8e2c24f539a2d608f60af0279d4631f8646895ed0687708e",
+        "recovered_literals": [],
+        "reconstruction": "Source-aware compatibility API; concrete clone interfaces and shared stack objects verified from DWARF.",
+        "interface_evidence": {
+          "line": "1304",
+          "shared_stack_objects": [
+            {
+              "name": "td",
+              "type": "target_definition_t",
+              "location": [
+                145,
+                152,
+                127
+              ],
+              "die": "0x6a434b0"
+            },
+            {
+              "name": "td",
+              "type": "target_definition_t",
+              "location": [
+                145,
+                152,
+                127
+              ],
+              "die": "0x6a43566"
+            },
+            {
+              "name": "td",
+              "type": "target_definition_t",
+              "location": [
+                145,
+                152,
+                127
+              ],
+              "die": "0x6a43664"
+            },
+            {
+              "name": "token",
+              "type": "token_generation_t",
+              "location": [
+                145,
+                152,
+                127
+              ],
+              "die": "0x6a43708"
+            }
+          ]
+        },
+        "enum_value_checks": {
+          "COUNTER_P1_P1": 0,
+          "COUNTER_TIME": 111
+        }
+      },
+      {
+        "name": "remove_counters_from_source",
+        "original_name": "remove_counters",
+        "address": "26d4c10",
+        "source": "functions/counters.c",
+        "line": "1304",
+        "static": false,
+        "prototype": "void remove_counters_from_source(int player, int card, int t_player, int t_card, counter_t type,\n                                 int num);",
+        "raw_sha256": "7c48261b1d0ebeac4b4e1d0fae009db2c3febabf4d26fc7a2a54bc360e064406",
+        "recovered_literals": [],
+        "reconstruction": "Source-aware compatibility API; concrete clone interfaces and shared stack objects verified from DWARF.",
+        "interface_evidence": {
+          "line": "1304"
+        },
+        "enum_value_checks": {
+          "COUNTER_P1_P1": 0,
+          "COUNTER_TIME": 111
+        }
+      },
+      {
+        "name": "remove_all_counters_from_source",
+        "original_name": "remove_all_counters",
+        "address": "26d4c50",
+        "source": "functions/counters.c",
+        "line": "1630",
+        "static": false,
+        "prototype": "void remove_all_counters_from_source(int player, int card, int t_player, int t_card, counter_t type);",
+        "raw_sha256": "0f5abf779711be725ba675e1c71027aa9fdf50225c2c792814a18672df4bf6b7",
+        "recovered_literals": [],
+        "reconstruction": "Source-aware compatibility API; concrete clone interfaces and shared stack objects verified from DWARF.",
+        "interface_evidence": {
+          "line": "1630"
+        },
+        "enum_value_checks": {
+          "COUNTER_P1_P1": 0,
+          "COUNTER_TIME": 111
+        }
+      }
+    ],
+    "layouts": {
+      "token_generation_t": {
+        "bytes": 76,
+        "fields": {
+          "id": 0,
+          "s_player": 4,
+          "s_card": 8,
+          "eff_player": 12,
+          "eff_card": 16,
+          "t_player": 20,
+          "pow": 24,
+          "tou": 28,
+          "key_plus": 32,
+          "s_key_plus": 36,
+          "color_forced": 40,
+          "no_sleight": 41,
+          "legacy": 42,
+          "qty": 43,
+          "special_infos": 44,
+          "action": 48,
+          "action_argument": 52,
+          "keep_track_of_tokens_generated": 56,
+          "special_code_for_legacy": 60,
+          "special_code_on_generation": 64,
+          "special_flags2": 68,
+          "special_flags3": 72
+        }
+      },
+      "target_definition_t": {
+        "bytes": 84,
+        "fields": {
+          "who_chooses": 0,
+          "allowed_controller": 4,
+          "preferred_controller": 8,
+          "zone": 12,
+          "required_type": 16,
+          "illegal_type": 20,
+          "required_abilities": 24,
+          "illegal_abilities": 28,
+          "required_color": 32,
+          "illegal_color": 36,
+          "extra": 40,
+          "required_subtype": 44,
+          "power_requirement": 48,
+          "toughness_requirement": 52,
+          "special": 56,
+          "required_state": 60,
+          "illegal_state": 64,
+          "allow_cancel": 68,
+          "player": 72,
+          "card": 76,
+          "flags": 80
+        }
+      }
+    },
+    "enum_values": {
+      "COUNTER_P1_P1": 0,
+      "COUNTER_TIME": 111
+    },
+    "scope": "Old four/three-argument removal APIs and bodies retained; source-aware APIs use recovered counter core. Counter dispatch integration remains pending."
+  },
+  "borrowed_target_list_qualifiers": {
+    "apis": [
+      "any_becomes_target",
+      "becomes_target_of_spell_or_effect",
+      "any_creature_becomes_target_of_spell_or_effect"
+    ],
+    "source_return_type": "const target_t*",
+    "adaptation": "Only local target_t* declarations assigned these API results gain const; parameters/returns remain unchanged, and writes remain compiler errors."
+  },
+  "local_target_card_ids": {
+    "evidence_file": "docs/recovery-evidence/local-card-ids.json",
+    "constants": 17,
+    "scope": "Function-local target values; live global ID/registration tables unchanged."
+  },
+  "partial_engine_word_reads": {
+    "globals": {
+      "event_flags": 5173640,
+      "land_can_be_played": 5173648,
+      "stack_data": 5281328
+    },
+    "types": {
+      "stack_data": {
+        "type": "stack_data_t[32]",
+        "bytes": null
+      },
+      "event_flags": {
+        "type": "int",
+        "bytes": 4
+      },
+      "land_can_be_played": {
+        "type": "int",
+        "bytes": 4
+      }
+    },
+    "layouts": {
+      "stack_data_t": {
+        "bytes": 4,
+        "fields": {
+          "internal_card_id": 0,
+          "generating_event": 2,
+          "unknown_sdt": 3
+        }
+      }
+    },
+    "normalization": "Read-only byte/halfword views of event_flags and land_can_be_played use unsigned shifts/masks; no writer is synthesized.",
+    "stack_event_read": "*(char*)(stack_size*4+0x50962e) is (char)stack_data[stack_size-1].generating_event; caller checks stack_size>0."
+  },
+  "existing_suspend_interface": {
+    "address": "20eb0c0",
+    "returns": "int",
+    "parameters": [
+      "int",
+      "int",
+      "event_t",
+      "int",
+      "int",
+      "int",
+      "int",
+      "int",
+      "int",
+      "int"
+    ],
+    "source": "cards/time_spiral.c",
+    "change": "Only static linkage removed and declaration added; existing body retained, not counted as recovered target implementation."
+  },
+  "repeat_effect_pair_return": {
+    "line": "2043",
+    "return_type": "target_t",
+    "bytes": 8,
+    "fields": {
+      "player": 0,
+      "card": 4
+    },
+    "storage": {
+      "player": "EAX",
+      "card": "EDX"
+    },
+    "return_die": "0x6569812",
+    "ghidra_join_storage": "EDX:4,EAX:4 (verified against field assignments and caller card use)",
+    "return_sequences": {
+      "267b0f2": "83c8ff83caff",
+      "267b190": "89d889fa"
+    },
+    "timestamp_adapter": {
+      "source": "functions/functions.c::new_timestamp",
+      "calls": [
+        "4373b0(void,int,int)",
+        "437400(void)"
+      ]
+    }
+  },
+  "split_card_2022_interfaces": {
+    "functions": [
+      {
+        "name": "generic_split_card_2022",
+        "original_name": "generic_split_card",
+        "address": "2488e80",
+        "source": "cards/invasion.c",
+        "line": "189",
+        "static": false,
+        "prototype": "int generic_split_card_2022(int player, int card, event_t event, int id_first_half,\n                            int can_play_first_half, int priority_first_half, int id_second_half,\n                            int can_play_second_half, int priority_second_half);",
+        "raw_sha256": "274a5a607af08f7fdea8fff6b62fff93cac5ff643fb7b91de963caf187eb1980",
+        "recovered_literals": [],
+        "supporting_exports": [
+          {
+            "address": "2485f50",
+            "raw_sha256": "8141d4976745ba1af8be73f6cdc5d185feff29e695c9e1b55786afe43a9915c7"
+          }
+        ],
+        "reconstruction": "Target cost-by-card-ID split interface recovered under a compatibility name; existing sixteen-argument API retained.",
+        "interface_evidence": {
+          "line": "189",
+          "parameters": [
+            "int",
+            "int",
+            "event_t",
+            "int",
+            "int",
+            "int",
+            "int",
+            "int",
+            "int"
+          ]
+        },
+        "enum_value_checks": {
+          "EVENT_PLAY_FIRST_HALF": 4096,
+          "EVENT_PLAY_SECOND_HALF": 4352
+        }
+      }
+    ],
+    "enum_values": {
+      "EVENT_PLAY_FIRST_HALF": 4096,
+      "EVENT_PLAY_SECOND_HALF": 4352
+    },
+    "existing_worker": {
+      "address": "2485f50",
+      "name": "split_card_impl",
+      "raw_sha256": "8141d4976745ba1af8be73f6cdc5d185feff29e695c9e1b55786afe43a9915c7"
+    },
+    "scope": "New wrapper uses the already recovered private worker. No worker duplication or global ID/registration upgrade; legacy split API unchanged."
+  },
+  "batch10_shared_helpers": {
+    "functions": [
+      {
+        "name": "amass",
+        "original_name": "amass",
+        "address": "21c7f50",
+        "source": "cards/war_of_the_spark.c",
+        "line": "2",
+        "static": false,
+        "prototype": "void amass(int player, int card, int amount);",
+        "raw_sha256": "ef793d69b2394186dc07243c972e225867377a688845b17e66e91c89b1ec3705",
+        "recovered_literals": [],
+        "reconstruction": "Verified concrete interface and focused source reconstruction; see interface evidence.",
+        "interface_evidence": {
+          "line": "2",
+          "parameters": [
+            {
+              "name": "player",
+              "type": "int",
+              "constant": null,
+              "location": [
+                145,
+                0
+              ]
+            },
+            {
+              "name": "card",
+              "type": "int",
+              "constant": null,
+              "location": [
+                145,
+                4
+              ]
+            },
+            {
+              "name": "amount",
+              "type": "int",
+              "constant": null,
+              "location": [
+                145,
+                8
+              ]
+            }
+          ],
+          "coff_symbol": "_amass",
+          "shared_stack_objects": [
+            {
+              "name": "td",
+              "type": "target_definition_t",
+              "location": [
+                145,
+                156,
+                127
+              ],
+              "die": "0x1961ef1"
+            },
+            {
+              "name": "token",
+              "type": "token_generation_t",
+              "location": [
+                145,
+                156,
+                127
+              ],
+              "die": "0x1962039"
+            }
+          ]
+        },
+        "local_enum_evidence": [
+          {
+            "name": null,
+            "bytes": 4,
+            "enumerators": {
+              "SUBTYPE_ARMY": 254
+            }
+          }
+        ]
+      },
+      {
+        "name": "basic_landcycling_2022",
+        "original_name": "basic_landcycling",
+        "address": "222bd80",
+        "source": "cards/modern_horizons_2.c",
+        "line": "82",
+        "static": false,
+        "prototype": "int basic_landcycling_2022(int player, int card, event_t event, int cless, int black, int blue,\n                           int green, int red, int white);",
+        "raw_sha256": "910e33311dee35c70bd707c2c60ab6949d5540225624356421c5ed7f419977a6",
+        "recovered_literals": [],
+        "reconstruction": "Verified concrete interface and focused source reconstruction; see interface evidence.",
+        "interface_evidence": {
+          "line": "82",
+          "parameters": [
+            {
+              "name": "player",
+              "type": "int",
+              "constant": null,
+              "location": [
+                145,
+                0
+              ]
+            },
+            {
+              "name": "card",
+              "type": "int",
+              "constant": null,
+              "location": [
+                145,
+                4
+              ]
+            },
+            {
+              "name": "event",
+              "type": "event_t",
+              "constant": null,
+              "location": [
+                145,
+                8
+              ]
+            },
+            {
+              "name": "cless",
+              "type": "int",
+              "constant": null,
+              "location": [
+                145,
+                12
+              ]
+            },
+            {
+              "name": "black",
+              "type": "int",
+              "constant": null,
+              "location": [
+                145,
+                16
+              ]
+            },
+            {
+              "name": "blue",
+              "type": "int",
+              "constant": null,
+              "location": [
+                145,
+                20
+              ]
+            },
+            {
+              "name": "green",
+              "type": "int",
+              "constant": null,
+              "location": [
+                145,
+                24
+              ]
+            },
+            {
+              "name": "red",
+              "type": "int",
+              "constant": null,
+              "location": [
+                145,
+                28
+              ]
+            },
+            {
+              "name": "white",
+              "type": "int",
+              "constant": null,
+              "location": [
+                145,
+                32
+              ]
+            }
+          ],
+          "coff_symbol": "_basic_landcycling"
+        }
+      },
+      {
+        "name": "locate_edh_card_2022",
+        "original_name": "locate_edh_card",
+        "address": "22c64f0",
+        "source": "cards/vanguard.c",
+        "line": "1803",
+        "static": false,
+        "prototype": "int locate_edh_card_2022(int player);",
+        "raw_sha256": "0674ed19d3ae4298a050f7cf5e442af137f591ec7bf93d432451adbd79576d07",
+        "recovered_literals": [],
+        "reconstruction": "Verified concrete interface and focused source reconstruction; see interface evidence.",
+        "interface_evidence": {
+          "line": "1803",
+          "parameters": [
+            {
+              "name": "player",
+              "type": "int",
+              "constant": null,
+              "location": [
+                145,
+                0
+              ]
+            }
+          ],
+          "coff_symbol": "_locate_edh_card"
+        }
+      },
+      {
+        "name": "most_common_color_all_permanents",
+        "original_name": "most_common_color",
+        "address": "2488800",
+        "source": "cards/invasion.c",
+        "line": "4897",
+        "static": true,
+        "prototype": "static int most_common_color_all_permanents(void);",
+        "raw_sha256": "8e5470fc5fee2dfe465b13ebfe7120e0a5f85546a53bed79a9afc0c386198918",
+        "recovered_literals": [],
+        "reconstruction": "Verified concrete interface and focused source reconstruction; see interface evidence.",
+        "interface_evidence": {
+          "line": "4897",
+          "parameters": [
+            {
+              "name": "player",
+              "type": "int",
+              "constant": 2,
+              "location": null
+            }
+          ],
+          "coff_symbol": "_most_common_color.constprop.0",
+          "counts_array": {
+            "type": "int[6]",
+            "die": "0x436d1ba",
+            "location": [
+              145,
+              84
+            ]
+          },
+          "machine_reconstruction": {
+            "bytes_sha256": "4c29b5609e23cbb596c63161c20b3481f517abf350996f57d87a2180efab6338",
+            "maximum_selection_range": [
+              "2488862",
+              "24888f0"
+            ],
+            "explicit_memory_writes": 0,
+            "count_increment": {
+              "address": "2488917",
+              "bytes": "89148e"
+            },
+            "final_count_comparison": {
+              "address": "2488898",
+              "bytes": "3b048e"
+            },
+            "semantics": "Six integer counters; count colors 1..5 across both players, compute maximum in registers, return every color tied at that maximum, including empty-board ties."
+          }
+        }
+      }
+    ],
+    "flags": {
+      "SUBTYPE_ARMY": 254,
+      "COUNTER_P1_P1": 0,
+      "TOKEN_ACTION_ADD_COUNTERS": 1048576
+    },
+    "layout": {
+      "token_generation_t": {
+        "id": 0,
+        "s_player": 4,
+        "s_card": 8,
+        "eff_player": 12,
+        "eff_card": 16,
+        "t_player": 20,
+        "pow": 24,
+        "tou": 28,
+        "key_plus": 32,
+        "s_key_plus": 36,
+        "color_forced": 40,
+        "no_sleight": 41,
+        "legacy": 42,
+        "qty": 43,
+        "special_infos": 44,
+        "action": 48,
+        "action_argument": 52,
+        "keep_track_of_tokens_generated": 56,
+        "special_code_for_legacy": 60,
+        "special_code_on_generation": 64,
+        "special_flags2": 68,
+        "special_flags3": 72
+      },
+      "target_definition_t": {
+        "who_chooses": 0,
+        "allowed_controller": 4,
+        "preferred_controller": 8,
+        "zone": 12,
+        "required_type": 16,
+        "illegal_type": 20,
+        "required_abilities": 24,
+        "illegal_abilities": 28,
+        "required_color": 32,
+        "illegal_color": 36,
+        "extra": 40,
+        "required_subtype": 44,
+        "power_requirement": 48,
+        "toughness_requirement": 52,
+        "special": 56,
+        "required_state": 60,
+        "illegal_state": 64,
+        "allow_cancel": 68,
+        "player": 72,
+        "card": 76,
+        "flags": 80
+      }
+    },
+    "scope": "Amass uses recovered token counter action; public aliases avoid collisions with older private helpers; color maximum is a scalar, with all ties preserved."
+  },
+  "historic_spell_clone": {
+    "address": "22ca3f0",
+    "line": "11",
+    "parameters": [
+      {
+        "name": "player",
+        "type": "int",
+        "entry_location": [
+          80
+        ]
+      },
+      {
+        "name": "card",
+        "type": "int",
+        "entry_location": [
+          82
+        ]
+      },
+      {
+        "name": "event",
+        "type": "event_t",
+        "entry_location": [
+          81
+        ]
+      },
+      {
+        "name": "trigger_mode",
+        "type": "int",
+        "entry_location": [
+          250,
+          32,
+          56,
+          12,
+          0,
+          159
+        ]
+      }
+    ],
+    "scope": "Concrete three-register clone; trigger mode is computed by duh_mode in this body, not an ABI argument."
+  },
+  "drawing_imports_and_cache": {
+    "imports": {
+      "get_rarity": {
+        "return_type": "const Rarities*",
+        "parameters": "int csvid",
+        "iat": "0x27b5374"
+      },
+      "get_watermarks": {
+        "return_type": "const Watermark*",
+        "parameters": "void",
+        "iat": "0x27b5378"
+      },
+      "get_border_color": {
+        "return_type": "border_t",
+        "parameters": "uint32_t csvid",
+        "iat": "0x27b536c"
+      }
+    },
+    "signature_source": "drawcardlib/drawcardlib.h",
+    "provider_exports": "drawcardlib/Drawcardlib.def",
+    "scope": "Existing drawing-library APIs; IAT slots are function pointers, not executable entry points.",
+    "Rarities": {
+      "size": 5,
+      "members": {
+        "default_expansion": 0,
+        "default_rarity": 1,
+        "watermark": 2,
+        "dfc_symbol": 3,
+        "flags": 4,
+        "rarity_in_expansion": 5
+      }
+    },
+    "Watermark": {
+      "size": 16,
+      "members": {
+        "name": 0,
+        "disp": 4,
+        "expansions": 8,
+        "row": 12,
+        "col": 13,
+        "copied_expansions": 14,
+        "saturation": 15
+      }
+    },
+    "cache": {
+      "address": "2774140",
+      "type": "const Watermark *",
+      "initial": 0,
+      "line": 17
+    },
+    "rarity_unsigned_range": {
+      "address": "2302bc5",
+      "bytes": "89d083e80383f8010f96c0",
+      "interpretation": "32-bit subtract 3, unsigned <= 1; rarities 3 and 4 only."
+    }
+  },
+  "surveil_vla_reconstruction": {
+    "test_layout": {
+      "message": 0,
+      "type": 100,
+      "subtype": 104,
+      "type_flag": 108,
+      "subtype_flag": 110,
+      "color": 112,
+      "id": 116,
+      "id2": 120,
+      "color_flag": 124,
+      "id_flag": 126,
+      "cmc": 128,
+      "keyword": 132,
+      "cmc_flag": 136,
+      "keyword_flag": 138,
+      "sp_keyword": 140,
+      "sp_keyword_flag": 144,
+      "power": 148,
+      "toughness": 152,
+      "power_flag": 156,
+      "toughness_flag": 158,
+      "state": 160,
+      "zone": 164,
+      "state_flag": 168,
+      "not_me": 170,
+      "ai_selection_mode": 172,
+      "qty": 174,
+      "sub2": 176,
+      "sub3": 180,
+      "sub4": 184,
+      "sub5": 188,
+      "no_shuffle": 192,
+      "create_minideck": 194,
+      "special_selection_function": 196,
+      "value_for_special_selection_function": 200,
+      "painters_servant_hack": 204,
+      "has_mana_to_pay_cmc": 208,
+      "can_legally_play": 209,
+      "owner": 210,
+      "storage": 212
+    },
+    "line": "4",
+    "locals": {
+      "to_look": {
+        "type": "int",
+        "location": 2293485
+      },
+      "added": {
+        "type": "int[1]",
+        "location": 2293582
+      },
+      "ac": {
+        "type": "int",
+        "location": 2293650
+      },
+      "this_test": {
+        "type": "test_definition_t",
+        "location": [
+          145,
+          148,
+          126
+        ]
+      }
+    },
+    "dwarf_call_arguments": {
+      "2619997": [
+        [
+          119,
+          0
+        ],
+        [
+          8,
+          255
+        ],
+        [
+          3,
+          236,
+          169,
+          117,
+          2
+        ]
+      ],
+      "26199cb": [
+        [
+          115,
+          0
+        ],
+        [
+          115,
+          0
+        ],
+        [
+          49
+        ],
+        [
+          48
+        ],
+        [
+          51
+        ],
+        [
+          9,
+          255
+        ],
+        [
+          119,
+          0
+        ]
+      ],
+      "2619a65": [
+        [
+          115,
+          0
+        ],
+        [
+          9,
+          255
+        ],
+        [
+          10,
+          0,
+          83
+        ]
+      ]
+    },
+    "source_test_adapter": {
+      "target_create_minideck": 194,
+      "source_create_minideck": 186,
+      "initialization": "functions/global_checking.c::new_default_test_definition",
+      "consumer": "functions/tutors.c::new_select_a_card",
+      "scope": "Use the named member of the source-level object with source C consumers; do not project the target frame offsets onto the old structure."
+    },
+    "machine_checks": {
+      "26198f7": "3b450c89c67e038b750c",
+      "2619909": "8d04b500000000",
+      "2619916": "e8b5280e0029c4",
+      "2619953": "8b148289148f",
+      "261996b": "474e",
+      "2619997": "668975de",
+      "26199cb": "83f8ff0f856cffffff",
+      "26199fb": "e830940900",
+      "2619a07": "e804a90900",
+      "2619a27": "e804fa0900",
+      "2619a3b": "e870a20300",
+      "2619a40": "8ba50cffffff",
+      "2619a49": "85d27e18",
+      "2619a4d": "c744240800530000c7442404ffffffff891c24",
+      "2619a60": "e84bbfe1fd"
+    },
+    "machine_sha256": "d1a6656c9050d991d38f55bf1f2df54d8edd8cf1acffa357be308a06491ef85c",
+    "scope": "VLA capacity is the initial signed minimum; remaining shrinks only after a selection. Return selected cards via hand/top, mill their count, then reorder only the remainder. Positive original number dispatches even on an empty deck."
+  },
+  "sprintf_import_thunk": {
+    "address": "2701df0",
+    "symbol": "_sprintf",
+    "storage_class": 2,
+    "bytes": "ff25f0547b02",
+    "iat": "27b54f0",
+    "library": "msvcrt.dll",
+    "import_name": "sprintf",
+    "signature": "int __cdecl sprintf(char *buffer, const char *format, ...)",
+    "refreshed_exports": 31
+  },
+  "watermark_choice_reconstruction": {
+    "25c4fd0": {
+      "line": "72",
+      "size": 378,
+      "locals": {
+        "idxs": "int[256]",
+        "i": "int",
+        "num_idxs": "int",
+        "choice": "int",
+        "choices": "char *[748085]",
+        "null": "unsigned int"
+      },
+      "machine_checks": {
+        "25c5006": "80780f00",
+        "25c5015": "83c01081f9ff000000",
+        "25c5036": "8d049500000000",
+        "25c5043": "e88871130029c4",
+        "25c505d": "c1e1048b4c0b04890c87",
+        "25c5081": "e87afcffff",
+        "25c5086": "8b9c85f4fbffff",
+        "25c50ad": "e80ed10e00",
+        "25c50c2": "89d88b1540417702c1e004",
+        "25c50d3": "01d08b4004",
+        "25c50d8": "c7442404ba7c750289442408893c24",
+        "25c50e7": "e804cd1300",
+        "25c5129": "ff1578537b02",
+        "25c513e": "bbff000000"
+      },
+      "scope": "Array holds indices 0..254 with name and nonzero saturation; VLA has one display pointer per retained entry. AI/speculation uses recorded_rand. Reconstruct omitted sprintf third argument from explicit [esp+8] store.",
+      "machine_sha256": "93796bae75d8a56cb2d62a49020e11c965034119c9c65154dae387fd3a47c611"
+    },
+    "25c4d00": {
+      "line": "20",
+      "size": 317,
+      "locals": {
+        "buf": "char[3000]",
+        "offset": "int"
+      },
+      "writable_alias": {
+        "local": "buffer",
+        "backing_array": "char buf[3000]",
+        "assignments": [
+          "buffer = buf + iVar1 + 7;",
+          "buffer = buffer + iVar2;"
+        ],
+        "scope": "Writable pointer into the local character array; preserve standard sprintf destination type."
+      },
+      "machine_sha256": "8b347ea7e4db1d57bb3e90eea754dba0713a4992d033f3233185dca42b0f31d0"
+    }
+  },
+  "pump_no_repeat_alt_neutral_specialization": {
+    "target_pump_layout": {
+      "source_p": 0,
+      "source_c": 4,
+      "pow_mod": 8,
+      "tou_mod": 12,
+      "key_mod": 16,
+      "skey_mod": 20,
+      "paue_flags": 24,
+      "can_block_additional_creatures": 28,
+      "eot_removal_method": 32,
+      "subtype": 36,
+      "color": 40,
+      "disabling_mode": 44
+    },
+    "line": "1580",
+    "machine_checks": {
+      "267b24a": "c745e800000000c745ec00000000c745f000000000",
+      "267b2ed": "e8aefdffff83faff",
+      "267b295": "89784c",
+      "267ae15": "8b72248b5228",
+      "267ae25": "89b0b40000008990b8000000",
+      "267ae38": "e893840300",
+      "267ae41": "8b502881ca00000008895028",
+      "267ae50": "c744240cffffffffc744240834000000",
+      "267ae67": "e8a4190500"
+    },
+    "source_worker_sha256": "7bf1094a7ddeb517d2e778145b82d357a10d6043e8879742fd8c76779cf6f683",
+    "wrapper_sha256": "89523b49b41bbb481c1edc810f8362360f92bf5a6ad8afa20f906a17e476faa3",
+    "worker_sha256": "46f5df289ea1b4807d80fd0c13faf502995a87c73c987e74d043d392be0a97c3",
+    "enum_values": {
+      "SUBTYPE_INVALID": 0,
+      "COLOR_TEST_0": 0,
+      "KEYWORD_RECALC_ABILITIES": 134217728,
+      "SP_KEYWORD_DOES_NOT_END_AT_EOT": -2147483648,
+      "PAUE_END_AT_EOT": 512
+    },
+    "scope": "Only this keyword-only wrapper: all appended fields are zero. Preserve nine common source fields, write neutral legacy subtype/color, then force the target ability recalculation. No general pump-struct or legacy-callback upgrade is claimed."
+  },
+  "card_count_cache": {
+    "type": "uint8_t[2][7]",
+    "bytes": 14,
+    "globals": {
+      "card_counts": "0x2797200",
+      "backup_card_counts": "0x2784e7c",
+      "backup0_card_counts": "0x2775bdc"
+    },
+    "initial_value": "Zero-initialized .bss",
+    "reset_checks": {
+      "26a9e49": "c7050072790200000000",
+      "26a9e58": "c7050472790200000000",
+      "26a9e67": "c7050872790200000000",
+      "26a9e80": "66c7050c7279020000"
+    },
+    "ai_copies": {
+      "backup_data_for_ai": {
+        "source": "0x2797200",
+        "destination": "0x2784e7c",
+        "bytes": 14,
+        "instructions": [
+          {
+            "address": "26b1867",
+            "bytes": "a100727902",
+            "instruction": "mov eax, dword ptr [0x2797200]"
+          },
+          {
+            "address": "26b186c",
+            "bytes": "a37c4e7802",
+            "instruction": "mov dword ptr [0x2784e7c], eax"
+          },
+          {
+            "address": "26b1871",
+            "bytes": "a104727902",
+            "instruction": "mov eax, dword ptr [0x2797204]"
+          },
+          {
+            "address": "26b1876",
+            "bytes": "a3804e7802",
+            "instruction": "mov dword ptr [0x2784e80], eax"
+          },
+          {
+            "address": "26b187b",
+            "bytes": "a108727902",
+            "instruction": "mov eax, dword ptr [0x2797208]"
+          },
+          {
+            "address": "26b1880",
+            "bytes": "a3844e7802",
+            "instruction": "mov dword ptr [0x2784e84], eax"
+          },
+          {
+            "address": "26b1885",
+            "bytes": "66a10c727902",
+            "instruction": "mov ax, word ptr [0x279720c]"
+          },
+          {
+            "address": "26b188b",
+            "bytes": "66a3884e7802",
+            "instruction": "mov word ptr [0x2784e88], ax"
+          }
+        ]
+      },
+      "restore_data_for_ai": {
+        "source": "0x2784e7c",
+        "destination": "0x2797200",
+        "bytes": 14,
+        "instructions": [
+          {
+            "address": "26b1a67",
+            "bytes": "a17c4e7802",
+            "instruction": "mov eax, dword ptr [0x2784e7c]"
+          },
+          {
+            "address": "26b1a6c",
+            "bytes": "a300727902",
+            "instruction": "mov dword ptr [0x2797200], eax"
+          },
+          {
+            "address": "26b1a71",
+            "bytes": "a1804e7802",
+            "instruction": "mov eax, dword ptr [0x2784e80]"
+          },
+          {
+            "address": "26b1a76",
+            "bytes": "a304727902",
+            "instruction": "mov dword ptr [0x2797204], eax"
+          },
+          {
+            "address": "26b1a7b",
+            "bytes": "a1844e7802",
+            "instruction": "mov eax, dword ptr [0x2784e84]"
+          },
+          {
+            "address": "26b1a80",
+            "bytes": "a308727902",
+            "instruction": "mov dword ptr [0x2797208], eax"
+          },
+          {
+            "address": "26b1a85",
+            "bytes": "a1884e7802",
+            "instruction": "mov eax, dword ptr [0x2784e88]"
+          },
+          {
+            "address": "26b1a8a",
+            "bytes": "66a30c727902",
+            "instruction": "mov word ptr [0x279720c], ax"
+          }
+        ]
+      },
+      "backup_data_for_ai_0": {
+        "source": "0x2797200",
+        "destination": "0x2775bdc",
+        "bytes": 14,
+        "instructions": [
+          {
+            "address": "26b1c7a",
+            "bytes": "a100727902",
+            "instruction": "mov eax, dword ptr [0x2797200]"
+          },
+          {
+            "address": "26b1c7f",
+            "bytes": "a3dc5b7702",
+            "instruction": "mov dword ptr [0x2775bdc], eax"
+          },
+          {
+            "address": "26b1c84",
+            "bytes": "a104727902",
+            "instruction": "mov eax, dword ptr [0x2797204]"
+          },
+          {
+            "address": "26b1c89",
+            "bytes": "a3e05b7702",
+            "instruction": "mov dword ptr [0x2775be0], eax"
+          },
+          {
+            "address": "26b1c8e",
+            "bytes": "a108727902",
+            "instruction": "mov eax, dword ptr [0x2797208]"
+          },
+          {
+            "address": "26b1c93",
+            "bytes": "a3e45b7702",
+            "instruction": "mov dword ptr [0x2775be4], eax"
+          },
+          {
+            "address": "26b1c98",
+            "bytes": "66a10c727902",
+            "instruction": "mov ax, word ptr [0x279720c]"
+          },
+          {
+            "address": "26b1c9e",
+            "bytes": "66a3e85b7702",
+            "instruction": "mov word ptr [0x2775be8], ax"
+          }
+        ]
+      },
+      "restore_data_for_ai_0": {
+        "source": "0x2775bdc",
+        "destination": "0x2797200",
+        "bytes": 14,
+        "instructions": [
+          {
+            "address": "26b1e7d",
+            "bytes": "a1dc5b7702",
+            "instruction": "mov eax, dword ptr [0x2775bdc]"
+          },
+          {
+            "address": "26b1e82",
+            "bytes": "a300727902",
+            "instruction": "mov dword ptr [0x2797200], eax"
+          },
+          {
+            "address": "26b1e87",
+            "bytes": "a1e05b7702",
+            "instruction": "mov eax, dword ptr [0x2775be0]"
+          },
+          {
+            "address": "26b1e8c",
+            "bytes": "a304727902",
+            "instruction": "mov dword ptr [0x2797204], eax"
+          },
+          {
+            "address": "26b1e91",
+            "bytes": "a1e45b7702",
+            "instruction": "mov eax, dword ptr [0x2775be4]"
+          },
+          {
+            "address": "26b1e96",
+            "bytes": "a308727902",
+            "instruction": "mov dword ptr [0x2797208], eax"
+          },
+          {
+            "address": "26b1e9b",
+            "bytes": "a1e85b7702",
+            "instruction": "mov eax, dword ptr [0x2775be8]"
+          },
+          {
+            "address": "26b1ea0",
+            "bytes": "66a30c727902",
+            "instruction": "mov word ptr [0x279720c], ax"
+          }
+        ]
+      }
+    },
+    "serialization": "Target serializes 14 bytes within its larger supplemental record. Save-format migration remains deferred; this recovery does not alter BACKUP_AND_SAVE_LIST."
+  },
+  "leaves_play_five_argument": {
+    "line": "743",
+    "parameters": [
+      [
+        "player",
+        "int"
+      ],
+      [
+        "card",
+        "int"
+      ],
+      [
+        "event",
+        "event_t"
+      ],
+      [
+        "can_be_suppressed",
+        "int"
+      ],
+      [
+        "can_be_duplicated",
+        "int"
+      ]
+    ],
+    "scope": "Full five-argument target body uses the recovered card-count cache. Preserve the existing three-argument source leaves_play API and body."
+  },
+  "end_turn_player_bits": {
+    "global_address": "4ef1a4",
+    "type": "player_bits_t[2]",
+    "element_size": 4,
+    "machine_address": "26a2ed7",
+    "machine_bytes": "8b0da4f14e00a1a8f14e0081c9000000030d00000003890da4f14e00a3a8f14e00",
+    "mask": "3000000",
+    "machine_sha256": "bf9d51e6859701b9752b6ac79b02eda252b5aa6464f800f1561b55078dd00462",
+    "scope": "Two separate 32-bit OR operations on player_bits[0] and [1]. Preserve target ability-disable mask writes; broader ability-mask consumer migration remains pending."
+  },
+  "batch14_compatibility_interfaces": {
+    "22fabf0": {
+      "line": "117",
+      "parameters": [
+        [
+          "player",
+          "int"
+        ],
+        [
+          "card",
+          "int"
+        ],
+        [
+          "event",
+          "event_t"
+        ]
+      ],
+      "return_type": "void"
+    },
+    "2697910": {
+      "line": "17156",
+      "parameters": [
+        [
+          "player",
+          "int"
+        ],
+        [
+          "card",
+          "int"
+        ],
+        [
+          "event",
+          "event_t"
+        ],
+        [
+          "aff_player",
+          "int"
+        ]
+      ],
+      "return_type": "int",
+      "native_interface": {
+        "address": "434be0",
+        "signature": "int __cdecl(int player)",
+        "executable_sha256": "0170f02b1c381a20a97ca0c12e99c8d338453ce4edbfc99148e726d565bee0de",
+        "machine_checks": {
+          "434be0": "558bec83ec0456",
+          "434bf1": "8b4508",
+          "434bf7": "390c8520f54e00",
+          "434c05": "837e6cff",
+          "434c0b": "f6460806",
+          "434c13": "e81800000083c408",
+          "434c1f": "b801000000eb0233c05ec9c3"
+        },
+        "body_sha256": "99bae19b28692d76b4ec82d5eeef36a579c0dd0895687e240a6712c8290a4b5e",
+        "scope": "One stack parameter; iterate active cards, test native state mask 6 and the patched can_attack entry at 0x434c30; return 0/1 with plain RET.",
+        "can_attack_route": [
+          {
+            "address": "434c30",
+            "bytes": "e9fa67bd01"
+          },
+          {
+            "address": "200b42f",
+            "bytes": "e9fc026a00"
+          },
+          {
+            "address": "26ab730",
+            "symbol": "_can_attack"
+          }
+        ]
+      }
+    },
+    "26a3630": {
+      "line": "856",
+      "parameters": [
+        [
+          "triggering_player",
+          "int"
+        ],
+        [
+          "triggering_card",
+          "int"
+        ],
+        [
+          "t_player",
+          "int"
+        ],
+        [
+          "t_card",
+          "int"
+        ],
+        [
+          "event",
+          "event_t"
+        ],
+        [
+          "can_be_suppressed",
+          "int"
+        ],
+        [
+          "can_be_duplicated",
+          "int"
+        ]
+      ],
+      "return_type": "int"
+    }
   }
 }

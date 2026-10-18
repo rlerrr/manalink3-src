@@ -5887,3 +5887,181 @@ int card_the_slayer(int player, int card, event_t event){
 	}
 	return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int new_creature_with_targeted_bestow(int player, int card, event_t event, target_definition_t *td,
+                                      int colorless, int black, int blue, int green, int red,
+                                      int white, int pow, int tou, int key, int s_key);
+
+/* ManalinkEh 2022: 0x2630ea0; original cards/theros.c:150. */
+int new_generic_creature_with_bestow(int player, int card, event_t event, int colorless, int black,
+                                     int blue, int green, int red, int white, int pow, int tou,
+                                     int key, int s_key)
+{
+  int result;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = player;
+  result = new_creature_with_targeted_bestow(player, card, event, &td, colorless, black, blue,
+                                             green, red, white, pow, tou, key, s_key);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2630a30; original cards/theros.c:161. */
+int new_creature_with_targeted_bestow(int player, int card, event_t event, target_definition_t *td,
+                                      int colorless, int black, int blue, int green, int red,
+                                      int white, int pow, int tou, int key, int s_key)
+{
+  unsigned short uVar1;
+  unsigned int uVar2;
+  card_instance_t *pcVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  int iVar6;
+  unsigned char bVar7;
+  int iStack_14;
+
+  pcVar3 = get_card_instance(player, card);
+  if (event == EVENT_CAN_CAST)
+  {
+    return 1;
+  }
+  bestow(player, card, event, colorless, black, blue, green, red, white);
+  if (event == EVENT_CAN_SKIP_TURN)
+  {
+    pcVar3->regen_status = pcVar3->regen_status | 0x9000000;
+    get_abilities(player, card, EVENT_CHANGE_TYPE, -1);
+    get_abilities(player, card, EVENT_ABILITIES, -1);
+  }
+  else if (event == EVENT_CHANGE_TYPE)
+  {
+    if (((card == affected_card) && (player == affected_card_controller)) &&
+        (pcVar3->info_slot == 0x42))
+    {
+
+      iVar5 = pcVar3->internal_card_id;
+      bVar7 = cards_data[iVar5].type & 0xfd;
+      if ((cards_data[iVar5].type & 2) == 0)
+      {
+        return 0;
+      }
+      if ((pcVar3->targets[0xd].player != iVar5) ||
+          (iStack_14 = pcVar3->dummy3, cards_data[iStack_14].type != bVar7))
+      {
+
+        iStack_14 = create_a_card_type(iVar5);
+        if (iStack_14 == -1)
+        {
+          return 0;
+        }
+        uVar1 = cards_data[iStack_14].id;
+        cards_data[iStack_14].type = bVar7;
+        cards_ptr[uVar1]->subtype1 = 0x4000;
+        pcVar3->dummy3 = iStack_14;
+        uVar2 = pcVar3->regen_status;
+        pcVar3->targets[0xd].player = iVar5;
+        pcVar3->regen_status = uVar2 | 0x1000000;
+      }
+      event_result = iStack_14;
+    }
+  LAB_02630ad4:
+    if (event - EVENT_POWER < 3)
+      goto LAB_02630adf;
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      iVar5 = get_id(player, card);
+      pcVar3->targets[0xd].player = iVar5;
+      iVar6 = get_id(player, card);
+      iVar5 = pcVar3->info_slot;
+      pcVar3->targets[0xd].card = iVar6;
+      if (iVar5 == 1)
+      {
+        iVar5 =
+            pay_bestow(player, card, EVENT_CAST_SPELL, colorless, black, blue, green, red, white);
+        if (iVar5 == 0)
+        {
+          spell_fizzled = 1;
+        }
+        else if ((iVar5 == 2) && (iVar5 = pick_target(td, "TARGET_CREATURE"), iVar5 != 0))
+        {
+
+          iVar5 = pcVar3->internal_card_id;
+          pcVar3->number_of_targets = '\x01';
+          pcVar3->info_slot = 0x42;
+          iVar6 = get_id(player, card);
+          cards_data[pcVar3->internal_card_id].rarity = (uint8_t)cards_ptr[iVar6]->subtype2;
+          bVar7 = cards_data[iVar5].type;
+          iVar5 = create_a_card_type(iVar5);
+          if (iVar5 == -1)
+          {
+            return 0;
+          }
+          cards_data[iVar5].type = bVar7 & 0xfd;
+          pcVar3->targets[0xd].player = iVar5;
+          pcVar3->regen_status = pcVar3->regen_status | 0x1000000;
+          pcVar3->dummy3 = iVar5;
+          pcVar3->internal_card_id = iVar5;
+          pcVar3->backup_internal_card_id = (uint16_t)iVar5;
+          add_a_subtype_permanently(player, card, player, card, SUBTYPE_AURA_CREATURE);
+        }
+      }
+    }
+  }
+  else
+  {
+    if (event != EVENT_RESOLVE_SPELL)
+      goto LAB_02630ad4;
+    if (pcVar3->number_of_targets != '\0')
+    {
+      iVar5 = valid_target(td);
+      if (iVar5 == 0)
+      {
+        iVar5 = pcVar3->targets[0xd].card;
+        if (iVar5 != -1)
+        {
+          pcVar3->targets[0xd].player = iVar5;
+          pcVar3->internal_card_id = iVar5;
+          pcVar3->backup_internal_card_id = (uint16_t)iVar5;
+        }
+      }
+      else
+      {
+        pcVar3->damage_target_player = (int8_t)pcVar3->targets[0].player;
+        pcVar3->damage_target_card = pcVar3->targets[0].card;
+      }
+    }
+  }
+  if (trigger_condition != 0xd4)
+  {
+    return 0;
+  }
+LAB_02630adf:
+  pcVar4 = in_play(player, card);
+  if ((pcVar4 != NULL) && (-1 < pcVar3->damage_target_player))
+  {
+    modify_pt_and_abilities((int)pcVar3->damage_target_player, pcVar3->damage_target_card, event,
+                            pow, tou, key);
+    special_abilities((int)pcVar3->damage_target_player, pcVar3->damage_target_card, event, s_key,
+                      player, card);
+    other_leaves_play_2022(player, card, (int)pcVar3->damage_target_player,
+                           pcVar3->damage_target_card, event, 0, 0);
+    if ((event == EVENT_LEAVES_PLAY_ABILITY) && (pcVar3->info_slot == 0x42))
+    {
+      iVar5 = pcVar3->targets[0xd].card;
+      pcVar3->info_slot = 2;
+      pcVar3->damage_target_card = -1;
+      pcVar3->damage_target_player = -1;
+      if (iVar5 != -1)
+      {
+        pcVar3->internal_card_id = iVar5;
+        pcVar3->backup_internal_card_id = (uint16_t)iVar5;
+      }
+    }
+  }
+  return 0;
+}

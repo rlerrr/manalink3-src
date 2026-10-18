@@ -5217,3 +5217,63 @@ LAB_022f821a:
   result = basic_spell(player, card, event);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22f8de0; original cards/weatherlight.c:4784. */
+int card_roc_hatchling(int player, int card, event_t event)
+{
+  int result;
+
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_SHELL, 4);
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    remove_counters_from_source(player, card, player, card, COUNTER_SHELL, 1);
+    result = count_counters(player, card, COUNTER_SHELL);
+    if (0 < result)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    result = count_counters(player, card, COUNTER_SHELL);
+    if (0 < result)
+    {
+      return 0;
+    }
+    if (event == EVENT_POWER)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      event_result = event_result + 3;
+      return 0;
+    }
+    if (event == EVENT_TOUGHNESS)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      event_result = event_result + 2;
+      return 0;
+    }
+  }
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    event_result = event_result | 0x20;
+  }
+  return 0;
+}

@@ -8942,3 +8942,358 @@ LAB_0218502e:
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2181300; original cards/mercadian_masques.c:6705. */
+int card_jeweled_torque(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  test_definition_t test;
+
+  if (card == -1)
+  {
+    return 0;
+  }
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = choose_a_color_and_show_legacy(player, card, 1 - player, -1);
+    instance = get_card_instance(player, card);
+    instance->targets[2].player = 1 << ((unsigned char)result & 0x1f);
+    if (trigger_condition != 0xd3)
+    {
+      return 0;
+    }
+  }
+  else if (trigger_condition != 0xd3)
+    goto LAB_02181326;
+  if ((card == affected_card) && (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->number_of_targets = '\0';
+    default_test_definition(&test, 0xff);
+    instance = get_card_instance(player, card);
+    test.color = instance->targets[2].player;
+    result = duh_mode(player);
+    sp_ability_trigger(2, event, (result != 0) + 1, TYPE_NONE, &test, player, card);
+  }
+LAB_02181326:
+  if (((event == EVENT_SPA) && (result = has_mana(player, 7, 2), result != 0)) &&
+      (result =
+           charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 2),
+       result != 0))
+  {
+    gain_life(player, 2);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21821a0; original cards/mercadian_masques.c:7037. */
+int card_putrefaction(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 0xff);
+    test.color = get_sleighted_color_test(player, card, 0x28);
+    sp_ability_trigger(2, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_SPA)
+  {
+    discard(trigger_cause_controller, 0, player);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2183c80; original cards/mercadian_masques.c:7759. */
+int card_snake_pit(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 0xff);
+    test.color = get_sleighted_color_test(player, card, 6);
+    result = duh_mode(player);
+    sp_ability_trigger(1 - player, event, (result != 0) + 1, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_SPA)
+  {
+    default_token_definition(player, card, 0x4985, (token_generation_t *)&test);
+    generate_token((token_generation_t *)&test);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x217d6c0; original cards/mercadian_masques.c:5174. */
+int card_blood_hound(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_DEAL_DAMAGE)
+  {
+    check_damage(2, -1, EVENT_DEAL_DAMAGE,
+                 DDBM_MUST_DAMAGE_TRIGGERING_PLAYER | DDBM_REPORT_DAMAGE_DEALT, player, card);
+  }
+  result = resolve_damage_trigger(player, card, event,
+                                  DDBM_MUST_DAMAGE_TRIGGERING_PLAYER | DDBM_REPORT_DAMAGE_DEALT |
+                                      DDBM_TRIGGER_OPTIONAL,
+                                  player, card);
+  if (result != 0)
+  {
+
+    instance = get_card_instance(player, card);
+    result = instance->targets[0x10].player;
+    instance->targets[0x10].player = 0;
+    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, result);
+  }
+  if ((current_turn == player) && (result = eot_trigger(player, card, event), result != 0))
+  {
+    remove_all_counters_from_source(player, card, player, card, COUNTER_P1_P1);
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21818f0; original cards/mercadian_masques.c:6834. */
+int card_lava_runner(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  const target_t *ptVar3;
+
+  haste(player, card, event);
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+
+      ptVar3 = becomes_target_of_spell_or_effect(player, card, event, player, card, 2);
+      if (ptVar3 != NULL)
+      {
+        player_sacrifices_a_permanent(player, card, ptVar3->player, 1, SAC_CAUSED | SAC_NO_CANCEL);
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2183380; original cards/mercadian_masques.c:7469. */
+int card_saprazzan_bailiff(int player, int card, event_t event)
+{
+  int *piVar1;
+  int iVar2;
+  int iVar3;
+  unsigned int player_00;
+  unsigned int uStack_ec;
+  test_definition_t test;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+
+    uStack_ec = 0;
+    do
+    {
+      player_00 = uStack_ec ^ current_turn;
+
+      iVar2 = count_graveyard(player_00);
+      piVar1 = graveyard_ptr_mutable[player_00];
+      iVar2 = iVar2 + -1;
+      if (-1 < iVar2)
+      {
+        do
+        {
+          iVar3 = is_what(-1, piVar1[iVar2], 0x40);
+          if ((iVar3 != 0) || (iVar3 = is_what(-1, piVar1[iVar2], 4), iVar3 != 0))
+          {
+            rfg_card_from_grave(player_00, iVar2);
+          }
+          iVar2 = iVar2 + -1;
+        } while (iVar2 != -1);
+      }
+      uStack_ec = uStack_ec + 1;
+    } while (uStack_ec != 2);
+    leaves_play_2022(player, card, EVENT_ETB, 1, 0);
+    return 0;
+  }
+  leaves_play_2022(player, card, event, 1, 0);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+
+    new_default_test_definition(&test, 0x44, "");
+    from_grave_to_hand_multiple(1 - current_turn, &test);
+    from_grave_to_hand_multiple(current_turn, &test);
+    return 0;
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int cast_creature_and_enchantment_spells_as_they_had_flash(int player, int card,
+                                                                  event_t event);
+
+/* ManalinkEh 2022: 0x216e890; original cards/mercadian_masques.c:8373. */
+static int cast_creature_and_enchantment_spells_as_they_had_flash(int player, int card,
+                                                                  event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  test_definition_t this_test;
+
+  iVar1 = is_what(player, card, 0x80);
+  if ((iVar1 != 0) &&
+      (instance = get_card_instance(player, card), -1 < instance->targets[0].player))
+  {
+
+    instance = get_card_instance(player, card);
+    iVar1 = is_humiliated_for_ability(instance->targets[0].player, instance->targets[0].card,
+                                      AL_STATIC);
+    if (iVar1 != 0)
+    {
+      return 0;
+    }
+    other_leaves_play_2022(player, card, instance->targets[0].player, instance->targets[0].card,
+                           event, 0, 0);
+    if (event == EVENT_LEAVES_PLAY_ABILITY)
+    {
+      kill_card(player, card, KILL_EXILE);
+      return 0;
+    }
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+
+    if (0 < active_cards_count[player])
+    {
+      iVar1 = 0;
+      do
+      {
+        instance = in_hand(player, iVar1);
+        if ((instance != NULL) && ((iVar3 = is_what(player, iVar1, 2),
+                                    iVar3 != 0 || (iVar3 = is_what(player, iVar1, 4), iVar3 != 0))))
+        {
+          iVar3 = get_original_internal_card_id(player, iVar1);
+          iVar3 = has_mana_to_cast_iid(player, EVENT_CAN_ACTIVATE, iVar3);
+          if (iVar3 != 0)
+          {
+            return 1;
+          }
+        }
+        iVar1 = iVar1 + 1;
+      } while (iVar1 < active_cards_count[player]);
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+
+    new_default_test_definition(&this_test, 6, "Select a creature or enchantment card to cast.");
+    iVar1 = new_select_a_card(player, player, 4, 0, 1, -1, &this_test);
+    if (iVar1 == -1)
+    {
+      spell_fizzled = 1;
+    }
+    else
+    {
+      iVar3 = charge_mana_from_id(player, iVar1, EVENT_ACTIVATE, -1);
+      if (iVar3 != 0)
+      {
+        play_card_in_hand_for_free(player, iVar1);
+        cant_be_responded_to = 1;
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21857c0; original cards/mercadian_masques.c:8414. */
+int card_vernal_equinox(int player, int card, event_t event)
+{
+  bool bVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  int iVar6;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      iVar2 = 0;
+      pcVar3 = get_card_instance(player, card);
+      bVar1 = false;
+      do
+      {
+        iVar6 = 0;
+        if (-1 < active_cards_count[iVar2])
+        {
+          do
+          {
+            pcVar4 = in_play(iVar2, iVar6);
+
+            if ((((pcVar4 != NULL) && (iVar5 = is_what(iVar2, iVar6, 0x80), iVar5 != 0)) &&
+                 (pcVar4 = get_card_instance(iVar2, iVar6),
+                  pcVar4->info_slot_fn ==
+                      cast_creature_and_enchantment_spells_as_they_had_flash)) &&
+                ((pcVar4->targets[0].player == player && (pcVar4->targets[0].card == card))))
+            {
+              if (player == iVar2)
+              {
+                kill_card(player, iVar6, KILL_EXILE);
+              }
+              else
+              {
+                if (iVar2 == 1)
+                  goto LAB_0218580c;
+                bVar1 = true;
+              }
+            }
+            iVar6 = iVar6 + 1;
+          } while (iVar6 <= active_cards_count[iVar2]);
+        }
+        iVar2 = iVar2 + 1;
+      } while (iVar2 != 2);
+      if (!bVar1)
+      {
+
+        iVar5 = 1 - player;
+        iVar2 = add_card_to_hand(iVar5, pcVar3->internal_card_id);
+        iVar6 = create_legacy_activate(iVar5, iVar2,
+                                       cast_creature_and_enchantment_spells_as_they_had_flash);
+        pcVar3 = get_card_instance(iVar5, iVar6);
+        pcVar3->targets[0].card = card;
+        pcVar3->targets[0].player = player;
+        pcVar3->number_of_targets = '\x01';
+        obliterate_card(iVar5, iVar2);
+      }
+    }
+  }
+  else if (((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) &&
+           (iVar2 = is_humiliated_for_ability(player, card, AL_STATIC), iVar2 == 0))
+  {
+    iVar2 = cast_creature_and_enchantment_spells_as_they_had_flash(player, card, event);
+    return iVar2;
+  }
+LAB_0218580c:
+  iVar2 = global_enchantment(player, card, event);
+  return iVar2;
+}

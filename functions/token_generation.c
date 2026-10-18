@@ -394,6 +394,15 @@ void generate_token(token_generation_t *token){
 
 		put_into_play(token->t_player, card_added);
 
+		/* Recovered 2022 token counter action (0x26659d0); after put_into_play. */
+		if (token->action & TOKEN_ACTION_ADD_COUNTERS){
+			++hack_silent_counters;
+			add_counters_from_source(token->s_player, token->s_card, token->t_player, card_added,
+								 (unsigned int)token->action_argument >> 16, token->action_argument & 0xffff);
+			--hack_silent_counters;
+		}
+		/* End recovered 2022 token counter action. */
+
 		if ((token->action & TOKEN_ACTION_BLOCKING) && in_play(token->t_player, card_added)){
 			play_sound_effect(WAV_BLOCK2);
 			if (event_flags & EA_SELECT_BLOCK){

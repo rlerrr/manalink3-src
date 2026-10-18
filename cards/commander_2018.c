@@ -1779,3 +1779,640 @@ int card_yuriko_the_tigers_shadow(int player, int card, event_t event)
   iVar1 = ninjutsu(player, card, event, 0, 1, 1, 0, 0, 0, 0x4abe);
   return iVar1;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2560e50; original cards/commander_2018.c:305. */
+int card_arixmethes_slumbering_isle(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int result;
+  card_instance_t *instance;
+  unsigned char bVar4;
+  int iStack_18;
+
+  check_legend_rule(player, card, event);
+  comes_into_play_tapped(player, card, event);
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_SLUMBER, 5);
+  if ((event == EVENT_CHANGE_TYPE) && (instance = in_play(player, card), instance != NULL))
+  {
+    if (card != affected_card)
+      goto LAB_02560ebb;
+    if (player != affected_card_controller)
+    {
+      if (trigger_condition != 0xd3)
+        goto LAB_02560ebb;
+      goto LAB_02560f69;
+    }
+    if ((land_can_be_played & 0x20000U) == 0)
+    {
+      result = count_counters(player, card, COUNTER_SLUMBER);
+      if (result != 0)
+      {
+
+        result = instance->internal_card_id;
+        bVar4 = cards_data[result].type & 0xfd | 1;
+        if (cards_data[result].type == bVar4)
+        {
+          return 0;
+        }
+        if ((instance->targets[7].player != result) ||
+            (iStack_18 = instance->dummy3, cards_data[iStack_18].type != bVar4))
+        {
+
+          iStack_18 = create_a_card_type(result);
+          if (iStack_18 == -1)
+          {
+            return 0;
+          }
+          cards_data[iStack_18].type = bVar4;
+          instance->dummy3 = iStack_18;
+          uVar1 = instance->regen_status;
+          instance->targets[7].player = result;
+          instance->regen_status = uVar1 | 0x1000000;
+        }
+        event_result = iStack_18;
+      }
+      goto LAB_02560eab;
+    }
+    if (trigger_condition != 0xd3)
+      goto LAB_02560ebb;
+  }
+  else
+  {
+  LAB_02560eab:
+    if ((trigger_condition != 0xd3) || (card != affected_card))
+      goto LAB_02560ebb;
+  LAB_02560f69:
+    if (player != affected_card_controller)
+      goto LAB_02560ebb;
+  }
+  if ((trigger_cause != card) &&
+      (result = count_counters(player, card, COUNTER_SLUMBER), result != 0))
+  {
+    result = duh_mode(player);
+    result = new_specific_spell_played(player, card, event, player, (result != 0) + 1, NULL);
+    if (result != 0)
+    {
+      instance = in_play(player, card);
+      remove_counters_from_source(player, card, player, card, COUNTER_SLUMBER, 1);
+      instance->regen_status = instance->regen_status | 0x1000000;
+      get_abilities(player, card, EVENT_CHANGE_TYPE, -1);
+      result = is_what(player, card, 1);
+      if (result == 0)
+      {
+        play_sound_effect(WAV_CHANGET);
+      }
+    }
+  }
+LAB_02560ebb:
+  result = is_what(player, card, 1);
+  if (result == 0)
+  {
+    result = mana_producing_creature_multi(player, card, event, 0, 0, 0, 1, 1, 0, 0);
+    return result;
+  }
+  result = two_mana_land(player, card, event, COLOR_GREEN, COLOR_BLUE);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2561690; original cards/commander_2018.c:467. */
+int card_echo_storm(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  token_generation_t token;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 0x40);
+    get_card_instance(player, card);
+    iVar3 = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    return iVar3;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 0x40);
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ARTIFACT", 1, NULL);
+        if (spell_fizzled != 1)
+        {
+          iVar3 = check_special_flags(player, card, 0x40000);
+          if (iVar3 == 0)
+          {
+            iVar3 = locate_edh_card_2022(player);
+            if (-1 < iVar3)
+            {
+              iVar3 = 0;
+              while (true)
+              {
+
+                iVar2 = get_commander_storm_count(player);
+                if (iVar2 <= iVar3)
+                  break;
+                iVar2 = new_pick_target(&td, "TARGET_ARTIFACT", 1, 0);
+                if (iVar2 == 0)
+                {
+                  iVar3 = iVar3 + 1;
+                }
+                else
+                {
+                  iVar3 = iVar3 + 1;
+                  copy_token_definition(player, card, &token, instance->targets[0].player,
+                                        instance->targets[0].card);
+                  generate_token(&token);
+                }
+              }
+              instance->number_of_targets = '\x01';
+            }
+          }
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 0x40);
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      iVar3 = valid_target(&td);
+      if (iVar3 != 0)
+      {
+        copy_token_definition(player, card, &token, instance->targets[0].player,
+                              instance->targets[0].card);
+        generate_token(&token);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 0x40);
+    get_card_instance(player, card);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25619a0; original cards/commander_2018.c:518. */
+int card_empyrial_storm(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    iVar1 = basic_spell(player, card, EVENT_CAN_CAST);
+    return iVar1;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (basic_spell(player, card, EVENT_CAST_SPELL), spell_fizzled != 1)) &&
+        (iVar1 = check_special_flags(player, card, 0x40000), iVar1 == 0))
+    {
+      iVar2 = locate_edh_card_2022(player);
+      iVar1 = 0;
+      if (-1 < iVar2)
+      {
+        for (; iVar2 = get_commander_storm_count(player), iVar1 < iVar2; iVar1 = iVar1 + 1)
+        {
+          generate_token_by_id(player, card, 0x48ff);
+        }
+      }
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    generate_token_by_id(player, card, 0x48ff);
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2562780; original cards/commander_2018.c:832. */
+int card_fury_storm(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int iStack_14;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      twincast(player, card, 0x6c, NULL, NULL);
+      result = counterspell_validate(player, card, NULL, 0);
+      if (((result != 0) && (result = check_special_flags(player, card, 0x40000), result == 0)) &&
+          (result = locate_edh_card_2022(player), -1 < result))
+      {
+
+        instance = get_card_instance(player, card);
+        for (iStack_14 = 0; result = get_commander_storm_count(player), iStack_14 < result;
+             iStack_14 = iStack_14 + 1)
+        {
+          copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
+        }
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = counterspell_validate(player, card, NULL, 0);
+      if (result != 0)
+      {
+
+        instance = get_card_instance(player, card);
+        copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = twincast(player, card, event, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2562940; original cards/commander_2018.c:863. */
+int card_genesis_storm(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  test_definition_t test;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_test_definition(&test, 1);
+    test.type_flag = 1;
+    get_card_instance(player, card);
+    iVar2 = basic_spell(player, card, EVENT_CAN_CAST);
+    return iVar2;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_test_definition(&test, 1);
+      test.type_flag = 1;
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) &&
+          (((player == affected_card_controller &&
+             (basic_spell(player, card, EVENT_CAST_SPELL), spell_fizzled != 1)) &&
+            (iVar2 = check_special_flags(player, card, 0x40000), iVar2 == 0))))
+      {
+        iVar3 = locate_edh_card_2022(player);
+        iVar2 = 0;
+        if (-1 < iVar3)
+        {
+          for (; iVar3 = get_commander_storm_count(player), iVar2 < iVar3; iVar2 = iVar2 + 1)
+          {
+            reveal_card_until_you_reveal_test(player, player, &test, 0x44);
+          }
+          instance->number_of_targets = '\x01';
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_test_definition(&test, 1);
+    test.type_flag = 1;
+    get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      reveal_card_until_you_reveal_test(player, player, &test, 0x44);
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_test_definition(&test, 1);
+    test.type_flag = 1;
+    get_card_instance(player, card);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25654a0; original cards/commander_2018.c:1694. */
+int card_skull_storm(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  unsigned int uVar3;
+  int iVar4;
+  int iStack_ec;
+  test_definition_t test;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    get_card_instance(player, card);
+    iVar2 = basic_spell(player, card, EVENT_CAN_CAST);
+    return iVar2;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      instance = get_card_instance(player, card);
+      default_test_definition(&test, 2);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        basic_spell(player, card, EVENT_CAST_SPELL);
+        if (spell_fizzled != 1)
+        {
+          iVar2 = check_special_flags(player, card, 0x40000);
+          if (iVar2 == 0)
+          {
+            iVar2 = locate_edh_card_2022(player);
+            if (-1 < iVar2)
+            {
+
+              iVar2 = 1 - player;
+              iStack_ec = 0;
+              while (true)
+              {
+                iVar4 = get_commander_storm_count(player);
+                if (iVar4 <= iStack_ec)
+                  break;
+                iVar4 = new_can_sacrifice(player, card, iVar2, &test);
+                if (iVar4 == 0)
+                {
+                  uVar3 = round_up_value(life[iVar2]);
+                  lose_life(iVar2, uVar3);
+                }
+                else
+                {
+                  new_sacrifice(player, card, iVar2, SAC_CAUSED | SAC_NO_CANCEL, &test);
+                }
+                iStack_ec = iStack_ec + 1;
+              }
+              instance->number_of_targets = '\x01';
+            }
+          }
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    get_card_instance(player, card);
+    default_test_definition(&test, 2);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      iVar4 = 1 - player;
+      iVar2 = new_can_sacrifice(player, card, iVar4, &test);
+      if (iVar2 == 0)
+      {
+        uVar3 = round_up_value(life[iVar4]);
+        lose_life(iVar4, uVar3);
+      }
+      else
+      {
+        new_sacrifice(player, card, iVar4, SAC_CAUSED | SAC_NO_CANCEL, &test);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    get_card_instance(player, card);
+    default_test_definition(&test, 2);
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2565a50; original cards/commander_2018.c:1810. */
+int card_varchild_betrayer_of_kjeldor(int player, int card, event_t event)
+{
+  int32_t iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  unsigned char uStack_ec;
+  token_generation_t token;
+
+  check_legend_rule(player, card, event);
+  iVar2 = whenever_i_deal_damage_to_a_player(player, card, event,
+                                             DDBM_REPORT_DAMAGE_DEALT | DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (iVar2 != 0)
+  {
+
+    instance = get_card_instance(player, card);
+    iVar1 = instance->targets[0x10].player;
+    instance->targets[0x10].player = 0;
+    uStack_ec = (char)((unsigned int)iVar1 >> 8) + (char)iVar1;
+    default_token_definition(instance->parent_controller, instance->parent_card, 0x4994, &token);
+    token.t_player = 1 - player;
+    token.qty = uStack_ec;
+    generate_token(&token);
+  }
+  if (event != EVENT_ABILITIES)
+  {
+    leaves_play_2022(player, card, event, 1, 1);
+    if (event != EVENT_LEAVES_PLAY_ABILITY)
+    {
+      return 0;
+    }
+    default_test_definition((test_definition_t *)&token, 2);
+    new_manipulate_all(player, card, 2, (test_definition_t *)&token, ACT_GAIN_CONTROL);
+    return 0;
+  }
+  if (1 - player == affected_card_controller)
+  {
+    iVar2 = has_subtype(1 - player, affected_card, SUBTYPE_SURVIVOR);
+    if (iVar2 != 0)
+    {
+      cannot_attack(affected_card_controller, affected_card, EVENT_ABILITIES);
+      cannot_block(affected_card_controller, affected_card, EVENT_ABILITIES);
+    }
+  }
+  leaves_play_2022(player, card, EVENT_ABILITIES, 1, 1);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25611a0; original cards/commander_2018.c:388. */
+int card_brudiclad_telchor_engineer(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  token_generation_t token;
+  target_definition_t td;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  result = is_humiliated_for_ability(player, card, AL_STATIC);
+  if (result == 0)
+  {
+    instance = in_play(player, card);
+    if (((event == EVENT_ABILITIES) && (instance != NULL)) && (affected_card_controller == player))
+    {
+      result = is_token(player, affected_card);
+      if (result != 0)
+      {
+        haste(affected_card_controller, affected_card, EVENT_ABILITIES);
+      }
+    }
+  }
+  result = beginning_of_combat_2022(player, card, event, player);
+  if (result != 0)
+  {
+    default_token_definition(player, card, 0x4968, &token);
+    token.pow = 2;
+    token.tou = 1;
+    token.color_forced = '\x04';
+    generate_token(&token);
+    default_target_definition(player, card, &td, 0x47);
+    td.allowed_controller = player;
+    td.illegal_abilities = 0;
+    td.special = 0x8000;
+    td.extra = (int32_t)is_token_targ;
+    result = can_target(&td);
+    if (result != 0)
+    {
+      result = new_pick_target(&td, "Choose a token you control.", 0, 0x80);
+      if (result != 0)
+      {
+        default_test_definition(&test, 0x47);
+        test.special_selection_function = is_token_test;
+        instance = get_card_instance(player, card);
+        result = instance->targets[0].card;
+        instance = get_card_instance(player, card);
+        shapeshift_all(player, card, player, &test, instance->targets[0].player, result, 0);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25639c0; original cards/commander_2018.c:1202. */
+int card_loyal_apprentice(int player, int card, event_t event)
+{
+  int result;
+  token_generation_t token;
+
+  result = beginning_of_combat_2022(player, card, event, player);
+  if (result != 0)
+  {
+    result = liutenant(player);
+    if (result != 0)
+    {
+      default_token_definition(player, card, 0x4995, &token);
+      token.action = TOKEN_ACTION_HASTE;
+      generate_token(&token);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2563a40; original cards/commander_2018.c:1217. */
+int card_loyal_drake(int player, int card, event_t event)
+{
+  int result;
+
+  result = beginning_of_combat_2022(player, card, event, player);
+  if (result != 0)
+  {
+    result = liutenant(player);
+    if (result != 0)
+    {
+      draw_a_card(player);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2563a90; original cards/commander_2018.c:1230. */
+int card_loyal_guardian(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+
+  result = beginning_of_combat_2022(player, card, event, player);
+  if (result != 0)
+  {
+    result = liutenant(player);
+    if (result != 0)
+    {
+      default_test_definition(&this_test, 2);
+      new_manipulate_all(player, card, player, &this_test, ACT_ADD_COUNTERS_BASE | ACT_KILL_BURY);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2563b20; original cards/commander_2018.c:1245. */
+int card_loyal_subordinate(int player, int card, event_t event)
+{
+  int result;
+
+  menace(player, card, event);
+  result = beginning_of_combat_2022(player, card, event, player);
+  if (result != 0)
+  {
+    result = liutenant(player);
+    if (result != 0)
+    {
+      lose_life(1 - player, 3);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2563ba0; original cards/commander_2018.c:1275. */
+int card_loyal_unicorn(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_t test;
+
+  result = beginning_of_combat_2022(player, card, event, player);
+  if (result != 0)
+  {
+    result = liutenant(player);
+    if (result != 0)
+    {
+
+      result = create_legacy_effect(player, card, loyal_unicorn_legacy);
+      alternate_legacy_text(1, player, result);
+      instance = get_card_instance(player, result);
+      instance->targets[0].player = player;
+      instance = get_card_instance(player, result);
+      instance->targets[0].card = card;
+      default_test_definition(&test, 2);
+      test.not_me = 1;
+      pump_creatures_until_eot(player, card, player, 2, 0, 0, 0, 8, &test);
+      return 0;
+    }
+  }
+  return 0;
+}

@@ -2750,3 +2750,242 @@ static int prismatic_piper_check(int player, int card, int card_color, int to_co
   }
   return 0;
 }
+
+/* ManalinkEh 2022: 0x22c64f0; original cards/vanguard.c:1803. */
+int locate_edh_card_2022(int player)
+{
+  card_instance_t *instance;
+  int result;
+  int card;
+
+  if (0 < active_cards_count[player])
+  {
+    card = 0;
+    do
+    {
+      instance = in_play(player, card);
+      if ((instance != NULL) && (result = get_id(player, card), result == 0x3953))
+      {
+        return card;
+      }
+      card = card + 1;
+    } while (card < active_cards_count[player]);
+  }
+  return -1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int get_commander_storm_count(int player);
+int put_all_commanders_from_command_zone_to(int player, int where, int *rv);
+int get_commander_id(int player, int commander_code);
+static int put_commander_from_command_zone_to_impl(int player, int where, int which_com, int *rv);
+void put_commander_in_the_command_zone_from_play(int player, int card);
+
+/* ManalinkEh 2022: 0x22c6940; original cards/vanguard.c:1813. */
+int get_commander_storm_count(int player)
+{
+  int result;
+
+  result = locate_edh_card_2022(player);
+  if (result == -1)
+  {
+    return 0;
+  }
+  result = count_counters(player, result, COUNTER_VORTEX);
+  return result / 2;
+}
+
+/* ManalinkEh 2022: 0x22c6590; original cards/vanguard.c:1830. */
+static int put_commander_from_command_zone_to_impl(int player, int where, int which_com, int *rv)
+{
+  int iVar1;
+  unsigned int uVar2;
+  int id;
+  int iVar3;
+  card_instance_t *instance;
+  int iVar5;
+  int iVar6;
+  int iVar7;
+  int iVar8;
+  char cVar9;
+  unsigned int uVar10;
+  unsigned int uStack_e8;
+  int cid[3];
+  char buffer1[100];
+  char buffer2[100];
+
+  iVar3 = locate_edh_card_2022(player);
+  if (iVar3 != -1)
+  {
+
+    instance = get_card_instance(player, iVar3);
+    iVar1 = instance->targets[3].player;
+    if (iVar1 < 0)
+    {
+      return -1;
+    }
+    cid[0] = -1;
+    cVar9 = (char)((unsigned int)iVar1 >> 8);
+    if ((char)iVar1 == '\x01')
+    {
+      cid[1] = instance->targets[2].player;
+      if (cVar9 != '\x01')
+      {
+        cid[2] = -1;
+        if (cid[1] == -1)
+        {
+          return -1;
+        }
+        goto LAB_022c6638;
+      }
+    }
+    else
+    {
+      cid[1] = -1;
+      if (cVar9 != '\x01')
+      {
+        return -1;
+      }
+    }
+    cid[2] = instance->targets[2].card;
+    if ((cid[2] & cid[1]) != 0xffffffff)
+    {
+    LAB_022c6638:
+
+      id = cid[2];
+      iVar1 = cid[1];
+      scnprintf(buffer1, 100, " %s", cards_ptr[cards_data[cid[1]].id]->name);
+      scnprintf(buffer2, 100, " %s", cards_ptr[cards_data[id].id]->name);
+      uStack_e8 = which_com;
+      if (which_com == 0)
+      {
+        iVar5 = get_cmc_by_internal_id(iVar1);
+        iVar6 = get_cmc_by_internal_id(id);
+        iVar7 = get_cmc_by_internal_id(iVar1);
+        iVar8 = get_cmc_by_internal_id(id);
+        uStack_e8 = 0;
+        if (iVar8 < iVar7)
+        {
+          uStack_e8 = 10;
+        }
+        uStack_e8 =
+            dialog_impl(player, iVar3, EVENT_CAST_SPELL, "\001\014", "\001\004", "\001\016",
+                        "\001\003", buffer1, (iVar1 ^ 0xffffffffU) >> 0x1f, uStack_e8, buffer2,
+                        (id ^ 0xffffffffU) >> 0x1f, (iVar6 <= iVar5) - 1 & 10, 0, 0, 0, 0);
+      }
+
+      uVar10 = 1;
+      iVar3 = -1;
+      uVar2 = uStack_e8 & 1;
+      do
+      {
+        if ((uVar2 != 0) && (-1 < iVar1))
+        {
+          remove_card_from_rfg(player, (unsigned int)cards_data[iVar1].id);
+          if (uVar10 == 1)
+          {
+            *(uint8_t *)&instance->targets[3].player = 4;
+          }
+          else if (uVar10 == 2)
+          {
+            *(uint8_t *)((int)&instance->targets[3].player + 1) = 4;
+          }
+          iVar3 = add_card_to_hand(player, iVar1);
+          if (rv != NULL)
+          {
+            rv[uVar10] = iVar3;
+          }
+          set_special_flags2(player, iVar3, 0x1000000);
+          if (where == 5)
+          {
+            add_state(player, iVar3, 0x10);
+          }
+          else if (1 < where - 4U)
+            goto LAB_022c66f0;
+          put_into_play(player, iVar3);
+        }
+      LAB_022c66f0:
+        uVar10 = uVar10 + 1;
+        if (uVar10 == 3)
+        {
+          return iVar3;
+        }
+        uVar2 = uStack_e8 & uVar10;
+        iVar1 = cid[uVar10];
+      } while (true);
+    }
+  }
+  return -1;
+}
+
+/* ManalinkEh 2022: 0x22c6990; original cards/vanguard.c:1877. */
+int put_all_commanders_from_command_zone_to(int player, int where, int *rv)
+{
+  int result;
+
+  result = put_commander_from_command_zone_to_impl(player, where, 3, rv);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22c69d0; original cards/vanguard.c:1886. */
+int get_commander_id(int player, int commander_code)
+{
+  int32_t card;
+  card_instance_t *instance;
+
+  card = locate_edh_card_2022(player);
+  if (card != -1)
+  {
+    if (commander_code == 2)
+    {
+      instance = get_card_instance(player, card);
+      return instance->targets[2].card;
+    }
+    instance = get_card_instance(player, card);
+    card = instance->targets[2].player;
+  }
+  return card;
+}
+
+/* ManalinkEh 2022: 0x22c6a20; original cards/vanguard.c:1895. */
+void put_commander_in_the_command_zone_from_play(int player, int card)
+{
+  uint16_t uVar1;
+  uint16_t uVar2;
+  int player_00;
+  int iid;
+  int card_00;
+  int result;
+  card_instance_t *instance;
+
+  player_00 = get_owner(player, card);
+  iid = get_original_internal_card_id(player, card);
+  uVar1 = cards_data[iid].id;
+  card_00 = locate_edh_card_2022(player_00);
+  if (card_00 == -1)
+  {
+    return;
+  }
+
+  result = get_commander_id(player_00, 1);
+  uVar2 = cards_data[result].id;
+  result = get_commander_id(player_00, 2);
+  if (uVar1 == cards_data[result].id)
+  {
+    dispatch_event(player, card, 0x1c00);
+    get_card_instance(player_00, card_00);
+  }
+  else
+  {
+    dispatch_event(player, card, 0x1c00);
+    instance = get_card_instance(player_00, card_00);
+    if (uVar1 != uVar2)
+    {
+      return;
+    }
+    *(uint16_t *)&instance->targets[3].player = 0x101;
+  }
+  add_card_to_rfg(player_00, iid);
+  obliterate_card(player, card);
+  return;
+}

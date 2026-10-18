@@ -2420,3 +2420,24 @@ int card_pentavus(int player, int card, event_t event)
 	return 0;
 }
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24a31b0; original cards/m12.c:1646. */
+int card_sundial_of_the_infinite(int player, int card, event_t event)
+{
+  int result;
+
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      end_the_turn(player, card, EVENT_RESOLVE_ACTIVATION);
+    }
+  }
+  result = generic_activated_ability(player, card, event, 0x10001, 1, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}

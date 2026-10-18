@@ -6842,3 +6842,193 @@ int card_watchdog(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x215b970; original cards/tempest.c:6558. */
+int card_havoc(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 0xff);
+    test.color = get_sleighted_color_test(player, card, 0x20);
+    sp_ability_trigger(1 - player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_SPA)
+  {
+    lose_life(1 - player, 2);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x215bd80; original cards/tempest.c:6645. */
+int card_insight(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 0xff);
+    test.color = get_sleighted_color_test(player, card, 8);
+    sp_ability_trigger(1 - player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_SPA)
+  {
+    draw_cards(player, 1);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x215e510; original cards/tempest.c:7485. */
+int card_warmth(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 0xff);
+    test.color = get_sleighted_color_test(player, card, 0x10);
+    sp_ability_trigger(1 - player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_SPA)
+  {
+    gain_life(player, 2);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x215a1a0; original cards/tempest.c:6053. */
+int card_chaotic_goo(int player, int card, event_t event)
+{
+  int result;
+
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 3);
+  result = duh_mode(player);
+  upkeep_trigger_ability_mode(player, card, event, player,
+                              (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    return 0;
+  }
+  result = flip_a_coin(player, card);
+  if (result != 0)
+  {
+    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    return 0;
+  }
+  remove_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x215c430; original cards/tempest.c:6765. */
+int card_magmasaur(int player, int card, event_t event)
+{
+  int dmg;
+  int result;
+  test_definition_t this_test;
+
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 5);
+  upkeep_trigger_ability_mode(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    return 0;
+  }
+
+  dmg = count_counters(player, card, COUNTER_P1_P1);
+  default_test_definition(&this_test, 2);
+  this_test.keyword = 0x20;
+  this_test.keyword_flag = 1;
+  result = do_dialog(player, player, card, -1, -1, " Remove counter\n sacrifice & damage", 0);
+  if (result == 0)
+  {
+    remove_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    return 0;
+  }
+  kill_card(player, card, KILL_SACRIFICE);
+  new_damage_all(player, card, 2, dmg, 2, &this_test);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x215d5b0; original cards/tempest.c:7158. */
+int card_segmented_wurm(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  const target_t *ptVar3;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      ptVar3 = becomes_target_of_spell_or_effect(player, card, event, player, card, 2);
+      if (ptVar3 != NULL)
+      {
+        add_counters_from_source(player, card, player, card, COUNTER_M1_M1, 1);
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x215d640; original cards/tempest.c:7172. */
+int card_servant_of_volrath(int player, int card, event_t event)
+{
+  leaves_play_2022(player, card, event, 1, 1);
+  if (event != EVENT_LEAVES_PLAY_ABILITY)
+  {
+    return 0;
+  }
+  impose_sacrifice(player, card, player, 1, 2, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x215dc90; original cards/tempest.c:7306. */
+int card_steal_enchantment(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+
+  leaves_play_2022(player, card, event, 0, 0);
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_0215dce8;
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) ||
+             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+      goto LAB_0215dce8;
+    if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+         (((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
+           (event != EVENT_CHANGE_TYPE)))) &&
+        (((event != EVENT_SET_COLOR && ((event & ~EVENT_UPKEEP) != EVENT_GET_SELECTED_CARD)) &&
+          ((event != EVENT_STATIC_EFFECTS && (event != EVENT_LEAVES_PLAY_ABILITY))))))
+    {
+      return 0;
+    }
+  }
+LAB_0215dce8:
+  default_target_definition(player, card, &td, 4);
+  result = generic_stealing_aura(player, card, event, &td, "TARGET_ENCHANTMENT");
+  return result;
+}

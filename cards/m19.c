@@ -3055,3 +3055,266 @@ int card_chaos_wand(int player, int card, event_t event)
                                     "TARGET_OPPONENT");
   return iVar2;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x220b280; original cards/m19.c:2101. */
+int card_sai_master_thopterist(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t test;
+
+  check_legend_rule(player, card, event);
+  sp_ability_trigger(player, event, 2, TYPE_ARTIFACT, NULL, player, card);
+  if (event != EVENT_SPA)
+  {
+    if ((((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
+         (event == EVENT_RESOLVE_ACTIVATION)) ||
+        (event == EVENT_CLEANUP))
+    {
+      default_test_definition(&test, 0x40);
+      test.qty = 2;
+      if (event == EVENT_RESOLVE_ACTIVATION)
+      {
+        draw_a_card(player);
+      }
+      result = generic_activated_ability_with_sacrifice_as_cost(
+          player, card, event, GAA_NONE, 1, 0, 1, 0, 0, 0, 0, NULL, "SACRIFICE_ARTIFACT", TYPE_NONE,
+          &test, SARV_0);
+    }
+    else
+    {
+      result = 0;
+    }
+    return result;
+  }
+  default_token_definition(player, card, 0x4995, (token_generation_t *)&test);
+  test.message[0x1c] = '\x01';
+  test.message[0x1d] = '\0';
+  test.message[0x1e] = '\0';
+  test.message[0x1f] = '\0';
+  test.message[0x18] = '\x01';
+  test.message[0x19] = '\0';
+  test.message[0x1a] = '\0';
+  test.message[0x1b] = '\0';
+  test.message[0x20] = ' ';
+  test.message[0x21] = '\0';
+  test.message[0x22] = '\0';
+  test.message[0x23] = '\0';
+  generate_token((token_generation_t *)&test);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x220b420; original cards/m19.c:2140. */
+int card_sarkhans_unsealing(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_t test;
+
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&test, 2);
+    test.power = 3;
+    test.power_flag = 2;
+    sp_ability_trigger(player, event, 2, TYPE_CREATURE, &test, player, card);
+  }
+  if (event == EVENT_SPA)
+  {
+
+    result = get_power(trigger_cause_controller, trigger_cause);
+    if (result < 7)
+    {
+      default_target_definition(player, card, (target_definition_t *)&test, 0x102);
+      test.message[0xc] = '\0';
+      test.message[0xd] = '\x12';
+      test.message[0xe] = '\0';
+      test.message[0xf] = '\0';
+      test.message[0x44] = '\0';
+      test.message[0x45] = '\0';
+      test.message[0x46] = '\0';
+      test.message[0x47] = '\0';
+      result = can_target((target_definition_t *)&test);
+      if (result != 0)
+      {
+        result = new_pick_target((target_definition_t *)&test, "TARGET_ANY", 0, 0);
+        if (result != 0)
+        {
+          damage_target0(player, card, 4);
+        }
+      }
+      instance = get_card_instance(player, card);
+      instance->number_of_targets = '\0';
+    }
+    else
+    {
+      new_damage_all(player, card, 1 - player, 4, 0x23, NULL);
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x220b5d0; original cards/m19.c:2203. */
+int card_shield_mare(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  unsigned int uVar4;
+  const target_t *ptVar5;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    gain_life(player, 3);
+    instance = in_play(player, card);
+    if (instance == NULL)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    instance = in_play(player, card);
+    if (instance == NULL)
+      goto LAB_0220b632;
+  }
+  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  if ((result == 0) &&
+      (ptVar5 = becomes_target_of_spell_or_effect(player, card, event, player, card, 1 - player),
+       ptVar5 != NULL))
+  {
+    gain_life(player, 3);
+  }
+LAB_0220b632:
+  if (((event == EVENT_BLOCK_LEGALITY) && (attacking_card_controller == player)) &&
+      (attacking_card == card))
+  {
+    uVar3 = get_color(affected_card_controller, affected_card);
+    uVar4 = get_sleighted_color_test(player, card, 0x10);
+    if ((uVar3 & uVar4) != 0)
+    {
+      event_result = 1;
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int isareth_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x22059c0; original cards/m19.c:1053. */
+int isareth_legacy(int player, int card, event_t event)
+{
+  int card_00;
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int iid;
+  int result;
+
+  pcVar1 = get_card_instance(player, card);
+  result = pcVar1->targets[0].player;
+  card_00 = pcVar1->targets[0].card;
+  if (pcVar1->targets[1].player < 0)
+  {
+    pcVar2 = in_play(result, card_00);
+    if (pcVar2 != NULL)
+    {
+      pcVar1->targets[1].player = 0;
+      set_special_flags(result, card_00, 0x4000);
+    }
+  }
+  leaves_play_2022(result, card_00, event, 1, 0);
+  if (event != EVENT_LEAVES_PLAY_ABILITY)
+  {
+    return 0;
+  }
+  iid = get_original_internal_card_id(result, card_00);
+  result = get_owner(result, card_00);
+  add_card_to_rfg(result, iid);
+  play_sound_effect(WAV_DESTROY);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2209020; original cards/m19.c:1070. */
+int card_isareth_the_awakener(int player, int card, event_t event)
+{
+  xtrigger_t xVar1;
+  declare_attackers_trigger_t mode;
+  int result;
+  int card_00;
+  test_definition_t test;
+
+  store_attackers(player, card, event, 0, player, card, NULL);
+  xVar1 = trigger_condition;
+  if (trigger_condition == 0xe5)
+  {
+    xVar1 = xtrigger_impl_value_dont_use_directly;
+  }
+  if ((event == EVENT_DECLARE_ATTACKERS) || (xVar1 == XTRIGGER_ATTACKING))
+  {
+
+    new_default_test_definition(&test, 2, "");
+    result = has_mana(player, 7, 1);
+    test.cmc = result + 1;
+    test.cmc_flag = 3;
+    result = graveyard_has_shroud(player);
+    if (result != 0)
+    {
+      return 0;
+    }
+    result = new_special_count_grave(player, &test);
+    if (result < 1)
+    {
+      return 0;
+    }
+    if ((player != 0) || (mode = DAT_RESOLVE_TRIGGER_OPTIONAL, ai_is_speculating == 1))
+    {
+      result = has_mana(player, 0, 1);
+      mode = (unsigned int)(result != 0) * 2;
+    }
+    dat_ability(player, card, event, mode, 1);
+  }
+  if (event == EVENT_DAT_ABILITY)
+  {
+
+    new_default_test_definition(&test, 2, "");
+    result = has_mana(player, 7, 1);
+    test.cmc_flag = 3;
+    test.cmc = result + 1;
+    if (ai_is_speculating != 1)
+    {
+      result = has_mana(player, 7, 1);
+      sprintf(test.message, "Select target creature card with converted mana cost %d or less.",
+              result);
+    }
+    result = select_target_from_grave_source(player, card, player, SFG_0, 1, &test, 0);
+    if (result != -1)
+    {
+      result = get_cmc_by_internal_id(result);
+      result =
+          charge_mana_while_resolving(player, card, EVENT_DAT_ABILITY, player, COLOR_ANY, result);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+      }
+    }
+    result = validate_target_from_grave_source(player, card, player, 0);
+    if (result != -1)
+    {
+
+      result = reanimate_permanent(player, card, player, result, REANIMATE_DEFAULT);
+      card_00 = create_targetted_legacy_effect(player, card, isareth_legacy, player, result);
+      add_status(player, card_00, 0x10000);
+      add_counters_from_source(player, card, player, result, COUNTER_CORPSE, 1);
+      convert_to_token(player, result);
+      set_special_flags(player, result, 0x4000);
+      set_special_flags2(player, result, 0x10000000);
+    }
+  }
+  return 0;
+}
