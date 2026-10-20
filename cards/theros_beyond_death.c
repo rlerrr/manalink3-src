@@ -792,7 +792,7 @@ int card_kroxa_titan_of_deaths_hunger(int player, int card, event_t event)
   }
   lose_life(iVar2, 3);
 LAB_0235e6c0:
-  iVar1 = check_special_flags3(player, card, 0x80000);
+  iVar1 = check_special_flags3_2022(player, card, 0x80000);
   if (iVar1 == 0)
   {
     kill_card(player, card, KILL_SACRIFICE);
@@ -1125,7 +1125,7 @@ int card_thassas_intervention(int player, int card, event_t event)
              spell_fizzled != 1))))
       {
         instance->number_of_targets = '\0';
-        iVar3 = check_special_flags2(player, card, -0x80000000);
+        iVar3 = check_special_flags2_2022(player, card, -0x80000000);
         if (iVar3 == 0)
         {
 
@@ -1224,7 +1224,7 @@ int card_uro_titan_of_natures_wrath(int player, int card, event_t event)
     gain_life(player, 3);
     draw_a_card(player);
     new_global_tutor(player, player, 4, 4, 0, 1, &test_land);
-    result = check_special_flags3(player, card, 0x80000);
+    result = check_special_flags3_2022(player, card, 0x80000);
     if (result == 0)
     {
       kill_card(player, card, KILL_SACRIFICE);
@@ -2177,7 +2177,7 @@ int card_polukranos_unchained(int player, int card, event_t event)
   target_definition_t td;
 
   check_legend_rule(player, card, event);
-  result = check_special_flags3(player, card, 0x80000);
+  result = check_special_flags3_2022(player, card, 0x80000);
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1,
                                        (-(unsigned int)(result == 0) & 0xfffffffa) + 0xc);
   if (event == EVENT_DEAL_DAMAGE)
@@ -3140,7 +3140,7 @@ static int calix_obliviation_legacy(int player, int card, event_t event)
             obliterate_card(player_00, iVar2);
             goto LAB_02358e88;
           }
-          set_special_flags3(player_00, iVar2, 0x40);
+          set_special_flags3_2022(player_00, iVar2, 0x40);
         }
         remove_card_from_rfg(player_00, (unsigned int)cards_data[iid].id);
         put_into_play(player_00, iVar2);
@@ -3552,5 +3552,215 @@ int card_the_birth_of_meletis(int player, int card, event_t event)
     gain_life(player, 2);
   }
   result = saga(player, card, event, 3);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x235d7b0; original cards/theros_beyond_death.c:1911. */
+int card_haktos_the_unscarred(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  char buffer[100];
+
+  check_legend_rule(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+
+    instance = get_card_instance(player, card);
+    result = internal_rand(2);
+    instance->info_slot = result + 2;
+    sprintf(buffer, " Haktos is susceptible\n to mana cost: %d ", result + 2);
+    do_dialog(player, player, card, -1, -1, buffer, 0);
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result != 0)
+    {
+      special_abilities2(player, card, EVENT_ETB, SP_KEYWORD2_PROT_MISC);
+      return 0;
+    }
+  }
+  else
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result != 0)
+      goto LAB_0235d815;
+  }
+  attack_if_able(player, card, event);
+LAB_0235d815:
+  special_abilities2(player, card, event, SP_KEYWORD2_PROT_MISC);
+  if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    if (((unsigned int)event_result >> 24 & 0xff) != '\x06')
+    {
+      result = get_cmc(attacking_card_controller, attacking_card);
+      instance = get_card_instance(player, card);
+      if (result == instance->info_slot)
+      {
+        return 0;
+      }
+    }
+    event_result = event_result | 1;
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x235c210; original cards/theros_beyond_death.c:1205. */
+int card_dream_trawler(int player, int card, event_t event)
+{
+  int t_card;
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  lifelink(player, card, event);
+  iVar1 = card_drawn_trigger(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (iVar1 != 0)
+  {
+    pump_until_eot_merge_previous(player, card, player, card, 1, 0);
+  }
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    draw_a_card(player);
+    return 0;
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+  LAB_0235c399:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      if (((event == EVENT_STATIC_EFFECTS) &&
+           (instance = get_card_instance(player, card), instance->info_slot == 0x42)) &&
+          (stack_size == 0))
+      {
+        instance = get_card_instance(player, card);
+        instance->info_slot = 0;
+      }
+      goto LAB_0235c3ae;
+    }
+  }
+  else
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      instance = get_card_instance(player, card);
+      instance->info_slot = 0x42;
+      goto LAB_0235c3ae;
+    }
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      if (event != EVENT_CLEANUP)
+      {
+        return 0;
+      }
+      goto LAB_0235c399;
+    }
+  }
+  instance = get_card_instance(player, card);
+  iVar1 = instance->parent_controller;
+  t_card = instance->parent_card;
+  pump_ability_until_eot_no_repeat(player, card, iVar1, t_card, 0, (SP_KEYWORD_HEXPROOF));
+  tap_card(iVar1, t_card);
+  instance = get_card_instance(iVar1, t_card);
+  if (instance->info_slot == 0x42)
+  {
+    ai_modifier = ai_modifier + -0x14;
+  }
+  iVar3 = check_for_special_ability(iVar1, t_card, (SP_KEYWORD_HEXPROOF));
+  if (iVar3 != 0)
+  {
+    ai_modifier = ai_modifier + -0x32;
+  }
+  instance = get_card_instance(iVar1, t_card);
+  instance->info_slot = 0;
+LAB_0235c3ae:
+  iVar1 = generic_activated_ability(player, card, event, 0x20, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x235f0e0; original cards/theros_beyond_death.c:2732. */
+int card_nyxbloom_ancient(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = in_play(player, card);
+  if ((instance != NULL) &&
+      (result = is_humiliated_for_ability(player, card, AL_STATIC), result != 0))
+  {
+    return 0;
+  }
+  if (event == EVENT_TAP_CARD)
+  {
+    if (affected_card_controller == player)
+    {
+
+      result = is_what(player, affected_card, 1);
+      if ((result != 0) && (multi_mana_transmutation[player][0] != 0))
+      {
+        return 0;
+      }
+      if (6 < tapped_for_mana_color)
+      {
+        if (tapped_for_mana_color != 0x100)
+        {
+          return 0;
+        }
+        result = 0;
+        do
+        {
+          if (0 < tapped_for_mana[result])
+          {
+            produce_mana(affected_card_controller, result, tapped_for_mana[result] * 2);
+            tapped_for_mana[result] = tapped_for_mana[result] * 3;
+          }
+          result = result + 1;
+        } while (result != 7);
+        return 0;
+      }
+      if (tapped_for_mana_color < 0)
+      {
+        return 0;
+      }
+      produce_mana(affected_card_controller, tapped_for_mana_color, 2);
+      result = tapped_for_mana_color;
+      tapped_for_mana[0] = 0;
+      tapped_for_mana[1] = 0;
+      tapped_for_mana[2] = 0;
+      tapped_for_mana[3] = 0;
+      tapped_for_mana[4] = 0;
+      tapped_for_mana[5] = 0;
+      tapped_for_mana[6] = 0;
+      tapped_for_mana_color = 0x100;
+      tapped_for_mana[result] = 3;
+      return 0;
+    }
+  }
+  else if ((((event == EVENT_COUNT_MANA) && (affected_card_controller == player)) &&
+            (result = is_tapped(player, affected_card), result == 0)) &&
+           ((result = is_animated_and_sick(affected_card_controller, affected_card),
+             result == 0 && (result = can_produce_mana(affected_card_controller, affected_card),
+                             result != 0))))
+  {
+
+    result = is_what(affected_card_controller, affected_card, 1);
+    if ((result != 0) && (multi_mana_transmutation[player][0] != 0))
+    {
+      return 0;
+    }
+    instance = get_card_instance(affected_card_controller, affected_card);
+    if ((cards_at_7c7000[instance->internal_card_id]->extra_ability & 0x1000) != 0)
+    {
+      call_card_function(affected_card_controller, affected_card, EVENT_COUNT_MANA);
+      call_card_function(affected_card_controller, affected_card, EVENT_COUNT_MANA);
+    }
+  }
+  result = global_enchantment(player, card, event);
   return result;
 }

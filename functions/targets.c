@@ -2148,11 +2148,102 @@ int can_legally_target(int targeting_player, int targeting_card, target_t *targe
     iVar1 = targeted->card;
     instance->targets[9].player = targeted->player;
     instance->targets[9].card = iVar1;
-    set_special_flags2(targeting_player, targeting_card, 0x10000);
+    set_special_flags2_2022(targeting_player, targeting_card, 0x10000);
     iVar3 = call_card_function(targeting_player, targeting_card, EVENT_CAN_CAST);
     instance->targets[9].player = -1;
     instance->targets[9].card = -1;
-    remove_special_flags2(targeting_player, targeting_card, 0x10000);
+    remove_special_flags2_2022(targeting_player, targeting_card, 0x10000);
   }
   return iVar3;
+}
+
+
+/* ManalinkEh 2022: 0x265d580; original functions/targets.c:107. */
+int has_protection_from_impl(int protected_player, int protected_card, int from_player,
+                             int from_card, is_protected_from_mode_2022_t new_protection_mode,
+                             keyword_t keywords)
+{
+  keyword_t kVar1;
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar4;
+  int initial_event_result;
+
+  if (((((keywords & (KEYWORD_PROT_CREATURES | KEYWORD_PROT_SORCERIES | KEYWORD_PROT_INSTANTS |
+                      KEYWORD_PRISTINE)) != KEYWORD_0) &&
+        (from_card != -1)) &&
+       (from_player != -1)) &&
+      (kVar1 = get_protections_from(from_player, from_card),
+       (keywords &
+        (KEYWORD_PROT_CREATURES | KEYWORD_PROT_SORCERIES | KEYWORD_PROT_INSTANTS |
+         KEYWORD_PRISTINE) &
+        kVar1) != KEYWORD_0))
+  {
+    return 1;
+  }
+  if (protected_card < 0)
+  {
+    if ((((unsigned int)player_bits[protected_player] >> 24 & 0xff) & 4) == 0)
+    {
+      return 0;
+    }
+  LAB_0265d680:
+    initial_event_result = (new_protection_mode << 0x18);
+  }
+  else
+  {
+    instance = get_card_instance(protected_player, protected_card);
+    uVar4 = instance->ext->sp_keywords2;
+    if ((uVar4 & 1) == 0)
+    {
+      if ((((uVar4 & 4) == 0) || (new_protection_mode != IPF2022_TARGET)) ||
+          (from_player == protected_player))
+      {
+        if ((uVar4 & 2) == 0)
+        {
+          return 0;
+        }
+        goto LAB_0265d680;
+      }
+      initial_event_result = (IPF2022_TARGET << 24);
+    }
+    else
+    {
+      initial_event_result = (new_protection_mode << 0x18);
+    }
+    if ((uVar4 & 2) == 0)
+    {
+      result = is_humiliated_for_ability(protected_player, protected_card, AL_STATIC);
+      if (result != 0)
+      {
+        return 0;
+      }
+      uVar4 = dispatch_event_arbitrary_to_one_card_with_initial_event_result(
+          protected_player, protected_card, EVENT_PROT_MISC, protected_player, protected_card,
+          from_player, from_card, (int)initial_event_result);
+      return uVar4 & 0xffffff;
+    }
+  }
+  uVar4 = dispatch_event_with_attacker_and_initial_event_result(
+      protected_player, protected_card, EVENT_PROT_MISC, from_player, from_card,
+      (int)initial_event_result);
+  return uVar4 & 0xffffff;
+}
+
+
+/* ManalinkEh 2022: 0x265d6c0; original functions/targets.c:116. */
+int is_protected_from_2022(int protected_player, int protected_card, int from_player, int from_card,
+                           is_protected_from_mode_2022_t new_protection_mode)
+{
+  keyword_t keywords;
+  int result;
+
+  keywords = KEYWORD_0;
+  if (-1 < protected_card)
+  {
+    keywords = get_abilities(protected_player, protected_card, EVENT_ABILITIES, -1);
+  }
+  result = has_protection_from_impl(protected_player, protected_card, from_player, from_card,
+                                    new_protection_mode, keywords);
+  return result;
 }

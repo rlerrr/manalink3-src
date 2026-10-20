@@ -7528,7 +7528,7 @@ void warp_world_effect(int player, int card, int t_player, int tutor_rest)
 
             iVar4 = add_card_to_hand(player_00, iVar4);
             *piVar7 = -1;
-            set_special_flags(player_00, iVar4, 0x10000);
+            set_special_flags_2022(player_00, iVar4, 0x10000);
             piVar7 = piVar7 + 1;
             put_into_play(player_00, iVar4);
             if (piVar7 == piVar6)
@@ -7550,7 +7550,7 @@ void warp_world_effect(int player, int card, int t_player, int tutor_rest)
 
           iVar4 = add_card_to_hand(player_00, iVar4);
           *piVar9 = -1;
-          set_special_flags(player_00, iVar4, 0x10000);
+          set_special_flags_2022(player_00, iVar4, 0x10000);
           piVar9 = piVar9 + 1;
           put_into_play(player_00, iVar4);
         } while (piVar9 != piVar6);
@@ -7575,4 +7575,106 @@ void warp_world_effect(int player, int card, int t_player, int tutor_rest)
       }
     }
   } while (true);
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int card_generic_boltland(int player, int card, event_t event);
+static int land_pay_life_or_etb_tapped(int player, int card, event_t event, int life_to_pay);
+
+/* ManalinkEh 2022: 0x24ddd70; original cards/ravnica.c:526. */
+static int land_pay_life_or_etb_tapped(int player, int card, event_t event, int life_to_pay)
+{
+  int iVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  int iVar6;
+  unsigned int uVar7;
+  uint32_t uStack_28;
+  char buffer[20];
+  if ((((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (iVar1 = is_humiliated_for_ability(player, card, AL_TRIG), iVar1 == 0))
+  {
+    pcVar2 = get_card_instance(player, card);
+    iVar1 = played_for_free(player, card);
+    uVar7 = 0;
+    if (iVar1 == 0)
+    {
+      uVar7 = (pcVar2->state >> 1 ^ 1) & 1;
+    }
+    iVar1 = can_pay_life(player, life_to_pay);
+    if (((player == 1) && (iVar1 != 0)) &&
+        ((7 < life[1] && (((pcVar2->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_TAPPED |
+                                             STATE_IN_PLAY)) == 0x20 &&
+                           (iVar3 = check_battlefield_for_id(1, 0x29e0), iVar3 == 0))))))
+    {
+      pcVar2->state = pcVar2->state & 0xffffffdf | 2;
+      count_mana_2022();
+      if (0 < active_cards_count[1])
+      {
+        iVar3 = 0;
+        do
+        {
+          pcVar4 = in_hand(1, iVar3);
+          if (pcVar4 != NULL)
+          {
+            pcVar4 = get_card_instance(1, iVar3);
+            iVar6 = pcVar4->internal_card_id;
+            if ((-1 < iVar6) &&
+                (iVar5 = has_mana_to_cast_iid(1, EVENT_CAST_SPELL, iVar6), iVar5 != 0))
+            {
+              pcVar2->state = pcVar2->state | 0x10;
+              count_mana_2022();
+              iVar6 = has_mana_to_cast_iid(1, EVENT_CAST_SPELL, iVar6);
+              pcVar2->state = pcVar2->state & 0xffffffef;
+              count_mana_2022();
+              if (iVar6 == 0)
+              {
+                uStack_28 = 10;
+                goto LAB_024de047;
+              }
+            }
+          }
+          iVar3 = iVar3 + 1;
+        } while (iVar3 < active_cards_count[1]);
+      }
+      uStack_28 = 0xffffffff;
+    LAB_024de047:
+      pcVar2->state = pcVar2->state & 0xfffffffd | 0x20;
+      count_mana_2022();
+    }
+    else
+    {
+      uStack_28 = 0xffffffff;
+    }
+    scnprintf(buffer, 0x14, "Pay %d life", life_to_pay);
+    iVar1 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\003",
+                        "Enter the battlefield tapped", 1, 1, buffer, iVar1, uStack_28, "Cancel",
+                        uVar7, 0xffffffff, 0, 0, 0, 0);
+    if (iVar1 == 1)
+    {
+      pcVar2->state = pcVar2->state | 0x10;
+    }
+    else if (iVar1 == 2)
+    {
+      lose_life(player, life_to_pay);
+    }
+    else
+    {
+      spell_fizzled = 1;
+    }
+  }
+  iVar1 = plain_mana_producer(player, card, event);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x24e2210; original cards/ravnica.c:596. */
+int card_generic_boltland(int player, int card, event_t event)
+{
+  int result;
+
+  result = land_pay_life_or_etb_tapped(player, card, event, 3);
+  return result;
 }

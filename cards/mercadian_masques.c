@@ -9952,3 +9952,189 @@ int card_conspiracy(int player, int card, event_t event)
   iVar1 = global_enchantment(player, card, event);
   return iVar1;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int mercadian_storage_land(int player, int card, event_t event, color_t color);
+
+/* ManalinkEh 2022: 0x216d7f0; original cards/mercadian_masques.c:176. */
+static int mercadian_storage_land(int player, int card, event_t event, color_t color)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+
+  comes_into_play_tapped(player, card, event);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    play_land_sound_effect(player, card);
+  }
+  else
+  {
+    if (event == EVENT_COUNT_MANA)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      iVar1 = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+      if (iVar1 == 0)
+      {
+        return 0;
+      }
+
+      iVar1 = count_counters(player, card, COUNTER_STORAGE);
+      if (iVar1 < 1)
+      {
+        return 0;
+      }
+      declare_mana_available(player, color, iVar1);
+      return 0;
+    }
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar1 = paying_mana();
+      if ((iVar1 == 0) && (iVar1 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 0,
+                                                             0, 0, 0, 0, 0, 0, NULL, NULL),
+                           iVar1 != 0))
+      {
+        return 1;
+      }
+      iVar1 = count_counters(player, card, COUNTER_STORAGE);
+      if (iVar1 < 1)
+      {
+        return 0;
+      }
+      iVar1 = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+      return iVar1;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+
+      instance = get_card_instance(player, card);
+      instance->info_slot = 0;
+      iVar1 = count_counters(player, card, COUNTER_STORAGE);
+      iVar3 = paying_mana();
+      if (iVar3 == 0 && iVar1 == 0)
+      {
+        iVar4 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0,
+                                          NULL, NULL);
+        iVar3 = 5;
+        iVar4 = (-(unsigned int)(iVar4 == 0) & 0xfffffff8) + 10;
+      }
+      else
+      {
+        iVar4 = 2;
+        iVar3 = (unsigned int)(1 < iVar1) * 5 + 5;
+      }
+      iVar3 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "Add a counter", 1,
+                          iVar4, "Remove X counters/produce X mana", (unsigned int)(0 < iVar1),
+                          iVar3, 0, 0, 0, 0);
+      if (iVar3 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (iVar3 != 1)
+      {
+        if (iVar3 != 2)
+        {
+          return 0;
+        }
+        iVar3 = generic_activated_ability(player, card, EVENT_ACTIVATE, 1, 0, 0, 0, 0, 0, 0, 0,
+                                          NULL, NULL);
+        if (iVar3 == 0)
+        {
+          return 0;
+        }
+        do
+        {
+
+          iVar3 = choose_a_number(player, "Remove how many counters?", iVar1);
+        } while (iVar1 < iVar3);
+        if (iVar3 != -1)
+        {
+          remove_counters_from_source(player, card, player, card, COUNTER_STORAGE, iVar3);
+          produce_mana_tapped_impl(player, card, color, iVar3, 0, 1);
+          return 0;
+        }
+        untap_card_no_event(player, card);
+        spell_fizzled = 1;
+        return 0;
+      }
+      add_state(player, card, 0x10);
+      iVar1 = generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 0, 0, 0, 0, 0, 0, 0, NULL,
+                                        NULL);
+      if (iVar1 != 0)
+      {
+        instance = get_card_instance(player, card);
+        instance->info_slot = 1;
+        ai_modifier = ai_modifier + 0x30;
+      }
+      if (spell_fizzled != 1)
+      {
+        return 0;
+      }
+      untap_card_no_event(player, card);
+      return 0;
+    }
+  }
+
+  if ((event == EVENT_RESOLVE_ACTIVATION) &&
+      (instance = get_card_instance(player, card), instance->info_slot == 1))
+  {
+    add_counters_from_source(player, card, instance->parent_controller, instance->parent_card,
+                             COUNTER_STORAGE, 1);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2180a20; original cards/mercadian_masques.c:6491. */
+int card_fountain_of_cho(int player, int card, event_t event)
+{
+  int result;
+
+  result = mercadian_storage_land(player, card, event, COLOR_WHITE);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2181d10; original cards/mercadian_masques.c:6932. */
+int card_mercadian_bazaar(int player, int card, event_t event)
+{
+  int result;
+
+  result = mercadian_storage_land(player, card, event, COLOR_RED);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2182f80; original cards/mercadian_masques.c:7313. */
+int card_rushwood_grove(int player, int card, event_t event)
+{
+  int result;
+
+  result = mercadian_storage_land(player, card, event, COLOR_GREEN);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2183530; original cards/mercadian_masques.c:7506. */
+int card_saprazzan_cove(int player, int card, event_t event)
+{
+  int result;
+
+  result = mercadian_storage_land(player, card, event, COLOR_BLUE);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2184850; original cards/mercadian_masques.c:8041. */
+int card_subterranean_hangar(int player, int card, event_t event)
+{
+  int result;
+
+  result = mercadian_storage_land(player, card, event, COLOR_BLACK);
+  return result;
+}

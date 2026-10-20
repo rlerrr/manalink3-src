@@ -17479,7 +17479,7 @@ int deflect_multi_targets(int player, int card, event_t event, target_definition
       iVar7 = counterspell_validate(player, card, td, 0);
       if (iVar7 != 0)
       {
-        set_special_flags2(iVar5, iVar8, 0x40000000);
+        set_special_flags2_2022(iVar5, iVar8, 0x40000000);
         pcVar6 = get_card_instance(iVar5, iVar8);
         bVar1 = pcVar6->number_of_targets;
         if (bVar1 == 10 || bVar1 < 10)
@@ -17497,7 +17497,7 @@ int deflect_multi_targets(int player, int card, event_t event, target_definition
         call_card_function(iVar5, iVar8, EVENT_CHANGE_TARGET);
         attacking_card = iVar7;
         attacking_card_controller = iVar3;
-        remove_special_flags2(iVar5, iVar8, 0x40000000);
+        remove_special_flags2_2022(iVar5, iVar8, 0x40000000);
       }
     }
   }
@@ -17572,7 +17572,7 @@ void multi_x_spell(int player, int card, event_t event, int num_x)
       {
         x_value = x_value / num_x;
         set_x_for_x_spells(player, card, EVENT_CAST_SPELL, x_value);
-        set_special_flags2(player, card, 0x20000);
+        set_special_flags2_2022(player, card, 0x20000);
         return;
       }
     }
@@ -17738,7 +17738,7 @@ static int remove_until_upkeep_legacy(int player, int card, event_t event)
         obliterate_card(instance->targets[0].player, iVar2);
         goto LAB_0269f087;
       }
-      set_special_flags3(instance->targets[0].player, iVar2, 0x40);
+      set_special_flags3_2022(instance->targets[0].player, iVar2, 0x40);
     }
     remove_card_from_rfg(instance->targets[0].player,
                          (unsigned int)cards_data[instance->targets[0].card].id);
@@ -20664,7 +20664,8 @@ LAB_0268517e:
 
 /* Focused October 2022 helpers using existing source flag storage. */
 
-/* ManalinkEh 2022: 0x2679db0; original functions/functions.c:1062. */
+/* Legacy compatibility accessor: original target-slot storage.
+ * The recovered extension-backed getter is below. */
 int get_special_flags_by_instance(card_instance_t *instance)
 {
   int flags = instance->targets[14].card;
@@ -20714,13 +20715,13 @@ void put_into_play_transformed(int player, int card)
     true_transform(player, card);
     pcVar1->internal_card_id = pcVar1->targets[0xc].card;
     pcVar3 = get_card_instance(player, card);
-    if ((get_special_flags3_by_instance(pcVar3) & SF3_CARD_IS_FLIPPED) == 0)
+    if ((get_special_flags3_by_instance_2022(pcVar3) & SF3_CARD_IS_FLIPPED) == 0)
     {
-      set_special_flags3(player, card, 0x200);
+      set_special_flags3_2022(player, card, 0x200);
     }
     else
     {
-      remove_special_flags3(player, card, 0x200);
+      remove_special_flags3_2022(player, card, 0x200);
     }
     put_into_play(player, card);
     pcVar1->regen_status = pcVar1->regen_status | 0x1f000000;
@@ -21841,4 +21842,293 @@ int resolve_counter_triggered_ability(int player, int card, target_definition_t 
   pcVar6->token_status = uVar3 | 0x10000;
   pcVar6->state = uVar2 | 0x22;
   return 1;
+}
+
+
+/* October 2022 extension-backed flag APIs. */
+int get_special_flags_by_instance_2022(card_instance_t *instance);
+int get_special_flags_2022(int player, int card, int type_of_special_flag);
+int check_special_flags_2022(int player, int card, int value);
+void set_special_flags_2022(int player, int card, int value);
+void remove_special_flags_2022(int player, int card, int value);
+int get_special_flags2_by_instance_2022(card_instance_t *instance);
+int check_special_flags2_2022(int player, int card, int value);
+void set_special_flags2_2022(int player, int card, int value);
+void remove_special_flags2_2022(int player, int card, int value);
+int get_special_flags3_by_instance_2022(card_instance_t *instance);
+int check_special_flags3_2022(int player, int card, int value);
+void set_special_flags3_2022(int player, int card, int value);
+void remove_special_flags3_2022(int player, int card, int value);
+
+/* ManalinkEh 2022: 0x2679db0; original functions/functions.c:1062. */
+int get_special_flags_by_instance_2022(card_instance_t *instance)
+{
+  return instance->ext->special_flags;
+}
+
+/* ManalinkEh 2022: 0x2679d40; original functions/functions.c:1048. */
+int get_special_flags_2022(int player, int card, int type_of_special_flag)
+{
+  card_instance_t *instance;
+  special_flags3_t sVar2;
+
+  instance = get_card_instance(player, card);
+  if (type_of_special_flag == 1)
+  {
+    return instance->ext->special_flags;
+  }
+  if (type_of_special_flag != 2)
+  {
+    if (type_of_special_flag == 3)
+    {
+      sVar2 = instance->ext->special_flags3;
+    }
+    else
+    {
+      sVar2 = ~0U;
+    }
+    return sVar2;
+  }
+  return instance->ext->special_flags2;
+}
+
+/* ManalinkEh 2022: 0x2679dd0; original functions/functions.c:1066. */
+int check_special_flags_2022(int player, int card, int value)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  return value & instance->ext->special_flags;
+}
+
+/* ManalinkEh 2022: 0x2679e00; original functions/functions.c:1071. */
+void set_special_flags_2022(int player, int card, int value)
+{
+  card_instance_t *instance;
+  int player_00;
+  int card_00;
+  if (card != -1)
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->special_flags = instance->ext->special_flags | value;
+    return;
+  }
+  player_00 = 0;
+  do
+  {
+    if (((player == player_00) || (player == 2)) &&
+        (card_00 = active_cards_count[player_00] + -1, -1 < card_00))
+    {
+      do
+      {
+        instance = in_play(player_00, card_00);
+        if (instance != NULL)
+        {
+          instance = get_card_instance(player_00, card_00);
+          instance->ext->special_flags = instance->ext->special_flags | value;
+        }
+        card_00 = card_00 + -1;
+      } while (card_00 != -1);
+    }
+    player_00 = player_00 + 1;
+  } while (player_00 != 2);
+  return;
+}
+
+/* ManalinkEh 2022: 0x267a050; original functions/functions.c:1093. */
+void remove_special_flags_2022(int player, int card, int value)
+{
+  card_instance_t *instance;
+  int card_00;
+  int player_00;
+  if (card != -1)
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->special_flags = instance->ext->special_flags & (~(uint32_t)value);
+    return;
+  }
+  player_00 = 0;
+  do
+  {
+    if (((player == player_00) || (player == 2)) &&
+        (card_00 = active_cards_count[player_00] + -1, -1 < card_00))
+    {
+      do
+      {
+        instance = in_play(player_00, card_00);
+        if (instance != NULL)
+        {
+          instance = get_card_instance(player_00, card_00);
+          instance->ext->special_flags = instance->ext->special_flags & (~(uint32_t)value);
+        }
+        card_00 = card_00 + -1;
+      } while (card_00 != -1);
+    }
+    player_00 = player_00 + 1;
+  } while (player_00 != 2);
+  return;
+}
+
+/* ManalinkEh 2022: 0x267a110; original functions/functions.c:1115. */
+int get_special_flags2_by_instance_2022(card_instance_t *instance)
+{
+  return instance->ext->special_flags2;
+}
+
+/* ManalinkEh 2022: 0x267a130; original functions/functions.c:1119. */
+int check_special_flags2_2022(int player, int card, int value)
+{
+  card_instance_t *instance;
+  instance = get_card_instance(player, card);
+  return value & instance->ext->special_flags2;
+}
+
+/* ManalinkEh 2022: 0x267a160; original functions/functions.c:1123. */
+void set_special_flags2_2022(int player, int card, int value)
+{
+  card_instance_t *instance;
+  int player_00;
+  int card_00;
+  if (card != -1)
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->special_flags2 = instance->ext->special_flags2 | value;
+    return;
+  }
+  player_00 = 0;
+  do
+  {
+    if (((player == player_00) || (player == 2)) &&
+        (card_00 = active_cards_count[player_00] + -1, -1 < card_00))
+    {
+      do
+      {
+        instance = in_play(player_00, card_00);
+        if (instance != NULL)
+        {
+          instance = get_card_instance(player_00, card_00);
+          instance->ext->special_flags2 = instance->ext->special_flags2 | value;
+        }
+        card_00 = card_00 + -1;
+      } while (card_00 != -1);
+    }
+    player_00 = player_00 + 1;
+  } while (player_00 != 2);
+  return;
+}
+
+/* ManalinkEh 2022: 0x267a210; original functions/functions.c:1145. */
+void remove_special_flags2_2022(int player, int card, int value)
+{
+  card_instance_t *instance;
+  int card_00;
+  int player_00;
+  if (card != -1)
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->special_flags2 = instance->ext->special_flags2 & (~(uint32_t)value);
+    return;
+  }
+  player_00 = 0;
+  do
+  {
+    if (((player == player_00) || (player == 2)) &&
+        (card_00 = active_cards_count[player_00] + -1, -1 < card_00))
+    {
+      do
+      {
+        instance = in_play(player_00, card_00);
+        if (instance != NULL)
+        {
+          instance = get_card_instance(player_00, card_00);
+          instance->ext->special_flags2 = instance->ext->special_flags2 & (~(uint32_t)value);
+        }
+        card_00 = card_00 + -1;
+      } while (card_00 != -1);
+    }
+    player_00 = player_00 + 1;
+  } while (player_00 != 2);
+  return;
+}
+
+/* ManalinkEh 2022: 0x267a2d0; original functions/functions.c:1167. */
+int get_special_flags3_by_instance_2022(card_instance_t *instance)
+{
+  return instance->ext->special_flags3;
+}
+
+/* ManalinkEh 2022: 0x267a2f0; original functions/functions.c:1171. */
+int check_special_flags3_2022(int player, int card, int value)
+{
+  card_instance_t *instance;
+  instance = get_card_instance(player, card);
+  return value & instance->ext->special_flags3;
+}
+
+/* ManalinkEh 2022: 0x267a320; original functions/functions.c:1175. */
+void set_special_flags3_2022(int player, int card, int value)
+{
+  card_instance_t *instance;
+  int player_00;
+  int card_00;
+  if (card != -1)
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->special_flags3 = instance->ext->special_flags3 | value;
+    return;
+  }
+  player_00 = 0;
+  do
+  {
+    if (((player == player_00) || (player == 2)) &&
+        (card_00 = active_cards_count[player_00] + -1, -1 < card_00))
+    {
+      do
+      {
+        instance = in_play(player_00, card_00);
+        if (instance != NULL)
+        {
+          instance = get_card_instance(player_00, card_00);
+          instance->ext->special_flags3 = instance->ext->special_flags3 | value;
+        }
+        card_00 = card_00 + -1;
+      } while (card_00 != -1);
+    }
+    player_00 = player_00 + 1;
+  } while (player_00 != 2);
+  return;
+}
+
+/* ManalinkEh 2022: 0x267a510; original functions/functions.c:1197. */
+void remove_special_flags3_2022(int player, int card, int value)
+{
+  card_instance_t *instance;
+  int card_00;
+  int player_00;
+  if (card != -1)
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->special_flags3 = instance->ext->special_flags3 & (value ^ ~0U);
+    return;
+  }
+  player_00 = 0;
+  do
+  {
+    if (((player == player_00) || (player == 2)) &&
+        (card_00 = active_cards_count[player_00] + -1, -1 < card_00))
+    {
+      do
+      {
+        instance = in_play(player_00, card_00);
+        if (instance != NULL)
+        {
+          instance = get_card_instance(player_00, card_00);
+          instance->ext->special_flags3 = instance->ext->special_flags3 & (value ^ ~0U);
+        }
+        card_00 = card_00 + -1;
+      } while (card_00 != -1);
+    }
+    player_00 = player_00 + 1;
+  } while (player_00 != 2);
+  return;
 }

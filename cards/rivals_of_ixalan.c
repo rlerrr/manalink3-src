@@ -2581,7 +2581,7 @@ int card_storm_the_vault(int player, int card, event_t event)
   if (((instance != NULL) && (instance->damage_source_player == player)) &&
       (instance->damage_target_card == -1))
   {
-    result = check_special_flags(player, instance->damage_source_card, 0x40);
+    result = check_special_flags_2022(player, instance->damage_source_card, 0x40);
     if ((result == 0) && ((instance->targets[3].player & 2) != 0))
     {
       instance = get_card_instance(player, card);
@@ -2627,7 +2627,7 @@ int card_zacama_primal_calamity(int player, int card, event_t event)
   vigilance(player, card, event);
   if (event == EVENT_ETB)
   {
-    iVar2 = check_special_flags(player, card, 0x40000);
+    iVar2 = check_special_flags_2022(player, card, 0x40000);
     if (iVar2 == 0)
     {
       manipulate_type(player, card, player, TYPE_LAND, ACT_UNTAP);
@@ -2884,7 +2884,7 @@ int card_gold_forge_garrison(int player, int card, event_t event)
         }
       }
       instance->info_slot = 0;
-      iVar3 = produce_mana_tapped_all_one_color(player, card, COLOR_TEST_ANY_COLORED, 2);
+      iVar3 = produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_ANY_COLORED, 2);
       return iVar3;
     }
     if (event != EVENT_RESOLVE_ACTIVATION)
@@ -3763,7 +3763,7 @@ int card_vault_of_catlacan(int player, int card, event_t event)
     if (result == 1)
     {
       result = count_subtype(player, 0x40, -1);
-      produce_mana_tapped(player, card, COLOR_BLUE, result);
+      produce_mana_tapped_2022(player, card, COLOR_BLUE, result);
     }
     else
     {
@@ -4069,7 +4069,7 @@ static int golden_guardian_legacy(int player, int card, event_t event)
       remove_card_from_grave(owner, position);
       result = get_internal_card_id_from_csv_id(0x4728);
       result = add_card_to_hand(player, result);
-      set_special_flags3(player, result, 0x201);
+      set_special_flags3_2022(player, result, 0x201);
       put_into_play(player, result);
       dispatch_event_with_initial_event_result(player, result,
                                                EVENT_ANOTHER_PERMANENT_HAS_TRANSFORMED, 0);
@@ -4353,6 +4353,154 @@ int card_forerunner_of_the_legion(int player, int card, event_t event)
     new_default_test_definition(&recovered_stack_test.test, 0xff, "Select a Vampire card.");
     recovered_stack_test.test.subtype = 0xcd;
     new_global_tutor(player, player, 1, 2, 0, 1, &recovered_stack_test.test);
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2191920; original cards/rivals_of_ixalan.c:1103. */
+int card_blood_sun(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  card_instance_t *instance;
+  int result;
+  test_definition_t test;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    draw_a_card(player);
+    instance = in_play(player, card);
+    if (instance == NULL)
+      goto LAB_0219198a;
+  LAB_02191969:
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      default_test_definition(&test, 1);
+      remove_abilities_by_test(2, event, &test, AL_ALL_NM);
+    }
+  }
+  else
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+      goto LAB_02191969;
+  }
+  if (event == EVENT_ABILITIES)
+  {
+
+    instance = in_play(player, card);
+    if ((((instance == NULL) ||
+          (instance = in_play(affected_card_controller, affected_card), instance == NULL)) ||
+         (result = is_humiliated_for_ability(player, card, AL_STATIC), result != 0)) ||
+        (result = is_what(affected_card_controller, affected_card, 1), result == 0))
+    {
+      return 0;
+    }
+    event_result = event_result & 0x9f080000U | 0x1f000000;
+    instance = get_card_instance(affected_card_controller, affected_card);
+    uVar1 = instance->targets[0x11].card;
+    instance->state = instance->state & 0xffffdfff;
+    instance->targets[0x11].card = uVar1 | 0x6e;
+    instance->ext->sp_keywords = instance->ext->sp_keywords & 0x993c00c0;
+  }
+LAB_0219198a:
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21969f0; original cards/rivals_of_ixalan.c:2977. */
+int card_sanctum_of_the_sun(int player, int card, event_t event)
+{
+  int result;
+
+  double_faced_card(player, card, event);
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+    LAB_02196b98:
+      play_land_sound_effect(player, card);
+      return 0;
+    }
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+
+      result = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+      if (result == 0)
+      {
+        return 0;
+      }
+      if (ai_is_speculating != 1)
+      {
+        if (player != 1)
+        {
+          return 1;
+        }
+        if (((unsigned char)trace_mode & 2) != 0)
+        {
+          return 1;
+        }
+      }
+      if (life[player] < 1)
+      {
+        return 0;
+      }
+      return 1;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      if (mana_colors_added[player] != 0)
+      {
+
+        result = do_dialog(player, player, card, -1, -1,
+                           " Basic land ability\n Multiple Mana ability\n Cancel", 1);
+        if (result == 0)
+        {
+          produce_mana_tapped_all_one_color_2022(player, card, mana_colors_added[player], 1);
+          return 0;
+        }
+        if (result == 2)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+      }
+      produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_ANY_COLORED, life[player]);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      if (((event != EVENT_COUNT_MANA) || (card != affected_card)) ||
+          (player != affected_card_controller))
+      {
+        result = mana_producer(player, card, event);
+        return result;
+      }
+      goto LAB_02196b16;
+    }
+    if (event == EVENT_RESOLVE_SPELL)
+      goto LAB_02196b98;
+  }
+  if (event != EVENT_COUNT_MANA)
+  {
+    return 0;
+  }
+LAB_02196b16:
+  if (((card == affected_card) && (player == affected_card_controller)) &&
+      ((result = mana_producer(player, card, EVENT_CAN_ACTIVATE),
+        result != 0 && ((declare_mana_available_hex(player, 0x3e, life[player]),
+                         life[player] < 1 && (mana_colors_added[player] != COLOR_TEST_0))))))
+  {
+    declare_mana_available_maybe_hex(player, mana_colors_added[player], 1);
   }
   return 0;
 }

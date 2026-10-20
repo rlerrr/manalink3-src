@@ -190,7 +190,7 @@ static char *commander_you_own(int who_chooses, int player, int card, int target
   pcVar2 = "owner";
   if (result == targeting_player)
   {
-    result = check_special_flags2(player, card, 0x1000000);
+    result = check_special_flags2_2022(player, card, 0x1000000);
     pcVar2 = NULL;
     if (result == 0)
     {
@@ -209,10 +209,10 @@ int card_sevinnes_reclamation(int player, int card, event_t event)
   {
     if (event == EVENT_RESOLVE_SPELL)
     {
-      result = check_special_flags(player, card, 0x10000000);
+      result = check_special_flags_2022(player, card, 0x10000000);
       if (result != 0)
       {
-        result = check_special_flags2(player, card, -0x80000000);
+        result = check_special_flags2_2022(player, card, -0x80000000);
         if (result == 0)
         {
           copy_spell_from_stack(player, player, card);

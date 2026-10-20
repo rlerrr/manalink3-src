@@ -1948,7 +1948,7 @@ static int primal_wellspring_legacy(int player, int card, event_t event)
       result = is_token(affected_card_controller, affected_card);
       if (result == 0)
       {
-        result = check_special_flags(affected_card_controller, affected_card, 0x40000);
+        result = check_special_flags_2022(affected_card_controller, affected_card, 0x40000);
         if ((result == 0) && (affected_card_controller == player))
         {
           result = is_what(player, affected_card, 0x38);
@@ -2454,7 +2454,7 @@ int card_captain_lannery_storm(int player, int card, event_t event)
         result = get_id(affected_card_controller, affected_card);
         if (result == 0x4998)
         {
-          result = check_special_flags(affected_card_controller, affected_card, 0x800);
+          result = check_special_flags_2022(affected_card_controller, affected_card, 0x800);
           if (result == 0)
           {
             count_for_gfp_ability(player, card, 0x77, player, 0x47, NULL);
@@ -2509,7 +2509,7 @@ int card_crushing_canopy(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         instance->number_of_targets = '\0';
-        iVar3 = check_special_flags2(player, card, -0x80000000);
+        iVar3 = check_special_flags2_2022(player, card, -0x80000000);
         if (iVar3 == 0)
         {
 
@@ -3724,7 +3724,7 @@ int card_itlimoc_cradle_of_the_sun(int player, int card, event_t event)
     if (result == 1)
     {
       result = count_subtype(player, 2, -1);
-      produce_mana_tapped(player, card, COLOR_GREEN, result);
+      produce_mana_tapped_2022(player, card, COLOR_GREEN, result);
     }
     else
     {
@@ -4351,4 +4351,97 @@ int card_arcane_adaptation(int player, int card, event_t event)
   }
   iVar1 = global_enchantment(player, card, event);
   return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2218ab0; original cards/ixalan.c:2729. */
+int card_lost_vale(int player, int card, event_t event)
+{
+  int result;
+
+  double_faced_card(player, card, event);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+    LAB_02218c48:
+      play_land_sound_effect(player, card);
+      return 0;
+    }
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+
+      result = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+      if (result == 0)
+      {
+        return 0;
+      }
+      if (ai_is_speculating != 1)
+      {
+        if (player != 1)
+        {
+          return 1;
+        }
+        if (((unsigned char)trace_mode & 2) != 0)
+        {
+          return 1;
+        }
+      }
+      if (life[player] < 1)
+      {
+        return 0;
+      }
+      return 1;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      if (mana_colors_added[player] != 0)
+      {
+
+        result = do_dialog(player, player, card, -1, -1,
+                           " Basic land ability\n Multiple Mana ability\n Cancel", 1);
+        if (result == 0)
+        {
+          produce_mana_tapped_all_one_color_2022(player, card, mana_colors_added[player], 1);
+          return 0;
+        }
+        if (result == 2)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+      }
+      produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_ANY_COLORED, 3);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      if (((event != EVENT_COUNT_MANA) || (card != affected_card)) ||
+          (player != affected_card_controller))
+      {
+        result = mana_producer(player, card, event);
+        return result;
+      }
+      goto LAB_02218bc6;
+    }
+    if (event == EVENT_RESOLVE_SPELL)
+      goto LAB_02218c48;
+  }
+  if (event != EVENT_COUNT_MANA)
+  {
+    return 0;
+  }
+LAB_02218bc6:
+  if (((card == affected_card) && (player == affected_card_controller)) &&
+      ((result = mana_producer(player, card, EVENT_CAN_ACTIVATE),
+        result != 0 && ((declare_mana_available_hex(player, 0x3e, 3),
+                         life[player] < 1 && (mana_colors_added[player] != COLOR_TEST_0))))))
+  {
+    declare_mana_available_maybe_hex(player, mana_colors_added[player], 1);
+  }
+  return 0;
 }

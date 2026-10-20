@@ -5416,3 +5416,161 @@ int card_thunderbreak_regent(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int display_of_dominance_effect(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2319e20; original cards/dragons_of_tarkir.c:3648. */
+static int display_of_dominance_effect(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  unsigned int uVar4;
+
+  if (event == EVENT_ABILITIES)
+  {
+    result = is_what(affected_card_controller, affected_card, 0x47);
+    if ((result != 0) && (affected_card_controller == player))
+    {
+      special_abilities2(player, affected_card, EVENT_ABILITIES, SP_KEYWORD2_GRANTED_PROT_MISC);
+    }
+  }
+  else if (event == EVENT_PROT_MISC)
+  {
+    instance = get_card_instance(affected_card_controller, affected_card);
+    if (instance != NULL)
+    {
+      result = is_what(affected_card_controller, affected_card, 0x47);
+      if (((result != 0) && (affected_card_controller == player)) &&
+          (((unsigned int)event_result >> 24 & 0xff) == '\x05'))
+      {
+        result = is_being_cast(attacking_card_controller, attacking_card);
+        if ((result != 0) && (1 - player == attacking_card_controller))
+        {
+          uVar3 = get_color(1 - player, attacking_card);
+          uVar4 = get_sleighted_color_test(player, card, 6);
+          if ((uVar3 & uVar4) != 0)
+          {
+            event_result = event_result | 1;
+          }
+        }
+      }
+    }
+  }
+  result = eot_trigger(player, card, event);
+  if (result == 0)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2324920; original cards/dragons_of_tarkir.c:3670. */
+int card_display_of_dominance(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  const char *prompt;
+  int iVar3;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = 2;
+    td.required_color = get_sleighted_color_test(player, card, 6);
+    td.preferred_controller = player;
+    get_card_instance(player, card);
+    iVar3 = basic_spell(player, card, EVENT_CAN_CAST);
+    return iVar3;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = 2;
+    td.required_color = get_sleighted_color_test(player, card, 6);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = 2;
+    td.required_color = get_sleighted_color_test(player, card, 6);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (event != EVENT_CHANGE_TARGET)
+      goto LAB_023249b0;
+  }
+  else
+  {
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = 2;
+    td.required_color = get_sleighted_color_test(player, card, 6);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+  }
+
+  instance->number_of_targets = '\0';
+  iVar3 = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+  iVar2 = check_special_flags2_2022(player, card, -0x80000000);
+  if (iVar2 != 0)
+  {
+    return 0;
+  }
+
+  iVar3 = dialog_impl(player, card, event, "\001\002", "Destroy non-creature", iVar3, 5,
+                      "Permanents untargettable", 1, 10, 0, 0, 0, 0);
+  if (iVar3 == 0)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+  if (iVar3 == 1)
+  {
+    prompt = get_sleighted_color_text2(player, card, "Select target %s or %s creature.", 2, 1);
+    iVar3 = generic_spell(player, card, event, 0x81, &td, prompt, 1, NULL);
+    return iVar3;
+  }
+LAB_023249b0:
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    if (instance->info_slot == 1)
+    {
+      iVar3 = valid_target(&td);
+      if (iVar3 != 0)
+      {
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      }
+    }
+    else if (instance->info_slot == 2)
+    {
+      create_legacy_effect(player, card, display_of_dominance_effect);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return 0;
+}

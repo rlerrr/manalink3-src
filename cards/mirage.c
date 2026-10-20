@@ -7808,7 +7808,7 @@ int card_ebony_charm(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         instance->number_of_targets = '\0';
-        iVar2 = check_special_flags2(player, card, -0x80000000);
+        iVar2 = check_special_flags2_2022(player, card, -0x80000000);
         if (iVar2 == 0)
         {
 
@@ -8475,7 +8475,7 @@ int card_chaos_charm(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         instance->number_of_targets = '\0';
-        iVar2 = check_special_flags2(player, card, -0x80000000);
+        iVar2 = check_special_flags2_2022(player, card, -0x80000000);
         if (iVar2 == 0)
         {
 
@@ -9598,7 +9598,7 @@ int card_sea_scryer(int player, int card, event_t event)
     {
       if (event != EVENT_CAN_ACTIVATE)
       {
-        produce_mana_tapped(1, card, COLOR_COLORLESS, 1);
+        produce_mana_tapped_2022(1, card, COLOR_COLORLESS, 1);
         return 0;
       }
       return uVar4;
@@ -9631,12 +9631,12 @@ int card_sea_scryer(int player, int card, event_t event)
           {
             return 0;
           }
-          produce_mana_tapped(player, card, color, 1);
+          produce_mana_tapped_2022(player, card, color, 1);
           tapped_for_mana_color = -2;
           return 0;
         }
       LAB_02391a94:
-        produce_mana_tapped(player, card, COLOR_COLORLESS, 1);
+        produce_mana_tapped_2022(player, card, COLOR_COLORLESS, 1);
         return 0;
       }
       iVar1 = 1;
@@ -9893,5 +9893,105 @@ int card_mind_harness(int player, int card, event_t event)
   td.required_color = get_sleighted_color_test(player, card, 0x18);
 LAB_0238f2eb:
   result = generic_stealing_aura(player, card, event, &td, "TARGET_CREATURE");
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2386090; original cards/mirage.c:4993. */
+int card_suqata_firewalker(int player, int card, event_t event)
+{
+  int result;
+  unsigned int uVar2;
+  unsigned int uVar3;
+
+  special_abilities2(player, card, event, SP_KEYWORD2_PROT_MISC);
+  if ((((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (((unsigned int)event_result >> 24 & 0xff) == '\x05'))
+  {
+    uVar2 = get_color(attacking_card_controller, attacking_card);
+    uVar3 = get_sleighted_color_test(player, card, 0x10);
+    if ((uVar2 & uVar3) != 0)
+    {
+      event_result = event_result | 1;
+    }
+  }
+  result = card_prodigal_sorcerer(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x238c0a0; original cards/mirage.c:6878. */
+int card_decomposition(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  const char *prompt;
+  target_definition_t td;
+
+  instance = get_card_instance(player, card);
+  if (((instance->damage_target_player < '\0') ||
+       (instance = in_play(player, card), instance == NULL)) ||
+      (result = is_humiliated_for_ability(player, card, AL_TRIG), result != 0))
+  {
+  LAB_0238c0c5:
+    default_target_definition(player, card, &td, 2);
+    td.required_color = get_sleighted_color_test(player, card, 2);
+    td.preferred_controller = 1 - player;
+    result = attached_creature_dies_trigger_for_controller(player, card, event,
+                                                           RESOLVE_TRIGGER_MANDATORY);
+    if (result != 0)
+    {
+    LAB_0238c2d0:
+      instance = get_card_instance(player, card);
+      lose_life((int)instance->damage_target_player, 2);
+    }
+    if (event == EVENT_CAN_CAST)
+      goto LAB_0238c148;
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_0238c148;
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) ||
+             ((event == EVENT_CAN_CHANGE_TARGET || (event == EVENT_CHANGE_TARGET))))
+      goto LAB_0238c148;
+  }
+  else
+  {
+    instance = get_card_instance(player, card);
+    upkeep_trigger_ability(player, card, event, (int)instance->damage_target_player);
+    if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+      goto LAB_0238c0c5;
+    instance = get_card_instance(player, card);
+    if (instance->damage_target_player == current_turn)
+    {
+
+      instance = get_card_instance(player, card);
+      cumulative_upkeep_general((int)instance->damage_target_player, instance->damage_target_card,
+                                EVENT_UPKEEP_TRIGGER_ABILITY, can_pay_1_life_thunk,
+                                lose_1_life_thunk);
+    }
+    default_target_definition(player, card, &td, 2);
+    td.required_color = get_sleighted_color_test(player, card, 2);
+    td.preferred_controller = 1 - player;
+    result = attached_creature_dies_trigger_for_controller(
+        player, card, EVENT_UPKEEP_TRIGGER_ABILITY, RESOLVE_TRIGGER_MANDATORY);
+    if (result != 0)
+      goto LAB_0238c2d0;
+  }
+  if (((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+      (((((2 < event - EVENT_POWER && (event != EVENT_RESOLVE_MOVING_AURA)) &&
+          (event != EVENT_CHANGE_TYPE)) &&
+         ((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)))) &&
+        (event != EVENT_STATIC_EFFECTS))))
+  {
+    return 0;
+  }
+LAB_0238c148:
+  prompt = get_sleighted_color_text(player, card, "Select target %s creature.", 1);
+  result = targeted_aura_custom_prompt(player, card, event, &td, prompt);
   return result;
 }

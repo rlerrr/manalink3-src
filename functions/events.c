@@ -1130,3 +1130,59 @@ void set_characteristic_pt(int newval)
   }
   return;
 }
+
+
+/* ManalinkEh 2022: 0x26cb5b0; original functions/events.c:223. */
+int dispatch_event_arbitrary_to_one_card_with_initial_event_result(
+    int player, int card, event_t event, int new_affected_card_controller, int new_affected_card,
+    int new_attacking_card_controller, int new_attacking_card, int initial_event_result)
+{
+  int result;
+  uint32_t uVar2;
+
+  push_affected_card_stack();
+  uVar2 = trigger_condition;
+  event_result = initial_event_result;
+  affected_card_controller = new_affected_card_controller;
+  affected_card = new_affected_card;
+  attacking_card_controller = new_attacking_card_controller;
+  attacking_card = new_attacking_card;
+  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))
+  {
+    trigger_condition = 0xffffffff;
+  }
+  event_rval = call_card_function(player, card, event);
+  result = event_result;
+  trigger_condition = uVar2;
+  pop_affected_card_stack();
+  return result;
+}
+
+
+/* ManalinkEh 2022: 0x26cbdb0; original functions/events.c:155. */
+int dispatch_event_with_attacker_and_initial_event_result(int new_affected_card_controller,
+                                                          int new_affected_card, event_t event,
+                                                          int new_attacking_card_controller,
+                                                          int new_attacking_card,
+                                                          int initial_event_result)
+{
+  int result;
+  uint32_t uVar2;
+
+  push_affected_card_stack();
+  uVar2 = trigger_condition;
+  event_result = initial_event_result;
+  affected_card_controller = new_affected_card_controller;
+  affected_card = new_affected_card;
+  attacking_card_controller = new_attacking_card_controller;
+  attacking_card = new_attacking_card;
+  if ((1 < event - EVENT_TRIGGER) && (event != EVENT_END_TRIGGER))
+  {
+    trigger_condition = 0xffffffff;
+  }
+  dispatch_event_raw(event);
+  result = event_result;
+  trigger_condition = uVar2;
+  pop_affected_card_stack();
+  return result;
+}

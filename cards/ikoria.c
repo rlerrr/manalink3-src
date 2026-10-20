@@ -1617,3 +1617,81 @@ LAB_0228b0f5:
   }
   return 0;
 }
+
+
+/* ManalinkEh 2022: 0x22887d0; original cards/ikoria.c:2619. */
+static const char *permanent_you_control_and_own(int who_chooses, int player, int card,
+                                                 int targeting_player, int targeting_card)
+{
+  int result;
+  result = get_owner(player, card);
+  if (result != targeting_player)
+  {
+    return "owner";
+  }
+  return NULL;
+}
+
+
+/* ManalinkEh 2022: 0x228cd10; original cards/ikoria.c:2625. */
+int card_yorion_sky_nomad(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+
+  target_definition_t td;
+  char flicker_array[2][151];
+
+  if (event == EVENT_QUERY)
+  {
+    if (attacking_card == 2)
+    {
+      if (singleplayer_mode == 2)
+      {
+        iVar1 = 0x3b;
+      }
+      else
+      {
+        iVar1 = ((other_game_mode == OGM_EDH) - 1 & 0xffffffda) + 0x75;
+      }
+      iVar2 = count_deck(player);
+      return (unsigned int)(iVar1 < iVar2);
+    }
+    check_legend_rule(player, card, EVENT_QUERY);
+    etb_ability(player, card, EVENT_QUERY, RESOLVE_TRIGGER_MANDATORY);
+  }
+  else
+  {
+    check_legend_rule(player, card, event);
+    etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (event == EVENT_ETB)
+    {
+
+      default_target_definition(player, card, &td, 0x47);
+      td.allowed_controller = player;
+      td.preferred_controller = player;
+      td.special = 0xc000;
+      td.extra = (int32_t)permanent_you_control_and_own;
+      td.illegal_abilities = 0;
+      td.allow_cancel = 3;
+      memset(flicker_array, 0, sizeof(flicker_array));
+      iVar1 = mark_up_to_n_targets_noload(&td, "Select a nonland permanent you own and control.",
+                                          -1, flicker_array);
+      if ((0 < iVar1) && (0 < active_cards_count[player]))
+      {
+        iVar1 = 0;
+        do
+        {
+          if (flicker_array[player][iVar1] != '\0')
+          {
+            iVar2 = remove_until_eot(player, card, player, iVar1);
+            alternate_legacy_text(2, player, iVar2);
+          }
+          iVar1 = iVar1 + 1;
+        } while (iVar1 < active_cards_count[player]);
+      }
+    }
+  }
+  iVar1 = hybrid(player, card, event);
+  return iVar1;
+}

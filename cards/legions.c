@@ -2186,3 +2186,15 @@ static int test_shares_creature_subtype(int iid, int value, int player, int card
   result = shares_creature_subtype((unsigned int)value >> 0x10, value & 0xffff, player, card);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24a9610; original cards/legions.c:1252. */
+int card_krosan_vorine(int player, int card, event_t event)
+{
+  int result;
+
+  maxblockers_1(player, card, event);
+  result = provoke(player, card, event);
+  return result;
+}

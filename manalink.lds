@@ -544,3 +544,10 @@ SECTIONS
     *(.debug_ranges)
   }
 }
+
+/* Typed October 2022 views of existing native mana lists. */
+_engine_raw_mana_available_hex_2022 = 0x4EF21C;
+_engine_mana_may_be_spent_as_color_2022 = 0x60A4B4;
+
+/* Native dynamic card-type pool index used by the 2022 token resolver. */
+_engine_dynamic_iid_start_2022 = 0x7A5380;

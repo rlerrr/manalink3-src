@@ -6931,7 +6931,7 @@ char *black_damage_source(int who_chooses, int player, int card, int targeting_p
       return "illegal color of damage source";
     }
     result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
+    if ((result == 0) || (result = check_special_flags_2022((int)pcVar1->damage_source_player,
                                                        pcVar1->damage_source_card, 0x40),
                           result == 0))
     {
@@ -6970,7 +6970,7 @@ char *blue_damage_source(int who_chooses, int player, int card, int targeting_pl
       return "illegal color of damage source";
     }
     result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
+    if ((result == 0) || (result = check_special_flags_2022((int)pcVar1->damage_source_player,
                                                        pcVar1->damage_source_card, 0x40),
                           result == 0))
     {
@@ -7009,7 +7009,7 @@ char *green_damage_source(int who_chooses, int player, int card, int targeting_p
       return "illegal color of damage source";
     }
     result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
+    if ((result == 0) || (result = check_special_flags_2022((int)pcVar1->damage_source_player,
                                                        pcVar1->damage_source_card, 0x40),
                           result == 0))
     {
@@ -7048,7 +7048,7 @@ char *red_damage_source(int who_chooses, int player, int card, int targeting_pla
       return "illegal color of damage source";
     }
     result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
+    if ((result == 0) || (result = check_special_flags_2022((int)pcVar1->damage_source_player,
                                                        pcVar1->damage_source_card, 0x40),
                           result == 0))
     {
@@ -7087,7 +7087,7 @@ char *white_damage_source(int who_chooses, int player, int card, int targeting_p
       return "illegal color of damage source";
     }
     result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
+    if ((result == 0) || (result = check_special_flags_2022((int)pcVar1->damage_source_player,
                                                        pcVar1->damage_source_card, 0x40),
                           result == 0))
     {
@@ -7201,4 +7201,60 @@ int enchanted_land_is_basic_land_type(int player, int card, event_t event, subty
 LAB_024c34ab:
   result = targeted_aura(player, card, event, td, "TARGET_LAND");
   return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24bfd80; original cards/unlimited.c:1049. */
+int card_celestial_prism(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  color_t color;
+
+  if (event == EVENT_COUNT_MANA)
+  {
+    if (((((card == affected_card) && (player == affected_card_controller)) &&
+          (result = is_tapped(player, card), result == 0)) &&
+         ((result = is_animated_and_sick(player, card),
+           result == 0 && (result = can_produce_mana(player, card), result != 0)))) &&
+        (result = has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0), result != 0))
+    {
+      declare_mana_available_hex(player, 0x3e, 1);
+      declare_mana_available(player, 0, -1);
+    }
+  }
+  else if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = is_tapped(player, card);
+    if (((result == 0) && (result = is_animated_and_sick(player, card), result == 0)) &&
+        ((result = can_produce_mana(player, card),
+          result != 0 && ((result = has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0),
+                           result != 0 && (instance = get_card_instance(player, card),
+                                           instance->targets[1].player != 1))))))
+    {
+      return 1;
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+
+    instance = get_card_instance(player, card);
+    color = choose_mana_all_one_color_2022(player, COLOR_TEST_ANY_COLORED, 1, "What kind of mana?",
+                                           COLOR_TEST_COLORLESS);
+    if (color == ~COLOR_COLORLESS)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    instance->targets[1].player = 1;
+    charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0);
+    instance->targets[1].player = 0;
+    if (spell_fizzled != 1)
+    {
+      produce_mana_tapped_2022(player, card, color, 1);
+      return 0;
+    }
+  }
+  return 0;
 }

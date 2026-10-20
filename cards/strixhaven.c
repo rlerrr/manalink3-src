@@ -90,7 +90,7 @@ static int codie_effect(int player, int card, event_t event)
   test_definition_t test;
   if ((((trigger_condition == 0xd3) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
-      (result = check_special_flags(trigger_cause_controller, trigger_cause, 0x40000), result == 0))
+      (result = check_special_flags_2022(trigger_cause_controller, trigger_cause, 0x40000), result == 0))
   {
     if (event == EVENT_TRIGGER)
     {
@@ -261,7 +261,7 @@ int card_double_major(int player, int card, event_t event)
               copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
           if (-1 < result)
           {
-            set_special_flags3(player, result, 0x1000000);
+            set_special_flags3_2022(player, result, 0x1000000);
           }
         }
         kill_card(player, card, KILL_DESTROY);
@@ -1529,7 +1529,7 @@ int card_academic_probation(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         pcVar2->number_of_targets = '\0';
-        result = check_special_flags2(player, card, -0x80000000);
+        result = check_special_flags2_2022(player, card, -0x80000000);
         if (result == 0)
         {
 
@@ -2166,7 +2166,7 @@ int card_decisive_denial(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
 
-        result = check_special_flags2(player, card, -0x80000000);
+        result = check_special_flags2_2022(player, card, -0x80000000);
         if (result == 0)
         {
 
@@ -3654,7 +3654,7 @@ int card_rip_apart(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         instance->number_of_targets = '\0';
-        iVar3 = check_special_flags2(player, card, -0x80000000);
+        iVar3 = check_special_flags2_2022(player, card, -0x80000000);
         if (iVar3 == 0)
         {
 
@@ -4124,7 +4124,7 @@ int card_umbral_juke(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         instance->number_of_targets = '\0';
-        result = check_special_flags2(player, card, -0x80000000);
+        result = check_special_flags2_2022(player, card, -0x80000000);
         if (result == 0)
         {
 
@@ -4902,7 +4902,7 @@ int card_retriever_phoenix(int player, int card, event_t event)
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    result = check_special_flags(player, card, 0x40000);
+    result = check_special_flags_2022(player, card, 0x40000);
     if (result == 0)
     {
       learn(player, card);
@@ -5422,7 +5422,7 @@ int card_shaile_dean_of_radiance(int player, int card, event_t event)
       {
         instance = in_play(player, iVar3);
         if (((instance != NULL) && (iVar2 = is_what(player, iVar3, 2), iVar2 != 0)) &&
-            (iVar2 = check_special_flags(player, iVar3, 0x1000), iVar2 != 0))
+            (iVar2 = check_special_flags_2022(player, iVar3, 0x1000), iVar2 != 0))
         {
           ai_modifier = ai_modifier + 10;
         }
@@ -5442,7 +5442,7 @@ int card_shaile_dean_of_radiance(int player, int card, event_t event)
             instance = in_play(player, iVar3),
             instance == NULL ||
                 ((iVar2 = is_what(player, iVar3, 2),
-                  iVar2 == 0 || (iVar2 = check_special_flags(player, iVar3, 0x1000), iVar2 == 0)))))
+                  iVar2 == 0 || (iVar2 = check_special_flags_2022(player, iVar3, 0x1000), iVar2 == 0)))))
         {
           iVar3 = iVar3 + -1;
           if (iVar3 == -1)
@@ -6455,7 +6455,7 @@ static int valentin_effect(int player, int card, event_t event)
         {
           pcVar1 = get_card_instance(affected_card_controller, affected_card);
           pcVar1->kill_code = '\x04';
-          set_special_flags2(affected_card_controller, affected_card, 0x10000000);
+          set_special_flags2_2022(affected_card_controller, affected_card, 0x10000000);
         }
       }
       uVar2 =
@@ -6551,7 +6551,7 @@ int card_valentin_dean_of_the_vein(int player, int card, event_t event)
     {
       instance = get_card_instance(affected_card_controller, affected_card);
       instance->kill_code = '\x04';
-      set_special_flags2(affected_card_controller, affected_card, 0x10000000);
+      set_special_flags2_2022(affected_card_controller, affected_card, 0x10000000);
     }
   }
 LAB_023dec3a:
@@ -7325,7 +7325,7 @@ int card_nassari_dean_of_expression(int player, int card, event_t event)
   else if (trigger_condition != 0xd3)
     goto LAB_023deabd;
   if (((card == affected_card) && (player == affected_card_controller)) &&
-      (result = check_special_flags(trigger_cause_controller, trigger_cause, -0x80000000),
+      (result = check_special_flags_2022(trigger_cause_controller, trigger_cause, -0x80000000),
        result != 0))
   {
     sp_ability_trigger(player, event, 2,
@@ -7681,8 +7681,8 @@ int ee_legacy(int player, int card, event_t event)
   pcVar3 = get_card_instance(player, card);
   iVar1 = pcVar3->targets[0].player;
   iVar2 = pcVar3->targets[0].card;
-  remove_special_flags(iVar1, iVar2, 0x4000);
-  remove_special_flags2(iVar1, iVar2, 0x10000000);
+  remove_special_flags_2022(iVar1, iVar2, 0x4000);
+  remove_special_flags2_2022(iVar1, iVar2, 0x10000000);
 LAB_023c8b00:
   kill_card(player, card, KILL_EXILE);
   return 0;
@@ -7710,8 +7710,8 @@ int card_elemental_expressionist(int player, int card, event_t event)
       {
 
         pcVar3 = get_card_instance(player, card);
-        set_special_flags2(pcVar3->targets[0].player, pcVar3->targets[0].card, 0x10000000);
-        set_special_flags(pcVar3->targets[0].player, pcVar3->targets[0].card, 0x4000);
+        set_special_flags2_2022(pcVar3->targets[0].player, pcVar3->targets[0].card, 0x10000000);
+        set_special_flags_2022(pcVar3->targets[0].player, pcVar3->targets[0].card, 0x4000);
         iVar2 = create_targetted_legacy_effect(player, card, ee_legacy, pcVar3->targets[0].player,
                                                pcVar3->targets[0].card);
         pcVar4 = get_card_instance(player, iVar2);
@@ -9059,7 +9059,7 @@ int card_confront_the_past(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
 
-        iVar3 = check_special_flags2(player, card, -0x80000000);
+        iVar3 = check_special_flags2_2022(player, card, -0x80000000);
         if (iVar3 == 0)
         {
 
@@ -9306,8 +9306,8 @@ int card_ecological_appreciation(int player, int card, event_t event)
       {
         return 0;
       }
-      set_special_flags(player, card, 0x20000);
-      iVar2 = check_special_flags2(player, card, -0x80000000);
+      set_special_flags_2022(player, card, 0x20000);
+      iVar2 = check_special_flags2_2022(player, card, -0x80000000);
       if (iVar2 != 0)
       {
         return 0;
@@ -11036,5 +11036,208 @@ LAB_023dc635:
   }
   lose_life(1 - player, 3);
   draw_a_card(player);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23d9080; original cards/strixhaven.c:5762. */
+int card_reconstruct_history(int player, int card, event_t event)
+{
+  unsigned int ret_location;
+  const char *pcVar1;
+  card_instance_t *instance;
+  int grave_position;
+  int *piVar3;
+  int iVar4;
+  inst_info_t iVar5;
+  int types[5];
+  char msg[100];
+  test_definition_t test;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    iVar4 = basic_spell(player, card, EVENT_CAN_CAST);
+    return iVar4;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+
+      instance = get_card_instance(player, card);
+      clear_info(instance, 0x58f6);
+      piVar3 = types;
+      types[0] = 0x40;
+      types[1] = 4;
+      types[2] = 0x10;
+      types[3] = 8;
+      types[4] = 0x100;
+      iVar4 = 0x40;
+      while (true)
+      {
+        default_test_definition(&test, iVar4);
+        iVar4 = new_special_count_grave(player, &test);
+        if (iVar4 != 0)
+        {
+
+          iVar5 = inst_info(instance, 0x58f6);
+          ret_location = ((uint32_t)iVar5.id | ((uint32_t)iVar5.data2 << 16)) >> 0x10;
+          pcVar1 = type_text(msg, 100, test.type, TYPETEXT_0);
+          sprintf(test.message, "Select target %s card.", pcVar1);
+          iVar4 =
+              select_target_from_grave_source(player, card, player, SFG_0, 1, &test, ret_location);
+          if (-1 < iVar4)
+          {
+            iVar4 = turn_card_in_grave_face_down(player, instance->targets[ret_location].player);
+            instance->targets[ret_location].card = iVar4;
+            increment_data2(instance, 0x58f6);
+          }
+        }
+        piVar3 = piVar3 + 1;
+        if (piVar3 == types + 5)
+          break;
+        iVar4 = *piVar3;
+      }
+      for (iVar4 = 0; iVar5 = inst_info(instance, 0x58f6),
+          iVar4 < (int)(((uint32_t)iVar5.id | ((uint32_t)iVar5.data2 << 16)) >> 0x10);
+           iVar4 = iVar4 + 1)
+      {
+        turn_card_in_grave_face_up(player, instance->targets[iVar4].player,
+                                   instance->targets[iVar4].card);
+        instance->targets[iVar4].card = graveyard_source[player][instance->targets[iVar4].player];
+      }
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    instance = get_card_instance(player, card);
+
+    for (iVar4 = 0; iVar5 = inst_info(instance, 0x58f6),
+        iVar4 < (int)(((uint32_t)iVar5.id | ((uint32_t)iVar5.data2 << 16)) >> 0x10);
+         iVar4 = iVar4 + 1)
+    {
+
+      grave_position = validate_target_from_grave_source(player, card, player, iVar4);
+      if (grave_position != -1)
+      {
+        from_grave_to_hand(player, grave_position, 1);
+      }
+    }
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23cce60; original cards/strixhaven.c:1544. */
+int card_divide_by_zero(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  target_definition_t td2;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    counterspell_target_definition(player, card, &td, 0xff);
+    td.extra = 1;
+    td.special = 0x1000000;
+    default_target_definition(player, card, &td2, 0x47);
+    td2.extra = 1;
+    td2.special = 0x1000000;
+    result = counterspell(player, card, EVENT_CAN_CAST, &td, 0);
+    if (result != 0)
+    {
+      instance = get_card_instance(player, card);
+      instance->mode = '\x01';
+      return 99;
+    }
+    instance = get_card_instance(player, card);
+    instance->mode = '\0';
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td2, NULL, 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    counterspell_target_definition(player, card, &td, 0xff);
+    td.extra = 1;
+    td.special = 0x1000000;
+    default_target_definition(player, card, &td2, 0x47);
+    td2.extra = 1;
+    td2.special = 0x1000000;
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    if (instance->mode != '\x01')
+    {
+      result = generic_spell(player, card, EVENT_CAST_SPELL, 0x81, &td2,
+                             "Select target spell or permanent with CMC 1 or greater.", 1, NULL);
+      return result;
+    }
+    result = counterspell(player, card, EVENT_CAST_SPELL, &td, 0);
+    return result;
+  }
+  if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+  {
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+    counterspell_target_definition(player, card, &td, 0xff);
+    td.extra = 1;
+    td.special = 0x1000000;
+    default_target_definition(player, card, &td2, 0x47);
+    return 0;
+  }
+  counterspell_target_definition(player, card, &td, 0xff);
+  td.extra = 1;
+  td.special = 0x1000000;
+  default_target_definition(player, card, &td2, 0x47);
+  td2.extra = 1;
+  td2.special = 0x1000000;
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    return 0;
+  }
+
+  instance = get_card_instance(player, card);
+  if (instance->mode == '\x01')
+  {
+    result = counterspell_validate(player, card, &td, 0);
+    if (result == 0)
+      goto LAB_023ccf29;
+    result = pre_counterspell(player, card, instance->targets[0].player, instance->targets[0].card);
+    if (result != 0)
+      goto LAB_023cd200;
+    kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+  }
+  else
+  {
+    result = valid_target(&td2);
+    if (result == 0)
+      goto LAB_023ccf29;
+  LAB_023cd200:
+    bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+  }
+  learn(player, card);
+LAB_023ccf29:
+  kill_card(player, card, KILL_DESTROY);
   return 0;
 }

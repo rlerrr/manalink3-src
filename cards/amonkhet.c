@@ -2605,10 +2605,10 @@ int card_synchronized_strike(int player, int card, event_t event)
       default_target_definition(player, card, &td, 2);
       td.allow_cancel = 3;
       instance = get_card_instance(player, card);
-      iVar5 = check_special_flags2(player, card, 0x2000);
+      iVar5 = check_special_flags2_2022(player, card, 0x2000);
       if (iVar5 == 0)
       {
-        check_special_flags2(player, card, 0x8000);
+        check_special_flags2_2022(player, card, 0x8000);
       }
       iVar5 = new_pick_target(&td, "TARGET_CREATURE", 0, 0);
       if (iVar5 != 0)
@@ -5710,10 +5710,10 @@ int card_splendid_agony(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       if ((card == affected_card) && (player == affected_card_controller))
       {
-        iVar3 = check_special_flags2(player, card, 0x2000);
+        iVar3 = check_special_flags2_2022(player, card, 0x2000);
         if (iVar3 == 0)
         {
-          check_special_flags2(player, card, 0x8000);
+          check_special_flags2_2022(player, card, 0x8000);
         }
         instance->number_of_targets = '\0';
         iVar3 =
@@ -6074,7 +6074,7 @@ int card_nissa_steward_of_elements(int player, int card, event_t event)
   LAB_022e3106:
     if (player == affected_card_controller)
     {
-      set_special_flags2(player, card, 0x20000);
+      set_special_flags2_2022(player, card, 0x20000);
       iVar4 = played_for_free(player, card);
       if ((iVar4 == 0) && (iVar4 = is_token(player, card), iVar4 == 0))
       {
@@ -6925,7 +6925,7 @@ int card_by_force(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      set_special_flags2(player, card, 0x20000);
+      set_special_flags2_2022(player, card, 0x20000);
       iVar5 = has_mana(player, 7, 1);
 
       iVar4 = target_available(-1, card, &td);
@@ -7553,7 +7553,7 @@ int card_cascading_cataracts(int player, int card, event_t event)
       return 0;
     }
   }
-  produce_mana_tapped(player, card, COLOR_COLORLESS, 1);
+  produce_mana_tapped_2022(player, card, COLOR_COLORLESS, 1);
   return 0;
 }
 
@@ -7813,7 +7813,7 @@ int card_channeler_initiate(int player, int card, event_t event)
   }
   else if (event == EVENT_ACTIVATE)
   {
-    result = produce_mana_tapped_all_one_color(player, card, COLOR_TEST_ANY_COLORED, 1);
+    result = produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_ANY_COLORED, 1);
     if (result != 0)
     {
       remove_counters_from_source(player, card, player, card, COUNTER_M1_M1, 1);
@@ -8455,4 +8455,141 @@ const char *target_is_token_too_2022(int who_chooses, int player, int card, int 
     pcVar2 = "token";
   }
   return pcVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22e05a0; original cards/amonkhet.c:3462. */
+int card_hapatras_mark(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.allowed_controller = player;
+        td.preferred_controller = player;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            pump_ability_until_eot(player, card, instance->targets[0].player,
+                                   instance->targets[0].card, 0, 0, 0, (SP_KEYWORD_HEXPROOF));
+            remove_all_counters_from_source(player, card, instance->targets[0].player,
+                                            instance->targets[0].card, COUNTER_M1_M1);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_022e060c;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  get_card_instance(player, card);
+LAB_022e060c:
+  result =
+      generic_spell(player, card, event, 0x81, &td, "Select target creature you control.", 1, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x22e4ea0; original cards/amonkhet.c:4937. */
+int card_destined_lead(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, 2);
+  instance = get_card_instance(player, card);
+  if (event == EVENT_GRAVEYARD_ABILITY)
+  {
+    result = can_sorcery_be_played(player, EVENT_GRAVEYARD_ABILITY);
+    if (result == 0)
+    {
+      return 0;
+    }
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_CREATURE", 1, NULL);
+    if (result != 0)
+    {
+      result = aftermath(player, card, EVENT_GRAVEYARD_ABILITY, 3, 0, 0, 1, 0, 0, 0);
+      return result;
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAN_CAST)
+    {
+      result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_CREATURE", 1, NULL);
+      return result;
+    }
+    if (event == EVENT_PLAY_FIRST_HALF)
+    {
+      generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_CREATURE", 1, NULL);
+    }
+    else
+    {
+      if (event == EVENT_PLAY_SECOND_HALF)
+      {
+        generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_CREATURE", 1, NULL);
+        if (spell_fizzled == 1)
+        {
+          return 0;
+        }
+        instance = get_card_instance(instance->targets[0].player, instance->targets[0].card);
+        ai_modifier = ai_modifier +
+                      (-(unsigned int)(instance->destroys_if_blocked == '\0') & 0xffffffa0) + 0x30;
+        return 0;
+      }
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+        result = get_aftermath(player, card);
+        if ((result == 0) && (result = valid_target(&td), result != 0))
+        {
+          result = pump_ability_until_eot(player, card, instance->targets[0].player,
+                                          instance->targets[0].card, 1, 0, 0, 0x800);
+          alternate_legacy_text(1, player, result);
+        }
+        result = get_aftermath(player, card);
+        if (result != 0)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+            result = pump_ability_until_eot(player, card, instance->targets[0].player,
+                                            instance->targets[0].card, 0, 0, 0, (SP_KEYWORD_LURE));
+            alternate_legacy_text(2, player, result);
+          }
+          kill_card(player, card, KILL_EXILE);
+        }
+        kill_card(player, card, KILL_DESTROY);
+      }
+    }
+  }
+  result = aftermath(player, card, event, 3, 0, 0, 1, 0, 0, 0);
+  return result;
 }

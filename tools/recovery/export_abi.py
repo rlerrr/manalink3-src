@@ -1,4 +1,5 @@
 """Export absolute EXE interfaces and entry-register ABI evidence from DWARF."""
+import argparse
 import csv
 import functools
 import json
@@ -46,9 +47,20 @@ def type_name(die):
 
 
 def main():
+    parser = argparse.ArgumentParser(__doc__)
+    parser.add_argument('--year', choices=['2020', '2022'], default='2022')
+    parser.add_argument('--output', type=Path)
+    parser.add_argument('--metadata-only', action='store_true',
+                        help='Export interfaces/conventions without changing recovery requests or Magic mappings')
+    args = parser.parse_args()
     root = Path(__file__).resolve().parents[2]
-    output = root / ".recovery"
-    image = Image(Path("G:/Manalink/ManalinkEh_10_22_Hotfix.dbg").read_bytes())
+    if args.year != '2022' and not args.metadata_only:
+        parser.error('2020 is supported only with --metadata-only')
+    output = args.output or root / '.recovery'
+    output.mkdir(parents=True, exist_ok=True)
+    debug_path = (root / 'ManalinkEh.dbg' if args.year == '2020' else
+                  Path('G:/Manalink/ManalinkEh_10_22_Hotfix.dbg'))
+    image = Image(debug_path.read_bytes())
     absolute = {name: address for name, address, section, kind, storage in image.symbols if section == -1 and address >= 0x400000}
     dwarf = image.dwarf()
     parser = LocationParser(dwarf.location_lists())
@@ -115,6 +127,9 @@ def main():
     (output / "unprototyped-absolute-interfaces.tsv").write_text(
         "".join("\t".join(row) + "\n" for name, row in unprototyped.items() if name not in interfaces))
     (output / "register-conventions.tsv").write_text("".join("\t".join(row) + "\n" for row in conventions.values()))
+    if args.metadata_only:
+        print(args.year, 'absolute interfaces', len(interfaces), 'register conventions', len(conventions))
+        return
     magic = Image((output / "2022-Magic.exe").read_bytes())
     segments = []
     for name, section in magic.sections.items():

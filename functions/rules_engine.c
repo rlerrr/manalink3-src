@@ -3,6 +3,9 @@
 
 #include "manalink.h"
 
+/* October 2022 independent game-mode flags. */
+other_game_mode_2022_t other_game_mode;
+
 extern int mulligans_complete[2];
 
 int hack_allow_sorcery_if_rules_engine_is_only_effect = 0;
@@ -53,13 +56,6 @@ int get_setting(int thing){
 	return settings[thing];
 }
 
-typedef enum {
-	SPM_NONE = 0,
-	SPM_MOMIR = 1,
-	SPM_DRAFT = 2,
-	SPM_TESTING = 3
-} singleplayer_mode_t;
-extern singleplayer_mode_t singleplayer_mode;
 
 // exe interface - no longer used
 void set_draft(void){
@@ -443,6 +439,9 @@ void pregame(void){
 
 	if (game_type != GAMETYPE_SOLO_DUEL){
 		singleplayer_mode = 0;	// Seems to be handled by the dialog code already, but I can't find it, and no reason to risk not clearing it.
+		/* Recovered 2022 game-mode fragment: reset outside solo duel @ 0x26c7a80. */
+		other_game_mode = OGM_NONE;
+		/* End recovered 2022 game-mode fragment: reset outside solo duel. */
 	}
 
 	int i;
@@ -461,6 +460,12 @@ void pregame(void){
 					if (csvid == CARD_ID_AVATAR_MOMIR_VIG){
 						singleplayer_mode = SPM_MOMIR;
 					}
+					/* Recovered 2022 game-mode fragment: EDH avatar in deck @ 0x26c7a80. */
+					if (csvid == CARD_ID_ELDER_DRAGON_HIGHLANDER)
+					{
+					  other_game_mode |= OGM_EDH;
+					}
+					/* End recovered 2022 game-mode fragment: EDH avatar in deck. */
 					if( vcount[p] < 10 ){
 						vanguard_avatar[p][vcount[p]] = csvid;
 						vcount[p]++;
@@ -474,6 +479,12 @@ void pregame(void){
 					if (csvid == CARD_ID_AVATAR_MOMIR_VIG){
 						singleplayer_mode = SPM_MOMIR;
 					}
+					/* Recovered 2022 game-mode fragment: EDH avatar already drawn @ 0x26c7a80. */
+					if (csvid == CARD_ID_ELDER_DRAGON_HIGHLANDER)
+					{
+					  other_game_mode |= OGM_EDH;
+					}
+					/* End recovered 2022 game-mode fragment: EDH avatar already drawn. */
 					if( vcount[p] < 10 ){
 						vanguard_avatar[p][vcount[p]] = csvid;
 						vcount[p]++;
@@ -3592,7 +3603,7 @@ int card_rules_engine(int player, int card, event_t event ){
 int get_aftermath(int player, int card)
 {
   int result;
-  result = check_special_flags(player, card, 0x200000);
+  result = check_special_flags_2022(player, card, 0x200000);
   return (unsigned int)(result != 0);
 }
 

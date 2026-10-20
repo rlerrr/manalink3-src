@@ -2944,7 +2944,7 @@ int zendikon(int player, int card, event_t event, int pow, int tgh, color_test_t
       if (((iVar1 == affected_card) &&
            (((player_00 == affected_card_controller &&
               ((unsigned char)(instance->kill_code - 2) < 2)) &&
-             (iVar3 = check_special_flags2(player_00, iVar1, 0x10000000), iVar3 == 0)))) &&
+             (iVar3 = check_special_flags2_2022(player_00, iVar1, 0x10000000), iVar3 == 0)))) &&
           (iVar3 = check_for_death_trigger_removal(player_00, iVar1), iVar3 == 0))
       {
 

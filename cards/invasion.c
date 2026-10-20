@@ -4346,7 +4346,7 @@ int card_ardent_soldier(int player, int card, event_t event)
 {
   int result;
   kicker(player, card, event, 2, 0, 0, 0, 0, 0);
-  result = check_special_flags(player, card, 0x80);
+  result = check_special_flags_2022(player, card, 0x80);
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1,
                                        (unsigned int)(result != 0));
   return 0;
@@ -4362,7 +4362,7 @@ int card_benalish_emissary(int player, int card, event_t event)
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    result = check_special_flags(player, card, 0x80);
+    result = check_special_flags_2022(player, card, 0x80);
     if (result != 0)
     {
       instance = get_card_instance(player, card);
@@ -4683,7 +4683,7 @@ int card_explosive_growth(int player, int card, event_t event)
         iVar2 = valid_target(&td);
         if (iVar2 != 0)
         {
-          iVar2 = check_special_flags(player, card, 0x80);
+          iVar2 = check_special_flags_2022(player, card, 0x80);
           if (iVar2 == 0)
           {
             iVar3 = 2;
@@ -4789,7 +4789,7 @@ int card_hypnotic_cloud(int player, int card, event_t event)
       result = valid_target(&td);
       if (result != 0)
       {
-        result = check_special_flags(player, card, 0x80);
+        result = check_special_flags_2022(player, card, 0x80);
         new_multidiscard(instance->targets[0].player,
                          (-(unsigned int)(result == 0) & 0xfffffffe) + 3, 0, player);
       }
@@ -4812,7 +4812,7 @@ int card_kavu_aggressor(int player, int card, event_t event)
   int result;
   kicker(player, card, event, 4, 0, 0, 0, 0, 0);
   cannot_block(player, card, event);
-  result = check_special_flags(player, card, 0x80);
+  result = check_special_flags_2022(player, card, 0x80);
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1,
                                        (unsigned int)(result != 0));
   return 0;
@@ -4894,7 +4894,7 @@ int card_llanowar_elite(int player, int card, event_t event)
   int result;
   int number;
   kicker(player, card, event, 8, 0, 0, 0, 0, 0);
-  result = check_special_flags(player, card, 0x80);
+  result = check_special_flags_2022(player, card, 0x80);
   number = 0;
   if (result != 0)
   {
@@ -5050,7 +5050,7 @@ int card_orims_touch(int player, int card, event_t event)
       if (result != 0)
       {
         instance = get_card_instance(player, card);
-        result = check_special_flags(player, card, 0x80);
+        result = check_special_flags_2022(player, card, 0x80);
         if (result == 0)
         {
           result = 2;
@@ -5078,7 +5078,7 @@ int card_pincer_spider(int player, int card, event_t event)
 {
   int result;
   kicker(player, card, event, 3, 0, 0, 0, 0, 0);
-  result = check_special_flags(player, card, 0x80);
+  result = check_special_flags_2022(player, card, 0x80);
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1,
                                        (unsigned int)(result != 0));
   return 0;
@@ -5306,7 +5306,7 @@ int card_savage_offensive(int player, int card, event_t event)
             (event == EVENT_CHANGE_TARGET)) &&
            (event == EVENT_RESOLVE_SPELL))
   {
-    result = check_special_flags(player, card, 0x80);
+    result = check_special_flags_2022(player, card, 0x80);
     if (result == 0)
     {
       pump_creatures_until_eot(player, card, player, 1, 0, 0, 0x100, 0, NULL);
@@ -5359,7 +5359,7 @@ int card_scorching_lava(int player, int card, event_t event)
       result = valid_target(&td);
       if (result != 0)
       {
-        result = check_special_flags(player, card, 0x80);
+        result = check_special_flags_2022(player, card, 0x80);
         if (result != 0)
         {
           instance = get_card_instance(player, card);
@@ -5500,7 +5500,7 @@ int card_tolarian_emissary(int player, int card, event_t event)
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    result = check_special_flags(player, card, 0x80);
+    result = check_special_flags_2022(player, card, 0x80);
     if (result != 0)
     {
       default_target_definition(player, card, &td, 4);
@@ -5621,7 +5621,7 @@ int card_urborg_skeleton(int player, int card, event_t event)
   {
     do_kicker(player, card, 3, 0, 0, 0, 0, 0);
   }
-  result = check_special_flags(player, card, 0x80);
+  result = check_special_flags_2022(player, card, 0x80);
   if (result != 0)
   {
     enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 1);
@@ -5964,7 +5964,7 @@ int card_shivan_emissary(int player, int card, event_t event)
   else
   {
     etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    if ((event == EVENT_ETB) && (result = check_special_flags(player, card, 0x80), result != 0))
+    if ((event == EVENT_ETB) && (result = check_special_flags_2022(player, card, 0x80), result != 0))
     {
       default_target_definition(player, card, &td_1, 2);
       td_1.illegal_color = get_sleighted_color_test(player, card, 2);
@@ -6345,7 +6345,7 @@ static int split_card_impl(int player, int card, event_t event, int id_first_hal
         return 0;
       }
     LAB_02486150:
-      iVar8 = check_special_flags2(player, card, -0x80000000);
+      iVar8 = check_special_flags2_2022(player, card, -0x80000000);
       if (iVar8 != 0)
       {
         return 0;
@@ -6391,7 +6391,7 @@ static int split_card_impl(int player, int card, event_t event, int id_first_hal
   uVar7 = is_token(player, card);
   uVar6 = uVar6 | uVar7;
   instance->number_of_targets = '\0';
-  iVar8 = check_special_flags2(player, card, -0x80000000);
+  iVar8 = check_special_flags2_2022(player, card, -0x80000000);
 
   uVar7 = instance->info_slot;
   if (iVar8 == 0)
@@ -6724,7 +6724,7 @@ int card_benalish_lancer(int player, int card, event_t event)
     {
       do_kicker(player, card, 2, 0, 0, 0, 0, 1);
     }
-    result = check_special_flags(player, card, 0x80);
+    result = check_special_flags_2022(player, card, 0x80);
     if (result == 0)
     {
       return 0;
@@ -6732,7 +6732,7 @@ int card_benalish_lancer(int player, int card, event_t event)
   }
   else
   {
-    result = check_special_flags(player, card, 0x80);
+    result = check_special_flags_2022(player, card, 0x80);
     if (result == 0)
       goto joined_r0x024966fb;
   }
@@ -6741,7 +6741,7 @@ joined_r0x024966fb:
   if ((((event == EVENT_ABILITIES) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       ((result = is_humiliated_for_ability(player, card, AL_STATIC),
-        result == 0 && (result = check_special_flags(player, card, 0x80), result != 0))))
+        result == 0 && (result = check_special_flags_2022(player, card, 0x80), result != 0))))
   {
     event_result = event_result | 0x100;
   }
@@ -6823,7 +6823,7 @@ int card_duskwalker(int player, int card, event_t event)
     {
       do_kicker(player, card, 3, 1, 0, 0, 0, 0);
     }
-    result = check_special_flags(player, card, 0x80);
+    result = check_special_flags_2022(player, card, 0x80);
     if (result == 0)
     {
       return 0;
@@ -6831,7 +6831,7 @@ int card_duskwalker(int player, int card, event_t event)
   }
   else
   {
-    result = check_special_flags(player, card, 0x80);
+    result = check_special_flags_2022(player, card, 0x80);
     if (result == 0)
       goto joined_r0x02497b87;
   }
@@ -6840,7 +6840,7 @@ joined_r0x02497b87:
   if ((((event == EVENT_ABILITIES) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       ((result = is_humiliated_for_ability(player, card, AL_STATIC),
-        result == 0 && (result = check_special_flags(player, card, 0x80), result != 0))))
+        result == 0 && (result = check_special_flags_2022(player, card, 0x80), result != 0))))
   {
     special_abilities(player, card, EVENT_ABILITIES, 1, player, card);
   }
@@ -6903,7 +6903,7 @@ int card_faerie_squadron(int player, int card, event_t event)
     {
       do_kicker(player, card, 3, 0, 1, 0, 0, 0);
     }
-    result = check_special_flags(player, card, 0x80);
+    result = check_special_flags_2022(player, card, 0x80);
     if (result == 0)
     {
       return 0;
@@ -6911,7 +6911,7 @@ int card_faerie_squadron(int player, int card, event_t event)
   }
   else
   {
-    result = check_special_flags(player, card, 0x80);
+    result = check_special_flags_2022(player, card, 0x80);
     if (result == 0)
       goto joined_r0x024982eb;
   }
@@ -6920,7 +6920,7 @@ joined_r0x024982eb:
   if ((((event == EVENT_ABILITIES) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       ((result = is_humiliated_for_ability(player, card, AL_STATIC),
-        result == 0 && (result = check_special_flags(player, card, 0x80), result != 0))))
+        result == 0 && (result = check_special_flags_2022(player, card, 0x80), result != 0))))
   {
     event_result = event_result | 0x20;
   }
@@ -7130,7 +7130,7 @@ int card_pouncing_kavu(int player, int card, event_t event)
     {
       do_kicker(player, card, 2, 0, 0, 0, 1, 0);
     }
-    result = check_special_flags(player, card, 0x80);
+    result = check_special_flags_2022(player, card, 0x80);
     if (result == 0)
     {
       return 0;
@@ -7138,7 +7138,7 @@ int card_pouncing_kavu(int player, int card, event_t event)
   }
   else
   {
-    result = check_special_flags(player, card, 0x80);
+    result = check_special_flags_2022(player, card, 0x80);
     if (result == 0)
       goto joined_r0x0249a397;
   }
@@ -7147,7 +7147,7 @@ joined_r0x0249a397:
   if ((((event == EVENT_ABILITIES) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       ((result = is_humiliated_for_ability(player, card, AL_STATIC),
-        result == 0 && (result = check_special_flags(player, card, 0x80), result != 0))))
+        result == 0 && (result = check_special_flags_2022(player, card, 0x80), result != 0))))
   {
     special_abilities(player, card, EVENT_ABILITIES, 4, player, card);
   }
@@ -7165,7 +7165,7 @@ int card_prison_barricade(int player, int card, event_t event)
     {
       do_kicker(player, card, 1, 0, 0, 0, 0, 1);
     }
-    result = check_special_flags(player, card, 0x80);
+    result = check_special_flags_2022(player, card, 0x80);
     if (result == 0)
     {
       return 0;
@@ -7173,7 +7173,7 @@ int card_prison_barricade(int player, int card, event_t event)
   }
   else
   {
-    result = check_special_flags(player, card, 0x80);
+    result = check_special_flags_2022(player, card, 0x80);
     if (result == 0)
       goto joined_r0x0249a65f;
   }
@@ -7182,7 +7182,7 @@ joined_r0x0249a65f:
   if ((((event == EVENT_ABILITIES) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       ((result = is_humiliated_for_ability(player, card, AL_STATIC),
-        result == 0 && (result = check_special_flags(player, card, 0x80), result != 0))))
+        result == 0 && (result = check_special_flags_2022(player, card, 0x80), result != 0))))
   {
     add_status(affected_card_controller, affected_card, 0x800);
   }
@@ -7512,7 +7512,7 @@ int card_vodalian_serpent(int player, int card, event_t event)
     }
   }
   kicker(player, card, event, 2, 0, 0, 0, 0, 0);
-  iVar1 = check_special_flags(player, card, 0x80);
+  iVar1 = check_special_flags_2022(player, card, 0x80);
   iVar2 = 0;
   if (iVar1 != 0)
   {
@@ -7642,12 +7642,12 @@ int card_agonizing_demise(int player, int card, event_t event)
 
         iVar2 = instance->targets[0].player;
         iVar4 = instance->targets[0].card;
-        iVar3 = check_special_flags(player, card, 0x80);
+        iVar3 = check_special_flags_2022(player, card, 0x80);
         if (iVar3 == 0)
         {
           kill_card(iVar2, iVar4, KILL_BURY);
         }
-        iVar3 = check_special_flags(player, card, 0x80);
+        iVar3 = check_special_flags_2022(player, card, 0x80);
         if (iVar3 != 0)
         {
           kill_card(iVar2, iVar4, KILL_BURY);
@@ -8376,4 +8376,191 @@ int card_blind_seer(int player, int card, event_t event)
   }
   result = generic_activated_ability(player, card, event_00, 4, 1, 0, 1, 0, 0, 0, 0, td_00, prompt);
   return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2495b40; original cards/invasion.c:4756. */
+int card_archaeological_dig(int player, int card, event_t event, int color1)
+{
+  card_instance_t *instance;
+  color_t color;
+  unsigned int uVar2;
+  int result;
+  unsigned int uVar4;
+  bool bVar5;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    instance = get_card_instance(player, card);
+    instance->info_slot = 1;
+    play_land_sound_effect_force_color(player, card, 0x3e);
+    count_mana_2022();
+    return 0;
+  }
+  if (event == EVENT_CHANGE_TYPE)
+  {
+
+    result = can_sacrifice_this_as_cost(player, card);
+    uVar2 = 0x3f;
+    if (result == 0)
+    {
+      uVar2 = 1;
+      result = is_what(player, card, 1);
+      if (result != 0)
+      {
+        uVar2 = mana_colors_added[player] | 1;
+      }
+    }
+    instance = get_card_instance(player, card);
+    instance->info_slot = uVar2;
+    return 0;
+  }
+  if (event == EVENT_COUNT_MANA)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    result = is_tapped(player, card);
+    if (result != 0)
+    {
+      return 0;
+    }
+    result = is_animated_and_sick(player, card);
+    if (result != 0)
+    {
+      return 0;
+    }
+    result = can_produce_mana(player, card);
+    if (result == 0)
+    {
+      return 0;
+    }
+    result = can_sacrifice_this_as_cost(player, card);
+    if (result != 0)
+    {
+      declare_mana_available_hex(player, 0x3f, 1);
+      return 0;
+    }
+    declare_mana_available(player, 0, 1);
+    return 0;
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    instance = get_card_instance(player, card);
+    if (instance->targets[1].player == 0x42)
+    {
+      return 0;
+    }
+    result = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+    return (unsigned int)(result != 0);
+  }
+  if (event != EVENT_ACTIVATE)
+  {
+    return 0;
+  }
+
+  instance = get_card_instance(player, card);
+  if (instance->targets[1].player == 0x42)
+  {
+    return 0;
+  }
+  result = can_sacrifice_this_as_cost(player, card);
+  if (result == 0)
+  {
+    result = is_what(player, card, 1);
+    color = COLOR_COLORLESS;
+    if (result == 0)
+      goto LAB_02495be7;
+    color = COLOR_COLORLESS;
+    if (mana_colors_added[player] == 0)
+      goto LAB_02495be7;
+    color = choose_a_color_exe(player, "What kind of mana?", 1, 0, mana_colors_added[player] | 1);
+  }
+  else
+  {
+    color = choose_mana_all_one_color_2022(player, COLOR_TEST_ANY, 1, "What kind of mana?",
+                                           COLOR_TEST_COLORLESS);
+  }
+  if (color == ~COLOR_COLORLESS)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+LAB_02495be7:
+  uVar2 = color_to_color_test(color);
+  result = is_what(player, card, 1);
+  uVar4 = 1;
+  if (result != 0)
+  {
+    uVar4 = mana_colors_added[player] | 1;
+  }
+  if ((uVar2 & uVar4) == 0)
+  {
+    instance = get_card_instance(player, card);
+    instance->targets[1].player = 0x42;
+    kill_card(player, card, KILL_SACRIFICE);
+    instance = get_card_instance(player, card);
+    bVar5 = spell_fizzled == 1;
+    instance->targets[1].player = 0;
+    if (bVar5)
+    {
+      return 0;
+    }
+  }
+  produce_mana_tapped_impl(player, card, color, 1, 0, 1);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2499510; original cards/invasion.c:5979. */
+int card_nomadic_elf(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_COUNT_MANA)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (result = can_produce_mana(player, card), result != 0)) &&
+        (result = has_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0), result != 0))
+    {
+      result = has_mana(player, 3, 1);
+      declare_mana_available_hex(player, 0x36, result);
+      declare_mana_available(player, 0, -1);
+    }
+  }
+  else if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = can_produce_mana(player, card);
+    if (result != 0)
+    {
+      result = has_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0);
+      return result;
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    result = choose_mana_all_one_color_2022(player, COLOR_TEST_ANY_COLORED, 1, "What kind of mana?",
+                                            COLOR_TEST_COLORLESS);
+    if (result == -1)
+    {
+      spell_fizzled = 1;
+    }
+    else
+    {
+      charge_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0);
+      if (spell_fizzled != 1)
+      {
+        produce_mana(player, result, 1);
+        tapped_for_mana_color = -2;
+        return 0;
+      }
+    }
+  }
+
+  return 0;
 }

@@ -2339,3 +2339,17 @@ int card_rhox_faithmender(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22b4140; original cards/m13.c:1313. */
+static int has_mbt_by_iid(int iid, int unused1, int unused2, int unused3)
+{
+  int result;
+  result = check_for_special_ability_2022(-1, iid, (SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_HEXPROOF));
+  if (result == 0)
+  {
+    return (unsigned int)((cards_data[iid].static_ability & 0x480) != 0);
+  }
+  return 1;
+}

@@ -1788,11 +1788,11 @@ static int opal_palace_legacy(int player, int card, event_t event)
   {
     if (((((card != affected_card) || (affected_card_controller != player)) &&
           (result = is_token(affected_card_controller, affected_card), result == 0)) &&
-         ((result = check_special_flags2(affected_card_controller, affected_card, -0x80000000),
+         ((result = check_special_flags2_2022(affected_card_controller, affected_card, -0x80000000),
            result == 0 &&
                (result = get_cmc(affected_card_controller, affected_card), 0 < result)))) &&
         ((affected_card_controller == player &&
-          (result = check_special_flags2(player, affected_card, 0x1000000), result != 0))))
+          (result = check_special_flags2_2022(player, affected_card, 0x1000000), result != 0))))
     {
       instance = get_card_instance(player, card);
       if (instance->targets[1].card == 0)

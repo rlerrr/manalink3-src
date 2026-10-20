@@ -680,7 +680,7 @@ int card_coveted_jewel(int player, int card, event_t event)
                    ((instance = get_card_instance(iVar1, iVar2),
                      (instance->state & 4) != 0 && (instance = get_card_instance(iVar1, iVar2),
                                                     (instance->state & 0x200) == 0)))))) &&
-            (iVar4 = check_special_flags(player, card, 0x40), iVar4 == 0))
+            (iVar4 = check_special_flags_2022(player, card, 0x40), iVar4 == 0))
         {
           draw_cards(iVar1, 3);
           untap_card(player, card);
@@ -701,7 +701,7 @@ int card_coveted_jewel(int player, int card, event_t event)
              ((instance = get_card_instance(iVar2, iVar4),
                (instance->state & 4) != 0 && (instance = get_card_instance(iVar2, iVar4),
                                               (instance->state & 0x200) == 0)))) &&
-            (iVar5 = check_special_flags(player, card, 0x40), iVar5 == 0))
+            (iVar5 = check_special_flags_2022(player, card, 0x40), iVar5 == 0))
         {
           draw_cards(1 - player, 3);
           untap_card(player, card);
@@ -1473,7 +1473,7 @@ int card_aminatous_augury(int player, int card, event_t event)
   {
 
     iVar2 = add_card_to_hand(player, iStack_f4);
-    set_special_flags(player, iVar2, 0x10000);
+    set_special_flags_2022(player, iVar2, 0x10000);
   }
   kill_card(player, card, KILL_DESTROY);
 LAB_025606e7:
@@ -1905,7 +1905,7 @@ int card_echo_storm(int player, int card, event_t event)
         generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ARTIFACT", 1, NULL);
         if (spell_fizzled != 1)
         {
-          iVar3 = check_special_flags(player, card, 0x40000);
+          iVar3 = check_special_flags_2022(player, card, 0x40000);
           if (iVar3 == 0)
           {
             iVar3 = locate_edh_card_2022(player);
@@ -1978,7 +1978,7 @@ int card_empyrial_storm(int player, int card, event_t event)
   {
     if ((((card == affected_card) && (player == affected_card_controller)) &&
          (basic_spell(player, card, EVENT_CAST_SPELL), spell_fizzled != 1)) &&
-        (iVar1 = check_special_flags(player, card, 0x40000), iVar1 == 0))
+        (iVar1 = check_special_flags_2022(player, card, 0x40000), iVar1 == 0))
     {
       iVar2 = locate_edh_card_2022(player);
       iVar1 = 0;
@@ -2021,7 +2021,7 @@ int card_fury_storm(int player, int card, event_t event)
       }
       twincast(player, card, 0x6c, NULL, NULL);
       result = counterspell_validate(player, card, NULL, 0);
-      if (((result != 0) && (result = check_special_flags(player, card, 0x40000), result == 0)) &&
+      if (((result != 0) && (result = check_special_flags_2022(player, card, 0x40000), result == 0)) &&
           (result = locate_edh_card_2022(player), -1 < result))
       {
 
@@ -2079,7 +2079,7 @@ int card_genesis_storm(int player, int card, event_t event)
       if ((card == affected_card) &&
           (((player == affected_card_controller &&
              (basic_spell(player, card, EVENT_CAST_SPELL), spell_fizzled != 1)) &&
-            (iVar2 = check_special_flags(player, card, 0x40000), iVar2 == 0))))
+            (iVar2 = check_special_flags_2022(player, card, 0x40000), iVar2 == 0))))
       {
         iVar3 = locate_edh_card_2022(player);
         iVar2 = 0;
@@ -2142,7 +2142,7 @@ int card_skull_storm(int player, int card, event_t event)
         basic_spell(player, card, EVENT_CAST_SPELL);
         if (spell_fizzled != 1)
         {
-          iVar2 = check_special_flags(player, card, 0x40000);
+          iVar2 = check_special_flags_2022(player, card, 0x40000);
           if (iVar2 == 0)
           {
             iVar2 = locate_edh_card_2022(player);
@@ -2788,4 +2788,75 @@ int card_lord_windgrace(int player, int card, event_t event)
 LAB_02563488:
   iVar4 = planeswalker(player, card, event, 5);
   return iVar4;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int vedalken_humiliation(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x255f990; original cards/commander_2018.c:1903. */
+static int vedalken_humiliation(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  if ((event - EVENT_POWER < 3) || (event == EVENT_CAST_SPELL))
+  {
+    instance = in_play(player, card);
+    if (instance == NULL)
+    {
+      return 0;
+    }
+    instance = in_play(affected_card_controller, affected_card);
+    if (instance == NULL)
+    {
+      return 0;
+    }
+    if (affected_card_controller == player)
+    {
+      return 0;
+    }
+    result = is_what(affected_card_controller, affected_card, 2);
+    if (result == 0)
+    {
+      return 0;
+    }
+    if (event - EVENT_POWER < 2)
+    {
+      set_base_pt(1);
+      return 0;
+    }
+    if ((event == EVENT_ABILITIES) || (event == EVENT_CAST_SPELL))
+    {
+
+      event_result = event_result | 0x1f000000;
+      instance = get_card_instance(affected_card_controller, affected_card);
+      event_result = event_result & 0x9f080000;
+      instance->state = instance->state & 0xffffdfff;
+      instance->ext->sp_keywords = instance->ext->sp_keywords & 0x993c00c0;
+      humiliate(player, card, affected_card_controller, affected_card, 1);
+    }
+  }
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2565fd0; original cards/commander_2018.c:1931. */
+int card_vedalken_humiliator(int player, int card, event_t event)
+{
+  int result;
+
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    result = metalcraft(player, card);
+    if (result != 0)
+    {
+      create_legacy_effect(player, card, vedalken_humiliation);
+    }
+  }
+  return 0;
 }

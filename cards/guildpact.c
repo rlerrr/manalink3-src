@@ -3735,3 +3735,34 @@ static char *not_already_dying(int who_chooses, int player, int card)
   }
   return pcVar2;
 }
+
+
+/* ManalinkEh 2022: 0x252b8d0; original cards/guildpact.c:70. */
+static void replicate_blue_red_2022_impl(int player, int card, int cless, int blue, int red)
+{
+  int result;
+  card_instance_t *instance;
+  result = check_special_flags_2022(player, card, 0x40000);
+  if (result == 0)
+  {
+    instance = get_card_instance(player, card);
+    while (true)
+    {
+      result = has_mana_multi(player, cless, 0, blue, 0, red, 0);
+      if (result == 0)
+      {
+        return;
+      }
+      result = do_dialog(player, player, card, -1, -1, " Replicate\n Stop", 0);
+      if (result != 0)
+        break;
+      charge_mana_multi(player, cless, 0, blue, 0, red, 0);
+      if (spell_fizzled == 1)
+      {
+        return;
+      }
+      instance->ext->times_replicate_paid = instance->ext->times_replicate_paid + '\x01';
+    }
+  }
+  return;
+}

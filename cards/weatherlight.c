@@ -1636,11 +1636,11 @@ When ~ is put into your graveyard from your library, shuffle your graveyard into
 	return 0;
 }
 
-static int can_pay_1_life_thunk(int player, int card, int number_of_age_counters)
+int can_pay_1_life_thunk(int player, int card, int number_of_age_counters)
 {
   return can_pay_life(player, number_of_age_counters);
 }
-static int lose_1_life_thunk(int player, int card, int number_of_age_counters)
+int lose_1_life_thunk(int player, int card, int number_of_age_counters)
 {
   lose_life(player, number_of_age_counters);
   return 1;
@@ -5276,4 +5276,23 @@ int card_roc_hatchling(int player, int card, event_t event)
     event_result = event_result | 0x20;
   }
   return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22f7590; original cards/weatherlight.c:4324. */
+int card_familiar_ground(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_ABILITIES)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if ((result == 0) && (affected_card_controller == player))
+    {
+      maxblockers_1(player, affected_card, EVENT_ABILITIES);
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
 }

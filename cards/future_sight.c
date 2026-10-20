@@ -3730,7 +3730,7 @@ int card_grave_scrabbler(int player, int card, event_t event)
   {
     new_default_test_definition(&this_test, 2, "Select target creature.");
     instance = get_card_instance(player, card);
-    result = check_special_flags3(player, card, 0x1000);
+    result = check_special_flags3_2022(player, card, 0x1000);
     if (result != 0)
     {
       select_target_from_either_grave(player, card, SFG_0, 1, 3, &this_test, 0, 1);
@@ -3923,5 +3923,49 @@ int card_mistmeadow_skulk(int player, int card, event_t event)
   {
     event_result = event_result | 1;
   }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2571d90; original cards/future_sight.c:3814. */
+static int veilstone_amulet_effect(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    give_shroud_to_player(player, card, event);
+    give_shroud_to_player(1 - player, card, event);
+  }
+  if (event == EVENT_ABILITIES)
+  {
+    result = is_what(affected_card_controller, affected_card, 2);
+    if ((result != 0) && (affected_card_controller == player))
+    {
+      special_abilities2(player, affected_card, EVENT_ABILITIES, SP_KEYWORD2_GRANTED_PROT_MISC);
+    }
+  }
+  else if (event == EVENT_PROT_MISC)
+  {
+    instance = get_card_instance(affected_card_controller, affected_card);
+    if ((instance != NULL) && (affected_card_controller == player))
+    {
+      result = is_what(player, affected_card, 2);
+      if ((result != 0) && ((1 - player == attacking_card_controller &&
+                             (((unsigned int)event_result >> 24 & 0xff) == '\x05'))))
+      {
+        event_result = event_result | 1;
+      }
+    }
+  }
+  result = eot_trigger(player, card, event);
+  if (result == 0)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
   return 0;
 }

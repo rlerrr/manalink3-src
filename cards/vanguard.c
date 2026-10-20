@@ -2895,7 +2895,7 @@ static int put_commander_from_command_zone_to_impl(int player, int where, int wh
           {
             rv[uVar10] = iVar3;
           }
-          set_special_flags2(player, iVar3, 0x1000000);
+          set_special_flags2_2022(player, iVar3, 0x1000000);
           if (where == 5)
           {
             add_state(player, iVar3, 0x10);

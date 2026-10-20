@@ -5543,3 +5543,30 @@ int card_lullmage_mentor(int player, int card, event_t event)
       &recovered_stack_td.target, 7);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25d6c60; original cards/zendikar.c:1823. */
+static int vov_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  attached_gets_sp_kw2(player, card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
+  if (event == EVENT_PROT_MISC)
+  {
+    instance = get_card_instance(player, card);
+    if ((((instance != NULL) && (instance->damage_target_card == affected_card)) &&
+         (instance->damage_target_player == affected_card_controller)) &&
+        ((((unsigned int)event_result >> 24 & 0xff) == '\x05' &&
+          (attacking_card_controller != player))))
+    {
+      event_result = event_result | 1;
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  return 0;
+}

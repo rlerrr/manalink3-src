@@ -4712,7 +4712,7 @@ int card_assassins_blade(int player, int card, event_t event)
         do
         {
           instance = in_play_and_attacking(iVar5, iVar2);
-          if ((instance != NULL) && (iVar3 = check_special_flags(iVar5, iVar2, 0x40), iVar3 == 0))
+          if ((instance != NULL) && (iVar3 = check_special_flags_2022(iVar5, iVar2, 0x40), iVar3 == 0))
           {
             return 1;
           }
@@ -4992,7 +4992,7 @@ int card_treetop_defense(int player, int card, event_t event)
       do
       {
         instance = in_play_and_attacking(player_00, iVar1);
-        if ((instance != NULL) && (iVar3 = check_special_flags(player_00, iVar1, 0x40), iVar3 == 0))
+        if ((instance != NULL) && (iVar3 = check_special_flags_2022(player_00, iVar1, 0x40), iVar3 == 0))
         {
           return 1;
         }
@@ -5030,7 +5030,7 @@ int card_scorching_winds(int player, int card, event_t event)
       do
       {
         instance = in_play_and_attacking(player_00, iVar1);
-        if ((instance != NULL) && (iVar3 = check_special_flags(player_00, iVar1, 0x40), iVar3 == 0))
+        if ((instance != NULL) && (iVar3 = check_special_flags_2022(player_00, iVar1, 0x40), iVar3 == 0))
         {
           return 1;
         }
@@ -5084,7 +5084,7 @@ int card_defiant_stand(int player, int card, event_t event)
         do
         {
           instance = in_play_and_attacking(iVar4, iVar2);
-          if ((instance != NULL) && (iVar3 = check_special_flags(iVar4, iVar2, 0x40), iVar3 == 0))
+          if ((instance != NULL) && (iVar3 = check_special_flags_2022(iVar4, iVar2, 0x40), iVar3 == 0))
           {
             return 1;
           }
@@ -5191,7 +5191,7 @@ int card_just_fate(int player, int card, event_t event)
       do
       {
         instance = in_play_and_attacking(iVar4, iVar2);
-        if ((instance != NULL) && (iVar3 = check_special_flags(iVar4, iVar2, 0x40), iVar3 == 0))
+        if ((instance != NULL) && (iVar3 = check_special_flags_2022(iVar4, iVar2, 0x40), iVar3 == 0))
         {
           return 1;
         }
@@ -5242,7 +5242,7 @@ int card_rally_the_troops(int player, int card, event_t event)
       do
       {
         instance = in_play_and_attacking(player_00, iVar1);
-        if ((instance != NULL) && (iVar3 = check_special_flags(player_00, iVar1, 0x40), iVar3 == 0))
+        if ((instance != NULL) && (iVar3 = check_special_flags_2022(player_00, iVar1, 0x40), iVar3 == 0))
         {
           return 1;
         }
@@ -5280,7 +5280,7 @@ int card_warriors_stand(int player, int card, event_t event)
       do
       {
         instance = in_play_and_attacking(player_00, iVar1);
-        if ((instance != NULL) && (iVar3 = check_special_flags(player_00, iVar1, 0x40), iVar3 == 0))
+        if ((instance != NULL) && (iVar3 = check_special_flags_2022(player_00, iVar1, 0x40), iVar3 == 0))
         {
           return 1;
         }
@@ -5635,4 +5635,24 @@ int card_eye_spy(int player, int card, event_t event)
 LAB_021c33ad:
   result = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
   return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21c5e60; original cards/portal_1_2_3k.c:4841. */
+int card_yuan_shao_the_indecicive(int player, int card, event_t event)
+{
+  int result;
+
+  check_legend_rule(player, card, event);
+  horsemanship2(player, card, event);
+  if (event == EVENT_ABILITIES)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if ((result == 0) && (affected_card_controller == player))
+    {
+      maxblockers_1(player, affected_card, EVENT_ABILITIES);
+    }
+  }
+  return 0;
 }

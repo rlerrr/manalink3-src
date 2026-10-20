@@ -4100,3 +4100,126 @@ int card_angelic_favor(int player, int card, event_t event)
   get_card_instance(player, card);
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int pale_moon_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x20902e0; original cards/nemesis.c:1250. */
+int pale_moon_legacy(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int (*paiVar4)[8];
+  int card_00;
+
+  if (event == EVENT_CAST_SPELL)
+  {
+    iVar1 = is_what(affected_card_controller, affected_card, 1);
+    if (iVar1 != 0)
+    {
+      set_special_flags2_2022(affected_card_controller, affected_card, 0x40);
+    }
+  }
+  else if (event == EVENT_MODIFY_MANA_PROD)
+  {
+    paiVar4 = mana_color_override;
+
+    iVar1 = 0;
+    do
+    {
+
+      iVar3 = active_cards_count[iVar1];
+      (*paiVar4)[0] = 0;
+      (*paiVar4)[1] = 0;
+      (*paiVar4)[2] = 0;
+      (*paiVar4)[3] = 0;
+      (*paiVar4)[4] = 0;
+      (*paiVar4)[5] = 0;
+      (*paiVar4)[6] = 0;
+      card_00 = 0;
+      if (0 < iVar3)
+      {
+        do
+        {
+          while (((instance = in_play(iVar1, card_00),
+                   instance == NULL || (iVar3 = is_what(iVar1, card_00, 1), iVar3 == 0)) ||
+                  (iVar3 = has_subtype(iVar1, card_00, SUBTYPE_BASIC), iVar3 != 0)))
+          {
+            card_00 = card_00 + 1;
+            if (active_cards_count[iVar1] <= card_00)
+              goto LAB_020903d8;
+          }
+          iVar3 = card_00 + 1;
+          set_special_flags2_2022(iVar1, card_00, 0x40);
+          card_00 = iVar3;
+        } while (iVar3 < active_cards_count[iVar1]);
+      }
+    LAB_020903d8:
+      iVar1 = iVar1 + 1;
+      paiVar4 = paiVar4 + 1;
+    } while (iVar1 != 2);
+  }
+  iVar1 = eot_trigger(player, card, event);
+  if (iVar1 != 0)
+  {
+    kill_card(player, card, KILL_EXILE);
+    cant_be_responded_to = 1;
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2094700; original cards/nemesis.c:1279. */
+int card_pale_moon(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int (*paiVar4)[8];
+  int card_00;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    paiVar4 = mana_color_override;
+
+    iVar1 = 0;
+    do
+    {
+
+      iVar3 = active_cards_count[iVar1];
+      (*paiVar4)[0] = 0;
+      (*paiVar4)[1] = 0;
+      (*paiVar4)[2] = 0;
+      (*paiVar4)[3] = 0;
+      (*paiVar4)[4] = 0;
+      (*paiVar4)[5] = 0;
+      (*paiVar4)[6] = 0;
+      card_00 = 0;
+      if (0 < iVar3)
+      {
+        do
+        {
+          while (((instance = in_play(iVar1, card_00),
+                   instance == NULL || (iVar3 = is_what(iVar1, card_00, 1), iVar3 == 0)) ||
+                  (iVar3 = has_subtype(iVar1, card_00, SUBTYPE_BASIC), iVar3 != 0)))
+          {
+            card_00 = card_00 + 1;
+            if (active_cards_count[iVar1] <= card_00)
+              goto LAB_020947f0;
+          }
+          iVar3 = card_00 + 1;
+          set_special_flags2_2022(iVar1, card_00, 0x40);
+          card_00 = iVar3;
+        } while (iVar3 < active_cards_count[iVar1]);
+      }
+    LAB_020947f0:
+      iVar1 = iVar1 + 1;
+      paiVar4 = paiVar4 + 1;
+    } while (iVar1 != 2);
+    create_legacy_effect(player, card, pale_moon_legacy);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  iVar1 = basic_spell(player, card, event);
+  return iVar1;
+}

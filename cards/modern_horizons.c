@@ -832,7 +832,7 @@ int card_weather_the_storm(int player, int card, event_t event)
     if (((card == affected_card) && (player == affected_card_controller)) &&
         (basic_spell(player, card, EVENT_CAST_SPELL), spell_fizzled != 1))
     {
-      iVar1 = check_special_flags(player, card, 0x40000);
+      iVar1 = check_special_flags_2022(player, card, 0x40000);
       iVar2 = 0;
       if (iVar1 == 0)
       {
@@ -2159,7 +2159,7 @@ int card_tempered_sliver(int player, int card, event_t event)
          (card_00 = instance->damage_source_card, card_00 != -1)) &&
         ((0 < instance->info_slot && (instance->damage_target_card == -1))))
     {
-      iVar3 = check_special_flags(iVar1, card_00, 0x40);
+      iVar3 = check_special_flags_2022(iVar1, card_00, 0x40);
       if (iVar3 == 0)
       {
         iVar3 = is_what(iVar1, card_00, 2);
@@ -2352,7 +2352,7 @@ int card_archmages_charm(int player, int card, event_t event)
         if ((card == affected_card) && (player == affected_card_controller))
         {
           instance->number_of_targets = '\0';
-          iVar2 = check_special_flags2(player, card, -0x80000000);
+          iVar2 = check_special_flags2_2022(player, card, -0x80000000);
           if (iVar2 == 0)
           {
 
@@ -3555,7 +3555,7 @@ int card_the_first_sliver(int player, int card, event_t event)
         result = is_token(affected_card_controller, affected_card);
         if (result == 0)
         {
-          result = check_special_flags(affected_card_controller, affected_card, 0x40000);
+          result = check_special_flags_2022(affected_card_controller, affected_card, 0x40000);
           if (result == 0)
           {
             result = is_humiliated_for_ability(player, card, AL_TRIG);
@@ -3758,5 +3758,255 @@ int card_ayula_queen_among_bears(int player, int card, event_t event)
             instance->targets[1].card);
     }
   }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int pro_colorless_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x23353f0; original cards/modern_horizons.c:1319. */
+static int pro_colorless_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  unsigned int uVar2;
+
+  attached_gets_sp_kw2(player, card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
+  if (event == EVENT_PROT_MISC)
+  {
+    instance = get_card_instance(player, card);
+    if (((instance != NULL) && (instance->damage_target_card == affected_card)) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+      uVar2 = get_color(attacking_card_controller, attacking_card);
+      if ((uVar2 & 0x3e) == 0)
+      {
+        event_result = event_result | 1;
+      }
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2338d80; original cards/modern_horizons.c:1331. */
+int card_giver_of_runes(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  color_t color;
+  keyword_t kVar3;
+  target_definition_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+
+      result = get_deck_color(player, 1 - player);
+      color = choose_a_color_from(player, result, COLOR_TEST_ANY);
+      if (color == COLOR_COLORLESS)
+      {
+        create_targetted_legacy_effect(player, card, pro_colorless_legacy,
+                                       instance->targets[0].player, instance->targets[0].card);
+      }
+      else
+      {
+        kVar3 = color_to_protection(color);
+        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                               instance->targets[0].player, instance->targets[0].card, 0, 0,
+                               kVar3 | KEYWORD_RECALC_SET_COLOR, 0);
+      }
+    }
+  }
+  result = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0, &td,
+                                     "TARGET_CREATURE");
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x233b920; original cards/modern_horizons.c:2630. */
+int card_prismatic_vista(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  bool bVar3;
+  test_definition_t this_test;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    play_land_sound_effect(player, card);
+  }
+  else
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (mana_colors_added[player] == 0)
+      {
+        result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 9, 0, 0, 0, 0, 0, 0, 1,
+                                           NULL, NULL);
+        return result;
+      }
+      result = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance = get_card_instance(player, card);
+      if (6 < life[player])
+      {
+        ai_modifier = ai_modifier + 1000;
+      }
+      if (mana_colors_added[player] == 0)
+      {
+        instance->info_slot = 2;
+        result = generic_activated_ability(player, card, EVENT_ACTIVATE, 9, 0, 0, 0, 0, 0, 0, 1,
+                                           NULL, NULL);
+        return result;
+      }
+
+      result = paying_mana();
+      if ((result == 0) && (result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 9,
+                                                               1, 0, 0, 0, 0, 0, 1, NULL, NULL),
+                            result != 0))
+      {
+        bVar3 = ai_is_speculating != 1;
+        instance->info_slot = 2;
+        if ((bVar3) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
+        {
+          result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1, "Fetch",
+                               1, 1, 0, 0, 0, 0);
+          if (result == 0)
+          {
+            spell_fizzled = 1;
+            return 0;
+          }
+          if (result == 1)
+            goto LAB_0233b9e2;
+          if (result != 2)
+          {
+            return 0;
+          }
+        }
+        generic_activated_ability(player, card, EVENT_ACTIVATE, 9, 0, 0, 0, 0, 0, 0, 1, NULL, NULL);
+        return 0;
+      }
+      instance->info_slot = 1;
+    LAB_0233b9e2:
+      mana_producer(player, card, EVENT_ACTIVATE);
+      return 0;
+    }
+    if ((event == EVENT_CLEANUP) || (event == EVENT_RESOLVE_ACTIVATION))
+    {
+      instance = get_card_instance(player, card);
+      if (event != EVENT_RESOLVE_ACTIVATION)
+      {
+        return 0;
+      }
+      if (instance->info_slot != 2)
+      {
+        return 0;
+      }
+      new_default_test_definition(&this_test, 1, "Select a basic land");
+      this_test.subtype = 0x2000;
+      new_global_tutor(player, player, 1, 4, 0, 1, &this_test);
+      return 0;
+    }
+  }
+  if (mana_colors_added[player] == 0)
+  {
+    return 0;
+  }
+  result = mana_producer(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23382e0; original cards/modern_horizons.c:1068. */
+int card_force_of_negation(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event == EVENT_MODIFY_COST)
+  {
+    if (current_turn != player)
+    {
+      result = get_sleighted_color(player, card, 2);
+      al_pitchspell(player, card, EVENT_MODIFY_COST, result, 0);
+    }
+    counterspell_target_definition(player, card, &td, 0xff);
+    return 0;
+  }
+  counterspell_target_definition(player, card, &td, 0xff);
+  td.illegal_type = 2;
+  if (event == EVENT_CAN_CAST)
+  {
+    result = generic_spell(player, card, EVENT_CAN_CAST, 2, &td, NULL, 0, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+  }
+  else if (event != EVENT_CHANGE_TARGET)
+    goto LAB_02338392;
+  if ((current_turn == player) ||
+      (result = casting_al_pitchspell(player, card, event, 2, 0), result != 0))
+  {
+    result = counterspell(player, card, event, &td, 0);
+    return result;
+  }
+  spell_fizzled = 1;
+LAB_02338392:
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    return 0;
+  }
+  result = counterspell_validate(player, card, &td, 0);
+  if (result != 0)
+  {
+
+    instance = get_card_instance(player, card);
+    result = pre_counterspell(player, card, instance->targets[0].player, instance->targets[0].card);
+    if (result == 0)
+    {
+      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+    }
+    else
+    {
+      put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
+      rfg_top_card_of_deck(instance->targets[0].player);
+    }
+  }
+  kill_card(player, card, KILL_DESTROY);
   return 0;
 }

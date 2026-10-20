@@ -6530,7 +6530,7 @@ int card_cairn_wanderer(int player, int card, event_t event)
         if ((cards_data[card_00].type & 2) != 0)
         {
           uVar3 = uVar3 | cards_data[card_00].static_ability & 0x4003fdbf;
-          uVar2 = check_for_special_ability(-1, card_00, 0x20f);
+          uVar2 = check_for_special_ability_2022(-1, card_00, 0x20f);
           sp_abilities = sp_abilities | uVar2;
         }
 

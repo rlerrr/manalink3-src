@@ -6058,3 +6058,99 @@ int card_forgotten_harvest(int player, int card, event_t event)
   result = global_enchantment(player, card, event);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2604870; original cards/prophecy.c:3243. */
+int card_mercenary_informer(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  unsigned int uVar4;
+  target_definition_t td;
+
+  special_abilities2(player, card, event, SP_KEYWORD2_PROT_MISC);
+  if (event == EVENT_PROT_MISC)
+  {
+    if (((card == affected_card) && (player == affected_card_controller)) &&
+        (((unsigned int)event_result >> 24 & 0xff) == '\x05'))
+    {
+      uVar3 = get_color(attacking_card_controller, attacking_card);
+      uVar4 = get_sleighted_color_test(player, card, 2);
+      if ((uVar3 & uVar4) != 0)
+      {
+        event_result = event_result | 1;
+      }
+    }
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = 0x1000;
+    td.required_subtype = 0x73;
+  }
+  else
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = 0x1000;
+    td.required_subtype = 0x73;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+
+        instance = get_card_instance(player, card);
+        put_on_bottom_of_deck(instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+  }
+  result = generic_activated_ability(player, card, event, 6, 2, 0, 0, 0, 0, 1, 0, &td,
+                                     "Select target nontoken Mercenary card.");
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2605770; original cards/prophecy.c:3648. */
+int card_rebel_informer(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  unsigned int uVar4;
+  target_definition_t td;
+
+  special_abilities2(player, card, event, SP_KEYWORD2_PROT_MISC);
+  if (event == EVENT_PROT_MISC)
+  {
+    if (((card == affected_card) && (player == affected_card_controller)) &&
+        (((unsigned int)event_result >> 24 & 0xff) == '\x05'))
+    {
+      uVar3 = get_color(attacking_card_controller, attacking_card);
+      uVar4 = get_sleighted_color_test(player, card, 0x20);
+      if ((uVar3 & uVar4) != 0)
+      {
+        event_result = event_result | 1;
+      }
+    }
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = 0x1000;
+    td.required_subtype = 0x9b;
+  }
+  else
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.illegal_type = 0x1000;
+    td.required_subtype = 0x9b;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+
+        instance = get_card_instance(player, card);
+        put_on_bottom_of_deck(instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+  }
+  result = generic_activated_ability(player, card, event, 6, 3, 0, 0, 0, 0, 0, 0, &td,
+                                     "Select target nontoken Rebel card.");
+  return result;
+}

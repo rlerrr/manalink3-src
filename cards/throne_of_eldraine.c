@@ -37,14 +37,14 @@ void adventure_transform(int player, int card, int csvid)
   card_instance_t *instance;
 
   true_transform_to_csvid(player, card, csvid);
-  result = check_special_flags3(player, card, 0x200);
+  result = check_special_flags3_2022(player, card, 0x200);
   if (result == 0)
   {
-    set_special_flags3(player, card, 0x200);
+    set_special_flags3_2022(player, card, 0x200);
   }
   else
   {
-    remove_special_flags3(player, card, 0x200);
+    remove_special_flags3_2022(player, card, 0x200);
   }
   instance = get_card_instance(player, card);
   instance->regen_status = instance->regen_status | 0x1f000000;
@@ -1312,8 +1312,8 @@ int card_stonecoil_serpent(int player, int card, event_t event)
   if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    set_special_flags2(player, card, 0x20000);
-    result = check_special_flags2(player, card, -0x80000000);
+    set_special_flags2_2022(player, card, 0x20000);
+    result = check_special_flags2_2022(player, card, -0x80000000);
     if (result == 0)
     {
       instance->info_slot = 0;
@@ -1449,7 +1449,7 @@ int play_card_from_adventure(int player, int t_player, int iid)
 
   remove_card_from_rfg(t_player, (unsigned int)cards_data[iid].id);
   card = add_card_to_hand(player, iid);
-  set_special_flags2(player, card, 0x800);
+  set_special_flags2_2022(player, card, 0x800);
   if (t_player != player)
   {
     if ((player == 0) && (t_player == 1))
@@ -1822,12 +1822,12 @@ int generic_adventurer(int player, int card, event_t event, int priority_creatur
     {
       return 0;
     }
-    iVar1 = check_special_flags2(player, card, 0x800);
+    iVar1 = check_special_flags2_2022(player, card, 0x800);
     if (iVar1 == 0)
     {
       return 0;
     }
-    remove_special_flags2(player, card, 0x800);
+    remove_special_flags2_2022(player, card, 0x800);
     return 0;
   }
   if (card != affected_card)
@@ -1838,12 +1838,12 @@ int generic_adventurer(int player, int card, event_t event, int priority_creatur
   {
     return 0;
   }
-  iVar1 = check_special_flags2(player, card, 0x800);
+  iVar1 = check_special_flags2_2022(player, card, 0x800);
   if (iVar1 != 0)
   {
     return 0;
   }
-  iVar1 = check_special_flags3(player, card, 1);
+  iVar1 = check_special_flags3_2022(player, card, 1);
   if (iVar1 != 0)
   {
     return 0;
@@ -1854,7 +1854,7 @@ int generic_adventurer(int player, int card, event_t event, int priority_creatur
   {
     iVar1 = is_token(player, card);
     bVar6 = iVar1 != 0;
-    iVar3 = check_special_flags2(player, card, -0x80000000);
+    iVar3 = check_special_flags2_2022(player, card, -0x80000000);
     if (iVar3 != 0)
       goto LAB_025ca795;
     instance->info_slot = 0;
@@ -1874,7 +1874,7 @@ int generic_adventurer(int player, int card, event_t event, int priority_creatur
   }
   else
   {
-    iVar1 = check_special_flags2(player, card, -0x80000000);
+    iVar1 = check_special_flags2_2022(player, card, -0x80000000);
     bVar6 = true;
     if (iVar1 != 0)
       goto LAB_025ca795;
@@ -4910,7 +4910,7 @@ int card_golden_egg(int player, int card, event_t event)
   add_state(player, card, 0x10);
   charge_mana(player, COLOR_COLORLESS, 1);
   if ((spell_fizzled != 1) &&
-      (result = produce_mana_tapped_all_one_color(player, card, COLOR_TEST_ANY_COLORED, 1),
+      (result = produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_ANY_COLORED, 1),
        result != 0))
   {
   LAB_025d048e:
@@ -5380,7 +5380,7 @@ int card_grumgully_the_generous(int player, int card, event_t event)
         result = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_HUMAN);
         if (result == 0)
         {
-          result = check_special_flags2(trigger_cause_controller, trigger_cause, 0x100);
+          result = check_special_flags2_2022(trigger_cause_controller, trigger_cause, 0x100);
           if (result == 0)
           {
             result = is_humiliated_for_ability(player, card, AL_STATIC);
@@ -5698,4 +5698,132 @@ int card_syr_carah_the_bold(int player, int card, event_t event)
     }
   }
   return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25ce410; original cards/throne_of_eldraine.c:1720. */
+int card_fabled_passage(int player, int card, event_t event)
+{
+  color_test_t col;
+  unsigned int uVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  color_t color;
+  bool bVar5;
+  test_definition_t this_test;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    play_land_sound_effect(player, card);
+    iVar4 = mana_colors_added[player];
+  joined_r0x025ce6ad:
+    if (iVar4 == 0)
+    {
+      return 0;
+    }
+    iVar4 = mana_producer(player, card, event);
+  }
+  else
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (mana_colors_added[player] != 0)
+      {
+        iVar4 = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+        return iVar4;
+      }
+      in_play(player, card);
+    }
+    else if (event == EVENT_ACTIVATE)
+    {
+      instance = in_play(player, card);
+      ai_modifier = ai_modifier + 100;
+      if (mana_colors_added[player] == 0)
+      {
+        instance->info_slot = 2;
+        iVar4 = generic_activated_ability(player, card, EVENT_ACTIVATE, 9, 0, 0, 0, 0, 0, 0, 0,
+                                          NULL, NULL);
+        return iVar4;
+      }
+      iVar4 = paying_mana();
+      if ((iVar4 != 0) || (iVar4 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 9, 1,
+                                                             0, 0, 0, 0, 0, 0, NULL, NULL),
+                           iVar4 == 0))
+      {
+        instance->info_slot = 1;
+      LAB_025ce4ce:
+        iVar4 = can_produce_mana(player, card);
+        if (iVar4 == 0)
+        {
+          return 0;
+        }
+        iVar4 = check_special_flags2_2022(player, card, 0x40);
+        if ((iVar4 != 0) && (iVar4 = is_what(player, card, 1), iVar4 != 0))
+        {
+          produce_mana_tapped_2022(player, card, COLOR_BLACK, 1);
+          return 0;
+        }
+
+        col = mana_colors_added[player];
+        uVar1 = num_bits_set(col);
+        if (uVar1 == 1)
+        {
+          color = single_color_test_bit_to_color(col);
+          produce_mana_tapped_2022(player, card, color, 1);
+          return 0;
+        }
+        produce_mana_tapped_all_one_color_2022(player, card, col, 1);
+        return 0;
+      }
+      bVar5 = ai_is_speculating != 1;
+      instance->info_slot = 2;
+      if ((bVar5) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
+      {
+        iVar4 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1,
+                            "Use Ability", 1, 1, 0, 0, 0, 0);
+        if (iVar4 == 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        if (iVar4 == 1)
+          goto LAB_025ce4ce;
+        if (iVar4 != 2)
+          goto LAB_025ce563;
+      }
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 9, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      {
+        iVar4 = mana_colors_added[player];
+        goto joined_r0x025ce6ad;
+      }
+      instance = in_play(player, card);
+      if ((event == EVENT_RESOLVE_ACTIVATION) && (instance->info_slot == 2))
+      {
+
+        new_default_test_definition(&this_test, 1, "Select a basic land card.");
+        this_test.subtype = 0x2000;
+        iVar4 = new_global_tutor(player, player, 1, 5, 0, 5, &this_test);
+        if ((-1 < iVar4) && (iVar3 = count_permanents_by_type(player, TYPE_LAND), 3 < iVar3))
+        {
+          if (ai_is_speculating == 1)
+          {
+            ai_modifier = ai_modifier + 0xf;
+          }
+          else
+          {
+            untap_card(player, iVar4);
+          }
+        }
+      }
+    }
+  LAB_025ce563:
+    iVar4 = generic_activated_ability(player, card, event, 9, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  }
+  return iVar4;
 }

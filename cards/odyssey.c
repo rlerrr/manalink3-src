@@ -388,3 +388,42 @@ LAB_02501f10:
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2512e50; original cards/odyssey.c:5362. */
+int card_spellbane_centaur(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  unsigned int uVar4;
+
+  if (event == EVENT_ABILITIES)
+  {
+    result = is_what(affected_card_controller, affected_card, 2);
+    if ((result != 0) && (affected_card_controller == player))
+    {
+      special_abilities2(player, affected_card, EVENT_ABILITIES, SP_KEYWORD2_GRANTED_PROT_MISC);
+    }
+  }
+  else if (event == EVENT_PROT_MISC)
+  {
+    instance = get_card_instance(affected_card_controller, affected_card);
+    if (instance != NULL)
+    {
+      result = is_what(affected_card_controller, affected_card, 2);
+      if (((result != 0) && (affected_card_controller == player)) &&
+          (((unsigned int)event_result >> 24 & 0xff) == '\x05'))
+      {
+        uVar3 = get_color(attacking_card_controller, attacking_card);
+        uVar4 = get_sleighted_color_test(player, card, 4);
+        if ((uVar3 & uVar4) != 0)
+        {
+          event_result = event_result | 1;
+        }
+      }
+    }
+  }
+  return 0;
+}

@@ -4365,7 +4365,7 @@ int card_destructive_tampering(int player, int card, event_t event)
     instance = get_card_instance(player, card);
   }
   instance->number_of_targets = '\0';
-  iVar3 = check_special_flags2(player, card, -0x80000000);
+  iVar3 = check_special_flags2_2022(player, card, -0x80000000);
   if (iVar3 != 0)
   {
     return 0;
@@ -4540,7 +4540,7 @@ int card_invigorated_rampage(int player, int card, event_t event)
   instance->number_of_targets = '\0';
   iVar3 = can_target(&td);
   iVar2 = target_available(-1, card, &td);
-  iVar1 = check_special_flags2(player, card, -0x80000000);
+  iVar1 = check_special_flags2_2022(player, card, -0x80000000);
   if (iVar1 != 0)
   {
     return 0;
@@ -6138,11 +6138,11 @@ int card_walking_ballista(int player, int card, event_t event)
     return iVar2;
   }
   if (((card == affected_card) && (player == affected_card_controller)) &&
-      (iVar2 = check_special_flags2(player, card, -0x80000000), iVar2 == 0))
+      (iVar2 = check_special_flags2_2022(player, card, -0x80000000), iVar2 == 0))
   {
 
     instance->info_slot = 0;
-    set_special_flags2(player, card, 0x20000);
+    set_special_flags2_2022(player, card, 0x20000);
     iVar2 = charge_mana_for_double_x(player, 6);
     if (spell_fizzled != 1)
     {
@@ -6738,7 +6738,7 @@ int card_rishkar_peema_renegade(int player, int card, event_t event)
       else
       {
         instance->number_of_targets = '\x01';
-        produce_mana_tapped(instance->targets[0].player, instance->targets[0].card, COLOR_GREEN, 1);
+        produce_mana_tapped_2022(instance->targets[0].player, instance->targets[0].card, COLOR_GREEN, 1);
         result = instance->targets[0].player;
         if (result == player)
         {
@@ -6956,7 +6956,7 @@ int card_unbridled_growth(int player, int card, event_t event)
       }
       if (iVar6 == 1)
       {
-        produce_mana_tapped_all_one_color(player_00, iVar2, COLOR_TEST_ANY_COLORED, 1);
+        produce_mana_tapped_all_one_color_2022(player_00, iVar2, COLOR_TEST_ANY_COLORED, 1);
         if (spell_fizzled != 1)
         {
           dispatch_event(player_00, iVar2, 0x81);
@@ -7957,4 +7957,143 @@ LAB_020c1740:
   recovered_stack_td.target.preferred_controller = 1 - player;
   result = targeted_aura(player, card, event, &recovered_stack_td.target, "TARGET_ARTIFACT");
   return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20c1e70; original cards/aether_revolt.c:2090. */
+int card_heroic_intervention(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (0 < active_cards_count[player])
+    {
+      iVar1 = 0;
+    LAB_020c1ec2:
+      do
+      {
+        instance = in_play(player, iVar1);
+        if (instance != NULL)
+        {
+          iVar3 = is_what(player, iVar1, 0x47);
+          if (iVar3 != 0)
+          {
+            iVar3 = iVar1 + 1;
+            pump_ability_until_eot(player, card, player, iVar1, 0, 0, 0,
+                                   (SP_KEYWORD_INDESTRUCTIBLE | SP_KEYWORD_HEXPROOF));
+            iVar1 = iVar3;
+            if (active_cards_count[player] <= iVar3)
+              break;
+            goto LAB_020c1ec2;
+          }
+        }
+        iVar1 = iVar1 + 1;
+      } while (iVar1 < active_cards_count[player]);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  iVar1 = basic_spell(player, card, event);
+  return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20ca0b0; original cards/aether_revolt.c:5034. */
+int card_spire_of_industry(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    iVar1 = check_battlefield_for_subtype(player, 0x40, -1);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar1 = is_humiliated_for_ability(player, card, AL_MANA);
+      if ((iVar1 == 0) &&
+          ((((ai_is_speculating == 1 ||
+              ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+             (life[player] < 2)) &&
+            (instance = get_card_instance(player, card), (instance->mana_color & 1) == 0))))
+      {
+        return 0;
+      }
+      goto LAB_020ca10a;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+
+      instance = get_card_instance(player, card);
+      if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+      {
+        if ((1 < life[player] && iVar1 != 0) && ((instance->mana_color & 1) == 0))
+          goto LAB_020ca2e2;
+      }
+      else if (iVar1 != 0)
+      {
+      LAB_020ca2e2:
+        produce_mana_tapped_all_one_color_2022(player, card, (unsigned int)instance->mana_color, 1);
+        if ((chosen_colors &
+             ((mana_colors_added[player] | COLOR_TEST_COLORLESS) ^ ~COLOR_TEST_0)) == COLOR_TEST_0)
+        {
+          return 0;
+        }
+        lose_life(player, 1);
+        return 0;
+      }
+      produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_COLORLESS, 1);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_020ca10a;
+    iVar1 = check_battlefield_for_subtype(player, 0x40, -1);
+  }
+  if (((event == EVENT_COUNT_MANA) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    iVar2 = is_tapped(player, card);
+    if (((iVar2 == 0) && (iVar2 = is_animated_and_sick(player, card), iVar2 == 0)) &&
+        (iVar2 = can_produce_mana(player, card), iVar2 != 0))
+    {
+      iVar2 = check_special_flags2_2022(player, card, 0x40);
+      if ((iVar2 == 0) || (iVar2 = is_what(player, card, 1), iVar2 == 0))
+      {
+
+        instance = get_card_instance(player, card);
+        if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+        {
+          if ((life[player] < 2) || (iVar1 == 0))
+          {
+            if ((instance->mana_color & 1) == 0)
+            {
+              return 0;
+            }
+            declare_mana_available(player, 0, 1);
+            return 0;
+          }
+        }
+        else if (iVar1 == 0)
+        {
+          declare_mana_available(player, mana_colors_added[player], 1);
+          return 0;
+        }
+        declare_mana_available_hex(player, (unsigned int)instance->mana_color, 1);
+      }
+      else
+      {
+        declare_mana_available(player, 1, 1);
+      }
+    }
+    return 0;
+  }
+LAB_020ca10a:
+  iVar1 = mana_producer(player, card, event);
+  return iVar1;
 }

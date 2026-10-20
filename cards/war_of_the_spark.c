@@ -2018,7 +2018,7 @@ int card_kaya_bane_of_the_dead(int player, int card, event_t event)
          (result = is_what(1 - player, affected_card, 0x47), result != 0)) &&
         (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
     {
-      set_special_flags(affected_card_controller, affected_card, 0x20000);
+      set_special_flags_2022(affected_card_controller, affected_card, 0x20000);
     }
   }
   else
@@ -2412,7 +2412,7 @@ int card_return_to_nature(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         instance->number_of_targets = '\0';
-        iVar2 = check_special_flags2(player, card, -0x80000000);
+        iVar2 = check_special_flags2_2022(player, card, -0x80000000);
         if (iVar2 == 0)
         {
 
@@ -2911,7 +2911,7 @@ int card_tyrants_scorn(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         instance->number_of_targets = '\0';
-        iVar3 = check_special_flags2(player, card, -0x80000000);
+        iVar3 = check_special_flags2_2022(player, card, -0x80000000);
         if (iVar3 == 0)
         {
 
@@ -4138,7 +4138,7 @@ int card_neoform(int player, int card, event_t event)
   if (event == EVENT_CAST_SPELL)
   {
     if (((card == affected_card) && (player == affected_card_controller)) &&
-        (result = check_special_flags2(player, card, -0x80000000), result == 0))
+        (result = check_special_flags2_2022(player, card, -0x80000000), result == 0))
     {
 
       new_default_test_definition(&test, 2, "Select a creature to sacrifice.");
@@ -6176,7 +6176,7 @@ int card_fblthp_the_lost(int player, int card, event_t event)
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    result = check_special_flags(player, card, 0x10000);
+    result = check_special_flags_2022(player, card, 0x10000);
     draw_cards(player, (result != 0) + 1);
   }
   ptVar1 = becomes_target_of_spell(player, card, event, player, card, 2, RESOLVE_TRIGGER_MANDATORY);
@@ -6572,5 +6572,519 @@ int card_god_eternal_bontu(int player, int card, event_t event)
     draw_cards(player, iStack_ec);
   }
   result = war_god_eternal(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21d6150; original cards/war_of_the_spark.c:5736. */
+int card_sorin_vengeful_bloodlord(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  unsigned int uVar5;
+  target_definition_t *ptStack_140;
+  target_definition_t td;
+  test_definition_t test_resurrect;
+
+  check_legend_rule(player, card, event);
+  lifelink(player, card, event);
+  if (event == EVENT_ABILITIES)
+  {
+    if (((((current_turn == player) && (instance = in_play(player, card), instance != NULL)) &&
+          (affected_card_controller == player)) &&
+         (instance = in_play(player, affected_card), instance != NULL)) &&
+        (((iVar1 = is_what(affected_card_controller, affected_card, 2),
+           iVar1 != 0 ||
+               (iVar1 = is_planeswalker(affected_card_controller, affected_card), iVar1 != 0)) &&
+          ((iVar1 = is_humiliated_for_ability(player, card, AL_STATIC),
+            iVar1 == 0 &&
+                (iVar1 = is_humiliated_for_ability(affected_card_controller, affected_card, AL_KEY),
+                 iVar1 == 0))))))
+    {
+
+      instance = get_card_instance(affected_card_controller, affected_card);
+      instance->ext->sp_keywords = instance->ext->sp_keywords | 2;
+    }
+    goto LAB_021d6223;
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 0x100);
+    td.zone = 0x1200;
+    default_test_definition(&test_resurrect, 2);
+    iVar1 = count_counters(player, card, COUNTER_LOYALTY);
+    test_resurrect.cmc = iVar1 + 1;
+    test_resurrect.cmc_flag = 3;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_ACTIVATE)
+    {
+
+      instance->number_of_targets = '\0';
+      instance->info_slot = 0;
+      iVar1 = new_special_count_grave(player, &test_resurrect);
+      uVar5 = 0;
+      if (0 < iVar1)
+      {
+        iVar1 = graveyard_has_shroud(player);
+        uVar5 = (unsigned int)(iVar1 == 0);
+      }
+      iVar1 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Deal 1 damage", 1,
+                          5, 2, "Reanimate", uVar5, 10, 0, 0, 0, 0, 0);
+      if (iVar1 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (iVar1 == 1)
+      {
+        pick_target(&td, "TARGET_PLAYER_OR_PLANESWALKER");
+        goto LAB_021d6223;
+      }
+      if (iVar1 != 2)
+        goto LAB_021d6223;
+
+      if (player == 1)
+      {
+
+        ptStack_140 = NULL;
+        iVar1 = 0;
+        for (iVar3 = 0; iVar4 = count_counters(1, card, COUNTER_LOYALTY), iVar3 <= iVar4;
+             iVar3 = iVar3 + 1)
+        {
+
+          test_resurrect.cmc = iVar3;
+          iVar4 = new_special_count_grave(1, &test_resurrect);
+          if (iVar1 < iVar4)
+          {
+            iVar1 = iVar4;
+            ptStack_140 = (target_definition_t *)iVar3;
+          }
+        }
+      LAB_021d6674:
+        iVar1 = (int)ptStack_140 + 1;
+        if (-1 < (int)ptStack_140)
+          goto LAB_021d63cb;
+      LAB_021d63fd:
+        spell_fizzled = 1;
+      }
+      else
+      {
+        if (player == 0)
+        {
+          iVar1 = count_counters(0, card, COUNTER_LOYALTY);
+          ptStack_140 =
+              (target_definition_t *)choose_a_number(0, "Remove how much Loyalty?", iVar1);
+          goto LAB_021d6674;
+        }
+        iVar1 = 1;
+        ptStack_140 = NULL;
+      LAB_021d63cb:
+        iVar3 = count_counters(player, card, COUNTER_LOYALTY);
+        if (iVar3 < (int)ptStack_140)
+          goto LAB_021d63fd;
+        remove_counters_from_source(player, card, player, card, COUNTER_LOYALTY, (int)ptStack_140);
+        instance->targets[1].player = (int32_t)ptStack_140;
+      }
+      test_resurrect.cmc = iVar1;
+      select_target_from_grave_source(player, card, player, SFG_0, 1, &test_resurrect, 0);
+      goto LAB_021d6223;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_021d6223;
+    default_target_definition(player, card, &td, 0x100);
+    td.zone = 0x1200;
+    default_test_definition(&test_resurrect, 2);
+    iVar1 = count_counters(player, card, COUNTER_LOYALTY);
+    test_resurrect.cmc = iVar1 + 1;
+    test_resurrect.cmc_flag = 3;
+    instance = get_card_instance(player, card);
+  }
+  ptStack_140 = &td;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    if (instance->info_slot == 1)
+    {
+      iVar1 = valid_target(ptStack_140);
+      if (iVar1 != 0)
+      {
+        damage_target0(player, card, 1);
+      }
+    }
+    else
+    {
+
+      if ((instance->info_slot == 2) &&
+          (iVar1 = validate_target_from_grave_source(player, card, player, 0), -1 < iVar1))
+      {
+
+        iVar1 = reanimate_permanent(player, card, player, iVar1, REANIMATE_DEFAULT);
+        add_a_subtype_permanently(player, card, player, iVar1, SUBTYPE_VAMPIRE);
+      }
+    }
+  }
+LAB_021d6223:
+  iVar1 = planeswalker(player, card, event, 4);
+  return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21d0bf0; original cards/war_of_the_spark.c:3581. */
+int card_lazotep_plating(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+      {
+        return 0;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      amass(player, card, 1);
+      if (0 < active_cards_count[player])
+      {
+        iVar1 = 0;
+        do
+        {
+          while ((instance = in_play(player, iVar1),
+                  instance == NULL || (iVar3 = is_what(player, iVar1, 0x47), iVar3 == 0)))
+          {
+            iVar1 = iVar1 + 1;
+            if (active_cards_count[player] <= iVar1)
+              goto LAB_021d0d18;
+          }
+          iVar3 = iVar1 + 1;
+          pump_ability_until_eot(player, card, player, iVar1, 0, 0, 0, (SP_KEYWORD_HEXPROOF));
+          iVar1 = iVar3;
+        } while (iVar3 < active_cards_count[player]);
+      }
+    LAB_021d0d18:
+      create_legacy_effect(player, card, lazotep_plating_effect);
+      kill_card(player, card, KILL_DESTROY);
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  iVar1 = basic_spell(player, card, event);
+  return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21c8380; original cards/war_of_the_spark.c:128. */
+int card_angraths_rampage(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  type_t type;
+  const char *pcVar3;
+  target_definition_t td;
+  char typetext[100];
+  char prompt[200];
+  test_definition_t test;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.zone = 0x1000;
+    get_card_instance(player, card);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_PLAYER", 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 2);
+      td.zone = 0x1000;
+      get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        result = check_special_flags2_2022(player, card, -0x80000000);
+
+        if ((result == 0) &&
+            (result =
+                 dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002",
+                             "Target sacrifices an artifact", 1, 5, "Target sacrifices a creature",
+                             1, 5, "Target sacrifices a planeswalker", 1, 5, 0, 0, 0, 0),
+             result == 0))
+        {
+          spell_fizzled = 1;
+        }
+        else
+        {
+          generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_PLAYER", 1, NULL);
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.zone = 0x1000;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = valid_target(&td);
+      if (result != 0)
+      {
+
+        if (instance->info_slot == 1)
+        {
+          result = 0x40;
+          type = TYPE_ARTIFACT;
+        }
+        else if (instance->info_slot == 2)
+        {
+          type = TYPE_CREATURE;
+          result = 2;
+        }
+        else
+        {
+          result = 0x100;
+          type = TARGET_TYPE_PLANESWALKER;
+        }
+        if (ai_is_speculating == 1)
+        {
+          prompt[0] = '\0';
+        }
+        else
+        {
+          pcVar3 = type_text(typetext, 100, type, TYPETEXT_0);
+          scnprintf(prompt, 200, "Select a %s to_sacrifice.", pcVar3);
+        }
+        new_default_test_definition(&test, result, prompt);
+        new_sacrifice(player, card, instance->targets[0].player, SAC_CAUSED | SAC_NO_CANCEL, &test);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.zone = 0x1000;
+    get_card_instance(player, card);
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int effect_yanggu_mana(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x21ced60; original cards/war_of_the_spark.c:2637. */
+int card_guild_globe(int player, int card, event_t event)
+{
+  int result;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    draw_a_card(player);
+  }
+  else if (event == EVENT_COUNT_MANA)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (result = mana_producer(player, card, EVENT_CAN_ACTIVATE), result != 0)) &&
+        ((result = can_sacrifice_this_as_cost(player, card),
+          result != 0 && (result = has_mana(player, 7, 2), result != 0))))
+    {
+      declare_mana_available_any_combination_of_colors(player, COLOR_TEST_ANY_COLORED, 2);
+    }
+  }
+  else if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+    if (((result != 0) && (result = can_sacrifice_this_as_cost(player, card), result != 0)) &&
+        (result = has_mana(player, 7, 2), result != 0))
+    {
+      return 1;
+    }
+  }
+  else if ((event == EVENT_ACTIVATE) &&
+           (result = charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0),
+            result != 0))
+  {
+    produce_mana_tapped_all_different_colors_2022(player, card, COLOR_TEST_ANY_COLORED, 2, NULL);
+    kill_card(player, card, KILL_SACRIFICE);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21c71e0; original cards/war_of_the_spark.c:3096. */
+static int effect_yanggu_mana(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = player;
+  td.allowed_controller = player;
+  td.allow_cancel = 2;
+  td.illegal_state = 0x1001;
+  td.illegal_abilities = 0;
+  td.special = 0x8000;
+  td.extra = (int32_t)has_a_counter_and_not_mana_src;
+  if (event == EVENT_COUNT_MANA)
+  {
+
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)) &&
+        (result = target_available(player, card, &td), 0 < result))
+    {
+      declare_mana_available_hex(player, 0x3e, result);
+    }
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      instance = get_card_instance(player, card);
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        result = is_humiliated_for_ability((int)instance->damage_target_player,
+                                           instance->damage_target_card, AL_STATIC);
+        if (result != 0)
+        {
+          return 0;
+        }
+        result = can_target(&td);
+        return result;
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      {
+        return 0;
+      }
+      instance = get_card_instance(player, card);
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      result = pick_target(&td, "TARGET_CREATURE");
+      if (result != 0)
+      {
+        instance->number_of_targets = '\x01';
+        produce_mana_tapped_any_combination_of_colors_impl(instance->targets[0].player,
+                                                           instance->targets[0].card,
+                                                           COLOR_TEST_ANY_COLORED, 1, NULL, 0);
+      }
+      spell_fizzled = 1;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x21cf9b0; original cards/war_of_the_spark.c:3134. */
+int card_jiang_yanggu_wildcrafter(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    create_targetted_legacy_activate(player, card, effect_yanggu_mana, player, card);
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      default_target_definition(player, card, &td, 2);
+      td.allow_cancel = 1;
+      instance = get_card_instance(player, card);
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        result = can_target(&td);
+        if (result == 0)
+        {
+          return 0;
+        }
+        goto LAB_021cfa35;
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+        goto LAB_021cfa35;
+      default_target_definition(player, card, &td, 2);
+      td.allow_cancel = 1;
+      instance = get_card_instance(player, card);
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+
+      instance->number_of_targets = '\0';
+      instance->info_slot = 0;
+      result = can_target(&td);
+      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "\001\014",
+                           "\001\017", "Add a +1/+1 counter", result, 5, 0xffffffff, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      new_pick_target(&td, "TARGET_CREATURE", 0, 1);
+    }
+    else if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
+    {
+      add_counters_from_source(player, card, instance->targets[0].player, instance->targets[0].card,
+                               COUNTER_P1_P1, 1);
+    }
+  }
+LAB_021cfa35:
+  result = planeswalker(player, card, event, 3);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21d1ee0; original cards/war_of_the_spark.c:4222. */
+int card_narsets_reversal(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = counterspell_validate(player, card, NULL, 0);
+    if (result != 0)
+    {
+
+      instance = get_card_instance(player, card);
+      result =
+          pre_counterspell(player, card, instance->targets[0].player, instance->targets[0].card);
+      if (result == 0)
+      {
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+      }
+      else
+      {
+        copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
+        bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell(player, card, event, 2, NULL, NULL, 1, NULL);
   return result;
 }

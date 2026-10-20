@@ -1,0 +1,1002 @@
+{
+  "scope": "Previously recovered implementations only; original functions and source fragments are not migrated.",
+  "functions": [
+    {
+      "name": "codie_effect",
+      "address": "23c68c0",
+      "source": "cards/strixhaven.c",
+      "calls": 1
+    },
+    {
+      "name": "card_double_major",
+      "address": "23cd240",
+      "source": "cards/strixhaven.c",
+      "calls": 1
+    },
+    {
+      "name": "commander_you_own",
+      "address": "23b2030",
+      "source": "cards/commander_2019.c",
+      "calls": 1
+    },
+    {
+      "name": "is_commander",
+      "address": "25a0360",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "me_or_commander",
+      "address": "25a03f0",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "get_aftermath",
+      "address": "26c7f10",
+      "source": "functions/rules_engine.c",
+      "calls": 1
+    },
+    {
+      "name": "card_synchronized_strike",
+      "address": "22e1b10",
+      "source": "cards/amonkhet.c",
+      "calls": 2
+    },
+    {
+      "name": "path_of_ancestry_legacy",
+      "address": "228d2e0",
+      "source": "cards/commander_2017.c",
+      "calls": 1
+    },
+    {
+      "name": "card_sevinnes_reclamation",
+      "address": "23b3dd0",
+      "source": "cards/commander_2019.c",
+      "calls": 2
+    },
+    {
+      "name": "card_crown_of_the_ages",
+      "address": "23f40c0",
+      "source": "cards/ice_age.c",
+      "calls": 2
+    },
+    {
+      "name": "card_ardent_soldier",
+      "address": "2495e80",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "card_benalish_emissary",
+      "address": "2496500",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "card_explosive_growth",
+      "address": "2497ed0",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "card_hypnotic_cloud",
+      "address": "24987f0",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "card_kavu_aggressor",
+      "address": "2498a80",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "card_llanowar_elite",
+      "address": "2498ec0",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "card_orims_touch",
+      "address": "24998b0",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "card_pincer_spider",
+      "address": "2499fb0",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "card_savage_offensive",
+      "address": "249b890",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "card_scorching_lava",
+      "address": "249bb40",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "card_tolarian_emissary",
+      "address": "249da10",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "card_urborg_skeleton",
+      "address": "249e270",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "primal_wellspring_legacy",
+      "address": "22126f0",
+      "source": "cards/ixalan.c",
+      "calls": 1
+    },
+    {
+      "name": "generator_servant_legacy",
+      "address": "21a9e30",
+      "source": "cards/m15.c",
+      "calls": 1
+    },
+    {
+      "name": "doublecast_legacy",
+      "address": "22058a0",
+      "source": "cards/m19.c",
+      "calls": 1
+    },
+    {
+      "name": "card_apex_of_power",
+      "address": "2206f30",
+      "source": "cards/m19.c",
+      "calls": 1
+    },
+    {
+      "name": "card_weather_the_storm",
+      "address": "233dbb0",
+      "source": "cards/modern_horizons.c",
+      "calls": 1
+    },
+    {
+      "name": "pyromancers_goggles_legacy",
+      "address": "20d9b40",
+      "source": "cards/origins.c",
+      "calls": 1
+    },
+    {
+      "name": "adventure_transform",
+      "address": "25c9910",
+      "source": "cards/throne_of_eldraine.c",
+      "calls": 3
+    },
+    {
+      "name": "card_crow_storm",
+      "address": "25c5700",
+      "source": "cards/unstable.c",
+      "calls": 1
+    },
+    {
+      "name": "doublecast_legacy_mana_value_2_or_less",
+      "address": "23068c0",
+      "source": "cards/zendikar_rising.c",
+      "calls": 1
+    },
+    {
+      "name": "triplecast_legacy_mana_value_2_or_less",
+      "address": "23069f0",
+      "source": "cards/zendikar_rising.c",
+      "calls": 1
+    },
+    {
+      "name": "mdfc_transform",
+      "address": "2306e80",
+      "source": "cards/zendikar_rising.c",
+      "calls": 3
+    },
+    {
+      "name": "can_legally_target",
+      "address": "2661860",
+      "source": "functions/targets.c",
+      "calls": 2
+    },
+    {
+      "name": "boseiju_legacy",
+      "address": "26095d0",
+      "source": "cards/champions_of_kamigawa.c",
+      "calls": 1
+    },
+    {
+      "name": "card_grave_scrabbler",
+      "address": "25758c0",
+      "source": "cards/future_sight.c",
+      "calls": 1
+    },
+    {
+      "name": "card_march_of_the_multitudes",
+      "address": "261e380",
+      "source": "cards/guilds_of_ravnica.c",
+      "calls": 1
+    },
+    {
+      "name": "card_soul_burn",
+      "address": "2408f80",
+      "source": "cards/ice_age.c",
+      "calls": 2
+    },
+    {
+      "name": "card_shivan_emissary",
+      "address": "249c260",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "card_asmoranomardicadaistinaculdacar",
+      "address": "222da30",
+      "source": "cards/modern_horizons_2.c",
+      "calls": 2
+    },
+    {
+      "name": "card_flametongue_yearling",
+      "address": "2234790",
+      "source": "cards/modern_horizons_2.c",
+      "calls": 1
+    },
+    {
+      "name": "card_hydroid_krasis",
+      "address": "25bfc00",
+      "source": "cards/ravnica_allegiance.c",
+      "calls": 1
+    },
+    {
+      "name": "card_stonecoil_serpent",
+      "address": "25d46f0",
+      "source": "cards/throne_of_eldraine.c",
+      "calls": 2
+    },
+    {
+      "name": "deflect_multi_targets",
+      "address": "2693670",
+      "source": "functions/functions.c",
+      "calls": 2
+    },
+    {
+      "name": "escape_spell",
+      "address": "2669160",
+      "source": "functions/play_spell_for_free.c",
+      "calls": 2
+    },
+    {
+      "name": "card_bloodchiefs_thirst",
+      "address": "2308450",
+      "source": "cards/zendikar_rising.c",
+      "calls": 1
+    },
+    {
+      "name": "is_entered_the_battlefield_this_turn",
+      "address": "259ff70",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "has_only_1_target_and_can_legally_change_target_to_attached",
+      "address": "24277b0",
+      "source": "cards/gargaroz.c",
+      "calls": 2
+    },
+    {
+      "name": "has_only_1_target_and_targets_a_creature_and_can_legally_change_target_to_me",
+      "address": "24278a0",
+      "source": "cards/gargaroz.c",
+      "calls": 2
+    },
+    {
+      "name": "card_academic_probation",
+      "address": "23c8bb0",
+      "source": "cards/strixhaven.c",
+      "calls": 1
+    },
+    {
+      "name": "card_decisive_denial",
+      "address": "23cc160",
+      "source": "cards/strixhaven.c",
+      "calls": 1
+    },
+    {
+      "name": "card_rip_apart",
+      "address": "23d9770",
+      "source": "cards/strixhaven.c",
+      "calls": 1
+    },
+    {
+      "name": "card_umbral_juke",
+      "address": "23de590",
+      "source": "cards/strixhaven.c",
+      "calls": 1
+    },
+    {
+      "name": "commander_test",
+      "address": "25a0390",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "is_not_commander",
+      "address": "25a03c0",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "card_destructive_tampering",
+      "address": "20c0210",
+      "source": "cards/aether_revolt.c",
+      "calls": 1
+    },
+    {
+      "name": "card_invigorated_rampage",
+      "address": "20c3bf0",
+      "source": "cards/aether_revolt.c",
+      "calls": 1
+    },
+    {
+      "name": "card_coveted_jewel",
+      "address": "2561390",
+      "source": "cards/commander_2018.c",
+      "calls": 2
+    },
+    {
+      "name": "card_alena_kessig_trapper",
+      "address": "25a2de0",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "card_anara_wolvid_familiar",
+      "address": "25a35c0",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "card_falthis_shadowcat_familiar",
+      "address": "25a73a0",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "card_flamekin_herald",
+      "address": "25a7720",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "card_captured_by_the_consulate",
+      "address": "24291c0",
+      "source": "cards/gargaroz.c",
+      "calls": 1
+    },
+    {
+      "name": "card_supreme_will",
+      "address": "20cf270",
+      "source": "cards/hour_of_devastation.c",
+      "calls": 1
+    },
+    {
+      "name": "card_doomfall",
+      "address": "20cfc50",
+      "source": "cards/hour_of_devastation.c",
+      "calls": 1
+    },
+    {
+      "name": "card_abrade",
+      "address": "20d0910",
+      "source": "cards/hour_of_devastation.c",
+      "calls": 1
+    },
+    {
+      "name": "split_card_impl",
+      "address": "2485f50",
+      "source": "cards/invasion.c",
+      "calls": 2
+    },
+    {
+      "name": "card_benalish_lancer",
+      "address": "2496620",
+      "source": "cards/invasion.c",
+      "calls": 3
+    },
+    {
+      "name": "card_duskwalker",
+      "address": "2497a90",
+      "source": "cards/invasion.c",
+      "calls": 3
+    },
+    {
+      "name": "card_faerie_squadron",
+      "address": "2498210",
+      "source": "cards/invasion.c",
+      "calls": 3
+    },
+    {
+      "name": "card_pouncing_kavu",
+      "address": "249a2a0",
+      "source": "cards/invasion.c",
+      "calls": 3
+    },
+    {
+      "name": "card_prison_barricade",
+      "address": "249a570",
+      "source": "cards/invasion.c",
+      "calls": 3
+    },
+    {
+      "name": "card_vodalian_serpent",
+      "address": "249e3b0",
+      "source": "cards/invasion.c",
+      "calls": 1
+    },
+    {
+      "name": "card_captain_lannery_storm",
+      "address": "22150d0",
+      "source": "cards/ixalan.c",
+      "calls": 1
+    },
+    {
+      "name": "card_crushing_canopy",
+      "address": "2216130",
+      "source": "cards/ixalan.c",
+      "calls": 1
+    },
+    {
+      "name": "card_ebony_charm",
+      "address": "238c730",
+      "source": "cards/mirage.c",
+      "calls": 1
+    },
+    {
+      "name": "card_burdened_aerialist",
+      "address": "222fab0",
+      "source": "cards/modern_horizons_2.c",
+      "calls": 1
+    },
+    {
+      "name": "card_flourishing_strike",
+      "address": "2234c00",
+      "source": "cards/modern_horizons_2.c",
+      "calls": 1
+    },
+    {
+      "name": "card_zabaz_the_glimmerwasp",
+      "address": "2243f30",
+      "source": "cards/modern_horizons_2.c",
+      "calls": 1
+    },
+    {
+      "name": "card_assassins_blade",
+      "address": "21c0670",
+      "source": "cards/portal_1_2_3k.c",
+      "calls": 1
+    },
+    {
+      "name": "card_treetop_defense",
+      "address": "21c19e0",
+      "source": "cards/portal_1_2_3k.c",
+      "calls": 1
+    },
+    {
+      "name": "card_scorching_winds",
+      "address": "21c1ed0",
+      "source": "cards/portal_1_2_3k.c",
+      "calls": 1
+    },
+    {
+      "name": "card_defiant_stand",
+      "address": "21c2000",
+      "source": "cards/portal_1_2_3k.c",
+      "calls": 1
+    },
+    {
+      "name": "card_just_fate",
+      "address": "21c4540",
+      "source": "cards/portal_1_2_3k.c",
+      "calls": 1
+    },
+    {
+      "name": "card_rally_the_troops",
+      "address": "21c4700",
+      "source": "cards/portal_1_2_3k.c",
+      "calls": 1
+    },
+    {
+      "name": "card_warriors_stand",
+      "address": "21c49a0",
+      "source": "cards/portal_1_2_3k.c",
+      "calls": 1
+    },
+    {
+      "name": "card_storm_the_vault",
+      "address": "2195b10",
+      "source": "cards/rivals_of_ixalan.c",
+      "calls": 1
+    },
+    {
+      "name": "card_zacama_primal_calamity",
+      "address": "2195ed0",
+      "source": "cards/rivals_of_ixalan.c",
+      "calls": 1
+    },
+    {
+      "name": "card_kroxa_titan_of_deaths_hunger",
+      "address": "235e4d0",
+      "source": "cards/theros_beyond_death.c",
+      "calls": 1
+    },
+    {
+      "name": "card_thassas_intervention",
+      "address": "23609c0",
+      "source": "cards/theros_beyond_death.c",
+      "calls": 1
+    },
+    {
+      "name": "card_uro_titan_of_natures_wrath",
+      "address": "23621b0",
+      "source": "cards/theros_beyond_death.c",
+      "calls": 1
+    },
+    {
+      "name": "play_card_from_adventure",
+      "address": "25c9a70",
+      "source": "cards/throne_of_eldraine.c",
+      "calls": 1
+    },
+    {
+      "name": "generic_adventurer",
+      "address": "25ca460",
+      "source": "cards/throne_of_eldraine.c",
+      "calls": 6
+    },
+    {
+      "name": "black_damage_source",
+      "address": "24bae70",
+      "source": "cards/unlimited.c",
+      "calls": 1
+    },
+    {
+      "name": "blue_damage_source",
+      "address": "24baf60",
+      "source": "cards/unlimited.c",
+      "calls": 1
+    },
+    {
+      "name": "green_damage_source",
+      "address": "24bb050",
+      "source": "cards/unlimited.c",
+      "calls": 1
+    },
+    {
+      "name": "red_damage_source",
+      "address": "24bb140",
+      "source": "cards/unlimited.c",
+      "calls": 1
+    },
+    {
+      "name": "white_damage_source",
+      "address": "24bb230",
+      "source": "cards/unlimited.c",
+      "calls": 1
+    },
+    {
+      "name": "card_parch",
+      "address": "25ba340",
+      "source": "cards/urza_legacy.c",
+      "calls": 1
+    },
+    {
+      "name": "damage_from_land_source",
+      "address": "2042a80",
+      "source": "cards/urza_saga.c",
+      "calls": 1
+    },
+    {
+      "name": "card_hope_charm",
+      "address": "2021cb0",
+      "source": "cards/visions.c",
+      "calls": 1
+    },
+    {
+      "name": "card_kaya_bane_of_the_dead",
+      "address": "21d0410",
+      "source": "cards/war_of_the_spark.c",
+      "calls": 1
+    },
+    {
+      "name": "card_return_to_nature",
+      "address": "21d4da0",
+      "source": "cards/war_of_the_spark.c",
+      "calls": 1
+    },
+    {
+      "name": "card_tyrants_scorn",
+      "address": "21d82d0",
+      "source": "cards/war_of_the_spark.c",
+      "calls": 1
+    },
+    {
+      "name": "mdfc_front_impl",
+      "address": "2306fe0",
+      "source": "cards/zendikar_rising.c",
+      "calls": 3
+    },
+    {
+      "name": "remove_until_upkeep_legacy",
+      "address": "269f000",
+      "source": "functions/functions.c",
+      "calls": 1
+    },
+    {
+      "name": "card_retriever_phoenix",
+      "address": "23d96f0",
+      "source": "cards/strixhaven.c",
+      "calls": 1
+    },
+    {
+      "name": "card_chaos_charm",
+      "address": "238b020",
+      "source": "cards/mirage.c",
+      "calls": 1
+    },
+    {
+      "name": "card_shaile_dean_of_radiance",
+      "address": "23db3a0",
+      "source": "cards/strixhaven.c",
+      "calls": 2
+    },
+    {
+      "name": "card_walking_ballista",
+      "address": "20cc120",
+      "source": "cards/aether_revolt.c",
+      "calls": 2
+    },
+    {
+      "name": "card_splendid_agony",
+      "address": "22dd2e0",
+      "source": "cards/amonkhet.c",
+      "calls": 2
+    },
+    {
+      "name": "card_nissa_steward_of_elements",
+      "address": "22e2ef0",
+      "source": "cards/amonkhet.c",
+      "calls": 1
+    },
+    {
+      "name": "juri_master_of_the_revue_effect",
+      "address": "25a1310",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "card_juri_master_of_the_revue",
+      "address": "25a9b50",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "card_tempered_sliver",
+      "address": "233d3a0",
+      "source": "cards/modern_horizons.c",
+      "calls": 1
+    },
+    {
+      "name": "card_breathless_knight",
+      "address": "222f3f0",
+      "source": "cards/modern_horizons_2.c",
+      "calls": 2
+    },
+    {
+      "name": "card_ravenous_squirrel",
+      "address": "223bf20",
+      "source": "cards/modern_horizons_2.c",
+      "calls": 1
+    },
+    {
+      "name": "card_sword_of_hearth_and_home",
+      "address": "2240320",
+      "source": "cards/modern_horizons_2.c",
+      "calls": 1
+    },
+    {
+      "name": "card_unbounded_potential",
+      "address": "2241f00",
+      "source": "cards/modern_horizons_2.c",
+      "calls": 1
+    },
+    {
+      "name": "dovin_grand_arbiter_legacy",
+      "address": "25bb340",
+      "source": "cards/ravnica_allegiance.c",
+      "calls": 1
+    },
+    {
+      "name": "card_neoform",
+      "address": "21d2370",
+      "source": "cards/war_of_the_spark.c",
+      "calls": 1
+    },
+    {
+      "name": "valentin_effect",
+      "address": "23c7140",
+      "source": "cards/strixhaven.c",
+      "calls": 1
+    },
+    {
+      "name": "card_valentin_dean_of_the_vein",
+      "address": "23debd0",
+      "source": "cards/strixhaven.c",
+      "calls": 1
+    },
+    {
+      "name": "multicascade",
+      "address": "22fab70",
+      "source": "cards/alara_reborn.c",
+      "calls": 1
+    },
+    {
+      "name": "card_by_force",
+      "address": "22ddcc0",
+      "source": "cards/amonkhet.c",
+      "calls": 1
+    },
+    {
+      "name": "card_aminatous_augury",
+      "address": "25604e0",
+      "source": "cards/commander_2018.c",
+      "calls": 1
+    },
+    {
+      "name": "card_hans_eriksson",
+      "address": "25a8760",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "card_hour_of_eternity",
+      "address": "20ce580",
+      "source": "cards/hour_of_devastation.c",
+      "calls": 1
+    },
+    {
+      "name": "card_orcish_squatters",
+      "address": "2405590",
+      "source": "cards/ice_age.c",
+      "calls": 1
+    },
+    {
+      "name": "card_agonizing_demise",
+      "address": "2495660",
+      "source": "cards/invasion.c",
+      "calls": 2
+    },
+    {
+      "name": "card_archmages_charm",
+      "address": "2335c60",
+      "source": "cards/modern_horizons.c",
+      "calls": 1
+    },
+    {
+      "name": "warp_world_effect",
+      "address": "24f58a0",
+      "source": "cards/ravnica.c",
+      "calls": 2
+    },
+    {
+      "name": "card_phyrexian_marauder",
+      "address": "2023810",
+      "source": "cards/visions.c",
+      "calls": 2
+    },
+    {
+      "name": "card_nassari_dean_of_expression",
+      "address": "23dea60",
+      "source": "cards/strixhaven.c",
+      "calls": 1
+    },
+    {
+      "name": "ee_legacy",
+      "address": "23c8a30",
+      "source": "cards/strixhaven.c",
+      "calls": 2
+    },
+    {
+      "name": "card_elemental_expressionist",
+      "address": "23ce370",
+      "source": "cards/strixhaven.c",
+      "calls": 2
+    },
+    {
+      "name": "card_confront_the_past",
+      "address": "23cb090",
+      "source": "cards/strixhaven.c",
+      "calls": 1
+    },
+    {
+      "name": "card_polukranos_unchained",
+      "address": "235f6b0",
+      "source": "cards/theros_beyond_death.c",
+      "calls": 1
+    },
+    {
+      "name": "card_meddle",
+      "address": "24285e0",
+      "source": "cards/gargaroz.c",
+      "calls": 2
+    },
+    {
+      "name": "opal_palace_legacy",
+      "address": "23c0880",
+      "source": "cards/commander_2013.c",
+      "calls": 2
+    },
+    {
+      "name": "card_echo_storm",
+      "address": "2561690",
+      "source": "cards/commander_2018.c",
+      "calls": 1
+    },
+    {
+      "name": "card_empyrial_storm",
+      "address": "25619a0",
+      "source": "cards/commander_2018.c",
+      "calls": 1
+    },
+    {
+      "name": "card_fury_storm",
+      "address": "2562780",
+      "source": "cards/commander_2018.c",
+      "calls": 1
+    },
+    {
+      "name": "card_genesis_storm",
+      "address": "2562940",
+      "source": "cards/commander_2018.c",
+      "calls": 1
+    },
+    {
+      "name": "card_skull_storm",
+      "address": "25654a0",
+      "source": "cards/commander_2018.c",
+      "calls": 1
+    },
+    {
+      "name": "card_tevesh_szat_doom_of_fools",
+      "address": "25b09e0",
+      "source": "cards/commander_legends.c",
+      "calls": 2
+    },
+    {
+      "name": "put_commander_from_command_zone_to_impl",
+      "address": "22c6590",
+      "source": "cards/vanguard.c",
+      "calls": 1
+    },
+    {
+      "name": "card_ecological_appreciation",
+      "address": "23cdd70",
+      "source": "cards/strixhaven.c",
+      "calls": 2
+    },
+    {
+      "name": "card_serra_bestiary",
+      "address": "2129110",
+      "source": "cards/homelands.c",
+      "calls": 2
+    },
+    {
+      "name": "isareth_legacy",
+      "address": "22059c0",
+      "source": "cards/m19.c",
+      "calls": 1
+    },
+    {
+      "name": "card_isareth_the_awakener",
+      "address": "2209020",
+      "source": "cards/m19.c",
+      "calls": 2
+    },
+    {
+      "name": "card_ardenn_intrepid_archaeologist",
+      "address": "25a3dd0",
+      "source": "cards/commander_legends.c",
+      "calls": 2
+    },
+    {
+      "name": "card_imoti_celebrant_of_bounty",
+      "address": "25a8da0",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "card_the_first_sliver",
+      "address": "233d4d0",
+      "source": "cards/modern_horizons.c",
+      "calls": 1
+    },
+    {
+      "name": "golden_guardian_legacy",
+      "address": "218f350",
+      "source": "cards/rivals_of_ixalan.c",
+      "calls": 1
+    },
+    {
+      "name": "calix_obliviation_legacy",
+      "address": "2358e10",
+      "source": "cards/theros_beyond_death.c",
+      "calls": 1
+    },
+    {
+      "name": "card_tizerus_charger",
+      "address": "22419b0",
+      "source": "cards/modern_horizons_2.c",
+      "calls": 1
+    },
+    {
+      "name": "card_grumgully_the_generous",
+      "address": "25d0610",
+      "source": "cards/throne_of_eldraine.c",
+      "calls": 1
+    },
+    {
+      "name": "zendikon",
+      "address": "2583ed0",
+      "source": "cards/worldwake.c",
+      "calls": 1
+    },
+    {
+      "name": "card_fblthp_the_lost",
+      "address": "21cc900",
+      "source": "cards/war_of_the_spark.c",
+      "calls": 1
+    },
+    {
+      "name": "card_laboratory_drudge",
+      "address": "25ab7c0",
+      "source": "cards/commander_legends.c",
+      "calls": 1
+    },
+    {
+      "name": "card_display_of_dominance",
+      "address": "2324920",
+      "source": "cards/dragons_of_tarkir.c",
+      "calls": 1
+    },
+    {
+      "name": "replicate_blue_red_2022_impl",
+      "address": "252b8d0",
+      "source": "cards/guildpact.c",
+      "calls": 1
+    },
+    {
+      "name": "card_angraths_rampage",
+      "address": "21c8380",
+      "source": "cards/war_of_the_spark.c",
+      "calls": 1
+    },
+    {
+      "name": "multi_x_spell",
+      "address": "2694000",
+      "source": "functions/functions.c",
+      "calls": 1
+    },
+    {
+      "name": "put_into_play_transformed",
+      "address": "26955c0",
+      "source": "functions/functions.c",
+      "calls": 3
+    }
+  ],
+  "skipped": []
+}

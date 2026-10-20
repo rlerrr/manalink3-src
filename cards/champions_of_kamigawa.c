@@ -5455,7 +5455,7 @@ static int boseiju_legacy(int player, int card, event_t event)
          (result = played_for_free(affected_card_controller, affected_card), result == 0)) &&
         (((result = is_token(affected_card_controller, affected_card),
            result == 0 &&
-               (result = check_special_flags2(affected_card_controller, affected_card, -0x80000000),
+               (result = check_special_flags2_2022(affected_card_controller, affected_card, -0x80000000),
                 result == 0)) &&
           ((result = get_cmc(affected_card_controller, affected_card),
             0 < result && ((affected_card_controller == player &&
@@ -5807,5 +5807,20 @@ static int card_cranial_extraction_impl(int player, int card, event_t event)
   td.zone = 0x1000;
 LAB_02609a3c:
   result = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2613040; original cards/champions_of_kamigawa.c:3200. */
+int card_masako_the_humorless(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    card_flags[player] = card_flags[player] | 1;
+  }
+  result = flash(player, card, event);
   return result;
 }

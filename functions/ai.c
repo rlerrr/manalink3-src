@@ -1,5 +1,21 @@
 #include "manalink.h"
 
+/* October 2022 per-player card and counterability flag storage. */
+static uint8_t backup_card_flags[8];
+static uint8_t backup_your_spells_cant_be_countered_by_color[2];
+static uint8_t backup0_card_flags[8];
+static uint8_t backup0_your_spells_cant_be_countered_by_color[2];
+
+/* October 2022 mana modifier table storage. */
+static uint8_t backup_mana_colors_added[8];
+static uint8_t backup_mana_color_override[64];
+static uint8_t backup_mana_quantity_override[64];
+static uint8_t backup_multi_mana_transmutation[16];
+static uint8_t backup0_mana_colors_added[8];
+static uint8_t backup0_mana_color_override[64];
+static uint8_t backup0_mana_quantity_override[64];
+static uint8_t backup0_multi_mana_transmutation[16];
+
 /* October 2022 extension storage; fixed banks and original template. */
 static char backup_card_ext[57600];
 static char backup0_card_ext[57600];
@@ -166,6 +182,16 @@ BACKUP_AND_SAVE_LIST
 #undef BACKUP_CMD_S
 void backup_data_for_ai(void)
 {
+  /* Recovered 2022 player-flag fragment: backup_data_for_ai @ 0x26b1700. */
+  memcpy(backup_card_flags, card_flags, sizeof(card_flags));
+  memcpy(backup_your_spells_cant_be_countered_by_color, your_spells_cant_be_countered_by_color, sizeof(your_spells_cant_be_countered_by_color));
+  /* End recovered 2022 player-flag fragment: backup_data_for_ai. */
+  /* Recovered 2022 mana-cache fragment: backup_data_for_ai @ 0x26b1700. */
+  memcpy(backup_mana_colors_added, mana_colors_added, sizeof(mana_colors_added));
+  memcpy(backup_mana_color_override, mana_color_override, sizeof(mana_color_override));
+  memcpy(backup_mana_quantity_override, mana_quantity_override, sizeof(mana_quantity_override));
+  memcpy(backup_multi_mana_transmutation, multi_mana_transmutation, sizeof(multi_mana_transmutation));
+  /* End recovered 2022 mana-cache fragment: backup_data_for_ai. */
   /* Recovered 2022 dice-cache fragment: backup_data_for_ai @ 0x26b1700. */
   memcpy(backup_add_to_die_rolls, add_to_die_rolls, sizeof(add_to_die_rolls));
   memcpy(backup_roll_extra_dice, roll_extra_dice, sizeof(roll_extra_dice));
@@ -195,6 +221,16 @@ void backup_data_for_ai(void)
 
 void restore_data_for_ai(void)
 {
+  /* Recovered 2022 player-flag fragment: restore_data_for_ai @ 0x26b1900. */
+  memcpy(card_flags, backup_card_flags, sizeof(card_flags));
+  memcpy(your_spells_cant_be_countered_by_color, backup_your_spells_cant_be_countered_by_color, sizeof(your_spells_cant_be_countered_by_color));
+  /* End recovered 2022 player-flag fragment: restore_data_for_ai. */
+  /* Recovered 2022 mana-cache fragment: restore_data_for_ai @ 0x26b1900. */
+  memcpy(mana_colors_added, backup_mana_colors_added, sizeof(mana_colors_added));
+  memcpy(mana_color_override, backup_mana_color_override, sizeof(mana_color_override));
+  memcpy(mana_quantity_override, backup_mana_quantity_override, sizeof(mana_quantity_override));
+  memcpy(multi_mana_transmutation, backup_multi_mana_transmutation, sizeof(multi_mana_transmutation));
+  /* End recovered 2022 mana-cache fragment: restore_data_for_ai. */
   /* Recovered 2022 dice-cache fragment: restore_data_for_ai @ 0x26b1900. */
   memcpy(add_to_die_rolls, backup_add_to_die_rolls, sizeof(add_to_die_rolls));
   memcpy(roll_extra_dice, backup_roll_extra_dice, sizeof(roll_extra_dice));
@@ -234,6 +270,16 @@ BACKUP_AND_SAVE_LIST
 #undef BACKUP_CMD_S
 void backup_data_for_ai_0(void)
 {
+  /* Recovered 2022 player-flag fragment: backup_data_for_ai_0 @ 0x26b1b00. */
+  memcpy(backup0_card_flags, card_flags, sizeof(card_flags));
+  memcpy(backup0_your_spells_cant_be_countered_by_color, your_spells_cant_be_countered_by_color, sizeof(your_spells_cant_be_countered_by_color));
+  /* End recovered 2022 player-flag fragment: backup_data_for_ai_0. */
+  /* Recovered 2022 mana-cache fragment: backup_data_for_ai_0 @ 0x26b1b00. */
+  memcpy(backup0_mana_colors_added, mana_colors_added, sizeof(mana_colors_added));
+  memcpy(backup0_mana_color_override, mana_color_override, sizeof(mana_color_override));
+  memcpy(backup0_mana_quantity_override, mana_quantity_override, sizeof(mana_quantity_override));
+  memcpy(backup0_multi_mana_transmutation, multi_mana_transmutation, sizeof(multi_mana_transmutation));
+  /* End recovered 2022 mana-cache fragment: backup_data_for_ai_0. */
   /* Recovered 2022 dice-cache fragment: backup_data_for_ai_0 @ 0x26b1b00. */
   memcpy(backup0_add_to_die_rolls, add_to_die_rolls, sizeof(add_to_die_rolls));
   memcpy(backup0_roll_extra_dice, roll_extra_dice, sizeof(roll_extra_dice));
@@ -266,6 +312,16 @@ void backup_data_for_ai_0(void)
 
 void restore_data_for_ai_0(void)
 {
+  /* Recovered 2022 player-flag fragment: restore_data_for_ai_0 @ 0x26b1d20. */
+  memcpy(card_flags, backup0_card_flags, sizeof(card_flags));
+  memcpy(your_spells_cant_be_countered_by_color, backup0_your_spells_cant_be_countered_by_color, sizeof(your_spells_cant_be_countered_by_color));
+  /* End recovered 2022 player-flag fragment: restore_data_for_ai_0. */
+  /* Recovered 2022 mana-cache fragment: restore_data_for_ai_0 @ 0x26b1d20. */
+  memcpy(mana_colors_added, backup0_mana_colors_added, sizeof(mana_colors_added));
+  memcpy(mana_color_override, backup0_mana_color_override, sizeof(mana_color_override));
+  memcpy(mana_quantity_override, backup0_mana_quantity_override, sizeof(mana_quantity_override));
+  memcpy(multi_mana_transmutation, backup0_multi_mana_transmutation, sizeof(multi_mana_transmutation));
+  /* End recovered 2022 mana-cache fragment: restore_data_for_ai_0. */
   /* Recovered 2022 dice-cache fragment: restore_data_for_ai_0 @ 0x26b1d20. */
   memcpy(add_to_die_rolls, backup0_add_to_die_rolls, sizeof(add_to_die_rolls));
   memcpy(roll_extra_dice, backup0_roll_extra_dice, sizeof(roll_extra_dice));
@@ -677,4 +733,74 @@ int network_rand(int player, int upperbound)
   }
   result = internal_rand(upperbound);
   return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int can_autotap(int player, int card, autotap_t autotap_flags);
+
+/* ManalinkEh 2022: 0x26b12c0; original functions/ai.c:15. */
+int can_autotap(int player, int card, autotap_t autotap_flags)
+{
+  enum
+  {
+    QUERY_IS_PLAIN_MANA_PRODUCER = 3
+  };
+
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  unsigned int uVar4;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    iVar3 = instance->internal_card_id;
+    uVar4 = instance->card_color & 0x7f;
+    iVar2 = is_what(player, card, 1);
+    if (iVar2 != 0)
+    {
+      uVar4 = uVar4 | mana_colors_added[player];
+    }
+    if ((uVar4 & 0x3f) != 0)
+    {
+      uVar4 = cards_data[iVar3].extra_ability;
+      if ((uVar4 & 0x1000) == 0)
+      {
+        iVar2 = is_what(player, card, 1);
+        if (iVar2 == 0)
+        {
+          return 0;
+        }
+        if ((*(unsigned char *)(mana_colors_added + player) & 0x3f) == 0)
+        {
+          return 0;
+        }
+        uVar4 = cards_data[iVar3].extra_ability;
+      }
+      if (((((uVar4 & 0x10000) == 0) && (iVar3 = can_produce_mana(player, card), iVar3 != 0)) &&
+           (((autotap_flags & AUTOTAP_NO_BASIC_LANDS) == AUTOTAP_0 ||
+             ((iVar3 = is_basic_land(player, card),
+               iVar3 == 0 && (iVar3 = query(player, card, -1, QUERY_IS_PLAIN_MANA_PRODUCER),
+                              iVar3 == 0)))))) &&
+          ((((autotap_flags & AUTOTAP_NO_NONBASIC_LANDS) == AUTOTAP_0 ||
+             (((iVar3 = is_what(player, card, 1),
+                iVar3 == 0 || (iVar3 = is_basic_land(player, card), iVar3 != 0)) ||
+               (iVar3 = query(player, card, -1, QUERY_IS_PLAIN_MANA_PRODUCER), iVar3 != 0)))) &&
+            ((((autotap_flags & AUTOTAP_NO_DONT_AUTO_TAP) == AUTOTAP_0 ||
+               ((instance->state & 0x40000) == 0)) &&
+              (((autotap_flags & AUTOTAP_NO_ARTIFACTS) == AUTOTAP_0 ||
+                ((iVar3 = is_what(player, card, 0x40),
+                  iVar3 == 0 || (iVar3 = query(player, card, -1, QUERY_IS_PLAIN_MANA_PRODUCER),
+                                 iVar3 != 0))))))))))
+      {
+        if ((autotap_flags & AUTOTAP_NO_CREATURES) != AUTOTAP_0)
+        {
+          iVar3 = is_what(player, card, 2);
+          return (unsigned int)(iVar3 == 0);
+        }
+        return 1;
+      }
+    }
+  }
+  return 0;
 }

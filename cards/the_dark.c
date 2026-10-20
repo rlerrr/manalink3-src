@@ -3948,3 +3948,57 @@ int card_goblins_of_the_flarg(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2429bd0; original cards/the_dark.c:861. */
+int deep_water_legacy(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int player_00;
+
+  if (event == EVENT_MODIFY_MANA_PROD)
+  {
+    iVar1 = 0x1c;
+
+    player_00 = 0;
+    do
+    {
+
+      iVar2 = player_00 << 5;
+      do
+      {
+        *(uint32_t *)((int)mana_color_override[0] + iVar2) = 2;
+        *(uint32_t *)((int)mana_quantity_override[0] + iVar2) = 1;
+        iVar2 = iVar2 + 4;
+      } while (iVar2 != iVar1);
+      if (0 < active_cards_count[player_00])
+      {
+        iVar2 = 0;
+        do
+        {
+          instance = in_play(player_00, iVar2);
+          if (((instance != NULL) && (iVar4 = is_what(player_00, iVar2, 1), player == player_00)) &&
+              (iVar4 != 0))
+          {
+            set_special_flags2_2022(player_00, iVar2, 0x40);
+          }
+          iVar2 = iVar2 + 1;
+        } while (iVar2 < active_cards_count[player_00]);
+      }
+      player_00 = player_00 + 1;
+      iVar1 = iVar1 + 0x20;
+    } while (player_00 != 2);
+  }
+  iVar1 = eot_trigger(player, card, event);
+  if (iVar1 != 0)
+  {
+    kill_card(player, card, KILL_EXILE);
+    cant_be_responded_to = 1;
+    return 0;
+  }
+  return 0;
+}

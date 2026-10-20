@@ -1267,3 +1267,35 @@ void attached_gets_kw(int player, int card, event_t event, keyword_t keyword,
   }
   return;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void attached_gets_sp_kw2(int player, int card, event_t event, sp_keyword2_t sp_keyword2);
+
+/* ManalinkEh 2022: 0x26e7a30; original functions/auras.c:109. */
+void attached_gets_sp_kw2(int player, int card, event_t event, sp_keyword2_t sp_keyword2)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event == EVENT_ABILITIES)
+  {
+
+    instance = in_play(player, card);
+    if ((instance != NULL) && (-1 < instance->damage_target_card))
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+
+      if ((sp_keyword2 != SP_KEYWORD2_0) && ((result == 0 && (-1 < instance->damage_target_card))))
+      {
+        result = is_humiliated_for_ability(player, card, AL_STATIC);
+        if (result == 0)
+        {
+          special_abilities2((int)instance->damage_target_player, instance->damage_target_card,
+                             EVENT_ABILITIES, sp_keyword2);
+          return;
+        }
+      }
+    }
+  }
+  return;
+}

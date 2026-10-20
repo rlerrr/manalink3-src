@@ -1579,3 +1579,1209 @@ int mana_doublers(int player, type_t type)
   } while (card < active_cards_count[player]);
   return iStack_14;
 }
+
+
+/* October 2022 tapped-mana producer component. */
+int produce_mana_tapped_all_one_color_with_default_2022(int player, int card,
+                                                        color_test_t available, int num_mana,
+                                                        color_test_t default_color);
+int produce_mana_tapped_any_combination_of_colors_2022(int player, int card, color_test_t available,
+                                                       int num_mana, const char *prompt);
+int produce_mana_tapped_all_one_color_2022(int player, int card, color_test_t available,
+                                           int num_mana);
+void produce_mana_tapped_2022(int player, int card, color_t color, int amount);
+void produce_mana_tapped2_2022(int player, int card, color_t color1, int amount1, color_t color2,
+                               int amount2);
+void produce_mana_tapped_multi_2022(int player, int card, int colorless, int black, int blue,
+                                    int green, int red, int white);
+int produce_mana_tapped_all_different_colors_2022(int player, int card, color_test_t available,
+                                                  int num_mana, const char *prompt);
+int produce_mana_tapped_all_one_color_impl(int player, int card, color_test_t available,
+                                           int num_mana, int mca);
+int produce_mana_tapped_all_one_color_with_default_impl(int player, int card,
+                                                        color_test_t available, int num_mana,
+                                                        color_test_t default_color, int mca,
+                                                        int contaminate);
+void produce_mana_tapped_impl(int player, int card, color_t color, int amount, int mca,
+                              int contaminate);
+void produce_mana_tapped2_impl(int player, int card, color_t color1, int amount1, color_t color2,
+                               int amount2, int mca);
+void produce_mana_tapped_multi_impl(int player, int card, int colorless, int black, int blue,
+                                    int green, int red, int white, int mca);
+int produce_mana_tapped_any_combination_of_colors_impl(int player, int card, color_test_t available,
+                                                       int num_mana, const char *prompt, int mca);
+static int produce_mana_tapped_all_different_colors_2022_impl(int player, int card,
+                                                              color_test_t available, int num_mana,
+                                                              const char *prompt);
+
+/* ManalinkEh 2022: 0x266c500; original functions/produce_mana.c:956. */
+int produce_mana_tapped_all_one_color_with_default_2022(int player, int card,
+                                                        color_test_t available, int num_mana,
+                                                        color_test_t default_color)
+{
+  int result;
+  result = produce_mana_tapped_all_one_color_with_default_impl(player, card, available, num_mana,
+                                                               default_color, 1, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x266ecc0; original functions/produce_mana.c:674. */
+int produce_mana_tapped_any_combination_of_colors_2022(int player, int card, color_test_t available,
+                                                       int num_mana, const char *prompt)
+{
+  int result;
+  result = produce_mana_tapped_any_combination_of_colors_impl(player, card, available, num_mana,
+                                                              prompt, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x266c580; original functions/produce_mana.c:964. */
+int produce_mana_tapped_all_one_color_2022(int player, int card, color_test_t available,
+                                           int num_mana)
+{
+  int result;
+  result = produce_mana_tapped_all_one_color_with_default_impl(player, card, available, num_mana,
+                                                               COLOR_TEST_COLORLESS, 1, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x266d010; original functions/produce_mana.c:262. */
+void produce_mana_tapped_2022(int player, int card, color_t color, int amount)
+{
+  produce_mana_tapped_impl(player, card, color, amount, 1, 1);
+  return;
+}
+
+/* ManalinkEh 2022: 0x266d970; original functions/produce_mana.c:328. */
+void produce_mana_tapped2_2022(int player, int card, color_t color1, int amount1, color_t color2,
+                               int amount2)
+{
+  produce_mana_tapped2_impl(player, card, color1, amount1, color2, amount2, 1);
+  return;
+}
+
+/* ManalinkEh 2022: 0x266e590; original functions/produce_mana.c:441. */
+void produce_mana_tapped_multi_2022(int player, int card, int colorless, int black, int blue,
+                                    int green, int red, int white)
+{
+  produce_mana_tapped_multi_impl(player, card, colorless, black, blue, green, red, white, 1);
+  return;
+}
+
+/* ManalinkEh 2022: 0x2671510; original functions/produce_mana.c:784. */
+int produce_mana_tapped_all_different_colors_2022(int player, int card, color_test_t available,
+                                                  int num_mana, const char *prompt)
+{
+  int result;
+  result =
+      produce_mana_tapped_all_different_colors_2022_impl(player, card, available, num_mana, prompt);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x266c540; original functions/produce_mana.c:960. */
+int produce_mana_tapped_all_one_color_impl(int player, int card, color_test_t available,
+                                           int num_mana, int mca)
+{
+  int result;
+  result = produce_mana_tapped_all_one_color_with_default_impl(player, card, available, num_mana,
+                                                               COLOR_TEST_COLORLESS, mca, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x266c120; original functions/produce_mana.c:882. */
+int produce_mana_tapped_all_one_color_with_default_impl(int player, int card,
+                                                        color_test_t available, int num_mana,
+                                                        color_test_t default_color, int mca,
+                                                        int contaminate)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  color_test_t available_00;
+  chosen_colors = COLOR_TEST_0;
+  spell_fizzled = 0;
+  iVar1 = is_what(player, card, 1);
+  if (((iVar1 != 0) && (mca != 0)) && (mana_colors_added[player] != COLOR_TEST_0))
+  {
+    if (num_mana < 2)
+    {
+      if (num_mana == 1)
+      {
+        available_00 = mana_colors_added[player] | available;
+        goto LAB_0266c485;
+      }
+    }
+    else
+    {
+      iVar1 = do_dialog(player, player, card, -1, -1,
+                        " Basic land ability\n Multiple Mana ability\n Cancel", 1);
+      if (iVar1 == 0)
+      {
+        available_00 = mana_colors_added[player];
+      LAB_0266c485:
+        produce_mana_tapped_all_one_color_impl(player, card, available_00, 1, 0);
+        return 1;
+      }
+      if (iVar1 != 1)
+      {
+        if (iVar1 == 2)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        goto LAB_0266c293;
+      }
+    }
+  }
+  iVar1 =
+      choose_mana_all_one_color_2022(player, available, num_mana, "What kind of mana?", default_color);
+  if ((spell_fizzled == 1) || (iVar1 == -1))
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+  if ((multi_mana_transmutation[player][0] == 0) ||
+      (((num_mana < 2 &&
+         ((num_mana != 1 || (iVar2 = mana_doublers(player, TYPE_LAND), iVar2 < 2)))) ||
+        (iVar2 = is_what(player, card, 1), iVar2 == 0))))
+  {
+    iVar2 = get_id(player, card);
+    if (iVar2 == 0x525b)
+    {
+      num_mana = devotion(player, -1, iVar1, 0);
+    }
+    iVar2 = check_special_flags2_2022(player, card, 0x40);
+    if (((iVar2 != 0) && (-1 < card)) && (contaminate != 0))
+    {
+      if (-1 < mana_quantity_override[player][iVar1])
+      {
+        num_mana = mana_quantity_override[player][iVar1];
+      }
+      iVar1 = mana_color_override[player][iVar1];
+    }
+    if (0 < num_mana)
+    {
+      produce_mana(player, iVar1, num_mana);
+      chosen_colors = chosen_colors | 1 << ((unsigned char)iVar1 & 0x1f);
+    }
+    tapped_for_mana[0] = 0;
+    tapped_for_mana[1] = 0;
+    tapped_for_mana[2] = 0;
+    tapped_for_mana[3] = 0;
+    tapped_for_mana[4] = 0;
+    tapped_for_mana[5] = 0;
+    tapped_for_mana[6] = 0;
+    tapped_for_mana[iVar1] = num_mana;
+    tapped_for_mana_color = iVar1;
+    if (num_mana != 1)
+    {
+      tapped_for_mana_color = 0x100;
+    }
+    if (((player == 1) && (((unsigned char)trace_mode & 2) == 0)) && (ai_is_speculating != 1))
+    {
+      if (iVar1 == 0)
+      {
+        load_text_2022(NULL, "FELLWAR_STONE");
+        iVar1 = 0x708;
+      }
+      else
+      {
+        load_text_2022(NULL, "FELLWAR_STONE");
+        if (iVar1 - 1U < 6)
+        {
+          iVar1 = iVar1 * 300;
+        }
+        else
+        {
+          iVar1 = 0x708;
+        }
+      }
+      do_dialog(1, 1, card, -1, -1, text_lines[0] + iVar1, 0);
+    }
+  }
+  else
+  {
+    iVar1 = single_color_test_bit_to_color(multi_mana_transmutation[player][0]);
+    produce_mana(player, iVar1, multi_mana_transmutation[player][1]);
+    tapped_for_mana_color = single_color_test_bit_to_color(multi_mana_transmutation[player][0]);
+  }
+LAB_0266c293:
+  if (-1 < card)
+  {
+    instance = get_card_instance(player, card);
+    instance->state = instance->state | 0x10;
+  }
+  return 1;
+}
+
+/* ManalinkEh 2022: 0x266cbf0; original functions/produce_mana.c:191. */
+void produce_mana_tapped_impl(int player, int card, color_t color, int amount, int mca,
+                              int contaminate)
+{
+  int result;
+  card_instance_t *instance;
+  color_test_t cVar3;
+  unsigned int uVar4;
+  result = check_special_flags2_2022(player, card, SF2_QUARUM_TRENCH_GNOMES);
+  uVar4 = card ^ 0xffffffff;
+  if ((((result != 0) && (color == COLOR_WHITE)) && ((int)uVar4 < 0)) &&
+      (result = is_what(player, card, 1), result != 0))
+  {
+    produce_mana(player, 0, 1);
+    tapped_for_mana_color = 0;
+    goto LAB_0266ce3e;
+  }
+  result = check_special_flags2_2022(player, card, 0x20000000);
+  if (((result != 0) && ((int)uVar4 < 0)) && (result = is_what(player, card, 1), result != 0))
+  {
+    produce_mana(player, 2, 1);
+    tapped_for_mana_color = 2;
+    goto LAB_0266ce3e;
+  }
+  result = is_what(player, card, 1);
+  if (((result == 0) || (mana_colors_added[player] == 0)) || (mca == 0))
+  {
+    if (1 < amount)
+      goto LAB_0266cd60;
+    if (amount != 1)
+      goto LAB_0266ccb0;
+    result = mana_doublers(player, TYPE_LAND);
+    if (1 < result)
+      goto LAB_0266cd60;
+    result = check_special_flags2_2022(player, card, 0x40);
+    if ((result != 0) && ((int)uVar4 < 0))
+      goto LAB_0266ceb0;
+  LAB_0266ce98:
+    produce_mana(player, color, amount);
+  LAB_0266ccdd:
+    tapped_for_mana[0] = 0;
+    tapped_for_mana[1] = 0;
+    tapped_for_mana[2] = 0;
+    tapped_for_mana[3] = 0;
+    tapped_for_mana[4] = 0;
+    tapped_for_mana[5] = 0;
+    tapped_for_mana[6] = 0;
+    tapped_for_mana[color] = (int)(amount ^ 0xffffffffU) >> 0x1f & amount;
+    tapped_for_mana_color = color;
+    if (amount != 1)
+    {
+      tapped_for_mana_color = 0x100;
+    }
+  }
+  else
+  {
+    if (amount < 2)
+    {
+      if (amount == 1)
+      {
+        cVar3 = color_to_color_test(color);
+        produce_mana_tapped_all_one_color_with_default_impl(player, card,
+                                                            cVar3 | mana_colors_added[player], 1,
+                                                            COLOR_TEST_COLORLESS, 0, contaminate);
+        return;
+      }
+    LAB_0266ccb0:
+      result = check_special_flags2_2022(player, card, 0x40);
+      if ((result != 0) && ((int)uVar4 < 0))
+      {
+      LAB_0266ceb0:
+        if (-1 < mana_quantity_override[player][color])
+        {
+          amount = mana_quantity_override[player][color];
+        }
+        if ((contaminate != 0) && (mana_color_override[player][color] != COLOR_COLORLESS))
+        {
+          color = mana_color_override[player][color];
+        }
+      }
+      if (0 < amount)
+        goto LAB_0266ce98;
+      goto LAB_0266ccdd;
+    }
+    result = do_dialog(player, player, card, -1, -1,
+                       " Basic land ability\n Multiple Mana ability\n Cancel", 1);
+    if (result == 0)
+    {
+      produce_mana_tapped_all_one_color_with_default_impl(player, card, mana_colors_added[player],
+                                                          1, COLOR_TEST_COLORLESS, 0, contaminate);
+      return;
+    }
+    if (result == 2)
+    {
+      spell_fizzled = 1;
+      return;
+    }
+  LAB_0266cd60:
+    result = is_what(player, card, 1);
+    if ((result == 0) || (multi_mana_transmutation[player][0] == 0))
+      goto LAB_0266ccb0;
+    result = check_special_flags2_2022(player, card, 0x40);
+    if (result == 0)
+    {
+      result = single_color_test_bit_to_color(multi_mana_transmutation[player][0]);
+    }
+    else
+    {
+      result = single_color_test_bit_to_color(
+          mana_color_override[player][multi_mana_transmutation[player][0]]);
+    }
+    produce_mana(player, result, multi_mana_transmutation[player][1]);
+    tapped_for_mana_color = result;
+    tapped_for_mana[result] = tapped_for_mana[result] +
+                              (multi_mana_transmutation[player][1] &
+                               (int)(multi_mana_transmutation[player][1] ^ 0xffffffffU) >> 0x1f);
+  }
+  if (card < 0)
+  {
+    return;
+  }
+LAB_0266ce3e:
+  instance = get_card_instance(player, card);
+  instance->state = instance->state | 0x10;
+  return;
+}
+
+/* ManalinkEh 2022: 0x266d580; original functions/produce_mana.c:267. */
+void produce_mana_tapped2_impl(int player, int card, color_t color1, int amount1, color_t color2,
+                               int amount2, int mca)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  unsigned int uStack_20;
+  int iStack_1c;
+  iStack_1c = amount2;
+  if (((mana_colors_added[player] != 0) && (result = is_what(player, card, 1), mca != 0)) &&
+      (result != 0))
+  {
+    result = do_dialog(player, player, card, -1, -1,
+                       " Basic land ability\n Multi Mana ability\n Cancel", 1);
+    if (result == 0)
+    {
+      uVar3 = num_bits_set(mana_colors_added[player]);
+      if (uVar3 != 1)
+      {
+        produce_mana_tapped_all_one_color_with_default_impl(player, card, mana_colors_added[player],
+                                                            1, COLOR_TEST_COLORLESS, 0, 1);
+        return;
+      }
+      color1 = single_color_test_bit_to_color(mana_colors_added[player]);
+      amount1 = 1;
+      goto LAB_0266d8d9;
+    }
+    if (result == 2)
+    {
+      spell_fizzled = 1;
+      return;
+    }
+  }
+  if (color1 != color2)
+  {
+    if ((multi_mana_transmutation[player][0] == 0) ||
+        (((amount2 + amount1 < 2 &&
+           ((amount2 + amount1 != 1 || (result = mana_doublers(player, TYPE_LAND), result < 2)))) ||
+          (result = is_what(player, card, 1), result == 0))))
+    {
+      result = check_special_flags2_2022(player, card, 0x40);
+      if ((card < 0) || (result == 0))
+      {
+        uStack_20 = (int)(amount2 ^ 0xffffffffU) >> 0x1f & amount2;
+      }
+      else
+      {
+        if ((mana_quantity_override[player][color1] < 0) &&
+            (mana_quantity_override[player][color2] < 0))
+        {
+          uStack_20 = (int)(amount2 ^ 0xffffffffU) >> 0x1f & amount2;
+        }
+        else
+        {
+          uStack_20 = 0;
+          iStack_1c = 0;
+          amount1 = mana_quantity_override[player][color1];
+        }
+        color1 = mana_color_override[player][color1];
+        color2 = mana_color_override[player][color2];
+        amount2 = iStack_1c;
+      }
+      if (0 < amount1)
+      {
+        produce_mana(player, color1, amount1);
+      }
+      if (0 < amount2)
+      {
+        produce_mana(player, color2, amount2);
+      }
+      tapped_for_mana[0] = 0;
+      tapped_for_mana[1] = 0;
+      tapped_for_mana[2] = 0;
+      tapped_for_mana[3] = 0;
+      tapped_for_mana[4] = 0;
+      tapped_for_mana[5] = 0;
+      tapped_for_mana[6] = 0;
+      tapped_for_mana_color = 0x100;
+      tapped_for_mana[color1] =
+          tapped_for_mana[color1] + (amount1 & (int)(amount1 ^ 0xffffffffU) >> 0x1f);
+      tapped_for_mana[color2] = tapped_for_mana[color2] + uStack_20;
+    }
+    else
+    {
+      result = check_special_flags2_2022(player, card, 0x40);
+      if (result == 0)
+      {
+        result = single_color_test_bit_to_color(multi_mana_transmutation[player][0]);
+      }
+      else
+      {
+        result = single_color_test_bit_to_color(
+            mana_color_override[player][multi_mana_transmutation[player][0]]);
+      }
+      produce_mana(player, result, multi_mana_transmutation[player][1]);
+      tapped_for_mana_color = result;
+      tapped_for_mana[result] = tapped_for_mana[result] +
+                                (multi_mana_transmutation[player][1] &
+                                 (int)(multi_mana_transmutation[player][1] ^ 0xffffffffU) >> 0x1f);
+    }
+    if (-1 < card)
+    {
+      instance = get_card_instance(player, card);
+      instance->state = instance->state | 0x10;
+    }
+    return;
+  }
+  amount1 = amount1 + amount2;
+LAB_0266d8d9:
+  produce_mana_tapped_impl(player, card, color1, amount1, 0, 1);
+  return;
+}
+
+/* ManalinkEh 2022: 0x266dee0; original functions/produce_mana.c:333. */
+void produce_mana_tapped_multi_impl(int player, int card, int colorless, int black, int blue,
+                                    int green, int red, int white, int mca)
+{
+  int iVar1;
+  card_instance_t *instance;
+  color_test_t available;
+  int iVar3;
+  int iStack_2c;
+
+  iVar3 = colorless + black + blue + green + red + white;
+  iVar1 = is_what(player, card, 1);
+  if (((iVar1 == 0) || (mca == 0)) || (mana_colors_added[player] == 0))
+  {
+    if ((1 < iVar3) || ((iVar3 == 1 && (iVar1 = mana_doublers(player, TYPE_LAND), 1 < iVar1))))
+      goto LAB_0266df63;
+  LAB_0266df72:
+    iVar1 = check_special_flags2_2022(player, card, 0x40);
+    if ((-1 < card) && (iVar1 != 0))
+    {
+      iVar1 = 0;
+      do
+      {
+        if (mana_quantity_override[player][iVar1] != 0)
+        {
+          produce_mana(player, mana_color_override[player][iVar1],
+                       mana_quantity_override[player][iVar1]);
+          tapped_for_mana_color = mana_color_override[player][iVar1];
+          tapped_for_mana[tapped_for_mana_color] = mana_quantity_override[player][iVar1];
+          goto LAB_0266e18a;
+        }
+        iVar1 = iVar1 + 1;
+      } while (iVar1 != 7);
+      if (0 < colorless)
+      {
+        produce_mana(player, mana_color_override[player][0], colorless);
+      }
+      if (0 < black)
+      {
+        produce_mana(player, mana_color_override[player][1], black);
+      }
+      if (0 < blue)
+      {
+        produce_mana(player, mana_color_override[player][2], blue);
+      }
+      if (0 < green)
+      {
+        produce_mana(player, mana_color_override[player][3], green);
+      }
+      if (0 < red)
+      {
+        produce_mana(player, mana_color_override[player][4], red);
+      }
+      iStack_2c = mana_color_override[player][5];
+      if (0 < white)
+      {
+        produce_mana(player, iStack_2c, white);
+        iStack_2c = mana_color_override[player][5];
+      }
+      tapped_for_mana[mana_color_override[player][mana_color_override[player][0]]] =
+          tapped_for_mana[mana_color_override[player][mana_color_override[player][0]]] +
+          ((int)(colorless ^ 0xffffffffU) >> 0x1f & colorless);
+      tapped_for_mana[mana_color_override[player][mana_color_override[player][1]]] =
+          tapped_for_mana[mana_color_override[player][mana_color_override[player][1]]] +
+          ((int)(black ^ 0xffffffffU) >> 0x1f & black);
+      tapped_for_mana[mana_color_override[player][mana_color_override[player][2]]] =
+          tapped_for_mana[mana_color_override[player][mana_color_override[player][2]]] +
+          ((int)(blue ^ 0xffffffffU) >> 0x1f & blue);
+      tapped_for_mana[mana_color_override[player][mana_color_override[player][3]]] =
+          tapped_for_mana[mana_color_override[player][mana_color_override[player][3]]] +
+          ((int)(green ^ 0xffffffffU) >> 0x1f & green);
+      tapped_for_mana[mana_color_override[player][mana_color_override[player][4]]] =
+          tapped_for_mana[mana_color_override[player][mana_color_override[player][4]]] +
+          ((int)(red ^ 0xffffffffU) >> 0x1f & red);
+      tapped_for_mana_color = 0x100;
+      iVar1 = mana_color_override[player][6];
+      tapped_for_mana[mana_color_override[player][iStack_2c]] =
+          tapped_for_mana[mana_color_override[player][iStack_2c]] +
+          ((int)(white ^ 0xffffffffU) >> 0x1f & white);
+      tapped_for_mana[iVar1] = 0;
+      goto LAB_0266e18a;
+    }
+    if (0 < colorless)
+    {
+      produce_mana(player, 0, colorless);
+    }
+    if (0 < black)
+    {
+      produce_mana(player, 1, black);
+    }
+    if (0 < blue)
+    {
+      produce_mana(player, 2, blue);
+    }
+    if (0 < green)
+    {
+      produce_mana(player, 3, green);
+    }
+    if (0 < red)
+    {
+      produce_mana(player, 4, red);
+    }
+    if (0 < white)
+    {
+      produce_mana(player, 5, white);
+    }
+    tapped_for_mana[6] = 0;
+    tapped_for_mana_color = 0x100;
+    tapped_for_mana[0] = (int)(colorless ^ 0xffffffffU) >> 0x1f & colorless;
+    tapped_for_mana[1] = (int)(black ^ 0xffffffffU) >> 0x1f & black;
+    tapped_for_mana[2] = (int)(blue ^ 0xffffffffU) >> 0x1f & blue;
+    tapped_for_mana[3] = (int)(green ^ 0xffffffffU) >> 0x1f & green;
+    tapped_for_mana[4] = (int)(red ^ 0xffffffffU) >> 0x1f & red;
+    tapped_for_mana[5] = (int)(white ^ 0xffffffffU) >> 0x1f & white;
+  }
+  else
+  {
+    if (mana_colors_added[player] == 0 && colorless == 0)
+    {
+      if (black == 0)
+      {
+        if (blue == 0)
+        {
+          if (green == 0)
+          {
+            if (red == 0)
+            {
+              if (white == 0)
+                goto LAB_0266df72;
+              available = COLOR_TEST_WHITE;
+            }
+            else
+            {
+              available = COLOR_TEST_RED;
+            }
+          }
+          else
+          {
+            available = COLOR_TEST_GREEN;
+          }
+        }
+        else
+        {
+          available = COLOR_TEST_BLUE;
+        }
+      }
+      else
+      {
+        available = COLOR_TEST_BLACK;
+      }
+    }
+    else
+    {
+      available = COLOR_TEST_COLORLESS;
+    }
+    if (iVar3 < 2)
+    {
+      if (iVar3 == 1)
+        goto LAB_0266e492;
+      goto LAB_0266df72;
+    }
+    iVar1 = do_dialog(player, player, card, -1, -1,
+                      " Basic land ability\n Multiple Mana ability\n Cancel", 1);
+    if (iVar1 == 0)
+    {
+      available = mana_colors_added[player];
+    LAB_0266e492:
+      produce_mana_tapped_all_one_color_with_default_impl(player, card, available, 1,
+                                                          COLOR_TEST_COLORLESS, 0, 1);
+      return;
+    }
+    if (iVar1 == 2)
+    {
+      spell_fizzled = 1;
+      return;
+    }
+  LAB_0266df63:
+    if (multi_mana_transmutation[player][0] == 0)
+      goto LAB_0266df72;
+    iVar1 = check_special_flags2_2022(player, card, 0x40);
+    if (iVar1 == 0)
+    {
+      iVar1 = single_color_test_bit_to_color(multi_mana_transmutation[player][0]);
+    }
+    else
+    {
+      iVar1 = single_color_test_bit_to_color(
+          mana_color_override[player][multi_mana_transmutation[player][0]]);
+    }
+    produce_mana(player, iVar1, multi_mana_transmutation[player][1]);
+    tapped_for_mana_color = iVar1;
+    tapped_for_mana[iVar1] =
+        tapped_for_mana[iVar1] + (multi_mana_transmutation[player][1] &
+                                  (int)(multi_mana_transmutation[player][1] ^ 0xffffffffU) >> 0x1f);
+  }
+  if (card < 0)
+  {
+    return;
+  }
+LAB_0266e18a:
+  instance = get_card_instance(player, card);
+  instance->state = instance->state | 0x10;
+  return;
+}
+
+/* ManalinkEh 2022: 0x266e8a0; original functions/produce_mana.c:594. */
+int produce_mana_tapped_any_combination_of_colors_impl(int player, int card, color_test_t available,
+                                                       int num_mana, const char *prompt, int mca)
+{
+  int iVar1;
+  unsigned int uVar2;
+  int iVar3;
+  card_instance_t *instance;
+  color_test_t available_00;
+  int iVar5;
+  int *piVar6;
+  unsigned char bVar7;
+  int cols[7];
+  bVar7 = 0;
+  chosen_colors = COLOR_TEST_0;
+  spell_fizzled = 0;
+  if (((multi_mana_transmutation[player][0] == 0) ||
+       (iVar1 = is_what(player, card, 1), iVar1 == 0)) ||
+      ((num_mana < 2 &&
+        ((num_mana != 1 || (iVar1 = mana_doublers(player, TYPE_LAND), iVar1 < 2))))))
+  {
+    iVar1 = is_what(player, card, 1);
+    if ((iVar1 != 0) && ((mca != 0 && (mana_colors_added[player] != COLOR_TEST_0))))
+    {
+      if (num_mana < 2)
+      {
+        if (num_mana == 1)
+        {
+          available_00 = mana_colors_added[player] | available;
+        LAB_0266eb55:
+          produce_mana_tapped_all_one_color_with_default_impl(player, card, available_00, 1,
+                                                              COLOR_TEST_COLORLESS, 0, 1);
+          return 1;
+        }
+      }
+      else
+      {
+        iVar1 = do_dialog(player, player, card, -1, -1,
+                          " Basic land ability\n Multiple Mana ability\n Cancel", 1);
+        if (iVar1 == 0)
+        {
+          available_00 = mana_colors_added[player];
+          goto LAB_0266eb55;
+        }
+        if (iVar1 != 1)
+        {
+          if (iVar1 == 2)
+          {
+            spell_fizzled = 1;
+            return 0;
+          }
+          goto LAB_0266ea02;
+        }
+      }
+    }
+    piVar6 = cols;
+    for (iVar1 = 7; iVar1 != 0; iVar1 = iVar1 + -1)
+    {
+      *piVar6 = 0;
+      piVar6 = piVar6 + (unsigned int)bVar7 * -2 + 1;
+    }
+    choose_combination_of_colors_of_mana_to_produce_into_arr(cols, player, available, num_mana,
+                                                             prompt);
+    if (spell_fizzled == 1)
+    {
+      return 0;
+    }
+    iVar1 = 0;
+    uVar2 = cols[0];
+    if (0 < cols[0])
+      goto LAB_0266e98b;
+  LAB_0266e968:
+    iVar3 = iVar1 + 1;
+    while (tapped_for_mana[iVar1] = uVar2 & (int)(uVar2 ^ 0xffffffff) >> 0x1f, iVar3 < 7)
+    {
+      while (true)
+      {
+        uVar2 = cols[iVar3];
+        iVar1 = iVar3;
+        if (cols[iVar3] < 1)
+          goto LAB_0266e968;
+      LAB_0266e98b:
+        iVar3 = check_special_flags2_2022(player, card, 0x40);
+        if (iVar3 != 0)
+        {
+          if (mana_quantity_override[player][iVar1] == 0)
+          {
+            produce_mana(player, mana_color_override[player][iVar1], cols[iVar1]);
+            chosen_colors = chosen_colors | 1 << ((unsigned char)iVar1 & 0x1f);
+            uVar2 = cols[iVar1];
+            goto LAB_0266e968;
+          }
+          produce_mana(player, mana_color_override[player][iVar1],
+                       mana_quantity_override[player][iVar1]);
+          tapped_for_mana_color = mana_color_override[player][iVar1];
+          tapped_for_mana[tapped_for_mana_color] = mana_quantity_override[player][iVar1];
+          goto LAB_0266ea02;
+        }
+        iVar3 = iVar1 + 1;
+        if ((iVar1 != 5) ||
+            (iVar5 = check_special_flags2_2022(player, card, SF2_QUARUM_TRENCH_GNOMES), iVar5 == 0))
+          break;
+        produce_mana(player, 0, cols[0]);
+        chosen_colors = chosen_colors | COLOR_TEST_COLORLESS;
+        tapped_for_mana[5] = cols[5] & (int)(cols[5] ^ 0xffffffffU) >> 0x1f;
+      }
+      produce_mana(player, iVar1, cols[iVar1]);
+      chosen_colors = chosen_colors | 1 << ((unsigned char)iVar1 & 0x1f);
+      uVar2 = cols[iVar1];
+    }
+    tapped_for_mana_color = 0x100;
+  }
+  else
+  {
+    iVar1 = check_special_flags2_2022(player, card, 0x40);
+    if (iVar1 == 0)
+    {
+      iVar1 = single_color_test_bit_to_color(multi_mana_transmutation[player][0]);
+    }
+    else
+    {
+      iVar1 = single_color_test_bit_to_color(
+          mana_color_override[player][multi_mana_transmutation[player][0]]);
+    }
+    produce_mana(player, iVar1, multi_mana_transmutation[player][1]);
+    tapped_for_mana_color = iVar1;
+    tapped_for_mana[iVar1] =
+        tapped_for_mana[iVar1] + (multi_mana_transmutation[player][1] &
+                                  (int)(multi_mana_transmutation[player][1] ^ 0xffffffffU) >> 0x1f);
+  }
+LAB_0266ea02:
+  if (card < 0)
+  {
+    return 1;
+  }
+  instance = get_card_instance(player, card);
+  instance->state = instance->state | 0x10;
+  return 1;
+}
+
+/* ManalinkEh 2022: 0x2670e00; original functions/produce_mana.c:698. */
+static int produce_mana_tapped_all_different_colors_2022_impl(int player, int card,
+                                                              color_test_t available, int num_mana,
+                                                              const char *prompt)
+{
+  int iVar1;
+  color_test_t cVar2;
+  unsigned int uVar3;
+  int iVar4;
+  card_instance_t *instance;
+  int iVar6;
+  int *piVar7;
+  unsigned char bVar8;
+  int iStack_30;
+  int cols[7];
+  bVar8 = 0;
+  chosen_colors = COLOR_TEST_0;
+  spell_fizzled = 0;
+  if ((multi_mana_transmutation[player][0] == 0) || (iVar1 = is_what(player, card, 1), iVar1 == 0))
+  {
+  LAB_02670f18:
+    iVar1 = is_what(player, card, 1);
+    if ((iVar1 == 0) || (cVar2 = mana_colors_added[player], cVar2 == COLOR_TEST_0))
+      goto LAB_02670f3a;
+    if (num_mana < 2)
+    {
+      if (num_mana == 1)
+      {
+      LAB_02671211:
+        produce_mana_tapped_all_one_color_with_default_impl(player, card, cVar2 | available, 1,
+                                                            COLOR_TEST_COLORLESS, 0, 1);
+        return 1;
+      }
+      goto LAB_02670f3a;
+    }
+    iVar1 = do_dialog(player, player, card, -1, -1,
+                      " Basic land ability\n Multiple Mana ability\n Cancel", 1);
+    if (iVar1 == 0)
+    {
+      produce_mana_tapped_all_one_color_with_default_impl(player, card, mana_colors_added[player],
+                                                          1, COLOR_TEST_COLORLESS, 0, 1);
+      return 1;
+    }
+    if (iVar1 != 1)
+    {
+      if (iVar1 == 2)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      goto joined_r0x0267106e;
+    }
+  LAB_02671288:
+    piVar7 = cols;
+    for (iVar1 = 7; iVar1 != 0; iVar1 = iVar1 + -1)
+    {
+      *piVar7 = 0;
+      piVar7 = piVar7 + (unsigned int)bVar8 * -2 + 1;
+    }
+  LAB_02670f4f:
+    iStack_30 = 0;
+    do
+    {
+      choose_combination_of_colors_of_mana_to_produce_into_arr(cols, player, available, 1, prompt);
+      iVar1 = 0;
+      do
+      {
+        if (0 < cols[iVar1])
+        {
+          cVar2 = color_to_color_test(iVar1);
+          available = available & (cVar2 ^ ~COLOR_TEST_0);
+        }
+        iVar1 = iVar1 + 1;
+      } while (iVar1 != 7);
+      iStack_30 = iStack_30 + 1;
+    } while (iStack_30 < num_mana);
+  }
+  else
+  {
+    if (1 < num_mana)
+    {
+    LAB_02670e76:
+      iVar1 = check_special_flags2_2022(player, card, 0x40);
+      if (iVar1 == 0)
+      {
+        iVar1 = single_color_test_bit_to_color(multi_mana_transmutation[player][0]);
+      }
+      else
+      {
+        iVar1 = single_color_test_bit_to_color(
+            mana_color_override[player][multi_mana_transmutation[player][0]]);
+      }
+      produce_mana(player, iVar1, multi_mana_transmutation[player][1]);
+      tapped_for_mana_color = iVar1;
+      tapped_for_mana[iVar1] = tapped_for_mana[iVar1] +
+                               (multi_mana_transmutation[player][1] &
+                                (int)(multi_mana_transmutation[player][1] ^ 0xffffffffU) >> 0x1f);
+      goto joined_r0x0267106e;
+    }
+    if (num_mana != 1)
+      goto LAB_02670f18;
+    iVar1 = mana_doublers(player, TYPE_LAND);
+    if (1 < iVar1)
+      goto LAB_02670e76;
+    iVar1 = is_what(player, card, 1);
+    if (iVar1 == 0)
+      goto LAB_02671288;
+    cVar2 = mana_colors_added[player];
+    if (cVar2 != COLOR_TEST_0)
+      goto LAB_02671211;
+  LAB_02670f3a:
+    piVar7 = cols;
+    for (iVar1 = 7; iVar1 != 0; iVar1 = iVar1 + -1)
+    {
+      *piVar7 = 0;
+      piVar7 = piVar7 + (unsigned int)bVar8 * -2 + 1;
+    }
+    if (0 < num_mana)
+      goto LAB_02670f4f;
+  }
+  if (spell_fizzled == 1)
+  {
+    return 0;
+  }
+  uVar3 = cols[0];
+  iVar1 = 0;
+  if (0 < cols[0])
+    goto LAB_02670fea;
+LAB_02670fc8:
+  iVar4 = iVar1 + 1;
+  while (tapped_for_mana[iVar1] = uVar3 & (int)(uVar3 ^ 0xffffffff) >> 0x1f, iVar4 < 7)
+  {
+    while (true)
+    {
+      uVar3 = cols[iVar4];
+      iVar1 = iVar4;
+      if ((int)uVar3 < 1)
+        goto LAB_02670fc8;
+    LAB_02670fea:
+      iVar4 = check_special_flags2_2022(player, card, 0x40);
+      if (iVar4 != 0)
+      {
+        if (mana_quantity_override[player][iVar1] != 0)
+        {
+          produce_mana(player, mana_color_override[player][iVar1],
+                       mana_quantity_override[player][iVar1]);
+          tapped_for_mana_color = mana_color_override[player][iVar1];
+          tapped_for_mana[tapped_for_mana_color] = mana_quantity_override[player][iVar1];
+          goto joined_r0x0267106e;
+        }
+        produce_mana(player, mana_color_override[player][iVar1], cols[iVar1]);
+        chosen_colors = chosen_colors | 1 << ((unsigned char)iVar1 & 0x1f);
+        uVar3 = cols[iVar1];
+        goto LAB_02670fc8;
+      }
+      iVar4 = iVar1 + 1;
+      if ((iVar1 != 5) ||
+          (iVar6 = check_special_flags2_2022(player, card, SF2_QUARUM_TRENCH_GNOMES), iVar6 == 0))
+        break;
+      produce_mana(player, 0, cols[0]);
+      chosen_colors = chosen_colors | COLOR_TEST_COLORLESS;
+      tapped_for_mana[5] = cols[5] & (int)(cols[5] ^ 0xffffffffU) >> 0x1f;
+    }
+    produce_mana(player, iVar1, cols[iVar1]);
+    chosen_colors = chosen_colors | 1 << ((unsigned char)iVar1 & 0x1f);
+    uVar3 = cols[iVar1];
+  }
+  tapped_for_mana_color = 0x100;
+joined_r0x0267106e:
+  if (card < 0)
+  {
+    return 1;
+  }
+  instance = get_card_instance(player, card);
+  instance->state = instance->state | 0x10;
+  return 1;
+}
+
+
+/* ManalinkEh 2022: 0x266ae20; original functions/produce_mana.c:788. */
+int choose_mana_all_one_color_2022(int player, color_test_t available, int num_mana,
+                                   const char *prompt, color_test_t default_color)
+{
+  int iVar1;
+  color_test_t cVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  int *piVar6;
+  int iVar7;
+  int iStack_38;
+  int charging[7];
+
+  iStack_38 = num_mana;
+  if (num_mana < 1)
+  {
+    if ((available & COLOR_TEST_COLORLESS) == COLOR_TEST_0)
+    {
+      iVar4 = 1;
+      do
+      {
+        if ((1 << ((unsigned char)iVar4 & 0x1f) & available) != COLOR_TEST_0)
+        {
+          return iVar4;
+        }
+        iVar4 = iVar4 + 1;
+      } while (iVar4 != 7);
+    }
+    return 0;
+  }
+  piVar6 = charging;
+  for (iVar4 = 7; iVar4 != 0; iVar4 = iVar4 + -1)
+  {
+    *piVar6 = 0;
+    piVar6 = piVar6 + 1;
+  }
+  if (needed_mana_colors < 1)
+  {
+    iVar4 = -1;
+  }
+  else
+  {
+    iVar4 = 0;
+    do
+    {
+      while (iVar5 = (*charge_mana_addr_of_pay_mana_xbugrw)[iVar4], iVar5 != -1)
+      {
+        if (charge_mana_addr_of_pre_mana_pool != (int (*)[8])0x0)
+        {
+          iVar5 = (iVar5 + (*charge_mana_addr_of_pre_mana_pool)[iVar4]) - mana_pool[player][iVar4];
+        }
+        charging[iVar4] = iVar5;
+        iVar4 = iVar4 + 1;
+        if (iVar4 == 7)
+          goto LAB_0266aeb4;
+      }
+      charging[iVar4] = 1000;
+      iVar4 = iVar4 + 1;
+    } while (iVar4 != 7);
+  LAB_0266aeb4:
+    iVar7 = 0;
+    iVar4 = -1;
+    iVar5 = 0;
+  LAB_0266aec0:
+    do
+    {
+      iVar1 = charging[iVar5];
+      if (iVar1 < 0)
+      {
+        if ((iVar5 != 6) && (0 < charging[6]))
+        {
+          iVar3 = -iVar1;
+          if (-charging[6] != iVar1 && charging[6] <= -iVar1)
+          {
+            iVar3 = charging[6];
+          }
+          charging[6] = charging[6] - iVar3;
+          iVar3 = iVar3 + charging[iVar5];
+          charging[iVar5] = iVar3;
+          if (-1 < iVar3)
+            goto LAB_0266aef8;
+        }
+        iVar1 = charging[0];
+        if ((iVar5 != 0) && (0 < charging[0]))
+        {
+          iVar3 = charging[iVar5];
+          if (-charging[0] == iVar3 || -iVar3 < charging[0])
+          {
+            charging[0] = charging[0] + iVar3;
+            charging[iVar5] = charging[iVar5] + -iVar3;
+          }
+          else
+          {
+            charging[0] = 0;
+            charging[iVar5] = charging[iVar5] + iVar1;
+          }
+          iVar5 = iVar5 + 1;
+          if (iVar5 == 7)
+            break;
+          goto LAB_0266aec0;
+        }
+      }
+      else if ((((0 < iVar1) && (iVar5 != 0)) && (iVar5 != 6)) &&
+               ((available & 1 << ((unsigned char)iVar5 & 0x1f)) != COLOR_TEST_0))
+      {
+        iVar7 = iVar7 + 1;
+        iStack_38 = iStack_38 - iVar1;
+        if ((iVar4 == -1) || (charging[iVar4] < iVar1))
+        {
+          iVar4 = iVar5;
+        }
+      }
+    LAB_0266aef8:
+      iVar5 = iVar5 + 1;
+    } while (iVar5 != 7);
+    if (iVar7 == 1)
+    {
+      if (iStack_38 < 0)
+      {
+        return iVar4;
+      }
+      if (-1 < iVar4)
+      {
+        return iVar4;
+      }
+      cVar2 = default_color & available;
+      if (cVar2 == COLOR_TEST_0)
+      {
+        if ((available & COLOR_TEST_COLORLESS) == COLOR_TEST_0)
+        {
+          iVar4 = 1;
+          do
+          {
+            if ((1 << ((unsigned char)iVar4 & 0x1f) & available) != COLOR_TEST_0)
+              goto LAB_0266af4c;
+            iVar4 = iVar4 + 1;
+          } while (iVar4 != 7);
+        }
+      }
+      else
+      {
+        if ((cVar2 & COLOR_TEST_COLORLESS) == COLOR_TEST_0)
+        {
+          iVar4 = 1;
+          do
+          {
+            if ((1 << ((unsigned char)iVar4 & 0x1f) & cVar2) != COLOR_TEST_0)
+              goto LAB_0266af4c;
+            iVar4 = iVar4 + 1;
+          } while (iVar4 != 7);
+        }
+      }
+      iVar4 = 0;
+    LAB_0266af4c:
+      if (((0 < charging[0]) || (0 < charging[6])) && (always_prompt_for_color == '\0'))
+      {
+        return iVar4;
+      }
+      goto LAB_0266afdc;
+    }
+    if (iVar4 != -1)
+      goto LAB_0266afdc;
+  }
+  if (always_prompt_for_color == '\0')
+  {
+    cVar2 = default_color & available;
+    if (cVar2 == COLOR_TEST_0)
+    {
+      if ((available & COLOR_TEST_COLORLESS) == COLOR_TEST_0)
+      {
+        iVar4 = 1;
+        do
+        {
+          if ((1 << ((unsigned char)iVar4 & 0x1f) & available) != COLOR_TEST_0)
+            goto LAB_0266afb4;
+          iVar4 = iVar4 + 1;
+        } while (iVar4 != 7);
+      }
+    }
+    else
+    {
+      if ((cVar2 & COLOR_TEST_COLORLESS) == COLOR_TEST_0)
+      {
+        iVar4 = 1;
+        do
+        {
+          if ((1 << ((unsigned char)iVar4 & 0x1f) & cVar2) != COLOR_TEST_0)
+            goto LAB_0266afb4;
+          iVar4 = iVar4 + 1;
+        } while (iVar4 != 7);
+      }
+    }
+    iVar4 = 0;
+  LAB_0266afb4:
+    if ((0 < needed_mana_colors) &&
+        (iStack_38 <= (charging[0] & (int)(charging[0] ^ 0xffffffffU) >> 0x1f) +
+                          (charging[6] & (int)(charging[6] ^ 0xffffffffU) >> 0x1f)))
+    {
+      return iVar4;
+    }
+  }
+LAB_0266afdc:
+  iVar4 = choose_a_color_exe(player, prompt, 1, iVar4, available);
+  return iVar4;
+}

@@ -5328,7 +5328,7 @@ static int pyromancers_goggles_legacy(int player, int card, event_t event)
     {
       return 0;
     }
-    result = check_special_flags(affected_card_controller, affected_card, 0x40000);
+    result = check_special_flags_2022(affected_card_controller, affected_card, 0x40000);
     if (result != 0)
     {
       return 0;

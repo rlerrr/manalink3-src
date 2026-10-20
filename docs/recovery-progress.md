@@ -1,15 +1,29 @@
 # October 2022 source recovery
 
 Implemented directly in the `cards/` and `functions/` source files, starting
-2026-10-17. Latest recovery pass: 2026-10-18.
+2026-10-17. Latest recovery pass: 2026-10-20.
 Missing target set files were created with `#include "manalink.h"`; implementations
 already present in the source were retained, with scoped repairs and lifecycle
 fragments recorded separately.
 
+A [2020-to-2022 modification pilot](recovery-comparison-pilot.md) now compares
+30 shared functions using a saved Ghidra Version Tracking session: 13 confirmed
+code/interface changes, 11 compiler/layout candidates, five matching local
+instruction streams and one refactor needing worker comparison. This does not
+change the recovered-implementation count below. It establishes a path for
+finding modifications in existing source alongside recovery of new functions.
+
+A separate [random sample](recovery-random-sample.md) freezes 15 shared card
+handlers and 15 helpers before decoding. It finds five card and seven helper
+code/API changes, 14 compiler/layout candidates and four matching local
+instruction streams. The population-weighted observed rate is about 36% within
+the eligible identity frame, with wide sampling uncertainty; it is not an
+estimate of remaining implementations or changed gameplay.
+
 ## Recovered source
 
-- **3,496 function implementations:** 2,815 functions named `card_*` and 681
-  helpers, in **136 checked C source units**, including units containing only
+- **3,670 function implementations:** 2,910 functions named `card_*` and 760
+  helpers, in **137 checked C source units**, including units containing only
   recovered engine/AI fragments.
 - The second pass added **340 implementations: 273 `card_*` functions and 67
   helpers**. The first pass contributed 1,066 implementations.
@@ -84,16 +98,66 @@ fragments recorded separately.
   13 helpers**, including extension lifecycle and the complete eight-function
   information/stored-ID API. Eight declarations and six scoped fragments restore
   storage, creation binding, AI snapshots and the ownership-transfer copy.
+- The twenty-fourth pass added **47 implementations: 28 `card_*` functions and
+  19 helpers**, using the extension's two keyword words and a five-value keyword
+  enum verified against DWARF. It separately corrected three calls whose private
+  protection worker shared a debug name with the public wrapper. New handlers
+  include Dress Down, Blood Sun, Rebbec, Gor Muldrak, Nevinyrral, Giver of Runes,
+  Veil of Summer and Haktos. The extension-backed getter/remover have distinct
+  `_2022` names; original accessors remain available. Keyword refresh, remaining
+  legacy keyword readers/writers and native/game integration remain unfinished.
+- The twenty-fifth pass added **16 implementations: ten `card_*` functions and
+  six helpers**, including Heroic Intervention, Shalai, Blacksmith's Skill,
+  Dream Trawler and Palladia-Mors. Scoped keyword-mask names are verified against
+  each caller's DWARF enums and machine operands. The protection core, its public
+  wrapper and two initial-result event dispatchers are recovered with a separate
+  six-value 2022 protection-mode enum; the old API and enum retain their values.
+- The twenty-sixth pass added **eight implementations: four `card_*` functions
+  and four helpers**. It recovers the full card-ID keyword lookup, both versioned
+  keyword queries, the specialized Replicate worker, Reconstruct History,
+  Angrath's Rampage, Inscription of Insight and Inscription of Ruin. Two previously
+  recovered literal card-ID queries now use the matching 2022 API. Packed
+  information reads and an array endpoint use verified layouts rather than
+  depending on C local placement.
+- The twenty-seventh pass added **14 implementations: two `card_*` functions
+  and twelve helpers**. All thirteen extension-backed flag APIs are recovered,
+  including replacement of one earlier compatibility adaptation. **218 flag
+  calls in 166 recovered functions** now use verified 2022 callees or an explicit
+  inline-read proof. Garth One-Eye and Serra's Emissary are recovered with two
+  private writable tables and verified native table-copy operands.
+- The twenty-eighth pass added **51 implementations: 26 `card_*` functions
+  and 25 helpers**. It recovers the mana-count pass, seven tapped-mana cores
+  and seven public front ends, plus their newly available callers. Twelve
+  declarations and four AI snapshot fragments recover the shared mana modifier
+  tables separately. Thirteen mana calls in eleven earlier recovered functions
+  now use verified 2022 APIs.
+- The twenty-ninth pass added **13 implementations: eleven `card_*` functions
+  and two helpers**. The versioned mana-color chooser retains the native dialog
+  tail call, while a private compiler-part helper unlocks Naked Singularity and
+  Reality Twist. Six declarations and six reset/AI fragments recover per-player
+  card and counterability flags. Two existing life-upkeep callback bodies were
+  exposed without counting them as new implementations.
+- The thirtieth pass added **nine implementations: seven `card_*` functions
+  and two helpers**. Independent game-mode storage and three verified pregame
+  fragments unlock the counterspell precheck and six callers. Yorion and its
+  private ownership predicate are also recovered, including its exact 302-byte
+  selection matrix initialization. The existing native singleplayer-mode type
+  and import are shared without changing their values, address or storage.
+- The thirty-first pass added **16 implementations: seven `card_*` functions
+  and nine helpers**. Eight versioned token-core functions preserve the target's
+  76-byte definition and sixteen action values, followed by Eternalize and its
+  seven card callers. A four-byte instance keyword view preserves the original
+  upkeep-byte names; a typed native alias supplies the dynamic token-type pool.
 - 21 previously missing C files were created. They include Strixhaven, Modern
   Horizons 1/2, Commander Legends, Throne of Eldraine, War of the Spark,
   Zendikar Rising, Commander 2020, and `functions/draft.c`.
-- 421 recovered functions retain private/static linkage, including nine private
-  implementation helpers whose names begin with `card_`. There are 269 recovered
+- 443 recovered functions retain private/static linkage, including nine private
+  implementation helpers whose names begin with `card_`. There are 326 recovered
   public helpers; shared declarations live in the existing `manalink.h`.
 - Every function has its target address and original DWARF source unit/line
   recorded immediately above its implementation.
-- Of the recovered symbols, 2,800 are referenced by the target registration
-  records; 2,722 serve at least one record marked CODED. The remaining functions
+- Of the recovered symbols, 2,896 are referenced by the target registration
+  records; 2,815 serve at least one record marked CODED. The remaining functions
   include callbacks and helper entry points. Counts are functions, not unique
   playable cards or completed mechanics. `cards/stubs.c::card_crab` preserves
   the target's no-op placeholder and is labeled accordingly.
@@ -897,7 +961,7 @@ Thirty-four refreshed API callers unlock Grist, Lonis, Murktide Regent, Omnath,
 Lord Windgrace, Jeska, Dina, Draconic Intervention, Dramatic Finale, Silverquill
 Silencer, Laboratory Drudge, Arcane Adaptation, Conspiracy, Nykthos Paragon,
 Agadeem's Awakening, Shatterskull Smashing, Skyclave Apparition and other handlers.
-The canonical raw cache now contains 4,318 rows and 4,298 original names. Preparation
+At that pass the canonical raw cache contained 4,318 rows and 4,298 original names. Preparation
 tools discard stale unaccepted hints after re-exporting while retaining accepted
 proofs. Native hook/jump-table integration, complete supplemental serialization
 and extension-backed flag/keyword reader/writer migration remain separate work.
@@ -911,9 +975,265 @@ arguments use the newer `DLGIMPL_MODE` dialog control (`0x1b`); its parser suppo
 is not present in the existing dialog implementation. Extension storage and its
 information API are now recovered, while the remaining native hooks and flag
 consumers still require integration.
+
+The twenty-fourth pass projects `sp_keywords` and `sp_keywords2` through the
+verified extension pointer, only when the decompiler declares the base as a
+`card_instance_t *`. Twenty projected field accesses in ten newly accepted
+functions are recorded with their offsets and widths. Other extension fields
+remain unresolved. The four-byte `sp_keyword2_t` enum is recovered from concrete
+DWARF, and all five values are checked at compile time. These changes unlock
+`special_abilities2`, the attached-object wrapper, Squirrellink, trample over
+planeswalkers, miscellaneous hexproof and blocking-limit helpers, plus their
+card handlers and private protection effects.
+
+The private `misc_protection.part.0` worker receives only player/card in EAX/EDX
+and sets bit 0 of the extension's second word. Its event-gated public wrapper
+tail-jumps to it. Giving them separate Ghidra identities fixes a spurious recursive
+call in the recovered public wrapper and wrong calls in two recovered protection
+helpers. Their recorded machine branches and refreshed raw hashes are checked.
+The separately named extension-backed getter preserves the target's Vigilance
+write and ability-loss bitmask handling; the remover clears the supplied mask.
+At that pass, the large card-ID keyword lookup and remaining legacy keyword
+migration were deferred. All 136 previously checked source prefixes were preserved,
+allowing exactly these three call repairs and their static forward declaration.
+The canonical cache now has 4,320 export rows and 4,300 original names.
+
+The twenty-fifth pass names twelve keyword-mask expressions in eleven accepted
+functions. Substitution is restricted to known special-keyword argument positions
+and the typed first extension keyword word. Each bit agrees with the caller's
+DWARF enumerators, a matching immediate operand in the release and compile-time
+assertions against the current header. The general address filter remains in
+place. These functions and Palladia-Mors's dependent handler add Heroic
+Intervention, Hapatra's Mark, Destined/Lead, Shalai, Fire Covenant, Trench Behemoth,
+Blacksmith's Skill, Dream Trawler and Lazotep Plating.
+
+The 2022 protection modes are damage=1, aura attachment=2, equipment attachment=3,
+blocking=4, targeting=5 and query=6. The old source assigns different values to
+targeting, damage and blocking, so these are recovered as
+`is_protected_from_mode_2022_t`/`IPF2022_*` with a distinct
+`is_protected_from_2022` wrapper. The core reads the second extension keyword
+word and selects direct-card or broadcast protection events. Its apparent
+`0x05000000` pointer is an integer initial result: DWARF identifies an `int`
+local, and machine instructions set the high byte to the mode. Player protection
+reads the verified high byte of the native player-bit word. Both event wrappers
+retain the existing native context push/pop bindings and independently save and
+restore the trigger condition. All 137 prior C source prefixes remain intact.
+At that pass the cache contained 4,321 export rows and 4,301 original names. Native
+dispatch integration and replacement of the remaining old protection/keyword
+consumers were deferred, including the card-ID lookup recovered in the next pass.
+
+The twenty-sixth pass recovers the complete 4,250-instruction card-ID keyword
+lookup in `functions/abilities.c`. It has no external calls; seven bounded
+read-only jump tables have their bytes, bounds and internal destinations
+recorded. Its decompiler output reported unsettled type propagation and exposed
+two `CONCAT11` expressions. The corresponding machine operations are `OR BH,1`;
+the reconstruction preserves the full accumulator with `| 0x100U`. Fifty-nine
+one-bit shifts use unsigned operands to retain x86 bit patterns. The remaining
+integer control flow is retained, with a recorded body hash and a focused
+whole-source check; the automatic function-length limit remains unchanged.
+
+`get_special_abilities_2022` and `check_for_special_ability_2022` preserve both
+paths: player `-1` queries by card ID, and live instances use extension storage.
+The original APIs remain available. Two recovered literal card-ID callers,
+Cairn Wanderer and the private M13 predicate, now use the 2022 query after their
+machine call targets were verified. Other earlier consumers remain pending.
+
+The Replicate specialization has five physical arguments: player/card/generic
+cost in EAX/EDX/ECX and blue/red costs on the stack. DWARF makes black/green/white
+constant zero; the event has no physical argument storage. The recovered private
+worker keeps the original dialog, payment/cancellation loop and byte counter
+wraparound at extension offset 159. The old Replicate implementation is retained;
+caller migration and engine copy handling remain integration work. Plumb the
+Forbidden remains deferred: its `SAC_OPTIONAL=128` flag collides with the old
+`SAC_SET_TARGETS` value and requires the newer sacrifice consumer.
+
+Packed information-value reads reconstruct all eight bytes from the verified
+`id`, `data2` and `data` fields. This unlocks Inscription of Insight and Ruin.
+Abundance remains deferred because its target-definition copies span 84 bytes,
+including an unrecovered trailing flags word; promotion now screens that copy
+pattern explicitly. Reconstruct History's five-element type-array endpoint is
+verified from DWARF stack offsets and the loop's machine instructions, then
+expressed as `types + 5`. The callee's concrete enum also establishes the empty
+`TYPETEXT_0=0` flag, retaining the source's other flag values. All 137 previous C
+prefixes remain intact apart from the two recorded query repairs. The raw cache
+now contains 4,323 export rows and 4,303 original names.
+
+The twenty-seventh pass recovers the thirteen flag APIs for the three four-byte
+extension words at offsets 180, 184 and 188. The selector getter, per-instance
+getters, masked checks, setters and removers retain their native single-card and
+all-in-play behavior, including the both-players selector. The APIs have `_2022`
+names. The original target-slot APIs remain available. One earlier getter had
+been reconstructed as a legacy compatibility adaptation; its recovered identity
+now points to the actual extension-backed getter. The compatibility function is
+retained separately and is not counted as another recovered implementation.
+Four enum-expanded full-word masks are reduced to bitwise complements only
+after their DWARF enumerators are verified to cover all 32 bits.
+
+Across 45 source units, 218 calls in 166 previously recovered functions now use
+the extension-backed flag APIs. Each has a verified canonical call or tail jump;
+the transformed-entry helper's getter has a separate proof for its inline
+extension-pointer load and bit-9 test. Arguments and control flow are retained.
+Two existing stack-storage reconstructions retain their layouts and receive
+updated body hashes. Original 2020 functions and scoped engine fragments are not
+migrated. Remaining original consumers, flag refresh and native hook binding
+still require integration.
+
+Garth One-Eye's seven card IDs and Serra's Emissary's nine type selectors are
+copied from two private writable arrays totaling 64 bytes. Their original DLL
+tables are in writable `.data`, so the recovery preserves mutability and the
+per-call local copies. DWARF supplies the local dimensions; the binary supplies
+the table bytes, source addresses, copy counts and `REP MOVSD` operands. Serra's
+native player-bit access is expressed as `player_bits[player]` after verifying
+the four-byte indexing and word load/OR/store. All earlier C prefixes are intact
+apart from the 218 recorded callee renames and one corrected provenance comment.
+The raw cache now contains 4,335 export rows and 4,315 original names.
 The Aura core also remains deferred: its target-definition struct is 84 bytes,
 with a new `flags` field at offset 80, versus the existing 80-byte definition.
 Its initialization and validation consumers need recovery together.
+
+The twenty-eighth pass recovers four live mana modifier tables: added colors,
+color overrides, quantity overrides and multi-mana replacements. Their twelve
+declarations include both private AI backup sets. All storage begins zeroed;
+the mana-count pass supplies the identity and sentinel resets. Four snapshot
+fragments each copy the complete 152-byte state, with two 64-byte `REP MOVSD`
+blocks and six scalar words independently traced in the binary. The arrays also
+appear in supplemental serialization, whose full format migration remains
+deferred.
+
+`count_mana_2022` restores the two-row variable-length source list, sized by the
+larger active-card count. It preserves modifier reset, per-player production
+events, special battlefield/hand/graveyard paths and deferred source dispatch.
+Separate native aliases expose the target's 51-entry mana list and 11-entry
+spend-as-color list per player; the old 50-entry declaration remains intact.
+The corresponding linker addresses and 204-/44-byte row strides are checked.
+
+Seven tapped-mana cores and seven public `_2022` front ends retain the modifier
+logic and physical interfaces. The distinct-color core takes five arguments;
+its abstract sixth argument is a constant one with no physical argument slot.
+Borrowed prompt strings are read-only. The special flag operand `0x800000` is
+verified as `SF2_QUARUM_TRENCH_GNOMES` in this call context. Existing recovered
+callers receive thirteen proven callee renames across eleven functions in eight
+units. The matching executable's jump at `0x472400`, DLL stub at `0x20103e9`
+and final target at `0x26a9b30` establish the native mana-count route. Original
+2020 callers and rebuilt native hook integration remain pending.
+
+New callers include Nyxbloom Ancient, Damping Sphere, Fabled Passage, Prismatic
+Vista, Spire of Industry, Cabal Stronghold, the five Hour of Devastation sacrifice
+Deserts and the five Mercadian Masques storage lands. All 137 previous C token
+prefixes are preserved after reversing only the documented callee renames and
+removing the new storage/snapshot fragments. `defs.h` is byte-identical to the
+previous pass. The raw cache contains 4,341 export rows and 4,321 original names.
+
+The twenty-ninth pass restores `choose_mana_all_one_color_2022`. Its raw export
+had absorbed the native color dialog and its UI/network paths after a sibling
+jump. A verified Ghidra call boundary at the exact native entry `0x4721c0`
+recovers the helper's own algorithm without those foreign stack temporaries.
+The outgoing five argument slots, epilogue, jump bytes, complete native dialog
+bytes and read-only prompt interface are retained as evidence. The earlier
+recovered producer now calls this versioned chooser; the original static source
+chooser stays intact. School of the Unseen, Archaeological Dig, Nomadic Elf and
+Celestial Prism are recovered as callers. Archaeological Dig retains its target
+DWARF's unused fourth parameter.
+
+The per-player `card_flags` words and counterability-color bytes occupy eight
+and two bytes respectively. Their four private AI buffers preserve both complete
+snapshot pairs. Recalculation resets the card flags; untap entry resets both
+counterability bytes before begin-turn dispatch. Every scalar copy is traced
+with its original two- or four-byte width, totaling ten bytes per snapshot.
+Supplemental serialization of both arrays is confirmed; its full format remains
+deferred. These globals unlock Masako the Humorless, Archelos, Lagoon Mystic
+and Archon of Coronation. The counterspell precheck remained deferred at that
+pass pending the separate `other_game_mode` state, recovered below.
+
+The target exports `can_pay_1_life_thunk` and `lose_1_life_thunk` publicly, while
+the old source keeps their matching bodies private to Weatherlight. Their
+verified interfaces are now shared, retaining the existing bodies exactly and
+allowing Dystopia and Decomposition to be recovered. They add no helper-body
+count. A separate private `basic_subtype_to_color_part_2022` retains the target's
+`.part.0` function. Its two card callers keep the first three basic-land cases
+inline, with nine independently verified calls to the remaining partial helper.
+Their mana override writes and special flags are preserved.
+
+All 137 prior C token prefixes are retained after reversing the one documented
+chooser rename, two linkage changes and six storage/six lifecycle additions.
+`defs.h` and `manalink.lds` are byte-identical to the preceding pass. The raw
+cache contains 4,344 export rows and 4,324 original names.
+
+The thirtieth pass recovers the four-byte independent game-mode flag word at
+`0x27b3728` and all five enum values from DWARF. It remains separate from the
+existing native singleplayer mode. Its target producer is pregame: reset outside
+solo duel, then OR the EDH bit when the EDH avatar is found in either the deck or
+already-drawn cards. These three writes are inserted in the corresponding
+existing control-flow locations, with avatar ID, branch operands and complete
+native pregame bytes recorded. No producers for other mode bits are invented.
+
+`pre_counterspell` now retains the target's color-based protection, Commander
+zone choice, exile/cast replacement, event dispatch, sound and trap paths. Its
+callers include Divide by Zero, Fold into Aether, Spelljack, Force of Negation,
+Subtlety and Narset's Reversal. It uses the previously recovered flag storage
+and extension-backed accessors; original counterspell code remains available.
+
+Yorion's private predicate takes all five physical target-callback arguments.
+It compares ownership to the targeting player, rather than using
+the older Antiquities predicate with the same name. The existing target
+dispatcher already supplies this five-argument interface. DWARF establishes the
+`char[2][151]` selection matrix. The native alignment-aware zero fill is
+reconstructed as one `memset` of all 302 bytes after checking both two-byte
+edge paths, the 300-byte aligned path and `REP STOSD` operands. Literal auditing
+replaces only this exact proven raw block before comparing the remaining source
+literals. The selection/exile paths and native companion deck-size conditions
+are preserved.
+
+The old source's native singleplayer-mode enum and extern declaration were
+private to `rules_engine.c`; they now live in shared headers unchanged. Their
+four values, four-byte width and native address `0x4e95a8` are verified. All 137
+prior C token prefixes are preserved after reversing this declaration move and
+removing the new global/three fragments. The linker file is byte-identical to
+the previous pass. The raw cache contains 4,346 rows and 4,326 original names.
+
+The thirty-first pass recovers `token_generation_2022_t` as a separate 76-byte
+record, retaining the old 72-byte type. Its first 21 member offsets match the
+legacy prefix; the added `special_flags3` word is at offset 72. Both callback
+signatures are verified in DWARF. The separate `token_action_2022_t` retains all
+sixteen native values: adding Equip Any shifted Haste from 8 to 16, Don't Copy
+Token Source from 16 to 32 and Convert into Artifact from 32 to 64. Existing
+action names and values remain unchanged for original callers.
+
+The recovered versioned component includes default/copy initialization,
+dynamic IID resolution, per-instance setup, the guarded special-info part
+helper, token generation and characteristic-setting/generic token handlers.
+The creation path retains Academy Manufactor, Chatterfang and Divine Visitation
+replacement behavior, action dispatch, callbacks, source tracking, counter
+actions and trap updates. The concrete quantities table is eight integer words
+for four records, proven by its native stores and loop bound; no huge allocation
+is inferred from an optimized DWARF bound. The focused core initializes the new
+`special_flags3` field but has no explicit read of it; no extra consumer is
+invented during reconstruction.
+
+The resolver uses the native sixteen-entry dynamic type pool, with a typed
+four-byte view of its start index at `0x7a5380`. A lowered 18-word copy becomes a
+72-byte `card_data_t` assignment after checking the native count and copy
+instruction. A packed ID/reserved-word load uses the verified two halfwords.
+The token keyword mirror at instance offset `0x124` is exposed through an
+anonymous union over the four original upkeep bytes. All old byte names,
+offsets and the 300-byte instance size remain intact; native load/store operands
+and the extension keyword write are preserved.
+
+Eternalize now uses the versioned initializer and generator with the full
+definition, allowing Adorned Pouncer, Proven Combatant, Steadfast Sentinel,
+Champion of Wits, Dreamstealer, Timeless Dragon and Timeless Witness to be
+recovered. Fresh token candidates use the verified new type/actions/APIs.
+Varina, Urza's Saga and Kiora Bests the Sea God remain deferred because their
+prepared overlapping-stack reconstructions need a separate layout update.
+Original source/token consumers, callbacks and native/card dispatch bindings
+remain subject to downstream migration and gameplay validation.
+
+All 137 earlier C token prefixes and all earlier implementation/fragment body
+records remain intact. Two existing citations now point to a separately
+preserved exact supporting export; their original hashes remain unchanged when
+the canonical generator export is refreshed. The old header definitions remain
+intact beneath the new union view, ABI declarations and native alias append.
+The raw cache contains 4,353 rows and 4,333 original names.
 
 Some code retains decompiler-style temporaries and control flow. Numeric
 constants are retained where a reliable symbolic reconstruction has not been
@@ -926,18 +1246,18 @@ original formatting, original macros or proven behavioral equivalence.
   the current `manalink.h` and `defs.h`. This also rejected missing dependencies,
   incompatible argument lists, unresolved identifiers and uninitialized locals
   reported by the checker.
-- All 136 complete modified/new source units passed Clang's 32-bit C syntax
+- All 137 complete modified/new source units passed Clang's 32-bit C syntax
   checks. `functions/rules_engine.c` needs the checker-only Windows compatibility
   definition `strncasecmp=_strnicmp` for existing configuration parsing code.
   Its game source was not changed for that portability issue.
 - Recovered string/character literals were checked against the raw exports.
-- All 3,496 recorded raw-export hashes and source provenance markers were checked,
-  along with supporting exports, twenty-two source fragments, twenty-six recovered global
-  declarations, local enum values, array endpoint replacements and 1,441
+- All 3,670 recorded raw-export hashes and source provenance markers were checked,
+  along with supporting exports, thirty-five source fragments, forty-seven recovered global
+  declarations, local enum values, array endpoint replacements and 1,530
   recovered literal arguments, plus two independently verified literal pointer
-  stores, sixteen reconstructed literal references and twenty-nine manually
+  stores, sixteen reconstructed literal references and 277 manually
   reconstructed/qualified function body hashes.
-- Reconstructed stack-storage body hashes were checked for all 83 affected
+- Reconstructed stack-storage body hashes were checked for all 85 affected
   functions, and the known cross-type local cast pattern is rejected.
 - Compile-time layout checks confirm the 300-byte card instance and recovered
   member offsets, including `mode` at `0x37` and `targets` at `0x74`.
@@ -947,10 +1267,25 @@ original formatting, original macros or proven behavioral equivalence.
 - The subtype cache checks confirm an eight-byte modifier record, its mode byte
   at offset four, a 128-byte player row and a 256-byte table.
 - The query selector type is checked as four bytes.
+- The separate 2022 protection-mode type is checked as four bytes with all six
+  values verified; the native player-bit array is checked as two four-byte words.
 - The resource-cache record is checked as 12 bytes with fields at offsets
   zero, four and eight.
 - The dice selector is checked as four bytes and each live modifier array as
   eight bytes.
+- Mana checks verify all four modifier table sizes/strides, both native list
+  views, event values, the producer flag mask, snapshot copy instructions and
+  the executable-to-DLL mana-count jump route.
+- Per-player card/counterability checks verify four-byte and one-byte elements,
+  full reset/copy ranges, instruction bytes and owning-function hashes. The
+  mana chooser's native dialog boundary and all nine partial color-helper
+  calls are checked, along with the retained life-upkeep callback bodies.
+- Independent and native singleplayer mode widths/values and pregame selectors
+  are checked. Yorion's callback slots, matrix dimensions and complete zero-fill
+  instruction sequence are verified against DWARF and the runtime bytes.
+- Token checks verify both definition sizes, every new member and retained
+  prefix offset, all sixteen action values, the preserved legacy action values,
+  keyword word/byte views, 72-byte card data and native dynamic-pool binding.
 - The stack card-ID word is checked at offset zero in a four-byte record;
   native text storage is checked as 249 rows of 300 bytes. Selected source state
   masks are checked against the verified target values.
@@ -1090,6 +1425,49 @@ own accesses.
   source-to-destination word copies before recovering both AI snapshot pairs.
 - `recover_state_masks.py`: prepares per-function mask substitutions with DWARF
   enum/member proofs and matching machine operands, keeping address screening.
+- `recover_keyword_masks.py`: prepares special-keyword argument/field masks with
+  per-unit enum proofs, matching machine operands and retained address screening.
+- `recover_keyword_lookup.py` and `recover_keyword_id_callers.py`: recover the
+  complete card-ID lookup and versioned query wrappers, then repair literal-ID
+  callers after checking their machine callees.
+- `recover_replicate_worker.py`: verifies the specialization's physical argument
+  locations and constants, prepares focused Ghidra interfaces and recovers the
+  original dialog/payment loop with its extension byte counter.
+- `recover_type_text_zero.py` and `recover_reconstruct_bounds.py`: recover the
+  empty text flag and the five-element array endpoint from concrete type/stack
+  declarations and loop operands.
+- `recover_extension_flags.py` and `migrate_recovered_flag_calls.py`: recover
+  the three extension flag-word APIs, correct the earlier compatibility getter
+  and migrate proven flag callees in recovered functions with body/stack hashes.
+- `recover_card_table_initializers.py` and `InspectRecoveryCardArrays.java`:
+  inspect and recover Garth/Serra's writable copied tables with exact data,
+  dimensions, copy operands and native player-word access evidence.
+- `recover_mana_caches.py` and `recover_mana_counter.py`: recover the four live
+  modifier arrays, both AI snapshot pairs, the complete count pass and two typed
+  native list aliases, checking reset instructions, VLA shape and native strides.
+- `recover_mana_production.py` and `ApplyRecoveryDifferentMana.java`: recover
+  seven producer cores/front ends with the distinct-color specialization's five
+  physical arguments and verified modifier operands.
+- `migrate_recovered_mana_calls.py`: verifies canonical producer/count callees
+  and the native jump route before updating recovered callers and body hashes.
+- `recover_mana_chooser.py` and `ApplyRecoveryManaChooser.java`: restore the
+  typed native dialog tail-call boundary and recover the newer shared chooser.
+- `expose_life_upkeep_thunks.py`: matches two retained Weatherlight callbacks
+  to their public target entries and exposes their unchanged bodies.
+- `recover_engine_flags.py`: verifies per-player card/counterability flag
+  storage, complete recalculation/untap resets and both AI snapshot pairs.
+- `recover_basic_color_part.py`: preserves the partial basic-land color helper
+  and recovers its two card callers with canonical call-site evidence.
+- `recover_game_mode.py`: recovers the independent mode word, verified enum and
+  the three original pregame writes in their existing control-flow locations.
+- `recover_yorion.py`: recovers the five-argument ownership predicate, Yorion's
+  two-row selection storage/zero fill and the shared native singleplayer import.
+- `recover_token_core.py`: recovers the versioned token layout/actions and eight
+  creation/copy helpers, preserving prior exact supporting exports and checking
+  the native pool, card-data copy and keyword mirror before applying.
+- `recover_protection_dispatch.py`: recovers the integer initial-result local,
+  versioned protection modes/API and native-context event wrappers, checking both
+  complete owning source units before appending.
 - `recover_devouring_type.py` and `recover_damage_choice_label.py`: recover
   grammatical suffix pointers and a native live-string view with exact operand
   checks before appending the private helper and card handler.
@@ -1101,6 +1479,11 @@ own accesses.
   compare both compiled initializers against the release before applying.
 - `recover_increment_info.py`: completes the 32-bit information-data increment
   while preserving the two original reads and unsigned wraparound.
+- `recover_extension_keywords.py`, `ApplyRecoveryKeywordWorker.java` and
+  `recover_keyword_enum.py`: recover extension-backed accessors, separate the
+  private two-argument protection worker from its public wrapper and recover
+  the second keyword-word enum. Promotion projects only the two verified words
+  through typed instance pointers; other extension fields remain deferred.
 - `ExportRecovery.java`: exports requested functions with source provenance.
 - `ExportRecoveryStrings.java`: resolves uniquely identified `.rdata` aliases
   from caller operands; `recover_literals.py` validates and renders their bytes.

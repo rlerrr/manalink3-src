@@ -1,0 +1,89 @@
+{
+  "native_count_route": {
+    "executable_sha256": "0170f02b1c381a20a97ca0c12e99c8d338453ce4edbfc99148e726d565bee0de",
+    "entry": {
+      "address": "472400",
+      "bytes": "e9e4dfb901"
+    },
+    "stub": {
+      "address": "20103e9",
+      "bytes": "e942976900"
+    },
+    "target": "26a9b30"
+  },
+  "functions": [
+    {
+      "name": "card_gold_forge_garrison",
+      "source": "cards/rivals_of_ixalan.c",
+      "address": "2196eb0",
+      "calls": 1
+    },
+    {
+      "name": "card_rishkar_peema_renegade",
+      "source": "cards/aether_revolt.c",
+      "address": "20c8a00",
+      "calls": 1
+    },
+    {
+      "name": "card_unbridled_growth",
+      "source": "cards/aether_revolt.c",
+      "address": "20cb740",
+      "calls": 1
+    },
+    {
+      "name": "card_astrolabe",
+      "source": "cards/alliances.c",
+      "address": "20a9440",
+      "calls": 1
+    },
+    {
+      "name": "card_cascading_cataracts",
+      "source": "cards/amonkhet.c",
+      "address": "22e82c0",
+      "calls": 1
+    },
+    {
+      "name": "card_itlimoc_cradle_of_the_sun",
+      "source": "cards/ixalan.c",
+      "address": "22169f0",
+      "calls": 1
+    },
+    {
+      "name": "card_sea_scryer",
+      "source": "cards/mirage.c",
+      "address": "2391900",
+      "calls": 3
+    },
+    {
+      "name": "card_vault_of_catlacan",
+      "source": "cards/rivals_of_ixalan.c",
+      "address": "2195c70",
+      "calls": 1
+    },
+    {
+      "name": "card_golden_egg",
+      "source": "cards/throne_of_eldraine.c",
+      "address": "25d00f0",
+      "calls": 1
+    },
+    {
+      "name": "card_channeler_initiate",
+      "source": "cards/amonkhet.c",
+      "address": "22dfd80",
+      "calls": 1
+    },
+    {
+      "name": "card_jeweled_amulet",
+      "source": "cards/ice_age.c",
+      "address": "23fddb0",
+      "calls": 1
+    },
+    {
+      "name": "produce_mana_tapped_all_one_color_with_default_impl",
+      "source": "functions/produce_mana.c",
+      "address": "266c120",
+      "calls": 1
+    }
+  ],
+  "skipped": []
+}

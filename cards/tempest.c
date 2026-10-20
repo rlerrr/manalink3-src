@@ -7032,3 +7032,150 @@ LAB_0215dce8:
   result = generic_stealing_aura(player, card, event, &td, "TARGET_ENCHANTMENT");
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2148db0; original cards/tempest.c:13. */
+int tempest_does_not_untap_land(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  unsigned int uVar4;
+  color_test_t cVar5;
+  unsigned int uVar6;
+  unsigned int uVar7;
+  int iStack_18;
+  color_test_t cStack_14;
+
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if ((((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+         (life[player] < 2)) &&
+        (instance = get_card_instance(player, card), (instance->mana_color & 1) == 0))
+    {
+      return 0;
+    }
+  LAB_02148ddd:
+    result = mana_producer(player, card, event);
+    return result;
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+
+    instance = get_card_instance(player, card);
+    cVar5 = (unsigned int)instance->mana_color | mana_colors_added[player];
+    if ((((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+         (life[player] < 2)) &&
+        ((cVar5 & COLOR_TEST_COLORLESS) != COLOR_TEST_0))
+    {
+      produce_mana_tapped_all_one_color_2022(player, card,
+                                             mana_colors_added[player] | COLOR_TEST_COLORLESS, 1);
+    }
+    else
+    {
+      produce_mana_tapped_all_one_color_2022(player, card, cVar5, 1);
+      result = check_special_flags2_2022(player, card, 0x40);
+      if (result == 0)
+      {
+        if ((chosen_colors &
+             ((mana_colors_added[player] | COLOR_TEST_COLORLESS) ^ ~COLOR_TEST_0)) != COLOR_TEST_0)
+        {
+          does_not_untap_effect(player, card, player, card, 8, 1);
+        }
+      }
+      else
+      {
+
+        cStack_14 = COLOR_TEST_0;
+        uVar6 = 0;
+        while (uVar7 = uVar6, uVar6 = uVar7 + 1, uVar6 != 7)
+        {
+          if (((mana_colors_added[player] | 1U) & uVar6) != 0)
+          {
+            cVar5 = color_to_color_test(mana_color_override[player][uVar7 + 1]);
+            cStack_14 = cStack_14 | cVar5;
+            if ((chosen_colors & (cStack_14 ^ ~COLOR_TEST_0)) != COLOR_TEST_0)
+            {
+              does_not_untap_effect(player, card, player, card, 8, 1);
+            }
+          }
+        }
+      }
+    }
+  }
+  else
+  {
+    if (((event != EVENT_COUNT_MANA) || (card != affected_card)) ||
+        (player != affected_card_controller))
+      goto LAB_02148ddd;
+    result = is_tapped(player, card);
+    if (((result == 0) && (result = is_animated_and_sick(player, card), result == 0)) &&
+        (result = can_produce_mana(player, card), result != 0))
+    {
+      result = check_special_flags2_2022(player, card, 0x40);
+
+      if (result == 0)
+      {
+
+        instance = get_card_instance(player, card);
+        uVar6 = mana_colors_added[player] | (unsigned int)instance->mana_color;
+        if (((ai_is_speculating == 1) ||
+             ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+            (life[player] < 2))
+        {
+          if ((uVar6 & 1) != 0)
+          {
+            declare_mana_available(player, 0, 1);
+          }
+        }
+        else
+        {
+          declare_mana_available_hex(player, uVar6, 1);
+        }
+      }
+      else
+      {
+        instance = get_card_instance(player, card);
+        uVar6 = (unsigned int)instance->mana_color | mana_colors_added[player];
+        if (((ai_is_speculating == 1) ||
+             ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+            (life[player] < 2))
+        {
+          if ((uVar6 & 1) != 0)
+          {
+            result = mana_quantity_override[player][0];
+            if (result < 0)
+            {
+              result = 1;
+            }
+            declare_mana_available(player, mana_color_override[player][0], result);
+          }
+        }
+        else
+        {
+          uVar7 = 0;
+          iStack_18 = 1;
+          do
+          {
+            uVar3 = color_to_color_test(uVar7);
+            if (((uVar3 & uVar6) != 0) && (mana_color_override[player][uVar7] != 0))
+            {
+              uVar3 = color_to_color_test(uVar7);
+              uVar4 = color_to_color_test(mana_color_override[player][uVar7]);
+              uVar6 = uVar6 & (uVar3 ^ 0xffffffff) | uVar4;
+              if (-1 < mana_quantity_override[player][uVar7])
+              {
+                iStack_18 = mana_quantity_override[player][uVar7];
+              }
+            }
+
+            uVar7 = uVar7 + 1;
+          } while (uVar7 < 7);
+          declare_mana_available_hex(player, uVar6, iStack_18);
+        }
+      }
+    }
+  }
+  return 0;
+}

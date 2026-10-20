@@ -893,8 +893,9 @@
         156
       ],
       "previous_body_sha256": "0c1d734c5251a0a097656f4a00edacb9b0332e8350a44f0364ed540722371fc1",
-      "body_sha256": "ffa098cd65398be8f3e414df6d60a3e6532866885947941a52f95b20cafd42d3",
-      "scope": "Explicit union members preserve verified overlapping stack views and prevent larger initializers overwriting small C locals. Byte storage has the exact DWARF extent. Older aggregate APIs remain in use; this is not an engine-ABI migration."
+      "body_sha256": "0525cb94d21193b145d42db28e8157e5f40c240bd1eacce6fa9a18d1fc3d6895",
+      "scope": "Explicit union members preserve verified overlapping stack views and prevent larger initializers overwriting small C locals. Byte storage has the exact DWARF extent. Older aggregate APIs remain in use; this is not an engine-ABI migration.",
+      "flag_migration_previous_body_sha256": "ffa098cd65398be8f3e414df6d60a3e6532866885947941a52f95b20cafd42d3"
     },
     "2209330": {
       "name": "card_lathliss_dragon_queen",
@@ -2129,8 +2130,9 @@
         156
       ],
       "previous_body_sha256": "3b6401e28d68d58ddad43d84d48298a9b184ccb48eb70d9ce7c2f57542d555f4",
-      "body_sha256": "c0e3cfaac1b743a135f815e9ab15880a6fb568b83ccded124a9686eaa175d130",
-      "scope": "Explicit union members preserve verified overlapping stack views and prevent larger initializers overwriting small C locals. Byte storage has the exact DWARF extent. Older aggregate APIs remain in use; this is not an engine-ABI migration."
+      "body_sha256": "0568a44dab97bbaebd4bcb31238d42c84e02a995f920e13d4ea4f22d434b230c",
+      "scope": "Explicit union members preserve verified overlapping stack views and prevent larger initializers overwriting small C locals. Byte storage has the exact DWARF extent. Older aggregate APIs remain in use; this is not an engine-ABI migration.",
+      "flag_migration_previous_body_sha256": "c0e3cfaac1b743a135f815e9ab15880a6fb568b83ccded124a9686eaa175d130"
     },
     "25c77a0": {
       "name": "card_hammer_boomtacular",
@@ -3549,6 +3551,80 @@
       ],
       "previous_body_sha256": "1fa8c9f878f02416055b174c413ebd0d96cf01f561d2c085ccd053e1ed3774d3",
       "body_sha256": "45bf8102bbc8ce1a0015b61ad92ba24ae5e47033d0e61eaaa2666ee2c6d04686",
+      "scope": "Verified shared DWARF frame offsets and local types. Use explicit union views before normal machine-state, dependency, interface and compiler screening.",
+      "resolved_partial_views": [],
+      "unresolved_partial_views": []
+    },
+    "25ad130": {
+      "name": "card_nevinyrral_urborg_tyrant",
+      "source": "cards/commander_legends.c",
+      "storage": [
+        {
+          "original_name": "token",
+          "original_type": "token_generation_t",
+          "frame_offset": -236,
+          "variables": [
+            {
+              "name": "token",
+              "type": "token_generation_t",
+              "die": "0x536a354"
+            },
+            {
+              "name": "this_test",
+              "type": "test_definition_t",
+              "die": "0x536a4da"
+            }
+          ],
+          "target_extent": 216,
+          "storage": "recovered_stack_token",
+          "members": {
+            "test_definition_t": "test",
+            "token_generation_t": "token"
+          }
+        }
+      ],
+      "frame_base": [
+        156
+      ],
+      "previous_body_sha256": "b5be9d38726843df96e33fc909939405d2c1ce7e0031a7d48b70b277e3e2bc57",
+      "body_sha256": "a1f9085b5fec71752a1e0b676be0e69242eff47551ea722007c2dc010761beef",
+      "scope": "Verified shared DWARF frame offsets and local types. Use explicit union views before normal machine-state, dependency, interface and compiler screening.",
+      "resolved_partial_views": [],
+      "unresolved_partial_views": []
+    },
+    "253d4c0": {
+      "name": "card_glissa_sunseeker",
+      "source": "cards/mirrodin.c",
+      "storage": [
+        {
+          "original_name": "td",
+          "original_type": "target_definition_t",
+          "frame_offset": -236,
+          "variables": [
+            {
+              "name": "td",
+              "type": "target_definition_t",
+              "die": "0x4c9fcf8"
+            },
+            {
+              "name": "test",
+              "type": "test_definition_t",
+              "die": "0x4c9fd11"
+            }
+          ],
+          "target_extent": 216,
+          "storage": "recovered_stack_td",
+          "members": {
+            "target_definition_t": "target",
+            "test_definition_t": "test"
+          }
+        }
+      ],
+      "frame_base": [
+        156
+      ],
+      "previous_body_sha256": "69595188ca4d1ead9ef3488ca91a06a60d42ac1264643cc8bed34dc42605a054",
+      "body_sha256": "2d4a82fb32bfef0851cd2b8388661706364b0e1f5a7ecbc2344db493e389960c",
       "scope": "Verified shared DWARF frame offsets and local types. Use explicit union views before normal machine-state, dependency, interface and compiler screening.",
       "resolved_partial_views": [],
       "unresolved_partial_views": []

@@ -722,7 +722,7 @@ int card_hydroid_krasis(int player, int card, event_t event)
     result = is_token(player, card);
     if (result == 0)
     {
-      result = check_special_flags(player, card, 0x40000);
+      result = check_special_flags_2022(player, card, 0x40000);
       if (result == 0)
       {
         uVar3 = round_down_value(instance->info_slot);
@@ -1535,7 +1535,7 @@ int dovin_grand_arbiter_legacy(int player, int card, event_t event)
   if ((((instance != NULL) && (instance->damage_source_player == player)) &&
        ((instance->targets[3].player & 2) != 0)) &&
       ((instance->damage_target_card == -1 &&
-        (result = check_special_flags(player, instance->damage_source_card, 0x40), result == 0))))
+        (result = check_special_flags_2022(player, instance->damage_source_card, 0x40), result == 0))))
   {
     instance = get_card_instance(player, card);
     if (instance->targets[0x10].player < 0)
@@ -3568,4 +3568,84 @@ joined_r0x025c20f2:
   result = can_counter_activated_or_triggered_ability(player, card, event);
   result = hybrid_split_card(player, card, event, 0x4cfe, result, 10, 0x4cfd, uVar3, 8);
   return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25c3720; original cards/ravnica_allegiance.c:3649. */
+int card_sphinx_of_the_guildpact(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+
+  misc_hexproof(player, card, event);
+  if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    uVar1 = get_color(attacking_card_controller, attacking_card);
+    uVar1 = num_bits_set(uVar1);
+    if (uVar1 == 1)
+    {
+      event_result = event_result | 1;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x25c3860; original cards/ravnica_allegiance.c:3739. */
+int card_sunder_shaman(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  unsigned int uVar4;
+  const char *prompt;
+  int times_damaged[2];
+  target_definition_t td;
+
+  maxblockers_1(player, card, event);
+  result = damage_dealt_by_me(player, card, event,
+                              DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
+                                  DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (result != 0)
+  {
+
+    instance = get_card_instance(player, card);
+
+    uVar4 = 0;
+    uVar3 = instance->targets[1].player;
+    instance->targets[1].player = 0;
+    times_damaged[0] = uVar3 & 0xff;
+    times_damaged[1] = uVar3 >> 8 & 0xff;
+    do
+    {
+      uVar3 = current_turn ^ uVar4;
+      if (times_damaged[uVar3] != 0)
+      {
+        default_target_definition(player, card, &td, 0x44);
+        td.allow_cancel = 0;
+        td.allowed_controller = uVar3;
+        td.preferred_controller = uVar3;
+        result = can_target(&td);
+        if (result != 0)
+        {
+          if (player == uVar3)
+          {
+            prompt = "Select target artifact or enchantment you control.";
+          }
+          else
+          {
+            prompt = "Select target artifact or enchantment controlled by opponent.";
+          }
+          result = new_pick_target(&td, prompt, 0, 0x80);
+          if (result != 0)
+          {
+            action_on_target(player, card, 0, ACT_KILL_DESTROY);
+          }
+        }
+      }
+      uVar4 = uVar4 + 1;
+      instance->number_of_targets = '\0';
+    } while (uVar4 != 2);
+  }
+  return 0;
 }

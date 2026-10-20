@@ -4939,7 +4939,7 @@ static int generator_servant_legacy(int player, int card, event_t event)
     {
       return 0;
     }
-    iVar1 = check_special_flags2(affected_card_controller, affected_card, -0x80000000);
+    iVar1 = check_special_flags2_2022(affected_card_controller, affected_card, -0x80000000);
     if (iVar1 != 0)
     {
       return 0;

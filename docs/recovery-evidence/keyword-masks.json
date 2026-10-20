@@ -1,0 +1,486 @@
+{
+  "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "functions": {
+    "22b4140": {
+      "name": "has_mbt_by_iid",
+      "source": "cards/m13.c",
+      "raw_sha256": "01c0749529f269037f51b2fdf46f9a0974cd633674cc82f7aa96f51c1b1aafc4",
+      "replacements": [
+        {
+          "context": "argument",
+          "function": "check_for_special_ability",
+          "arity": 3,
+          "argument": 2,
+          "literal": "0x800200",
+          "expression": "(SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_HEXPROOF)",
+          "mask": 8389120,
+          "bits": {
+            "SP_KEYWORD_DEATHTOUCH": 512,
+            "SP_KEYWORD_HEXPROOF": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "22b414a",
+              "bytes": "c744240800028000",
+              "instruction": "mov dword ptr [esp + 8], 0x800200"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "d0dbdc41ddf1eaa340c13e59db1a9660a9d51bb44ef64798e173731bd73fe365",
+      "enumerators": {
+        "SP_KEYWORD_DEATHTOUCH": {
+          "value": 512,
+          "die": "0x270ef46",
+          "enum_die": "0x270ee7a"
+        },
+        "SP_KEYWORD_HEXPROOF": {
+          "value": 8388608,
+          "die": "0x270f0b5",
+          "enum_die": "0x270ee7a"
+        }
+      }
+    },
+    "20c1e70": {
+      "name": "card_heroic_intervention",
+      "source": "cards/aether_revolt.c",
+      "raw_sha256": "7ce092c29250b0391034e90aff3bfacc9fc7ea74bd87154c25e1e68144106c2e",
+      "replacements": [
+        {
+          "context": "argument",
+          "function": "pump_ability_until_eot",
+          "arity": 8,
+          "argument": 7,
+          "literal": "0x800800",
+          "expression": "(SP_KEYWORD_INDESTRUCTIBLE | SP_KEYWORD_HEXPROOF)",
+          "mask": 8390656,
+          "bits": {
+            "SP_KEYWORD_INDESTRUCTIBLE": 2048,
+            "SP_KEYWORD_HEXPROOF": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "20c1eee",
+              "bytes": "c744241c00088000",
+              "instruction": "mov dword ptr [esp + 0x1c], 0x800800"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "f2a1a81575bf58ba720754451e0f21bde12c2097110ba4c9ad22ec2259db410f",
+      "enumerators": {
+        "SP_KEYWORD_INDESTRUCTIBLE": {
+          "value": 2048,
+          "die": "0xa9ed08",
+          "enum_die": "0xa9ec09"
+        },
+        "SP_KEYWORD_HEXPROOF": {
+          "value": 8388608,
+          "die": "0xa9ee44",
+          "enum_die": "0xa9ec09"
+        }
+      }
+    },
+    "22e05a0": {
+      "name": "card_hapatras_mark",
+      "source": "cards/amonkhet.c",
+      "raw_sha256": "5cdbbc15094ad7948687fb1a8e0a211dc77924aba91c690ef316cfcdf79c2be0",
+      "replacements": [
+        {
+          "context": "argument",
+          "function": "pump_ability_until_eot",
+          "arity": 8,
+          "argument": 7,
+          "literal": "0x800000",
+          "expression": "(SP_KEYWORD_HEXPROOF)",
+          "mask": 8388608,
+          "bits": {
+            "SP_KEYWORD_HEXPROOF": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "22e06d0",
+              "bytes": "c744241c00008000",
+              "instruction": "mov dword ptr [esp + 0x1c], 0x800000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "47767f1cdb50d2e231a9a0fbf9e11ad97935d900f6bf4ecafa80281981014355",
+      "enumerators": {
+        "SP_KEYWORD_LURE": {
+          "value": 4194304,
+          "die": "0x2a04f2b",
+          "enum_die": "0x2a04d05"
+        },
+        "SP_KEYWORD_HEXPROOF": {
+          "value": 8388608,
+          "die": "0x2a04f40",
+          "enum_die": "0x2a04d05"
+        }
+      }
+    },
+    "22e4ea0": {
+      "name": "card_destined_lead",
+      "source": "cards/amonkhet.c",
+      "raw_sha256": "02d9f2dcf71fc8d8a1d97ad4329528c381f0b5848c88042a673cf24e74bbee6b",
+      "replacements": [
+        {
+          "context": "argument",
+          "function": "pump_ability_until_eot",
+          "arity": 8,
+          "argument": 7,
+          "literal": "0x400000",
+          "expression": "(SP_KEYWORD_LURE)",
+          "mask": 4194304,
+          "bits": {
+            "SP_KEYWORD_LURE": 4194304
+          },
+          "machine_sites": [
+            {
+              "address": "22e5208",
+              "bytes": "c744241c00004000",
+              "instruction": "mov dword ptr [esp + 0x1c], 0x400000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "e53f9d5aac8c2991704dd89c419e4b538a15d95f0fc0f025be82fad763b57c2e",
+      "enumerators": {
+        "SP_KEYWORD_LURE": {
+          "value": 4194304,
+          "die": "0x2a04f2b",
+          "enum_die": "0x2a04d05"
+        },
+        "SP_KEYWORD_HEXPROOF": {
+          "value": 8388608,
+          "die": "0x2a04f40",
+          "enum_die": "0x2a04d05"
+        }
+      }
+    },
+    "25b10d0": {
+      "name": "card_trench_behemoth",
+      "source": "cards/commander_legends.c",
+      "raw_sha256": "44fe7c58434dd3e632320be3b0ebab7595ec600baa507f7c3469469133ea60a9",
+      "replacements": [
+        {
+          "context": "argument",
+          "function": "pump_ability_until_eot_no_repeat",
+          "arity": 6,
+          "argument": 5,
+          "literal": "0x800000",
+          "expression": "(SP_KEYWORD_HEXPROOF)",
+          "mask": 8388608,
+          "bits": {
+            "SP_KEYWORD_HEXPROOF": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "25b12ee",
+              "bytes": "c744241400008000",
+              "instruction": "mov dword ptr [esp + 0x14], 0x800000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "0f77a4fbf7cb8c040f91f10765dd1280eef8cb68ea241cda3bf0718bd6edbf68",
+      "enumerators": {
+        "SP_KEYWORD_HEXPROOF": {
+          "value": 8388608,
+          "die": "0x535ed2c",
+          "enum_die": "0x535eaf1"
+        }
+      }
+    },
+    "22d2be0": {
+      "name": "card_shalai_voice_of_plenty",
+      "source": "cards/dominaria.c",
+      "raw_sha256": "0aa5225bf27188cb9eefb3ab503f6ec63b8e2dd6311030ff0f06876ccd5a7901",
+      "replacements": [
+        {
+          "context": "extension_word",
+          "original": "((pcVar1->field_21).ext)->sp_keywords | 0x800000",
+          "replacement": "((pcVar1->field_21).ext)->sp_keywords | (SP_KEYWORD_HEXPROOF)",
+          "literal": "0x800000",
+          "expression": "(SP_KEYWORD_HEXPROOF)",
+          "mask": 8388608,
+          "bits": {
+            "SP_KEYWORD_HEXPROOF": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "22d2d9c",
+              "bytes": "81ca00008000",
+              "instruction": "or edx, 0x800000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "3eb06e7b4236d625c000304754f7e18caceffb9ee2e0db4ba0ae25c29b5bd9c2",
+      "enumerators": {
+        "SP_KEYWORD_HEXPROOF": {
+          "value": 8388608,
+          "die": "0x2940110",
+          "enum_die": "0x293fed5"
+        }
+      }
+    },
+    "23f7250": {
+      "name": "card_fire_covenant",
+      "source": "cards/ice_age.c",
+      "raw_sha256": "14fa8b6474e8e293f7cfb9a7a4ad3c2e266c2ce0513856dcaced8f576d7fbe26",
+      "replacements": [
+        {
+          "context": "argument",
+          "function": "check_for_special_ability",
+          "arity": 3,
+          "argument": 2,
+          "literal": "0x800800",
+          "expression": "(SP_KEYWORD_INDESTRUCTIBLE | SP_KEYWORD_HEXPROOF)",
+          "mask": 8390656,
+          "bits": {
+            "SP_KEYWORD_INDESTRUCTIBLE": 2048,
+            "SP_KEYWORD_HEXPROOF": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "23f7393",
+              "bytes": "c744240800088000",
+              "instruction": "mov dword ptr [esp + 8], 0x800800"
+            },
+            {
+              "address": "23f756f",
+              "bytes": "c744240800088000",
+              "instruction": "mov dword ptr [esp + 8], 0x800800"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "b575b5ad2eb627c5a4c98e16601cd522f2f9ca6370d6b6bd4bb9a4b8953005fa",
+      "enumerators": {
+        "SP_KEYWORD_INDESTRUCTIBLE": {
+          "value": 2048,
+          "die": "0x3b824af",
+          "enum_die": "0x3b823b0"
+        },
+        "SP_KEYWORD_HEXPROOF": {
+          "value": 8388608,
+          "die": "0x3b825eb",
+          "enum_die": "0x3b823b0"
+        }
+      }
+    },
+    "22b41a0": {
+      "name": "m13_ring",
+      "source": "cards/m13.c",
+      "raw_sha256": "057d65d57db58b3aea16025991ddfdb0720acb0f0f06d146f0de85006b80f0b0",
+      "replacements": [
+        {
+          "context": "argument",
+          "function": "pump_ability_until_eot",
+          "arity": 8,
+          "argument": 7,
+          "literal": "0x800000",
+          "expression": "(SP_KEYWORD_HEXPROOF)",
+          "mask": 8388608,
+          "bits": {
+            "SP_KEYWORD_HEXPROOF": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "22b4766",
+              "bytes": "c744241c00008000",
+              "instruction": "mov dword ptr [esp + 0x1c], 0x800000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "df9879d7691f4f3bb1912790d1825d7ff80275cc1166346a827adf74e5e0eea3",
+      "enumerators": {
+        "SP_KEYWORD_DEATHTOUCH": {
+          "value": 512,
+          "die": "0x270ef46",
+          "enum_die": "0x270ee7a"
+        },
+        "SP_KEYWORD_HEXPROOF": {
+          "value": 8388608,
+          "die": "0x270f0b5",
+          "enum_die": "0x270ee7a"
+        }
+      }
+    },
+    "2205d60": {
+      "name": "palladia_mors_legacy",
+      "source": "cards/m19.c",
+      "raw_sha256": "1c99a1ccc03be8f69bf5b068fc409df422f06991fc77f181e1a94b7e7c10b531",
+      "replacements": [
+        {
+          "context": "argument",
+          "function": "special_abilities",
+          "arity": 6,
+          "argument": 3,
+          "literal": "0x800000",
+          "expression": "(SP_KEYWORD_HEXPROOF)",
+          "mask": 8388608,
+          "bits": {
+            "SP_KEYWORD_HEXPROOF": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "2205d86",
+              "bytes": "c744240c00008000",
+              "instruction": "mov dword ptr [esp + 0xc], 0x800000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "416d6b43a2cbf841cfe485b4257e4ed34db0a3dd20df57dabe8cfa655a62fe5b",
+      "enumerators": {
+        "SP_KEYWORD_HEXPROOF": {
+          "value": 8388608,
+          "die": "0x1c6354c",
+          "enum_die": "0x1c63311"
+        }
+      }
+    },
+    "222e340": {
+      "name": "card_blacksmiths_skill",
+      "source": "cards/modern_horizons_2.c",
+      "raw_sha256": "8810652378e26bd4a7b0df8b38e4c4c4530ce9e37aefbe8e39e9e0c10f98818c",
+      "replacements": [
+        {
+          "context": "argument",
+          "function": "pump_ability_until_eot",
+          "arity": 8,
+          "argument": 7,
+          "literal": "0x800800",
+          "expression": "(SP_KEYWORD_INDESTRUCTIBLE | SP_KEYWORD_HEXPROOF)",
+          "mask": 8390656,
+          "bits": {
+            "SP_KEYWORD_INDESTRUCTIBLE": 2048,
+            "SP_KEYWORD_HEXPROOF": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "222e47f",
+              "bytes": "c744241c00088000",
+              "instruction": "mov dword ptr [esp + 0x1c], 0x800800"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "a509f09baea18be1affdc442989ab9f76db7d19409698bd4c7a3390f34360e36",
+      "enumerators": {
+        "SP_KEYWORD_INDESTRUCTIBLE": {
+          "value": 2048,
+          "die": "0x1f5c876",
+          "enum_die": "0x1f5c777"
+        },
+        "SP_KEYWORD_HEXPROOF": {
+          "value": 8388608,
+          "die": "0x1f5c9b2",
+          "enum_die": "0x1f5c777"
+        }
+      }
+    },
+    "235c210": {
+      "name": "card_dream_trawler",
+      "source": "cards/theros_beyond_death.c",
+      "raw_sha256": "b6f3c622bb12b2fd73e28c6b93e19aec343057f46c67bc95e5e7ad1f6587be77",
+      "replacements": [
+        {
+          "context": "argument",
+          "function": "pump_ability_until_eot_no_repeat",
+          "arity": 6,
+          "argument": 5,
+          "literal": "0x800000",
+          "expression": "(SP_KEYWORD_HEXPROOF)",
+          "mask": 8388608,
+          "bits": {
+            "SP_KEYWORD_HEXPROOF": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "235c2bd",
+              "bytes": "c744241400008000",
+              "instruction": "mov dword ptr [esp + 0x14], 0x800000"
+            },
+            {
+              "address": "235c31b",
+              "bytes": "c744240800008000",
+              "instruction": "mov dword ptr [esp + 8], 0x800000"
+            }
+          ]
+        },
+        {
+          "context": "argument",
+          "function": "check_for_special_ability",
+          "arity": 3,
+          "argument": 2,
+          "literal": "0x800000",
+          "expression": "(SP_KEYWORD_HEXPROOF)",
+          "mask": 8388608,
+          "bits": {
+            "SP_KEYWORD_HEXPROOF": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "235c2bd",
+              "bytes": "c744241400008000",
+              "instruction": "mov dword ptr [esp + 0x14], 0x800000"
+            },
+            {
+              "address": "235c31b",
+              "bytes": "c744240800008000",
+              "instruction": "mov dword ptr [esp + 8], 0x800000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "c4ac6a827b4cc45b15b9c21367819c009fe1a0b344def916bc7656c7c0cd5256",
+      "enumerators": {
+        "SP_KEYWORD_HEXPROOF": {
+          "value": 8388608,
+          "die": "0x32656c4",
+          "enum_die": "0x3265489"
+        }
+      }
+    },
+    "21d0bf0": {
+      "name": "card_lazotep_plating",
+      "source": "cards/war_of_the_spark.c",
+      "raw_sha256": "6604dff8dd0c4b6cff667d62e5f9822290a1650cd20b4aa3ba097505bd27b8bc",
+      "replacements": [
+        {
+          "context": "argument",
+          "function": "pump_ability_until_eot",
+          "arity": 8,
+          "argument": 7,
+          "literal": "0x800000",
+          "expression": "(SP_KEYWORD_HEXPROOF)",
+          "mask": 8388608,
+          "bits": {
+            "SP_KEYWORD_HEXPROOF": 8388608
+          },
+          "machine_sites": [
+            {
+              "address": "21d0cd9",
+              "bytes": "c744241c00008000",
+              "instruction": "mov dword ptr [esp + 0x1c], 0x800000"
+            }
+          ]
+        }
+      ],
+      "machine_sha256": "4f2def6ebd75d68bc477d5296a9d096b145d72d2892d30c668dc973b78c723c9",
+      "enumerators": {
+        "SP_KEYWORD_HEXPROOF": {
+          "value": 8388608,
+          "die": "0x19471ec",
+          "enum_die": "0x1946fb1"
+        }
+      }
+    }
+  },
+  "scope": "Known special-keyword arguments and typed first extension keyword word only. Per-unit DWARF enum values, unchanged numeric bits, and release instruction operands verified."
+}

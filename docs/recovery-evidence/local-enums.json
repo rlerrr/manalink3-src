@@ -2038,6 +2038,51 @@
       "declarations": [
         "enum { COUNTER_CORRUPTION = 163 };"
       ]
+    },
+    "23d9080": {
+      "source": "cards/strixhaven.c",
+      "name": "card_reconstruct_history",
+      "types": [],
+      "declarations": [],
+      "array_boundaries": [
+        {
+          "original": "piVar3 == (int *)msg",
+          "replacement": "piVar3 == types + 5"
+        }
+      ],
+      "array_boundary_evidence": {
+        "layout": {
+          "types": {
+            "type": "int[5]",
+            "frame_offset": -356,
+            "die": "0x39492df",
+            "expression": [
+              145,
+              156,
+              125
+            ]
+          },
+          "msg": {
+            "type": "char[100]",
+            "frame_offset": -336,
+            "die": "0x3949312",
+            "expression": [
+              145,
+              176,
+              125
+            ]
+          }
+        },
+        "machine_checks": {
+          "23d90f1": "8d8da4feffff",
+          "23d9138": "83c304",
+          "23d913b": "8d85b8feffff",
+          "23d9141": "39c3",
+          "23d9143": "0f84bf010000"
+        },
+        "raw_sha256": "4f3478367a1cc846a4397bd2c5b350a79f60d68761de48975bae1aca6dd3f186",
+        "scope": "Five four-byte types end at the adjacent message buffer; express the endpoint as the one-past-array pointer without relying on C local placement."
+      }
     }
   },
   "target_constant_recoveries": [

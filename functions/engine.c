@@ -1,6 +1,16 @@
 // -*- c-basic-offset:2 -*-
 #include "manalink.h"
 
+/* October 2022 per-player card and counterability flag storage. */
+uint32_t card_flags[2];
+uint8_t your_spells_cant_be_countered_by_color[2];
+
+/* October 2022 mana modifier table storage. */
+int mana_colors_added[2];
+int mana_color_override[2][8];
+int mana_quantity_override[2][8];
+int multi_mana_transmutation[2][2];
+
 /* October 2022 dice modifier cache storage. */
 int add_to_die_rolls[2];
 int roll_extra_dice[2];
@@ -121,6 +131,9 @@ void count_colors_of_lands_in_play(void)
 
 void recalculate_all_cards_in_play(void)
 {
+  /* Recovered 2022 player-flag fragment: recalculate_all_cards_in_play @ 0x26a9e40. */
+  memset(card_flags, 0, sizeof(card_flags));
+  /* End recovered 2022 player-flag fragment: recalculate_all_cards_in_play. */
   /* Recovered 2022 dice-cache fragment: recalculate_all_cards_in_play @ 0x26a9e40. */
   memset(add_to_die_rolls, 0, sizeof(add_to_die_rolls));
   memset(roll_extra_dice, 0, sizeof(roll_extra_dice));
@@ -254,6 +267,9 @@ int target_player_skips_untap(int player, int card, event_t event);
 
 int untap_phase(int player)
 {
+  /* Recovered 2022 player-flag fragment: untap_phase @ 0x26b08d0. */
+  memset(your_spells_cant_be_countered_by_color, 0, sizeof(your_spells_cant_be_countered_by_color));
+  /* End recovered 2022 player-flag fragment: untap_phase. */
   // Return 1 to skip the rest of the turn (without even a cleanup step!).  The exe only does this if a player dies.
   player_bits[0] &= ~PB_SEND_EVENT_UNTAP_CARD_TO_ALL;
   player_bits[1] &= ~PB_SEND_EVENT_UNTAP_CARD_TO_ALL;
@@ -2207,4 +2223,65 @@ void hook_helper_for_startduel(void)
       get_card_instance(player, card)->ext = &card_ext[player][card];
       get_displayed_card_instance(player, card)->ext = &disp_card_ext[player][card];
     }
+}
+
+
+/* ManalinkEh 2022: 0x26a9b30; original functions/engine.c:1401. */
+void count_mana_2022(void)
+{
+  for (int color = 0; color < 8; ++color)
+  {
+    raw_mana_available[1][color] = 0;
+    raw_mana_available[0][color] = 0;
+    mana_color_override[1][color] = color;
+    mana_color_override[0][color] = color;
+    mana_quantity_override[1][color] = -1;
+    mana_quantity_override[0][color] = -1;
+  }
+  engine_raw_mana_available_hex_2022[0][0] = -1;
+  engine_mana_may_be_spent_as_color_2022[1][0] = -1;
+  engine_mana_may_be_spent_as_color_2022[0][0] = -1;
+  engine_raw_mana_available_hex_2022[1][0] = -1;
+  mana_colors_added[1] = 0;
+  mana_colors_added[0] = 0;
+  multi_mana_transmutation[1][1] = 0;
+  multi_mana_transmutation[0][1] = 0;
+  multi_mana_transmutation[1][0] = 0;
+  multi_mana_transmutation[0][0] = 0;
+
+  int capacity = active_cards_count[0];
+  if (capacity < active_cards_count[1])
+    capacity = active_cards_count[1];
+  int mana_sources[2][capacity];
+  memset(mana_sources, 0xff, sizeof(mana_sources));
+  int source_counts[2] = {0, 0};
+  for (int player = 0; player < 2; ++player)
+  {
+    remove_special_flags2_2022(player, -1, 0x40);
+    dispatch_event(player, 0, EVENT_MODIFY_MANA_PROD);
+    for (int card = 0; card < active_cards_count[player]; ++card)
+    {
+      card_instance_t *instance = in_play(player, card);
+      if (instance != NULL)
+      {
+        if ((cards_data[instance->internal_card_id].extra_ability & 0x1000) != 0)
+          mana_sources[player][source_counts[player]++] = card;
+        uint16_t csvid = cards_data[instance->internal_card_id].id;
+        if (csvid == 100 || (csvid == 0xee && (instance->state & 0x10) == 0))
+          dispatch_event_to_single_card(player, card, EVENT_COUNT_MANA, -1, -1);
+      }
+      instance = in_hand(player, card);
+      if (instance != NULL)
+      {
+        uint16_t csvid = cards_data[instance->internal_card_id].id;
+        if (csvid == 0x8e3 || csvid == 0x2293)
+          dispatch_event_to_single_card(player, card, EVENT_COUNT_MANA, -1, -1);
+      }
+    }
+    if (is_id_in_grave(player, 0x176c) != 0 && ((uint32_t)player_bits[player] & 0x02000000U) == 0)
+      mana_colors_added[player] |= 0x28;
+  }
+  for (int player = 0; player < 2; ++player)
+    for (int source = 0; source < source_counts[player]; ++source)
+      dispatch_event(player, mana_sources[player][source], EVENT_COUNT_MANA);
 }

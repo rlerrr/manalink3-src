@@ -6674,7 +6674,7 @@ static char *damage_from_land_source(int who_chooses, int player, int card)
       return "must be damage from a land source";
     }
     result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 1);
-    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
+    if ((result == 0) || (result = check_special_flags_2022((int)pcVar1->damage_source_player,
                                                        pcVar1->damage_source_card, 0x40),
                           result == 0))
     {
@@ -7794,4 +7794,83 @@ int card_serras_hymn(int player, int card, event_t event)
 LAB_0205720a:
   iVar2 = generic_activated_ability(player, card, event, 8, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
   return iVar2;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2044260; original cards/urza_saga.c:24. */
+int multimana_producer_per_type_count(int player, int card, event_t event, int sel_type, int clr)
+{
+  int result;
+  int argument2;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+    LAB_020442ed:
+      play_land_sound_effect(player, card);
+      return 0;
+    }
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+
+      result = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+      if (result == 0)
+      {
+        return 0;
+      }
+      if (((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+          (result = count_subtype(player, sel_type, -1), result == 0))
+      {
+        return 0;
+      }
+      return 1;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      result = count_subtype(player, sel_type, -1);
+      produce_mana_tapped_2022(player, card, clr, result);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      if (((event != EVENT_COUNT_MANA) || (card != affected_card)) ||
+          (player != affected_card_controller))
+      {
+        result = mana_producer(player, card, event);
+        return result;
+      }
+      goto LAB_020442d4;
+    }
+    if (event == EVENT_RESOLVE_SPELL)
+      goto LAB_020442ed;
+  }
+  if (event != EVENT_COUNT_MANA)
+  {
+    return 0;
+  }
+LAB_020442d4:
+  if (((card == affected_card) && (player == affected_card_controller)) &&
+      (result = mana_producer(player, card, EVENT_CAN_ACTIVATE), result != 0))
+  {
+    result = count_subtype(player, sel_type, -1);
+    if ((((result < 2) &&
+          ((result = count_subtype(player, sel_type, -1),
+            result < 1 || (result = check_battlefield_for_id(player, 0x2579), result == 0)))) ||
+         (result = is_what(player, card, 1), result == 0)) ||
+        (multi_mana_transmutation[player][0] == COLOR_TEST_0))
+    {
+      result = count_subtype(player, sel_type, -1);
+      declare_mana_available(player, clr, result);
+      return 0;
+    }
+    result = multi_mana_transmutation[player][1];
+    argument2 = single_color_test_bit_to_color(multi_mana_transmutation[player][0]);
+    declare_mana_available(player, argument2, result);
+  }
+  return 0;
 }

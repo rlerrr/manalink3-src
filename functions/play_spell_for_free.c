@@ -853,11 +853,11 @@ int escape_spell(int player, int g_pos)
   {
     remove_card_from_grave(player, g_pos);
     iVar2 = add_card_to_hand(player, iVar2);
-    set_special_flags3(player, iVar2, 0x80000);
+    set_special_flags3_2022(player, iVar2, 0x80000);
     iVar1 = is_what(player, iVar2, 1);
     if (iVar1 != 0)
     {
-      set_special_flags3(player, iVar2, 0x20000);
+      set_special_flags3_2022(player, iVar2, 0x20000);
     }
     iVar1 = real_play_spell_for_free(player, iVar2, 0x10000000);
     if (iVar1 != 0)

@@ -6232,3 +6232,285 @@ int card_raff_capashen_ships_mage(int player, int card, event_t event)
   }
   return 1;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22cfe60; original cards/dominaria.c:1888. */
+int card_knight_of_grace(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  unsigned int uVar2;
+  int result;
+
+  misc_hexproof(player, card, event);
+  if (event == EVENT_PROT_MISC)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      uVar1 = get_color(attacking_card_controller, attacking_card);
+      uVar2 = get_sleighted_color_test(player, card, 2);
+      if ((uVar1 & uVar2) != 0)
+      {
+        event_result = event_result | 1;
+      }
+    }
+  }
+  else if (((event == EVENT_POWER) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    result = get_sleighted_color_test(player, card, 2);
+    result = count_permanents_by_color(2, 0x47, result);
+    if (result != 0)
+    {
+      event_result = event_result + 1;
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22cff50; original cards/dominaria.c:1906. */
+int card_knight_of_malice(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  unsigned int uVar2;
+  int result;
+
+  misc_hexproof(player, card, event);
+  if (event == EVENT_PROT_MISC)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      uVar1 = get_color(attacking_card_controller, attacking_card);
+      uVar2 = get_sleighted_color_test(player, card, 0x20);
+      if ((uVar1 & uVar2) != 0)
+      {
+        event_result = event_result | 1;
+      }
+    }
+  }
+  else if (((event == EVENT_POWER) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    result = get_sleighted_color_test(player, card, 0x20);
+    result = count_permanents_by_color(2, 0x47, result);
+    if (result != 0)
+    {
+      event_result = event_result + 1;
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22d2be0; original cards/dominaria.c:2943. */
+int card_shalai_voice_of_plenty(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  test_definition_t this_test;
+  check_legend_rule(player, card, event);
+  instance = in_play(player, card);
+  if ((instance != NULL) &&
+      (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+  {
+    give_hexproof_to_player(player, card, event);
+  }
+  if (event == EVENT_ABILITIES)
+  {
+    instance = in_play(player, card);
+    if ((((instance != NULL) &&
+          (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)) &&
+         (result = is_what(affected_card_controller, affected_card, 0x102), result != 0)) &&
+        ((affected_card_controller == player && (affected_card != card))))
+    {
+      instance = get_card_instance(player, affected_card);
+      instance->ext->sp_keywords = instance->ext->sp_keywords | (SP_KEYWORD_HEXPROOF);
+    }
+    return 0;
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+  LAB_022d2c91:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_022d2c96;
+  }
+  else if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    if (event != EVENT_CLEANUP)
+    {
+      return 0;
+    }
+    goto LAB_022d2c91;
+  }
+  default_test_definition(&this_test, 2);
+  new_manipulate_all(player, card, player, &this_test, ACT_ADD_COUNTERS_BASE | ACT_KILL_BURY);
+LAB_022d2c96:
+  result = generic_activated_ability(player, card, event, 0, 4, 0, 0, 2, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22cc670; original cards/dominaria.c:583. */
+int card_cabal_stronghold(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  unsigned int uVar4;
+  bool bVar5;
+  unsigned int uStack_14;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    instance = get_card_instance(player, card);
+    instance->info_slot = 1;
+    play_land_sound_effect_force_color(player, card, 2);
+    count_mana_2022();
+  LAB_022cc73c:
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      get_card_instance(player, card);
+    }
+    else
+    {
+      if (event != EVENT_CLEANUP)
+      {
+      LAB_022cc6fb:
+        iVar2 = mana_producer(player, card, event);
+        return iVar2;
+      }
+      get_card_instance(player, card);
+    }
+    return 0;
+  }
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    iVar2 = has_mana(player, 0, 4);
+    if (iVar2 == 0)
+    {
+      instance = get_card_instance(player, card);
+      instance->info_slot = 1;
+    }
+    else
+    {
+      instance = get_card_instance(player, card);
+      instance->info_slot = 2;
+    }
+    goto LAB_022cc6fb;
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+    goto LAB_022cc6fb;
+  if (event != EVENT_ACTIVATE)
+    goto LAB_022cc73c;
+  instance = get_card_instance(player, card);
+
+  iVar2 = paying_mana();
+  if ((iVar2 == 0) && (iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 4, 0,
+                                                         0, 0, 0, 0, 0, NULL, NULL),
+                       iVar2 != 0))
+  {
+    bVar5 = ai_is_speculating != 1;
+    instance->info_slot = 2;
+    if ((bVar5) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
+    {
+      iVar2 = get_hacked_subtype(player, card, 0x5009);
+      iVar2 = count_basic_lands(player, iVar2);
+      iVar3 = is_tapped(player, card);
+      if ((iVar3 == 0) && ((iVar3 = is_animated_and_sick(player, card),
+                            iVar3 == 0 && (iVar3 = can_produce_mana(player, card), iVar3 != 0))))
+      {
+        iVar3 = has_mana(player, 0, 4);
+        uStack_14 = (unsigned int)(iVar3 != 0);
+      }
+      else
+      {
+        uStack_14 = 0;
+      }
+      iVar3 = is_tapped(player, card);
+      if ((iVar3 == 0) && (iVar3 = is_animated_and_sick(player, card), iVar3 == 0))
+      {
+        iVar3 = can_produce_mana(player, card);
+        uVar4 = (unsigned int)(iVar3 != 0);
+      }
+      else
+      {
+        uVar4 = 0;
+      }
+      iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\016",
+                          "Produce colorless mana", uVar4, 5, "Raid the Coffers", uStack_14,
+                          (iVar2 < 4) - 1 & 10, 0, 0, 0, 0);
+      if (iVar2 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (iVar2 == 1)
+        goto LAB_022cc783;
+      if (iVar2 != 2)
+      {
+        return 0;
+      }
+    }
+    add_state(player, card, 0x10);
+    charge_mana(player, COLOR_ANY, 3);
+    if (spell_fizzled == 1)
+    {
+      remove_state(player, card, 0x10);
+    }
+    else
+    {
+
+      iVar2 = get_hacked_subtype(player, card, 0x5009);
+      iVar2 = count_basic_lands(player, iVar2);
+      produce_mana_tapped_impl(player, card, COLOR_BLACK, iVar2, 0, 1);
+      ai_modifier = ai_modifier + ((3 < iVar2) - 1 & 0xffffff70) + 0x30;
+    }
+  }
+  else
+  {
+    instance->info_slot = 1;
+  LAB_022cc783:
+    produce_mana_tapped_2022(player, card, COLOR_COLORLESS, 1);
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x22cd050; original cards/dominaria.c:786. */
+int card_damping_sphere(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event == EVENT_MODIFY_MANA_PROD)
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if (result == 0)
+      {
+        multi_mana_transmutation[1][0] = 1;
+        multi_mana_transmutation[0][0] = 1;
+        multi_mana_transmutation[1][1] = 1;
+        multi_mana_transmutation[0][1] = 1;
+      }
+    }
+  }
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if ((event == EVENT_MODIFY_COST_GLOBAL) && (result == 0))
+    {
+      result = is_what(affected_card_controller, affected_card, 1);
+      if (result == 0)
+      {
+        result = get_specific_storm_count(affected_card_controller);
+        COST_COLORLESS = COST_COLORLESS + (char)result;
+      }
+    }
+  }
+  return 0;
+}

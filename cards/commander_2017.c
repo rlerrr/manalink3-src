@@ -681,7 +681,7 @@ static int path_of_ancestry_legacy(int player, int card, event_t event)
     if (((((card != affected_card) || (affected_card_controller != player)) &&
           (result = played_for_free(affected_card_controller, affected_card), result == 0)) &&
          (((result = is_token(affected_card_controller, affected_card),
-            result == 0 && (result = check_special_flags2(affected_card_controller, affected_card,
+            result == 0 && (result = check_special_flags2_2022(affected_card_controller, affected_card,
                                                           -0x80000000),
                             result == 0)) &&
            ((affected_card_controller == player &&

@@ -4210,3 +4210,34 @@ LAB_02033c0f:
   result = generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x202e2c0; original cards/fifth_dawn.c:2049. */
+int card_fold_into_aether(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_t test;
+
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    result = counterspell(player, card, event, NULL, 0);
+    return result;
+  }
+
+  instance = get_card_instance(player, card);
+  counterspell(player, card, EVENT_RESOLVE_SPELL, NULL, 0);
+  result = pre_counterspell(player, card, instance->targets[0].player, instance->targets[0].card);
+  if ((result != 0) && (result = instance->targets[0].player,
+                        result = do_dialog(result, player, card, result, instance->targets[0].card,
+                                           " Put a creature in play\n Pass", 0),
+                        result == 0))
+  {
+    new_default_test_definition(&test, 2, "Select a creature card to put onto the battlefield.");
+    result = instance->targets[0].player;
+    new_global_tutor(result, result, 4, 4, 0, 2, &test);
+    return 0;
+  }
+  return 0;
+}

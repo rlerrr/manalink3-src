@@ -2563,3 +2563,102 @@ int card_tales_end(int player, int card, event_t event)
   }
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int hexpr_ub_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2394850; original cards/m20.c:2819. */
+static int hexpr_ub_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  unsigned int uVar2;
+  char cVar3;
+
+  attached_gets_sp_kw2(player, card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
+  instance = get_card_instance(player, card);
+  if (event == EVENT_PROT_MISC)
+  {
+    cVar3 = (char)((unsigned int)event_result >> 0x18);
+    if ((cVar3 == '\x06') ||
+        ((((cVar3 == '\x05' && (attacking_card_controller != player)) &&
+           (instance->damage_target_card == affected_card)) &&
+          ((instance->damage_target_player == affected_card_controller &&
+            (uVar2 = get_color(attacking_card_controller, attacking_card), (uVar2 & 6) != 0))))))
+    {
+      event_result = event_result | 1;
+      return 0;
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x239a350; original cards/m20.c:2831. */
+int card_veil_of_summer(int player, int card, event_t event)
+{
+  int iVar1;
+  color_t cVar2;
+  card_instance_t *instance;
+  int iVar4;
+
+  if (event == EVENT_CAN_CAST)
+    goto LAB_0239a381;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card != affected_card) || (player != affected_card_controller))
+    {
+      return 0;
+    }
+    goto LAB_0239a381;
+  }
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+    goto LAB_0239a381;
+  }
+
+  cVar2 = get_sleighted_color(player, card, 2);
+  iVar1 = get_stormcolor_count(1 - player, cVar2);
+  if (iVar1 == 0)
+  {
+    cVar2 = get_sleighted_color(player, card, 1);
+    iVar1 = get_stormcolor_count(1 - player, cVar2);
+    if (iVar1 != 0)
+      goto LAB_0239a4e0;
+  }
+  else
+  {
+  LAB_0239a4e0:
+    draw_a_card(player);
+  }
+  create_legacy_effect(player, card, vos_legacy);
+  if (0 < active_cards_count[player])
+  {
+    iVar1 = 0;
+    do
+    {
+      while ((instance = in_play(player, iVar1),
+              instance == NULL || (iVar4 = is_what(player, iVar1, 0x47), iVar4 == 0)))
+      {
+        iVar1 = iVar1 + 1;
+        if (active_cards_count[player] <= iVar1)
+          goto LAB_0239a4c0;
+      }
+      iVar4 = iVar1 + 1;
+      create_targetted_legacy_effect(player, card, hexpr_ub_legacy, player, iVar1);
+      iVar1 = iVar4;
+    } while (iVar4 < active_cards_count[player]);
+  }
+LAB_0239a4c0:
+  kill_card(player, card, KILL_DESTROY);
+LAB_0239a381:
+  iVar1 = basic_spell(player, card, event);
+  return iVar1;
+}

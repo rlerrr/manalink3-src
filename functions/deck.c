@@ -2953,3 +2953,109 @@ int increment_data(card_instance_t *inst, int cid)
   inst_info_t second = inst_info(inst, cid);
   return set_inst_info(inst, cid, initial.data + 1u, second.data2);
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int pre_counterspell(int player, int card, int to_counter_player, int to_counter_card);
+
+/* ManalinkEh 2022: 0x26b5e90; original functions/deck.c:1615. */
+int pre_counterspell(int player, int card, int to_counter_player, int to_counter_card)
+{
+  unsigned char bVar1;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  unsigned int uVar5;
+  int card_00;
+  int iVar6;
+
+  pcVar2 = get_card_instance(to_counter_player, to_counter_card);
+  iVar4 = pcVar2->internal_card_id;
+  if ((((iVar4 == -1) ||
+        (pcVar3 = get_card_instance(to_counter_player, to_counter_card),
+         (pcVar3->state & (STATE_OUBLIETTED | STATE_INVISIBLE | STATE_IN_PLAY)) != 0x20)) ||
+       (pcVar3->internal_card_id < 0)) ||
+      ((pcVar2->token_status & 0x200) != 0))
+  {
+    return 0;
+  }
+  bVar1 = your_spells_cant_be_countered_by_color[to_counter_player];
+  if (bVar1 != 0)
+  {
+    uVar5 = get_color(player, card);
+    if (uVar5 == 0)
+    {
+      uVar5 = 1;
+    }
+    if (((uVar5 & bVar1) != 0) &&
+        (iVar6 = is_being_cast(to_counter_player, to_counter_card), iVar6 != 0))
+    {
+      return 0;
+    }
+  }
+  if (((((uint8_t)other_game_mode & OGM_EDH) != OGM_NONE) &&
+       (iVar6 = check_special_flags2_2022(to_counter_player, to_counter_card, 0x1000000),
+        iVar6 != 0)) &&
+      (iVar6 = do_dialog(to_counter_player, to_counter_player, to_counter_card, -1, -1,
+                         " Return Commander to commander\'s zone\n Decline", 0),
+       iVar6 == 0))
+  {
+    iVar6 = get_owner(to_counter_player, to_counter_card);
+    card_00 = locate_edh_card_2022(iVar6);
+    if (-1 < card_00)
+    {
+      pcVar3 = get_card_instance(iVar6, card_00);
+      if (pcVar3->targets[2].player == pcVar2->original_internal_card_id)
+      {
+        *(uint8_t *)&pcVar3->targets[3].player = 1;
+      }
+      else if (pcVar3->targets[2].card == pcVar2->original_internal_card_id)
+      {
+        *(uint8_t *)((int)&pcVar3->targets[3].player + 1) = 1;
+      }
+      goto LAB_026b60d0;
+    }
+  }
+  if (((card_flags[player] & 4) != 0) && ((cards_data[iVar4].type & 1) == 0))
+  {
+    if ((-1 < to_counter_player) && (-1 < to_counter_card))
+    {
+      kill_card_impl(to_counter_player, to_counter_card, KILL_EXILE, 0);
+    }
+    iVar6 = can_legally_play_iid(player, iVar4);
+    if (iVar6 == 0)
+    {
+      return -1;
+    }
+    iVar6 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\002", "\001\003",
+                        "\001\012", iVar4, "Play this card", 1, 10, "Decline", 1, 1, 0, 0, 0, 0);
+    if (iVar6 != 1)
+    {
+      return -1;
+    }
+    play_card_in_exile_for_free(player, to_counter_player, (unsigned int)cards_data[iVar4].id);
+    return -1;
+  }
+  dispatch_event_with_attacker(to_counter_player, to_counter_card, EVENT_COUNTERSPELL, player,
+                               card);
+  iVar4 = is_what(player, card, 0x20);
+  if (iVar4 == 0)
+  {
+    play_sound_effect(WAV_INTERUPT);
+  }
+  iVar4 = is_what(to_counter_player, to_counter_card, 2);
+  if ((to_counter_player != player) && (iVar4 != 0))
+  {
+    increase_trap_condition(to_counter_player, 0x608, 1);
+  }
+  iVar4 = check_special_flags_2022(to_counter_player, to_counter_card, 0x100000);
+  if (iVar4 == 0)
+  {
+    return 1;
+  }
+LAB_026b60d0:
+  if ((-1 < to_counter_player) && (-1 < to_counter_card))
+  {
+    kill_card_impl(to_counter_player, to_counter_card, KILL_EXILE, 0);
+  }
+  return -1;
+}

@@ -18,7 +18,7 @@ from pathlib import Path
 UNRESOLVED = re.compile(r"\b(?:undefined\w*|in_(?!play(?:_and_attacking)?\b|hand\b)\w+|extraout_\w+|unaff_\w+|_?DAT_[0-9a-fA-F]{8}\w*|UNK_\w+|PTR_\w+|func_0x[0-9a-fA-F]+|field_\w+|CONCAT\w*|SUB\d+|ZEXT\w*|SEXT\w*)\b")
 LITERAL = r'"(?:\\.|[^"\\\r\n])*"|\'(?:\\.|[^\'\\\r\n])*\''
 FUNCTION_DEFINITION = re.compile(r"\b([A-Za-z_]\w*)\s*\([^;{}()]*\)\s*\{")
-STACK_AGGREGATES = ('test_definition_t', 'target_definition_t', 'token_generation_t')
+STACK_AGGREGATES = ('test_definition_t', 'target_definition_t', 'token_generation_t', 'token_generation_2022_t')
 
 
 def aggregate_stack_aliases(body):
@@ -102,7 +102,65 @@ def rewrite_argument(text, name, arity, argument, replacements):
     return text
 
 
-def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=(), state_mask_replacements=()):
+def project_extension_keywords(text):
+    """Project only the two verified keyword words through typed instance pointers.
+
+    extension-foundation.json proves instance.ext at 44, and the two uint32_t
+    words at extension offsets 0 and 4. Other union members remain unresolved.
+    """
+    pointers = set(re.findall(r'\bcard_instance_t\s*\*\s*(\w+)\b', text))
+    projections = []
+    def replace(match):
+        if match[1] not in pointers:
+            return match[0]
+        replacement = match[1] + '->ext->' + match[2]
+        projections.append(dict(original=match[0], replacement=replacement,
+                                instance_offset=44, extension_offset=4 if match[2] == 'sp_keywords2' else 0,
+                                bytes=4))
+        return replacement
+    text = re.sub(r'\(\((\w+)->field_21\)\.ext\)->(sp_keywords2?)\b', replace, text)
+    return text, projections
+
+
+def project_replicate_count(text):
+    """Verified one-byte extension counter at +159, through typed instances."""
+    pointers=set(re.findall(r'\bcard_instance_t\s*\*\s*(\w+)\b',text));projections=[]
+    def replace(match):
+        if match[1] not in pointers:return match[0]
+        replacement=match[1]+'->ext->times_replicate_paid'
+        projections.append(dict(original=match[0],replacement=replacement,instance_offset=44,extension_offset=159,bytes=1))
+        return replacement
+    return re.sub(r'\(\((\w+)->field_21\)\.ext\)->times_replicate_paid\b',replace,text),projections
+
+
+EXTENSION_FLAG_NAMES = ('get_special_flags',) + tuple(prefix + '_special_flags' + suffix for prefix in ('check','set','remove')
+                             for suffix in ('','2','3')) + tuple('get_special_flags' + suffix + '_by_instance' for suffix in ('','2','3'))
+
+MANA_API_NAMES = ('count_mana','choose_mana_all_one_color','produce_mana_tapped','produce_mana_tapped2','produce_mana_tapped_multi',
+                  'produce_mana_tapped_all_one_color','produce_mana_tapped_all_one_color_with_default',
+                  'produce_mana_tapped_any_combination_of_colors','produce_mana_tapped_all_different_colors')
+
+TOKEN_API_NAMES = {'default_token_definition':'default_token_definition_2022',
+                   'copy_token_definition':'copy_token_definition_2022', 'generate_token':'generate_token_2022',
+                   'resolve_iid':'resolve_token_iid_2022', 'set_token':'set_token_2022',
+                   'get_copyable_special_infos':'get_copyable_special_infos_part_2022',
+                   'token_characteristic_setting_effects':'token_characteristic_setting_effects_2022',
+                   'generic_token':'generic_token_2022'}
+
+
+def project_extension_flags(text):
+    """Only the three verified four-byte flag words on typed instances."""
+    pointers=set(re.findall(r'\bcard_instance_t\s*\*\s*(\w+)\b',text));projections=[]
+    offsets={'special_flags':180,'special_flags2':184,'special_flags3':188}
+    def replace(match):
+        if match[1] not in pointers:return match[0]
+        replacement=match[1]+'->ext->'+match[2]
+        projections.append(dict(original=match[0],replacement=replacement,instance_offset=44,extension_offset=offsets[match[2]],bytes=4))
+        return replacement
+    return re.sub(r'\(\((\w+)->field_21\)\.ext\)->(special_flags[23]?)\b',replace,text),projections
+
+
+def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=(), state_mask_replacements=(), keyword_mask_replacements=(), use_keyword_accessors_2022=False, use_extension_flags_2022=False, use_mana_api_2022=False, use_token_api_2022=False):
     text = strip_comments(text).strip()
     for replacement in state_mask_replacements:
         text = text.replace(replacement['original'], replacement['replacement'])
@@ -111,6 +169,36 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
         literals.append(match[0])
         return f"RECOVERY_LITERAL_{len(literals)-1}"
     text = re.sub(LITERAL, save_literal, text)
+    if use_token_api_2022:
+        mapping = {**TOKEN_API_NAMES, 'token_generation_t':'token_generation_2022_t', 'token_action_t':'token_action_2022_t'}
+        text = re.sub(r'\b(?:TOKEN_ACTION_\w+|' + '|'.join(mapping) + r')\b',
+                      lambda m: m[0].replace('TOKEN_ACTION_', 'TOKEN2022_ACTION_') if m[0].startswith('TOKEN_ACTION_') else mapping[m[0]], text)
+    for replacement in keyword_mask_replacements:
+        if replacement['context'] == 'argument':
+            text = rewrite_argument(text, replacement['function'], replacement['arity'], replacement['argument'],
+                                    {replacement['literal']: replacement['expression']})
+        else:
+            assert replacement['context'] == 'extension_word'
+            text = text.replace(replacement['original'], replacement['replacement'])
+    text, _ = project_extension_keywords(text)
+    text, _ = project_replicate_count(text)
+    text, _ = project_extension_flags(text)
+    if use_extension_flags_2022:
+        for name in EXTENSION_FLAG_NAMES:
+            text=re.sub(r'\b'+name+r'\b',name+'_2022',text)
+    if use_mana_api_2022:
+        for name in MANA_API_NAMES:text=re.sub(r'\b'+name+r'\b',name+'_2022',text)
+    # Keep the 2020 APIs available for original callers. Recovered 2022 paths
+    # use the separately recovered extension-backed implementations.
+    text = re.sub(r'\bget_special_abilities_by_instance\b', 'get_special_abilities_by_instance_2022', text)
+    text = re.sub(r'\bremove_special_ability\b', 'remove_special_ability_2022', text)
+    if use_keyword_accessors_2022:
+        text = re.sub(r'\bget_special_abilities\b', 'get_special_abilities_2022', text)
+        text = re.sub(r'\bcheck_for_special_ability\b', 'check_for_special_ability_2022', text)
+    # Protection modes were renumbered in 2022; keep that domain separate.
+    text = re.sub(r'\bis_protected_from_mode_t\b', 'is_protected_from_mode_2022_t', text)
+    text = re.sub(r'\bIPF_(DAMAGE|ATTACH_AURA|ATTACH_EQUIPMENT|BLOCK|TARGET|QUERY)\b', r'IPF2022_\1', text)
+    text = re.sub(r'\bis_protected_from\b', 'is_protected_from_2022', text)
     if re.search(r'\bload_text_2022\s*\(', text):
         # Both spellings point at the first byte of the verified 249x300
         # native buffer. A string formatter needs the first char row.
@@ -136,8 +224,10 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
     text = re.sub(r"\b_DAT_0078fa30\b", "engine_selected_card", text)
     # These are flag arguments, not executable addresses. Keep the match
     # restricted to simple three-argument calls to this typed accessor.
-    text = re.sub(r"(\bcheck_special_flags\([^(),]*,[^(),]*,)\s*0x800000(\s*\))",
+    text = re.sub(r"(\bcheck_special_flags(?:_2022)?\([^(),]*,[^(),]*,)\s*0x800000(\s*\))",
                   r"\1SF_MOVE_AURA_LEGAL_TARGET\2", text)
+    text = re.sub(r"(\bcheck_special_flags2(?:_2022)?\([^(),]*,[^(),]*,)\s*0x800000(\s*\))",
+                  r"\1SF2_QUARUM_TRENCH_GNOMES\2", text)
     # Both DWARF units and the existing header identify this state mask.
     text = re.sub(r"(\bcheck_state\([^(),]*,[^(),]*,)\s*0x800000(\s*\))",
                   r"\1STATE_OUBLIETTED\2", text)
@@ -155,6 +245,9 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
             text = re.sub(r'\b' + re.escape(local) + r'\.' + suffix + r'\b', local + '.' + member, text)
         text = re.sub(r'\b' + re.escape(local) + r'\._0_4_\b(?!\s*(?:=(?!=)|[+*/%&|^-]=))',
             '((uint32_t)' + local + '.id | ((uint32_t)' + local + '.data2 << 16))', text)
+        # This value returns in EDX:EAX; a scalar read packs all three fields.
+        packed = '((uint64_t)' + local + '.id | ((uint64_t)' + local + '.data2 << 16) | ((uint64_t)' + local + '.data << 32))'
+        text = re.sub(r'\((?:unsigned long long|uint64_t)\)\s*' + re.escape(local) + r'\b', packed, text)
     def damage_word(match):
         name, instance = match[1], match[2]
         if not re.search(r'\b(?:unsigned int|uint32_t)\s+' + re.escape(name) + r'\s*;', text):
@@ -310,10 +403,13 @@ def main():
     overlapping_globals = [f[1] for line in (analysis / "absolute-interfaces.tsv").read_text().splitlines()
                            if (f := line.split("\t"))[2] == "global"]
     candidates, rejected = {}, {}
+    token_interface_ready = 'token_core_2022' in json.loads((root / 'docs/recovery-evidence/interface-recovery.json').read_text())
     storage_path = root / 'docs/recovery-evidence/stack-storage.json'
     storage_evidence = json.loads(storage_path.read_text()) if storage_path.exists() else {}
     masks_path = root / 'docs/recovery-evidence/state-masks.json'
     state_masks = json.loads(masks_path.read_text())['functions'] if masks_path.exists() else {}
+    keyword_path = root / 'docs/recovery-evidence/keyword-masks.json'
+    keyword_masks = json.loads(keyword_path.read_text())['functions'] if keyword_path.exists() else {}
     for row in csv.DictReader((exports / "export.tsv").open(), delimiter="\t"):
         name = row["name"]
         if row["status"] != "ok" or not row["source"].endswith(".c"):
@@ -339,8 +435,19 @@ def main():
         if state_proof:
             assert state_proof['name'] == name and state_proof['source'] == row['source']
             assert state_proof['raw_sha256'] == hashlib.sha256(raw.encode()).hexdigest()
+        keyword_proof = keyword_masks.get(row['address'])
+        if keyword_proof:
+            assert keyword_proof['name'] == name and keyword_proof['source'] == row['source']
+            assert keyword_proof['raw_sha256'] == hashlib.sha256(raw.encode()).hexdigest()
+        use_token_interface = token_interface_ready and bool(re.search(r'\btoken_generation_t\b', strip_comments(raw)))
+        prepared_storage = storage_evidence.get('candidates', {}).get(row['address'])
+        if use_token_interface and prepared_storage:
+            rejected[name] = '76-byte token storage awaiting layout migration'
+            continue
         body = clean(resolved, overlapping_globals, local.get("declarations", []), local.get("array_boundaries", []),
-                     state_proof['replacements'] if state_proof else [])
+                     state_proof['replacements'] if state_proof else [], keyword_proof['replacements'] if keyword_proof else [],
+                     use_keyword_accessors_2022=True, use_extension_flags_2022=True, use_mana_api_2022=True,
+                     use_token_api_2022=use_token_interface)
         storage_proof = None
         prepared_storage = storage_evidence.get('candidates', {}).get(row['address'])
         if prepared_storage:
@@ -364,6 +471,9 @@ def main():
         if aggregate_stack_aliases(code):
             rejected[name] = "overlapping stack objects awaiting verified storage"
             continue
+        if (re.search(r'=\s*0x15\s*;', code) and 'target_definition_t *)((int)' in code):
+            rejected[name] = '84-byte target-definition copy awaiting trailing-flags layout migration'
+            continue
         if UNRESOLVED.search(code) or re.search(r"::|\bthis\b|\._\d|\.field_", code):
             rejected[name] = "unresolved machine state or layout"
             continue
@@ -375,7 +485,7 @@ def main():
         if len(body) > args.max_characters:
             rejected[name] = "larger function awaiting focused reconstruction"
             continue
-        if state_proof:
+        if state_proof or keyword_proof:
             body = subprocess.run(['C:/Program Files/LLVM/bin/clang-format.exe',
                 '-style={BasedOnStyle: LLVM, IndentWidth: 2, BreakBeforeBraces: Allman, ColumnLimit: 100}'],
                 input=body.encode(), capture_output=True, check=True).stdout.decode().replace('\r\n', '\n')
@@ -387,11 +497,34 @@ def main():
                                 line=metadata.get("line", ""), static=static,
                                 body=body, prototype=signature + ";", raw_sha256=hashlib.sha256(raw.encode()).hexdigest(),
                                 recovered_literals=recovered_literals)
+        _, keyword_projections = project_extension_keywords(strip_comments(raw))
+        if keyword_projections:
+            candidates[name]['extension_keyword_projections'] = keyword_projections
+            candidates[name]['extension_layout_evidence'] = 'extension-foundation.json'
+        _, replicate_projections = project_replicate_count(strip_comments(raw))
+        if replicate_projections:
+            candidates[name]['extension_replicate_projections'] = replicate_projections
+            candidates[name]['extension_layout_evidence'] = 'extension-foundation.json'
+        _, flag_projections = project_extension_flags(strip_comments(raw))
+        if flag_projections:
+            candidates[name]['extension_flag_projections'] = flag_projections
+            candidates[name]['extension_layout_evidence'] = 'extension-foundation.json'
         if state_proof:
             from audit_source import function_body
             candidates[name].update(state_mask_evidence=state_proof,
                 reconstruction='State masks named from verified per-unit DWARF enumerators and machine operands; numeric value and operators preserved.',
                 reconstruction_body_sha256=hashlib.sha256(function_body(body,name).encode()).hexdigest())
+        if keyword_proof:
+            from audit_source import function_body
+            candidates[name].update(keyword_mask_evidence=keyword_proof,
+                reconstruction='Keyword masks named only in verified keyword arguments/extension words; values and operations preserved.',
+                reconstruction_body_sha256=hashlib.sha256(function_body(body,name).encode()).hexdigest())
+        packed_views = {local:len(re.findall(r'\(ulonglong\)\s*' + re.escape(local) + r'\b', raw))
+                        for local in re.findall(r'\binst_info_t\s+(\w+)\s*;', raw)}
+        packed_views = {local:count for local,count in packed_views.items() if count}
+        if packed_views:
+            candidates[name]['packed_information_value_views'] = packed_views
+            candidates[name]['extension_layout_evidence'] = 'extension-foundation.json'
         if storage_proof:
             candidates[name]['stack_storage_reconstruction'] = storage_proof
             candidates[name]['reconstruction'] = storage_proof['scope']
@@ -399,9 +532,26 @@ def main():
             candidates[name]["local_type_declarations"] = local["declarations"]
             candidates[name]["local_enum_evidence"] = local["types"]
             candidates[name]["array_boundaries"] = local.get("array_boundaries", [])
+            if local.get('array_boundary_evidence'):
+                candidates[name]['array_boundary_evidence'] = local['array_boundary_evidence']
         if "is_humiliated_for_ability(" in body:
             candidates[name]["interface_adaptations"] = ["Three-argument is_humiliated calls use is_humiliated_for_ability."]
         adaptations = candidates[name].setdefault("interface_adaptations", [])
+        if re.search(r'\btoken_generation_2022_t\b', body):
+            candidates[name]['token_interface_2022'] = dict(type='token_generation_2022_t',
+                actions=sorted(set(re.findall(r'\bTOKEN_ACTION_\w+\b',code_only(strip_comments(raw))))),
+                calls={old:new for old,new in TOKEN_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))})
+            adaptations.append('Versioned 76-byte token definition, native action values and recovered token APIs; original token interfaces retained.')
+        if re.search(r'\b(?:' + '|'.join(MANA_API_NAMES) + r')_2022\s*\(', body):
+            adaptations.append("Versioned 2022 mana APIs preserve added-color, override and transmutation handling; original producers remain available.")
+        if any(name+'_2022(' in body for name in EXTENSION_FLAG_NAMES):
+            adaptations.append("Versioned extension-backed flag API; original 2020 flag storage/accessors retained.")
+        if "get_special_abilities_2022(" in body or "check_for_special_ability_2022(" in body:
+            adaptations.append("Versioned 2022 keyword queries retain card-ID lookup and extension-backed instance handling.")
+        if "is_protected_from_2022(" in body or "IPF2022_" in body:
+            adaptations.append("Protection modes use the separately recovered 2022 enum and API; original mode values remain unchanged.")
+        if "get_special_abilities_by_instance_2022(" in body or "remove_special_ability_2022(" in body:
+            adaptations.append("Recovered 2022 keyword accessors use extension storage; original 2020 APIs remain available.")
         if "add_counters_from_source(" in body:
             adaptations.append("Six-argument add_counters calls retain source/recipient through add_counters_from_source.")
         if "ENGINE_DONE_LABEL" in body or "ENGINE_OK_LABEL" in body:
@@ -549,7 +699,11 @@ def main():
             header = root / "manalink.h"
             content = header.read_bytes()
             marker = content.rfind(b"#ifdef __cplusplus")
-            addition = "/* Interfaces recovered from October 2022 DWARF. */\n" + "\n".join(sorted(public)) + "\n\n"
+            extension_public = [p for p in sorted(public) if re.search(r'\bsp_keyword2_t\b', p)]
+            addition = "/* Interfaces recovered from October 2022 DWARF. */\n" + "\n".join(p for p in sorted(public) if p not in extension_public) + "\n"
+            if extension_public:
+                addition += '#ifndef SHANDALAR\n' + '\n'.join(extension_public) + '\n#endif\n'
+            addition += '\n'
             header.write_bytes((content[:marker] + addition.encode() + content[marker:]).replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
         report["applied"] = True
         manifest = root / "docs/recovery-evidence/recovered-functions.json"

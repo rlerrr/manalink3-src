@@ -4858,7 +4858,7 @@ int card_hope_charm(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         instance->number_of_targets = '\0';
-        iVar3 = check_special_flags2(player, card, -0x80000000);
+        iVar3 = check_special_flags2_2022(player, card, -0x80000000);
         if (iVar3 == 0)
         {
 
@@ -5516,8 +5516,8 @@ int card_phyrexian_marauder(int player, int card, event_t event)
   if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    set_special_flags2(player, card, 0x20000);
-    iVar2 = check_special_flags2(player, card, -0x80000000);
+    set_special_flags2_2022(player, card, 0x20000);
+    iVar2 = check_special_flags2_2022(player, card, -0x80000000);
     if (iVar2 == 0)
     {
       instance->info_slot = 0;
@@ -5929,4 +5929,76 @@ int card_remedy(int player, int card, event_t event)
     get_card_instance(player, card);
   }
   return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int peace_talks_effect(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2014640; original cards/visions.c:4780. */
+static int peace_talks_effect(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    give_shroud_to_player(player, card, event);
+    give_shroud_to_player(1 - player, card, event);
+  }
+  if (event == EVENT_ABILITIES)
+  {
+    result = is_what(affected_card_controller, affected_card, 0x47);
+    if (result != 0)
+    {
+      special_abilities2(affected_card_controller, affected_card, EVENT_ABILITIES,
+                         SP_KEYWORD2_GRANTED_PROT_MISC);
+    }
+  }
+  else if (event == EVENT_PROT_MISC)
+  {
+    instance = get_card_instance(affected_card_controller, affected_card);
+    if (instance != NULL)
+    {
+      result = is_what(affected_card_controller, affected_card, 0x47);
+      if ((result != 0) && (((unsigned int)event_result >> 24 & 0xff) == '\x05'))
+      {
+        event_result = event_result | 1;
+      }
+    }
+  }
+  else
+  {
+    if (event == EVENT_BEGIN_TURN)
+    {
+      instance = get_card_instance(player, card);
+      instance->targets[1].player = 0x42;
+      return 0;
+    }
+    if (event == EVENT_CLEANUP)
+    {
+      instance = get_card_instance(player, card);
+      if (instance->targets[1].player == 0x42)
+      {
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2023780; original cards/visions.c:4806. */
+int card_peace_talks(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    nobody_can_attack_this_turn_and_next_turn(player, card, 2);
+    result = create_legacy_effect(player, card, peace_talks_effect);
+    alternate_legacy_text(1, player, result);
+    kill_card(player, card, KILL_SACRIFICE);
+  }
+  result = basic_spell(player, card, event);
+  return result;
 }

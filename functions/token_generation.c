@@ -898,3 +898,877 @@ void copy_all_tokens_both_players(int player, int card, int type, test_definitio
   }
   return;
 }
+
+
+/* October 2022 token creation component. */
+void generate_token_2022(token_generation_2022_t *token);
+static void set_token_2022(int player, int card, token_generation_2022_t *token);
+void default_token_definition_2022(int player, int card, int id, token_generation_2022_t *token);
+static int resolve_token_iid_2022(iid_t int_id, token_generation_2022_t *token);
+static int get_copyable_special_infos_part_2022(int t_player, int t_card);
+void copy_token_definition_2022(int player, int card, token_generation_2022_t *token, int t_player,
+                                int t_card);
+int token_characteristic_setting_effects_2022(int player, int card, event_t event, int t_player,
+                                              int t_card);
+int generic_token_2022(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x26659d0; original functions/token_generation.c:503. */
+void generate_token_2022(token_generation_2022_t *token)
+{
+  uint16_t uVar1;
+  uint16_t uVar2;
+  int32_t iVar3;
+  int32_t iVar4;
+  bool bVar5;
+  bool bVar6;
+  uint8_t uVar7;
+  int iVar8;
+  card_instance_t *pcVar9;
+  token_action_2022_t tVar10;
+  int iVar11;
+  card_instance_t *pcVar12;
+  int iVar13;
+  int card;
+  int iVar14;
+  unsigned int uVar15;
+  unsigned int uStack_ac;
+  int iStack_9c;
+  card_instance_t *pcStack_98;
+  int iStack_94;
+  int iStack_90;
+  iid_t iStack_8c;
+  int iStack_88;
+  int aiStack_84[8];
+  target_definition_t td;
+
+  iVar8 = get_internal_card_id_from_csv_id(token->id);
+  uStack_ac = (unsigned int)token->qty;
+  iVar8 = is_what(-1, iVar8, 0x80);
+  if (iVar8 == 0)
+  {
+    iVar8 = token->t_player;
+    iVar14 = 0;
+    do
+    {
+      iVar13 = 0;
+      if (0 < active_cards_count[iVar14])
+      {
+      LAB_026664f0:
+        do
+        {
+          pcVar9 = in_play(iVar14, iVar13);
+          if (pcVar9 != NULL)
+          {
+            uVar2 = cards_data[pcVar9->internal_card_id].id;
+            if (uVar2 != 0x3541)
+            {
+              if ((unsigned short)uVar2 < 0x3542)
+              {
+                if ((uVar2 != 0x1e90) && (uVar2 != 0x2f09))
+                {
+                  iVar13 = iVar13 + 1;
+                  if (active_cards_count[iVar14] <= iVar13)
+                    break;
+                  goto LAB_026664f0;
+                }
+              }
+              else
+              {
+                if (uVar2 == 0x39ba)
+                  goto LAB_02666529;
+                if (uVar2 != 0x41c4)
+                  goto LAB_0266652b;
+              }
+              if (iVar8 != iVar14)
+                goto LAB_0266652b;
+            }
+          LAB_02666529:
+            uStack_ac = uStack_ac * 2;
+          }
+        LAB_0266652b:
+          iVar13 = iVar13 + 1;
+        } while (iVar13 < active_cards_count[iVar14]);
+      }
+      iVar14 = iVar14 + 1;
+    } while (iVar14 != 2);
+  }
+  if ((int)uStack_ac < 1)
+  {
+    return;
+  }
+  iStack_94 = token->id;
+  aiStack_84[2] = 0xffffffff;
+  aiStack_84[0] = iStack_94;
+  aiStack_84[3] = 0;
+  aiStack_84[1] = uStack_ac;
+  iVar8 = token->t_player;
+  aiStack_84[4] = 0xffffffff;
+  aiStack_84[5] = 0;
+  aiStack_84[6] = 0xffffffff;
+  aiStack_84[7] = 0;
+  if (active_cards_count[iVar8] < 1)
+  {
+    bVar5 = false;
+  }
+  else
+  {
+    iVar13 = 0;
+    bVar5 = false;
+    iStack_88 = 0;
+    iVar14 = 0;
+  LAB_02665aa9:
+    do
+    {
+      pcVar9 = in_play(iVar8, iVar13);
+      if ((pcVar9 != NULL) &&
+          (iVar8 = is_humiliated_for_ability(token->t_player, iVar13, AL_STATIC), iVar8 == 0))
+      {
+        iVar8 = get_id(token->t_player, iVar13);
+        iVar14 = iVar14 + (unsigned int)(iVar8 == 0x59a8);
+        iVar8 = get_id(token->t_player, iVar13);
+        iStack_88 = iStack_88 + (unsigned int)(iVar8 == 0x59ce);
+        iVar8 = get_id(token->t_player, iVar13);
+        if (iVar8 == 0x4b8f)
+        {
+          iVar8 = token->t_player;
+          iVar13 = iVar13 + 1;
+          bVar5 = true;
+          if (active_cards_count[iVar8] <= iVar13)
+            break;
+          goto LAB_02665aa9;
+        }
+      }
+      iVar8 = token->t_player;
+      iVar13 = iVar13 + 1;
+    } while (iVar13 < active_cards_count[iVar8]);
+    for (; iVar14 != 0; iVar14 = iVar14 + -1)
+    {
+      while (iStack_94 != 0x4917)
+      {
+        if (iStack_94 == 0x5077)
+        {
+          if (1 < iVar14)
+          {
+            aiStack_84[1] = aiStack_84[1] + uStack_ac;
+          }
+          aiStack_84[2] = 0x4917;
+          aiStack_84[3] = aiStack_84[3] + uStack_ac;
+          aiStack_84[4] = 0x4998;
+          aiStack_84[5] = aiStack_84[5] + uStack_ac;
+        }
+        else if (iStack_94 == 0x4998)
+        {
+          if (1 < iVar14)
+          {
+            aiStack_84[1] = aiStack_84[1] + uStack_ac;
+          }
+          aiStack_84[2] = 0x5077;
+          aiStack_84[3] = aiStack_84[3] + uStack_ac;
+          aiStack_84[4] = 0x4917;
+          aiStack_84[5] = aiStack_84[5] + uStack_ac;
+        }
+        iVar14 = iVar14 + -1;
+        if (iVar14 == 0)
+          goto LAB_02665be0;
+      }
+      if (1 < iVar14)
+      {
+        aiStack_84[1] = aiStack_84[1] + uStack_ac;
+      }
+      aiStack_84[2] = 0x5077;
+      aiStack_84[3] = aiStack_84[3] + uStack_ac;
+      aiStack_84[4] = 0x4998;
+      aiStack_84[5] = aiStack_84[5] + uStack_ac;
+    }
+  LAB_02665be0:
+    if (iStack_88 != 0)
+    {
+      aiStack_84[6] = 0x4991;
+      aiStack_84[7] = (iStack_88 + -1) * uStack_ac + uStack_ac;
+    }
+  }
+  iStack_90 = 0;
+  do
+  {
+    if (-1 < iStack_94)
+    {
+      if (((bVar5) && (iVar8 = get_internal_card_id_from_csv_id(iStack_94),
+                       cards_data[iVar8].cc[2] != '\x03')) &&
+          (cards_data[iVar8].type != 0x80))
+      {
+        iStack_94 = 0x48ff;
+        aiStack_84[iStack_90 * 2] = 0x48ff;
+      }
+      iStack_8c = get_internal_card_id_from_csv_id(iStack_94);
+      iStack_88 = 0;
+      iVar8 = aiStack_84[iStack_90 * 2 + 1];
+      if (0 < iVar8)
+      {
+        do
+        {
+          if ((0 < iStack_90) &&
+              (default_token_definition_2022(token->s_player, token->s_card, iStack_94, token),
+               iStack_94 == 0x4991))
+          {
+            token->tou = 1;
+            token->pow = 1;
+            token->color_forced = '\b';
+          }
+          if (((bVar5) && (iVar14 = get_internal_card_id_from_csv_id(iStack_94),
+                           cards_data[iVar14].cc[2] != '\x03')) &&
+              (cards_data[iVar14].type != 0x80))
+          {
+            token->key_plus = 0x20;
+            token->s_key_plus = 8;
+            token->tou = 4;
+            token->pow = 4;
+            token->color_forced = ' ';
+            token->special_infos = 0;
+          }
+          iStack_8c = resolve_token_iid_2022(iStack_8c, token);
+          if (token->eff_card == -1)
+          {
+            if (((token->keep_track_of_tokens_generated != 0) || (token->legacy == '\x01')) ||
+                ((token->action & (TOKEN2022_ACTION_PUMP_TOUGHNESS | TOKEN2022_ACTION_PUMP_POWER |
+                                   TOKEN2022_ACTION_HASTE | TOKEN2022_ACTION_EQUIP)) != 0))
+            {
+              backtrace_and_abort("functions/token_generation.c:392\ntoken->eff_card != -1 || "
+                                  "!(token->keep_track_of_tokens_generated > 0 || token->legacy == "
+                                  "1 || (token->action & (TOKEN_ACTION_EQUIP | TOKEN_ACTION_HASTE "
+                                  "| TOKEN_ACTION_PUMP_POWER | TOKEN_ACTION_PUMP_TOUGHNESS)))");
+            }
+          LAB_02665cab:
+            pcStack_98 = NULL;
+          }
+          else
+          {
+            if (token->keep_track_of_tokens_generated == 0)
+              goto LAB_02665cab;
+            pcStack_98 = get_card_instance(token->eff_player, token->eff_card);
+          }
+          iVar14 = token->t_player;
+          iVar13 = add_card_to_hand(iVar14, iStack_8c);
+          set_token_2022(iVar14, iVar13, token);
+          pcVar9 = get_card_instance(iVar14, iVar13);
+          pcVar9->state = pcVar9->state | 0x20;
+          hand_count[iVar14] = hand_count[iVar14] + -1;
+          pcVar9 = get_card_instance(token->t_player, iVar13);
+          if (token->legacy == '\x01')
+          {
+            iVar14 = create_targetted_legacy_effect(token->eff_player, token->eff_card,
+                                                    token->special_code_for_legacy, token->t_player,
+                                                    iVar13);
+            pcVar12 = get_card_instance(token->eff_player, iVar14);
+            pcVar12->eot_toughness = 0x300;
+            uVar1 = cards_data[iStack_8c].id;
+            pcVar12->display_pic_csv_id = uVar1;
+          }
+          tVar10 = token->action;
+          if ((tVar10 & TOKEN2022_ACTION_TAPPED) != 0)
+          {
+            pcVar9->state = pcVar9->state | 0x10;
+          }
+          if (((tVar10 & TOKEN2022_ACTION_ATTACKING_UNTAPPED) != 0) &&
+              (pcVar9->state = pcVar9->state | 4,
+               (tVar10 & TOKEN2022_ACTION_SKIP_ATTACK_CHECK) == 0))
+          {
+            choose_who_attack(token->t_player, iVar13);
+            tVar10 = token->action;
+          }
+          if ((tVar10 & TOKEN2022_ACTION_BLOCKING) != 0)
+          {
+            pcVar12 = get_card_instance(1 - token->t_player, token->action_argument);
+            uVar7 = pcVar12->blocking;
+            if (uVar7 == 0xff)
+            {
+              uVar7 = (uint8_t)token->action_argument;
+            }
+            pcVar9->blocking = uVar7;
+            tVar10 = token->action;
+            pcVar9->state = pcVar9->state | 0x8008;
+          }
+          if (((tVar10 & TOKEN2022_ACTION_EQUIP) != 0) && (iStack_88 == 0))
+          {
+            equip_target_creature(token->eff_player, token->eff_card, token->t_player, iVar13);
+            tVar10 = token->action;
+          }
+          if (((tVar10 & TOKEN2022_ACTION_EQUIP_ANY) != 0) && (iStack_88 == 0))
+          {
+            default_target_definition(token->eff_player, token->eff_card, &td, 0xff);
+            td.required_subtype = 0x3001;
+            td.illegal_abilities = 0;
+            pcVar12 = get_card_instance(token->eff_player, token->eff_card);
+            iVar3 = pcVar12->targets[0].player;
+            iVar4 = pcVar12->targets[0].card;
+            iVar14 = can_target(&td);
+            if ((iVar14 != 0) &&
+                (iVar14 = new_pick_target(&td, "Select an equipment you control", 0, 0x80),
+                 iVar14 != 0))
+            {
+              equip_target_creature(pcVar12->targets[0].player, pcVar12->targets[0].card,
+                                    token->t_player, iVar13);
+            }
+            pcVar12->targets[0].player = iVar3;
+            pcVar12->targets[0].card = iVar4;
+            tVar10 = token->action;
+          }
+          if ((tVar10 & TOKEN2022_ACTION_DONT_COPY_TOKEN_SOURCE) != 0)
+          {
+            set_special_flags_2022(token->t_player, iVar13, 0x40000000);
+            tVar10 = token->action;
+          }
+          if ((tVar10 & (TOKEN2022_ACTION_PUMP_TOUGHNESS | TOKEN2022_ACTION_PUMP_POWER |
+                         TOKEN2022_ACTION_HASTE)) != 0)
+          {
+            iStack_9c = 0;
+            if ((tVar10 & TOKEN2022_ACTION_PUMP_TOUGHNESS) != 0)
+            {
+              iStack_9c = token->action_argument;
+            }
+            iVar14 = 0;
+            if ((tVar10 & TOKEN2022_ACTION_PUMP_POWER) != 0)
+            {
+              iVar14 = token->action_argument;
+            }
+            pump_ability_until_eot(token->eff_player, token->eff_card, token->t_player, iVar13,
+                                   iVar14, iStack_9c, 0, tVar10 >> 2 & 4);
+            tVar10 = token->action;
+          }
+          if ((tVar10 & TOKEN2022_ACTION_ADD_SUBTYPE) != 0)
+          {
+            add_a_subtype_permanently(token->eff_player, token->eff_card, token->t_player, iVar13,
+                                      token->action_argument);
+            tVar10 = token->action;
+          }
+          if ((tVar10 & TOKEN2022_ACTION_RECORD_SOURCE_ID) != 0)
+          {
+            iVar14 = get_id(token->s_player, token->s_card);
+            pcVar9->damage_source_card = iVar14;
+          }
+          if (token->special_code_on_generation != NULL)
+          {
+            (*token->special_code_on_generation)(token, iVar13, iStack_88);
+          }
+          iVar14 = token->t_player;
+          if (iStack_88 < (int)token->keep_track_of_tokens_generated)
+          {
+            pcStack_98->targets[iStack_88].player = iVar14;
+            pcStack_98->targets[iStack_88].card = iVar13;
+          }
+          put_into_play(iVar14, iVar13);
+          tVar10 = token->action;
+          if ((tVar10 & TOKEN2022_ACTION_ADD_COUNTERS) != 0)
+          {
+            hack_silent_counters = hack_silent_counters + 1;
+            add_counters_from_source(token->s_player, token->s_card, token->t_player, iVar13,
+                                     (unsigned int)token->action_argument >> 0x10,
+                                     token->action_argument & 0xffff);
+            hack_silent_counters = hack_silent_counters + -1;
+            tVar10 = token->action;
+          }
+          if ((((tVar10 & TOKEN2022_ACTION_BLOCKING) == 0) ||
+               (pcVar9 = in_play(token->t_player, iVar13), pcVar9 == NULL)) ||
+              (play_sound_effect(WAV_BLOCK2),
+               (((unsigned int)event_flags >> 16 & 0xff) & 0x10) == 0))
+          {
+            uVar15 = token->special_infos;
+          }
+          else
+          {
+            dispatch_trigger2(current_turn, TRIGGER_BLOCKER_CHOSEN, EXE_STR(0x790074), 0,
+                              token->t_player, iVar13);
+            uVar15 = token->special_infos;
+          }
+          if (uVar15 == 99)
+          {
+            uVar15 = 0;
+            iVar14 = get_id(token->t_player, iVar13);
+            bVar6 = false;
+            do
+            {
+              card = active_cards_count[uVar15] + -1;
+              if (-1 < card)
+              {
+                do
+                {
+                  pcVar9 = in_play(uVar15, card);
+                  if ((((pcVar9 != NULL) && ((token->t_player != uVar15 || (iVar13 != card)))) &&
+                       (iVar11 = get_id(uVar15, card), iVar14 == iVar11)) &&
+                      (((int)(uVar15 ^ 0xffffffff) < 0 && (pcVar9 = get_card_instance(uVar15, card),
+                                                           pcVar9->targets[0xe].player == 99))))
+                  {
+                    kill_card(uVar15, card, KILL_SACRIFICE);
+                    bVar6 = true;
+                  }
+                  card = card + -1;
+                } while (card != -1);
+              }
+              uVar15 = uVar15 + 1;
+            } while (uVar15 != 2);
+            if (bVar6)
+            {
+              kill_card(token->t_player, iVar13, KILL_SACRIFICE);
+            }
+          }
+          if (iStack_88 < (int)token->keep_track_of_tokens_generated)
+          {
+            pcVar9 = get_card_instance(token->eff_player, token->eff_card);
+            pcVar9->targets[iStack_88].player = token->t_player;
+            pcVar9->targets[iStack_88].card = iVar13;
+          }
+          iStack_88 = iStack_88 + 1;
+        } while (iStack_88 != iVar8);
+      }
+      increase_trap_condition(token->t_player, 0x206, iVar8);
+    }
+    iStack_90 = iStack_90 + 1;
+    if (iStack_90 == 4)
+    {
+      uVar15 = token->keep_track_of_tokens_generated;
+      if (uVar15 == 0)
+      {
+        return;
+      }
+      if (uVar15 < uStack_ac)
+      {
+        uStack_ac = uVar15;
+      }
+      token->keep_track_of_tokens_generated = uStack_ac;
+      return;
+    }
+    iStack_94 = aiStack_84[iStack_90 * 2];
+  } while (true);
+}
+
+/* ManalinkEh 2022: 0x2664eb0; original functions/token_generation.c:150. */
+static void set_token_2022(int player, int card, token_generation_2022_t *token)
+{
+  uint32_t uVar1;
+  unsigned int uVar2;
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  instance->damage_source_player = (int8_t)token->s_player;
+  instance->damage_source_card = token->s_card;
+  uVar1 = token->s_key_plus;
+  instance->ext->sp_keywords = uVar1;
+  instance->token_special_keywords_2022 = uVar1;
+  set_special_flags2_2022(player, card, token->special_flags2);
+  instance = get_card_instance(player, card);
+  uVar2 = token->special_infos;
+  instance->token_status = instance->token_status | 0x10;
+  instance = get_card_instance(player, card);
+  instance->targets[0xe].player = uVar2;
+  return;
+}
+
+/* ManalinkEh 2022: 0x2665470; original functions/token_generation.c:5. */
+void default_token_definition_2022(int player, int card, int id, token_generation_2022_t *token)
+{
+  int result;
+  card_instance_t *instance;
+  token->id = id;
+  token->eff_player = player;
+  token->eff_card = card;
+  token->t_player = player;
+  if ((player < 0) || (card < 0))
+  {
+  LAB_02665498:
+    token->s_card = -1;
+    token->s_player = -1;
+    token->no_sleight = '\x01';
+  }
+  else
+  {
+    instance = get_card_instance(player, card);
+    result = instance->internal_card_id;
+    if (result == activation_card)
+    {
+      player = instance->parent_controller;
+      card = instance->parent_card;
+    LAB_0266554c:
+      if ((player < 0) || (card < 0))
+        goto LAB_02665498;
+    }
+    else
+    {
+      if ((-1 < result) && (cards_data[result].id - 0x385 < 8))
+      {
+        player = (int)instance->damage_source_player;
+        card = instance->damage_source_card;
+        goto LAB_0266554c;
+      }
+    }
+    token->s_player = player;
+    token->s_card = card;
+    token->no_sleight = '\0';
+  }
+  token->pow = -1;
+  token->tou = -1;
+  token->key_plus = 0;
+  token->s_key_plus = 0;
+  token->color_forced = '\0';
+  token->special_code_for_legacy = empty;
+  token->special_code_on_generation = NULL;
+  token->legacy = '\0';
+  token->qty = '\x01';
+  token->special_infos = 0;
+  token->action = 0;
+  token->action_argument = 0;
+  token->keep_track_of_tokens_generated = 0;
+  token->special_flags2 = 0;
+  token->special_flags3 = 0;
+  return;
+}
+
+/* ManalinkEh 2022: 0x2664f30; original functions/token_generation.c:295. */
+static int resolve_token_iid_2022(iid_t int_id, token_generation_2022_t *token)
+{
+  unsigned char bVar1;
+  unsigned int uVar2;
+  int iVar3;
+  token_action_2022_t tVar4;
+  unsigned char bVar5;
+  char cVar6;
+  char cVar7;
+  char cVar8;
+  int iVar9;
+  card_instance_t *instance;
+  int iVar11;
+  int iVar12;
+  uint32_t uVar13;
+  card_data_t *pcVar14;
+  int *piVar15;
+  card_data_t *pcVar16;
+  bool bVar17;
+  unsigned char bVar18;
+  unsigned int uStack_6c;
+  unsigned int uStack_64;
+  unsigned int uStack_58;
+  int dynused[16];
+
+  bVar18 = 0;
+  iVar9 = get_internal_card_id_from_csv_id((unsigned int)cards_data[int_id].id);
+  iVar11 = engine_dynamic_iid_start_2022;
+  if ((cards_data[iVar9].cc[2] != '\x03') && (cards_data[iVar9].type != 0x80))
+  {
+    iVar9 = engine_dynamic_iid_start_2022 + 0x10;
+    iVar3 = engine_dynamic_iid_start_2022;
+    do
+    {
+      iVar12 = iVar3;
+      uVar2 = (uint32_t)cards_data[iVar12].id | ((uint32_t)cards_data[iVar12].reserved2 << 16);
+      if (((((uint16_t)uVar2 == cards_data[int_id].id) && (token->id == (uVar2 & 0xffff))) &&
+           ((token->pow < 0 || (token->pow == (int)cards_data[iVar12].power)))) &&
+          (((token->tou < 0 || (token->tou == (int)cards_data[iVar12].toughness)) &&
+            ((cards_data[iVar12].static_ability & token->key_plus) != 0))))
+      {
+        bVar1 = 1;
+        if ((token->action & TOKEN2022_ACTION_CONVERT_INTO_ARTIFACT) != 0)
+        {
+          bVar1 = cards_data[iVar12].type >> 6 & 1;
+        }
+        uStack_58 = (unsigned int)cards_data[iVar12].color;
+        bVar5 = token->color_forced;
+        if (token->color_forced == 0)
+        {
+          bVar5 = cards_data[iVar12].color;
+        }
+        uStack_6c = (unsigned int)bVar5;
+        if (((-1 < token->s_player) && (-1 < token->s_card)) && (token->no_sleight == '\0'))
+        {
+          uStack_6c = get_sleighted_color_test(token->s_player, token->s_card, bVar5 & 0x3e);
+          uStack_58 = (unsigned int)cards_data[iVar12].color;
+        }
+        if ((uStack_58 == uStack_6c) && (bVar1 != 0))
+        {
+          return iVar12;
+        }
+      }
+      iVar3 = iVar12 + 1;
+    } while (iVar12 + 1 != iVar9);
+    bVar1 = cards_data[int_id].color;
+    if (token->color_forced != 0)
+    {
+      bVar1 = token->color_forced;
+    }
+    uStack_64 = (unsigned int)bVar1;
+    if (((-1 < token->s_player) && (-1 < token->s_card)) && (token->no_sleight == '\0'))
+    {
+      uStack_64 = get_sleighted_color_test(token->s_player, token->s_card, uStack_64 & 0x3e);
+    }
+    if (((((-1 < token->pow) && (token->pow != (int)cards_data[int_id].power)) ||
+          ((-1 < token->tou && (token->tou != (int)cards_data[int_id].toughness)))) ||
+         ((token->key_plus != 0 && (token->key_plus != cards_data[int_id].static_ability)))) ||
+        ((cards_data[int_id].color != uStack_64 ||
+          ((((cards_data[int_id].type & 0x40) == 0 &&
+             ((token->action & TOKEN2022_ACTION_CONVERT_INTO_ARTIFACT) != 0)) ||
+            ((token->action & TOKEN2022_ACTION_ISNT_LEGENDARY) != 0))))))
+    {
+      uStack_58 = 0;
+      piVar15 = dynused;
+      for (iVar9 = 0x10; iVar9 != 0; iVar9 = iVar9 + -1)
+      {
+        *piVar15 = 0;
+        piVar15 = piVar15 + (unsigned int)bVar18 * -2 + 1;
+      }
+      do
+      {
+        iVar9 = 0;
+        do
+        {
+          while (true)
+          {
+            instance = get_card_instance(uStack_58, iVar9);
+            uVar13 = instance->original_internal_card_id;
+            if (uVar13 == 0xffffffff)
+            {
+              uVar13 = (uint32_t)instance->backup_internal_card_id;
+            }
+            if ((iVar11 <= (int)uVar13) && ((int)uVar13 <= iVar11 + 0xf))
+            {
+              dynused[uVar13 - iVar11] = 1;
+            }
+            iVar3 = instance->dummy3;
+            if ((iVar11 + 0xf < iVar3 || iVar3 < iVar11) || (uVar13 == 0))
+              break;
+            iVar9 = iVar9 + 1;
+            dynused[iVar3 - iVar11] = 1;
+            if (iVar9 == 0x96)
+              goto LAB_0266519c;
+          }
+          iVar9 = iVar9 + 1;
+        } while (iVar9 != 0x96);
+      LAB_0266519c:
+        uStack_58 = uStack_58 + 1;
+        iVar9 = iVar11;
+        if (uStack_58 == 2)
+        {
+          do
+          {
+            if (((dynused[iVar9 - iVar11] == 0) && (engine_dynamic_iid_start_2022 <= iVar9)) &&
+                (iVar9 <= engine_dynamic_iid_start_2022 + 0xf))
+            {
+              cards_data[iVar9].id = 0xffff;
+            }
+            bVar17 = iVar12 != iVar9;
+            iVar9 = iVar9 + 1;
+          } while (bVar17);
+          iVar11 = create_a_card_type(int_id);
+          cards_data[iVar11] = cards_data[int_id];
+          iVar9 = token->pow;
+          if ((-1 < iVar9) && (iVar9 != cards_data[int_id].power))
+          {
+            cards_data[iVar11].power = (int16_t)iVar9;
+          }
+          iVar9 = token->tou;
+          if ((-1 < iVar9) && (iVar9 != cards_data[int_id].toughness))
+          {
+            cards_data[iVar11].toughness = (int16_t)iVar9;
+          }
+          if (token->key_plus != 0)
+          {
+            cards_data[iVar11].static_ability = cards_data[iVar11].static_ability | token->key_plus;
+          }
+          tVar4 = token->action;
+          if (((cards_data[int_id].type & 0x40) == 0) &&
+              ((tVar4 & TOKEN2022_ACTION_CONVERT_INTO_ARTIFACT) != 0))
+          {
+            cards_data[iVar11].type = cards_data[iVar11].type | 0x40;
+          }
+          if ((tVar4 & TOKEN2022_ACTION_ISNT_LEGENDARY) != 0)
+          {
+            cards_data[iVar11].subtype = '\0';
+          }
+          cards_data[iVar11].color = (uint8_t)uStack_64;
+          return iVar11;
+        }
+      } while (true);
+    }
+  }
+  return int_id;
+}
+
+/* ManalinkEh 2022: 0x2665380; original functions/token_generation.c:218. */
+static int get_copyable_special_infos_part_2022(int t_player, int t_card)
+{
+  unsigned int uVar1;
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar4;
+
+  instance = get_card_instance(t_player, t_card);
+  uVar1 = instance->targets[0xe].player;
+  uVar4 = (int)(uVar1 ^ 0xffffffff) >> 0x1f & uVar1;
+  if ((int)uVar1 < 1)
+  {
+    return uVar4;
+  }
+  result = get_backup_id(t_player, t_card);
+  if (result < 0x493b)
+  {
+    if (0x4902 < result)
+    {
+      switch (result)
+      {
+      case 0x4903:
+      case 0x4905:
+      case 0x4916:
+      case 0x4925:
+        goto LAB_02665409;
+      default:
+        goto LAB_026653e3;
+      case 0x491f:
+        goto LAB_0266545b;
+      case 0x4926:
+      case 0x493a:
+      code_r0x0266544e:
+        if (uVar1 != 0x43)
+        {
+          return 0;
+        }
+        return uVar4;
+      }
+    }
+    if (result != 0x38e)
+    {
+    LAB_026653e3:
+      return 0;
+    }
+  }
+  else
+  {
+    if (result == 0x496c)
+    {
+    LAB_0266545b:
+      if (1 < uVar4 - 0x42)
+      {
+        return 0;
+      }
+      return uVar4;
+    }
+    if (result < 0x496d)
+    {
+      if (result != 0x4951)
+      {
+        if (result != 0x4952)
+        {
+          return 0;
+        }
+        goto code_r0x0266544e;
+      }
+    }
+    else
+    {
+      if (result == 0x49a8)
+        goto LAB_0266545b;
+      if (result < 0x49a9)
+      {
+        if ((result - 0x497dU & 0xffffffef) != 0)
+        {
+          return 0;
+        }
+      }
+      else if (result != 0x500b)
+      {
+        return 0;
+      }
+    }
+  }
+LAB_02665409:
+  if (uVar1 == 0x42)
+  {
+    return uVar4;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2665580; original functions/token_generation.c:62. */
+void copy_token_definition_2022(int player, int card, token_generation_2022_t *token, int t_player,
+                                int t_card)
+{
+  special_flags2_t sVar1;
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar4;
+
+  result = get_id(t_player, t_card);
+  default_token_definition_2022(player, card, result, token);
+  token->no_sleight = '\x01';
+  if (cards_ptr[result]->card_type == 8)
+  {
+    instance = get_card_instance(t_player, t_card);
+    result = check_special_flags_2022(t_player, t_card, 0x40000000);
+    if (result == 0)
+    {
+      token->s_player = (int)instance->damage_source_player;
+      token->s_card = instance->damage_source_card;
+    }
+    else
+    {
+      token->s_card = -1;
+      token->s_player = -1;
+    }
+    sVar1 = instance->ext->special_flags2;
+    token->s_key_plus = instance->ext->sp_keywords;
+    token->special_flags2 = sVar1;
+    if ((t_player < 0) || (t_card < 0))
+    {
+      uVar4 = 0;
+    }
+    else
+    {
+      uVar4 = get_copyable_special_infos_part_2022(t_player, t_card);
+    }
+    token->special_infos = uVar4;
+    result = check_special_flags2_2022(t_player, t_card, 0x80);
+    if (result != 0)
+    {
+      token->special_flags2 = 0x80;
+      return;
+    }
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x2665820; original functions/token_generation.c:124. */
+int token_characteristic_setting_effects_2022(int player, int card, event_t event, int t_player,
+                                              int t_card)
+{
+  special_flags2_t value;
+  int result;
+  card_instance_t *instance;
+
+  if (card != -1)
+  {
+    result = check_special_flags2_2022(player, card, 0x400);
+    if (result == 0)
+    {
+      instance = get_card_instance(player, card);
+      special_abilities(t_player, t_card, event, instance->token_special_keywords_2022, t_player,
+                        t_card);
+      if ((((event == EVENT_CHANGE_TYPE) && (t_card == affected_card)) &&
+           (t_player == affected_card_controller)) &&
+          (value = instance->ext->special_flags2, 0 < value))
+      {
+        if ((land_can_be_played & 0x20000U) == 0)
+        {
+          land_can_be_played = land_can_be_played | 0x10000;
+        }
+        else
+        {
+          set_special_flags2_2022(t_player, t_card, value);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2665900; original functions/token_generation.c:146. */
+int generic_token_2022(int player, int card, event_t event)
+{
+  int result;
+  result = token_characteristic_setting_effects_2022(player, card, event, player, card);
+  return result;
+}

@@ -5241,7 +5241,7 @@ int card_astrolabe(int player, int card, event_t event)
         generic_activated_ability(player, card, EVENT_ACTIVATE, 9, 1, 0, 0, 0, 0, 0, 0, NULL, NULL);
     if (result != 0)
     {
-      produce_mana_tapped_all_one_color(player, card, COLOR_TEST_ANY_COLORED, 2);
+      produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_ANY_COLORED, 2);
     }
   }
   else
@@ -6141,4 +6141,199 @@ int card_natures_wrath(int player, int card, event_t event)
 LAB_020ab38d:
   iVar1 = global_enchantment(player, card, event);
   return iVar1;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20aa6f0; original cards/alliances.c:4312. */
+int card_gorilla_berserkers(int player, int card, event_t event)
+{
+  rampage(player, card, event, 2);
+  minblockers_3(player, card, event);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20ac270; original cards/alliances.c:4804. */
+int card_school_of_the_unseen(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  color_t color;
+  unsigned int uVar2;
+  int result;
+  unsigned int uVar4;
+  bool bVar5;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    instance = get_card_instance(player, card);
+    instance->info_slot = 1;
+    play_land_sound_effect_force_color(player, card, 0x3e);
+    count_mana_2022();
+    return 0;
+  }
+  if (event == EVENT_CHANGE_TYPE)
+  {
+
+    uVar2 = 0x3f;
+    result = has_mana(player, 0, 3);
+    if (result == 0)
+    {
+      uVar2 = 1;
+      result = is_what(player, card, 1);
+      if (result != 0)
+      {
+        uVar2 = mana_colors_added[player] | 1;
+      }
+    }
+    instance = get_card_instance(player, card);
+    instance->info_slot = uVar2;
+    return 0;
+  }
+  if (event == EVENT_COUNT_MANA)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    result = is_tapped(player, card);
+    if (result != 0)
+    {
+      return 0;
+    }
+    result = is_animated_and_sick(player, card);
+    if (result != 0)
+    {
+      return 0;
+    }
+    result = can_produce_mana(player, card);
+    if (result == 0)
+    {
+      return 0;
+    }
+    result = has_mana(player, 7, 3);
+    if (result != 0)
+    {
+      declare_mana_available_hex(player, 0x3f, 1);
+      return 0;
+    }
+    declare_mana_available(player, 0, 1);
+    return 0;
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    instance = get_card_instance(player, card);
+    if (instance->targets[1].player == 0x42)
+    {
+      return 0;
+    }
+    result = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+    return (unsigned int)(result != 0);
+  }
+  if (event != EVENT_ACTIVATE)
+  {
+    return 0;
+  }
+
+  instance = get_card_instance(player, card);
+  if (instance->targets[1].player == 0x42)
+  {
+    return 0;
+  }
+  result = has_mana(player, 0, 3);
+  if (result == 0)
+  {
+    result = is_what(player, card, 1);
+    color = COLOR_COLORLESS;
+    if (result == 0)
+      goto LAB_020ac323;
+    color = COLOR_COLORLESS;
+    if (mana_colors_added[player] == 0)
+      goto LAB_020ac323;
+    color = choose_a_color_exe(player, "What kind of mana?", 1, 0, mana_colors_added[player] | 1);
+  }
+  else
+  {
+    color = choose_mana_all_one_color_2022(player, COLOR_TEST_ANY, 1, "What kind of mana?",
+                                           COLOR_TEST_COLORLESS);
+  }
+  if (color == ~COLOR_COLORLESS)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+LAB_020ac323:
+  uVar2 = color_to_color_test(color);
+  result = is_what(player, card, 1);
+  uVar4 = 1;
+  if (result != 0)
+  {
+    uVar4 = mana_colors_added[player] | 1;
+  }
+  if ((uVar2 & uVar4) == 0)
+  {
+    instance = get_card_instance(player, card);
+    instance->targets[1].player = 0x42;
+    charge_mana(player, COLOR_COLORLESS, 2);
+    instance = get_card_instance(player, card);
+    bVar5 = spell_fizzled == 1;
+    instance->targets[1].player = 0;
+    if (bVar5)
+    {
+      return 0;
+    }
+  }
+  produce_mana_tapped_impl(player, card, color, 1, 0, 1);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20a9c60; original cards/alliances.c:4072. */
+int card_dystopia(int player, int card, event_t event)
+{
+  int result;
+  const char *msg;
+  test_definition_t test;
+
+  if (event == EVENT_CAST_SPELL)
+  {
+    result = get_sleighted_color_test(player, card, 0x28);
+    result = count_permanents_by_color(1 - player, 2, result);
+    if (result < 1)
+    {
+      ai_modifier = ai_modifier + -0x18;
+    }
+    else
+    {
+      result = get_sleighted_color_test(player, card, 0x28);
+      result = count_permanents_by_color(1 - player, 2, result);
+      ai_modifier = ai_modifier + result * 8;
+    }
+    upkeep_trigger_ability(player, card, EVENT_CAST_SPELL, 2);
+  }
+  else
+  {
+    upkeep_trigger_ability(player, card, event, 2);
+    if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+    {
+      if (current_turn == player)
+      {
+        cumulative_upkeep_general(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, can_pay_1_life_thunk,
+                                  lose_1_life_thunk);
+      }
+      msg = get_sleighted_color_text2(player, card, "Select a %s or %s permanent to sacrifice.", 3,
+                                      5);
+      new_default_test_definition(&test, 0x47, msg);
+      test.color = get_sleighted_color_test(player, card, 0x28);
+      new_sacrifice(current_turn, card, current_turn, SAC_CAUSED | SAC_NO_CANCEL, &test);
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
 }

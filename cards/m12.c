@@ -2441,3 +2441,52 @@ int card_sundial_of_the_infinite(int player, int card, event_t event)
   result = generic_activated_ability(player, card, event, 0x10001, 1, 0, 0, 0, 0, 0, 0, NULL, NULL);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x249eb60; original cards/m12.c:198. */
+static int autumns_veil_effect(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  unsigned int uVar4;
+
+  if (event == EVENT_ABILITIES)
+  {
+    result = is_what(affected_card_controller, affected_card, 2);
+    if ((result != 0) && (affected_card_controller == player))
+    {
+      special_abilities2(player, affected_card, EVENT_ABILITIES, SP_KEYWORD2_GRANTED_PROT_MISC);
+    }
+  }
+  else if (event == EVENT_PROT_MISC)
+  {
+    instance = get_card_instance(affected_card_controller, affected_card);
+    if (instance != NULL)
+    {
+      result = is_what(affected_card_controller, affected_card, 2);
+      if (((result != 0) && (affected_card_controller == player)) &&
+          (((unsigned int)event_result >> 24 & 0xff) == '\x05'))
+      {
+        result = is_being_cast(attacking_card_controller, attacking_card);
+        if (result != 0)
+        {
+          uVar3 = get_color(attacking_card_controller, attacking_card);
+          uVar4 = get_sleighted_color_test(player, card, 6);
+          if ((uVar3 & uVar4) != 0)
+          {
+            event_result = event_result | 1;
+          }
+        }
+      }
+    }
+  }
+  result = eot_trigger(player, card, event);
+  if (result == 0)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}

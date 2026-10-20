@@ -2764,6 +2764,174 @@ int dermotaxi_legacy(int player, int card, event_t event);
 int increment_data(card_instance_t *inst, int cid);
 #endif
 
+/* Extension keyword APIs recovered from October 2022. */
+#ifndef SHANDALAR
+int get_special_abilities_by_instance_2022(card_instance_t *instance);
+void remove_special_ability_2022(int player, int card, int sa);
+#endif
+
+/* Interfaces recovered from October 2022 DWARF. */
+void maxblockers_1(int player, int card, event_t event);
+void minblockers_3(int player, int card, event_t event);
+void misc_hexproof(int player, int card, event_t event);
+void squirrellink(int player, int card, event_t event);
+void trample_over_planeswalkers(int player, int card, event_t event);
+#ifndef SHANDALAR
+void attached_gets_sp_kw2(int player, int card, event_t event, sp_keyword2_t sp_keyword2);
+void special_abilities2(int player, int card, event_t event, sp_keyword2_t sp_keyword2);
+#endif
+
+/* October 2022 protection dispatch interfaces. */
+#ifndef SHANDALAR
+int dispatch_event_arbitrary_to_one_card_with_initial_event_result(
+    int player, int card, event_t event, int new_affected_card_controller, int new_affected_card,
+    int new_attacking_card_controller, int new_attacking_card, int initial_event_result);
+int dispatch_event_with_attacker_and_initial_event_result(int new_affected_card_controller,
+                                                          int new_affected_card, event_t event,
+                                                          int new_attacking_card_controller,
+                                                          int new_attacking_card,
+                                                          int initial_event_result);
+int has_protection_from_impl(int protected_player, int protected_card, int from_player,
+                             int from_card, is_protected_from_mode_2022_t new_protection_mode,
+                             keyword_t keywords);
+int is_protected_from_2022(int protected_player, int protected_card, int from_player, int from_card,
+                           is_protected_from_mode_2022_t new_protection_mode);
+#endif
+
+/* Interfaces recovered from October 2022 DWARF. */
+int palladia_mors_legacy(int player, int card, event_t event);
+
+/* October 2022 card-ID and live-instance keyword queries. */
+#ifndef SHANDALAR
+int get_special_abilities_2022(int player, int card);
+int check_for_special_ability_2022(int player, int card, int keyword);
+#endif
+
+/* October 2022 extension-backed flag interfaces. */
+#ifndef SHANDALAR
+int get_special_flags_by_instance_2022(card_instance_t *instance);
+int get_special_flags_2022(int player, int card, int type_of_special_flag);
+int check_special_flags_2022(int player, int card, int value);
+void set_special_flags_2022(int player, int card, int value);
+void remove_special_flags_2022(int player, int card, int value);
+int get_special_flags2_by_instance_2022(card_instance_t *instance);
+int check_special_flags2_2022(int player, int card, int value);
+void set_special_flags2_2022(int player, int card, int value);
+void remove_special_flags2_2022(int player, int card, int value);
+int get_special_flags3_by_instance_2022(card_instance_t *instance);
+int check_special_flags3_2022(int player, int card, int value);
+void set_special_flags3_2022(int player, int card, int value);
+void remove_special_flags3_2022(int player, int card, int value);
+#endif
+
+/* October 2022 mana modifier caches. */
+#ifndef SHANDALAR
+extern int mana_colors_added[2];
+extern int mana_color_override[2][8];
+extern int mana_quantity_override[2][8];
+extern int multi_mana_transmutation[2][2];
+#endif
+
+/* October 2022 mana count pass and native list views. */
+#ifndef SHANDALAR
+extern int engine_raw_mana_available_hex_2022[2][51];
+extern int engine_mana_may_be_spent_as_color_2022[2][11];
+void count_mana_2022(void);
+#endif
+
+/* October 2022 tapped-mana production interfaces. */
+#ifndef SHANDALAR
+int produce_mana_tapped_all_one_color_with_default_2022(int player, int card,
+                                                        color_test_t available, int num_mana,
+                                                        color_test_t default_color);
+int produce_mana_tapped_any_combination_of_colors_2022(int player, int card, color_test_t available,
+                                                       int num_mana, const char *prompt);
+int produce_mana_tapped_all_one_color_2022(int player, int card, color_test_t available,
+                                           int num_mana);
+void produce_mana_tapped_2022(int player, int card, color_t color, int amount);
+void produce_mana_tapped2_2022(int player, int card, color_t color1, int amount1, color_t color2,
+                               int amount2);
+void produce_mana_tapped_multi_2022(int player, int card, int colorless, int black, int blue,
+                                    int green, int red, int white);
+int produce_mana_tapped_all_different_colors_2022(int player, int card, color_test_t available,
+                                                  int num_mana, const char *prompt);
+int produce_mana_tapped_all_one_color_impl(int player, int card, color_test_t available,
+                                           int num_mana, int mca);
+int produce_mana_tapped_all_one_color_with_default_impl(int player, int card,
+                                                        color_test_t available, int num_mana,
+                                                        color_test_t default_color, int mca,
+                                                        int contaminate);
+void produce_mana_tapped_impl(int player, int card, color_t color, int amount, int mca,
+                              int contaminate);
+void produce_mana_tapped2_impl(int player, int card, color_t color1, int amount1, color_t color2,
+                               int amount2, int mca);
+void produce_mana_tapped_multi_impl(int player, int card, int colorless, int black, int blue,
+                                    int green, int red, int white, int mca);
+int produce_mana_tapped_any_combination_of_colors_impl(int player, int card, color_test_t available,
+                                                       int num_mana, const char *prompt, int mca);
+#endif
+
+/* Interfaces recovered from October 2022 DWARF. */
+int can_autotap(int player, int card, autotap_t autotap_flags);
+int card_generic_boltland(int player, int card, event_t event);
+int chaos_moon_legacy(int player, int card, event_t event);
+int deep_water_legacy(int player, int card, event_t event);
+int mdfc_back_boltland(int player, int card, event_t event);
+int multimana_producer_per_type_count(int player, int card, event_t event, int sel_type, int clr);
+int pale_moon_legacy(int player, int card, event_t event);
+int tempest_does_not_untap_land(int player, int card, event_t event);
+
+/* October 2022 mana-color chooser. */
+#ifndef SHANDALAR
+int choose_mana_all_one_color_2022(int player, color_test_t available, int num_mana,
+                                   const char *prompt, color_test_t default_color);
+#endif
+
+/* Public 2022 life-upkeep callback interfaces; retained source bodies. */
+#ifndef SHANDALAR
+int can_pay_1_life_thunk(int player, int card, int number_of_age_counters);
+int lose_1_life_thunk(int player, int card, int number_of_age_counters);
+#endif
+
+/* October 2022 per-player card/counterability flags. */
+#ifndef SHANDALAR
+extern uint32_t card_flags[2];
+extern uint8_t your_spells_cant_be_countered_by_color[2];
+#endif
+
+/* October 2022 basic-land color replacement callers. */
+#ifndef SHANDALAR
+int card_naked_singularity(int player, int card, event_t event);
+int card_reality_twist(int player, int card, event_t event);
+#endif
+
+/* October 2022 independent game-mode state. */
+#ifndef SHANDALAR
+extern other_game_mode_2022_t other_game_mode;
+#endif
+
+/* Interfaces recovered from October 2022 DWARF. */
+int pre_counterspell(int player, int card, int to_counter_player, int to_counter_card);
+
+/* Shared native singleplayer-mode import. */
+extern singleplayer_mode_t singleplayer_mode;
+
+/* October 2022 token creation interfaces. */
+#ifndef SHANDALAR
+extern int engine_dynamic_iid_start_2022;
+void generate_token_2022(token_generation_2022_t *token);
+void default_token_definition_2022(int player, int card, int id, token_generation_2022_t *token);
+void copy_token_definition_2022(int player, int card, token_generation_2022_t *token, int t_player,
+                                int t_card);
+int token_characteristic_setting_effects_2022(int player, int card, event_t event, int t_player,
+                                              int t_card);
+int generic_token_2022(int player, int card, event_t event);
+#endif
+
+/* Interfaces recovered from October 2022 DWARF. */
+int eternalize(int player, int card, event_t event, card_id_t cid, int x, int b, int u, int g,
+               int r, int w);
+
 #ifdef __cplusplus
 }
 #endif

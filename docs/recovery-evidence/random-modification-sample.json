@@ -1,0 +1,4598 @@
+{
+  "selection": {
+    "seed": "manalink-shared-functions-2026-10-18-v1",
+    "per_stratum": 15,
+    "design": "SHA-256 ranking of seed, stratum and sorted identity fields; lowest ranks selected without replacement before decoding or decompilation.",
+    "frame_counts": {
+      "cards": 11729,
+      "helpers": 2653
+    },
+    "excluded_pair_counts": {
+      "already-recovered-target": 18,
+      "prior-pilot-name": 30,
+      "non-C-source": 6
+    },
+    "paired_identities": 14436,
+    "ambiguous_shared_keys": 75,
+    "prior_review_sha256": "0d6b8d2aed3f98c77df673d12b5f1364d92df9e6a1432c9cecb19be0010c47eb",
+    "recovered_manifest_sha256": "e73db4f66cf9cc66498f0cdd290897b128324343e6f6e0a1073ab215e30799a8",
+    "inventory_sha256": {
+      "2020": "42f7d58e93f7d99665ca9ccf2883684a5b35dd99e7e57de92547d54931693db7",
+      "2022": "cd5a8d856379ef3d5f536437de59d94174ad4abfdd0089adde0e9cb5bc09e1d6"
+    },
+    "selection": [
+      {
+        "stratum": "cards",
+        "rank": "000ede569fc4a4f0fff4d08003a4949068aaa140d27fc7c78e1751ec95200f22",
+        "old": {
+          "source": "cards/theros.c",
+          "name": "card_arena_athlete",
+          "low_pc": "0x2029ff0",
+          "high_pc": "0x202a0d5",
+          "line": "2601",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x1407c2",
+          "start": 33726448,
+          "end": 33726677
+        },
+        "new": {
+          "source": "cards/theros.c",
+          "name": "card_arena_athlete",
+          "low_pc": "0x2638390",
+          "high_pc": "0x263847b",
+          "line": "2998",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x5ca8a80",
+          "start": 40076176,
+          "end": 40076411
+        },
+        "method": "source-and-name",
+        "artifact": "card_arena_athlete__2029ff0"
+      },
+      {
+        "stratum": "cards",
+        "rank": "0018c24e9b277ea62a8c989141373e7f90d13e0cd53dbf6c68309be0a099605f",
+        "old": {
+          "source": "cards/mirage.c",
+          "name": "card_rampant_growth",
+          "low_pc": "0x23fb820",
+          "high_pc": "0x23fb8c2",
+          "line": "4051",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x35aed35",
+          "start": 37730336,
+          "end": 37730498
+        },
+        "new": {
+          "source": "cards/mirage.c",
+          "name": "card_rampant_growth",
+          "low_pc": "0x2383cf0",
+          "high_pc": "0x2383d9f",
+          "line": "4213",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x34bc282",
+          "start": 37240048,
+          "end": 37240223
+        },
+        "method": "source-and-name",
+        "artifact": "card_rampant_growth__23fb820"
+      },
+      {
+        "stratum": "cards",
+        "rank": "001a4fde9db892fb32d78b01889879a2391d11f9cd92fe8c4ca216c39d0fb7a2",
+        "old": {
+          "source": "cards/dissension.c",
+          "name": "card_azorius_ploy",
+          "low_pc": "0x20c5a10",
+          "high_pc": "0x20c5b6f",
+          "line": "324",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0xa66f4b",
+          "start": 34363920,
+          "end": 34364271
+        },
+        "new": {
+          "source": "cards/dissension.c",
+          "name": "card_azorius_ploy",
+          "low_pc": "0x221b710",
+          "high_pc": "0x221ba72",
+          "line": "309",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x1eabaf6",
+          "start": 35763984,
+          "end": 35764850
+        },
+        "method": "source-and-name",
+        "artifact": "card_azorius_ploy__20c5a10"
+      },
+      {
+        "stratum": "cards",
+        "rank": "00214708c4cb50ffce5292bf10174cbc5cbf27e0f327f859773f2e3586ce0d9d",
+        "old": {
+          "source": "cards/m15.c",
+          "name": "card_phytotitan",
+          "low_pc": "0x21160a0",
+          "high_pc": "0x21160ea",
+          "line": "4031",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0xe29f53",
+          "start": 34693280,
+          "end": 34693354
+        },
+        "new": {
+          "source": "cards/m15.c",
+          "name": "card_phytotitan",
+          "low_pc": "0x21b6750",
+          "high_pc": "0x21b67a5",
+          "line": "4178",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x17c324a",
+          "start": 35350352,
+          "end": 35350437
+        },
+        "method": "source-and-name",
+        "artifact": "card_phytotitan__21160a0"
+      },
+      {
+        "stratum": "cards",
+        "rank": "0027e20bcb4e0924b4645f2a7f8f00408bad3c384a5ed0a564aa2c2b616da6a0",
+        "old": {
+          "source": "cards/commander_2016.c",
+          "name": "card_runehorn_hellkite",
+          "low_pc": "0x232db90",
+          "high_pc": "0x232dcaf",
+          "line": "617",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x2baf5a1",
+          "start": 36887440,
+          "end": 36887727
+        },
+        "new": {
+          "source": "cards/commander_2016.c",
+          "name": "card_runehorn_hellkite",
+          "low_pc": "0x23e8340",
+          "high_pc": "0x23e846a",
+          "line": "619",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x3ad1102",
+          "start": 37651264,
+          "end": 37651562
+        },
+        "method": "source-and-name",
+        "artifact": "card_runehorn_hellkite__232db90"
+      },
+      {
+        "stratum": "cards",
+        "rank": "002d7fb1acf89238494f8c7b8c2eb89db2e9e70239c8d13875efcd28e7628df9",
+        "old": {
+          "source": "cards/dragons_maze.c",
+          "name": "card_reap_intellect",
+          "low_pc": "0x2080cd0",
+          "high_pc": "0x2080f72",
+          "line": "2357",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x73e88b",
+          "start": 34082000,
+          "end": 34082674
+        },
+        "new": {
+          "source": "cards/dragons_maze.c",
+          "name": "card_reap_intellect",
+          "low_pc": "0x2298190",
+          "high_pc": "0x2298559",
+          "line": "2427",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x2585195",
+          "start": 36274576,
+          "end": 36275545
+        },
+        "method": "source-and-name",
+        "artifact": "card_reap_intellect__2080cd0"
+      },
+      {
+        "stratum": "cards",
+        "rank": "00306c559fc9d1fef482d945c47c9ede346a47bd9985806b7b171fc4852ac3eb",
+        "old": {
+          "source": "cards/tempest.c",
+          "name": "card_serene_offering",
+          "low_pc": "0x216aca0",
+          "high_pc": "0x216ae0e",
+          "line": "3935",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x11fca3f",
+          "start": 35040416,
+          "end": 35040782
+        },
+        "new": {
+          "source": "cards/tempest.c",
+          "name": "card_serene_offering",
+          "low_pc": "0x2155bd0",
+          "high_pc": "0x2155d3d",
+          "line": "4646",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x126508a",
+          "start": 34954192,
+          "end": 34954557
+        },
+        "method": "source-and-name",
+        "artifact": "card_serene_offering__216aca0"
+      },
+      {
+        "stratum": "cards",
+        "rank": "003d1b923ef1f474a3edeccf1d8a2eafed7f76819cc386afcaaeeac7a9a5ae08",
+        "old": {
+          "source": "cards/odissey.c",
+          "name": "card_chatter_of_squirrel",
+          "low_pc": "0x2014b60",
+          "high_pc": "0x2014c31",
+          "line": "1588",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x93b5b",
+          "start": 33639264,
+          "end": 33639473
+        },
+        "new": {
+          "source": "cards/odyssey.c",
+          "name": "card_chatter_of_squirrel",
+          "low_pc": "0x2507390",
+          "high_pc": "0x2507461",
+          "line": "1634",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x4a44f5b",
+          "start": 38826896,
+          "end": 38827105
+        },
+        "method": "unique-name-moved-source",
+        "artifact": "card_chatter_of_squirrel__2014b60"
+      },
+      {
+        "stratum": "cards",
+        "rank": "004671aed0d671a770c6d13833ac5a74c1b5e6a80b11911b2a92617e9adca1b4",
+        "old": {
+          "source": "cards/legends.c",
+          "name": "card_caverns_of_despair",
+          "low_pc": "0x20df7a0",
+          "high_pc": "0x20df7fd",
+          "line": "1345",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0xba857d",
+          "start": 34469792,
+          "end": 34469885
+        },
+        "new": {
+          "source": "cards/legends.c",
+          "name": "card_caverns_of_despair",
+          "low_pc": "0x21f0030",
+          "high_pc": "0x21f0097",
+          "line": "1357",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x1bad29f",
+          "start": 35586096,
+          "end": 35586199
+        },
+        "method": "source-and-name",
+        "artifact": "card_caverns_of_despair__20df7a0"
+      },
+      {
+        "stratum": "cards",
+        "rank": "0050682261823e3e2b584762b9f5f81735d94ed9e9cc2e3f2e6018c1a200a146",
+        "old": {
+          "source": "cards/m13.c",
+          "name": "card_harbor_bandit",
+          "low_pc": "0x20607e0",
+          "high_pc": "0x2060835",
+          "line": "900",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x5f4541",
+          "start": 33949664,
+          "end": 33949749
+        },
+        "new": {
+          "source": "cards/m13.c",
+          "name": "card_harbor_bandit",
+          "low_pc": "0x22b6b80",
+          "high_pc": "0x22b6bd5",
+          "line": "919",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x27186bb",
+          "start": 36400000,
+          "end": 36400085
+        },
+        "method": "source-and-name",
+        "artifact": "card_harbor_bandit__20607e0"
+      },
+      {
+        "stratum": "cards",
+        "rank": "0051249b185be93dd215c2f0f883edeb666c7447b463e8d7f07194c8597d976a",
+        "old": {
+          "source": "cards/visions.c",
+          "name": "card_anvil_of_bagardan",
+          "low_pc": "0x228ac70",
+          "high_pc": "0x228acec",
+          "line": "76",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x228748f",
+          "start": 36220016,
+          "end": 36220140
+        },
+        "new": {
+          "source": "cards/visions.c",
+          "name": "card_anvil_of_bagardan",
+          "low_pc": "0x2014e80",
+          "high_pc": "0x2014f1e",
+          "line": "77",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0xcdd70",
+          "start": 33640064,
+          "end": 33640222
+        },
+        "method": "source-and-name",
+        "artifact": "card_anvil_of_bagardan__228ac70"
+      },
+      {
+        "stratum": "cards",
+        "rank": "00541f5ec2840a2ae032dfa665d5995f51fc5d319e8bcfca99adf5b9cc1e3980",
+        "old": {
+          "source": "cards/fallen_empires.c",
+          "name": "card_thrull_wizard",
+          "low_pc": "0x23e08f0",
+          "high_pc": "0x23e0bdb",
+          "line": "1579",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x346ca38",
+          "start": 37619952,
+          "end": 37620699
+        },
+        "new": {
+          "source": "cards/fallen_empires.c",
+          "name": "card_thrull_wizard",
+          "low_pc": "0x24218e0",
+          "high_pc": "0x2421c48",
+          "line": "1636",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x3de0edc",
+          "start": 37886176,
+          "end": 37887048
+        },
+        "method": "source-and-name",
+        "artifact": "card_thrull_wizard__23e08f0"
+      },
+      {
+        "stratum": "cards",
+        "rank": "00555636a07416a7d5a28a58a42242069a4b98ef988774120e20fe44b8c143d4",
+        "old": {
+          "source": "cards/champions_of_kamigawa.c",
+          "name": "card_cage_of_hands",
+          "low_pc": "0x23121c0",
+          "high_pc": "0x23122f5",
+          "line": "753",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x29595ab",
+          "start": 36774336,
+          "end": 36774645
+        },
+        "new": {
+          "source": "cards/champions_of_kamigawa.c",
+          "name": "card_cage_of_hands",
+          "low_pc": "0x260da00",
+          "high_pc": "0x260dbc9",
+          "line": "815",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x5a576a6",
+          "start": 39901696,
+          "end": 39902153
+        },
+        "method": "source-and-name",
+        "artifact": "card_cage_of_hands__23121c0"
+      },
+      {
+        "stratum": "cards",
+        "rank": "00597d4940027227ea05bf9c37269ff8b0da34889f93f130168d248ddada8d1c",
+        "old": {
+          "source": "cards/invasion.c",
+          "name": "card_verdeloth_the_ancient",
+          "low_pc": "0x2386b10",
+          "high_pc": "0x2386c58",
+          "line": "3963",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x300e9d7",
+          "start": 37251856,
+          "end": 37252184
+        },
+        "new": {
+          "source": "cards/invasion.c",
+          "name": "card_verdeloth_the_ancient",
+          "low_pc": "0x2494420",
+          "high_pc": "0x2494568",
+          "line": "4284",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x435b852",
+          "start": 38356000,
+          "end": 38356328
+        },
+        "method": "source-and-name",
+        "artifact": "card_verdeloth_the_ancient__2386b10"
+      },
+      {
+        "stratum": "cards",
+        "rank": "00693467a6b36f4d90763bcc5666c9a2212d240e03423f188bc1a5ed3a66dc3e",
+        "old": {
+          "source": "cards/planechase.c",
+          "name": "card_brindle_shoat",
+          "low_pc": "0x23e7450",
+          "high_pc": "0x23e7523",
+          "line": "318",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x3503be9",
+          "start": 37647440,
+          "end": 37647651
+        },
+        "new": {
+          "source": "cards/planechase.c",
+          "name": "card_brindle_shoat",
+          "low_pc": "0x2412a20",
+          "high_pc": "0x2412ade",
+          "line": "318",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x3d25332",
+          "start": 37825056,
+          "end": 37825246
+        },
+        "method": "source-and-name",
+        "artifact": "card_brindle_shoat__23e7450"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "003a0ec768775ca0ac3c4e0cfe298a8611712112e24f93f25115414196ac7c05",
+        "old": {
+          "source": "functions/sacrifices.c",
+          "name": "player_sacrifices_a_creature",
+          "low_pc": "0x248bdb0",
+          "high_pc": "0x248be29",
+          "line": "623",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x3d2873a",
+          "start": 38321584,
+          "end": 38321705
+        },
+        "new": {
+          "source": "functions/sacrifices.c",
+          "name": "player_sacrifices_a_creature",
+          "low_pc": "0x26e51c0",
+          "high_pc": "0x26e5239",
+          "line": "622",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x6d127fc",
+          "start": 40784320,
+          "end": 40784441
+        },
+        "method": "source-and-name",
+        "artifact": "player_sacrifices_a_creature__248bdb0"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "005b53be38a1ef26f1f718211ba8b77aee026020be56684e7950df612e1be567",
+        "old": {
+          "source": "cards/legends.c",
+          "name": "glyph_of_destruction_boost_legacy",
+          "low_pc": "0x20dc060",
+          "high_pc": "0x20dc0ff",
+          "line": "2802",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0xba4249",
+          "start": 34455648,
+          "end": 34455807
+        },
+        "new": {
+          "source": "cards/legends.c",
+          "name": "glyph_of_destruction_boost_legacy",
+          "low_pc": "0x21ec620",
+          "high_pc": "0x21ec6c6",
+          "line": "2859",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x1bb2fb0",
+          "start": 35571232,
+          "end": 35571398
+        },
+        "method": "source-and-name",
+        "artifact": "glyph_of_destruction_boost_legacy__20dc060"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "0061f48d6e86ee24292d58f6a195ad0ba1df55b7fb9a74cf395f536191690fce",
+        "old": {
+          "source": "functions/functions.c",
+          "name": "when_attacks_pump_self",
+          "low_pc": "0x24c5510",
+          "high_pc": "0x24c55e0",
+          "line": "7648",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x41f28c2",
+          "start": 38556944,
+          "end": 38557152
+        },
+        "new": {
+          "source": "functions/functions.c",
+          "name": "when_attacks_pump_self",
+          "low_pc": "0x268d840",
+          "high_pc": "0x268d93c",
+          "line": "9701",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x6597bb5",
+          "start": 40425536,
+          "end": 40425788
+        },
+        "method": "source-and-name",
+        "artifact": "when_attacks_pump_self__24c5510"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "0066fbdd2d614ca2e055bfbb45008fc676aecba2a2e983d91fe572b2690943d5",
+        "old": {
+          "source": "functions/play_spell_for_free.c",
+          "name": "copy_spell_from_stack",
+          "low_pc": "0x24ea260",
+          "high_pc": "0x24ea29b",
+          "line": "94",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x4681785",
+          "start": 38707808,
+          "end": 38707867
+        },
+        "new": {
+          "source": "functions/play_spell_for_free.c",
+          "name": "copy_spell_from_stack",
+          "low_pc": "0x26686d0",
+          "high_pc": "0x266871c",
+          "line": "116",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x628a66a",
+          "start": 40273616,
+          "end": 40273692
+        },
+        "method": "source-and-name",
+        "artifact": "copy_spell_from_stack__24ea260"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "007b7f74f65df3cf76ba32794e26038dcc5354e29063add7519ba57eebfcaab5",
+        "old": {
+          "source": "functions/tutors.c",
+          "name": "show_deck",
+          "low_pc": "0x24f58a0",
+          "high_pc": "0x24f58f0",
+          "line": "7",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x4833b16",
+          "start": 38754464,
+          "end": 38754544
+        },
+        "new": {
+          "source": "functions/tutors.c",
+          "name": "show_deck",
+          "low_pc": "0x2650c40",
+          "high_pc": "0x2650c9a",
+          "line": "10",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x5e3a09d",
+          "start": 40176704,
+          "end": 40176794
+        },
+        "method": "source-and-name",
+        "artifact": "show_deck__24f58a0"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "007c0173e647b6997cb423cfb07998d195a329f611fd55d904a21289adf155f7",
+        "old": {
+          "source": "functions/engine.c",
+          "name": "is_legal_block_impl",
+          "low_pc": "0x24add80",
+          "high_pc": "0x24ae08e",
+          "line": "402",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x414240e",
+          "start": 38460800,
+          "end": 38461582
+        },
+        "new": {
+          "source": "functions/engine.c",
+          "name": "is_legal_block_impl",
+          "low_pc": "0x26ab5a0",
+          "high_pc": "0x26ab6ac",
+          "line": "2053",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x66712ac",
+          "start": 40547744,
+          "end": 40548012
+        },
+        "method": "source-and-name",
+        "artifact": "is_legal_block_impl__24add80"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "00849d20db3da04e8ac7922101f00452d597748c3b51f392615bf4c77c8af168",
+        "old": {
+          "source": "cards/fate_reforged.c",
+          "name": "manifest_iid_impl",
+          "low_pc": "0x2230880",
+          "high_pc": "0x22309e1",
+          "line": "107",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x1d984f4",
+          "start": 35850368,
+          "end": 35850721
+        },
+        "new": {
+          "source": "cards/fate_reforged.c",
+          "name": "manifest_iid_impl",
+          "low_pc": "0x2622140",
+          "high_pc": "0x262228e",
+          "line": "107",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x5bde4e3",
+          "start": 39985472,
+          "end": 39985806
+        },
+        "method": "source-and-name",
+        "artifact": "manifest_iid_impl__2230880"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "00a4971420575768d2b15677761bb633a191420bf2a2d91092c4ac1f4e072c32",
+        "old": {
+          "source": "cards/betrayers_of_kamigawa.c",
+          "name": "genju",
+          "low_pc": "0x22cb460",
+          "high_pc": "0x22cb830",
+          "line": "159",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x26bd2a9",
+          "start": 36484192,
+          "end": 36485168
+        },
+        "new": {
+          "source": "cards/betrayers_of_kamigawa.c",
+          "name": "genju",
+          "low_pc": "0x25692e0",
+          "high_pc": "0x25696ac",
+          "line": "165",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x4ef5b86",
+          "start": 39228128,
+          "end": 39229100
+        },
+        "method": "source-and-name",
+        "artifact": "genju__22cb460"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "00b7f9e76fc689a66f8e7ecd4062edc479b83c301b4649346b5c7aa568392f89",
+        "old": {
+          "source": "cards/ice_age.c",
+          "name": "lose_2_life_thunk",
+          "low_pc": "0x2404510",
+          "high_pc": "0x2404531",
+          "line": "3158",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x36d7512",
+          "start": 37766416,
+          "end": 37766449
+        },
+        "new": {
+          "source": "cards/ice_age.c",
+          "name": "lose_2_life_thunk",
+          "low_pc": "0x23ecfe0",
+          "high_pc": "0x23ed001",
+          "line": "3915",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x3b9e6a9",
+          "start": 37670880,
+          "end": 37670913
+        },
+        "method": "source-and-name",
+        "artifact": "lose_2_life_thunk__2404510"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "00bdbc4c38317a7989eee4a0e9156db1a64c374c185c24e6bcc544ec04574aec",
+        "old": {
+          "source": "functions/boost_creature_type.c",
+          "name": "boost_creature_type",
+          "low_pc": "0x24885a0",
+          "high_pc": "0x24885ee",
+          "line": "45",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x3c9100e",
+          "start": 38307232,
+          "end": 38307310
+        },
+        "new": {
+          "source": "functions/boost_creature_type.c",
+          "name": "boost_creature_type",
+          "low_pc": "0x26eb370",
+          "high_pc": "0x26eb3be",
+          "line": "45",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x6f35709",
+          "start": 40809328,
+          "end": 40809406
+        },
+        "method": "source-and-name",
+        "artifact": "boost_creature_type__24885a0"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "00cfe80a4dd1b84acdc2d2973876aecd88055aa49ec8ff24e0ce6953306973c9",
+        "old": {
+          "source": "functions/functions.c",
+          "name": "in_play_and_attacking",
+          "low_pc": "0x24b8a50",
+          "high_pc": "0x24b8a78",
+          "line": "5249",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x41e386b",
+          "start": 38505040,
+          "end": 38505080
+        },
+        "new": {
+          "source": "functions/functions.c",
+          "name": "in_play_and_attacking",
+          "low_pc": "0x2681300",
+          "high_pc": "0x268132c",
+          "line": "7165",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x65b4a40",
+          "start": 40375040,
+          "end": 40375084
+        },
+        "method": "source-and-name",
+        "artifact": "in_play_and_attacking__24b8a50"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "00e7bce41bc6f5d14ae06c2ad994f06bfc7fea90f97f4b57eaed913e4e1852da",
+        "old": {
+          "source": "functions/gain_control_and_legend_rule.c",
+          "name": "gain_control_until_source_is_in_play_and_tapped",
+          "low_pc": "0x24fad20",
+          "high_pc": "0x24fadf7",
+          "line": "536",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x48c3f71",
+          "start": 38776096,
+          "end": 38776311
+        },
+        "new": {
+          "source": "functions/gain_control_and_legend_rule.c",
+          "name": "gain_control_until_source_is_in_play_and_tapped",
+          "low_pc": "0x2664af0",
+          "high_pc": "0x2664c09",
+          "line": "581",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x61161f8",
+          "start": 40258288,
+          "end": 40258569
+        },
+        "method": "source-and-name",
+        "artifact": "gain_control_until_source_is_in_play_and_tapped__24fad20"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "011731a26c3cd628c4ad3ff6ffe812fc6513a898586d424c2215efef76d8d960",
+        "old": {
+          "source": "functions/produce_mana.c",
+          "name": "wild_growth_aura_all_one_color",
+          "low_pc": "0x24e5830",
+          "high_pc": "0x24e585f",
+          "line": "797",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x4565a6f",
+          "start": 38688816,
+          "end": 38688863
+        },
+        "new": {
+          "source": "functions/produce_mana.c",
+          "name": "wild_growth_aura_all_one_color",
+          "low_pc": "0x266b970",
+          "high_pc": "0x266b99f",
+          "line": "1156",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x633e385",
+          "start": 40286576,
+          "end": 40286623
+        },
+        "method": "source-and-name",
+        "artifact": "wild_growth_aura_all_one_color__24e5830"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "01175bed46b2c58334a7d866daace067e859776b682ef691318df789ad9ad6b0",
+        "old": {
+          "source": "functions/functions.c",
+          "name": "get_hacked_land_text",
+          "low_pc": "0x24b7ef0",
+          "high_pc": "0x24b81ac",
+          "line": "4569",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x41e2bfc",
+          "start": 38502128,
+          "end": 38502828
+        },
+        "new": {
+          "source": "functions/functions.c",
+          "name": "get_hacked_land_text",
+          "low_pc": "0x26808c0",
+          "high_pc": "0x2680aec",
+          "line": "6454",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x65a15bb",
+          "start": 40372416,
+          "end": 40372972
+        },
+        "method": "source-and-name",
+        "artifact": "get_hacked_land_text__24b7ef0"
+      },
+      {
+        "stratum": "helpers",
+        "rank": "012d5eaca6ef63aeb08df49e17a5b049a3008ce4a65aab9c444b34707627310b",
+        "old": {
+          "source": "cards/fate_reforged.c",
+          "name": "dash_cost_cless",
+          "low_pc": "0x2230500",
+          "high_pc": "0x2230579",
+          "line": "204",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x1d98048",
+          "start": 35849472,
+          "end": 35849593
+        },
+        "new": {
+          "source": "cards/fate_reforged.c",
+          "name": "dash_cost_cless",
+          "low_pc": "0x2621d10",
+          "high_pc": "0x2621d88",
+          "line": "210",
+          "declaration": "False",
+          "ranges": "",
+          "die_offset": "0x5bddeca",
+          "start": 39984400,
+          "end": 39984520
+        },
+        "method": "source-and-name",
+        "artifact": "dash_cost_cless__2230500"
+      }
+    ]
+  },
+  "selection_sha256": "eced7aef47f73b6f51b0a701479300362de245862d2e0f0524de99d5ede4fe16",
+  "sampling_frame_csv_sha256": "0b5c57a2c972a2226bf7c53c0498753b4052c07b35049370ba2d2aead2c600c6",
+  "repository_head": "c94c87d2977f48ff0ef1569b713253a3534d613e",
+  "release_sha256": {
+    "2020": "927d076ca9e6a46b8a2bde0aeeed5e3b847ec8f55d22cebc9f92744bea460759",
+    "2022": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5"
+  },
+  "results": {
+    "categories": {
+      "compiler-layout-candidate": 14,
+      "confirmed-change": 12,
+      "same-instructions": 4
+    },
+    "change_kinds": {
+      "logic": 4,
+      "interface-migration": 4,
+      "event-filter": 1,
+      "token-color": 1,
+      "display-state": 1,
+      "display-text": 1
+    },
+    "strata": {
+      "cards": {
+        "eligible_population": 11729,
+        "sample": 15,
+        "confirmed_changes": 5,
+        "categories": {
+          "compiler-layout-candidate": 8,
+          "confirmed-change": 5,
+          "same-instructions": 2
+        },
+        "observed_change_rate": 0.3333333333333333,
+        "wilson_95": [
+          0.1517632443971473,
+          0.5828645226148023
+        ],
+        "population_weight": 0.8155333055207898
+      },
+      "helpers": {
+        "eligible_population": 2653,
+        "sample": 15,
+        "confirmed_changes": 7,
+        "categories": {
+          "compiler-layout-candidate": 6,
+          "confirmed-change": 7,
+          "same-instructions": 2
+        },
+        "observed_change_rate": 0.4666666666666667,
+        "wilson_95": [
+          0.24809535365737387,
+          0.698830199745016
+        ],
+        "population_weight": 0.18446669447921013
+      }
+    },
+    "population_weighted_observed_change_rate": 0.357928892597228,
+    "inference": "Exploratory local code/API-change rate in the eligible shared-C-function frame. Not the rate of changed gameplay, nor a total remaining-recovery estimate. Wilson intervals cover sampling uncertainty under the review labels, not classification errors, unpaired functions or indirect callee/data changes."
+  },
+  "version_tracking": {
+    "project": ".recovery/ghidra/ComparisonPilot.gpr",
+    "session": "2020-to-2022-random-v1",
+    "expected_pairs_verified": 30,
+    "markup_applied": false,
+    "correlator_counts": {
+      "Exact Symbol Name Match": 30,
+      "Exact Function Instructions Match": 4
+    },
+    "raw_sha256": "8ffb50d5e25ea44749d0583d2a5439ffaaa47d20b837cb0411054d98ff861fe0"
+  },
+  "supporting_context": {
+    "2020": {
+      "land_words_address": "0x254eae0",
+      "land_words_type": "char *[8][3]",
+      "land_words": [
+        "land",
+        "Land",
+        "LAND",
+        "swamp",
+        "Swamp",
+        "SWAMP",
+        "island",
+        "Island",
+        "ISLAND",
+        "forest",
+        "Forest",
+        "FOREST",
+        "mountain",
+        "Mountain",
+        "MOUNTAIN",
+        "plains",
+        "Plains",
+        "PLAINS",
+        "land",
+        "Land",
+        "LAND",
+        "land",
+        "Land",
+        "LAND"
+      ],
+      "copy_worker_address": "0x24ea0f0",
+      "copy_worker_die": "0x46815a4",
+      "copy_worker_concrete_parameters": [
+        {
+          "name": "player",
+          "type": "int",
+          "constant": null,
+          "location": 1577819
+        },
+        {
+          "name": "internal_id",
+          "type": "int",
+          "constant": null,
+          "location": 1577875
+        },
+        {
+          "name": "special_flags3",
+          "type": "int",
+          "constant": null,
+          "location": 1577906
+        },
+        {
+          "name": "copied",
+          "type": "card_instance_t *",
+          "constant": null,
+          "location": [
+            145,
+            0
+          ]
+        },
+        {
+          "name": "special_flags",
+          "type": "int",
+          "constant": 786432,
+          "location": null
+        }
+      ]
+    },
+    "2022": {
+      "land_words_address": "0x2764840",
+      "land_words_type": "char *[8][3]",
+      "land_words": [
+        "land",
+        "Land",
+        "LAND",
+        "swamp",
+        "Swamp",
+        "SWAMP",
+        "island",
+        "Island",
+        "ISLAND",
+        "forest",
+        "Forest",
+        "FOREST",
+        "mountain",
+        "Mountain",
+        "MOUNTAIN",
+        "plains",
+        "Plains",
+        "PLAINS",
+        "land",
+        "Land",
+        "LAND",
+        "land",
+        "Land",
+        "LAND"
+      ],
+      "copy_worker_address": "0x2668490",
+      "copy_worker_die": "0x628a7ad",
+      "copy_worker_concrete_parameters": [
+        {
+          "name": "player",
+          "type": "int",
+          "constant": null,
+          "location": 2461133
+        },
+        {
+          "name": "internal_id",
+          "type": "int",
+          "constant": null,
+          "location": 2461204
+        },
+        {
+          "name": "special_flags",
+          "type": "int",
+          "constant": null,
+          "location": 2461239
+        },
+        {
+          "name": "special_flags3",
+          "type": "int",
+          "constant": null,
+          "location": [
+            145,
+            0
+          ]
+        },
+        {
+          "name": "copied",
+          "type": "card_instance_t *",
+          "constant": null,
+          "location": [
+            145,
+            4
+          ]
+        },
+        {
+          "name": "forced_target",
+          "type": "target_t *",
+          "constant": null,
+          "location": [
+            145,
+            8
+          ]
+        }
+      ]
+    },
+    "assessment": {
+      "land_word_tables_identical": true,
+      "old_copy_flags_optimized_out_as_constant": "0xc0000",
+      "copy_caller_change": "The old ECX=0 is special_flags3, not special_flags. The old special_flags is a DWARF constant 0xc0000. The new worker restores that physical argument and adds forced_target=NULL. Do not count the ECX literal difference as a new flag behavior.",
+      "show_deck_limitation": "Unmapped native tail jump causes halt_baddata in raw C. The assembly independently shows a new zero store to hack_show_deck_force_expansion before show_deck_exe."
+    }
+  },
+  "functions": [
+    {
+      "name": "card_arena_athlete",
+      "artifact": "card_arena_athlete__2029ff0",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x2029ff0",
+          "rva": "0x29ff0",
+          "source": "cards/theros.c",
+          "line": "2601",
+          "bytes": 229,
+          "sha256": "8930fb3b01ede43c4fa8ada2b965bfcf68e520fdf49e6eeb56b91d8da80ef33c",
+          "instructions": 69,
+          "decoded_bytes": 229,
+          "fully_decoded": true,
+          "calls": [
+            "heroic_mode",
+            "default_target_definition",
+            "get_card_instance",
+            "can_target",
+            "pick_target",
+            "pump_ability_until_eot"
+          ],
+          "branches": [
+            "jne",
+            "jne",
+            "je",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 5,
+            "0x1": 1,
+            "0x2": 2,
+            "0x20": 1,
+            "0x2522a22": 1,
+            "0x70": 3
+          },
+          "normalized_sha256": "3ec9fdfe4cba95da8f6d36749fb76b38c481fcc966c2f2b8854556d7e5df2cab",
+          "c_artifact": ".recovery/comparison-random/2020-card_arena_athlete__2029ff0.c",
+          "c_sha256": "6aef000fd1f6dbba46f06ad7748f01c745315850473ede6f07aaea12d90ca4b8",
+          "asm_artifact": ".recovery/comparison-random/2020-card_arena_athlete__2029ff0.asm",
+          "asm_sha256": "cac61021e750b6275cf12dea468d0cb77f90ec9d75d7a119482e405c925fa6da"
+        },
+        "2022": {
+          "address": "0x2638390",
+          "rva": "0x638390",
+          "source": "cards/theros.c",
+          "line": "2998",
+          "bytes": 235,
+          "sha256": "e1783e08c82fe18a71277eb73271dae4535fca98ce7adeb02a6de8b1ff1b1563",
+          "instructions": 70,
+          "decoded_bytes": 235,
+          "fully_decoded": true,
+          "calls": [
+            "heroic_mode",
+            "default_target_definition",
+            "get_card_instance",
+            "can_target",
+            "pick_target",
+            "pump_ability_until_eot"
+          ],
+          "branches": [
+            "jne",
+            "jne",
+            "je",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 5,
+            "0x1": 1,
+            "0x2": 2,
+            "0x20": 1,
+            "0x275bbae": 1,
+            "0x74": 3
+          },
+          "normalized_sha256": "155bf8dfa820bf0ea5110a8000a22197c9719cddca60aefaf26b4ca67b852822",
+          "c_artifact": ".recovery/comparison-random/2022-card_arena_athlete__2029ff0.c",
+          "c_sha256": "ad359f1afa0317a5f3a5231bbc7a6b67b35c5c00ef98055324dac3f992816f56",
+          "asm_artifact": ".recovery/comparison-random/2022-card_arena_athlete__2029ff0.asm",
+          "asm_sha256": "cb8c8695ee769b39bc61c943937518d5e4c3d8888e98f80ae8dd4ea8c053368a"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Same heroic trigger, target selection and until-EOT blocking restriction; decompiled local statements correspond.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "cards/theros.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "aac7d3707c68cac7bf01ffa2f0043443143af5fbb4b1d81e71a8efd15cf34ecc",
+        "current_body_sha256": "aac7d3707c68cac7bf01ffa2f0043443143af5fbb4b1d81e71a8efd15cf34ecc",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_rampant_growth",
+      "artifact": "card_rampant_growth__23fb820",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x23fb820",
+          "rva": "0x3fb820",
+          "source": "cards/mirage.c",
+          "line": "4051",
+          "bytes": 162,
+          "sha256": "bdaeaf1cc027971a02e75ce5c5d72a33cefff615f3dfbd38e6dbe01a86be860f",
+          "instructions": 46,
+          "decoded_bytes": 162,
+          "fully_decoded": true,
+          "calls": [
+            "basic_spell",
+            "count_subtype",
+            "tutor_basic_land",
+            "kill_card"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "jmp",
+            "jne",
+            "jne",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x1": 3,
+            "0x2": 1,
+            "0x3": 1,
+            "0x6c": 1,
+            "0x71": 1,
+            "0x8": 1,
+            "0xc": 2,
+            "0xffffffff": 1
+          },
+          "normalized_sha256": "b442a8af35a710d1ea579524bb13e2d6b6ed10ec15af01fa70b5da07b3770a22",
+          "c_artifact": ".recovery/comparison-random/2020-card_rampant_growth__23fb820.c",
+          "c_sha256": "c7b203702f2b5a347791d0db5d2c3db68a19a12d4e188a600af379aab3721655",
+          "asm_artifact": ".recovery/comparison-random/2020-card_rampant_growth__23fb820.asm",
+          "asm_sha256": "1fce5fdfc2c00e6d05118558f21a359607134b90907a397d019c41782694c63f"
+        },
+        "2022": {
+          "address": "0x2383cf0",
+          "rva": "0x383cf0",
+          "source": "cards/mirage.c",
+          "line": "4213",
+          "bytes": 175,
+          "sha256": "3b3dc984db36c110f8a90dca9359ee26ad69483430da9a30eb384cfedabf9946",
+          "instructions": 49,
+          "decoded_bytes": 175,
+          "fully_decoded": true,
+          "calls": [
+            "basic_spell",
+            "tutor_basic_land",
+            "kill_card",
+            "count_subtype"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "jmp",
+            "jmp",
+            "jne",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x1": 3,
+            "0x2": 1,
+            "0x3": 1,
+            "0x6c": 1,
+            "0x71": 1,
+            "0x8": 1,
+            "0xc": 2,
+            "0xffffffff": 1
+          },
+          "normalized_sha256": "472e53ce1bf5c69598e35430a884ff1011805df33ff88835d3ac1d35286847aa",
+          "c_artifact": ".recovery/comparison-random/2022-card_rampant_growth__23fb820.c",
+          "c_sha256": "f6664c2f0e7d32156703345fac886161637b3a1111c7c3d0660193193ad9be11",
+          "asm_artifact": ".recovery/comparison-random/2022-card_rampant_growth__23fb820.asm",
+          "asm_sha256": "189d017c7a56185427e63c4c549b3fd74de897c08faf09804021d5066d95e603"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Same AI adjustment, tutor_basic_land arguments and destroy-on-resolution path.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "cards/mirage.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "46ef30d33f2344c697d604b91ace3957bd7903a43f473f5feaf8690aff5d6f29",
+        "current_body_sha256": "46ef30d33f2344c697d604b91ace3957bd7903a43f473f5feaf8690aff5d6f29",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_azorius_ploy",
+      "artifact": "card_azorius_ploy__20c5a10",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x20c5a10",
+          "rva": "0xc5a10",
+          "source": "cards/dissension.c",
+          "line": "324",
+          "bytes": 351,
+          "sha256": "24543e3566a03ec394820013509f2be79c0c5b88736e7fdcb4080787d2cd4ac6",
+          "instructions": 94,
+          "decoded_bytes": 351,
+          "fully_decoded": true,
+          "calls": [
+            "default_target_definition",
+            "get_card_instance",
+            "generic_spell",
+            "default_target_definition",
+            "get_card_instance",
+            "validate_target",
+            "kill_card",
+            "maze_of_ith_effect"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "jne",
+            "je",
+            "je",
+            "jne",
+            "jmp",
+            "jne",
+            "jne",
+            "jmp",
+            "jne",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 2,
+            "0x1": 2,
+            "0x2": 3,
+            "0x25284c5": 1,
+            "0x400": 1,
+            "0x5400": 1,
+            "0x6c": 1,
+            "0x71": 2,
+            "0x74": 3
+          },
+          "normalized_sha256": "0cc59e4b84f70d2f9131e75e03cb65e81c9b28e772b3349eec303554aabfbd58",
+          "c_artifact": ".recovery/comparison-random/2020-card_azorius_ploy__20c5a10.c",
+          "c_sha256": "2f36fe5eca59c346877d16e01e9cfd653ca0e5157ae7457b31bdf0259dc7ff4b",
+          "asm_artifact": ".recovery/comparison-random/2020-card_azorius_ploy__20c5a10.asm",
+          "asm_sha256": "a2fb6c3cb6906e637ad22a84e9c95f892a9d575f1eed0833def1421fe68c326e"
+        },
+        "2022": {
+          "address": "0x221b710",
+          "rva": "0x21b710",
+          "source": "cards/dissension.c",
+          "line": "309",
+          "bytes": 866,
+          "sha256": "c249071c31b4a729178809ba8019a78dff08337dac3bf9590ee112ecbc78ae3f",
+          "instructions": 198,
+          "decoded_bytes": 866,
+          "fully_decoded": true,
+          "calls": [
+            "default_target_definition",
+            "default_target_definition",
+            "get_card_instance",
+            "validate_target",
+            "validate_target",
+            "kill_card",
+            "default_target_definition",
+            "default_target_definition",
+            "get_card_instance",
+            "default_target_definition",
+            "default_target_definition",
+            "get_card_instance",
+            "new_pick_target",
+            "new_pick_target",
+            "negate_combat_damage_this_turn",
+            "default_target_definition",
+            "default_target_definition",
+            "get_card_instance",
+            "generic_spell",
+            "negate_combat_damage_this_turn_to"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "je",
+            "jne",
+            "je",
+            "jne",
+            "jne",
+            "jne",
+            "jmp",
+            "jne",
+            "jne",
+            "jne",
+            "jne",
+            "je",
+            "jmp",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 5,
+            "0x1": 10,
+            "0x2": 9,
+            "0x273637c": 1,
+            "0x27363c8": 1,
+            "0x400": 1,
+            "0x5400": 1,
+            "0x6c": 1,
+            "0x71": 2,
+            "0x74": 2,
+            "0x81": 2,
+            "0xcc": 4
+          },
+          "normalized_sha256": "00ff8f73054b45248dd0e76961736e0302c7b231b2a39608d0a2785af9fa31a1",
+          "c_artifact": ".recovery/comparison-random/2022-card_azorius_ploy__20c5a10.c",
+          "c_sha256": "7c4f57f08cfa050d929f9a7c3cb044fe97fa87888b57e427f5bfebba15876e10",
+          "asm_artifact": ".recovery/comparison-random/2022-card_azorius_ploy__20c5a10.asm",
+          "asm_sha256": "c0ef3c340b726e9dbada86833a00f9117794b45b859dc57c99cf3faeecd5a48d"
+        }
+      },
+      "direct_targets_added": [
+        "negate_combat_damage_this_turn",
+        "negate_combat_damage_this_turn_to",
+        "new_pick_target"
+      ],
+      "direct_targets_removed": [
+        "maze_of_ith_effect"
+      ],
+      "review": {
+        "category": "confirmed-change",
+        "note": "Two target definitions and target slots replace the old single Maze-of-Ith-style effect; resolution separately prevents damage dealt by target 0 and damage dealt to target 1.",
+        "gameplay_validated": false,
+        "change_kind": "logic"
+      },
+      "source_reference": {
+        "path": "cards/dissension.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "394c59b97103437f176c03a8d6b87e45bcbb1083cb6b6235560e1f733a586887",
+        "current_body_sha256": "394c59b97103437f176c03a8d6b87e45bcbb1083cb6b6235560e1f733a586887",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_phytotitan",
+      "artifact": "card_phytotitan__21160a0",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x21160a0",
+          "rva": "0x1160a0",
+          "source": "cards/m15.c",
+          "line": "4031",
+          "bytes": 74,
+          "sha256": "93cfdb5ee7897ca0b04a783c39407f9a4d140b5492af58ddf1e8f20ae1cea240",
+          "instructions": 25,
+          "decoded_bytes": 74,
+          "fully_decoded": true,
+          "calls": [
+            "this_dies_trigger_for_owner",
+            "create_legacy_effect"
+          ],
+          "branches": [
+            "je"
+          ],
+          "immediate_counts": {
+            "0x10": 2,
+            "0x2": 1
+          },
+          "normalized_sha256": "b73148e34afe5ca387ae6f091f112ae0c2cdef5eee44d06551b01189d6f33d4f",
+          "c_artifact": ".recovery/comparison-random/2020-card_phytotitan__21160a0.c",
+          "c_sha256": "e02cf76ccc496a46630e552079d715d9fdd025648bcbffc899b3e2ac652d2f60",
+          "asm_artifact": ".recovery/comparison-random/2020-card_phytotitan__21160a0.asm",
+          "asm_sha256": "e310f8e5ff186d42031b6b572a8b09b31cb2ae8ec0ad9a284cce0da3d3add03c"
+        },
+        "2022": {
+          "address": "0x21b6750",
+          "rva": "0x1b6750",
+          "source": "cards/m15.c",
+          "line": "4178",
+          "bytes": 85,
+          "sha256": "6f5895302860a30c546321d08b75cc3e2d842929441366f34cc6d52df0c85ae2",
+          "instructions": 32,
+          "decoded_bytes": 85,
+          "fully_decoded": true,
+          "calls": [
+            "this_dies_trigger_for_owner",
+            "create_legacy_effect"
+          ],
+          "branches": [
+            "jne"
+          ],
+          "immediate_counts": {
+            "0x10": 3,
+            "0x2": 1
+          },
+          "normalized_sha256": "642af1d9a8253bc3e146eeaba1489824c4924769060dc5c1f1537c5d54b1b8bb",
+          "c_artifact": ".recovery/comparison-random/2022-card_phytotitan__21160a0.c",
+          "c_sha256": "1df909ae99fbf685ad5717d08e89adaeb97473932a4e1b89fd1faec4a47fcfd7",
+          "asm_artifact": ".recovery/comparison-random/2022-card_phytotitan__21160a0.asm",
+          "asm_sha256": "b42e7ff552094c4ad6129360218a148b9cb219abc3513ba7d1b6a72b0313354b"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Same mandatory death trigger and same legacy callback; early-return/block layout differs. Callback behavior is not assessed here.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "cards/m15.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "cd6a95c108e3ef81a296b06399a2ebdf30b646ccf1bf02ea735196bf0bf85b7d",
+        "current_body_sha256": "cd6a95c108e3ef81a296b06399a2ebdf30b646ccf1bf02ea735196bf0bf85b7d",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_runehorn_hellkite",
+      "artifact": "card_runehorn_hellkite__232db90",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x232db90",
+          "rva": "0x32db90",
+          "source": "cards/commander_2016.c",
+          "line": "617",
+          "bytes": 287,
+          "sha256": "89e6453f993348e4f7f6ea56254fda39f01c6c5b1ae1c55768718b5bccf828db",
+          "instructions": 69,
+          "decoded_bytes": 287,
+          "fully_decoded": true,
+          "calls": [
+            "new_discard_all",
+            "draw_cards",
+            "new_discard_all",
+            "draw_cards",
+            "has_mana_multi",
+            "charge_mana_multi"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "je",
+            "jmp",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 8,
+            "0x1": 4,
+            "0x1c": 3,
+            "0x20": 1,
+            "0x5": 2,
+            "0x7": 2,
+            "0xb0": 1,
+            "0xb5": 1,
+            "0xd00": 1
+          },
+          "normalized_sha256": "d3f4547200be0294d70728c77badabd931bff3dbc7bca8891615627a52dfb27c",
+          "c_artifact": ".recovery/comparison-random/2020-card_runehorn_hellkite__232db90.c",
+          "c_sha256": "94a4ff624ea3aab3c7f2badffab2bdc10d4b8ba7a49de1dbd731efd99f0956cd",
+          "asm_artifact": ".recovery/comparison-random/2020-card_runehorn_hellkite__232db90.asm",
+          "asm_sha256": "b897f24ee189d8085e328398bff1acec5f1993db2413148f2a85d57cb48c3157"
+        },
+        "2022": {
+          "address": "0x23e8340",
+          "rva": "0x3e8340",
+          "source": "cards/commander_2016.c",
+          "line": "619",
+          "bytes": 298,
+          "sha256": "b1b31037a427ee802f51856243953b7a0ed1c556bda43ccbcd55e7c1b52e849f",
+          "instructions": 68,
+          "decoded_bytes": 298,
+          "fully_decoded": true,
+          "calls": [
+            "new_discard_all",
+            "draw_cards",
+            "new_discard_all",
+            "draw_cards",
+            "has_mana_multi",
+            "charge_mana_multi"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "je",
+            "je",
+            "jmp",
+            "je",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 8,
+            "0x1": 4,
+            "0x1c": 3,
+            "0x2": 1,
+            "0x20": 1,
+            "0x5": 2,
+            "0x7": 2,
+            "0xb0": 1,
+            "0xb5": 1,
+            "0xd00": 1
+          },
+          "normalized_sha256": "c0e2eb73b713ed7e7de809d2b0233c6166ecea573dbf0f9bdbe2ffea3d89b24a",
+          "c_artifact": ".recovery/comparison-random/2022-card_runehorn_hellkite__232db90.c",
+          "c_sha256": "72d276e824a86b7e1893eaa0c987b50957584940b47b3c0d2589a7ade9294946",
+          "asm_artifact": ".recovery/comparison-random/2022-card_runehorn_hellkite__232db90.asm",
+          "asm_sha256": "b0cfc29bee9441d330bf6a8d13d7b437b7d71efffc546dcf864df2f870018337"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Same graveyard activation costs, exile result and APNAP discard/draw-seven sequence; conditional code generation differs.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "cards/commander_2016.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "56f5605f8b22976d0e77a6f8ca63d6cc494ed1b99cfa1ec80a3ed9e690f37244",
+        "current_body_sha256": "56f5605f8b22976d0e77a6f8ca63d6cc494ed1b99cfa1ec80a3ed9e690f37244",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_reap_intellect",
+      "artifact": "card_reap_intellect__2080cd0",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x2080cd0",
+          "rva": "0x80cd0",
+          "source": "cards/dragons_maze.c",
+          "line": "2357",
+          "bytes": 674,
+          "sha256": "4a7a549ded20ab77665b138ab27233bc26da4c6d8f859a5c5f08d57dbe0474d1",
+          "instructions": 156,
+          "decoded_bytes": 674,
+          "fully_decoded": true,
+          "calls": [
+            "default_target_definition",
+            "generic_spell",
+            "default_target_definition",
+            "valid_target",
+            "kill_card",
+            "get_card_instance",
+            "new_default_test_definition",
+            "__chkstk_ms",
+            "new_select_a_card",
+            "get_id",
+            "rfg_card_in_hand",
+            "lobotomy_effect",
+            "shuffle"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "jne",
+            "je",
+            "je",
+            "jne",
+            "jmp",
+            "jne",
+            "jne",
+            "jmp",
+            "jne",
+            "jmp",
+            "jle",
+            "je",
+            "jmp",
+            "jle",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 4,
+            "0x1": 5,
+            "0x1000": 2,
+            "0x158": 1,
+            "0x2": 4,
+            "0x2525f04": 1,
+            "0x4": 1,
+            "0x400": 1,
+            "0x44": 1,
+            "0x5400": 1,
+            "0x6c": 1,
+            "0x71": 2,
+            "0x74": 1,
+            "0xffffffff": 2
+          },
+          "normalized_sha256": "2bf25441a294928d6acce1a9d44e7e4b297734e051c9a947000053a15f0b722d",
+          "c_artifact": ".recovery/comparison-random/2020-card_reap_intellect__2080cd0.c",
+          "c_sha256": "9c33d779a069ee1f017a6ce79d7cc283321d6461d3f863671ddb90f4de151c04",
+          "asm_artifact": ".recovery/comparison-random/2020-card_reap_intellect__2080cd0.asm",
+          "asm_sha256": "80f99b305c65e9a8d417516f84db2debaf030e9cedc2e4e2c3e6ea09ba1a45ff"
+        },
+        "2022": {
+          "address": "0x2298190",
+          "rva": "0x298190",
+          "source": "cards/dragons_maze.c",
+          "line": "2427",
+          "bytes": 969,
+          "sha256": "9c2440109db1559a5222fd1d1c13d4f719911b3bd6fa34df1b9120faf3fe2a2d",
+          "instructions": 220,
+          "decoded_bytes": 969,
+          "fully_decoded": true,
+          "calls": [
+            "default_target_definition",
+            "get_card_instance",
+            "default_target_definition",
+            "get_card_instance",
+            "default_target_definition",
+            "get_card_instance",
+            "check_special_flags2",
+            "set_special_flags2",
+            "charge_mana",
+            "set_x_for_x_spells",
+            "valid_target",
+            "kill_card",
+            "default_target_definition",
+            "get_card_instance",
+            "generic_spell",
+            "new_default_test_definition",
+            "__chkstk_ms",
+            "new_select_a_card",
+            "lobotomy_effect",
+            "shuffle",
+            "get_id",
+            "rfg_card_in_hand"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "je",
+            "jne",
+            "je",
+            "jne",
+            "jmp",
+            "jne",
+            "jne",
+            "jne",
+            "jne",
+            "jne",
+            "je",
+            "jmp",
+            "jne",
+            "jmp",
+            "jne",
+            "jl",
+            "jle",
+            "jne",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 10,
+            "0x1": 6,
+            "0x1000": 4,
+            "0x164": 1,
+            "0x1f": 1,
+            "0x2": 3,
+            "0x20000": 1,
+            "0x273aa90": 1,
+            "0x4": 1,
+            "0x400": 1,
+            "0x44": 1,
+            "0x5400": 1,
+            "0x6c": 2,
+            "0x71": 2,
+            "0x74": 2,
+            "0x80000000": 1,
+            "0xffffffff": 5
+          },
+          "normalized_sha256": "11297a6f1abe6323ee82f14ee7693246c0dcc91e831e653c77efbe2adc61a2b9",
+          "c_artifact": ".recovery/comparison-random/2022-card_reap_intellect__2080cd0.c",
+          "c_sha256": "bef1a24f577f7d847ac919366d964533e5815cbb76058c97fcdd3262ddb87c13",
+          "asm_artifact": ".recovery/comparison-random/2022-card_reap_intellect__2080cd0.asm",
+          "asm_sha256": "7e02a275a442dd4692c1406ca4e7e4615b22c6f1a6053e9b49312e7104d2ae11"
+        }
+      },
+      "direct_targets_added": [
+        "charge_mana",
+        "check_special_flags2",
+        "set_special_flags2",
+        "set_x_for_x_spells"
+      ],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "confirmed-change",
+        "note": "Adds special-flag checks, explicit variable mana charging and set_x_for_x_spells; target definition changes and lobotomy_effect gains an argument. VLA stack probing prevents trusting the entire raw resolution decompilation.",
+        "gameplay_validated": false,
+        "change_kind": "logic"
+      },
+      "source_reference": {
+        "path": "cards/dragons_maze.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "b732a20f2ef1cd0fd260f6eefce44022fbdafa578dbd8797f93767ac895d5b21",
+        "current_body_sha256": "b732a20f2ef1cd0fd260f6eefce44022fbdafa578dbd8797f93767ac895d5b21",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_serene_offering",
+      "artifact": "card_serene_offering__216aca0",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x216aca0",
+          "rva": "0x16aca0",
+          "source": "cards/tempest.c",
+          "line": "3935",
+          "bytes": 366,
+          "sha256": "59a8984b0f2142a61b903e9f7d4518db6a7b0198c5221834924bb1d5789f25e2",
+          "instructions": 101,
+          "decoded_bytes": 366,
+          "fully_decoded": true,
+          "calls": [
+            "default_target_definition",
+            "get_card_instance",
+            "generic_spell",
+            "default_target_definition",
+            "get_card_instance",
+            "valid_target",
+            "kill_card",
+            "get_cmc",
+            "kill_card",
+            "gain_life"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "jne",
+            "je",
+            "je",
+            "jne",
+            "jmp",
+            "jne",
+            "jne",
+            "jmp",
+            "jne",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 1,
+            "0x1": 2,
+            "0x2": 2,
+            "0x252e387": 1,
+            "0x4": 2,
+            "0x400": 1,
+            "0x5400": 1,
+            "0x6c": 1,
+            "0x71": 2,
+            "0x74": 1,
+            "0x78": 2
+          },
+          "normalized_sha256": "baa8f2dc05d4160c0bfb25906e6c5ca350f6d6e4a4412a5f663f89c1d335a17c",
+          "c_artifact": ".recovery/comparison-random/2020-card_serene_offering__216aca0.c",
+          "c_sha256": "1932219b4fe4e3509582ebf7b8d53ee9153956177d62f3efba3ca823936f3e7a",
+          "asm_artifact": ".recovery/comparison-random/2020-card_serene_offering__216aca0.asm",
+          "asm_sha256": "4f5a1c2fc4dcca6b2dc11ee530b0929c1c0478802e5b54a72c9480cab7843926"
+        },
+        "2022": {
+          "address": "0x2155bd0",
+          "rva": "0x155bd0",
+          "source": "cards/tempest.c",
+          "line": "4646",
+          "bytes": 365,
+          "sha256": "2db746760fbdbca94aa4fa38083b7c64cf627355b5830fdeb3eca11dec21c6ed",
+          "instructions": 96,
+          "decoded_bytes": 365,
+          "fully_decoded": true,
+          "calls": [
+            "default_target_definition",
+            "get_card_instance",
+            "generic_spell",
+            "default_target_definition",
+            "get_card_instance",
+            "valid_target",
+            "kill_card",
+            "get_cmc",
+            "kill_card",
+            "gain_life"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "je",
+            "jne",
+            "je",
+            "jne",
+            "jmp",
+            "jne",
+            "jne",
+            "jmp",
+            "jne",
+            "jmp",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 1,
+            "0x1": 2,
+            "0x2": 2,
+            "0x272e14f": 1,
+            "0x4": 2,
+            "0x400": 1,
+            "0x5400": 1,
+            "0x6c": 1,
+            "0x71": 2,
+            "0x74": 1,
+            "0x7c": 2
+          },
+          "normalized_sha256": "2fd4a770957afb6ef29975b09648f1d161ecd42fe8c56450c53c6f59f3041f2d",
+          "c_artifact": ".recovery/comparison-random/2022-card_serene_offering__216aca0.c",
+          "c_sha256": "ec4a77efcec31387faceb39f3ec968c0c845f479113f78efa6758d9c0e7baddd",
+          "asm_artifact": ".recovery/comparison-random/2022-card_serene_offering__216aca0.asm",
+          "asm_sha256": "ce86cae0ed59ad7453264e30acaaabfc185d2a8aeccf800124aa9fda292fa34b"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Same targeting and resolve path (CMC lookup, destroy enchantment, gain life); event block grouping differs.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "cards/tempest.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "ebe6ae2455f307ddb119b66bc89bd513ea85dc13e379e52e26b3b7b1438198b0",
+        "current_body_sha256": "ebe6ae2455f307ddb119b66bc89bd513ea85dc13e379e52e26b3b7b1438198b0",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_chatter_of_squirrel",
+      "artifact": "card_chatter_of_squirrel__2014b60",
+      "stratum": "cards",
+      "identity_method": "unique-name-moved-source",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x2014b60",
+          "rva": "0x14b60",
+          "source": "cards/odissey.c",
+          "line": "1588",
+          "bytes": 209,
+          "sha256": "24184fe68650968eaaff78ff3b1f35484f2e2bf539981678f552d1857a574db2",
+          "instructions": 55,
+          "decoded_bytes": 209,
+          "fully_decoded": true,
+          "calls": [
+            "do_flashback",
+            "generate_token_by_id",
+            "get_flashback",
+            "kill_card",
+            "basic_spell",
+            "kill_card"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "je",
+            "jmp",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 4,
+            "0x1": 2,
+            "0x2": 1,
+            "0x24": 3,
+            "0x4": 1,
+            "0x4991": 1,
+            "0x71": 1,
+            "0x74": 2
+          },
+          "normalized_sha256": "151e7c293285d492b49e53aa5495a302ba91b343f286c7f6ac1523f2b91469be",
+          "c_artifact": ".recovery/comparison-random/2020-card_chatter_of_squirrel__2014b60.c",
+          "c_sha256": "e5b88fed4a9cc66c1b40515d7f005382e85483a4bb231a11cc83db0ab326eb2f",
+          "asm_artifact": ".recovery/comparison-random/2020-card_chatter_of_squirrel__2014b60.asm",
+          "asm_sha256": "6a0a594b47d88131e758df1b120b12ce4329c0ec08a7be3df01dbcaa59c49a4e"
+        },
+        "2022": {
+          "address": "0x2507390",
+          "rva": "0x507390",
+          "source": "cards/odyssey.c",
+          "line": "1634",
+          "bytes": 209,
+          "sha256": "599d25eb728c9e14d72dc3e15d4441ae7bfba78f646741160391e9117692c6da",
+          "instructions": 56,
+          "decoded_bytes": 209,
+          "fully_decoded": true,
+          "calls": [
+            "do_flashback",
+            "generate_token_by_id",
+            "get_flashback",
+            "kill_card",
+            "basic_spell",
+            "kill_card"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "je",
+            "jmp",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 4,
+            "0x1": 2,
+            "0x2": 1,
+            "0x24": 3,
+            "0x4": 1,
+            "0x4991": 1,
+            "0x71": 1,
+            "0x74": 1
+          },
+          "normalized_sha256": "13a8729cd7873a5c1add47be40714bc8c73b79e0a0e6243bf2b114abde906835",
+          "c_artifact": ".recovery/comparison-random/2022-card_chatter_of_squirrel__2014b60.c",
+          "c_sha256": "ce90124d87c1bfdc9383f362fef35497362d71144dcc6bc83ea989515dd325ff",
+          "asm_artifact": ".recovery/comparison-random/2022-card_chatter_of_squirrel__2014b60.asm",
+          "asm_sha256": "0e523ee1bbdaac8557d2c7bb5506a5637cb892909e6e94e8834f8b09667a0a0e"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Same token ID, flashback costs, resolve and exile/destroy paths; scheduling differs.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "cards/odissey.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "e245bbd00613d8ab44558879702cb6753a8829ab171d659c3c02241cacc7408a",
+        "current_body_sha256": "e245bbd00613d8ab44558879702cb6753a8829ab171d659c3c02241cacc7408a",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_caverns_of_despair",
+      "artifact": "card_caverns_of_despair__20df7a0",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x20df7a0",
+          "rva": "0xdf7a0",
+          "source": "cards/legends.c",
+          "line": "1345",
+          "bytes": 93,
+          "sha256": "97ca96b5ceab883a4978a01caa09baa92dc017864b53754f8926aea1eae3a2e5",
+          "instructions": 36,
+          "decoded_bytes": 93,
+          "fully_decoded": true,
+          "calls": [
+            "enchant_world",
+            "count_blockers",
+            "count_attackers"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "jmp",
+            "jle",
+            "jmp",
+            "jg",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x1": 1,
+            "0x78": 2,
+            "0x79": 1,
+            "0x8": 1
+          },
+          "normalized_sha256": "adfd7012fe1420eb84e873e933487c9470fa90086ba38d3a5d76f9fa989f3233",
+          "c_artifact": ".recovery/comparison-random/2020-card_caverns_of_despair__20df7a0.c",
+          "c_sha256": "54b3d6caa67746aff701508e9780596b87e2ff5ff11c4113253eada49a1fb529",
+          "asm_artifact": ".recovery/comparison-random/2020-card_caverns_of_despair__20df7a0.asm",
+          "asm_sha256": "53d120ffd149045ea3b02dc9e2c3ac0ff48501e2d37d1d3175b55eff3fd3407f"
+        },
+        "2022": {
+          "address": "0x21f0030",
+          "rva": "0x1f0030",
+          "source": "cards/legends.c",
+          "line": "1357",
+          "bytes": 103,
+          "sha256": "be005a17c4b9489b13c67dc4d2707e61346429cc9a6eabbca5cf7ab930c4b567",
+          "instructions": 37,
+          "decoded_bytes": 103,
+          "fully_decoded": true,
+          "calls": [
+            "enchant_world",
+            "count_attackers",
+            "count_blockers"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "jmp",
+            "jle",
+            "jmp",
+            "jle",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x1": 2,
+            "0x78": 2,
+            "0x79": 1,
+            "0x8": 1
+          },
+          "normalized_sha256": "88aef699ac9957c20fa25538dd358e00c2bd2f8246cb2c11a26028fb5dbb8bf1",
+          "c_artifact": ".recovery/comparison-random/2022-card_caverns_of_despair__20df7a0.c",
+          "c_sha256": "9410808a63549de3dc96706b71de4f2e3fd2a9c0f7e43dbc82f780d625df1e4d",
+          "asm_artifact": ".recovery/comparison-random/2022-card_caverns_of_despair__20df7a0.asm",
+          "asm_sha256": "d567d46c496765a0c1218d7c7e7671a9fa939090950e050431bb5d2f0a9cee8e"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Same attack/block count thresholds and enchant_world tail call; common condition is duplicated between event blocks.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "cards/legends.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "21237de44fdffc0d5825d00878dc2950790294e5d3ef350b6aa48d5423f173d5",
+        "current_body_sha256": "21237de44fdffc0d5825d00878dc2950790294e5d3ef350b6aa48d5423f173d5",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_harbor_bandit",
+      "artifact": "card_harbor_bandit__20607e0",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "same-symbolic-instructions",
+      "releases": {
+        "2020": {
+          "address": "0x20607e0",
+          "rva": "0x607e0",
+          "source": "cards/m13.c",
+          "line": "900",
+          "bytes": 85,
+          "sha256": "78a156d11449db3abc0ae9cfd2536925bc127e31e2e50d1952e7bf41ec38d0a5",
+          "instructions": 17,
+          "decoded_bytes": 85,
+          "fully_decoded": true,
+          "calls": [
+            "uthden_m13_creature"
+          ],
+          "branches": [],
+          "immediate_counts": {
+            "0x0": 4,
+            "0x1": 2,
+            "0x10": 1,
+            "0x2": 1,
+            "0x20": 1
+          },
+          "normalized_sha256": "81ba8f2d7a1d86c399653e728ed08c5b436e64f440819b96a02ac00f17568c49",
+          "c_artifact": ".recovery/comparison-random/2020-card_harbor_bandit__20607e0.c",
+          "c_sha256": "e1ddcf7fede6902d55573366d33aff5f96fa66e3cc381a7f7ea10243662dfbe5",
+          "asm_artifact": ".recovery/comparison-random/2020-card_harbor_bandit__20607e0.asm",
+          "asm_sha256": "82727f7bb7ba8a703d8ca668e59e498f14ba041c810d47101bf5f0970e8bbfc2"
+        },
+        "2022": {
+          "address": "0x22b6b80",
+          "rva": "0x2b6b80",
+          "source": "cards/m13.c",
+          "line": "919",
+          "bytes": 85,
+          "sha256": "b05e0e74829d84f853d2889a7ccd74f4fde3bf0fdc75d26d5fa543d93a72aeeb",
+          "instructions": 17,
+          "decoded_bytes": 85,
+          "fully_decoded": true,
+          "calls": [
+            "uthden_m13_creature"
+          ],
+          "branches": [],
+          "immediate_counts": {
+            "0x0": 4,
+            "0x1": 2,
+            "0x10": 1,
+            "0x2": 1,
+            "0x20": 1
+          },
+          "normalized_sha256": "81ba8f2d7a1d86c399653e728ed08c5b436e64f440819b96a02ac00f17568c49",
+          "c_artifact": ".recovery/comparison-random/2022-card_harbor_bandit__20607e0.c",
+          "c_sha256": "69d6939b40aeb5bccf55ecc4a88f35916951d9a4a1ba1408c51ab5c8d5d862dc",
+          "asm_artifact": ".recovery/comparison-random/2022-card_harbor_bandit__20607e0.asm",
+          "asm_sha256": "6f6c049140e427c37d294956f8648b44ae08e29cdd04cca4fd941e65f3a9f814"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "same-instructions",
+        "note": "Same symbolic instruction stream and forwarded helper arguments. Raw C exposes an incomplete callee signature, so the local instruction comparison is the evidence.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "cards/m13.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "4430c7137c514eda75d9d59d3d99d20b4aa8986f1cba803a791fe05552f51ba7",
+        "current_body_sha256": "4430c7137c514eda75d9d59d3d99d20b4aa8986f1cba803a791fe05552f51ba7",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_anvil_of_bagardan",
+      "artifact": "card_anvil_of_bagardan__228ac70",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x228ac70",
+          "rva": "0x28ac70",
+          "source": "cards/visions.c",
+          "line": "76",
+          "bytes": 124,
+          "sha256": "0f9c9b3be53d9032aa8607d23325ff21fbc43b173f243983768816ab2d560ccc",
+          "instructions": 43,
+          "decoded_bytes": 124,
+          "fully_decoded": true,
+          "calls": [
+            "is_humiliated",
+            "in_play",
+            "discard"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "je",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 1,
+            "0x1f": 1,
+            "0x31": 1,
+            "0xa": 1,
+            "0xc": 3
+          },
+          "normalized_sha256": "65191cfdd199c15f73ab97fb72f21f42dc13a2482569b93c66360b4d882aab96",
+          "c_artifact": ".recovery/comparison-random/2020-card_anvil_of_bagardan__228ac70.c",
+          "c_sha256": "c690e77fb98bf1ad2c17c33c37e5dfca9905d73f73375717284c7d878ce9dec3",
+          "asm_artifact": ".recovery/comparison-random/2020-card_anvil_of_bagardan__228ac70.asm",
+          "asm_sha256": "308372c6efed423ae9dda0d898d5620e801a11ca52fb52880ad6589fdadf67ca"
+        },
+        "2022": {
+          "address": "0x2014e80",
+          "rva": "0x14e80",
+          "source": "cards/visions.c",
+          "line": "77",
+          "bytes": 158,
+          "sha256": "e53cf151944bded3054eed9a640cb209cce7146416d2f70abe232c8ab220e877",
+          "instructions": 48,
+          "decoded_bytes": 158,
+          "fully_decoded": true,
+          "calls": [
+            "in_play",
+            "is_humiliated",
+            "is_humiliated",
+            "discard"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "je",
+            "jne",
+            "jmp",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 1,
+            "0x1f": 1,
+            "0x2": 1,
+            "0x31": 1,
+            "0x4": 1,
+            "0xa": 1,
+            "0xc": 2
+          },
+          "normalized_sha256": "6696f750a3ba931853339b40bd3751e04ee233cf307191af0993865a8a707690",
+          "c_artifact": ".recovery/comparison-random/2022-card_anvil_of_bagardan__228ac70.c",
+          "c_sha256": "720f42731014d46ed511973b31bb3d1d9d77d0d7a3b6e8ec8d111810ff8df4f4",
+          "asm_artifact": ".recovery/comparison-random/2022-card_anvil_of_bagardan__228ac70.asm",
+          "asm_sha256": "8e9cf3a306541df717dd3e11fea9133df983f8d57ec4232e6a4dc22436b9946f"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "confirmed-change",
+        "note": "Replaces one broad humiliation check with AL_TRIG for draw/discard and AL_STATIC for the maximum-hand-size branch.",
+        "gameplay_validated": false,
+        "change_kind": "interface-migration"
+      },
+      "source_reference": {
+        "path": "cards/visions.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "65fa887ba89581292c1b4f3b6e0c9550182b76174a123b046fa589fecff1a594",
+        "current_body_sha256": "65fa887ba89581292c1b4f3b6e0c9550182b76174a123b046fa589fecff1a594",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_thrull_wizard",
+      "artifact": "card_thrull_wizard__23e08f0",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x23e08f0",
+          "rva": "0x3e08f0",
+          "source": "cards/fallen_empires.c",
+          "line": "1579",
+          "bytes": 747,
+          "sha256": "98cf29dd35b2ae93192f7a1d1defc1d7a39ac11ee7e5959ef5bb0632397c6628",
+          "instructions": 168,
+          "decoded_bytes": 747,
+          "fully_decoded": true,
+          "calls": [
+            "counterspell_target_definition",
+            "get_sleighted_color_test",
+            "get_card_instance",
+            "generic_activated_ability",
+            "counterspell_target_definition",
+            "get_sleighted_color_test",
+            "get_card_instance",
+            "has_mana",
+            "has_mana",
+            "charge_mana_multi",
+            "real_counter_a_spell",
+            "has_mana",
+            "has_mana",
+            "dialog_impl"
+          ],
+          "branches": [
+            "je",
+            "ja",
+            "je",
+            "je",
+            "jmp",
+            "jne",
+            "jne",
+            "je",
+            "jne",
+            "jmp",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 18,
+            "0x1": 10,
+            "0x2": 4,
+            "0x22": 1,
+            "0x2543a45": 1,
+            "0x2543cce": 1,
+            "0x2543cd4": 1,
+            "0x2543cda": 1,
+            "0x3": 2,
+            "0x400": 1,
+            "0x6d": 1,
+            "0x72": 3,
+            "0x90": 3,
+            "0xff": 1
+          },
+          "normalized_sha256": "045d48e144415d06f77f7fc6cdc36891f4ba7d8d9145885909755da62217e235",
+          "c_artifact": ".recovery/comparison-random/2020-card_thrull_wizard__23e08f0.c",
+          "c_sha256": "a513de6883f54084c3b5274511a302f60d88fa1127b377aa0a037fcb1a0deef9",
+          "asm_artifact": ".recovery/comparison-random/2020-card_thrull_wizard__23e08f0.asm",
+          "asm_sha256": "9750190c0e5d92c3166f3bbd68ab571835476236d384ee81252aa2562c0725eb"
+        },
+        "2022": {
+          "address": "0x24218e0",
+          "rva": "0x4218e0",
+          "source": "cards/fallen_empires.c",
+          "line": "1636",
+          "bytes": 872,
+          "sha256": "35f2738b6e264e9f6fe7c773e5c492415ad0e72c700247b1b1038e1cf9ef861a",
+          "instructions": 196,
+          "decoded_bytes": 872,
+          "fully_decoded": true,
+          "calls": [
+            "counterspell_target_definition",
+            "get_sleighted_color_test",
+            "get_card_instance",
+            "generic_activated_ability",
+            "counterspell_target_definition",
+            "get_sleighted_color_test",
+            "get_card_instance",
+            "has_mana",
+            "has_mana",
+            "charge_mana_multi",
+            "real_counter_a_spell",
+            "has_mana",
+            "has_mana",
+            "dialog_impl",
+            "charge_mana_multi"
+          ],
+          "branches": [
+            "je",
+            "jbe",
+            "jne",
+            "je",
+            "jmp",
+            "je",
+            "je",
+            "jne",
+            "jmp",
+            "jne",
+            "jne",
+            "jne",
+            "jmp",
+            "jmp",
+            "jne",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 24,
+            "0x1": 12,
+            "0x2": 3,
+            "0x22": 1,
+            "0x274a2f1": 1,
+            "0x274a57a": 1,
+            "0x274a580": 1,
+            "0x274a586": 1,
+            "0x3": 3,
+            "0x400": 1,
+            "0x6d": 1,
+            "0x72": 3,
+            "0x98": 2,
+            "0xff": 1
+          },
+          "normalized_sha256": "9a22666b9a0621adb6a20e26e033a1a04acdd8051125399dd90744ba440980aa",
+          "c_artifact": ".recovery/comparison-random/2022-card_thrull_wizard__23e08f0.c",
+          "c_sha256": "0cc55c0199e12026e0366356c7c227973ddb5eb210ed90610c6c54e9e2c561f1",
+          "asm_artifact": ".recovery/comparison-random/2022-card_thrull_wizard__23e08f0.asm",
+          "asm_sha256": "58a96f387b24e03d21cf5056ad781fb6e8bb4dcc8edf7334559fb5fc08d7a556"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Reviewed counterspell target, three-generic/one-black payment choices, dialog and counterspell paths correspond despite larger code and split branches.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "cards/fallen_empires.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "b6e638d258de6d5e06df12782b383284d0affa670ea368dc2db368c35cd874b8",
+        "current_body_sha256": "b6e638d258de6d5e06df12782b383284d0affa670ea368dc2db368c35cd874b8",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_cage_of_hands",
+      "artifact": "card_cage_of_hands__23121c0",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x23121c0",
+          "rva": "0x3121c0",
+          "source": "cards/champions_of_kamigawa.c",
+          "line": "753",
+          "bytes": 309,
+          "sha256": "080eda7bc5b3017e56d252d843180a03ffe9a3b80e4800155c5d8f6a491a70b8",
+          "instructions": 83,
+          "decoded_bytes": 309,
+          "fully_decoded": true,
+          "calls": [
+            "in_play",
+            "get_card_instance",
+            "get_card_instance",
+            "cannot_attack",
+            "cannot_block",
+            "bounce_permanent",
+            "generic_activated_ability",
+            "disabling_aura"
+          ],
+          "branches": [
+            "je",
+            "js",
+            "je",
+            "jbe",
+            "jne",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 9,
+            "0x1": 3,
+            "0x22": 1,
+            "0x40": 3,
+            "0x6d": 1,
+            "0x72": 1
+          },
+          "normalized_sha256": "2cb6f73b9bde41be8cba9ad18768dbb9cba463f3d9864fab280a14b08d183b75",
+          "c_artifact": ".recovery/comparison-random/2020-card_cage_of_hands__23121c0.c",
+          "c_sha256": "5c36a75ce7d4a06a9ef5753871898263f58e40bb60a73718f4d57b700b07a70e",
+          "asm_artifact": ".recovery/comparison-random/2020-card_cage_of_hands__23121c0.asm",
+          "asm_sha256": "f9ebd0e15414cbf6d0548ba3e5e942cfa25e4f83d99033b6d377bab22ab11463"
+        },
+        "2022": {
+          "address": "0x260da00",
+          "rva": "0x60da00",
+          "source": "cards/champions_of_kamigawa.c",
+          "line": "815",
+          "bytes": 457,
+          "sha256": "31db99de43a1c94fdc959e35199ee8246aff6b34d423b069637c9d905ecbe7b2",
+          "instructions": 120,
+          "decoded_bytes": 457,
+          "fully_decoded": true,
+          "calls": [
+            "in_play",
+            "get_card_instance",
+            "disabling_aura",
+            "get_card_instance",
+            "cannot_attack",
+            "cannot_block",
+            "bounce_permanent",
+            "generic_activated_ability"
+          ],
+          "branches": [
+            "je",
+            "jns",
+            "je",
+            "je",
+            "je",
+            "jne",
+            "jmp",
+            "je",
+            "je",
+            "jbe",
+            "je",
+            "je",
+            "je",
+            "je",
+            "jne",
+            "jmp",
+            "je",
+            "jbe",
+            "jne",
+            "jne",
+            "je",
+            "jmp",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 9,
+            "0x1": 3,
+            "0x2": 1,
+            "0x22": 1,
+            "0x36": 1,
+            "0x3c": 1,
+            "0x40": 3,
+            "0x400": 1,
+            "0x4700": 1,
+            "0x5400": 1,
+            "0x600": 1,
+            "0x6c": 1,
+            "0x6d": 1,
+            "0x71": 1,
+            "0x72": 1,
+            "0x74": 1,
+            "0x800": 1,
+            "0x90": 1,
+            "0xfe": 1
+          },
+          "normalized_sha256": "b4c8f57e1264f9c0eeb26a6537663c4beeeb872e4a689bf0d8c9f92bbcb738c0",
+          "c_artifact": ".recovery/comparison-random/2022-card_cage_of_hands__23121c0.c",
+          "c_sha256": "94d01b29aa6c56df3e27b50ee1baf70af5c736190def99ca1cea5f000df41f35",
+          "asm_artifact": ".recovery/comparison-random/2022-card_cage_of_hands__23121c0.asm",
+          "asm_sha256": "c5b702988268daaff77ebc00b64547a9d8506ac3aa863d5e802e803dd6f62c17"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "confirmed-change",
+        "note": "Adds an explicit aura-event/casting guard before the disabling_aura fallback. Activated bounce behavior remains. This is a call-path change, not evidence of a new card effect.",
+        "gameplay_validated": false,
+        "change_kind": "event-filter"
+      },
+      "source_reference": {
+        "path": "cards/champions_of_kamigawa.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "f53e199e6a0c8c1bd18ddbc264a994a3120be69cdbe5782f803969dc41a4320f",
+        "current_body_sha256": "f53e199e6a0c8c1bd18ddbc264a994a3120be69cdbe5782f803969dc41a4320f",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_verdeloth_the_ancient",
+      "artifact": "card_verdeloth_the_ancient__2386b10",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "same-symbolic-instructions",
+      "releases": {
+        "2020": {
+          "address": "0x2386b10",
+          "rva": "0x386b10",
+          "source": "cards/invasion.c",
+          "line": "3963",
+          "bytes": 328,
+          "sha256": "223178eb653ddcce5dab3a9213110f65694f8c5948c059fe979a4ba89d9a1bc0",
+          "instructions": 71,
+          "decoded_bytes": 328,
+          "fully_decoded": true,
+          "calls": [
+            "check_legend_rule",
+            "etb_ability",
+            "boost_creature_type",
+            "boost_creature_type",
+            "kicker",
+            "check_special_flags",
+            "get_card_instance",
+            "generate_tokens_by_id"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 8,
+            "0x1": 4,
+            "0x2": 2,
+            "0x24": 2,
+            "0x497d": 1,
+            "0x5100": 1,
+            "0x80": 1,
+            "0xa3": 1,
+            "0xc8": 1,
+            "0xffffffff": 1
+          },
+          "normalized_sha256": "5dd2b1385215cc54f38a87dd8fc08d039d0ef35ce02227f2601ed9884ac7d544",
+          "c_artifact": ".recovery/comparison-random/2020-card_verdeloth_the_ancient__2386b10.c",
+          "c_sha256": "8f7d9be72d6c7d542b9368fdc207fa3612330561a538caaeb990d1ffd78215d9",
+          "asm_artifact": ".recovery/comparison-random/2020-card_verdeloth_the_ancient__2386b10.asm",
+          "asm_sha256": "a90e13143c210cb5aae9caade9bcfa7d8ea9ab047baabb5fb85f7a0d7c0ad24a"
+        },
+        "2022": {
+          "address": "0x2494420",
+          "rva": "0x494420",
+          "source": "cards/invasion.c",
+          "line": "4284",
+          "bytes": 328,
+          "sha256": "645a000543cb34b4885117dc593e0da93765894cac82587328a8a3933fce763b",
+          "instructions": 71,
+          "decoded_bytes": 328,
+          "fully_decoded": true,
+          "calls": [
+            "check_legend_rule",
+            "etb_ability",
+            "boost_creature_type",
+            "boost_creature_type",
+            "kicker",
+            "check_special_flags",
+            "get_card_instance",
+            "generate_tokens_by_id"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 8,
+            "0x1": 4,
+            "0x2": 2,
+            "0x24": 2,
+            "0x497d": 1,
+            "0x5100": 1,
+            "0x80": 1,
+            "0xa3": 1,
+            "0xc8": 1,
+            "0xffffffff": 1
+          },
+          "normalized_sha256": "5dd2b1385215cc54f38a87dd8fc08d039d0ef35ce02227f2601ed9884ac7d544",
+          "c_artifact": ".recovery/comparison-random/2022-card_verdeloth_the_ancient__2386b10.c",
+          "c_sha256": "ee8172efc6b8e6aac3efc45056e6d1ad57ce126acd890fbf601108b9f6ea7302",
+          "asm_artifact": ".recovery/comparison-random/2022-card_verdeloth_the_ancient__2386b10.asm",
+          "asm_sha256": "b38909d59300ebc118cd34cfd0c48208fc52a2fa2c023648f1f7853001d9bd07"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "same-instructions",
+        "note": "Same local instruction stream, legend/ETB/kicker calls, token amount and subtype boosts; union member spelling differs only in Ghidra C.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "cards/invasion.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "da15df7323956ca12168f1045443ac7b0e557e29e32b5394e91f2a4dfd2a713b",
+        "current_body_sha256": "da15df7323956ca12168f1045443ac7b0e557e29e32b5394e91f2a4dfd2a713b",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "card_brindle_shoat",
+      "artifact": "card_brindle_shoat__23e7450",
+      "stratum": "cards",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x23e7450",
+          "rva": "0x3e7450",
+          "source": "cards/planechase.c",
+          "line": "318",
+          "bytes": 211,
+          "sha256": "5a7106ebabc5a4c00010160a3df714544cf6015fd3d9fd04d8531aec2d926d21",
+          "instructions": 57,
+          "decoded_bytes": 211,
+          "fully_decoded": true,
+          "calls": [
+            "this_dies_trigger",
+            "default_token_definition",
+            "get_sleighted_color_test",
+            "generate_token"
+          ],
+          "branches": [
+            "jbe",
+            "je",
+            "jne",
+            "jne",
+            "je",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x1": 1,
+            "0x18": 2,
+            "0x2": 1,
+            "0x3": 2,
+            "0x490a": 1,
+            "0x58": 2,
+            "0x8": 1,
+            "0x8a": 1
+          },
+          "normalized_sha256": "38655ae77b1bafdaf8b4917a0de3472fad0c88e1b5df7f2b72d352d7816094ac",
+          "c_artifact": ".recovery/comparison-random/2020-card_brindle_shoat__23e7450.c",
+          "c_sha256": "15e61e02f6ea710f230adf459680b6228f2fdd4e836bea5643f5e73f3ebb1e63",
+          "asm_artifact": ".recovery/comparison-random/2020-card_brindle_shoat__23e7450.asm",
+          "asm_sha256": "0f90e158c14117a394c0c002d93491c4cc32eaed926d7280b20ea4fa6ae978e6"
+        },
+        "2022": {
+          "address": "0x2412a20",
+          "rva": "0x412a20",
+          "source": "cards/planechase.c",
+          "line": "318",
+          "bytes": 190,
+          "sha256": "b74df40678909430a7d4a1301f49e96e6be33667ef41f71ab023cd9fda8459ef",
+          "instructions": 60,
+          "decoded_bytes": 190,
+          "fully_decoded": true,
+          "calls": [
+            "this_dies_trigger",
+            "default_token_definition",
+            "generate_token"
+          ],
+          "branches": [
+            "jbe",
+            "jne",
+            "jne",
+            "jne",
+            "je",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x1": 1,
+            "0x18": 2,
+            "0x2": 1,
+            "0x3": 2,
+            "0x490a": 1,
+            "0x5c": 3,
+            "0x8": 1,
+            "0x8a": 1
+          },
+          "normalized_sha256": "d95a20ae8017e4136a2c31b5861cdc541ca28c9b8091cb983f57ec6838985ff4",
+          "c_artifact": ".recovery/comparison-random/2022-card_brindle_shoat__23e7450.c",
+          "c_sha256": "f78fceca00dd5315d7c9d757f96bf780c0235c855fa2b978f1ef1f69809e4570",
+          "asm_artifact": ".recovery/comparison-random/2022-card_brindle_shoat__23e7450.asm",
+          "asm_sha256": "088c4455d49fb923d514786baa2b888077e81c63f4fb124df3ea81c1218d57db"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [
+        "get_sleighted_color_test"
+      ],
+      "review": {
+        "category": "confirmed-change",
+        "note": "The 3/3 token now receives literal green color 8 instead of calling get_sleighted_color_test for that value. Further token API behavior is outside this local assessment.",
+        "gameplay_validated": false,
+        "change_kind": "token-color"
+      },
+      "source_reference": {
+        "path": "cards/planechase.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "3f098a291118e25daf7e38d1cbd0046326abd772fc2f8a7cd246f357b0e6a974",
+        "current_body_sha256": "3f098a291118e25daf7e38d1cbd0046326abd772fc2f8a7cd246f357b0e6a974",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "player_sacrifices_a_creature",
+      "artifact": "player_sacrifices_a_creature__248bdb0",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x248bdb0",
+          "rva": "0x48bdb0",
+          "source": "functions/sacrifices.c",
+          "line": "623",
+          "bytes": 121,
+          "sha256": "314d208d2c82fd2450317ded95a26ae52449807b4610caa4f925280d822bfcb6",
+          "instructions": 23,
+          "decoded_bytes": 121,
+          "fully_decoded": true,
+          "calls": [
+            "sacrifice"
+          ],
+          "branches": [],
+          "immediate_counts": {
+            "0x0": 8,
+            "0x1": 1,
+            "0x2": 1,
+            "0x38": 1,
+            "0xffffffff": 1
+          },
+          "normalized_sha256": "666249d1fbd959f90d3a7df5aabd29a7f119573ca033077dda13950a730300cd",
+          "c_artifact": ".recovery/comparison-random/2020-player_sacrifices_a_creature__248bdb0.c",
+          "c_sha256": "6f05a9145df813eccc3ac4864d2585e016610ca1064fdeb4bf412f60f2c6e6f1",
+          "asm_artifact": ".recovery/comparison-random/2020-player_sacrifices_a_creature__248bdb0.asm",
+          "asm_sha256": "e79fc389ca418513829caa9bf251d026abab2c6b21e8797a117b18c4ed2ecef2"
+        },
+        "2022": {
+          "address": "0x26e51c0",
+          "rva": "0x6e51c0",
+          "source": "functions/sacrifices.c",
+          "line": "622",
+          "bytes": 121,
+          "sha256": "df2d9f5af00bf786674897b4a441b682e7add0cdce794d9babb52b7552b34c1e",
+          "instructions": 23,
+          "decoded_bytes": 121,
+          "fully_decoded": true,
+          "calls": [
+            "sacrifice"
+          ],
+          "branches": [],
+          "immediate_counts": {
+            "0x0": 8,
+            "0x1": 1,
+            "0x2": 1,
+            "0x38": 1,
+            "0xffffffff": 1
+          },
+          "normalized_sha256": "8b970907f41876961c160314a49aa979809368344d3088b744f3ded661e622bf",
+          "c_artifact": ".recovery/comparison-random/2022-player_sacrifices_a_creature__248bdb0.c",
+          "c_sha256": "c564ea5370eedc628ad8556cfa3ef9c92fcf9fb3b2a4e4dba4dbd51de83476db",
+          "asm_artifact": ".recovery/comparison-random/2022-player_sacrifices_a_creature__248bdb0.asm",
+          "asm_sha256": "233d5542174430cea2c3b2b0aa9fee6d14bd42d80e92c5a81a2c72cf9689303a"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Same fourteen sacrifice arguments; argument setup order differs.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "functions/sacrifices.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "65924d2cfa4425b15b4b7e7f0d2b62dffb57b8ffa425244e33698233fdc7bbf7",
+        "current_body_sha256": "65924d2cfa4425b15b4b7e7f0d2b62dffb57b8ffa425244e33698233fdc7bbf7",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "glyph_of_destruction_boost_legacy",
+      "artifact": "glyph_of_destruction_boost_legacy__20dc060",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x20dc060",
+          "rva": "0xdc060",
+          "source": "cards/legends.c",
+          "line": "2802",
+          "bytes": 159,
+          "sha256": "316b3cf87a713158379ed77549febeaf5bcafe6d9571965f0e31024ca40ab9d7",
+          "instructions": 52,
+          "decoded_bytes": 159,
+          "fully_decoded": true,
+          "calls": [
+            "get_card_instance",
+            "get_card_instance",
+            "end_of_combat_trigger",
+            "kill_card"
+          ],
+          "branches": [
+            "js",
+            "je",
+            "jne",
+            "jne",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 1,
+            "0x10": 3,
+            "0x2": 2,
+            "0x32": 1,
+            "0xa": 1
+          },
+          "normalized_sha256": "c6b602028d508520437d79968cb858f6739cb365ec28332d3c7d23b18862924b",
+          "c_artifact": ".recovery/comparison-random/2020-glyph_of_destruction_boost_legacy__20dc060.c",
+          "c_sha256": "321fbd4b553fd95c2b913d150d07bac0d76165948c9e23b032c84b8623c73f86",
+          "asm_artifact": ".recovery/comparison-random/2020-glyph_of_destruction_boost_legacy__20dc060.asm",
+          "asm_sha256": "f34b4b4ad9bcc7fdae744ff151a9ee8d654e8cdaa4c8743d93e8942667d662bd"
+        },
+        "2022": {
+          "address": "0x21ec620",
+          "rva": "0x1ec620",
+          "source": "cards/legends.c",
+          "line": "2859",
+          "bytes": 166,
+          "sha256": "9e29e2dcfa90abe14a2cd01bd11f19e84f0365cd8db0047722e61b7d4cf2a724",
+          "instructions": 53,
+          "decoded_bytes": 166,
+          "fully_decoded": true,
+          "calls": [
+            "get_card_instance",
+            "get_card_instance",
+            "end_of_combat_trigger",
+            "kill_card"
+          ],
+          "branches": [
+            "jns",
+            "je",
+            "je",
+            "jne",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 1,
+            "0x10": 3,
+            "0x2": 2,
+            "0x32": 1,
+            "0xa": 1
+          },
+          "normalized_sha256": "6f382f4a841c647da3475670d2bce1b8f9157122b8948379b74269e86ded7470",
+          "c_artifact": ".recovery/comparison-random/2022-glyph_of_destruction_boost_legacy__20dc060.c",
+          "c_sha256": "824194bb5911e7fe97d0956003ba5bfc25fb505cfd7932145b2368e558b800e1",
+          "asm_artifact": ".recovery/comparison-random/2022-glyph_of_destruction_boost_legacy__20dc060.asm",
+          "asm_sha256": "7df740494fb3520de1012f493d238899499b3eab0bd638f2241909441ebac8d1"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Same damage-target power boost and end-of-combat removal; local C corresponds.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "cards/legends.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "f09fe47b6d3f3ecfdc7e0fed27a24667deb945a6d66a627f8b6e8899dbec1b88",
+        "current_body_sha256": "f09fe47b6d3f3ecfdc7e0fed27a24667deb945a6d66a627f8b6e8899dbec1b88",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "when_attacks_pump_self",
+      "artifact": "when_attacks_pump_self__24c5510",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x24c5510",
+          "rva": "0x4c5510",
+          "source": "functions/functions.c",
+          "line": "7648",
+          "bytes": 208,
+          "sha256": "99e789a868d2fcbb7a61c6657ecf8105d4846ea0cafd27268a5494d1e9f87dd8",
+          "instructions": 69,
+          "decoded_bytes": 208,
+          "fully_decoded": true,
+          "calls": [
+            "declare_attackers_trigger",
+            "pump_until_eot_merge_previous",
+            "is_humiliated",
+            "is_humiliated"
+          ],
+          "branches": [
+            "jne",
+            "je",
+            "jne",
+            "je",
+            "jne",
+            "jne",
+            "jg",
+            "jle",
+            "jne",
+            "jmp",
+            "jg",
+            "jle",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 1,
+            "0x15": 2,
+            "0x18": 2,
+            "0x39": 2,
+            "0x3a": 1
+          },
+          "normalized_sha256": "5132c8281ed002196a6202ab3e1118c9453225078f0f9170af8853886a991888",
+          "c_artifact": ".recovery/comparison-random/2020-when_attacks_pump_self__24c5510.c",
+          "c_sha256": "824cae73b64e1c7c1a23d3d966a5f9e4c7d18860ab5fb87dc5354a18d15f203a",
+          "asm_artifact": ".recovery/comparison-random/2020-when_attacks_pump_self__24c5510.asm",
+          "asm_sha256": "72f65cb24be9e54d5431f1f788ee48a8e48d0d17fef60580881c30b437c04177"
+        },
+        "2022": {
+          "address": "0x268d840",
+          "rva": "0x68d840",
+          "source": "functions/functions.c",
+          "line": "9701",
+          "bytes": 252,
+          "sha256": "a26a0b79ce955a6af04b58c1a1ff9bfd7fb0e2354c528a4e91c73ad1ccd7a61e",
+          "instructions": 73,
+          "decoded_bytes": 252,
+          "fully_decoded": true,
+          "calls": [
+            "declare_attackers_trigger",
+            "is_humiliated",
+            "pump_until_eot_merge_previous_alt",
+            "is_humiliated"
+          ],
+          "branches": [
+            "jne",
+            "je",
+            "jne",
+            "je",
+            "jne",
+            "jg",
+            "jle",
+            "jne",
+            "jmp",
+            "jmp",
+            "jg",
+            "jle",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 2,
+            "0x15": 2,
+            "0x1c": 2,
+            "0x2": 2,
+            "0x39": 1,
+            "0x3a": 1
+          },
+          "normalized_sha256": "b9f4aa963b42ffc1ebb9bdd7504898df8863dbad453a67eef6cd382c07ff4f10",
+          "c_artifact": ".recovery/comparison-random/2022-when_attacks_pump_self__24c5510.c",
+          "c_sha256": "7afdaa83e0802fe9905fbaaadb4d8b52bd61cdbc8663a2f2777d6eb5e81bf73c",
+          "asm_artifact": ".recovery/comparison-random/2022-when_attacks_pump_self__24c5510.asm",
+          "asm_sha256": "adb166231a96dc253b125c669c03178d7617f40905192f86edb5edc37feb211e"
+        }
+      },
+      "direct_targets_added": [
+        "pump_until_eot_merge_previous_alt"
+      ],
+      "direct_targets_removed": [
+        "pump_until_eot_merge_previous"
+      ],
+      "review": {
+        "category": "confirmed-change",
+        "note": "Uses pump_until_eot_merge_previous_alt with trailing 0 and category-aware AL_TRIG checks in AI boost paths.",
+        "gameplay_validated": false,
+        "change_kind": "interface-migration"
+      },
+      "source_reference": {
+        "path": "functions/functions.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "b47cad23ca30c34457c4ed11ca7c5ec8aa87d0ab570769a577b3d74a13213937",
+        "current_body_sha256": "b47cad23ca30c34457c4ed11ca7c5ec8aa87d0ab570769a577b3d74a13213937",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "copy_spell_from_stack",
+      "artifact": "copy_spell_from_stack__24ea260",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x24ea260",
+          "rva": "0x4ea260",
+          "source": "functions/play_spell_for_free.c",
+          "line": "94",
+          "bytes": 59,
+          "sha256": "40409b2a7c279bba300806e1eeec5c687c01153bfdc14a1130f723e9748488e9",
+          "instructions": 22,
+          "decoded_bytes": 59,
+          "fully_decoded": true,
+          "calls": [
+            "get_card_instance",
+            "real_copy_spell"
+          ],
+          "branches": [
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x8": 2,
+            "0xffffffff": 1
+          },
+          "normalized_sha256": "6e39b5e3080978dff152506d49eec530735dd1290eba380905dbf3015304ae61",
+          "c_artifact": ".recovery/comparison-random/2020-copy_spell_from_stack__24ea260.c",
+          "c_sha256": "89c6c691b9fb99edea33a1ce693b2e59e47388d369bcd4b7b937f092ed5bab53",
+          "asm_artifact": ".recovery/comparison-random/2020-copy_spell_from_stack__24ea260.asm",
+          "asm_sha256": "fa067aa634c23268a4a4ce393364c07f7b309dc63b5f926ef460b500cf50441e"
+        },
+        "2022": {
+          "address": "0x26686d0",
+          "rva": "0x6686d0",
+          "source": "functions/play_spell_for_free.c",
+          "line": "116",
+          "bytes": 76,
+          "sha256": "4817c52c1b7efaa6ff57cbdf8094b0a9ce12dfbd5234a2fc8ba1c380c0943688",
+          "instructions": 24,
+          "decoded_bytes": 76,
+          "fully_decoded": true,
+          "calls": [
+            "get_card_instance",
+            "real_copy_spell"
+          ],
+          "branches": [
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 2,
+            "0x8": 2,
+            "0xc0000": 1,
+            "0xffffffff": 1
+          },
+          "normalized_sha256": "05a7e868547d892208dce8081bfb4e63a6d137f558b9b6b0b58a16ee6442d7d4",
+          "c_artifact": ".recovery/comparison-random/2022-copy_spell_from_stack__24ea260.c",
+          "c_sha256": "76c02c2fad28159864cff2bc2f7a205e9d7a607212bfba65de1b05ca177b1a35",
+          "asm_artifact": ".recovery/comparison-random/2022-copy_spell_from_stack__24ea260.asm",
+          "asm_sha256": "77f240c6ddccdc76c831bb412181a6558c476d4d8dedf32c8a6376ba6f9e7d54"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "confirmed-change",
+        "note": "Migrates to a six-argument copy worker with forced_target=NULL. The apparent 0-to-0xc0000 flag change is compiler specialization: old DWARF fixes special_flags=0xc0000 and ECX=0 supplies special_flags3.",
+        "gameplay_validated": false,
+        "change_kind": "interface-migration"
+      },
+      "source_reference": {
+        "path": "functions/play_spell_for_free.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "0442f4b730adaf86e7e9e41b4b61ff7990a48f7b406c31b01603145a785d221a",
+        "current_body_sha256": "0442f4b730adaf86e7e9e41b4b61ff7990a48f7b406c31b01603145a785d221a",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "show_deck",
+      "artifact": "show_deck__24f58a0",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x24f58a0",
+          "rva": "0x4f58a0",
+          "source": "functions/tutors.c",
+          "line": "7",
+          "bytes": 80,
+          "sha256": "77bd0ac3940d39f2beb4ec68dde4f34f114db1df9119293c95eede136c9cd2d9",
+          "instructions": 31,
+          "decoded_bytes": 80,
+          "fully_decoded": true,
+          "calls": [
+            "call_sub_437E20_unless_ai_is_speculating",
+            "show_deck_exe"
+          ],
+          "branches": [
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0xc": 2
+          },
+          "normalized_sha256": "65af5418d56aa710e8789e126255a8410b6f2ed9146eb4dd80158160b8f5c3d4",
+          "c_artifact": ".recovery/comparison-random/2020-show_deck__24f58a0.c",
+          "c_sha256": "4ecd4cf79749bed1a4e950b7be8005bf8ccb12d9e3f01b74a8fd7688d966a5ca",
+          "asm_artifact": ".recovery/comparison-random/2020-show_deck__24f58a0.asm",
+          "asm_sha256": "cff7c11f02093b1a05975db625bfd8ea1aa7c66b74ceb012a2f95afcf34c26f2"
+        },
+        "2022": {
+          "address": "0x2650c40",
+          "rva": "0x650c40",
+          "source": "functions/tutors.c",
+          "line": "10",
+          "bytes": 90,
+          "sha256": "d89a7e092522d45d497c675f6b44e8e899b36ec971d9d237db0aaa47947f1667",
+          "instructions": 32,
+          "decoded_bytes": 90,
+          "fully_decoded": true,
+          "calls": [
+            "call_sub_437E20_unless_ai_is_speculating",
+            "show_deck_exe"
+          ],
+          "branches": [
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 1,
+            "0xc": 2
+          },
+          "normalized_sha256": "03392298043605ab82968f5a2504620baa46286353896b6470bf5be2b07ec9f4",
+          "c_artifact": ".recovery/comparison-random/2022-show_deck__24f58a0.c",
+          "c_sha256": "319673c46b6a9ed46d96014e5cc3d94eac6371ac5479f87102e265a046190736",
+          "asm_artifact": ".recovery/comparison-random/2022-show_deck__24f58a0.asm",
+          "asm_sha256": "1120eaa9f2801671e5ee633d74e89e6c7eefbf2776c26e0b05a43e88ae9a9572"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "confirmed-change",
+        "note": "New assembly store resets hack_show_deck_force_expansion to 0 before the native show_deck_exe tail jump. Raw C ends at halt_baddata due to the incomplete native model; the store is independently verified in assembly.",
+        "gameplay_validated": false,
+        "change_kind": "display-state"
+      },
+      "source_reference": {
+        "path": "functions/tutors.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "0fc0ab55a99db3bc30a7dcbabf812e1ffb430d8480d240927e5ed4b3d9aae566",
+        "current_body_sha256": "0fc0ab55a99db3bc30a7dcbabf812e1ffb430d8480d240927e5ed4b3d9aae566",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "is_legal_block_impl",
+      "artifact": "is_legal_block_impl__24add80",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x24add80",
+          "rva": "0x4add80",
+          "source": "functions/engine.c",
+          "line": "402",
+          "bytes": 782,
+          "sha256": "8bbeff83b7e14bc4ee9e47ef538e41f490da8a752ce7c3a1920d35fbca0d2651",
+          "instructions": 201,
+          "decoded_bytes": 782,
+          "fully_decoded": true,
+          "calls": [
+            "get_card_instance",
+            "get_color",
+            "is_what",
+            "get_card_instance",
+            "is_humiliated",
+            "is_humiliated",
+            "has_my_colors",
+            "dispatch_event_with_attacker",
+            "get_color",
+            "is_what",
+            "get_abilities",
+            "get_special_abilities_by_instance",
+            "is_what"
+          ],
+          "branches": [
+            "js",
+            "jne",
+            "je",
+            "jne",
+            "jne",
+            "je",
+            "jne",
+            "je",
+            "jne",
+            "je",
+            "jne",
+            "je",
+            "je",
+            "je",
+            "je",
+            "je",
+            "jne",
+            "je",
+            "je",
+            "je",
+            "je",
+            "js",
+            "jne",
+            "js",
+            "jne",
+            "jne",
+            "jne",
+            "jne",
+            "jne",
+            "je",
+            "je",
+            "jne",
+            "je",
+            "je",
+            "jmp",
+            "jne",
+            "jne",
+            "jne",
+            "jmp",
+            "je",
+            "jmp",
+            "jmp",
+            "jne",
+            "jmp",
+            "jmp",
+            "jne",
+            "jmp",
+            "jne",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x1": 3,
+            "0x10": 3,
+            "0x100": 1,
+            "0x10000": 1,
+            "0x14": 2,
+            "0x1f": 1,
+            "0x2": 4,
+            "0x20": 3,
+            "0x34": 1,
+            "0x4": 3,
+            "0x40": 4,
+            "0x40000000": 2,
+            "0x420": 1,
+            "0x78": 1,
+            "0x8": 3,
+            "0x8000100": 1,
+            "0x800018": 1,
+            "0xa": 1,
+            "0xf800": 1,
+            "0xff": 1,
+            "0xffffffff": 1
+          },
+          "normalized_sha256": "1bcae6efe90af2fa73601136a8e15426d446a53b88eee9ad68898a4bb1f602d9",
+          "c_artifact": ".recovery/comparison-random/2020-is_legal_block_impl__24add80.c",
+          "c_sha256": "554b41101695377ed618a83946a7f7803c63acb1149b590e8672c56def6f282c",
+          "asm_artifact": ".recovery/comparison-random/2020-is_legal_block_impl__24add80.asm",
+          "asm_sha256": "021ed2b717b0159ccea5d4d99884f9a6aef9ccf1ff620f4c032db40fd65fb5ce"
+        },
+        "2022": {
+          "address": "0x26ab5a0",
+          "rva": "0x6ab5a0",
+          "source": "functions/engine.c",
+          "line": "2053",
+          "bytes": 268,
+          "sha256": "dbf845d7c81a5bc10599013df42b207d2d70275d27f2614e1700819e8f2cc4e7",
+          "instructions": 97,
+          "decoded_bytes": 268,
+          "fully_decoded": true,
+          "calls": [
+            "is_legal_block_impl2",
+            "in_play",
+            "is_legal_block_impl2",
+            "in_play"
+          ],
+          "branches": [
+            "jbe",
+            "jle",
+            "jle",
+            "je",
+            "je",
+            "je",
+            "je",
+            "jle",
+            "jg",
+            "jle",
+            "je",
+            "je",
+            "je",
+            "jg"
+          ],
+          "immediate_counts": {
+            "0x0": 1,
+            "0x1": 3,
+            "0x14": 3
+          },
+          "normalized_sha256": "830f62c34a067424b4e69b937a120de0666d01fd1135649a56816450609b435d",
+          "c_artifact": ".recovery/comparison-random/2022-is_legal_block_impl__24add80.c",
+          "c_sha256": "497c7e8727ed3cfc130b90bc9a7b44d590b049f8b95829bc420a321f8b80b260",
+          "asm_artifact": ".recovery/comparison-random/2022-is_legal_block_impl__24add80.asm",
+          "asm_sha256": "f3673f1e4cf6aae3045eae2375d8d39ab738ada40c0f6e7af37e7e01d4f2b0ff"
+        }
+      },
+      "direct_targets_added": [
+        "in_play",
+        "is_legal_block_impl2"
+      ],
+      "direct_targets_removed": [
+        "dispatch_event_with_attacker",
+        "get_abilities",
+        "get_card_instance",
+        "get_color",
+        "get_special_abilities_by_instance",
+        "has_my_colors",
+        "is_humiliated",
+        "is_what"
+      ],
+      "review": {
+        "category": "confirmed-change",
+        "note": "Delegates base legality to new is_legal_block_impl2 and adds scans/counting of other blockers to satisfy multi-blocker requirements. The new worker was not substituted for the sampled entry.",
+        "gameplay_validated": false,
+        "change_kind": "logic"
+      },
+      "source_reference": {
+        "path": "functions/engine.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "7358c1113fb95a8be749ff551acd87ab8e56b2bf39e36339bb6ffaae6e1eba72",
+        "current_body_sha256": "7358c1113fb95a8be749ff551acd87ab8e56b2bf39e36339bb6ffaae6e1eba72",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "manifest_iid_impl",
+      "artifact": "manifest_iid_impl__2230880",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x2230880",
+          "rva": "0x230880",
+          "source": "cards/fate_reforged.c",
+          "line": "107",
+          "bytes": 353,
+          "sha256": "a19d1075755168669355dbabde8e236972da222f2d6fadceef89db8d7275d603",
+          "instructions": 95,
+          "decoded_bytes": 353,
+          "fully_decoded": true,
+          "calls": [
+            "get_internal_card_id_from_csv_id",
+            "add_card_to_hand",
+            "add_state",
+            "get_original_internal_card_id",
+            "add_card_to_hand",
+            "create_targetted_legacy_activate",
+            "obliterate_card",
+            "get_card_instance",
+            "call_card_function",
+            "set_special_flags2",
+            "put_into_play",
+            "remove_state",
+            "create_targetted_legacy_activate",
+            "turn_face_down"
+          ],
+          "branches": [
+            "je",
+            "jne",
+            "je",
+            "je",
+            "jne",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 1,
+            "0x100": 1,
+            "0x1000": 2,
+            "0x1200": 1,
+            "0x1c": 2,
+            "0x33c4": 1
+          },
+          "normalized_sha256": "3f226faaa376706b794bef18085deb72874ae87a3aa05f252e3890f7592e318b",
+          "c_artifact": ".recovery/comparison-random/2020-manifest_iid_impl__2230880.c",
+          "c_sha256": "22a55f12ef6bfc176a9f08bf81a3812e15b18fad338f5985cd869c78edf912e6",
+          "asm_artifact": ".recovery/comparison-random/2020-manifest_iid_impl__2230880.asm",
+          "asm_sha256": "f28534c1cabb291788f33ccf8565c893f875a60875897d850d92fe1fb347c19b"
+        },
+        "2022": {
+          "address": "0x2622140",
+          "rva": "0x622140",
+          "source": "cards/fate_reforged.c",
+          "line": "107",
+          "bytes": 334,
+          "sha256": "c327f653833a290b2e85890c0215e48179a1c70c97d3956fe185dc49db4fe16b",
+          "instructions": 93,
+          "decoded_bytes": 334,
+          "fully_decoded": true,
+          "calls": [
+            "get_internal_card_id_from_csv_id",
+            "add_card_to_hand",
+            "add_state",
+            "get_original_internal_card_id",
+            "add_card_to_hand",
+            "create_targetted_legacy_activate",
+            "obliterate_card",
+            "get_card_instance",
+            "call_card_function",
+            "set_special_flags2",
+            "put_into_play",
+            "remove_state",
+            "create_targetted_legacy_activate",
+            "turn_face_down"
+          ],
+          "branches": [
+            "je",
+            "jne",
+            "je",
+            "je",
+            "jne",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 1,
+            "0x100": 1,
+            "0x1000": 1,
+            "0x1200": 1,
+            "0x1c": 2,
+            "0x33c4": 1
+          },
+          "normalized_sha256": "bc441d1f2738699c25fe76ba6ef97e21aaaf5d4c10e47d6037705a0e16e320de",
+          "c_artifact": ".recovery/comparison-random/2022-manifest_iid_impl__2230880.c",
+          "c_sha256": "245098ceb09128e27ca44bfd1bfa0d3da717356d0737c642633095581390d1d8",
+          "asm_artifact": ".recovery/comparison-random/2022-manifest_iid_impl__2230880.asm",
+          "asm_sha256": "f598254fe31b1465f5c027cee1ab32d98c0b42c21a8037f6cfbd7b731cc005a0"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Same regparm3 manifest setup, ownership, legacy creation and face-down handling; equality operand order/scheduling differ.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "cards/fate_reforged.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "c7b1e1a1626986e8e899109dee43818dcf855a8cdc9fd42e6d597a41117086be",
+        "current_body_sha256": "c7b1e1a1626986e8e899109dee43818dcf855a8cdc9fd42e6d597a41117086be",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "genju",
+      "artifact": "genju__22cb460",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x22cb460",
+          "rva": "0x2cb460",
+          "source": "cards/betrayers_of_kamigawa.c",
+          "line": "159",
+          "bytes": 976,
+          "sha256": "96a238895eea3b696488dc8fe2601df984931b2ef4a0d5ec6fd7ce6e2b63252a",
+          "instructions": 243,
+          "decoded_bytes": 976,
+          "fully_decoded": true,
+          "calls": [
+            "get_card_instance",
+            "in_play",
+            "default_target_definition",
+            "get_hacked_land_text",
+            "targeted_aura_custom_prompt",
+            "in_play",
+            "check_special_flags3",
+            "create_legacy_effect",
+            "get_card_instance",
+            "get_owner",
+            "get_card_instance",
+            "get_original_internal_card_id",
+            "get_card_instance",
+            "generic_activated_ability",
+            "add_a_subtype",
+            "land_animation2",
+            "in_play",
+            "get_card_instance",
+            "set_special_flags3"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "je",
+            "je",
+            "je",
+            "je",
+            "je",
+            "je",
+            "jne",
+            "jle",
+            "jmp",
+            "je",
+            "je",
+            "je",
+            "jbe",
+            "je",
+            "je",
+            "je",
+            "jmp",
+            "je",
+            "jne",
+            "jne",
+            "je",
+            "ja",
+            "je",
+            "jmp",
+            "je",
+            "jmp",
+            "je",
+            "jmp",
+            "jne",
+            "jmp",
+            "jne",
+            "je",
+            "jbe",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 11,
+            "0x1": 2,
+            "0x2": 4,
+            "0x253ac7d": 1,
+            "0x253ac91": 1,
+            "0x36": 1,
+            "0x3c": 1,
+            "0x4": 2,
+            "0x400": 1,
+            "0x42": 1,
+            "0x5400": 1,
+            "0x6c": 1,
+            "0x6d": 1,
+            "0x700": 1,
+            "0x71": 1,
+            "0x72": 1,
+            "0x73": 1,
+            "0x74": 1,
+            "0x77": 1,
+            "0x800": 1,
+            "0x90": 4,
+            "0xbc": 1,
+            "0xfd": 1,
+            "0xff": 1
+          },
+          "normalized_sha256": "31c797d9cd07288d307275027bc915316d2b331db583ffa6a712b8da0d056276",
+          "c_artifact": ".recovery/comparison-random/2020-genju__22cb460.c",
+          "c_sha256": "cec9bb18034f7ce040c65d2e47dd774a2abd5f51e0d2069ef36e7b63d7d4d2c3",
+          "asm_artifact": ".recovery/comparison-random/2020-genju__22cb460.asm",
+          "asm_sha256": "500ab6764195968bea421b7216f66d02a19077d2107d232e7f7892a38606a347"
+        },
+        "2022": {
+          "address": "0x25692e0",
+          "rva": "0x5692e0",
+          "source": "cards/betrayers_of_kamigawa.c",
+          "line": "165",
+          "bytes": 972,
+          "sha256": "34012234114059aa593b01a6fe711c765a570162bb16de6d42d7da1d0f4ee4f4",
+          "instructions": 242,
+          "decoded_bytes": 972,
+          "fully_decoded": true,
+          "calls": [
+            "get_card_instance",
+            "in_play",
+            "default_target_definition",
+            "targeted_aura_custom_prompt",
+            "in_play",
+            "check_for_death_trigger_removal",
+            "check_special_flags3",
+            "create_legacy_effect",
+            "get_card_instance",
+            "get_owner",
+            "get_card_instance",
+            "get_original_internal_card_id",
+            "get_card_instance",
+            "get_hacked_land_text",
+            "land_animation2",
+            "get_card_instance",
+            "generic_activated_ability",
+            "in_play",
+            "get_card_instance",
+            "set_special_flags3"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "je",
+            "je",
+            "je",
+            "je",
+            "je",
+            "jne",
+            "je",
+            "je",
+            "jbe",
+            "je",
+            "je",
+            "je",
+            "je",
+            "jne",
+            "jg",
+            "je",
+            "jne",
+            "jne",
+            "je",
+            "jne",
+            "ja",
+            "je",
+            "je",
+            "je",
+            "je",
+            "jmp",
+            "jmp",
+            "jne",
+            "jmp",
+            "jmp",
+            "jmp",
+            "jne",
+            "je",
+            "jbe",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 11,
+            "0x1": 2,
+            "0x2": 4,
+            "0x27544a0": 1,
+            "0x27544b4": 1,
+            "0x36": 1,
+            "0x3c": 1,
+            "0x4": 2,
+            "0x400": 1,
+            "0x42": 1,
+            "0x4700": 1,
+            "0x5400": 1,
+            "0x600": 1,
+            "0x6c": 1,
+            "0x6d": 1,
+            "0x71": 1,
+            "0x72": 1,
+            "0x73": 1,
+            "0x74": 1,
+            "0x77": 1,
+            "0x800": 1,
+            "0x90": 1,
+            "0x94": 2,
+            "0xbc": 1,
+            "0xfe": 1,
+            "0xff": 1
+          },
+          "normalized_sha256": "2c66087a5628a6a2aea6d0a0a106e831b4eb429f1d65ff9dbd18a27d60753956",
+          "c_artifact": ".recovery/comparison-random/2022-genju__22cb460.c",
+          "c_sha256": "d5665ea163ba4be6ea2b5d98fed46199f07bd318c562ee2b20381bc19addddf8",
+          "asm_artifact": ".recovery/comparison-random/2022-genju__22cb460.asm",
+          "asm_sha256": "a3ad93fc3f5b6dc9343ac7a57fab81b0447403eb263f3836eef05b74e6dacadd"
+        }
+      },
+      "direct_targets_added": [
+        "check_for_death_trigger_removal"
+      ],
+      "direct_targets_removed": [
+        "add_a_subtype"
+      ],
+      "review": {
+        "category": "confirmed-change",
+        "note": "Adds check_for_death_trigger_removal before return-legacy creation. Spirit subtype setup moves from add_a_subtype on the land to targets[9].card=0xbc on the animation legacy.",
+        "gameplay_validated": false,
+        "change_kind": "logic"
+      },
+      "source_reference": {
+        "path": "cards/betrayers_of_kamigawa.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "a49c7aae4930dbc1ae3d73f5ac74463272b1efab022509acc4d77571e5e7bf09",
+        "current_body_sha256": "a49c7aae4930dbc1ae3d73f5ac74463272b1efab022509acc4d77571e5e7bf09",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "lose_2_life_thunk",
+      "artifact": "lose_2_life_thunk__2404510",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "same-symbolic-instructions",
+      "releases": {
+        "2020": {
+          "address": "0x2404510",
+          "rva": "0x404510",
+          "source": "cards/ice_age.c",
+          "line": "3158",
+          "bytes": 33,
+          "sha256": "225ce456334997b431934ac307808cd26c0a4c4b41a8d82dadc210ac9da2c584",
+          "instructions": 12,
+          "decoded_bytes": 33,
+          "fully_decoded": true,
+          "calls": [
+            "lose_life"
+          ],
+          "branches": [],
+          "immediate_counts": {
+            "0x1": 1,
+            "0x8": 1
+          },
+          "normalized_sha256": "8fec8ef181be50639046cfbc27febf2b0aabe49e0487a89940e8a930d1f6e8fb",
+          "c_artifact": ".recovery/comparison-random/2020-lose_2_life_thunk__2404510.c",
+          "c_sha256": "66b8b64fb7516efce12c6772ad0f99be5e158430581f00283555c3cd40fc174f",
+          "asm_artifact": ".recovery/comparison-random/2020-lose_2_life_thunk__2404510.asm",
+          "asm_sha256": "634b92fe25063fbf789b7e4dfd20f046dea94d6dbeaa2bd9d5190fdc93bd7720"
+        },
+        "2022": {
+          "address": "0x23ecfe0",
+          "rva": "0x3ecfe0",
+          "source": "cards/ice_age.c",
+          "line": "3915",
+          "bytes": 33,
+          "sha256": "3b6bd1d5a461dc023b7e4115534db2107a0be5c8c9f1f1b3c250c08d99459631",
+          "instructions": 12,
+          "decoded_bytes": 33,
+          "fully_decoded": true,
+          "calls": [
+            "lose_life"
+          ],
+          "branches": [],
+          "immediate_counts": {
+            "0x1": 1,
+            "0x8": 1
+          },
+          "normalized_sha256": "8fec8ef181be50639046cfbc27febf2b0aabe49e0487a89940e8a930d1f6e8fb",
+          "c_artifact": ".recovery/comparison-random/2022-lose_2_life_thunk__2404510.c",
+          "c_sha256": "1486cbb2f4f6ff0d96c242ea9df2c81349e442234c08f62ed01cf535c39a9739",
+          "asm_artifact": ".recovery/comparison-random/2022-lose_2_life_thunk__2404510.asm",
+          "asm_sha256": "3e4f567dbddcdb98a759f7087bdee5b03acdba6b339eb5303e55a2f51b7fa747"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "same-instructions",
+        "note": "Same lose_life(player,age_counters*2) and return 1; callee behavior may differ.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "cards/ice_age.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "dd73bc7e866fe66d4bbdaba95229e6d43e166566cafc57528aa8397999b2eb6c",
+        "current_body_sha256": "dd73bc7e866fe66d4bbdaba95229e6d43e166566cafc57528aa8397999b2eb6c",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "boost_creature_type",
+      "artifact": "boost_creature_type__24885a0",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "same-symbolic-instructions",
+      "releases": {
+        "2020": {
+          "address": "0x24885a0",
+          "rva": "0x4885a0",
+          "source": "functions/boost_creature_type.c",
+          "line": "45",
+          "bytes": 78,
+          "sha256": "916799c8f5f31e39bdda49d5b4f746cc98dc2b9fb69632438a68c4d7242deb3f",
+          "instructions": 24,
+          "decoded_bytes": 78,
+          "fully_decoded": true,
+          "calls": [
+            "boost_subtype"
+          ],
+          "branches": [],
+          "immediate_counts": {
+            "0x0": 1,
+            "0x24": 1
+          },
+          "normalized_sha256": "19f9c8b840557aed36bdd39ee38943918d426f78ad4aaf6110ba9426323915e5",
+          "c_artifact": ".recovery/comparison-random/2020-boost_creature_type__24885a0.c",
+          "c_sha256": "8f3e6e94752337255abaa20e1c3a49cac91a64f3fde4895818cc22cefc3e192e",
+          "asm_artifact": ".recovery/comparison-random/2020-boost_creature_type__24885a0.asm",
+          "asm_sha256": "5ed4a8173425907dc0949153d36a0a674d91396e570fb22a1904deb0df66373f"
+        },
+        "2022": {
+          "address": "0x26eb370",
+          "rva": "0x6eb370",
+          "source": "functions/boost_creature_type.c",
+          "line": "45",
+          "bytes": 78,
+          "sha256": "2e2952ee93e13915f0a1d0d52ee57022f53b640e805f2e0d1e28178ec9f79b9c",
+          "instructions": 24,
+          "decoded_bytes": 78,
+          "fully_decoded": true,
+          "calls": [
+            "boost_subtype"
+          ],
+          "branches": [],
+          "immediate_counts": {
+            "0x0": 1,
+            "0x24": 1
+          },
+          "normalized_sha256": "19f9c8b840557aed36bdd39ee38943918d426f78ad4aaf6110ba9426323915e5",
+          "c_artifact": ".recovery/comparison-random/2022-boost_creature_type__24885a0.c",
+          "c_sha256": "7e3868bb1a2f1999ce3de682579a230a83b82031ad25df0754206f48c45183b3",
+          "asm_artifact": ".recovery/comparison-random/2022-boost_creature_type__24885a0.asm",
+          "asm_sha256": "d37b52795bc35359a81079510eff54d67f00f2d7513c6ce627aea1b7af41b4ff"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "same-instructions",
+        "note": "Same forwarding of subtype, power, toughness, abilities and flags to boost_subtype.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "functions/boost_creature_type.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "c00d313d780f6f3a57d0ed95a857806b4ec30c863946062857b8855771c68b14",
+        "current_body_sha256": "c00d313d780f6f3a57d0ed95a857806b4ec30c863946062857b8855771c68b14",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "in_play_and_attacking",
+      "artifact": "in_play_and_attacking__24b8a50",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x24b8a50",
+          "rva": "0x4b8a50",
+          "source": "functions/functions.c",
+          "line": "5249",
+          "bytes": 40,
+          "sha256": "d7155b281ec483d4f233d79726f5e4b29a150b42cec97419835b7325dbf9e17c",
+          "instructions": 17,
+          "decoded_bytes": 40,
+          "fully_decoded": true,
+          "calls": [
+            "in_play"
+          ],
+          "branches": [
+            "je",
+            "je"
+          ],
+          "immediate_counts": {
+            "0x4": 1,
+            "0x8": 1
+          },
+          "normalized_sha256": "5169b5898a16c4a6717c9d01ad6bd3c375b50a568dc393cac66fa72941c1a3b3",
+          "c_artifact": ".recovery/comparison-random/2020-in_play_and_attacking__24b8a50.c",
+          "c_sha256": "3a5580fcd85e538bcf2bcb37bf6fb516c86b5c65f139817d20774fcdab17673a",
+          "asm_artifact": ".recovery/comparison-random/2020-in_play_and_attacking__24b8a50.asm",
+          "asm_sha256": "2c24f922e9154013cc0d1d4f83c327cad96d5b80f1f10debc1916b1d7c8f4c51"
+        },
+        "2022": {
+          "address": "0x2681300",
+          "rva": "0x681300",
+          "source": "functions/functions.c",
+          "line": "7165",
+          "bytes": 44,
+          "sha256": "2895c568710af795a86e0d4a241554698565f3484669e946ba268ac81ffd2d8f",
+          "instructions": 18,
+          "decoded_bytes": 44,
+          "fully_decoded": true,
+          "calls": [
+            "in_play"
+          ],
+          "branches": [
+            "je",
+            "je"
+          ],
+          "immediate_counts": {
+            "0x4": 1,
+            "0x8": 1
+          },
+          "normalized_sha256": "e94920d02abe7d94f30d6f2a1cb68143b5bf0fc529d122dc12fc48f81d52dbc0",
+          "c_artifact": ".recovery/comparison-random/2022-in_play_and_attacking__24b8a50.c",
+          "c_sha256": "3f51a7afa6a6c368adf4357c1a9fc2962699e096b48a719e4fe5db3d1fb9e376",
+          "asm_artifact": ".recovery/comparison-random/2022-in_play_and_attacking__24b8a50.asm",
+          "asm_sha256": "e62931d9e455375b3afc13f3f07f324b622b52dd260a40798df9f3de39791b24"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Equivalent NULL/state-bit test expressed with an inverted branch; same returned instance or NULL.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "functions/functions.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "6a339d451a04662019136e7064c84824ea950ddcfc583e26d0cd67fbade14e2b",
+        "current_body_sha256": "6a339d451a04662019136e7064c84824ea950ddcfc583e26d0cd67fbade14e2b",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "gain_control_until_source_is_in_play_and_tapped",
+      "artifact": "gain_control_until_source_is_in_play_and_tapped__24fad20",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x24fad20",
+          "rva": "0x4fad20",
+          "source": "functions/gain_control_and_legend_rule.c",
+          "line": "536",
+          "bytes": 215,
+          "sha256": "7f6d9f3e1a8ea26176d10a917a7129d5d62a6eaba8df416ccc8514a3b5cb01c9",
+          "instructions": 67,
+          "decoded_bytes": 215,
+          "fully_decoded": true,
+          "calls": [
+            "in_play",
+            "get_card_instance",
+            "in_play",
+            "is_tapped",
+            "gain_control_until_clause"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "je",
+            "jne",
+            "je",
+            "je",
+            "je",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 4,
+            "0x1c": 3,
+            "0x2": 1,
+            "0x4": 1
+          },
+          "normalized_sha256": "32e7c662689ed4ef1b0c4e29b73326e0f9747c3936cd5a8a3cf0f5ba4a860570",
+          "c_artifact": ".recovery/comparison-random/2020-gain_control_until_source_is_in_play_and_tapped__24fad20.c",
+          "c_sha256": "8368d3087d6d4d26e933e4d57701b4568603144587f0e729f39c77da2c528231",
+          "asm_artifact": ".recovery/comparison-random/2020-gain_control_until_source_is_in_play_and_tapped__24fad20.asm",
+          "asm_sha256": "77482d08253e3d3f5c19246e34092133039c679997334a05c277501c5fa11d11"
+        },
+        "2022": {
+          "address": "0x2664af0",
+          "rva": "0x664af0",
+          "source": "functions/gain_control_and_legend_rule.c",
+          "line": "581",
+          "bytes": 281,
+          "sha256": "688afbe6160667807f77ea87e85e5de018115718ebca3bcaa4bdc5ee2ab9fc97",
+          "instructions": 88,
+          "decoded_bytes": 281,
+          "fully_decoded": true,
+          "calls": [
+            "in_play",
+            "get_card_instance",
+            "in_play",
+            "is_tapped",
+            "gain_control_until_clause",
+            "in_play",
+            "alternate_legacy_text"
+          ],
+          "branches": [
+            "je",
+            "je",
+            "je",
+            "je",
+            "je",
+            "jne",
+            "je",
+            "je",
+            "je",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 4,
+            "0x1": 1,
+            "0x2": 1,
+            "0x28": 4,
+            "0x4": 1,
+            "0xffffffff": 1
+          },
+          "normalized_sha256": "50b7e80a9b89bdd0332aec6adbb8e906543eb2d7bc7198f4d468309e67cb01be",
+          "c_artifact": ".recovery/comparison-random/2022-gain_control_until_source_is_in_play_and_tapped__24fad20.c",
+          "c_sha256": "8e10f7a3a04a973a5be2d16d608a7bdd0be2e776ee9422b1efb663f3eadf9875",
+          "asm_artifact": ".recovery/comparison-random/2022-gain_control_until_source_is_in_play_and_tapped__24fad20.asm",
+          "asm_sha256": "992da51cf11aa84c529ddefaa73dd796fe7628f94253b5d50703c00b318df467"
+        }
+      },
+      "direct_targets_added": [
+        "alternate_legacy_text"
+      ],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "confirmed-change",
+        "note": "After successful gain_control_until_clause, calls alternate_legacy_text(1,player,legacy). The added behavior is display text, not a claimed new control rule.",
+        "gameplay_validated": false,
+        "change_kind": "display-text"
+      },
+      "source_reference": {
+        "path": "functions/gain_control_and_legend_rule.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "aca105a6d9eb4beadcc3fb0d194f5f90d1240dd8d0babad0d069a781f3df4a8e",
+        "current_body_sha256": "aca105a6d9eb4beadcc3fb0d194f5f90d1240dd8d0babad0d069a781f3df4a8e",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "wild_growth_aura_all_one_color",
+      "artifact": "wild_growth_aura_all_one_color__24e5830",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x24e5830",
+          "rva": "0x4e5830",
+          "source": "functions/produce_mana.c",
+          "line": "797",
+          "bytes": 47,
+          "sha256": "ab721aee23a0522c71252d5cfe1ff323795c7c69496e02a46d8f69b3a73719ec",
+          "instructions": 18,
+          "decoded_bytes": 47,
+          "fully_decoded": true,
+          "calls": [
+            "wga_backend"
+          ],
+          "branches": [
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x1": 1
+          },
+          "normalized_sha256": "261e3ec28f0492cb34da4ada25ed2dcbc40daeb13d57c86d716ec3c732726da5",
+          "c_artifact": ".recovery/comparison-random/2020-wild_growth_aura_all_one_color__24e5830.c",
+          "c_sha256": "b0a9203b66c48dbf8af72f3d2354119e2056c18ab3d9c6681388c6f7a0e00bb4",
+          "asm_artifact": ".recovery/comparison-random/2020-wild_growth_aura_all_one_color__24e5830.asm",
+          "asm_sha256": "0247e1339a4365230410d579e6c69d47027a4596e096212d511604e4f01eea42"
+        },
+        "2022": {
+          "address": "0x266b970",
+          "rva": "0x66b970",
+          "source": "functions/produce_mana.c",
+          "line": "1156",
+          "bytes": 47,
+          "sha256": "1b667edf620d3741d152f03f791f4f86e66c10dc637be842d238e11352ac4f90",
+          "instructions": 18,
+          "decoded_bytes": 47,
+          "fully_decoded": true,
+          "calls": [
+            "wga_backend"
+          ],
+          "branches": [
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x1": 1
+          },
+          "normalized_sha256": "b85c27dc3a5ef200fa5ce433fb6e5580b42f7e2ccdaef3f24583a6dfbe96c90a",
+          "c_artifact": ".recovery/comparison-random/2022-wild_growth_aura_all_one_color__24e5830.c",
+          "c_sha256": "18133f2bd7bb235e9c8185c2cd23a0224abf8f73625ade8466c290187201916e",
+          "asm_artifact": ".recovery/comparison-random/2022-wild_growth_aura_all_one_color__24e5830.asm",
+          "asm_sha256": "ac5b71a90285f3251c6d576c95c04ca54e126fa5376f8809cc6d19def3f5435b"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Same seven-argument wga_backend call and mode; argument setup scheduling differs.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "functions/produce_mana.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "f8a7ac84e80ff7d6736ca222ef34e894654d09f27ca4585a9bdcf4e31d7eab37",
+        "current_body_sha256": "f8a7ac84e80ff7d6736ca222ef34e894654d09f27ca4585a9bdcf4e31d7eab37",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "get_hacked_land_text",
+      "artifact": "get_hacked_land_text__24b7ef0",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x24b7ef0",
+          "rva": "0x4b7ef0",
+          "source": "functions/functions.c",
+          "line": "4569",
+          "bytes": 700,
+          "sha256": "88c8193a12e037246a53100ff984b4a18af60b036cc549f2db2a6e9c40274225",
+          "instructions": 187,
+          "decoded_bytes": 700,
+          "fully_decoded": true,
+          "calls": [
+            "get_card_instance",
+            "sprintf"
+          ],
+          "branches": [
+            "je",
+            "jne",
+            "jmp",
+            "je",
+            "jne",
+            "je",
+            "jne",
+            "je",
+            "jg",
+            "je",
+            "jg",
+            "je",
+            "jg",
+            "jne",
+            "jne",
+            "je",
+            "je",
+            "jmp",
+            "je",
+            "jne",
+            "je",
+            "jg",
+            "je",
+            "je",
+            "jne",
+            "jmp",
+            "je",
+            "je",
+            "jne",
+            "je",
+            "js",
+            "je",
+            "jne",
+            "je",
+            "jne",
+            "jmp",
+            "je",
+            "je",
+            "je",
+            "je",
+            "je",
+            "jmp",
+            "jmp",
+            "jmp",
+            "jmp",
+            "jmp",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 4,
+            "0x1": 2,
+            "0x18": 3,
+            "0x1f": 1,
+            "0x2": 3,
+            "0x20": 1,
+            "0x25": 1,
+            "0x254d613": 1,
+            "0x3": 1,
+            "0x4": 3,
+            "0x5": 2,
+            "0x5001": 1,
+            "0x5002": 1,
+            "0x5006": 1,
+            "0x5007": 1,
+            "0x5009": 1,
+            "0x61": 5,
+            "0x6c": 2,
+            "0x6e": 1,
+            "0x6f": 1,
+            "0x73": 1,
+            "0x89": 1,
+            "0x8e": 1,
+            "0x90": 1,
+            "0x94": 1,
+            "0xff": 1,
+            "0xffffffff": 1
+          },
+          "normalized_sha256": "4ed04841142ce79e25294f255ebb1275385acab60c59badc78059e963d8971fd",
+          "c_artifact": ".recovery/comparison-random/2020-get_hacked_land_text__24b7ef0.c",
+          "c_sha256": "638e3ac63b006fdbd77da9edf6808542cb570d474836abe6058feffb3819e2ce",
+          "asm_artifact": ".recovery/comparison-random/2020-get_hacked_land_text__24b7ef0.asm",
+          "asm_sha256": "737f204317e9c22f9422e21cd9611faf8c15e90ecf6d4ae722b14bbed1b747d8"
+        },
+        "2022": {
+          "address": "0x26808c0",
+          "rva": "0x6808c0",
+          "source": "functions/functions.c",
+          "line": "6454",
+          "bytes": 556,
+          "sha256": "0557ed66bd845fb1ab9b89656ac323d4f676eae211d4489e2fc6afe1946c6e54",
+          "instructions": 157,
+          "decoded_bytes": 556,
+          "fully_decoded": true,
+          "calls": [
+            "sprintf",
+            "get_card_instance"
+          ],
+          "branches": [
+            "je",
+            "jne",
+            "jmp",
+            "je",
+            "jne",
+            "jne",
+            "jne",
+            "jg",
+            "jg",
+            "ja",
+            "ja",
+            "jmp",
+            "je",
+            "jns",
+            "jne",
+            "je",
+            "je",
+            "jne",
+            "jmp",
+            "jmp",
+            "jmp",
+            "ja",
+            "jmp",
+            "jmp",
+            "ja",
+            "jmp",
+            "je",
+            "je",
+            "jne",
+            "jne",
+            "jmp",
+            "jne",
+            "jmp",
+            "jmp",
+            "jmp"
+          ],
+          "immediate_counts": {
+            "0x0": 2,
+            "0x1": 2,
+            "0x18": 3,
+            "0x1f": 1,
+            "0x2": 3,
+            "0x20": 1,
+            "0x2061": 1,
+            "0x25": 2,
+            "0x275f900": 1,
+            "0x3": 1,
+            "0x4": 3,
+            "0x5": 2,
+            "0x5001": 1,
+            "0x61": 5,
+            "0x6c": 2,
+            "0x6e": 2,
+            "0x6f": 1,
+            "0x73": 1,
+            "0x8": 1,
+            "0x94": 1,
+            "0xff": 1,
+            "0xffffffff": 1
+          },
+          "normalized_sha256": "87bd3629b8923d7e15979091a1ee088ddf817407e7b7257600461133f8e2c705",
+          "c_artifact": ".recovery/comparison-random/2022-get_hacked_land_text__24b7ef0.c",
+          "c_sha256": "dcf9c9de791af512eef12d073c253f7dd8caa92f5adc46bfaead2f5382ad6649",
+          "asm_artifact": ".recovery/comparison-random/2022-get_hacked_land_text__24b7ef0.asm",
+          "asm_sha256": "01cf3583333431ef9ab58712212daac04e2aae083930d04a87b49d83f87a8bbb"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "compiler-layout-candidate",
+        "note": "Reviewed subtype/color mappings, article/case formatting and hacking paths correspond; switch and loop lowering differ. All 24 pointed-to land-word strings were independently checked equal.",
+        "gameplay_validated": false
+      },
+      "source_reference": {
+        "path": "functions/functions.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "79d930d32209d44959497267a9923b1e33be1f9b0c7ac9b169f6676da517db75",
+        "current_body_sha256": "79d930d32209d44959497267a9923b1e33be1f9b0c7ac9b169f6676da517db75",
+        "body_text_identical_to_baseline": true
+      }
+    },
+    {
+      "name": "dash_cost_cless",
+      "artifact": "dash_cost_cless__2230500",
+      "stratum": "helpers",
+      "identity_method": "source-and-name",
+      "status": "review-required",
+      "releases": {
+        "2020": {
+          "address": "0x2230500",
+          "rva": "0x230500",
+          "source": "cards/fate_reforged.c",
+          "line": "204",
+          "bytes": 121,
+          "sha256": "6dde56ef27233d5a812595266dabacbe8e6addfc90e2cd9e088a301497468a4e",
+          "instructions": 52,
+          "decoded_bytes": 121,
+          "fully_decoded": true,
+          "calls": [
+            "in_play",
+            "get_id",
+            "is_humiliated"
+          ],
+          "branches": [
+            "jle",
+            "jmp",
+            "jle",
+            "je",
+            "jne",
+            "jne",
+            "jg"
+          ],
+          "immediate_counts": {
+            "0x2": 1,
+            "0x3ad9": 1,
+            "0x8": 1
+          },
+          "normalized_sha256": "0b508da3d58bc0ea43d4aa62012662ed3815483bd78e20176ea0f148e909f2c3",
+          "c_artifact": ".recovery/comparison-random/2020-dash_cost_cless__2230500.c",
+          "c_sha256": "d474778cd79f1292b6a995ee7a79fd8ec2f8cc087503571e933442492051003d",
+          "asm_artifact": ".recovery/comparison-random/2020-dash_cost_cless__2230500.asm",
+          "asm_sha256": "55c51e8aed353a57628458c32142a6996772b777c7e3443915f7e4196bbcf3fe"
+        },
+        "2022": {
+          "address": "0x2621d10",
+          "rva": "0x621d10",
+          "source": "cards/fate_reforged.c",
+          "line": "210",
+          "bytes": 120,
+          "sha256": "f1afce22e85d9d6b4cae8a33d0b8826336bfae1d87767e967993f2226007997d",
+          "instructions": 44,
+          "decoded_bytes": 120,
+          "fully_decoded": true,
+          "calls": [
+            "in_play",
+            "get_id",
+            "is_humiliated"
+          ],
+          "branches": [
+            "jle",
+            "jmp",
+            "jle",
+            "je",
+            "jne",
+            "jne",
+            "jg"
+          ],
+          "immediate_counts": {
+            "0x2": 1,
+            "0x3ad9": 1,
+            "0x4": 1,
+            "0xc": 2
+          },
+          "normalized_sha256": "279199af60814943f72b7c64c73a7f51377cddff55a8b922094172436dfcc0f1",
+          "c_artifact": ".recovery/comparison-random/2022-dash_cost_cless__2230500.c",
+          "c_sha256": "755226302e71646fd1061298b87c65e4e97f913a11197918c49e501bc4909935",
+          "asm_artifact": ".recovery/comparison-random/2022-dash_cost_cless__2230500.asm",
+          "asm_sha256": "65dea6d89875e2042d6f694bee396eb66fa42915125d47a719428164d4b08de8"
+        }
+      },
+      "direct_targets_added": [],
+      "direct_targets_removed": [],
+      "review": {
+        "category": "confirmed-change",
+        "note": "The cost-reducer humiliation check gains AL_STATIC; same two-mana reduction and zero floor.",
+        "gameplay_validated": false,
+        "change_kind": "interface-migration"
+      },
+      "source_reference": {
+        "path": "cards/fate_reforged.c",
+        "baseline_commit": "427968c",
+        "baseline_body_sha256": "8f1ce9f882152e781ddd5017fd55ba221dc24baa84eb6b5d20cd5e8a882d0f0f",
+        "current_body_sha256": "8f1ce9f882152e781ddd5017fd55ba221dc24baa84eb6b5d20cd5e8a882d0f0f",
+        "body_text_identical_to_baseline": true
+      }
+    }
+  ],
+  "limitations": [
+    "No selection by size/similarity and no replacement of hard functions; seed and frame frozen before decoding.",
+    "Only unambiguously paired C functions are in the frame; known pilot entries and catalogued recovered target entries are excluded.",
+    "Same local instructions or corresponding C does not prove unchanged callee/data behavior.",
+    "Raw C has unresolved optimized parameter locations and incomplete native call models. Assembly and DWARF are used to resolve or qualify claims.",
+    "Code/API changes include display changes, optional arguments and event filters; they are not all new card effects or bug fixes."
+  ]
+}

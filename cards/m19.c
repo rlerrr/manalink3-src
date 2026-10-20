@@ -952,7 +952,7 @@ int card_apex_of_power(int player, int card, event_t event)
       this_test.type_flag = 1;
       exile_top_x_card_you_may_play_them(player, card, 7, &this_test, player, MPCFE_UNTIL_EOT);
       result = not_played_from_hand(player, card);
-      if ((result == 0) && (result = check_special_flags(player, card, 0x40000), result == 0))
+      if ((result == 0) && (result = check_special_flags_2022(player, card, 0x40000), result == 0))
       {
         produce_mana_all_one_color(player, COLOR_TEST_ANY_COLORED, 10);
       }
@@ -1038,7 +1038,7 @@ int doublecast_legacy(int player, int card, event_t event)
   if (((trigger_condition == 0xd3) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    result = check_special_flags(trigger_cause_controller, trigger_cause, 0x40000);
+    result = check_special_flags_2022(trigger_cause_controller, trigger_cause, 0x40000);
     if (result == 0)
     {
       default_test_definition(&test, 0x38);
@@ -3246,7 +3246,7 @@ int isareth_legacy(int player, int card, event_t event)
     if (pcVar2 != NULL)
     {
       pcVar1->targets[1].player = 0;
-      set_special_flags(result, card_00, 0x4000);
+      set_special_flags_2022(result, card_00, 0x4000);
     }
   }
   leaves_play_2022(result, card_00, event, 1, 0);
@@ -3333,8 +3333,8 @@ int card_isareth_the_awakener(int player, int card, event_t event)
       add_status(player, card_00, 0x10000);
       add_counters_from_source(player, card, player, result, COUNTER_CORPSE, 1);
       convert_to_token(player, result);
-      set_special_flags(player, result, 0x4000);
-      set_special_flags2(player, result, 0x10000000);
+      set_special_flags_2022(player, result, 0x4000);
+      set_special_flags2_2022(player, result, 0x10000000);
     }
   }
   return 0;
@@ -3539,6 +3539,41 @@ int card_desecrated_tomb(int player, int card, event_t event)
   {
     instance->info_slot = 0;
     return 0;
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int palladia_mors_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2205d60; original cards/m19.c:1767. */
+int palladia_mors_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  special_abilities((int)instance->damage_target_player, instance->damage_target_card, event,
+                    (SP_KEYWORD_HEXPROOF), player, card);
+  result = damage_dealt_by_me_arbitrary(instance->targets[0].player, instance->targets[0].card,
+                                        event, DDBM_0, player, card);
+  if (result == 0)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x220a810; original cards/m19.c:1774. */
+int card_palladia_mors_the_ruiner(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  vigilance(player, card, event);
+  if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    create_targetted_legacy_effect_no_repeat(player, card, palladia_mors_legacy, player, card);
   }
   return 0;
 }

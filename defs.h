@@ -1496,10 +1496,17 @@ typedef struct card_instance_struct
   uint16_t unused_0x12a;
   uint8_t unused_0x12c;
 #else
+  union
+  {
+    struct
+    {
   uint8_t	upkeep_colorless;	/* 0x124 */	// These seven bytes are strong candidates for reclamation.  Used in: 0x402B60, 0x437670, Energy Flux, Sunken City, Stasis, Conversion, Junun Efreet, Phantasmal Force, Force of Nature, Cosmic Horror
   uint8_t	upkeep_black;		/* 0x125 */
   uint8_t	upkeep_blue;		/* 0x126 */
   uint8_t	upkeep_green;		/* 0x127 */
+    };
+    uint32_t token_special_keywords_2022; /* Native token keyword mirror at 0x124. */
+  };
   uint8_t	upkeep_red;			/* 0x128 */
   uint8_t	upkeep_white;		/* 0x129 */
   uint8_t	upkeep_artmana;		/* 0x12A */
@@ -3417,6 +3424,7 @@ typedef enum {
 } exiledby_choose_mode_t;
 
 typedef enum {
+	TYPETEXT_0 = 0, /* October 2022 name for no type-text flags. */
 	TYPETEXT_NO_ABBREV	= 1<<0,	/* Don't abbreviate "instant interrupt" to "instant", "artifact creature enchantment land" or "artifact creature enchantment
 								 * land planeswalker" to "permanent", or "permanent instant sorcery" to "card". */
 	TYPETEXT_INVERT		= 1<<1,	// Precede each returned type with "non", and put a comma between the last two types instead of "or".
@@ -3839,6 +3847,105 @@ struct card_ext_struct
   special_flags2_t special_flags2;
   special_flags3_t special_flags3;
 };
+#endif
+
+
+#ifndef SHANDALAR
+/* October 2022 second keyword word; verified against DWARF. */
+typedef enum
+{
+  SP_KEYWORD2_0 = 0,
+  SP_KEYWORD2_PROT_MISC = 1,
+  SP_KEYWORD2_GRANTED_PROT_MISC = 2,
+  SP_KEYWORD2_HEXPROOF_MISC = 4,
+  SP_KEYWORD2_CANNON_FODDER = 8
+} sp_keyword2_t;
+#endif
+
+
+#ifndef SHANDALAR
+/* October 2022 protection event modes; original modes retained above. */
+typedef enum
+{
+  IPF2022_DAMAGE = 1,
+  IPF2022_ATTACH_AURA = 2,
+  IPF2022_ATTACH_EQUIPMENT = 3,
+  IPF2022_BLOCK = 4,
+  IPF2022_TARGET = 5,
+  IPF2022_QUERY = 6
+} is_protected_from_mode_2022_t;
+#endif
+
+
+#ifndef SHANDALAR
+/* October 2022 independent game modes; original singleplayer modes retained. */
+typedef enum
+{
+  OGM_NONE = 0,
+  OGM_EDH = 1,
+  OGM_PLANECHASE = 2,
+  OGM_RANDOM_SINGLETON = 4,
+  OGM_SPAT = 8
+} other_game_mode_2022_t;
+#endif
+
+
+/* Shared native singleplayer mode type; moved unchanged from rules_engine.c. */
+typedef enum {
+	SPM_NONE = 0,
+	SPM_MOMIR = 1,
+	SPM_DRAFT = 2,
+	SPM_TESTING = 3
+} singleplayer_mode_t;
+
+
+#ifndef SHANDALAR
+/* October 2022 token creation ABI; legacy layout/actions retained above. */
+typedef enum
+{
+  TOKEN2022_ACTION_TAPPED = 1,
+  TOKEN2022_ACTION_ATTACKING_UNTAPPED = 2,
+  TOKEN2022_ACTION_ATTACKING = 3,
+  TOKEN2022_ACTION_EQUIP = 4,
+  TOKEN2022_ACTION_EQUIP_ANY = 8,
+  TOKEN2022_ACTION_HASTE = 16,
+  TOKEN2022_ACTION_DONT_COPY_TOKEN_SOURCE = 32,
+  TOKEN2022_ACTION_CONVERT_INTO_ARTIFACT = 64,
+  TOKEN2022_ACTION_RECORD_SOURCE_ID = 128,
+  TOKEN2022_ACTION_ISNT_LEGENDARY = 256,
+  TOKEN2022_ACTION_BLOCKING = 65536,
+  TOKEN2022_ACTION_PUMP_POWER = 131072,
+  TOKEN2022_ACTION_PUMP_TOUGHNESS = 262144,
+  TOKEN2022_ACTION_ADD_SUBTYPE = 524288,
+  TOKEN2022_ACTION_ADD_COUNTERS = 1048576,
+  TOKEN2022_ACTION_SKIP_ATTACK_CHECK = 2097152
+} token_action_2022_t;
+
+typedef struct struct_token_generation_2022_t
+{
+  int id;
+  int s_player;
+  int s_card;
+  int eff_player;
+  int eff_card;
+  int t_player;
+  int pow;
+  int tou;
+  unsigned int key_plus;
+  unsigned int s_key_plus;
+  unsigned char color_forced;
+  unsigned char no_sleight;
+  unsigned char legacy;
+  unsigned char qty;
+  unsigned int special_infos;
+  token_action_2022_t action;
+  int action_argument;
+  unsigned int keep_track_of_tokens_generated;
+  int (*special_code_for_legacy)(int, int, event_t);
+  void (*special_code_on_generation)(struct struct_token_generation_2022_t *, int, int);
+  int special_flags2;
+  int special_flags3;
+} token_generation_2022_t;
 #endif
 
 #endif

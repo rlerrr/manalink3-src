@@ -12,7 +12,7 @@ import subprocess
 from pathlib import Path
 
 from inspect_release import Image
-from promote_recovery import LITERAL, clean, strip_comments
+from promote_recovery import LITERAL, clean, strip_comments, MANA_API_NAMES
 from recover_literals import recover_strings
 
 
@@ -121,7 +121,11 @@ def main():
             # collapses lines containing only indentation along with their break.
             resolved = re.sub(r"(?m)^[ \t]+$", "", resolved)
             candidate = ("static " if function["static"] else "") + clean(
-                resolved, overlapping, function.get("local_type_declarations", []), function.get("array_boundaries", []))
+                resolved, overlapping, function.get("local_type_declarations", []), function.get("array_boundaries", []),
+                use_keyword_accessors_2022=("get_special_abilities_2022(" in current or "check_for_special_ability_2022(" in current),
+                use_extension_flags_2022=bool(re.search(r'\b(?:get|set|remove|check)_special_flags[23]?(?:_by_instance)?_2022\s*\(',current)),
+                use_mana_api_2022=bool(re.search(r'\b(?:' + '|'.join(MANA_API_NAMES) + r')_2022\s*\(',current)),
+                use_token_api_2022=bool(re.search(r'\btoken_generation_2022_t\b',current)))
             formatted = format_bytes(candidate.encode("utf-8"))
             if tokens(current) != tokens(formatted) or comments(current) != comments(formatted):
                 skipped.append(relative + "::" + function["name"])

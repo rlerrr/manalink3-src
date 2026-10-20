@@ -3384,7 +3384,7 @@ void multicascade(int player, int card, event_t event, int amount)
     result = is_token(player, card);
     if (result == 0)
     {
-      result = check_special_flags(player, card, 0x40000);
+      result = check_special_flags_2022(player, card, 0x40000);
       if (result == 0)
       {
         result = get_cmc(player, card);

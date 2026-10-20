@@ -72,12 +72,84 @@ _Static_assert(sizeof(target_t) == 8 && offsetof(target_t, player) == 0 && offse
             with layout.open('a') as stream:
                 stream.write('\n' + '\n'.join(assertions) + '\n')
     state_values = {}
+    keyword_values = {}
+    interfaces = json.loads((root / 'docs/recovery-evidence/interface-recovery.json').read_text())
+    if interfaces.get('type_text_empty_flag'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(TYPETEXT_0 == 0 && sizeof(type_text_t) == 4, "empty type-text flag");\n')
+    if interfaces.get('extension_flags_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(special_flags_t)==4 && sizeof(special_flags2_t)==4 && sizeof(special_flags3_t)==4, "extension flag words");\n_Static_assert(SF3_CARD_IS_FLIPPED==512, "verified inline flip flag");\n')
+    if interfaces.get('mana_modifier_caches_2022'):
+        with layout.open('a') as stream:
+            stream.write('''
+_Static_assert(sizeof(mana_colors_added)==8, "added mana colors");
+_Static_assert(sizeof(mana_color_override)==64 && sizeof(mana_color_override[0])==32, "mana color override shape");
+_Static_assert(sizeof(mana_quantity_override)==64 && sizeof(mana_quantity_override[0])==32, "mana quantity override shape");
+_Static_assert(sizeof(multi_mana_transmutation)==16 && sizeof(multi_mana_transmutation[0])==8, "multi mana replacement shape");
+''')
+    if interfaces.get('mana_counter_2022'):
+        with layout.open('a') as stream:
+            stream.write('''
+_Static_assert(sizeof(engine_raw_mana_available_hex_2022)==408 && sizeof(engine_raw_mana_available_hex_2022[0])==204, "2022 native hex mana stride");
+_Static_assert(sizeof(engine_mana_may_be_spent_as_color_2022)==88 && sizeof(engine_mana_may_be_spent_as_color_2022[0])==44, "native spend-as-color stride");
+_Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVENT_COUNT_MANA==0x7f, "mana count event/word interfaces");
+''')
+    token_core = interfaces.get('token_core_2022')
+    if token_core:
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(token_generation_t)==72 && sizeof(token_generation_2022_t)==76 && sizeof(token_action_2022_t)==4, "separate token layouts/actions");\n')
+            for member in token_core['layout']['members']:
+                stream.write(f'_Static_assert(offsetof(token_generation_2022_t,{member["name"]})=={member["offset"]}, "2022 token member {member["name"]}");\n')
+                if member['name'] != 'special_flags3':
+                    stream.write(f'_Static_assert(offsetof(token_generation_t,{member["name"]})=={member["offset"]}, "retained token prefix {member["name"]}");\n')
+            for name,number in token_core['actions']['members'].items():
+                stream.write(f'_Static_assert({name.replace("TOKEN_ACTION_","TOKEN2022_ACTION_")}=={number}, "2022 token action {name}");\n')
+            stream.write('_Static_assert(TOKEN_ACTION_HASTE==8 && TOKEN_ACTION_CONVERT_INTO_ARTIFACT==32, "retained legacy token actions");\n'
+                         '_Static_assert(offsetof(card_instance_t,token_special_keywords_2022)==292 && sizeof(((card_instance_t*)0)->token_special_keywords_2022)==4 && offsetof(card_instance_t,upkeep_colorless)==292 && offsetof(card_instance_t,upkeep_green)==295, "token keyword mirror overlay");\n'
+                         '_Static_assert(sizeof(card_data_t)==72 && offsetof(card_data_t,id)==36 && offsetof(card_data_t,reserved2)==38 && sizeof(engine_dynamic_iid_start_2022)==4, "dynamic token card-data view");\n')
+    if interfaces.get('yorion_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(singleplayer_mode_t)==4 && sizeof(singleplayer_mode)==4, "native singleplayer-mode word");\n'
+                         '_Static_assert(SPM_NONE==0 && SPM_MOMIR==1 && SPM_DRAFT==2 && SPM_TESTING==3, "retained singleplayer-mode values");\n'
+                         '_Static_assert(sizeof(char[2][151])==302, "Yorion selection matrix");\n')
+    if interfaces.get('game_mode_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(other_game_mode_2022_t)==4 && sizeof(other_game_mode)==4, "independent game-mode word");\n'
+                         '_Static_assert(OGM_NONE==0 && OGM_EDH==1 && OGM_PLANECHASE==2 && OGM_RANDOM_SINGLETON==4 && OGM_SPAT==8, "independent game-mode values");\n'
+                         '_Static_assert(CARD_ID_ELDER_DRAGON_HIGHLANDER==14675 && GAMETYPE_SOLO_DUEL==1, "pregame mode selectors");\n')
+    if interfaces.get('player_flag_caches_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(card_flags)==8 && sizeof(card_flags[0])==4, "per-player card-flag words");\n'
+                         '_Static_assert(sizeof(your_spells_cant_be_countered_by_color)==2 && sizeof(your_spells_cant_be_countered_by_color[0])==1, "per-player counterability color bytes");\n')
+    if interfaces.get('mana_production_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(SF2_QUARUM_TRENCH_GNOMES==0x800000, "typed mana replacement mask");\n')
+    keyword_enum = interfaces.get('extension_keyword_enum')
+    protection_dispatch = interfaces.get('protection_dispatch_2022')
+    if protection_dispatch:
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(is_protected_from_mode_2022_t) == 4, "protection mode width");\n' +
+                         '_Static_assert(sizeof(player_bits) == 8 && sizeof(player_bits[0]) == 4, "native player-bit words");\n' +
+                         '\n'.join(f'_Static_assert({name.replace("IPF_", "IPF2022_")} == {number}, "2022 protection mode");'
+                                   for name,number in protection_dispatch['modes']['members'].items()) + '\n')
+    if keyword_enum:
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(sp_keyword2_t) == 4, "second keyword word");\n' +
+                         '\n'.join(f'_Static_assert({name} == {number}, "second keyword bit");'
+                                   for name, number in keyword_enum['members'].items()) + '\n')
     for function in manifest['accepted_functions']:
+        for replacement in function.get('keyword_mask_evidence', {}).get('replacements', []):
+            for name,number in replacement['bits'].items():
+                assert name not in keyword_values or keyword_values[name] == number
+                keyword_values[name] = number
         for replacement in function.get('state_mask_evidence', {}).get('replacements', []):
             for name, number in replacement['bits'].items():
                 assert name not in state_values or state_values[name] == number
                 state_values[name] = number
     with layout.open('a') as stream:
+        stream.write('\n' + '\n'.join(f'_Static_assert({name} == {number}, "recovered keyword mask");'
+                                      for name,number in keyword_values.items()) + '\n')
         stream.write('\n' + '\n'.join(f'_Static_assert({name} == {number}, "recovered state mask");'
                                       for name,number in state_values.items()) + '\n')
     if storage_evidence.exists():

@@ -6005,3 +6005,194 @@ int card_tel_jilad_stylus(int player, int card, event_t event)
                                      "TARGET_PERMANENT_YOU_OWN");
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x253d4c0; original cards/mirrodin.c:2132. */
+int card_glissa_sunseeker(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int iVar5;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_CAN_WASTE_MANA)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_test_definition(&recovered_stack_td.test, 0x40);
+      has_mana(player, 7, -1);
+      iVar1 =
+          check_battlefield_for_special_card(player, card, 1 - player, 0, &recovered_stack_td.test);
+      if (iVar1 != 0)
+      {
+        event_result = event_result | 1;
+      }
+    }
+    return 0;
+  }
+  if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &recovered_stack_td.target, 0x40);
+  LAB_0253d532:
+    if ((event == EVENT_RESOLVE_ACTIVATION) &&
+        (iVar1 = valid_target(&recovered_stack_td.target), iVar1 != 0))
+    {
+      instance = get_card_instance(player, card);
+      iVar1 = get_cmc(instance->targets[0].player, instance->targets[0].card);
+      if (iVar1 == mana_pool[player][7])
+      {
+        kill_target0(player, card, KILL_DESTROY);
+        if (instance->targets[0].player == player)
+        {
+          ai_modifier = ai_modifier + -0x18;
+        }
+        else
+        {
+          ai_modifier = ai_modifier + 0x18;
+        }
+      }
+      else
+      {
+        ai_modifier = ai_modifier + -99;
+      }
+    }
+    iVar1 = generic_activated_ability(player, card, event, 5, 0, 0, 0, 0, 0, 0, 0,
+                                      &recovered_stack_td.target, "TARGET_ARTIFACT");
+    return iVar1;
+  }
+  default_target_definition(player, card, &recovered_stack_td.target, 0x40);
+  if (event != EVENT_ACTIVATE)
+    goto LAB_0253d532;
+  iVar1 = generic_activated_ability(player, card, EVENT_ACTIVATE, 5, 0, 0, 0, 0, 0, 0, 0,
+                                    &recovered_stack_td.target, "TARGET_ARTIFACT");
+  if (spell_fizzled == 1)
+  {
+    return iVar1;
+  }
+  if (ai_is_speculating != 1)
+  {
+    if (player != 1)
+    {
+      return iVar1;
+    }
+    if (((unsigned char)trace_mode & 2) != 0)
+    {
+      return iVar1;
+    }
+  }
+  instance = get_card_instance(player, card);
+  iVar2 = get_cmc(instance->targets[0].player, instance->targets[0].card);
+  iVar2 = has_mana(player, 7, iVar2);
+  if ((iVar2 == 0) || (iVar2 = check_for_special_ability_2022(instance->targets[0].player,
+                                                              instance->targets[0].card, 0x800),
+                       iVar2 != 0))
+    goto LAB_0253d6ae;
+  iVar2 = instance->targets[0].player;
+  if (iVar2 == player)
+  {
+    ai_modifier = ai_modifier + -0x18;
+  }
+  iVar2 = get_cmc(iVar2, instance->targets[0].card);
+  if (0 < active_cards_count[player])
+  {
+    iVar5 = 0;
+    do
+    {
+      iVar4 = mana_pool[player][7];
+      if (iVar2 <= iVar4)
+      {
+        if (0 < active_cards_count[player])
+          goto LAB_0253d8fd;
+        goto LAB_0253da8b;
+      }
+      iVar4 = can_autotap(player, iVar5,
+                          AUTOTAP_NO_CREATURES | AUTOTAP_NO_ARTIFACTS | AUTOTAP_NO_DONT_AUTO_TAP |
+                              AUTOTAP_NO_NONBASIC_LANDS);
+      if (iVar4 != 0)
+      {
+        autotap_mana_source(player, iVar5);
+      }
+      iVar5 = iVar5 + 1;
+    } while (iVar5 < active_cards_count[player]);
+    iVar4 = mana_pool[player][7];
+    if (0 < active_cards_count[player])
+    {
+      iVar5 = 0;
+      do
+      {
+        if (iVar2 <= iVar4)
+          goto LAB_0253d8fd;
+        iVar4 = can_autotap(player, iVar5,
+                            AUTOTAP_NO_CREATURES | AUTOTAP_NO_ARTIFACTS | AUTOTAP_NO_DONT_AUTO_TAP);
+        if (iVar4 != 0)
+        {
+          autotap_mana_source(player, iVar5);
+        }
+        iVar5 = iVar5 + 1;
+        iVar4 = mana_pool[player][7];
+      } while (iVar5 < active_cards_count[player]);
+      if (0 < active_cards_count[player])
+      {
+        iVar5 = 0;
+        do
+        {
+          if (iVar2 <= iVar4)
+            goto LAB_0253d90f;
+          iVar4 = can_autotap(player, iVar5, AUTOTAP_NO_CREATURES | AUTOTAP_NO_DONT_AUTO_TAP);
+          if (iVar4 != 0)
+          {
+            autotap_mana_source(player, iVar5);
+          }
+          iVar5 = iVar5 + 1;
+          iVar4 = mana_pool[player][7];
+        } while (iVar5 < active_cards_count[player]);
+        if (0 < active_cards_count[player])
+        {
+          iVar5 = 0;
+          do
+          {
+            if (iVar2 <= iVar4)
+              break;
+            iVar4 = can_autotap(player, iVar5, AUTOTAP_NO_DONT_AUTO_TAP);
+            if (iVar4 != 0)
+            {
+              autotap_mana_source(player, iVar5);
+            }
+            iVar5 = iVar5 + 1;
+            iVar4 = mana_pool[player][7];
+          } while (iVar5 < active_cards_count[player]);
+        }
+        goto LAB_0253d90f;
+      }
+    }
+  }
+LAB_0253da8b:
+  iVar4 = mana_pool[player][7];
+LAB_0253d90f:
+  if (iVar2 == iVar4)
+  {
+    return iVar1;
+  }
+LAB_0253d6ae:
+  ai_modifier = ai_modifier + -99;
+  return iVar1;
+LAB_0253d8fd:
+  if (active_cards_count[player] < 1)
+    goto LAB_0253da8b;
+  goto LAB_0253d90f;
+}

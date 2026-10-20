@@ -695,11 +695,11 @@ static char *has_only_1_target_and_targets_a_creature_and_can_legally_change_tar
       instance->targets[9].player = targeting_player;
       iVar2 = instance->targets[9].card;
       instance->targets[9].card = targeting_card;
-      set_special_flags2(player, card, 0x10000);
+      set_special_flags2_2022(player, card, 0x10000);
       iVar5 = call_card_function(player, card, EVENT_CAN_CAST);
       instance->targets[9].card = iVar2;
       instance->targets[9].player = iVar1;
-      remove_special_flags2(player, card, 0x10000);
+      remove_special_flags2_2022(player, card, 0x10000);
       pcVar4 = "cannot target this creature";
       if (iVar5 != 0)
       {
@@ -793,11 +793,11 @@ static char *has_only_1_target_and_can_legally_change_target_to_attached(
     pcVar3->targets[9].player = (int)pcVar5->damage_target_player;
     iVar2 = pcVar3->targets[9].card;
     pcVar3->targets[9].card = iVar6;
-    set_special_flags2(spell_player, spell_card, 0x10000);
+    set_special_flags2_2022(spell_player, spell_card, 0x10000);
     iVar6 = call_card_function(spell_player, spell_card, EVENT_CAN_CAST);
     pcVar3->targets[9].player = iVar1;
     pcVar3->targets[9].card = iVar2;
-    remove_special_flags2(spell_player, spell_card, 0x10000);
+    remove_special_flags2_2022(spell_player, spell_card, 0x10000);
     pcVar4 = "cannot target this creature";
     if (iVar6 != 0)
     {
@@ -830,7 +830,7 @@ int card_captured_by_the_consulate(int player, int card, event_t event)
        (iVar3 = is_what(trigger_cause_controller, trigger_cause, 1), iVar3 != 0)) ||
       ((iVar3 = is_token(trigger_cause_controller, trigger_cause),
         iVar3 != 0 ||
-            (iVar3 = check_special_flags(trigger_cause_controller, trigger_cause, 0x40000),
+            (iVar3 = check_special_flags_2022(trigger_cause_controller, trigger_cause, 0x40000),
              iVar3 != 0))))
   {
   LAB_024291ec:
@@ -931,9 +931,9 @@ int card_meddle(int player, int card, event_t event)
           (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_creature;
       if ((card == affected_card) && (player == affected_card_controller))
       {
-        set_special_flags2(card_on_stack_controller, card_on_stack, 0x4000);
+        set_special_flags2_2022(card_on_stack_controller, card_on_stack, 0x4000);
         deflect_one_target(player, card, EVENT_CAST_SPELL, &td_spell);
-        remove_special_flags2(card_on_stack_controller, card_on_stack, 0x4000);
+        remove_special_flags2_2022(card_on_stack_controller, card_on_stack, 0x4000);
       }
     }
   }
@@ -955,4 +955,45 @@ int card_meddle(int player, int card, event_t event)
     counterspell_target_definition(player, card, &td_spell, 0xff);
   }
   return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2429740; original cards/gargaroz.c:722. */
+int card_spelljack(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    iVar1 = counterspell_validate(player, card, NULL, 0);
+    if (iVar1 != 0)
+    {
+
+      instance = get_card_instance(player, card);
+      iVar1 = get_id(instance->targets[0].player, instance->targets[0].card);
+      iVar3 =
+          pre_counterspell(player, card, instance->targets[0].player, instance->targets[0].card);
+      if (iVar3 == 0)
+      {
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+      }
+      else
+      {
+        put_on_top_of_deck(instance->targets[0].player, instance->targets[0].card);
+        rfg_top_card_of_deck(instance->targets[0].player);
+      }
+      if (-1 < iVar1)
+      {
+        create_may_play_card_from_exile_effect(player, card, instance->targets[0].player, iVar1,
+                                               MPCFE_FOR_FREE);
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  iVar1 = generic_spell(player, card, event, 2, NULL, NULL, 1, NULL);
+  return iVar1;
 }

@@ -3318,7 +3318,7 @@ int card_serra_bestiary(int player, int card, event_t event)
     {
       cannot_attack((int)pcVar3->damage_target_player, pcVar3->damage_target_card, event);
       cannot_block((int)pcVar3->damage_target_player, pcVar3->damage_target_card, event);
-      set_special_flags2((int)pcVar3->damage_target_player, pcVar3->damage_target_card, 0x10);
+      set_special_flags2_2022((int)pcVar3->damage_target_player, pcVar3->damage_target_card, 0x10);
     }
   }
   leaves_play_2022(player, card, event, 0, 0);
@@ -3326,7 +3326,7 @@ int card_serra_bestiary(int player, int card, event_t event)
   {
 
     pcVar3 = get_card_instance(player, card);
-    remove_special_flags2((int)pcVar3->damage_target_player, pcVar3->damage_target_card, 0x10);
+    remove_special_flags2_2022((int)pcVar3->damage_target_player, pcVar3->damage_target_card, 0x10);
   }
   else
   {

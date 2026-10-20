@@ -2337,7 +2337,7 @@ int card_supreme_will(int player, int card, event_t event)
         (player == affected_card_controller))
     {
       instance->number_of_targets = '\0';
-      result = check_special_flags2(player, card, -0x80000000);
+      result = check_special_flags2_2022(player, card, -0x80000000);
       if (result == 0)
       {
 
@@ -2543,7 +2543,7 @@ int card_doomfall(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         instance->number_of_targets = '\0';
-        iVar3 = check_special_flags2(player, card, -0x80000000);
+        iVar3 = check_special_flags2_2022(player, card, -0x80000000);
         if (iVar3 == 0)
         {
 
@@ -2734,7 +2734,7 @@ int card_abrade(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         instance->number_of_targets = '\0';
-        iVar3 = check_special_flags2(player, card, -0x80000000);
+        iVar3 = check_special_flags2_2022(player, card, -0x80000000);
         if (iVar3 == 0)
         {
 
@@ -3953,7 +3953,7 @@ int card_hour_of_eternity(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
 
-      set_special_flags2(player, card, 0x20000);
+      set_special_flags2_2022(player, card, 0x20000);
       iVar3 = played_for_free(player, card);
       if ((iVar3 == 0) && (iVar3 = is_token(player, card), iVar3 == 0))
       {
@@ -4386,5 +4386,808 @@ int card_imminent_doom(int player, int card, event_t event)
     }
   }
   result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20d6e10; original cards/hour_of_devastation.c:3344. */
+int card_hashep_oasis(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  bool bVar3;
+  target_definition_t td;
+  test_definition_t test;
+
+  if (event == EVENT_COUNT_MANA)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (result = is_tapped(player, card), result == 0)) &&
+        ((result = is_animated_and_sick(player, card),
+          result == 0 && (result = can_produce_mana(player, card), result != 0))))
+    {
+      result = check_special_flags2_2022(player, card, 0x40);
+      if ((result == 0) || (result = is_what(player, card, 1), result == 0))
+      {
+
+        instance = get_card_instance(player, card);
+        if (((ai_is_speculating == 1) ||
+             ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+            (life[player] < 2))
+        {
+          if ((instance->mana_color & 1) != 0)
+          {
+            declare_mana_available(player, 0, 1);
+          }
+        }
+        else
+        {
+          declare_mana_available_hex(player, (unsigned int)instance->mana_color, 1);
+        }
+      }
+      else
+      {
+        declare_mana_available(player, 1, 1);
+      }
+    }
+  LAB_020d6fa0:
+    result = mana_producer(player, card, event);
+    return result;
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+    goto LAB_020d6fa0;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((event == EVENT_CLEANUP) || (event == EVENT_RESOLVE_ACTIVATION))
+    {
+      default_target_definition(player, card, &td, 2);
+      new_default_test_definition(&test, 0x47, "Select a Desert to sacrifice.");
+      test.subtype = 0x5000;
+      instance = get_card_instance(player, card);
+      if (event != EVENT_RESOLVE_ACTIVATION)
+      {
+        return 0;
+      }
+      if (instance->info_slot == 2)
+      {
+        result = valid_target(&td);
+        if (result != 0)
+        {
+          pump_until_eot_merge_previous(player, card, instance->targets[0].player,
+                                        instance->targets[0].card, 3, 3);
+          return 0;
+        }
+        return 0;
+      }
+      return 0;
+    }
+    goto LAB_020d6fa0;
+  }
+  default_target_definition(player, card, &td, 2);
+  new_default_test_definition(&test, 0x47, "Select a Desert to sacrifice.");
+  test.subtype = 0x5000;
+  instance = get_card_instance(player, card);
+
+  result = paying_mana();
+  if (((result == 0) && (result = can_sorcery_be_played(player, EVENT_ACTIVATE), result != 0)) &&
+      (result = generic_activated_ability_with_sacrifice_as_cost(
+           player, card, EVENT_CAN_ACTIVATE, GAA_CAN_TARGET, 1, 0, 0, 3, 0, 0, 0, &td,
+           "TARGET_CREATURE", TYPE_NONE, &test, SARV_0),
+       result != 0))
+  {
+    bVar3 = ai_is_speculating != 1;
+    instance->info_slot = 2;
+    if ((bVar3) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
+    {
+      result = can_target(&td);
+      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1,
+                           "Sac a desert and grow a creature", result, 1, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (result == 1)
+        goto LAB_020d70a8;
+      if (result != 2)
+      {
+        return 0;
+      }
+    }
+    add_state(player, card, 0x10);
+    generic_activated_ability_with_sacrifice_as_cost(
+        player, card, EVENT_ACTIVATE, GAA_CAN_SORCERY_BE_PLAYED | GAA_CAN_TARGET | GAA_UNTAPPED, 1,
+        0, 0, 2, 0, 0, 0, &td, "TARGET_CREATURE", TYPE_NONE, &test, SARV_0);
+    if (spell_fizzled == 1)
+    {
+      remove_state(player, card, 0x10);
+    }
+  }
+  else
+  {
+    instance->info_slot = 1;
+  LAB_020d70a8:
+
+    instance = get_card_instance(player, card);
+    if ((((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+         (life[player] < 2)) &&
+        ((instance->mana_color & 1) != 0))
+    {
+      produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_COLORLESS, 1);
+    }
+    else
+    {
+      produce_mana_tapped_all_one_color_2022(player, card, (unsigned int)instance->mana_color, 1);
+      if ((chosen_colors & ((mana_colors_added[player] | COLOR_TEST_COLORLESS) ^ ~COLOR_TEST_0)) !=
+          COLOR_TEST_0)
+      {
+        lose_life(player, 1);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20d76b0; original cards/hour_of_devastation.c:3481. */
+int card_ifnir_deadlands(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  bool bVar3;
+  target_definition_t td;
+  test_definition_t test;
+
+  if (event == EVENT_COUNT_MANA)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (result = is_tapped(player, card), result == 0)) &&
+        ((result = is_animated_and_sick(player, card),
+          result == 0 && (result = can_produce_mana(player, card), result != 0))))
+    {
+      result = check_special_flags2_2022(player, card, 0x40);
+      if ((result == 0) || (result = is_what(player, card, 1), result == 0))
+      {
+
+        instance = get_card_instance(player, card);
+        if (((ai_is_speculating == 1) ||
+             ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+            (life[player] < 2))
+        {
+          if ((instance->mana_color & 1) != 0)
+          {
+            declare_mana_available(player, 0, 1);
+          }
+        }
+        else
+        {
+          declare_mana_available_hex(player, (unsigned int)instance->mana_color, 1);
+        }
+      }
+      else
+      {
+        declare_mana_available(player, 1, 1);
+      }
+    }
+  LAB_020d7848:
+    result = mana_producer(player, card, event);
+    return result;
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+    goto LAB_020d7848;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+    {
+      default_target_definition(player, card, &td, 2);
+      td.allowed_controller = 1 - player;
+      new_default_test_definition(&test, 0x47, "Select a Desert to sacrifice.");
+      test.subtype = 0x5000;
+      instance = get_card_instance(player, card);
+      if (event != EVENT_RESOLVE_ACTIVATION)
+      {
+        return 0;
+      }
+      if (instance->info_slot == 2)
+      {
+        result = valid_target(&td);
+        if (result != 0)
+        {
+          add_counters_from_source(player, card, instance->targets[0].player,
+                                   instance->targets[0].card, COUNTER_M1_M1, 2);
+          return 0;
+        }
+        return 0;
+      }
+      return 0;
+    }
+    goto LAB_020d7848;
+  }
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = 1 - player;
+  new_default_test_definition(&test, 0x47, "Select a Desert to sacrifice.");
+  test.subtype = 0x5000;
+  instance = get_card_instance(player, card);
+
+  result = paying_mana();
+  if (((result == 0) && (result = can_sorcery_be_played(player, EVENT_ACTIVATE), result != 0)) &&
+      (result = generic_activated_ability_with_sacrifice_as_cost(
+           player, card, EVENT_CAN_ACTIVATE, GAA_CAN_TARGET, 2, 3, 0, 0, 0, 0, 0, &td,
+           "TARGET_CREATURE_OPPONENT_CONTROLS", TYPE_NONE, &test, SARV_0),
+       result != 0))
+  {
+    bVar3 = ai_is_speculating != 1;
+    instance->info_slot = 2;
+    if ((bVar3) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
+    {
+      result = can_target(&td);
+      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1,
+                           "Sac a desert and shrink a creature", result, 1, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (result == 1)
+        goto LAB_020d7958;
+      if (result != 2)
+      {
+        return 0;
+      }
+    }
+    add_state(player, card, 0x10);
+    generic_activated_ability_with_sacrifice_as_cost(
+        player, card, EVENT_ACTIVATE, GAA_CAN_TARGET, 2, 2, 0, 0, 0, 0, 0, &td,
+        "TARGET_CREATURE_OPPONENT_CONTROLS", TYPE_NONE, &test, SARV_0);
+    if (spell_fizzled == 1)
+    {
+      remove_state(player, card, 0x10);
+    }
+  }
+  else
+  {
+    instance->info_slot = 1;
+  LAB_020d7958:
+
+    instance = get_card_instance(player, card);
+    if ((((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+         (life[player] < 2)) &&
+        ((instance->mana_color & 1) != 0))
+    {
+      produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_COLORLESS, 1);
+    }
+    else
+    {
+      produce_mana_tapped_all_one_color_2022(player, card, (unsigned int)instance->mana_color, 1);
+      if ((chosen_colors & ((mana_colors_added[player] | COLOR_TEST_COLORLESS) ^ ~COLOR_TEST_0)) !=
+          COLOR_TEST_0)
+      {
+        lose_life(player, 1);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20d7c90; original cards/hour_of_devastation.c:3574. */
+int card_ipnu_rivulet(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  bool bVar3;
+  target_definition_t td;
+  test_definition_t test;
+
+  if (event == EVENT_COUNT_MANA)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (result = is_tapped(player, card), result == 0)) &&
+        ((result = is_animated_and_sick(player, card),
+          result == 0 && (result = can_produce_mana(player, card), result != 0))))
+    {
+      result = check_special_flags2_2022(player, card, 0x40);
+      if ((result == 0) || (result = is_what(player, card, 1), result == 0))
+      {
+
+        instance = get_card_instance(player, card);
+        if (((ai_is_speculating == 1) ||
+             ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+            (life[player] < 2))
+        {
+          if ((instance->mana_color & 1) != 0)
+          {
+            declare_mana_available(player, 0, 1);
+          }
+        }
+        else
+        {
+          declare_mana_available_hex(player, (unsigned int)instance->mana_color, 1);
+        }
+      }
+      else
+      {
+        declare_mana_available(player, 1, 1);
+      }
+    }
+  LAB_020d7e28:
+    result = mana_producer(player, card, event);
+    return result;
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+    goto LAB_020d7e28;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+    {
+      default_target_definition(player, card, &td, 0);
+      td.zone = 0x1000;
+      new_default_test_definition(&test, 0x47, "Select a Desert to sacrifice.");
+      test.subtype = 0x5000;
+      instance = get_card_instance(player, card);
+      if (event != EVENT_RESOLVE_ACTIVATION)
+      {
+        return 0;
+      }
+      if (instance->info_slot == 2)
+      {
+        result = valid_target(&td);
+        if (result != 0)
+        {
+          mill(instance->targets[0].player, 4);
+          return 0;
+        }
+        return 0;
+      }
+      return 0;
+    }
+    goto LAB_020d7e28;
+  }
+  default_target_definition(player, card, &td, 0);
+  td.zone = 0x1000;
+  new_default_test_definition(&test, 0x47, "Select a Desert to sacrifice.");
+  test.subtype = 0x5000;
+  instance = get_card_instance(player, card);
+
+  result = paying_mana();
+  if ((result == 0) && (result = generic_activated_ability_with_sacrifice_as_cost(
+                            player, card, EVENT_CAN_ACTIVATE, GAA_CAN_TARGET, 1, 0, 2, 0, 0, 0, 0,
+                            &td, "TARGET_PLAYER", TYPE_NONE, &test, SARV_0),
+                        result != 0))
+  {
+    bVar3 = ai_is_speculating != 1;
+    instance->info_slot = 2;
+    if ((bVar3) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
+    {
+      result = can_target(&td);
+      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1,
+                           "Sac a desert and mill four cards", result, 1, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (result == 1)
+        goto LAB_020d7f18;
+      if (result != 2)
+      {
+        return 0;
+      }
+    }
+    add_state(player, card, 0x10);
+    generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_ACTIVATE, GAA_CAN_TARGET,
+                                                     1, 0, 1, 0, 0, 0, 0, &td, "TARGET_OPPONENT",
+                                                     TYPE_NONE, &test, SARV_0);
+    if (spell_fizzled == 1)
+    {
+      remove_state(player, card, 0x10);
+    }
+  }
+  else
+  {
+    instance->info_slot = 1;
+  LAB_020d7f18:
+
+    instance = get_card_instance(player, card);
+    if ((((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+         (life[player] < 2)) &&
+        ((instance->mana_color & 1) != 0))
+    {
+      produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_COLORLESS, 1);
+    }
+    else
+    {
+      produce_mana_tapped_all_one_color_2022(player, card, (unsigned int)instance->mana_color, 1);
+      if ((chosen_colors & ((mana_colors_added[player] | COLOR_TEST_COLORLESS) ^ ~COLOR_TEST_0)) !=
+          COLOR_TEST_0)
+      {
+        lose_life(player, 1);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20d8250; original cards/hour_of_devastation.c:3667. */
+int card_ramunap_ruins(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  bool bVar3;
+  test_definition_t test;
+
+  if (event == EVENT_COUNT_MANA)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (result = is_tapped(player, card), result == 0)) &&
+        ((result = is_animated_and_sick(player, card),
+          result == 0 && (result = can_produce_mana(player, card), result != 0))))
+    {
+      result = check_special_flags2_2022(player, card, 0x40);
+      if ((result == 0) || (result = is_what(player, card, 1), result == 0))
+      {
+
+        instance = get_card_instance(player, card);
+        if (((ai_is_speculating == 1) ||
+             ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+            (life[player] < 2))
+        {
+          if ((instance->mana_color & 1) != 0)
+          {
+            declare_mana_available(player, 0, 1);
+          }
+        }
+        else
+        {
+          declare_mana_available_hex(player, (unsigned int)instance->mana_color, 1);
+        }
+      }
+      else
+      {
+        declare_mana_available(player, 1, 1);
+      }
+    }
+  LAB_020d83b8:
+    result = mana_producer(player, card, event);
+    return result;
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+    goto LAB_020d83b8;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+    {
+      new_default_test_definition(&test, 0x47, "Select a Desert to sacrifice.");
+      test.subtype = 0x5000;
+      instance = get_card_instance(player, card);
+      if (event != EVENT_RESOLVE_ACTIVATION)
+      {
+        return 0;
+      }
+      if (instance->info_slot == 2)
+      {
+        damage_player(1 - player, 2, player, card);
+        return 0;
+      }
+      return 0;
+    }
+    goto LAB_020d83b8;
+  }
+  new_default_test_definition(&test, 0x47, "Select a Desert to sacrifice.");
+  test.subtype = 0x5000;
+  instance = get_card_instance(player, card);
+
+  result = paying_mana();
+  if ((result == 0) && (result = generic_activated_ability_with_sacrifice_as_cost(
+                            player, card, EVENT_CAN_ACTIVATE, GAA_NONE, 2, 0, 0, 0, 3, 0, 0, NULL,
+                            NULL, TYPE_NONE, &test, SARV_0),
+                        result != 0))
+  {
+    bVar3 = ai_is_speculating != 1;
+    instance->info_slot = 2;
+    if ((bVar3) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
+    {
+      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1,
+                           "Sac a desert and damage opponent", 1, 1, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (result == 1)
+        goto LAB_020d8478;
+      if (result != 2)
+      {
+        return 0;
+      }
+    }
+    add_state(player, card, 0x10);
+    generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_ACTIVATE, GAA_NONE, 2, 0,
+                                                     0, 0, 2, 0, 0, NULL, NULL, TYPE_NONE, &test,
+                                                     SARV_0);
+    if (spell_fizzled == 1)
+    {
+      remove_state(player, card, 0x10);
+    }
+  }
+  else
+  {
+    instance->info_slot = 1;
+  LAB_020d8478:
+
+    instance = get_card_instance(player, card);
+    if ((((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+         (life[player] < 2)) &&
+        ((instance->mana_color & 1) != 0))
+    {
+      produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_COLORLESS, 1);
+    }
+    else
+    {
+      produce_mana_tapped_all_one_color_2022(player, card, (unsigned int)instance->mana_color, 1);
+      if ((chosen_colors & ((mana_colors_added[player] | COLOR_TEST_COLORLESS) ^ ~COLOR_TEST_0)) !=
+          COLOR_TEST_0)
+      {
+        lose_life(player, 1);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20d8af0; original cards/hour_of_devastation.c:3813. */
+int card_shefet_dunes(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  bool bVar3;
+  test_definition_t test;
+
+  if (event == EVENT_COUNT_MANA)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (result = is_tapped(player, card), result == 0)) &&
+        ((result = is_animated_and_sick(player, card),
+          result == 0 && (result = can_produce_mana(player, card), result != 0))))
+    {
+      result = check_special_flags2_2022(player, card, 0x40);
+      if ((result == 0) || (result = is_what(player, card, 1), result == 0))
+      {
+
+        instance = get_card_instance(player, card);
+        if (((ai_is_speculating == 1) ||
+             ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+            (life[player] < 2))
+        {
+          if ((instance->mana_color & 1) != 0)
+          {
+            declare_mana_available(player, 0, 1);
+          }
+        }
+        else
+        {
+          declare_mana_available_hex(player, (unsigned int)instance->mana_color, 1);
+        }
+      }
+      else
+      {
+        declare_mana_available(player, 1, 1);
+      }
+    }
+  LAB_020d8c58:
+    result = mana_producer(player, card, event);
+    return result;
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+    goto LAB_020d8c58;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+    {
+      new_default_test_definition(&test, 0x47, "Select a Desert to sacrifice.");
+      test.subtype = 0x5000;
+      instance = get_card_instance(player, card);
+      if (event != EVENT_RESOLVE_ACTIVATION)
+      {
+        return 0;
+      }
+      if (instance->info_slot == 2)
+      {
+        pump_creatures_until_eot(player, card, player, 0, 1, 1, 0, 0, NULL);
+        return 0;
+      }
+      return 0;
+    }
+    goto LAB_020d8c58;
+  }
+  new_default_test_definition(&test, 0x47, "Select a Desert to sacrifice.");
+  test.subtype = 0x5000;
+  instance = get_card_instance(player, card);
+
+  result = paying_mana();
+  if (((result == 0) && (result = can_sorcery_be_played(player, EVENT_ACTIVATE), result != 0)) &&
+      (result = generic_activated_ability_with_sacrifice_as_cost(
+           player, card, EVENT_CAN_ACTIVATE, GAA_NONE, 2, 0, 0, 0, 0, 3, 0, NULL, NULL, TYPE_NONE,
+           &test, SARV_0),
+       result != 0))
+  {
+    bVar3 = ai_is_speculating != 1;
+    instance->info_slot = 2;
+    if ((bVar3) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
+    {
+      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Get mana", 1, 1,
+                           "Sac a desert to pump your creatures", 1, 1, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (result == 1)
+        goto LAB_020d8d40;
+      if (result != 2)
+      {
+        return 0;
+      }
+    }
+    add_state(player, card, 0x10);
+    generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_ACTIVATE, GAA_NONE, 2, 0,
+                                                     0, 0, 0, 2, 0, NULL, NULL, TYPE_NONE, &test,
+                                                     SARV_0);
+    if (spell_fizzled == 1)
+    {
+      remove_state(player, card, 0x10);
+    }
+  }
+  else
+  {
+    instance->info_slot = 1;
+  LAB_020d8d40:
+
+    instance = get_card_instance(player, card);
+    if ((((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0)))) &&
+         (life[player] < 2)) &&
+        ((instance->mana_color & 1) != 0))
+    {
+      produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_COLORLESS, 1);
+    }
+    else
+    {
+      produce_mana_tapped_all_one_color_2022(player, card, (unsigned int)instance->mana_color, 1);
+      if ((chosen_colors & ((mana_colors_added[player] | COLOR_TEST_COLORLESS) ^ ~COLOR_TEST_0)) !=
+          COLOR_TEST_0)
+      {
+        lose_life(player, 1);
+      }
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int eternalize(int player, int card, event_t event, card_id_t cid, int x, int b, int u, int g,
+               int r, int w);
+
+/* ManalinkEh 2022: 0x20cd780; original cards/hour_of_devastation.c:4. */
+int eternalize(int player, int card, event_t event, card_id_t cid, int x, int b, int u, int g,
+               int r, int w)
+{
+  int result;
+  token_generation_2022_t token;
+
+  if (event == EVENT_GRAVEYARD_ABILITY)
+  {
+    result = has_mana_multi(player, x, b, u, g, r, w);
+    if ((result != 0) &&
+        (result = can_sorcery_be_played(player, EVENT_GRAVEYARD_ABILITY), result != 0))
+    {
+      return 0x1020;
+    }
+  }
+  else if (event == EVENT_PAY_FLASHBACK_COSTS)
+  {
+    charge_mana_multi(player, x, b, u, g, r, w);
+    if (spell_fizzled != 1)
+    {
+      return 2;
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATED_GRAVEYARD_ABILITY)
+  {
+    default_token_definition_2022(player, card, cid, &token);
+    token.color_forced = '\x02';
+    token.no_sleight = '\x01';
+    token.tou = 4;
+    token.pow = 4;
+    token.special_flags3 = 0x40000;
+    generate_token_2022(&token);
+  }
+  return (unsigned int)(event == EVENT_CAN_CAST);
+}
+
+/* ManalinkEh 2022: 0x20cd8b0; original cards/hour_of_devastation.c:198. */
+int card_adorned_pouncer(int player, int card, event_t event)
+{
+  int result;
+
+  result = eternalize(player, card, event, CARD_ID_ADORNED_POUNCER, 3, 0, 0, 0, 0, 2);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20ce1c0; original cards/hour_of_devastation.c:461. */
+int card_steadfast_sentinel(int player, int card, event_t event)
+{
+  int result;
+
+  vigilance(player, card, event);
+  result = eternalize(player, card, event, CARD_ID_STEADFAST_SENTINEL, 4, 0, 0, 0, 0, 2);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20ce240; original cards/hour_of_devastation.c:500. */
+int card_champion_of_wits(int player, int card, event_t event)
+{
+  int result;
+
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    result = do_dialog(player, player, card, -1, -1, " Draw & Discard\n Pass", 0);
+    if (result == 0)
+    {
+      result = get_power(player, card);
+      draw_cards(player, result);
+      new_multidiscard(player, 2, 0, player);
+    }
+  }
+  result = eternalize(player, card, event, CARD_ID_CHAMPION_OF_WITS, 5, 0, 2, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20cf160; original cards/hour_of_devastation.c:706. */
+int card_proven_combatant(int player, int card, event_t event)
+{
+  int result;
+
+  result = eternalize(player, card, event, CARD_ID_PROVEN_COMBATANT, 4, 0, 2, 0, 0, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x20d0040; original cards/hour_of_devastation.c:1030. */
+int card_dreamstealer(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar4;
+  int times_damaged[2];
+  int damages[2];
+
+  menace(player, card, event);
+  result = damage_dealt_by_me(player, card, event,
+                              DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
+                                  DDBM_REPORT_DAMAGE_DEALT | DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (result != 0)
+  {
+
+    instance = get_card_instance(player, card);
+    uVar4 = instance->targets[1].player;
+    instance->targets[1].player = 0;
+    times_damaged[1] = uVar4 >> 8 & 0xff;
+    uVar1 = instance->targets[0x10].player;
+    times_damaged[0] = uVar4 & 0xff;
+    instance->targets[0x10].player = 0;
+
+    damages[0] = uVar1 & 0xff;
+    damages[1] = uVar1 >> 8 & 0xff;
+    if (times_damaged[current_turn] != 0)
+    {
+      new_multidiscard(current_turn, damages[current_turn], 0, player);
+    }
+    uVar4 = current_turn ^ 1;
+    if (times_damaged[uVar4] != 0)
+    {
+      new_multidiscard(uVar4, damages[uVar4], 0, player);
+    }
+  }
+  result = eternalize(player, card, event, CARD_ID_DREAMSTEALER, 4, 2, 0, 0, 0, 0);
   return result;
 }

@@ -1095,7 +1095,7 @@ int card_march_of_the_multitudes(int player, int card, event_t event)
            (instance = get_card_instance(player, card), card == affected_card)) &&
           (player == affected_card_controller))
       {
-        result = check_special_flags2(player, card, -0x80000000);
+        result = check_special_flags2_2022(player, card, -0x80000000);
         if (result == 0)
         {
           result = played_for_free(player, card);

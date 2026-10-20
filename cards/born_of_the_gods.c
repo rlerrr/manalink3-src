@@ -4687,4 +4687,82 @@ int card_mogis_chosen(int player, int card, event_t event){
 
 // Minotaur Younghorn / Minotaur Goreseeker --> Phoberos Reaver
 
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int crypsis_legacy(int player, int card, event_t event);
 
+/* ManalinkEh 2022: 0x2035860; original cards/born_of_the_gods.c:855. */
+static int crypsis_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  attached_gets_sp_kw2(player, card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
+
+  if ((((event == EVENT_PROT_MISC) && (instance = get_card_instance(player, card),
+                                       instance->damage_target_card == affected_card)) &&
+       (instance->damage_target_player == affected_card_controller)) &&
+      ((((unsigned int)event_result >> 24 & 0xff) == '\x06' ||
+        ((result = is_what(attacking_card_controller, attacking_card, 2),
+          result != 0 && (attacking_card_controller != player))))))
+  {
+
+    event_result = event_result | 1;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20378f0; original cards/born_of_the_gods.c:866. */
+int card_crypsis(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.preferred_controller = player;
+        td.allowed_controller = player;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target(&td);
+          if (result != 0)
+          {
+
+            instance = get_card_instance(player, card);
+            create_targetted_legacy_effect(player, card, crypsis_legacy,
+                                           instance->targets[0].player, instance->targets[0].card);
+            untap_card(instance->targets[0].player, instance->targets[0].card);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0203794b;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+LAB_0203794b:
+  result = generic_spell(player, card, event, 1, &td, "ASHNODS_BATTLEGEAR", 1, NULL);
+  return result;
+}

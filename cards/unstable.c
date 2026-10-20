@@ -1236,7 +1236,7 @@ int card_crow_storm(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      result = check_special_flags(player, card, 0x40000);
+      result = check_special_flags_2022(player, card, 0x40000);
       if (result == 0)
       {
         result = get_storm_count();
@@ -2590,5 +2590,48 @@ int card_hydradoodle(int player, int card, event_t event)
 {
   multi_x_spell(player, card, event, 2);
   enters_the_battlefield_with_counters_fn(player, card, event, COUNTER_P1_P1, roll_xd6_shim);
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25c7a90; original cards/unstable.c:1599. */
+int card_earl_of_squirrel(int player, int card, event_t event)
+{
+  int result;
+
+  squirrellink(player, card, event);
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    if (affected_card_controller == player)
+    {
+      result = is_token(player, affected_card);
+      if (result != 0)
+      {
+        result = is_what(affected_card_controller, affected_card, 2);
+        if (result != 0)
+        {
+          result = is_humiliated_for_ability(player, card, AL_STATIC);
+          if (result == 0)
+          {
+            add_a_subtype(affected_card_controller, affected_card, SUBTYPE_SQUIRREL);
+          }
+        }
+      }
+    }
+  }
+  else if (((event - EVENT_POWER < 2) && (affected_card_controller == player)) &&
+           (card != affected_card))
+  {
+    result = has_subtype(player, affected_card, SUBTYPE_SQUIRREL);
+    if (result != 0)
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if (result == 0)
+      {
+        event_result = event_result + 1;
+      }
+    }
+  }
   return 0;
 }

@@ -7253,7 +7253,7 @@ int card_crown_of_the_ages(int player, int card, event_t event)
           call_card_function(instance->targets[0].player, instance->targets[0].card,
                              EVENT_CAN_MOVE_AURA);
         }
-        set_special_flags3(instance->targets[0].player, instance->targets[0].card,
+        set_special_flags3_2022(instance->targets[0].player, instance->targets[0].card,
                            (-(unsigned int)(player == 0) & 0xffff8000) + 0x10000);
         call_card_function(instance->targets[0].player, instance->targets[0].card, EVENT_MOVE_AURA);
       }
@@ -7281,7 +7281,7 @@ int card_crown_of_the_ages(int player, int card, event_t event)
   {
     call_card_function(instance->targets[0].player, instance->targets[0].card,
                        EVENT_RESOLVE_MOVING_AURA);
-    remove_special_flags3(instance->targets[0].player, instance->targets[0].card, 0);
+    remove_special_flags3_2022(instance->targets[0].player, instance->targets[0].card, 0);
     return 0;
   }
   return 0;
@@ -8116,8 +8116,8 @@ int card_soul_burn(int player, int card, event_t event)
         pcVar1 = get_card_instance(player, card);
         if ((card == affected_card) && (player == affected_card_controller))
         {
-          set_special_flags2(player, card, 0x20000);
-          result = check_special_flags2(player, card, -0x80000000);
+          set_special_flags2_2022(player, card, 0x20000);
+          result = check_special_flags2_2022(player, card, -0x80000000);
           if (result == 0)
           {
             pcVar1->info_slot = 0;
@@ -10235,7 +10235,7 @@ int card_orcish_squatters(int player, int card, event_t event)
         if ((((instance != NULL) && (iVar1 = is_what(current_turn, iVar3, 2), iVar1 != 0)) &&
              (iVar1 = is_attacking(current_turn, iVar3), iVar1 != 0)) &&
             ((iVar1 = is_unblocked(current_turn, iVar3),
-              iVar1 != 0 && (iVar1 = check_special_flags(current_turn, iVar3, 0x40), iVar1 == 0))))
+              iVar1 != 0 && (iVar1 = check_special_flags_2022(current_turn, iVar3, 0x40), iVar1 == 0))))
         {
           iVar1 = get_power(current_turn, iVar3);
           iVar4 = iVar4 + iVar1;
@@ -10710,7 +10710,7 @@ int card_jeweled_amulet(int player, int card, event_t event)
   }
 LAB_023fe0d4:
   remove_counters_from_source(player, card, player, card, COUNTER_CHARGE, 1);
-  produce_mana_tapped(player, card, instance->targets[1].player, 1);
+  produce_mana_tapped_2022(player, card, instance->targets[1].player, 1);
   return 0;
 }
 
@@ -10932,4 +10932,700 @@ int card_breath_of_dreams(int player, int card, event_t event)
   }
   iVar3 = global_enchantment(player, card, event);
   return iVar3;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23f7250; original cards/ice_age.c:3262. */
+int card_fire_covenant(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  int iVar5;
+  int iVar6;
+  int iStack_70;
+  target_definition_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    get_card_instance(player, card);
+    default_target_definition(player, card, &td, 2);
+    if (player == 1)
+    {
+      td.illegal_abilities = get_protections_from(1, card);
+      td.special = 0x8000;
+      td.extra = (int32_t)not_indestructible;
+    }
+    iVar5 = basic_spell(player, card, EVENT_CAN_CAST);
+    if (iVar5 != 0)
+    {
+      iVar5 = can_pay_life_as_cost_for_spells_or_activated_abilities(player, 1);
+      return iVar5;
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if ((event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET) &&
+             (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+    pcVar1 = get_card_instance(player, card);
+    default_target_definition(player, card, &td, 2);
+    if (player == 1)
+    {
+      td.illegal_abilities = get_protections_from(1, card);
+      td.special = 0x8000;
+      td.extra = (int32_t)not_indestructible;
+    }
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (((card == affected_card) && (player == affected_card_controller)) &&
+          (iVar2 = is_token(player, card), iVar5 = current_turn, iVar2 == 0))
+      {
+        iVar2 = active_cards_count[current_turn] + -1;
+        iStack_70 = 0;
+        if (-1 < iVar2)
+        {
+          do
+          {
+            if ((((iVar5 == 1 - player) && (pcVar3 = in_play(iVar5, iVar2), pcVar3 != NULL)) &&
+                 ((iVar4 = is_what(iVar5, iVar2, 2),
+                   iVar4 != 0 && ((iVar4 = can_target(&td),
+                                   iVar4 != 0 && (iVar4 = check_for_ability(iVar5, iVar2, 0x64800),
+                                                  iVar4 == 0)))))) &&
+                (iVar4 = check_for_special_ability(
+                     iVar5, iVar2, (SP_KEYWORD_INDESTRUCTIBLE | SP_KEYWORD_HEXPROOF)),
+                 iVar4 == 0))
+            {
+              iVar4 = get_toughness(iVar5, iVar2);
+              iStack_70 = iStack_70 + iVar4;
+            }
+            iVar2 = iVar2 + -1;
+          } while (iVar2 != -1);
+        }
+        iVar5 = current_turn;
+        iVar4 = 1 - current_turn;
+        iVar2 = active_cards_count[iVar4] + -1;
+        if (-1 < iVar2)
+        {
+          do
+          {
+            if (((((player == iVar5) && (pcVar3 = in_play(iVar4, iVar2), pcVar3 != NULL)) &&
+                  (iVar6 = is_what(iVar4, iVar2, 2), iVar6 != 0)) &&
+                 ((iVar6 = can_target(&td),
+                   iVar6 != 0 &&
+                       (iVar6 = check_for_ability(iVar4, iVar2, 0x64800), iVar6 == 0)))) &&
+                (iVar6 = check_for_special_ability(
+                     iVar4, iVar2, (SP_KEYWORD_INDESTRUCTIBLE | SP_KEYWORD_HEXPROOF)),
+                 iVar6 == 0))
+            {
+              iVar6 = get_toughness(iVar4, iVar2);
+              iStack_70 = iStack_70 + iVar6;
+            }
+            iVar2 = iVar2 + -1;
+          } while (iVar2 != -1);
+        }
+        iVar5 = life[player];
+        if (iVar5 - iStack_70 < 6)
+        {
+          iVar2 = 0;
+          iVar4 = iVar5 - (iStack_70 + -1);
+          if (iVar4 < 7)
+          {
+            iVar2 = iVar4 + -6;
+          }
+          iStack_70 = iVar2 + iStack_70 + -1;
+        }
+        if (player == 0)
+        {
+          iStack_70 = choose_a_number(0, "Pay how much life?", iVar5);
+        }
+        if ((iStack_70 < 1) || (life[player] < iStack_70))
+        {
+          spell_fizzled = 1;
+        }
+        else
+        {
+          lose_life(player, iStack_70);
+          pcVar1->info_slot = iStack_70;
+        }
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      target_and_divide_damage(player, card, &td, "TARGET_CREATURE", pcVar1->info_slot);
+      kill_card(player, card, KILL_SACRIFICE);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+int chaos_moon_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x23ec100; original cards/ice_age.c:1911. */
+int chaos_moon_legacy(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  subtype_t sVar4;
+  int (*paiVar5)[8];
+  int card_00;
+
+  if (event == EVENT_CAST_SPELL)
+  {
+    iVar1 = is_what(affected_card_controller, affected_card, 1);
+    if (iVar1 != 0)
+    {
+      sVar4 = get_hacked_subtype(player, card, 0x5006);
+      iVar1 = has_subtype(affected_card_controller, affected_card, sVar4);
+      if (iVar1 != 0)
+      {
+        set_special_flags2_2022(affected_card_controller, affected_card, 0x40);
+      }
+    }
+  }
+  else if (event == EVENT_COUNT_MANA)
+  {
+    paiVar5 = mana_color_override;
+
+    iVar1 = 0;
+    do
+    {
+
+      iVar3 = active_cards_count[iVar1];
+      (*paiVar5)[0] = 0;
+      (*paiVar5)[1] = 0;
+      (*paiVar5)[2] = 0;
+      (*paiVar5)[3] = 0;
+      (*paiVar5)[4] = 0;
+      (*paiVar5)[5] = 0;
+      (*paiVar5)[6] = 0;
+      card_00 = 0;
+      if (0 < iVar3)
+      {
+        do
+        {
+          while ((instance = in_play(iVar1, card_00),
+                  instance == NULL || (iVar3 = is_what(iVar1, card_00, 1), iVar3 == 0)))
+          {
+          LAB_023ec198:
+            card_00 = card_00 + 1;
+            if (active_cards_count[iVar1] <= card_00)
+              goto LAB_023ec218;
+          }
+          sVar4 = get_hacked_subtype(player, card, 0x5006);
+          iVar3 = has_subtype(iVar1, card_00, sVar4);
+          if (iVar3 == 0)
+            goto LAB_023ec198;
+          iVar3 = card_00 + 1;
+          set_special_flags2_2022(iVar1, card_00, 0x40);
+          card_00 = iVar3;
+        } while (iVar3 < active_cards_count[iVar1]);
+      }
+    LAB_023ec218:
+      iVar1 = iVar1 + 1;
+      paiVar5 = paiVar5 + 1;
+    } while (iVar1 != 2);
+  }
+  iVar1 = eot_trigger(player, card, event);
+  if (iVar1 != 0)
+  {
+    kill_card(player, card, KILL_EXILE);
+    cant_be_responded_to = 1;
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x23f3380; original cards/ice_age.c:1973. */
+int card_chaos_moon(int player, int card, event_t event)
+{
+  int result;
+  unsigned int uVar2;
+  test_definition_t this_test;
+
+  upkeep_trigger_ability(player, card, event, 2);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+
+    uVar2 = count_permanents_by_type(2, TYPE_PERMANENT);
+    default_test_definition(&this_test, 2);
+    this_test.color = get_sleighted_color_test(player, card, 0x10);
+    this_test.color_flag = 0;
+    if ((uVar2 & 1) == 0)
+    {
+      pump_creatures_until_eot(player, card, 2, 2, -1, -1, 0, 0, &this_test);
+      result = create_legacy_effect(player, card, chaos_moon_legacy);
+      alternate_legacy_text(4, player, result);
+    }
+    else
+    {
+      pump_creatures_until_eot(player, card, 2, 1, 1, 1, 0, 0, &this_test);
+      result = create_legacy_effect(player, card, chaos_moon_legacy_odd);
+      alternate_legacy_text(3, player, result);
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x23fd160; original cards/ice_age.c:5008. */
+int card_infernal_darkness(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int (*paiVar4)[8];
+  int card_00;
+
+  cumulative_upkeep_general(player, card, event, can_pay_1_life_b_thunk, lose_1_life_b_thunk);
+  if (event == EVENT_CAST_SPELL)
+  {
+    iVar1 = is_what(affected_card_controller, affected_card, 1);
+    if (iVar1 != 0)
+    {
+      set_special_flags2_2022(affected_card_controller, affected_card, 0x40);
+    }
+  }
+  else if ((event == EVENT_MODIFY_MANA_PROD) || (event == EVENT_RESOLVE_SPELL))
+  {
+    paiVar4 = mana_color_override;
+
+    iVar1 = 0;
+    do
+    {
+
+      iVar3 = active_cards_count[iVar1];
+      (*paiVar4)[0] = 1;
+      (*paiVar4)[1] = 1;
+      (*paiVar4)[2] = 1;
+      (*paiVar4)[3] = 1;
+      (*paiVar4)[4] = 1;
+      (*paiVar4)[5] = 1;
+      (*paiVar4)[6] = 1;
+      card_00 = 0;
+      if (0 < iVar3)
+      {
+        do
+        {
+          while ((instance = in_play(iVar1, card_00),
+                  instance == NULL || (iVar3 = is_what(iVar1, card_00, 1), iVar3 == 0)))
+          {
+            card_00 = card_00 + 1;
+            if (active_cards_count[iVar1] <= card_00)
+              goto LAB_023fd270;
+          }
+          iVar3 = card_00 + 1;
+          set_special_flags2_2022(iVar1, card_00, 0x40);
+          card_00 = iVar3;
+        } while (iVar3 < active_cards_count[iVar1]);
+      }
+    LAB_023fd270:
+      iVar1 = iVar1 + 1;
+      paiVar4 = paiVar4 + 1;
+    } while (iVar1 != 2);
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x24071f0; original cards/ice_age.c:8139. */
+int card_ritual_of_subdual(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int (*paiVar4)[8];
+  int card_00;
+
+  cumulative_upkeep(player, card, event, 2, 0, 0, 0, 0, 0);
+  if (event == EVENT_CAST_SPELL)
+  {
+    iVar1 = is_what(affected_card_controller, affected_card, 1);
+    if (iVar1 != 0)
+    {
+      set_special_flags2_2022(affected_card_controller, affected_card, 0x40);
+    }
+  }
+  else if ((event == EVENT_COUNT_MANA) || (event == EVENT_RESOLVE_SPELL))
+  {
+    paiVar4 = mana_color_override;
+
+    iVar1 = 0;
+    do
+    {
+
+      iVar3 = active_cards_count[iVar1];
+      (*paiVar4)[0] = 0;
+      (*paiVar4)[1] = 0;
+      (*paiVar4)[2] = 0;
+      (*paiVar4)[3] = 0;
+      (*paiVar4)[4] = 0;
+      (*paiVar4)[5] = 0;
+      (*paiVar4)[6] = 0;
+      card_00 = 0;
+      if (0 < iVar3)
+      {
+        do
+        {
+          while ((instance = in_play(iVar1, card_00),
+                  instance == NULL || (iVar3 = is_what(iVar1, card_00, 1), iVar3 == 0)))
+          {
+            card_00 = card_00 + 1;
+            if (active_cards_count[iVar1] <= card_00)
+              goto LAB_02407318;
+          }
+          iVar3 = card_00 + 1;
+          set_special_flags2_2022(iVar1, card_00, 0x40);
+          card_00 = iVar3;
+        } while (iVar3 < active_cards_count[iVar1]);
+      }
+    LAB_02407318:
+      iVar1 = iVar1 + 1;
+      paiVar4 = paiVar4 + 1;
+    } while (iVar1 != 2);
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
+}
+
+
+/* ManalinkEh 2022: 0x23ed750; original cards/ice_age.c:7051. */
+static int basic_subtype_to_color_part_2022(int subt)
+{
+  if (subt != 0x5006)
+  {
+    return (subt == 0x5007) - 1 | 5;
+  }
+  return 4;
+}
+
+
+/* ManalinkEh 2022: 0x2403360; original cards/ice_age.c:7060. */
+int card_naked_singularity(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  subtype_t sVar4;
+  int iVar5;
+  cumulative_upkeep(player, card, event, 3, 0, 0, 0, 0, 0);
+  if (event != EVENT_CAST_SPELL)
+  {
+    if ((event == EVENT_MODIFY_MANA_PROD) || (event == EVENT_RESOLVE_SPELL))
+    {
+      iVar5 = 0;
+      do
+      {
+        iVar1 = get_hacked_subtype(player, card, 0x5009);
+        if (iVar1 == 0x5009)
+        {
+          iVar1 = 1;
+        }
+        else if (iVar1 == 0x5002)
+        {
+          iVar1 = 2;
+        }
+        else if (iVar1 == 0x5001)
+        {
+          iVar1 = 3;
+        }
+        else
+        {
+          iVar1 = basic_subtype_to_color_part_2022(iVar1);
+        }
+        mana_color_override[iVar5][iVar1] = 5;
+        iVar1 = get_hacked_subtype(player, card, 0x5002);
+        if (iVar1 == 0x5009)
+        {
+          iVar1 = 1;
+        }
+        else if (iVar1 == 0x5002)
+        {
+          iVar1 = 2;
+        }
+        else if (iVar1 == 0x5001)
+        {
+          iVar1 = 3;
+        }
+        else
+        {
+          iVar1 = basic_subtype_to_color_part_2022(iVar1);
+        }
+        mana_color_override[iVar5][iVar1] = 3;
+        iVar1 = get_hacked_subtype(player, card, 0x5001);
+        if (iVar1 == 0x5009)
+        {
+          iVar1 = 1;
+        }
+        else if (iVar1 == 0x5002)
+        {
+          iVar1 = 2;
+        }
+        else if (iVar1 == 0x5001)
+        {
+          iVar1 = 3;
+        }
+        else
+        {
+          iVar1 = basic_subtype_to_color_part_2022(iVar1);
+        }
+        mana_color_override[iVar5][iVar1] = 1;
+        iVar1 = get_hacked_subtype(player, card, 0x5006);
+        if (iVar1 == 0x5009)
+        {
+          iVar1 = 1;
+        }
+        else if (iVar1 == 0x5002)
+        {
+          iVar1 = 2;
+        }
+        else if (iVar1 == 0x5001)
+        {
+          iVar1 = 3;
+        }
+        else
+        {
+          iVar1 = basic_subtype_to_color_part_2022(iVar1);
+        }
+        mana_color_override[iVar5][iVar1] = 2;
+        iVar1 = get_hacked_subtype(player, card, 0x5007);
+        if (iVar1 == 0x5009)
+        {
+          iVar1 = 1;
+        }
+        else if (iVar1 == 0x5002)
+        {
+          iVar1 = 2;
+        }
+        else if (iVar1 == 0x5001)
+        {
+          iVar1 = 3;
+        }
+        else
+        {
+          iVar1 = basic_subtype_to_color_part_2022(iVar1);
+        }
+        mana_color_override[iVar5][iVar1] = 4;
+        if (0 < active_cards_count[iVar5])
+        {
+          iVar1 = 0;
+          do
+          {
+            instance = in_play(iVar5, iVar1);
+            if ((instance != NULL) &&
+                ((((iVar3 = has_subtype(iVar5, iVar1, SUBTYPE_FOREST),
+                    iVar3 != 0 ||
+                        (iVar3 = has_subtype(iVar5, iVar1, SUBTYPE_ISLAND), iVar3 != 0)) ||
+                   (iVar3 = has_subtype(iVar5, iVar1, SUBTYPE_MOUNTAIN), iVar3 != 0)) ||
+                  ((iVar3 = has_subtype(iVar5, iVar1, SUBTYPE_PLAINS),
+                    iVar3 != 0 ||
+                        (iVar3 = has_subtype(iVar5, iVar1, SUBTYPE_SWAMP), iVar3 != 0))))))
+            {
+              set_special_flags2(iVar5, iVar1, 0x40);
+            }
+            iVar1 = iVar1 + 1;
+          } while (iVar1 < active_cards_count[iVar5]);
+        }
+        iVar5 = iVar5 + 1;
+      } while (iVar5 != 2);
+    }
+    return 0;
+  }
+  sVar4 = get_hacked_subtype(player, card, 0x5009);
+  iVar5 = has_subtype(affected_card_controller, affected_card, sVar4);
+  if (iVar5 == 0)
+  {
+    sVar4 = get_hacked_subtype(player, card, 0x5002);
+    iVar5 = has_subtype(affected_card_controller, affected_card, sVar4);
+    if (iVar5 == 0)
+    {
+      sVar4 = get_hacked_subtype(player, card, 0x5001);
+      iVar5 = has_subtype(affected_card_controller, affected_card, sVar4);
+      if (iVar5 == 0)
+      {
+        sVar4 = get_hacked_subtype(player, card, 0x5006);
+        iVar5 = has_subtype(affected_card_controller, affected_card, sVar4);
+        if (iVar5 == 0)
+        {
+          sVar4 = get_hacked_subtype(player, card, 0x5007);
+          iVar5 = has_subtype(affected_card_controller, affected_card, sVar4);
+          if (iVar5 == 0)
+          {
+            return 0;
+          }
+        }
+      }
+    }
+  }
+  set_special_flags2(affected_card_controller, affected_card, 0x40);
+  return 0;
+}
+
+
+/* ManalinkEh 2022: 0x2406c20; original cards/ice_age.c:8060. */
+int card_reality_twist(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  subtype_t sVar4;
+  int iVar5;
+  cumulative_upkeep(player, card, event, 1, 0, 2, 0, 0, 0);
+  if (event == EVENT_CAST_SPELL)
+  {
+    sVar4 = get_hacked_subtype(player, card, 0x5009);
+    iVar1 = has_subtype(affected_card_controller, affected_card, sVar4);
+    if (iVar1 == 0)
+    {
+      sVar4 = get_hacked_subtype(player, card, 0x5001);
+      iVar1 = has_subtype(affected_card_controller, affected_card, sVar4);
+      if (iVar1 == 0)
+      {
+        sVar4 = get_hacked_subtype(player, card, 0x5006);
+        iVar1 = has_subtype(affected_card_controller, affected_card, sVar4);
+        if (iVar1 == 0)
+        {
+          sVar4 = get_hacked_subtype(player, card, 0x5007);
+          iVar1 = has_subtype(affected_card_controller, affected_card, sVar4);
+          if (iVar1 == 0)
+            goto LAB_02406c90;
+        }
+      }
+    }
+    set_special_flags2(affected_card_controller, affected_card, 0x40);
+  }
+  else if ((event == EVENT_MODIFY_MANA_PROD) || (event == EVENT_RESOLVE_SPELL))
+  {
+    iVar1 = 0;
+    do
+    {
+      iVar2 = get_hacked_subtype(player, card, 0x5009);
+      if (iVar2 == 0x5009)
+      {
+        iVar2 = 1;
+      }
+      else if (iVar2 == 0x5002)
+      {
+        iVar2 = 2;
+      }
+      else if (iVar2 == 0x5001)
+      {
+        iVar2 = 3;
+      }
+      else
+      {
+        iVar2 = basic_subtype_to_color_part_2022(iVar2);
+      }
+      mana_color_override[iVar1][iVar2] = 3;
+      iVar2 = get_hacked_subtype(player, card, 0x5001);
+      if (iVar2 == 0x5009)
+      {
+        iVar2 = 1;
+      }
+      else if (iVar2 == 0x5002)
+      {
+        iVar2 = 2;
+      }
+      else if (iVar2 == 0x5001)
+      {
+        iVar2 = 3;
+      }
+      else
+      {
+        iVar2 = basic_subtype_to_color_part_2022(iVar2);
+      }
+      mana_color_override[iVar1][iVar2] = 1;
+      iVar2 = get_hacked_subtype(player, card, 0x5006);
+      if (iVar2 == 0x5009)
+      {
+        iVar2 = 1;
+      }
+      else if (iVar2 == 0x5002)
+      {
+        iVar2 = 2;
+      }
+      else if (iVar2 == 0x5001)
+      {
+        iVar2 = 3;
+      }
+      else
+      {
+        iVar2 = basic_subtype_to_color_part_2022(iVar2);
+      }
+      mana_color_override[iVar1][iVar2] = 5;
+      iVar2 = get_hacked_subtype(player, card, 0x5007);
+      if (iVar2 == 0x5009)
+      {
+        iVar2 = 1;
+      }
+      else if (iVar2 == 0x5002)
+      {
+        iVar2 = 2;
+      }
+      else if (iVar2 == 0x5001)
+      {
+        iVar2 = 3;
+      }
+      else
+      {
+        iVar2 = basic_subtype_to_color_part_2022(iVar2);
+      }
+      mana_color_override[iVar1][iVar2] = 4;
+      if (0 < active_cards_count[iVar1])
+      {
+        iVar2 = 0;
+        do
+        {
+          instance = in_play(iVar1, iVar2);
+          if (instance != NULL)
+          {
+            sVar4 = get_hacked_subtype(player, card, 0x5001);
+            iVar5 = has_subtype(iVar1, iVar2, sVar4);
+            if (iVar5 == 0)
+            {
+              sVar4 = get_hacked_subtype(player, card, 0x5006);
+              iVar5 = has_subtype(iVar1, iVar2, sVar4);
+              if (iVar5 == 0)
+              {
+                sVar4 = get_hacked_subtype(player, card, 0x5007);
+                iVar5 = has_subtype(iVar1, iVar2, sVar4);
+                if (iVar5 == 0)
+                {
+                  sVar4 = get_hacked_subtype(player, card, 0x5009);
+                  iVar5 = has_subtype(iVar1, iVar2, sVar4);
+                  if (iVar5 == 0)
+                    goto LAB_02406e6a;
+                }
+              }
+            }
+            set_special_flags2(iVar1, iVar2, 0x40);
+          }
+        LAB_02406e6a:
+          iVar2 = iVar2 + 1;
+        } while (iVar2 < active_cards_count[iVar1]);
+      }
+      iVar1 = iVar1 + 1;
+    } while (iVar1 != 2);
+  }
+LAB_02406c90:
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
 }
