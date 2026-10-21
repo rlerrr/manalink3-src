@@ -200,6 +200,10 @@ ATTACK_API_NAMES={name:name+'_2022' for name in (
     'declare_attackers_trigger_test','when_attacks_pump_self','support','battle_cry','renown','retrace')}
 ENTRY_API_NAMES={name:name+'_2022' for name in ('etb_ability','etb_ability_global','evolve','exploit')}
 LEVEL_BUDDY_API_NAMES={name:name+'_2022' for name in ('level_up','buddy_creature')}
+GLOBAL_TUTOR_API_NAMES={name:name+'_2022' for name in ('new_global_tutor','global_tutor','gain_control_impl')}
+TUTOR_DESTINATION_NAMES={name:name.replace('TUTOR_','TUTOR2022_',1) for name in ('TUTOR_0','TUTOR_HAND','TUTOR_DECK','TUTOR_GRAVE','TUTOR_PLAY','TUTOR_PLAY_TAPPED','TUTOR_RFG','TUTOR_EXILE','TUTOR_GET_ID','TUTOR_PLAY_ATTACKING','TUTOR_GET_POSITION','TUTOR_BOTTOM_OF_DECK','TUTOR_TPLAYER_HAND','TUTOR_BOTTOM_OF_DECK_RANDOM','TUTOR_HAND_AND_MARK','TUTOR_OPPOSITION_AGENT')}
+TUTOR_ORIGIN_NAMES={name:name.replace('TUTOR_FROM_','TUTOR_FROM2022_',1) for name in ('TUTOR_FROM_DECK','TUTOR_FROM_GRAVE','TUTOR_FROM_RFG','TUTOR_FROM_HAND','TUTOR_FROM_GRAVE_NOTARGET','TUTOR_FROM_DECK_AUTO')}
+TUTOR_DOMAIN_NAMES={'tutor_t':'tutor_destination_2022_t','tutor_from_t':'tutor_from_2022_t'}
 ACTION_API_NAMES={name:name+'_2022' for name in ('action_on_card','new_manipulate_all','manipulate_all','get_random_permanent','shapeshift_all','enters_the_battlefield_as_copy_of_any')}
 DEATH_TRIGGER_API_NAMES={name:name+'_2022' for name in ('count_for_gfp_ability','count_for_gfp_ability_and_store_values','count_for_gfp_ability_and_store_values_extra','resolve_gfp_ability')}
 SPELL_TRIGGER_API_NAMES={'sp_ability_trigger':'sp_ability_trigger_2022'}
@@ -235,7 +239,7 @@ def project_extension_flags(text):
     return re.sub(r'\(\((\w+)->field_21\)\.ext\)->(special_flags[23]?)\b',replace,text),projections
 
 
-def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=(), state_mask_replacements=(), keyword_mask_replacements=(), use_keyword_accessors_2022=False, use_extension_flags_2022=False, use_mana_api_2022=False, use_token_api_2022=False, use_test_api_2022=False, use_target_api_2022=False, use_sacrifice_api_2022=False, use_spell_api_2022=False, use_ability_api_2022=False, use_pump_api_2022=False, use_activated_api_2022=False, use_attack_api_2022=False, use_entry_api_2022=False, use_level_buddy_api_2022=False, use_phyrexian_api_2022=False, use_spell_trigger_api_2022=False, use_death_trigger_api_2022=False, use_action_api_2022=False):
+def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=(), state_mask_replacements=(), keyword_mask_replacements=(), use_keyword_accessors_2022=False, use_extension_flags_2022=False, use_mana_api_2022=False, use_token_api_2022=False, use_test_api_2022=False, use_target_api_2022=False, use_sacrifice_api_2022=False, use_spell_api_2022=False, use_ability_api_2022=False, use_pump_api_2022=False, use_activated_api_2022=False, use_attack_api_2022=False, use_entry_api_2022=False, use_level_buddy_api_2022=False, use_phyrexian_api_2022=False, use_spell_trigger_api_2022=False, use_death_trigger_api_2022=False, use_action_api_2022=False, use_global_tutor_api_2022=False):
     text = strip_comments(text).strip()
     for replacement in state_mask_replacements:
         text = text.replace(replacement['original'], replacement['replacement'])
@@ -260,7 +264,8 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
         (use_attack_api_2022,ATTACK_API_NAMES),(use_entry_api_2022,ENTRY_API_NAMES),
         (use_level_buddy_api_2022,LEVEL_BUDDY_API_NAMES),(use_phyrexian_api_2022,PHYREXIAN_API_NAMES),
         (use_spell_trigger_api_2022,SPELL_TRIGGER_API_NAMES),
-        (use_death_trigger_api_2022,DEATH_TRIGGER_API_NAMES),(use_action_api_2022,{**ACTION_API_NAMES,'actions_t':'actions_2022_t'})]:
+        (use_death_trigger_api_2022,DEATH_TRIGGER_API_NAMES),(use_action_api_2022,{**ACTION_API_NAMES,'actions_t':'actions_2022_t'}),
+        (use_global_tutor_api_2022,{**GLOBAL_TUTOR_API_NAMES,**TUTOR_DESTINATION_NAMES,**TUTOR_ORIGIN_NAMES,**TUTOR_DOMAIN_NAMES})]:
         if enabled:
             text=re.sub(r'\b(?:'+'|'.join(mapping)+r')\b',lambda m:mapping[m[0]],text)
     for replacement in keyword_mask_replacements:
@@ -510,6 +515,7 @@ def main():
     spell_trigger_interface_ready = 'spell_trigger_native_2022' in recovered_interfaces
     death_trigger_interface_ready = 'death_trigger_core_2022' in recovered_interfaces
     action_interface_ready = 'action_core_2022' in recovered_interfaces
+    global_tutor_interface_ready = 'global_tutor_core_2022' in recovered_interfaces
     recovered_manifest = root / 'docs/recovery-evidence/recovered-functions.json'
     recovered_addresses = {f['address']:f['name'] for f in json.loads(recovered_manifest.read_text()).get('accepted_functions',[])} if recovered_manifest.exists() else {}
     target_interface_ready = all(key in recovered_interfaces for key in ['target_initializers_2022','target_validation_2022','target_selection_2022'])
@@ -598,7 +604,8 @@ def main():
                      use_phyrexian_api_2022=phyrexian_interface_ready,
                      use_spell_trigger_api_2022=spell_trigger_interface_ready,
                      use_death_trigger_api_2022=death_trigger_interface_ready,
-                     use_action_api_2022=action_interface_ready)
+                     use_action_api_2022=action_interface_ready,
+                     use_global_tutor_api_2022=global_tutor_interface_ready)
         storage_proof = None
         prepared_storage = storage_evidence.get('candidates', {}).get(row['address'])
         if prepared_storage:
@@ -750,6 +757,11 @@ def main():
             if calls:
                 candidates[name]['phyrexian_interface_2022']=dict(calls=calls)
                 adaptations.append('Native Phyrexian availability, casting and activated-cost APIs; original interfaces retained.')
+        if global_tutor_interface_ready:
+            translations={old:new for old,new in {**GLOBAL_TUTOR_API_NAMES,**TUTOR_DESTINATION_NAMES,**TUTOR_ORIGIN_NAMES,**TUTOR_DOMAIN_NAMES}.items() if re.search(r'\b'+old+r'\b',code_only(strip_comments(raw)))}
+            if translations:
+                candidates[name]['global_tutor_interface_2022']=dict(translations=translations)
+                adaptations.append('Native global tutoring/control transfer and destination/origin domains; legacy tutor values/interfaces retained.')
         if action_interface_ready:
             calls={old:new for old,new in ACTION_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
             if calls:

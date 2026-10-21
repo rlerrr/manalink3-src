@@ -86900,5 +86900,1824 @@
       "223fb20": "Earlier manual reconstruction body requires a coordinated component migration."
     },
     "scope": "Only scalar-only helper calls in already recovered native functions, with exact native call/jump destinations. Leave all legacy source functions, aggregate callers and earlier manually reconstructed bodies unchanged."
+  },
+  "global_tutor_core_2022": {
+    "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+    "parameters": {
+      "26524d0": [
+        {
+          "name": "player",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 0)"
+        },
+        {
+          "name": "targ_player",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 4)"
+        },
+        {
+          "name": "search_location",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 8)"
+        },
+        {
+          "name": "destination",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 12)"
+        },
+        {
+          "name": "must_select",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 16)"
+        },
+        {
+          "name": "ai_selection_mode",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 20)"
+        },
+        {
+          "name": "type",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 24)"
+        },
+        {
+          "name": "flag1",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 28)"
+        },
+        {
+          "name": "subtype",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 32)"
+        },
+        {
+          "name": "flag2",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 36)"
+        },
+        {
+          "name": "color",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 40)"
+        },
+        {
+          "name": "flag3",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 44)"
+        },
+        {
+          "name": "id",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 48)"
+        },
+        {
+          "name": "flag4",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 52)"
+        },
+        {
+          "name": "cc",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 56)"
+        },
+        {
+          "name": "flag5",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 60)"
+        }
+      ],
+      "2651990": [
+        {
+          "name": "player",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xe80",
+              "end": "0xec8",
+              "expression": "(DW_OP_fbreg: 0)"
+            },
+            {
+              "start": "0xf02",
+              "end": "0xf33",
+              "expression": "(DW_OP_fbreg: 0)"
+            },
+            {
+              "start": "0x10bd",
+              "end": "0x10cc",
+              "expression": "(DW_OP_reg0 (r0))"
+            }
+          ]
+        },
+        {
+          "name": "targ_player",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xe80",
+              "end": "0xec8",
+              "expression": "(DW_OP_fbreg: 4)"
+            }
+          ]
+        },
+        {
+          "name": "search_location",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xe80",
+              "end": "0xec8",
+              "expression": "(DW_OP_fbreg: 8)"
+            }
+          ]
+        },
+        {
+          "name": "destination",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xe80",
+              "end": "0xec8",
+              "expression": "(DW_OP_fbreg: 12)"
+            },
+            {
+              "start": "0xf02",
+              "end": "0xf33",
+              "expression": "(DW_OP_fbreg: 12)"
+            },
+            {
+              "start": "0x10bd",
+              "end": "0x10cc",
+              "expression": "(DW_OP_fbreg: 12)"
+            }
+          ]
+        },
+        {
+          "name": "must_select",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xe80",
+              "end": "0xec8",
+              "expression": "(DW_OP_fbreg: 16)"
+            }
+          ]
+        },
+        {
+          "name": "ai_selection_mode",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xe80",
+              "end": "0xec8",
+              "expression": "(DW_OP_fbreg: 20)"
+            }
+          ]
+        },
+        {
+          "name": "this_test",
+          "type": "test_definition_t *",
+          "location": [
+            {
+              "start": "0xe80",
+              "end": "0xec8",
+              "expression": "(DW_OP_fbreg: 24)"
+            }
+          ]
+        }
+      ],
+      "2663990": [
+        {
+          "name": "player",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 0)"
+        },
+        {
+          "name": "card",
+          "type": "int",
+          "location": "(DW_OP_fbreg: 4)"
+        }
+      ],
+      "2650b80": [
+        {
+          "name": "player",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x70",
+              "end": "0x91",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x91",
+              "end": "0x9c",
+              "expression": "(DW_OP_reg7 (r7))"
+            },
+            {
+              "start": "0x9c",
+              "end": "0x9e",
+              "expression": "(DW_OP_GNU_entry_value: (DW_OP_reg0 (r0)); DW_OP_stack_value)"
+            },
+            {
+              "start": "0x9e",
+              "end": "0x12d",
+              "expression": "(DW_OP_reg7 (r7))"
+            },
+            {
+              "start": "0x12d",
+              "end": "0x12f",
+              "expression": "(DW_OP_GNU_entry_value: (DW_OP_reg0 (r0)); DW_OP_stack_value)"
+            }
+          ]
+        },
+        {
+          "name": "targ_player",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x70",
+              "end": "0x12f",
+              "expression": "(DW_OP_GNU_parameter_ref: <0xb7944>; DW_OP_stack_value)"
+            }
+          ]
+        }
+      ]
+    },
+    "locals": {
+      "26524d0": [
+        {
+          "name": "this_test",
+          "type": "test_definition_t",
+          "location": "(DW_OP_fbreg: -232)"
+        }
+      ],
+      "2651990": [
+        {
+          "name": "avoid_shuffle",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xe9e",
+              "end": "0xec8",
+              "expression": "(DW_OP_fbreg: -64)"
+            },
+            {
+              "start": "0xec8",
+              "end": "0xf64",
+              "expression": "(DW_OP_breg6 (r6): 0; DW_OP_const2u: 65535; DW_OP_and; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x10bd",
+              "end": "0x10cc",
+              "expression": "(DW_OP_breg6 (r6): 0; DW_OP_const2u: 65535; DW_OP_and; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1865",
+              "end": "0x1886",
+              "expression": "(DW_OP_breg6 (r6): 0; DW_OP_const2u: 65535; DW_OP_and; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1966",
+              "end": "0x1975",
+              "expression": "(DW_OP_breg6 (r6): 0; DW_OP_const2u: 65535; DW_OP_and; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1995",
+              "end": "0x19a8",
+              "expression": "(DW_OP_breg6 (r6): 0; DW_OP_const2u: 65535; DW_OP_and; DW_OP_stack_value)"
+            }
+          ]
+        },
+        {
+          "name": "test_type",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xea6",
+              "end": "0xea8",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0xea8",
+              "end": "0xec8",
+              "expression": "(DW_OP_fbreg: -40)"
+            }
+          ]
+        },
+        {
+          "name": "q",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xf33",
+              "end": "0xf64",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0xf64",
+              "end": "0xf6f",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x101b",
+              "end": "0x1023",
+              "expression": "(DW_OP_reg1 (r1))"
+            },
+            {
+              "start": "0x1023",
+              "end": "0x1033",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x1254",
+              "end": "0x125f",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1288",
+              "end": "0x13ac",
+              "expression": "(DW_OP_reg7 (r7))"
+            },
+            {
+              "start": "0x13eb",
+              "end": "0x1605",
+              "expression": "(DW_OP_reg7 (r7))"
+            },
+            {
+              "start": "0x167a",
+              "end": "0x1705",
+              "expression": "(DW_OP_reg7 (r7))"
+            },
+            {
+              "start": "0x1705",
+              "end": "0x171d",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x171d",
+              "end": "0x172b",
+              "expression": "(DW_OP_reg7 (r7))"
+            },
+            {
+              "start": "0x172b",
+              "end": "0x173c",
+              "expression": "(DW_OP_breg7 (r7): -1; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x173c",
+              "end": "0x1741",
+              "expression": "(DW_OP_reg7 (r7))"
+            },
+            {
+              "start": "0x1746",
+              "end": "0x1842",
+              "expression": "(DW_OP_reg7 (r7))"
+            },
+            {
+              "start": "0x18a2",
+              "end": "0x1966",
+              "expression": "(DW_OP_reg7 (r7))"
+            },
+            {
+              "start": "0x1966",
+              "end": "0x1975",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1995",
+              "end": "0x19a8",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            }
+          ]
+        },
+        {
+          "name": "tutored",
+          "type": "int[1]",
+          "location": [
+            {
+              "start": "0xecb",
+              "end": "0xed0",
+              "expression": "(DW_OP_breg0 (r0): 0)"
+            },
+            {
+              "start": "0xed0",
+              "end": "0xed5",
+              "expression": "(DW_OP_fbreg: -44; DW_OP_deref)"
+            },
+            {
+              "start": "0xed5",
+              "end": "0x13e6",
+              "expression": "(DW_OP_breg4 (r4): 28)"
+            },
+            {
+              "start": "0x13eb",
+              "end": "0x1675",
+              "expression": "(DW_OP_breg4 (r4): 28)"
+            },
+            {
+              "start": "0x167a",
+              "end": "0x19bb",
+              "expression": "(DW_OP_breg4 (r4): 28)"
+            }
+          ]
+        },
+        {
+          "name": "tc",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xecb",
+              "end": "0xf64",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0xf64",
+              "end": "0xf6f",
+              "expression": "(DW_OP_fbreg: -36)"
+            },
+            {
+              "start": "0xfc4",
+              "end": "0xfd8",
+              "expression": "(DW_OP_fbreg: -36)"
+            },
+            {
+              "start": "0xfef",
+              "end": "0x1033",
+              "expression": "(DW_OP_fbreg: -36)"
+            },
+            {
+              "start": "0x10bd",
+              "end": "0x10cc",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1109",
+              "end": "0x110e",
+              "expression": "(DW_OP_reg1 (r1))"
+            },
+            {
+              "start": "0x1117",
+              "end": "0x1122",
+              "expression": "(DW_OP_fbreg: -36)"
+            },
+            {
+              "start": "0x117a",
+              "end": "0x1186",
+              "expression": "(DW_OP_fbreg: -36)"
+            },
+            {
+              "start": "0x1198",
+              "end": "0x11a1",
+              "expression": "(DW_OP_fbreg: -36)"
+            },
+            {
+              "start": "0x11fc",
+              "end": "0x1208",
+              "expression": "(DW_OP_fbreg: -36)"
+            },
+            {
+              "start": "0x123f",
+              "end": "0x1254",
+              "expression": "(DW_OP_fbreg: -36)"
+            },
+            {
+              "start": "0x1605",
+              "end": "0x1610",
+              "expression": "(DW_OP_fbreg: -36)"
+            },
+            {
+              "start": "0x1705",
+              "end": "0x171d",
+              "expression": "(DW_OP_fbreg: -36)"
+            },
+            {
+              "start": "0x1842",
+              "end": "0x1865",
+              "expression": "(DW_OP_fbreg: -36)"
+            },
+            {
+              "start": "0x1865",
+              "end": "0x1886",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1895",
+              "end": "0x1898",
+              "expression": "(DW_OP_fbreg: -36)"
+            },
+            {
+              "start": "0x1966",
+              "end": "0x1975",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1995",
+              "end": "0x19a8",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            }
+          ]
+        },
+        {
+          "name": "rv",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xecb",
+              "end": "0xf64",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0xf64",
+              "end": "0xf6f",
+              "expression": "(DW_OP_fbreg: -52)"
+            },
+            {
+              "start": "0x100c",
+              "end": "0x1033",
+              "expression": "(DW_OP_fbreg: -52)"
+            },
+            {
+              "start": "0x10bd",
+              "end": "0x10cc",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1865",
+              "end": "0x1886",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1966",
+              "end": "0x1975",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1995",
+              "end": "0x19a8",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            }
+          ]
+        },
+        {
+          "name": "orig_player",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xecb",
+              "end": "0xedc",
+              "expression": "(DW_OP_reg2 (r2))"
+            }
+          ]
+        },
+        {
+          "name": "opposition_agent_flag",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xedd",
+              "end": "0xf0c",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1865",
+              "end": "0x1886",
+              "expression": "(DW_OP_reg0 (r0))"
+            }
+          ]
+        },
+        {
+          "name": "new_search_location",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xf02",
+              "end": "0xf33",
+              "expression": "(DW_OP_fbreg: 8)"
+            },
+            {
+              "start": "0x10bd",
+              "end": "0x10cc",
+              "expression": "(DW_OP_fbreg: 8)"
+            },
+            {
+              "start": "0x117a",
+              "end": "0x1186",
+              "expression": "(DW_OP_lit2; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1186",
+              "end": "0x1198",
+              "expression": "(DW_OP_lit1; DW_OP_stack_value)"
+            }
+          ]
+        },
+        {
+          "name": "card_added",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x1254",
+              "end": "0x125f",
+              "expression": "(DW_OP_const1s: -1; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1288",
+              "end": "0x12bf",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x12d0",
+              "end": "0x12d6",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x12d6",
+              "end": "0x12de",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1360",
+              "end": "0x1364",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1364",
+              "end": "0x1389",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x139f",
+              "end": "0x13ac",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x13eb",
+              "end": "0x1402",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x142a",
+              "end": "0x142d",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x142d",
+              "end": "0x1433",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x145b",
+              "end": "0x147c",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x1487",
+              "end": "0x14ab",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x14b9",
+              "end": "0x14c5",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x14cf",
+              "end": "0x14da",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x14da",
+              "end": "0x14fd",
+              "expression": "(DW_OP_reg6 (r6))"
+            },
+            {
+              "start": "0x14fd",
+              "end": "0x153d",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x154e",
+              "end": "0x1557",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x155f",
+              "end": "0x1569",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1569",
+              "end": "0x1570",
+              "expression": "(DW_OP_breg4 (r4): 4)"
+            },
+            {
+              "start": "0x16b2",
+              "end": "0x16c6",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x16ec",
+              "end": "0x16f0",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x16f0",
+              "end": "0x16f7",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x1746",
+              "end": "0x174c",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x175b",
+              "end": "0x1777",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x178f",
+              "end": "0x1791",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1791",
+              "end": "0x17b9",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x17dc",
+              "end": "0x17e3",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x1813",
+              "end": "0x181c",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x182e",
+              "end": "0x1832",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1832",
+              "end": "0x1838",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x18a2",
+              "end": "0x18b5",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x18e1",
+              "end": "0x18ec",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1902",
+              "end": "0x191c",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x193e",
+              "end": "0x1949",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x1949",
+              "end": "0x1960",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1961",
+              "end": "0x1966",
+              "expression": "(DW_OP_fbreg: -32)"
+            },
+            {
+              "start": "0x196e",
+              "end": "0x1975",
+              "expression": "(DW_OP_const1s: -1; DW_OP_stack_value)"
+            }
+          ]
+        },
+        {
+          "name": "really_tutored",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x1254",
+              "end": "0x125f",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1288",
+              "end": "0x129e",
+              "expression": "(DW_OP_fbreg: -48)"
+            },
+            {
+              "start": "0x129e",
+              "end": "0x12ab",
+              "expression": "(DW_OP_breg0 (r0): -1; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x12ab",
+              "end": "0x12c5",
+              "expression": "(DW_OP_fbreg: -48; DW_OP_deref; DW_OP_lit1; DW_OP_minus; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x139f",
+              "end": "0x13ac",
+              "expression": "(DW_OP_fbreg: -48)"
+            },
+            {
+              "start": "0x13eb",
+              "end": "0x1402",
+              "expression": "(DW_OP_fbreg: -48; DW_OP_deref; DW_OP_lit1; DW_OP_minus; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x145b",
+              "end": "0x147c",
+              "expression": "(DW_OP_fbreg: -48; DW_OP_deref; DW_OP_lit1; DW_OP_minus; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1497",
+              "end": "0x14ab",
+              "expression": "(DW_OP_fbreg: -48; DW_OP_deref; DW_OP_lit1; DW_OP_minus; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x14cf",
+              "end": "0x14e5",
+              "expression": "(DW_OP_fbreg: -48; DW_OP_deref; DW_OP_lit1; DW_OP_minus; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x14fd",
+              "end": "0x153d",
+              "expression": "(DW_OP_fbreg: -48; DW_OP_deref; DW_OP_lit1; DW_OP_minus; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x154e",
+              "end": "0x1557",
+              "expression": "(DW_OP_fbreg: -48; DW_OP_deref; DW_OP_lit1; DW_OP_minus; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x16b2",
+              "end": "0x16c6",
+              "expression": "(DW_OP_fbreg: -48; DW_OP_deref; DW_OP_lit1; DW_OP_minus; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1746",
+              "end": "0x174c",
+              "expression": "(DW_OP_fbreg: -48; DW_OP_deref; DW_OP_lit1; DW_OP_minus; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x17dc",
+              "end": "0x17e3",
+              "expression": "(DW_OP_fbreg: -48; DW_OP_deref; DW_OP_lit1; DW_OP_minus; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1813",
+              "end": "0x181c",
+              "expression": "(DW_OP_fbreg: -48; DW_OP_deref; DW_OP_lit1; DW_OP_minus; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x193e",
+              "end": "0x1949",
+              "expression": "(DW_OP_fbreg: -48; DW_OP_deref; DW_OP_lit1; DW_OP_minus; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x196e",
+              "end": "0x1975",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            }
+          ]
+        },
+        {
+          "name": "storage_loc",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x1254",
+              "end": "0x125f",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1288",
+              "end": "0x12c5",
+              "expression": "(DW_OP_fbreg: -56)"
+            },
+            {
+              "start": "0x139f",
+              "end": "0x13ac",
+              "expression": "(DW_OP_fbreg: -56)"
+            },
+            {
+              "start": "0x13eb",
+              "end": "0x1402",
+              "expression": "(DW_OP_fbreg: -56)"
+            },
+            {
+              "start": "0x145b",
+              "end": "0x147c",
+              "expression": "(DW_OP_fbreg: -56)"
+            },
+            {
+              "start": "0x1497",
+              "end": "0x14ab",
+              "expression": "(DW_OP_fbreg: -56)"
+            },
+            {
+              "start": "0x14cf",
+              "end": "0x14e5",
+              "expression": "(DW_OP_fbreg: -56)"
+            },
+            {
+              "start": "0x14fd",
+              "end": "0x153d",
+              "expression": "(DW_OP_fbreg: -56)"
+            },
+            {
+              "start": "0x154e",
+              "end": "0x1557",
+              "expression": "(DW_OP_fbreg: -56)"
+            },
+            {
+              "start": "0x16b2",
+              "end": "0x16c6",
+              "expression": "(DW_OP_fbreg: -56)"
+            },
+            {
+              "start": "0x1746",
+              "end": "0x174c",
+              "expression": "(DW_OP_fbreg: -56)"
+            },
+            {
+              "start": "0x17dc",
+              "end": "0x17e3",
+              "expression": "(DW_OP_fbreg: -56)"
+            },
+            {
+              "start": "0x1813",
+              "end": "0x181c",
+              "expression": "(DW_OP_fbreg: -56)"
+            },
+            {
+              "start": "0x193e",
+              "end": "0x1949",
+              "expression": "(DW_OP_fbreg: -56)"
+            },
+            {
+              "start": "0x196e",
+              "end": "0x1975",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            }
+          ]
+        },
+        {
+          "name": "selected",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xf99",
+              "end": "0xfb7",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0xfb7",
+              "end": "0xfcd",
+              "expression": "(DW_OP_reg6 (r6))"
+            },
+            {
+              "start": "0x10cc",
+              "end": "0x10ed",
+              "expression": "(DW_OP_reg6 (r6))"
+            },
+            {
+              "start": "0x110e",
+              "end": "0x1117",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1117",
+              "end": "0x1208",
+              "expression": "(DW_OP_reg6 (r6))"
+            },
+            {
+              "start": "0x1229",
+              "end": "0x123f",
+              "expression": "(DW_OP_reg6 (r6))"
+            },
+            {
+              "start": "0x1605",
+              "end": "0x1641",
+              "expression": "(DW_OP_reg6 (r6))"
+            },
+            {
+              "start": "0x164c",
+              "end": "0x1662",
+              "expression": "(DW_OP_reg6 (r6))"
+            },
+            {
+              "start": "0x1842",
+              "end": "0x1865",
+              "expression": "(DW_OP_reg6 (r6))"
+            }
+          ]
+        },
+        {
+          "name": "s_location",
+          "type": "int *",
+          "location": [
+            {
+              "start": "0xfb7",
+              "end": "0xfc7",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x10cc",
+              "end": "0x10e7",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1117",
+              "end": "0x1129",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1198",
+              "end": "0x11a1",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1605",
+              "end": "0x1622",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1622",
+              "end": "0x162b",
+              "expression": "(DW_OP_fbreg: -24)"
+            },
+            {
+              "start": "0x162b",
+              "end": "0x163b",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1842",
+              "end": "0x1865",
+              "expression": "(DW_OP_reg0 (r0))"
+            }
+          ]
+        },
+        {
+          "name": "starting_card",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x103e",
+              "end": "0x105e",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1208",
+              "end": "0x1224",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x1224",
+              "end": "0x1229",
+              "expression": "(DW_OP_reg6 (r6))"
+            }
+          ]
+        },
+        {
+          "name": "selected",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x105e",
+              "end": "0x1099",
+              "expression": "(DW_OP_reg6 (r6))"
+            }
+          ]
+        },
+        {
+          "name": "t_deck",
+          "type": "int *",
+          "location": null
+        },
+        {
+          "name": "t_deck",
+          "type": "int *",
+          "location": null
+        },
+        {
+          "name": "dest_player",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x1780",
+              "end": "0x1797",
+              "expression": "(DW_OP_reg3 (r3))"
+            }
+          ]
+        },
+        {
+          "name": "instance",
+          "type": "card_instance_t *",
+          "location": [
+            {
+              "start": "0x12e2",
+              "end": "0x12e5",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x12e5",
+              "end": "0x12f6",
+              "expression": "(DW_OP_fbreg: -68)"
+            },
+            {
+              "start": "0x1368",
+              "end": "0x1372",
+              "expression": "(DW_OP_fbreg: -68)"
+            },
+            {
+              "start": "0x18a2",
+              "end": "0x18b5",
+              "expression": "(DW_OP_fbreg: -68)"
+            }
+          ]
+        },
+        {
+          "name": "temp_ca",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x1360",
+              "end": "0x1364",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x1364",
+              "end": "0x1368",
+              "expression": "(DW_OP_fbreg: -32)"
+            }
+          ]
+        },
+        {
+          "name": "instantiated",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x16ec",
+              "end": "0x16f1",
+              "expression": "(DW_OP_lit1; DW_OP_stack_value)"
+            }
+          ]
+        },
+        {
+          "name": "ca",
+          "type": "card_instance_t *",
+          "location": [
+            {
+              "start": "0x1571",
+              "end": "0x157d",
+              "expression": "(DW_OP_reg0 (r0))"
+            }
+          ]
+        }
+      ],
+      "2663990": [
+        {
+          "name": "oldinst",
+          "type": "card_instance_t *",
+          "location": [
+            {
+              "start": "0x62b",
+              "end": "0x630",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x630",
+              "end": "0x650",
+              "expression": "(DW_OP_reg2 (r2))"
+            },
+            {
+              "start": "0x650",
+              "end": "0x83f",
+              "expression": "(DW_OP_fbreg: -36)"
+            }
+          ]
+        },
+        {
+          "name": "old_ts",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x62b",
+              "end": "0x636",
+              "expression": "(DW_OP_fbreg: -24)"
+            }
+          ]
+        },
+        {
+          "name": "new_card",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x654",
+              "end": "0x65d",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x65d",
+              "end": "0x706",
+              "expression": "(DW_OP_fbreg: -28)"
+            },
+            {
+              "start": "0x706",
+              "end": "0x714",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x714",
+              "end": "0x83f",
+              "expression": "(DW_OP_fbreg: -28)"
+            }
+          ]
+        },
+        {
+          "name": "typ",
+          "type": "type_t",
+          "location": [
+            {
+              "start": "0x671",
+              "end": "0x6a4",
+              "expression": "(DW_OP_breg0 (r0): 0; DW_OP_const1u: 255; DW_OP_and; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x6a4",
+              "end": "0x6ca",
+              "expression": "(DW_OP_breg2 (r2): 0; DW_OP_const1u: 255; DW_OP_and; DW_OP_stack_value)"
+            }
+          ]
+        },
+        {
+          "name": "newinst",
+          "type": "card_instance_t *",
+          "location": [
+            {
+              "start": "0x71a",
+              "end": "0x725",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x725",
+              "end": "0x748",
+              "expression": "(DW_OP_reg6 (r6))"
+            }
+          ]
+        },
+        {
+          "name": "p",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x751",
+              "end": "0x756",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x756",
+              "end": "0x763",
+              "expression": "(DW_OP_reg2 (r2))"
+            },
+            {
+              "start": "0x7d6",
+              "end": "0x7e4",
+              "expression": "(DW_OP_reg2 (r2))"
+            }
+          ]
+        },
+        {
+          "name": "c",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x756",
+              "end": "0x763",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            },
+            {
+              "start": "0x763",
+              "end": "0x7d5",
+              "expression": "(DW_OP_reg6 (r6))"
+            },
+            {
+              "start": "0x7e4",
+              "end": "0x81a",
+              "expression": "(DW_OP_reg6 (r6))"
+            }
+          ]
+        },
+        {
+          "name": "inst",
+          "type": "card_instance_t *",
+          "location": [
+            {
+              "start": "0x777",
+              "end": "0x79f",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0x7e4",
+              "end": "0x81a",
+              "expression": "(DW_OP_reg0 (r0))"
+            }
+          ]
+        },
+        {
+          "name": "i",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x78a",
+              "end": "0x79f",
+              "expression": "(DW_OP_lit0; DW_OP_stack_value)"
+            }
+          ]
+        }
+      ],
+      "2650b80": [
+        {
+          "name": "amount",
+          "type": "int",
+          "location": [
+            {
+              "start": "0x92",
+              "end": "0xa5",
+              "expression": "(DW_OP_reg0 (r0))"
+            },
+            {
+              "start": "0xa5",
+              "end": "0x12b",
+              "expression": "(DW_OP_reg3 (r3))"
+            }
+          ]
+        },
+        {
+          "name": "result",
+          "type": "int",
+          "location": [
+            {
+              "start": "0xc3",
+              "end": "0x126",
+              "expression": "(DW_OP_reg0 (r0))"
+            }
+          ]
+        }
+      ]
+    },
+    "enum_values": {},
+    "control_sites": [
+      {
+        "address": "26519a1",
+        "bytes": "668bb7c0000000",
+        "instruction": "mov si, word ptr [edi + 0xc0]"
+      },
+      {
+        "address": "26519b8",
+        "bytes": "668b87ae000000",
+        "instruction": "mov ax, word ptr [edi + 0xae]"
+      },
+      {
+        "address": "26519bf",
+        "bytes": "c1e002",
+        "instruction": "shl eax, 2"
+      },
+      {
+        "address": "26519c2",
+        "bytes": "e809a80a00",
+        "instruction": "call 0x26fc1d0"
+      },
+      {
+        "address": "26519c7",
+        "bytes": "29c4",
+        "instruction": "sub esp, eax"
+      },
+      {
+        "address": "26519cc",
+        "bytes": "8d44241c",
+        "instruction": "lea eax, [esp + 0x1c]"
+      },
+      {
+        "address": "26519d0",
+        "bytes": "c7442404a2560000",
+        "instruction": "mov dword ptr [esp + 4], 0x56a2"
+      },
+      {
+        "address": "2651c04",
+        "bytes": "e8a70e0600",
+        "instruction": "call 0x26b2ab0"
+      },
+      {
+        "address": "2651e5e",
+        "bytes": "e82d1b0100",
+        "instruction": "call 0x2663990"
+      },
+      {
+        "address": "26520f9",
+        "bytes": "e852600100",
+        "instruction": "call 0x2668150"
+      },
+      {
+        "address": "265214f",
+        "bytes": "89c6",
+        "instruction": "mov esi, eax"
+      },
+      {
+        "address": "265249b",
+        "bytes": "e8e0e6ffff",
+        "instruction": "call 0x2650b80"
+      },
+      {
+        "address": "2663a51",
+        "bytes": "81ce08000040",
+        "instruction": "or esi, 0x40000008"
+      },
+      {
+        "address": "2663ab1",
+        "bytes": "0d00000300",
+        "instruction": "or eax, 0x30000"
+      },
+      {
+        "address": "2663abc",
+        "bytes": "890495f0765000",
+        "instruction": "mov dword ptr [edx*4 + 0x5076f0], eax"
+      },
+      {
+        "address": "2663aca",
+        "bytes": "893495c07e5000",
+        "instruction": "mov dword ptr [edx*4 + 0x507ec0], esi"
+      }
+    ],
+    "functions": {
+      "2663990": {
+        "machine_bytes": 559,
+        "machine_sha256": "16fcc0fa17d7f3f6d784c7a93eb6ba603bcde1c8926210fffee16cd2a4c6a16b",
+        "changes": [
+          {
+            "original": "\n\n\n\n\nint gain_control_impl(int player,int card)\n\n{\n  byte bVar1;\n  uint32_t uVar2;\n  char cVar3;\n  card_instance_t *src;\n  int card_00;\n  card_instance_t *pcVar4;\n  card_instance_t *pcVar5;\n  uint32_t *puVar6;\n  int player_00;\n  int argument1;\n  int card_01;\n  \n                    \n  src = get_card_instance(player,card);\n  uVar2 = src->timestamp;\n  argument1 = 1 - player;\n  card_00 = add_card_to_hand_exe(argument1,src->internal_card_id);\n  if (card_00 != -1) {\n                    \n    pcVar4 = get_card_instance(argument1,card_00);\n    memcpy_inst_and_ext(pcVar4,src);\n    pcVar4->state = pcVar4->state & 0xfffffff3 | 0x30000;\n    timestamp_card[uVar2] = card_00;\n                    \n    cVar3 = '\\x01' - (char)player;\n    timestamp_player[uVar2] = argument1;\n    player_00 = 0;\n    do {\n      if (0 < active_cards_count[player_00]) {\n        card_01 = 0;\n        do {\n          pcVar4 = get_card_instance(player_00,card_01);\n          if ((pcVar4->damage_target_player == player) && (pcVar4->damage_target_card == card)) {\n            pcVar4->damage_target_player = cVar3;\n            pcVar4->damage_target_card = card_00;\n          }\n          if ((pcVar4->damage_source_player == player) && (pcVar4->damage_source_card == card)) {\n            pcVar4->damage_source_player = cVar3;\n            pcVar4->damage_source_card = card_00;\n          }\n                    \n          bVar1 = pcVar4->number_of_targets;\n          if (bVar1 != 0) {\n            pcVar5 = pcVar4;\n            do {\n              while ((pcVar5->targets[0].player != player || (pcVar5->targets[0].card != card))) {\n                pcVar5 = (card_instance_t *)&pcVar5->state;\n                if ((card_instance_t *)(pcVar4->color_id + (uint)bVar1 * 8 + -0x40) == pcVar5)\n                goto LAB_02663b4b;\n              }\n              puVar6 = &pcVar5->state;\n              pcVar5->targets[0].player = argument1;\n              pcVar5->targets[0].card = card_00;\n              pcVar5 = (card_instance_t *)puVar6;\n            } while ((uint32_t *)(pcVar4->color_id + (uint)bVar1 * 8 + -0x40) != puVar6);\n          }\nLAB_02663b4b:\n          card_01 = card_01 + 1;\n        } while (card_01 < active_cards_count[player_00]);\n      }\n      player_00 = player_00 + 1;\n    } while (player_00 != 2);\n  }\n  bVar1 = cards_data[src->internal_card_id].type;\n  if ((bVar1 & 2) != 0) {\n    creature_count[argument1] = creature_count[argument1] + 1;\n  }\n  if ((bVar1 & 0x40) != 0) {\n    artifact_count[argument1] = artifact_count[argument1] + 1;\n  }\n  if ((bVar1 & 4) != 0) {\n    enchantment_count[argument1] = enchantment_count[argument1] + 1;\n  }\n  types_of_cards_on_bf[argument1] = types_of_cards_on_bf[argument1] | (uint)bVar1;\n  redraw_libraries();\n  src->token_status = src->token_status | 0x40000008;\n  kill_card_exe(player,card,KILL_EXILE);\n  if ((event_flags._3_1_ & 0x10) != 0) {\n    dispatch_event(argument1,card_00,0x94);\n    return card_00;\n  }\n  return card_00;\n}\n\n",
+            "replacement": "int gain_control_impl_2022(int player, int card)\n{\n  card_instance_t *src = get_card_instance(player, card);\n  uint32_t old_timestamp = src->timestamp;\n  int new_player = 1 - player;\n  int new_card = add_card_to_hand_exe(new_player, src->internal_card_id);\n  if (new_card != -1)\n  {\n    card_instance_t *dest = get_card_instance(new_player, new_card);\n    memcpy_inst_and_ext(dest, src);\n    dest->state = (dest->state & 0xfffffff3U) | 0x30000U;\n    timestamp_card[old_timestamp] = new_card;\n    timestamp_player[old_timestamp] = new_player;\n    for (int p = 0; p < 2; ++p)\n      for (int c = 0; c < active_cards_count[p]; ++c)\n      {\n        card_instance_t *instance = get_card_instance(p, c);\n        if (instance->damage_target_player == player && instance->damage_target_card == card)\n        {\n          instance->damage_target_player = new_player;\n          instance->damage_target_card = new_card;\n        }\n        if (instance->damage_source_player == player && instance->damage_source_card == card)\n        {\n          instance->damage_source_player = new_player;\n          instance->damage_source_card = new_card;\n        }\n        unsigned int count = instance->number_of_targets;\n        for (unsigned int i = 0; i < count; ++i)\n          if (instance->targets[i].player == player && instance->targets[i].card == card)\n          {\n            instance->targets[i].player = new_player;\n            instance->targets[i].card = new_card;\n          }\n      }\n  }\n  uint8_t type = cards_data[src->internal_card_id].type;\n  if ((type & 2) != 0)\n    ++creature_count[new_player];\n  if ((type & 0x40) != 0)\n    ++artifact_count[new_player];\n  if ((type & 4) != 0)\n    ++enchantment_count[new_player];\n  types_of_cards_on_bf[new_player] |= type;\n  redraw_libraries();\n  src->token_status |= 0x40000008U;\n  kill_card_exe(player, card, KILL_EXILE);\n  if (((uint32_t)event_flags & 0x10000000U) != 0)\n    dispatch_event(new_player, new_card, (event_t)0x94);\n  return new_card;\n}\n",
+            "occurrences": 1,
+            "kind": "native VLA call-frame/control-transfer reconstruction",
+            "machine_sites": [
+              {
+                "address": "26519a1",
+                "bytes": "668bb7c0000000",
+                "instruction": "mov si, word ptr [edi + 0xc0]"
+              },
+              {
+                "address": "26519b8",
+                "bytes": "668b87ae000000",
+                "instruction": "mov ax, word ptr [edi + 0xae]"
+              },
+              {
+                "address": "26519bf",
+                "bytes": "c1e002",
+                "instruction": "shl eax, 2"
+              },
+              {
+                "address": "26519c2",
+                "bytes": "e809a80a00",
+                "instruction": "call 0x26fc1d0"
+              },
+              {
+                "address": "26519c7",
+                "bytes": "29c4",
+                "instruction": "sub esp, eax"
+              },
+              {
+                "address": "26519cc",
+                "bytes": "8d44241c",
+                "instruction": "lea eax, [esp + 0x1c]"
+              },
+              {
+                "address": "26519d0",
+                "bytes": "c7442404a2560000",
+                "instruction": "mov dword ptr [esp + 4], 0x56a2"
+              },
+              {
+                "address": "2651c04",
+                "bytes": "e8a70e0600",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "2651e5e",
+                "bytes": "e82d1b0100",
+                "instruction": "call 0x2663990"
+              },
+              {
+                "address": "26520f9",
+                "bytes": "e852600100",
+                "instruction": "call 0x2668150"
+              },
+              {
+                "address": "265214f",
+                "bytes": "89c6",
+                "instruction": "mov esi, eax"
+              },
+              {
+                "address": "265249b",
+                "bytes": "e8e0e6ffff",
+                "instruction": "call 0x2650b80"
+              },
+              {
+                "address": "2663a51",
+                "bytes": "81ce08000040",
+                "instruction": "or esi, 0x40000008"
+              },
+              {
+                "address": "2663ab1",
+                "bytes": "0d00000300",
+                "instruction": "or eax, 0x30000"
+              },
+              {
+                "address": "2663abc",
+                "bytes": "890495f0765000",
+                "instruction": "mov dword ptr [edx*4 + 0x5076f0], eax"
+              },
+              {
+                "address": "2663aca",
+                "bytes": "893495c07e5000",
+                "instruction": "mov dword ptr [edx*4 + 0x507ec0], esi"
+              }
+            ]
+          }
+        ],
+        "canonical_calls": [
+          {
+            "address": "2663aa1",
+            "bytes": "e86aef0400",
+            "target": "26b2a10",
+            "name": "memcpy_inst_and_ext"
+          }
+        ]
+      },
+      "2651990": {
+        "machine_bytes": 2875,
+        "machine_sha256": "d5fe4f5a33ec6aad5c34ab58a6f56a5a28b7ac1883a80fe35c4e8137123f3095",
+        "changes": [
+          {
+            "original": "\n\n\n\n\n\n\nint new_global_tutor(int player,int targ_player,int search_location,int destination,int must_select,\n                    int ai_selection_mode,test_definition_t *this_test)\n\n{\n  uint *puVar1;\n  int iVar2;\n  kill_t kVar3;\n  ushort uVar4;\n  uint uVar5;\n  int iVar6;\n  int *piVar7;\n  uint uVar8;\n  card_instance_t *pcVar9;\n  int iVar10;\n  card_instance_t *pcVar11;\n  uint uVar12;\n  bool bVar13;\n  type_t tStackY_64;\n  kill_t kStack_58;\n  uint uStack_54;\n  kill_t akStack_50 [3];\n  uint uStack_44;\n  card_instance_t *pcStack_40;\n  uint uStack_3c;\n  bool bStack_36;\n  bool bStack_35;\n  int iStack_34;\n  int iStack_30;\n  uint uStack_2c;\n  uint *puStack_28;\n  kill_t kStack_24;\n  int iStack_20;\n  uint uStack_1c;\n  card_instance_t *pcStack_18;\n  uint *puStack_14;\n  \n                    \n  uVar4 = this_test->no_shuffle;\n  tStackY_64 = 0x26519b3;\n  uStack_3c = (uint)uVar4;\n  kStack_24 = new_get_test_score(this_test);\n  uVar5 = (uint)this_test->qty;\n  tStackY_64 = 0x26519c7;\n  iVar2 = uVar5 * -4;\n  *(undefined4 *)(&stack0xffffffa4 + iVar2) = 0x56a2;\n  puStack_28 = &uStack_44 + -uVar5;\n  *(card_instance_t **)(&stack0xffffffa0 + iVar2) = (card_instance_t *)(1 - player);\n  pcStack_18 = (card_instance_t *)(1 - player);\n  (&tStackY_64)[-uVar5] = 0x26519ed;\n  iVar6 = check_battlefield_for_id\n                    (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n  bStack_36 = player == targ_player;\n  bStack_35 = uVar4 == 0 && search_location == 1;\n  if ((iVar6 == 0) || (player != targ_player || search_location != 1)) {\n    iStack_34 = CONCAT31(iStack_34._1_3_,destination == 2 && bStack_35);\n    bStack_35 = bStack_35 && destination != 2;\n    pcStack_18 = (card_instance_t *)player;\n    if (search_location == 5) {\n      puStack_14 = (uint *)0x2;\n    }\n    else {\n      puStack_14 = (uint *)search_location;\n    }\n  }\n  else {\n    iStack_34 = (uint)iStack_34._1_3_ << 8;\n    bStack_36 = pcStack_18 == (card_instance_t *)targ_player;\n    destination = 0xe;\n    puStack_14 = (uint *)0x1;\n  }\n  if (this_test->qty == 0) {\n    if ((char)iStack_34 == '\\0') {\n      iStack_30 = 0;\n      if (search_location == 4) {\nLAB_026524b8:\n        uStack_2c = 0;\n        uStack_1c = 0xffffffff;\n        goto LAB_02651ecc;\n      }\n    }\n    else {\n      *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n      (&tStackY_64)[-uVar5] = 0x265247e;\n      shuffle(*(int *)(&stack0xffffffa0 + iVar2));\n      iStack_30 = 0;\n    }\nLAB_02652485:\n    uStack_2c = 0;\n    uStack_1c = 0xffffffff;\n  }\n  else {\n                    \n    iStack_30 = 0;\n    iStack_20 = 0;\n    uStack_1c = 0;\n    uStack_2c = destination - 4;\n    do {\n      kVar3 = kStack_24;\n      if (puStack_14 == (uint *)0x6) {\n                    \n        *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n        (&tStackY_64)[-uVar5] = 0x2651b48;\n        iVar6 = get_tutoring_denial(*(int *)(&stack0xffffffa0 + iVar2));\n        if (iVar6 == 0) {\n          *(undefined4 *)(&stack0xffffffa4 + iVar2) = 0x22b9;\n          *(int *)(&stack0xffffffa0 + iVar2) = 1 - targ_player;\n          (&tStackY_64)[-uVar5] = 0x2651b65;\n          iVar6 = check_battlefield_for_id\n                            (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          uVar12 = 0;\n          if (iVar6 != 0) {\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2651d20;\n            iVar6 = count_deck(*(int *)(&stack0xffffffa0 + iVar2));\n            if (3 < iVar6) {\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x2651d31;\n              iVar6 = count_deck(*(int *)(&stack0xffffffa0 + iVar2));\n              uVar12 = iVar6 - 4;\n            }\n          }\n          while( true ) {\n            *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n            (&tStackY_64)[-uVar5] = 0x2651ba5;\n            iVar6 = count_deck(*(int *)(&stack0xffffffa0 + iVar2));\n            kVar3 = kStack_24;\n            if (iVar6 <= (int)uVar12) break;\n            (&uStack_54)[-uVar5] = (uint)this_test;\n            (&kStack_58)[-uVar5] = kVar3;\n            iVar6 = deck_ptr[targ_player][uVar12];\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            *(int *)(&stack0xffffffa4 + iVar2) = iVar6;\n            (&tStackY_64)[-uVar5] = 0x2651b91;\n            iVar6 = new_make_test(*(int *)(&stack0xffffffa0 + iVar2),\n                                  *(int *)(&stack0xffffffa4 + iVar2),(&kStack_58)[-uVar5],\n                                  (test_definition_t *)(&uStack_54)[-uVar5]);\n            if (iVar6 != 0) {\n              if (uVar12 != 0xffffffff) {\n                piVar7 = deck_ptr[targ_player];\n                goto LAB_02651ca8;\n              }\n              break;\n            }\n            uVar12 = uVar12 + 1;\n          }\n        }\n        puStack_14 = (uint *)0x1;\nLAB_02651bb0:\n        uVar4 = this_test->qty;\n        if (1 < uVar4) break;\n        iStack_30 = -2;\n      }\n      else {\n        akStack_50[2 - uVar5] = (kill_t)this_test;\n        akStack_50[1 - uVar5] = kVar3;\n        akStack_50[-uVar5] = ai_selection_mode;\n        (&uStack_54)[-uVar5] = must_select;\n        (&kStack_58)[-uVar5] = search_location;\n        pcVar9 = pcStack_18;\n        *(int *)(&stack0xffffffa4 + iVar2) = targ_player;\n        *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n        (&tStackY_64)[-uVar5] = 0x2651aa7;\n        uVar12 = new_select_a_card(*(int *)(&stack0xffffffa0 + iVar2),\n                                   *(int *)(&stack0xffffffa4 + iVar2),(&kStack_58)[-uVar5],\n                                   (&uStack_54)[-uVar5],akStack_50[-uVar5],akStack_50[1 - uVar5],\n                                   (test_definition_t *)akStack_50[2 - uVar5]);\n        iVar6 = iStack_20;\n        if (uVar12 == 0xffffffff) goto LAB_02651bb0;\n        if (puStack_14 == (uint *)0x2) {\n          piVar7 = graveyard_ptr_mutable[targ_player];\nLAB_02651c27:\n          (&kStack_58)[-uVar5] = KILL_DESTROY;\n          puStack_14 = (uint *)(piVar7 + uVar12);\n          uVar8 = piVar7[uVar12];\n          *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n          *(uint *)(&stack0xffffffa4 + iVar2) = (uint)cards_data[uVar8].type;\n          (&tStackY_64)[-uVar5] = 0x2651c51;\n          iVar6 = grafdiggers_cages(*(int *)(&stack0xffffffa0 + iVar2),\n                                    *(type_t *)(&stack0xffffffa4 + iVar2),(&kStack_58)[-uVar5]);\n          if ((iVar6 == 0) || ((1 < uStack_2c && (destination != 8)))) {\n            puStack_28[iStack_20] = *puStack_14;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2651c83;\n            remove_card_from_grave\n                      (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n            iStack_20 = iStack_20 + 1;\n          }\n          else {\n            puStack_28[iStack_20] = 0xffffffff;\n          }\n          puStack_14 = (uint *)0x2;\n        }\n        else {\n          piVar7 = deck_ptr[targ_player];\n          if (puStack_14 == (uint *)0x3) {\n            piVar7 = rfg_ptr[targ_player];\nLAB_02651ad4:\n            uVar12 = piVar7[uVar12];\n            puStack_28[iStack_20] = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            *(uint *)(&stack0xffffffa4 + iVar2) = (uint)cards_data[uVar12].id;\n            (&tStackY_64)[-uVar5] = 0x2651afc;\n            remove_card_from_rfg\n                      (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n            iStack_20 = iVar6 + 1;\n          }\n          else if (puStack_14 == (uint *)0x4) {\n            if (destination == 7) {\n              *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x265214c;\n              uVar12 = get_id(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2))\n              ;\n              puStack_28[iStack_20] = uVar12;\n            }\n            else {\n              puStack_28[iStack_20] = uVar12;\n            }\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2651c09;\n            pcVar9 = get_card_instance(*(int *)(&stack0xffffffa0 + iVar2),\n                                       *(int *)(&stack0xffffffa4 + iVar2));\n            iStack_20 = iStack_20 + 1;\n            pcVar9->state = pcVar9->state | 0x20;\n          }\n          else if (puStack_14 == (uint *)0x1) {\nLAB_02651ca8:\n            puStack_14 = (uint *)piVar7;\n            if ((card_instance_t *)targ_player == pcStack_18) {\n              (&kStack_58)[-uVar5] = KILL_BURY;\n              *(undefined4 *)(&stack0xffffffa4 + iVar2) = 0x600;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x2652133;\n              set_trap_condition(*(int *)(&stack0xffffffa0 + iVar2),\n                                 *(int *)(&stack0xffffffa4 + iVar2),(&kStack_58)[-uVar5]);\n            }\n            puVar1 = (uint *)((int *)puStack_14 + uVar12);\n            (&kStack_58)[-uVar5] = KILL_BURY;\n            puStack_14 = puVar1;\n            uVar8 = *puVar1;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            *(uint *)(&stack0xffffffa4 + iVar2) = (uint)cards_data[uVar8].type;\n            (&tStackY_64)[-uVar5] = 0x2651cdb;\n            iVar6 = grafdiggers_cages(*(int *)(&stack0xffffffa0 + iVar2),\n                                      *(type_t *)(&stack0xffffffa4 + iVar2),(&kStack_58)[-uVar5]);\n            if ((iVar6 == 0) || ((1 < uStack_2c && (destination != 8)))) {\n              puStack_28[iStack_20] = *puStack_14;\n              *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x2651d05;\n              remove_card_from_deck\n                        (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n              iStack_20 = iStack_20 + 1;\n            }\n            else {\n              puStack_28[iStack_20] = 0xffffffff;\n            }\n            puStack_14 = (uint *)0x1;\n          }\n          else {\n            if (puStack_14 == (uint *)0x2) goto LAB_02651c27;\n            if (puStack_14 == (uint *)0x3) goto LAB_02651ad4;\n          }\n        }\n        uVar4 = this_test->qty;\n        if (1 < this_test->create_minideck) {\n          this_test->create_minideck = this_test->create_minideck - 1;\n        }\n      }\n      uStack_1c = uStack_1c + 1;\n    } while ((int)uStack_1c < (int)(uint)uVar4);\n    puVar1 = puStack_28;\n    if ((char)iStack_34 == '\\0') {\n      if (search_location != 4) goto LAB_02651d64;\n      if (iStack_20 < 1) goto LAB_026524b8;\n      iVar6 = 0;\n      do {\n        uVar12 = puVar1[iVar6];\n        *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n        *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n        iVar6 = iVar6 + 1;\n        (&tStackY_64)[-uVar5] = 0x2652240;\n        pcVar9 = get_card_instance(*(int *)(&stack0xffffffa0 + iVar2),\n                                   *(int *)(&stack0xffffffa4 + iVar2));\n        pcVar9->state = pcVar9->state & 0xffffffdf;\n      } while (iStack_20 != iVar6);\n    }\n    else {\n      *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n      (&tStackY_64)[-uVar5] = 0x26523ad;\n      shuffle(*(int *)(&stack0xffffffa0 + iVar2));\nLAB_02651d64:\n      if (iStack_20 < 1) goto LAB_02652485;\n    }\n                    \n    iStack_34 = 0;\n    uStack_2c = 0;\n    uStack_1c = 0xffffffff;\n    uStack_44 = (int)puStack_14 - 2;\n    iVar6 = 0;\n    do {\n      pcVar9 = pcStack_18;\n      uVar12 = puStack_28[iVar6];\n      if (uVar12 != 0xffffffff) {\n        uStack_2c = uStack_2c + 1;\n        switch(destination) {\n        case 1:\n        case 0xb:\n        case 0xd:\n          bVar13 = (card_instance_t *)(uint)(destination == 1) == pcStack_18;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n          pcStack_40 = (card_instance_t *)CONCAT31(pcStack_40._1_3_,bVar13 && uStack_3c != 2);\n          if (destination == 0xb) {\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2652298;\n            uStack_1c = add_card_to_hand(*(int *)(&stack0xffffffa0 + iVar2),\n                                         *(int *)(&stack0xffffffa4 + iVar2));\n            pcVar9 = (card_instance_t *)targ_player;\n            if ((char)pcStack_40 != '\\0') goto code_r0x026522a7;\n          }\n          else {\n            *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n            (&tStackY_64)[-uVar5] = 0x2651f33;\n            uStack_1c = add_card_to_hand(*(int *)(&stack0xffffffa0 + iVar2),\n                                         *(int *)(&stack0xffffffa4 + iVar2));\n            pcVar9 = pcStack_18;\n            if ((char)pcStack_40 == '\\0') {\ncode_r0x02651f43:\n              if (destination != 0xd) goto code_r0x02651f4d;\n            }\n            else {\ncode_r0x026522a7:\n              if ((uStack_44 < 2) ||\n                 ((kStack_24 != KILL_0 && ((kStack_24 != KILL_BURY || (this_test->type != 0xff))))))\n              {\n                pcStack_40 = pcVar9;\n                *(uint *)(&stack0xffffffa4 + iVar2) = uStack_1c;\n                *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n                (&uStack_54)[-uVar5] = 0xffffffff;\n                (&kStack_58)[-uVar5] = ~KILL_0;\n                (&tStackY_64)[-uVar5] = 0x26522e4;\n                reveal_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                            (&kStack_58)[-uVar5],(&uStack_54)[-uVar5]);\n                pcVar9 = pcStack_40;\n                goto code_r0x02651f43;\n              }\n              if (destination != 0xd) break;\n            }\n            uVar8 = uStack_1c;\n            *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n            (&kStack_58)[-uVar5] = 0x200000;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            pcStack_40 = pcVar9;\n            (&tStackY_64)[-uVar5] = 0x2652446;\n            add_state(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                      (&kStack_58)[-uVar5]);\n            pcVar9 = pcStack_40;\n          }\ncode_r0x02651f4d:\n          uVar8 = uStack_1c;\n          if (puStack_14 == (uint *)0x2) {\n            *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            (&tStackY_64)[-uVar5] = 0x2651f66;\n            from_grave_to_hand_triggers\n                      (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          }\n          break;\n        case 2:\n                    \n          if (puStack_14 == (uint *)0x4) {\n            uStack_1c = uVar12;\n          }\n          uVar8 = uStack_1c;\n          if (((kStack_24 == KILL_0) && ((this_test->type == 0 || (this_test->type == 0xff)))) ||\n             (pcStack_18 != (card_instance_t *)0x1)) {\n            if (puStack_14 != (uint *)0x4) {\n              (&kStack_58)[-uVar5] = KILL_0;\n              *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x2652059;\n              put_iid_under_the_first_x_cards_of_library\n                        (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                         (&kStack_58)[-uVar5]);\n              break;\n            }\n          }\n          else if (puStack_14 == (uint *)0x4) {\n            (&uStack_54)[-uVar5] = 0xffffffff;\n            (&kStack_58)[-uVar5] = ~KILL_0;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            *(undefined4 *)(&stack0xffffffa0 + iVar2) = 1;\n            (&tStackY_64)[-uVar5] = 0x2652471;\n            reveal_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                        (&kStack_58)[-uVar5],(&uStack_54)[-uVar5]);\n          }\n          else {\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x26521de;\n            uVar8 = add_card_to_hand_invisible\n                              (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2)\n                              );\n            (&uStack_54)[-uVar5] = 0xffffffff;\n            (&kStack_58)[-uVar5] = ~KILL_0;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            *(undefined4 *)(&stack0xffffffa0 + iVar2) = 1;\n            uStack_1c = uVar8;\n            (&tStackY_64)[-uVar5] = 0x2652201;\n            reveal_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                        (&kStack_58)[-uVar5],(&uStack_54)[-uVar5]);\n          }\n          uVar8 = uStack_1c;\n          *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n          (&tStackY_64)[-uVar5] = 0x2652210;\n          put_on_top_of_deck(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          break;\n        case 3:\n          if (puStack_14 == (uint *)0x4) {\n            (&uStack_54)[-uVar5] = 0;\n            (&kStack_58)[-uVar5] = (kill_t)pcVar9;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2652005;\n            new_discard_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                             (&kStack_58)[-uVar5],(&uStack_54)[-uVar5]);\n            uStack_1c = uVar12;\n          }\n          else {\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2652264;\n            uVar8 = add_card_to_hand(*(int *)(&stack0xffffffa0 + iVar2),\n                                     *(int *)(&stack0xffffffa4 + iVar2));\n            uStack_1c = uVar8;\n            if (puStack_14 == (uint *)0x1) {\n              *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x26523fd;\n              put_on_top_of_deck(*(int *)(&stack0xffffffa0 + iVar2),\n                                 *(int *)(&stack0xffffffa4 + iVar2));\n              *(undefined4 *)(&stack0xffffffa4 + iVar2) = 1;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x265240d;\n              mill(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n            }\n            else {\n              (&kStack_58)[-uVar5] = KILL_DESTROY;\n              *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x2652288;\n              kill_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                        (&kStack_58)[-uVar5]);\n            }\n          }\n          break;\n        case 4:\n        case 5:\n        case 8:\n                    \n          uStack_1c = uVar12;\n          if (puStack_14 != (uint *)0x4) {\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2651ddd;\n            uStack_1c = add_card_to_hand(*(int *)(&stack0xffffffa0 + iVar2),\n                                         *(int *)(&stack0xffffffa4 + iVar2));\n          }\n          uVar8 = uStack_1c;\n          *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n          (&tStackY_64)[-uVar5] = 0x2651def;\n          pcStack_40 = get_card_instance(*(int *)(&stack0xffffffa0 + iVar2),\n                                         *(int *)(&stack0xffffffa4 + iVar2));\n          uVar8 = uStack_1c;\n          if ((card_instance_t *)targ_player != pcStack_18) {\n            bVar13 = pcStack_18 == (card_instance_t *)0x0;\n            (&kStack_58)[-uVar5] = 0x1000;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            if (bVar13) {\n              (&tStackY_64)[-uVar5] = 0x2651e18;\n              add_state(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                        (&kStack_58)[-uVar5]);\n            }\n            else {\n              (&tStackY_64)[-uVar5] = 0x265234d;\n              remove_state(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                           (&kStack_58)[-uVar5]);\n            }\n          }\n          uVar8 = uStack_1c;\n          if ((destination == 5) || (destination == 8)) {\n            pcStack_40->state = pcStack_40->state | 0x10;\n            if (puStack_14 == (uint *)0x2) goto code_r0x026521a6;\ncode_r0x02651e36:\n            if (puStack_14 == (uint *)0x1) {\n              (&kStack_58)[-uVar5] = 0x10000;\n              *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x26523ec;\n              set_special_flags(*(int *)(&stack0xffffffa0 + iVar2),\n                                *(int *)(&stack0xffffffa4 + iVar2),(&kStack_58)[-uVar5]);\n            }\n          }\n          else {\n            if (puStack_14 != (uint *)0x2) goto code_r0x02651e36;\ncode_r0x026521a6:\n            (&kStack_58)[-uVar5] = KILL_BURY;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x26521bd;\n            set_special_flags3(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2)\n                               ,(&kStack_58)[-uVar5]);\n          }\n          uVar8 = uStack_1c;\n          *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n          (&tStackY_64)[-uVar5] = 0x2651e4f;\n          put_into_play(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          uVar8 = uStack_1c;\n          if ((card_instance_t *)targ_player != pcStack_18) {\n                    \n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            (&tStackY_64)[-uVar5] = 0x2651e63;\n            uVar8 = gain_control_impl(*(int *)(&stack0xffffffa0 + iVar2),\n                                      *(int *)(&stack0xffffffa4 + iVar2));\n            pcVar9 = pcStack_18;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n            uStack_1c = uVar8;\n            (&tStackY_64)[-uVar5] = 0x2651e75;\n            pcStack_40 = get_card_instance(*(int *)(&stack0xffffffa0 + iVar2),\n                                           *(int *)(&stack0xffffffa4 + iVar2));\n          }\n          if (destination == 8) {\n            pcStack_40->state = pcStack_40->state | 4;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uStack_1c;\n            *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n            (&tStackY_64)[-uVar5] = 0x26523d0;\n            choose_who_attack(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2))\n            ;\n          }\n          break;\n        case 6:\n          if (puStack_14 == (uint *)0x4) {\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2652334;\n            uVar8 = get_id(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            uStack_1c = uVar8;\n            (&tStackY_64)[-uVar5] = 0x2652343;\n            rfg_card_in_hand(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          }\n          else {\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            uStack_1c = (uint)cards_data[uVar12].id;\n            (&tStackY_64)[-uVar5] = 0x2651fce;\n            add_card_to_rfg(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          }\n          *(undefined4 *)(&stack0xffffffa0 + iVar2) = 0x17;\n          (&tStackY_64)[-uVar5] = 0x2651fda;\n          play_sound_effect(*(wav_t *)(&stack0xffffffa0 + iVar2));\n          break;\n        case 10:\n        case 0xc:\n          pcStack_40 = (card_instance_t *)deck_ptr[targ_player];\n          if (puStack_14 == (uint *)0x4) {\n                    \n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x26522f8;\n            iVar10 = count_deck(*(int *)(&stack0xffffffa0 + iVar2));\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            pcStack_40 = (card_instance_t *)(pcStack_40->color_id + iVar10 * 4 + -0x40);\n            (&tStackY_64)[-uVar5] = 0x265230d;\n            iVar10 = get_original_internal_card_id\n                               (*(int *)(&stack0xffffffa0 + iVar2),\n                                *(int *)(&stack0xffffffa4 + iVar2));\n            pcStack_40->special_counters = (char)iVar10;\n            pcStack_40->counters2 = (char)((uint)iVar10 >> 8);\n            pcStack_40->counters3 = (char)((uint)iVar10 >> 0x10);\n            pcStack_40->counters4 = (char)((uint)iVar10 >> 0x18);\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x265231e;\n            obliterate_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          }\n          else {\n                    \n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            uStack_1c = (uint)cards_data[uVar12].id;\n            (&tStackY_64)[-uVar5] = 0x2651f9c;\n            iVar10 = count_deck(*(int *)(&stack0xffffffa0 + iVar2));\n            *(uint *)(pcStack_40->color_id + iVar10 * 4 + -0x40) = uVar12;\n          }\n          break;\n        case 0xe:\n                    \n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n          *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n          (&tStackY_64)[-uVar5] = 0x265206f;\n          uStack_1c = add_card_to_hand(*(int *)(&stack0xffffffa0 + iVar2),\n                                       *(int *)(&stack0xffffffa4 + iVar2));\n          *(uint *)(&stack0xffffffa4 + iVar2) = uStack_1c;\n          *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n          (&tStackY_64)[-uVar5] = 0x2652081;\n          pcVar11 = get_card_instance(*(int *)(&stack0xffffffa0 + iVar2),\n                                      *(int *)(&stack0xffffffa4 + iVar2));\n          pcVar9 = pcStack_18;\n          uVar8 = uStack_1c;\n          pcVar11->state = pcVar11->state | 0x20;\n          *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n          iVar10 = hand_count[(int)pcVar9];\n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n          (&uStack_54)[-uVar5] = 0xffffffff;\n          (&kStack_58)[-uVar5] = ~KILL_0;\n          hand_count[(int)pcVar9] = iVar10 + -1;\n          (&tStackY_64)[-uVar5] = 0x26520bb;\n          reveal_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                      (&kStack_58)[-uVar5],(&uStack_54)[-uVar5]);\n          *(int *)(&stack0xffffffa0 + iVar2) = player;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n          (&tStackY_64)[-uVar5] = 0x26520ca;\n          add_card_to_rfg(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          uVar4 = cards_data[uVar12].id;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uStack_1c;\n          (&uStack_54)[-uVar5] = (uint)uVar4;\n          pcVar9 = pcStack_18;\n          akStack_50[-uVar5] = KILL_DESTROY;\n          (&kStack_58)[-uVar5] = player;\n          *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n          (&tStackY_64)[-uVar5] = 0x26520fe;\n          create_may_play_card_from_exile_effect\n                    (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                     (&kStack_58)[-uVar5],(&uStack_54)[-uVar5],akStack_50[-uVar5]);\n          pcVar9 = pcStack_18;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uStack_1c;\n          *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n          (&tStackY_64)[-uVar5] = 0x2652110;\n          obliterate_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n        }\n        if (-1 < this_test->storage) {\n          *(int *)(&stack0xffffffa4 + iVar2) = this_test->storage;\n          *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n          (&tStackY_64)[-uVar5] = 0x2651ea4;\n          pcVar9 = get_card_instance(*(int *)(&stack0xffffffa0 + iVar2),\n                                     *(int *)(&stack0xffffffa4 + iVar2));\n          pcVar9->targets[iStack_34].card = uVar12;\n          iStack_34 = iStack_34 + 1;\n        }\n      }\n      iVar6 = iVar6 + 1;\n    } while (iVar6 < iStack_20);\n  }\n  pcVar9 = pcStack_18;\n  if ((search_location == 6) && (bStack_36 != false)) {\n    (&tStackY_64)[-uVar5] = 0x26524a0;\n    side_effects_to_tutor_deck_from_permanents((int)pcVar9,*(int *)(&stack0xffffffa0 + iVar2));\n  }\nLAB_02651ecc:\n  if (bStack_35 != false) {\n    *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n    (&tStackY_64)[-uVar5] = 0x26523a0;\n    shuffle(*(int *)(&stack0xffffffa0 + iVar2));\n  }\n  if (iStack_30 != -2) {\n    if (this_test->qty < 2) {\n      uStack_2c = uStack_1c;\n    }\n    return uStack_2c;\n  }\n  return -2;\n}\n\n",
+            "replacement": "int new_global_tutor_2022(int player, int targ_player, int search_location,\n    int destination, int must_select, int ai_selection_mode, test_definition_2022_t *this_test)\n{\n  int avoid_shuffle = this_test->no_shuffle;\n  int test_type = new_get_test_score_2022(this_test);\n  int capacity = this_test->qty;\n  int tutored[capacity];\n  int selector = 1 - player;\n  int opposition_agent = check_battlefield_for_id(selector, 0x56a2);\n  int self_search = player == targ_player;\n  int shuffle_after = avoid_shuffle == 0 && search_location == TUTOR_FROM2022_DECK;\n  int shuffle_before;\n  int zone;\n  if (!opposition_agent || player != targ_player || search_location != TUTOR_FROM2022_DECK)\n  {\n    shuffle_before = destination == TUTOR2022_DECK && shuffle_after;\n    shuffle_after = shuffle_after && destination != TUTOR2022_DECK;\n    selector = player;\n    zone = search_location == TUTOR_FROM2022_GRAVE_NOTARGET ? TUTOR_FROM2022_GRAVE : search_location;\n  }\n  else\n  {\n    shuffle_before = 0;\n    self_search = selector == targ_player;\n    destination = TUTOR2022_OPPOSITION_AGENT;\n    zone = TUTOR_FROM2022_DECK;\n  }\n\n  int tc = 0;\n  int cancelled = 0;\n  int card_added = -1;\n  int really_tutored = 0;\n  if (this_test->qty != 0)\n  {\n    unsigned int q = 0;\n    do\n    {\n      int selected = -1;\n      if (zone == TUTOR_FROM2022_DECK_AUTO)\n      {\n        if (!get_tutoring_denial_2022(selector))\n        {\n          unsigned int starting_card = 0;\n          if (check_battlefield_for_id(1 - targ_player, 0x22b9) && count_deck(targ_player) > 3)\n            starting_card = count_deck(targ_player) - 4;\n          while ((int)starting_card < count_deck(selector))\n          {\n            if (new_make_test_2022(targ_player, deck_ptr[targ_player][starting_card], test_type, this_test))\n            {\n              selected = starting_card;\n              break;\n            }\n            ++starting_card;\n          }\n        }\n        zone = TUTOR_FROM2022_DECK;\n      }\n      else\n        selected = new_select_a_card_2022(selector, targ_player, search_location,\n            must_select, ai_selection_mode, test_type, this_test);\n\n      if (selected == -1)\n      {\n        if (this_test->qty > 1)\n          break;\n        cancelled = -2;\n      }\n      else\n      {\n        if (zone == TUTOR_FROM2022_GRAVE || zone == TUTOR_FROM2022_DECK)\n        {\n          int *s_location = zone == TUTOR_FROM2022_GRAVE ? graveyard_ptr_mutable[targ_player] : deck_ptr[targ_player];\n          if (zone == TUTOR_FROM2022_DECK && selector == targ_player)\n            set_trap_condition(targ_player, 0x600, 1);\n          int from = zone == TUTOR_FROM2022_GRAVE ? 2 : 1;\n          if (!grafdiggers_cages(targ_player, (type_t)cards_data[s_location[selected]].type, from) ||\n              ((unsigned int)(destination - TUTOR2022_PLAY) > 1 && destination != TUTOR2022_PLAY_ATTACKING))\n          {\n            tutored[tc++] = s_location[selected];\n            if (zone == TUTOR_FROM2022_GRAVE)\n              remove_card_from_grave(targ_player, selected);\n            else\n              remove_card_from_deck(targ_player, selected);\n          }\n          else\n            tutored[tc] = -1;\n        }\n        else if (zone == TUTOR_FROM2022_RFG)\n        {\n          int iid = rfg_ptr[targ_player][selected];\n          tutored[tc++] = iid;\n          remove_card_from_rfg(targ_player, cards_data[iid].id);\n        }\n        else if (zone == TUTOR_FROM2022_HAND)\n        {\n          if (destination == TUTOR2022_GET_ID)\n            selected = get_id(targ_player, selected);\n          tutored[tc++] = selected;\n          get_card_instance(targ_player, selected)->state |= 0x20;\n        }\n        if (this_test->create_minideck > 1)\n          --this_test->create_minideck;\n      }\n      ++q;\n    } while (q < this_test->qty);\n  }\n\n  if (shuffle_before)\n    shuffle(targ_player);\n  else if (search_location == TUTOR_FROM2022_HAND)\n    for (int q = 0; q < tc; ++q)\n      get_card_instance(targ_player, tutored[q])->state &= ~0x20U;\n\n  int storage_loc = 0;\n  for (int q = 0; q < tc; ++q)\n  {\n    int iid = tutored[q];\n    if (iid == -1)\n      continue;\n    ++really_tutored;\n    switch (destination)\n    {\n    case TUTOR2022_HAND:\n    case TUTOR2022_TPLAYER_HAND:\n    case TUTOR2022_HAND_AND_MARK:\n    {\n      int dest_player = destination == TUTOR2022_TPLAYER_HAND ? targ_player : selector;\n      card_added = add_card_to_hand(dest_player, iid);\n      int reveal = selector == (destination == TUTOR2022_HAND) && avoid_shuffle != 2;\n      if (reveal && ((unsigned int)(zone - TUTOR_FROM2022_GRAVE) < 2 ||\n          (test_type != 0 && (test_type != 1 || this_test->type != 0xff))))\n        reveal_card(selector, card_added, -1, -1);\n      if (destination == TUTOR2022_HAND_AND_MARK)\n        add_state(dest_player, card_added, 0x200000);\n      if (zone == TUTOR_FROM2022_GRAVE)\n        from_grave_to_hand_triggers(dest_player, card_added);\n      break;\n    }\n    case TUTOR2022_DECK:\n      if (zone == TUTOR_FROM2022_HAND)\n        card_added = iid;\n      if ((test_type == 0 || (test_type == 1 && this_test->type == 0xff)) || selector != 1)\n      {\n        if (zone != TUTOR_FROM2022_HAND)\n        {\n          put_iid_under_the_first_x_cards_of_library(targ_player, iid, 0);\n          break;\n        }\n      }\n      else if (zone == TUTOR_FROM2022_HAND)\n        reveal_card(1, card_added, -1, -1);\n      else\n      {\n        card_added = add_card_to_hand_invisible(targ_player, iid);\n        reveal_card(1, card_added, -1, -1);\n      }\n      put_on_top_of_deck(targ_player, card_added);\n      break;\n    case TUTOR2022_GRAVE:\n      if (zone == TUTOR_FROM2022_HAND)\n      {\n        new_discard_card(targ_player, iid, selector, 0);\n        card_added = iid;\n      }\n      else\n      {\n        card_added = add_card_to_hand(targ_player, iid);\n        if (zone == TUTOR_FROM2022_DECK)\n        {\n          put_on_top_of_deck(targ_player, card_added);\n          mill(targ_player, 1);\n        }\n        else\n          kill_card(targ_player, card_added, KILL_DESTROY);\n      }\n      break;\n    case TUTOR2022_PLAY:\n    case TUTOR2022_PLAY_TAPPED:\n    case TUTOR2022_PLAY_ATTACKING:\n    {\n      card_added = zone == TUTOR_FROM2022_HAND ? iid : add_card_to_hand(targ_player, iid);\n      card_instance_t *instance = get_card_instance(targ_player, card_added);\n      if (targ_player != selector)\n      {\n        if (selector == 0)\n          add_state(targ_player, card_added, 0x1000);\n        else\n          remove_state(targ_player, card_added, 0x1000);\n      }\n      if (destination == TUTOR2022_PLAY_TAPPED || destination == TUTOR2022_PLAY_ATTACKING)\n        instance->state |= 0x10;\n      if (zone == TUTOR_FROM2022_GRAVE)\n        set_special_flags3_2022(targ_player, card_added, 1);\n      else if (zone == TUTOR_FROM2022_DECK)\n        set_special_flags_2022(targ_player, card_added, 0x10000);\n      put_into_play(targ_player, card_added);\n      if (targ_player != selector)\n      {\n        card_added = gain_control_impl_2022(targ_player, card_added);\n        instance = get_card_instance(selector, card_added);\n      }\n      if (destination == TUTOR2022_PLAY_ATTACKING)\n      {\n        instance->state |= 4;\n        choose_who_attack(selector, card_added);\n      }\n      break;\n    }\n    case TUTOR2022_RFG:\n      if (zone == TUTOR_FROM2022_HAND)\n      {\n        card_added = get_id(targ_player, iid);\n        rfg_card_in_hand(targ_player, iid);\n      }\n      else\n      {\n        card_added = cards_data[iid].id;\n        add_card_to_rfg(targ_player, iid);\n      }\n      play_sound_effect((wav_t)0x17);\n      break;\n    case TUTOR2022_BOTTOM_OF_DECK:\n    case TUTOR2022_BOTTOM_OF_DECK_RANDOM:\n      if (zone == TUTOR_FROM2022_HAND)\n      {\n        int position = count_deck(targ_player);\n        deck_ptr[targ_player][position] = get_original_internal_card_id(targ_player, iid);\n        obliterate_card(targ_player, iid);\n      }\n      else\n      {\n        card_added = cards_data[iid].id;\n        deck_ptr[targ_player][count_deck(targ_player)] = iid;\n      }\n      break;\n    case TUTOR2022_OPPOSITION_AGENT:\n    {\n      card_added = add_card_to_hand(selector, iid);\n      card_instance_t *instance = get_card_instance(selector, card_added);\n      instance->state |= 0x20;\n      --hand_count[selector];\n      reveal_card(selector, card_added, -1, -1);\n      add_card_to_rfg(player, iid);\n      create_may_play_card_from_exile_effect(selector, card_added, player, cards_data[iid].id, 1);\n      obliterate_card(selector, card_added);\n      break;\n    }\n    default:\n      break;\n    }\n    if (this_test->storage >= 0)\n      get_card_instance(selector, this_test->storage)->targets[storage_loc++].card = iid;\n  }\n  if (search_location == TUTOR_FROM2022_DECK_AUTO && self_search)\n    side_effects_to_tutor_deck_from_permanents_2022(selector, targ_player);\n  if (shuffle_after)\n    shuffle(targ_player);\n  if (cancelled == -2)\n    return -2;\n  return this_test->qty < 2 ? card_added : really_tutored;\n}\n",
+            "occurrences": 1,
+            "kind": "native VLA call-frame/control-transfer reconstruction",
+            "machine_sites": [
+              {
+                "address": "26519a1",
+                "bytes": "668bb7c0000000",
+                "instruction": "mov si, word ptr [edi + 0xc0]"
+              },
+              {
+                "address": "26519b8",
+                "bytes": "668b87ae000000",
+                "instruction": "mov ax, word ptr [edi + 0xae]"
+              },
+              {
+                "address": "26519bf",
+                "bytes": "c1e002",
+                "instruction": "shl eax, 2"
+              },
+              {
+                "address": "26519c2",
+                "bytes": "e809a80a00",
+                "instruction": "call 0x26fc1d0"
+              },
+              {
+                "address": "26519c7",
+                "bytes": "29c4",
+                "instruction": "sub esp, eax"
+              },
+              {
+                "address": "26519cc",
+                "bytes": "8d44241c",
+                "instruction": "lea eax, [esp + 0x1c]"
+              },
+              {
+                "address": "26519d0",
+                "bytes": "c7442404a2560000",
+                "instruction": "mov dword ptr [esp + 4], 0x56a2"
+              },
+              {
+                "address": "2651c04",
+                "bytes": "e8a70e0600",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "2651e5e",
+                "bytes": "e82d1b0100",
+                "instruction": "call 0x2663990"
+              },
+              {
+                "address": "26520f9",
+                "bytes": "e852600100",
+                "instruction": "call 0x2668150"
+              },
+              {
+                "address": "265214f",
+                "bytes": "89c6",
+                "instruction": "mov esi, eax"
+              },
+              {
+                "address": "265249b",
+                "bytes": "e8e0e6ffff",
+                "instruction": "call 0x2650b80"
+              },
+              {
+                "address": "2663a51",
+                "bytes": "81ce08000040",
+                "instruction": "or esi, 0x40000008"
+              },
+              {
+                "address": "2663ab1",
+                "bytes": "0d00000300",
+                "instruction": "or eax, 0x30000"
+              },
+              {
+                "address": "2663abc",
+                "bytes": "890495f0765000",
+                "instruction": "mov dword ptr [edx*4 + 0x5076f0], eax"
+              },
+              {
+                "address": "2663aca",
+                "bytes": "893495c07e5000",
+                "instruction": "mov dword ptr [edx*4 + 0x507ec0], esi"
+              }
+            ]
+          }
+        ],
+        "canonical_calls": [
+          {
+            "address": "26519ae",
+            "bytes": "e82dcd0600",
+            "target": "26be6e0",
+            "name": "new_get_test_score_2022"
+          },
+          {
+            "address": "2651aa2",
+            "bytes": "e859f8ffff",
+            "target": "2651300",
+            "name": "new_select_a_card_2022"
+          },
+          {
+            "address": "2651b43",
+            "bytes": "e8f8f5ffff",
+            "target": "2651140",
+            "name": "get_tutoring_denial_2022"
+          },
+          {
+            "address": "2651b8c",
+            "bytes": "e8bfdb0600",
+            "target": "26bf750",
+            "name": "new_make_test_2022"
+          },
+          {
+            "address": "2651c4c",
+            "bytes": "e87fd20200",
+            "target": "267eed0",
+            "name": "grafdiggers_cages"
+          },
+          {
+            "address": "2651cd6",
+            "bytes": "e8f5d10200",
+            "target": "267eed0",
+            "name": "grafdiggers_cages"
+          },
+          {
+            "address": "2651e5e",
+            "bytes": "e82d1b0100",
+            "target": "2663990",
+            "name": "gain_control_impl_2022"
+          },
+          {
+            "address": "26521b8",
+            "bytes": "e863810200",
+            "target": "267a320",
+            "name": "set_special_flags3_2022"
+          },
+          {
+            "address": "26521d9",
+            "bytes": "e8b20c0600",
+            "target": "26b2e90",
+            "name": "add_card_to_hand_invisible"
+          },
+          {
+            "address": "26523e7",
+            "bytes": "e8147a0200",
+            "target": "2679e00",
+            "name": "set_special_flags_2022"
+          },
+          {
+            "address": "265249b",
+            "bytes": "e8e0e6ffff",
+            "target": "2650b80",
+            "name": "side_effects_to_tutor_deck_from_permanents_2022"
+          }
+        ]
+      },
+      "26524d0": {
+        "machine_bytes": 154,
+        "machine_sha256": "7960fe54f1dd523f0abee6ddee9c10a1a20411dd0e3cca747dcb4d1c1622eea9",
+        "changes": [],
+        "canonical_calls": [
+          {
+            "address": "26524eb",
+            "bytes": "e8c0c60600",
+            "target": "26bebb0",
+            "name": "default_test_definition_2022"
+          },
+          {
+            "address": "265255b",
+            "bytes": "e830f4ffff",
+            "target": "2651990",
+            "name": "new_global_tutor_2022"
+          }
+        ]
+      }
+    },
+    "destinations": {
+      "TUTOR_0": 0,
+      "TUTOR_HAND": 1,
+      "TUTOR_DECK": 2,
+      "TUTOR_GRAVE": 3,
+      "TUTOR_PLAY": 4,
+      "TUTOR_PLAY_TAPPED": 5,
+      "TUTOR_RFG": 6,
+      "TUTOR_EXILE": 6,
+      "TUTOR_GET_ID": 7,
+      "TUTOR_PLAY_ATTACKING": 8,
+      "TUTOR_GET_POSITION": 9,
+      "TUTOR_BOTTOM_OF_DECK": 10,
+      "TUTOR_TPLAYER_HAND": 11,
+      "TUTOR_BOTTOM_OF_DECK_RANDOM": 12,
+      "TUTOR_HAND_AND_MARK": 13,
+      "TUTOR_OPPOSITION_AGENT": 14
+    },
+    "origins": {
+      "TUTOR_FROM_DECK": 1,
+      "TUTOR_FROM_GRAVE": 2,
+      "TUTOR_FROM_RFG": 3,
+      "TUTOR_FROM_HAND": 4,
+      "TUTOR_FROM_GRAVE_NOTARGET": 5,
+      "TUTOR_FROM_DECK_AUTO": 6
+    },
+    "vla_bound": {
+      "expression_bytes": [
+        119,
+        174,
+        1,
+        148,
+        2,
+        10,
+        255,
+        255,
+        26,
+        49,
+        28
+      ],
+      "expression": "(DW_OP_breg7 (r7): 174; DW_OP_deref_size: 2; DW_OP_const2u: 65535; DW_OP_and; DW_OP_lit1; DW_OP_minus)"
+    },
+    "test_layout": {
+      "bytes": 216,
+      "qty_offset": 174,
+      "qty_bytes": 2,
+      "no_shuffle_offset": 192,
+      "create_minideck_offset": 194,
+      "storage_offset": 212
+    },
+    "timestamp_arrays": {
+      "card_address": "5076f0",
+      "player_address": "507ec0",
+      "elements": 500,
+      "element_bytes": 4
+    },
+    "scope": "Full native VLA-backed global tutoring and scalar frontend, separate native destination/origin values, Opposition Agent routing and native control transfer. Preserve shuffle stages, return values, ownership, original fixed arrays and source bodies.",
+    "integration_pending": "Earlier manual/aggregate consumers, lifecycle/dispatch integration, native linkage and gameplay verification remain pending.",
+    "native_edge_cases": {
+      "single_cancel_returns_minus_two": true,
+      "multi_cancel_keeps_selected": true,
+      "cage_failure_does_not_advance_count": true,
+      "hand_id_used_for_instance_marking": true,
+      "failed_control_allocation_still_runs_tail": true
+    },
+    "side_effect_helper": {
+      "address": "2650b80",
+      "physical_arguments": [
+        "player"
+      ],
+      "retained_unused_source_argument": "targ_player"
+    }
   }
 }

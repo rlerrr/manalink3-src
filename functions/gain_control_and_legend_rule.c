@@ -615,3 +615,62 @@ int gain_control_until_eoyt(int player, int card, int t_player, int t_card)
   result = gain_control_until_clause(player, card, t_player, t_card, 0x80, 0, 0, 0, 0);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 global tutoring and control transfer. */
+
+/* ManalinkEh 2022: 0x2663990; original functions/gain_control_and_legend_rule.c:133. */
+int gain_control_impl_2022(int player, int card)
+{
+  card_instance_t *src = get_card_instance(player, card);
+  uint32_t old_timestamp = src->timestamp;
+  int new_player = 1 - player;
+  int new_card = add_card_to_hand_exe(new_player, src->internal_card_id);
+  if (new_card != -1)
+  {
+    card_instance_t *dest = get_card_instance(new_player, new_card);
+    memcpy_inst_and_ext(dest, src);
+    dest->state = (dest->state & 0xfffffff3U) | 0x30000U;
+    timestamp_card[old_timestamp] = new_card;
+    timestamp_player[old_timestamp] = new_player;
+    for (int p = 0; p < 2; ++p)
+      for (int c = 0; c < active_cards_count[p]; ++c)
+      {
+        card_instance_t *instance = get_card_instance(p, c);
+        if (instance->damage_target_player == player && instance->damage_target_card == card)
+        {
+          instance->damage_target_player = new_player;
+          instance->damage_target_card = new_card;
+        }
+        if (instance->damage_source_player == player && instance->damage_source_card == card)
+        {
+          instance->damage_source_player = new_player;
+          instance->damage_source_card = new_card;
+        }
+        unsigned int count = instance->number_of_targets;
+        for (unsigned int i = 0; i < count; ++i)
+          if (instance->targets[i].player == player && instance->targets[i].card == card)
+          {
+            instance->targets[i].player = new_player;
+            instance->targets[i].card = new_card;
+          }
+      }
+  }
+  uint8_t type = cards_data[src->internal_card_id].type;
+  if ((type & 2) != 0)
+    ++creature_count[new_player];
+  if ((type & 0x40) != 0)
+    ++artifact_count[new_player];
+  if ((type & 4) != 0)
+    ++enchantment_count[new_player];
+  types_of_cards_on_bf[new_player] |= type;
+  redraw_libraries();
+  src->token_status |= 0x40000008U;
+  kill_card_exe(player, card, KILL_EXILE);
+  if (((uint32_t)event_flags & 0x10000000U) != 0)
+    dispatch_event(new_player, new_card, (event_t)0x94);
+  return new_card;
+}
+
+#endif

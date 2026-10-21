@@ -3460,6 +3460,16 @@ int enters_the_battlefield_as_copy_of_any_2022(int player, int card, event_t eve
                                                target_definition_2022_t *td, char *prompt);
 #endif
 
+/* October 2022 global tutor APIs. */
+#ifndef SHANDALAR
+int gain_control_impl_2022(int player, int card);
+int new_global_tutor_2022(int player, int targ_player, int search_location, int destination,
+                          int must_select, int ai_selection_mode, test_definition_2022_t *this_test);
+int global_tutor_2022(int player, int targ_player, int search_location, int destination,
+                      int must_select, int ai_selection_mode, int type, int flag1, int subtype,
+                      int flag2, int color, int flag3, int id, int flag4, int cc, int flag5);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

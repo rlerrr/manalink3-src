@@ -124,7 +124,7 @@ def main():
                                  function.get('native_entry_callee_binding_2022') or function.get('level_buddy_evidence') or
                                  function.get('native_level_buddy_callee_binding_2022') or function.get('native_dependency_bindings_2022') or
                                  function.get('ward_guard_evidence') or function.get('phyrexian_cost_evidence') or
-                                 function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022'))
+                                 function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022') or function.get('global_tutor_evidence'))
             if target_validation:
                 literal_input = target_validation_input(literal_input, target_validation, function['address'], machine_bytes)
                 for change in target_validation['changes']:
@@ -317,6 +317,13 @@ def main():
                 for original,replacement in phyrexian_interface['calls'].items():
                     if PHYREXIAN_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
                         raise ValueError('Versioned Phyrexian cost callee mismatch')
+            global_tutor_interface=function.get('global_tutor_interface_2022')
+            if global_tutor_interface:
+                from promote_recovery import GLOBAL_TUTOR_API_NAMES,TUTOR_DESTINATION_NAMES,TUTOR_ORIGIN_NAMES,TUTOR_DOMAIN_NAMES
+                mapping={**GLOBAL_TUTOR_API_NAMES,**TUTOR_DESTINATION_NAMES,**TUTOR_ORIGIN_NAMES,**TUTOR_DOMAIN_NAMES}
+                for original,replacement in global_tutor_interface['translations'].items():
+                    if mapping.get(original)!=replacement or not re.search(r'\b'+replacement+r'\b',body):
+                        raise ValueError('Native global-tutor interface/domain mismatch')
             action_interface=function.get('action_interface_2022')
             if action_interface:
                 from promote_recovery import ACTION_API_NAMES
@@ -360,7 +367,7 @@ def main():
                         function.get('entry_trigger_evidence') or function.get('native_entry_callee_binding_2022') or
                         function.get('level_buddy_evidence') or function.get('native_level_buddy_callee_binding_2022') or
                         function.get('native_dependency_bindings_2022') or function.get('ward_guard_evidence') or
-                        function.get('phyrexian_cost_evidence') or function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022'))
+                        function.get('phyrexian_cost_evidence') or function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022') or function.get('global_tutor_evidence'))
             if consumer:
                 for call in consumer['canonical_calls']:
                     at=int(call['address'],16);data=bytes.fromhex(call['bytes'])
@@ -1057,6 +1064,13 @@ def main():
                 raise ValueError('Native activation mana-payment linker binding mismatch')
         except (ValueError,OSError,KeyError) as error:
             issues.append(dict(source='functions/functions.c',name='activated_core_2022',error=str(error)))
+    global_tutor=interfaces.get('global_tutor_core_2022')
+    if global_tutor:
+        try:
+            from audit_global_tutor import audit_component
+            audit_component(global_tutor,manifest,sources,machine_bytes,root)
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='functions/tutors.c',name='global_tutor_core_2022',error=str(error)))
     action_core=interfaces.get('action_core_2022')
     if action_core:
         try:

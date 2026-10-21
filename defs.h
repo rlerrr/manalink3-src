@@ -4090,4 +4090,39 @@ typedef struct struct_token_generation_2022_t
 typedef uint32_t actions_2022_t;
 #endif
 
+
+#ifndef SHANDALAR
+/* October 2022 tutor domains; retain legacy destination values above. */
+typedef uint32_t tutor_destination_2022_t;
+enum
+{
+  TUTOR2022_0 = 0,
+  TUTOR2022_HAND = 1,
+  TUTOR2022_DECK = 2,
+  TUTOR2022_GRAVE = 3,
+  TUTOR2022_PLAY = 4,
+  TUTOR2022_PLAY_TAPPED = 5,
+  TUTOR2022_RFG = 6,
+  TUTOR2022_EXILE = 6,
+  TUTOR2022_GET_ID = 7,
+  TUTOR2022_PLAY_ATTACKING = 8,
+  TUTOR2022_GET_POSITION = 9,
+  TUTOR2022_BOTTOM_OF_DECK = 10,
+  TUTOR2022_TPLAYER_HAND = 11,
+  TUTOR2022_BOTTOM_OF_DECK_RANDOM = 12,
+  TUTOR2022_HAND_AND_MARK = 13,
+  TUTOR2022_OPPOSITION_AGENT = 14
+};
+typedef uint32_t tutor_from_2022_t;
+enum
+{
+  TUTOR_FROM2022_DECK = 1,
+  TUTOR_FROM2022_GRAVE = 2,
+  TUTOR_FROM2022_RFG = 3,
+  TUTOR_FROM2022_HAND = 4,
+  TUTOR_FROM2022_GRAVE_NOTARGET = 5,
+  TUTOR_FROM2022_DECK_AUTO = 6
+};
+#endif
+
 #endif

@@ -214,6 +214,14 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
             stream.write('_Static_assert(offsetof(card_instance_t,targets[17].card)==256, "common activation permission word");\n')
             stream.write('\n'.join(f'_Static_assert({name}=={number}, "native activation flag");' for name,number in component['flags']['members'].items())+'\n')
             stream.write('\n'.join(f'_Static_assert({name}=={number}, "native activation enum value");' for name,number in component['enum_values'].items())+'\n')
+    if interfaces.get('global_tutor_core_2022'):
+        component=interfaces['global_tutor_core_2022']
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(tutor_destination_2022_t)==4 && sizeof(tutor_from_2022_t)==4 && TUTOR_HAND==0 && TUTOR2022_HAND==1, "separate native tutor domains");\n')
+            stream.write('_Static_assert(sizeof(test_definition_2022_t)==216 && offsetof(test_definition_2022_t,qty)==174 && sizeof(((test_definition_2022_t*)0)->qty)==2 && offsetof(test_definition_2022_t,no_shuffle)==192 && offsetof(test_definition_2022_t,create_minideck)==194 && offsetof(test_definition_2022_t,storage)==212, "native tutor fields");\n')
+            stream.write('_Static_assert(sizeof(target_t)==8 && offsetof(card_instance_t,targets)==116 && offsetof(card_instance_t,number_of_targets)==54, "native control-transfer target cursor");\n')
+            for group,prefix in [(component['destinations'],'TUTOR_'),(component['origins'],'TUTOR_FROM_')]:
+                stream.write('\n'.join(f'_Static_assert({name.replace(prefix,("TUTOR2022_" if prefix=="TUTOR_" else "TUTOR_FROM2022_"),1)}=={number}, "native tutor value");' for name,number in group.items())+'\n')
     if interfaces.get('action_core_2022'):
         component=interfaces['action_core_2022']
         with layout.open('a') as stream:

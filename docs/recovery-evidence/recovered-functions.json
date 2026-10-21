@@ -1,7 +1,7 @@
 {
-  "exported_functions": 4566,
+  "exported_functions": 4568,
   "initially_reconstructable": 141,
-  "accepted": 4080,
+  "accepted": 4083,
   "compiler_passes": 3,
   "source_files": {
     "cards/strixhaven.c": 205,
@@ -73,7 +73,7 @@
     "functions/produce_mana.c": 19,
     "functions/rules_engine.c": 2,
     "functions/targets.c": 44,
-    "functions/tutors.c": 16,
+    "functions/tutors.c": 18,
     "cards/antiquities.c": 1,
     "cards/coldsnap.c": 7,
     "cards/commander_2017.c": 22,
@@ -97,7 +97,7 @@
     "cards/vanguard.c": 8,
     "functions/token_generation.c": 16,
     "cards/morningtide.c": 2,
-    "functions/gain_control_and_legend_rule.c": 2,
+    "functions/gain_control_and_legend_rule.c": 3,
     "cards/commander_2015.c": 1,
     "cards/saviors_of_kamigawa.c": 3,
     "cards/torment.c": 3,
@@ -107369,6 +107369,325 @@
           "new_manipulate_all": "new_manipulate_all_2022"
         }
       }
+    },
+    {
+      "name": "gain_control_impl_2022",
+      "address": "2663990",
+      "source": "functions/gain_control_and_legend_rule.c",
+      "line": "133",
+      "static": false,
+      "prototype": "int gain_control_impl_2022(int player, int card);",
+      "raw_sha256": "5e73bbb2901629beafad38c4836e36723d9de1fa74949db7de8e710bf92352e6",
+      "recovered_literals": [],
+      "global_tutor_evidence": {
+        "machine_bytes": 559,
+        "machine_sha256": "16fcc0fa17d7f3f6d784c7a93eb6ba603bcde1c8926210fffee16cd2a4c6a16b",
+        "changes": [
+          {
+            "original": "\n\n\n\n\nint gain_control_impl(int player,int card)\n\n{\n  byte bVar1;\n  uint32_t uVar2;\n  char cVar3;\n  card_instance_t *src;\n  int card_00;\n  card_instance_t *pcVar4;\n  card_instance_t *pcVar5;\n  uint32_t *puVar6;\n  int player_00;\n  int argument1;\n  int card_01;\n  \n                    \n  src = get_card_instance(player,card);\n  uVar2 = src->timestamp;\n  argument1 = 1 - player;\n  card_00 = add_card_to_hand_exe(argument1,src->internal_card_id);\n  if (card_00 != -1) {\n                    \n    pcVar4 = get_card_instance(argument1,card_00);\n    memcpy_inst_and_ext(pcVar4,src);\n    pcVar4->state = pcVar4->state & 0xfffffff3 | 0x30000;\n    timestamp_card[uVar2] = card_00;\n                    \n    cVar3 = '\\x01' - (char)player;\n    timestamp_player[uVar2] = argument1;\n    player_00 = 0;\n    do {\n      if (0 < active_cards_count[player_00]) {\n        card_01 = 0;\n        do {\n          pcVar4 = get_card_instance(player_00,card_01);\n          if ((pcVar4->damage_target_player == player) && (pcVar4->damage_target_card == card)) {\n            pcVar4->damage_target_player = cVar3;\n            pcVar4->damage_target_card = card_00;\n          }\n          if ((pcVar4->damage_source_player == player) && (pcVar4->damage_source_card == card)) {\n            pcVar4->damage_source_player = cVar3;\n            pcVar4->damage_source_card = card_00;\n          }\n                    \n          bVar1 = pcVar4->number_of_targets;\n          if (bVar1 != 0) {\n            pcVar5 = pcVar4;\n            do {\n              while ((pcVar5->targets[0].player != player || (pcVar5->targets[0].card != card))) {\n                pcVar5 = (card_instance_t *)&pcVar5->state;\n                if ((card_instance_t *)(pcVar4->color_id + (uint)bVar1 * 8 + -0x40) == pcVar5)\n                goto LAB_02663b4b;\n              }\n              puVar6 = &pcVar5->state;\n              pcVar5->targets[0].player = argument1;\n              pcVar5->targets[0].card = card_00;\n              pcVar5 = (card_instance_t *)puVar6;\n            } while ((uint32_t *)(pcVar4->color_id + (uint)bVar1 * 8 + -0x40) != puVar6);\n          }\nLAB_02663b4b:\n          card_01 = card_01 + 1;\n        } while (card_01 < active_cards_count[player_00]);\n      }\n      player_00 = player_00 + 1;\n    } while (player_00 != 2);\n  }\n  bVar1 = cards_data[src->internal_card_id].type;\n  if ((bVar1 & 2) != 0) {\n    creature_count[argument1] = creature_count[argument1] + 1;\n  }\n  if ((bVar1 & 0x40) != 0) {\n    artifact_count[argument1] = artifact_count[argument1] + 1;\n  }\n  if ((bVar1 & 4) != 0) {\n    enchantment_count[argument1] = enchantment_count[argument1] + 1;\n  }\n  types_of_cards_on_bf[argument1] = types_of_cards_on_bf[argument1] | (uint)bVar1;\n  redraw_libraries();\n  src->token_status = src->token_status | 0x40000008;\n  kill_card_exe(player,card,KILL_EXILE);\n  if ((event_flags._3_1_ & 0x10) != 0) {\n    dispatch_event(argument1,card_00,0x94);\n    return card_00;\n  }\n  return card_00;\n}\n\n",
+            "replacement": "int gain_control_impl_2022(int player, int card)\n{\n  card_instance_t *src = get_card_instance(player, card);\n  uint32_t old_timestamp = src->timestamp;\n  int new_player = 1 - player;\n  int new_card = add_card_to_hand_exe(new_player, src->internal_card_id);\n  if (new_card != -1)\n  {\n    card_instance_t *dest = get_card_instance(new_player, new_card);\n    memcpy_inst_and_ext(dest, src);\n    dest->state = (dest->state & 0xfffffff3U) | 0x30000U;\n    timestamp_card[old_timestamp] = new_card;\n    timestamp_player[old_timestamp] = new_player;\n    for (int p = 0; p < 2; ++p)\n      for (int c = 0; c < active_cards_count[p]; ++c)\n      {\n        card_instance_t *instance = get_card_instance(p, c);\n        if (instance->damage_target_player == player && instance->damage_target_card == card)\n        {\n          instance->damage_target_player = new_player;\n          instance->damage_target_card = new_card;\n        }\n        if (instance->damage_source_player == player && instance->damage_source_card == card)\n        {\n          instance->damage_source_player = new_player;\n          instance->damage_source_card = new_card;\n        }\n        unsigned int count = instance->number_of_targets;\n        for (unsigned int i = 0; i < count; ++i)\n          if (instance->targets[i].player == player && instance->targets[i].card == card)\n          {\n            instance->targets[i].player = new_player;\n            instance->targets[i].card = new_card;\n          }\n      }\n  }\n  uint8_t type = cards_data[src->internal_card_id].type;\n  if ((type & 2) != 0)\n    ++creature_count[new_player];\n  if ((type & 0x40) != 0)\n    ++artifact_count[new_player];\n  if ((type & 4) != 0)\n    ++enchantment_count[new_player];\n  types_of_cards_on_bf[new_player] |= type;\n  redraw_libraries();\n  src->token_status |= 0x40000008U;\n  kill_card_exe(player, card, KILL_EXILE);\n  if (((uint32_t)event_flags & 0x10000000U) != 0)\n    dispatch_event(new_player, new_card, (event_t)0x94);\n  return new_card;\n}\n",
+            "occurrences": 1,
+            "kind": "native VLA call-frame/control-transfer reconstruction",
+            "machine_sites": [
+              {
+                "address": "26519a1",
+                "bytes": "668bb7c0000000",
+                "instruction": "mov si, word ptr [edi + 0xc0]"
+              },
+              {
+                "address": "26519b8",
+                "bytes": "668b87ae000000",
+                "instruction": "mov ax, word ptr [edi + 0xae]"
+              },
+              {
+                "address": "26519bf",
+                "bytes": "c1e002",
+                "instruction": "shl eax, 2"
+              },
+              {
+                "address": "26519c2",
+                "bytes": "e809a80a00",
+                "instruction": "call 0x26fc1d0"
+              },
+              {
+                "address": "26519c7",
+                "bytes": "29c4",
+                "instruction": "sub esp, eax"
+              },
+              {
+                "address": "26519cc",
+                "bytes": "8d44241c",
+                "instruction": "lea eax, [esp + 0x1c]"
+              },
+              {
+                "address": "26519d0",
+                "bytes": "c7442404a2560000",
+                "instruction": "mov dword ptr [esp + 4], 0x56a2"
+              },
+              {
+                "address": "2651c04",
+                "bytes": "e8a70e0600",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "2651e5e",
+                "bytes": "e82d1b0100",
+                "instruction": "call 0x2663990"
+              },
+              {
+                "address": "26520f9",
+                "bytes": "e852600100",
+                "instruction": "call 0x2668150"
+              },
+              {
+                "address": "265214f",
+                "bytes": "89c6",
+                "instruction": "mov esi, eax"
+              },
+              {
+                "address": "265249b",
+                "bytes": "e8e0e6ffff",
+                "instruction": "call 0x2650b80"
+              },
+              {
+                "address": "2663a51",
+                "bytes": "81ce08000040",
+                "instruction": "or esi, 0x40000008"
+              },
+              {
+                "address": "2663ab1",
+                "bytes": "0d00000300",
+                "instruction": "or eax, 0x30000"
+              },
+              {
+                "address": "2663abc",
+                "bytes": "890495f0765000",
+                "instruction": "mov dword ptr [edx*4 + 0x5076f0], eax"
+              },
+              {
+                "address": "2663aca",
+                "bytes": "893495c07e5000",
+                "instruction": "mov dword ptr [edx*4 + 0x507ec0], esi"
+              }
+            ]
+          }
+        ],
+        "canonical_calls": [
+          {
+            "address": "2663aa1",
+            "bytes": "e86aef0400",
+            "target": "26b2a10",
+            "name": "memcpy_inst_and_ext"
+          }
+        ]
+      },
+      "reconstruction": "Full native VLA-backed global tutoring and scalar frontend, separate native destination/origin values, Opposition Agent routing and native control transfer. Preserve shuffle stages, return values, ownership, original fixed arrays and source bodies.",
+      "reconstruction_body_sha256": "c64dbfadf38c0a90fe2d12b01dc64ddf2cba7a461c7283d9ff1a18ae2a03a238"
+    },
+    {
+      "name": "new_global_tutor_2022",
+      "address": "2651990",
+      "source": "functions/tutors.c",
+      "line": "389",
+      "static": false,
+      "prototype": "int new_global_tutor_2022(int player, int targ_player, int search_location, int destination,\n                          int must_select, int ai_selection_mode, test_definition_2022_t *this_test);",
+      "raw_sha256": "8452584bcb1167164e29e9e5eea4a0fc0b6f66a3bab976cf1a065a9cc2442e41",
+      "recovered_literals": [],
+      "global_tutor_evidence": {
+        "machine_bytes": 2875,
+        "machine_sha256": "d5fe4f5a33ec6aad5c34ab58a6f56a5a28b7ac1883a80fe35c4e8137123f3095",
+        "changes": [
+          {
+            "original": "\n\n\n\n\n\n\nint new_global_tutor(int player,int targ_player,int search_location,int destination,int must_select,\n                    int ai_selection_mode,test_definition_t *this_test)\n\n{\n  uint *puVar1;\n  int iVar2;\n  kill_t kVar3;\n  ushort uVar4;\n  uint uVar5;\n  int iVar6;\n  int *piVar7;\n  uint uVar8;\n  card_instance_t *pcVar9;\n  int iVar10;\n  card_instance_t *pcVar11;\n  uint uVar12;\n  bool bVar13;\n  type_t tStackY_64;\n  kill_t kStack_58;\n  uint uStack_54;\n  kill_t akStack_50 [3];\n  uint uStack_44;\n  card_instance_t *pcStack_40;\n  uint uStack_3c;\n  bool bStack_36;\n  bool bStack_35;\n  int iStack_34;\n  int iStack_30;\n  uint uStack_2c;\n  uint *puStack_28;\n  kill_t kStack_24;\n  int iStack_20;\n  uint uStack_1c;\n  card_instance_t *pcStack_18;\n  uint *puStack_14;\n  \n                    \n  uVar4 = this_test->no_shuffle;\n  tStackY_64 = 0x26519b3;\n  uStack_3c = (uint)uVar4;\n  kStack_24 = new_get_test_score(this_test);\n  uVar5 = (uint)this_test->qty;\n  tStackY_64 = 0x26519c7;\n  iVar2 = uVar5 * -4;\n  *(undefined4 *)(&stack0xffffffa4 + iVar2) = 0x56a2;\n  puStack_28 = &uStack_44 + -uVar5;\n  *(card_instance_t **)(&stack0xffffffa0 + iVar2) = (card_instance_t *)(1 - player);\n  pcStack_18 = (card_instance_t *)(1 - player);\n  (&tStackY_64)[-uVar5] = 0x26519ed;\n  iVar6 = check_battlefield_for_id\n                    (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n  bStack_36 = player == targ_player;\n  bStack_35 = uVar4 == 0 && search_location == 1;\n  if ((iVar6 == 0) || (player != targ_player || search_location != 1)) {\n    iStack_34 = CONCAT31(iStack_34._1_3_,destination == 2 && bStack_35);\n    bStack_35 = bStack_35 && destination != 2;\n    pcStack_18 = (card_instance_t *)player;\n    if (search_location == 5) {\n      puStack_14 = (uint *)0x2;\n    }\n    else {\n      puStack_14 = (uint *)search_location;\n    }\n  }\n  else {\n    iStack_34 = (uint)iStack_34._1_3_ << 8;\n    bStack_36 = pcStack_18 == (card_instance_t *)targ_player;\n    destination = 0xe;\n    puStack_14 = (uint *)0x1;\n  }\n  if (this_test->qty == 0) {\n    if ((char)iStack_34 == '\\0') {\n      iStack_30 = 0;\n      if (search_location == 4) {\nLAB_026524b8:\n        uStack_2c = 0;\n        uStack_1c = 0xffffffff;\n        goto LAB_02651ecc;\n      }\n    }\n    else {\n      *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n      (&tStackY_64)[-uVar5] = 0x265247e;\n      shuffle(*(int *)(&stack0xffffffa0 + iVar2));\n      iStack_30 = 0;\n    }\nLAB_02652485:\n    uStack_2c = 0;\n    uStack_1c = 0xffffffff;\n  }\n  else {\n                    \n    iStack_30 = 0;\n    iStack_20 = 0;\n    uStack_1c = 0;\n    uStack_2c = destination - 4;\n    do {\n      kVar3 = kStack_24;\n      if (puStack_14 == (uint *)0x6) {\n                    \n        *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n        (&tStackY_64)[-uVar5] = 0x2651b48;\n        iVar6 = get_tutoring_denial(*(int *)(&stack0xffffffa0 + iVar2));\n        if (iVar6 == 0) {\n          *(undefined4 *)(&stack0xffffffa4 + iVar2) = 0x22b9;\n          *(int *)(&stack0xffffffa0 + iVar2) = 1 - targ_player;\n          (&tStackY_64)[-uVar5] = 0x2651b65;\n          iVar6 = check_battlefield_for_id\n                            (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          uVar12 = 0;\n          if (iVar6 != 0) {\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2651d20;\n            iVar6 = count_deck(*(int *)(&stack0xffffffa0 + iVar2));\n            if (3 < iVar6) {\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x2651d31;\n              iVar6 = count_deck(*(int *)(&stack0xffffffa0 + iVar2));\n              uVar12 = iVar6 - 4;\n            }\n          }\n          while( true ) {\n            *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n            (&tStackY_64)[-uVar5] = 0x2651ba5;\n            iVar6 = count_deck(*(int *)(&stack0xffffffa0 + iVar2));\n            kVar3 = kStack_24;\n            if (iVar6 <= (int)uVar12) break;\n            (&uStack_54)[-uVar5] = (uint)this_test;\n            (&kStack_58)[-uVar5] = kVar3;\n            iVar6 = deck_ptr[targ_player][uVar12];\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            *(int *)(&stack0xffffffa4 + iVar2) = iVar6;\n            (&tStackY_64)[-uVar5] = 0x2651b91;\n            iVar6 = new_make_test(*(int *)(&stack0xffffffa0 + iVar2),\n                                  *(int *)(&stack0xffffffa4 + iVar2),(&kStack_58)[-uVar5],\n                                  (test_definition_t *)(&uStack_54)[-uVar5]);\n            if (iVar6 != 0) {\n              if (uVar12 != 0xffffffff) {\n                piVar7 = deck_ptr[targ_player];\n                goto LAB_02651ca8;\n              }\n              break;\n            }\n            uVar12 = uVar12 + 1;\n          }\n        }\n        puStack_14 = (uint *)0x1;\nLAB_02651bb0:\n        uVar4 = this_test->qty;\n        if (1 < uVar4) break;\n        iStack_30 = -2;\n      }\n      else {\n        akStack_50[2 - uVar5] = (kill_t)this_test;\n        akStack_50[1 - uVar5] = kVar3;\n        akStack_50[-uVar5] = ai_selection_mode;\n        (&uStack_54)[-uVar5] = must_select;\n        (&kStack_58)[-uVar5] = search_location;\n        pcVar9 = pcStack_18;\n        *(int *)(&stack0xffffffa4 + iVar2) = targ_player;\n        *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n        (&tStackY_64)[-uVar5] = 0x2651aa7;\n        uVar12 = new_select_a_card(*(int *)(&stack0xffffffa0 + iVar2),\n                                   *(int *)(&stack0xffffffa4 + iVar2),(&kStack_58)[-uVar5],\n                                   (&uStack_54)[-uVar5],akStack_50[-uVar5],akStack_50[1 - uVar5],\n                                   (test_definition_t *)akStack_50[2 - uVar5]);\n        iVar6 = iStack_20;\n        if (uVar12 == 0xffffffff) goto LAB_02651bb0;\n        if (puStack_14 == (uint *)0x2) {\n          piVar7 = graveyard_ptr_mutable[targ_player];\nLAB_02651c27:\n          (&kStack_58)[-uVar5] = KILL_DESTROY;\n          puStack_14 = (uint *)(piVar7 + uVar12);\n          uVar8 = piVar7[uVar12];\n          *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n          *(uint *)(&stack0xffffffa4 + iVar2) = (uint)cards_data[uVar8].type;\n          (&tStackY_64)[-uVar5] = 0x2651c51;\n          iVar6 = grafdiggers_cages(*(int *)(&stack0xffffffa0 + iVar2),\n                                    *(type_t *)(&stack0xffffffa4 + iVar2),(&kStack_58)[-uVar5]);\n          if ((iVar6 == 0) || ((1 < uStack_2c && (destination != 8)))) {\n            puStack_28[iStack_20] = *puStack_14;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2651c83;\n            remove_card_from_grave\n                      (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n            iStack_20 = iStack_20 + 1;\n          }\n          else {\n            puStack_28[iStack_20] = 0xffffffff;\n          }\n          puStack_14 = (uint *)0x2;\n        }\n        else {\n          piVar7 = deck_ptr[targ_player];\n          if (puStack_14 == (uint *)0x3) {\n            piVar7 = rfg_ptr[targ_player];\nLAB_02651ad4:\n            uVar12 = piVar7[uVar12];\n            puStack_28[iStack_20] = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            *(uint *)(&stack0xffffffa4 + iVar2) = (uint)cards_data[uVar12].id;\n            (&tStackY_64)[-uVar5] = 0x2651afc;\n            remove_card_from_rfg\n                      (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n            iStack_20 = iVar6 + 1;\n          }\n          else if (puStack_14 == (uint *)0x4) {\n            if (destination == 7) {\n              *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x265214c;\n              uVar12 = get_id(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2))\n              ;\n              puStack_28[iStack_20] = uVar12;\n            }\n            else {\n              puStack_28[iStack_20] = uVar12;\n            }\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2651c09;\n            pcVar9 = get_card_instance(*(int *)(&stack0xffffffa0 + iVar2),\n                                       *(int *)(&stack0xffffffa4 + iVar2));\n            iStack_20 = iStack_20 + 1;\n            pcVar9->state = pcVar9->state | 0x20;\n          }\n          else if (puStack_14 == (uint *)0x1) {\nLAB_02651ca8:\n            puStack_14 = (uint *)piVar7;\n            if ((card_instance_t *)targ_player == pcStack_18) {\n              (&kStack_58)[-uVar5] = KILL_BURY;\n              *(undefined4 *)(&stack0xffffffa4 + iVar2) = 0x600;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x2652133;\n              set_trap_condition(*(int *)(&stack0xffffffa0 + iVar2),\n                                 *(int *)(&stack0xffffffa4 + iVar2),(&kStack_58)[-uVar5]);\n            }\n            puVar1 = (uint *)((int *)puStack_14 + uVar12);\n            (&kStack_58)[-uVar5] = KILL_BURY;\n            puStack_14 = puVar1;\n            uVar8 = *puVar1;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            *(uint *)(&stack0xffffffa4 + iVar2) = (uint)cards_data[uVar8].type;\n            (&tStackY_64)[-uVar5] = 0x2651cdb;\n            iVar6 = grafdiggers_cages(*(int *)(&stack0xffffffa0 + iVar2),\n                                      *(type_t *)(&stack0xffffffa4 + iVar2),(&kStack_58)[-uVar5]);\n            if ((iVar6 == 0) || ((1 < uStack_2c && (destination != 8)))) {\n              puStack_28[iStack_20] = *puStack_14;\n              *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x2651d05;\n              remove_card_from_deck\n                        (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n              iStack_20 = iStack_20 + 1;\n            }\n            else {\n              puStack_28[iStack_20] = 0xffffffff;\n            }\n            puStack_14 = (uint *)0x1;\n          }\n          else {\n            if (puStack_14 == (uint *)0x2) goto LAB_02651c27;\n            if (puStack_14 == (uint *)0x3) goto LAB_02651ad4;\n          }\n        }\n        uVar4 = this_test->qty;\n        if (1 < this_test->create_minideck) {\n          this_test->create_minideck = this_test->create_minideck - 1;\n        }\n      }\n      uStack_1c = uStack_1c + 1;\n    } while ((int)uStack_1c < (int)(uint)uVar4);\n    puVar1 = puStack_28;\n    if ((char)iStack_34 == '\\0') {\n      if (search_location != 4) goto LAB_02651d64;\n      if (iStack_20 < 1) goto LAB_026524b8;\n      iVar6 = 0;\n      do {\n        uVar12 = puVar1[iVar6];\n        *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n        *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n        iVar6 = iVar6 + 1;\n        (&tStackY_64)[-uVar5] = 0x2652240;\n        pcVar9 = get_card_instance(*(int *)(&stack0xffffffa0 + iVar2),\n                                   *(int *)(&stack0xffffffa4 + iVar2));\n        pcVar9->state = pcVar9->state & 0xffffffdf;\n      } while (iStack_20 != iVar6);\n    }\n    else {\n      *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n      (&tStackY_64)[-uVar5] = 0x26523ad;\n      shuffle(*(int *)(&stack0xffffffa0 + iVar2));\nLAB_02651d64:\n      if (iStack_20 < 1) goto LAB_02652485;\n    }\n                    \n    iStack_34 = 0;\n    uStack_2c = 0;\n    uStack_1c = 0xffffffff;\n    uStack_44 = (int)puStack_14 - 2;\n    iVar6 = 0;\n    do {\n      pcVar9 = pcStack_18;\n      uVar12 = puStack_28[iVar6];\n      if (uVar12 != 0xffffffff) {\n        uStack_2c = uStack_2c + 1;\n        switch(destination) {\n        case 1:\n        case 0xb:\n        case 0xd:\n          bVar13 = (card_instance_t *)(uint)(destination == 1) == pcStack_18;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n          pcStack_40 = (card_instance_t *)CONCAT31(pcStack_40._1_3_,bVar13 && uStack_3c != 2);\n          if (destination == 0xb) {\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2652298;\n            uStack_1c = add_card_to_hand(*(int *)(&stack0xffffffa0 + iVar2),\n                                         *(int *)(&stack0xffffffa4 + iVar2));\n            pcVar9 = (card_instance_t *)targ_player;\n            if ((char)pcStack_40 != '\\0') goto code_r0x026522a7;\n          }\n          else {\n            *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n            (&tStackY_64)[-uVar5] = 0x2651f33;\n            uStack_1c = add_card_to_hand(*(int *)(&stack0xffffffa0 + iVar2),\n                                         *(int *)(&stack0xffffffa4 + iVar2));\n            pcVar9 = pcStack_18;\n            if ((char)pcStack_40 == '\\0') {\ncode_r0x02651f43:\n              if (destination != 0xd) goto code_r0x02651f4d;\n            }\n            else {\ncode_r0x026522a7:\n              if ((uStack_44 < 2) ||\n                 ((kStack_24 != KILL_0 && ((kStack_24 != KILL_BURY || (this_test->type != 0xff))))))\n              {\n                pcStack_40 = pcVar9;\n                *(uint *)(&stack0xffffffa4 + iVar2) = uStack_1c;\n                *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n                (&uStack_54)[-uVar5] = 0xffffffff;\n                (&kStack_58)[-uVar5] = ~KILL_0;\n                (&tStackY_64)[-uVar5] = 0x26522e4;\n                reveal_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                            (&kStack_58)[-uVar5],(&uStack_54)[-uVar5]);\n                pcVar9 = pcStack_40;\n                goto code_r0x02651f43;\n              }\n              if (destination != 0xd) break;\n            }\n            uVar8 = uStack_1c;\n            *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n            (&kStack_58)[-uVar5] = 0x200000;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            pcStack_40 = pcVar9;\n            (&tStackY_64)[-uVar5] = 0x2652446;\n            add_state(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                      (&kStack_58)[-uVar5]);\n            pcVar9 = pcStack_40;\n          }\ncode_r0x02651f4d:\n          uVar8 = uStack_1c;\n          if (puStack_14 == (uint *)0x2) {\n            *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            (&tStackY_64)[-uVar5] = 0x2651f66;\n            from_grave_to_hand_triggers\n                      (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          }\n          break;\n        case 2:\n                    \n          if (puStack_14 == (uint *)0x4) {\n            uStack_1c = uVar12;\n          }\n          uVar8 = uStack_1c;\n          if (((kStack_24 == KILL_0) && ((this_test->type == 0 || (this_test->type == 0xff)))) ||\n             (pcStack_18 != (card_instance_t *)0x1)) {\n            if (puStack_14 != (uint *)0x4) {\n              (&kStack_58)[-uVar5] = KILL_0;\n              *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x2652059;\n              put_iid_under_the_first_x_cards_of_library\n                        (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                         (&kStack_58)[-uVar5]);\n              break;\n            }\n          }\n          else if (puStack_14 == (uint *)0x4) {\n            (&uStack_54)[-uVar5] = 0xffffffff;\n            (&kStack_58)[-uVar5] = ~KILL_0;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            *(undefined4 *)(&stack0xffffffa0 + iVar2) = 1;\n            (&tStackY_64)[-uVar5] = 0x2652471;\n            reveal_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                        (&kStack_58)[-uVar5],(&uStack_54)[-uVar5]);\n          }\n          else {\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x26521de;\n            uVar8 = add_card_to_hand_invisible\n                              (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2)\n                              );\n            (&uStack_54)[-uVar5] = 0xffffffff;\n            (&kStack_58)[-uVar5] = ~KILL_0;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            *(undefined4 *)(&stack0xffffffa0 + iVar2) = 1;\n            uStack_1c = uVar8;\n            (&tStackY_64)[-uVar5] = 0x2652201;\n            reveal_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                        (&kStack_58)[-uVar5],(&uStack_54)[-uVar5]);\n          }\n          uVar8 = uStack_1c;\n          *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n          (&tStackY_64)[-uVar5] = 0x2652210;\n          put_on_top_of_deck(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          break;\n        case 3:\n          if (puStack_14 == (uint *)0x4) {\n            (&uStack_54)[-uVar5] = 0;\n            (&kStack_58)[-uVar5] = (kill_t)pcVar9;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2652005;\n            new_discard_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                             (&kStack_58)[-uVar5],(&uStack_54)[-uVar5]);\n            uStack_1c = uVar12;\n          }\n          else {\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2652264;\n            uVar8 = add_card_to_hand(*(int *)(&stack0xffffffa0 + iVar2),\n                                     *(int *)(&stack0xffffffa4 + iVar2));\n            uStack_1c = uVar8;\n            if (puStack_14 == (uint *)0x1) {\n              *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x26523fd;\n              put_on_top_of_deck(*(int *)(&stack0xffffffa0 + iVar2),\n                                 *(int *)(&stack0xffffffa4 + iVar2));\n              *(undefined4 *)(&stack0xffffffa4 + iVar2) = 1;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x265240d;\n              mill(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n            }\n            else {\n              (&kStack_58)[-uVar5] = KILL_DESTROY;\n              *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x2652288;\n              kill_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                        (&kStack_58)[-uVar5]);\n            }\n          }\n          break;\n        case 4:\n        case 5:\n        case 8:\n                    \n          uStack_1c = uVar12;\n          if (puStack_14 != (uint *)0x4) {\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2651ddd;\n            uStack_1c = add_card_to_hand(*(int *)(&stack0xffffffa0 + iVar2),\n                                         *(int *)(&stack0xffffffa4 + iVar2));\n          }\n          uVar8 = uStack_1c;\n          *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n          (&tStackY_64)[-uVar5] = 0x2651def;\n          pcStack_40 = get_card_instance(*(int *)(&stack0xffffffa0 + iVar2),\n                                         *(int *)(&stack0xffffffa4 + iVar2));\n          uVar8 = uStack_1c;\n          if ((card_instance_t *)targ_player != pcStack_18) {\n            bVar13 = pcStack_18 == (card_instance_t *)0x0;\n            (&kStack_58)[-uVar5] = 0x1000;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            if (bVar13) {\n              (&tStackY_64)[-uVar5] = 0x2651e18;\n              add_state(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                        (&kStack_58)[-uVar5]);\n            }\n            else {\n              (&tStackY_64)[-uVar5] = 0x265234d;\n              remove_state(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                           (&kStack_58)[-uVar5]);\n            }\n          }\n          uVar8 = uStack_1c;\n          if ((destination == 5) || (destination == 8)) {\n            pcStack_40->state = pcStack_40->state | 0x10;\n            if (puStack_14 == (uint *)0x2) goto code_r0x026521a6;\ncode_r0x02651e36:\n            if (puStack_14 == (uint *)0x1) {\n              (&kStack_58)[-uVar5] = 0x10000;\n              *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n              *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n              (&tStackY_64)[-uVar5] = 0x26523ec;\n              set_special_flags(*(int *)(&stack0xffffffa0 + iVar2),\n                                *(int *)(&stack0xffffffa4 + iVar2),(&kStack_58)[-uVar5]);\n            }\n          }\n          else {\n            if (puStack_14 != (uint *)0x2) goto code_r0x02651e36;\ncode_r0x026521a6:\n            (&kStack_58)[-uVar5] = KILL_BURY;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x26521bd;\n            set_special_flags3(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2)\n                               ,(&kStack_58)[-uVar5]);\n          }\n          uVar8 = uStack_1c;\n          *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n          (&tStackY_64)[-uVar5] = 0x2651e4f;\n          put_into_play(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          uVar8 = uStack_1c;\n          if ((card_instance_t *)targ_player != pcStack_18) {\n                    \n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            (&tStackY_64)[-uVar5] = 0x2651e63;\n            uVar8 = gain_control_impl(*(int *)(&stack0xffffffa0 + iVar2),\n                                      *(int *)(&stack0xffffffa4 + iVar2));\n            pcVar9 = pcStack_18;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n            *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n            uStack_1c = uVar8;\n            (&tStackY_64)[-uVar5] = 0x2651e75;\n            pcStack_40 = get_card_instance(*(int *)(&stack0xffffffa0 + iVar2),\n                                           *(int *)(&stack0xffffffa4 + iVar2));\n          }\n          if (destination == 8) {\n            pcStack_40->state = pcStack_40->state | 4;\n            *(uint *)(&stack0xffffffa4 + iVar2) = uStack_1c;\n            *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n            (&tStackY_64)[-uVar5] = 0x26523d0;\n            choose_who_attack(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2))\n            ;\n          }\n          break;\n        case 6:\n          if (puStack_14 == (uint *)0x4) {\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x2652334;\n            uVar8 = get_id(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            uStack_1c = uVar8;\n            (&tStackY_64)[-uVar5] = 0x2652343;\n            rfg_card_in_hand(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          }\n          else {\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            uStack_1c = (uint)cards_data[uVar12].id;\n            (&tStackY_64)[-uVar5] = 0x2651fce;\n            add_card_to_rfg(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          }\n          *(undefined4 *)(&stack0xffffffa0 + iVar2) = 0x17;\n          (&tStackY_64)[-uVar5] = 0x2651fda;\n          play_sound_effect(*(wav_t *)(&stack0xffffffa0 + iVar2));\n          break;\n        case 10:\n        case 0xc:\n          pcStack_40 = (card_instance_t *)deck_ptr[targ_player];\n          if (puStack_14 == (uint *)0x4) {\n                    \n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x26522f8;\n            iVar10 = count_deck(*(int *)(&stack0xffffffa0 + iVar2));\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            pcStack_40 = (card_instance_t *)(pcStack_40->color_id + iVar10 * 4 + -0x40);\n            (&tStackY_64)[-uVar5] = 0x265230d;\n            iVar10 = get_original_internal_card_id\n                               (*(int *)(&stack0xffffffa0 + iVar2),\n                                *(int *)(&stack0xffffffa4 + iVar2));\n            pcStack_40->special_counters = (char)iVar10;\n            pcStack_40->counters2 = (char)((uint)iVar10 >> 8);\n            pcStack_40->counters3 = (char)((uint)iVar10 >> 0x10);\n            pcStack_40->counters4 = (char)((uint)iVar10 >> 0x18);\n            *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            (&tStackY_64)[-uVar5] = 0x265231e;\n            obliterate_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          }\n          else {\n                    \n            *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n            uStack_1c = (uint)cards_data[uVar12].id;\n            (&tStackY_64)[-uVar5] = 0x2651f9c;\n            iVar10 = count_deck(*(int *)(&stack0xffffffa0 + iVar2));\n            *(uint *)(pcStack_40->color_id + iVar10 * 4 + -0x40) = uVar12;\n          }\n          break;\n        case 0xe:\n                    \n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n          *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n          (&tStackY_64)[-uVar5] = 0x265206f;\n          uStack_1c = add_card_to_hand(*(int *)(&stack0xffffffa0 + iVar2),\n                                       *(int *)(&stack0xffffffa4 + iVar2));\n          *(uint *)(&stack0xffffffa4 + iVar2) = uStack_1c;\n          *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n          (&tStackY_64)[-uVar5] = 0x2652081;\n          pcVar11 = get_card_instance(*(int *)(&stack0xffffffa0 + iVar2),\n                                      *(int *)(&stack0xffffffa4 + iVar2));\n          pcVar9 = pcStack_18;\n          uVar8 = uStack_1c;\n          pcVar11->state = pcVar11->state | 0x20;\n          *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n          iVar10 = hand_count[(int)pcVar9];\n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar8;\n          (&uStack_54)[-uVar5] = 0xffffffff;\n          (&kStack_58)[-uVar5] = ~KILL_0;\n          hand_count[(int)pcVar9] = iVar10 + -1;\n          (&tStackY_64)[-uVar5] = 0x26520bb;\n          reveal_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                      (&kStack_58)[-uVar5],(&uStack_54)[-uVar5]);\n          *(int *)(&stack0xffffffa0 + iVar2) = player;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uVar12;\n          (&tStackY_64)[-uVar5] = 0x26520ca;\n          add_card_to_rfg(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n          uVar4 = cards_data[uVar12].id;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uStack_1c;\n          (&uStack_54)[-uVar5] = (uint)uVar4;\n          pcVar9 = pcStack_18;\n          akStack_50[-uVar5] = KILL_DESTROY;\n          (&kStack_58)[-uVar5] = player;\n          *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n          (&tStackY_64)[-uVar5] = 0x26520fe;\n          create_may_play_card_from_exile_effect\n                    (*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2),\n                     (&kStack_58)[-uVar5],(&uStack_54)[-uVar5],akStack_50[-uVar5]);\n          pcVar9 = pcStack_18;\n          *(uint *)(&stack0xffffffa4 + iVar2) = uStack_1c;\n          *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcVar9;\n          (&tStackY_64)[-uVar5] = 0x2652110;\n          obliterate_card(*(int *)(&stack0xffffffa0 + iVar2),*(int *)(&stack0xffffffa4 + iVar2));\n        }\n        if (-1 < this_test->storage) {\n          *(int *)(&stack0xffffffa4 + iVar2) = this_test->storage;\n          *(card_instance_t **)(&stack0xffffffa0 + iVar2) = pcStack_18;\n          (&tStackY_64)[-uVar5] = 0x2651ea4;\n          pcVar9 = get_card_instance(*(int *)(&stack0xffffffa0 + iVar2),\n                                     *(int *)(&stack0xffffffa4 + iVar2));\n          pcVar9->targets[iStack_34].card = uVar12;\n          iStack_34 = iStack_34 + 1;\n        }\n      }\n      iVar6 = iVar6 + 1;\n    } while (iVar6 < iStack_20);\n  }\n  pcVar9 = pcStack_18;\n  if ((search_location == 6) && (bStack_36 != false)) {\n    (&tStackY_64)[-uVar5] = 0x26524a0;\n    side_effects_to_tutor_deck_from_permanents((int)pcVar9,*(int *)(&stack0xffffffa0 + iVar2));\n  }\nLAB_02651ecc:\n  if (bStack_35 != false) {\n    *(int *)(&stack0xffffffa0 + iVar2) = targ_player;\n    (&tStackY_64)[-uVar5] = 0x26523a0;\n    shuffle(*(int *)(&stack0xffffffa0 + iVar2));\n  }\n  if (iStack_30 != -2) {\n    if (this_test->qty < 2) {\n      uStack_2c = uStack_1c;\n    }\n    return uStack_2c;\n  }\n  return -2;\n}\n\n",
+            "replacement": "int new_global_tutor_2022(int player, int targ_player, int search_location,\n    int destination, int must_select, int ai_selection_mode, test_definition_2022_t *this_test)\n{\n  int avoid_shuffle = this_test->no_shuffle;\n  int test_type = new_get_test_score_2022(this_test);\n  int capacity = this_test->qty;\n  int tutored[capacity];\n  int selector = 1 - player;\n  int opposition_agent = check_battlefield_for_id(selector, 0x56a2);\n  int self_search = player == targ_player;\n  int shuffle_after = avoid_shuffle == 0 && search_location == TUTOR_FROM2022_DECK;\n  int shuffle_before;\n  int zone;\n  if (!opposition_agent || player != targ_player || search_location != TUTOR_FROM2022_DECK)\n  {\n    shuffle_before = destination == TUTOR2022_DECK && shuffle_after;\n    shuffle_after = shuffle_after && destination != TUTOR2022_DECK;\n    selector = player;\n    zone = search_location == TUTOR_FROM2022_GRAVE_NOTARGET ? TUTOR_FROM2022_GRAVE : search_location;\n  }\n  else\n  {\n    shuffle_before = 0;\n    self_search = selector == targ_player;\n    destination = TUTOR2022_OPPOSITION_AGENT;\n    zone = TUTOR_FROM2022_DECK;\n  }\n\n  int tc = 0;\n  int cancelled = 0;\n  int card_added = -1;\n  int really_tutored = 0;\n  if (this_test->qty != 0)\n  {\n    unsigned int q = 0;\n    do\n    {\n      int selected = -1;\n      if (zone == TUTOR_FROM2022_DECK_AUTO)\n      {\n        if (!get_tutoring_denial_2022(selector))\n        {\n          unsigned int starting_card = 0;\n          if (check_battlefield_for_id(1 - targ_player, 0x22b9) && count_deck(targ_player) > 3)\n            starting_card = count_deck(targ_player) - 4;\n          while ((int)starting_card < count_deck(selector))\n          {\n            if (new_make_test_2022(targ_player, deck_ptr[targ_player][starting_card], test_type, this_test))\n            {\n              selected = starting_card;\n              break;\n            }\n            ++starting_card;\n          }\n        }\n        zone = TUTOR_FROM2022_DECK;\n      }\n      else\n        selected = new_select_a_card_2022(selector, targ_player, search_location,\n            must_select, ai_selection_mode, test_type, this_test);\n\n      if (selected == -1)\n      {\n        if (this_test->qty > 1)\n          break;\n        cancelled = -2;\n      }\n      else\n      {\n        if (zone == TUTOR_FROM2022_GRAVE || zone == TUTOR_FROM2022_DECK)\n        {\n          int *s_location = zone == TUTOR_FROM2022_GRAVE ? graveyard_ptr_mutable[targ_player] : deck_ptr[targ_player];\n          if (zone == TUTOR_FROM2022_DECK && selector == targ_player)\n            set_trap_condition(targ_player, 0x600, 1);\n          int from = zone == TUTOR_FROM2022_GRAVE ? 2 : 1;\n          if (!grafdiggers_cages(targ_player, (type_t)cards_data[s_location[selected]].type, from) ||\n              ((unsigned int)(destination - TUTOR2022_PLAY) > 1 && destination != TUTOR2022_PLAY_ATTACKING))\n          {\n            tutored[tc++] = s_location[selected];\n            if (zone == TUTOR_FROM2022_GRAVE)\n              remove_card_from_grave(targ_player, selected);\n            else\n              remove_card_from_deck(targ_player, selected);\n          }\n          else\n            tutored[tc] = -1;\n        }\n        else if (zone == TUTOR_FROM2022_RFG)\n        {\n          int iid = rfg_ptr[targ_player][selected];\n          tutored[tc++] = iid;\n          remove_card_from_rfg(targ_player, cards_data[iid].id);\n        }\n        else if (zone == TUTOR_FROM2022_HAND)\n        {\n          if (destination == TUTOR2022_GET_ID)\n            selected = get_id(targ_player, selected);\n          tutored[tc++] = selected;\n          get_card_instance(targ_player, selected)->state |= 0x20;\n        }\n        if (this_test->create_minideck > 1)\n          --this_test->create_minideck;\n      }\n      ++q;\n    } while (q < this_test->qty);\n  }\n\n  if (shuffle_before)\n    shuffle(targ_player);\n  else if (search_location == TUTOR_FROM2022_HAND)\n    for (int q = 0; q < tc; ++q)\n      get_card_instance(targ_player, tutored[q])->state &= ~0x20U;\n\n  int storage_loc = 0;\n  for (int q = 0; q < tc; ++q)\n  {\n    int iid = tutored[q];\n    if (iid == -1)\n      continue;\n    ++really_tutored;\n    switch (destination)\n    {\n    case TUTOR2022_HAND:\n    case TUTOR2022_TPLAYER_HAND:\n    case TUTOR2022_HAND_AND_MARK:\n    {\n      int dest_player = destination == TUTOR2022_TPLAYER_HAND ? targ_player : selector;\n      card_added = add_card_to_hand(dest_player, iid);\n      int reveal = selector == (destination == TUTOR2022_HAND) && avoid_shuffle != 2;\n      if (reveal && ((unsigned int)(zone - TUTOR_FROM2022_GRAVE) < 2 ||\n          (test_type != 0 && (test_type != 1 || this_test->type != 0xff))))\n        reveal_card(selector, card_added, -1, -1);\n      if (destination == TUTOR2022_HAND_AND_MARK)\n        add_state(dest_player, card_added, 0x200000);\n      if (zone == TUTOR_FROM2022_GRAVE)\n        from_grave_to_hand_triggers(dest_player, card_added);\n      break;\n    }\n    case TUTOR2022_DECK:\n      if (zone == TUTOR_FROM2022_HAND)\n        card_added = iid;\n      if ((test_type == 0 || (test_type == 1 && this_test->type == 0xff)) || selector != 1)\n      {\n        if (zone != TUTOR_FROM2022_HAND)\n        {\n          put_iid_under_the_first_x_cards_of_library(targ_player, iid, 0);\n          break;\n        }\n      }\n      else if (zone == TUTOR_FROM2022_HAND)\n        reveal_card(1, card_added, -1, -1);\n      else\n      {\n        card_added = add_card_to_hand_invisible(targ_player, iid);\n        reveal_card(1, card_added, -1, -1);\n      }\n      put_on_top_of_deck(targ_player, card_added);\n      break;\n    case TUTOR2022_GRAVE:\n      if (zone == TUTOR_FROM2022_HAND)\n      {\n        new_discard_card(targ_player, iid, selector, 0);\n        card_added = iid;\n      }\n      else\n      {\n        card_added = add_card_to_hand(targ_player, iid);\n        if (zone == TUTOR_FROM2022_DECK)\n        {\n          put_on_top_of_deck(targ_player, card_added);\n          mill(targ_player, 1);\n        }\n        else\n          kill_card(targ_player, card_added, KILL_DESTROY);\n      }\n      break;\n    case TUTOR2022_PLAY:\n    case TUTOR2022_PLAY_TAPPED:\n    case TUTOR2022_PLAY_ATTACKING:\n    {\n      card_added = zone == TUTOR_FROM2022_HAND ? iid : add_card_to_hand(targ_player, iid);\n      card_instance_t *instance = get_card_instance(targ_player, card_added);\n      if (targ_player != selector)\n      {\n        if (selector == 0)\n          add_state(targ_player, card_added, 0x1000);\n        else\n          remove_state(targ_player, card_added, 0x1000);\n      }\n      if (destination == TUTOR2022_PLAY_TAPPED || destination == TUTOR2022_PLAY_ATTACKING)\n        instance->state |= 0x10;\n      if (zone == TUTOR_FROM2022_GRAVE)\n        set_special_flags3_2022(targ_player, card_added, 1);\n      else if (zone == TUTOR_FROM2022_DECK)\n        set_special_flags_2022(targ_player, card_added, 0x10000);\n      put_into_play(targ_player, card_added);\n      if (targ_player != selector)\n      {\n        card_added = gain_control_impl_2022(targ_player, card_added);\n        instance = get_card_instance(selector, card_added);\n      }\n      if (destination == TUTOR2022_PLAY_ATTACKING)\n      {\n        instance->state |= 4;\n        choose_who_attack(selector, card_added);\n      }\n      break;\n    }\n    case TUTOR2022_RFG:\n      if (zone == TUTOR_FROM2022_HAND)\n      {\n        card_added = get_id(targ_player, iid);\n        rfg_card_in_hand(targ_player, iid);\n      }\n      else\n      {\n        card_added = cards_data[iid].id;\n        add_card_to_rfg(targ_player, iid);\n      }\n      play_sound_effect((wav_t)0x17);\n      break;\n    case TUTOR2022_BOTTOM_OF_DECK:\n    case TUTOR2022_BOTTOM_OF_DECK_RANDOM:\n      if (zone == TUTOR_FROM2022_HAND)\n      {\n        int position = count_deck(targ_player);\n        deck_ptr[targ_player][position] = get_original_internal_card_id(targ_player, iid);\n        obliterate_card(targ_player, iid);\n      }\n      else\n      {\n        card_added = cards_data[iid].id;\n        deck_ptr[targ_player][count_deck(targ_player)] = iid;\n      }\n      break;\n    case TUTOR2022_OPPOSITION_AGENT:\n    {\n      card_added = add_card_to_hand(selector, iid);\n      card_instance_t *instance = get_card_instance(selector, card_added);\n      instance->state |= 0x20;\n      --hand_count[selector];\n      reveal_card(selector, card_added, -1, -1);\n      add_card_to_rfg(player, iid);\n      create_may_play_card_from_exile_effect(selector, card_added, player, cards_data[iid].id, 1);\n      obliterate_card(selector, card_added);\n      break;\n    }\n    default:\n      break;\n    }\n    if (this_test->storage >= 0)\n      get_card_instance(selector, this_test->storage)->targets[storage_loc++].card = iid;\n  }\n  if (search_location == TUTOR_FROM2022_DECK_AUTO && self_search)\n    side_effects_to_tutor_deck_from_permanents_2022(selector, targ_player);\n  if (shuffle_after)\n    shuffle(targ_player);\n  if (cancelled == -2)\n    return -2;\n  return this_test->qty < 2 ? card_added : really_tutored;\n}\n",
+            "occurrences": 1,
+            "kind": "native VLA call-frame/control-transfer reconstruction",
+            "machine_sites": [
+              {
+                "address": "26519a1",
+                "bytes": "668bb7c0000000",
+                "instruction": "mov si, word ptr [edi + 0xc0]"
+              },
+              {
+                "address": "26519b8",
+                "bytes": "668b87ae000000",
+                "instruction": "mov ax, word ptr [edi + 0xae]"
+              },
+              {
+                "address": "26519bf",
+                "bytes": "c1e002",
+                "instruction": "shl eax, 2"
+              },
+              {
+                "address": "26519c2",
+                "bytes": "e809a80a00",
+                "instruction": "call 0x26fc1d0"
+              },
+              {
+                "address": "26519c7",
+                "bytes": "29c4",
+                "instruction": "sub esp, eax"
+              },
+              {
+                "address": "26519cc",
+                "bytes": "8d44241c",
+                "instruction": "lea eax, [esp + 0x1c]"
+              },
+              {
+                "address": "26519d0",
+                "bytes": "c7442404a2560000",
+                "instruction": "mov dword ptr [esp + 4], 0x56a2"
+              },
+              {
+                "address": "2651c04",
+                "bytes": "e8a70e0600",
+                "instruction": "call 0x26b2ab0"
+              },
+              {
+                "address": "2651e5e",
+                "bytes": "e82d1b0100",
+                "instruction": "call 0x2663990"
+              },
+              {
+                "address": "26520f9",
+                "bytes": "e852600100",
+                "instruction": "call 0x2668150"
+              },
+              {
+                "address": "265214f",
+                "bytes": "89c6",
+                "instruction": "mov esi, eax"
+              },
+              {
+                "address": "265249b",
+                "bytes": "e8e0e6ffff",
+                "instruction": "call 0x2650b80"
+              },
+              {
+                "address": "2663a51",
+                "bytes": "81ce08000040",
+                "instruction": "or esi, 0x40000008"
+              },
+              {
+                "address": "2663ab1",
+                "bytes": "0d00000300",
+                "instruction": "or eax, 0x30000"
+              },
+              {
+                "address": "2663abc",
+                "bytes": "890495f0765000",
+                "instruction": "mov dword ptr [edx*4 + 0x5076f0], eax"
+              },
+              {
+                "address": "2663aca",
+                "bytes": "893495c07e5000",
+                "instruction": "mov dword ptr [edx*4 + 0x507ec0], esi"
+              }
+            ]
+          }
+        ],
+        "canonical_calls": [
+          {
+            "address": "26519ae",
+            "bytes": "e82dcd0600",
+            "target": "26be6e0",
+            "name": "new_get_test_score_2022"
+          },
+          {
+            "address": "2651aa2",
+            "bytes": "e859f8ffff",
+            "target": "2651300",
+            "name": "new_select_a_card_2022"
+          },
+          {
+            "address": "2651b43",
+            "bytes": "e8f8f5ffff",
+            "target": "2651140",
+            "name": "get_tutoring_denial_2022"
+          },
+          {
+            "address": "2651b8c",
+            "bytes": "e8bfdb0600",
+            "target": "26bf750",
+            "name": "new_make_test_2022"
+          },
+          {
+            "address": "2651c4c",
+            "bytes": "e87fd20200",
+            "target": "267eed0",
+            "name": "grafdiggers_cages"
+          },
+          {
+            "address": "2651cd6",
+            "bytes": "e8f5d10200",
+            "target": "267eed0",
+            "name": "grafdiggers_cages"
+          },
+          {
+            "address": "2651e5e",
+            "bytes": "e82d1b0100",
+            "target": "2663990",
+            "name": "gain_control_impl_2022"
+          },
+          {
+            "address": "26521b8",
+            "bytes": "e863810200",
+            "target": "267a320",
+            "name": "set_special_flags3_2022"
+          },
+          {
+            "address": "26521d9",
+            "bytes": "e8b20c0600",
+            "target": "26b2e90",
+            "name": "add_card_to_hand_invisible"
+          },
+          {
+            "address": "26523e7",
+            "bytes": "e8147a0200",
+            "target": "2679e00",
+            "name": "set_special_flags_2022"
+          },
+          {
+            "address": "265249b",
+            "bytes": "e8e0e6ffff",
+            "target": "2650b80",
+            "name": "side_effects_to_tutor_deck_from_permanents_2022"
+          }
+        ]
+      },
+      "reconstruction": "Full native VLA-backed global tutoring and scalar frontend, separate native destination/origin values, Opposition Agent routing and native control transfer. Preserve shuffle stages, return values, ownership, original fixed arrays and source bodies.",
+      "reconstruction_body_sha256": "51098b3dc2a1cf9b802e118bba95525126d281940fe66a4d388bb668e6bc28dc"
+    },
+    {
+      "name": "global_tutor_2022",
+      "address": "26524d0",
+      "source": "functions/tutors.c",
+      "line": "689",
+      "static": false,
+      "prototype": "int global_tutor_2022(int player, int targ_player, int search_location, int destination,\n                      int must_select, int ai_selection_mode, int type, int flag1, int subtype,\n                      int flag2, int color, int flag3, int id, int flag4, int cc, int flag5);",
+      "raw_sha256": "1a38933b8127403eb7536a09a7b1c807b24ee9894acc46f82a0e21123f1d1a87",
+      "recovered_literals": [],
+      "global_tutor_evidence": {
+        "machine_bytes": 154,
+        "machine_sha256": "7960fe54f1dd523f0abee6ddee9c10a1a20411dd0e3cca747dcb4d1c1622eea9",
+        "changes": [],
+        "canonical_calls": [
+          {
+            "address": "26524eb",
+            "bytes": "e8c0c60600",
+            "target": "26bebb0",
+            "name": "default_test_definition_2022"
+          },
+          {
+            "address": "265255b",
+            "bytes": "e830f4ffff",
+            "target": "2651990",
+            "name": "new_global_tutor_2022"
+          }
+        ]
+      },
+      "reconstruction": "Full native VLA-backed global tutoring and scalar frontend, separate native destination/origin values, Opposition Agent routing and native control transfer. Preserve shuffle stages, return values, ownership, original fixed arrays and source bodies.",
+      "reconstruction_body_sha256": "735a75bfeaa4ecbf6627ae51de89c865dbb809e82f401770ca16fd29dae47d02"
     }
   ],
   "deferred": {
@@ -108185,9 +108504,9 @@
   },
   "applied": true,
   "card_handler_functions": 3033,
-  "helper_functions": 1047,
+  "helper_functions": 1050,
   "private_helpers": 511,
-  "shared_helper_interfaces": 536,
+  "shared_helper_interfaces": 539,
   "deferred_reason_counts": {
     "native address already recovered as sp_ability_trigger_impl_2022": 1,
     "native address already recovered as sp_ability_trigger_2022": 1,
@@ -108539,7 +108858,7 @@
     "card_crucible_of_worlds": "int card_crucible_of_worlds(int player, int card, event_t event);",
     "card_bribery": "int card_bribery(int player, int card, event_t event);"
   },
-  "latest_batch_accepted": 12,
+  "latest_batch_accepted": 3,
   "private_functions": 520,
   "recovery_passes": [
     {
@@ -109374,12 +109693,24 @@
       "new_unsigned_action_type": 1,
       "new_canonical_raw_entries": 6,
       "new_checked_source_units": 1
+    },
+    {
+      "implementations": 3,
+      "card_functions": 0,
+      "helpers": 3,
+      "sub_batches": [
+        3
+      ],
+      "private_helpers": 0,
+      "public_helpers": 3,
+      "new_canonical_raw_entries": 2,
+      "new_checked_source_units": 0
     }
   ],
-  "raw_export_entries": 4623,
-  "last_screen_accepted": 4,
+  "raw_export_entries": 4625,
+  "last_screen_accepted": 0,
   "provenance_audit": {
-    "functions": 4080,
+    "functions": 4083,
     "source_fragments": 40,
     "stack_storage_functions": 88,
     "recovered_literal_arguments": 1588,
@@ -109461,23 +109792,17 @@
     }
   },
   "source_prefix_check": {
-    "previous_units": 138,
-    "new_checked_source_units": 1,
-    "new_implementations": 12,
-    "new_card_functions": 4,
-    "new_helpers": 8,
-    "new_private_helpers": 2,
-    "new_public_helpers": 6,
-    "exposed_existing_native_public_helpers": 1,
-    "migrated_native_scalar_callers": 1,
-    "added_executable_network_aliases": 2,
-    "new_unsigned_action_type": 1,
-    "native_action_worker_ranges": 2,
-    "native_action_worker_bytes": 852,
-    "new_canonical_raw_entries": 6,
-    "raw_export_entries": 4623,
-    "raw_original_names": 4566,
-    "status": "All earlier C token prefixes survive after reversing one verified scalar callee binding and restoring the existing counter-number wrapper static qualifier. Its body is unchanged. Earlier implementation records change only for that binding and the documented native-public exposure. Existing fragments, globals, interface components and stack evidence remain intact. Definitions add only the native unsigned action type; the header adds the new interfaces and the linker appends two verified network aliases."
+    "previous_units": 139,
+    "new_checked_source_units": 0,
+    "new_implementations": 3,
+    "new_card_functions": 0,
+    "new_helpers": 3,
+    "new_private_helpers": 0,
+    "new_public_helpers": 3,
+    "new_canonical_raw_entries": 2,
+    "raw_export_entries": 4625,
+    "raw_original_names": 4568,
+    "status": "All earlier implementation records and C token prefixes survive unchanged. Existing source fragments, globals, interface components, stack evidence and linker script are preserved. Only the three new native interfaces and separate tutor domains are added."
   },
   "source_fragments": [
     {

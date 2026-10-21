@@ -22,7 +22,7 @@ estimate of remaining implementations or changed gameplay.
 
 ## Recovered source
 
-- **4,080 function implementations:** 3,033 functions named `card_*` and 1,047
+- **4,083 function implementations:** 3,033 functions named `card_*` and 1,050
   helpers, in **139 checked C source units**, including units containing only
   recovered engine/AI fragments.
 - The second pass added **340 implementations: 273 `card_*` functions and 67
@@ -264,11 +264,14 @@ estimate of remaining implementations or changed gameplay.
   random permanent choice and copy helpers unblock Last One Standing, Sakashima
   of a Thousand Faces, Sakashima's Will and Pretender's Claim. The action worker
   includes both hot/cold ranges and retains an unsigned 32-bit action domain.
+- The fifty-fourth pass added **three public helpers**: native global tutoring,
+  its scalar wrapper and control transfer. The tutor uses a quantity-sized VLA
+  and distinct 2022 destination values; earlier source interfaces are retained.
 - 21 previously missing C files were created. They include Strixhaven, Modern
   Horizons 1/2, Commander Legends, Throne of Eldraine, War of the Spark,
   Zendikar Rising, Commander 2020, and `functions/draft.c`.
 - 520 recovered functions retain private/static linkage, including nine private
-  implementation helpers whose names begin with `card_`. There are 536 recovered
+  implementation helpers whose names begin with `card_`. There are 539 recovered
   public helpers; shared declarations live in the existing `manalink.h`.
 - Every function has its target address and original DWARF source unit/line
   recorded immediately above its implementation.
@@ -2131,6 +2134,21 @@ linker appends the two network aliases. The canonical cache has 4,623 rows and
 stack-array state and remains deferred for a full reconstruction; native
 linkage and gameplay checks remain pending.
 
+The fifty-fourth pass reconstructs `new_global_tutor_2022`,
+`global_tutor_2022` and `gain_control_impl_2022` in the original tutor/control
+source files. Native stack allocation and DWARF establish that the tutor's
+selection array has `test.qty` elements, read from the 16-bit field at offset
+174. Separate native tutor domains preserve the destination values shifted by
+one from the old source and the new automatic-deck origin. The body retains
+Opposition Agent routing, shuffle stages, cancellation results, Cage handling,
+ownership changes and the target's unusual hand-ID indexing behavior. Control
+transfer preserves timestamp-array updates, target retargeting and the native
+tail behavior when allocation fails. These three bodies have native instruction
+and replay evidence; earlier implementations and evidence remain unchanged.
+All 139 source units and ABI checks pass. The canonical cache now has 4,625 rows
+and 4,568 original names. Earlier consumers still need deliberate migration to
+the shifted destination values; native linkage and gameplay checks remain pending.
+
 Some code retains decompiler-style temporaries and control flow. Numeric
 constants are retained where a reliable symbolic reconstruction has not been
 established. These are provisional reconstructed implementations, not claims of
@@ -2147,11 +2165,11 @@ original formatting, original macros or proven behavioral equivalence.
   definition `strncasecmp=_strnicmp` for existing configuration parsing code.
   Its game source was not changed for that portability issue.
 - Recovered string/character literals were checked against the raw exports.
-- All 4,080 recorded raw-export hashes and source provenance markers were checked,
+- All 4,083 recorded raw-export hashes and source provenance markers were checked,
   along with supporting exports, forty source fragments, fifty-two recovered global
   declarations, local enum values, array endpoint replacements and 1,588
   recovered literal arguments, plus two independently verified literal pointer
-  stores, sixteen reconstructed literal references and 1,457 manually
+  stores, sixteen reconstructed literal references and 1,460 manually
   reconstructed/qualified function body hashes.
 - Reconstructed stack-storage body hashes were checked for all 88 functions in
   the shared storage registry, and the known cross-type local cast pattern is

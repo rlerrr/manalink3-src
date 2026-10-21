@@ -139,7 +139,8 @@ def main():
                 use_phyrexian_api_2022=bool(function.get('phyrexian_interface_2022')),
                 use_spell_trigger_api_2022=bool(function.get('spell_trigger_interface_2022')),
                 use_death_trigger_api_2022=bool(function.get('death_trigger_interface_2022')),
-                use_action_api_2022=bool(function.get('action_interface_2022')))
+                use_action_api_2022=bool(function.get('action_interface_2022')),
+                use_global_tutor_api_2022=bool(function.get('global_tutor_interface_2022')))
             formatted = format_bytes(candidate.encode("utf-8"))
             if tokens(current) != tokens(formatted) or comments(current) != comments(formatted):
                 skipped.append(relative + "::" + function["name"])
