@@ -6665,7 +6665,7 @@ static int vizkopa_guildmage_legacy(int player, int card, event_t event)
   {
     event_flags = event_flags | 0x200000;
     amount =
-        trigger_gain_life(player, card, EVENT_STATIC_EFFECTS, player, RESOLVE_TRIGGER_MANDATORY);
+        trigger_gain_life_2022(player, card, EVENT_STATIC_EFFECTS, player, RESOLVE_TRIGGER_MANDATORY);
     if (amount == 0)
     {
       return 0;
@@ -6673,7 +6673,7 @@ static int vizkopa_guildmage_legacy(int player, int card, event_t event)
   }
   else
   {
-    amount = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+    amount = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
     if (amount == 0)
       goto joined_r0x02515e30;
   }
@@ -6684,7 +6684,7 @@ static int vizkopa_guildmage_legacy(int player, int card, event_t event)
   }
   else
   {
-    lose_the_game(1 - player);
+    lose_the_game_2022(1 - player);
   }
 joined_r0x02515e30:
   if (event != EVENT_CLEANUP)

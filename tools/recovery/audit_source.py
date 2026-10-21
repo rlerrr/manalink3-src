@@ -124,7 +124,7 @@ def main():
                                  function.get('native_entry_callee_binding_2022') or function.get('level_buddy_evidence') or
                                  function.get('native_level_buddy_callee_binding_2022') or function.get('native_dependency_bindings_2022') or
                                  function.get('ward_guard_evidence') or function.get('phyrexian_cost_evidence') or
-                                 function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022') or function.get('global_tutor_evidence'))
+                                 function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022') or function.get('global_tutor_evidence') or function.get('energy_card_evidence') or function.get('specific_cip_evidence') or function.get('activation_operand_evidence') or function.get('life_core_evidence') or function.get('native_life_callee_binding_2022') or function.get('cannot_lose_evidence') or function.get('native_cannot_lose_callee_binding_2022') or function.get('lichs_mastery_evidence') or function.get('life_loss_evidence') or function.get('native_life_loss_callee_binding_2022') or function.get('oath_life_loss_evidence'))
             if target_validation:
                 literal_input = target_validation_input(literal_input, target_validation, function['address'], machine_bytes)
                 for change in target_validation['changes']:
@@ -324,6 +324,31 @@ def main():
                 for original,replacement in global_tutor_interface['translations'].items():
                     if mapping.get(original)!=replacement or not re.search(r'\b'+replacement+r'\b',body):
                         raise ValueError('Native global-tutor interface/domain mismatch')
+            life_loss_interface=function.get('life_loss_interface_2022')
+            if life_loss_interface:
+                from promote_recovery import LIFE_LOSS_API_NAMES
+                for original,replacement in life_loss_interface['calls'].items():
+                    if LIFE_LOSS_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Native life-loss interface mismatch')
+            cannot_lose_interface=function.get('cannot_lose_interface_2022')
+            if cannot_lose_interface:
+                from promote_recovery import CANNOT_LOSE_API_NAMES
+                for original,replacement in cannot_lose_interface['calls'].items():
+                    if CANNOT_LOSE_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Native cannot-lose interface mismatch')
+            life_interface=function.get('life_interface_2022')
+            if life_interface:
+                from promote_recovery import LIFE_API_NAMES,LIFE_ENUM_NAMES
+                mapping={**LIFE_API_NAMES,**LIFE_ENUM_NAMES}
+                for original,replacement in life_interface['translations'].items():
+                    if mapping.get(original)!=replacement or not re.search(r'\b'+replacement+r'\b',body):
+                        raise ValueError('Native life interface/event domain mismatch')
+            specific_cip_interface=function.get('specific_cip_interface_2022')
+            if specific_cip_interface:
+                from promote_recovery import SPECIFIC_CIP_API_NAMES
+                for original,replacement in specific_cip_interface['calls'].items():
+                    if SPECIFIC_CIP_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Native specific enters-play interface mismatch')
             action_interface=function.get('action_interface_2022')
             if action_interface:
                 from promote_recovery import ACTION_API_NAMES
@@ -367,7 +392,7 @@ def main():
                         function.get('entry_trigger_evidence') or function.get('native_entry_callee_binding_2022') or
                         function.get('level_buddy_evidence') or function.get('native_level_buddy_callee_binding_2022') or
                         function.get('native_dependency_bindings_2022') or function.get('ward_guard_evidence') or
-                        function.get('phyrexian_cost_evidence') or function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022') or function.get('global_tutor_evidence'))
+                        function.get('phyrexian_cost_evidence') or function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022') or function.get('global_tutor_evidence') or function.get('energy_card_evidence') or function.get('specific_cip_evidence') or function.get('activation_operand_evidence') or function.get('life_core_evidence') or function.get('native_life_callee_binding_2022') or function.get('cannot_lose_evidence') or function.get('native_cannot_lose_callee_binding_2022') or function.get('lichs_mastery_evidence') or function.get('life_loss_evidence') or function.get('native_life_loss_callee_binding_2022') or function.get('oath_life_loss_evidence'))
             if consumer:
                 for call in consumer['canonical_calls']:
                     at=int(call['address'],16);data=bytes.fromhex(call['bytes'])
@@ -914,7 +939,10 @@ def main():
                               ('native_level_buddy_callers_2022','native_level_buddy_callee_binding_2022'),
                               ('native_phyrexian_callers_2022','native_phyrexian_callee_binding_2022'),
                               ('native_death_trigger_callers_2022','native_death_trigger_callee_binding_2022'),
-                              ('native_action_callers_2022','native_action_callee_binding_2022')]:
+                              ('native_action_callers_2022','native_action_callee_binding_2022'),
+                              ('native_life_callers_2022','native_life_callee_binding_2022'),
+                              ('native_cannot_lose_callers_2022','native_cannot_lose_callee_binding_2022'),
+                              ('native_life_loss_callers_2022','native_life_loss_callee_binding_2022')]:
         scalar_callers=interfaces.get(component)
         if not scalar_callers:continue
         try:
@@ -1064,6 +1092,62 @@ def main():
                 raise ValueError('Native activation mana-payment linker binding mismatch')
         except (ValueError,OSError,KeyError) as error:
             issues.append(dict(source='functions/functions.c',name='activated_core_2022',error=str(error)))
+    oath_loss=interfaces.get('oath_life_loss_2022')
+    if oath_loss:
+        try:
+            from audit_oath_loss import audit_component
+            audit_component(oath_loss,manifest,sources,machine_bytes,image,root,interfaces)
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='cards/ice_age.c',name='oath_life_loss_2022',error=str(error)))
+    life_loss=interfaces.get('life_loss_2022')
+    if life_loss:
+        try:
+            from audit_life_loss import audit_component
+            audit_component(life_loss,manifest,sources,machine_bytes,interfaces)
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='functions/functions.c',name='life_loss_2022',error=str(error)))
+    lich_loss=interfaces.get('lichs_mastery_loss_2022')
+    if lich_loss:
+        try:
+            from audit_lich_loss import audit_component
+            audit_component(lich_loss,manifest,sources,machine_bytes,image,root)
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='cards/dominaria.c',name='lichs_mastery_loss_2022',error=str(error)))
+    cannot_lose=interfaces.get('cannot_lose_core_2022')
+    if cannot_lose:
+        try:
+            from audit_cannot_lose import audit_component
+            audit_component(cannot_lose,manifest,sources,machine_bytes,interfaces)
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='functions/functions.c',name='cannot_lose_core_2022',error=str(error)))
+    life_core=interfaces.get('life_core_2022')
+    if life_core:
+        try:
+            from audit_life_core import audit_component
+            audit_component(life_core,manifest,sources,machine_bytes,root)
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='functions/functions.c',name='life_core_2022',error=str(error)))
+    activation_operands=interfaces.get('activation_operand_cards_2022')
+    if activation_operands:
+        try:
+            from recover_activation_operand_cards import audit_component
+            audit_component(activation_operands,manifest,sources,machine_bytes)
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='cards/aether_revolt.c',name='activation_operand_cards_2022',error=str(error)))
+    specific_cip=interfaces.get('specific_cip_2022')
+    if specific_cip:
+        try:
+            from audit_specific_cip import audit_component
+            audit_component(specific_cip,manifest,sources,machine_bytes)
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='functions/functions.c',name='specific_cip_2022',error=str(error)))
+    energy_cards=interfaces.get('energy_card_operands_2022')
+    if energy_cards:
+        try:
+            from audit_energy_cards import audit_component
+            audit_component(energy_cards,manifest,sources,machine_bytes,interfaces)
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='cards/aether_revolt.c',name='energy_card_operands_2022',error=str(error)))
     global_tutor=interfaces.get('global_tutor_core_2022')
     if global_tutor:
         try:

@@ -1099,7 +1099,7 @@ int card_sanguine_bond(int player, int card, event_t event)
   card_instance_t *instance;
   int iVar3;
 
-  iVar1 = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  iVar1 = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (iVar1 != 0)
   {
     instance = in_play(player, card);
@@ -1112,7 +1112,7 @@ int card_sanguine_bond(int player, int card, event_t event)
       }
       else
       {
-        lose_the_game(1 - player);
+        lose_the_game_2022(1 - player);
       }
     }
   }

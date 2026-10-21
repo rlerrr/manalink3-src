@@ -3760,7 +3760,7 @@ int card_grollub(int player, int card, event_t event)
     {
 
       instance = get_card_instance(player, card);
-      gain_life(1 - player, instance->targets[7].card);
+      gain_life_2022(1 - player, instance->targets[7].card);
       instance->targets[7].card = 0;
       return 0;
     }
@@ -4051,7 +4051,7 @@ int card_necrologia(int player, int card, event_t event)
       }
       else
       {
-        lose_life(player, iVar2);
+        lose_life_2022(player, iVar2);
         instance->info_slot = iVar2;
       }
     }

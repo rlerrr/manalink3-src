@@ -1571,7 +1571,7 @@ int card_vraskas_contempt(int player, int card, event_t event)
           if (result != 0)
           {
             kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
-            gain_life(player, 2);
+            gain_life_2022(player, 2);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -3150,7 +3150,7 @@ int card_wildgrowth_walker(int player, int card, event_t event)
   if ((event == EVENT_EXPLORE) && (affected_card_controller == player))
   {
     add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
-    gain_life(player, 3);
+    gain_life_2022(player, 3);
   }
   return 0;
 }
@@ -4063,7 +4063,7 @@ int card_huatli_warrior_poet(int player, int card, event_t event)
       if (iVar7 == 1)
       {
         iVar7 = get_highest_power(player);
-        gain_life(player, iVar7);
+        gain_life_2022(player, iVar7);
       }
       else if (iVar7 == 2)
       {

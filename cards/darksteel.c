@@ -3542,7 +3542,7 @@ int card_ageless_entity(int player, int card, event_t event)
   int num;
   card_instance_t *instance;
 
-  num = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  num = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (num != 0)
   {
     instance = in_play(player, card);
@@ -3648,7 +3648,7 @@ int card_well_of_lost_dreams(int player, int card, event_t event)
   card_instance_t *instance;
   int iVar5;
 
-  iVar3 = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  iVar3 = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   iVar1 = max_x_value;
   iVar2 = x_value;
 

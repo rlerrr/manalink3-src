@@ -167,7 +167,7 @@ int card_inspired_ultimatum(int player, int card, event_t event)
       result = valid_target(&td_player);
       if (result != 0)
       {
-        gain_life(instance->targets[0].player, 5);
+        gain_life_2022(instance->targets[0].player, 5);
       }
       result = validate_target(player, card, &td_any, 1);
       if (result != 0)
@@ -311,7 +311,7 @@ int card_dire_tactics(int player, int card, event_t event)
             if (result == 0)
             {
               result = get_toughness(instance->targets[0].player, instance->targets[0].card);
-              lose_life(player, result);
+              lose_life_2022(player, result);
             }
             kill_target0(player, card, KILL_EXILE);
           }

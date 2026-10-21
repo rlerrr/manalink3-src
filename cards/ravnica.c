@@ -7376,7 +7376,7 @@ int card_searing_meditation(int player, int card, event_t event)
   card_instance_t *instance;
   target_definition_t td;
 
-  result = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  result = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (result != 0)
   {
     instance = in_play(player, card);

@@ -43,7 +43,7 @@ int card_basic_conjuration(int player, int card, event_t event)
     new_default_test_definition(&test3, 2, "Select a creature card to reveal.");
     reveal_top_cards_of_library_and_choose(player, card, player, 6, 0, TUTOR_HAND, 1,
                                            TUTOR_BOTTOM_OF_DECK_RANDOM, 0, &test3);
-    gain_life(player, 3);
+    gain_life_2022(player, 3);
     kill_card(player, card, KILL_DESTROY);
   }
   result = basic_spell(player, card, event);
@@ -133,8 +133,8 @@ int card_crushing_disappointment(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    lose_life(player, 2);
-    lose_life(1 - player, 2);
+    lose_life_2022(player, 2);
+    lose_life_2022(1 - player, 2);
     draw_cards(player, 2);
     kill_card(player, card, KILL_DESTROY);
   }
@@ -316,7 +316,7 @@ int card_environmental_sciences(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     tutor_basic_land(player, 0, 0);
-    gain_life(player, 2);
+    gain_life_2022(player, 2);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -1969,7 +1969,7 @@ int card_blex_vexing_pest(int player, int card, event_t event)
   result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (result != 0)
   {
-    gain_life(player, 4);
+    gain_life_2022(player, 4);
     return 0;
   }
   return 0;
@@ -2018,7 +2018,7 @@ int card_search_for_blex(int player, int card, event_t event)
       iVar2 = iVar2 * 3;
     }
     mill(player, iVar1);
-    lose_life(player, iVar2);
+    lose_life_2022(player, iVar2);
     kill_card(player, card, KILL_DESTROY);
   }
   iVar1 = basic_spell(player, card, event);
@@ -3597,8 +3597,8 @@ int card_restorative_burst(int player, int card, event_t event)
         if (result != -1)
           goto LAB_023d66f4;
       LAB_023d6708:
-        gain_life(player, 4);
-        gain_life(1 - player, 4);
+        gain_life_2022(player, 4);
+        gain_life_2022(1 - player, 4);
       }
       kill_card(player, card, KILL_EXILE);
       goto LAB_023d65bd;
@@ -4477,7 +4477,7 @@ int card_cram_session(int player, int card, event_t event)
 
   if (event == EVENT_RESOLVE_SPELL)
   {
-    gain_life(player, 4);
+    gain_life_2022(player, 4);
     learn(player, card);
     kill_card(player, card, KILL_DESTROY);
   }
@@ -4839,7 +4839,7 @@ int card_overgrown_arch(int player, int card, event_t event)
 
     if (instance->mode == '\x01')
     {
-      gain_life(player, 1);
+      gain_life_2022(player, 1);
     }
     else if (instance->mode == '\x02')
     {
@@ -6579,7 +6579,7 @@ int card_lisette_dean_of_the_root(int player, int card, event_t event)
 
   mdfc_back(player, card, event);
   check_legend_rule(player, card, event);
-  result = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  result = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (result != 0)
   {
     instance = in_play(player, card);
@@ -7027,7 +7027,7 @@ int card_mage_hunter(int player, int card, event_t event)
   {
     return 0;
   }
-  lose_life(1 - player, 1);
+  lose_life_2022(1 - player, 1);
   return 0;
 }
 
@@ -7077,7 +7077,7 @@ int card_professor_onyx(int player, int card, event_t event)
   if (event == EVENT_SPA)
   {
     lose_life(1 - player, 2);
-    gain_life(player, 2);
+    gain_life_2022(player, 2);
     goto LAB_023d7e98;
   }
   if ((event == EVENT_ACTIVATE) || (event == EVENT_CAN_ACTIVATE))
@@ -7373,7 +7373,7 @@ int card_witherbloom_apprentice(int player, int card, event_t event)
     return 0;
   }
   lose_life(1 - player, 1);
-  gain_life(player, 1);
+  gain_life_2022(player, 1);
   return 0;
 }
 
@@ -7385,7 +7385,7 @@ int card_witherbloom_pledgemage(int player, int card, event_t event)
   magecraft_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
   if (event == EVENT_SPA)
   {
-    gain_life(player, 1);
+    gain_life_2022(player, 1);
   }
   result = hybrid(player, card, event);
   return result;
@@ -7980,7 +7980,7 @@ int card_lorehold_command(int player, int card, event_t event)
               result = validate_target(player, card, ptStack_1a4, 1);
               if (result != 0)
               {
-                gain_life(instance->targets[1].player, 3);
+                gain_life_2022(instance->targets[1].player, 3);
               }
             }
           }
@@ -10103,7 +10103,7 @@ int card_strixhaven_stadium(int player, int card, event_t event)
           iVar2 = count_counters(player, card, COUNTER_POINT);
           if (9 < iVar2)
           {
-            lose_the_game(1 - player);
+            lose_the_game_2022(1 - player);
           }
         }
         if (player == iVar3)
@@ -10145,7 +10145,7 @@ int card_daemogoth_woe_eater(int player, int card, event_t event)
   {
     discard(1 - player, 0, player);
     draw_a_card(player);
-    gain_life(player, 2);
+    gain_life_2022(player, 2);
   }
   result = hybrid(player, card, event);
   return result;
@@ -11034,7 +11034,7 @@ LAB_023dc635:
   {
     return 0;
   }
-  lose_life(1 - player, 3);
+  lose_life_2022(1 - player, 3);
   draw_a_card(player);
   return 0;
 }
@@ -11275,7 +11275,7 @@ int card_plumb_the_forbidden(int player, int card, event_t event)
   else if (event == EVENT_RESOLVE_SPELL)
   {
     draw_cards(player, 1);
-    lose_life(player, 1);
+    lose_life_2022(player, 1);
     kill_card(player, card, KILL_DESTROY);
   }
   result = basic_spell(player, card, event);

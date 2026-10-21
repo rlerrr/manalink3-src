@@ -320,7 +320,7 @@ int card_imps_mischief(int player, int card, event_t event)
         {
           deflect_one_target(player, card, EVENT_RESOLVE_SPELL, &td_spell);
           iVar1 = get_cmc(instance->targets[0].player, instance->targets[0].card);
-          lose_life(player, iVar1);
+          lose_life_2022(player, iVar1);
         }
         kill_card(player, card, KILL_DESTROY);
         return 0;

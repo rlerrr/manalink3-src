@@ -1442,7 +1442,7 @@ int card_invoke_the_divine(int player, int card, event_t event)
           if (result != 0)
           {
             kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-            gain_life(player, 4);
+            gain_life_2022(player, 4);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -2018,7 +2018,7 @@ int card_tatyova_benthic_druid(int player, int card, event_t event)
   {
     return 0;
   }
-  gain_life(player, 1);
+  gain_life_2022(player, 1);
   draw_a_card(player);
   return 0;
 }
@@ -3079,7 +3079,7 @@ int card_firesong_and_sunspeaker(int player, int card, event_t event)
         pcVar1->targets[9].card = affected_card;
       }
     }
-    result = trigger_gain_life(player, card, EVENT_CAST_SPELL, player, RESOLVE_TRIGGER_MANDATORY);
+    result = trigger_gain_life_2022(player, card, EVENT_CAST_SPELL, player, RESOLVE_TRIGGER_MANDATORY);
     if (result == 0)
     {
       return 0;
@@ -3087,7 +3087,7 @@ int card_firesong_and_sunspeaker(int player, int card, event_t event)
   }
   else
   {
-    result = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+    result = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
     if (result == 0)
       goto LAB_022cdfbd;
   }
@@ -3606,7 +3606,7 @@ int card_teferi_timebender(int player, int card, event_t event)
       }
       else if (result == 2)
       {
-        gain_life(player, 2);
+        gain_life_2022(player, 2);
         draw_cards(player, 2);
       }
       else if (result == 3)
@@ -5040,7 +5040,7 @@ int card_chainers_torment(int player, int card, event_t event)
   if ((event & ~EVENT_SET_LEGACY_EFFECT_NAME) == EVENT_CHAPTER1)
   {
     damage_player(1 - player, 2, player, card);
-    gain_life(player, 2);
+    gain_life_2022(player, 2);
   }
   else if (event == EVENT_CHAPTER3)
   {
@@ -6531,4 +6531,149 @@ int card_deep_freeze(int player, int card, event_t event)
   disabling_aura_ai(player, card, event);
   return result;
 }
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22d04c0; original cards/dominaria.c:2011. */
+int card_lichs_mastery(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  check_legend_rule(player, card, event);
+  hexproof_2022(player, card, event);
+  cannot_lose_the_game_2022(player, card, event, player);
+  result = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if ((result != 0) && (instance = in_play(player, card), instance != NULL))
+  {
+    draw_cards(player, result);
+  }
+  if ((((trigger_condition == 0xd4) &&
+        (result = is_humiliated_for_ability(player, card, AL_TRIG), result == 0)) &&
+       (card == affected_card)) &&
+      (((player == affected_card_controller && (trigger_cause == card)) &&
+        ((trigger_cause_controller == player && (reason_for_trigger_controller == player))))))
+  {
+    if (event == EVENT_TRIGGER)
+    {
+      event_result = event_result | 2;
+    }
+    else if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      suspend_cannot_lose_the_game = 1;
+      lose_the_game_2022(player);
+    }
+    else if (event == EVENT_END_TRIGGER)
+    {
+      suspend_cannot_lose_the_game = 0;
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 Lichs Mastery life-loss helpers. */
+
+typedef union
+{
+  char text[100];
+  test_definition_2022_t test;
+} lichs_mastery_storage_2022_t;
+
+/* ManalinkEh 2022: 0x22ca570; original cards/dominaria.c:1949. */
+static char *target_only_permanents_unless_in_hand_2022(int who_chooses, int player, int card)
+{
+  card_instance_t *instance;
+  int result;
+  instance = in_hand(player, card);
+  if (instance == NULL)
+  {
+    result = is_what(player, card, 0x47);
+    if (result == 0)
+    {
+      return (char *)EXE_STR(0x728F6C);
+    }
+  }
+  return NULL;
+}
+
+
+/* ManalinkEh 2022: 0x22d0100; original cards/dominaria.c:1954. */
+void lichs_mastery_lifeloss_trigger_2022(int player, int card, int amount)
+{
+  target_definition_2022_t td;
+  lichs_mastery_storage_2022_t storage;
+  default_target_definition_2022(player, card, &td, 0);
+  td.zone = 0x300;
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  td.illegal_abilities = 0;
+  td.allow_cancel = 0;
+  td.special = TARGET_SPECIAL_EXTRA_FUNCTION;
+  td.extra = (int32_t)target_only_permanents_unless_in_hand_2022;
+  int grave[amount];
+  target_t tgts[amount + 1];
+  card_instance_t *instance = get_card_instance(player, card);
+  int num_tgts = 0;
+  int i = 0;
+  while (1)
+  {
+    int available = can_target_2022(&td);
+    if ((!available && get_grave(player)[0] == -1) || amount <= i)
+      break;
+    int grave_available = get_grave(player)[0] != -1;
+    int hand_or_play_available = can_target_2022(&td);
+    int choice =
+        dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "\001\014", "\001\003",
+                    "\001\026", "Exile from hand or play", hand_or_play_available, 5,
+                    "Exile from graveyard", grave_available, 10, 0, 0, 0, 0);
+    int next_count = num_tgts + 1;
+    if (choice == 1)
+    {
+      scnprintf(storage.text, 100,
+                "Select a permanent you control or a card from your hand to exile. (%d of %d).",
+                next_count, amount);
+      if (select_target_2022(player, card, &td, storage.text, &tgts[i]))
+      {
+        instance->number_of_targets = 0;
+        state_untargettable(tgts[i].player, tgts[i].card, 1);
+        num_tgts = next_count;
+        grave[i] = 0;
+      }
+      ++i;
+    }
+    else
+    {
+      default_test_definition_2022(&storage.test, 0xff);
+      scnprintf(storage.text, 100, "Select a card to exile (%d of %d).", next_count, amount);
+      new_global_tutor_2022(player, player, TUTOR_FROM2022_GRAVE, TUTOR2022_RFG, 1, 3,
+                            &storage.test);
+      num_tgts = next_count;
+      grave[i] = 1;
+      ++i;
+    }
+  }
+  for (i = 0; i < num_tgts; ++i)
+    if (!grave[i])
+      state_untargettable(tgts[i].player, tgts[i].card, 0);
+  for (i = 0; i < num_tgts; ++i)
+  {
+    if (grave[i])
+      continue;
+    if (in_hand(tgts[i].player, tgts[i].card))
+    {
+      put_on_top_of_deck(tgts[i].player, tgts[i].card);
+      rfg_top_card_of_deck(tgts[i].player);
+    }
+    else
+      kill_card(tgts[i].player, tgts[i].card, KILL_EXILE);
+  }
+}
+
 #endif

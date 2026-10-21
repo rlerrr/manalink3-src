@@ -1543,7 +1543,7 @@ int card_gideon_of_the_trials_emblem(int player, int card, event_t event)
   {
     return 0;
   }
-  cannot_lose_the_game(player, card, event, player);
+  cannot_lose_the_game_2022(player, card, event, player);
   return 0;
 }
 
@@ -2224,7 +2224,7 @@ static int glorious_end_legacy(int player, int card, event_t event)
       result = eot_trigger(player, card, event);
       if (result != 0)
       {
-        lose_the_game(player);
+        lose_the_game_2022(player);
         kill_card(player, card, KILL_EXILE);
       }
     }
@@ -2783,7 +2783,7 @@ int card_wayward_servant(int player, int card, event_t event)
     return 0;
   }
   lose_life(1 - player, 1);
-  gain_life(player, 1);
+  gain_life_2022(player, 1);
   return 0;
 }
 
@@ -2801,7 +2801,7 @@ int card_throne_of_the_god_pharaoh(int player, int card, event_t event)
       default_test_definition(&this_test, 2);
       this_test.state = 0x10;
       result = check_battlefield_for_special_card(player, card, player, 4, &this_test);
-      lose_life(1 - player, result);
+      lose_life_2022(1 - player, result);
     }
   }
   return 0;
@@ -3833,7 +3833,7 @@ int card_cut_ribbons(int player, int card, event_t event)
         instance = get_card_instance(player, card);
         result = x_value;
         instance->targets[1].card = x_value;
-        lose_life(1 - player, result);
+        lose_life_2022(1 - player, result);
         kill_card(player, card, KILL_EXILE);
       }
       kill_card(player, card, KILL_DESTROY);
@@ -4063,7 +4063,7 @@ int card_compulsory_rest(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
     instance = get_card_instance(player, card);
-    gain_life(instance->targets[9].player, 2);
+    gain_life_2022(instance->targets[9].player, 2);
   }
   else if ((event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE) || (event == EVENT_CLEANUP))
   {
@@ -4361,7 +4361,7 @@ int card_cruel_reality(int player, int card, event_t event)
                                SAC_CAUSED | SAC_NO_CANCEL, &test);
         if (result == 0)
         {
-          lose_life(instance->targets[0].player, 5);
+          lose_life_2022(instance->targets[0].player, 5);
         }
       }
     }
@@ -4497,7 +4497,7 @@ int card_trespassers_curse(int player, int card, event_t event)
       if (event == EVENT_ETB)
       {
         lose_life(instance->targets[0].player, 1);
-        gain_life(player, 1);
+        gain_life_2022(player, 1);
       }
     }
   }
@@ -6272,13 +6272,13 @@ int card_luxa_river_shrine(int player, int card, event_t event)
       result = instance->info_slot;
       if (result == 1)
       {
-        gain_life(player, 1);
+        gain_life_2022(player, 1);
         add_counters_from_source(player, card, player, card, COUNTER_BRICK, 1);
         result = instance->info_slot;
       }
       if (result == 2)
       {
-        gain_life(player, 2);
+        gain_life_2022(player, 2);
         return 0;
       }
     }
@@ -6852,7 +6852,7 @@ int card_faith_of_the_devoted(int player, int card, event_t event)
       if (result != 0)
       {
         lose_life(1 - player, 2);
-        gain_life(player, 2);
+        gain_life_2022(player, 2);
       }
     }
   }
@@ -7595,7 +7595,7 @@ int card_bontus_monument(int player, int card, event_t event)
     return 0;
   }
   lose_life(1 - player, 1);
-  gain_life(player, 1);
+  gain_life_2022(player, 1);
   return 0;
 }
 
@@ -8802,4 +8802,64 @@ LAB_022dfac0:
   iVar2 = aura(player, card, event, &td2, "TARGET_CREATURE_YOU_CONTROL");
   return iVar2;
 }
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22e9800; original cards/amonkhet.c:6321. */
+int card_desiccated_naga(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_2022_t td2;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition_2022(player, card, &td2, 0);
+    td2.zone = 0x1000;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = count_subtype(player, 0x47, 0x7009);
+      if (result < 1)
+      {
+        return 0;
+      }
+      result = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE,
+                                              GAA_CAN_ONLY_TARGET_OPPONENT, 3, 1, 0, 0, 0, 0, 0,
+                                              &td2, NULL);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = '\0';
+      result = count_subtype(player, 0x47, 0x7009);
+      if (result < 1)
+      {
+        return 0;
+      }
+      result =
+          generic_activated_ability_2022(player, card, EVENT_ACTIVATE, GAA_CAN_ONLY_TARGET_OPPONENT,
+                                         3, 1, 0, 0, 0, 0, 0, &td2, NULL);
+      return result;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td2, 0);
+    td2.zone = 0x1000;
+    instance = get_card_instance(player, card);
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target_2022(&td2), result != 0))
+  {
+    lose_life(instance->targets[0].player, 2);
+    gain_life(player, 2);
+  }
+  return 0;
+}
+
 #endif

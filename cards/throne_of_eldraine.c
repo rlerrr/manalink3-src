@@ -786,10 +786,10 @@ int card_stormfist_crusader(int player, int card, event_t event)
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
     draw_a_card(current_turn);
-    lose_life(player_00, 1);
+    lose_life_2022(player_00, 1);
     player_01 = current_turn ^ 1;
     draw_a_card(player_01);
-    lose_life(player_01, 1);
+    lose_life_2022(player_01, 1);
   }
   return 0;
 }
@@ -963,7 +963,7 @@ int card_ayara_first_of_locthwain(int player, int card, event_t event)
   if (event == EVENT_ETB)
   {
     lose_life(1 - player, 1);
-    gain_life(player, 1);
+    gain_life_2022(player, 1);
     return 0;
   }
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -3338,7 +3338,7 @@ int card_profane_insight(int player, int card, event_t event)
     if (event == EVENT_RESOLVE_SPELL)
     {
       draw_a_card(player);
-      lose_life(player, 1);
+      lose_life_2022(player, 1);
     }
   }
 LAB_025d3108:
@@ -3477,10 +3477,10 @@ int card_rankle_master_of_pranks(int player, int card, event_t event)
         if (uVar2 != 0)
         {
 
-          lose_life(current_turn, 1);
+          lose_life_2022(current_turn, 1);
           draw_a_card(player_00);
           uVar1 = current_turn ^ 1;
-          lose_life(uVar1, 1);
+          lose_life_2022(uVar1, 1);
           draw_a_card(uVar1);
         }
         if (uVar4 != 0)
@@ -3824,7 +3824,7 @@ int card_swift_end(int player, int card, event_t event)
 
         instance = get_card_instance(player, card);
         kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-        lose_life(player, 2);
+        lose_life_2022(player, 2);
       }
     LAB_025d4919:
       result = adventure(player, card, event, 0x50c6);
@@ -4224,7 +4224,7 @@ int card_kenrith_the_returned_king(int player, int card, event_t event)
     add_counters_from_source(player, card, iVar2, instance->targets[0].card, COUNTER_P1_P1, 1);
     break;
   case 3:
-    gain_life(iVar2, 5);
+    gain_life_2022(iVar2, 5);
     break;
   case 4:
     draw_a_card(iVar2);
@@ -4348,7 +4348,7 @@ int card_the_great_henge(int player, int card, event_t event)
   }
   else if (event == EVENT_ACTIVATE)
   {
-    gain_life(player, 2);
+    gain_life_2022(player, 2);
   }
 LAB_025d580a:
   result = artifact_mana_all_one_color(player, card, event, 2, 0);
@@ -4608,7 +4608,7 @@ int card_castle_locthwain(int player, int card, event_t event)
       if ((event == EVENT_RESOLVE_ACTIVATION) && (0 < instance->info_slot))
       {
         draw_a_card(player);
-        lose_life(player, hand_count[player]);
+        lose_life_2022(player, hand_count[player]);
       }
       return 0;
     }
@@ -5866,7 +5866,7 @@ int card_doom_foretold(int player, int card, event_t event)
       discard(current_turn, 2, player);
       lose_life(current_turn, 2);
       draw_a_card(player);
-      gain_life(player, 2);
+      gain_life_2022(player, 2);
       default_token_definition_2022(player, card, 0x4958, &token);
       token.s_key_plus = 8;
       generate_token_2022(&token);

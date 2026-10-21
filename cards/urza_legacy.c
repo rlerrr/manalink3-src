@@ -2926,7 +2926,7 @@ int card_tethered_skirge(int player, int card, event_t event)
       ptVar3 = becomes_target_of_spell_or_effect(player, card, event, player, card, 2);
       if (ptVar3 != NULL)
       {
-        lose_life(player, 1);
+        lose_life_2022(player, 1);
       }
     }
   }

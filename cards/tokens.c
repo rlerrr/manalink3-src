@@ -558,7 +558,7 @@ int card_food(int player, int card, event_t event)
     }
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
-      gain_life(player, 3);
+      gain_life_2022(player, 3);
     }
   }
   result = generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
@@ -588,7 +588,7 @@ int card_pest_token(int player, int card, event_t event)
     result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (result != 0)
     {
-      gain_life(player, 1);
+      gain_life_2022(player, 1);
     }
   }
   return 0;

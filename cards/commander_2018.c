@@ -2391,7 +2391,7 @@ int card_loyal_subordinate(int player, int card, event_t event)
     result = liutenant(player);
     if (result != 0)
     {
-      lose_life(1 - player, 3);
+      lose_life_2022(1 - player, 3);
       return 0;
     }
   }

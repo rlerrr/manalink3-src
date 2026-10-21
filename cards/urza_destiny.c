@@ -3278,3 +3278,82 @@ LAB_02107e0e:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2109f60; original cards/urza_destiny.c:3050. */
+int card_scrying_glass(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  unsigned char bVar5;
+  unsigned int uStack_68;
+  target_definition_2022_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition_2022(player, card, &td, 0);
+    td.zone = 0x1000;
+    get_card_instance(player, card);
+    goto LAB_02109fd0;
+  }
+  if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+  default_target_definition_2022(player, card, &td, 0);
+  td.zone = 0x1000;
+  instance = get_card_instance(player, card);
+  if ((event != EVENT_RESOLVE_ACTIVATION) || (iVar2 = valid_target_2022(&td), iVar2 == 0))
+    goto LAB_02109fd0;
+  iVar2 = instance->targets[0].player;
+  if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+  {
+    iVar3 = internal_rand(hand_count[iVar2]);
+    iVar3 = iVar3 + 1;
+    iVar4 = get_deck_color(player, iVar2);
+    iVar4 = choose_a_color(player, iVar4);
+    bVar5 = (unsigned char)iVar4;
+    reveal_target_player_hand(iVar2);
+    if (0 < active_cards_count[iVar2])
+      goto LAB_0210a110;
+  }
+  else
+  {
+    do
+    {
+      iVar3 = choose_a_number(player, "Choose a number greater than 0.", hand_count[iVar2]);
+    } while (iVar3 < 1);
+    iVar4 = get_deck_color(player, iVar2);
+    iVar4 = choose_a_color(player, iVar4);
+    bVar5 = (unsigned char)iVar4;
+    reveal_target_player_hand(iVar2);
+    if (active_cards_count[iVar2] < 1)
+      goto LAB_02109fd0;
+  LAB_0210a110:
+    uStack_68 = 1 << (bVar5 & 0x1f);
+    iVar4 = 0;
+    do
+    {
+      instance = in_hand(iVar2, iVar4);
+      if (instance != NULL)
+      {
+        iVar3 = iVar3 + -1 + (unsigned int)(((int)instance->color & uStack_68) == 0);
+      }
+      iVar4 = iVar4 + 1;
+    } while (iVar4 < active_cards_count[iVar2]);
+  }
+  if (iVar3 == 0)
+  {
+    draw_cards(player, 1);
+  }
+LAB_02109fd0:
+  iVar2 = generic_activated_ability_2022(player, card, event,
+                                         (GAA_UNTAPPED | GAA_CAN_ONLY_TARGET_OPPONENT), 3, 0, 0, 0,
+                                         0, 0, 0, &td, NULL);
+  return iVar2;
+}
+
+#endif

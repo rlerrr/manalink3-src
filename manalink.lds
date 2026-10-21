@@ -555,3 +555,6 @@ _engine_dynamic_iid_start_2022 = 0x7A5380;
 /* October 2022 network packet interfaces. */
 _receive_network_packet_2022 = 0x4A70C0;
 _send_network_packet_2022 = 0x4A6BC0;
+
+/* October 2022 life-gain draw counter (inferred name). */
+_life_gain_draw_count_2022 = 0x4EF538;

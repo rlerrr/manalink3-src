@@ -1400,10 +1400,10 @@ int card_blim_comedic_genius(int player, int card, event_t event)
     } while ((target_definition_t *)piStack_70 != &td);
 
     iVar2 = count_permanents_you_control_but_you_dont_own(0, 0x47);
-    lose_life(0, iVar2);
+    lose_life_2022(0, iVar2);
     new_multidiscard(0, iVar2, 2, player);
     iVar2 = count_permanents_you_control_but_you_dont_own(1, 0x47);
-    lose_life(1, iVar2);
+    lose_life_2022(1, iVar2);
     new_multidiscard(1, iVar2, 2, player);
     return 0;
   }
@@ -1614,7 +1614,7 @@ int card_gnostro_voice_of_the_crags(int player, int card, event_t event)
     }
     else if (uVar1 == '\x03')
     {
-      gain_life(player, iVar4);
+      gain_life_2022(player, iVar4);
       return 0;
     }
   }
@@ -1865,11 +1865,11 @@ int card_kwain_itinerant_meddler(int player, int card, event_t event)
 
     if (dc[current_turn] == 1)
     {
-      gain_life(current_turn, 1);
+      gain_life_2022(current_turn, 1);
     }
     if (dc[current_turn ^ 1U] == 1)
     {
-      gain_life(current_turn ^ 1U, 1);
+      gain_life_2022(current_turn ^ 1U, 1);
     }
   }
   result = generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
@@ -3022,7 +3022,7 @@ int card_nightshade_harvester(int player, int card, event_t event)
   {
     return 0;
   }
-  lose_life(1 - player, 1);
+  lose_life_2022(1 - player, 1);
   add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
   return 0;
 }
@@ -3738,7 +3738,7 @@ int card_liesa_shroud_of_dusk(int player, int card, event_t event)
   {
     return 0;
   }
-  lose_life(trigger_cause_controller, 2);
+  lose_life_2022(trigger_cause_controller, 2);
   return 0;
 }
 
@@ -5844,7 +5844,7 @@ int card_nadiers_nightblade(int player, int card, event_t event)
     return 0;
   }
   lose_life(1 - player, 1);
-  gain_life(player, 1);
+  gain_life_2022(player, 1);
   return 0;
 }
 
@@ -7979,6 +7979,32 @@ int card_sakashimas_will(int player, int card, event_t event)
     td3.illegal_abilities = 0;
     td3.allow_cancel = 0;
     get_card_instance(player, card);
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25b21a0; original cards/commander_legends.c:6120. */
+int card_zara_renegade_recruiter(int player, int card, event_t event)
+{
+  int target_card;
+  test_definition_2022_t test;
+
+  check_legend_rule(player, card, event);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if ((event == EVENT_DAT_ABILITY) && (hand_count[1 - player] != 0))
+  {
+
+    new_default_test_definition_2022(&test, 2, "Select a creature card.");
+    target_card = new_global_tutor_2022(player, 1 - player, 4, 8, 0, 2, &test);
+    if (-1 < target_card)
+    {
+      create_targetted_legacy_effect(player, card, bounce_at_eot, player, target_card);
+    }
   }
   return 0;
 }

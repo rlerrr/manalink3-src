@@ -633,7 +633,7 @@ int card_smiting_helix(int player, int card, event_t event)
         if (result != 0)
         {
           damage_target0(player, card, 3);
-          gain_life(player, 3);
+          gain_life_2022(player, 3);
         }
         result = get_flashback(player, card);
         if (result == 0)
@@ -2692,7 +2692,7 @@ LAB_0233a8f2:
   {
     if (iVar1 == 4)
     {
-      gain_life(player, 4);
+      gain_life_2022(player, 4);
     LAB_0233a945:
       kill_card(player, card, KILL_DESTROY);
       return 0;
@@ -3075,7 +3075,7 @@ LAB_0233add7:
       if (0xe < iVar2)
       {
         target_opponent(player, card);
-        lose_the_game(instance->targets[0].player);
+        lose_the_game_2022(instance->targets[0].player);
       }
     }
   }

@@ -201,6 +201,11 @@ ATTACK_API_NAMES={name:name+'_2022' for name in (
 ENTRY_API_NAMES={name:name+'_2022' for name in ('etb_ability','etb_ability_global','evolve','exploit')}
 LEVEL_BUDDY_API_NAMES={name:name+'_2022' for name in ('level_up','buddy_creature')}
 GLOBAL_TUTOR_API_NAMES={name:name+'_2022' for name in ('new_global_tutor','global_tutor','gain_control_impl')}
+SPECIFIC_CIP_API_NAMES={name:name+'_2022' for name in ('specific_cip','new_specific_cip','new_specific_cip_global')}
+LIFE_API_NAMES={name:name+'_2022' for name in ('can_lose_the_game','player_can_gain_life_as_cost','gain_life','gain_life_from_lifelink','lose_the_game','trigger_gain_life')}
+LIFE_ENUM_NAMES={'XTRIGGER_REPLACE_GAIN_LIFE':'XTRIGGER2022_REPLACE_GAIN_LIFE'}
+CANNOT_LOSE_API_NAMES={name:name+'_2022' for name in ('cannot_lose_the_game','cannot_lose_the_game_for_having_less_than_0_life')}
+LIFE_LOSS_API_NAMES={'lose_life':'lose_life_2022','oath_of_lim_dul_lifeloss_trigger':'oath_of_lim_dul_lifeloss_trigger_2022'}
 TUTOR_DESTINATION_NAMES={name:name.replace('TUTOR_','TUTOR2022_',1) for name in ('TUTOR_0','TUTOR_HAND','TUTOR_DECK','TUTOR_GRAVE','TUTOR_PLAY','TUTOR_PLAY_TAPPED','TUTOR_RFG','TUTOR_EXILE','TUTOR_GET_ID','TUTOR_PLAY_ATTACKING','TUTOR_GET_POSITION','TUTOR_BOTTOM_OF_DECK','TUTOR_TPLAYER_HAND','TUTOR_BOTTOM_OF_DECK_RANDOM','TUTOR_HAND_AND_MARK','TUTOR_OPPOSITION_AGENT')}
 TUTOR_ORIGIN_NAMES={name:name.replace('TUTOR_FROM_','TUTOR_FROM2022_',1) for name in ('TUTOR_FROM_DECK','TUTOR_FROM_GRAVE','TUTOR_FROM_RFG','TUTOR_FROM_HAND','TUTOR_FROM_GRAVE_NOTARGET','TUTOR_FROM_DECK_AUTO')}
 TUTOR_DOMAIN_NAMES={'tutor_t':'tutor_destination_2022_t','tutor_from_t':'tutor_from_2022_t'}
@@ -239,7 +244,7 @@ def project_extension_flags(text):
     return re.sub(r'\(\((\w+)->field_21\)\.ext\)->(special_flags[23]?)\b',replace,text),projections
 
 
-def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=(), state_mask_replacements=(), keyword_mask_replacements=(), use_keyword_accessors_2022=False, use_extension_flags_2022=False, use_mana_api_2022=False, use_token_api_2022=False, use_test_api_2022=False, use_target_api_2022=False, use_sacrifice_api_2022=False, use_spell_api_2022=False, use_ability_api_2022=False, use_pump_api_2022=False, use_activated_api_2022=False, use_attack_api_2022=False, use_entry_api_2022=False, use_level_buddy_api_2022=False, use_phyrexian_api_2022=False, use_spell_trigger_api_2022=False, use_death_trigger_api_2022=False, use_action_api_2022=False, use_global_tutor_api_2022=False):
+def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=(), state_mask_replacements=(), keyword_mask_replacements=(), use_keyword_accessors_2022=False, use_extension_flags_2022=False, use_mana_api_2022=False, use_token_api_2022=False, use_test_api_2022=False, use_target_api_2022=False, use_sacrifice_api_2022=False, use_spell_api_2022=False, use_ability_api_2022=False, use_pump_api_2022=False, use_activated_api_2022=False, use_attack_api_2022=False, use_entry_api_2022=False, use_level_buddy_api_2022=False, use_phyrexian_api_2022=False, use_spell_trigger_api_2022=False, use_death_trigger_api_2022=False, use_action_api_2022=False, use_global_tutor_api_2022=False, use_specific_cip_api_2022=False, use_life_api_2022=False, use_cannot_lose_api_2022=False, use_life_loss_api_2022=False):
     text = strip_comments(text).strip()
     for replacement in state_mask_replacements:
         text = text.replace(replacement['original'], replacement['replacement'])
@@ -265,7 +270,11 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
         (use_level_buddy_api_2022,LEVEL_BUDDY_API_NAMES),(use_phyrexian_api_2022,PHYREXIAN_API_NAMES),
         (use_spell_trigger_api_2022,SPELL_TRIGGER_API_NAMES),
         (use_death_trigger_api_2022,DEATH_TRIGGER_API_NAMES),(use_action_api_2022,{**ACTION_API_NAMES,'actions_t':'actions_2022_t'}),
-        (use_global_tutor_api_2022,{**GLOBAL_TUTOR_API_NAMES,**TUTOR_DESTINATION_NAMES,**TUTOR_ORIGIN_NAMES,**TUTOR_DOMAIN_NAMES})]:
+        (use_global_tutor_api_2022,{**GLOBAL_TUTOR_API_NAMES,**TUTOR_DESTINATION_NAMES,**TUTOR_ORIGIN_NAMES,**TUTOR_DOMAIN_NAMES}),
+        (use_specific_cip_api_2022,SPECIFIC_CIP_API_NAMES),
+        (use_life_api_2022,{**LIFE_API_NAMES,**LIFE_ENUM_NAMES}),
+        (use_cannot_lose_api_2022,CANNOT_LOSE_API_NAMES),
+        (use_life_loss_api_2022,LIFE_LOSS_API_NAMES)]:
         if enabled:
             text=re.sub(r'\b(?:'+'|'.join(mapping)+r')\b',lambda m:mapping[m[0]],text)
     for replacement in keyword_mask_replacements:
@@ -516,6 +525,10 @@ def main():
     death_trigger_interface_ready = 'death_trigger_core_2022' in recovered_interfaces
     action_interface_ready = 'action_core_2022' in recovered_interfaces
     global_tutor_interface_ready = 'global_tutor_core_2022' in recovered_interfaces
+    specific_cip_interface_ready = 'specific_cip_2022' in recovered_interfaces
+    life_interface_ready = 'life_core_2022' in recovered_interfaces
+    cannot_lose_interface_ready = 'cannot_lose_core_2022' in recovered_interfaces
+    life_loss_interface_ready = 'life_loss_2022' in recovered_interfaces
     recovered_manifest = root / 'docs/recovery-evidence/recovered-functions.json'
     recovered_addresses = {f['address']:f['name'] for f in json.loads(recovered_manifest.read_text()).get('accepted_functions',[])} if recovered_manifest.exists() else {}
     target_interface_ready = all(key in recovered_interfaces for key in ['target_initializers_2022','target_validation_2022','target_selection_2022'])
@@ -605,7 +618,11 @@ def main():
                      use_spell_trigger_api_2022=spell_trigger_interface_ready,
                      use_death_trigger_api_2022=death_trigger_interface_ready,
                      use_action_api_2022=action_interface_ready,
-                     use_global_tutor_api_2022=global_tutor_interface_ready)
+                     use_global_tutor_api_2022=global_tutor_interface_ready,
+                     use_specific_cip_api_2022=specific_cip_interface_ready,
+                     use_life_api_2022=life_interface_ready,
+                     use_cannot_lose_api_2022=cannot_lose_interface_ready,
+                     use_life_loss_api_2022=life_loss_interface_ready)
         storage_proof = None
         prepared_storage = storage_evidence.get('candidates', {}).get(row['address'])
         if prepared_storage:
@@ -757,6 +774,26 @@ def main():
             if calls:
                 candidates[name]['phyrexian_interface_2022']=dict(calls=calls)
                 adaptations.append('Native Phyrexian availability, casting and activated-cost APIs; original interfaces retained.')
+        if life_loss_interface_ready:
+            calls={old:new for old,new in LIFE_LOSS_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['life_loss_interface_2022']=dict(calls=calls)
+                adaptations.append('Native life-loss engine and recovered gain/Mastery callbacks; original interfaces retained.')
+        if cannot_lose_interface_ready:
+            calls={old:new for old,new in CANNOT_LOSE_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['cannot_lose_interface_2022']=dict(calls=calls)
+                adaptations.append('Native specialized loss-protection worker and public wrappers; original interfaces retained.')
+        if life_interface_ready:
+            translations={old:new for old,new in {**LIFE_API_NAMES,**LIFE_ENUM_NAMES}.items() if re.search(r'\b'+old+r'\b',code_only(strip_comments(raw)))}
+            if translations:
+                candidates[name]['life_interface_2022']=dict(translations=translations)
+                adaptations.append('Native life gain/loss-prevention frontends and replacement trigger value; original interfaces and event domain retained.')
+        if specific_cip_interface_ready:
+            calls={old:new for old,new in SPECIFIC_CIP_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['specific_cip_interface_2022']=dict(calls=calls)
+                adaptations.append('Native specific enters-play frontends use the recovered worker and native test layout; original interfaces retained.')
         if global_tutor_interface_ready:
             translations={old:new for old,new in {**GLOBAL_TUTOR_API_NAMES,**TUTOR_DESTINATION_NAMES,**TUTOR_ORIGIN_NAMES,**TUTOR_DOMAIN_NAMES}.items() if re.search(r'\b'+old+r'\b',code_only(strip_comments(raw)))}
             if translations:

@@ -6265,7 +6265,7 @@ int card_mangaras_blessing(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    gain_life(player, 5);
+    gain_life_2022(player, 5);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -6563,7 +6563,7 @@ int card_shadowbane(int player, int card, event_t event)
               uVar4 = get_sleighted_color_test(player, card, 2);
               if ((uVar3 & uVar4) != 0)
               {
-                gain_life(player, result);
+                gain_life_2022(player, result);
               }
             }
           }
@@ -7044,7 +7044,7 @@ int card_sirocco(int player, int card, event_t event)
           }
           else
           {
-            lose_life(player, 4);
+            lose_life_2022(player, 4);
           }
           iStack_15c = iStack_15c + -1;
         } while (iStack_15c != 0);
@@ -9402,7 +9402,7 @@ int card_reign_of_terror(int player, int card, event_t event)
 
     get_sleighted_color_test(player, card, iVar1);
     iVar1 = new_manipulate_all(player, card, 2, (test_definition_t *)buffer, ACT_KILL_BURY);
-    lose_life(player, iVar1);
+    lose_life_2022(player, iVar1);
   }
   else if (instance->info_slot == 1)
   {
@@ -9456,7 +9456,7 @@ int card_roots_of_life(int player, int card, event_t event)
         iVar2 = has_subtype(affected_card_controller, affected_card, instance->targets[1].player);
         if (iVar2 != 0)
         {
-          gain_life(player, 1);
+          gain_life_2022(player, 1);
         }
       }
     }
@@ -9771,14 +9771,14 @@ int card_soul_echo(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     enters_the_battlefield_with_counters(player, card, EVENT_CAST_SPELL, COUNTER_ECHO,
                                          instance->info_slot);
-    cannot_lose_the_game_for_having_less_than_0_life(player, card, EVENT_CAST_SPELL, player);
+    cannot_lose_the_game_for_having_less_than_0_life_2022(player, card, EVENT_CAST_SPELL, player);
     upkeep_trigger_ability(player, card, EVENT_CAST_SPELL, player);
   }
   else
   {
     instance = get_card_instance(player, card);
     enters_the_battlefield_with_counters(player, card, event, COUNTER_ECHO, instance->info_slot);
-    cannot_lose_the_game_for_having_less_than_0_life(player, card, event, player);
+    cannot_lose_the_game_for_having_less_than_0_life_2022(player, card, event, player);
     upkeep_trigger_ability(player, card, event, player);
     if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
     {
@@ -9946,7 +9946,7 @@ int card_decomposition(int player, int card, event_t event)
     {
     LAB_0238c2d0:
       instance = get_card_instance(player, card);
-      lose_life((int)instance->damage_target_player, 2);
+      lose_life_2022((int)instance->damage_target_player, 2);
     }
     if (event == EVENT_CAN_CAST)
       goto LAB_0238c148;

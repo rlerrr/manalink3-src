@@ -3889,7 +3889,7 @@ static int brood_of_cockroaches_legacy(int player, int card, event_t event)
     result = graveyard_ptr_mutable[owner][position];
     remove_card_from_grave(owner, position);
     add_card_to_hand(owner, result);
-    lose_life(owner, 1);
+    lose_life_2022(owner, 1);
   }
   kill_card(player, card, KILL_EXILE);
   return 0;
@@ -5419,7 +5419,7 @@ int card_heat_wave(int player, int card, event_t event)
                        (unsigned int)(1 < life[1 - current_turn]));
     if (result != 1)
     {
-      lose_life(1 - current_turn, 1);
+      lose_life_2022(1 - current_turn, 1);
       forbid_attack = 0;
       goto LAB_02021847;
     }
@@ -6011,6 +6011,40 @@ int card_talruum_piper(int player, int card, event_t event)
 {
   ability_must_block_me(player, card, event, 0x20, NULL);
   return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2025030; original cards/visions.c:5362. */
+int card_urborg_mindsucker(int player, int card, event_t event)
+{
+  int result;
+  target_definition_2022_t td;
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition_2022(player, card, &td, 0);
+    td.zone = 0x1000;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td, 0);
+    td.zone = 0x1000;
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target_2022(&td), result != 0))
+    {
+      discard(1 - player, 1, player);
+    }
+  }
+  result = generic_activated_ability_2022(
+      player, card, event,
+      (GAA_SACRIFICE_ME | GAA_CAN_SORCERY_BE_PLAYED | GAA_CAN_ONLY_TARGET_OPPONENT), 0, 1, 0, 0, 0,
+      0, 0, &td, NULL);
+  return result;
 }
 
 #endif

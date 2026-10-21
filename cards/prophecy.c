@@ -1727,7 +1727,7 @@ int card_despoil(int player, int card, event_t event)
           if (result != 0)
           {
             kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-            lose_life(instance->targets[0].player, 2);
+            lose_life_2022(instance->targets[0].player, 2);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -4635,7 +4635,7 @@ int lose_2_life_unless_pay_2(int player, int card, event_t event)
                                               (int)instance->damage_target_player, COLOR_ANY, 2),
          result == 0))
     {
-      lose_life((int)instance->damage_target_player, 2);
+      lose_life_2022((int)instance->damage_target_player, 2);
     }
     kill_card(player, card, KILL_EXILE);
     return 0;
@@ -5645,7 +5645,7 @@ int card_rhystic_syphon(int player, int card, event_t event)
               goto LAB_026062b7;
           }
           lose_life(iVar2, 5);
-          gain_life(player, 5);
+          gain_life_2022(player, 5);
         }
       LAB_026062b7:
         kill_card(player, card, KILL_DESTROY);
@@ -5682,7 +5682,7 @@ int gain_2_life_unless_they_pay_2(int player, int card, event_t event)
                                               (int)instance->damage_target_player, COLOR_ANY, 2),
          result == 0))
     {
-      gain_life(player, 2);
+      gain_life_2022(player, 2);
     }
     kill_card(player, card, KILL_EXILE);
     return 0;
@@ -5861,15 +5861,15 @@ int card_celestial_convergence(int player, int card, event_t event)
             iVar1 = life[player];
             if (iVar2 < iVar1)
             {
-              lose_the_game(1 - player);
+              lose_the_game_2022(1 - player);
             }
             else if (iVar1 < iVar2)
             {
-              lose_the_game(player);
+              lose_the_game_2022(player);
             }
             else if (iVar1 == iVar2)
             {
-              lose_the_game(2);
+              lose_the_game_2022(2);
             }
           }
           else

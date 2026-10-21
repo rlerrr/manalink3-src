@@ -2922,7 +2922,7 @@ static void remove_counters_from_source_2022_impl(int player, int card, int t_pl
           if ((iVar4 != 0) && (iVar4 = pick_target(&td, "TARGET_PLAYER"), iVar4 != 0))
           {
             lose_life(instance->targets[0].player, 1);
-            gain_life(player, 1);
+            gain_life_2022(player, 1);
           }
           iVar2 = iVar2 + 1;
         } while (iStack_70 != iVar2);

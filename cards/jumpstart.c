@@ -169,7 +169,7 @@ int card_nocturnal_feeder(int player, int card, event_t event)
     return 0;
   }
   lose_life(1 - player, 2);
-  gain_life(player, 2);
+  gain_life_2022(player, 2);
   return 0;
 }
 
@@ -266,7 +266,7 @@ int card_tinybones_trinket_thief(int player, int card, event_t event)
   if ((result != 0) && (result = get_trap_condition(1 - player, 0x203), result != 0))
   {
     draw_a_card(player);
-    lose_life(player, 1);
+    lose_life_2022(player, 1);
   }
   if (event != EVENT_ACTIVATE)
   {
@@ -276,7 +276,7 @@ int card_tinybones_trinket_thief(int player, int card, event_t event)
     }
     if ((event == EVENT_RESOLVE_ACTIVATION) && (hand_count[1 - player] == 0))
     {
-      lose_life(1 - player, 10);
+      lose_life_2022(1 - player, 10);
     }
   }
   result = generic_activated_ability(player, card, event, 0, 4, 2, 0, 0, 0, 0, 0, NULL, NULL);

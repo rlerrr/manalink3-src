@@ -22,7 +22,7 @@ estimate of remaining implementations or changed gameplay.
 
 ## Recovered source
 
-- **4,083 function implementations:** 3,033 functions named `card_*` and 1,050
+- **4,123 function implementations:** 3,053 functions named `card_*` and 1,070
   helpers, in **139 checked C source units**, including units containing only
   recovered engine/AI fragments.
 - The second pass added **340 implementations: 273 `card_*` functions and 67
@@ -267,16 +267,37 @@ estimate of remaining implementations or changed gameplay.
 - The fifty-fourth pass added **three public helpers**: native global tutoring,
   its scalar wrapper and control transfer. The tutor uses a quantity-sized VLA
   and distinct 2022 destination values; earlier source interfaces are retained.
+- The fifty-fifth pass added **thirteen card handlers**: Zara, Flower // Flourish,
+  The Binding of the Titans and ten Aether Revolt handlers. Fourteen native
+  operand sites establish the packed energy costs, unsigned player-energy reads
+  and opponent-target activation flags. Existing implementations are retained.
+- The fifty-sixth pass added **eight implementations: four helpers and four
+  card handlers**. The specific enters-play worker and three guarded frontends
+  use the native filter layout. Packed activation operands unblock Gonti's
+  Aether Heart, Desiccated Naga, Scrying Glass and Urborg Mindsucker.
+- The fifty-seventh pass added **twelve implementations: three card handlers
+  and nine helpers**. Native life-gain replacement/notification and loss-prevention
+  APIs, two state globals and a verified executable counter alias unblock
+  Exquisite Archangel, Lich's Mastery, Skyshroud Cutter and False Cure's legacy
+  effect. Exact native calls bind 141 earlier recovered functions to these APIs.
+- The fifty-eighth pass added **five helpers**: the specialized cannot-lose
+  worker, two public wrappers, Lich's Mastery's life-loss callback and its private
+  target predicate. Four earlier native callers now use the recovered protection
+  APIs. The callback has verified dynamic array bounds and shared text/test storage.
+- The fifty-ninth pass added **two public helpers**: native life-loss dispatch
+  and Oath of Lim-Dul's callback. Fifty-seven earlier recovered callers gain
+  native loss bindings; the gain worker's two loss calls and the loss engine's
+  Oath callback are coordinated with the recovered implementations.
 - 21 previously missing C files were created. They include Strixhaven, Modern
   Horizons 1/2, Commander Legends, Throne of Eldraine, War of the Spark,
   Zendikar Rising, Commander 2020, and `functions/draft.c`.
-- 520 recovered functions retain private/static linkage, including nine private
-  implementation helpers whose names begin with `card_`. There are 539 recovered
+- 526 recovered functions retain private/static linkage, including nine private
+  implementation helpers whose names begin with `card_`. There are 553 recovered
   public helpers; shared declarations live in the existing `manalink.h`.
 - Every function has its target address and original DWARF source unit/line
   recorded immediately above its implementation.
-- Of the recovered symbols, 3,019 are referenced by the target registration
-  records; 2,937 serve at least one record marked CODED. The remaining functions
+- Of the recovered symbols, 3,039 are referenced by the target registration
+  records; 2,957 serve at least one record marked CODED. The remaining functions
   include callbacks and helper entry points. Counts are functions, not unique
   playable cards or completed mechanics. `cards/stubs.c::card_crab` preserves
   the target's no-op placeholder and is labeled accordingly.
@@ -2149,6 +2170,168 @@ All 139 source units and ABI checks pass. The canonical cache now has 4,625 rows
 and 4,568 original names. Earlier consumers still need deliberate migration to
 the shifted destination values; native linkage and gameplay checks remain pending.
 
+The fifty-fifth pass adds the three handlers unblocked by the native global
+tutor: Zara, Renegade Recruiter; Flower // Flourish; and The Binding of the
+Titans. It also recovers Aetherwind Basker, Consulate Turret, Glint-Sleeve
+Siphoner, Gonti's Machinations, Greenbelt Rampager, Lightning Runner, Peema
+Aether-Seer, Shielded Aether Thief, Shipwreck Moray and Tezzeret's Simulacrum
+in `cards/aether_revolt.c`. Packed energy costs had resembled executable
+addresses to the conservative screen. Native outgoing argument stores at stack
+offset 40 identify the cost word passed to `generic_activated_ability_2022`;
+existing `GVC_PLAYER_COUNTERS(PCOUNTER_ENERGY, n)` macros preserve those exact
+bits. Four unsigned byte comparisons use the energy field at offset 2 with a
+four-byte player stride. Tezzeret's activation mode is a verified combination
+of untapped and opponent-target flags. Consulate Turret's apparent pointer local
+is the integer cost word, with zero and three-energy alternatives. Its prompt
+retains the native mutable pointer interface. No address-range guard was relaxed.
+
+All 139 source units and layout checks pass. Every earlier implementation record
+and C token prefix is preserved; headers, definitions and linker script are
+byte-identical to the preceding batch. Ten manually reconstructed bodies have
+hashes, full native function hashes, replayable operand changes and canonical
+callee proofs. Four recovered dialog arguments are checked against read-only
+bytes. Gonti's Aether Heart remains deferred pending recovery of the native
+`new_specific_cip` aggregate interface. The canonical export cache remains at
+4,625 rows and 4,568 original names; native linking and gameplay remain pending.
+
+The fifty-sixth pass recovers the private `new_specific_cip_impl_2022` worker,
+plus `specific_cip_2022`, `new_specific_cip_2022` and
+`new_specific_cip_global_2022`, in `functions/functions.c`. DWARF proves the
+worker's first three arguments use EAX/EDX/ECX and its remaining four arguments
+use stack words. The public wrappers retain their enters-play trigger guard;
+the worker retains reason/controller checks, optional source/type filtering,
+the 16-bit `not_me` field, trigger mode resolution, target slot 1 stores and
+power/toughness recalculation bits. The scalar frontend constructs the full
+216-byte test and truncates its five flag inputs to their native 16-bit fields.
+Unused `t_player` parameters remain unused, as in the target. All earlier source
+interfaces and implementations are retained.
+
+Gonti's Aether Heart now uses that recovered aggregate interface and an exact
+eight-energy cost. Desiccated Naga, Scrying Glass and Urborg Mindsucker use native
+opponent-target activation flags, with the latter also retaining sacrifice and
+sorcery-speed bits. Five outgoing argument stores prove these four handlers'
+cost/mode values and their native activated-helper destination. Sixteen native
+sites separately cover the enters-play worker's filtering/context and wrapper
+guards/calls. All eight new bodies have native hashes, source hashes and callee
+evidence. The three public declarations are added to `manalink.h`; definitions,
+linker script, earlier implementation records and source token prefixes are
+preserved. All 139 source units and ABI checks pass. The canonical cache now has
+4,628 rows and 4,571 original names. Native linking and gameplay remain pending.
+
+The fifty-seventh pass recovers eight native life helpers in
+`functions/functions.c`: the private gain-life and can-lose workers; ordinary
+and lifelink gain frontends; gain-as-cost permission; public loss permission;
+the game-loss frontend; and the gain-life trigger handler. DWARF proves EAX for
+the private loss worker and EAX/EDX/ECX for the gain worker. Both-player routing,
+replacement callbacks, saved trigger globals, negative replacement results,
+life/trap updates, gain notifications and the post-notification draw/loss paths
+retain their native order. Context push/pop calls retain the existing executable
+void signatures. The game-loss frontend honors the suspension flag and the
+native special-card/speculation branches before reaching the executable hook.
+
+The target uses `0x01000600` for life-gain replacement; the old source's
+Shandalar-only declaration uses `0x01000800`. A separate
+`XTRIGGER2022_REPLACE_GAIN_LIFE` constant preserves the native value without
+changing that earlier declaration. `life_to_lose_on_gain_life` and
+`suspend_cannot_lose_the_game` are reconstructed as external four-byte BSS state,
+with COFF addresses, linkage and DWARF integer types recorded. A two-word
+executable counter at `0x4ef538` controls the draw-on-gain path; its new source
+name, `life_gain_draw_count_2022`, is explicitly inferred. It is a linker alias,
+not separately allocated storage. New state lifecycle and broader integration
+remain pending.
+
+These APIs and declarations unblock Exquisite Archangel, Lich's Mastery,
+Skyshroud Cutter and False Cure's private legacy effect in their original set
+files. In addition, 141 earlier recovered functions in 41 source units now call
+the native public life APIs, with exact native destinations, original records,
+reversible identifier bindings and before/after body hashes retained. Eighty-two
+earlier manual bodies remain deferred for coordinated component migration.
+Twenty-nine native sites pin the core's flags, context calls, state restoration,
+replacement event, executable counter and public/private routes. All 139 source
+units, ABI checks and provenance checks pass. Earlier C token prefixes survive
+after reversing the recorded bindings; prior fragments, globals, interface
+components and stack records are preserved. The canonical cache has 4,631 rows
+and 4,574 original names. Native `lose_life`, the specialized cannot-lose
+suppression worker, linking and gameplay verification remain pending; recovered
+handlers do not imply completed card mechanics.
+
+The fifty-eighth pass recovers `cannot_lose_the_game_impl_2022` and both public
+protection wrappers in `functions/functions.c`. DWARF gives `for_life` the
+constant value 1 and no storage: the worker has six physical arguments, with
+three in EAX/EDX/ECX and three stack words. Restoring that specialization fixes
+the decompiled poison/draw arguments. The general wrapper enables both; the
+life-only wrapper disables both. Life suppression is unconditional in this
+native worker. Poison-byte reads use the verified four-byte player stride.
+Hidden life/poison debt, protected-player changes, leaving-play marker 17 and
+empty-library draw suppression retain their native behavior. Four recovered
+callers, including Exquisite Archangel and Lich's Mastery, gain exact native
+public-callee bindings; their earlier records and reversible body hashes remain.
+
+The same pass reconstructs `lichs_mastery_lifeloss_trigger_2022` and its private
+hand/permanent predicate in `cards/dominaria.c`. DWARF and the allocation code
+prove `int grave[amount]` and `target_t tgts[amount + 1]`. The 100-byte prompt
+buffer and 216-byte test have the same stack location; a union preserves that
+storage, with the prompt occupying `test.message` at offset zero. The target
+definition occupies a separate 84 bytes. Eighteen outgoing dialog argument
+stores, nine read-only text values and the VLA/selection/exile instructions are
+recorded independently. The predicate preserves a writable runtime executable
+error-buffer address; it does not invent a static error string. Target-selection
+failure still advances the array index without advancing the successful count;
+the grave tutor return remains ignored, and all selected targets are unmarked
+before exiling. Arrays are not silently initialized or capped. Native hand
+exile still goes through top-of-library removal; permanent exile uses kill mode 4.
+
+All 139 source units, ABI checks and provenance checks pass. Earlier source
+tokens survive after reversing four documented callee bindings; prior globals,
+fragments, interface components and stack registry entries are preserved.
+Headers add only three public prototypes. The canonical cache has 4,634 rows and
+4,577 original names. Native `lose_life` and its routing to the new callback,
+broader integration, linking and gameplay verification remain pending.
+
+Ghidra briefly could not save because the C: drive was nearly full. Removing
+generated compiler scratch copies allowed the export to save successfully.
+Forty-eight older baseline scratch snapshots (passes 7 through 54) were then
+compressed into `.recovery/cache-archives/`; every file was compared byte-for-byte
+before its expanded copy was removed. This reclaimed about 852 MiB. The archive
+index records ZIP hashes, and its README gives restoration instructions for old
+one-time prefix verifiers. Raw exports, source files, Ghidra projects and the
+current baseline snapshots were retained.
+
+The fifty-ninth pass recovers `lose_life_2022` in `functions/functions.c`.
+DWARF identifies a fixed `int marked[2][151]` array at frame offset -1228; the
+native zeroing sequence clears 302 four-byte words. The reconstructed body uses
+`memset` for precisely those 1208 bytes and retains the remaining native control
+flow. All-player recursion, invalid-player/nonpositive-amount returns, life-total
+permission, pre-loss callback-ID snapshots, trigger humiliation checks,
+life/trap/sound updates and player-before-opponent callbacks are retained. The
+engine now calls the recovered gain worker and Lich's Mastery callback. Both
+loss calls in the earlier recovered gain worker use the new routine, with the
+earlier record and reversible body hash retained; its native evidence gains only
+those two proven call sites.
+
+`oath_of_lim_dul_lifeloss_trigger_2022` is recovered in `cards/ice_age.c` from
+the original callback's verified control flow, using the 84-byte target APIs and
+native `amount + 1` target VLA. Failed selection still advances the index without
+advancing the successful count. All targets are unmarked before discarding hand
+cards or sacrificing permanents. Its unchanged private predicate is verified
+against the separate native entry and supporting export, rather than counted as
+a newly recovered implementation. The original callback and predicate remain
+unchanged. The native life-loss engine's one Oath call now uses the recovered
+callback, with its earlier stage record, reversible identifier binding and exact
+native destination retained. The selection prompt is checked against native
+read-only bytes.
+
+Fifty-seven previously recovered functions in 36 source units now use the
+native life-loss entry with exact direct-call evidence; 78 earlier manual bodies
+await coordinated component migrations. All 139 source units, ABI checks and
+provenance checks pass. Earlier source token prefixes survive after reversing
+the recorded public-callee and gain-worker bindings. Existing fragments, globals
+and stack evidence remain intact; the earlier life component changes only for
+the two coordinated loss call proofs. Headers add two public prototypes, with
+definitions and the linker unchanged. The canonical cache has 4,637 rows and
+4,579 original names. Broader lifecycle/dispatch integration, earlier manual
+consumers, native linking and gameplay verification remain pending.
+
 Some code retains decompiler-style temporaries and control flow. Numeric
 constants are retained where a reliable symbolic reconstruction has not been
 established. These are provisional reconstructed implementations, not claims of
@@ -2165,11 +2348,11 @@ original formatting, original macros or proven behavioral equivalence.
   definition `strncasecmp=_strnicmp` for existing configuration parsing code.
   Its game source was not changed for that portability issue.
 - Recovered string/character literals were checked against the raw exports.
-- All 4,083 recorded raw-export hashes and source provenance markers were checked,
-  along with supporting exports, forty source fragments, fifty-two recovered global
-  declarations, local enum values, array endpoint replacements and 1,588
+- All 4,123 recorded raw-export hashes and source provenance markers were checked,
+  along with supporting exports, forty source fragments, fifty-four recovered global
+  declarations, local enum values, array endpoint replacements and 1,599
   recovered literal arguments, plus two independently verified literal pointer
-  stores, sixteen reconstructed literal references and 1,460 manually
+  stores, sixteen reconstructed literal references and 1,695 manually
   reconstructed/qualified function body hashes.
 - Reconstructed stack-storage body hashes were checked for all 88 functions in
   the shared storage registry, and the known cross-type local cast pattern is

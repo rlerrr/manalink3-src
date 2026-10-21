@@ -3175,7 +3175,7 @@ int card_vedalken_ghoul(int player, int card, event_t event)
         result = is_humiliated_for_ability(player, card, AL_TRIG);
         if (result == 0)
         {
-          lose_life(1 - current_turn, 4);
+          lose_life_2022(1 - current_turn, 4);
         }
       }
     }

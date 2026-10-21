@@ -53,7 +53,7 @@ int card_camaraderie(int player, int card, event_t event)
     else if (event == EVENT_RESOLVE_SPELL)
     {
       result = count_permanents_by_type(player, TYPE_CREATURE);
-      gain_life(player, result);
+      gain_life_2022(player, result);
       draw_cards(player, result);
       pump_creatures_until_eot_merge_pt(player, card, player, 1, 1, NULL);
       kill_card(player, card, KILL_DESTROY);
@@ -921,13 +921,13 @@ int card_vraska_golgari_queen_emblem(int player, int card, event_t event)
     uVar4 = uVar3 >> 8 & 0xff;
     for (uVar3 = uVar3 & 0xff; uVar3 != 0; uVar3 = uVar3 - 1)
     {
-      lose_the_game(0);
+      lose_the_game_2022(0);
     }
     if (uVar4 != 0)
     {
       do
       {
-        lose_the_game(1);
+        lose_the_game_2022(1);
         uVar4 = uVar4 - 1;
       } while (uVar4 != 0);
       return 0;
@@ -1827,7 +1827,7 @@ int card_vraska_golgari_queen(int player, int card, event_t event)
       iVar2 = new_sacrifice(player, card, player, SAC_DONE, &test);
       if (iVar2 != 0)
       {
-        gain_life(player, 1);
+        gain_life_2022(player, 1);
         draw_a_card(player);
       }
     }
@@ -2350,7 +2350,7 @@ int card_creeping_chill(int player, int card, event_t event)
     return 0;
   }
   damage_player(1 - player, 3, player, card);
-  gain_life(player, 3);
+  gain_life_2022(player, 3);
   kill_card(player, card, KILL_DESTROY);
   return 0;
 }
@@ -2362,7 +2362,7 @@ int card_dawn_of_hope(int player, int card, event_t event)
   token_generation_t token;
 
   result = duh_mode(player);
-  result = trigger_gain_life(player, card, event, player, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  result = trigger_gain_life_2022(player, card, event, player, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (result != 0)
   {
     result = has_mana(player, 7, 2);
@@ -3818,6 +3818,64 @@ static int is_basic_land_by_internal_id(int iid, int unused, int unused1, int un
   int result;
 
   result = is_basic_land_by_id((unsigned int)cards_data[iid].id);
+  return result;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x261ce20; original cards/guilds_of_ravnica.c:1505. */
+int card_flower_flourish(int player, int card, event_t event)
+{
+  const char *msg;
+  card_instance_t *instance;
+  unsigned int uVar2;
+  int result;
+  test_definition_2022_t this_test;
+
+  msg = get_hacked_land_text(player, card, "Select a basic %s or %s card.", 0x5001, 0x5007);
+  new_default_test_definition_2022(&this_test, 1, msg);
+  this_test.subtype = get_hacked_subtype(player, card, 0x5001);
+  this_test.sub2 = get_hacked_subtype(player, card, 0x5007);
+  this_test.subtype_flag = 3;
+  this_test.special_selection_function = is_basic_land_by_internal_id;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+        goto LAB_0261cf1d;
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          uVar2 = instance->info_slot;
+          if ((uVar2 & 1) != 0)
+          {
+            new_global_tutor_2022(player, player, 1, 1, 0, 1, &this_test);
+            uVar2 = instance->info_slot;
+          }
+          if ((uVar2 & 2) != 0)
+          {
+            pump_subtype_until_eot_2022(player, card, player, -1, 2, 2, 0, 0);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0261cf1d;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+        goto LAB_0261cf1d;
+    }
+  }
+  get_card_instance(player, card);
+LAB_0261cf1d:
+  result = hybrid_split_card(player, card, event, 0x4ba7, 1, 10, 0x4ba6, 1, 8);
   return result;
 }
 

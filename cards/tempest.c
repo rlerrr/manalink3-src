@@ -6860,7 +6860,7 @@ int card_havoc(int player, int card, event_t event)
   }
   if (event == EVENT_SPA)
   {
-    lose_life(1 - player, 2);
+    lose_life_2022(1 - player, 2);
   }
   result = global_enchantment(player, card, event);
   return result;
@@ -6902,7 +6902,7 @@ int card_warmth(int player, int card, event_t event)
   }
   if (event == EVENT_SPA)
   {
-    gain_life(player, 2);
+    gain_life_2022(player, 2);
   }
   result = global_enchantment(player, card, event);
   return result;

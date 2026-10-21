@@ -5604,7 +5604,7 @@ int card_soothing_balm(int player, int card, event_t event)
           result = valid_target(&td);
           if (result != 0)
           {
-            gain_life(instance->targets[0].player, 5);
+            gain_life_2022(instance->targets[0].player, 5);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -5781,7 +5781,7 @@ int card_tonic_peddler(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
-      gain_life(instance->targets[0].player, 3);
+      gain_life_2022(instance->targets[0].player, 3);
     }
   }
   result = generic_activated_ability(player, card, event, 0x25, 0, 0, 0, 0, 0, 1, 0, &td,
@@ -6624,7 +6624,7 @@ int card_deepwood_tantiv(int player, int card, event_t event)
         result = is_unblocked(player, card);
         if (result == 0)
         {
-          gain_life(player, 2);
+          gain_life_2022(player, 2);
         }
       }
     }
@@ -6969,7 +6969,7 @@ int card_sacred_prey(int player, int card, event_t event)
         result = is_unblocked(player, card);
         if (result == 0)
         {
-          gain_life(player, 1);
+          gain_life_2022(player, 1);
         }
       }
     }
@@ -8984,7 +8984,7 @@ LAB_02181326:
            charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_ANY, 2),
        result != 0))
   {
-    gain_life(player, 2);
+    gain_life_2022(player, 2);
   }
   return 0;
 }

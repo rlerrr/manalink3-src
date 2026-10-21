@@ -4804,7 +4804,7 @@ int card_soldevi_steam_beast(int player, int card, event_t event)
       result = would_validate_arbitrary_target(&td, tgt_player, -1);
       if (result != 0)
       {
-        gain_life(tgt_player, 2);
+        gain_life_2022(tgt_player, 2);
       }
       instance->number_of_targets = '\0';
     }
@@ -5941,7 +5941,7 @@ static int fyndhorn_druid_dies_legacy(int player, int card, event_t event)
           {
             iVar4 = (unsigned int)card_counts[iVar1][5] * 4 + 4;
           }
-          gain_life(iVar1, iVar4);
+          gain_life_2022(iVar1, iVar4);
           goto LAB_0209d463;
         }
       }
@@ -6508,7 +6508,7 @@ int card_wandering_mage(int player, int card, event_t event)
                                                0, 1, 0, &td, "TARGET_DAMAGE");
         if (iVar3 != 0)
         {
-          lose_life(player, 1);
+          lose_life_2022(player, 1);
         }
       }
       else

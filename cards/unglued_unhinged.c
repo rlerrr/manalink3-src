@@ -1625,7 +1625,7 @@ int card_the_cheese_stands_alone(int player, int card, event_t event)
             iVar1 = iVar1 + 1;
           } while (iVar1 < active_cards_count[player]);
         }
-        lose_the_game(1 - player);
+        lose_the_game_2022(1 - player);
       }
     }
   }

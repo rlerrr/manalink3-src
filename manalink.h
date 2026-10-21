@@ -3470,6 +3470,54 @@ int global_tutor_2022(int player, int targ_player, int search_location, int dest
                       int flag2, int color, int flag3, int id, int flag4, int cc, int flag5);
 #endif
 
+/* October 2022 specific enters-play APIs. */
+#ifndef SHANDALAR
+int specific_cip_2022(int player, int card, event_t event, int t_player, int trigger_mode, int type,
+                      int flag1, int subtype, int flag2, int color, int flag3, int id, int flag4,
+                      int cc, int flag5);
+int new_specific_cip_global_2022(int player, event_t event, int trigger_mode, type_t type,
+                                 test_definition_2022_t *this_test, int triggering_player,
+                                 int triggering_card);
+int new_specific_cip_2022(int player, int card, event_t event, int t_player, int trigger_mode,
+                          test_definition_2022_t *this_test);
+#endif
+
+/* October 2022 life-gain and loss-prevention APIs. */
+#ifndef SHANDALAR
+int can_lose_the_game_2022(int player);
+int player_can_gain_life_as_cost_2022(int player);
+void gain_life_2022(int player, int amount);
+void gain_life_from_lifelink_2022(int player, int amount);
+void lose_the_game_2022(int player);
+int trigger_gain_life_2022(int player, int card, event_t event, int who_gains,
+                           resolve_trigger_t trigger_mode);
+extern int life_to_lose_on_gain_life;
+extern int suspend_cannot_lose_the_game;
+extern int life_gain_draw_count_2022[2];
+#endif
+
+/* October 2022 cannot-lose protection APIs. */
+#ifndef SHANDALAR
+void cannot_lose_the_game_for_having_less_than_0_life_2022(int player, int card, event_t event,
+                                                           int who_cant_lose);
+void cannot_lose_the_game_2022(int player, int card, event_t event, int who_cant_lose);
+#endif
+
+/* October 2022 Lichs Mastery life-loss API. */
+#ifndef SHANDALAR
+void lichs_mastery_lifeloss_trigger_2022(int player, int card, int amount);
+#endif
+
+/* October 2022 native life-loss API. */
+#ifndef SHANDALAR
+int lose_life_2022(int player, int amount);
+#endif
+
+/* October 2022 Oath life-loss callback API. */
+#ifndef SHANDALAR
+void oath_of_lim_dul_lifeloss_trigger_2022(int player, int card, int amount);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

@@ -2429,7 +2429,7 @@ int card_sly_spy_f(int player, int card, event_t event)
       {
         amount = roll_d6t(player, player, card, uVar4, -1);
         iVar3 = iVar3 + 1;
-        lose_life(uVar4, amount);
+        lose_life_2022(uVar4, amount);
       } while (iVar3 != iVar1);
     }
     uStack_20 = uStack_20 + 1;

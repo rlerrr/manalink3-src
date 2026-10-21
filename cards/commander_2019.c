@@ -283,7 +283,7 @@ int card_greven_predator_captain(int player, int card, event_t event)
           result = get_power(uVar3, card_00);
           draw_cards(player, result);
           result = get_toughness(uVar3, card_00);
-          lose_life(player, result);
+          lose_life_2022(player, result);
           kill_card(uVar3, card_00, KILL_SACRIFICE);
           instance->token_status = instance->token_status & 0xfffdffff;
         }

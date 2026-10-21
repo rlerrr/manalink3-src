@@ -5449,3 +5449,50 @@ LAB_025ec7ad:
       generic_spell(player, card, event, 0x81, &td, "Select target nonland permanent.", 1, NULL);
   return result;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25e7440; original cards/onslaught.c:2291. */
+static int false_cure_legacy(int player, int card, event_t event)
+{
+  enum
+  {
+    XTRIGGER_REPLACE_GAIN_LIFE = 16778752
+  };
+
+  xtrigger_t xVar1;
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    event_flags = event_flags | 0x200000;
+  }
+  xVar1 = trigger_condition;
+  if (trigger_condition == 0xe5)
+  {
+    xVar1 = xtrigger_impl_value_dont_use_directly;
+  }
+  if ((((xVar1 == XTRIGGER2022_REPLACE_GAIN_LIFE) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((reason_for_trigger_controller == player && (0 < life_gained))))
+  {
+    if (event == EVENT_TRIGGER)
+    {
+      event_result = event_result | 2;
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      life_to_lose_on_gain_life = life_gained * 2;
+      return 0;
+    }
+  }
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+}
+
+#endif

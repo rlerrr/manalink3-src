@@ -438,7 +438,7 @@ int card_kayas_wrath(int player, int card, event_t event)
       {
         amount = amount + result;
       }
-      gain_life(player, amount);
+      gain_life_2022(player, amount);
       kill_card(player, card, KILL_DESTROY);
     }
     else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
@@ -579,7 +579,7 @@ int card_sphinxs_insight(int player, int card, event_t event)
     draw_cards(player, 2);
     if ((current_turn == player) && ((current_phase == 0x14 || (current_phase == 0x1e))))
     {
-      gain_life(player, 2);
+      gain_life_2022(player, 2);
     }
     kill_card(player, card, KILL_DESTROY);
   }
@@ -1616,7 +1616,7 @@ int card_dovin_grand_arbiter(int player, int card, event_t event)
     else if (iVar1 == 2)
     {
       generate_token_by_id(player, card, 0x4995);
-      gain_life(player, 1);
+      gain_life_2022(player, 1);
     }
     else if (iVar1 == 3)
     {
@@ -1813,7 +1813,7 @@ int card_simic_ascendancy(int player, int card, event_t event)
     result = count_counters(player, card, COUNTER_GROWTH);
     if (0x13 < result)
     {
-      lose_the_game(1 - player);
+      lose_the_game_2022(1 - player);
     }
   }
   xVar1 = trigger_condition;
@@ -2136,7 +2136,7 @@ int card_priest_of_forgotten_gods(int player, int card, event_t event)
                       ptStack_144);
         ptVar1 = instance->targets + iVar4;
         iVar4 = iVar4 + 1;
-        lose_life(ptVar1->player, 2);
+        lose_life_2022(ptVar1->player, 2);
         if ((int)(unsigned int)instance->number_of_targets <= iVar4)
           goto LAB_025c161a;
       }
@@ -2691,7 +2691,7 @@ int card_consecrate_consume(int player, int card, event_t event)
 
                       iVar4 = get_power(pcVar1->targets[0].player, iVar3);
                       kill_card(pcVar1->targets[0].player, iVar3, KILL_SACRIFICE);
-                      gain_life(player, iVar4);
+                      gain_life_2022(player, iVar4);
                     }
                   }
                   else
@@ -2780,7 +2780,7 @@ int card_depose_deploy(int player, int card, event_t event)
           {
             generate_tokens_by_id(player, card, 0x4995, 2);
             result = count_permanents_by_type(player, TYPE_CREATURE);
-            gain_life(player, result);
+            gain_life_2022(player, result);
           }
           kill_card(player, card, KILL_DESTROY);
         }

@@ -4125,4 +4125,10 @@ enum
 };
 #endif
 
+
+#ifndef SHANDALAR
+/* October 2022 life replacement trigger; retain the original event domain. */
+enum { XTRIGGER2022_REPLACE_GAIN_LIFE = 0x01000600 };
+#endif
+
 #endif

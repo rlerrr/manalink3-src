@@ -74,7 +74,7 @@ int card_funeral_rites(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     draw_cards(player, 2);
-    lose_life(player, 2);
+    lose_life_2022(player, 2);
     mill(player, 2);
     kill_card(player, card, KILL_DESTROY);
   }
@@ -186,7 +186,7 @@ int card_agonizing_remorse(int player, int card, event_t event)
             if (-1 < iVar4)
             {
             LAB_0235a4b8:
-              lose_life(player, 1);
+              lose_life_2022(player, 1);
               break;
             }
             iVar3 = instance->targets[0].player;
@@ -337,7 +337,7 @@ int card_cling_to_dust(int player, int card, event_t event)
             }
             else
             {
-              gain_life(player, 3);
+              gain_life_2022(player, 3);
             }
           }
           kill_card(player, card, KILL_DESTROY);
@@ -734,7 +734,7 @@ int card_heliods_intervention(int player, int card, event_t event)
       }
       else if ((instance->eot_toughness == 2) && (iVar5 = valid_target(&td1), iVar5 != 0))
       {
-        gain_life(instance->targets[0].player, iVar2 * 2);
+        gain_life_2022(instance->targets[0].player, iVar2 * 2);
       }
       kill_card(player, card, KILL_DESTROY);
       return 0;
@@ -1628,7 +1628,7 @@ int card_tymaret_chosen_from_death(int player, int card, event_t event)
       }
       iVar6 = iVar6 + 1;
     } while (iVar6 != 2);
-    gain_life(player, iStack_ec);
+    gain_life_2022(player, iStack_ec);
     return 0;
   }
   if (((card == affected_card) && (affected_card_controller == player)) && (player != -1))
@@ -1971,7 +1971,7 @@ int card_tymaret_calls_the_dead(int player, int card, event_t event)
   {
 
     result = count_subtype(player, -1, 0xde);
-    gain_life(player, result);
+    gain_life_2022(player, result);
     scry(player, result);
   }
   result = saga(player, card, event, 3);
@@ -3965,7 +3965,7 @@ int card_ereboss_intervention(int player, int card, event_t event)
     {
       pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
                           -iVar3, -iVar3);
-      gain_life(player, iVar3);
+      gain_life_2022(player, iVar3);
     }
     else
     {
@@ -4055,6 +4055,74 @@ LAB_0235cf67:
     instance->eot_toughness = uVar4;
   }
   return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2361340; original cards/theros_beyond_death.c:3883. */
+int card_the_binding_of_the_titans(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int grave_id;
+  int iVar3;
+  int target_location;
+  int iStack_f4;
+  test_definition_2022_t test;
+
+  if (event == EVENT_CHAPTER1)
+  {
+
+    mill(current_turn, 3);
+    mill(current_turn ^ 1, 3);
+  }
+  else if (event == EVENT_CHAPTER2)
+  {
+
+    instance = get_card_instance(player, card);
+    iVar1 = select_multiple_cards_from_either_graveyard_2022(player, card, SFG_0, 3, 1, NULL, 2,
+                                                             instance->targets);
+    iStack_f4 = 0;
+    if (0 < iVar1)
+    {
+      target_location = 0;
+      do
+      {
+
+        grave_id = validate_target_from_grave_source(
+            player, card, instance->targets[target_location].player >> 0x10, target_location);
+        if (grave_id != -1)
+        {
+          iVar3 = is_what(
+              -1,
+              graveyard_ptr_mutable[instance->targets[target_location].player >> 0x10][grave_id],
+              2);
+          iStack_f4 = (iStack_f4 + 1) - (unsigned int)(iVar3 == 0);
+          rfg_card_from_grave(instance->targets[target_location].player >> 0x10, grave_id);
+        }
+        target_location = target_location + 1;
+      } while (iVar1 != target_location);
+    }
+    gain_life_2022(player, iStack_f4);
+  }
+  else if (event == EVENT_CHAPTER3)
+  {
+    new_default_test_definition_2022(&test, 3, "Select target creature or land card.");
+    iVar1 = new_special_count_grave_2022(player, &test);
+    if (iVar1 != 0)
+    {
+      iVar1 = graveyard_has_shroud(player);
+      if (iVar1 == 0)
+      {
+        new_global_tutor_2022(player, player, 2, 1, 1, 1, &test);
+      }
+    }
+  }
+  iVar1 = saga(player, card, event, 3);
+  return iVar1;
 }
 
 #endif

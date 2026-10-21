@@ -3636,7 +3636,7 @@ static int card_choice_of_damnation_impl(int player, int card, event_t event)
           iVar3 = do_dialog(player, player, card, -1, -1, buffer, argument7);
           if (iVar3 == 0)
           {
-            lose_life(instance->targets[0].player, __n_1);
+            lose_life_2022(instance->targets[0].player, __n_1);
           }
           else
           {

@@ -6363,7 +6363,7 @@ int card_sanctimony(int player, int card, event_t event)
         }
         if (event == EVENT_RESOLVE_TRIGGER)
         {
-          gain_life(player, 1);
+          gain_life_2022(player, 1);
           goto LAB_0204fcc3;
         }
       }
@@ -7356,7 +7356,7 @@ int card_yawgmoths_edict(int player, int card, event_t event)
   if (event == EVENT_SPA)
   {
     lose_life(1 - player, 1);
-    gain_life(player, 1);
+    gain_life_2022(player, 1);
   }
   result = global_enchantment(player, card, event);
   return result;
@@ -7995,7 +7995,7 @@ int card_power_taint(int player, int card, event_t event)
       result = has_mana((int)instance->damage_target_player, 0, 2);
       if (result == 0)
       {
-        lose_life((int)instance->damage_target_player, 2);
+        lose_life_2022((int)instance->damage_target_player, 2);
       }
       else
       {
@@ -8006,7 +8006,7 @@ int card_power_taint(int player, int card, event_t event)
         {
           return 0;
         }
-        lose_life((int)instance->damage_target_player, 2);
+        lose_life_2022((int)instance->damage_target_player, 2);
       }
     }
     upkeep_trigger_ability(player, card, event, (int)instance->damage_target_player);

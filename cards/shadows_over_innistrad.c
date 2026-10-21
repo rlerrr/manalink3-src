@@ -7637,7 +7637,7 @@ static int lilianas_indignation_legacy(int player, int card, event_t event)
           } while (iVar4 < num_cards_milled);
           if (amount != 0)
           {
-            lose_life(instance->targets[0].player, amount);
+            lose_life_2022(instance->targets[0].player, amount);
           }
         }
         kill_card(player, card, KILL_EXILE);
@@ -7838,7 +7838,7 @@ static int graf_mole_effect(int player, int card, event_t event)
 
     for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
     {
-      gain_life(player, 3);
+      gain_life_2022(player, 3);
     }
     kill_card(player, card, KILL_EXILE);
   }

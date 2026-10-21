@@ -921,7 +921,7 @@ int card_ajanis_welcome(int player, int card, event_t event)
     result = new_specific_cip(player, card, event, player, 2, &test);
     if (result != 0)
     {
-      gain_life(player, 1);
+      gain_life_2022(player, 1);
     }
   }
   result = global_enchantment(player, card, event);
@@ -1172,10 +1172,10 @@ int card_fraying_omnipotence(int player, int card, event_t event)
   {
     uVar3 = 0;
     uVar2 = round_up_value(life[current_turn]);
-    lose_life(result, uVar2);
+    lose_life_2022(result, uVar2);
     uVar4 = current_turn ^ 1;
     uVar2 = round_up_value(life[uVar4]);
-    lose_life(uVar4, uVar2);
+    lose_life_2022(uVar4, uVar2);
     result = current_turn;
     uVar2 = round_up_value(hand_count[current_turn]);
     new_multidiscard(result, uVar2, 0, player);
@@ -1611,7 +1611,7 @@ int card_revitalize(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    gain_life(player, 3);
+    gain_life_2022(player, 3);
     draw_a_card(player);
     kill_card(player, card, KILL_DESTROY);
   }
@@ -1722,7 +1722,7 @@ int card_vampire_neonate(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
     lose_life(1 - player, 1);
-    gain_life(player, 1);
+    gain_life_2022(player, 1);
   }
   result = generic_activated_ability(player, card, event, 1, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
   return result;
@@ -1835,7 +1835,7 @@ int card_vengeant_vampire(int player, int card, event_t event)
       if (result != 0)
       {
         action_on_target(player, card, 0, ACT_KILL_DESTROY);
-        gain_life(player, 4);
+        gain_life_2022(player, 4);
         instance->number_of_targets = '\0';
       }
     }
@@ -3395,7 +3395,7 @@ static int liliana_mill_legacy(int player, int card, event_t event)
           if (bVar1)
           {
             lose_life(1 - player, 2);
-            gain_life(player, 2);
+            gain_life_2022(player, 2);
           }
         }
         kill_card(player, card, KILL_EXILE);
@@ -3662,7 +3662,7 @@ int card_lilianas_contract(int player, int card, event_t event)
       }
       if (3 < iStack_fc)
       {
-        lose_the_game(1 - player);
+        lose_the_game_2022(1 - player);
       }
     }
   }

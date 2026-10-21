@@ -952,7 +952,7 @@ int card_vindictive_lich(int player, int card, event_t event)
         }
         else if (result == 3)
         {
-          lose_life(instance->targets[0].player, 5);
+          lose_life_2022(instance->targets[0].player, 5);
         }
       }
     }

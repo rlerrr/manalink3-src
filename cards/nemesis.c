@@ -2827,7 +2827,7 @@ int card_rejuvenation_chamber(int player, int card, event_t event)
   fading(player, card, event, 2);
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    gain_life(player, 2);
+    gain_life_2022(player, 2);
   }
   result = generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
   return result;
@@ -3290,7 +3290,7 @@ int card_noble_stand(int player, int card, event_t event)
           ((iVar3 = blocking(1 - current_turn, iVar1, EVENT_DECLARE_BLOCKERS),
             iVar3 != 0 && (1 - current_turn == player))))
       {
-        gain_life(player, 2);
+        gain_life_2022(player, 2);
       }
       iVar1 = iVar1 + -1;
     } while (iVar1 != -1);
@@ -4441,4 +4441,62 @@ int card_treetop_bracers(int player, int card, event_t event)
   result = aura_pref_controller(player, card, event, player, NULL);
   return result;
 }
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x209be80; original cards/nemesis.c:3789. */
+int card_skyshroud_cutter(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event == EVENT_MODIFY_COST)
+  {
+    result = check_battlefield_for_subtype(player, 1, 0x5001);
+    if ((result != 0) && (result = player_can_gain_life_as_cost_2022(1 - player), result != 0))
+    {
+      null_casting_cost(player, card);
+      instance = get_card_instance(player, card);
+      instance->info_slot = 1;
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    instance->info_slot = 0;
+    return 0;
+  }
+  if (event == EVENT_CAN_CAST)
+  {
+    result = basic_spell(player, card, EVENT_CAN_CAST);
+    return result;
+  }
+  if (((((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+        (player == affected_card_controller)) &&
+       ((result = played_for_free(player, card),
+         result == 0 && (result = is_token(player, card), result == 0)))) &&
+      (instance = get_card_instance(player, card), instance->info_slot == 1))
+  {
+
+    result = get_id(player, card);
+    result = has_mana_to_cast_id(player, EVENT_CAST_SPELL, result);
+    if ((result != 0) &&
+        (result = do_dialog(player, player, card, -1, -1,
+                            " Make opponent gain 5 life\n Play normally\n Cancel", 0),
+         result != 0))
+    {
+      if (result != 1)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      result = get_id(player, card);
+      charge_mana_from_id(player, card, EVENT_CAST_SPELL, result);
+      return 0;
+    }
+    gain_life_2022(1 - player, 5);
+  }
+  return 0;
+}
+
 #endif

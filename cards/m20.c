@@ -38,7 +38,7 @@ int card_aerial_assault(int player, int card, event_t event)
             new_default_test_definition(&test, 2, "");
             test.keyword = 0x20;
             result = check_battlefield_for_special_card(player, card, player, 4, &test);
-            gain_life(player, result);
+            gain_life_2022(player, result);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -285,7 +285,7 @@ int card_corpse_knight(int player, int card, event_t event)
   {
     return 0;
   }
-  lose_life(1 - player, 1);
+  lose_life_2022(1 - player, 1);
   return 0;
 }
 
@@ -741,7 +741,7 @@ int card_noxious_grasp(int player, int card, event_t event)
       result = instance->targets[0].card;
       instance = get_card_instance(player, card);
       kill_card(instance->targets[0].player, result, KILL_DESTROY);
-      gain_life(player, 1);
+      gain_life_2022(player, 1);
     }
     kill_card(player, card, KILL_DESTROY);
   }
@@ -1448,7 +1448,7 @@ int card_ajani_strength_of_the_pride(int player, int card, event_t event)
     {
       iVar2 = count_permanents_by_type(player, TYPE_CREATURE);
       iVar3 = count_permanents_by_type(player, TARGET_TYPE_PLANESWALKER);
-      gain_life(player, iVar3 + iVar2);
+      gain_life_2022(player, iVar3 + iVar2);
     }
     else if (iVar2 == 2)
     {

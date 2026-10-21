@@ -248,7 +248,7 @@ int card_heartwarming_redemption(int player, int card, event_t event)
       result = hand_count[player] + 1;
       discard_all(player);
       draw_cards(player, result);
-      gain_life(player, hand_count[player]);
+      gain_life_2022(player, hand_count[player]);
       kill_card(player, card, KILL_DESTROY);
     }
     else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
@@ -1755,7 +1755,7 @@ int card_huatli_the_suns_heart(int player, int card, event_t event)
   {
     default_test_definition(&this_test, 2);
     result = check_battlefield_for_special_card(player, card, player, 0x100, &this_test);
-    gain_life(player, result);
+    gain_life_2022(player, result);
   }
 LAB_021cf0be:
   result = planeswalker(player, card, event, 7);
@@ -1784,7 +1784,7 @@ int card_jace_wielder_of_mysteries(int player, int card, event_t event)
     }
     if (event == EVENT_RESOLVE_TRIGGER)
     {
-      lose_the_game(1 - player);
+      lose_the_game_2022(1 - player);
       suppress_draw = 1;
       goto LAB_021cf4db;
     }
@@ -1830,7 +1830,7 @@ int card_jace_wielder_of_mysteries(int player, int card, event_t event)
     }
     else if ((instance->info_slot == 2) && (draw_cards(player, 7), *deck_ptr[player] == -1))
     {
-      lose_the_game(1 - player);
+      lose_the_game_2022(1 - player);
     }
   }
 LAB_021cf4db:
@@ -3664,7 +3664,7 @@ int card_ajani_the_greathearted(int player, int card, event_t event)
 
     if (pcStack_18->info_slot == 1)
     {
-      gain_life(player, 3);
+      gain_life_2022(player, 3);
     }
     else
     {
@@ -3787,7 +3787,7 @@ int card_bolass_citadel(int player, int card, event_t event)
     if ((event == EVENT_RESOLVE_ACTIVATION) &&
         (instance = get_card_instance(player, card), instance->info_slot == 3))
     {
-      lose_life(1 - player, 10);
+      lose_life_2022(1 - player, 10);
       return 0;
     }
     return 0;
@@ -3898,7 +3898,7 @@ LAB_021c9830:
   if (iVar3 == 2)
   {
     iVar5 = get_cmc_by_internal_id(iVar5);
-    lose_life(player, iVar5);
+    lose_life_2022(player, iVar5);
     play_card_in_deck_for_free(player, player, 0);
     spell_fizzled = 1;
     cant_be_responded_to = 1;
@@ -5281,7 +5281,7 @@ int card_tezzeret_master_of_the_bridge(int player, int card, event_t event)
 
         iVar3 = count_permanents_by_type(player, TYPE_ARTIFACT);
         damage_player(1 - player, iVar3, player, card);
-        gain_life(player, iVar3);
+        gain_life_2022(player, iVar3);
       }
       else if (iVar3 == 2)
       {
@@ -5667,7 +5667,7 @@ int card_enter_the_god_eternals(int player, int card, event_t event)
   else
   {
     damage_target0(player, card, 4);
-    gain_life(player, 4);
+    gain_life_2022(player, 4);
     result = validate_target(player, card, &td1, 1);
     if (result != 0)
       goto LAB_021cc7c8;

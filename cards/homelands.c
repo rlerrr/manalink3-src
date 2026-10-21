@@ -3202,7 +3202,7 @@ int card_aether_storm(int player, int card, event_t event)
       {
         return 0;
       }
-      lose_life(player, 4);
+      lose_life_2022(player, 4);
       return 0;
     }
   }

@@ -2061,7 +2061,7 @@ int card_angrath_the_flame_chained(int player, int card, event_t event)
     if (result == 1)
     {
       discard(1 - player, 0, player);
-      lose_life(1 - player, 2);
+      lose_life_2022(1 - player, 2);
     }
     else if (result == 2)
     {
@@ -2080,7 +2080,7 @@ int card_angrath_the_flame_chained(int player, int card, event_t event)
     else if (result == 3)
     {
       result = count_graveyard(1 - player);
-      lose_life(1 - player, result);
+      lose_life_2022(1 - player, result);
     }
   }
 LAB_02192c32:
@@ -2816,7 +2816,7 @@ int card_azors_gateway(int player, int card, event_t event)
     iVar2 = exiledby_count_cmcs(player, instance->parent_card, 2);
     if (4 < iVar2)
     {
-      gain_life(player, 5);
+      gain_life_2022(player, 5);
       untap_card(player, instance->parent_card);
       transform(player, instance->parent_card);
       return 0;
@@ -3695,7 +3695,7 @@ int card_twilight_prophet(int player, int card, event_t event)
       amount = get_cmc_by_internal_id(result);
       lose_life(1 - player, amount);
       result = get_cmc_by_internal_id(result);
-      gain_life(player, result);
+      gain_life_2022(player, result);
     }
   }
   return 0;

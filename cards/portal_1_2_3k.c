@@ -2706,7 +2706,7 @@ int card_vampiric_touch(int player, int card, event_t event)
           if (result != 0)
           {
             damage_target0(player, card, 2);
-            gain_life(player, 2);
+            gain_life_2022(player, 2);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -2965,7 +2965,7 @@ int card_fruition(int player, int card, event_t event)
   else if (event == EVENT_RESOLVE_SPELL)
   {
     result = count_subtype(2, 1, 0x5001);
-    gain_life(player, result);
+    gain_life_2022(player, result);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -3163,7 +3163,7 @@ int card_renewing_dawn(int player, int card, event_t event)
   {
     result = get_hacked_subtype(player, card, 0x5006);
     result = count_subtype(1 - player, 1, result);
-    gain_life(player, result * 2);
+    gain_life_2022(player, result * 2);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -3216,7 +3216,7 @@ int card_starlight(int player, int card, event_t event)
     result = check_battlefield_for_special_card(player, card, 1 - player, 4, &this_test);
     if (0 < result)
     {
-      gain_life(player, result * 3);
+      gain_life_2022(player, result * 3);
     }
     kill_card(player, card, KILL_DESTROY);
   }
@@ -3313,7 +3313,7 @@ int card_natural_spring(int player, int card, event_t event)
           result = valid_target(&td);
           if (result != 0)
           {
-            gain_life(instance->targets[0].player, 8);
+            gain_life_2022(instance->targets[0].player, 8);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -3489,7 +3489,7 @@ int card_path_of_peace(int player, int card, event_t event)
             instance = get_card_instance(player, card);
             kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
             result = get_owner(instance->targets[0].player, instance->targets[0].card);
-            gain_life(result, 4);
+            gain_life_2022(result, 4);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -3550,7 +3550,7 @@ int card_kiss_of_death(int player, int card, event_t event)
           if (result != 0)
           {
             damage_target0(player, card, 4);
-            gain_life(player, 4);
+            gain_life_2022(player, 4);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -3857,7 +3857,7 @@ int card_bargain(int player, int card, event_t event)
     if (result != 0)
     {
       draw_cards(1 - player, 1);
-      gain_life(player, 7);
+      gain_life_2022(player, 7);
     }
     kill_card(player, card, KILL_DESTROY);
   }
@@ -3871,7 +3871,7 @@ int card_temple_elder(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    gain_life(player, 1);
+    gain_life_2022(player, 1);
   }
   result =
       generic_activated_ability(player, card, event, 0x10000001, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
@@ -4214,7 +4214,7 @@ int card_stolen_grain(int player, int card, event_t event)
           if (result != 0)
           {
             damage_target0(player, card, 5);
-            gain_life(player, 5);
+            gain_life_2022(player, 5);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -4297,7 +4297,7 @@ int card_spring_of_eternal_peace(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    gain_life(player, 8);
+    gain_life_2022(player, 8);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -4369,7 +4369,7 @@ int card_soul_shred(int player, int card, event_t event)
           if (result != 0)
           {
             damage_target0(player, card, 3);
-            gain_life(player, 3);
+            gain_life_2022(player, 3);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -4423,7 +4423,7 @@ int card_dark_offering(int player, int card, event_t event)
           if (result != 0)
           {
             kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-            gain_life(player, 3);
+            gain_life_2022(player, 3);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -4490,7 +4490,7 @@ int card_harmony_of_nature(int player, int card, event_t event)
         state_untargettable(player, iVar3, 0);
       } while (piVar4 != tapped + iVar2);
     }
-    gain_life(player, iVar2 << 2);
+    gain_life_2022(player, iVar2 << 2);
     kill_card(player, card, KILL_DESTROY);
   }
   iVar2 = basic_spell(player, card, event);

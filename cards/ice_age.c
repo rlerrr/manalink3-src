@@ -7340,7 +7340,7 @@ static int lose_1_life_b_thunk(int player, int card, int number_of_age_counters)
 {
   charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, COLOR_BLACK,
                               number_of_age_counters);
-  lose_life(player, number_of_age_counters);
+  lose_life_2022(player, number_of_age_counters);
   return 1;
 }
 
@@ -8085,7 +8085,7 @@ int soul_burn_legacy(int player, int card, event_t event)
     }
     else if (event == EVENT_RESOLVE_TRIGGER)
     {
-      gain_life(player, result);
+      gain_life_2022(player, result);
       kill_card(player, card, KILL_EXILE);
     }
     else if (event == EVENT_END_TRIGGER)
@@ -8373,7 +8373,7 @@ int card_caribou_range(int player, int card, event_t event)
     }
     if (iVar5 == 2)
     {
-      gain_life(player, 1);
+      gain_life_2022(player, 1);
       return 0;
     }
   }
@@ -10353,7 +10353,7 @@ int card_thoughtleech(int player, int card, event_t event)
           result = do_dialog(player, player, card, -1, -1, " Gain 1 life\n Decline", 0);
           if (result == 0)
           {
-            gain_life(player, 1);
+            gain_life_2022(player, 1);
           }
         }
       }
@@ -11655,4 +11655,46 @@ int card_spectral_shield(int player, int card, event_t event)
   result = aura(player, card, event, NULL, NULL);
   return result;
 }
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 Oath life-loss callback. */
+
+/* ManalinkEh 2022: 0x24040a0; original cards/ice_age.c:7248. */
+void oath_of_lim_dul_lifeloss_trigger_2022(int player, int card, int amount)
+{
+  target_definition_2022_t td;
+  default_target_definition_2022(player, card, &td, 0);
+  td.zone = TARGET_ZONE_HAND | TARGET_ZONE_IN_PLAY;
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  td.illegal_abilities = 0;
+  td.allow_cancel = 0;
+  td.special = TARGET_SPECIAL_NOT_ME | TARGET_SPECIAL_EXTRA_FUNCTION;
+  td.extra = (int32_t)target_only_permanents_unless_in_hand;
+
+  target_t tgts[amount + 1];
+  int i, num_tgts = 0;
+  card_instance_t *instance = get_card_instance(player, card);
+
+  for (i = 0; can_target_2022(&td) && i < amount; ++i)
+    if (select_target_2022(player, card, &td, "Select a permanent to sacrifice or card to discard.",
+                           &tgts[i]))
+    {
+      instance->number_of_targets = 0;
+      state_untargettable(tgts[i].player, tgts[i].card, 1);
+      ++num_tgts;
+    }
+
+  for (i = 0; i < num_tgts; ++i)
+    state_untargettable(tgts[i].player, tgts[i].card, 0);
+
+  for (i = 0; i < num_tgts; ++i)
+    if (in_hand(tgts[i].player, tgts[i].card))
+      discard_card(tgts[i].player, tgts[i].card);
+    else
+      kill_card(tgts[i].player, tgts[i].card, KILL_SACRIFICE);
+}
+
 #endif

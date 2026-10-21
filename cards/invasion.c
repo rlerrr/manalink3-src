@@ -5649,7 +5649,7 @@ int card_wandering_stream(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     result = count_domain(player, card);
-    gain_life(player, result * 2);
+    gain_life_2022(player, result * 2);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -5924,7 +5924,7 @@ static int source_damage_prevented_if_black_or_red_damage_source_controller(int 
       uVar6 = get_sleighted_color_test(player, card, 2);
       if ((uVar4 & (uVar6 | uVar5)) != 0)
       {
-        gain_life(player, iVar3);
+        gain_life_2022(player, iVar3);
         kill_card(player, card, KILL_EXILE);
       }
     }
@@ -7887,7 +7887,7 @@ int card_rewards_of_diversity(int player, int card, event_t event)
   }
   if (event == EVENT_SPA)
   {
-    gain_life(player, 4);
+    gain_life_2022(player, 4);
   }
   result = global_enchantment(player, card, event);
   return result;

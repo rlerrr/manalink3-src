@@ -618,7 +618,7 @@ int card_archfiend_of_despair(int player, int card, event_t event)
   if (result != 0)
   {
     result = get_trap_condition(1 - player, 2);
-    lose_life(1 - player, result);
+    lose_life_2022(1 - player, result);
   }
   instance = in_play(player, card);
   if ((((event == EVENT_STATIC_EFFECTS) && (instance != NULL)) && (card == affected_card)) &&

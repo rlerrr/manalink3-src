@@ -5404,7 +5404,7 @@ static int card_swallowing_plague_impl(int player, int card, event_t event)
         if ((event == EVENT_RESOLVE_SPELL) && (result = valid_target(&td), result != 0))
         {
           damage_target0(player, card, x_value);
-          gain_life(player, x_value);
+          gain_life_2022(player, x_value);
         }
         goto LAB_02609e91;
       }
@@ -5526,7 +5526,7 @@ int card_boseiju_who_shelters_all(int player, int card, event_t event)
       return 0;
     }
 
-    lose_life(player, 2);
+    lose_life_2022(player, 2);
     result = create_legacy_effect(player, card, boseiju_legacy);
     instance = get_card_instance(player, result);
     instance->targets[1].card = tapped_for_mana_color;

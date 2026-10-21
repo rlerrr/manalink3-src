@@ -131,7 +131,7 @@ int card_bottle_golems(int player, int card, event_t event)
     return 0;
   }
   result = get_power(player, card);
-  gain_life(player, result);
+  gain_life_2022(player, result);
   return 0;
 }
 
@@ -374,7 +374,7 @@ int card_dihadas_ploy(int player, int card, event_t event)
       draw_cards(player, 2);
       discard(player, 0, player);
       result = get_trap_condition(player, 0x203);
-      gain_life(player, result);
+      gain_life_2022(player, result);
       kill_card(player, card, KILL_DESTROY);
     }
     result = jumpstart(player, card, event, 0x59df);
@@ -580,7 +580,7 @@ int card_feast_of_sanity(int player, int card, event_t event)
       if (result != 0)
       {
         damage_target0(player, card, 1);
-        gain_life(player, 1);
+        gain_life_2022(player, 1);
       }
     }
     instance = get_card_instance(player, card);
@@ -647,7 +647,7 @@ int card_flay_essence(int player, int card, event_t event)
             result = count_counters(instance->targets[0].player, instance->targets[0].card,
                                     ~COUNTER_P1_P1);
             kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
-            gain_life(player, result);
+            gain_life_2022(player, result);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -1791,7 +1791,7 @@ int card_vermin_gorger(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
     lose_life(1 - player, 2);
-    gain_life(player, 2);
+    gain_life_2022(player, 2);
   }
   result = generic_activated_ability(player, card, event, 0x40201, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
   return result;
@@ -1991,7 +1991,7 @@ int card_blossoming_calm(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     create_legacy_effect(player, card, blossoming_calm_effect);
-    gain_life(player, 2);
+    gain_life_2022(player, 2);
     rebound(player, card);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -2149,7 +2149,7 @@ int card_foundry_helix(int player, int card, event_t event)
       result = valid_target(&td);
       if ((result != 0) && (damage_target0(player, card, 4), instance->info_slot == 1))
       {
-        gain_life(player, 4);
+        gain_life_2022(player, 4);
       }
       kill_card(player, card, KILL_DESTROY);
       return 0;
@@ -3113,7 +3113,7 @@ void ward_granted(int player, int card, event_t event, int t_player, int t_card,
         if (iVar4 == 1)
         {
           uVar5 = 0;
-          lose_life(iVar3, life_to_pay);
+          lose_life_2022(iVar3, life_to_pay);
         }
       }
       if (((((((cless < 1) && (black < 1)) && (blue < 1)) && ((green < 1 && (red < 1)))) &&
@@ -3195,7 +3195,7 @@ int card_abiding_grace(int player, int card, event_t event)
         }
       }
     }
-    gain_life(player, 1);
+    gain_life_2022(player, 1);
   }
 LAB_0222c491:
   result = global_enchantment(player, card, event);
@@ -7232,7 +7232,7 @@ int card_sythis_harvests_hand(int player, int card, event_t event)
   if (event == EVENT_SPA)
   {
     draw_cards(player, 1);
-    gain_life(player, 1);
+    gain_life_2022(player, 1);
   }
   result = global_enchantment(player, card, event);
   return result;
@@ -9047,7 +9047,7 @@ int card_nykthos_paragon(int player, int card, event_t event)
   card_instance_t *instance;
 
   result = duh_mode(player);
-  aVar2 = trigger_gain_life(player, card, event, player, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  aVar2 = trigger_gain_life_2022(player, card, event, player, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (aVar2 != 0)
   {
     instance = get_card_instance(player, card);

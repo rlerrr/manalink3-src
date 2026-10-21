@@ -14,12 +14,12 @@ from recover_test_consumers import read,rename
 def sha(data):return hashlib.sha256(data).hexdigest()
 
 def main():
-    ap=argparse.ArgumentParser(__doc__);ap.add_argument('--apply',action='store_true');ap.add_argument('--family',choices=['aura','ability','pump','activated','attack','entry','level_buddy','phyrexian','death_trigger','action'],default='aura');args=ap.parse_args()
+    ap=argparse.ArgumentParser(__doc__);ap.add_argument('--apply',action='store_true');ap.add_argument('--family',choices=['aura','ability','pump','activated','attack','entry','level_buddy','phyrexian','death_trigger','action','life','cannot_lose','life_loss'],default='aura');args=ap.parse_args()
     root=Path(__file__).resolve().parents[2];cache=root/'.recovery';mp=root/'docs/recovery-evidence/recovered-functions.json';ip=root/'docs/recovery-evidence/interface-recovery.json'
-    component={'aura':'native_scalar_callers_2022','ability':'native_ability_callers_2022','pump':'native_pump_callers_2022','activated':'native_activated_callers_2022','attack':'native_attack_callers_2022','entry':'native_entry_callers_2022','level_buddy':'native_level_buddy_callers_2022','phyrexian':'native_phyrexian_callers_2022','death_trigger':'native_death_trigger_callers_2022','action':'native_action_callers_2022'}[args.family]
-    binding={'aura':'native_scalar_callee_binding_2022','ability':'native_ability_callee_binding_2022','pump':'native_pump_callee_binding_2022','activated':'native_activated_callee_binding_2022','attack':'native_attack_callee_binding_2022','entry':'native_entry_callee_binding_2022','level_buddy':'native_level_buddy_callee_binding_2022','phyrexian':'native_phyrexian_callee_binding_2022','death_trigger':'native_death_trigger_callee_binding_2022','action':'native_action_callee_binding_2022'}[args.family]
+    component={'aura':'native_scalar_callers_2022','ability':'native_ability_callers_2022','pump':'native_pump_callers_2022','activated':'native_activated_callers_2022','attack':'native_attack_callers_2022','entry':'native_entry_callers_2022','level_buddy':'native_level_buddy_callers_2022','phyrexian':'native_phyrexian_callers_2022','death_trigger':'native_death_trigger_callers_2022','action':'native_action_callers_2022','life':'native_life_callers_2022','cannot_lose':'native_cannot_lose_callers_2022','life_loss':'native_life_loss_callers_2022'}[args.family]
+    binding={'aura':'native_scalar_callee_binding_2022','ability':'native_ability_callee_binding_2022','pump':'native_pump_callee_binding_2022','activated':'native_activated_callee_binding_2022','attack':'native_attack_callee_binding_2022','entry':'native_entry_callee_binding_2022','level_buddy':'native_level_buddy_callee_binding_2022','phyrexian':'native_phyrexian_callee_binding_2022','death_trigger':'native_death_trigger_callee_binding_2022','action':'native_action_callee_binding_2022','life':'native_life_callee_binding_2022','cannot_lose':'native_cannot_lose_callee_binding_2022','life_loss':'native_life_loss_callee_binding_2022'}[args.family]
     m=json.loads(mp.read_text());interfaces=json.loads(ip.read_text());assert component not in interfaces
-    addresses=(set(interfaces['aura_consumers_2022']['functions'])|set(interfaces['split_card_helpers_2022']['functions'])) if args.family=='aura' else set(interfaces[{'ability':'ability_writers_2022','pump':'pump_core_2022','activated':'activated_core_2022','attack':'attacker_core_2022','entry':'entry_triggers_2022','level_buddy':'level_buddy_2022','phyrexian':'phyrexian_costs_2022','death_trigger':'death_trigger_core_2022','action':'action_core_2022'}[args.family]]['functions'])
+    addresses=(set(interfaces['aura_consumers_2022']['functions'])|set(interfaces['split_card_helpers_2022']['functions'])) if args.family=='aura' else set(interfaces[{'ability':'ability_writers_2022','pump':'pump_core_2022','activated':'activated_core_2022','attack':'attacker_core_2022','entry':'entry_triggers_2022','level_buddy':'level_buddy_2022','phyrexian':'phyrexian_costs_2022','death_trigger':'death_trigger_core_2022','action':'action_core_2022','life':'life_core_2022','cannot_lose':'cannot_lose_core_2022','life_loss':'life_loss_2022'}[args.family]]['functions'])
     def eligible(prototype):
         if args.family=='activated':prototype=re.sub(r'\bcard_instance_t\s*\*','',prototype)
         return not re.search(r'\*|\b(?:target|test)_definition',prototype)
@@ -67,6 +67,12 @@ def main():
             f.setdefault('entry_interface_2022',dict(calls={}))['calls'].update(calls)
         if args.family=='level_buddy':
             f.setdefault('level_buddy_interface_2022',dict(calls={}))['calls'].update(calls)
+        if args.family=='life_loss':
+            f.setdefault('life_loss_interface_2022',dict(calls={}))['calls'].update(calls)
+        if args.family=='cannot_lose':
+            f.setdefault('cannot_lose_interface_2022',dict(calls={}))['calls'].update(calls)
+        if args.family=='life':
+            f.setdefault('life_interface_2022',dict(translations={}))['translations'].update(calls)
         if args.family=='action':
             f.setdefault('action_interface_2022',dict(calls={}))['calls'].update(calls)
         if args.family=='death_trigger':

@@ -214,6 +214,47 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
             stream.write('_Static_assert(offsetof(card_instance_t,targets[17].card)==256, "common activation permission word");\n')
             stream.write('\n'.join(f'_Static_assert({name}=={number}, "native activation flag");' for name,number in component['flags']['members'].items())+'\n')
             stream.write('\n'.join(f'_Static_assert({name}=={number}, "native activation enum value");' for name,number in component['enum_values'].items())+'\n')
+    if interfaces.get('oath_life_loss_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(target_t)==8 && sizeof(target_definition_2022_t)==84 && TARGET_SPECIAL_NOT_ME==0x4000 && TARGET_SPECIAL_EXTRA_FUNCTION==0x8000 && TYPE_PERMANENT==0x47 && KILL_SACRIFICE==3, "native Oath target/VLA/predicate/sacrifice layout");\n')
+    if interfaces.get('life_loss_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(int[2][151])==1208 && sizeof(int)==4 && sizeof(int[151])==604, "native life-loss saved callback matrix");\n')
+            stream.write('\n'.join(f'_Static_assert({name}=={value}, "native life-loss enum");' for name,value in interfaces['life_loss_2022']['enum_values'].items())+'\n')
+    if interfaces.get('lichs_mastery_loss_2022'):
+        from lich_loss_body import STORAGE
+        with layout.open('a') as stream:
+            stream.write('\n'+STORAGE+'\n_Static_assert(sizeof(lichs_mastery_storage_2022_t)==216 && offsetof(lichs_mastery_storage_2022_t,text)==0 && offsetof(lichs_mastery_storage_2022_t,test)==0 && sizeof(((lichs_mastery_storage_2022_t*)0)->text)==100, "native Lich shared text/test storage");\n')
+            stream.write('_Static_assert(offsetof(test_definition_2022_t,message)==0 && sizeof(((test_definition_2022_t*)0)->message)==100 && sizeof(target_t)==8 && sizeof(target_definition_2022_t)==84 && sizeof(int)==4, "native Lich fixed and VLA element layouts");\n')
+            stream.write('_Static_assert(TARGET_SPECIAL_EXTRA_FUNCTION==0x8000 && KILL_EXILE==4 && TUTOR_FROM2022_GRAVE==2 && TUTOR2022_RFG==6, "native Lich selection/exile constants");\n')
+    if interfaces.get('cannot_lose_core_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(PlayerCounters)==4 && offsetof(PlayerCounters,poison_)==0 && sizeof(((PlayerCounters*)0)->poison_)==1, "native cannot-lose poison byte");\n')
+            stream.write('_Static_assert(offsetof(card_instance_t,targets[5].player)==156 && offsetof(card_instance_t,targets[5].card)==160 && offsetof(card_instance_t,targets[6].player)==164 && offsetof(card_instance_t,targets[6].card)==168, "native cannot-lose hidden-debt slots");\n')
+    if interfaces.get('life_core_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(XTRIGGER2022_REPLACE_GAIN_LIFE==0x01000600 && TRIGGER_GAIN_LIFE==224 && sizeof(xtrigger_t)==4, "native life replacement event");\n')
+            stream.write('_Static_assert(PB_CANT_GAIN_LIFE==0x200000 && EA_LICH==0x200000 && sizeof(event_flags)==4 && sizeof(player_bits[0])==4, "native life event/player flag words");\n')
+            stream.write('_Static_assert(sizeof(life_to_lose_on_gain_life)==4 && sizeof(suspend_cannot_lose_the_game)==4 && sizeof(life_gain_draw_count_2022)==8 && sizeof(life_gain_draw_count_2022[0])==4, "native life state and draw counter words");\n')
+    if interfaces.get('specific_cip_2022'):
+        component=interfaces['specific_cip_2022']
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(TRIGGER_COMES_INTO_PLAY==219 && EVENT_TRIGGER==125 && EVENT_RESOLVE_TRIGGER==126, "native specific enters-play events");\n')
+            stream.write('_Static_assert(sizeof(test_definition_2022_t)==216 && offsetof(test_definition_2022_t,not_me)==170 && sizeof(((test_definition_2022_t*)0)->not_me)==2, "native specific enters-play filter");\n')
+            stream.write('_Static_assert(offsetof(card_instance_t,regen_status)==40 && offsetof(card_instance_t,targets[1].player)==124 && offsetof(card_instance_t,targets[1].card)==128, "native specific enters-play context stores");\n')
+            for name,offset in component['scalar_flag_offsets'].items():
+                stream.write(f'_Static_assert(offsetof(test_definition_2022_t,{name})=={offset} && sizeof(((test_definition_2022_t*)0)->{name})==2, "native scalar enters-play flag");\n')
+    if interfaces.get('activation_operand_cards_2022'):
+        with layout.open('a') as stream:
+            for enums in interfaces['activation_operand_cards_2022']['unit_enums'].values():
+                stream.write('\n'.join(f'_Static_assert({name}=={value}, "native activation operand enum");' for name,value in enums.items())+'\n')
+            stream.write('_Static_assert(GVC_PLAYER_COUNTERS(PCOUNTER_ENERGY,8)==0x2020800, "native eight-energy cost");\n')
+    if interfaces.get('energy_card_operands_2022'):
+        component=interfaces['energy_card_operands_2022']
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(PlayerCounters)==4 && offsetof(PlayerCounters,energy_)==2 && sizeof(((PlayerCounters*)0)->energy_)==1, "native unsigned energy byte");\n')
+            stream.write('\n'.join(f'_Static_assert({name}=={number}, "native energy-card enum");' for name,number in component['enum_values'].items())+'\n')
+            stream.write('\n'.join(f'_Static_assert(GVC_PLAYER_COUNTERS(PCOUNTER_ENERGY,{n})=={0x2020000|(n<<8)}, "native packed energy cost");' for n in [1,2,3])+'\n')
     if interfaces.get('global_tutor_core_2022'):
         component=interfaces['global_tutor_core_2022']
         with layout.open('a') as stream:

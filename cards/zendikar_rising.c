@@ -52,7 +52,7 @@ static int angel_of_destiny_legacy(int player, int card, event_t event)
     iVar2 = get_starting_life_total(iVar2);
     if (iVar2 <= iVar1)
     {
-      lose_the_game(player);
+      lose_the_game_2022(player);
     }
     kill_card(player, card, KILL_DESTROY);
     return 0;
@@ -617,7 +617,7 @@ int card_feed_the_swarm(int player, int card, event_t event)
             kill_target0(player, card, KILL_DESTROY);
             instance = get_card_instance(player, card);
             result = get_cmc(instance->targets[0].player, instance->targets[0].card);
-            lose_life(player, result);
+            lose_life_2022(player, result);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -2015,10 +2015,10 @@ int card_scourge_of_the_skyclaves(int player, int card, event_t event)
     {
 
       uVar2 = round_up_value(life[current_turn]);
-      lose_life(iVar3, uVar2);
+      lose_life_2022(iVar3, uVar2);
       player_00 = current_turn ^ 1;
       uVar2 = round_up_value(life[player_00]);
-      lose_life(player_00, uVar2);
+      lose_life_2022(player_00, uVar2);
     }
   }
   return 0;
@@ -2594,7 +2594,7 @@ int card_zof_consumption(int player, int card, event_t event)
     }
   }
   lose_life(1 - player, 4);
-  gain_life(player, 4);
+  gain_life_2022(player, 4);
   kill_card(player, card, KILL_DESTROY);
 LAB_0231012c:
   result = mdfc_front_impl(player, card, event, 1, 0);
@@ -2967,7 +2967,7 @@ int card_scale_the_heights(int player, int card, event_t event)
           add_counters_from_source(player, card, instance->targets[0].player,
                                    instance->targets[0].card, COUNTER_P1_P1, 1);
         }
-        gain_life(player, 2);
+        gain_life_2022(player, 2);
         result = create_legacy_effect(player, card, check_playable_lands_legacy);
         instance = get_card_instance(player, result);
         result = get_id(player, card);

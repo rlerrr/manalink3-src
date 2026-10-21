@@ -1566,7 +1566,7 @@ int card_the_scarab_god(int player, int card, event_t event)
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
     result = count_subtype(player, 0x47, 0xde);
-    lose_life(1 - player, result);
+    lose_life_2022(1 - player, result);
     scry(player, result);
   }
   else
@@ -2124,7 +2124,7 @@ static int afflict(int player, int card, event_t event, int amount)
       result = is_humiliated_for_ability(player, card, AL_TRIG);
       if (result == 0)
       {
-        lose_life(1 - current_turn, amount);
+        lose_life_2022(1 - current_turn, amount);
       }
     }
   }
@@ -2678,7 +2678,7 @@ int card_torment_of_hailfire(int player, int card, event_t event)
           {
             impose_sacrifice(player, card, iVar4, 1, 0x47, 0, 0, 0, 0, 0, 0, 0, -1, 0);
           LAB_020d06d0:
-            lose_life(iVar4, 3);
+            lose_life_2022(iVar4, 3);
           }
           else
           {
@@ -2866,7 +2866,7 @@ int card_wildfire_eternal(int player, int card, event_t event)
         result = is_unblocked(player, card);
         if (result == 0)
         {
-          lose_life(1 - current_turn, 4);
+          lose_life_2022(1 - current_turn, 4);
         }
         else
         {

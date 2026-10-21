@@ -6399,7 +6399,7 @@ int card_lammastide_weave(int player, int card, event_t event)
           if (iVar2 != 0)
           {
             iVar2 = get_cmc_by_id((unsigned int)cards_data[iVar1].id);
-            gain_life(player, iVar2);
+            gain_life_2022(player, iVar2);
           }
         }
       }
