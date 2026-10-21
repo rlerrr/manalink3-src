@@ -3848,7 +3848,7 @@ int card_vanishing(int player, int card, event_t event)
     if (event == EVENT_CAN_CAST)
     {
     LAB_0201f86f:
-      result = vanilla_aura(player, card, event, player);
+      result = vanilla_aura_2022(player, card, event, player);
       return result;
     }
     if (event == EVENT_CAST_SPELL)
@@ -3949,7 +3949,7 @@ int card_death_watch(int player, int card, event_t event)
     }
   }
 LAB_02020e10:
-  result = vanilla_aura(player, card, event, player);
+  result = vanilla_aura_2022(player, card, event, player);
   return result;
 }
 
@@ -3981,7 +3981,7 @@ int card_feral_instinct(int player, int card, event_t event)
       if (result != 0)
       {
         instance = get_card_instance(player, card);
-        result = pump_until_eot(player, card, instance->targets[0].player,
+        result = pump_until_eot_2022(player, card, instance->targets[0].player,
                                 instance->targets[0].card, 1, 1);
         alternate_legacy_text(2, player, result);
         result = cantrip(player, card, 1);
@@ -4068,7 +4068,7 @@ int card_giant_caterpillar(int player, int card, event_t event)
   }
   if (event == EVENT_ACTIVATE)
   {
-    result = charge_mana_for_activated_ability(player, card, 0, 0, 0, 1, 0, 0);
+    result = charge_mana_for_activated_ability_2022(player, card, 0, 0, 0, 1, 0, 0);
     if ((result != 0) && (result = can_sacrifice_this_as_cost(player, card), result != 0))
     {
       kill_card(player, card, KILL_SACRIFICE);
@@ -4333,7 +4333,7 @@ int card_wicked_reward(int player, int card, event_t event)
           result = valid_target(&td);
           if (result != 0)
           {
-            pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 4,
+            pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, 4,
                            2);
           }
           kill_card(player, card, KILL_DESTROY);
@@ -4565,7 +4565,7 @@ int card_mystic_veil(int player, int card, event_t event)
       kill_card(player, card, KILL_SACRIFICE);
     }
   }
-  result = generic_aura(player, card, event, player, 0, 0, 0x20000, 0, 0, 0, 0);
+  result = generic_aura_2022(player, card, event, player, 0, 0, 0x20000, 0, 0, 0, 0);
   return result;
 }
 
@@ -4650,7 +4650,7 @@ int card_spider_climb(int player, int card, event_t event)
       kill_card(player, card, KILL_SACRIFICE);
     }
   }
-  result = generic_aura(player, card, event, player, 0, 3, 0x400, 0, 0, 0, 0);
+  result = generic_aura_2022(player, card, event, player, 0, 3, 0x400, 0, 0, 0, 0);
   return result;
 }
 
@@ -4680,7 +4680,7 @@ int card_wake_of_voltures(int player, int card, event_t event)
     }
     else
     {
-      result = charge_mana_for_activated_ability(player, card, 1, 1, 0, 0, 0, 0);
+      result = charge_mana_for_activated_ability_2022(player, card, 1, 1, 0, 0, 0, 0);
       if (result != 0)
       {
         state_untargettable(player, card, 1);
@@ -5063,7 +5063,7 @@ static int fx_milled_power(int player, int card, event_t event)
                        (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + result));
       if (pcVar3 != NULL)
       {
-        legacycard = pump_until_eot(
+        legacycard = pump_until_eot_2022(
             player, card, current_turn,
             (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + result), power, 0);
         alternate_legacy_text(1, player, legacycard);
@@ -5190,7 +5190,7 @@ int card_sun_clasp(int player, int card, event_t event)
     }
   }
 LAB_02024774:
-  result = generic_aura(player, card, event, player, 1, 3, 0, 0, 0, 0, 0);
+  result = generic_aura_2022(player, card, event, player, 1, 3, 0, 0, 0, 0, 0);
   return result;
 }
 
@@ -5229,7 +5229,7 @@ int card_vampirism(int player, int card, event_t event)
   int card_00;
   target_definition_t td;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     cantrip(player, card, 1);
@@ -5661,7 +5661,7 @@ int card_dark_privilege(int player, int card, event_t event)
       }
     }
   }
-  iVar3 = generic_aura(player, card, event, player, 1, 1, 0, 0, 0, 0, 0);
+  iVar3 = generic_aura_2022(player, card, event, player, 1, 1, 0, 0, 0, 0, 0);
   return iVar3;
 }
 
@@ -6002,3 +6002,15 @@ int card_peace_talks(int player, int card, event_t event)
   result = basic_spell(player, card, event);
   return result;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2024930; original cards/visions.c:5238. */
+int card_talruum_piper(int player, int card, event_t event)
+{
+  ability_must_block_me(player, card, event, 0x20, NULL);
+  return 0;
+}
+
+#endif

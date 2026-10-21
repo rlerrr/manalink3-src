@@ -551,3 +551,7 @@ _engine_mana_may_be_spent_as_color_2022 = 0x60A4B4;
 
 /* Native dynamic card-type pool index used by the 2022 token resolver. */
 _engine_dynamic_iid_start_2022 = 0x7A5380;
+
+/* October 2022 network packet interfaces. */
+_receive_network_packet_2022 = 0x4A70C0;
+_send_network_packet_2022 = 0x4A6BC0;

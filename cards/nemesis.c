@@ -2748,7 +2748,7 @@ LAB_0209954c:
 int card_flowstone_strike(int player, int card, event_t event)
 {
   int result;
-  result = vanilla_instant_pump(player, card, event, 2, 1 - player, 1, -1, 0, 4);
+  result = vanilla_instant_pump_2022(player, card, event, 2, 1 - player, 1, -1, 0, 4);
   return result;
 }
 
@@ -2808,7 +2808,7 @@ LAB_0209b728:
 int card_phyrexian_driver(int player, int card, event_t event)
 {
   test_definition_t test;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -3189,7 +3189,7 @@ int card_downhill_charge(int player, int card, event_t event)
 
       result = get_hacked_subtype(player, card, 0x5006);
       result = count_subtype(player, 1, result);
-      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, result,
+      pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, result,
                      0);
     }
     kill_card(player, card, KILL_DESTROY);
@@ -3435,7 +3435,7 @@ int card_flowstone_thopter(int player, int card, event_t event)
   }
 
   instance = get_card_instance(player, card);
-  pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+  pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                          instance->parent_controller, instance->parent_card, 1, -1, 0x20, 0);
 LAB_0209a0c7:
   result = generic_activated_ability(player, card, event, 0, 1, 0, 0, 0, 0, 0, 0, NULL, NULL);
@@ -3801,7 +3801,7 @@ static int mana_cache_legacy(int player, int card, event_t event)
       {
         return 0;
       }
-      iVar2 = can_produce_mana(iVar3, card_00);
+      iVar2 = can_produce_mana_2022(iVar3, card_00);
       if (iVar2 == 0)
       {
         return 0;
@@ -3821,7 +3821,7 @@ static int mana_cache_legacy(int player, int card, event_t event)
       {
         return 0;
       }
-      iVar3 = can_produce_mana(iVar3, card_00);
+      iVar3 = can_produce_mana_2022(iVar3, card_00);
       return iVar3;
     }
     if (event == EVENT_ACTIVATE)
@@ -3933,7 +3933,7 @@ int card_mana_cache(int player, int card, event_t event)
   {
     if ((((card == affected_card) && (player == affected_card_controller)) &&
          (iVar1 = count_counters(player, card, COUNTER_CHARGE), iVar1 != 0)) &&
-        (iVar1 = can_produce_mana(player, card), iVar1 != 0))
+        (iVar1 = can_produce_mana_2022(player, card), iVar1 != 0))
     {
       iVar1 = count_counters(player, card, COUNTER_CHARGE);
       declare_mana_available(player, 0, iVar1);
@@ -3944,7 +3944,7 @@ int card_mana_cache(int player, int card, event_t event)
     iVar1 = count_counters(player, card, COUNTER_CHARGE);
     if ((0 < iVar1) && (current_turn == player))
     {
-      iVar1 = can_produce_mana(player, card);
+      iVar1 = can_produce_mana_2022(player, card);
       return iVar1;
     }
   }
@@ -4223,3 +4223,222 @@ int card_pale_moon(int player, int card, event_t event)
   iVar1 = basic_spell(player, card, event);
   return iVar1;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2099130; original cards/nemesis.c:2828. */
+int card_air_bladder(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  unsigned int uVar3;
+
+  if (event == EVENT_BLOCK_LEGALITY)
+  {
+    instance = in_play(player, card);
+    if (((instance != NULL) && (instance->damage_target_card == affected_card)) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+      uVar3 = get_abilities(attacking_card_controller, attacking_card, EVENT_ABILITIES, -1);
+      if ((uVar3 & 0x20) == 0)
+      {
+        event_result = 1;
+      }
+    }
+  }
+  attached_gets_kw(player, card, event, KEYWORD_FLYING, SP_KEYWORD_0);
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209a200; original cards/nemesis.c:3179. */
+int card_laccolith_rig(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int player_00;
+  target_definition_2022_t td;
+
+  instance = in_play(player, card);
+
+  if (((instance != NULL) &&
+       (instance = get_card_instance(player, card), -1 < instance->damage_target_player)) &&
+      (instance = get_card_instance(player, card), event == EVENT_DECLARE_BLOCKERS))
+  {
+    player_00 = (int)instance->damage_target_player;
+    iVar2 = instance->damage_target_card;
+    iVar3 = is_attacking(player_00, iVar2);
+    if (((iVar3 != 0) && (iVar3 = is_unblocked(player_00, iVar2), iVar3 == 0)) &&
+        (iVar3 = is_humiliated_for_ability(player, card, AL_TRIG), iVar3 == 0))
+    {
+
+      iVar3 = do_dialog(player, player, card, -1, -1, " Damage creature\n Pass", 0);
+      if (iVar3 == 0)
+      {
+
+        instance = get_card_instance(player_00, iVar2);
+        instance->number_of_targets = '\0';
+        default_target_definition_2022(player_00, iVar2, &td, 2);
+        td.who_chooses = player;
+        iVar3 = can_target_2022(&td);
+        if ((iVar3 != 0) && (iVar3 = pick_target_2022(&td, "TARGET_CREATURE"), iVar3 != 0))
+        {
+          negate_combat_damage_this_turn(player, card, player_00, iVar2, 0);
+          iVar3 = get_power(player_00, iVar2);
+          damage_creature(instance->targets[0].player, instance->targets[0].card, iVar3, player_00,
+                          iVar2);
+        }
+        instance->number_of_targets = '\0';
+      }
+      else if (iVar3 == 1)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+    }
+  }
+  iVar2 = aura_pref_controller(player, card, event, player, NULL);
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x209a3e0; original cards/nemesis.c:3218. */
+int card_lashknife(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int result;
+  card_instance_t *pcVar3;
+  target_definition_2022_t td2;
+
+  if (event == EVENT_MODIFY_COST)
+  {
+
+    pcVar1 = get_card_instance(player, card);
+    base_target_definition_2022(player, card, &td2, 2);
+    td2.allowed_controller = player;
+    td2.preferred_controller = player;
+    td2.illegal_state = 1;
+    result = check_battlefield_for_subtype(player, 1, 0x5007);
+    if ((result == 0) || (result = can_target_2022(&td2), result == 0))
+    {
+      pcVar1->info_slot = 0;
+    }
+    else
+    {
+      pcVar1->info_slot = 1;
+      null_casting_cost(player, card);
+    }
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if (event == EVENT_CAN_CAST)
+    {
+      result = aura_pref_controller(player, card, EVENT_CAN_CAST, player, NULL);
+      return result;
+    }
+    pcVar1 = get_card_instance(player, card);
+    if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+        (player == affected_card_controller))
+    {
+      pcVar1->number_of_targets = '\0';
+      result = played_for_free(player, card);
+      if (((result == 0) && (result = is_token(player, card), result == 0)) &&
+          (pcVar1->info_slot == 1))
+      {
+
+        pcVar3 = get_card_instance(player, card);
+        result = has_mana_to_cast_iid(player, pcVar3->internal_card_id, 0x6c);
+        if ((result == 0) ||
+            (result = do_dialog(player, player, card, -1, -1,
+                                " Tap a creature you control\n Play normally\n Cancel", 0),
+             result == 0))
+        {
+          base_target_definition_2022(player, card, &td2, 2);
+          td2.allowed_controller = player;
+          td2.preferred_controller = player;
+          td2.illegal_state = 1;
+          result = new_pick_target_2022(&td2, "Select a creature you control to tap.", 0, 0x81);
+          if (result == 0)
+          {
+            spell_fizzled = 1;
+            return 0;
+          }
+          action_on_target(player, card, 0, ACT_TAP);
+          pcVar1->number_of_targets = '\0';
+        }
+        else
+        {
+          if (result != 1)
+          {
+            spell_fizzled = 1;
+            return 0;
+          }
+          result = get_id(player, card);
+          charge_mana_from_id(player, card, EVENT_CAST_SPELL, result);
+        }
+      }
+    }
+  }
+  attached_gets_kw(player, card, event, KEYWORD_FIRST_STRIKE, SP_KEYWORD_0);
+  result = aura_pref_controller(player, card, event, player, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209b880; original cards/nemesis.c:3643. */
+int card_parallax_dementia(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  leaves_play_2022(player, card, event, 1, 1);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+
+    instance = get_card_instance(player, card);
+    kill_card((int)instance->damage_target_player, instance->damage_target_card, KILL_BURY);
+  }
+  fading(player, card, event, 1);
+  attached_gets_pt(player, card, event, 3, 2);
+  result = aura_pref_controller(player, card, event, player, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209c650; original cards/nemesis.c:3962. */
+int card_treetop_bracers(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      instance = get_card_instance(player, card);
+      if (-1 < instance->damage_target_player)
+      {
+
+        instance = get_card_instance(player, card);
+        if (((event == EVENT_BLOCK_LEGALITY) &&
+             (instance->damage_target_player == attacking_card_controller)) &&
+            (instance->damage_target_card == attacking_card))
+        {
+
+          uVar3 = get_abilities(affected_card_controller, affected_card, EVENT_ABILITIES, -1);
+          if ((uVar3 & 0x20) == 0)
+          {
+            event_result = 1;
+          }
+        }
+      }
+    }
+  }
+  attached_gets_pt(player, card, event, 1, 1);
+  result = aura_pref_controller(player, card, event, player, NULL);
+  return result;
+}
+#endif

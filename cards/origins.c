@@ -5437,7 +5437,7 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_020d9664:
-    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
       goto joined_r0x020d968d;
   }
@@ -5472,7 +5472,7 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
     }
-    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
     {
       return 0;
@@ -5536,3 +5536,31 @@ int card_days_undoing(int player, int card, event_t event)
   result = basic_spell(player, card, event);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 attacker/keyword helpers. */
+
+/* ManalinkEh 2022: 0x20d9ef0; original cards/origins.c:11. */
+void renown_2022(int player, int card, event_t event, int n)
+{
+  int result;
+  if ((event == EVENT_DEAL_DAMAGE) || (trigger_condition == 0xd7))
+  {
+    result = check_special_flags3_2022(player, card, 0x10);
+    if (result == 0)
+    {
+      result = has_combat_damage_been_inflicted_to_a_player(player, card, event);
+      if (result != 0)
+      {
+        set_special_flags3_2022(player, card, 0x10);
+        add_counters_from_source(player, card, player, card, COUNTER_P1_P1, n);
+        dispatch_xtrigger2(player, XTRIGGER_BECAME_RENOWNED, "became renowned", 0, player, card);
+        return;
+      }
+    }
+  }
+  return;
+}
+
+#endif

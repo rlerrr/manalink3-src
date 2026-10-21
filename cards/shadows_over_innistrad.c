@@ -7879,7 +7879,7 @@ static int ulvenwald_mysteries_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_0229f514:
-    iVar3 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    iVar3 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (iVar3 == 0)
       goto LAB_0229f537;
   }
@@ -7944,7 +7944,7 @@ static int ulvenwald_mysteries_effect(int player, int card, event_t event)
         pcVar2->targets[1].card = pcVar2->targets[1].card + 1;
       }
     }
-    iVar3 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    iVar3 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (iVar3 == 0)
     {
       return 0;

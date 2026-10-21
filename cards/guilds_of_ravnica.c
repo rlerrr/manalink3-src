@@ -140,7 +140,7 @@ int card_conclave_tribunal(int player, int card, event_t event)
   target_definition_t td;
   return_from_oblivion(player, card, event);
   generic_spell_with_convoke(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     default_target_definition(player, card, &td, 0x47);
@@ -218,7 +218,7 @@ int card_glowspore_shaman(int player, int card, event_t event)
 {
   int result;
   test_definition_t this_test;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     mill(player, 3);
@@ -241,7 +241,7 @@ int card_golgari_findbroker(int player, int card, event_t event)
 {
   int result;
   test_definition_t this_test;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     new_default_test_definition(&this_test, 0x47, "Select target permanent card.");
@@ -370,7 +370,7 @@ int card_kraul_harpooner(int player, int card, event_t event)
     td.required_abilities = 0x20;
     td.allow_cancel = 2;
     result = count_graveyard_by_type(player, 2);
-    pump_until_eot(player, card, player, card, result, 0);
+    pump_until_eot_2022(player, card, player, card, result, 0);
     result = can_target(&td);
     if (result != 0)
     {
@@ -441,7 +441,7 @@ LAB_0261e1e5:
 /* ManalinkEh 2022: 0x2619110; original cards/guilds_of_ravnica.c:2237. */
 static void haste_and_must_attack_until_eot(token_generation_t *token, int beast, int number)
 {
-  pump_ability_until_eot(token->s_player, token->s_card, token->t_player, beast, 0, 0, 0, 0x404);
+  pump_ability_until_eot_2022(token->s_player, token->s_card, token->t_player, beast, 0, 0, 0, 0x404);
   return;
 }
 
@@ -451,7 +451,7 @@ int card_maximize_altitude(int player, int card, event_t event)
   int result;
   if ((event != EVENT_GRAVEYARD_ABILITY) && (event != EVENT_PAY_FLASHBACK_COSTS))
   {
-    result = vanilla_instant_pump(player, card, event, 2, player, 1, 1, 0x20, 0);
+    result = vanilla_instant_pump_2022(player, card, event, 2, player, 1, 1, 0x20, 0);
     return result;
   }
   result = jumpstart(player, card, event, 0x4be6);
@@ -464,7 +464,7 @@ int card_maximize_velocity(int player, int card, event_t event)
   int result;
   if ((event != EVENT_GRAVEYARD_ABILITY) && (event != EVENT_PAY_FLASHBACK_COSTS))
   {
-    result = vanilla_instant_pump(player, card, event, 2, player, 1, 1, 0, 4);
+    result = vanilla_instant_pump_2022(player, card, event, 2, player, 1, 1, 0, 4);
     return result;
   }
   result = jumpstart(player, card, event, 0x4be7);
@@ -474,8 +474,8 @@ int card_maximize_velocity(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x261eea0; original cards/guilds_of_ravnica.c:2658. */
 int card_nightveil_predator(int player, int card, event_t event)
 {
-  deathtouch(player, card, event);
-  hexproof(player, card, event);
+  deathtouch_2022(player, card, event);
+  hexproof_2022(player, card, event);
   return 0;
 }
 
@@ -483,7 +483,7 @@ int card_nightveil_predator(int player, int card, event_t event)
 int card_pitiless_gorgon(int player, int card, event_t event)
 {
   int result;
-  deathtouch(player, card, event);
+  deathtouch_2022(player, card, event);
   if (event != EVENT_MODIFY_COST)
   {
     if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
@@ -509,7 +509,7 @@ int card_plaguecrafter(int player, int card, event_t event)
   unsigned int t_player;
   int sac[2];
   test_definition_t test;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     new_default_test_definition(&test, 0x102, "Select a creature or planeswalker to sacrifice.");
@@ -807,7 +807,7 @@ int card_trostani_discordant(int player, int card, event_t event)
   token_generation_t token;
   check_legend_rule(player, card, event);
   boost_creature_type(player, card, event, ~SUBTYPE_INVALID, 1, 1, 0, BCT_CONTROLLER_ONLY);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     default_token_definition(player, card, 0x4986, &token);
@@ -878,7 +878,7 @@ int card_underrealm_lich(int player, int card, event_t event)
     iVar1 = instance->parent_controller;
     instance = get_card_instance(player, card);
     card_00 = instance->parent_card;
-    pump_ability_until_eot(iVar1, card_00, iVar1, card_00, 0, 0, 0, 0x800);
+    pump_ability_until_eot_2022(iVar1, card_00, iVar1, card_00, 0, 0, 0, 0x800);
     tap_card(iVar1, card_00);
     iVar3 = check_for_special_ability(iVar1, card_00, 0x800);
     if (iVar3 != 0)
@@ -945,7 +945,7 @@ int card_arboretum_elemental(int player, int card, event_t event)
   card_instance_t *instance;
   int result;
 
-  hexproof(player, card, event);
+  hexproof_2022(player, card, event);
   instance = get_card_instance(player, card);
   if (event == EVENT_MODIFY_COST)
   {
@@ -983,7 +983,7 @@ int card_impervious_greatwurm(int player, int card, event_t event)
   card_instance_t *instance;
   int result;
 
-  indestructible(player, card, event);
+  indestructible_2022(player, card, event);
   instance = get_card_instance(player, card);
   if (event == EVENT_MODIFY_COST)
   {
@@ -1021,7 +1021,7 @@ int card_izoni_thousand_eyed(int player, int card, event_t event)
   token_generation_t token;
 
   check_legend_rule(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     default_token_definition(player, card, 0x4952, &token);
@@ -1235,7 +1235,7 @@ int gnr_locket(int player, int card, event_t event)
       draw_cards(player, 2);
       return 0;
     }
-    iVar2 = get_cost_mod_for_activated_abilities(player, card, 0, 0, 0, 0, 0, 0);
+    iVar2 = get_cost_mod_for_activated_abilities_2022(player, card, 0, 0, 0, 0, 0, 0);
     iVar5 = paying_mana();
     if (((iVar5 == 0) &&
          (iVar5 = has_mana_hybrid(player, 5, iStack_1c, iStack_20, iVar2), iVar5 != 0)) &&
@@ -1338,7 +1338,7 @@ int card_deafening_clarion(int player, int card, event_t event)
   }
   if ((uVar1 & 2) != 0)
   {
-    pump_subtype_until_eot(player, card, player, -1, 0, 0, 0, 2);
+    pump_subtype_until_eot_2022(player, card, player, -1, 0, 0, 0, 2);
   }
   kill_card(player, card, KILL_DESTROY);
   return 0;
@@ -1349,7 +1349,7 @@ int card_disinformation_campaign(int player, int card, event_t event)
 {
   int result;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     draw_a_card(player);
@@ -1647,11 +1647,11 @@ static int effect_nullhide_ferox(int player, int card, event_t event)
       card_00 = instance->targets[0].card;
       if (event == EVENT_CAN_ACTIVATE)
       {
-        iVar3 = can_use_activated_abilities(iVar2, card_00);
+        iVar3 = can_use_activated_abilities_2022(iVar2, card_00);
         if (iVar3 != 0)
         {
 
-          iVar2 = get_cost_mod_for_activated_abilities(iVar2, card_00, 2, 0, 0, 0, 0, 0);
+          iVar2 = get_cost_mod_for_activated_abilities_2022(iVar2, card_00, 2, 0, 0, 0, 0, 0);
           iVar2 = has_mana_multi(player, iVar2, 0, 0, 0, 0, 0);
           if (iVar2 != 0)
           {
@@ -1664,7 +1664,7 @@ static int effect_nullhide_ferox(int player, int card, event_t event)
         if (event == EVENT_ACTIVATE)
         {
 
-          iVar2 = get_cost_mod_for_activated_abilities(iVar2, card_00, 2, 0, 0, 0, 0, 0);
+          iVar2 = get_cost_mod_for_activated_abilities_2022(iVar2, card_00, 2, 0, 0, 0, 0, 0);
           charge_mana_multi(player, iVar2, 0, 0, 0, 0, 0);
           return 0;
         }
@@ -1688,7 +1688,7 @@ int card_nullhide_ferox(int player, int card, event_t event)
   int iVar5;
   int iVar6;
 
-  hexproof(player, card, event);
+  hexproof_2022(player, card, event);
   if (event == EVENT_MODIFY_COST_GLOBAL)
   {
     iVar3 = is_humiliated_for_ability(player, card, AL_STATIC);
@@ -2196,7 +2196,7 @@ int card_knight_of_autumn(int player, int card, event_t event)
   int result;
   target_definition_t td;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
 
@@ -2233,7 +2233,7 @@ int card_knight_of_autumn(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x261f3f0; original cards/guilds_of_ravnica.c:2868. */
 int card_parhelion_patrol(int player, int card, event_t event)
 {
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   mentor(player, card, event);
   return 0;
 }
@@ -2244,7 +2244,7 @@ int card_venerated_loxodon(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
 
@@ -2454,7 +2454,7 @@ static int midnight_reaper_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_026191b7:
-    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
       goto joined_r0x026191e0;
   }
@@ -2493,7 +2493,7 @@ static int midnight_reaper_effect(int player, int card, event_t event)
       test.type_flag = 3;
       count_for_gfp_ability(player, card, 0x77, player, 0, &test);
     }
-    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
     {
       return 0;
@@ -2568,7 +2568,7 @@ LAB_0261e975:
   instance = get_card_instance(player, card);
 
   if ((instance->kill_code == '\0') &&
-      (uVar4 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY), uVar4 != 0))
+      (uVar4 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY), uVar4 != 0))
   {
 
     damage_player(player, uVar4 & 0xff, player, card);
@@ -2872,7 +2872,7 @@ int card_runaway_steam_kin(int player, int card, event_t event)
       {
         return 0;
       }
-      result = can_produce_mana(player, card);
+      result = can_produce_mana_2022(player, card);
       if (result == 0)
       {
         return 0;
@@ -2888,7 +2888,7 @@ int card_runaway_steam_kin(int player, int card, event_t event)
     }
     if (event == EVENT_CAN_ACTIVATE)
     {
-      result = can_produce_mana(player, card);
+      result = can_produce_mana_2022(player, card);
       if (result == 0)
       {
         return 0;
@@ -2976,7 +2976,7 @@ int card_crackling_drake(int player, int card, event_t event)
   int iVar1;
   int iVar2;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     if (((event == EVENT_POWER) && (card == affected_card)) && (player == affected_card_controller))
@@ -3203,8 +3203,8 @@ int card_find_finality(int player, int card, event_t event)
                                        instance->targets[0].card, COUNTER_P1_P1, 2);
             }
 
-            pump_subtype_until_eot(player, card, current_turn, -1, -4, -4, 0, 0);
-            pump_subtype_until_eot(player, card, current_turn ^ 1, -1, -4, -4, 0, 0);
+            pump_subtype_until_eot_2022(player, card, current_turn, -1, -4, -4, 0, 0);
+            pump_subtype_until_eot_2022(player, card, current_turn ^ 1, -1, -4, -4, 0, 0);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -3342,7 +3342,7 @@ int card_response_resurgence(int player, int card, event_t event)
           }
           if ((uVar2 & 2) != 0)
           {
-            pump_subtype_until_eot(player, card, player, -1, 0, 0, 0x100, 8);
+            pump_subtype_until_eot_2022(player, card, player, -1, 0, 0, 0x100, 8);
             extra_combat_effect(player, card, EVENT_RESOLVE_SPELL, 0, NULL, 1);
           }
           kill_card(player, card, KILL_DESTROY);
@@ -3694,7 +3694,7 @@ int card_aurelia_exemplar_of_justice(int player, int card, event_t event)
 
         instance = get_card_instance(player, card);
         uVar3 = get_color(instance->targets[0].player, instance->targets[0].card);
-        pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+        pump_ability_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
                                2, 0, (uVar3 & 0x10) << 3, uVar3 >> 2 & 8);
       }
     }
@@ -3808,3 +3808,17 @@ LAB_026215ad:
   iVar3 = generic_spell(player, card, event, 1, &td, "TARGET_PLAYER", 1, NULL);
   return iVar3;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2619160; original cards/guilds_of_ravnica.c:1502. */
+static int is_basic_land_by_internal_id(int iid, int unused, int unused1, int unused2)
+{
+  int result;
+
+  result = is_basic_land_by_id((unsigned int)cards_data[iid].id);
+  return result;
+}
+
+#endif

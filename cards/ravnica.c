@@ -7678,3 +7678,100 @@ int card_generic_boltland(int player, int card, event_t event)
   result = land_pay_life_or_etb_tapped(player, card, event, 3);
   return result;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24e3760; original cards/ravnica.c:1016. */
+int card_breath_of_fury(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_2022_t td;
+
+  result = attached_creature_deals_damage(player, card, event,
+                                          DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE |
+                                              DDBM_MUST_DAMAGE_OPPONENT);
+  if (result != 0)
+  {
+
+    instance = get_card_instance(player, card);
+    default_target_definition_2022(player, card, &td, 2);
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    result = can_target_2022(&td);
+    if (result != 0)
+    {
+      new_pick_target_2022(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
+    }
+    if ((ai_is_speculating == 0) &&
+        (result = validate_target_2022(player, card, &td, 0), result != 0))
+    {
+      instance->targets[1].player = (int)instance->damage_target_player;
+      instance->targets[1].card = instance->damage_target_card;
+      attach_aura_to_target_2022(player, card, event, instance->targets[0].player,
+                            instance->targets[0].card);
+      extra_combat_effect(player, card, event, 1, NULL, 1);
+    }
+    kill_card(instance->targets[1].player, instance->targets[1].card, KILL_SACRIFICE);
+  }
+  if (event == EVENT_CAN_CAST)
+    goto LAB_024e37c0;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+    LAB_024e3869:
+      if (player == affected_card_controller)
+        goto LAB_024e37c0;
+    }
+    else
+    {
+    LAB_024e3814:
+      if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+           (2 < event - EVENT_POWER)) &&
+          (event != EVENT_RESOLVE_MOVING_AURA))
+      {
+        if ((event == EVENT_CHANGE_TYPE) || (event == EVENT_SET_COLOR))
+          goto LAB_024e37ad;
+        if ((event != EVENT_GET_SELECTED_CARD) && (event != EVENT_STATIC_EFFECTS))
+        {
+          return 0;
+        }
+      }
+      if (event != EVENT_CAST_SPELL)
+        goto LAB_024e37ad;
+      if (card == affected_card)
+        goto LAB_024e3869;
+    }
+  }
+  else
+  {
+    if (event == EVENT_RESOLVE_SPELL)
+      goto LAB_024e37c0;
+    if (event != EVENT_CAN_CHANGE_TARGET)
+    {
+      if (event == EVENT_CHANGE_TARGET)
+        goto LAB_024e37c0;
+      goto LAB_024e3814;
+    }
+  LAB_024e37ad:
+    if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+        (event == EVENT_CHANGE_TARGET))
+      goto LAB_024e37c0;
+  }
+  if ((((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+         (2 < event - EVENT_POWER)) &&
+        (event != EVENT_RESOLVE_MOVING_AURA)) &&
+       ((event != EVENT_CHANGE_TYPE && (event != EVENT_SET_COLOR)))) &&
+      ((event != EVENT_GET_SELECTED_CARD && (event != EVENT_STATIC_EFFECTS))))
+  {
+    return 0;
+  }
+LAB_024e37c0:
+  default_target_definition_2022(player, card, &td, 2);
+  td.allowed_controller = player;
+  result = aura(player, card, event, &td, "TARGET_CREATURE_YOU_CONTROL");
+  return result;
+}
+#endif

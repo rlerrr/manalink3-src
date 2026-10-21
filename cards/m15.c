@@ -5034,7 +5034,7 @@ static int eternal_thirst_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_021a9b54:
-    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     pcVar1 = in_play(player, card);
     if (uVar2 == 0)
       goto LAB_021a9b87;
@@ -5070,7 +5070,7 @@ static int eternal_thirst_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, 1 - player, 2, NULL);
     }
-    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     pcVar1 = in_play(player, card);
     if (uVar2 == 0)
     {

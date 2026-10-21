@@ -93,6 +93,11 @@ def main():
                 groups=dict(groups), target_sizes=sizes, expected_aliases=request['aliases'], views=views,
                 frame_base=value(die, 'DW_AT_frame_base'),
                 scope='Verified shared DWARF frame offsets and local types. Use explicit union views before normal machine-state, dependency, interface and compiler screening.')
+    for source_type,native_type in storage.get('source_type_aliases',{}).items():
+        assert source_type in storage['target_layouts'] and native_type in field_layouts
+        assert storage['target_layouts'][source_type]['size']==storage['target_layouts'][native_type]['size']
+        assert storage['target_layouts'][source_type]['members']==storage['target_layouts'][native_type]['members']
+        field_layouts[source_type]=dict(field_layouts[native_type])
     assert set(field_layouts) == set(storage['target_layouts'])
     for typename, fields in field_layouts.items():
         storage['target_layouts'][typename].update(fields)

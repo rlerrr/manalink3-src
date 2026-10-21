@@ -35,7 +35,7 @@ int card_colossification(int player, int card, event_t event)
     return 0;
   }
 LAB_02288900:
-  result = generic_aura(player, card, event, player, 0x14, 0x14, 0, 0, 0, 0, 0);
+  result = generic_aura_2022(player, card, event, player, 0x14, 0x14, 0, 0, 0, 0, 0);
   return result;
 }
 
@@ -117,7 +117,7 @@ int card_glimmerbell(int player, int card, event_t event)
 int card_imposing_vantasaur(int player, int card, event_t event)
 {
   int result;
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   result = cycling(player, card, event, 1, 0, 0, 0, 0, 0);
   return result;
 }
@@ -516,12 +516,12 @@ int card_gyruda_doom_of_depths(int player, int card, event_t event)
       return 1;
     }
     check_legend_rule(player, card, EVENT_QUERY);
-    etb_ability(player, card, EVENT_QUERY, RESOLVE_TRIGGER_MANDATORY);
+    etb_ability_2022(player, card, EVENT_QUERY, RESOLVE_TRIGGER_MANDATORY);
   }
   else
   {
     check_legend_rule(player, card, event);
-    etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (event == EVENT_ETB)
     {
       special_mill(player, card, 0x5337, 2, 4);
@@ -575,12 +575,12 @@ int card_keruga_the_macrosage(int player, int card, event_t event)
       return 1;
     }
     check_legend_rule(player, card, EVENT_QUERY);
-    etb_ability(player, card, EVENT_QUERY, RESOLVE_TRIGGER_MANDATORY);
+    etb_ability_2022(player, card, EVENT_QUERY, RESOLVE_TRIGGER_MANDATORY);
   }
   else
   {
     check_legend_rule(player, card, event);
-    etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (event == EVENT_ETB)
     {
       default_test_definition(&test, 0x47);
@@ -654,7 +654,7 @@ LAB_0228aa4c:
 
     instance = get_card_instance(player, card);
     bounce_permanent(instance->targets[0].player, instance->targets[0].card);
-    pump_ability_until_eot_no_repeat(player, card, instance->parent_controller,
+    pump_ability_until_eot_no_repeat_2022(player, card, instance->parent_controller,
                                      instance->parent_card, 0, 0x800);
   }
   result = generic_activated_ability(player, card, event, 6, 1, 0, 0, 1, 0, 0, 0, &td,
@@ -729,7 +729,7 @@ int card_rooting_moloch(int player, int card, event_t event)
   int iVar2;
   test_definition_t test;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   new_default_test_definition(&test, 0xff, "Select a card with Cycling.");
   test.special_selection_function = iid_has_cycling;
   if (event == EVENT_ETB)
@@ -789,7 +789,7 @@ int card_winota_joiner_of_forces(int player, int card, event_t event)
                                                  0, TUTOR_BOTTOM_OF_DECK_RANDOM, 0, &test);
       if (-1 < t_card)
       {
-        pump_ability_until_eot_no_repeat(player, card, player, t_card, 0, 0x800);
+        pump_ability_until_eot_no_repeat_2022(player, card, player, t_card, 0, 0x800);
       }
     }
     return 0;
@@ -936,7 +936,7 @@ int card_kinnan_bonder_prodigy(int player, int card, event_t event)
         {
           return 0;
         }
-        iVar1 = can_produce_mana(affected_card_controller, affected_card);
+        iVar1 = can_produce_mana_2022(affected_card_controller, affected_card);
         if (iVar1 == 0)
         {
           return 0;
@@ -1295,12 +1295,12 @@ int card_kaheera_the_orphanguard(int player, int card, event_t event)
       return 1;
     }
     check_legend_rule(player, card, EVENT_QUERY);
-    vigilance(player, card, EVENT_QUERY);
+    vigilance_2022(player, card, EVENT_QUERY);
   }
   else
   {
     check_legend_rule(player, card, event);
-    vigilance(player, card, event);
+    vigilance_2022(player, card, event);
     if ((((event - EVENT_POWER < 3) && (instance = in_play(player, card), instance != NULL)) &&
          (iVar2 = is_humiliated_for_ability(player, card, AL_STATIC), iVar2 == 0)) &&
         ((((affected_card_controller == player && (affected_card != card)) &&
@@ -1322,7 +1322,7 @@ int card_kaheera_the_orphanguard(int player, int card, event_t event)
       }
       else
       {
-        vigilance(affected_card_controller, affected_card, EVENT_ABILITIES);
+        vigilance_2022(affected_card_controller, affected_card, EVENT_ABILITIES);
       }
     }
   }
@@ -1467,7 +1467,7 @@ static int luminous_broodmoth_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_022880b7:
-    iVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    iVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (iVar2 == 0)
       goto LAB_022880dc;
   }
@@ -1502,7 +1502,7 @@ static int luminous_broodmoth_effect(int player, int card, event_t event)
       test.keyword_flag = 1;
       count_for_gfp_ability_and_store_values(player, card, 0x77, player, 0, &test, 0x90, 0);
     }
-    iVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    iVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (iVar2 == 0)
     {
       return 0;
@@ -1596,7 +1596,7 @@ LAB_0228b0f5:
   instance = get_card_instance(player, card);
 
   if ((instance->kill_code == '\0') &&
-      (iVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY), 0 < iVar2))
+      (iVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY), 0 < iVar2))
   {
     iVar3 = 0;
     do

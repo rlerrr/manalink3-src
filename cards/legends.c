@@ -9131,6 +9131,40 @@ Flying
 int card_giant_strength(int player, int card, event_t event)
 {
   int result;
-  result = generic_aura(player, card, event, player, 2, 2, 0, 0, 0, 0, 0);
+  result = generic_aura_2022(player, card, event, player, 2, 2, 0, 0, 0, 0, 0);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 pump effects and cleanup helpers. */
+static void spirit_link_effect_part_2022(int player, int card, int who_gains);
+
+/* ManalinkEh 2022: 0x21ecf20; original cards/legends.c:7383. */
+static void spirit_link_effect_part_2022(int player, int card, int who_gains)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(affected_card_controller, affected_card);
+  if ((((instance->internal_card_id == damage_card) && (0 < instance->info_slot)) &&
+       (instance->damage_source_player == player)) &&
+      (instance->damage_source_card == card))
+  {
+    gain_life(who_gains, instance->info_slot);
+  }
+  return;
+}
+
+
+/* ManalinkEh 2022: 0x22006a0; original cards/legends.c:7383. */
+void spirit_link_effect_2022(int player, int card, event_t event, int who_gains)
+{
+  if (event != EVENT_DEAL_DAMAGE)
+  {
+    return;
+  }
+  spirit_link_effect_part_2022(player, card, who_gains);
+  return;
+}
+
+#endif

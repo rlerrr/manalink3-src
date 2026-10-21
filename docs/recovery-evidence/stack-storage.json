@@ -273,12 +273,288 @@
         "card": "integer",
         "flags": "integer"
       }
+    },
+    "token_generation_2022_t": {
+      "size": 76,
+      "members": {
+        "id": 0,
+        "s_player": 4,
+        "s_card": 8,
+        "eff_player": 12,
+        "eff_card": 16,
+        "t_player": 20,
+        "pow": 24,
+        "tou": 28,
+        "key_plus": 32,
+        "s_key_plus": 36,
+        "color_forced": 40,
+        "no_sleight": 41,
+        "legacy": 42,
+        "qty": 43,
+        "special_infos": 44,
+        "action": 48,
+        "action_argument": 52,
+        "keep_track_of_tokens_generated": 56,
+        "special_code_for_legacy": 60,
+        "special_code_on_generation": 64,
+        "special_flags2": 68,
+        "special_flags3": 72
+      },
+      "member_sizes": {
+        "id": 4,
+        "s_player": 4,
+        "s_card": 4,
+        "eff_player": 4,
+        "eff_card": 4,
+        "t_player": 4,
+        "pow": 4,
+        "tou": 4,
+        "key_plus": 4,
+        "s_key_plus": 4,
+        "color_forced": 1,
+        "no_sleight": 1,
+        "legacy": 1,
+        "qty": 1,
+        "special_infos": 4,
+        "action": 4,
+        "action_argument": 4,
+        "keep_track_of_tokens_generated": 4,
+        "special_code_for_legacy": 4,
+        "special_code_on_generation": 4,
+        "special_flags2": 4,
+        "special_flags3": 4
+      },
+      "member_kinds": {
+        "id": "integer",
+        "s_player": "integer",
+        "s_card": "integer",
+        "eff_player": "integer",
+        "eff_card": "integer",
+        "t_player": "integer",
+        "pow": "integer",
+        "tou": "integer",
+        "key_plus": "integer",
+        "s_key_plus": "integer",
+        "color_forced": "integer",
+        "no_sleight": "integer",
+        "legacy": "integer",
+        "qty": "integer",
+        "special_infos": "integer",
+        "action": "integer",
+        "action_argument": "integer",
+        "keep_track_of_tokens_generated": "integer",
+        "special_code_for_legacy": "pointer",
+        "special_code_on_generation": "pointer",
+        "special_flags2": "integer",
+        "special_flags3": "integer"
+      }
+    },
+    "test_definition_2022_t": {
+      "size": 216,
+      "members": {
+        "message": 0,
+        "type": 100,
+        "subtype": 104,
+        "type_flag": 108,
+        "subtype_flag": 110,
+        "color": 112,
+        "id": 116,
+        "id2": 120,
+        "color_flag": 124,
+        "id_flag": 126,
+        "cmc": 128,
+        "keyword": 132,
+        "cmc_flag": 136,
+        "keyword_flag": 138,
+        "sp_keyword": 140,
+        "sp_keyword_flag": 144,
+        "power": 148,
+        "toughness": 152,
+        "power_flag": 156,
+        "toughness_flag": 158,
+        "state": 160,
+        "zone": 164,
+        "state_flag": 168,
+        "not_me": 170,
+        "ai_selection_mode": 172,
+        "qty": 174,
+        "sub2": 176,
+        "sub3": 180,
+        "sub4": 184,
+        "sub5": 188,
+        "no_shuffle": 192,
+        "create_minideck": 194,
+        "special_selection_function": 196,
+        "value_for_special_selection_function": 200,
+        "painters_servant_hack": 204,
+        "has_mana_to_pay_cmc": 208,
+        "can_legally_play": 209,
+        "owner": 210,
+        "storage": 212
+      },
+      "member_sizes": {
+        "message": 100,
+        "type": 4,
+        "subtype": 4,
+        "type_flag": 2,
+        "subtype_flag": 2,
+        "color": 4,
+        "id": 4,
+        "id2": 4,
+        "color_flag": 2,
+        "id_flag": 2,
+        "cmc": 4,
+        "keyword": 4,
+        "cmc_flag": 2,
+        "keyword_flag": 2,
+        "sp_keyword": 4,
+        "sp_keyword_flag": 2,
+        "power": 4,
+        "toughness": 4,
+        "power_flag": 2,
+        "toughness_flag": 2,
+        "state": 4,
+        "zone": 4,
+        "state_flag": 2,
+        "not_me": 2,
+        "ai_selection_mode": 2,
+        "qty": 2,
+        "sub2": 4,
+        "sub3": 4,
+        "sub4": 4,
+        "sub5": 4,
+        "no_shuffle": 2,
+        "create_minideck": 2,
+        "special_selection_function": 4,
+        "value_for_special_selection_function": 4,
+        "painters_servant_hack": 4,
+        "has_mana_to_pay_cmc": 1,
+        "can_legally_play": 1,
+        "owner": 1,
+        "storage": 4
+      },
+      "member_kinds": {
+        "message": "aggregate",
+        "type": "integer",
+        "subtype": "integer",
+        "type_flag": "integer",
+        "subtype_flag": "integer",
+        "color": "integer",
+        "id": "integer",
+        "id2": "integer",
+        "color_flag": "integer",
+        "id_flag": "integer",
+        "cmc": "integer",
+        "keyword": "integer",
+        "cmc_flag": "integer",
+        "keyword_flag": "integer",
+        "sp_keyword": "integer",
+        "sp_keyword_flag": "integer",
+        "power": "integer",
+        "toughness": "integer",
+        "power_flag": "integer",
+        "toughness_flag": "integer",
+        "state": "integer",
+        "zone": "integer",
+        "state_flag": "integer",
+        "not_me": "integer",
+        "ai_selection_mode": "integer",
+        "qty": "integer",
+        "sub2": "integer",
+        "sub3": "integer",
+        "sub4": "integer",
+        "sub5": "integer",
+        "no_shuffle": "integer",
+        "create_minideck": "integer",
+        "special_selection_function": "pointer",
+        "value_for_special_selection_function": "integer",
+        "painters_servant_hack": "aggregate",
+        "has_mana_to_pay_cmc": "integer",
+        "can_legally_play": "integer",
+        "owner": "integer",
+        "storage": "integer"
+      }
+    },
+    "target_definition_2022_t": {
+      "size": 84,
+      "members": {
+        "who_chooses": 0,
+        "allowed_controller": 4,
+        "preferred_controller": 8,
+        "zone": 12,
+        "required_type": 16,
+        "illegal_type": 20,
+        "required_abilities": 24,
+        "illegal_abilities": 28,
+        "required_color": 32,
+        "illegal_color": 36,
+        "extra": 40,
+        "required_subtype": 44,
+        "power_requirement": 48,
+        "toughness_requirement": 52,
+        "special": 56,
+        "required_state": 60,
+        "illegal_state": 64,
+        "allow_cancel": 68,
+        "player": 72,
+        "card": 76,
+        "flags": 80
+      },
+      "member_sizes": {
+        "who_chooses": 4,
+        "allowed_controller": 4,
+        "preferred_controller": 4,
+        "zone": 4,
+        "required_type": 4,
+        "illegal_type": 4,
+        "required_abilities": 4,
+        "illegal_abilities": 4,
+        "required_color": 4,
+        "illegal_color": 4,
+        "extra": 4,
+        "required_subtype": 4,
+        "power_requirement": 4,
+        "toughness_requirement": 4,
+        "special": 4,
+        "required_state": 4,
+        "illegal_state": 4,
+        "allow_cancel": 4,
+        "player": 4,
+        "card": 4,
+        "flags": 4
+      },
+      "member_kinds": {
+        "who_chooses": "integer",
+        "allowed_controller": "integer",
+        "preferred_controller": "integer",
+        "zone": "integer",
+        "required_type": "integer",
+        "illegal_type": "integer",
+        "required_abilities": "integer",
+        "illegal_abilities": "integer",
+        "required_color": "integer",
+        "illegal_color": "integer",
+        "extra": "integer",
+        "required_subtype": "integer",
+        "power_requirement": "integer",
+        "toughness_requirement": "integer",
+        "special": "integer",
+        "required_state": "integer",
+        "illegal_state": "integer",
+        "allow_cancel": "integer",
+        "player": "integer",
+        "card": "integer",
+        "flags": "integer"
+      }
     }
   },
   "source_layouts": {
     "test_definition_t": 208,
     "target_definition_t": 80,
-    "token_generation_t": 72
+    "token_generation_t": 72,
+    "token_generation_2022_t": 76,
+    "test_definition_2022_t": 216,
+    "target_definition_2022_t": 84
   },
   "functions": {
     "22df520": {
@@ -3628,6 +3904,125 @@
       "scope": "Verified shared DWARF frame offsets and local types. Use explicit union views before normal machine-state, dependency, interface and compiler screening.",
       "resolved_partial_views": [],
       "unresolved_partial_views": []
+    },
+    "2242640": {
+      "name": "card_urzas_saga",
+      "source": "cards/modern_horizons_2.c",
+      "storage": [
+        {
+          "original_name": "test",
+          "original_type": "test_definition_t",
+          "frame_offset": -236,
+          "variables": [
+            {
+              "name": "test",
+              "type": "test_definition_t",
+              "die": "0x1f62f56"
+            },
+            {
+              "name": "token",
+              "type": "token_generation_2022_t",
+              "die": "0x1f6322a",
+              "dwarf_type": "token_generation_t"
+            }
+          ],
+          "target_extent": 216,
+          "storage": "recovered_stack_test",
+          "members": {
+            "test_definition_t": "test",
+            "token_generation_2022_t": "token"
+          }
+        }
+      ],
+      "frame_base": [
+        156
+      ],
+      "previous_body_sha256": "88558a46dc25c9d0b21a3a0fe38b85d786686aa72fccf096f781ae77adc5e4f9",
+      "scope": "Revalidated native DWARF shared frame offsets; use the full 76-byte token view with unchanged test/target prefix views and exact native storage extents. Normalize only verified contiguous token word writes and Varina prompt initialization.",
+      "resolved_partial_views": [],
+      "unresolved_partial_views": [],
+      "body_sha256": "d463ab030460eb992d68a2dadc914dddde79989930c81e22b987575c0da8dcc3"
+    },
+    "235e100": {
+      "name": "card_kiora_bests_the_sea_god",
+      "source": "cards/theros_beyond_death.c",
+      "storage": [
+        {
+          "original_name": "token",
+          "original_type": "token_generation_2022_t",
+          "frame_offset": -104,
+          "variables": [
+            {
+              "name": "token",
+              "type": "token_generation_2022_t",
+              "die": "0x326f590",
+              "dwarf_type": "token_generation_t"
+            },
+            {
+              "name": "td",
+              "type": "target_definition_t",
+              "die": "0x326f697"
+            }
+          ],
+          "target_extent": 84,
+          "storage": "recovered_stack_token",
+          "members": {
+            "target_definition_t": "target",
+            "token_generation_2022_t": "token"
+          }
+        }
+      ],
+      "frame_base": [
+        156
+      ],
+      "previous_body_sha256": "2cbaeaff836ba1b83871506044b693249b5a95823bfba919c361c6aa7b99c0c7",
+      "scope": "Revalidated native DWARF shared frame offsets; use the full 76-byte token view with unchanged test/target prefix views and exact native storage extents. Normalize only verified contiguous token word writes and Varina prompt initialization.",
+      "resolved_partial_views": [],
+      "unresolved_partial_views": [],
+      "body_sha256": "f8756307d6c494c73e9f9dc24ea82a5a91623f778ff8e2462e84957ba2eeb3ad"
+    },
+    "2565c60": {
+      "name": "card_varina_lich_queen",
+      "source": "cards/commander_2018.c",
+      "storage": [
+        {
+          "original_name": "test",
+          "original_type": "test_definition_t",
+          "frame_offset": -236,
+          "variables": [
+            {
+              "name": "test",
+              "type": "test_definition_t",
+              "die": "0x4e2bb2e"
+            },
+            {
+              "name": "this_test",
+              "type": "test_definition_t",
+              "die": "0x4e2bc55"
+            },
+            {
+              "name": "token",
+              "type": "token_generation_2022_t",
+              "die": "0x4e2bd1f",
+              "dwarf_type": "token_generation_t"
+            }
+          ],
+          "target_extent": 216,
+          "storage": "recovered_stack_test",
+          "members": {
+            "test_definition_t": "test",
+            "token_generation_2022_t": "token"
+          }
+        }
+      ],
+      "frame_base": [
+        156
+      ],
+      "previous_body_sha256": "d202e8e5fcfb9277122f1ad51c1f53399d10da2ff3b2a070ca1211a78ee532b5",
+      "scope": "Revalidated native DWARF shared frame offsets; use the full 76-byte token view with unchanged test/target prefix views and exact native storage extents. Normalize only verified contiguous token word writes and Varina prompt initialization.",
+      "resolved_partial_views": [],
+      "unresolved_partial_views": [],
+      "body_sha256": "f1704ad5d5d088e10cb9edc30d700eee42cd2035957d6412f40b218b20a70fb5"
     }
   },
   "candidates": {
@@ -5985,5 +6380,10 @@
   "last_candidate_preparation": {
     "prepared": 12,
     "rejected": {}
+  },
+  "source_type_aliases": {
+    "token_generation_2022_t": "token_generation_t",
+    "test_definition_2022_t": "test_definition_t",
+    "target_definition_2022_t": "target_definition_t"
   }
 }

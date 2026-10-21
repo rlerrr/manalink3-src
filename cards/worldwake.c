@@ -2829,7 +2829,7 @@ static int zendikon_legacy(int player, int card, event_t event)
   instance = in_play(player, card);
   if ((instance != NULL) && (instance->targets[0].player != -1))
   {
-    result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    result = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (result != 0)
     {
 
@@ -3034,3 +3034,58 @@ int card_wind_zendikon(int player, int card, event_t event)
                     SP_KEYWORD_0);
   return result;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25858a0; original cards/worldwake.c:658. */
+int card_canopy_cover(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      instance = get_card_instance(player, card);
+      if (-1 < instance->damage_target_player)
+      {
+
+        instance = get_card_instance(player, card);
+        if (event == EVENT_BLOCK_LEGALITY)
+        {
+          if ((instance->damage_target_player == attacking_card_controller) &&
+              (instance->damage_target_card == attacking_card))
+          {
+
+            uVar3 = get_abilities(affected_card_controller, affected_card, EVENT_ABILITIES, -1);
+            if ((uVar3 & 0x420) == 0)
+            {
+              event_result = 1;
+            }
+          }
+          attached_gets_sp_kw2(player, card, EVENT_BLOCK_LEGALITY, SP_KEYWORD2_GRANTED_PROT_MISC);
+          get_card_instance(player, card);
+          goto LAB_0258590a;
+        }
+      }
+    }
+  }
+  attached_gets_sp_kw2(player, card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
+  instance = get_card_instance(player, card);
+  if ((((event == EVENT_PROT_MISC) && (instance->damage_target_card == affected_card)) &&
+       (instance->damage_target_player == affected_card_controller)) &&
+      ((1 - player == attacking_card_controller &&
+        (((unsigned int)event_result >> 24 & 0xff) == '\x05'))))
+  {
+    event_result = event_result | 1;
+  }
+LAB_0258590a:
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+#endif

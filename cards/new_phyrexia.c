@@ -4906,7 +4906,7 @@ int card_bludgeon_brawl(int player, int card, event_t event)
       (iVar2 = is_equipment(affected_card_controller, affected_card), iVar2 == 0))
   {
 
-    add_a_subtype(affected_card_controller, affected_card, SUBTYPE_EQUIPMENT);
+    add_a_subtype_2022(affected_card_controller, affected_card, SUBTYPE_EQUIPMENT);
     if (0 < active_cards_count[player])
     {
       iVar2 = 0;
@@ -4944,3 +4944,390 @@ LAB_0226e5a7:
   iVar2 = global_enchantment(player, card, event);
   return iVar2;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 Phyrexian cost helpers. */
+int charge_mana_called_from_pay_phyrexian_mana;
+static const char *const phyrexian_color_words_2022[6] = {"colorless", "black", "blue", "green", "red", "white"};
+
+/* ManalinkEh 2022: 0x226caa0; original cards/new_phyrexia.c:60. */
+static int charge_phyrexian_mana_impl_2022(int player, int cless, int black, int blue, int green,
+                                           int red, int white, int clred_artifact)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  unsigned int uVar4;
+  int argument3;
+  int iStack_110;
+  int iStack_10c;
+  int manacost[6];
+  int manacost_modified[6];
+  char buffer[200];
+
+  manacost[3] = green;
+  manacost[5] = white;
+  manacost_modified[3] = green;
+  manacost[0] = 0;
+  manacost[2] = blue;
+  manacost[4] = red;
+  manacost_modified[0] = 0;
+  manacost_modified[2] = blue;
+  manacost_modified[4] = red;
+  manacost_modified[5] = white;
+  manacost[1] = black;
+  manacost_modified[1] = black;
+  iStack_110 = can_pay_life(player, 2);
+  iVar1 = how_much_life_can_i_pay(player);
+  iVar2 = has_mana(player, (-(unsigned int)(clred_artifact == 0) ^ 0xffffffff) & 6, cless);
+  if (iVar2 == 0)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+  if (iStack_110 != 0)
+  {
+    iVar2 = 1;
+    iStack_110 = 0;
+    while (true)
+    {
+      if (black != 0)
+      {
+        argument3 = (iVar1 - iStack_110) / 2;
+        if (black < argument3)
+        {
+          argument3 = black;
+        }
+        iVar3 = has_mana(player, iVar2, 1);
+        uVar4 = black - iVar3 & (int)(black - iVar3 ^ 0xffffffffU) >> 0x1f;
+        sprintf(buffer, " Pay 2 life for how much %s mana? (max %d, min %d)",
+                phyrexian_color_words_2022[iVar2], argument3, uVar4);
+        while (true)
+        {
+          iVar3 = choose_a_number(player, buffer, argument3);
+          if (iVar3 == -1)
+          {
+            spell_fizzled = 1;
+            return 0;
+          }
+          if ((iVar3 <= argument3) && ((int)uVar4 <= iVar3))
+            break;
+          if (player == 1)
+          {
+            spell_fizzled = 1;
+            ai_modifier = ai_modifier + -100;
+            return 0;
+          }
+        }
+        if ((((iVar1 - iStack_110) + -6) / 2 <= iVar3) && (player == 1))
+        {
+          ai_modifier = ai_modifier + -999;
+          spell_fizzled = 1;
+          return 0;
+        }
+        iStack_110 = iStack_110 + iVar3 * 2;
+        manacost_modified[iVar2] = manacost_modified[iVar2] - iVar3;
+      }
+      iVar2 = iVar2 + 1;
+      if (iVar2 == 6)
+        break;
+      black = manacost[iVar2];
+    }
+    white = manacost_modified[5];
+    green = manacost_modified[3];
+    black = manacost_modified[1];
+    red = manacost_modified[4];
+    blue = manacost_modified[2];
+  }
+  charge_mana_called_from_pay_phyrexian_mana = 1;
+  iStack_10c = cless;
+  if (clred_artifact != 0)
+  {
+    iStack_10c = 0;
+    clred_artifact = cless;
+  }
+  charge_mana_multi_a(player, iStack_10c, black, blue, green, red, white, clred_artifact);
+  charge_mana_called_from_pay_phyrexian_mana = 0;
+  if (spell_fizzled != 1)
+  {
+    lose_life(player, iStack_110);
+    return 1;
+  }
+  charge_mana_called_from_pay_phyrexian_mana = 0;
+  return 0;
+}
+
+
+/* ManalinkEh 2022: 0x226d7a0; original cards/new_phyrexia.c:5. */
+int has_phyrexian_mana_2022(int player, int cless, int black, int blue, int green, int red,
+                            int white, int clred_artifact)
+{
+  int iVar1;
+  int iVar2;
+  unsigned int uVar3;
+  int iVar4;
+  int argument2;
+  int manacost[5];
+  manacost[1] = blue;
+  manacost[0] = black;
+  manacost[2] = green;
+  manacost[3] = red;
+  manacost[4] = white;
+  iVar1 = has_mana_multi(player, cless, black, blue, green, red, white);
+  if (iVar1 == 0)
+  {
+    iVar1 = has_mana(player, (-(unsigned int)(clred_artifact == 0) ^ 0xffffffff) & 6, cless);
+    uVar3 = 0;
+    if ((iVar1 != 0) && (iVar1 = can_pay_life(player, 1), iVar1 != 0))
+    {
+      iVar1 = 0x32;
+      argument2 = 0;
+      while (true)
+      {
+        argument2 = argument2 + 1;
+        iVar4 = 4;
+        if (black < 1)
+        {
+          iVar1 = iVar1 + -10;
+        }
+        else
+        {
+          do
+          {
+            for (; black <= iVar4; iVar4 = iVar4 + -1)
+            {
+              iVar1 = iVar1 + -2;
+            }
+            iVar2 = has_mana(player, argument2, iVar4 + 1);
+            if (iVar2 != 0)
+            {
+              iVar1 = iVar1 + -2;
+            }
+            iVar4 = iVar4 + -1;
+          } while (-1 < iVar4);
+        }
+        if (argument2 == 5)
+          break;
+        black = manacost[argument2];
+      }
+      if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+      {
+        uVar3 = (unsigned int)(6 < life[player] - iVar1);
+      }
+      else
+      {
+        uVar3 = (unsigned int)(iVar1 <= life[player]);
+      }
+    }
+    return uVar3;
+  }
+  return 1;
+}
+
+
+/* ManalinkEh 2022: 0x226d900; original cards/new_phyrexia.c:50. */
+int has_phyrexian_mana_for_activated_ability_2022(int player, int card, int cless, int black,
+                                                  int blue, int green, int red, int white)
+{
+  int result;
+
+  result = get_cost_mod_for_activated_abilities_2022(
+      player, card, (int)(cless ^ 0xffffffffU) >> 0x1f & cless, black, blue, green, red, white);
+  result = has_phyrexian_mana_2022(player, result, black, blue, green, red, white, 0);
+  return result;
+}
+
+
+/* ManalinkEh 2022: 0x226d990; original cards/new_phyrexia.c:135. */
+int charge_phyrexian_mana_2022(int player, int card, event_t event, int cless, int black, int blue,
+                               int green, int red, int white, int clred_artifact)
+{
+  int result;
+  result = get_updated_casting_cost(player, card, -1, event, cless);
+  result = charge_phyrexian_mana_impl_2022(player, result, black, blue, green, red, white,
+                                           clred_artifact);
+  return result;
+}
+
+
+/* ManalinkEh 2022: 0x226da10; original cards/new_phyrexia.c:141. */
+int charge_phyrexian_mana_for_activated_ability_2022(int player, int card, int cless, int black,
+                                                     int blue, int green, int red, int white)
+{
+  int iVar1;
+  int iVar2;
+  int colorless;
+
+  iVar2 = 0;
+  if (cless < 1)
+  {
+    iVar2 = cless;
+  }
+  iVar1 = get_cost_mod_for_activated_abilities_2022(
+      player, card, (int)(cless ^ 0xffffffffU) >> 0x1f & cless, black, blue, green, red, white);
+  colorless = iVar2;
+  if ((cless < 0) && (iVar1 == 0))
+  {
+    colorless = 0;
+    iVar1 = iVar2;
+  }
+  iVar1 = charge_phyrexian_mana_impl_2022(player, iVar1, black, blue, green, red, white, 0);
+  iVar2 = 0;
+  if ((iVar1 != 0) && (iVar2 = 1, colorless != 0))
+  {
+    iVar2 = charge_mana_multi(player, colorless, 0, 0, 0, 0, 0);
+    return (unsigned int)(iVar2 != 0);
+  }
+  return iVar2;
+}
+
+
+/* ManalinkEh 2022: 0x226db00; original cards/new_phyrexia.c:156. */
+int phyrexian_casting_costs_2022(int player, int card, event_t event, int cless, int black,
+                                 int blue, int green, int red, int white, int clred_artifact)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  int manacost[5];
+
+  instance = get_card_instance(player, card);
+  manacost[0] = black;
+  manacost[1] = blue;
+  manacost[2] = green;
+  manacost[3] = red;
+  manacost[4] = white;
+  if (event != EVENT_MODIFY_COST)
+  {
+    if (event == EVENT_CAN_CAST)
+    {
+      return 1;
+    }
+    if (event != EVENT_CAST_SPELL)
+    {
+      return 0;
+    }
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    if (instance->info_slot != 1)
+    {
+      return 0;
+    }
+    iVar2 = played_for_free(player, card);
+    iVar3 = is_token(player, card);
+    if (iVar2 != 0 || iVar3 != 0)
+    {
+      return 0;
+    }
+    iVar2 = charge_phyrexian_mana_2022(player, card, EVENT_CAST_SPELL, cless, black, blue, green,
+                                       red, white, clred_artifact);
+    if (iVar2 != 0)
+    {
+      return 0;
+    }
+    spell_fizzled = 1;
+    return 0;
+  }
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+  iVar2 = get_updated_casting_cost(player, card, -1, EVENT_MODIFY_COST, -1);
+  if (clred_artifact == 0)
+  {
+    iVar3 = has_mana_multi(player, iVar2, black, blue, green, red, white);
+  }
+  else
+  {
+    iVar3 = has_mana_multi_a(player, iVar2, black, blue, green, red, white);
+  }
+  if (iVar3 != 0)
+    goto LAB_0226dd40;
+  if (clred_artifact == 0)
+  {
+    iVar2 = has_mana(player, 0, iVar2);
+    if (iVar2 == 0)
+    {
+      instance->info_slot = 0;
+      return 0;
+    }
+  }
+  else
+  {
+    iVar2 = has_mana(player, 6, iVar2);
+    if (iVar2 == 0)
+    {
+      instance->info_slot = 0;
+      goto LAB_0226dc32;
+    }
+  }
+  iVar2 = can_pay_life(player, 1);
+  if (iVar2 != 0)
+  {
+    iVar3 = 0;
+    iVar2 = 0x32;
+    while (true)
+    {
+      iVar3 = iVar3 + 1;
+      if (black < 1)
+      {
+        iVar2 = iVar2 + -10;
+      }
+      else
+      {
+        iVar5 = 4;
+        do
+        {
+          for (; black <= iVar5; iVar5 = iVar5 + -1)
+          {
+            iVar2 = iVar2 + -2;
+          }
+          iVar4 = has_mana(player, iVar3, iVar5 + 1);
+          if (iVar4 != 0)
+          {
+            iVar2 = iVar2 + -2;
+          }
+          iVar5 = iVar5 + -1;
+        } while (-1 < iVar5);
+      }
+      if (iVar3 == 5)
+        break;
+      black = manacost[iVar3];
+    }
+    if (player == 1)
+    {
+      if (6 < life[1] - iVar2)
+        goto LAB_0226dd40;
+    }
+    else if (iVar2 <= life[player])
+    {
+    LAB_0226dd40:
+      null_casting_cost(player, card);
+      instance->info_slot = 1;
+      return 0;
+    }
+  }
+  instance->info_slot = 0;
+  if (clred_artifact == 0)
+  {
+    return 0;
+  }
+LAB_0226dc32:
+  infinite_casting_cost();
+  return 0;
+}
+
+#endif

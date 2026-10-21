@@ -2758,3 +2758,33 @@ LAB_024fdb7d:
   result = generic_spell(player, card, event, 1, &td, "TARGET_PERMANENT", 1, NULL);
   return result;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24f6980; original cards/scourge.c:88. */
+static int ageless_sentinels_subtypes_abils(int player, int card, event_t event)
+{
+  int card_00;
+  card_instance_t *instance;
+  int player_00;
+
+  if ((event & 0xfffffff7) == EVENT_ABILITIES)
+  {
+
+    instance = get_card_instance(player, card);
+    card_00 = instance->damage_target_card;
+    player_00 = (int)instance->damage_target_player;
+    if (((card_00 == affected_card) && (affected_card_controller == player_00)) &&
+        (event == EVENT_ABILITIES))
+    {
+      event_result = event_result & 0xff7fffff;
+    }
+    else if (event == EVENT_CHANGE_TYPE)
+    {
+      remove_a_subtype(player_00, card_00, SUBTYPE_WALL);
+      add_a_subtype_2022(player_00, card_00, SUBTYPE_BIRD);
+      add_a_subtype_2022(player_00, card_00, SUBTYPE_GIANT);
+    }
+  }
+  return 0;
+}

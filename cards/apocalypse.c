@@ -2858,6 +2858,8 @@ int card_credit_voucher(int player, int card, event_t event)
   return result;
 }
 
+static int whirlpool_rider_part_2022(int player, int card, event_t event);
+
 /* ManalinkEh 2022: 0x2069960; original cards/apocalypse.c:2829. */
 int card_whirlpool_rider(int player, int card, event_t event)
 {
@@ -2868,7 +2870,7 @@ int card_whirlpool_rider(int player, int card, event_t event)
   {
     return 0;
   }
-  card_whirlpool_rider(player, card_00, card);
+  whirlpool_rider_part_2022(player, card_00, card);
   return 0;
 }
 
@@ -2881,7 +2883,7 @@ int card_whirlpool_drake(int player, int card, event_t event)
   {
     result = player;
     etb_ability(player, card, EVENT_ETB, RESOLVE_TRIGGER_MANDATORY);
-    card_whirlpool_rider(player, result, card);
+    whirlpool_rider_part_2022(player, result, card);
     return 0;
   }
   result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -2906,7 +2908,7 @@ int card_whirlpool_warrior(int player, int card, event_t event)
   {
     result = player;
     etb_ability(player, card, EVENT_ETB, RESOLVE_TRIGGER_MANDATORY);
-    card_whirlpool_rider(player, result, card);
+    whirlpool_rider_part_2022(player, result, card);
     return 0;
   }
   if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
@@ -2925,3 +2927,19 @@ int card_whirlpool_warrior(int player, int card, event_t event)
   result = generic_activated_ability(player, card, event, 8, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 typed consumers and compiler parts. */
+
+/* ManalinkEh 2022: 0x2060dd0; original cards/apocalypse.c:2829. */
+static int whirlpool_rider_part_2022(int player, int card, event_t event)
+{
+  int result;
+
+  result = reshuffle_hand_into_deck(player, 0);
+  result = draw_cards(player, result);
+  return result;
+}
+
+#endif

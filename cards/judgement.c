@@ -2337,7 +2337,7 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_02058d68:
-    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
       goto joined_r0x02058d8d;
   }
@@ -2374,7 +2374,7 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
       this_test.subtype = 0x16;
       count_for_gfp_ability_and_store_values(player, card, 0x77, player, 0, &this_test, 0x20, 0);
     }
-    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
     {
       return 0;

@@ -286,7 +286,7 @@ static int verdant_succession_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_02501ee7:
-    iVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    iVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (iVar2 == 0)
       goto LAB_02501f10;
   }
@@ -323,7 +323,7 @@ static int verdant_succession_effect(int player, int card, event_t event)
       this_test.color = get_sleighted_color_test(player, card, 8);
       count_for_gfp_ability_and_store_values(player, card, 0x77, 2, 0, &this_test, 0x10, 1);
     }
-    iVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    iVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (iVar2 == 0)
     {
       return 0;

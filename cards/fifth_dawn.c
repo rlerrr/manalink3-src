@@ -4105,7 +4105,7 @@ int card_ouphe_vandals(int player, int card, event_t event)
       {
         return 0;
       }
-      result = can_use_activated_abilities(player, card);
+      result = can_use_activated_abilities_2022(player, card);
       if (result == 0)
       {
         return 0;
@@ -4120,7 +4120,7 @@ int card_ouphe_vandals(int player, int card, event_t event)
       {
         return 0;
       }
-      result = has_mana_for_activated_ability(player, card, 0, 0, 0, 1, 0, 0);
+      result = has_mana_for_activated_ability_2022(player, card, 0, 0, 0, 1, 0, 0);
       if (result == 0)
       {
         return 0;
@@ -4130,7 +4130,7 @@ int card_ouphe_vandals(int player, int card, event_t event)
     if (event == EVENT_ACTIVATE)
     {
       instance->number_of_targets = '\0';
-      result = charge_mana_for_activated_ability(player, card, 0, 0, 0, 1, 0, 0);
+      result = charge_mana_for_activated_ability_2022(player, card, 0, 0, 0, 1, 0, 0);
       if (result == 0)
       {
         return 0;
@@ -4179,7 +4179,7 @@ int card_summoning_station(int player, int card, event_t event)
     }
   LAB_02033bbb:
     result = duh_mode(player);
-    result = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+    result = resolve_gfp_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
     if (result != 0)
     {
       untap_card(player, card);

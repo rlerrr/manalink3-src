@@ -517,7 +517,7 @@ int card_spellseeker(int player, int card, event_t event)
   int result;
   test_definition_t this_test;
   result = duh_mode(player);
-  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -541,7 +541,7 @@ static void partner_with(int player, int card, event_t event, int id)
   test_definition_t this_test;
 
   result = duh_mode(player);
-  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event != EVENT_ETB)
   {
     return;
@@ -945,14 +945,14 @@ LAB_02026ae9:
         iVar10 = 1;
         iVar9 = -1;
       }
-      pump_until_eot_merge_previous(iVar2, iVar7, iVar2, iVar7, iVar9, iVar10);
+      pump_until_eot_merge_previous_2022(iVar2, iVar7, iVar2, iVar7, iVar9, iVar10);
       return 0;
     }
     iVar7 = instance->parent_card;
     iVar2 = instance->parent_controller;
     iVar9 = 2;
   }
-  pump_ability_until_eot(iVar2, iVar7, iVar2, iVar7, 0, 0, 0, iVar9);
+  pump_ability_until_eot_2022(iVar2, iVar7, iVar2, iVar7, 0, 0, 0, iVar9);
   return 0;
 }
 
@@ -981,12 +981,12 @@ int card_krav_the_unredeemed(int player, int card, event_t event)
     td.zone = 0x1000;
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar1 = can_use_activated_abilities(player, card);
+      iVar1 = can_use_activated_abilities_2022(player, card);
       if (iVar1 == 0)
       {
         return 0;
       }
-      iVar1 = has_mana_for_activated_ability(player, card, 0, 1, 0, 0, 0, 0);
+      iVar1 = has_mana_for_activated_ability_2022(player, card, 0, 1, 0, 0, 0, 0);
       if (iVar1 == 0)
       {
         return 0;
@@ -1000,7 +1000,7 @@ int card_krav_the_unredeemed(int player, int card, event_t event)
     }
     if (event == EVENT_ACTIVATE)
     {
-      iVar1 = charge_mana_for_activated_ability(player, card, 0, 1, 0, 0, 0, 0);
+      iVar1 = charge_mana_for_activated_ability_2022(player, card, 0, 1, 0, 0, 0, 0);
       if (iVar1 == 0)
       {
         return 0;
@@ -1085,7 +1085,7 @@ int card_archon_of_valors_reach(int player, int card, event_t event)
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   pcVar1 = get_card_instance(player, card);
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   if (event == EVENT_ETB)
   {
     result = is_humiliated_for_ability(player, card, AL_TRIG);
@@ -1463,3 +1463,190 @@ int card_bramble_sovereign(int player, int card, event_t event)
   }
   return 0;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2027370; original cards/battlebond.c:472. */
+int card_generous_patron(int player, int card, event_t event)
+{
+  int result;
+
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    if ((event == EVENT_COUNTERS) && (attacking_card_controller == player))
+    {
+      result = is_what(affected_card_controller, affected_card, 2);
+      if ((result != 0) && (affected_card_controller != player))
+      {
+        result = is_humiliated_for_ability(player, card, AL_TRIG);
+        if (result == 0)
+        {
+          draw_a_card(player);
+        }
+      }
+    }
+    return 0;
+  }
+  support_2022(player, card, 2);
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 action and copy helpers. */
+
+/* ManalinkEh 2022: 0x20277e0; original cards/battlebond.c:610. */
+int get_random_permanent_2022(int player, test_definition_2022_t *this_test)
+{
+  card_instance_t *instance;
+  int iVar2;
+  long lVar3;
+  int iVar4;
+  int card;
+  test_definition_2022_t default_test;
+  int prm[151];
+
+  if (this_test == NULL)
+  {
+    this_test = &default_test;
+    default_test_definition_2022(this_test, 0x47);
+  }
+  iVar4 = active_cards_count[player];
+  if (iVar4 == hand_count[player] || iVar4 - hand_count[player] < 0)
+  {
+  LAB_0202792e:
+    lVar3 = -1;
+  }
+  else
+  {
+    if ((trace_mode & 2U) == 0)
+    {
+      if (iVar4 < 1)
+        goto LAB_0202792e;
+    }
+    else
+    {
+      if (current_turn == 1)
+      {
+        receive_network_packet_2022();
+        return dblword_628C10;
+      }
+      prm[0] = -1;
+      if (iVar4 < 1)
+      {
+        lVar3 = -1;
+        goto LAB_020278c2;
+      }
+    }
+    prm[0] = -1;
+    card = 0;
+    iVar4 = 0;
+    do
+    {
+      instance = in_play(player, card);
+      if ((instance != NULL) &&
+          (iVar2 = new_make_test_in_play_2022(player, card, -1, this_test), iVar2 != 0))
+      {
+        prm[iVar4] = card;
+        iVar4 = iVar4 + 1;
+      }
+      card = card + 1;
+    } while (card < active_cards_count[player]);
+    lVar3 = prm[0];
+    if (1 < iVar4)
+    {
+      iVar4 = internal_rand(iVar4);
+      lVar3 = prm[iVar4];
+    }
+    if ((trace_mode & 2U) != 0)
+    {
+    LAB_020278c2:
+      byte_628C0C = '\x18';
+      dblword_628C10 = lVar3;
+      send_network_packet_2022();
+      return lVar3;
+    }
+  }
+  return lVar3;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2027960; original cards/battlebond.c:644. */
+int card_last_one_standing(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  const char *pcVar4;
+  char buffer[100];
+  test_definition_2022_t this_test;
+
+  if (event == EVENT_CAN_CAST)
+    goto LAB_02027990;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    goto LAB_02027990;
+  }
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+    goto LAB_02027990;
+  }
+
+  default_test_definition_2022(&this_test, 2);
+  iVar2 = check_battlefield_for_subtype(player, 2, -1);
+  iVar1 = 1 - player;
+  iVar3 = check_battlefield_for_subtype(iVar1, 2, -1);
+  if (iVar2 == 0)
+  {
+    if (iVar3 != 0)
+      goto LAB_02027a43;
+    get_random_permanent_2022(-1, &this_test);
+  }
+  else
+  {
+    iVar1 = player;
+    if (iVar3 != 0)
+    {
+      iVar1 = internal_rand(1);
+    }
+  LAB_02027a43:
+    iVar2 = get_random_permanent_2022(iVar1, &this_test);
+    if (iVar1 != -1)
+    {
+      iVar3 = get_id(iVar1, iVar2);
+      pcVar4 = get_card_name_by_id(iVar3);
+      scnprintf(buffer, 100, "Last One Standing chose %s at random", pcVar4);
+      dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\006", iVar1, iVar2, "\001\011", buffer,
+                  "\001\014", "\001\003", 0, 0, 0, 0);
+      state_untargettable(iVar1, iVar2, 1);
+      new_manipulate_all_2022(player, card, 2, &this_test, ACT_KILL_DESTROY);
+      state_untargettable(iVar1, iVar2, 0);
+    }
+  }
+  kill_card(player, card, KILL_DESTROY);
+LAB_02027990:
+  iVar1 = basic_spell(player, card, event);
+  return iVar1;
+}
+
+#endif

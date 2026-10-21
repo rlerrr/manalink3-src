@@ -742,11 +742,11 @@ int card_muck_drubb(int player, int card, event_t event)
       {
         ai_modifier = ai_modifier + -10;
       }
-      etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
+      etb_ability_2022(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
     }
     else
     {
-      etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
       result = card_on_stack_controller;
       if ((event == EVENT_ETB) && (instance->info_slot == 1))
       {
@@ -997,3 +997,128 @@ int card_spelljack(int player, int card, event_t event)
   iVar1 = generic_spell(player, card, event, 2, NULL, NULL, 1, NULL);
   return iVar1;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *can_legally_change_target_to_me(int who_chooses, int player, int card,
+                                             int targeting_player, int targeting_card);
+
+/* ManalinkEh 2022: 0x24281d0; original cards/gargaroz.c:142. */
+int card_silver_wyvern(int player, int card, event_t event)
+{
+  int result;
+
+  if (((event != EVENT_ACTIVATE) && (1 < event - EVENT_RESOLVE_ACTIVATION)) &&
+      (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+  result = deflect_away_from_me(player, card, event, 0, 0, 0, 1, 0, 0, 0, 0, NULL, 1);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x24276f0; original cards/gargaroz.c:415. */
+static char *can_legally_change_target_to_me(int who_chooses, int player, int card,
+                                             int targeting_player, int targeting_card)
+{
+  int32_t iVar1;
+  int32_t iVar2;
+  card_instance_t *instance;
+  char *pcVar4;
+  int iVar5;
+
+  instance = get_card_instance(player, card);
+  pcVar4 = "must have at least 1 target";
+  if (instance->number_of_targets != '\0')
+  {
+    iVar1 = instance->targets[9].player;
+    instance->targets[9].player = targeting_player;
+    iVar2 = instance->targets[9].card;
+    instance->targets[9].card = targeting_card;
+    set_special_flags2_2022(player, card, 0x10000);
+    iVar5 = call_card_function(player, card, EVENT_CAN_CAST);
+    instance->targets[9].card = iVar2;
+    instance->targets[9].player = iVar1;
+    remove_special_flags2_2022(player, card, 0x10000);
+    pcVar4 = "cannot target this creature";
+    if (iVar5 != 0)
+    {
+      return NULL;
+    }
+  }
+  return pcVar4;
+}
+
+/* ManalinkEh 2022: 0x2428df0; original cards/gargaroz.c:430. */
+int card_mizzium_meddler(int player, int card, event_t event)
+{
+  int player_00;
+  card_instance_t *pcVar1;
+  int result;
+  card_instance_t *pcVar3;
+  target_definition_2022_t td_spell;
+
+  counterspell_target_definition_2022(player, card, &td_spell, 0xff);
+  td_spell.special = td_spell.special | 0x8000;
+  td_spell.extra = (int32_t)can_legally_change_target_to_me;
+  pcVar1 = get_card_instance(player, card);
+  result = duh_mode(player);
+  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  player_00 = card_on_stack_controller;
+  result = card_on_stack;
+  if (event == EVENT_CAN_CAST)
+  {
+    result = counterspell_2022(player, card, EVENT_CAN_CAST, &td_spell, 0);
+    if (result == 0)
+    {
+      pcVar1->info_slot = 0;
+      return 1;
+    }
+    pcVar1->info_slot = 1;
+    result = 99;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (((card == affected_card) && (player == affected_card_controller)) &&
+          (current_turn == player))
+      {
+        ai_modifier = ai_modifier + -10;
+      }
+    }
+    else if ((event == EVENT_ETB) && (pcVar1->info_slot == 1))
+    {
+
+      pcVar1->targets[0].card = card_on_stack;
+      pcVar1->targets[0].player = player_00;
+      pcVar1->number_of_targets = '\x01';
+      set_special_flags2_2022(player_00, result, 0x10000);
+      result = call_card_function(pcVar1->targets[0].player, pcVar1->targets[0].card,
+                                  EVENT_CHANGE_TARGET);
+      remove_special_flags2_2022(pcVar1->targets[0].player, pcVar1->targets[0].card, 0x10000);
+      if (result == -1)
+      {
+        spell_fizzled = 1;
+      }
+      else
+      {
+        pcVar1->info_slot = result;
+      }
+      result = counterspell_validate_2022(player, card, &td_spell, 0);
+      if (result != 0)
+      {
+
+        pcVar3 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
+        result = pcVar1->info_slot;
+        pcVar3->targets[result].player = player;
+        pcVar3->targets[result].card = card;
+        return 0;
+      }
+    }
+    result = 0;
+  }
+  return result;
+}
+
+#endif

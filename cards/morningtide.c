@@ -3817,7 +3817,7 @@ static int thornbite_staff_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_0227dd25:
-    result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    result = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (result == 0)
       goto LAB_0227dd45;
   }
@@ -3853,7 +3853,7 @@ static int thornbite_staff_effect(int player, int card, event_t event)
       count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
     }
     result =
-        resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+        resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (result == 0)
     {
       return 0;

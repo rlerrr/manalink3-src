@@ -2379,7 +2379,7 @@ static int counter_number_2022_impl(int player, int card, counter_t type, int nu
 }
 
 /* ManalinkEh 2022: 0x26d4810; original functions/counters.c:933. */
-static int counter_number_2022(int player, int card, counter_t type, int number)
+int counter_number_2022(int player, int card, counter_t type, int number)
 {
   int result;
 
@@ -3517,3 +3517,119 @@ void move_counters_from_source(int player, int card, int t_player, int t_card, i
   }
   return;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26d4f30; original functions/counters.c:1506. */
+void increment_all_counters(int src_player, int src_card, int t_player, int t_card)
+{
+  counter_t *pcVar1;
+  char cVar2;
+  card_instance_t *instance;
+  counter_t cVar4;
+  int result;
+  unsigned int uStack_38;
+  counter_t counter_types[9];
+  if ((1 < (unsigned int)t_player) || (0x96 < t_card))
+  {
+    return;
+  }
+  if (t_card < 0)
+  {
+    if (ENERGY_COUNTERS(t_player) != '\0')
+    {
+      add_energy(t_player, 1);
+    }
+    if (POISON_COUNTERS(t_player) != '\0')
+    {
+      poison(t_player, 1);
+    }
+    if (EXPERIENCE_COUNTERS(t_player) == '\0')
+    {
+      return;
+    }
+    add_experience(t_player, 1);
+    return;
+  }
+  instance = get_card_instance(t_player, t_card);
+  if (instance->internal_card_id == activation_card)
+  {
+    instance = get_card_instance(instance->parent_controller, instance->parent_card);
+  }
+  uStack_38 = 0;
+  if (instance->special_counters != '\0')
+  {
+    counter_types[0] = (unsigned int)instance->special_counter_type;
+    uStack_38 = (unsigned int)(instance->special_counter_type != COUNTER_invalid);
+  }
+  if (instance->counters2 != '\0')
+  {
+    cVar4 = (counter_t)(unsigned char)instance->targets[0x12].player;
+    counter_types[uStack_38] = cVar4;
+    uStack_38 = uStack_38 + (cVar4 != COUNTER_invalid);
+  }
+  if (instance->counters3 != '\0')
+  {
+    cVar4 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 1);
+    counter_types[uStack_38] = cVar4;
+    uStack_38 = uStack_38 + (cVar4 != COUNTER_invalid);
+  }
+  if (instance->counters4 != '\0')
+  {
+    cVar4 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 2);
+    counter_types[uStack_38] = cVar4;
+    uStack_38 = uStack_38 + (cVar4 != COUNTER_invalid);
+  }
+  if (instance->counters5 != '\0')
+  {
+    cVar4 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].player + 3);
+    counter_types[uStack_38] = cVar4;
+    uStack_38 = uStack_38 + (cVar4 != COUNTER_invalid);
+  }
+  if (instance->counters != '\0')
+  {
+    counter_types[uStack_38] = COUNTER_P1_P1;
+    uStack_38 = uStack_38 + 1;
+  }
+  if (instance->counters_m1m1 != '\0')
+  {
+    counter_types[uStack_38] = COUNTER_M1_M1;
+    uStack_38 = uStack_38 + 1;
+  }
+  cVar2 = *(char *)((int)&instance->targets[0x12].card + 1);
+  if (((char)instance->targets[0x12].card == '\0') ||
+      (cVar4 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 2),
+       counter_types[uStack_38] = cVar4, cVar4 == COUNTER_invalid))
+  {
+    if ((cVar2 == '\0') ||
+        (cVar4 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),
+         counter_types[uStack_38] = cVar4, cVar4 == COUNTER_invalid))
+    {
+      if (uStack_38 == 0)
+      {
+        return;
+      }
+      goto LAB_026d50de;
+    }
+  }
+  else
+  {
+    uStack_38 = uStack_38 + 1;
+    if ((cVar2 == '\0') ||
+        (cVar4 = (counter_t) * (unsigned char *)((int)&instance->targets[0x12].card + 3),
+         counter_types[uStack_38] = cVar4, cVar4 == COUNTER_invalid))
+      goto LAB_026d50de;
+  }
+  uStack_38 = uStack_38 + 1;
+LAB_026d50de:
+  result = 0;
+  do
+  {
+    pcVar1 = counter_types + result;
+    result = result + 1;
+    add_counters_from_source(src_player, src_card, t_player, t_card, *pcVar1, 1);
+  } while (result < (int)uStack_38);
+  return;
+}
+
+#endif

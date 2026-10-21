@@ -7217,8 +7217,8 @@ int card_celestial_prism(int player, int card, event_t event)
     if (((((card == affected_card) && (player == affected_card_controller)) &&
           (result = is_tapped(player, card), result == 0)) &&
          ((result = is_animated_and_sick(player, card),
-           result == 0 && (result = can_produce_mana(player, card), result != 0)))) &&
-        (result = has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0), result != 0))
+           result == 0 && (result = can_produce_mana_2022(player, card), result != 0)))) &&
+        (result = has_mana_for_activated_ability_2022(player, card, 2, 0, 0, 0, 0, 0), result != 0))
     {
       declare_mana_available_hex(player, 0x3e, 1);
       declare_mana_available(player, 0, -1);
@@ -7228,8 +7228,8 @@ int card_celestial_prism(int player, int card, event_t event)
   {
     result = is_tapped(player, card);
     if (((result == 0) && (result = is_animated_and_sick(player, card), result == 0)) &&
-        ((result = can_produce_mana(player, card),
-          result != 0 && ((result = has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0),
+        ((result = can_produce_mana_2022(player, card),
+          result != 0 && ((result = has_mana_for_activated_ability_2022(player, card, 2, 0, 0, 0, 0, 0),
                            result != 0 && (instance = get_card_instance(player, card),
                                            instance->targets[1].player != 1))))))
     {
@@ -7248,7 +7248,7 @@ int card_celestial_prism(int player, int card, event_t event)
       return 0;
     }
     instance->targets[1].player = 1;
-    charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0);
+    charge_mana_for_activated_ability_2022(player, card, 2, 0, 0, 0, 0, 0);
     instance->targets[1].player = 0;
     if (spell_fizzled != 1)
     {
@@ -7258,3 +7258,23 @@ int card_celestial_prism(int player, int card, event_t event)
   }
   return 0;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24bcd70; original cards/unlimited.c:99. */
+static int ward_enchantment(int player, int card, event_t event, int keyword)
+{
+  int result;
+
+  result = this_effect_doesnt_remove_this(player, card, event);
+  if (result != 0)
+  {
+    return 0;
+  }
+  attached_gets_kw(player, card, event, keyword, SP_KEYWORD_0);
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+
+#endif

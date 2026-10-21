@@ -6477,7 +6477,7 @@ int card_dark_impostor(int player, int card, event_t event)
     pcVar6 = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar5 = can_use_activated_abilities(player, card);
+      iVar5 = can_use_activated_abilities_2022(player, card);
       if (iVar5 == 0)
       {
         return 0;

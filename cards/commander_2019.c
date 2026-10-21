@@ -10,7 +10,7 @@ static int goad_effect(int player, int card, event_t event)
   if (-1 < instance->damage_target_card)
   {
     instance = get_card_instance(player, card);
-    attack_if_able((int)instance->damage_target_player, instance->damage_target_card, event);
+    attack_if_able_2022((int)instance->damage_target_player, instance->damage_target_card, event);
   }
   if (event == EVENT_CAN_SKIP_TURN)
   {
@@ -58,7 +58,7 @@ int card_apex_altisaur(int player, int card, event_t event)
   card_instance_t *instance;
   target_definition_t td;
   result = duh_mode(player);
-  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if ((event != EVENT_ETB) && (result = damage_dealt_to_me_arbitrary(
                                    player, card, event, DDBM_TRIGGER_OPTIONAL, player, card),
                                result == 0))
@@ -84,7 +84,7 @@ int card_apex_altisaur(int player, int card, event_t event)
 int card_dockside_extortionist(int player, int card, event_t event)
 {
   int howmany;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -160,15 +160,15 @@ int card_gift_of_doom(int player, int card, event_t event)
     }
     else if (event == EVENT_TURNED_FACE_UP)
     {
-      result = vanilla_aura(player, card, EVENT_CAN_CAST, player);
+      result = vanilla_aura_2022(player, card, EVENT_CAN_CAST, player);
       if (result == 0)
       {
         kill_card(player, card, KILL_STATE_BASED_ACTION);
       }
       else
       {
-        vanilla_aura(player, card, EVENT_CAST_SPELL, player);
-        vanilla_aura(player, card, EVENT_RESOLVE_SPELL, player);
+        vanilla_aura_2022(player, card, EVENT_CAST_SPELL, player);
+        vanilla_aura_2022(player, card, EVENT_RESOLVE_SPELL, player);
       }
     }
     result = morph(player, card, event, 0, 0, 0, 0, 0, 0);
@@ -395,7 +395,7 @@ int card_ohran_frostfang(int player, int card, event_t event)
           instance = in_play(player, card);
           if (instance != NULL)
           {
-            deathtouch(affected_card_controller, affected_card, EVENT_ABILITIES);
+            deathtouch_2022(affected_card_controller, affected_card, EVENT_ABILITIES);
           }
         }
       }
@@ -446,7 +446,7 @@ static int atla_palani_effect(int player, int card, event_t event)
       }
       goto LAB_023b14ff;
     }
-    uVar2 = resolve_gfp_ability(player, card, EVENT_STATIC_EFFECTS, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_STATIC_EFFECTS, RESOLVE_TRIGGER_MANDATORY);
     result = check_status(player, card, 0x10000);
     if (result != 0)
     {
@@ -466,7 +466,7 @@ static int atla_palani_effect(int player, int card, event_t event)
       if (event == EVENT_GRAVEYARD_FROM_PLAY)
         goto LAB_023b1640;
     LAB_023b14ff:
-      uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
       result = check_status(player, card, 0x10000);
       if (result != 0)
         goto LAB_023b158c;
@@ -505,7 +505,7 @@ static int atla_palani_effect(int player, int card, event_t event)
       test.subtype = 0xfb;
       count_for_gfp_ability(player, card, 0x77, player, 0, &test);
     }
-    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     result = check_status(player, card, 0x10000);
     if (result != 0)
     {
@@ -577,7 +577,7 @@ int card_atla_palani_nest_tender(int player, int card, event_t event)
     {
     LAB_023b2408:
 
-      uStack_ec = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      uStack_ec = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
       if (uStack_ec != 0)
       {
       LAB_023b242b:
@@ -618,7 +618,7 @@ int card_atla_palani_nest_tender(int player, int card, event_t event)
         return 0;
       }
       uStack_ec =
-          resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+          resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
       if (uStack_ec != 0)
         goto LAB_023b242b;
       goto LAB_023b23ee;
@@ -744,7 +744,7 @@ int card_grismold_the_dreadsower(int player, int card, event_t event)
     generate_token(&token);
   }
   count_for_gfp_ability_and_store_values(player, card, event, 2, 2, NULL, 0x400, 0);
-  uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (uVar2 != 0)
   {
 
@@ -1035,7 +1035,7 @@ int card_doomed_artisan(int player, int card, event_t event)
          (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)))) &&
       ((1 < event - EVENT_BLOCK_LEGALITY || (event_result = 1, event == EVENT_ABILITIES))))
   {
-    cannot_attack(affected_card_controller, affected_card, EVENT_ABILITIES);
+    cannot_attack_2022(affected_card_controller, affected_card, EVENT_ABILITIES);
     cannot_block(affected_card_controller, affected_card, EVENT_ABILITIES);
   }
   if ((current_turn == player) && (result = eot_trigger(player, card, event), result != 0))
@@ -1117,3 +1117,46 @@ int card_ghired_conclave_exile(int player, int card, event_t event)
   }
   return 0;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23b36b0; original cards/commander_2019.c:720. */
+int card_krrik_son_of_yawgmoth(int player, int card, event_t event)
+{
+  int result;
+  test_definition_2022_t test;
+
+  check_legend_rule(player, card, event);
+  lifelink(player, card, event);
+  phyrexian_casting_costs_2022(player, card, event, 4, 3, 0, 0, 0, 0, 0);
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      card_flags[player] = card_flags[player] | 2;
+    }
+    if (trigger_condition != 0xd3)
+    {
+      return 0;
+    }
+  }
+  else if (trigger_condition != 0xd3)
+    goto LAB_023b3741;
+  if ((card == affected_card) && (player == affected_card_controller))
+  {
+    default_test_definition_2022(&test, 0xff);
+    test.color = get_sleighted_color_test(player, card, 2);
+    sp_ability_trigger_2022(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+LAB_023b3741:
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  return 0;
+}
+
+#endif

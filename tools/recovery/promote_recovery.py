@@ -18,7 +18,7 @@ from pathlib import Path
 UNRESOLVED = re.compile(r"\b(?:undefined\w*|in_(?!play(?:_and_attacking)?\b|hand\b)\w+|extraout_\w+|unaff_\w+|_?DAT_[0-9a-fA-F]{8}\w*|UNK_\w+|PTR_\w+|func_0x[0-9a-fA-F]+|field_\w+|CONCAT\w*|SUB\d+|ZEXT\w*|SEXT\w*)\b")
 LITERAL = r'"(?:\\.|[^"\\\r\n])*"|\'(?:\\.|[^\'\\\r\n])*\''
 FUNCTION_DEFINITION = re.compile(r"\b([A-Za-z_]\w*)\s*\([^;{}()]*\)\s*\{")
-STACK_AGGREGATES = ('test_definition_t', 'target_definition_t', 'token_generation_t', 'token_generation_2022_t')
+STACK_AGGREGATES = ('test_definition_t', 'test_definition_2022_t', 'target_definition_t', 'target_definition_2022_t', 'token_generation_t', 'token_generation_2022_t')
 
 
 def aggregate_stack_aliases(body):
@@ -147,6 +147,81 @@ TOKEN_API_NAMES = {'default_token_definition':'default_token_definition_2022',
                    'token_characteristic_setting_effects':'token_characteristic_setting_effects_2022',
                    'generic_token':'generic_token_2022'}
 
+TEST_API_NAMES = {name:name+'_2022' for name in (
+    'get_test_score','new_get_test_score','new_default_test_definition','default_test_definition',
+    'new_make_test_in_play','make_test_in_play','new_make_test','make_test',
+    'get_average_value_from_zone','select_card_from_zone','get_tutoring_denial','new_select_a_card',
+    'select_a_card','select_multiple_cards_from_graveyard','select_multiple_cards_from_graveyard_to_array',
+    'new_special_count_grave','new_select_target_from_grave','select_target_from_grave_source',
+    'select_target_from_either_grave','check_battlefield_for_special_card','aura_attached_to_me',
+    'select_multiple_cards_from_either_graveyard')}
+SACRIFICE_API_NAMES = {name:name+'_2022' for name in (
+    'can_sacrifice_this_as_cost','new_can_sacrifice_as_cost','max_can_sacrifice_as_cost','can_sacrifice_as_cost',
+    'can_sacrifice_type_as_cost','can_cause_sacrifice','new_can_sacrifice','can_sacrifice',
+    'is_nice_creature_to_sacrifice','get_best_permanent_for_sacrifice','new_get_special_permanent_for_sacrifice',
+    'pick_creature_for_sacrifice','pick_permanent_for_sacrifice','pick_special_permanent_for_sacrifice',
+    'new_sacrifice','mark_sacrifice','sacrifice','controller_sacrifices_a_permanent',
+    'player_sacrifices_a_permanent','player_sacrifices_a_hacked_land','impose_sacrifice',
+    'controller_sacrifices_a_creature','player_sacrifices_a_creature','prevent_damage_sacrificing_a_creature',
+    'check_battlefield_for_sacrifice','can_activate_altar_basic','altar_basic_activation','altar_basic',
+    'altar_extended','sacrifice_and_report_value')}
+SACRIFICE_FLAGS_2022 = ('SAC_NO_CANCEL','SAC_DONE','SAC_JUST_MARK','SAC_ALL_OR_NONE','SAC_AS_COST',
+                       'SAC_CAUSED','SAC_RETURN_CHOICE','SAC_OPTIONAL','SAC_SET_TARGETS')
+SPELL_API_NAMES={'generic_spell':'generic_spell_2022','show_deck':'show_deck_2022'}
+ABILITY_API_NAMES={name:name+'_2022' for name in (
+    'default_pump_ability_definition','deathtouch','hexproof','indestructible','attack_if_able',
+    'block_if_able','vigilance','granted_flanking','special_abilities','lure_effect','pump_attached',
+    'generic_aura','generic_animating_aura','generic_animating_aura_custom_prompt',
+    'generic_animating_aura_with_added_subtype')}
+PUMP_API_NAMES={name:name+'_2022' for name in (
+    'effect_pump_until_eot','get_sleighted_hacked_suppressed_ability','pump_until_eot',
+    'pump_until_eot_merge_previous','pump_ability_until_eot_with_precomputed_sleight_hack_suppress',
+    'pump_ability','pump_ability_until_eot','can_block_additional_until_eot','pump_ability_until_eot_no_repeat',
+    'pump_ability_by_test','pump_creatures_until_eot_merge_pt_alternate_legacy_text',
+    'pump_creatures_until_eot_merge_pt','pump_creatures_until_eot','pump_subtype_until_eot',
+    'pump_color_until_eot','pump_creatures_until_eot_no_repeat','vanilla_pump','vanilla_instant_pump',
+    'legacy_effect_pump_ability_until_eot','cannot_attack','humiliate','disable_all_activated_abilities',
+    'disable_nonmana_activated_abilities','humiliate_and_set_pt_abilities','humility_legacy',
+    'spirit_link_effect','force_a_subtype','add_a_subtype')}
+ACTIVATED_API_NAMES={name:name+'_2022' for name in (
+    'granted_generic_activated_ability','generic_activated_ability','attachment_granting_activated_ability',
+    'equipment_granting_activated_ability','has_mana_for_activated_ability','charge_mana_for_activated_ability',
+    'charge_mana_for_activated_ability_while_resolving','can_use_activated_abilities',
+    'can_use_activated_abilities_by_instance','can_produce_mana','vanilla_creature_pumper',
+    'generic_shade_amt_can_pump','get_cost_mod_for_activated_abilities',
+    'generic_activated_ability_with_sacrifice_as_cost','generic_activated_ability_with_target_in_grave',
+    'generic_activated_ability_with_tapsubtype_as_cost')}
+SPELL_FLAGS_2022=('GS_CAN_TARGET','GS_COUNTERSPELL','GS_X_SPELL','GS_GRAVE_RECYCLER','GS_REGENERATION',
+    'GS_OPTIONAL_TARGET','GS_CAN_ONLY_TARGET_OPPONENT','GS_LITERAL_PROMPT','GS_DAMAGE_PREVENTION','GS_AURA',
+    'GS_SAC_CREATURE_AS_COST','GS_GRAVE_RECYCLER_OPP_GRAVE','GS_GRAVE_RECYCLER_BOTH_GRAVES',
+    'GS_GRAVE_RECYCLER_FROM_GRAVEYARDS','GS_ONE_OR_MULTIPLE_TARGETS','GS_SAC_PERMANENT_AS_COST')
+ATTACK_API_NAMES={name:name+'_2022' for name in (
+    'store_attackers','resolve_declare_attackers_trigger','declare_attackers_trigger',
+    'declare_attackers_trigger_test','when_attacks_pump_self','support','battle_cry','renown','retrace')}
+ENTRY_API_NAMES={name:name+'_2022' for name in ('etb_ability','etb_ability_global','evolve','exploit')}
+LEVEL_BUDDY_API_NAMES={name:name+'_2022' for name in ('level_up','buddy_creature')}
+ACTION_API_NAMES={name:name+'_2022' for name in ('action_on_card','new_manipulate_all','manipulate_all','get_random_permanent','shapeshift_all','enters_the_battlefield_as_copy_of_any')}
+DEATH_TRIGGER_API_NAMES={name:name+'_2022' for name in ('count_for_gfp_ability','count_for_gfp_ability_and_store_values','count_for_gfp_ability_and_store_values_extra','resolve_gfp_ability')}
+SPELL_TRIGGER_API_NAMES={'sp_ability_trigger':'sp_ability_trigger_2022'}
+PHYREXIAN_API_NAMES={name:name+'_2022' for name in ('has_phyrexian_mana','charge_phyrexian_mana',
+    'has_phyrexian_mana_for_activated_ability','charge_phyrexian_mana_for_activated_ability','phyrexian_casting_costs')}
+TARGET_API_NAMES = {name:name+'_2022' for name in (
+    'get_protections_from','base_target_definition','default_target_definition',
+    'counterspell_validate','counterspell','counterspell_resolve_unless_pay_x',
+    'opponent_or_pw_target_definition','counterspell_target_definition','counter_activated_target_definition',
+    'counter_triggered_target_definition','real_validate_target','real_target_available','can_target',
+    'target_available','would_validate_arbitrary_target','validate_arbitrary_target','would_validate_target',
+    'would_valid_target','validate_target','valid_target','real_select_target','choose_default_target',
+    'select_target','pick_target','new_pick_target','pick_next_target_noload_arbitrary','pick_next_target_arbitrary',
+    'pick_next_target_noload','pick_up_to_n_targets_noload','pick_up_to_n_targets','mark_up_to_n_targets_noload',
+    'pick_player_duh','target_opponent','opponent_is_valid_target','autoselect_target',
+    'ninjutsu_custom_target','ninjutsu','attach_aura_to_target','targeted_aura',
+    'targeted_aura_custom_prompt','disabling_targeted_aura','vanilla_aura','disabling_aura',
+    'aura_with_variable_pt_boost_depending_on_condition','put_into_play_aura_attached_to_target',
+    'gain_control_and_attach_as_aura','end_of_stealing_aura_effect','generic_stealing_aura',
+    'when_enchanted_permanent_dies_return_aura_to_hand','cannot_be_enchanted_granted',
+    'cannot_be_enchanted','enchant_player')}
+
 
 def project_extension_flags(text):
     """Only the three verified four-byte flag words on typed instances."""
@@ -160,7 +235,7 @@ def project_extension_flags(text):
     return re.sub(r'\(\((\w+)->field_21\)\.ext\)->(special_flags[23]?)\b',replace,text),projections
 
 
-def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=(), state_mask_replacements=(), keyword_mask_replacements=(), use_keyword_accessors_2022=False, use_extension_flags_2022=False, use_mana_api_2022=False, use_token_api_2022=False):
+def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=(), state_mask_replacements=(), keyword_mask_replacements=(), use_keyword_accessors_2022=False, use_extension_flags_2022=False, use_mana_api_2022=False, use_token_api_2022=False, use_test_api_2022=False, use_target_api_2022=False, use_sacrifice_api_2022=False, use_spell_api_2022=False, use_ability_api_2022=False, use_pump_api_2022=False, use_activated_api_2022=False, use_attack_api_2022=False, use_entry_api_2022=False, use_level_buddy_api_2022=False, use_phyrexian_api_2022=False, use_spell_trigger_api_2022=False, use_death_trigger_api_2022=False, use_action_api_2022=False):
     text = strip_comments(text).strip()
     for replacement in state_mask_replacements:
         text = text.replace(replacement['original'], replacement['replacement'])
@@ -173,6 +248,21 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
         mapping = {**TOKEN_API_NAMES, 'token_generation_t':'token_generation_2022_t', 'token_action_t':'token_action_2022_t'}
         text = re.sub(r'\b(?:TOKEN_ACTION_\w+|' + '|'.join(mapping) + r')\b',
                       lambda m: m[0].replace('TOKEN_ACTION_', 'TOKEN2022_ACTION_') if m[0].startswith('TOKEN_ACTION_') else mapping[m[0]], text)
+    for enabled,mapping in [
+        (use_test_api_2022,{**TEST_API_NAMES,'test_definition_t':'test_definition_2022_t'}),
+        (use_target_api_2022,{**TARGET_API_NAMES,'target_definition_t':'target_definition_2022_t'}),
+        (use_sacrifice_api_2022,{**SACRIFICE_API_NAMES,'sacrifice_t':'sacrifice_2022_t',
+                               **{name:name.replace('SAC_','SAC2022_') for name in SACRIFICE_FLAGS_2022}}),
+        (use_spell_api_2022,{**SPELL_API_NAMES,'generic_spell_flags_t':'generic_spell_flags_2022_t',
+                            **{name:name.replace('GS_','GS2022_') for name in SPELL_FLAGS_2022}}),
+        (use_ability_api_2022,{**ABILITY_API_NAMES,'pump_ability_t':'pump_ability_2022_t'}),
+        (use_pump_api_2022,PUMP_API_NAMES),(use_activated_api_2022,ACTIVATED_API_NAMES),
+        (use_attack_api_2022,ATTACK_API_NAMES),(use_entry_api_2022,ENTRY_API_NAMES),
+        (use_level_buddy_api_2022,LEVEL_BUDDY_API_NAMES),(use_phyrexian_api_2022,PHYREXIAN_API_NAMES),
+        (use_spell_trigger_api_2022,SPELL_TRIGGER_API_NAMES),
+        (use_death_trigger_api_2022,DEATH_TRIGGER_API_NAMES),(use_action_api_2022,{**ACTION_API_NAMES,'actions_t':'actions_2022_t'})]:
+        if enabled:
+            text=re.sub(r'\b(?:'+'|'.join(mapping)+r')\b',lambda m:mapping[m[0]],text)
     for replacement in keyword_mask_replacements:
         if replacement['context'] == 'argument':
             text = rewrite_argument(text, replacement['function'], replacement['arity'], replacement['argument'],
@@ -216,6 +306,8 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
     # show_deck deliberately accepts an integer address for its final label
     # argument in this source tree. Keep the localized engine strings live.
     text = rewrite_argument(text, "show_deck", 6, 5,
+                            {"str_Done": "ENGINE_DONE_LABEL", "str_OK": "ENGINE_OK_LABEL"})
+    text = rewrite_argument(text, "show_deck_2022", 6, 5,
                             {"str_Done": "ENGINE_DONE_LABEL", "str_OK": "ENGINE_OK_LABEL"})
     # Identical kill-code value and meaning in the two interfaces.
     text = re.sub(r"\bACT_KILL_EXILE\b", "ACT_KILL_REMOVE", text)
@@ -403,7 +495,24 @@ def main():
     overlapping_globals = [f[1] for line in (analysis / "absolute-interfaces.tsv").read_text().splitlines()
                            if (f := line.split("\t"))[2] == "global"]
     candidates, rejected = {}, {}
-    token_interface_ready = 'token_core_2022' in json.loads((root / 'docs/recovery-evidence/interface-recovery.json').read_text())
+    recovered_interfaces=json.loads((root / 'docs/recovery-evidence/interface-recovery.json').read_text())
+    token_interface_ready = 'token_core_2022' in recovered_interfaces
+    test_interface_ready = 'test_core_2022' in recovered_interfaces
+    sacrifice_interface_ready = 'sacrifice_core_2022' in recovered_interfaces
+    spell_interface_ready = 'generic_spell_2022' in recovered_interfaces
+    ability_interface_ready = 'ability_writers_2022' in recovered_interfaces
+    pump_interface_ready = 'pump_core_2022' in recovered_interfaces
+    activated_interface_ready = 'activated_core_2022' in recovered_interfaces
+    attack_interface_ready = 'attacker_core_2022' in recovered_interfaces
+    entry_interface_ready = 'entry_triggers_2022' in recovered_interfaces
+    level_buddy_interface_ready = 'level_buddy_2022' in recovered_interfaces
+    phyrexian_interface_ready = 'phyrexian_costs_2022' in recovered_interfaces
+    spell_trigger_interface_ready = 'spell_trigger_native_2022' in recovered_interfaces
+    death_trigger_interface_ready = 'death_trigger_core_2022' in recovered_interfaces
+    action_interface_ready = 'action_core_2022' in recovered_interfaces
+    recovered_manifest = root / 'docs/recovery-evidence/recovered-functions.json'
+    recovered_addresses = {f['address']:f['name'] for f in json.loads(recovered_manifest.read_text()).get('accepted_functions',[])} if recovered_manifest.exists() else {}
+    target_interface_ready = all(key in recovered_interfaces for key in ['target_initializers_2022','target_validation_2022','target_selection_2022'])
     storage_path = root / 'docs/recovery-evidence/stack-storage.json'
     storage_evidence = json.loads(storage_path.read_text()) if storage_path.exists() else {}
     masks_path = root / 'docs/recovery-evidence/state-masks.json'
@@ -416,6 +525,9 @@ def main():
             rejected[name] = "unsupported export or C++ source"
             continue
         address = int(row["address"], 16)
+        if row['address'] in recovered_addresses:
+            rejected[name] = 'native address already recovered as '+recovered_addresses[row['address']]
+            continue
         static = address in static_addresses
         if name in (file_definitions.get(row["source"], set()) if static else definitions):
             rejected[name] = "implementation already present in source"
@@ -424,10 +536,32 @@ def main():
             rejected[name] = "compiler clone or noncanonical entry"
             continue
         raw = (exports / (row["address"] + ".c")).read_text(encoding="utf-8")
+        # DWARF compiler parts can share the public name. A raw self-call may
+        # actually target a distinct private entry; defer it until that binding
+        # and the private implementation have been recovered explicitly.
+        raw_code=code_only(strip_comments(raw))
+        if '{' in raw_code and re.search(r'\b'+re.escape(name)+r'\s*\(',raw_code.split('{',1)[1]):
+            from capstone import Cs, CS_ARCH_X86, CS_MODE_32
+            from capstone.x86_const import X86_OP_IMM
+            bound=functions[address]
+            code=image.pe.get_data(address-image.pe.OPTIONAL_HEADER.ImageBase,int(bound['high_pc'],16)-address)
+            decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True
+            clone_calls=[i for i in decoder.disasm(code,address) if i.mnemonic in {'call','jmp'} and
+                         i.operands[0].type==X86_OP_IMM and i.operands[0].imm!=address and
+                         functions.get(i.operands[0].imm,{}).get('name')==name]
+            if clone_calls:
+                rejected[name]='public/private compiler-part name binding awaiting recovery'
+                continue
         if re.search(r"WARNING:.*(?:bad instruction|Could not recover|uninitialized)", raw, re.I):
             rejected[name] = "decompiler control-flow warning"
             continue
         resolved, recovered_literals = recover_strings(strip_comments(raw), image, string_aliases[address])
+        if (spell_interface_ready and re.search(r'\bGS_(?:GRAVE_RECYCLER_FROM_GRAVEYARDS|ONE_OR_MULTIPLE_TARGETS|SAC_PERMANENT_AS_COST)\b',code_only(resolved))
+            and not re.search(r'\bgeneric_spell\s*\(',code_only(resolved))
+            and not ('activation_costs_2022' in recovered_interfaces and
+                         re.search(r'\bgeneric_activated_ability_with_target_in_grave\s*\(',code_only(resolved)))):
+            rejected[name]='native generic-spell flags awaiting a recovered consumer'
+            continue
         local = local_types.get(row["address"], {})
         if local:
             assert local["source"] == row["source"] and local["name"] == name
@@ -444,10 +578,27 @@ def main():
         if use_token_interface and prepared_storage:
             rejected[name] = '76-byte token storage awaiting layout migration'
             continue
+        if ability_interface_ready and prepared_storage and re.search(r'\bpump_ability_t\b',strip_comments(raw)):
+            rejected[name] = '48-byte pump storage awaiting layout migration'
+            continue
+        if prepared_storage and ((test_interface_ready and re.search(r'\btest_definition_t\b',strip_comments(raw))) or
+                                 (target_interface_ready and re.search(r'\btarget_definition_t\b',strip_comments(raw)))):
+            rejected[name]='Native test/target storage awaiting layout migration'
+            continue
         body = clean(resolved, overlapping_globals, local.get("declarations", []), local.get("array_boundaries", []),
                      state_proof['replacements'] if state_proof else [], keyword_proof['replacements'] if keyword_proof else [],
                      use_keyword_accessors_2022=True, use_extension_flags_2022=True, use_mana_api_2022=True,
-                     use_token_api_2022=use_token_interface)
+                     use_token_api_2022=use_token_interface,use_test_api_2022=test_interface_ready,use_target_api_2022=target_interface_ready,
+                     use_sacrifice_api_2022=sacrifice_interface_ready,use_spell_api_2022=spell_interface_ready,
+                     use_ability_api_2022=ability_interface_ready,use_pump_api_2022=pump_interface_ready,
+                     use_activated_api_2022=activated_interface_ready,
+                     use_attack_api_2022=attack_interface_ready,
+                     use_entry_api_2022=entry_interface_ready,
+                     use_level_buddy_api_2022=level_buddy_interface_ready,
+                     use_phyrexian_api_2022=phyrexian_interface_ready,
+                     use_spell_trigger_api_2022=spell_trigger_interface_ready,
+                     use_death_trigger_api_2022=death_trigger_interface_ready,
+                     use_action_api_2022=action_interface_ready)
         storage_proof = None
         prepared_storage = storage_evidence.get('candidates', {}).get(row['address'])
         if prepared_storage:
@@ -471,7 +622,7 @@ def main():
         if aggregate_stack_aliases(code):
             rejected[name] = "overlapping stack objects awaiting verified storage"
             continue
-        if (re.search(r'=\s*0x15\s*;', code) and 'target_definition_t *)((int)' in code):
+        if (re.search(r'=\s*0x15\s*;', code) and re.search(r'target_definition(?:_2022)?_t\s*\*\)\(\(int\)',code)):
             rejected[name] = '84-byte target-definition copy awaiting trailing-flags layout migration'
             continue
         if UNRESOLVED.search(code) or re.search(r"::|\bthis\b|\._\d|\.field_", code):
@@ -537,11 +688,83 @@ def main():
         if "is_humiliated_for_ability(" in body:
             candidates[name]["interface_adaptations"] = ["Three-argument is_humiliated calls use is_humiliated_for_ability."]
         adaptations = candidates[name].setdefault("interface_adaptations", [])
+        for enabled,label,typename,names in [(test_interface_ready,'test','test_definition_2022_t',TEST_API_NAMES),
+                                             (target_interface_ready,'target','target_definition_2022_t',TARGET_API_NAMES)]:
+            calls={old:new for old,new in names.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            definition_present=bool(re.search(r'\b'+typename+r'\b',body))
+            if enabled and (definition_present or calls):
+                candidates[name][label+'_interface_2022']=dict(type=typename,definition_present=definition_present,calls=calls)
+                adaptations.append('Verified 2022 '+label+' layout and recovered APIs; original aggregate interfaces retained.')
         if re.search(r'\btoken_generation_2022_t\b', body):
             candidates[name]['token_interface_2022'] = dict(type='token_generation_2022_t',
                 actions=sorted(set(re.findall(r'\bTOKEN_ACTION_\w+\b',code_only(strip_comments(raw))))),
                 calls={old:new for old,new in TOKEN_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))})
             adaptations.append('Versioned 76-byte token definition, native action values and recovered token APIs; original token interfaces retained.')
+        if sacrifice_interface_ready:
+            calls={old:new for old,new in SACRIFICE_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            flags=[flag for flag in SACRIFICE_FLAGS_2022 if re.search(r'\b'+flag+r'\b',code_only(strip_comments(raw)))]
+            definition_present=bool(re.search(r'\bsacrifice_2022_t\b',body))
+            if calls or flags or definition_present:
+                candidates[name]['sacrifice_interface_2022']=dict(type='sacrifice_2022_t',definition_present=definition_present,calls=calls,flags=flags)
+                adaptations.append('Native sacrifice flags and recovered 2022 APIs; original flag and aggregate domains retained.')
+        if spell_interface_ready:
+            calls={old:new for old,new in SPELL_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            flags=[flag for flag in SPELL_FLAGS_2022 if re.search(r'\b'+flag+r'\b',code_only(strip_comments(raw)))]
+            definition_present=bool(re.search(r'\bgeneric_spell_flags_2022_t\b',body))
+            if calls or flags or definition_present:
+                candidates[name]['spell_interface_2022']=dict(type='generic_spell_flags_2022_t',definition_present=definition_present,calls=calls,flags=flags)
+                adaptations.append('Native generic-spell flags and recovered core/display APIs; original flag and aggregate domains retained.')
+        if ability_interface_ready:
+            calls={old:new for old,new in ABILITY_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            definition_present=bool(re.search(r'\bpump_ability_2022_t\b',body))
+            if calls or definition_present:
+                candidates[name]['ability_interface_2022']=dict(type='pump_ability_2022_t',definition_present=definition_present,calls=calls)
+                adaptations.append('Native extension-backed ability writers and 48-byte pump record; original interfaces retained.')
+        if pump_interface_ready:
+            calls={old:new for old,new in PUMP_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['pump_interface_2022']=dict(calls=calls)
+                adaptations.append('Native pump-effect/cleanup APIs and subtype frontends; original interfaces retained.')
+        if activated_interface_ready:
+            calls={old:new for old,new in ACTIVATED_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['activated_interface_2022']=dict(calls=calls)
+                adaptations.append('Native granted activation, mana/cost and permission APIs; original interfaces retained.')
+        if attack_interface_ready:
+            calls={old:new for old,new in ATTACK_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['attack_interface_2022']=dict(calls=calls)
+                adaptations.append('Native attacker storage/resolution and keyword helper APIs; original interfaces retained.')
+        if entry_interface_ready:
+            calls={old:new for old,new in ENTRY_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['entry_interface_2022']=dict(calls=calls)
+                adaptations.append('Native entry-trigger suppression/repetition and Evolve/Exploit helper APIs; original interfaces retained.')
+        if level_buddy_interface_ready:
+            calls={old:new for old,new in LEVEL_BUDDY_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['level_buddy_interface_2022']=dict(calls=calls)
+                adaptations.append('Native Level Up and Buddy APIs with verified private compiler parts; original interfaces retained.')
+        if phyrexian_interface_ready:
+            calls={old:new for old,new in PHYREXIAN_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['phyrexian_interface_2022']=dict(calls=calls)
+                adaptations.append('Native Phyrexian availability, casting and activated-cost APIs; original interfaces retained.')
+        if action_interface_ready:
+            calls={old:new for old,new in ACTION_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['action_interface_2022']=dict(calls=calls)
+                adaptations.append('Native action, random permanent and copy consumers with 216-byte tests/84-byte targets; original interfaces retained.')
+        if death_trigger_interface_ready:
+            calls={old:new for old,new in DEATH_TRIGGER_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['death_trigger_interface_2022']=dict(calls=calls)
+                adaptations.append('Native death-trigger counting/storage and resolution APIs with 216-byte tests; original interfaces retained.')
+        if spell_trigger_interface_ready:
+            calls={old:new for old,new in SPELL_TRIGGER_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['spell_trigger_interface_2022']=dict(calls=calls)
+                adaptations.append('Native spell-cast trigger API with 216-byte tests; legacy callers retain their original interface.')
         if re.search(r'\b(?:' + '|'.join(MANA_API_NAMES) + r')_2022\s*\(', body):
             adaptations.append("Versioned 2022 mana APIs preserve added-color, override and transmutation handling; original producers remain available.")
         if any(name+'_2022(' in body for name in EXTENSION_FLAG_NAMES):
@@ -685,7 +908,9 @@ def main():
         for relative, entries in by_file.items():
             destination = root / relative
             content = destination.read_bytes() if destination.exists() else b'#include "manalink.h"\n'
-            addition = "\n\n/* Recovered October 2022 implementations; see docs/recovery-progress.md. */\n"
+            # These exports belong to the Manalink DLL configuration, including
+            # scalar frontends whose callee has a native aggregate interface.
+            addition = "\n\n#ifndef SHANDALAR\n/* Recovered October 2022 implementations; see docs/recovery-progress.md. */\n"
             needed = set().union(*(dependencies[c["name"]] for c in candidates.values()))
             addition += "\n".join(c["prototype"] for c in entries if c["name"] in needed) + "\n\n"
             for c in sorted(entries, key=lambda c: int(c["line"] or 0)):
@@ -694,12 +919,13 @@ def main():
                 if not c["static"] and (not c["name"].startswith("card_") or
                                         referenced_from[c["name"]] - {relative}):
                     public.append(c["prototype"])
+            addition+='#endif\n'
             destination.write_bytes((content.rstrip() + addition.encode()).replace(b"\r\n", b"\n").replace(b"\n", b"\r\n").rstrip(b"\r\n") + b"\r\n")
         if public:
             header = root / "manalink.h"
             content = header.read_bytes()
             marker = content.rfind(b"#ifdef __cplusplus")
-            extension_public = [p for p in sorted(public) if re.search(r'\bsp_keyword2_t\b', p)]
+            extension_public = [p for p in sorted(public) if re.search(r'\b(?:sp_keyword2_t|\w+_2022_t)\b', p)]
             addition = "/* Interfaces recovered from October 2022 DWARF. */\n" + "\n".join(p for p in sorted(public) if p not in extension_public) + "\n"
             if extension_public:
                 addition += '#ifndef SHANDALAR\n' + '\n'.join(extension_public) + '\n#endif\n'

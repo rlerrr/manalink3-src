@@ -43,8 +43,20 @@ public class ExportRecovery extends GhidraScript {
                     failed++;
                     continue;
                 }
-                new DisassembleCommand(start, new AddressSet(start, end), true).applyTo(currentProgram, monitor);
-                function.setBody(new AddressSet(start, end));
+                AddressSet body = new AddressSet(start, end);
+                // Optional disjoint DWARF ranges, with exclusive endpoints.
+                // Existing four-column requests continue to use one extent.
+                if (fields.length > 4) {
+                    for (String range : fields[4].split(",")) {
+                        String[] bounds = range.split(":");
+                        if (bounds.length != 2) throw new Exception("Invalid extra range " + range);
+                        Address extraStart = toAddr(Long.parseUnsignedLong(bounds[0], 16));
+                        Address extraEnd = toAddr(Long.parseUnsignedLong(bounds[1], 16) - 1);
+                        body.add(extraStart, extraEnd);
+                    }
+                }
+                new DisassembleCommand(start, body, true).applyTo(currentProgram, monitor);
+                function.setBody(body);
                 // GCC sibling calls end in a direct JMP to another function.
                 // Explicit CALL_RETURN flow keeps the decompiler from absorbing
                 // that callee's body into this function. Only exact known entry

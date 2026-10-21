@@ -1661,7 +1661,7 @@ int card_agent_of_shauku(int player, int card, event_t event)
   }
   if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
   {
-    pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+    pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                            instance->targets[0].player, instance->targets[0].card, 2, 0, 0, 0);
   }
   return 0;
@@ -2003,7 +2003,7 @@ int card_pit_raptor(int player, int card, event_t event)
 int card_silt_crawler(int player, int card, event_t event)
 {
   test_definition_t this_test;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -2642,7 +2642,7 @@ int card_keldon_berserker(int player, int card, event_t event)
     result = control_an_untapped_land(player);
     if (result == 0)
     {
-      pump_until_eot(player, card, player, card, 3, 0);
+      pump_until_eot_2022(player, card, player, card, 3, 0);
     }
   }
   return 0;
@@ -2783,7 +2783,7 @@ static int ribbon_snake_legacy(int player, int card, event_t event)
     {
     LAB_025f9098:
 
-      iVar2 = pump_ability_until_eot(iVar3, card_00, iVar3, card_00, 0, 0, 0x20, 0);
+      iVar2 = pump_ability_until_eot_2022(iVar3, card_00, iVar3, card_00, 0, 0, 0x20, 0);
       if (iVar2 != -1)
       {
         instance = get_card_instance(iVar3, iVar2);
@@ -3288,7 +3288,7 @@ static int vintara_elephant_legacy(int player, int card, event_t event)
     {
     LAB_025f9968:
 
-      iVar2 = pump_ability_until_eot(iVar3, card_00, iVar3, card_00, 0, 0, 0x80, 0);
+      iVar2 = pump_ability_until_eot_2022(iVar3, card_00, iVar3, card_00, 0, 0, 0x80, 0);
       if (iVar2 != -1)
       {
         instance = get_card_instance(iVar3, iVar2);
@@ -3620,7 +3620,7 @@ static int zerapa_minotaur_legacy(int player, int card, event_t event)
     {
     LAB_025f9c08:
 
-      iVar2 = pump_ability_until_eot(iVar3, card_00, iVar3, card_00, 0, 0, 0x100, 0);
+      iVar2 = pump_ability_until_eot_2022(iVar3, card_00, iVar3, card_00, 0, 0, 0x100, 0);
       if (iVar2 != -1)
       {
         instance = get_card_instance(iVar3, iVar2);
@@ -4025,7 +4025,7 @@ int card_ribbon_snake(int player, int card, event_t event)
   }
 
   pcVar2 = get_card_instance(player, card);
-  iVar3 = pump_ability_until_eot(pcVar2->parent_controller, pcVar2->parent_card,
+  iVar3 = pump_ability_until_eot_2022(pcVar2->parent_controller, pcVar2->parent_card,
                                  pcVar2->parent_controller, pcVar2->parent_card, 0, 0, 0x20, 0);
   if (iVar3 != -1)
   {
@@ -4286,7 +4286,7 @@ int card_vintara_elephant(int player, int card, event_t event)
   }
 
   pcVar2 = get_card_instance(player, card);
-  iVar3 = pump_ability_until_eot(pcVar2->parent_controller, pcVar2->parent_card,
+  iVar3 = pump_ability_until_eot_2022(pcVar2->parent_controller, pcVar2->parent_card,
                                  pcVar2->parent_controller, pcVar2->parent_card, 0, 0, 0x80, 0);
   if (iVar3 != -1)
   {
@@ -4388,7 +4388,7 @@ int card_wall_of_vipers(int player, int card, event_t event)
       {
         iVar4 = would_validate_arbitrary_target(&td, 1 - player, (unsigned int)pcVar3->blocking);
         if (((iVar4 != 0) &&
-             (iVar4 = charge_mana_for_activated_ability(player, card, 3, 0, 0, 0, 0, 0),
+             (iVar4 = charge_mana_for_activated_ability_2022(player, card, 3, 0, 0, 0, 0, 0),
               iVar4 != 0)) &&
             (iVar4 = new_pick_target(&td, "Select target creature Wall of Vipers is blocking.", 0,
                                      0x80),
@@ -4502,7 +4502,7 @@ int card_zerapa_minotaur(int player, int card, event_t event)
   }
 
   pcVar2 = get_card_instance(player, card);
-  iVar3 = pump_ability_until_eot(pcVar2->parent_controller, pcVar2->parent_card,
+  iVar3 = pump_ability_until_eot_2022(pcVar2->parent_controller, pcVar2->parent_card,
                                  pcVar2->parent_controller, pcVar2->parent_card, 0, 0, 0x100, 0);
   if (iVar3 != -1)
   {
@@ -4952,7 +4952,7 @@ int card_jeweled_spirit(int player, int card, event_t event)
                      " Prot. from Black\n Prot. from Blue\n Prot. from Green\n Prot from Red\n "
                      "Prot. from White\n Prot from Artifacts",
                      result + -1);
-  pump_ability_until_eot(player, card, instance->parent_controller, instance->parent_card, 0, 0,
+  pump_ability_until_eot_2022(player, card, instance->parent_controller, instance->parent_card, 0, 0,
                          1 << ((char)result + 0xbU & 0x1f) | 0x10000000, 0);
   return 0;
 }
@@ -5023,12 +5023,12 @@ int card_keldon_battlewagon(int player, int card, event_t event)
     iVar1 = 0;
     if (0 < iVar3)
     {
-      iVar1 = can_use_activated_abilities(player, card);
+      iVar1 = can_use_activated_abilities_2022(player, card);
       if (iVar1 == 0)
       {
         return 0;
       }
-      iVar1 = has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
+      iVar1 = has_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 0, 0);
       if (iVar1 == 0)
       {
         return 0;
@@ -5160,7 +5160,7 @@ int card_nakaya_shade(int player, int card, event_t event)
   {
     if (event == EVENT_ACTIVATE)
     {
-      result = charge_mana_for_activated_ability(player, card, 0, 1, 0, 0, 0, 0);
+      result = charge_mana_for_activated_ability_2022(player, card, 0, 1, 0, 0, 0, 0);
     }
     else
     {
@@ -5552,7 +5552,7 @@ int card_rhystic_shield(int player, int card, event_t event)
       if (event == EVENT_RESOLVE_SPELL)
       {
 
-        pump_subtype_until_eot(player, card, player, -1, 0, 1, 0, 0);
+        pump_subtype_until_eot_2022(player, card, player, -1, 0, 1, 0, 0);
 
         bVar1 = true;
         uVar4 = 0;
@@ -5575,7 +5575,7 @@ int card_rhystic_shield(int player, int card, event_t event)
         } while (uVar4 != 2);
         if (bVar1)
         {
-          pump_subtype_until_eot(player, card, player, -1, 0, 2, 0, 0);
+          pump_subtype_until_eot_2022(player, card, player, -1, 0, 2, 0, 0);
         }
         kill_card(player, card, KILL_DESTROY);
       }
@@ -6154,3 +6154,186 @@ int card_rebel_informer(int player, int card, event_t event)
                                      "Select target nontoken Rebel card.");
   return result;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2603da0; original cards/prophecy.c:3034. */
+int card_jolraels_favor(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int32_t card_00;
+
+  instance = get_card_instance(player, card);
+  if (instance->damage_target_player < '\0')
+  {
+  LAB_02603de0:
+    iVar2 = aura_pref_controller(player, card, event, player, NULL);
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      instance = get_card_instance(player, card);
+      iVar2 = (int)instance->damage_target_player;
+      card_00 = instance->damage_target_card;
+      if (event == EVENT_RESOLVE_ACTIVATION)
+      {
+      LAB_02603e20:
+        iVar3 = can_be_regenerated(iVar2, card_00);
+        if (iVar3 != 0)
+        {
+          regenerate_target(iVar2, card_00);
+        }
+      }
+      else if (event == EVENT_CAN_ACTIVATE)
+      {
+        if (iVar2 < 0)
+        {
+          return 0;
+        }
+        if ((((unsigned int)land_can_be_played >> 8 & 0xff) & 2) == 0)
+        {
+          return 0;
+        }
+        iVar2 = can_be_regenerated(iVar2, card_00);
+        if (iVar2 == 0)
+        {
+          return 0;
+        }
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+        goto LAB_02603de0;
+
+      instance = get_card_instance(player, card);
+      if (event == EVENT_RESOLVE_ACTIVATION)
+      {
+        iVar2 = (int)instance->damage_target_player;
+        card_00 = instance->damage_target_card;
+        goto LAB_02603e20;
+      }
+    }
+    iVar3 = generic_activated_ability(player, card, event, 0, 1, 0, 0, 1, 0, 0, 0, NULL, NULL);
+    iVar2 = 99;
+    if (iVar3 == 0)
+    {
+      return 0;
+    }
+  }
+  return iVar2;
+}
+
+/* ManalinkEh 2022: 0x26044a0; original cards/prophecy.c:3174. */
+int card_latullas_orders(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int result;
+  card_instance_t *instance;
+  int times_damaged[2];
+  target_definition_2022_t td;
+
+  result = attached_creature_deals_damage(player, card, event,
+                                          DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_MUST_DAMAGE_OPPONENT |
+                                              DDBM_TRIGGER_OPTIONAL);
+  if (result != 0)
+  {
+
+    instance = get_card_instance(player, card);
+    uVar1 = instance->targets[1].player;
+    times_damaged[1] = uVar1 >> 8 & 0xff;
+    times_damaged[0] = uVar1 & 0xff;
+    default_target_definition_2022(player, card, &td, 0x40);
+    td.preferred_controller = 1 - current_turn;
+    td.allowed_controller = td.preferred_controller;
+    result = times_damaged[td.preferred_controller];
+    instance->targets[0].player = td.preferred_controller;
+    if (result != 0)
+    {
+      result = can_target_2022(&td);
+      if (result != 0)
+      {
+        result = new_pick_target_2022(
+            &td, "Select target artifact defending player controls to destroy.", 0, 0x80);
+        if (result != 0)
+        {
+          kill_card(1 - current_turn, instance->targets[0].card, KILL_DESTROY);
+        }
+      }
+    }
+    instance->number_of_targets = '\0';
+  }
+  result = aura_pref_controller(player, card, event, player, NULL);
+  return result;
+}
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2600950; original cards/prophecy.c:1760. */
+int card_barbed_field(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int player_00;
+  event_t event_00;
+  target_definition_2022_t *td_00;
+  target_definition_2022_t td;
+
+  iVar1 = is_humiliated_for_ability(player, card, AL_STATIC);
+  if (iVar1 == 0)
+  {
+    instance = get_card_instance(player, card);
+    td_00 = &td;
+    if (-1 < instance->damage_target_player)
+    {
+
+      instance = get_card_instance(player, card);
+      player_00 = (int)instance->damage_target_player;
+      iVar1 = instance->damage_target_card;
+      default_target_definition_2022(player_00, iVar1, td_00, 0x102);
+      td.zone = 0x1200;
+      td.preferred_controller = 1 - player;
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        iVar3 = 5;
+        event_00 = EVENT_CAN_ACTIVATE;
+      LAB_02600af4:
+        iVar1 = granted_generic_activated_ability_2022(player, card, player_00, iVar1, event_00,
+                                                       iVar3, 0, 0, 0, 0, 0, 0, 0, td_00, NULL);
+        return iVar1;
+      }
+      if (event == EVENT_ACTIVATE)
+      {
+        instance->number_of_targets = '\0';
+        iVar3 = pick_target_2022(td_00, "TARGET_ANY");
+        if (iVar3 != 0)
+        {
+          td_00 = NULL;
+          iVar3 = 1;
+          event_00 = EVENT_ACTIVATE;
+          goto LAB_02600af4;
+        }
+      }
+      else if ((event == EVENT_RESOLVE_ACTIVATION) &&
+               (iVar3 = validate_target_2022(player_00, iVar1, td_00, 0), iVar3 != 0))
+      {
+
+        instance = get_card_instance(player_00, iVar1);
+        damage_creature(instance->targets[0].player, instance->targets[0].card, 1, player, card);
+      }
+    }
+  }
+  default_target_definition_2022(player, card, &td, 1);
+  td.preferred_controller = player;
+  iVar1 = aura_literal_prompt(player, card, event, &td, "Select target land.");
+  return iVar1;
+}
+
+#endif

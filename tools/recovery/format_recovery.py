@@ -125,7 +125,21 @@ def main():
                 use_keyword_accessors_2022=("get_special_abilities_2022(" in current or "check_for_special_ability_2022(" in current),
                 use_extension_flags_2022=bool(re.search(r'\b(?:get|set|remove|check)_special_flags[23]?(?:_by_instance)?_2022\s*\(',current)),
                 use_mana_api_2022=bool(re.search(r'\b(?:' + '|'.join(MANA_API_NAMES) + r')_2022\s*\(',current)),
-                use_token_api_2022=bool(re.search(r'\btoken_generation_2022_t\b',current)))
+                use_token_api_2022=bool(re.search(r'\btoken_generation_2022_t\b',current)),
+                use_test_api_2022=bool(function.get('test_interface_2022')),
+                use_target_api_2022=bool(function.get('target_interface_2022')),
+                use_sacrifice_api_2022=bool(function.get('sacrifice_interface_2022')),
+                use_spell_api_2022=bool(function.get('spell_interface_2022')),
+                use_ability_api_2022=bool(function.get('ability_interface_2022')),
+                use_pump_api_2022=bool(function.get('pump_interface_2022')),
+                use_activated_api_2022=bool(function.get('activated_interface_2022')),
+                use_attack_api_2022=bool(function.get('attack_interface_2022')),
+                use_entry_api_2022=bool(function.get('entry_interface_2022')),
+                use_level_buddy_api_2022=bool(function.get('level_buddy_interface_2022')),
+                use_phyrexian_api_2022=bool(function.get('phyrexian_interface_2022')),
+                use_spell_trigger_api_2022=bool(function.get('spell_trigger_interface_2022')),
+                use_death_trigger_api_2022=bool(function.get('death_trigger_interface_2022')),
+                use_action_api_2022=bool(function.get('action_interface_2022')))
             formatted = format_bytes(candidate.encode("utf-8"))
             if tokens(current) != tokens(formatted) or comments(current) != comments(formatted):
                 skipped.append(relative + "::" + function["name"])

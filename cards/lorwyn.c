@@ -6580,7 +6580,7 @@ static int colfenors_urn_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_0258ce17:
-    iStack_114 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    iStack_114 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (iStack_114 == 0)
       goto LAB_0258ce3f;
   }
@@ -6619,7 +6619,7 @@ static int colfenors_urn_effect(int player, int card, event_t event)
       count_for_gfp_ability_and_store_values(player, card, 0x77, player, 0, &test, 0xf0, 0);
     }
     iStack_114 =
-        resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+        resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (iStack_114 == 0)
     {
       return 0;
@@ -6695,3 +6695,101 @@ LAB_0258ce3f:
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 Level Up/Buddy helpers. */
+
+/* ManalinkEh 2022: 0x258e270; original cards/lorwyn.c:459. */
+static void buddy_creature_part_2022(int player, int card, event_t event, subtype_t type, int cless)
+{
+  int iVar1;
+  int iVar2;
+  const char *pcVar3;
+  unsigned int amount;
+  test_definition_2022_t *ptStack_150;
+  char msg[100];
+  test_definition_2022_t test;
+
+  iVar1 = count_subtype_in_hand(player, type);
+  if (iVar1 == 0)
+  {
+    ai_modifier = ai_modifier + -0x100;
+  }
+  iVar1 = played_for_free(player, card);
+  if (iVar1 != 0)
+  {
+    return;
+  }
+  iVar1 = is_token(player, card);
+  if (iVar1 != 0)
+  {
+    return;
+  }
+  iVar1 = true_get_updated_casting_cost(player, card, -1, event, -1);
+  iVar2 = count_subtype_in_hand(player, type);
+  if (iVar2 != 0)
+  {
+    iVar2 = has_mana(player, 7, cless);
+    if (iVar2 != 0)
+    {
+      amount = iVar1 + cless & (int)(iVar1 + cless ^ 0xffffffffU) >> 0x1f;
+      pcVar3 = get_subtype_text("Reveal %a card", type);
+      scnprintf(msg, 100, "%s", pcVar3);
+      scnprintf(test.message, 100, "Pay %d", amount);
+      iVar1 = dialog_impl(player, card, event, "\001\002", "\001\014", msg, 1, 5, test.message, 1,
+                          1, 0, 0, 0, 0);
+      if (iVar1 == 0)
+      {
+        spell_fizzled = 1;
+        return;
+      }
+      if (iVar1 != 1)
+      {
+        if (iVar1 == 2)
+        {
+          charge_mana(player, COLOR_COLORLESS, amount);
+          return;
+        }
+        return;
+      }
+    }
+    ptStack_150 = &test;
+    pcVar3 = get_subtype_text("Select a %a card.", type);
+    new_default_test_definition_2022(ptStack_150, 0xff, pcVar3);
+    test.subtype = type;
+    test.zone = 0x100;
+    iVar1 = new_select_a_card_2022(player, player, 4, 0, 3, -1, ptStack_150);
+    if (iVar1 < 0)
+    {
+      spell_fizzled = 1;
+      return;
+    }
+    reveal_card(player, card, player, iVar1);
+    return;
+  }
+  return;
+}
+
+
+/* ManalinkEh 2022: 0x258f6c0; original cards/lorwyn.c:459. */
+int buddy_creature_2022(int player, int card, event_t event, subtype_t type, int cless)
+{
+  int result;
+  if (event == EVENT_MODIFY_COST)
+  {
+    result = count_subtype_in_hand(player, type);
+    if (result < 2)
+    {
+      COST_COLORLESS = COST_COLORLESS + (char)cless;
+    }
+  }
+  else if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    buddy_creature_part_2022(player, card, EVENT_CAST_SPELL, type, cless);
+  }
+  return 0;
+}
+
+#endif

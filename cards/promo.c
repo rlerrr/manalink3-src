@@ -1259,7 +1259,7 @@ int card_fruitcake_elemental(int player, int card, event_t event)
   card_instance_t *instance;
   target_definition_t td;
 
-  indestructible(player, card, event);
+  indestructible_2022(player, card, event);
   if ((current_turn == player) && (result = eot_trigger(player, card, event), result != 0))
   {
     damage_player(player, 7, player, card);

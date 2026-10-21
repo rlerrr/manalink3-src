@@ -3639,19 +3639,67 @@ static int card_uproot_impl(int player, int card, event_t event)
 int ninjutsu_custom_target(int player, int card, event_t event, int cless, int black, int blue,
                            int green, int red, int white, target_definition_t *td, int csvid);
 
-/* ManalinkEh 2022: 0x25696b0; original cards/betrayers_of_kamigawa.c:315. */
+/* Legacy 80-byte target compatibility for custom-target ninjutsu.
+ * Native 2022 wrapper and private implementation are recovered below. */
 int ninjutsu_custom_target(int player, int card, event_t event, int cless, int black, int blue,
                            int green, int red, int white, target_definition_t *td, int csvid)
 {
-  int result;
-
-  if (2 < event - EVENT_CAN_ACTIVATE_FROM_HAND)
-  {
+  if ((uint32_t)event - (uint32_t)EVENT_CAN_ACTIVATE_FROM_HAND > 2U)
     return 0;
+
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  target_definition_t td_default;
+  base_target_definition(player, card, &td_default, 2);
+  if (td == NULL)
+  {
+    td = &td_default;
   }
-  result =
-      ninjutsu_custom_target(player, card, event, cless, black, blue, green, red, white, td, csvid);
-  return result;
+  td->illegal_abilities = 0;
+  td->allowed_controller = player;
+  td->preferred_controller = player;
+  td->required_state = 2;
+  td->illegal_state = 8;
+  if (event == EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    if ((current_phase == 0x18) &&
+        (iVar3 = has_mana_multi(player, cless, black, blue, green, red, white), iVar3 != 0))
+    {
+      iVar3 = can_target(td);
+      return (unsigned int)(iVar3 != 0);
+    }
+  }
+  else if (event == EVENT_ACTIVATE_FROM_HAND)
+  {
+    instance = get_card_instance(player, card);
+    instance->number_of_targets = '\0';
+    iVar3 = charge_mana_multi(player, cless, black, blue, green, red, white);
+    if ((iVar3 != 0) && (iVar3 = pick_target(td, "NINJUTSU"), iVar3 != 0))
+    {
+      bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+      return 1;
+    }
+  }
+  else
+  {
+    if ((event == EVENT_RESOLVE_ACTIVATION_FROM_HAND) && (0 < active_cards_count[player]))
+    {
+      iVar3 = 0;
+      do
+      {
+        instance = in_hand(player, iVar3);
+        if ((instance != NULL) && (iVar2 = get_id(player, iVar3), iVar2 == csvid))
+        {
+          instance->state = instance->state | 0x14;
+          put_into_play(player, iVar3);
+          return 0;
+        }
+        iVar3 = iVar3 + 1;
+      } while (iVar3 < active_cards_count[player]);
+    }
+  }
+  return 0;
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -3675,3 +3723,102 @@ int card_harbinger_of_spring(int player, int card, event_t event)
   result = soulshift(player, card, event, 4, 1);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 split card helpers. */
+
+/* ManalinkEh 2022: 0x2569100; original cards/betrayers_of_kamigawa.c:315. */
+static int ninjutsu_custom_target_part_2022(int player, int card, event_t event, int cless,
+                                            int black, int blue, int green, int red, int white,
+                                            target_definition_2022_t *td, int csvid)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  target_definition_2022_t td_default;
+  base_target_definition_2022(player, card, &td_default, 2);
+  if (td == NULL)
+  {
+    td = &td_default;
+  }
+  td->illegal_abilities = 0;
+  td->allowed_controller = player;
+  td->preferred_controller = player;
+  td->required_state = 2;
+  td->illegal_state = 8;
+  if (event == EVENT_CAN_ACTIVATE_FROM_HAND)
+  {
+    if ((current_phase == 0x18) &&
+        (iVar3 = has_mana_multi(player, cless, black, blue, green, red, white), iVar3 != 0))
+    {
+      iVar3 = can_target_2022(td);
+      return (unsigned int)(iVar3 != 0);
+    }
+  }
+  else if (event == EVENT_ACTIVATE_FROM_HAND)
+  {
+    instance = get_card_instance(player, card);
+    instance->number_of_targets = '\0';
+    iVar3 = charge_mana_multi(player, cless, black, blue, green, red, white);
+    if ((iVar3 != 0) && (iVar3 = pick_target_2022(td, "NINJUTSU"), iVar3 != 0))
+    {
+      bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+      return 1;
+    }
+  }
+  else
+  {
+    if ((event == EVENT_RESOLVE_ACTIVATION_FROM_HAND) && (0 < active_cards_count[player]))
+    {
+      iVar3 = 0;
+      do
+      {
+        instance = in_hand(player, iVar3);
+        if ((instance != NULL) && (iVar2 = get_id(player, iVar3), iVar2 == csvid))
+        {
+          instance->state = instance->state | 0x14;
+          put_into_play(player, iVar3);
+          return 0;
+        }
+        iVar3 = iVar3 + 1;
+      } while (iVar3 < active_cards_count[player]);
+    }
+  }
+  return 0;
+}
+
+
+/* ManalinkEh 2022: 0x25696b0; original cards/betrayers_of_kamigawa.c:315. */
+int ninjutsu_custom_target_2022(int player, int card, event_t event, int cless, int black, int blue,
+                                int green, int red, int white, target_definition_2022_t *td,
+                                int csvid)
+{
+  int result;
+
+  if ((uint32_t)event - (uint32_t)EVENT_CAN_ACTIVATE_FROM_HAND > 2U)
+  {
+    return 0;
+  }
+  result = ninjutsu_custom_target_part_2022(player, card, event, cless, black, blue, green, red,
+                                            white, td, csvid);
+  return result;
+}
+
+
+/* ManalinkEh 2022: 0x2569740; original cards/betrayers_of_kamigawa.c:432. */
+int ninjutsu_2022(int player, int card, event_t event, int cless, int black, int blue, int green,
+                  int red, int white, int csvid)
+{
+  int result;
+
+  if ((uint32_t)event - (uint32_t)EVENT_CAN_ACTIVATE_FROM_HAND > 2U)
+  {
+    return 0;
+  }
+  result = ninjutsu_custom_target_part_2022(player, card, event, cless, black, blue, green, red,
+                                            white, NULL, csvid);
+  return result;
+}
+
+#endif

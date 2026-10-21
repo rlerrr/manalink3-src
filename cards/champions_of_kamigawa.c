@@ -5424,7 +5424,7 @@ LAB_02609e91:
 int card_torii_watchguard(int player, int card, event_t event)
 {
   int result;
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   result = soulshift(player, card, event, 4, 1);
   return result;
 }

@@ -3827,7 +3827,7 @@ int card_second_wind(int player, int card, event_t event)
     return 0;
   }
 LAB_0257a727:
-  result = vanilla_aura(player, card, event, 2);
+  result = vanilla_aura_2022(player, card, event, 2);
   return result;
 }
 
@@ -3969,3 +3969,106 @@ static int veilstone_amulet_effect(int player, int card, event_t event)
   kill_card(player, card, KILL_EXILE);
   return 0;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *is_permanent_or_suspend_legacy(int who_chooses, int player, int card);
+
+/* ManalinkEh 2022: 0x25716a0; original cards/future_sight.c:3049. */
+static char *is_permanent_or_suspend_legacy(int who_chooses, int player, int card)
+{
+  int result;
+  card_instance_t *instance;
+
+  result = is_what(player, card, 0x47);
+  if (result == 0)
+  {
+    instance = get_card_instance(player, card);
+    result = is_what(player, card, 0x80);
+    if (((result == 0) || (instance->info_slot_fn != generic_suspend_legacy)) &&
+        (cards_data[instance->internal_card_id].id != 0x2178))
+    {
+      return "must be a permanent or a Suspend legacy card.";
+    }
+  }
+  return NULL;
+}
+
+/* ManalinkEh 2022: 0x257ae00; original cards/future_sight.c:3065. */
+int card_shivan_sand_mage(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int card_00;
+  target_definition_2022_t td;
+
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+
+    default_target_definition_2022(player, card, &td, 199);
+    td.preferred_controller = 2;
+    td.special = 0x8000;
+    td.extra = (int32_t)is_permanent_or_suspend_legacy;
+    instance = get_card_instance(player, card);
+    result =
+        do_dialog(player, player, card, -1, -1, " Add 2 Time Counters\n Remove 2 Time Counters", 0);
+    if (result == 0)
+    {
+      result = can_target_2022(&td);
+      if (result != 0)
+      {
+        result = new_pick_target_2022(
+            &td, "Select target permanent or suspended legacy with a time counter.", 0, 0x80);
+        if (result != 0)
+        {
+          result =
+              count_counters(instance->targets[0].player, instance->targets[0].card, COUNTER_TIME);
+          if (0 < result)
+          {
+            add_counters_from_source(player, card, instance->targets[0].player,
+                                     instance->targets[0].card, COUNTER_TIME, 2);
+          }
+        }
+      }
+    }
+    else
+    {
+      result = can_target_2022(&td);
+      if (result != 0)
+      {
+        result = new_pick_target_2022(
+            &td, "Select target permanent or Suspend legacy card-remove counters.", 0, 0x80);
+        if (result != 0)
+        {
+          remove_counters_from_source(player, card, instance->targets[0].player,
+                                      instance->targets[0].card, COUNTER_TIME, 2);
+          result =
+              count_counters(instance->targets[0].player, instance->targets[0].card, COUNTER_TIME);
+          if (result == 0)
+          {
+            ai_modifier = ai_modifier + -0x60;
+          }
+          result = instance->targets[0].player;
+          card_00 = instance->targets[0].card;
+          if (result == player)
+          {
+            result = is_what(player, card_00, 0x80);
+            ai_modifier = ai_modifier + (-(unsigned int)(result == 0) & 0xffffffa0) + 0x30;
+            result = instance->targets[0].player;
+            if (result == player)
+              goto LAB_0257ae35;
+            card_00 = instance->targets[0].card;
+          }
+          result = is_what(result, card_00, 0x80);
+          ai_modifier = ai_modifier + ((-(unsigned int)(result == 0) & 0x60) - 0x30);
+        }
+      }
+    }
+  }
+LAB_0257ae35:
+  result = suspend(player, card, event, 4, 0, 0, 0, 0, 1, 0, NULL, NULL);
+  return result;
+}
+
+#endif

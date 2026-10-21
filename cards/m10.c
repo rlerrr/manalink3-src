@@ -1077,7 +1077,7 @@ int effect_must_attack_on_next_combat(int player, int card, event_t event)
   if (-1 < instance->damage_target_card)
   {
     instance = get_card_instance(player, card);
-    attack_if_able((int)instance->damage_target_player, instance->damage_target_card, event);
+    attack_if_able_2022((int)instance->damage_target_player, instance->damage_target_card, event);
   }
   if ((event == EVENT_PHASE_CHANGED) && (0x1d < current_phase))
   {

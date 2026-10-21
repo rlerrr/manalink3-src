@@ -3505,7 +3505,7 @@ int card_slobad_goblin_tinkerer(int player, int card, event_t event)
       result = valid_target(&td);
       if (result != 0)
       {
-        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+        pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                                instance->targets[0].player, instance->targets[0].card, 0, 0, 0,
                                0x800);
       }

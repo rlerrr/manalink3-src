@@ -24,7 +24,7 @@ from format_recovery import definition_span
 
 
 COMMENT = r'/\*.*?\*/|//[^\r\n]*'
-MEMBERS = dict(test_definition_t='test', target_definition_t='target', token_generation_t='token', int='value', **{'char[100]': 'buffer'})
+MEMBERS = dict(test_definition_t='test', test_definition_2022_t='test', target_definition_t='target', target_definition_2022_t='target', token_generation_t='token', token_generation_2022_t='token', int='value', **{'char[100]': 'buffer'})
 
 
 def descendants(die):

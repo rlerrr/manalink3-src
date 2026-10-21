@@ -3664,7 +3664,7 @@ int card_fevered_strength(int player, int card, event_t event)
   int result;
   int legacycard;
 
-  result = vanilla_instant_pump(player, card, event, 2, player, 2, 0, 0x4000000, 0);
+  result = vanilla_instant_pump_2022(player, card, event, 2, player, 2, 0, 0x4000000, 0);
   if ((result != 0) && (event == EVENT_RESOLVE_SPELL))
   {
     legacycard = cantrip(player, card, 1);
@@ -3691,7 +3691,7 @@ int card_floodwater_dam(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar3 = has_mana_for_activated_ability(player, card, 3, 0, 0, 0, 0, 0);
+      iVar3 = has_mana_for_activated_ability_2022(player, card, 3, 0, 0, 0, 0, 0);
       if (iVar3 == 0)
       {
         return 0;
@@ -3705,7 +3705,7 @@ int card_floodwater_dam(int player, int card, event_t event)
       instance->number_of_targets = '\0';
       iVar3 = 0;
       while (
-          ((iVar2 = can_target(&td), iVar2 != 0 && (iVar2 = has_mana_for_activated_ability(
+          ((iVar2 = can_target(&td), iVar2 != 0 && (iVar2 = has_mana_for_activated_ability_2022(
                                                         player, card, iVar3 * 2 + 1, 0, 0, 0, 0, 0),
                                                     iVar2 != 0)) &&
            (iVar2 = new_pick_target(&td, "TARGET_LAND", iVar3, 0), iVar2 != 0)))
@@ -3726,7 +3726,7 @@ int card_floodwater_dam(int player, int card, event_t event)
         state_untargettable(ptVar4->player, ptVar4->card, 0);
         ptVar4 = ptVar5;
       } while (ptVar5 != instance->targets + iVar3);
-      iVar3 = charge_mana_for_activated_ability(player, card, iVar3 * 2 + 1, 0, 0, 0, 0, 0);
+      iVar3 = charge_mana_for_activated_ability_2022(player, card, iVar3 * 2 + 1, 0, 0, 0, 0, 0);
       if (iVar3 == 0)
       {
         return 0;
@@ -3930,9 +3930,9 @@ int card_royal_herbalist(int player, int card, event_t event)
   int result;
   if (event == EVENT_CAN_ACTIVATE)
   {
-    result = can_use_activated_abilities(player, card);
+    result = can_use_activated_abilities_2022(player, card);
     if (((result != 0) &&
-         (result = has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0), result != 0)) &&
+         (result = has_mana_for_activated_ability_2022(player, card, 2, 0, 0, 0, 0, 0), result != 0)) &&
         (*deck_ptr[player] != -1))
     {
       return 1;
@@ -3940,7 +3940,7 @@ int card_royal_herbalist(int player, int card, event_t event)
   }
   else if (event == EVENT_ACTIVATE)
   {
-    result = charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0);
+    result = charge_mana_for_activated_ability_2022(player, card, 2, 0, 0, 0, 0, 0);
     if (result != 0)
     {
       rfg_top_card_of_deck(player);
@@ -4010,9 +4010,9 @@ int card_seasoned_tactician(int player, int card, event_t event)
     td.special = 0x20;
     if (event == EVENT_CAN_ACTIVATE)
     {
-      result = can_use_activated_abilities(player, card);
+      result = can_use_activated_abilities_2022(player, card);
       if ((((result != 0) && (result = can_target(&td), result != 0)) &&
-           (result = has_mana_for_activated_ability(player, card, 3, 0, 0, 0, 0, 0),
+           (result = has_mana_for_activated_ability_2022(player, card, 3, 0, 0, 0, 0, 0),
             result != 0)) &&
           (result = count_deck(player), 3 < result))
       {
@@ -4343,7 +4343,7 @@ int card_sworn_defender(int player, int card, event_t event)
     {
       instance = get_card_instance(player, card);
       instance->number_of_targets = '\0';
-      iVar1 = charge_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0);
+      iVar1 = charge_mana_for_activated_ability_2022(player, card, 1, 0, 0, 0, 0, 0);
       if (iVar1 == 0)
       {
         return 0;
@@ -4427,7 +4427,7 @@ static void boost_tough_gain_1_life(int player, int card, int t_player, int t_ca
   card_instance_t *instance;
 
   instance = get_card_instance(player, card);
-  pump_ability_until_eot(player, card, (int)instance->damage_target_player,
+  pump_ability_until_eot_2022(player, card, (int)instance->damage_target_player,
                          instance->damage_target_card, 0, 3, 0, 0);
   gain_life(player, 1);
   return;
@@ -4493,7 +4493,7 @@ int card_kjeldoran_pride(int player, int card, event_t event)
     result = valid_target(&td);
     if (result != 0)
     {
-      attach_aura_to_target(player, instance->parent_card, EVENT_RESOLVE_ACTIVATION,
+      attach_aura_to_target_2022(player, instance->parent_card, EVENT_RESOLVE_ACTIVATION,
                             instance->targets[0].player, instance->targets[0].card);
     }
   LAB_020aa8be:
@@ -4590,7 +4590,7 @@ int card_casting_of_bones(int player, int card, event_t event)
     }
   }
 LAB_020a9a58:
-  iVar3 = vanilla_aura(player, card, event, player);
+  iVar3 = vanilla_aura_2022(player, card, event, player);
   return iVar3;
 }
 
@@ -4655,7 +4655,7 @@ LAB_020aa5a4:
     return 0;
   }
 LAB_020aa578:
-  iVar3 = vanilla_aura(player, card, event, player);
+  iVar3 = vanilla_aura_2022(player, card, event, player);
   return iVar3;
 }
 
@@ -4925,7 +4925,7 @@ int card_storm_elemental(int player, int card, event_t event)
       }
       if ((iVar3 == 2) && (instance->targets[1].player == 1))
       {
-        pump_until_eot_merge_previous(instance->parent_controller, instance->parent_card,
+        pump_until_eot_merge_previous_2022(instance->parent_controller, instance->parent_card,
                                       instance->parent_controller, instance->parent_card, 1, 1);
         return 0;
       }
@@ -5015,7 +5015,7 @@ int card_viscerid_armor(int player, int card, event_t event)
     }
   }
 LAB_020ae924:
-  result = generic_aura(player, card, event, player, 1, 1, 0, 0, 0, 0, 0);
+  result = generic_aura_2022(player, card, event, player, 1, 1, 0, 0, 0, 0, 0);
   return result;
 }
 
@@ -5105,7 +5105,7 @@ int card_viscerid_drone(int player, int card, event_t event)
     return 0;
   }
   instance->info_slot = 0;
-  iVar3 = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
+  iVar3 = charge_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 0, 0);
   if (iVar3 == 0)
   {
     return 0;
@@ -5182,16 +5182,16 @@ int card_agent_of_stromgald(int player, int card, event_t event)
 
   if (event == EVENT_CAN_ACTIVATE)
   {
-    result = has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 1, 0);
+    result = has_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 1, 0);
     if (result != 0)
     {
-      result = can_produce_mana(player, card);
+      result = can_produce_mana_2022(player, card);
       return result;
     }
   }
   else if (event == EVENT_ACTIVATE)
   {
-    result = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 1, 0);
+    result = charge_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 1, 0);
     if (result != 0)
     {
       produce_mana(player, 1, 1);
@@ -5200,7 +5200,7 @@ int card_agent_of_stromgald(int player, int card, event_t event)
   else if (((event == EVENT_COUNT_MANA) && (card == affected_card)) &&
            (player == affected_card_controller))
   {
-    result = can_produce_mana(player, card);
+    result = can_produce_mana_2022(player, card);
     if (result != 0)
     {
       result = has_mana(player, 4, 1);
@@ -5328,15 +5328,15 @@ int card_krovikan_plague(int player, int card, event_t event)
       {
         iVar2 = is_tapped(player_00, iVar2);
         if ((((iVar2 == 0) && (iVar2 = can_target(&td), iVar2 != 0)) &&
-             (iVar2 = can_use_activated_abilities(player, card), iVar2 != 0)) &&
-            (iVar2 = has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0), iVar2 != 0))
+             (iVar2 = can_use_activated_abilities_2022(player, card), iVar2 != 0)) &&
+            (iVar2 = has_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 0, 0), iVar2 != 0))
         {
           return 1;
         }
       }
       else if (event == EVENT_ACTIVATE)
       {
-        iVar3 = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
+        iVar3 = charge_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 0, 0);
         if (((iVar3 != 0) && (iVar3 = is_tapped(player_00, iVar2), iVar3 == 0)) &&
             ((iVar3 = can_target(&td),
               iVar3 != 0 && (iVar3 = pick_target(&td, "TARGET_ANY"), iVar3 != 0))))
@@ -5563,7 +5563,7 @@ int card_urzas_engine(int player, int card, event_t event)
       iVar2 = instance->info_slot;
       if (iVar2 == 1)
       {
-        iVar2 = pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+        iVar2 = pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                                        instance->parent_controller, instance->parent_card, 0, 0,
                                        0x40, 0);
         alternate_legacy_text(1, player, iVar2);
@@ -5580,7 +5580,7 @@ int card_urzas_engine(int player, int card, event_t event)
           instance = in_play_and_attacking(player, iVar2);
           if ((instance != NULL) && (uVar1 == instance->blocking))
           {
-            iVar4 = pump_ability_until_eot(player, card, player, iVar2, 0, 0, 0x80, 0);
+            iVar4 = pump_ability_until_eot_2022(player, card, player, iVar2, 0, 0, 0x80, 0);
             alternate_legacy_text(2, player, iVar4);
           }
           iVar2 = iVar2 + 1;
@@ -5660,7 +5660,7 @@ int card_veterans_voice(int player, int card, event_t event)
       iVar2 = validate_target(player, card, &td, 0);
       if (iVar2 != 0)
       {
-        pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+        pump_ability_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
                                2, 1, 0, 0);
       }
     }
@@ -5707,7 +5707,7 @@ int card_winters_night(int player, int card, event_t event)
            ((iVar1 = is_tapped(affected_card_controller, affected_card),
              iVar1 == 0 && (iVar1 = is_animated_and_sick(affected_card_controller, affected_card),
                             iVar1 == 0)))) &&
-          (iVar1 = can_produce_mana(affected_card_controller, affected_card), iVar1 != 0))
+          (iVar1 = can_produce_mana_2022(affected_card_controller, affected_card), iVar1 != 0))
       {
         instance = get_card_instance(affected_card_controller, affected_card);
         iVar3 = 0;
@@ -6211,7 +6211,7 @@ int card_school_of_the_unseen(int player, int card, event_t event)
     {
       return 0;
     }
-    result = can_produce_mana(player, card);
+    result = can_produce_mana_2022(player, card);
     if (result == 0)
     {
       return 0;
@@ -6337,3 +6337,236 @@ int card_dystopia(int player, int card, event_t event)
   result = global_enchantment(player, card, event);
   return result;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *is_damage_to_player_or_planeswalker(int who_chooses, int player, int card,
+                                                 int targeting_player, int targeting_card);
+static int effect_cant_be_blocked_except_by_walls(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x209d520; original cards/alliances.c:5484. */
+static int effect_cant_be_blocked_except_by_walls(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event == EVENT_BLOCK_LEGALITY)
+  {
+
+    instance = get_card_instance(player, card);
+    if (((-1 < instance->damage_target_card) &&
+         (instance->damage_target_player == attacking_card_controller)) &&
+        (instance->damage_target_card == attacking_card))
+    {
+      result = has_subtype(affected_card_controller, affected_card, SUBTYPE_WALL);
+      if (result == 0)
+      {
+        event_result = 1;
+      }
+    }
+  }
+  else if ((event == EVENT_CLEANUP) || (event == EVENT_SHOULD_AI_PLAY))
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20ae440; original cards/alliances.c:5512. */
+int card_varchilds_crusader(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = create_targetted_legacy_effect(instance->parent_controller, instance->parent_card,
+                                              effect_cant_be_blocked_except_by_walls,
+                                              instance->parent_controller, instance->parent_card);
+      alternate_legacy_text(1, player, result);
+      result = create_targetted_legacy_effect(instance->parent_controller, instance->parent_card,
+                                              sac_next_endstep, instance->parent_controller,
+                                              instance->parent_card);
+      alternate_legacy_text(2, player, result);
+    }
+  }
+  result = generic_activated_ability_2022(player, card, event, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x209d660; original cards/alliances.c:5714. */
+static char *is_damage_to_player_or_planeswalker(int who_chooses, int player, int card,
+                                                 int targeting_player, int targeting_card)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if (instance->internal_card_id != damage_card)
+  {
+    return ",damage";
+  }
+  if ((-1 < instance->damage_target_card) &&
+      (result = damage_is_to_planeswalker(instance), result == 0))
+  {
+    return ",damage to a player or planeswalker";
+  }
+  return NULL;
+}
+
+/* ManalinkEh 2022: 0x20af030; original cards/alliances.c:5740. */
+int card_wandering_mage(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int32_t iVar2;
+  int iVar3;
+  int iVar4;
+  unsigned int uVar5;
+  unsigned int uVar6;
+  target_definition_2022_t td;
+  target_definition_2022_t td1;
+  target_definition_2022_t td2;
+  target_definition_2022_t td3;
+
+  if (((event == EVENT_ACTIVATE) || (event - EVENT_RESOLVE_ACTIVATION < 2)) ||
+      (event == EVENT_CLEANUP))
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    td.extra = damage_card;
+    td.required_type = 0;
+    td.special = 0x100000;
+    default_target_definition_2022(player, card, &td1, 0);
+    td1.special = 0x8000;
+    td1.extra = (int32_t)damage_to_cleric_or_wizard;
+    default_target_definition_2022(player, card, &td2, 0xff);
+    td2.special = 0x8000;
+    td2.extra = (int32_t)is_damage_to_player_or_planeswalker;
+    base_target_definition_2022(player, card, &td3, 2);
+    td3.allowed_controller = player;
+    td3.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x4000004, 0, 0, 0,
+                                             0, 0, 1, 0, &td, "TARGET_DAMAGE");
+      if (((iVar3 != 0) && (iVar3 = can_pay_life(player, 1), iVar3 != 0)) ||
+          ((iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x1000004, 0,
+                                                   0, 1, 0, 0, 0, 0, &td1, "TARGET_DAMAGE"),
+            iVar3 != 0 || ((iVar3 = can_target_2022(&td3),
+                            iVar3 != 0 && (iVar3 = generic_activated_ability_2022(
+                                               player, card, EVENT_CAN_ACTIVATE, 0x1000004, 0, 1, 0,
+                                               0, 0, 0, 0, &td2, "TARGET_DAMAGE"),
+                                           iVar3 != 0))))))
+      {
+        return 99;
+      }
+    }
+    else if (event == EVENT_ACTIVATE)
+    {
+
+      iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x4000004, 0, 0, 0,
+                                             0, 0, 1, 0, &td, "TARGET_DAMAGE");
+      uVar6 = 0;
+      if (iVar3 != 0)
+      {
+        iVar3 = can_pay_life(player, 1);
+        uVar6 = (unsigned int)(iVar3 != 0);
+      }
+      iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x4000004, 0, 0, 1,
+                                             0, 0, 0, 0, &td1, "TARGET_DAMAGE");
+      iVar4 = can_target_2022(&td3);
+      uVar5 = 0;
+      if (iVar4 != 0)
+      {
+        iVar4 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x1000004, 0, 1, 0,
+                                               0, 0, 0, 0, &td2, "TARGET_DAMAGE");
+        uVar5 = (unsigned int)(iVar4 != 0);
+      }
+      iVar3 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Prevent dam to crit.", uVar6,
+                          5, "Prevent dam to cleric/wiz.", iVar3, 10,
+                          "Prevent dam to player/plansw.", uVar5, 5, 0, 0, 0, 0);
+      if (iVar3 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (iVar3 == 1)
+      {
+        iVar3 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x4000004, 0, 0, 0, 0,
+                                               0, 1, 0, &td, "TARGET_DAMAGE");
+        if (iVar3 != 0)
+        {
+          lose_life(player, 1);
+        }
+      }
+      else
+      {
+        if (iVar3 == 2)
+        {
+          iVar3 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x4000004, 0, 0, 1,
+                                                 0, 0, 0, 0, &td1, "TARGET_DAMAGE");
+          return iVar3;
+        }
+        if (((iVar3 == 3) &&
+             (iVar3 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x1000004, 0, 1,
+                                                     0, 0, 0, 0, 0, &td2, "TARGET_DAMAGE"),
+              iVar3 != 0)) &&
+            (iVar3 = new_pick_target_2022(&td3, "TARGET_CREATURE_YOU_CONTROL", 1, 1), iVar3 != 0))
+        {
+          add_counters_from_source(player, card, instance->targets[1].player,
+                                   instance->targets[1].card, COUNTER_M1_M1, 1);
+        }
+      }
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      iVar2 = instance->info_slot;
+      if (iVar2 == 1)
+      {
+        iVar3 = valid_target_2022(&td);
+        if (iVar3 == 0)
+        {
+          iVar2 = instance->info_slot;
+        }
+        else
+        {
+          prevent_damage(instance->targets[0].player, instance->targets[0].card, 2);
+          iVar2 = instance->info_slot;
+        }
+      }
+      if (iVar2 == 2)
+      {
+        iVar3 = valid_target_2022(&td1);
+        if (iVar3 == 0)
+        {
+          iVar2 = instance->info_slot;
+        }
+        else
+        {
+          prevent_damage(instance->targets[0].player, instance->targets[0].card, 1);
+          iVar2 = instance->info_slot;
+        }
+      }
+      if ((iVar2 == 3) && (iVar3 = valid_target_2022(&td2), iVar3 != 0))
+      {
+        prevent_damage(instance->targets[0].player, instance->targets[0].card, 2);
+        return 0;
+      }
+    }
+  }
+  return 0;
+}
+
+#endif

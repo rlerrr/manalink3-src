@@ -29,7 +29,11 @@ def resolve_partials(body, views, layouts):
                 record = layouts[target]
                 for name, at in record['members'].items():
                     # These fields require migration of the old aggregate APIs.
-                    if name in {'flags', 'special_flags3', 'sp_keyword', 'sp_keyword_flag'} or (target == 'test_definition_t' and at >= 140):
+                    if ((name in {'flags', 'special_flags3', 'sp_keyword', 'sp_keyword_flag'} and
+                         not ((target=='token_generation_2022_t' and name=='special_flags3') or
+                              (target=='target_definition_2022_t' and name=='flags') or
+                              (target=='test_definition_2022_t' and name in {'sp_keyword','sp_keyword_flag'}))) or
+                        (target == 'test_definition_t' and at >= 140)):
                         continue
                     if at == offset and record['member_sizes'][name] == size:
                         candidates.append((storage + '.' + alias + '.' + name, record['member_kinds'][name]))

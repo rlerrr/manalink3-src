@@ -1950,6 +1950,53 @@ typedef struct
 	int storage; //If > -1, when used in "new_global_tutor", will store the result of the tutor on (player, card) targeting part, beginning with "get_card_instance(player, storage)->targets[0].card". Will store internal_card_id or csv_id depening on the type of tutor
 } test_definition_t;
 
+/* October 2022 test ABI; the original 208-byte definition remains available. */
+#ifndef SHANDALAR
+typedef int (*test_selection_predicate_2022_t)(int,int,int,int);
+typedef struct
+{
+  char message[100];
+  uint32_t type;
+  uint32_t subtype;
+  uint16_t type_flag;
+  uint16_t subtype_flag;
+  uint32_t color;
+  int32_t id;
+  int32_t id2;
+  uint16_t color_flag;
+  uint16_t id_flag;
+  int32_t cmc;
+  uint32_t keyword;
+  uint16_t cmc_flag;
+  uint16_t keyword_flag;
+  uint32_t sp_keyword;
+  uint16_t sp_keyword_flag;
+  int32_t power;
+  int32_t toughness;
+  uint16_t power_flag;
+  uint16_t toughness_flag;
+  uint32_t state;
+  uint32_t zone;
+  uint16_t state_flag;
+  uint16_t not_me;
+  uint16_t ai_selection_mode;
+  uint16_t qty;
+  uint32_t sub2;
+  uint32_t sub3;
+  uint32_t sub4;
+  uint32_t sub5;
+  uint16_t no_shuffle;
+  uint16_t create_minideck;
+  test_selection_predicate_2022_t special_selection_function;
+  int32_t value_for_special_selection_function;
+  int16_t painters_servant_hack[2];
+  uint8_t has_mana_to_pay_cmc;
+  uint8_t can_legally_play;
+  uint8_t owner;
+  int32_t storage;
+} test_definition_2022_t;
+#endif
+
 typedef enum
 {
 	ACT_KILL_BURY			= 1,	// mirrors kill_t
@@ -2229,6 +2276,7 @@ typedef enum
 	GAA_SACRIFICE_CREATURE		= 1<<9,
 	GAA_SPELL_ON_STACK			= 1<<10,
 	GAA_DO_NOT_RECALCULATE_ACTIVATION_COST = 1<<11, // Used by activation cost with mana hybrid
+	GAA_DURING_COMBAT = 1<<12, /* October 2022 DWARF; previously unnamed bit. */
 
 	GAA_ONCE_PER_TURN					= 1<<13,
 	GAA_RFG_ME							= 1<<14,
@@ -2238,6 +2286,7 @@ typedef enum
 	GAA_NOT_ME_AS_TARGET				= 1<<18,
 	GAA_TAPPED							= 1<<19,
 	GAA_DECK_SEARCHER					= 1<<20,
+	GAA_MANA_ABILITY = 1<<21, /* October 2022 DWARF; previously unnamed bit. */
 
 	GAA_CAN_ONLY_TARGET_OPPONENT		= 1<<22,
 	GAA_REGENERATION					= 1<<23,
@@ -2279,6 +2328,29 @@ typedef enum
 	GS_ONE_OR_MULTIPLE_TARGETS	 	= 1<<13, //For cards like "Fire // Ice"
 	GS_SAC_PERMANENT_AS_COST		= 1<<14,
 } generic_spell_flags_t;
+
+/* October 2022 generic-spell flags; original values remain above. */
+#ifndef SHANDALAR
+typedef enum
+{
+  GS2022_CAN_TARGET = 1,
+  GS2022_COUNTERSPELL = 2,
+  GS2022_X_SPELL = 4,
+  GS2022_GRAVE_RECYCLER = 8,
+  GS2022_REGENERATION = 16,
+  GS2022_OPTIONAL_TARGET = 32,
+  GS2022_CAN_ONLY_TARGET_OPPONENT = 64,
+  GS2022_LITERAL_PROMPT = 128,
+  GS2022_DAMAGE_PREVENTION = 256,
+  GS2022_AURA = 512,
+  GS2022_SAC_CREATURE_AS_COST = 1024,
+  GS2022_GRAVE_RECYCLER_OPP_GRAVE = 2048,
+  GS2022_GRAVE_RECYCLER_BOTH_GRAVES = 4096,
+  GS2022_GRAVE_RECYCLER_FROM_GRAVEYARDS = 8192,
+  GS2022_ONE_OR_MULTIPLE_TARGETS = 16384,
+  GS2022_SAC_PERMANENT_AS_COST = 32768,
+} generic_spell_flags_2022_t;
+#endif
 
 /* Special flags  - Generic flags */
 typedef enum
@@ -3038,6 +3110,34 @@ typedef struct
   int32_t card;
 } target_definition_t;
 
+/* October 2022 targeting layout; the original target_definition_t remains 80 bytes. */
+#ifndef SHANDALAR
+typedef struct
+{
+  int32_t who_chooses;
+  int32_t allowed_controller;
+  int32_t preferred_controller;
+  int32_t zone;
+  int32_t required_type;
+  int32_t illegal_type;
+  int32_t required_abilities;
+  int32_t illegal_abilities;
+  int32_t required_color;
+  int32_t illegal_color;
+  int32_t extra;
+  int32_t required_subtype;
+  int32_t power_requirement;
+  int32_t toughness_requirement;
+  int32_t special;
+  int32_t required_state;
+  int32_t illegal_state;
+  int32_t allow_cancel;
+  int32_t player;
+  int32_t card;
+  int32_t flags;
+} target_definition_2022_t;
+#endif
+
 typedef enum
 {
   TARGET_ZONE_HAND		= 0x100,
@@ -3205,6 +3305,25 @@ typedef struct pump_ability_until_eot_arguments_t
 	int eot_removal_method;
 } pump_ability_t;
 
+/* October 2022 pump record; legacy 36-byte record remains above. */
+#ifndef SHANDALAR
+typedef struct pump_ability_arguments_2022_t
+{
+  int source_p;
+  int source_c;
+  int pow_mod;
+  int tou_mod;
+  keyword_t key_mod;
+  sp_keyword_t skey_mod;
+  int paue_flags;
+  int can_block_additional_creatures;
+  int eot_removal_method;
+  subtype_t subtype;
+  color_test_t color;
+  int disabling_mode;
+} pump_ability_2022_t;
+#endif
+
 typedef enum {
 	// seek_grave_for_id_to_reanimate compares >= 0
 
@@ -3361,12 +3480,29 @@ typedef enum
 	SAC_SET_TARGETS			= 1<<7,	// Sets a bunch of values in {player,card}'s targets[0] - targets[4], for backwards compatibility with the old sacrifice() interface.  Avoid.
 } sacrifice_t;
 
+/* October 2022 sacrifice flags; retain the original flag domain above. */
+#ifndef SHANDALAR
+typedef enum
+{
+  SAC2022_NO_CANCEL = 1,
+  SAC2022_DONE = 2,
+  SAC2022_JUST_MARK = 4,
+  SAC2022_ALL_OR_NONE = 8,
+  SAC2022_AS_COST = 16,
+  SAC2022_CAUSED = 32,
+  SAC2022_RETURN_CHOICE = 64,
+  SAC2022_OPTIONAL = 128,
+  SAC2022_SET_TARGETS = 256,
+} sacrifice_2022_t;
+#endif
+
 typedef enum
 {
 	SARV_0 = 0, /* Recovered October 2022 zero-valued flag name. */
 	SARV_REPORT_POWER		= 1<<0,		// Use only one of these or you'll get messed result
 	SARV_REPORT_TOUGHNESS	= 1<<1,		// Use only one of these or you'll get messed result
 	SARV_REPORT_COLORS		= 1<<2,		// Use only one of these or you'll get messed result
+	SARV_REPORT_COUNT = 1<<3, /* October 2022 DWARF; previously unnamed bit. */
 	SARV_REPORT_CMC			= 1<<4,		// Use only one of these or you'll get messed result
 	SARV_EXTRA_IMPOSE_SACRIFICE	= 1<<31 // Can be mixed with the other parameters
 } sacrifice_and_report_value_flags_t;
@@ -3946,6 +4082,12 @@ typedef struct struct_token_generation_2022_t
   int special_flags2;
   int special_flags3;
 } token_generation_2022_t;
+#endif
+
+
+#ifndef SHANDALAR
+/* October 2022 action values have unsigned 32-bit storage. */
+typedef uint32_t actions_2022_t;
 #endif
 
 #endif

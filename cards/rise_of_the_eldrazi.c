@@ -5085,7 +5085,7 @@ int card_affa_guard_hound(int player, int card, event_t event)
       if (result != 0)
       {
         instance = get_card_instance(player, card);
-        pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 3);
+        pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, 0, 3);
       }
     }
   }
@@ -5115,7 +5115,7 @@ int card_wildheart_invoker(int player, int card, event_t event)
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
       instance = get_card_instance(player, card);
-      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+      pump_ability_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
                              5, 5, 0x80, 0);
     }
   }
@@ -5212,6 +5212,177 @@ int card_lust_for_war(int player, int card, event_t event)
     }
   }
 LAB_024b657f:
-  result = disabling_aura(player, card, event);
+  result = disabling_aura_2022(player, card, event);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 Level Up/Buddy helpers. */
+
+/* ManalinkEh 2022: 0x24ac850; original cards/rise_of_the_eldrazi.c:25. */
+static void level_up_effects_part_2022(int player, int card, event_t event, int l2, int l2power,
+                                       int l2toughness, keyword_t l2key, sp_keyword_t l2sp, int l3,
+                                       int l3power, int l3toughness, keyword_t l3key,
+                                       sp_keyword_t l3sp)
+{
+  unsigned int uVar1;
+  card_instance_t *instance;
+  int iVar3;
+  keyword_t kVar4;
+  int iVar5;
+  int iVar6;
+  keyword_t kStack_1c;
+  keyword_t kStack_18;
+  uVar1 = event - EVENT_POWER;
+  kStack_18 = l2key;
+  kStack_1c = l3key;
+  if (uVar1 < 3)
+  {
+    if (((affected_card == card) && (affected_card_controller == player)) &&
+        (instance = in_play(player, card), instance != NULL))
+    {
+      iVar3 = count_counters(player, card, COUNTER_LEVEL);
+      if (iVar3 < l3)
+      {
+        if (l2 <= iVar3)
+        {
+          if (uVar1 < 2)
+          {
+            if (event != EVENT_POWER)
+            {
+              l2power = l2toughness;
+            }
+            goto LAB_024aca33;
+          }
+          if ((l2key & KEYWORD_BASIC_LANDWALK) != KEYWORD_0)
+          {
+            kStack_18 = get_hacked_walk(player, card, l2key);
+            kStack_18 = kStack_18 | l2key & ~KEYWORD_BASIC_LANDWALK;
+          }
+          if ((kStack_18 & KEYWORD_PROT_COLORED) != KEYWORD_0)
+          {
+            kVar4 = get_sleighted_protection(player, card, kStack_18);
+            kStack_18 = kVar4 | kStack_18 & ~KEYWORD_PROT_COLORED;
+          }
+          if (l2sp != SP_KEYWORD_0)
+          {
+            special_abilities_2022(player, card, EVENT_ABILITIES, l2sp, player, card);
+          }
+          event_result = event_result | kStack_18;
+        }
+      }
+      else
+      {
+        if (uVar1 < 2)
+        {
+          l2power = l3power;
+          if (event != EVENT_POWER)
+          {
+            l2power = l3toughness;
+          }
+        LAB_024aca33:
+          set_base_pt(l2power);
+          return;
+        }
+        if ((l3key & KEYWORD_BASIC_LANDWALK) != KEYWORD_0)
+        {
+          kStack_1c = get_hacked_walk(player, card, l3key);
+          kStack_1c = kStack_1c | l3key & ~KEYWORD_BASIC_LANDWALK;
+        }
+        if ((kStack_1c & KEYWORD_PROT_COLORED) != KEYWORD_0)
+        {
+          kVar4 = get_sleighted_protection(player, card, kStack_1c);
+          kStack_1c = kVar4 | kStack_1c & ~KEYWORD_PROT_COLORED;
+        }
+        if ((l2key & KEYWORD_BASIC_LANDWALK) != KEYWORD_0)
+        {
+          kStack_18 = get_hacked_walk(player, card, l2key);
+          kStack_18 = kStack_18 | l2key & ~KEYWORD_BASIC_LANDWALK;
+        }
+        if ((kStack_18 & KEYWORD_PROT_COLORED) != KEYWORD_0)
+        {
+          kVar4 = get_sleighted_protection(player, card, kStack_18);
+          kStack_18 = kVar4 | kStack_18 & ~KEYWORD_PROT_COLORED;
+        }
+        if ((l2sp | l3sp) != SP_KEYWORD_0)
+        {
+          special_abilities_2022(player, card, EVENT_ABILITIES, l2sp | l3sp, player, card);
+        }
+        event_result = kStack_1c | event_result | kStack_18;
+      }
+    }
+  }
+  else
+  {
+    if ((event == EVENT_SHOULD_AI_PLAY) &&
+        (iVar3 = count_counters(player, card, COUNTER_LEVEL), iVar3 != 0))
+    {
+      if (iVar3 < l2)
+      {
+        iVar5 = (iVar3 + 1) * (iVar3 + 1);
+      }
+      else
+      {
+        iVar6 = (l2 + 1) * (l2 + 1);
+        iVar5 = iVar6 + 0x18;
+        if (l2 < iVar3)
+        {
+          if (l3 <= iVar3)
+          {
+            iVar5 = iVar6 + 0x30;
+            iVar3 = l3;
+          }
+          iVar3 = (iVar3 - l2) + 1;
+          iVar5 = iVar5 + iVar3 * iVar3;
+        }
+      }
+      if (player == 1)
+      {
+        ai_modifier = ai_modifier + iVar5;
+      }
+      else
+      {
+        ai_modifier = ai_modifier - iVar5;
+      }
+    }
+  }
+  return;
+}
+
+
+/* ManalinkEh 2022: 0x24ace40; original cards/rise_of_the_eldrazi.c:176. */
+int level_up_2022(int player, int card, event_t event, int x, int b, int u, int g, int r, int w,
+                  int l1power, int l1toughness, int l2, int l2power, int l2toughness,
+                  keyword_t l2key, sp_keyword_t l2sp, int l3, int l3power, int l3toughness,
+                  keyword_t l3key, sp_keyword_t l3sp)
+{
+  int result;
+  level_up_effects_part_2022(player, card, event, l2, l2power, l2toughness, l2key, l2sp, l3,
+                             l3power, l3toughness, l3key, l3sp);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = can_use_activated_abilities_2022(player, card);
+    if ((result != 0) &&
+        (result = has_mana_for_activated_ability_2022(player, card, x, b, u, g, r, w), result != 0))
+    {
+      result = can_sorcery_be_played(player, EVENT_CAN_ACTIVATE);
+      return (unsigned int)(result != 0);
+    }
+  }
+  else
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      charge_mana_for_activated_ability_2022(player, card, x, b, u, g, r, w);
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      add_counters_from_source(player, card, player, card, COUNTER_LEVEL, 1);
+    }
+  }
+  return 0;
+}
+
+#endif

@@ -6269,3 +6269,43 @@ static int effect_flaying_tendrils(int player, int card, event_t event)
   kill_card(player, card, KILL_EXILE);
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 attacker/keyword helpers. */
+
+/* ManalinkEh 2022: 0x225a8c0; original cards/oath_of_the_gatewatch.c:84. */
+void support_2022(int player, int card, int max_targets)
+{
+  target_definition_2022_t td;
+  char prompt[100];
+  target_t saved_targets[152];
+  default_target_definition_2022(player, card, &td, 2);
+  td.preferred_controller = player;
+  td.special = 0x4000;
+  td.allow_cancel = 2;
+  if (can_target_2022(&td))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    uint8_t old_num_targets = instance->number_of_targets;
+    memcpy(saved_targets, instance->targets, 152);
+    instance->number_of_targets = 0;
+    for (int i = 0; i < max_targets; ++i)
+    {
+      scnprintf(prompt, 100, "Select another target creature. (%d of %d)", i + 1, max_targets);
+      if (new_pick_target_2022(&td, prompt, i, 0x80))
+        state_untargettable(instance->targets[i].player, instance->targets[i].card, 1);
+    }
+    if (max_targets > 0)
+      for (int i = 0; i < instance->number_of_targets; ++i)
+      {
+        state_untargettable(instance->targets[i].player, instance->targets[i].card, 0);
+        add_counters_from_source(player, card, instance->targets[i].player,
+                                 instance->targets[i].card, COUNTER_P1_P1, 1);
+      }
+    instance->number_of_targets = old_num_targets;
+    memcpy(instance->targets, saved_targets, 152);
+  }
+}
+
+#endif

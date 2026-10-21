@@ -240,3 +240,40 @@ int count_rfg_by_type(int player, int type)
   }
   return iVar2;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 typed consumers and compiler parts. */
+
+/* ManalinkEh 2022: 0x26e62e0; original functions/count_graveyard.c:192. */
+int new_special_count_grave_2022(int player, test_definition_2022_t *this_test)
+{
+  int test_type;
+  int iVar1;
+  int *piVar2;
+  int iVar3;
+  int iStack_14;
+
+  test_type = new_get_test_score_2022(this_test);
+  iStack_14 = 0;
+  iVar3 = 0;
+  do
+  {
+    if ((player == iVar3) || (player == 2))
+    {
+      piVar2 = graveyard_ptr_mutable[iVar3];
+      iVar1 = *piVar2;
+      while (iVar1 != -1)
+      {
+        piVar2 = piVar2 + 1;
+        iVar1 = new_make_test_2022(player, iVar1, test_type, this_test);
+        iStack_14 = (iStack_14 + 1) - (unsigned int)(iVar1 == 0);
+        iVar1 = *piVar2;
+      }
+    }
+    iVar3 = iVar3 + 1;
+  } while (iVar3 != 2);
+  return iStack_14;
+}
+
+#endif

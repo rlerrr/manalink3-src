@@ -2183,3 +2183,214 @@ int shares_creature_subtype_by_iid(int p0, int c0, int p1, int iid)
   }
   return 0;
 }
+
+
+/* ManalinkEh 2022: 0x2672900; original functions/has_creature_type.c:404. */
+card_instance_t *update_alter_add_subtype(subtype_t subt, card_instance_t *inst)
+{
+  card_ext_t *pcVar1;
+  uint16_t *puVar2;
+  int result;
+
+  if (inst == NULL)
+  {
+    inst = get_card_instance(affected_card_controller, affected_card);
+  }
+  pcVar1 = inst->ext;
+  puVar2 = pcVar1->subtype;
+  do
+  {
+    if (*puVar2 == subt)
+    {
+      return inst;
+    }
+    puVar2 = puVar2 + 1;
+  } while (puVar2 != pcVar1->subtype + 12);
+  result = 0;
+  do
+  {
+    if (pcVar1->subtype[result] == 0)
+    {
+      pcVar1->subtype[result] = (uint16_t)subt;
+      return inst;
+    }
+    result = result + 1;
+  } while (result != 0xc);
+  return inst;
+}
+
+
+/* ManalinkEh 2022: 0x2672d90; original functions/has_creature_type.c:433. */
+card_instance_t *update_alter_remove_subtype(subtype_t subt, card_instance_t *inst)
+{
+  card_ext_t *pcVar1;
+  int iVar2;
+  int iVar3;
+  subtype_t sVar5;
+  int iVar4;
+
+  if (inst == NULL)
+  {
+    inst = get_card_instance(affected_card_controller, affected_card);
+  }
+  pcVar1 = inst->ext;
+  iVar2 = 0;
+  do
+  {
+    while (pcVar1->subtype[iVar2] != subt)
+    {
+      iVar2 = iVar2 + 1;
+      if (iVar2 == 0xc)
+      {
+        return inst;
+      }
+    }
+    do
+    {
+      pcVar1->subtype[iVar2] = 0;
+      iVar4 = iVar2;
+      if (iVar2 < 0xc)
+      {
+        do
+        {
+          iVar3 = iVar4 + 1;
+          if ((iVar4 == 11 ? pcVar1->inst_info_data[0].id : pcVar1->subtype[iVar4 + 1]) == 0)
+            break;
+          pcVar1->subtype[iVar4] =
+              (iVar4 == 11 ? pcVar1->inst_info_data[0].id : pcVar1->subtype[iVar4 + 1]);
+          iVar4 = iVar3;
+        } while (iVar3 != 0xc);
+        sVar5 = (subtype_t)pcVar1->subtype[iVar2];
+      }
+      else
+      {
+        sVar5 = SUBTYPE_INVALID;
+      }
+    } while (subt == sVar5);
+    iVar2 = iVar2 + 1;
+    if (iVar2 == 0xc)
+    {
+      return inst;
+    }
+  } while (true);
+}
+
+
+/* ManalinkEh 2022: 0x2672eb0; original functions/has_creature_type.c:458. */
+card_instance_t *update_alter_remove_creature_subtypes(card_instance_t *inst)
+{
+  card_ext_t *pcVar1;
+  int iVar2;
+  int iVar4;
+  int iVar3;
+
+  if (inst == NULL)
+  {
+    inst = get_card_instance(affected_card_controller, affected_card);
+  }
+  pcVar1 = inst->ext;
+  iVar4 = 0;
+  do
+  {
+    while ((0xffeU < (uint32_t)pcVar1->subtype[iVar4] - 1U ||
+            (pcVar1->subtype[iVar4] = 0, iVar3 = iVar4, 0xb < iVar4)))
+    {
+      iVar4 = iVar4 + 1;
+      if (iVar4 == 0xc)
+      {
+        return inst;
+      }
+    }
+    do
+    {
+      iVar2 = iVar3 + 1;
+      if ((iVar3 == 11 ? pcVar1->inst_info_data[0].id : pcVar1->subtype[iVar3 + 1]) == 0)
+        break;
+      pcVar1->subtype[iVar3] =
+          (iVar3 == 11 ? pcVar1->inst_info_data[0].id : pcVar1->subtype[iVar3 + 1]);
+      iVar3 = iVar2;
+    } while (iVar2 != 0xc);
+  } while (true);
+}
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+void remove_a_subtype(int player, int card, subtype_t subtype);
+static int remove_a_subtype_permanently_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2672fa0; original functions/has_creature_type.c:500. */
+void remove_a_subtype(int player, int card, subtype_t subtype)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  update_alter_remove_subtype(subtype, instance);
+  return;
+}
+
+/* ManalinkEh 2022: 0x2672e30; original functions/has_creature_type.c:597. */
+static int remove_a_subtype_permanently_legacy(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *inst;
+
+  if (event == EVENT_CHANGE_TYPE)
+  {
+
+    if ((land_can_be_played & 0x20000U) == 0)
+    {
+      land_can_be_played = land_can_be_played | 0x10000;
+    }
+
+    pcVar1 = get_card_instance(player, card);
+    if ((pcVar1->damage_target_card == affected_card) &&
+        (pcVar1->damage_target_player == affected_card_controller))
+    {
+      inst = get_card_instance((int)pcVar1->damage_target_player, pcVar1->damage_target_card);
+      update_alter_remove_subtype(pcVar1->targets[1].card, inst);
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x26731c0; original functions/has_creature_type.c:610. */
+int remove_a_subtype_permanently(int player, int card, int t_player, int t_card, subtype_t subtype)
+{
+  int card_00;
+  card_instance_t *instance;
+
+  card_00 = create_targetted_legacy_effect(player, card, remove_a_subtype_permanently_legacy,
+                                           t_player, t_card);
+  instance = get_card_instance(player, card_00);
+  instance->targets[1].card = subtype;
+  instance->token_status = 0x10000;
+  return card_00;
+}
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 pump effects and cleanup helpers. */
+
+
+/* ManalinkEh 2022: 0x2672f30; original functions/has_creature_type.c:492. */
+void force_a_subtype_2022(int player, int card, subtype_t subtype)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  update_alter_remove_creature_subtypes(instance);
+  update_alter_add_subtype(subtype, instance);
+  return;
+}
+
+
+/* ManalinkEh 2022: 0x2672f70; original functions/has_creature_type.c:496. */
+void add_a_subtype_2022(int player, int card, subtype_t subtype)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  update_alter_add_subtype(subtype, instance);
+  return;
+}
+
+#endif

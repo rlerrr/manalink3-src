@@ -329,3 +329,429 @@ void damage_all(int p, int c, int controller, int amount_damage, int all, int pl
 	this_test.keyword_flag = flag1;
 	new_damage_all(p, c, controller, amount_damage, (1*all)+(2*player_too), &this_test);
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 action and copy helpers. */
+
+/* ManalinkEh 2022: 0x2666bc0; original functions/manipulate_and_damage_all.c:3. */
+static int action_on_card_impl_2022(int player, int card, int p, int c, actions_2022_t action,
+                                    counter_t counter_type, int counter_num)
+{
+  int result;
+  if (ACT_DETAIN < action)
+  {
+    if (action == ACT_REMOVE_COUNTERS_BASE)
+    {
+      result = count_counters(p, c, counter_type);
+      if (counter_num < result)
+      {
+        result = counter_num;
+      }
+      remove_counters_from_source(player, card, p, c, counter_type, result);
+      return result;
+    }
+    if (action != ACT_PARAMETERIZED_ACTIONS_MASK)
+    {
+      if (action == ACT_ADD_COUNTERS_BASE)
+      {
+        add_counters_predoubled_from_source(player, card, p, c, counter_type, counter_num);
+        return counter_num;
+      }
+      return 0;
+    }
+    abort();
+    return -1;
+  }
+  switch (action)
+  {
+  case ACT_KILL_BURY:
+  case ACT_KILL_DESTROY:
+    result = check_for_special_ability_2022(p, c, 0x800);
+    if (result != 0)
+    {
+      return 0;
+    }
+  case ACT_KILL_SACRIFICE:
+  case ACT_KILL_REMOVE:
+  case ACT_KILL_STATE_BASED_ACTION:
+    kill_card(p, c, action);
+    break;
+  case ACT_BOUNCE:
+    bounce_permanent(p, c);
+    break;
+  case ACT_TAP:
+    result = is_tapped(p, c);
+    if (result != 0)
+    {
+      return 0;
+    }
+    tap_card(p, c);
+    break;
+  case ACT_UNTAP:
+    result = is_tapped(p, c);
+    if (result == 0)
+    {
+      return 0;
+    }
+    untap_card(p, c);
+    break;
+  default:
+    return 0;
+  case ACT_RFG_UNTIL_EOT:
+    remove_until_eot(player, card, p, c);
+    break;
+  case ACT_PUT_ON_TOP:
+    put_on_top_of_deck(p, c);
+    break;
+  case ACT_PUT_ON_BOTTOM:
+    put_on_bottom_of_deck(p, c);
+    break;
+  case ACT_DISABLE_NONMANA_ACTIVATED_ABILITIES:
+    result = 1;
+    goto code_r0x02666db9;
+  case ACT_ENABLE_NONMANA_ACTIVATED_ABILITIES:
+    result = 0;
+  code_r0x02666db9:
+    disable_nonmana_activated_abilities_2022(p, c, result);
+    break;
+  case ACT_HUMILIATE:
+    result = 2;
+    goto code_r0x02666d86;
+  case ACT_DE_HUMILIATE:
+    result = 0;
+  code_r0x02666d86:
+    humiliate_2022(player, card, p, c, result);
+    break;
+  case ACT_MAKE_UNTARGETTABLE:
+    result = 1;
+    goto code_r0x02666d5b;
+  case ACT_REMOVE_UNTARGETTABLE:
+    result = 0;
+  code_r0x02666d5b:
+    state_untargettable(p, c, result);
+    break;
+  case ACT_DISABLE_ALL_ACTIVATED_ABILITIES:
+    result = 1;
+    goto code_r0x02666d30;
+  case ACT_ENABLE_ALL_ACTIVATED_ABILITIES:
+    result = 0;
+  code_r0x02666d30:
+    disable_all_activated_abilities_2022(p, c, result);
+    break;
+  case ACT_GET_COUNT:
+    break;
+  case ACT_GAIN_CONTROL:
+    gain_control_permanently(player, p, c);
+    break;
+  case ACT_DOES_NOT_UNTAP:
+    does_not_untap_effect(player, card, p, c, 0, 1);
+    break;
+  case ACT_PHASE_OUT:
+    phase_out(p, c);
+    break;
+  case ACT_OF_TREASON:
+    effect_act_of_treason(player, card, p, c);
+    break;
+  case ACT_DETAIN:
+    detain(player, card, p, c);
+  }
+  return 1;
+}
+
+
+/* ManalinkEh 2022: 0x2666f10; original functions/manipulate_and_damage_all.c:127. */
+static actions_2022_t cook_action_2022(int player, int card, actions_2022_t raw_action,
+                                  counter_t *counter_type, int *counter_num)
+{
+  short sVar1;
+  int result;
+  actions_2022_t aVar3;
+  aVar3 = raw_action & ACT_PARAMETERIZED_ACTIONS_MASK;
+  sVar1 = (short)raw_action;
+  if (aVar3 == ACT_ADD_COUNTERS_BASE)
+  {
+    *counter_type = raw_action >> 0x10 & COUNTER_invalid;
+    result = (int)sVar1;
+    *counter_num = result;
+    if (0 < result)
+    {
+      result = counter_number_2022(player, card, *counter_type, result);
+      *counter_num = result;
+      if (0 < result)
+      {
+        return ACT_ADD_COUNTERS_BASE;
+      }
+      return ~ACT_KILL_BURY;
+    }
+  }
+  else
+  {
+    if (aVar3 != ACT_REMOVE_COUNTERS_BASE)
+    {
+      if (aVar3 == 0)
+      {
+        return raw_action;
+      }
+      backtrace_and_abort(
+          "functions/manipulate_and_damage_all.c:155\n!\"Unknown parameterized action\"");
+    }
+    *counter_type = raw_action >> 0x10 & COUNTER_invalid;
+    *counter_num = (int)sVar1;
+    if (0 < sVar1)
+    {
+      return ACT_REMOVE_COUNTERS_BASE;
+    }
+  }
+  return 0xffffffff;
+}
+
+
+/* ManalinkEh 2022: 0x2666fe0; original functions/manipulate_and_damage_all.c:160. */
+int action_on_card_2022(int player, int card, int t_player, int t_card, actions_2022_t raw_action)
+{
+  actions_2022_t action;
+  int result;
+  counter_t counter_type;
+  int counter_num;
+
+  counter_type = COUNTER_invalid;
+  counter_num = 0;
+  action = cook_action_2022(t_player, t_card, raw_action, &counter_type, &counter_num);
+  result = 0;
+  if (action < ~ACT_KILL_BURY)
+  {
+    result =
+        action_on_card_impl_2022(player, card, t_player, t_card, action, counter_type, counter_num);
+  }
+  return result;
+}
+
+
+/* ManalinkEh 2022: 0x26670c0; original functions/manipulate_and_damage_all.c:178. */
+int new_manipulate_all_2022(int player, int card, int t_player, test_definition_2022_t *this_test,
+                            actions_2022_t raw_action)
+{
+  unsigned int uVar1;
+  int iVar2;
+  actions_2022_t action;
+  card_instance_t *instance;
+  int iVar4;
+  int iVar5;
+  int *piVar6;
+  int iVar7;
+  int iVar8;
+  int iVar9;
+  int *piVar10;
+  bool bVar11;
+  int *piStack_358;
+  int iStack_354;
+  int iStack_350;
+  int iStack_344;
+  counter_t counter_type;
+  int counter_num;
+  int mc[2];
+  int marked[2][100];
+
+  iStack_344 = 0;
+  bVar11 = t_player == 2;
+  mc[0] = 0;
+  mc[1] = 0;
+  iVar4 = current_turn;
+  iVar9 = current_turn;
+  do
+  {
+    if ((t_player == iVar4) || (bVar11))
+    {
+      iVar7 = 1;
+      iVar8 = active_cards_count[iVar4] + -1;
+      iVar2 = iVar4;
+      if (-1 < iVar8)
+        goto LAB_026672f9;
+    }
+    else
+    {
+      iVar7 = 1;
+      iVar2 = iVar9;
+    }
+    while (iVar9 = iVar2, iStack_344 = iVar7, iVar7 != 0)
+    {
+      iVar9 = 1 - iVar4;
+      if (((t_player == iVar9) || (bVar11)) && (iVar8 = active_cards_count[iVar9] + -1, -1 < iVar8))
+      {
+      LAB_026672f9:
+        do
+        {
+          uVar1 = this_test->zone;
+          if (uVar1 == 0x200)
+          {
+            instance = in_play(iVar9, iVar8);
+            if (((instance == NULL) || (iVar4 = is_what(iVar9, iVar8, 0x47), iVar4 == 0)) ||
+                (iVar4 = check_state(iVar9, iVar8, 0x100000), iVar4 != 0))
+            {
+              uVar1 = this_test->zone;
+              goto joined_r0x026672ed;
+            }
+          LAB_02667362:
+            iVar4 = new_make_test_in_play_2022(iVar9, iVar8, -1, this_test);
+            if ((iVar4 != 0) &&
+                (((this_test->not_me == 0 || (player != iVar9)) || (card != iVar8))))
+            {
+              iVar4 = mc[iVar9];
+              mc[iVar9] = iVar4 + 1;
+              marked[iVar9][iVar4] = iVar8;
+              if ((raw_action < ACT_BOUNCE) || (raw_action == ACT_KILL_STATE_BASED_ACTION))
+              {
+                instance->kill_code = (uint8_t)raw_action;
+                if (raw_action == ACT_KILL_STATE_BASED_ACTION)
+                {
+                  set_special_flags_2022(iVar9, iVar8, 0x800);
+                }
+              }
+            }
+          }
+          else
+          {
+          joined_r0x026672ed:
+            if ((uVar1 == 0x100) && (instance = in_hand(iVar9, iVar8), instance != NULL))
+              goto LAB_02667362;
+          }
+          iVar8 = iVar8 + -1;
+        } while (iVar8 != -1);
+      }
+      iVar7 = iStack_344 + 1;
+      iVar4 = current_turn;
+      iVar2 = current_turn;
+      if (1 < iVar7)
+      {
+        if (raw_action != ACT_BOUNCE)
+          goto LAB_02667172;
+        piStack_358 = marked[0];
+        iStack_344 = 0;
+        goto LAB_02667426;
+      }
+    }
+  } while (true);
+LAB_02667426:
+  do
+  {
+    if (1 < mc[iStack_344])
+    {
+      iVar9 = mc[iStack_344] + -1;
+      iVar4 = 0;
+      piVar10 = piStack_358;
+      do
+      {
+        while (true)
+        {
+          iVar2 = *piVar10;
+          iVar7 = has_subtype(iStack_344, iVar2, SUBTYPE_AURA);
+          iVar8 = iVar4 + 1;
+          if (iVar7 == 0)
+            break;
+        LAB_02667450:
+          piVar10 = piVar10 + 1;
+          iVar4 = iVar8;
+          if (iVar9 == iVar8)
+            goto LAB_026674f8;
+        }
+        iVar7 = piVar10[1];
+        iVar5 = has_subtype(iStack_344, iVar7, SUBTYPE_AURA);
+        if (iVar5 == 0)
+          goto LAB_02667450;
+        piVar6 = piVar10;
+        if (0 < iVar4)
+        {
+          while (true)
+          {
+            piVar6[1] = iVar2;
+            piVar6 = piVar6 + -1;
+            if (piStack_358 == piVar6)
+              break;
+            iVar2 = *piVar6;
+          }
+        }
+        piVar10 = piVar10 + 1;
+        *piStack_358 = iVar7;
+        iVar4 = iVar8;
+      } while (iVar9 != iVar8);
+    }
+  LAB_026674f8:
+    iStack_344 = iStack_344 + 1;
+    piStack_358 = piStack_358 + 100;
+  } while (iStack_344 != 2);
+LAB_02667172:
+  iStack_344 = 1;
+  iStack_354 = 0;
+  iVar4 = current_turn;
+  iVar9 = current_turn;
+  do
+  {
+    if (iStack_344 == 1)
+    {
+      if (((t_player == iVar4) || (iVar2 = iVar9, bVar11)) &&
+          (iStack_350 = mc[iVar4], iVar2 = iVar4, 0 < iStack_350))
+        goto LAB_026671d9;
+    }
+    else
+    {
+      iVar9 = 1 - iVar4;
+      if (((iVar9 == t_player) || (bVar11)) && (iStack_350 = mc[iVar9], 0 < iStack_350))
+      {
+      LAB_026671d9:
+        iVar4 = 0;
+        do
+        {
+          counter_type = COUNTER_invalid;
+          counter_num = 0;
+          iVar2 = marked[iVar9][iVar4];
+          action = cook_action_2022(iVar9, iVar2, raw_action, &counter_type, &counter_num);
+          if (action == 0xffffffff)
+          {
+            return iStack_354;
+          }
+          if (action != ~ACT_KILL_BURY)
+          {
+            iVar2 = action_on_card_impl_2022(player, card, iVar9, iVar2, action, counter_type,
+                                             counter_num);
+            iStack_354 = iStack_354 + iVar2;
+          }
+          iVar4 = iVar4 + 1;
+        } while (iVar4 != iStack_350);
+      }
+      iVar4 = current_turn;
+      iVar2 = current_turn;
+      if (1 < iStack_344)
+      {
+        return iStack_354;
+      }
+    }
+    iStack_344 = iStack_344 + 1;
+    iVar9 = iVar2;
+  } while (true);
+}
+
+
+/* ManalinkEh 2022: 0x26675a0; original functions/manipulate_and_damage_all.c:245. */
+int manipulate_all_2022(int player, int card, int t_player, int type, int flag1, int subtype,
+                        int flag2, int color, int flag3, int id, int flag4, int cc, int flag5,
+                        actions_2022_t action)
+{
+  int result;
+  test_definition_2022_t this_test;
+  new_default_test_definition_2022(&this_test, type, "");
+  this_test.type_flag = (unsigned short)flag1;
+  this_test.subtype = subtype;
+  this_test.subtype_flag = (unsigned short)flag2;
+  this_test.color = color;
+  this_test.color_flag = (unsigned short)flag3;
+  this_test.id = id;
+  this_test.id_flag = (unsigned short)flag4;
+  this_test.cmc = cc;
+  this_test.cmc_flag = (unsigned short)flag5;
+  this_test.type = type;
+  result = new_manipulate_all_2022(player, card, t_player, &this_test, action);
+  return result;
+}
+
+#endif

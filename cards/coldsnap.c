@@ -3817,7 +3817,7 @@ int card_gristle_grinner(int player, int card, event_t event)
     instance = in_play(player, card);
     if (instance != NULL)
     {
-      pump_until_eot_merge_previous(player, card, player, card, 2, 2);
+      pump_until_eot_merge_previous_2022(player, card, player, card, 2, 2);
       return 0;
     }
   }

@@ -6694,3 +6694,82 @@ joined_r0x02515e30:
   kill_card(player, card, KILL_DESTROY);
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 entry-trigger helpers. */
+
+/* ManalinkEh 2022: 0x2516b90; original cards/gatecrash.c:23. */
+void evolve_2022(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card != affected_card) || (player != affected_card_controller))
+    {
+      instance = in_play(player, card);
+      if ((instance != NULL) && ((affected_card_controller == player &&
+                                  (iVar1 = is_what(player, affected_card, 2), iVar1 != 0))))
+      {
+        iVar1 = get_power(trigger_cause_controller, trigger_cause);
+        iVar3 = get_power(player, card);
+        if (iVar1 <= iVar3)
+        {
+          iVar1 = get_toughness(trigger_cause_controller, trigger_cause);
+          iVar3 = get_toughness(player, card);
+          if (iVar1 <= iVar3)
+            goto LAB_02516c58;
+        }
+        if (current_phase < 0x15)
+        {
+          ai_modifier = ai_modifier + 0x14;
+        }
+      }
+    LAB_02516c58:
+      if (trigger_condition != 0xdb)
+      {
+        return;
+      }
+      goto LAB_02516c68;
+    }
+    if (trigger_condition != 0xdb)
+    {
+      return;
+    }
+  }
+  else
+  {
+    if (trigger_condition != 0xdb)
+      goto LAB_02516bb5;
+  LAB_02516c68:
+    if ((card != affected_card) || (affected_card_controller != player))
+      goto LAB_02516bb5;
+  }
+  iVar1 = is_what(trigger_cause_controller, trigger_cause, 2);
+  if (iVar1 != 0)
+  {
+    instance = get_card_instance(trigger_cause_controller, trigger_cause);
+    instance->regen_status = instance->regen_status | 0x6000000;
+    iVar1 = get_power(trigger_cause_controller, trigger_cause);
+    iVar3 = get_power(player, card);
+    if (iVar1 <= iVar3)
+    {
+      iVar1 = get_toughness(trigger_cause_controller, trigger_cause);
+      iVar3 = get_toughness(player, card);
+      if (iVar1 <= iVar3)
+        goto LAB_02516bb5;
+    }
+    etb_ability_global_2022(player, event, 2, TYPE_CREATURE, NULL, player, card);
+  }
+LAB_02516bb5:
+  if (event != EVENT_ETB)
+  {
+    return;
+  }
+  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  return;
+}
+
+#endif

@@ -3059,3 +3059,211 @@ LAB_026b60d0:
   }
   return -1;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 typed consumers and compiler parts. */
+
+/* ManalinkEh 2022: 0x26b9850; original functions/deck.c:2949. */
+int new_select_target_from_grave_2022(int player, int card, int t_player, select_grave_t mode,
+                                      int ai_mode, test_definition_2022_t *this_test,
+                                      int ret_location)
+{
+  int *piVar1;
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  result = new_select_a_card_2022(
+      player, t_player, (-(unsigned int)((mode & SFG_NOTARGET) == SFG_0) & 0xfffffffd) + 5,
+      mode & SFG_CANNOT_CANCEL, ai_mode, -1, this_test);
+  if (result != -1)
+  {
+    piVar1 = graveyard_ptr_mutable[t_player];
+    instance->targets[ret_location].player = result;
+    instance->targets[ret_location].card = piVar1[result];
+  }
+  return result;
+}
+
+
+/* ManalinkEh 2022: 0x26b98e0; original functions/deck.c:2966. */
+int select_target_from_grave_source_2022(int player, int card, int t_player, select_grave_t mode,
+                                         int ai_mode, test_definition_2022_t *this_test,
+                                         int ret_location)
+{
+  int result;
+  card_instance_t *instance;
+
+  result = new_select_a_card_2022(
+      player, t_player, (-(unsigned int)((mode & SFG_NOTARGET) == SFG_0) & 0xfffffffd) + 5,
+      mode & SFG_CANNOT_CANCEL, ai_mode, -1, this_test);
+  if (result == -1)
+  {
+    if ((mode & SFG_NO_SPELL_FIZZLED) == SFG_0)
+    {
+      spell_fizzled = 1;
+    }
+    return -1;
+  }
+  instance = get_card_instance(player, card);
+  instance->targets[ret_location].player = result;
+  instance->targets[ret_location].card = graveyard_source[t_player][result];
+  return graveyard_ptr_mutable[t_player][result];
+}
+
+
+/* ManalinkEh 2022: 0x26b99a0; original functions/deck.c:2991. */
+int select_target_from_either_grave_2022(int player, int card, select_grave_t mode,
+                                         int ai_mode_own_graveyard, int ai_mode_opponent_graveyard,
+                                         test_definition_2022_t *test, int ret_location_graveyard,
+                                         int ret_location_card)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *instance;
+  bool bVar5;
+  bool bVar6;
+  select_grave_t sStack_70;
+  target_t tgt_gy;
+  target_definition_2022_t td;
+
+  iVar1 = new_special_count_grave_2022(0, test);
+  iVar2 = new_special_count_grave_2022(1, test);
+  bVar5 = iVar1 != 0;
+  bVar6 = iVar2 != 0;
+  sStack_70 = mode;
+  if (bVar5 && bVar6)
+  {
+    sStack_70 = mode & ~SFG_CANNOT_CANCEL;
+  }
+  while (true)
+  {
+    if (bVar5 && bVar6)
+    {
+      base_target_definition_2022(player, card, &td, 0);
+      td.zone = 0x1000;
+      td.allow_cancel = (mode ^ SFG_CANNOT_CANCEL) & SFG_CANNOT_CANCEL;
+      load_text_2022(NULL, "TARGET_GRAVEYARD");
+      iVar3 = select_target_2022(player, card + -1000, &td, text_lines[0], &tgt_gy);
+      if (iVar3 == 0)
+      {
+        spell_fizzled = 1;
+        return -1;
+      }
+      hack_override_show_deck_done_button_label = "Rechoose GY";
+    }
+    else
+    {
+      if (iVar1 == 0 && iVar2 == 0)
+      {
+        spell_fizzled = 1;
+        return -1;
+      }
+      tgt_gy.player = (int32_t)(iVar1 == 0);
+    }
+    iVar3 = ai_mode_opponent_graveyard;
+    if (player == tgt_gy.player)
+    {
+      iVar3 = ai_mode_own_graveyard;
+    }
+    iVar3 = select_target_from_grave_source_2022(player, card, tgt_gy.player, sStack_70, iVar3,
+                                                 test, ret_location_card);
+    hack_override_show_deck_done_button_label = NULL;
+    if (iVar3 != -1)
+    {
+      instance = get_card_instance(player, card);
+      if (-1 < ret_location_graveyard)
+      {
+        instance->targets[ret_location_graveyard].player = tgt_gy.player;
+        instance->targets[ret_location_graveyard].card = -1;
+        return iVar3;
+      }
+      return iVar3;
+    }
+    if (!bVar5 || !bVar6)
+    {
+      spell_fizzled = 1;
+      hack_override_show_deck_done_button_label = NULL;
+      return -1;
+    }
+    if (ai_is_speculating == 1)
+      break;
+    if ((player == 1) && (((unsigned char)trace_mode & 2) == 0))
+    {
+      spell_fizzled = 1;
+      hack_override_show_deck_done_button_label = NULL;
+      return -1;
+    }
+    spell_fizzled = 0;
+  }
+  spell_fizzled = 1;
+  hack_override_show_deck_done_button_label = NULL;
+  return -1;
+}
+
+
+/* ManalinkEh 2022: 0x26b6500; original functions/deck.c:1688. */
+int counterspell_resolve_unless_pay_x_2022(int player, int card, target_definition_2022_t *td,
+                                           int target_num, int x)
+{
+  int card_00;
+  int result;
+  card_instance_t *instance;
+  kill_t kill_mode;
+  int iStack_3c;
+  char options[40];
+
+  kill_mode = KILL_STATE_BASED_ACTION;
+  if (target_num < 0)
+  {
+    kill_mode = KILL_EXILE;
+    target_num = 0;
+  }
+  result = counterspell_validate_2022(player, card, td, target_num);
+  iStack_3c = 0;
+  if (result != 0)
+  {
+    if (x < 1)
+    {
+      return 2;
+    }
+    sprintf(options, " Pay %d\n Decline", x);
+    instance = get_card_instance(player, card);
+    result = has_mana(instance->targets[target_num].player, 7, x);
+    if (((result != 0) && (result = instance->targets[target_num].player,
+                           result = do_dialog(result, player, card, result,
+                                              instance->targets[target_num].card, options, 0),
+                           result == 0)) &&
+        (result =
+             charge_mana_while_resolving(player, card, EVENT_RESOLVE_SPELL,
+                                         instance->targets[target_num].player, COLOR_COLORLESS, x),
+         result != 0))
+    {
+      return 2;
+    }
+    result = pre_counterspell(player, card, instance->targets[target_num].player,
+                              instance->targets[target_num].card);
+    iStack_3c = 0;
+    if (result != 0)
+    {
+      result = instance->targets[target_num].player;
+      card_00 = instance->targets[target_num].card;
+      if ((-1 < result) && (-1 < card_00))
+      {
+        kill_card_impl(result, card_00, kill_mode, 2);
+      }
+      result = is_what(player, card, 0x20);
+      iStack_3c = 1;
+      if (result == 0)
+      {
+        iStack_3c = 1;
+        play_sound_effect(WAV_INTERUPT);
+      }
+    }
+  }
+  return iStack_3c;
+}
+
+#endif

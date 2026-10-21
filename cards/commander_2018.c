@@ -440,6 +440,8 @@ int card_nesting_dragon(int player, int card, event_t event)
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
+static int amaug_leg_part_2022(int player, int card, event_t event);
+
 /* ManalinkEh 2022: 0x2560360; original cards/commander_2018.c:3. */
 static int amaug_leg(int player, int card, event_t event)
 {
@@ -455,7 +457,7 @@ static int amaug_leg(int player, int card, event_t event)
   {
     return 0;
   }
-  result = amaug_leg(player, card, event);
+  result = amaug_leg_part_2022(player, card, event);
   return result;
 }
 
@@ -904,7 +906,7 @@ static int loyal_unicorn_legacy(int player, int card, event_t event)
     result = is_humiliated_for_ability(instance->targets[0].player, result, AL_STATIC);
     if (result == 0)
     {
-      special_abilities(affected_card_controller, affected_card, EVENT_ABILITIES, 8,
+      special_abilities_2022(affected_card_controller, affected_card, EVENT_ABILITIES, 8,
                         instance->targets[0].player, instance->targets[0].card);
     }
   }
@@ -1202,11 +1204,11 @@ static int effect_xantcha(int player, int card, event_t event)
       card_00 = instance->targets[0].card;
       if (event == EVENT_CAN_ACTIVATE)
       {
-        iVar3 = can_use_activated_abilities(iVar2, card_00);
+        iVar3 = can_use_activated_abilities_2022(iVar2, card_00);
         if (iVar3 != 0)
         {
 
-          iVar2 = get_cost_mod_for_activated_abilities(iVar2, card_00, 3, 0, 0, 0, 0, 0);
+          iVar2 = get_cost_mod_for_activated_abilities_2022(iVar2, card_00, 3, 0, 0, 0, 0, 0);
           iVar2 = has_mana_multi(player, iVar2, 0, 0, 0, 0, 0);
           if (iVar2 != 0)
           {
@@ -1219,7 +1221,7 @@ static int effect_xantcha(int player, int card, event_t event)
         if (event == EVENT_ACTIVATE)
         {
 
-          iVar2 = get_cost_mod_for_activated_abilities(iVar2, card_00, 3, 0, 0, 0, 0, 0);
+          iVar2 = get_cost_mod_for_activated_abilities_2022(iVar2, card_00, 3, 0, 0, 0, 0, 0);
           charge_mana_multi(player, iVar2, 0, 0, 0, 0, 0);
           return 0;
         }
@@ -1259,7 +1261,7 @@ int card_xantcha_sleeper_agent(int player, int card, event_t event)
   iVar3 = is_humiliated_for_ability(player, card, AL_STATIC);
   if (iVar3 == 0)
   {
-    attack_if_able(player, card, event);
+    attack_if_able_2022(player, card, event);
   }
   pcVar2 = get_card_instance(player, card);
   if (event == EVENT_STATIC_EFFECTS)
@@ -1333,7 +1335,7 @@ int card_thantis_the_warweaver(int player, int card, event_t event)
   int result;
 
   check_legend_rule(player, card, event);
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   instance = in_play(player, card);
   if (instance != NULL)
   {
@@ -1359,7 +1361,7 @@ int card_whiptongue_hydra(int player, int card, event_t event)
   int num;
   test_definition_t this_test;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -1712,7 +1714,7 @@ int card_yennett_cryptic_sovereign(int player, int card, event_t event)
   char buffer[50];
 
   check_legend_rule(player, card, event);
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   menace(player, card, event);
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
   if (event != EVENT_DAT_ABILITY)
@@ -1776,7 +1778,7 @@ int card_yuriko_the_tigers_shadow(int player, int card, event_t event)
       iVar3 = iVar3 + 1;
     } while (iVar1 != iVar3);
   }
-  iVar1 = ninjutsu(player, card, event, 0, 1, 1, 0, 0, 0, 0x4abe);
+  iVar1 = ninjutsu_2022(player, card, event, 0, 1, 1, 0, 0, 0, 0x4abe);
   return iVar1;
 }
 
@@ -2833,7 +2835,7 @@ static int vedalken_humiliation(int player, int card, event_t event)
       event_result = event_result & 0x9f080000;
       instance->state = instance->state & 0xffffdfff;
       instance->ext->sp_keywords = instance->ext->sp_keywords & 0x993c00c0;
-      humiliate(player, card, affected_card_controller, affected_card, 1);
+      humiliate_2022(player, card, affected_card_controller, affected_card, 1);
     }
   }
   if (event != EVENT_CLEANUP)
@@ -2860,3 +2862,463 @@ int card_vedalken_humiliator(int player, int card, event_t event)
   }
   return 0;
 }
+
+
+/* ManalinkEh 2022: 0x2565c60; original cards/commander_2018.c:1845. */
+int card_varina_lich_queen(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  char msg[100];
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_2022_t token;
+    uint8_t bytes[216];
+  } recovered_stack_test;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_DECLARE_ATTACKERS)
+  {
+    default_test_definition(&recovered_stack_test.test, 2);
+    recovered_stack_test.test.subtype = 0xde;
+    store_attackers(player, card, EVENT_DECLARE_ATTACKERS, 0, player, -1,
+                    &recovered_stack_test.test);
+    dat_ability(player, card, EVENT_DECLARE_ATTACKERS, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  }
+  else
+  {
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+    if (event == EVENT_DAT_ABILITY)
+    {
+      instance = get_card_instance(player, card);
+      result = instance->info_slot;
+      draw_cards(player, result);
+      new_multidiscard(player, result, 0, player);
+      gain_life(player, result);
+      return 0;
+    }
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = count_graveyard(player);
+      if (result < 2)
+      {
+        return 0;
+      }
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 2, 0, 0, 0, 0, 0, 0,
+                                         NULL, NULL);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      memcpy(msg, "Select a card to exile.", 24);
+      memset(msg + 24, 0, 76);
+      new_default_test_definition(&recovered_stack_test.test, 0xff, msg);
+      result = new_global_tutor(player, player, 2, 6, 0, 3, &recovered_stack_test.test);
+      if (result < 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      new_global_tutor(player, player, 2, 6, 1, 3, &recovered_stack_test.test);
+      return 0;
+    }
+  }
+  if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  default_token_definition_2022(instance->parent_controller, instance->parent_card, 0x49ac,
+                                &recovered_stack_test.token);
+  recovered_stack_test.token.action = TOKEN2022_ACTION_TAPPED;
+  generate_token_2022(&recovered_stack_test.token);
+  return 0;
+}
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 typed consumers and compiler parts. */
+
+/* ManalinkEh 2022: 0x255fd50; original cards/commander_2018.c:3. */
+static int amaug_leg_part_2022(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  type_t tVar3;
+  type_t tVar4;
+  unsigned int uVar5;
+  uint32_t uVar6;
+  int iVar7;
+  unsigned int uVar8;
+  int iVar9;
+  int32_t *piVar10;
+  unsigned int uVar11;
+  type_t tStack_140;
+  type_t tStack_13c;
+  type_t tStack_138;
+  int iStack_134;
+  int playable[2][8];
+  test_definition_2022_t this_test;
+
+  instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    tStack_138 = instance->targets[0].player;
+    if (tStack_138 == ~TYPE_NONE)
+    {
+      instance->targets[0].player = 0;
+      tStack_138 = TYPE_NONE;
+    }
+    piVar10 = &instance->targets[0].card;
+    iStack_134 = 0;
+    do
+    {
+      iVar9 = *piVar10;
+      if (iVar9 != -1)
+      {
+        tVar4 = get_type_with_iid(-1, -1, iVar9);
+        tVar3 = tVar4 & (TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_SPELL | TYPE_ENCHANTMENT |
+                         TYPE_CREATURE);
+        if ((tVar4 & TYPE_INTERRUPT) == TYPE_NONE)
+        {
+          iVar7 = is_tribal(-1, iVar9);
+          if (iVar7 != 0)
+            goto LAB_0255ff16;
+          if (tVar3 != TYPE_NONE)
+            goto LAB_0255ff1c;
+        }
+        else
+        {
+          iVar7 = is_tribal(-1, iVar9);
+          tVar3 = tVar3 | TYPE_INSTANT;
+          if (iVar7 != 0)
+          {
+          LAB_0255ff16:
+            tVar3 = tVar3 | TYPE_EFFECT;
+          }
+        LAB_0255ff1c:
+          if (((tVar3 | tStack_138) != tStack_138) &&
+              (iVar9 = can_legally_play_iid_now(player, iVar9, EVENT_CAN_ACTIVATE), iVar9 != 0))
+          {
+            if (iVar9 == 99)
+            {
+              return 99;
+            }
+            iStack_134 = 1;
+          }
+        }
+      }
+      piVar10 = piVar10 + 2;
+      if (&instance->targets[7].card == piVar10)
+      {
+        return iStack_134;
+      }
+    } while (true);
+  }
+  if (event != EVENT_ACTIVATE)
+  {
+    return 0;
+  }
+  tVar4 = instance->targets[0].player;
+  tStack_138 = 0;
+  iVar9 = 0;
+  do
+  {
+    iVar7 = instance->targets[iVar9].card;
+    if ((iVar7 != -1) &&
+        (iVar2 = check_rfg(player, (unsigned int)cards_data[iVar7].id), iVar2 != 0))
+    {
+      tVar3 = get_type_with_iid(-1, -1, iVar7);
+      tStack_13c = tVar3 & (TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_SPELL |
+                            TYPE_ENCHANTMENT | TYPE_CREATURE);
+      if ((tVar3 & TYPE_INTERRUPT) == TYPE_NONE)
+      {
+        iVar2 = is_tribal(-1, iVar7);
+        if (iVar2 != 0)
+          goto LAB_0255fe43;
+        if (tStack_13c != TYPE_NONE)
+          goto LAB_0255fe46;
+      }
+      else
+      {
+        tStack_13c = tStack_13c | TYPE_INSTANT;
+        iVar2 = is_tribal(-1, iVar7);
+        if (iVar2 != 0)
+        {
+        LAB_0255fe43:
+          tStack_13c = tStack_13c | TYPE_EFFECT;
+        }
+      LAB_0255fe46:
+        if ((tVar4 != (tStack_13c | tVar4)) &&
+            (iVar2 = can_legally_play_iid_now(player, iVar7, EVENT_ACTIVATE), iVar2 != 0))
+        {
+          playable[0][tStack_138] = iVar7;
+          playable[1][tStack_138] = iVar9;
+          tStack_138 = tStack_138 + 1;
+        }
+      }
+    }
+    iVar9 = iVar9 + 1;
+  } while (iVar9 != 7);
+  new_default_test_definition_2022(&this_test, 0xff, "Select a card to cast.");
+  iVar9 = select_card_from_zone_2022(player, player, playable[0], tStack_138, 0, 1, -1, &this_test);
+  if (iVar9 == -1)
+  {
+  LAB_02560240:
+    spell_fizzled = 1;
+  }
+  else
+  {
+    tVar3 = get_type_with_iid(-1, -1, playable[0][iVar9]);
+    uVar5 = num_bits_set(tVar3);
+    if (uVar5 < 2)
+    {
+      iVar7 = is_tribal(-1, playable[0][iVar9]);
+      if ((iVar7 != 0) && ((tVar4 & TYPE_EFFECT) == TYPE_NONE))
+      {
+        if ((tVar3 & TYPE_EFFECT) == TYPE_NONE)
+          goto LAB_02560057;
+        goto LAB_02560298;
+      }
+      instance->targets[0].player = instance->targets[0].player | tVar3;
+    }
+    else
+    {
+      if (((tVar3 & TYPE_EFFECT) == TYPE_NONE) || ((tVar4 & TYPE_EFFECT) != TYPE_NONE))
+      {
+      LAB_02560057:
+        uVar6 = 0;
+      }
+      else
+      {
+      LAB_02560298:
+        uVar6 = 1;
+      }
+      uVar5 = 0;
+      if ((tVar3 & TYPE_SORCERY) != TYPE_NONE)
+      {
+        uVar5 = (unsigned int)((tVar4 & TYPE_SORCERY) == TYPE_NONE);
+      }
+      tStack_138 = tVar3 & TARGET_TYPE_PLANESWALKER;
+      if (tStack_138 != TYPE_NONE)
+      {
+        tStack_138 = (type_t)((tVar4 & TARGET_TYPE_PLANESWALKER) == TYPE_NONE);
+      }
+      tStack_13c = tVar3 & TYPE_INSTANT;
+      if (tStack_13c != TYPE_NONE)
+      {
+        tStack_13c = (type_t)((tVar4 & TYPE_INSTANT) == TYPE_NONE);
+      }
+      tStack_140 = tVar3 & TYPE_ENCHANTMENT;
+      if (tStack_140 != TYPE_NONE)
+      {
+        tStack_140 = (type_t)((tVar4 & TYPE_ENCHANTMENT) == TYPE_NONE);
+      }
+      uVar8 = 0;
+      if ((tVar3 & TYPE_CREATURE) != TYPE_NONE)
+      {
+        uVar8 = (unsigned int)((tVar4 & TYPE_CREATURE) == TYPE_NONE);
+      }
+      uVar11 = 0;
+      if ((tVar3 & TYPE_ARTIFACT) != TYPE_NONE)
+      {
+        uVar11 = (unsigned int)((tVar4 & TYPE_ARTIFACT) == TYPE_NONE);
+      }
+      iVar7 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\003",
+                          "\001\004", "\001\016", "Artifact", uVar11, 1, "Creature", uVar8, 1,
+                          "Enchantment", tStack_140, 1, "Instant", tStack_13c, 1, "Planeswalker",
+                          tStack_138, 1, "Sorcery", uVar5, 1, "Tribal", uVar6, 1, 0, 0, 0, 0);
+      switch (iVar7)
+      {
+      default:
+        goto LAB_02560240;
+      case 1:
+        instance->targets[0].player = instance->targets[0].player | 0x40;
+        break;
+      case 2:
+        instance->targets[0].player = instance->targets[0].player | 2;
+        break;
+      case 3:
+        instance->targets[0].player = instance->targets[0].player | 4;
+        break;
+      case 4:
+        instance->targets[0].player = instance->targets[0].player | 0x10;
+        break;
+      case 5:
+        instance->targets[0].player = instance->targets[0].player | 0x100;
+        break;
+      case 6:
+        instance->targets[0].player = instance->targets[0].player | 8;
+        break;
+      case 7:
+        instance->targets[0].player = instance->targets[0].player | 0x80;
+      }
+    }
+    play_card_in_exile_for_free(player, player, (unsigned int)cards_data[playable[0][iVar9]].id);
+    cant_be_responded_to = 1;
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int is_enchanted_or_enchantment_creature(int unused1, int unused2, int player, int card);
+static char *is_aura_or_equipment(int who_chooses, int player, int card);
+
+/* ManalinkEh 2022: 0x255f810; original cards/commander_2018.c:978. */
+static char *is_aura_or_equipment(int who_chooses, int player, int card)
+{
+  int result;
+
+  result = has_subtype(player, card, SUBTYPE_AURA);
+  if (result == 0)
+  {
+    result = has_subtype(player, card, SUBTYPE_EQUIPMENT);
+    if (result == 0)
+    {
+      return "must be an aura or equipment.";
+    }
+  }
+  return NULL;
+}
+
+/* ManalinkEh 2022: 0x2562ee0; original cards/commander_2018.c:985. */
+int card_heavenly_blademaster(int player, int card, event_t event)
+{
+  target_t *ptVar1;
+  target_t *ptVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  card_instance_t *pcVar5;
+  int iVar6;
+  target_definition_2022_t td;
+
+  iVar3 = duh_mode(player);
+  etb_ability_2022(player, card, event, (iVar3 != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  pcVar4 = get_card_instance(player, card);
+  if (event != EVENT_ETB)
+  {
+    if (event - EVENT_POWER < 2)
+    {
+      pcVar5 = in_play(player, card);
+      if (((pcVar5 != NULL) && (affected_card_controller == player)) && (affected_card != card))
+      {
+        iVar3 = is_humiliated_for_ability(pcVar4->targets[0].player, pcVar4->targets[0].card,
+                                          AL_STATIC);
+        if (iVar3 == 0)
+        {
+          iVar3 = count_auras_enchanting_me(player, card);
+          iVar6 = equipments_attached_to_me(player, card, 1);
+          event_result = event_result + iVar3 + iVar6;
+        }
+      }
+    }
+    return 0;
+  }
+
+  pcVar4->number_of_targets = '\0';
+  default_target_definition_2022(player, card, &td, 0x47);
+  td.allowed_controller = player;
+  td.illegal_abilities = 0;
+  td.special = 0x8000;
+  td.extra = (int32_t)is_aura_or_equipment;
+  td.allow_cancel = 2;
+  iVar3 = 0;
+  do
+  {
+    iVar6 = can_target_2022(&td);
+    if (iVar6 == 0)
+      break;
+    iVar6 = new_pick_target_2022(&td, "Select target Aura or Equipment you control", iVar3, 0x80);
+    if (iVar6 == 0)
+      break;
+    ptVar2 = pcVar4->targets + iVar3;
+    ptVar1 = pcVar4->targets + iVar3;
+    iVar3 = iVar3 + 1;
+    state_untargettable(ptVar1->player, ptVar2->card, 1);
+  } while (iVar3 != 10);
+  iVar3 = 0;
+  if (pcVar4->number_of_targets != '\0')
+  {
+    do
+    {
+      state_untargettable(pcVar4->targets[iVar3].player, pcVar4->targets[iVar3].card, 0);
+      iVar6 = has_subtype(pcVar4->targets[iVar3].player, pcVar4->targets[iVar3].card, SUBTYPE_AURA);
+      if (iVar6 == 0)
+      {
+        iVar6 = has_subtype(pcVar4->targets[iVar3].player, pcVar4->targets[iVar3].card,
+                            SUBTYPE_EQUIPMENT);
+        if (iVar6 != 0)
+        {
+          equip_target_creature(pcVar4->targets[iVar3].player, pcVar4->targets[iVar3].card, player,
+                                card);
+        }
+      }
+      else
+      {
+        attach_aura_to_target_2022(pcVar4->targets[iVar3].player, pcVar4->targets[iVar3].card,
+                                   EVENT_ETB, player, card);
+      }
+      iVar3 = iVar3 + 1;
+    } while (iVar3 < (int)(unsigned int)pcVar4->number_of_targets);
+  }
+  pcVar4->number_of_targets = '\0';
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x255f7c0; original cards/commander_2018.c:1033. */
+static int is_enchanted_or_enchantment_creature(int unused1, int unused2, int player, int card)
+{
+  int result;
+  unsigned int uVar2;
+
+  result = is_enchanted(player, card);
+  uVar2 = 1;
+  if (result == 0)
+  {
+    result = is_what(player, card, 4);
+    uVar2 = (unsigned int)(result != 0);
+  }
+  return uVar2;
+}
+
+/* ManalinkEh 2022: 0x2563140; original cards/commander_2018.c:1041. */
+int card_kestia_the_cultivator(int player, int card, event_t event)
+{
+  int result;
+  test_definition_2022_t test;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_DECLARE_ATTACKERS)
+  {
+    default_test_definition_2022(&test, 2);
+    test.special_selection_function = is_enchanted_or_enchantment_creature;
+    store_attackers_2022(player, card, EVENT_DECLARE_ATTACKERS, DAT_SEPARATE_TRIGGERS, player, -1,
+                         &test);
+    dat_ability(player, card, EVENT_DECLARE_ATTACKERS,
+                DAT_SEPARATE_TRIGGERS | DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  }
+  else
+  {
+    dat_ability(player, card, event, DAT_SEPARATE_TRIGGERS | DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+    if (event == EVENT_DAT_ABILITY)
+    {
+      draw_cards(player, 1);
+    }
+  }
+  result = new_generic_creature_with_bestow(player, card, event, 3, 0, 1, 1, 0, 1, 4, 4, 0, 0);
+  return result;
+}
+
+#endif

@@ -3675,7 +3675,7 @@ static int abduction_effect(int player, int card, event_t event)
   int result;
 
   instance = get_card_instance(player, card);
-  result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  result = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (result == 0)
   {
     return 0;
@@ -3700,7 +3700,7 @@ static int has_same_mana_type(int unused, int color, int player, int card)
 int card_arctic_wolves(int player, int card, event_t event)
 {
   cumulative_upkeep(player, card, event, 2, 0, 0, 0, 0, 0);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -3831,7 +3831,7 @@ int card_fit_of_rage(int player, int card, event_t event)
           result = valid_target(&td);
           if (result != 0)
           {
-            pump_ability_until_eot(player, card, instance->targets[0].player,
+            pump_ability_until_eot_2022(player, card, instance->targets[0].player,
                                    instance->targets[0].card, 3, 3, 0x100, 0);
           }
           kill_card(player, card, KILL_DESTROY);
@@ -3856,7 +3856,7 @@ LAB_022f77d9:
 int card_guided_strike(int player, int card, event_t event)
 {
   int result;
-  result = vanilla_instant_pump(player, card, event, 2, player, 1, 0, 0x1000100, 0);
+  result = vanilla_instant_pump_2022(player, card, event, 2, player, 1, 0, 0x1000100, 0);
   return result;
 }
 
@@ -3980,9 +3980,9 @@ int card_soul_shepherd(int player, int card, event_t event)
   test_definition_t test;
   if (event == EVENT_CAN_ACTIVATE)
   {
-    result = can_use_activated_abilities(player, card);
+    result = can_use_activated_abilities_2022(player, card);
     if ((result != 0) &&
-        (result = has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 1), result != 0))
+        (result = has_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 0, 1), result != 0))
     {
       result = any_in_graveyard_by_type(player, 2);
       return (unsigned int)(result != 0);
@@ -3990,7 +3990,7 @@ int card_soul_shepherd(int player, int card, event_t event)
   }
   else if (event == EVENT_ACTIVATE)
   {
-    charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 1);
+    charge_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 0, 1);
     if (spell_fizzled != 1)
     {
       new_default_test_definition(&test, 2, "Select a creature card to exile.");
@@ -4086,7 +4086,7 @@ int card_thran_forge(int player, int card, event_t event)
       result = valid_target(&td);
       if (result != 0)
       {
-        pump_until_eot_merge_previous(instance->parent_controller, instance->parent_card,
+        pump_until_eot_merge_previous_2022(instance->parent_controller, instance->parent_card,
                                       instance->targets[0].player, instance->targets[0].card, 1, 0);
         turn_into_artifact(instance->parent_controller, instance->parent_card,
                            instance->targets[0].player, instance->targets[0].card, 1);
@@ -4252,7 +4252,7 @@ int card_boiling_blood(int player, int card, event_t event)
         result = valid_target(&td);
         if (result != 0)
         {
-          pump_ability_until_eot(player, card, instance->targets[0].player,
+          pump_ability_until_eot_2022(player, card, instance->targets[0].player,
                                  instance->targets[0].card, 0, 0, 0, 0x400);
           draw_cards(player, 1);
         }
@@ -4310,11 +4310,11 @@ int card_abduction(int player, int card, event_t event)
           }
         }
       }
-      etb_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+      etb_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
       goto LAB_022eb0c1;
     }
   }
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     untap_card((int)pcVar2->damage_target_player, pcVar2->damage_target_card);
@@ -4402,7 +4402,7 @@ int card_coils_of_the_medusa(int player, int card, event_t event)
       (pcVar1 = get_card_instance(player, card), pcVar1->damage_target_player < '\0'))
   {
   LAB_022f7059:
-    result = generic_aura(player, card, event, player, 1, -1, 0, 0, 0, 0, 0);
+    result = generic_aura_2022(player, card, event, player, 1, -1, 0, 0, 0, 0, 0);
   }
   else
   {
@@ -4646,7 +4646,7 @@ int card_mana_chains(int player, int card, event_t event)
     return 0;
   }
 LAB_022f8448:
-  result = vanilla_aura(player, card, event, 1 - player);
+  result = vanilla_aura_2022(player, card, event, 1 - player);
   return result;
 }
 
@@ -4710,7 +4710,7 @@ int card_phantom_wings(int player, int card, event_t event)
       (result = is_humiliated_for_ability(player, card, AL_STATIC), result != 0))
   {
   LAB_022f8ce8:
-    result = generic_aura(player, card, event, player, 0, 0, 0x20, 0, 0, 0, 0);
+    result = generic_aura_2022(player, card, event, player, 0, 0, 0x20, 0, 0, 0, 0);
   }
   else
   {
@@ -4902,7 +4902,7 @@ static int angelic_renewal_effect(int player, int card, event_t event)
     }
   }
   iVar3 = duh_mode(player);
-  iVar3 = resolve_gfp_ability(player, card, event, (iVar3 != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  iVar3 = resolve_gfp_ability_2022(player, card, event, (iVar3 != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if ((iVar3 != 0) && (iVar3 = check_status(player, card, 0x10000), iVar3 == 0))
   {
 
@@ -5183,7 +5183,7 @@ int card_apathy(int player, int card, event_t event)
     return 0;
   }
 LAB_022f6639:
-  result = disabling_aura(player, card, event);
+  result = disabling_aura_2022(player, card, event);
   return result;
 }
 
@@ -5296,3 +5296,80 @@ int card_familiar_ground(int player, int card, event_t event)
   result = global_enchantment(player, card, event);
   return result;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *is_already_damaged(int who_chooses, int player, int card);
+
+/* ManalinkEh 2022: 0x22e9b20; original cards/weatherlight.c:4338. */
+static char *is_already_damaged(int who_chooses, int player, int card)
+{
+  card_instance_t *instance;
+  char *pcVar2;
+
+  instance = get_card_instance(player, card);
+  pcVar2 = NULL;
+  if (instance->damage_on_card == 0)
+  {
+    pcVar2 = "must be a creature that was dealt damage this turn.";
+  }
+  return pcVar2;
+}
+
+/* ManalinkEh 2022: 0x22f7600; original cards/weatherlight.c:4345. */
+int card_fatal_blow(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_2022_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition_2022(player, card, &td, 2);
+        td.extra = (int32_t)is_already_damaged;
+        td.special = 0x8000;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target_2022(&td);
+          if (result != 0)
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_BURY);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_022f7678;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition_2022(player, card, &td, 2);
+  td.extra = (int32_t)is_already_damaged;
+  td.special = 0x8000;
+  get_card_instance(player, card);
+LAB_022f7678:
+  result = generic_spell_2022(player, card, event, 0x81, &td,
+                              "Select target creature that was dealt damage this turn, bury it.", 1,
+                              NULL);
+  return result;
+}
+
+#endif

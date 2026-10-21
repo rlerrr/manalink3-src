@@ -1,4 +1,5 @@
 """Audit source provenance and literal bytes against cached recovery inputs."""
+import ast
 import hashlib
 import json
 import re
@@ -40,6 +41,42 @@ def function_body(source, name):
     raise ValueError("Unclosed function body")
 
 
+def target_validation_input(text, evidence, address, machine_bytes):
+    """Replay only the recorded per-function string/storage reconstructions."""
+    if hashlib.sha256(machine_bytes(int(address, 16), evidence['machine_bytes'])).hexdigest() != evidence['machine_sha256']:
+        raise ValueError('Target validation/availability machine hash mismatch')
+    for change in evidence['changes']:
+        original = change['original']
+        anchor=change.get('after_anchor')
+        at=text.index(anchor) if anchor else 0
+        if text[at:].count(original) != change['occurrences']:
+            raise ValueError('Target validator reconstruction input mismatch')
+        text = text[:at]+text[at:].replace(original, change['replacement'])
+        for site in change['machine_sites']:
+            data = bytes.fromhex(site['bytes'])
+            if machine_bytes(int(site['address'], 16), len(data)) != data:
+                raise ValueError('Target validator storage/predicate/live-string instruction mismatch')
+        if 'machine_range' in change:
+            start, end = (int(a, 16) for a in change['machine_range'])
+            if (end - start != change['machine_bytes'] or
+                hashlib.sha256(machine_bytes(start, end - start)).hexdigest() != change['machine_sha256']):
+                raise ValueError('Target validator inline append range mismatch')
+        for block in change.get('machine_ranges',[]):
+            start,end=int(block['start'],16),int(block['end'],16)
+            if end-start!=block['bytes'] or hashlib.sha256(machine_bytes(start,end-start)).hexdigest()!=block['sha256']:
+                raise ValueError('Reconstructed storage native range mismatch')
+        literal = change.get('native_literal')
+        if literal:
+            data = bytes.fromhex(literal['bytes'])
+            if (not data.endswith(b'\0') or len(data) != literal['copy_bytes'] or
+                machine_bytes(int(literal['address'], 16), len(data)) != data):
+                raise ValueError('Target validator inline append literal mismatch')
+            expected = change.get('literal', ',cannot target self').encode() + b'\0'
+            if data != expected:
+                raise ValueError('Target validator inline append text mismatch')
+    return text
+
+
 def main():
     root = Path(__file__).resolve().parents[2]
     analysis = root / ".recovery"
@@ -73,6 +110,47 @@ def main():
                 if readonly_string(image, int(entry["address"], 16)) != bytes.fromhex(entry["bytes"]):
                     raise ValueError("Read-only string byte mismatch")
             literal_input = strip_comments(raw)
+            target_validation = (function.get('target_validation_evidence') or function.get('target_selection_evidence') or
+                                 function.get('test_core_evidence') or function.get('test_consumer_evidence') or
+                                 function.get('sacrifice_core_evidence') or function.get('generic_spell_evidence') or
+                                 function.get('split_helper_evidence') or function.get('aura_consumer_evidence') or
+                                 function.get('aura_attachment_binding_2022') or function.get('native_scalar_callee_binding_2022') or
+                                 function.get('ability_writer_evidence') or function.get('ability_writer_binding_2022') or
+                                 function.get('native_ability_callee_binding_2022') or function.get('pump_core_evidence') or
+                                 function.get('pump_callee_binding_2022') or function.get('native_pump_callee_binding_2022') or
+                                 function.get('activated_core_evidence') or function.get('native_activated_callee_binding_2022') or
+                                 function.get('activation_cost_evidence') or function.get('attacker_core_evidence') or
+                                 function.get('native_attack_callee_binding_2022') or function.get('entry_trigger_evidence') or
+                                 function.get('native_entry_callee_binding_2022') or function.get('level_buddy_evidence') or
+                                 function.get('native_level_buddy_callee_binding_2022') or function.get('native_dependency_bindings_2022') or
+                                 function.get('ward_guard_evidence') or function.get('phyrexian_cost_evidence') or
+                                 function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022'))
+            if target_validation:
+                literal_input = target_validation_input(literal_input, target_validation, function['address'], machine_bytes)
+                for change in target_validation['changes']:
+                    if change['kind'] == 'VLA call-frame reconstruction':
+                        template = function_body(sources[function['source']], change['source_template_name'])
+                        if (hashlib.sha256(template.replace('\r\n', '\n').encode()).hexdigest() != change['source_template_sha256'] or
+                            (change['logical_size_addend'], change['native_alignment']) != (50, 4) or
+                            literal_tokens(change['replacement']) != [('"', '%s %d %d'), ('"', 'TARGET_COUNT'), ('"', 'FIREBALL')]):
+                            raise ValueError('Target picker VLA source-template/layout mismatch')
+                        for literal in change['literals']:
+                            data = bytes.fromhex(literal['bytes']); instruction = literal['instruction']; code = bytes.fromhex(instruction['bytes'])
+                            if (readonly_string(image, int(literal['address'], 16)) != data or
+                                machine_bytes(int(instruction['address'], 16), len(code)) != code or
+                                not code.endswith(struct.pack('<I', int(literal['address'], 16)))):
+                                raise ValueError('Target picker VLA text-resource operand mismatch')
+                        for block in change['ranges']:
+                            start, end = int(block['start'], 16), int(block['end'], 16)
+                            if end - start != block['bytes'] or hashlib.sha256(machine_bytes(start, end - start)).hexdigest() != block['sha256']:
+                                raise ValueError('Target picker VLA argument/allocation/cleanup range mismatch')
+                        stores = change['format_word_stores']
+                        if [s['bytes'] for s in stores] != ['c7459025732025', 'c7459464202564', 'c6459800']:
+                            raise ValueError('Target picker VLA AI format stores mismatch')
+                        for site in stores:
+                            data = bytes.fromhex(site['bytes'])
+                            if machine_bytes(int(site['address'], 16), len(data)) != data:
+                                raise ValueError('Target picker VLA AI format instruction mismatch')
             for entry in function.get("reconstructed_literal_constants", []):
                 # Manually reconstructed VLA call frames can lose typed string
                 # arguments. The raw pointer spelling, read-only bytes and all
@@ -163,6 +241,244 @@ def main():
             if source.count(marker) != 1:
                 raise ValueError("Missing or repeated source provenance marker")
             body = function_body(source[source.index(marker):], function["name"])
+            for label,typename in [('test','test_definition_2022_t'),('target','target_definition_2022_t')]:
+                interface=function.get(label+'_interface_2022')
+                if interface:
+                    from promote_recovery import TEST_API_NAMES,TARGET_API_NAMES
+                    names=TEST_API_NAMES if label=='test' else TARGET_API_NAMES
+                    if interface['type']!=typename or interface['definition_present']!=bool(re.search(r'\b'+typename+r'\b',body)):
+                        raise ValueError('Versioned '+label+' aggregate interface mismatch')
+                    for original,replacement in interface['calls'].items():
+                        if names.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                            raise ValueError('Versioned '+label+' API binding mismatch')
+            sacrifice_interface=function.get('sacrifice_interface_2022')
+            if sacrifice_interface:
+                from promote_recovery import SACRIFICE_API_NAMES,SACRIFICE_FLAGS_2022
+                if sacrifice_interface['type']!='sacrifice_2022_t' or sacrifice_interface['definition_present']!=bool(re.search(r'\bsacrifice_2022_t\b',body)):
+                    raise ValueError('Versioned sacrifice interface mismatch')
+                for original,replacement in sacrifice_interface['calls'].items():
+                    if SACRIFICE_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Versioned sacrifice callee mismatch')
+                for flag in sacrifice_interface['flags']:
+                    if flag not in SACRIFICE_FLAGS_2022 or not re.search(r'\b'+flag.replace('SAC_','SAC2022_')+r'\b',body):
+                        raise ValueError('Versioned sacrifice flag mismatch')
+            spell_interface=function.get('spell_interface_2022')
+            if spell_interface:
+                from promote_recovery import SPELL_API_NAMES,SPELL_FLAGS_2022
+                if spell_interface['type']!='generic_spell_flags_2022_t' or spell_interface['definition_present']!=bool(re.search(r'\bgeneric_spell_flags_2022_t\b',body)):
+                    raise ValueError('Versioned generic-spell interface mismatch')
+                for original,replacement in spell_interface['calls'].items():
+                    if SPELL_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Versioned generic-spell callee mismatch')
+                for flag in spell_interface['flags']:
+                    if flag not in SPELL_FLAGS_2022 or not re.search(r'\b'+flag.replace('GS_','GS2022_')+r'\b',body):
+                        raise ValueError('Versioned generic-spell flag mismatch')
+            ability_interface=function.get('ability_interface_2022')
+            if ability_interface:
+                from promote_recovery import ABILITY_API_NAMES
+                if ability_interface['type']!='pump_ability_2022_t' or ability_interface['definition_present']!=bool(re.search(r'\bpump_ability_2022_t\b',body)):
+                    raise ValueError('Versioned ability/pump interface mismatch')
+                for original,replacement in ability_interface['calls'].items():
+                    if ABILITY_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Versioned ability/pump callee mismatch')
+            pump_interface=function.get('pump_interface_2022')
+            if pump_interface:
+                from promote_recovery import PUMP_API_NAMES
+                for original,replacement in pump_interface['calls'].items():
+                    if PUMP_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Versioned pump callee mismatch')
+            activated_interface=function.get('activated_interface_2022')
+            if activated_interface:
+                from promote_recovery import ACTIVATED_API_NAMES
+                for original,replacement in activated_interface['calls'].items():
+                    if ACTIVATED_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Versioned activation callee mismatch')
+            attack_interface=function.get('attack_interface_2022')
+            if attack_interface:
+                from promote_recovery import ATTACK_API_NAMES
+                for original,replacement in attack_interface['calls'].items():
+                    if ATTACK_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Versioned attacker/keyword helper callee mismatch')
+            entry_interface=function.get('entry_interface_2022')
+            if entry_interface:
+                from promote_recovery import ENTRY_API_NAMES
+                for original,replacement in entry_interface['calls'].items():
+                    if ENTRY_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Versioned entry-trigger/keyword helper callee mismatch')
+            level_buddy_interface=function.get('level_buddy_interface_2022')
+            if level_buddy_interface:
+                from promote_recovery import LEVEL_BUDDY_API_NAMES
+                for original,replacement in level_buddy_interface['calls'].items():
+                    if LEVEL_BUDDY_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Versioned Level Up/Buddy callee mismatch')
+            phyrexian_interface=function.get('phyrexian_interface_2022')
+            if phyrexian_interface:
+                from promote_recovery import PHYREXIAN_API_NAMES
+                for original,replacement in phyrexian_interface['calls'].items():
+                    if PHYREXIAN_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Versioned Phyrexian cost callee mismatch')
+            action_interface=function.get('action_interface_2022')
+            if action_interface:
+                from promote_recovery import ACTION_API_NAMES
+                for original,replacement in action_interface['calls'].items():
+                    if ACTION_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Native action/copy consumer callee mismatch')
+            death_trigger_interface=function.get('death_trigger_interface_2022')
+            if death_trigger_interface:
+                from promote_recovery import DEATH_TRIGGER_API_NAMES
+                for original,replacement in death_trigger_interface['calls'].items():
+                    if DEATH_TRIGGER_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Native death-trigger callee mismatch')
+            spell_trigger_interface=function.get('spell_trigger_interface_2022')
+            if spell_trigger_interface:
+                from promote_recovery import SPELL_TRIGGER_API_NAMES
+                for original,replacement in spell_trigger_interface['calls'].items():
+                    if SPELL_TRIGGER_API_NAMES.get(original)!=replacement or not re.search(r'\b'+replacement+r'\s*\(',body):
+                        raise ValueError('Native spell-trigger callee mismatch')
+            aura_part=function.get('aura_part_evidence')
+            if aura_part and hashlib.sha256(machine_bytes(int(function['address'],16),aura_part['machine_bytes'])).hexdigest()!=aura_part['machine_sha256']:
+                raise ValueError('Aura compiler-part machine hash mismatch')
+            aura_binding=function.get('aura_part_binding_2022')
+            if aura_binding:
+                if (hashlib.sha256(machine_bytes(int(function['address'],16),aura_binding['machine_bytes'])).hexdigest()!=aura_binding['machine_sha256'] or
+                    body.count(aura_binding['part']+'(')!=1 or re.search(r'\b'+re.escape(function['name'])+r'\s*\(',body[body.index('{'):]) or
+                    aura_binding['body_sha256']!=function['reconstruction_body_sha256']):
+                    raise ValueError('Aura public wrapper private binding mismatch')
+                for call in aura_binding['calls']:
+                    at=int(call['address'],16);data=bytes.fromhex(call['bytes'])
+                    if (len(data)!=5 or data[0] not in {0xe8,0xe9} or machine_bytes(at,5)!=data or at+5+struct.unpack('<i',data[1:])[0]!=int(call['target'],16)):
+                        raise ValueError('Aura compiler-part call/tail target mismatch')
+            consumer = (function.get('test_consumer_evidence') or function.get('sacrifice_core_evidence') or
+                        function.get('generic_spell_evidence') or function.get('split_helper_evidence') or
+                        function.get('aura_consumer_evidence') or function.get('aura_attachment_binding_2022') or
+                        function.get('native_scalar_callee_binding_2022') or function.get('ability_writer_evidence') or
+                        function.get('ability_writer_binding_2022') or function.get('native_ability_callee_binding_2022') or
+                        function.get('pump_core_evidence') or function.get('pump_callee_binding_2022') or
+                        function.get('native_pump_callee_binding_2022') or function.get('activated_core_evidence') or
+                        function.get('native_activated_callee_binding_2022') or function.get('activation_cost_evidence') or
+                        function.get('attacker_core_evidence') or function.get('native_attack_callee_binding_2022') or
+                        function.get('entry_trigger_evidence') or function.get('native_entry_callee_binding_2022') or
+                        function.get('level_buddy_evidence') or function.get('native_level_buddy_callee_binding_2022') or
+                        function.get('native_dependency_bindings_2022') or function.get('ward_guard_evidence') or
+                        function.get('phyrexian_cost_evidence') or function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022'))
+            if consumer:
+                for call in consumer['canonical_calls']:
+                    at=int(call['address'],16);data=bytes.fromhex(call['bytes'])
+                    if (len(data)!=5 or data[0] not in {0xe8,0xe9} or machine_bytes(at,5)!=data or
+                        at+5+struct.unpack('<i',data[1:])[0]!=int(call['target'],16) or
+                        not re.search(r'\b'+re.escape(call['name'])+r'\s*\(',body)):
+                        raise ValueError('Test consumer native callee binding mismatch')
+            dependency_binding=function.get('native_dependency_bindings_2022')
+            if dependency_binding:
+                from capstone import Cs,CS_ARCH_X86,CS_MODE_32
+                from capstone.x86_const import X86_OP_IMM
+                from promote_recovery import code_only
+                decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True
+                for reference in dependency_binding['function_references']:
+                    at=int(reference['address'],16);data=bytes.fromhex(reference['bytes'])
+                    instructions=list(decoder.disasm(data,at))
+                    if (machine_bytes(at,len(data))!=data or len(instructions)!=1 or
+                        not any(o.type==X86_OP_IMM and o.imm==int(reference['target'],16) for o in instructions[0].operands) or
+                        not re.search(r'\b'+re.escape(reference['name'])+r'\b',code_only(body).split('{',1)[1])):
+                        raise ValueError('Native dependency callback/function address mismatch')
+            compiler_binding=function.get('compiler_part_binding_2022')
+            if compiler_binding:
+                if (hashlib.sha256(machine_bytes(int(function['address'],16),compiler_binding['machine_bytes'])).hexdigest()!=compiler_binding['machine_sha256'] or
+                    len(re.findall(r'\b'+re.escape(compiler_binding['part'])+r'\s*\(',body))!=1 or
+                    compiler_binding['body_sha256']!=function['reconstruction_body_sha256']):
+                    raise ValueError('Compiler-part public binding mismatch')
+                for call in compiler_binding['calls']:
+                    at=int(call['address'],16);data=bytes.fromhex(call['bytes'])
+                    if (len(data)!=5 or data[0] not in {0xe8,0xe9} or machine_bytes(at,5)!=data or
+                        at+5+struct.unpack('<i',data[1:])[0]!=int(call['target'],16)):
+                        raise ValueError('Compiler-part native call target mismatch')
+            target_getter_binding = function.get('target_getter_binding_2022')
+            if target_getter_binding:
+                call = target_getter_binding['call']; at = int(call['address'], 16); data = bytes.fromhex(call['bytes'])
+                if (function['address'] != '265d580' or call['target'] != '265d2e0' or len(data) != 5 or data[0] != 0xe8 or
+                    machine_bytes(at, 5) != data or at + 5 + struct.unpack('<i', data[1:])[0] != int(call['target'], 16) or
+                    body.count(target_getter_binding['replacement'] + '(') != 1 or
+                    target_getter_binding['body_sha256'] != function['reconstruction_body_sha256']):
+                    raise ValueError('Protection dispatcher private getter binding mismatch')
+            if target_validation:
+                for call in target_validation['canonical_calls']:
+                    at = int(call['address'], 16); data = bytes.fromhex(call['bytes'])
+                    if len(data) == 5 and data[0] in {0xe8, 0xe9}:
+                        delta = struct.unpack('<i', data[1:])[0]
+                    elif len(data) == 2 and data[0] == 0xeb:
+                        delta = struct.unpack('<b', data[1:])[0]
+                    else:
+                        raise ValueError('Unsupported target validation call encoding')
+                    if (machine_bytes(at, len(data)) != data or at + len(data) + delta != int(call['target'], 16) or
+                        not re.search(r'\b' + re.escape(call['name']) + r'\s*\(', body)):
+                        raise ValueError('Target validation versioned callee mismatch')
+            target_initializer = function.get('target_initializer_evidence')
+            if target_initializer:
+                if hashlib.sha256(machine_bytes(int(function['address'], 16), target_initializer['machine_bytes'])).hexdigest() != target_initializer['machine_sha256']:
+                    raise ValueError('Target initializer/protection worker machine hash mismatch')
+                for call in target_initializer['calls']:
+                    data = bytes.fromhex(call['bytes']); at = int(call['address'], 16)
+                    if (machine_bytes(at, len(data)) != data or len(data) != 5 or data[0] not in {0xe8, 0xe9} or
+                        at + 5 + struct.unpack('<i', data[1:])[0] != int(call['target'], 16) or
+                        not re.search(r'\b' + re.escape(call['name']) + r'\s*\(', body)):
+                        raise ValueError('Target initializer private/public call binding mismatch')
+                store = target_initializer['flags_store']
+                if store:
+                    data = bytes.fromhex(store['bytes'])
+                    if (machine_bytes(int(store['address'], 16), len(data)) != data or
+                        data not in {bytes.fromhex('c7405000000000'), bytes.fromhex('c7435000000000')} or
+                        (store['offset'], store['value']) != (80, 0) or 'td->flags = 0;' not in body):
+                        raise ValueError('Target initializer flags store mismatch')
+            subtype_mutator=function.get('extension_subtype_evidence')
+            if subtype_mutator:
+                if hashlib.sha256(machine_bytes(int(function['address'],16),subtype_mutator['machine_bytes'])).hexdigest()!=subtype_mutator['machine_sha256']:
+                    raise ValueError('Extension subtype mutator machine hash mismatch')
+                compact_body=re.sub(r'\s+','',body)
+                for change in subtype_mutator['adjustments']:
+                    count=change.get('occurrences',1)
+                    if raw.count(change['original'])!=count or compact_body.count(re.sub(r'\s+','',change['replacement']))!=count:
+                        raise ValueError('Extension subtype endpoint/lookahead/range reconstruction mismatch')
+                    if change['kind']=='adjacent information ID lookahead' and (change['subtype_count'],change['adjacent_offset'],change['bytes'])!=(12,32,2):
+                        raise ValueError('Extension subtype adjacent-word layout mismatch')
+            token_stack = function.get('token_stack_evidence')
+            if token_stack:
+                if hashlib.sha256(machine_bytes(int(function['address'],16),token_stack['machine_bytes'])).hexdigest() != token_stack['machine_sha256']:
+                    raise ValueError('Token stack-card/predicate machine hash mismatch')
+                word_blocks=[b for b in token_stack['literal_blocks'] if b['kind']=='token word store']
+                if len(word_blocks)!=len(token_stack['word_stores']):
+                    raise ValueError('Token stack word-store block count mismatch')
+                for block,store in zip(word_blocks,token_stack['word_stores']):
+                    from capstone import Cs,CS_ARCH_X86,CS_MODE_32
+                    from capstone.x86_const import X86_OP_MEM,X86_OP_IMM,X86_REG_EBP
+                    chars=re.findall(r"=\s*('(?:\\.|[^'\\])*');",block['original'])
+                    if len(chars)!=4 or int.from_bytes(bytes(ord(ast.literal_eval(c)) for c in chars),'little')!=store['value']:
+                        raise ValueError('Token stack native byte/word value mismatch')
+                    site=store['site'];code=bytes.fromhex(site['bytes']);at=int(site['address'],16)
+                    decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True;instructions=list(decoder.disasm(code,at))
+                    if machine_bytes(at,len(code))!=code or len(instructions)!=1:
+                        raise ValueError('Token stack native word instruction mismatch')
+                    ins=instructions[0];ops=ins.operands
+                    if (ins.mnemonic!='mov' or len(ops)!=2 or ops[0].type!=X86_OP_MEM or ops[0].size!=4 or
+                        ops[0].mem.base!=X86_REG_EBP or ops[0].mem.disp!=store['frame_offset']+8+store['offset'] or
+                        ops[1].type!=X86_OP_IMM or ops[1].imm!=store['value']):
+                        raise ValueError('Token stack native word destination/value mismatch')
+                for block in token_stack['literal_blocks']:
+                    original=block['original']
+                    if expected.count(original)!=1 or hashlib.sha256(original.encode()).hexdigest()!=block['original_sha256']:
+                        raise ValueError('Token stack literal-block provenance mismatch')
+                    expected=expected.replace(original,block['replacement'])
+            frontend=function.get('token_frontend_evidence')
+            if frontend:
+                if hashlib.sha256(machine_bytes(int(function['address'],16),frontend['machine_bytes'])).hexdigest()!=frontend['machine_sha256']:
+                    raise ValueError('Token frontend machine hash mismatch')
+                for call in frontend['canonical_calls']:
+                    at=int(call['address'],16);data=bytes.fromhex(call['bytes'])
+                    if len(data)==5 and data[0] in {0xe8,0xe9}:delta=struct.unpack('<i',data[1:])[0]
+                    elif len(data)==2 and data[0]==0xeb:delta=struct.unpack('<b',data[1:])[0]
+                    else:raise ValueError('Unsupported token frontend call/jump encoding')
+                    if (machine_bytes(at,len(data))!=data or at+len(data)+delta!=int(call['target'],16) or
+                        not re.search(r'\b'+call['replacement']+r'\s*\(',body)):
+                        raise ValueError('Token frontend canonical call/tail-jump mismatch')
             token_core = function.get('token_core_evidence')
             if token_core and hashlib.sha256(machine_bytes(int(function['address'],16), token_core['machine_bytes'])).hexdigest() != token_core['machine_sha256']:
                 raise ValueError('Token core machine hash mismatch')
@@ -466,6 +782,587 @@ def main():
         except (ValueError, OSError) as error:
             issues.append(dict(source=function["source"], name=function["name"], error=str(error)))
     interfaces = json.loads((root / "docs/recovery-evidence/interface-recovery.json").read_text())
+    aura_parts=interfaces.get('aura_parts_2022')
+    if aura_parts:
+        try:
+            by_address={f['address']:f for f in manifest['accepted_functions']}
+            if len(aura_parts['functions'])!=3 or len(aura_parts['repairs'])!=3:
+                raise ValueError('Aura compiler-part component membership mismatch')
+            for address,detail in aura_parts['functions'].items():
+                if by_address[address]['aura_part_evidence']!=detail or not by_address[address]['static']:
+                    raise ValueError('Aura compiler-part ownership/evidence mismatch')
+            for address,detail in aura_parts['repairs'].items():
+                if by_address[address]['aura_part_binding_2022']!=detail or len(aura_parts['parameters'][address])!=len(aura_parts['parameters'][detail['part_address']]):
+                    raise ValueError('Aura wrapper physical-argument/evidence mismatch')
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/auras.c',name='aura_parts_2022',error=str(error)))
+    test_core=interfaces.get('test_core_2022')
+    if test_core:
+        try:
+            record=test_core['layout'];members={m['name']:m for m in record['members']}
+            if (record['bytes']!=216 or (members['sp_keyword']['offset'],members['sp_keyword']['bytes'])!=(140,4) or
+                (members['sp_keyword_flag']['offset'],members['sp_keyword_flag']['bytes'])!=(144,2) or members['storage']['offset']!=212 or
+                test_core['callback']!=dict(return_type='int',arguments=['int']*4)):
+                raise ValueError('2022 test record/callback layout mismatch')
+            native=json.loads((root/'docs/recovery-evidence/stack-storage.json').read_text())['target_layouts']['test_definition_t']
+            if native['members']!={m['name']:m['offset'] for m in record['members']} or native['member_sizes']!={m['name']:m['bytes'] for m in record['members']}:
+                raise ValueError('2022 test member registry mismatch')
+            entries={f['address']:f for f in manifest['accepted_functions'] if f.get('test_core_evidence')}
+            if len(entries)!=8 or set(entries)!=set(test_core['functions']):
+                raise ValueError('2022 test core membership mismatch')
+            for address,detail in test_core['functions'].items():
+                if entries[address]['test_core_evidence']!=detail:
+                    raise ValueError('2022 test core evidence mismatch')
+                for site in detail['new_field_sites']:
+                    data=bytes.fromhex(site['bytes'])
+                    if machine_bytes(int(site['address'],16),len(data))!=data:
+                        raise ValueError('2022 test added-field native operand mismatch')
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/global_checking.c',name='test_core_2022',error=str(error)))
+    spell=interfaces.get('generic_spell_2022')
+    if spell:
+        try:
+            from generic_spell_body import STORAGE
+            entries={f['address']:f for f in manifest['accepted_functions'] if f.get('generic_spell_evidence')}
+            if set(entries)!={'26a0250','2650c40'} or set(entries)!=set(spell['functions']):
+                raise ValueError('Generic-spell component membership mismatch')
+            if spell['storage_declarations']!=STORAGE or sources['functions/functions.c'].replace('\r\n','\n').count(STORAGE)!=1:
+                raise ValueError('Generic-spell typed storage declaration mismatch')
+            if (spell['flags']['bytes']!=4 or len(spell['flags']['members'])!=16 or
+                list(spell['flags']['members'].values())!=[1<<n for n in range(16)] or
+                spell['retained_flags']!=dict(GS_ONE_OR_MULTIPLE_TARGETS=8192,GS_SAC_PERMANENT_AS_COST=16384)):
+                raise ValueError('Generic-spell native/legacy flag-domain mismatch')
+            fixed={(x['name'],x['type'],x['location']) for x in spell['locals']['26a0250'] if isinstance(x['location'],str)}
+            if not {('test','test_definition_t','(DW_OP_fbreg: -236)'),('illegal_tgt','char[200]','(DW_OP_fbreg: -236)'),('td9','target_definition_t','(DW_OP_fbreg: -236)'),('targeted_player','int[2]','(DW_OP_fbreg: -244)')}<=fixed:
+                raise ValueError('Generic-spell native scratch/array locations mismatch')
+            if len(spell['parameters']['26a0250'])!=8 or len(spell['parameters']['2650c40'])!=6:
+                raise ValueError('Generic-spell physical interface mismatch')
+            literal=spell['retarget_prompt'];site=literal['site']
+            if readonly_string(image,int(literal['address'],16))!=bytes.fromhex(literal['bytes']) or site['bytes']!='c744240c74447602':
+                raise ValueError('Generic-spell target-choice literal mismatch')
+            for site in [site,*spell['control_sites']]:
+                data=bytes.fromhex(site['bytes'])
+                if machine_bytes(int(site['address'],16),len(data))!=data:
+                    raise ValueError('Generic-spell VLA/variadic/cleanup native operand mismatch')
+            for address,detail in spell['functions'].items():
+                if entries[address]['generic_spell_evidence']!=detail:
+                    raise ValueError('Generic-spell component evidence mismatch')
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='functions/functions.c',name='generic_spell_2022',error=str(error)))
+    split_helpers=interfaces.get('split_card_helpers_2022')
+    if split_helpers:
+        try:
+            entries={f['address']:f for f in manifest['accepted_functions'] if f.get('split_helper_evidence')}
+            if set(entries)!={'26c0860','2199560','2569100','25696b0','2569740','21a3da0'} or set(entries)!=set(split_helpers['functions']):
+                raise ValueError('Split card helper membership mismatch')
+            for address,detail in split_helpers['functions'].items():
+                if entries[address]['split_helper_evidence']!=detail:
+                    raise ValueError('Split card helper evidence mismatch')
+            if split_helpers['events']!=dict(EVENT_CAN_ACTIVATE_FROM_HAND=177,EVENT_ACTIVATE_FROM_HAND=178,EVENT_RESOLVE_ACTIVATION_FROM_HAND=179):
+                raise ValueError('Split card helper hand-event range mismatch')
+            for address,arity in [('2199560',3),('2569100',11)]:
+                ps=split_helpers['parameters'][address]
+                if len(ps)!=arity or [p['location'][0]['expression'] for p in ps[:3]]!=['(DW_OP_reg0 (r0))','(DW_OP_reg2 (r2))','(DW_OP_reg1 (r1))']:
+                    raise ValueError('Split card helper physical parameter mismatch')
+            legacy=split_helpers['legacy_compatibility']
+            body=function_body(sources[legacy['source']],legacy['name'])
+            if (legacy['counted_implementation'] or (legacy['retained_target_bytes'],legacy['native_target_bytes'])!=(80,84) or
+                hashlib.sha256(body.replace('\r\n','\n').encode()).hexdigest()!=legacy['body_sha256'] or
+                re.search(r'\b'+legacy['name']+r'\s*\(',body[body.index('{'):])):
+                raise ValueError('Split card helper legacy compatibility mismatch')
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/betrayers_of_kamigawa.c',name='split_card_helpers_2022',error=str(error)))
+    aura_consumers=interfaces.get('aura_consumers_2022')
+    if aura_consumers:
+        try:
+            from recover_aura_consumers import ADDRESSES,PRIVATE
+            entries={f['address']:f for f in manifest['accepted_functions'] if f.get('aura_consumer_evidence')}
+            if set(entries)!=set(ADDRESSES) or set(entries)!=set(aura_consumers['functions']) or {a for a,e in entries.items() if e['static']}!=PRIVATE:
+                raise ValueError('Aura consumer membership/linkage mismatch')
+            for address,detail in aura_consumers['functions'].items():
+                if entries[address]['aura_consumer_evidence']!=detail:
+                    raise ValueError('Aura consumer evidence mismatch')
+            for address,detail in aura_consumers['repairs'].items():
+                entry=next(f for f in manifest['accepted_functions'] if f['address']==address)
+                recorded={k:v for k,v in detail.items() if k!='previous_record'}
+                body=function_body(sources[entry['source']],entry['name'])
+                if (entry.get('aura_attachment_binding_2022')!=recorded or detail['body_sha256']!=entry.get('reconstruction_body_sha256') or
+                    re.search(r'\battach_aura_to_target\s*\(',body)):
+                    raise ValueError('Aura native attachment binding mismatch')
+            trigger=aura_consumers['trigger_condition']
+            if trigger['address']!='7a2d78' or trigger['existing_linker_symbol']!='_trigger_condition':
+                raise ValueError('Aura trigger-condition linker binding mismatch')
+            for site in trigger['sites']:
+                data=bytes.fromhex(site['bytes'])
+                if machine_bytes(int(site['address'],16),len(data))!=data:
+                    raise ValueError('Aura trigger-condition native operand mismatch')
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/auras.c',name='aura_consumers_2022',error=str(error)))
+    for component,binding in [('native_scalar_callers_2022','native_scalar_callee_binding_2022'),
+                              ('native_ability_callers_2022','native_ability_callee_binding_2022'),
+                              ('native_pump_callers_2022','native_pump_callee_binding_2022'),
+                              ('native_activated_callers_2022','native_activated_callee_binding_2022'),
+                              ('native_attack_callers_2022','native_attack_callee_binding_2022'),
+                              ('native_entry_callers_2022','native_entry_callee_binding_2022'),
+                              ('native_level_buddy_callers_2022','native_level_buddy_callee_binding_2022'),
+                              ('native_phyrexian_callers_2022','native_phyrexian_callee_binding_2022'),
+                              ('native_death_trigger_callers_2022','native_death_trigger_callee_binding_2022'),
+                              ('native_action_callers_2022','native_action_callee_binding_2022')]:
+        scalar_callers=interfaces.get(component)
+        if not scalar_callers:continue
+        try:
+            entries={f['address']:f for f in manifest['accepted_functions'] if f.get(binding)}
+            if set(entries)!=set(scalar_callers['functions']):
+                raise ValueError('Native scalar helper caller membership mismatch')
+            for original,helper in scalar_callers['helpers'].items():
+                entry=next(f for f in manifest['accepted_functions'] if f['address']==helper['address'])
+                prototype=helper['prototype']
+                if component=='native_activated_callers_2022':
+                    if scalar_callers['common_instance_layout']!=dict(bytes=300,ability_loss_offset=256):
+                        raise ValueError('Common activation instance-pointer layout mismatch')
+                    prototype=re.sub(r'\bcard_instance_t\s*\*','',prototype)
+                if entry['name']!=helper['name'] or entry['prototype']!=helper['prototype'] or re.search(r'\*|\b(?:target|test)_definition',prototype):
+                    raise ValueError('Native scalar helper signature mismatch')
+            for address,detail in scalar_callers['functions'].items():
+                entry=entries[address];recorded={k:v for k,v in detail.items() if k!='previous_record'}
+                body=function_body(sources[entry['source']],entry['name'])
+                if (entry[binding]!=recorded or detail['body_sha256']!=entry['reconstruction_body_sha256'] or
+                    any(re.search(r'\b'+original+r'\s*\(',body[body.index('{'):]) for original in detail['calls'])):
+                    raise ValueError('Native scalar helper caller binding mismatch')
+                from recover_test_consumers import rename
+                restored,_=rename(body.replace('\r\n','\n'),{new:old for old,new in detail['calls'].items()})
+                if (hashlib.sha256(restored.encode()).hexdigest()!=detail['previous_body_sha256'] or
+                    hashlib.sha256(machine_bytes(int(address,16),detail['machine_bytes'])).hexdigest()!=detail['machine_sha256']):
+                    raise ValueError('Native scalar caller changed outside recorded bindings or native body mismatch')
+                for call in detail['canonical_calls']:
+                    at=int(call['address'],16);data=bytes.fromhex(call['bytes'])
+                    helper=scalar_callers['helpers'][call['original']]
+                    if (len(data)!=5 or data[0] not in {0xe8,0xe9} or machine_bytes(at,5)!=data or
+                        at+5+struct.unpack('<i',data[1:])[0]!=int(helper['address'],16) or
+                        call['target']!=helper['address'] or call['name']!=helper['name'] or
+                        detail['calls'].get(call['original'])!=call['name']):
+                        raise ValueError('Native scalar caller exact callee mismatch')
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='cards/',name=component,error=str(error)))
+    ability_writers=interfaces.get('ability_writers_2022')
+    if ability_writers:
+        try:
+            from recover_ability_writers import ADDRESSES,PRIVATE,TWO_PARAMETER_PARTS,PUMP_TYPE
+            entries={f['address']:f for f in manifest['accepted_functions'] if f.get('ability_writer_evidence')}
+            if set(entries)!=set(ADDRESSES) or set(entries)!=set(ability_writers['functions']) or {a for a,f in entries.items() if f['static']}!=set(PRIVATE):
+                raise ValueError('Native ability writer membership/linkage mismatch')
+            for address,detail in ability_writers['functions'].items():
+                if entries[address]['ability_writer_evidence']!=detail:
+                    raise ValueError('Native ability writer evidence mismatch')
+            record=ability_writers['pump_layout']
+            if (record['bytes']!=48 or ability_writers['retained_pump_bytes']!=36 or
+                [x['offset'] for x in record['members']]!=list(range(0,48,4)) or any(x['bytes']!=4 for x in record['members']) or
+                [x['name'] for x in record['members'][-3:]]!=['subtype','color','disabling_mode'] or
+                ability_writers['pump_type_declaration']!=PUMP_TYPE or (root/'defs.h').read_text().count(PUMP_TYPE)!=1):
+                raise ValueError('Native/legacy pump layout mismatch')
+            for address in TWO_PARAMETER_PARTS:
+                ps=ability_writers['parameters'][address]
+                if (len(ps)!=3 or [p['location'][0]['expression'] for p in ps[:2]]!=['(DW_OP_reg0 (r0))','(DW_OP_reg2 (r2))'] or
+                    not all('DW_OP_GNU_parameter_ref' in x['expression'] for x in ps[2]['location']) or
+                    re.search(r'\bevent\b',entries[address]['prototype'])):
+                    raise ValueError('Native keyword helper physical/source parameter mismatch')
+            ps=ability_writers['parameters']['26df8e0']
+            if len(ps)!=5 or ps[3]['location'][0]['expression']!='(DW_OP_fbreg: 0)' or not all('DW_OP_GNU_parameter_ref' in x['expression'] for x in ps[4]['location']):
+                raise ValueError('Native granted-flanking physical/source parameter mismatch')
+            for address,detail in ability_writers['repairs'].items():
+                entry=next(f for f in manifest['accepted_functions'] if f['address']==address)
+                if (entry.get('ability_writer_binding_2022')!={k:v for k,v in detail.items() if k!='previous_record'} or
+                    entry.get('reconstruction_body_sha256')!=detail['body_sha256'] or
+                    re.search(r'\bspecial_abilities\s*\(',function_body(sources[entry['source']],entry['name']))):
+                    raise ValueError('Attached keyword writer native callee mismatch')
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='functions/abilities.c',name='ability_writers_2022',error=str(error)))
+    pump_core=interfaces.get('pump_core_2022')
+    if pump_core:
+        try:
+            from recover_pump_core import CORE,REMOVAL,DEPENDENCIES,SUBTYPES,PRIVATE,REPLACED,REPAIRS
+            entries={f['address']:f for f in manifest['accepted_functions'] if f.get('pump_core_evidence')}
+            if (set(entries)!=set(CORE+REMOVAL+DEPENDENCIES+SUBTYPES) or set(entries)!=set(pump_core['functions']) or
+                {a for a,f in entries.items() if f['static']}!=PRIVATE or set(pump_core['previous_records'])!=REPLACED or
+                set(pump_core['replacements'])!=REPLACED or set(pump_core['repairs'])!=set(REPAIRS)):
+                raise ValueError('Native pump component membership/linkage mismatch')
+            for address,detail in pump_core['functions'].items():
+                if entries[address]['pump_core_evidence']!=detail:
+                    raise ValueError('Native pump component evidence mismatch')
+                body=function_body(sources[entries[address]['source']],entries[address]['name'])
+                from capstone import Cs,CS_ARCH_X86,CS_MODE_32
+                from capstone.x86_const import X86_OP_IMM
+                decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True
+                for ref in detail['function_references']:
+                    data=bytes.fromhex(ref['bytes']);ins=list(decoder.disasm(data,int(ref['address'],16)))
+                    if (machine_bytes(int(ref['address'],16),len(data))!=data or len(ins)!=1 or
+                        not any(o.type==X86_OP_IMM and o.imm==int(ref['target'],16) for o in ins[0].operands) or
+                        not re.search(r'\b'+re.escape(ref['name'])+r'\b',body)):
+                        raise ValueError('Native pump callback/reference operand mismatch')
+            for address,detail in pump_core['repairs'].items():
+                entry=next(f for f in manifest['accepted_functions'] if f['address']==address)
+                body=function_body(sources[entry['source']],entry['name'])
+                if (entry.get('pump_callee_binding_2022')!={k:v for k,v in detail.items() if k!='previous_record'} or
+                    entry.get('reconstruction_body_sha256')!=detail['body_sha256'] or
+                    any(re.search(r'\b'+name+r'\s*\(',body) for name in detail['calls'])):
+                    raise ValueError('Native subtype frontend binding mismatch')
+                target_validation_input('',{**detail,'changes':[]},address,machine_bytes)
+                for call in detail['canonical_calls']:
+                    at=int(call['address'],16);data=bytes.fromhex(call['bytes'])
+                    if (len(data)!=5 or data[0] not in {0xe8,0xe9} or machine_bytes(at,5)!=data or
+                        at+5+struct.unpack('<i',data[1:])[0]!=int(call['target'],16) or
+                        not re.search(r'\b'+re.escape(call['name'])+r'\s*\(',body)):
+                        raise ValueError('Native subtype frontend call/jump mismatch')
+            for address,detail in pump_core['replacements'].items():
+                if entries[address]['reconstruction_body_sha256']!=detail['body_sha256'] or entries[address]['name']!=pump_core['previous_records'][address]['name']:
+                    raise ValueError('Native pump existing scalar entry replacement mismatch')
+            ps=pump_core['parameters']['21ecf20']
+            if ([p['name'] for p in ps]!=['player','card','who_gains','event'] or
+                [p['location'][0]['expression'] for p in ps[:3]]!=['(DW_OP_reg0 (r0))','(DW_OP_reg2 (r2))','(DW_OP_reg1 (r1))'] or
+                not all('DW_OP_GNU_parameter_ref' in x['expression'] for x in ps[3]['location'])):
+                raise ValueError('Spirit Link physical/source parameter mismatch')
+            for site in pump_core['control_sites']:
+                data=bytes.fromhex(site['bytes'])
+                if machine_bytes(int(site['address'],16),len(data))!=data:
+                    raise ValueError('Native pump record-copy/slot operand mismatch')
+            sites={s['address']:s['bytes'] for s in pump_core['control_sites']}
+            if any(sites.get(a)!=b for a,b in {'26a1551':'b915000000','26a157a':'f3a5','26a162b':'b915000000','26a1635':'f3a5','26a24a1':'8b83b8000000','26a24ab':'8b83b4000000','267ae15':'8b7224','267ae25':'89b0b4000000'}.items()):
+                raise ValueError('Native pump field/copy semantics mismatch')
+            color=pump_core['native_color_slot'];serialization=pump_core['pump_serialization']
+            if ((color['tested_offset'],color['loaded_offset'])!=(184,180) or serialization!=dict(record_bytes=48,subtype_offset=36,color_offset=40,subtype_target_offset=180,color_target_offset=184,unserialized_disabling_offset=44)):
+                raise ValueError('Native pump subtype/color serialization mismatch')
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='functions/functions.c',name='pump_core_2022',error=str(error)))
+    activated=interfaces.get('activated_core_2022')
+    if activated:
+        try:
+            from recover_activated_core import ADDRESSES
+            from activated_core_bodies import STORAGE
+            entries={f['address']:f for f in manifest['accepted_functions'] if f.get('activated_core_evidence')}
+            if set(entries)!=set(ADDRESSES) or set(entries)!=set(activated['functions']) or any(f['static'] for f in entries.values()):
+                raise ValueError('Native activated-ability core membership/linkage mismatch')
+            for address,detail in activated['functions'].items():
+                if entries[address]['activated_core_evidence']!=detail:
+                    raise ValueError('Native activated-ability evidence mismatch')
+            fixed={(v['name'],v['type'],v['location']) for v in activated['locals']['269c8c0'] if isinstance(v['location'],str)}
+            if not {('td_default','target_definition_t','(DW_OP_fbreg: -236)'),('test','test_definition_t','(DW_OP_fbreg: -236)'),('tgt','target_t','(DW_OP_fbreg: -236)')}<=fixed:
+                raise ValueError('Native activated-ability shared storage location mismatch')
+            if activated['storage_declaration']!=STORAGE or sources['functions/functions.c'].replace('\r\n','\n').count(STORAGE)!=1:
+                raise ValueError('Native activated-ability shared storage declaration mismatch')
+            if activated['flags']['bytes']!=4 or activated['zero_flags']!=dict(SF_0=0,SF2_0=0) or activated['added_flag_members']!=dict(GAA_DURING_COMBAT=4096,GAA_MANA_ABILITY=2097152):
+                raise ValueError('Native activated-ability enum domain mismatch')
+            if activated['mana_payment_array']!=dict(type='int[8]',elements=8,element_bytes=4,bytes=32,symbols=[dict(name='_pay_mana_xbugrwaU',address='4ef400',storage=2)]):
+                raise ValueError('Native activation mana-payment array mismatch')
+            if not re.search(r'_pay_mana_xbugrwaU\s*=\s*0x4EF400;', (root/'manalink.lds').read_text()):
+                raise ValueError('Native activation mana-payment linker binding mismatch')
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/functions.c',name='activated_core_2022',error=str(error)))
+    action_core=interfaces.get('action_core_2022')
+    if action_core:
+        try:
+            from audit_action_core import audit_component
+            audit_component(action_core,manifest,sources,machine_bytes,image,root)
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='functions/manipulate_and_damage_all.c',name='action_core_2022',error=str(error)))
+    death_trigger=interfaces.get('death_trigger_core_2022')
+    if death_trigger:
+        try:
+            from audit_death_trigger_core import audit_component
+            audit_component(death_trigger,manifest,machine_bytes)
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/functions.c',name='death_trigger_core_2022',error=str(error)))
+    dependency_repairs=interfaces.get('dependency_repairs_2022')
+    if dependency_repairs:
+        try:
+            from audit_dependency_repairs import audit_component
+            audit_component(dependency_repairs,manifest,machine_bytes,root)
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/',name='dependency_repairs_2022',error=str(error)))
+    spell_trigger=interfaces.get('spell_trigger_native_2022')
+    if spell_trigger:
+        try:
+            from audit_spell_trigger_native import audit_component
+            audit_component(spell_trigger,manifest,sources,machine_bytes)
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/functions.c',name='spell_trigger_native_2022',error=str(error)))
+    phyrexian=interfaces.get('phyrexian_costs_2022')
+    if phyrexian:
+        try:
+            from audit_phyrexian_costs import audit_component
+            audit_component(phyrexian,manifest,sources,machine_bytes,image)
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/new_phyrexia.c',name='phyrexian_costs_2022',error=str(error)))
+    ward_guard=interfaces.get('ward_recursion_guard_2022')
+    if ward_guard:
+        try:
+            from recover_ward_guard import ADDRESS,GLOBAL,DECLARATION,SOURCE
+            entries=[f for f in manifest['accepted_functions'] if f.get('ward_guard_evidence')]
+            if len(entries)!=1 or entries[0]['address']!=ADDRESS or entries[0]['static'] or entries[0]['ward_guard_evidence']!=ward_guard['function']:
+                raise ValueError('Ward guard function evidence/membership mismatch')
+            record=ward_guard['global_record'];declaration=record['declaration'];address=int(declaration['target_address'],16)
+            if (record['bytes']!=8 or record['members']!=dict(player=0,card=4) or record['initial_bytes']!='ffffffffffffffff' or
+                machine_bytes(address,8)!=bytes.fromhex(record['initial_bytes']) or record['location']!=[3]+list(struct.pack('<I',address)) or
+                len(record['symbols'])!=1 or record['symbols'][0]['address']!=declaration['target_address'] or record['symbols'][0]['storage']!=3):
+                raise ValueError('Ward guard static pair native layout/initializer mismatch')
+            if declaration not in manifest['source_globals'] or declaration['declaration']!=DECLARATION or declaration['source']!=SOURCE or declaration['name']!=GLOBAL:
+                raise ValueError('Ward guard static pair source registry mismatch')
+            if ward_guard['function_symbols']!=[dict(name='_this_effect_doesnt_remove_this',storage=2)] or ward_guard['target_flags']!=dict(bytes=84,offset=80,mask=3) or ward_guard['regen_context']!=dict(offset=40,mask=0x8000000):
+                raise ValueError('Ward guard public linkage/target/context mismatch')
+            if len(record['sites'])!=7 or {s['field_offset'] for s in record['sites']}!={0,4}:
+                raise ValueError('Ward guard native word reference membership mismatch')
+            for site in record['sites']:
+                data=bytes.fromhex(site['bytes'])
+                if site['field_bytes']!=4 or machine_bytes(int(site['address'],16),len(data))!=data:
+                    raise ValueError('Ward guard native word reference mismatch')
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/auras.c',name='ward_recursion_guard_2022',error=str(error)))
+    frontier=interfaces.get('dependency_frontier_2022')
+    if frontier:
+        try:
+            entries={f['address']:f for f in manifest['accepted_functions'] if f.get('native_dependency_bindings_2022')}
+            targets={f['address']:f for f in manifest['accepted_functions']}
+            if set(entries)!=set(frontier['functions']):
+                raise ValueError('Dependency frontier evidence membership mismatch')
+            for address,detail in frontier['functions'].items():
+                entry=entries[address]
+                if entry['native_dependency_bindings_2022']!=detail:
+                    raise ValueError('Dependency frontier function evidence mismatch')
+                for reference in detail['canonical_calls']+detail['function_references']:
+                    target=targets[reference['target']]
+                    if target['name']!=reference['name'] or (target['static'] and target['source']!=entry['source']):
+                        raise ValueError('Dependency frontier private owner/callee identity mismatch')
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/',name='dependency_frontier_2022',error=str(error)))
+    level_buddy=interfaces.get('level_buddy_2022')
+    if level_buddy:
+        try:
+            from audit_level_buddy import audit_component
+            audit_component(level_buddy,manifest,sources,machine_bytes,image)
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/rise_of_the_eldrazi.c',name='level_buddy_2022',error=str(error)))
+    entry_triggers=interfaces.get('entry_triggers_2022')
+    if entry_triggers:
+        try:
+            from audit_entry_triggers import audit_component
+            audit_component(entry_triggers,manifest,sources,machine_bytes)
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/functions.c',name='entry_triggers_2022',error=str(error)))
+    attacker=interfaces.get('attacker_core_2022')
+    if attacker:
+        try:
+            from audit_attacker_core import audit_component
+            audit_component(attacker,manifest,sources,machine_bytes,image)
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/functions.c',name='attacker_core_2022',error=str(error)))
+    costs=interfaces.get('activation_costs_2022')
+    if costs:
+        try:
+            from audit_activation_costs import audit_component
+            audit_component(costs,manifest,sources,machine_bytes,image)
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/functions.c',name='activation_costs_2022',error=str(error)))
+    sacrifice=interfaces.get('sacrifice_core_2022')
+    if sacrifice:
+        try:
+            from sacrifice_core_bodies import STORAGE
+            entries={f['address']:f for f in manifest['accepted_functions'] if f.get('sacrifice_core_evidence')}
+            if len(entries)!=36 or set(entries)!=set(sacrifice['functions']) or sum(f['static'] for f in entries.values())!=6:
+                raise ValueError('Sacrifice component membership mismatch')
+            expected=dict(SAC_NO_CANCEL=1,SAC_DONE=2,SAC_JUST_MARK=4,SAC_ALL_OR_NONE=8,SAC_AS_COST=16,SAC_CAUSED=32,SAC_RETURN_CHOICE=64,SAC_OPTIONAL=128,SAC_SET_TARGETS=256)
+            if sacrifice['enum']!=dict(bytes=4,members=expected) or sacrifice['retained_set_targets_value']!=128:
+                raise ValueError('Sacrifice native/legacy flag-domain mismatch')
+            if sacrifice['storage_declarations']!=STORAGE or sources['functions/sacrifices.c'].replace('\r\n','\n').count(STORAGE)!=1:
+                raise ValueError('Sacrifice shared storage declaration mismatch')
+            global_proof=sacrifice['test_global']
+            if (global_proof['address'],global_proof['pointer_bytes'],global_proof['symbols'])!=('279529c',4,[dict(name='_sacrifice_test',address='279529c',storage=3)]):
+                raise ValueError('Sacrifice native test-global binding mismatch')
+            locals=sacrifice['locals']
+            worker={(x['name'],x['type'],x['location']) for x in locals['26e4110'] if isinstance(x['location'],str)}
+            if not {('rval','int','(DW_OP_fbreg: -532)'),('tgt','target_t','(DW_OP_fbreg: -532)'),('token','token_generation_t','(DW_OP_fbreg: -532)'),
+                    ('marked','char[151]','(DW_OP_fbreg: -371)'),('default_prompt','char[200]','(DW_OP_fbreg: -220)')}<=worker:
+                raise ValueError('Sacrifice native shared-storage offsets mismatch')
+            picker={(x['name'],x['type'],x['location']) for x in locals['26e4c50'] if isinstance(x['location'],str)}
+            if not {('prompt','char[200]','(DW_OP_fbreg: -236)'),('test','test_definition_t','(DW_OP_fbreg: -236)')}<=picker:
+                raise ValueError('Sacrifice prompt/test shared storage mismatch')
+            cause=sacrifice['parameters']['26e3990'];prompt=sacrifice['parameters']['26e3a30']
+            if (len(cause)!=2 or cause[0]['location'][0]['expression']!='(DW_OP_reg0 (r0))' or
+                not all('DW_OP_GNU_parameter_ref' in x['expression'] for x in cause[1]['location']) or
+                [p['name'] for p in prompt]!=['prompt','type','invert','maxlen'] or prompt[-1]['location'] is not None or prompt[-1]['constant']!=200):
+                raise ValueError('Sacrifice physical/abstract parameter mismatch')
+            for address,detail in sacrifice['functions'].items():
+                if entries[address]['sacrifice_core_evidence']!=detail:
+                    raise ValueError('Sacrifice component evidence mismatch')
+                for site in detail['typed_storage_sites']:
+                    data=bytes.fromhex(site['bytes'])
+                    if machine_bytes(int(site['address'],16),len(data))!=data:
+                        raise ValueError('Sacrifice typed storage native operand mismatch')
+            token_fields={s['address']:s['bytes'] for s in sacrifice['functions']['26e4110']['typed_storage_sites']}
+            if any(token_fields.get(a)!=b for a,b in {'26e48ef':'898508feffff','26e48f5':'c6851ffeffff02','26e48fc':'c78524feffff10000000'}.items()):
+                raise ValueError('Sacrifice token controller/quantity/action stores mismatch')
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='functions/sacrifices.c',name='sacrifice_core_2022',error=str(error)))
+    consumers=interfaces.get('test_consumers_2022')
+    if consumers:
+        try:
+            entries={f['address']:f for f in manifest['accepted_functions'] if f.get('test_consumer_evidence')}
+            if len(entries)!=19 or set(entries)!=set(consumers['functions']):
+                raise ValueError('Test consumer component membership mismatch')
+            for address,detail in consumers['functions'].items():
+                if entries[address]['test_consumer_evidence']!=detail:
+                    raise ValueError('Test consumer component evidence mismatch')
+            hand=next(x for x in consumers['locals']['2651300'] if x['name']=='hand_index')
+            if hand['type']!='int[150]' or hand['decoded']!='(DW_OP_fbreg: -620)':
+                raise ValueError('Test consumer hand storage evidence mismatch')
+            expansion=consumers['show_deck_expansion_global']
+            if (expansion['bytes'],expansion['zero_value'],expansion['symbols'])!=(4,0,[dict(name='_hack_show_deck_force_expansion',address='2774164',storage=2)]):
+                raise ValueError('Test consumer deck expansion global mismatch')
+            legacy=consumers['legacy_compatibility']
+            compatibility=function_body(sources[legacy['source']],legacy['name'])
+            if (legacy['counted_implementation'] or (legacy['retained_test_bytes'],legacy['native_test_bytes'])!=(208,216) or
+                hashlib.sha256(compatibility.replace('\r\n','\n').encode()).hexdigest()!=legacy['body_sha256'] or
+                re.search(r'\b'+re.escape(legacy['name'])+r'\s*\(',compatibility[compatibility.index('{'):]) or
+                'test_definition_2022_t' in compatibility):
+                raise ValueError('Legacy to-array compatibility body mismatch')
+            migrated=consumers['migrated_native_wrapper']
+            if entries[migrated['address']]['name']!=migrated['name']:
+                raise ValueError('Test consumer native wrapper identity mismatch')
+            all_entries={f['address']:f for f in manifest['accepted_functions']}
+            for address,repair in consumers['repairs'].items():
+                if all_entries[address]['compiler_part_binding_2022']!=repair:
+                    raise ValueError('Compiler-part repair component mismatch')
+            reused=consumers['reused_global'];site=reused['native_site']
+            if (reused['declaration'] not in sources[reused['source']] or
+                machine_bytes(int(site['address'],16),len(bytes.fromhex(site['bytes']))).hex()!=site['bytes']):
+                raise ValueError('Test consumer reused rules-engine global mismatch')
+        except (ValueError,OSError,KeyError,StopIteration) as error:
+            issues.append(dict(source='functions/tutors.c',name='test_consumers_2022',error=str(error)))
+    target_selection = interfaces.get('target_selection_2022')
+    if target_selection:
+        try:
+            from target_selection_bodies import STORAGE
+            if target_selection['shared_storage_declaration'] != STORAGE or target_selection['shared_storage_bytes'] != 480:
+                raise ValueError('Target selection shared storage declaration mismatch')
+            selector_locals = {(v['name'], v['type'], v['frame_offset']) for v in target_selection['locals']['265f3d0']}
+            if not {('err_reason', 'char[208]', -500), ('illegal_tgt', 'char[200]', -500), ('candidates', 'target_t[60]', -500),
+                    ('illegal_tgt', 'char[200]', -700), ('tmp_tgt', 'target_t', -708), ('unknown_v44', 'int', -712)} <= selector_locals:
+                raise ValueError('Target selection native stack aliases mismatch')
+            if len(target_selection['parameters']['265f3d0']) != 23 or len(target_selection['parameters']['265fb20']) != 23:
+                raise ValueError('Target selection physical parameter count mismatch')
+            bounds = target_selection['candidate_bound_instructions']
+            if [s['bytes'] for s in bounds[:2]] != ['47', '83ff39'] or bounds[2]['instruction'] != 'jg 0x265f755':
+                raise ValueError('Target selection 58-card candidate bound mismatch')
+            for site in bounds:
+                data = bytes.fromhex(site['bytes'])
+                if machine_bytes(int(site['address'], 16), len(data)) != data:
+                    raise ValueError('Target selection candidate bound instruction mismatch')
+            thunk = target_selection['fscanf']
+            if (thunk['thunk'], thunk['bytes'], thunk['iat'], thunk['dll'], thunk['name'], thunk['fixed_arguments'], thunk['variadic']) != ('2701e58', 'ff25b4547b02', '27b54b4', 'msvcrt.dll', 'fscanf', 2, True):
+                raise ValueError('Target selection fscanf import interface mismatch')
+            if machine_bytes(int(thunk['thunk'], 16), 6).hex() != thunk['bytes']:
+                raise ValueError('Target selection fscanf import thunk mismatch')
+            image.pe.parse_data_directories()
+            imports = [(lib.dll.decode(), imp.name.decode(), imp.address) for lib in image.pe.DIRECTORY_ENTRY_IMPORT
+                       for imp in lib.imports if imp.name == b'fscanf']
+            if imports != [('msvcrt.dll', 'fscanf', 0x27b54b4)]:
+                raise ValueError('Target selection fscanf IAT identity mismatch')
+            if sum(c['name'] == 'fscanf' for c in target_selection['functions']['2660930']['canonical_calls']) != 8:
+                raise ValueError('Target selection fscanf call count mismatch')
+            for detail in target_selection['functions'].values():
+                for change in detail['changes']:
+                    for operand in change.get('pointer_operands', []):
+                        for site in operand['sites']:
+                            data = bytes.fromhex(site['bytes'])
+                            if machine_bytes(int(site['address'], 16), len(data)) != data:
+                                raise ValueError('Target selection live engine operand mismatch')
+            entries = {f['address']: f for f in manifest['accepted_functions'] if f.get('target_selection_evidence')}
+            if len(entries) != 18 or set(entries) != set(target_selection['functions']):
+                raise ValueError('Target selection component membership mismatch')
+            for address, detail in target_selection['functions'].items():
+                if entries[address]['target_selection_evidence'] != detail:
+                    raise ValueError('Target selection component evidence mismatch')
+            migration = target_selection['chooser_migration']
+            if entries[migration['address']]['reconstruction_body_sha256'] != migration['body_sha256']:
+                raise ValueError('Target selection chooser migration hash mismatch')
+        except (ValueError, OSError, KeyError) as error:
+            issues.append(dict(source='functions/targets.c', name='target_selection_2022', error=str(error)))
+    target_validation = interfaces.get('target_validation_2022')
+    if target_validation:
+        try:
+            local = target_validation['validator_locals']
+            if (local['error_str']['type'], local['error_str']['frame_offset'],
+                local['buffer']['type'], local['buffer']['frame_offset'], target_validation['frame_base_bias_from_ebp']) != ('char[200]', -220, 'char[100]', -320, 8):
+                raise ValueError('Target validator native buffer layout mismatch')
+            if target_validation['predicate']['return_type'] != 'const char *' or target_validation['predicate']['parameters'] != ['int'] * 5:
+                raise ValueError('Target validator predicate interface mismatch')
+            physical = target_validation['parameters']
+            if (len(physical['265d720']['physical']) != 23 or len(physical['265ef60']['physical']) != 22 or
+                len(physical['265f1f0']['physical']) != 22 or
+                physical['265f1f0']['abstract_constants'] != [dict(name='test_damage_target_or_source', value=0, physical_argument=False)]):
+                raise ValueError('Target validator/availability physical argument mismatch')
+            target_entries = {f['address']: f for f in manifest['accepted_functions'] if f.get('target_validation_evidence')}
+            if set(target_entries) != set(target_validation['functions']) or len(target_entries) != 14:
+                raise ValueError('Target validation component membership mismatch')
+            for address, detail in target_validation['functions'].items():
+                if target_entries[address]['target_validation_evidence'] != detail:
+                    raise ValueError('Target validation component evidence mismatch')
+            getter_binding = target_validation['protection_getter_binding']
+            getter_entry = next(f for f in manifest['accepted_functions'] if f['address'] == getter_binding['address'])
+            if getter_entry['target_getter_binding_2022'] != getter_binding:
+                raise ValueError('Target validation protection-getter migration evidence mismatch')
+        except (ValueError, OSError, KeyError) as error:
+            issues.append(dict(source='functions/targets.c', name='target_validation_2022', error=str(error)))
+    target_initializers = interfaces.get('target_initializers_2022')
+    if target_initializers:
+        try:
+            target_layout = target_initializers['layout']
+            if (target_layout['bytes'] != 84 or len(target_layout['members']) != 21 or
+                any(m['offset'] != i * 4 or m['type'] != 'int32_t' or m['bytes'] != 4
+                    for i, m in enumerate(target_layout['members'])) or
+                target_layout['members'][-1]['name'] != 'flags'):
+                raise ValueError('2022 target definition layout mismatch')
+            retained = target_initializers['retained_legacy_wrapper']
+            retained_body = function_body(sources[retained['source']], retained['name'])
+            if hashlib.sha256(retained_body.replace('\r\n', '\n').encode()).hexdigest() != retained['body_sha256']:
+                raise ValueError('Retained legacy target wrapper changed')
+            initializer_entries = {f['address']: f for f in manifest['accepted_functions'] if f.get('target_initializer_evidence')}
+            if set(initializer_entries) != set(target_initializers['functions']):
+                raise ValueError('Target initializer evidence membership mismatch')
+            for address, detail in target_initializers['functions'].items():
+                if initializer_entries[address]['target_initializer_evidence'] != detail:
+                    raise ValueError('Target initializer evidence mismatch')
+        except (ValueError, OSError, KeyError) as error:
+            issues.append(dict(source='functions/targets.c', name='target_initializers_2022', error=str(error)))
+    subtype_mutators=interfaces.get('extension_subtype_mutators_2022')
+    if subtype_mutators:
+        try:
+            types=subtype_mutators['types']
+            if (types['card_ext_t']['bytes']!=192 or types['card_ext_t']['members']['subtype']!={'offset':8,'type':'uint16_t[12]'} or
+                types['card_ext_t']['members']['inst_info_data']!={'offset':32,'type':'inst_info_t[6]'} or
+                types['inst_info_t']['members']['id']!={'offset':0,'type':'uint16_t'}):
+                raise ValueError('Extension subtype/info array layout mismatch')
+            for at,expected_hex in subtype_mutators['machine_checks'].items():
+                data=bytes.fromhex(expected_hex)
+                if machine_bytes(int(at,16),len(data))!=data:
+                    raise ValueError('Extension subtype bounds/unsigned-range instruction mismatch')
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/has_creature_type.c',name='extension_subtype_mutators_2022',error=str(error)))
+    token_stack_master=interfaces.get('token_stack_cards_2022')
+    if token_stack_master:
+        try:
+            for at,expected_hex in token_stack_master['machine_checks'].items():
+                data=bytes.fromhex(expected_hex)
+                if machine_bytes(int(at,16),len(data))!=data:
+                    raise ValueError('Token stack slot/prompt/predicate instruction mismatch')
+            prompt=token_stack_master['prompt'];data=bytes.fromhex(prompt['bytes'])
+            if (len(data)!=24 or not data.endswith(b'\0') or machine_bytes(int(prompt['address'],16),24)!=data or
+                (prompt['copy_bytes'],prompt['zero_bytes'],prompt['total_bytes'])!=(24,76,100)):
+                raise ValueError('Varina exact prompt-copy/clear mismatch')
+            shared=token_stack_master['existing_shared_interface']
+            if (shared['prototype'] not in (root/'manalink.h').read_text() or
+                'int has_no_mana_cost(int player, int card){' not in sources[shared['source']] or shared['new_implementations']!=0):
+                raise ValueError('Retained no-mana-cost predicate interface mismatch')
+        except (ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/commander_2018.c',name='token_stack_cards_2022',error=str(error)))
     tokens = interfaces.get('token_core_2022')
     if tokens:
         try:

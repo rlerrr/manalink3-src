@@ -5961,7 +5961,7 @@ Target player discards two cards unless he or she discards an artifact card. */
 /* ManalinkEh 2022: 0x253fd90; original cards/mirrodin.c:2847. */
 int card_leveler(int player, int card, event_t event)
 {
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;

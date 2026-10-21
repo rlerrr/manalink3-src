@@ -1772,3 +1772,124 @@ int generic_token_2022(int player, int card, event_t event)
   result = token_characteristic_setting_effects_2022(player, card, event, player, card);
   return result;
 }
+
+
+/* October 2022 token ID/copy entry points. */
+static int generate_token_by_id_part_2022(int player, int card, int csvid, int number, int reserved);
+static void copy_token_part_2022(int player, int card, int tok_player, int tok_card);
+void copy_token_2022(int player, int card, int tok_player, int tok_card);
+int generate_token_by_id_2022(int player, int card, int csvid);
+void generate_tokens_by_id_2022(int player, int card, int csvid, int howmany);
+int generate_reserved_token_by_id_2022(int player, int csvid);
+
+/* ManalinkEh 2022: 0x2666580; original functions/token_generation.c:624. */
+static int generate_token_by_id_part_2022(int player, int card, int csvid, int number, int reserved)
+{
+  int iVar1;
+  int iid;
+  int iVar2;
+  token_generation_2022_t token;
+
+  default_token_definition_2022(player, card, csvid, &token);
+  if (reserved == 0)
+  {
+    iVar1 = -1;
+    token.qty = (unsigned char)number;
+    generate_token_2022(&token);
+  }
+  else
+  {
+    token.no_sleight = '\x01';
+    iVar1 = get_internal_card_id_from_csv_id(csvid);
+    iid = resolve_token_iid_2022(iVar1, &token);
+    if (number < 1)
+    {
+      return -1;
+    }
+    iVar2 = 0;
+    do
+    {
+      iVar2 = iVar2 + 1;
+      iVar1 = add_card_to_hand(player, iid);
+      set_token_2022(player, iVar1, &token);
+      put_into_play(player, iVar1);
+    } while (number != iVar2);
+  }
+  return iVar1;
+}
+
+/* ManalinkEh 2022: 0x2666640; original functions/token_generation.c:614. */
+static void copy_token_part_2022(int player, int card, int tok_player, int tok_card)
+{
+  token_generation_2022_t token;
+  copy_token_definition_2022(player, card, &token, tok_player, tok_card);
+  generate_token_2022(&token);
+  return;
+}
+
+/* ManalinkEh 2022: 0x2666680; original functions/token_generation.c:614. */
+void copy_token_2022(int player, int card, int tok_player, int tok_card)
+{
+  if ((-1 < tok_player) && (-1 < tok_card))
+  {
+    copy_token_part_2022(player, card, tok_player, tok_card);
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x26666b0; original functions/token_generation.c:649. */
+int generate_token_by_id_2022(int player, int card, int csvid)
+{
+  int result;
+  unsigned int reserved;
+
+  result = get_internal_card_id_from_csv_id(csvid);
+  if (cards_data[result].cc[2] == '\x03')
+  {
+    reserved = 1;
+  }
+  else
+  {
+    reserved = (unsigned int)(cards_data[result].type == 0x80);
+  }
+  result = generate_token_by_id_part_2022(player, card, csvid, 1, reserved);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2666720; original functions/token_generation.c:653. */
+void generate_tokens_by_id_2022(int player, int card, int csvid, int howmany)
+{
+  int result;
+  unsigned int reserved;
+
+  result = get_internal_card_id_from_csv_id(csvid);
+  if (cards_data[result].cc[2] == '\x03')
+  {
+    reserved = 1;
+  }
+  else
+  {
+    reserved = (unsigned int)(cards_data[result].type == 0x80);
+  }
+  if (0 < howmany)
+  {
+    generate_token_by_id_part_2022(player, card, csvid, howmany, reserved);
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x2666790; original functions/token_generation.c:657. */
+int generate_reserved_token_by_id_2022(int player, int csvid)
+{
+  int result;
+
+  result = get_internal_card_id_from_csv_id(csvid);
+  if ((cards_data[result].cc[2] != '\x03') && (cards_data[result].type != 0x80))
+  {
+    backtrace_and_abort("functions/token_generation.c:658\nis_reserved_id(csvid)");
+  }
+  result = generate_token_by_id_part_2022(player, -1, csvid, 1, 1);
+  return result;
+}

@@ -5574,3 +5574,35 @@ LAB_023249b0:
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 entry-trigger helpers. */
+
+/* ManalinkEh 2022: 0x2319fb0; original cards/dragons_of_tarkir.c:6. */
+static int exploit_impl_2022(int player, int card, event_t event, resolve_trigger_t mode)
+{
+  int result;
+  test_definition_2022_t test;
+  etb_ability_2022(player, card, event, mode);
+  if ((event == EVENT_ETB) &&
+      (result = can_sacrifice_2022(player, player, 1, TYPE_CREATURE, SUBTYPE_INVALID), result != 0))
+  {
+    new_default_test_definition_2022(&test, 2, "");
+    result = new_sacrifice_2022(player, card, player, SAC2022_RETURN_CHOICE, &test);
+    return result;
+  }
+  return 0;
+}
+
+
+/* ManalinkEh 2022: 0x231a430; original cards/dragons_of_tarkir.c:22. */
+int exploit_2022(int player, int card, event_t event)
+{
+  int result;
+  result = duh_mode(player);
+  result = exploit_impl_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  return result;
+}
+
+#endif

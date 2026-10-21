@@ -2974,7 +2974,7 @@ int card_dauthi_trapper(int player, int card, event_t event)
     result = valid_target(&td);
     if (result != 0)
     {
-      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+      pump_ability_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
                              0, 0, 0, 0x100);
     }
   }
@@ -2989,7 +2989,7 @@ int card_crossbow_ambush(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    pump_subtype_until_eot(player, card, player, -1, 0, 0, 0x400, 0);
+    pump_subtype_until_eot_2022(player, card, player, -1, 0, 0, 0x400, 0);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -3368,7 +3368,7 @@ int card_conviction(int player, int card, event_t event)
     }
   }
 LAB_0212d624:
-  result = generic_aura(player, card, event, player, 1, 3, 0, 0, 0, 0, 0);
+  result = generic_aura_2022(player, card, event, player, 1, 3, 0, 0, 0, 0, 0);
   return result;
 }
 
@@ -3487,7 +3487,7 @@ static int grave_pact_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_0212adb8:
-    iVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    iVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (iVar2 == 0)
       goto LAB_0212adda;
   }
@@ -3522,7 +3522,7 @@ static int grave_pact_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
     }
-    iVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    iVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (iVar2 == 0)
     {
       return 0;
@@ -3544,3 +3544,31 @@ LAB_0212adda:
   }
   return 0;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2135130; original cards/stronghold.c:3419. */
+int card_contempt(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_player)
+  {
+
+    instance = get_card_instance(player, card);
+    store_attackers(player, card, event, 0, (int)instance->damage_target_player,
+                    instance->damage_target_card, NULL);
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+    if (event == EVENT_DAT_ABILITY)
+    {
+      bounce_permanent(player, card);
+      bounce_permanent((int)instance->damage_target_player, instance->damage_target_card);
+    }
+  }
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+#endif

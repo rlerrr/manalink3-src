@@ -1122,7 +1122,7 @@ static int give_token_haste_legacy(int player, int card, event_t event);
 int card_arvad_the_cursed(int player, int card, event_t event)
 {
   check_legend_rule(player, card, event);
-  deathtouch(player, card, event);
+  deathtouch_2022(player, card, event);
   lifelink(player, card, event);
   boost_creature_type(player, card, event, SUBTYPE_LEGEND, 2, 2, 0, BCT_CONTROLLER_ONLY);
   return 0;
@@ -1132,7 +1132,7 @@ int card_arvad_the_cursed(int player, int card, event_t event)
 int card_baird_steward_of_argive(int player, int card, event_t event)
 {
   check_legend_rule(player, card, event);
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   tax_attack(player, card, event);
   return 0;
 }
@@ -1141,7 +1141,7 @@ int card_baird_steward_of_argive(int player, int card, event_t event)
 int card_befuddle(int player, int card, event_t event)
 {
   int result;
-  result = vanilla_instant_pump(player, card, event, 2, 1 - player, -4, 0, 0x1000000, 0);
+  result = vanilla_instant_pump_2022(player, card, event, 2, 1 - player, -4, 0, 0x1000000, 0);
   return result;
 }
 
@@ -1331,7 +1331,7 @@ int card_final_parting(int player, int card, event_t event)
 int card_garna_the_bloodflame(int player, int card, event_t event)
 {
   check_legend_rule(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   boost_subtype(player, card, event, ~SUBTYPE_INVALID, 0, 0, 0, 4, BCT_CONTROLLER_ONLY);
   if (event == EVENT_ETB)
   {
@@ -1353,7 +1353,7 @@ int card_garna_the_bloodflame(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x22ce2b0; original cards/dominaria.c:1261. */
 int card_goblin_chainwhirler(int player, int card, event_t event)
 {
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -1469,7 +1469,7 @@ int card_josu_vess_lich_knight(int player, int card, event_t event)
   check_legend_rule(player, card, event);
   kicker(player, card, event, 5, 1, 0, 0, 0, 0);
   menace(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     result = kicked(player, card);
@@ -1620,7 +1620,7 @@ int card_merfolk_trickster(int player, int card, event_t event)
   int result;
   target_definition_t td;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   default_target_definition(player, card, &td, 2);
   td.allowed_controller = 1 - player;
   td.allow_cancel = 0;
@@ -1698,7 +1698,7 @@ int card_niambi_faithful_healer(int player, int card, event_t event)
   int result;
   test_definition_t test;
   check_legend_rule(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -1718,7 +1718,7 @@ int card_niambi_faithful_healer(int player, int card, event_t event)
 int card_on_serras_wings(int player, int card, event_t event)
 {
   int result;
-  result = generic_aura(player, card, event, player, 1, 1, 0x20, 10, 0x2001, 0, 8);
+  result = generic_aura_2022(player, card, event, player, 1, 1, 0x20, 10, 0x2001, 0, 8);
   return result;
 }
 
@@ -1878,7 +1878,7 @@ int card_seal_away(int player, int card, event_t event)
   card_instance_t *instance;
   target_definition_t td;
   return_from_oblivion(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     default_target_definition(player, card, &td, 2);
@@ -2232,7 +2232,7 @@ int card_verix_bladewing(int player, int card, event_t event)
   int result;
   check_legend_rule(player, card, event);
   kicker(player, card, event, 3, 0, 0, 0, 0, 0);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     result = kicked(player, card);
@@ -2341,7 +2341,7 @@ int card_wizards_retort(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x22d6300; original cards/dominaria.c:4442. */
 int card_yavimaya_sapherd(int player, int card, event_t event)
 {
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -2655,11 +2655,11 @@ int card_naru_meha_master_wizard(int player, int card, event_t event)
         result = counterspell(player, card, EVENT_CAST_SPELL, &td, 0);
         return result;
       }
-      etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
+      etb_ability_2022(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
     }
     else
     {
-      etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
       if (((event == EVENT_ETB) &&
            (result = counterspell_validate(player, card, &td, 0), result != 0)) &&
           (instance->info_slot == 1))
@@ -2941,7 +2941,7 @@ int card_danitha_capashen_paragon(int player, int card, event_t event)
   int result;
 
   check_legend_rule(player, card, event);
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   lifelink(player, card, event);
   if ((((event == EVENT_MODIFY_COST_GLOBAL) && (affected_card_controller == player)) &&
        (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)) &&
@@ -2999,7 +2999,7 @@ int card_dauntless_bodyguard(int player, int card, event_t event)
   instance = in_play(result, card_00);
   if (instance != NULL)
   {
-    pump_ability_until_eot(player, card, result, card_00, 0, 0, 0, 0x800);
+    pump_ability_until_eot_2022(player, card, result, card_00, 0, 0, 0, 0x800);
   }
 LAB_022cd2e2:
   result = generic_activated_ability(player, card, event, 8, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
@@ -3167,7 +3167,7 @@ int card_grunn_the_lonely_king(int player, int card, event_t event)
   }
   result = get_toughness(player, card);
   power = get_power(player, card);
-  pump_until_eot_merge_previous(player, card, player, card, power, result);
+  pump_until_eot_merge_previous_2022(player, card, player, card, power, result);
   return 0;
 }
 
@@ -3301,7 +3301,7 @@ int card_multani_yavimayas_avatar(int player, int card, event_t event)
     else if (event == EVENT_PAY_FLASHBACK_COSTS)
     {
 
-      charge_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0);
+      charge_mana_for_activated_ability_2022(player, card, 1, 0, 0, 1, 0, 0);
       iVar6 = 0;
       do
       {
@@ -3359,7 +3359,7 @@ int card_slinn_voda_the_rising_deep(int player, int card, event_t event)
   bVar5 = 0;
   check_legend_rule(player, card, event);
   kicker(player, card, event, 1, 0, 1, 0, 0, 0);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if ((event == EVENT_ETB) && (iVar1 = kicked(player, card), iVar1 != 0))
   {
 
@@ -3665,7 +3665,7 @@ int card_tetsuko_umezawa_fugitive(int player, int card, event_t event)
     {
       return 0;
     }
-    special_abilities(affected_card_controller, affected_card, EVENT_ABILITIES, 0x10, player, card);
+    special_abilities_2022(affected_card_controller, affected_card, EVENT_ABILITIES, 0x10, player, card);
   }
   return 0;
 }
@@ -3848,7 +3848,7 @@ int card_zhalfirin_void(int player, int card, event_t event)
 {
   int result;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     scry(player, 1);
@@ -3894,7 +3894,7 @@ int tiana_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_022c9e27:
-    uVar5 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar5 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar5 == 0)
       goto LAB_022c9e4c;
   }
@@ -3930,7 +3930,7 @@ int tiana_effect(int player, int card, event_t event)
     test.sub2 = 0x3001;
     test.subtype_flag = 3;
     count_for_gfp_ability_and_store_values(player, card, 0x77, player, 0, &test, 0xd0, 1);
-    uVar5 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar5 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar5 == 0)
     {
       return 0;
@@ -4031,7 +4031,7 @@ LAB_022d4e68:
   pcVar3 = get_card_instance(player, card);
 
   if ((pcVar3->kill_code == '\0') &&
-      (uVar4 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY), uVar4 != 0))
+      (uVar4 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY), uVar4 != 0))
   {
 
     pcVar3 = get_card_instance(player, card);
@@ -4080,7 +4080,7 @@ int saga(int player, int card, event_t event, int chapters)
   int iStack_14;
 
   iStack_14 = chapters;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     hack_silent_counters = hack_silent_counters + 1;
@@ -4220,7 +4220,7 @@ int card_arbor_armament(int player, int card, event_t event)
           {
 
             instance = get_card_instance(player, card);
-            pump_ability_until_eot(player, card, instance->targets[0].player,
+            pump_ability_until_eot_2022(player, card, instance->targets[0].player,
                                    instance->targets[0].card, 0, 0, 0x400, 0);
             add_counters_from_source(player, card, instance->targets[0].player,
                                      instance->targets[0].card, COUNTER_P1_P1, 1);
@@ -4717,7 +4717,7 @@ int card_song_of_freyalise(int player, int card, event_t event)
           {
             add_counters_from_source(player, card, player, iVar3, COUNTER_P1_P1, 1);
             iVar2 = iVar3 + 1;
-            pump_ability_until_eot(player, card, player, iVar3, 0, 0, 0x80, 0x808);
+            pump_ability_until_eot_2022(player, card, player, iVar3, 0, 0, 0x80, 0x808);
             iVar3 = iVar2;
             if (active_cards_count[player] <= iVar2)
               break;
@@ -4969,7 +4969,7 @@ int card_triumph_of_gerrard(int player, int card, event_t event)
     }
     else
     {
-      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+      pump_ability_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
                              0, 0, 0x120, 2);
     }
   }
@@ -5079,7 +5079,7 @@ int card_demonlord_belzenlok(int player, int card, event_t event)
   test_definition_t test;
 
   check_legend_rule(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -5263,7 +5263,7 @@ static int slimefoot_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_022c98c7:
-    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
       goto joined_r0x022c98f0;
   }
@@ -5300,7 +5300,7 @@ static int slimefoot_effect(int player, int card, event_t event)
       test.subtype = 0xa3;
       count_for_gfp_ability(player, card, 0x77, player, 0, &test);
     }
-    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
     {
       return 0;
@@ -5376,7 +5376,7 @@ int card_slimefoot_the_stowaway(int player, int card, event_t event)
     {
     LAB_022d3218:
 
-      uVar3 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      uVar3 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
       if (uVar3 != 0)
       {
       LAB_022d323d:
@@ -5417,7 +5417,7 @@ int card_slimefoot_the_stowaway(int player, int card, event_t event)
         return 0;
       }
       uVar3 =
-          resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+          resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
       if (uVar3 != 0)
         goto LAB_022d323d;
       goto LAB_022d31fe;
@@ -5790,7 +5790,7 @@ int card_oath_of_teferi(int player, int card, event_t event)
   target_definition_t td;
 
   check_legend_rule(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
 
@@ -5894,7 +5894,7 @@ int card_curators_ward(int player, int card, event_t event)
               pcVar2 != NULL &&
                   (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))))
         {
-          hexproof((int)pcVar1->damage_target_player, pcVar1->damage_target_card, EVENT_ABILITIES);
+          hexproof_2022((int)pcVar1->damage_target_player, pcVar1->damage_target_card, EVENT_ABILITIES);
         }
         goto LAB_022cce88;
       }
@@ -6419,7 +6419,7 @@ int card_cabal_stronghold(int player, int card, event_t event)
       iVar2 = count_basic_lands(player, iVar2);
       iVar3 = is_tapped(player, card);
       if ((iVar3 == 0) && ((iVar3 = is_animated_and_sick(player, card),
-                            iVar3 == 0 && (iVar3 = can_produce_mana(player, card), iVar3 != 0))))
+                            iVar3 == 0 && (iVar3 = can_produce_mana_2022(player, card), iVar3 != 0))))
       {
         iVar3 = has_mana(player, 0, 4);
         uStack_14 = (unsigned int)(iVar3 != 0);
@@ -6431,7 +6431,7 @@ int card_cabal_stronghold(int player, int card, event_t event)
       iVar3 = is_tapped(player, card);
       if ((iVar3 == 0) && (iVar3 = is_animated_and_sick(player, card), iVar3 == 0))
       {
-        iVar3 = can_produce_mana(player, card);
+        iVar3 = can_produce_mana_2022(player, card);
         uVar4 = (unsigned int)(iVar3 != 0);
       }
       else
@@ -6514,3 +6514,21 @@ int card_damping_sphere(int player, int card, event_t event)
   }
   return 0;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22cd3d0; original cards/dominaria.c:877. */
+int card_deep_freeze(int player, int card, event_t event)
+{
+  int result;
+
+  attached_set_pt(player, card, event, 0, 4);
+  attached_is_additional_color(player, card, event, COLOR_TEST_BLUE);
+  attached_is_additional_subtype(player, card, event, SUBTYPE_WALL);
+  disable_attached(player, card, event, 0x17e);
+  result = aura(player, card, event, NULL, NULL);
+  disabling_aura_ai(player, card, event);
+  return result;
+}
+#endif

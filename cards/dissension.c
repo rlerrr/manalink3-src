@@ -5028,7 +5028,7 @@ int card_wars_toll(int player, int card, event_t event)
       new_manipulate_all(player, card, iVar6, &test, ACT_TAP);
     }
   }
-  iVar6 = declare_attackers_trigger(player, card, event, 0, iVar6, -1);
+  iVar6 = declare_attackers_trigger_2022(player, card, event, 0, iVar6, -1);
 
   if (((iVar6 != 0) && (iVar3 = is_humiliated_for_ability(player, card, AL_TRIG),
                         iVar6 = current_turn, iVar3 == 0)) &&
@@ -5342,3 +5342,37 @@ LAB_02221d50:
                                        "Select target land.");
   return result;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22270c0; original cards/dissension.c:3901. */
+int card_shielding_plax(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  hybrid(player, card, event);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    draw_a_card(player);
+    attached_gets_sp_kw2(player, card, EVENT_ETB, SP_KEYWORD2_GRANTED_PROT_MISC);
+    get_card_instance(player, card);
+  }
+  else
+  {
+    attached_gets_sp_kw2(player, card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
+    instance = get_card_instance(player, card);
+    if ((((event == EVENT_PROT_MISC) && (instance->damage_target_card == affected_card)) &&
+         (instance->damage_target_player == affected_card_controller)) &&
+        ((1 - player == attacking_card_controller &&
+          (((unsigned int)event_result >> 24 & 0xff) == '\x05'))))
+    {
+      event_result = event_result | 1;
+    }
+  }
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+#endif

@@ -403,7 +403,7 @@ int card_bloodline_necromancer(int player, int card, event_t event)
   test_definition_t test;
   lifelink(player, card, event);
   result = duh_mode(player);
-  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_ETB)
   {
     new_default_test_definition(&test, 2, "Select target Vampire or Wizard creature card.");
@@ -466,7 +466,7 @@ int card_shifting_shadow(int player, int card, event_t event)
     }
   }
 LAB_0228ecd0:
-  result = generic_aura(player, card, event, 1 - player, 0, 0, 0, 4, 0, 0, 0);
+  result = generic_aura_2022(player, card, event, 1 - player, 0, 0, 0, 4, 0, 0, 0);
   return result;
 }
 
@@ -799,7 +799,7 @@ int card_taigam_sidisis_hand(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     t_player = instance->targets[0].player;
     instance = get_card_instance(player, card);
-    pump_until_eot(player, instance->parent_card, t_player, t_card, -result, -result);
+    pump_until_eot_2022(player, instance->parent_card, t_player, t_card, -result, -result);
     instance = get_card_instance(player, card);
     instance->info_slot = 0;
   }

@@ -2276,7 +2276,7 @@ static int debuff_for_T_sac(int player, int card, event_t event, int powmod, int
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
       instance = get_card_instance(player, card);
-      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, powmod,
+      pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, powmod,
                      tghmod);
     }
   }
@@ -2433,7 +2433,7 @@ int card_iron_will(int player, int card, event_t event)
       return result;
     }
   }
-  result = vanilla_instant_pump(player, card, event, 2, player, 0, 4, 0, 0);
+  result = vanilla_instant_pump_2022(player, card, event, 2, player, 0, 4, 0, 0);
   return result;
 }
 
@@ -2476,7 +2476,7 @@ int card_pygmy_pyrosaur(int player, int card, event_t event)
 int card_rank_and_file(int player, int card, event_t event)
 {
   test_definition_t this_test;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -2932,3 +2932,152 @@ int card_tethered_skirge(int player, int card, event_t event)
   }
   return 0;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25b9c70; original cards/urza_legacy.c:2566. */
+int card_cessation(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  immortal_enchantment(player, card, event);
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    instance = get_card_instance(player, card);
+    if (-1 < instance->damage_target_player)
+    {
+
+      instance = get_card_instance(player, card);
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if (result == 0)
+      {
+        cannot_attack_2022((int)instance->damage_target_player, instance->damage_target_card, event);
+      }
+    }
+  }
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25b9ef0; original cards/urza_legacy.c:2632. */
+int card_granite_grip(int player, int card, event_t event)
+{
+  int result;
+
+  result = get_hacked_subtype(player, card, 0x5006);
+  result = count_subtype(player, 1, result);
+  attached_gets_pt(player, card, event, result, 0);
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25baa20; original cards/urza_legacy.c:2840. */
+int card_sleepers_guile(int player, int card, event_t event)
+{
+  int result;
+
+  immortal_enchantment(player, card, event);
+  attached_gets_kw(player, card, event, KEYWORD_0, SP_KEYWORD_FEAR);
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25baa90; original cards/urza_legacy.c:2853. */
+int card_slow_motion(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int argument7;
+
+  immortal_enchantment(player, card, event);
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    instance = get_card_instance(player, card);
+    if (instance->damage_target_player != -1)
+    {
+
+      instance = get_card_instance(player, card);
+      upkeep_trigger_ability(player, card, event, (int)instance->damage_target_player);
+      if ((event == EVENT_UPKEEP_TRIGGER_ABILITY) &&
+          (instance->damage_target_player == current_turn))
+      {
+        result = has_mana_multi((int)instance->damage_target_player, 2, 0, 0, 0, 0, 0);
+        if (result != 0)
+        {
+
+          result = is_tapped((int)instance->damage_target_player, instance->damage_target_card);
+          argument7 = 0;
+          if (result != 0)
+          {
+            result = has_mana(player, 7, -1);
+            argument7 = (unsigned int)(result < 5);
+          }
+          result = do_dialog((int)instance->damage_target_player, player, card, -1, -1,
+                             " Pay 2 or sac\n Pass", argument7);
+          if (result == 0)
+          {
+            charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER,
+                                        (int)instance->damage_target_player, COLOR_ANY, 2);
+            if (spell_fizzled != 1)
+              goto LAB_025baad4;
+          }
+        }
+        kill_card((int)instance->damage_target_player, instance->damage_target_card,
+                  KILL_SACRIFICE);
+      }
+    }
+  }
+LAB_025baad4:
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25bac70; original cards/urza_legacy.c:2892. */
+int card_sluggishness(int player, int card, event_t event)
+{
+  int result;
+
+  immortal_enchantment(player, card, event);
+  attached_gets_kw(player, card, event, KEYWORD_0, SP_KEYWORD_CANNOT_BLOCK);
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x25baea0; original cards/urza_legacy.c:2943. */
+int card_treacherous_link(int player, int card, event_t event)
+{
+  char cVar1;
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_player)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+
+      instance = get_card_instance(player, card);
+      if (event == EVENT_PREVENT_DAMAGE)
+      {
+        cVar1 = instance->damage_target_player;
+        result = instance->damage_target_card;
+
+        instance = get_card_instance(affected_card_controller, affected_card);
+        if ((((instance->internal_card_id == damage_card) && (0 < instance->info_slot)) &&
+             (cVar1 == instance->damage_target_player)) &&
+            (instance->damage_target_card == result))
+        {
+          instance->damage_target_card = -1;
+        }
+      }
+    }
+  }
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+#endif

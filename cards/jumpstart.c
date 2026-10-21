@@ -7,7 +7,7 @@ int card_archaeomender(int player, int card, event_t event)
 {
   int result;
   test_definition_t test;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     new_default_test_definition(&test, 0x40, "Select target artifact card.");
@@ -31,7 +31,7 @@ int card_brightmare(int player, int card, event_t event)
   card_instance_t *instance;
   target_definition_t td;
   result = duh_mode(player);
-  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -72,7 +72,7 @@ int card_chained_brute(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2373430; original cards/jumpstart.c:153. */
 int card_corsair_captain(int player, int card, event_t event)
 {
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     generate_token_by_id(player, card, 0x4998);
@@ -252,7 +252,7 @@ int card_sethron_hurloon_general(int player, int card, event_t event)
   }
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    pump_subtype_until_eot(player, card, player, 0x77, 1, 0, 0, 0x10004);
+    pump_subtype_until_eot_2022(player, card, player, 0x77, 1, 0, 0, 0x10004);
   }
   return 0;
 }
@@ -288,7 +288,7 @@ int card_witch_of_the_moors(int player, int card, event_t event)
 {
   int result;
   test_definition_t test;
-  deathtouch(player, card, event);
+  deathtouch_2022(player, card, event);
   result = eot_trigger(player, card, event);
   if ((result != 0) && (current_turn == player))
   {
@@ -344,7 +344,7 @@ int card_scholar_of_the_lost_trove(int player, int card, event_t event)
   test_definition_t test;
 
   result = duh_mode(player);
-  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_ETB)
   {
     default_test_definition(&test, 0x78);
@@ -494,7 +494,7 @@ int card_inniaz_the_gale_force(int player, int card, event_t event)
     if (event == EVENT_CAN_ACTIVATE)
     {
 
-      result = get_cost_mod_for_activated_abilities(player, card, 2, 0, 0, 0, 0, 1);
+      result = get_cost_mod_for_activated_abilities_2022(player, card, 2, 0, 0, 0, 0, 1);
       result = has_mana_hybrid(player, 1, 5, 2, result);
       if (result == 0)
       {
@@ -507,7 +507,7 @@ int card_inniaz_the_gale_force(int player, int card, event_t event)
     if (event == EVENT_ACTIVATE)
     {
 
-      result = get_cost_mod_for_activated_abilities(player, card, 2, 0, 0, 0, 0, 1);
+      result = get_cost_mod_for_activated_abilities_2022(player, card, 2, 0, 0, 0, 0, 1);
       charge_mana_hybrid(player, card, 1, 5, 2, result);
       if (spell_fizzled == 1)
       {
@@ -557,7 +557,7 @@ int card_stone_haven_pilgrim(int player, int card, event_t event)
     result = check_battlefield_for_subtype(player, 0x44, -1);
     if (result != 0)
     {
-      pump_ability_until_eot(player, card, player, card, 1, 1, 0, 2);
+      pump_ability_until_eot_2022(player, card, player, card, 1, 1, 0, 2);
     }
   }
   else if ((((event - EVENT_POW_BOOST < 2) && (current_turn == player)) &&
@@ -577,7 +577,7 @@ int thriving_land(int player, int card, event_t event)
   card_instance_t *instance;
   color_test_t cVar3;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
 
@@ -665,7 +665,7 @@ static int kels_fight_fixer_effect(int player, int card, event_t event)
     }
   }
   result = duh_mode(player);
-  uVar3 = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  uVar3 = resolve_gfp_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if ((uVar3 != 0) && (result = check_status(player, card, 0x10000), result == 0))
   {
 
@@ -781,7 +781,7 @@ int card_kels_fight_fixer(int player, int card, event_t event)
     if (event != EVENT_RESOLVE_ACTIVATION)
       goto LAB_02373d9d;
   }
-  pump_ability_until_eot_no_repeat(pcStack_f0->parent_controller, pcStack_f0->parent_card,
+  pump_ability_until_eot_no_repeat_2022(pcStack_f0->parent_controller, pcStack_f0->parent_card,
                                    pcStack_f0->parent_controller, pcStack_f0->parent_card, 0,
                                    0x800);
 LAB_02373d9d:
@@ -1069,7 +1069,7 @@ int card_trusty_retriever(int player, int card, event_t event)
   unsigned int uVar2;
   test_definition_t this_test;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
 
@@ -1172,7 +1172,7 @@ int card_muxus_goblin_grandee(int player, int card, event_t event)
   test.subtype = 0x4b;
   test.not_me = 1;
   iVar1 = check_battlefield_for_special_card(player, card, player, 4, &test);
-  pump_until_eot(player, card, player, card, iVar1, iVar1);
+  pump_until_eot_2022(player, card, player, card, iVar1, iVar1);
   return 0;
 }
 

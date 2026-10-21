@@ -2800,7 +2800,7 @@ int card_cloak_of_feathers(int player, int card, event_t event)
           result = valid_target(&td);
           if (result != 0)
           {
-            pump_ability_until_eot(player, card, instance->targets[0].player,
+            pump_ability_until_eot_2022(player, card, instance->targets[0].player,
                                    instance->targets[0].card, 0, 0, 0x20, 0);
             draw_cards(player, 1);
           }
@@ -2828,7 +2828,7 @@ int card_ingenious_thief(int player, int card, event_t event)
   card_instance_t *instance;
   int result;
   target_definition_t td;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     default_target_definition(player, card, &td, 0);
@@ -3003,7 +3003,7 @@ int card_burning_cloak(int player, int card, event_t event)
           result = valid_target(&td);
           if (result != 0)
           {
-            pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 2,
+            pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, 2,
                            0);
             damage_creature(instance->targets[0].player, instance->targets[0].card, 2, player,
                             card);
@@ -3230,7 +3230,7 @@ int card_steadfastness(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    pump_subtype_until_eot(player, card, player, -1, 0, 3, 0, 0);
+    pump_subtype_until_eot_2022(player, card, player, -1, 0, 3, 0, 0);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -3257,7 +3257,7 @@ int card_stern_marshal(int player, int card, event_t event)
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
       instance = get_card_instance(player, card);
-      pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+      pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                              instance->targets[0].player, instance->targets[0].card, 2, 2, 0, 0);
     }
   }
@@ -3273,7 +3273,7 @@ int card_valorous_charge(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     result = get_sleighted_color_test(player, card, 0x20);
-    pump_color_until_eot(player, card, 2, result, 2, 0, 0, 0);
+    pump_color_until_eot_2022(player, card, 2, result, 2, 0, 0, 0);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -3436,7 +3436,7 @@ int card_angelic_blessing(int player, int card, event_t event)
           result = valid_target(&td);
           if (result != 0)
           {
-            pump_ability_until_eot(player, card, instance->targets[0].player,
+            pump_ability_until_eot_2022(player, card, instance->targets[0].player,
                                    instance->targets[0].card, 3, 3, 0x20, 0);
           }
           kill_card(player, card, KILL_DESTROY);
@@ -3514,7 +3514,7 @@ int card_natures_cloak(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     result = get_hacked_walk(player, card, 4);
-    pump_color_until_eot(player, card, player, 8, 0, 0, result, 0);
+    pump_color_until_eot_2022(player, card, player, 8, 0, 0, result, 0);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -3637,7 +3637,7 @@ int card_talas_explorer(int player, int card, event_t event)
   int result;
   int tgt_player;
   target_definition_t td;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     default_target_definition(player, card, &td, 0);
@@ -3730,7 +3730,7 @@ int card_wind_sail(int player, int card, event_t event)
             ptVar2 = instance->targets + iVar5;
             ptVar1 = instance->targets + iVar5;
             iVar5 = iVar5 + 1;
-            pump_ability_until_eot(player, card, ptVar1->player, ptVar2->card, 0, 0, 0x20, 0);
+            pump_ability_until_eot_2022(player, card, ptVar1->player, ptVar2->card, 0, 0, 0x20, 0);
             if ((int)(unsigned int)instance->number_of_targets <= iVar5)
               goto LAB_021c3971;
           }
@@ -3801,7 +3801,7 @@ int card_goblin_war_cry(int player, int card, event_t event)
               iVar4 = is_what(iVar2, iVar3, 2);
               if ((iVar4 != 0) && (instance->targets[0].card != iVar3))
               {
-                pump_ability_until_eot(player, card, iVar2, iVar3, 0, 0, 0, 0x20);
+                pump_ability_until_eot_2022(player, card, iVar2, iVar3, 0, 0, 0, 0x20);
               }
               iVar3 = iVar3 + 1;
             } while (iVar3 < active_cards_count[iVar2]);
@@ -4068,7 +4068,7 @@ int card_wu_spy(int player, int card, event_t event)
   int result;
   target_definition_t td;
   test_definition_t test;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     default_target_definition(player, card, &td, 2);
@@ -4178,7 +4178,7 @@ int card_desperate_charge(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    pump_subtype_until_eot(player, card, player, -1, 2, 0, 0, 0);
+    pump_subtype_until_eot_2022(player, card, player, -1, 2, 0, 0, 0);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -4314,7 +4314,7 @@ int card_dakmor_lancer(int player, int card, event_t event)
   const char *prompt;
   target_definition_t td1;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -5452,7 +5452,7 @@ int card_yuan_shaos_infantry(int player, int card, event_t event)
   if (event == EVENT_DAT_ABILITY)
   {
 
-    card_00 = pump_ability_until_eot(player, card, player, card, 0, 0, 0, 0x10);
+    card_00 = pump_ability_until_eot_2022(player, card, player, card, 0, 0, 0, 0x10);
     if (card_00 != -1)
     {
 
@@ -5562,7 +5562,7 @@ int card_zuo_ci_the_mocking_sage(int player, int card, event_t event)
   int result;
 
   check_legend_rule(player, card, event);
-  hexproof(player, card, event);
+  hexproof_2022(player, card, event);
   result = card_taoist_mystic(player, card, event);
   return result;
 }

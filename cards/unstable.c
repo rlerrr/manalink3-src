@@ -1459,7 +1459,7 @@ int card_everythingamajig_c(int player, int card, event_t event)
     {
       if ((((unsigned int)land_can_be_played >> 16 & 0xff) & 4) == 0)
       {
-        iVar3 = can_use_activated_abilities(player, card);
+        iVar3 = can_use_activated_abilities_2022(player, card);
         return (unsigned int)(iVar3 != 0 && iVar2 != 0);
       }
     }
@@ -1557,7 +1557,7 @@ int card_knight_of_the_widget(int player, int card, event_t event)
   int iVar4;
   int card_00;
 
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
        (affected_card_controller == player)) &&
       (player != -1))
@@ -1947,7 +1947,7 @@ int card_everythingamajig_b(int player, int card, event_t event)
                         0, 0, 0, 0, 0, "\001\025", 0, 0, 0, 0);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar1 = can_use_activated_abilities(player, card);
+      iVar1 = can_use_activated_abilities_2022(player, card);
       return (unsigned int)(iVar1 != 0 && iVar2 != 0);
     }
     if ((event == EVENT_ACTIVATE) && (iVar2 == 3))
@@ -2269,7 +2269,7 @@ int card_go_to_jail(int player, int card, event_t event)
   target_definition_t td;
 
   return_from_oblivion(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
 
@@ -2477,7 +2477,7 @@ int card_garbage_elemental_d(int player, int card, event_t event)
   target_definition_t td;
 
   cascade_2022(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -2570,7 +2570,7 @@ int card_painiac(int player, int card, event_t event)
     return 0;
   }
   power = roll_d6t(player, player, card, -1, -1);
-  pump_until_eot_merge_previous(player, card, player, card, power, 0);
+  pump_until_eot_merge_previous_2022(player, card, player, card, power, 0);
   return 0;
 }
 
@@ -2614,7 +2614,7 @@ int card_earl_of_squirrel(int player, int card, event_t event)
           result = is_humiliated_for_ability(player, card, AL_STATIC);
           if (result == 0)
           {
-            add_a_subtype(affected_card_controller, affected_card, SUBTYPE_SQUIRREL);
+            add_a_subtype_2022(affected_card_controller, affected_card, SUBTYPE_SQUIRREL);
           }
         }
       }
@@ -2635,3 +2635,24 @@ int card_earl_of_squirrel(int player, int card, event_t event)
   }
   return 0;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25c7470; original cards/unstable.c:1355. */
+int card_garbage_elemental_c(int player, int card, event_t event)
+{
+  int howmany;
+
+  battle_cry_2022(player, card, event);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  howmany = roll_2d6t_difference(player, player, card, -1, -1);
+  generate_tokens_by_id(player, card, 0x493a, howmany);
+  return 0;
+}
+
+#endif

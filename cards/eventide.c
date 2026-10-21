@@ -4659,7 +4659,7 @@ int card_springjack_shepherd(int player, int card, event_t event)
 {
   int result;
   result = player;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -4668,3 +4668,150 @@ int card_springjack_shepherd(int player, int card, event_t event)
   generate_tokens_by_id(player, card, 0x4939, result);
   return 0;
 }
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2362ea0; original cards/eventide.c:1682. */
+static int fod_1(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  if ((event - EVENT_POWER < 2) || (event == EVENT_CHANGE_TYPE))
+  {
+
+    instance = get_card_instance(player, card);
+    if ((instance->damage_target_card == affected_card) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+
+      instance =
+          get_card_instance((int)instance->damage_target_player, instance->damage_target_card);
+      if (event - EVENT_POWER < 2)
+      {
+        set_base_pt(2);
+      }
+      else
+      {
+        update_alter_remove_creature_subtypes(instance);
+        update_alter_add_subtype(SUBTYPE_KITHKIN, instance);
+        update_alter_add_subtype(SUBTYPE_SPIRIT, instance);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2363030; original cards/eventide.c:1699. */
+static int fod_2(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  if ((event - EVENT_POWER < 2) || (event == EVENT_CHANGE_TYPE))
+  {
+
+    instance = get_card_instance(player, card);
+    if ((instance->damage_target_card == affected_card) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+
+      instance =
+          get_card_instance((int)instance->damage_target_player, instance->damage_target_card);
+      if (event - EVENT_POWER < 2)
+      {
+        set_base_pt(4);
+      }
+      else
+      {
+        update_alter_remove_creature_subtypes(instance);
+        update_alter_add_subtype(SUBTYPE_KITHKIN, instance);
+        update_alter_add_subtype(SUBTYPE_SPIRIT, instance);
+        update_alter_add_subtype(SUBTYPE_WARRIOR, instance);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2362f40; original cards/eventide.c:1717. */
+static int fod_3(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  if ((event - EVENT_POWER < 2 || event == EVENT_CHANGE_TYPE) || (event == EVENT_ABILITIES))
+  {
+
+    instance = get_card_instance(player, card);
+    if ((instance->damage_target_card == affected_card) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+
+      instance =
+          get_card_instance((int)instance->damage_target_player, instance->damage_target_card);
+      if (event - EVENT_POWER < 2)
+      {
+        set_base_pt(8);
+      }
+      else if (event == EVENT_ABILITIES)
+      {
+        event_result = event_result | 0x120;
+      }
+      else
+      {
+        update_alter_remove_creature_subtypes(instance);
+        update_alter_add_subtype(SUBTYPE_KITHKIN, instance);
+        update_alter_add_subtype(SUBTYPE_SPIRIT, instance);
+        update_alter_add_subtype(SUBTYPE_WARRIOR, instance);
+        update_alter_add_subtype(SUBTYPE_AVATAR, instance);
+      }
+    }
+  }
+  return 0;
+}
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 attacker/keyword helpers. */
+
+/* ManalinkEh 2022: 0x23636c0; original cards/eventide.c:71. */
+int retrace_2022(int player, int card, event_t event, int id)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_2022_t this_test;
+  if (event == EVENT_GRAVEYARD_ABILITY)
+  {
+    result = has_mana_to_cast_id(player, EVENT_GRAVEYARD_ABILITY, id);
+    if (result != 0)
+    {
+      default_test_definition_2022(&this_test, 1);
+      this_test.zone = 0x100;
+      result = check_battlefield_for_special_card_2022(player, card, player, 0, &this_test);
+      if (result != 0)
+      {
+        instance = get_card_instance(player, card);
+        result =
+            can_legally_play_iid_now(player, instance->internal_card_id, EVENT_GRAVEYARD_ABILITY);
+        if (result != 0)
+        {
+          return 2;
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_PAY_FLASHBACK_COSTS) &&
+           (charge_mana_from_id(player, -1, EVENT_PAY_FLASHBACK_COSTS, id), spell_fizzled != 1))
+  {
+    new_default_test_definition_2022(&this_test, 1, "Select a land card to discard.");
+    result = new_select_a_card_2022(player, player, 4, 0, 3, -1, &this_test);
+    if (result == -1)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    discard_card(player, result);
+    return 1;
+  }
+  return 0;
+}
+
+#endif

@@ -35,7 +35,7 @@ int card_alseid_of_lifes_bounty(int player, int card, event_t event)
       if (result != 0)
       {
         uVar3 = select_a_protection(player);
-        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+        pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                                instance->targets[0].player, instance->targets[0].card, 0, 0,
                                uVar3 | 0x10000000, 0);
       }
@@ -86,7 +86,7 @@ int card_funeral_rites(int player, int card, event_t event)
 int card_kunoros_hound_of_athreos(int player, int card, event_t event)
 {
   check_legend_rule(player, card, event);
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   menace(player, card, event);
   lifelink(player, card, event);
   return 0;
@@ -95,7 +95,7 @@ int card_kunoros_hound_of_athreos(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x235ea20; original cards/theros_beyond_death.c:2481. */
 int card_mire_triton(int player, int card, event_t event)
 {
-  deathtouch(player, card, event);
+  deathtouch_2022(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
@@ -112,7 +112,7 @@ int card_thassas_oracle(int player, int card, event_t event)
   int num_cards;
   int result;
   test_definition_t test;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     num_cards = devotion(player, card, 2, 0);
@@ -273,6 +273,9 @@ int card_nyx_lotus(int player, int card, event_t event)
 int escape(int player, int card, event_t event, int colorless, int black, int blue, int green,
            int red, int white, int num_exile);
 
+static int escape_part_2022(int player, int card, event_t event, int colorless, int black, int blue,
+                            int green, int red, int white, int num_exile);
+
 /* ManalinkEh 2022: 0x235a2e0; original cards/theros_beyond_death.c:4. */
 int escape(int player, int card, event_t event, int colorless, int black, int blue, int green,
            int red, int white, int num_exile)
@@ -283,7 +286,7 @@ int escape(int player, int card, event_t event, int colorless, int black, int bl
   {
     return 0;
   }
-  result = escape(player, card, event, colorless, black, blue, green, red, white, num_exile);
+  result = escape_part_2022(player, card, event, colorless, black, blue, green, red, white, num_exile);
   return result;
 }
 
@@ -615,7 +618,7 @@ int card_elspeth_suns_nemesis(int player, int card, event_t event)
           ptVar5 = instance->targets + iVar3;
           ptVar1 = instance->targets + iVar3;
           iVar3 = iVar3 + 1;
-          pump_until_eot_merge_previous(player, card, ptVar1->player, ptVar5->card, 2, 1);
+          pump_until_eot_merge_previous_2022(player, card, ptVar1->player, ptVar5->card, 2, 1);
         } while (iVar3 < (int)(unsigned int)instance->number_of_targets);
       }
       instance->number_of_targets = '\0';
@@ -980,7 +983,7 @@ int card_soul_guide_lantern(int player, int card, event_t event)
   card_instance_t *pcStack_ec;
   test_definition_t test;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     if ((*graveyard_ptr_mutable[player] == -1) ||
@@ -1281,7 +1284,7 @@ static int daxos_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_02359080:
-    uVar4 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar4 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar4 == 0)
       goto joined_r0x023590a5;
   }
@@ -1317,7 +1320,7 @@ static int daxos_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
     }
-    uVar4 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar4 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar4 == 0)
     {
       return 0;
@@ -1408,7 +1411,7 @@ int card_daxos_blessed_by_the_sun(int player, int card, event_t event)
     }
   }
 LAB_0235bde8:
-  iVar1 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  iVar1 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (0 < iVar1)
   {
     do
@@ -1449,7 +1452,7 @@ static int erebos_thb_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_02359348:
-    iVar3 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    iVar3 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (iVar3 == 0)
       goto joined_r0x02359369;
   }
@@ -1485,7 +1488,7 @@ static int erebos_thb_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
     }
-    iVar3 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    iVar3 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (iVar3 == 0)
     {
       return 0;
@@ -1907,7 +1910,7 @@ int card_the_triumph_of_anax(int player, int card, event_t event)
 
         instance = get_card_instance(player, card);
         result = count_counters(player, card, COUNTER_LORE);
-        pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+        pump_ability_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
                                result, 0, 0x80, 0);
       }
     }
@@ -2339,7 +2342,7 @@ int card_erebos_bleak_hearted(int player, int card, event_t event)
   test_definition_t test;
 
   check_legend_rule(player, card, event);
-  indestructible(player, card, event);
+  indestructible_2022(player, card, event);
   if (event == EVENT_STATIC_EFFECTS)
   {
     if ((card == affected_card) && (player == affected_card_controller))
@@ -2440,7 +2443,7 @@ int card_heliod_sun_crowned(int player, int card, event_t event)
   target_definition_t td;
 
   check_legend_rule(player, card, event);
-  indestructible(player, card, event);
+  indestructible_2022(player, card, event);
   result = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (result != 0)
   {
@@ -2517,7 +2520,7 @@ int card_klothys_god_of_destiny(int player, int card, event_t event)
   test_definition_t test;
 
   check_legend_rule(player, card, event);
-  indestructible(player, card, event);
+  indestructible_2022(player, card, event);
   result = beginning_of_phase(player, card, event, player, card, 0x14);
   if (result != 0)
   {
@@ -2557,7 +2560,7 @@ int card_nylea_keen_eyed(int player, int card, event_t event)
   int result;
 
   check_legend_rule(player, card, event);
-  indestructible(player, card, event);
+  indestructible_2022(player, card, event);
   if (event == EVENT_MODIFY_COST_GLOBAL)
   {
     if ((affected_card_controller == player) &&
@@ -2719,7 +2722,7 @@ int card_purphoros_bronze_blooded(int player, int card, event_t event)
   test_definition_t test;
 
   check_legend_rule(player, card, event);
-  indestructible(player, card, event);
+  indestructible_2022(player, card, event);
   boost_subtype(player, card, event, ~SUBTYPE_INVALID, 0, 0, 0, 4, BCT_CONTROLLER_ONLY);
   if (event != EVENT_ACTIVATE)
   {
@@ -2772,7 +2775,7 @@ int card_thassa_deep_dwelling(int player, int card, event_t event)
   target_definition_t td;
 
   check_legend_rule(player, card, event);
-  indestructible(player, card, event);
+  indestructible_2022(player, card, event);
   if ((((trigger_condition == 0xcd) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (current_turn == player))
@@ -3198,7 +3201,7 @@ static int athreos_effect(int player, int card, event_t event)
     }
     event_00 = EVENT_STATIC_EFFECTS;
   LAB_02358860:
-    iVar3 = resolve_gfp_ability(player, card, event_00, RESOLVE_TRIGGER_MANDATORY);
+    iVar3 = resolve_gfp_ability_2022(player, card, event_00, RESOLVE_TRIGGER_MANDATORY);
     iVar4 = check_status(player, card, 0x10000);
     if (iVar4 != 0)
     {
@@ -3274,7 +3277,7 @@ static int athreos_effect(int player, int card, event_t event)
       goto LAB_02358860;
     }
   LAB_02358981:
-    iVar3 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    iVar3 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     iVar4 = check_status(player, card, 0x10000);
     if (iVar4 != 0)
       goto joined_r0x023589c4;
@@ -3334,7 +3337,7 @@ int card_athreos_shroud_veiled(int player, int card, event_t event)
   target_definition_t td;
 
   check_legend_rule(player, card, event);
-  indestructible(player, card, event);
+  indestructible_2022(player, card, event);
   iVar1 = eot_trigger(player, card, event);
   if ((iVar1 != 0) && (current_turn == player))
   {
@@ -3587,7 +3590,7 @@ int card_haktos_the_unscarred(int player, int card, event_t event)
     if (result != 0)
       goto LAB_0235d815;
   }
-  attack_if_able(player, card, event);
+  attack_if_able_2022(player, card, event);
 LAB_0235d815:
   special_abilities2(player, card, event, SP_KEYWORD2_PROT_MISC);
   if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
@@ -3745,7 +3748,7 @@ int card_nyxbloom_ancient(int player, int card, event_t event)
   else if ((((event == EVENT_COUNT_MANA) && (affected_card_controller == player)) &&
             (result = is_tapped(player, affected_card), result == 0)) &&
            ((result = is_animated_and_sick(affected_card_controller, affected_card),
-             result == 0 && (result = can_produce_mana(affected_card_controller, affected_card),
+             result == 0 && (result = can_produce_mana_2022(affected_card_controller, affected_card),
                              result != 0))))
   {
 
@@ -3764,3 +3767,294 @@ int card_nyxbloom_ancient(int player, int card, event_t event)
   result = global_enchantment(player, card, event);
   return result;
 }
+
+
+/* ManalinkEh 2022: 0x235e100; original cards/theros_beyond_death.c:2212. */
+int card_kiora_bests_the_sea_god(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int card_00;
+
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    token_generation_2022_t token;
+    uint8_t bytes[84];
+  } recovered_stack_token;
+
+  if (event == EVENT_CHAPTER1)
+  {
+    default_token_definition_2022(player, card, 0x495c, &recovered_stack_token.token);
+    recovered_stack_token.token.tou = 8;
+    recovered_stack_token.token.pow = 8;
+    recovered_stack_token.token.s_key_plus = 0x800000;
+    generate_token_2022(&recovered_stack_token.token);
+  }
+  else if (event == EVENT_CHAPTER2)
+  {
+    iVar1 = 1 - player;
+    if (0 < active_cards_count[iVar1])
+    {
+      card_00 = 0;
+      do
+      {
+        instance = in_play(iVar1, card_00);
+        if (instance != NULL)
+        {
+          iVar2 = is_what(iVar1, card_00, 0x47);
+          if (iVar2 != 0)
+          {
+            iVar2 = is_what(iVar1, card_00, 1);
+            if (iVar2 == 0)
+            {
+              effect_frost_titan(player, card, iVar1, card_00);
+            }
+          }
+        }
+        card_00 = card_00 + 1;
+      } while (card_00 < active_cards_count[iVar1]);
+    }
+  }
+  else if (event == EVENT_CHAPTER3)
+  {
+    default_target_definition(player, card, &recovered_stack_token.target, 0x47);
+    recovered_stack_token.target.allowed_controller = 1 - player;
+    recovered_stack_token.target.allow_cancel = 0;
+    iVar1 = can_target(&recovered_stack_token.target);
+    if (iVar1 != 0)
+    {
+      iVar1 = new_pick_target(&recovered_stack_token.target,
+                              "Select target permanent an opponent controls.", 0, 0x80);
+      if (iVar1 != 0)
+      {
+        instance = get_card_instance(player, card);
+        iVar1 = instance->targets[0].card;
+        instance = get_card_instance(player, card);
+        gain_control_permanently(player, instance->targets[0].player, iVar1);
+        instance = get_card_instance(player, card);
+        iVar1 = instance->targets[0].card;
+        instance = get_card_instance(player, card);
+        untap_card(instance->targets[0].player, iVar1);
+      }
+    }
+  }
+  iVar1 = saga(player, card, event, 3);
+  return iVar1;
+}
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 typed consumers and compiler parts. */
+
+/* ManalinkEh 2022: 0x2359940; original cards/theros_beyond_death.c:4. */
+static int escape_part_2022(int player, int card, event_t event, int colorless, int black, int blue,
+                            int green, int red, int white, int num_exile)
+{
+  int32_t *piVar1;
+  card_instance_t *instance;
+  int result;
+  int position;
+  int iid;
+  target_t *ptVar4;
+  test_definition_2022_t this_test;
+  if (event == EVENT_GRAVEYARD_ABILITY)
+  {
+    result = has_mana_multi(player, colorless, black, blue, green, red, white);
+    if ((result != 0) && (result = count_graveyard(player), num_exile < result))
+    {
+      result = get_id(player, card);
+      result = can_legally_play_csvid_now(player, result, EVENT_GRAVEYARD_ABILITY);
+      if (result != 0)
+      {
+        return ((result == 99) - 1 & 0xfffffc00) + 0x2400;
+      }
+      if ((hack_allow_sorcery_if_rules_engine_is_only_effect == 1) && (stack_size == 1))
+      {
+        return 0x2000;
+      }
+    }
+  }
+  else if (event == EVENT_PAY_FLASHBACK_COSTS)
+  {
+    instance = get_card_instance(player, card);
+    new_default_test_definition_2022(&this_test, 0xff, "Select a card to exile for escape.");
+    this_test.id = 0x388;
+    this_test.id_flag = 1;
+    result = charge_mana_multi(player, colorless, black, blue, green, red, white);
+    if (result != 0)
+    {
+      result = instance->targets[3].card;
+      position = validate_target_from_grave_source(player, card, player, 3);
+      if (position == -1)
+      {
+        return -1;
+      }
+      iid = turn_card_in_grave_face_down(player, position);
+      select_multiple_cards_from_graveyard_2022(player, player, -1, 3, &this_test, num_exile,
+                                                instance->targets);
+      result = find_in_graveyard_by_source(player, result, position);
+      turn_card_in_grave_face_up(player, result, iid);
+    }
+    if (spell_fizzled == 1)
+    {
+      return 0;
+    }
+    if (0 < num_exile)
+    {
+      ptVar4 = instance->targets;
+      do
+      {
+        piVar1 = &ptVar4->player;
+        ptVar4 = ptVar4 + 1;
+        rfg_card_from_grave(player, *piVar1);
+      } while (ptVar4 != instance->targets + num_exile);
+    }
+    return 1;
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x235cdd0; original cards/theros_beyond_death.c:1548. */
+int card_ereboss_intervention(int player, int card, event_t event)
+{
+  target_t *ptVar1;
+  card_instance_t *instance;
+  int iVar3;
+  uint32_t uVar4;
+  int grave_id;
+  unsigned int uVar5;
+  int iVar6;
+  target_definition_2022_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    get_card_instance(player, card);
+    iVar3 = generic_spell_2022(player, card, EVENT_CAN_CAST, 4, NULL, NULL, 0, NULL);
+    return iVar3;
+  }
+  if (event != EVENT_CAST_SPELL)
+  {
+    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+    {
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+      default_target_definition_2022(player, card, &td, 2);
+      get_card_instance(player, card);
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td, 2);
+    instance = get_card_instance(player, card);
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      return 0;
+    }
+
+    iVar3 = instance->info_slot;
+    if (instance->eot_toughness == 1)
+    {
+      pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
+                          -iVar3, -iVar3);
+      gain_life(player, iVar3);
+    }
+    else
+    {
+
+      if ((instance->eot_toughness == 2) && (0 < iVar3 * 2))
+      {
+        iVar6 = 0;
+        do
+        {
+          grave_id = validate_target_from_grave_source(
+              player, card, instance->targets[iVar6].player >> 0x10, iVar6);
+          if (grave_id == -1)
+            break;
+          ptVar1 = instance->targets + iVar6;
+
+          iVar6 = iVar6 + 1;
+          rfg_card_from_grave(ptVar1->player >> 0x10, grave_id);
+        } while (iVar6 != iVar3 * 2);
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+  default_target_definition_2022(player, card, &td, 2);
+  instance = get_card_instance(player, card);
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+
+  iVar3 = count_graveyard(player);
+  if (iVar3 != 0)
+  {
+    uVar5 = 1;
+    iVar3 = graveyard_has_shroud(player);
+    if (iVar3 != 0)
+      goto LAB_0235cf67;
+  }
+  iVar3 = count_graveyard(1 - player);
+  uVar5 = 0;
+  if (iVar3 != 0)
+  {
+    iVar3 = graveyard_has_shroud(1 - player);
+    uVar5 = (unsigned int)(iVar3 == 0);
+  }
+LAB_0235cf67:
+  iVar3 = can_target_2022(&td);
+  uVar4 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\016", "\001\014",
+                      "Debuff creature & gain life", iVar3, 5, "Exile cards from graveyards", uVar5,
+                      5, 0, 0, 0, 0);
+  iVar3 = max_x_value;
+  if (uVar4 == 0)
+  {
+    spell_fizzled = 1;
+  }
+  else
+  {
+    if (uVar4 == 1)
+    {
+      generic_spell_2022(player, card, EVENT_CAST_SPELL, 5, &td, "TARGET_CREATURE", 1, NULL);
+      iVar3 = max_x_value;
+    }
+    else if (uVar4 == 2)
+    {
+
+      max_x_value = 9;
+      iVar6 = generic_spell_2022(player, card, EVENT_CAST_SPELL, 4, NULL, NULL, 0, NULL);
+      if (iVar6 != 0)
+      {
+        select_multiple_cards_from_either_graveyard_2022(
+            player, card, SFG_0, 3, 1, NULL, instance->info_slot * 2, instance->targets);
+      }
+    }
+    max_x_value = iVar3;
+    instance->eot_toughness = uVar4;
+  }
+  return 0;
+}
+
+#endif

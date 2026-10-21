@@ -7377,7 +7377,7 @@ int card_kjeldoran_elite_guard(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     result =
-        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+        pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                                instance->targets[0].player, instance->targets[0].card, 2, 2, 0, 0);
     if (result != -1)
     {
@@ -7618,7 +7618,7 @@ int card_phantasmal_mount(int player, int card, event_t event)
     td.preferred_controller = player;
     instance = get_card_instance(player, card);
     if (((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0)) &&
-        (result = pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+        (result = pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                                          instance->targets[0].player, instance->targets[0].card, 1,
                                          1, 0x20, 0),
          result != -1))
@@ -7972,7 +7972,7 @@ int card_kjeldoran_guard(int player, int card, event_t event)
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
       instance = get_card_instance(player, card);
-      result = pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+      result = pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                                       instance->targets[0].player, instance->targets[0].card, 1, 1,
                                       0, 0);
       if (result != -1)
@@ -8214,7 +8214,7 @@ int card_touch_of_vitae(int player, int card, event_t event)
           {
 
             instance = get_card_instance(player, card);
-            pump_ability_until_eot(player, card, instance->targets[0].player,
+            pump_ability_until_eot_2022(player, card, instance->targets[0].player,
                                    instance->targets[0].card, 0, 0, 0, 4);
             result = instance->targets[0].player;
             if (result == player)
@@ -8444,7 +8444,7 @@ int card_forbidden_lore(int player, int card, event_t event)
       {
 
         pcVar4 = get_card_instance(player_00, iVar1);
-        pump_ability_until_eot(pcVar2->parent_controller, pcVar2->parent_card,
+        pump_ability_until_eot_2022(pcVar2->parent_controller, pcVar2->parent_card,
                                pcVar4->targets[0].player, pcVar4->targets[0].card, 2, 1, 0, 0);
       }
     }
@@ -8639,7 +8639,7 @@ int card_goblin_sappers(int player, int card, event_t event)
     iVar3 = create_targetted_legacy_effect(player, card, die_at_end_of_combat,
                                            instance->parent_controller, instance->parent_card);
     alternate_legacy_text(3, player, iVar3);
-    iVar3 = pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+    iVar3 = pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                                    instance->targets[0].player, instance->targets[0].card, 0, 0, 0,
                                    0x10);
     alternate_legacy_text(1, player, iVar3);
@@ -8691,7 +8691,7 @@ int card_halls_of_mist(int player, int card, event_t event)
           return 0;
         }
       }
-      cannot_attack(current_turn, card_00, event);
+      cannot_attack_2022(current_turn, card_00, event);
       card_00 = card_00 + 1;
     } while (card_00 < active_cards_count[current_turn]);
   }
@@ -8851,7 +8851,7 @@ int card_karplusan_giant(int player, int card, event_t event)
   instance = in_play(result, card_00);
   if (instance != NULL)
   {
-    pump_until_eot_merge_previous(result, card_00, result, card_00, 1, 1);
+    pump_until_eot_merge_previous_2022(result, card_00, result, card_00, 1, 1);
   }
 LAB_023fe70d:
   result = generic_activated_ability(player, card, event, 6, 0, 0, 0, 0, 0, 0, 0, &td,
@@ -9200,7 +9200,7 @@ int card_mystic_might(int player, int card, event_t event)
       {
 
         pcVar4 = get_card_instance(player_00, iVar1);
-        pump_ability_until_eot(pcVar2->parent_controller, pcVar2->parent_card,
+        pump_ability_until_eot_2022(pcVar2->parent_controller, pcVar2->parent_card,
                                pcVar4->targets[0].player, pcVar4->targets[0].card, 2, 2, 0, 0);
       }
     }
@@ -9298,7 +9298,7 @@ int card_prismatic_ward(int player, int card, event_t event)
     return 0;
   }
 LAB_02406560:
-  result = vanilla_aura(player, card, event, player);
+  result = vanilla_aura_2022(player, card, event, player);
   return result;
 }
 
@@ -9463,7 +9463,7 @@ int card_total_war(int player, int card, event_t event)
   pcVar1 = in_play(player, card);
   if (((pcVar1 != NULL) &&
        (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar2 == 0)) &&
-      (iVar2 = declare_attackers_trigger(player, card, event, 0, current_turn, -1), iVar2 != 0))
+      (iVar2 = declare_attackers_trigger_2022(player, card, event, 0, current_turn, -1), iVar2 != 0))
   {
 
     pcVar1 = get_card_instance(player, card);
@@ -9571,7 +9571,7 @@ int chaos_moon_legacy_odd(int player, int card, event_t event)
         {
           return 0;
         }
-        result = can_produce_mana(affected_card_controller, affected_card);
+        result = can_produce_mana_2022(affected_card_controller, affected_card);
         if (result == 0)
         {
           return 0;
@@ -9668,7 +9668,7 @@ int card_cloak_of_confusion(int player, int card, event_t event)
     return 0;
   }
 LAB_023f3c38:
-  iVar2 = generic_aura(player, card, event, player, 0, 0, 0, 0, 0, 0, 0);
+  iVar2 = generic_aura_2022(player, card, event, player, 0, 0, 0, 0, 0, 0, 0);
   return iVar2;
 }
 
@@ -9743,7 +9743,7 @@ int card_earthlore(int player, int card, event_t event)
       result = valid_target(&td);
       if (result != 0)
       {
-        pump_until_eot(instance->parent_controller, instance->parent_card,
+        pump_until_eot_2022(instance->parent_controller, instance->parent_card,
                        instance->targets[0].player, instance->targets[0].card, 1, 2);
       }
     }
@@ -10091,7 +10091,7 @@ LAB_02401e4c:
     return 0;
   }
 LAB_02401e18:
-  result = vanilla_aura(player, card, event, 1 - player);
+  result = vanilla_aura_2022(player, card, event, 1 - player);
   return result;
 }
 
@@ -10319,7 +10319,7 @@ int card_seizures(int player, int card, event_t event)
     return 0;
   }
 LAB_02407833:
-  result = disabling_aura(player, card, event);
+  result = disabling_aura_2022(player, card, event);
   return result;
 }
 
@@ -10515,7 +10515,7 @@ int card_fylgja(int player, int card, event_t event)
         {
 
           pcVar3->number_of_targets = '\0';
-          iVar2 = has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
+          iVar2 = has_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 0, 0);
           bVar1 = false;
           if (iVar2 != 0)
           {
@@ -10743,7 +10743,7 @@ int card_arcums_sleigh(int player, int card, event_t event)
   {
     add_state(player, card, 0x10);
     tapped_for_mana_color = -1;
-    pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0,
+    pump_ability_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, 0,
                            0, 0, 8);
   }
   if (event == EVENT_CAN_ACTIVATE)
@@ -10766,7 +10766,7 @@ int card_arcums_sleigh(int player, int card, event_t event)
     }
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
-      pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+      pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                              instance->targets[0].player, instance->targets[0].card, 0, 0, 0, 8);
       return 0;
     }
@@ -11629,3 +11629,30 @@ LAB_02406c90:
   iVar1 = global_enchantment(player, card, event);
   return iVar1;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2409690; original cards/ice_age.c:8890. */
+int card_spectral_shield(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  attached_gets_sp_kw2(player, card, event, SP_KEYWORD2_GRANTED_PROT_MISC);
+  instance = get_card_instance(player, card);
+  if ((((event == EVENT_PROT_MISC) && (instance->damage_target_card == affected_card)) &&
+       (instance->damage_target_player == affected_card_controller)) &&
+      (((unsigned int)event_result >> 24 & 0xff) == '\x05'))
+  {
+    result = is_being_cast(attacking_card_controller, attacking_card);
+    if (result != 0)
+    {
+      event_result = event_result | 1;
+    }
+  }
+  attached_gets_pt(player, card, event, 0, 2);
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+#endif

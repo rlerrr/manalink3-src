@@ -2932,6 +2932,534 @@ int generic_token_2022(int player, int card, event_t event);
 int eternalize(int player, int card, event_t event, card_id_t cid, int x, int b, int u, int g,
                int r, int w);
 
+/* Existing shared no-mana-cost predicate used by the recovered printed-cost test. */
+int has_no_mana_cost(int player, int card);
+
+/* October 2022 token ID/copy APIs; legacy signatures retained. */
+#ifndef SHANDALAR
+void copy_token_2022(int player, int card, int tok_player, int tok_card);
+int generate_token_by_id_2022(int player, int card, int csvid);
+void generate_tokens_by_id_2022(int player, int card, int csvid, int howmany);
+int generate_reserved_token_by_id_2022(int player, int csvid);
+#endif
+
+/* October 2022 extension subtype mutation helpers. */
+#ifndef SHANDALAR
+card_instance_t *update_alter_add_subtype(subtype_t subt, card_instance_t *inst);
+card_instance_t *update_alter_remove_subtype(subtype_t subt, card_instance_t *inst);
+card_instance_t *update_alter_remove_creature_subtypes(card_instance_t *inst);
+#endif
+
+/* Interfaces recovered from October 2022 DWARF. */
+int remove_a_subtype_permanently(int player, int card, int t_player, int t_card, subtype_t subtype);
+void remove_a_subtype(int player, int card, subtype_t subtype);
+
+/* October 2022 targeting initializers; require the separate 84-byte definition. */
+#ifndef SHANDALAR
+int get_protections_from_2022(int player, int card);
+void base_target_definition_2022(int player, int card, target_definition_2022_t *td, int type);
+void default_target_definition_2022(int player, int card, target_definition_2022_t *td, int type);
+void opponent_or_pw_target_definition_2022(int player, int card, target_definition_2022_t *td);
+void counterspell_target_definition_2022(int player, int card, target_definition_2022_t *td,
+                                         int type);
+void counter_activated_target_definition_2022(int player, int card, target_definition_2022_t *td,
+                                              int type);
+void counter_triggered_target_definition_2022(int player, int card, target_definition_2022_t *td,
+                                              int type);
+#endif
+
+/* October 2022 target validation/availability; require the 84-byte definition. */
+#ifndef SHANDALAR
+int real_validate_target_2022(int tgt_player, int tgt_card, char *return_error_str, int who_chooses,
+                              int allowed_controller, int preferred_controller, int zone,
+                              int required_type, int illegal_type, int required_abilities,
+                              int illegal_abilities, int required_color, int illegal_color,
+                              int extra, int required_subtype, int power_requirement,
+                              int toughness_requirement, int special, int required_state,
+                              int illegal_state);
+int real_target_available_2022(int *return_count, int test_damage_target_or_source, int who_chooses,
+                               int allowed_controller, int preferred_controller, int zone,
+                               int required_type, int illegal_type, int required_abilities,
+                               int illegal_abilities, int required_color, int illegal_color,
+                               int extra, int required_subtype, int power_requirement,
+                               int toughness_requirement, int special, int required_state,
+                               int illegal_state);
+int can_target_2022(target_definition_2022_t *td);
+int target_available_2022(int player, int card, target_definition_2022_t *td);
+int would_validate_arbitrary_target_2022(target_definition_2022_t *td, int tgt_player,
+                                         int tgt_card);
+int validate_arbitrary_target_2022(target_definition_2022_t *td, int tgt_player, int tgt_card);
+int would_validate_target_2022(int player, int card, target_definition_2022_t *td,
+                               int target_number);
+int would_valid_target_2022(target_definition_2022_t *td);
+int validate_target_2022(int player, int card, target_definition_2022_t *td, int target_number);
+int valid_target_2022(target_definition_2022_t *td);
+#endif
+
+/* October 2022 selection/picking APIs; require the 84-byte definition. */
+#ifndef SHANDALAR
+int real_select_target_2022(int who_chooses, int allowed_controller, int preferred_controller,
+                            int zone, int required_type, int illegal_type, int required_abilities,
+                            int illegal_abilities, int required_color, int illegal_color, int extra,
+                            int required_subtype, int power_requirement, int toughness_requirement,
+                            int special, int required_state, int illegal_state, const char *prompt,
+                            int allow_cancel, target_t *ret_tgt);
+int pick_next_target_noload_arbitrary_2022(target_definition_2022_t *td, const char *prompt,
+                                           int player, int card);
+int pick_next_target_arbitrary_2022(target_definition_2022_t *td, const char *prompt, int player,
+                                    int card);
+int choose_default_target_2022(int player, int card, target_definition_2022_t *td);
+int select_target_2022(int player, int card, target_definition_2022_t *td, const char *prompt,
+                       target_t *ret_location);
+int pick_target_2022(target_definition_2022_t *td, const char *prompt);
+int new_pick_target_2022(target_definition_2022_t *td, const char *prompt, int ret_location,
+                         int mode);
+int pick_next_target_noload_2022(target_definition_2022_t *td, const char *prompt);
+int pick_up_to_n_targets_noload_2022(target_definition_2022_t *td, const char *prompt, int num);
+int pick_up_to_n_targets_2022(target_definition_2022_t *td, const char *prompt, int num);
+int mark_up_to_n_targets_noload_2022(target_definition_2022_t *td, const char *prompt, int num,
+                                     char (*marked)[151]);
+int pick_player_duh_2022(int player, int card, int preferred_controller, int allow_cancel);
+int target_opponent_2022(int player, int card);
+int opponent_is_valid_target_2022(int player, int card);
+int autoselect_target_2022(int player, int card, int i, int j, int k, int who_chooses,
+                           int allowed_controller, int preferred_controller, int zone,
+                           int required_type, int illegal_type, int required_abilities,
+                           int illegal_abilities, int required_color, int illegal_color, int extra,
+                           int required_subtype, int power_requirement, int toughness_requirement,
+                           int special, int required_state, int illegal_state, int flags,
+                           int prompt, int allow_cancel, int ret_location);
+#endif
+
+/* October 2022 test constructors and matchers; require the 216-byte definition. */
+#ifndef SHANDALAR
+int get_test_score_2022(int type, int flag1, int subtype, int flag2, int color, int flag3, int id,
+                        int flag4, int cc, int flag5);
+int new_get_test_score_2022(test_definition_2022_t *this_test);
+void new_default_test_definition_2022(test_definition_2022_t *this_test, int type, const char *msg);
+void default_test_definition_2022(test_definition_2022_t *this_test, int type);
+int new_make_test_in_play_2022(int player, int to_examine, int test_type,
+                               test_definition_2022_t *this_test);
+int make_test_in_play_2022(int player, int to_examine, int test_type, int type, int flag1,
+                           int subtype, int flag2, int color, int flag3, int id, int flag4, int cc,
+                           int flag5);
+int new_make_test_2022(int player, int to_examine, int test_type,
+                       test_definition_2022_t *this_test);
+int make_test_2022(int player, int to_examine, int test_type, int type, int flag1, int subtype,
+                   int flag2, int color, int flag3, int id, int flag4, int cc, int flag5);
+#endif
+
+/* October 2022 graveyard/zone and counterspell consumers. */
+#ifndef SHANDALAR
+extern int32_t hack_show_deck_force_expansion;
+extern int hack_allow_sorcery_if_rules_engine_is_only_effect;
+int get_average_value_from_zone_2022(int targ_player, int *s_location, int zone_count,
+                                     test_definition_2022_t *this_test, int my_test, int mode);
+int select_card_from_zone_2022(int player, int targ_player, int *s_location, int zone_count,
+                               int must_select, int ai_selection_mode, int test_type,
+                               test_definition_2022_t *this_test);
+int get_tutoring_denial_2022(int player);
+int new_select_a_card_2022(int player, int targ_player, int search_location, int must_select,
+                           int ai_selection_mode, int test_type, test_definition_2022_t *this_test);
+int select_a_card_2022(int player, int targ_player, int search_location, int must_select,
+                       int ai_selection_mode, int test_type, int type, int flag1, int subtype,
+                       int flag2, int color, int flag3, int id, int flag4, int cc, int flag5);
+int select_multiple_cards_from_graveyard_2022(int player, int targ_player, int must_select_all,
+                                              int ai_selection_mode,
+                                              test_definition_2022_t *this_test, int max_targets,
+                                              target_t *ret_location);
+int select_multiple_cards_from_graveyard_to_array_2022(int player, int targ_player,
+                                                       int must_select_all, int ai_selection_mode,
+                                                       test_definition_2022_t *this_test,
+                                                       int max_targets, target_t *ret_location);
+int new_special_count_grave_2022(int player, test_definition_2022_t *this_test);
+int new_select_target_from_grave_2022(int player, int card, int t_player, select_grave_t mode,
+                                      int ai_mode, test_definition_2022_t *this_test,
+                                      int ret_location);
+int select_target_from_grave_source_2022(int player, int card, int t_player, select_grave_t mode,
+                                         int ai_mode, test_definition_2022_t *this_test,
+                                         int ret_location);
+int select_target_from_either_grave_2022(int player, int card, select_grave_t mode,
+                                         int ai_mode_own_graveyard, int ai_mode_opponent_graveyard,
+                                         test_definition_2022_t *test, int ret_location_graveyard,
+                                         int ret_location_card);
+int counterspell_validate_2022(int player, int card, target_definition_2022_t *td, int target_num);
+int counterspell_2022(int player, int card, event_t event, target_definition_2022_t *td,
+                      int target_num);
+int counterspell_resolve_unless_pay_x_2022(int player, int card, target_definition_2022_t *td,
+                                           int target_num, int x);
+#endif
+
+/* October 2022 sacrifice family; native flag and aggregate layouts. */
+#ifndef SHANDALAR
+int can_sacrifice_this_as_cost_2022(int player, int card);
+int new_can_sacrifice_as_cost_2022(int player, int card, test_definition_2022_t *test);
+int max_can_sacrifice_as_cost_2022(int player, int card, test_definition_2022_t *test);
+int can_sacrifice_as_cost_2022(int player, int amount, int type, int flag1, int subtype, int flag2,
+                               int color, int flag3, int id, int flag4, int cc, int flag5);
+int can_sacrifice_type_as_cost_2022(int player, int amount, type_t type);
+int can_cause_sacrifice_2022(int player, int t_player);
+int new_can_sacrifice_2022(int player, int card, int t_player, test_definition_2022_t *test);
+int can_sacrifice_2022(int player, int t_player, int amount, type_t type, subtype_t subtype);
+int is_nice_creature_to_sacrifice_2022(int player, int card);
+int get_best_permanent_for_sacrifice_2022(int player, int type);
+int new_get_special_permanent_for_sacrifice_2022(int player, int card,
+                                                 test_definition_2022_t *test);
+int pick_creature_for_sacrifice_2022(int player, int card, int cannot_cancel);
+int pick_permanent_for_sacrifice_2022(int player, int card, int type, int cannot_cancel);
+int pick_special_permanent_for_sacrifice_2022(int player, int card, int cannot_cancel, int type,
+                                              int flag1, int subtype, int flag2, int color,
+                                              int flag3, int id, int flag4, int cc, int flag5);
+int new_sacrifice_2022(int player, int card, int t_player, sacrifice_2022_t options,
+                       test_definition_2022_t *test);
+int mark_sacrifice_2022(int player, int card, int t_player, sacrifice_2022_t options,
+                        test_definition_2022_t *test, char *marked_for_sacrifice);
+int sacrifice_2022(int player, int card, int t_player, int cannot_cancel, int type, int flag1,
+                   int subtype, int flag2, int color, int flag3, int id, int flag4, int cc,
+                   int flag5);
+int controller_sacrifices_a_permanent_2022(int player, int card, int req_type,
+                                           sacrifice_2022_t options);
+int player_sacrifices_a_permanent_2022(int src_player, int src_card, int t_player, int req_type,
+                                       sacrifice_2022_t options);
+int player_sacrifices_a_hacked_land_2022(int src_player, int src_card, int t_player,
+                                         subtype_t land_subtype, sacrifice_2022_t options);
+int impose_sacrifice_2022(int player, int card, int t_player, int amount, int type, int flag1,
+                          int subtype, int flag2, int color, int flag3, int id, int flag4, int cc,
+                          int flag5);
+void controller_sacrifices_a_creature_2022(int player, int card);
+void player_sacrifices_a_creature_2022(int s_player, int s_card, int t_player);
+int prevent_damage_sacrificing_a_creature_2022(int player, int card, event_t event, int mode);
+int check_battlefield_for_sacrifice_2022(int player, int type, int flag1, int subtype, int flag2,
+                                         int color, int flag3, int id, int flag4, int cc,
+                                         int flag5);
+int can_activate_altar_basic_2022(int player, int card, int act_mode, int type);
+int altar_basic_activation_2022(int player, int card, int act_mode, int type);
+int altar_basic_2022(int player, int card, event_t event, int act_mode, int type);
+int altar_extended_2022(int player, int card, event_t event, int act_mode, int type, int flag1,
+                        int subtype, int flag2, int color, int flag3, int id, int flag4, int cmc,
+                        int flag5);
+int sacrifice_and_report_value_2022(int player, int card, int t_player, int flags,
+                                    test_definition_2022_t *test);
+#endif
+
+/* October 2022 generic spell and deck display APIs. */
+#ifndef SHANDALAR
+int generic_spell_2022(int player, int card, event_t event, int flags, target_definition_2022_t *td,
+                       const char *prompt, int max_targets, test_definition_2022_t *this_test);
+int show_deck_2022(int player, const int *deck, int num_cards, const char *prompt,
+                   int suppress_done_label, int done_label);
+#endif
+
+/* Interfaces recovered from October 2022 DWARF. */
+#ifndef SHANDALAR
+int aura(int player, int card, event_t event, target_definition_2022_t *td, char *prompt);
+int aura_literal_prompt(int player, int card, event_t event, target_definition_2022_t *td,
+                        char *prompt);
+#endif
+int aura_pref_controller(int player, int card, event_t event, int pref_controller, char *prompt);
+
+/* October 2022 battlefield tests and split ninjutsu helpers. */
+#ifndef SHANDALAR
+int check_battlefield_for_special_card_2022(int player, int card, int t_player, int mode,
+                                            test_definition_2022_t *this_test);
+int ninjutsu_custom_target_2022(int player, int card, event_t event, int cless, int black, int blue,
+                                int green, int red, int white, target_definition_2022_t *td,
+                                int csvid);
+int ninjutsu_2022(int player, int card, event_t event, int cless, int black, int blue, int green,
+                  int red, int white, int csvid);
+#endif
+
+/* October 2022 Aura targeting and attachment APIs. */
+#ifndef SHANDALAR
+int attach_aura_to_target_2022(int aura_player, int aura_card, event_t event, int t_player,
+                               int t_card);
+int aura_attached_to_me_2022(int player, int card, event_t event, resolve_trigger_t trigger_mode,
+                             test_definition_2022_t *test2);
+int targeted_aura_2022(int player, int card, event_t event, target_definition_2022_t *td,
+                       char *prompt);
+int targeted_aura_custom_prompt_2022(int player, int card, event_t event,
+                                     target_definition_2022_t *td, char *prompt);
+int disabling_targeted_aura_2022(int player, int card, event_t event, target_definition_2022_t *td,
+                                 char *prompt, int mode);
+int vanilla_aura_2022(int player, int card, event_t event, int pref_controller);
+int disabling_aura_2022(int player, int card, int event);
+int aura_with_variable_pt_boost_depending_on_condition_2022(int player, int card, event_t event,
+                                                            target_definition_2022_t *td,
+                                                            test_definition_2022_t *this_test,
+                                                            int pow, int tou, int pow2, int tou2);
+void put_into_play_aura_attached_to_target_2022(int aura_player, int aura_card, int t_player,
+                                                int t_card);
+int gain_control_and_attach_as_aura_2022(int player, int card, event_t event, int t_player,
+                                         int t_card);
+void end_of_stealing_aura_effect_2022(int player, int card);
+int generic_stealing_aura_2022(int player, int card, event_t event, target_definition_2022_t *td,
+                               char *prompt);
+void when_enchanted_permanent_dies_return_aura_to_hand_2022(int player, int card, event_t event);
+void cannot_be_enchanted_granted_2022(int granting_player, int granting_card, event_t event,
+                                      int t_player, int t_card);
+void cannot_be_enchanted_2022(int player, int card, event_t event);
+int enchant_player_2022(int player, int card, event_t event, target_definition_2022_t *td);
+#endif
+
+/* October 2022 ability writers and Aura pump APIs. */
+#ifndef SHANDALAR
+void default_pump_ability_definition_2022(int player, int card, pump_ability_2022_t *pump, int pow,
+                                          int tou, int key, int skey);
+void deathtouch_2022(int player, int card, event_t event);
+void hexproof_2022(int player, int card, event_t event);
+void indestructible_2022(int player, int card, event_t event);
+int attack_if_able_2022(int player, int card, event_t event);
+int block_if_able_2022(int player, int card, event_t event);
+void vigilance_2022(int player, int card, event_t event);
+void granted_flanking_2022(int s_player, int s_card, int t_player, int t_card, event_t event);
+void special_abilities_2022(int player, int card, event_t event, int sp_abilities,
+                            int source_player, int source_card);
+void pump_attached_2022(int player, int card, event_t event, pump_ability_2022_t *ability_mod);
+int generic_aura_2022(int player, int card, event_t event, int pref_controller, int p_plus,
+                      int t_plus, int k_plus, int k_special, int subtype, int clr, int flags);
+int generic_animating_aura_2022(int player, int card, event_t event, target_definition_2022_t *td,
+                                char *prompt, int pow, int tou, int key, int s_key);
+int generic_animating_aura_custom_prompt_2022(int player, int card, event_t event,
+                                              target_definition_2022_t *td, char *prompt, int pow,
+                                              int tou, int key, int s_key);
+int generic_animating_aura_with_added_subtype_2022(int player, int card, event_t event,
+                                                   target_definition_2022_t *td, char *prompt,
+                                                   int pow, int tou, int key, int s_key,
+                                                   subtype_t subtype);
+#endif
+
+/* Interfaces recovered from October 2022 DWARF. */
+void ability_must_block_me(int player, int card, event_t event, int ability, char *prompt);
+
+/* October 2022 pump engine and cleanup APIs. */
+#ifndef SHANDALAR
+void get_sleighted_hacked_suppressed_ability_2022(int player, int card, int t_player,
+                                                  int *p_ability, int *p_sp_ability);
+int pump_until_eot_2022(int player, int card, int t_player, int t_card, int power, int toughness);
+int pump_until_eot_merge_previous_2022(int player, int card, int t_player, int t_card, int power,
+                                       int toughness);
+int pump_ability_2022(int player, int card, int t_player, int t_card, pump_ability_2022_t *pump);
+int pump_ability_until_eot_2022(int player, int card, int t_player, int t_card, int power,
+                                int toughness, int ability, int sp_ability);
+int can_block_additional_until_eot_2022(int player, int card, int t_player, int t_card,
+                                        int num_additional);
+int pump_ability_until_eot_no_repeat_2022(int player, int card, int t_player, int t_card,
+                                          int ability, int sp_ability);
+void pump_ability_by_test_2022(int player, int card, int t_player, pump_ability_2022_t *pump,
+                               test_definition_2022_t *this_test);
+void pump_creatures_until_eot_merge_pt_alternate_legacy_text_2022(int player, int card,
+                                                                  int t_player, int power,
+                                                                  int toughness,
+                                                                  test_definition_2022_t *this_test,
+                                                                  int alt_text_number);
+void pump_creatures_until_eot_merge_pt_2022(int player, int card, int t_player, int power,
+                                            int toughness, test_definition_2022_t *this_test);
+void pump_creatures_until_eot_2022(int player, int card, int t_player,
+                                   int alternate_legacy_text_number, int power, int toughness,
+                                   int ability, int sp_ability, test_definition_2022_t *this_test);
+int pump_subtype_until_eot_2022(int player, int card, int t_player, int subtype, int power,
+                                int toughness, int ability, int sp_ability);
+void pump_color_until_eot_2022(int player, int card, int t_player, int clr, int power,
+                               int toughness, int ability, int sp_ability);
+void pump_creatures_until_eot_no_repeat_2022(int player, int card, int t_player,
+                                             int alternate_legacy_text_number, int ability,
+                                             int sp_ability, test_definition_2022_t *this_test);
+int vanilla_pump_2022(int player, int card, event_t event, target_definition_2022_t *td, int power,
+                      int toughness, int keyword, int sp_keyword);
+int vanilla_instant_pump_2022(int player, int card, event_t event, int allowed_controller,
+                              int preferred_controller, int power, int toughness, int keyword,
+                              int sp_keyword);
+int legacy_effect_pump_ability_until_eot_2022(int player, int card, event_t event);
+int cannot_attack_2022(int player, int card, event_t event);
+int humiliate_2022(int src_player, int src_card, int t_player, int t_card, int mode);
+void disable_all_activated_abilities_2022(int player, int card, int mode);
+void disable_nonmana_activated_abilities_2022(int player, int card, int mode);
+int humiliate_and_set_pt_abilities_2022(int player, int card, int t_player, int t_card, int mode,
+                                        test_definition_2022_t *hc);
+int humility_legacy_2022(int player, int card, event_t event);
+void spirit_link_effect_2022(int player, int card, event_t event, int who_gains);
+void force_a_subtype_2022(int player, int card, subtype_t subtype);
+void add_a_subtype_2022(int player, int card, subtype_t subtype);
+#endif
+
+/* October 2022 activated-ability core APIs. */
+#ifndef SHANDALAR
+extern int pay_mana_xbugrwaU[8];
+int granted_generic_activated_ability_2022(int granting_player, int granting_card,
+                                           int granted_to_player, int granted_to_card,
+                                           event_t event, int mode, int cless, int black, int blue,
+                                           int green, int red, int white, uint32_t variable_costs,
+                                           target_definition_2022_t *td, char *prompt);
+int generic_activated_ability_2022(int player, int card, event_t event, int mode, int cless,
+                                   int black, int blue, int green, int red, int white,
+                                   uint32_t variable_costs, target_definition_2022_t *td,
+                                   char *prompt);
+int attachment_granting_activated_ability_2022(int player, int card, event_t event, int mode,
+                                               int cless, int black, int blue, int green, int red,
+                                               int white, uint32_t variable_costs,
+                                               target_definition_2022_t *td, char *prompt);
+int equipment_granting_activated_ability_2022(int player, int card, event_t event,
+                                              char *dialog_option, int equip_cost, int mode,
+                                              int cless, int black, int blue, int green, int red,
+                                              int white, uint32_t variable_costs,
+                                              target_definition_2022_t *td, char *prompt);
+int has_mana_for_activated_ability_2022(int player, int card, int cless, int black, int blue,
+                                        int green, int red, int white);
+int charge_mana_for_activated_ability_2022(int player, int card, int cless, int black, int blue,
+                                           int green, int red, int white);
+int charge_mana_for_activated_ability_while_resolving_2022(int player, int card, event_t event,
+                                                           int colorless, int black, int blue,
+                                                           int green, int red, int white);
+int can_use_activated_abilities_2022(int player, int card);
+int can_use_activated_abilities_by_instance_2022(card_instance_t *instance);
+int can_produce_mana_2022(int player, int card);
+int vanilla_creature_pumper_2022(int player, int card, event_t event, int req_cless, int req_black,
+                                 int req_blue, int req_green, int req_red, int req_white, int flags,
+                                 int pow, int tou, int key, int s_key,
+                                 target_definition_2022_t *td);
+int generic_shade_amt_can_pump_2022(int player, int card, int pump, int life_to_pay, int cless,
+                                    int black, int blue, int green, int red, int white, int limit);
+int get_cost_mod_for_activated_abilities_2022(int player, int card, int orig_cost, int black,
+                                              int blue, int green, int red, int white);
+#endif
+
+/* Interfaces recovered from October 2022 DWARF. */
+int charge_mana_from_id_with_cost_mod(int player, int card, event_t event, int csvid, int cost_mod);
+int uvilda_legacy(int player, int card, event_t event);
+
+/* October 2022 specialized activation cost APIs. */
+#ifndef SHANDALAR
+int generic_activated_ability_with_sacrifice_as_cost_2022(
+    int player, int card, event_t event, generic_activated_ability_flags_t flags, int cless,
+    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_2022_t *td,
+    char *prompt, type_t type, test_definition_2022_t *test,
+    sacrifice_and_report_value_flags_t sac_flags);
+int generic_activated_ability_with_target_in_grave_2022(
+    int player, int card, event_t event, generic_activated_ability_flags_t flags, int cless,
+    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_2022_t *td,
+    char *prompt, type_t type, test_definition_2022_t *test, int gs_flags_for_grave_recycler);
+int generic_activated_ability_with_tapsubtype_as_cost_2022(
+    int player, int card, event_t event, generic_activated_ability_flags_t flags, int cless,
+    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_2022_t *td,
+    char *prompt, target_definition_2022_t *td_subtype, int req_tap);
+int select_multiple_cards_from_either_graveyard_2022(int player, int card, select_grave_t mode,
+                                                     int ai_mode_own_graveyard,
+                                                     int ai_mode_opponent_graveyard,
+                                                     test_definition_2022_t *this_test,
+                                                     int max_targets, target_t *ret_location);
+#endif
+
+/* October 2022 attacker and keyword APIs. */
+#ifndef SHANDALAR
+void store_attackers_2022(int player, int card, event_t event, declare_attackers_trigger_t mode,
+                          int attacker_player, int attacker_card, test_definition_2022_t *test);
+int resolve_declare_attackers_trigger_2022(int player, int card, event_t event,
+                                           declare_attackers_trigger_t mode);
+int declare_attackers_trigger_2022(int player, int card, event_t event,
+                                   declare_attackers_trigger_t mode, int attacker_player,
+                                   int attacker_card);
+int declare_attackers_trigger_test_2022(int player, int card, event_t event,
+                                        declare_attackers_trigger_t mode, int attacker_player,
+                                        int attacker_card, test_definition_2022_t *test);
+int when_attacks_pump_self_2022(int player, int card, event_t event, int power, int toughness);
+void support_2022(int player, int card, int max_targets);
+void battle_cry_2022(int player, int card, event_t event);
+void renown_2022(int player, int card, event_t event, int n);
+int retrace_2022(int player, int card, event_t event, int id);
+#endif
+
+/* October 2022 entry-trigger APIs. */
+#ifndef SHANDALAR
+void etb_ability_2022(int player, int card, event_t event, resolve_trigger_t trigger_mode);
+void etb_ability_global_2022(int controller_of_trigger, event_t event, int trigger_mode,
+                             type_t type, test_definition_2022_t *test, int triggering_player,
+                             int triggering_card);
+void evolve_2022(int player, int card, event_t event);
+int exploit_2022(int player, int card, event_t event);
+#endif
+
+/* October 2022 Level Up and Buddy APIs. */
+#ifndef SHANDALAR
+int level_up_2022(int player, int card, event_t event, int x, int b, int u, int g, int r, int w,
+                  int l1power, int l1toughness, int l2, int l2power, int l2toughness,
+                  keyword_t l2key, sp_keyword_t l2sp, int l3, int l3power, int l3toughness,
+                  keyword_t l3key, sp_keyword_t l3sp);
+int buddy_creature_2022(int player, int card, event_t event, subtype_t type, int cless);
+#endif
+
+/* Interfaces recovered from October 2022 DWARF. */
+#ifndef SHANDALAR
+int deflect_away_from_me(int player, int card, event_t event, int mode, int cless, int black,
+                         int blue, int green, int red, int white, uint32_t variable_costs,
+                         target_definition_2022_t *td, int must_be_creature);
+#endif
+
+/* October 2022 protection-Aura guard API. */
+#ifndef SHANDALAR
+int this_effect_doesnt_remove_this(int player, int card, event_t event);
+#endif
+
+/* October 2022 Phyrexian cost APIs. */
+#ifndef SHANDALAR
+extern int charge_mana_called_from_pay_phyrexian_mana;
+int has_phyrexian_mana_2022(int player, int cless, int black, int blue, int green, int red,
+                            int white, int clred_artifact);
+int has_phyrexian_mana_for_activated_ability_2022(int player, int card, int cless, int black,
+                                                  int blue, int green, int red, int white);
+int charge_phyrexian_mana_2022(int player, int card, event_t event, int cless, int black, int blue,
+                               int green, int red, int white, int clred_artifact);
+int charge_phyrexian_mana_for_activated_ability_2022(int player, int card, int cless, int black,
+                                                     int blue, int green, int red, int white);
+int phyrexian_casting_costs_2022(int player, int card, event_t event, int cless, int black,
+                                 int blue, int green, int red, int white, int clred_artifact);
+#endif
+
+/* October 2022 native spell-trigger API. */
+#ifndef SHANDALAR
+void sp_ability_trigger_2022(int controller_of_trigger, event_t event, int trigger_mode,
+                             type_t type, test_definition_2022_t *test, int triggering_player,
+                             int triggering_card);
+#endif
+
+/* October 2022 counter, legend and delayed-return helpers. */
+#ifndef SHANDALAR
+void increment_all_counters(int src_player, int src_card, int t_player, int t_card);
+void disable_legend_rule(int player, int card, event_t event, int t_player);
+int bounce_at_eot(int player, int card, event_t event);
+#endif
+
+/* October 2022 death-trigger APIs. */
+#ifndef SHANDALAR
+void count_for_gfp_ability_and_store_values_extra_2022(int player, int card, int event,
+                                                       int t_player, int type,
+                                                       CardPairFunction extra_check, int mode,
+                                                       int storage_location);
+void count_for_gfp_ability_and_store_values_2022(int player, int card, int event, int t_player,
+                                                 int type, test_definition_2022_t *this_test,
+                                                 int mode, int storage_location);
+void count_for_gfp_ability_2022(int player, int card, int event, int t_player, int type,
+                                test_definition_2022_t *this_test);
+int resolve_gfp_ability_2022(int player, int card, event_t event, resolve_trigger_t trig_mode);
+#endif
+
+/* October 2022 action and copy APIs. */
+#ifndef SHANDALAR
+int counter_number_2022(int player, int card, counter_t type, int number);
+void receive_network_packet_2022(void);
+void send_network_packet_2022(void);
+int action_on_card_2022(int player, int card, int t_player, int t_card, actions_2022_t raw_action);
+int new_manipulate_all_2022(int player, int card, int t_player, test_definition_2022_t *this_test,
+                            actions_2022_t raw_action);
+int manipulate_all_2022(int player, int card, int t_player, int type, int flag1, int subtype,
+                        int flag2, int color, int flag3, int id, int flag4, int cc, int flag5,
+                        actions_2022_t action);
+int get_random_permanent_2022(int player, test_definition_2022_t *this_test);
+void shapeshift_all_2022(int src_player, int src_card, int t_player, test_definition_2022_t *test,
+                         int turn_into_player, int turn_into_card, int mode);
+int enters_the_battlefield_as_copy_of_any_2022(int player, int card, event_t event,
+                                               target_definition_2022_t *td, char *prompt);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

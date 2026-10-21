@@ -117,7 +117,7 @@ int card_cavalier_of_flame(int player, int card, event_t event)
   int result;
   int card_00;
   test_definition_t test;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     new_default_test_definition(&test, 0xff, "Select a card to discard.");
@@ -182,7 +182,7 @@ int card_cavalier_of_night(int player, int card, event_t event)
   test_definition_t test;
   lifelink(player, card, event);
   result = duh_mode(player);
-  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_ETB)
   {
     new_default_test_definition(&test, 2, "Select another creature to sacrifice.");
@@ -232,7 +232,7 @@ int card_cavalier_of_thorns(int player, int card, event_t event)
 {
   int result;
   test_definition_t test;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     reveal_top_cards_of_library_and_choose_type(player, card, player, 5, 1, TUTOR_PLAY_TAPPED, 1,
@@ -332,7 +332,7 @@ int card_golos_tireless_pilgrim(int player, int card, event_t event)
   test_definition_t test;
   check_legend_rule(player, card, event);
   result = duh_mode(player);
-  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_ETB)
   {
     new_default_test_definition(&test, 1, "Choose a land card.");
@@ -374,7 +374,7 @@ LAB_02397166:
 int card_gorging_vulture(int player, int card, event_t event)
 {
   int source_csvid;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -388,7 +388,7 @@ int card_gorging_vulture(int player, int card, event_t event)
 int card_infuriate(int player, int card, event_t event)
 {
   int result;
-  result = vanilla_instant_pump(player, card, event, 2, player, 3, 2, 0, 0);
+  result = vanilla_instant_pump_2022(player, card, event, 2, player, 3, 2, 0, 0);
   return result;
 }
 
@@ -610,7 +610,7 @@ static char *is_legendary_by_iid(int who_chooses, int player, int card)
 int card_tomebound_lich(int player, int card, event_t event)
 {
   int result;
-  deathtouch(player, card, event);
+  deathtouch_2022(player, card, event);
   lifelink(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if ((event != EVENT_ETB) &&
@@ -648,7 +648,7 @@ int card_vilis_broker_of_blood(int player, int card, event_t event)
     default_target_definition(player, card, &td, 2);
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
-      pump_until_eot_merge_previous(player, instance->parent_card, instance->targets[0].player,
+      pump_until_eot_merge_previous_2022(player, instance->parent_card, instance->targets[0].player,
                                     instance->targets[0].card, -1, -1);
     }
   }
@@ -762,7 +762,7 @@ int card_agent_of_treachery(int player, int card, event_t event)
   int iVar4;
   target_definition_t td;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     default_target_definition(player, card, &td, 0x47);
@@ -1130,7 +1130,7 @@ static int moldervine_reclamation_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_023943c4:
-    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
       goto joined_r0x023943ed;
   }
@@ -1165,7 +1165,7 @@ static int moldervine_reclamation_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability_and_store_values(player, card, 0x77, player, 2, NULL, 0, 0);
     }
-    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
     {
       return 0;
@@ -1230,7 +1230,7 @@ int card_moldervine_reclamation(int player, int card, event_t event)
   }
 LAB_023980ea:
   count_for_gfp_ability_and_store_values(player, card, event, player, 2, NULL, 0, 0);
-  uVar1 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  uVar1 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if ((uVar1 != 0) && (instance = get_card_instance(player, card), instance->kill_code == '\0'))
   {
 
@@ -1396,7 +1396,7 @@ LAB_023996a3:
       iVar8 = 4;
       iVar7 = 0;
     }
-    pump_ability_until_eot_no_repeat(player_00, card_00, player_00, card_00, iVar7, iVar8);
+    pump_ability_until_eot_no_repeat_2022(player_00, card_00, player_00, card_00, iVar7, iVar8);
   }
   return 0;
 }
@@ -1492,7 +1492,7 @@ int card_knight_of_the_ebon_legion(int player, int card, event_t event)
     {
 
       instance = get_card_instance(player, card);
-      pump_ability_until_eot(player, card, instance->parent_controller, instance->parent_card, 3, 3,
+      pump_ability_until_eot_2022(player, card, instance->parent_controller, instance->parent_card, 3, 3,
                              0, 0x200);
     }
   }
@@ -1641,7 +1641,7 @@ int card_omnath_locus_of_the_roil(int player, int card, event_t event)
   target_definition_t td;
 
   check_legend_rule(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   landfall(player, card, event);
   if ((event == EVENT_ETB) && (trigger_cause_controller == player))
   {
@@ -1773,7 +1773,7 @@ int card_sorin_imperious_bloodlord(int player, int card, event_t event)
       result = valid_target(ptStack_194);
       if (result != 0)
       {
-        pump_ability_until_eot_no_repeat(instance->parent_controller, instance->parent_card,
+        pump_ability_until_eot_no_repeat_2022(instance->parent_controller, instance->parent_card,
                                          instance->targets[0].player, instance->targets[0].card, 0,
                                          0x202);
         result =
@@ -1819,7 +1819,7 @@ int card_voracious_hydra(int player, int card, event_t event)
 
   if (event != EVENT_CAST_SPELL)
   {
-    etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (event == EVENT_ETB)
     {
       default_target_definition(player, card, &td, 2);
@@ -1864,7 +1864,7 @@ int card_voracious_hydra(int player, int card, event_t event)
                                            instance->info_slot);
     }
   }
-  etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
   return 0;
 }
 
@@ -1893,7 +1893,7 @@ int card_chandra_novice_pyromancer(int player, int card, event_t event)
       instance->number_of_targets = '\0';
       instance->info_slot = 0;
       iVar2 = can_target(&td);
-      iVar3 = can_produce_mana(player, card);
+      iVar3 = can_produce_mana_2022(player, card);
       iVar4 = count_subtype(player, 2, 0x3a);
       iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Pump elementals",
                           1, iVar4, 1, "Add mana", iVar3, 2, 0xffffffff, "Deal 2 damage", iVar2, 2,
@@ -2038,7 +2038,7 @@ int card_leyline_of_abundance(int player, int card, event_t event)
       {
         return 0;
       }
-      result = can_produce_mana(affected_card_controller, affected_card);
+      result = can_produce_mana_2022(affected_card_controller, affected_card);
       if (result == 0)
       {
         return 0;
@@ -2366,7 +2366,7 @@ int card_leyline_of_combustion(int player, int card, event_t event)
 int card_yarok_the_desecrated(int player, int card, event_t event)
 {
   check_legend_rule(player, card, event);
-  deathtouch(player, card, event);
+  deathtouch_2022(player, card, event);
   lifelink(player, card, event);
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -2390,7 +2390,7 @@ int card_kaalia_zenith_seeker(int player, int card, event_t event)
   test_definition_t test;
 
   check_legend_rule(player, card, event);
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if ((event == EVENT_ETB) && (*deck_ptr[player] != -1))
   {
@@ -2662,3 +2662,17 @@ LAB_0239a381:
   iVar1 = basic_spell(player, card, event);
   return iVar1;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2394370; original cards/m20.c:591. */
+static int can_cast_this(int iid, int unused, int player, int card)
+{
+  int result;
+
+  result = has_mana_to_cast_iid(player, EVENT_CAN_CAST, iid);
+  return result;
+}
+
+#endif

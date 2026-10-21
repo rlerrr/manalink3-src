@@ -777,7 +777,7 @@ int can_autotap(int player, int card, autotap_t autotap_flags)
         }
         uVar4 = cards_data[iVar3].extra_ability;
       }
-      if (((((uVar4 & 0x10000) == 0) && (iVar3 = can_produce_mana(player, card), iVar3 != 0)) &&
+      if (((((uVar4 & 0x10000) == 0) && (iVar3 = can_produce_mana_2022(player, card), iVar3 != 0)) &&
            (((autotap_flags & AUTOTAP_NO_BASIC_LANDS) == AUTOTAP_0 ||
              ((iVar3 = is_basic_land(player, card),
                iVar3 == 0 && (iVar3 = query(player, card, -1, QUERY_IS_PLAIN_MANA_PRODUCER),

@@ -1213,7 +1213,7 @@ int card_team_spirit(int player, int card, event_t event)
           if (result != 0)
           {
             instance = get_card_instance(player, card);
-            pump_subtype_until_eot(player, card, instance->targets[0].player, -1, 1, 1, 0, 0);
+            pump_subtype_until_eot_2022(player, card, instance->targets[0].player, -1, 1, 1, 0, 0);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -1563,7 +1563,7 @@ int card_double_header(int player, int card, event_t event)
   target_definition_t td;
 
   result = duh_mode(player);
-  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -1655,7 +1655,7 @@ static int rock_paper_scissors(int player, int card, event_t event, int beaten)
         result = is_humiliated_for_ability(player, card, AL_STATIC);
         if (result == 0)
         {
-          cannot_attack(affected_card_controller, affected_card, EVENT_ABILITIES);
+          cannot_attack_2022(affected_card_controller, affected_card, EVENT_ABILITIES);
           cannot_block(affected_card_controller, affected_card, EVENT_ABILITIES);
         }
       }
@@ -1735,7 +1735,7 @@ int card_wordmail(int player, int card, event_t event)
     return 0;
   }
 LAB_02304b50:
-  result = vanilla_aura(player, card, event, player);
+  result = vanilla_aura_2022(player, card, event, player);
   return result;
 }
 
@@ -2157,7 +2157,7 @@ int card_poultrygeist(int player, int card, event_t event)
     count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
   }
   iVar1 = duh_mode(player);
-  iVar1 = resolve_gfp_ability(player, card, event, (iVar1 != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  iVar1 = resolve_gfp_ability_2022(player, card, event, (iVar1 != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (0 < iVar1)
   {
     do
@@ -2297,7 +2297,7 @@ int card_growth_spurt(int player, int card, event_t event)
 
   if (event != EVENT_RESOLVE_SPELL)
   {
-    result = vanilla_instant_pump(player, card, event, 2, player, 4, 4, 0, 0);
+    result = vanilla_instant_pump_2022(player, card, event, 2, player, 4, 4, 0, 0);
     return result;
   }
   default_target_definition(player, card, &td, 2);
@@ -2307,7 +2307,7 @@ int card_growth_spurt(int player, int card, event_t event)
 
     instance = get_card_instance(player, card);
     result = roll_d6t(player, player, card, instance->targets[0].player, instance->targets[0].card);
-    pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, result,
+    pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, result,
                    result);
   }
   kill_card(player, card, KILL_DESTROY);
@@ -2409,3 +2409,83 @@ int card_goblin_secret_agent(int player, int card, event_t event)
   }
   return 0;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23034f0; original cards/unglued_unhinged.c:427. */
+int card_fowl_play(int player, int card, event_t event)
+{
+  int result;
+
+  attached_set_pt(player, card, event, 1, 1);
+  attached_is_forced_subtype(player, card, event, SUBTYPE_BIRD);
+  disable_attached(player, card, event, 0x7e);
+  result = aura(player, card, event, NULL, NULL);
+  disabling_aura_ai(player, card, event);
+  return result;
+}
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static char *target_must_have_counters(int who_chooses, int player, int card, int targeting_player,
+                                       int targeting_card);
+
+/* ManalinkEh 2022: 0x2302b70; original cards/unglued_unhinged.c:919. */
+static char *target_must_have_counters(int who_chooses, int player, int card, int targeting_player,
+                                       int targeting_card)
+{
+  int result;
+  char *pcVar2;
+
+  result = count_counters(player, card, ~COUNTER_P1_P1);
+  pcVar2 = NULL;
+  if (result == 0)
+  {
+    pcVar2 = "must have counters";
+  }
+  return pcVar2;
+}
+
+/* ManalinkEh 2022: 0x2304110; original cards/unglued_unhinged.c:924. */
+int card_hungry_hungry_heifer(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  counter_t type;
+  target_definition_2022_t td;
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    return 0;
+  }
+
+  base_target_definition_2022(player, card, &td, 0x47);
+  td.preferred_controller = player;
+  td.allowed_controller = player;
+  td.special = 0x8000;
+  td.extra = (int32_t)target_must_have_counters;
+  instance = get_card_instance(player, card);
+  instance->number_of_targets = '\0';
+  result = can_target_2022(&td);
+  if ((result != 0) && (result = pick_target_2022(&td, "TARGET_PERMANENT"), result != 0))
+  {
+
+    instance->number_of_targets = '\0';
+    type = choose_existing_counter_type(
+        player, player, card, instance->targets[0].player, instance->targets[0].card,
+        CECT_REMOVE | CECT_CONSIDER_ALL | CECT_HUMAN_CAN_CANCEL, -1, -1);
+    if (type != COUNTER_invalid)
+    {
+      remove_counters_from_source(player, card, instance->targets[0].player,
+                                  instance->targets[0].card, type, 1);
+      return 0;
+    }
+  }
+  kill_card(player, card, KILL_SACRIFICE);
+  return 0;
+}
+
+#endif

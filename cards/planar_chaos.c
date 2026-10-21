@@ -3729,7 +3729,7 @@ int card_ghost_tactician(int player, int card, event_t event)
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
     instance = get_card_instance(player, card);
-    pump_subtype_until_eot(instance->parent_controller, instance->parent_card, player, -1, 1, 0, 0,
+    pump_subtype_until_eot_2022(instance->parent_controller, instance->parent_card, player, -1, 1, 0, 0,
                            0);
   }
   result = generic_activated_ability(player, card, event, 0x21, 0, 0, 0, 0, 0, 1, 0, NULL, NULL);

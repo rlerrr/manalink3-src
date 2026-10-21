@@ -1169,7 +1169,7 @@ LAB_020ce97c:
 int card_striped_riverwinder(int player, int card, event_t event)
 {
   int result;
-  hexproof(player, card, event);
+  hexproof_2022(player, card, event);
   result = cycling(player, card, event, 0, 0, 1, 0, 0, 0);
   return result;
 }
@@ -1200,7 +1200,7 @@ int card_accursed_horde(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
-      pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+      pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                              instance->targets[0].player, instance->targets[0].card, 0, 0, 0,
                              0x800);
     }
@@ -1502,7 +1502,7 @@ int card_bloodwater_entity(int player, int card, event_t event)
 {
   int result;
   test_definition_t this_test;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   prowess(player, card, event);
   if (event == EVENT_ETB)
   {
@@ -1644,7 +1644,7 @@ static int effect_despair(int player, int card, event_t event)
   int result;
 
   instance = get_card_instance(player, card);
-  special_abilities((int)instance->damage_target_player, instance->damage_target_card, event,
+  special_abilities_2022((int)instance->damage_target_player, instance->damage_target_card, event,
                     0x10000, player, card);
   result = damage_dealt_by_me_arbitrary(
       (int)instance->damage_target_player, instance->damage_target_card, event,
@@ -1691,7 +1691,7 @@ int card_djeru_with_eyes_wide_open(int player, int card, event_t event)
   int result;
   test_definition_t test;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     new_default_test_definition(&test, 0xff, "Select a Planeswalker card.");
@@ -1946,7 +1946,7 @@ int card_appeal_authority(int player, int card, event_t event)
         {
           iVar2 = count_subtype(player, 2, -1);
           iVar3 = count_subtype(player, 2, -1);
-          pump_ability_until_eot(player, card, instance->targets[0].player,
+          pump_ability_until_eot_2022(player, card, instance->targets[0].player,
                                  instance->targets[0].card, iVar3, iVar2, 0x80, 0);
         }
       }
@@ -1966,7 +1966,7 @@ int card_appeal_authority(int player, int card, event_t event)
             iVar2 = iVar2 + 1;
           } while (iVar2 < (int)(unsigned int)instance->number_of_targets);
         }
-        pump_subtype_until_eot(player, card, player, -1, 1, 1, 0, 8);
+        pump_subtype_until_eot_2022(player, card, player, -1, 1, 1, 0, 8);
         kill_card(player, card, KILL_EXILE);
       }
       kill_card(player, card, KILL_DESTROY);
@@ -2138,7 +2138,7 @@ int card_angel_of_condemnation(int player, int card, event_t event)
   int result;
   target_definition_t td;
 
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   return_from_oblivion(player, card, event);
   instance = get_card_instance(player, card);
   default_target_definition(player, card, &td, 2);
@@ -2226,7 +2226,7 @@ int card_overwhelming_splendor(int player, int card, event_t event)
             {
 
               event_result = event_result & 0x1f000000;
-              humiliate(player, card, affected_card_controller, affected_card, 1);
+              humiliate_2022(player, card, affected_card_controller, affected_card, 1);
               instance = get_card_instance(affected_card_controller, affected_card);
               instance->state = instance->state & 0xffffdfff;
             }
@@ -2260,7 +2260,7 @@ int card_cunning_survivor(int player, int card, event_t event)
     result = discard_trigger(player, card, event, player, 2, 0);
     if (result != 0)
     {
-      pump_ability_until_eot(player, card, player, card, 1, 0, 0, 0x10);
+      pump_ability_until_eot_2022(player, card, player, card, 1, 0, 0, 0x10);
       return 0;
     }
   }
@@ -2292,7 +2292,7 @@ int card_ominous_sphinx(int player, int card, event_t event)
         result = pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS");
         if (result != 0)
         {
-          pump_until_eot_merge_previous(player, card, instance->targets[0].player,
+          pump_until_eot_merge_previous_2022(player, card, instance->targets[0].player,
                                         instance->targets[0].card, -2, 0);
         }
       }
@@ -2477,7 +2477,7 @@ int card_unesh_criosphinx_sovereign(int player, int card, event_t event)
     {
       COST_COLORLESS = COST_COLORLESS + -2;
     }
-    etb_ability(player, card, EVENT_MODIFY_COST_GLOBAL, RESOLVE_TRIGGER_MANDATORY);
+    etb_ability_2022(player, card, EVENT_MODIFY_COST_GLOBAL, RESOLVE_TRIGGER_MANDATORY);
     result = is_humiliated_for_ability(player, card, AL_TRIG);
     if (result != 0)
     {
@@ -2486,7 +2486,7 @@ int card_unesh_criosphinx_sovereign(int player, int card, event_t event)
   }
   else
   {
-    etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     result = is_humiliated_for_ability(player, card, AL_TRIG);
     if (result != 0)
       goto LAB_020cf85d;
@@ -2619,7 +2619,7 @@ int card_grisly_survivor(int player, int card, event_t event)
     result = discard_trigger(player, card, event, player, 2, 0);
     if (result != 0)
     {
-      pump_until_eot_merge_previous(player, card, player, card, 2, 0);
+      pump_until_eot_merge_previous_2022(player, card, player, card, 2, 0);
       return 0;
     }
   }
@@ -2831,7 +2831,7 @@ int card_crash_through(int player, int card, event_t event)
               goto LAB_020d0de8;
           }
           iVar2 = iVar3 + 1;
-          pump_ability_until_eot(player, card, player, iVar3, 0, 0, 0x80, 0);
+          pump_ability_until_eot_2022(player, card, player, iVar3, 0, 0, 0x80, 0);
           iVar3 = iVar2;
         } while (iVar2 < active_cards_count[player]);
       }
@@ -3040,7 +3040,7 @@ int card_samut_the_tested(int player, int card, event_t event)
       iVar3 = valid_target(ptStack_19c);
       if (iVar3 != 0)
       {
-        pump_ability_until_eot(player, card, pcVar2->targets[0].player, pcVar2->targets[0].card, 0,
+        pump_ability_until_eot_2022(player, card, pcVar2->targets[0].player, pcVar2->targets[0].card, 0,
                                0, 0x40000000, 0);
       }
     }
@@ -3150,14 +3150,14 @@ int card_unraveling_mummy(int player, int card, event_t event)
       iVar2 = valid_target(&td);
       if (iVar2 != 0)
       {
-        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+        pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                                instance->targets[0].player, instance->targets[0].card, 0, 0, 0, 2);
       }
       iVar2 = instance->info_slot;
     }
     if ((iVar2 == 2) && (iVar2 = valid_target(&td), iVar2 != 0))
     {
-      pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+      pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
                              instance->targets[0].player, instance->targets[0].card, 0, 0, 0,
                              0x200);
     }
@@ -3662,7 +3662,7 @@ static int the_scorpion_god_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_020cd045:
-    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
       goto LAB_020cd067;
   }
@@ -3703,7 +3703,7 @@ static int the_scorpion_god_effect(int player, int card, event_t event)
         count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
       }
     }
-    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
     {
       return 0;
@@ -3787,7 +3787,7 @@ int card_the_scorpion_god(int player, int card, event_t event)
     count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
   }
 LAB_020d2df0:
-  uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (uVar2 != 0)
   {
 
@@ -4275,7 +4275,7 @@ int card_hostile_desert(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     uVar1 = instance->token_status;
     iVar2 = paying_mana();
-    if ((iVar2 == 0) && ((iVar2 = can_use_activated_abilities(player, card),
+    if ((iVar2 == 0) && ((iVar2 = can_use_activated_abilities_2022(player, card),
                           iVar2 != 0 && (iVar2 = count_graveyard_by_type(player, 1), 0 < iVar2))))
     {
       iVar2 = has_mana(player, 7, 3);
@@ -4454,7 +4454,7 @@ int card_hashep_oasis(int player, int card, event_t event)
         result = valid_target(&td);
         if (result != 0)
         {
-          pump_until_eot_merge_previous(player, card, instance->targets[0].player,
+          pump_until_eot_merge_previous_2022(player, card, instance->targets[0].player,
                                         instance->targets[0].card, 3, 3);
           return 0;
         }
@@ -4543,7 +4543,7 @@ int card_ifnir_deadlands(int player, int card, event_t event)
     if ((((card == affected_card) && (player == affected_card_controller)) &&
          (result = is_tapped(player, card), result == 0)) &&
         ((result = is_animated_and_sick(player, card),
-          result == 0 && (result = can_produce_mana(player, card), result != 0))))
+          result == 0 && (result = can_produce_mana_2022(player, card), result != 0))))
     {
       result = check_special_flags2_2022(player, card, 0x40);
       if ((result == 0) || (result = is_what(player, card, 1), result == 0))
@@ -4683,7 +4683,7 @@ int card_ipnu_rivulet(int player, int card, event_t event)
     if ((((card == affected_card) && (player == affected_card_controller)) &&
          (result = is_tapped(player, card), result == 0)) &&
         ((result = is_animated_and_sick(player, card),
-          result == 0 && (result = can_produce_mana(player, card), result != 0))))
+          result == 0 && (result = can_produce_mana_2022(player, card), result != 0))))
     {
       result = check_special_flags2_2022(player, card, 0x40);
       if ((result == 0) || (result = is_what(player, card, 1), result == 0))
@@ -4820,7 +4820,7 @@ int card_ramunap_ruins(int player, int card, event_t event)
     if ((((card == affected_card) && (player == affected_card_controller)) &&
          (result = is_tapped(player, card), result == 0)) &&
         ((result = is_animated_and_sick(player, card),
-          result == 0 && (result = can_produce_mana(player, card), result != 0))))
+          result == 0 && (result = can_produce_mana_2022(player, card), result != 0))))
     {
       result = check_special_flags2_2022(player, card, 0x40);
       if ((result == 0) || (result = is_what(player, card, 1), result == 0))
@@ -4947,7 +4947,7 @@ int card_shefet_dunes(int player, int card, event_t event)
     if ((((card == affected_card) && (player == affected_card_controller)) &&
          (result = is_tapped(player, card), result == 0)) &&
         ((result = is_animated_and_sick(player, card),
-          result == 0 && (result = can_produce_mana(player, card), result != 0))))
+          result == 0 && (result = can_produce_mana_2022(player, card), result != 0))))
     {
       result = check_special_flags2_2022(player, card, 0x40);
       if ((result == 0) || (result = is_what(player, card, 1), result == 0))
@@ -5117,7 +5117,7 @@ int card_steadfast_sentinel(int player, int card, event_t event)
 {
   int result;
 
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   result = eternalize(player, card, event, CARD_ID_STEADFAST_SENTINEL, 4, 0, 0, 0, 0, 2);
   return result;
 }
@@ -5127,7 +5127,7 @@ int card_champion_of_wits(int player, int card, event_t event)
 {
   int result;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     result = do_dialog(player, player, card, -1, -1, " Draw & Discard\n Pass", 0);

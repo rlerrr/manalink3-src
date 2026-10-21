@@ -111,7 +111,7 @@ int card_confounding_conundrum(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   target_definition_t td;
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   result = get_trap_condition(1 - player, 0x402);
   if (1 < result)
   {
@@ -155,7 +155,7 @@ int card_legion_angel(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   result = duh_mode(player);
-  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -251,7 +251,7 @@ static int malakir_rebirth_legacy(int player, int card, event_t event)
   int result;
 
   instance = get_card_instance(player, card);
-  result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  result = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (result == 0)
   {
     return 0;
@@ -368,7 +368,7 @@ int card_sea_gate_stormcaller(int player, int card, event_t event)
 {
   int result;
   kicker(player, card, event, 1, 0, 1, 0, 0, 0);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -413,7 +413,7 @@ int card_tajuru_paragon(int player, int card, event_t event)
   bVar3 = 0;
   kicker(player, card, event, 3, 0, 0, 0, 0, 0);
   result = kicked(player, card);
-  etb_ability(player, card, event, (unsigned int)(result != 0) * 2);
+  etb_ability_2022(player, card, event, (unsigned int)(result != 0) * 2);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -448,7 +448,7 @@ int card_thieving_skydiver(int player, int card, event_t event)
   target_definition_t td;
   char buffer[100];
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   kicker(player, card, event, -1, 0, 0, 0, 0, 0);
   if (event == EVENT_ETB)
   {
@@ -491,7 +491,7 @@ int card_yasharn_implacable_earth(int player, int card, event_t event)
   test_definition_t test;
 
   check_legend_rule(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -1115,7 +1115,7 @@ int card_angel_of_destiny(int player, int card, event_t event)
     gain_life(current_turn ^ 1, instance->info_slot);
   }
 
-  result = declare_attackers_trigger(
+  result = declare_attackers_trigger_2022(
       player, card, event, DAT_ATTACKS_PLAYER | DAT_RESOLVE_TRIGGER_MANDATORY, player, card);
   if (result == 0)
   {
@@ -1257,7 +1257,7 @@ int card_beyeen_veil(int player, int card, event_t event)
       goto LAB_023082f7;
     }
   }
-  pump_subtype_until_eot(player, card, 1 - player, -1, -2, 0, 0, 0);
+  pump_subtype_until_eot_2022(player, card, 1 - player, -1, -2, 0, 0, 0);
   kill_card(player, card, KILL_DESTROY);
 LAB_023082fc:
   result = mdfc_front_impl(player, card, event, 1, 0);
@@ -1691,7 +1691,7 @@ int card_leyline_tyrant(int player, int card, event_t event)
     {
 
       result =
-          charge_mana_for_activated_ability_while_resolving(player, card, event, 0, 0, 0, 0, -1, 0);
+          charge_mana_for_activated_ability_while_resolving_2022(player, card, event, 0, 0, 0, 0, -1, 0);
       if (0 < result)
       {
         damage_target0(player, card, result);
@@ -1855,7 +1855,7 @@ int card_nighthawk_scavenger(int player, int card, event_t event)
 {
   int result;
 
-  deathtouch(player, card, event);
+  deathtouch_2022(player, card, event);
   lifelink(player, card, event);
   if (((event == EVENT_POWER) && (card == affected_card)) && (player == affected_card_controller))
   {
@@ -2097,7 +2097,7 @@ int card_sejiri_shelter(int player, int card, event_t event)
       {
 
         uVar3 = select_a_protection(player);
-        pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+        pump_ability_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
                                0, 0, uVar3 | 0x10000000, 0);
       }
       kill_card(player, card, KILL_DESTROY);
@@ -2196,7 +2196,7 @@ int card_skyclave_cleric(int player, int card, event_t event)
 {
   int result;
 
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     gain_life(player, 2);
@@ -2229,7 +2229,7 @@ int card_skyclave_relic(int player, int card, event_t event)
   int result;
   token_generation_t token;
 
-  indestructible(player, card, event);
+  indestructible_2022(player, card, event);
   kicker(player, card, event, 3, 0, 0, 0, 0, 0);
   if (((trigger_condition == 0xdb) && (card == affected_card)) &&
       (player == affected_card_controller))
@@ -2550,7 +2550,7 @@ int card_umara_wizard(int player, int card, event_t event)
     result = new_specific_spell_played(player, card, event, player, 2, &test);
     if (result != 0)
     {
-      pump_ability_until_eot_no_repeat(player, card, player, card, 0x20, 0);
+      pump_ability_until_eot_no_repeat_2022(player, card, player, card, 0x20, 0);
     }
   }
   result = mdfc_front_impl(player, card, event, 1, 0);
@@ -2641,7 +2641,7 @@ int card_crawling_barrens(int player, int card, event_t event)
   uVar5 = 0;
   if (iVar2 == 0)
   {
-    iVar2 = can_use_activated_abilities(player, card);
+    iVar2 = can_use_activated_abilities_2022(player, card);
     uVar5 = (unsigned int)(iVar2 != 0);
   }
   iVar2 = paying_mana();
@@ -2714,7 +2714,7 @@ int card_felidar_retreat(int player, int card, event_t event)
           if ((instance != NULL) && (result = is_what(player, iStack_14, 2), result != 0))
           {
             add_counters_from_source(player, card, player, iStack_14, COUNTER_P1_P1, 1);
-            pump_ability_until_eot_no_repeat(player, card, player, iStack_14, 0, 8);
+            pump_ability_until_eot_no_repeat_2022(player, card, player, iStack_14, 0, 8);
           }
           iStack_14 = iStack_14 + -1;
         } while (iStack_14 != -1);
@@ -2871,7 +2871,7 @@ int card_phylath_world_sculptor(int player, int card, event_t event)
   target_definition_t td;
 
   check_legend_rule(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   landfall(player, card, event);
   if (event == EVENT_ETB)
   {
@@ -2906,7 +2906,7 @@ int card_phylath_world_sculptor(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x230d4d0; original cards/zendikar_rising.c:2655. */
 int card_prowling_felidar(int player, int card, event_t event)
 {
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   landfall(player, card, event);
   if (event != EVENT_ETB)
   {
@@ -3686,7 +3686,7 @@ int card_veteran_adventurer(int player, int card, event_t event)
 {
   int result;
 
-  vigilance(player, card, event);
+  vigilance_2022(player, card, event);
   if (event != EVENT_MODIFY_COST)
   {
     return 0;
@@ -3703,7 +3703,7 @@ int card_zagras_thief_of_heartbeats(int player, int card, event_t event)
   int result;
 
   check_legend_rule(player, card, event);
-  deathtouch(player, card, event);
+  deathtouch_2022(player, card, event);
   haste(player, card, event);
   if (event == EVENT_MODIFY_COST)
   {
@@ -3716,7 +3716,7 @@ int card_zagras_thief_of_heartbeats(int player, int card, event_t event)
     result = is_what(player, affected_card, 2);
     if (result != 0)
     {
-      deathtouch(affected_card_controller, affected_card, EVENT_ABILITIES);
+      deathtouch_2022(affected_card_controller, affected_card, EVENT_ABILITIES);
     }
   }
   instance = combat_damage_being_dealt(event);
@@ -3848,7 +3848,7 @@ int card_omnath_locus_of_creation(int player, int card, event_t event)
   inst_info_t result;
 
   check_legend_rule(player, card, event);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   landfall(player, card, event);
   if (event == EVENT_ETB)
   {

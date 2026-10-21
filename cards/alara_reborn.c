@@ -2967,7 +2967,7 @@ int card_etherium_abomination(int player, int card, event_t event)
 int card_magefire_wings(int player, int card, event_t event)
 {
   int result;
-  result = generic_aura(player, card, event, player, 2, 0, 0x20, 0, 0, 0, 0);
+  result = generic_aura_2022(player, card, event, player, 2, 0, 0x20, 0, 0, 0, 0);
   return result;
 }
 
@@ -2976,7 +2976,7 @@ int card_marrow_chomper(int player, int card, event_t event)
 {
   card_instance_t *instance;
   devour(player, card, event, 2);
-  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;

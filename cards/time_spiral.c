@@ -7544,7 +7544,7 @@ int card_fallen_ideal(int player, int card, event_t event)
           pump_until_eot_merge_previous(granted_to_player, iVar4, granted_to_player, iVar4, 2, 1);
       return iVar4;
     }
-    iVar2 = generic_aura(player, card, event, player, 0, 0, 0x20, 0, 0, 0, 0);
+    iVar2 = generic_aura_2022(player, card, event, player, 0, 0, 0x20, 0, 0, 0, 0);
   }
   return iVar2;
 }
@@ -7657,11 +7657,11 @@ int card_voidmage_husher(int player, int card, event_t event)
         iVar1 = cast_counter_activated_ability(player, card, 0);
         return iVar1;
       }
-      etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
+      etb_ability_2022(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
     }
     else
     {
-      etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
       if (event == EVENT_ETB)
       {
         resolve_counter_activated_ability(player, card, NULL, 0);
@@ -7671,6 +7671,119 @@ int card_voidmage_husher(int player, int card, event_t event)
     return 0;
   }
   bounce_permanent(player, card);
-  etb_ability(player, card, EVENT_SPA, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability_2022(player, card, EVENT_SPA, RESOLVE_TRIGGER_MANDATORY);
   return 0;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20fe1e0; original cards/time_spiral.c:7029. */
+int card_undying_rage(int player, int card, event_t event)
+{
+  int result;
+
+  immortal_enchantment(player, card, event);
+  attached_gets_pt(player, card, event, 2, 2);
+  attached_gets_kw(player, card, event, KEYWORD_0, SP_KEYWORD_CANNOT_BLOCK);
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static int re_enable_abilities_at_eot(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x20ea990; original cards/time_spiral.c:6930. */
+static int re_enable_abilities_at_eot(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_player)
+  {
+    disable_all_activated_abilities_2022((int)instance->damage_target_player,
+                                         instance->damage_target_card, 0);
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20fde10; original cards/time_spiral.c:6943. */
+int card_trickbind(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+
+  pcVar1 = get_card_instance(player, card);
+  if (event == EVENT_CAN_CAST)
+  {
+    result = can_counter_activated_ability(player, card, EVENT_CAN_CAST, NULL);
+    if (result != 0)
+    {
+      pcVar1->info_slot = 1;
+      return 99;
+    }
+    result = can_counter_triggered_ability(player, card, EVENT_CAN_CAST, NULL);
+    if (result != 0)
+    {
+      pcVar1->info_slot = 2;
+      return 99;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      pcVar2 = get_card_instance(player, card);
+      pcVar2->number_of_targets = '\0';
+      state_untargettable(player, card, 1);
+      if (pcVar1->info_slot == 1)
+      {
+        cast_counter_activated_ability(player, card, 0);
+      }
+      else
+      {
+        if (pcVar1->info_slot != 2)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        cast_counter_triggered_ability(player, card, 0);
+      }
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (pcVar1->info_slot == 1)
+    {
+
+      pcVar1 =
+          get_card_instance(stack_cards[stack_size + -1].player, stack_cards[stack_size + -1].card);
+      disable_all_activated_abilities_2022(pcVar1->parent_controller, pcVar1->parent_card, 1);
+      create_targetted_legacy_effect(player, card, re_enable_abilities_at_eot,
+                                     pcVar1->parent_controller, pcVar1->parent_card);
+      resolve_counter_activated_ability(player, card, NULL, 0);
+    }
+    else if (pcVar1->info_slot == 2)
+    {
+      disable_all_activated_abilities_2022(pcVar1->targets[0].player, pcVar1->targets[0].card, 1);
+      create_targetted_legacy_effect(player, card, re_enable_abilities_at_eot,
+                                     pcVar1->targets[0].player, pcVar1->targets[0].card);
+      resolve_counter_triggered_ability(player, card, NULL, 0);
+    }
+    state_untargettable(player, card, 0);
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  return 0;
+}
+
+#endif

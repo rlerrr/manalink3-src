@@ -6046,7 +6046,7 @@ LAB_02630adf:
   {
     modify_pt_and_abilities((int)pcVar3->damage_target_player, pcVar3->damage_target_card, event,
                             pow, tou, key);
-    special_abilities((int)pcVar3->damage_target_player, pcVar3->damage_target_card, event, s_key,
+    special_abilities_2022((int)pcVar3->damage_target_player, pcVar3->damage_target_card, event, s_key,
                       player, card);
     other_leaves_play_2022(player, card, (int)pcVar3->damage_target_player,
                            pcVar3->damage_target_card, event, 0, 0);

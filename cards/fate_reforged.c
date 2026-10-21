@@ -4713,3 +4713,69 @@ T: Add 1 to your mana pool.
 1, T: Put a storage counter on Crucible of the Spirit Dragon.
 T, Remove X storage counters from Crucible of the Spirit Dragon: Add X mana in any combination of colors to your mana pool. Spend this mana only to cast Dragon spells or activate abilities of Dragons.
 */
+
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x26229b0; original cards/fate_reforged.c:4080. */
+static int wotft_1(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  if ((event - EVENT_POWER < 2) || (event == EVENT_CHANGE_TYPE))
+  {
+
+    instance = get_card_instance(player, card);
+    if ((instance->damage_target_card == affected_card) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+
+      instance =
+          get_card_instance((int)instance->damage_target_player, instance->damage_target_card);
+      if (event - EVENT_POWER < 2)
+      {
+        set_base_pt(3);
+      }
+      else
+      {
+        update_alter_remove_creature_subtypes(instance);
+        update_alter_add_subtype(SUBTYPE_HUMAN, instance);
+        update_alter_add_subtype(SUBTYPE_WARRIOR, instance);
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x2622ce0; original cards/fate_reforged.c:4097. */
+static int wotft_2(int player, int card, event_t event)
+{
+  int card_00;
+  card_instance_t *instance;
+  int player_00;
+
+  if ((event & 0xfffffff7) == EVENT_ABILITIES)
+  {
+
+    instance = get_card_instance(player, card);
+    card_00 = instance->damage_target_card;
+    if ((card_00 == affected_card) &&
+        (player_00 = (int)instance->damage_target_player, player_00 == affected_card_controller))
+    {
+
+      instance = get_card_instance(player_00, card_00);
+      if (event == EVENT_ABILITIES)
+      {
+        event_result = event_result | 0x80;
+        lifelink(player_00, card_00, EVENT_ABILITIES);
+      }
+      else
+      {
+        update_alter_remove_creature_subtypes(instance);
+        update_alter_add_subtype(SUBTYPE_HUMAN, instance);
+        update_alter_add_subtype(SUBTYPE_SPIRIT, instance);
+        update_alter_add_subtype(SUBTYPE_WARRIOR, instance);
+      }
+    }
+  }
+  return 0;
+}
