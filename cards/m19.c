@@ -2520,7 +2520,7 @@ int card_tezzeret_artifice_master(int player, int card, event_t event)
     }
     else if (iVar2 == 3)
     {
-      generate_token_by_id(player, card, 0x4a54);
+      generate_token_by_id_2022(player, card, 0x4a54);
     }
   }
 LAB_0220bc4a:
@@ -3686,6 +3686,316 @@ static char *is_artifact_or_enchantment_or_flying_creature(int who_chooses, int 
     return NULL;
   }
   return "must be an artifact, enchantment, or creature with flying.";
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2209f00; original cards/m19.c:1533. */
+int card_nicol_bolas_the_ravager(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  double_faced_card(player, card, event);
+  check_legend_rule(player, card, event);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    discard(1 - player, 0, player);
+    return 0;
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+  LAB_02209fa9:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_02209fae;
+  }
+  else if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    if (event != EVENT_CLEANUP)
+    {
+      return 0;
+    }
+    goto LAB_02209fa9;
+  }
+  instance = get_card_instance(player, card);
+  result = instance->parent_card;
+  instance = get_card_instance(player, card);
+  exile_and_return_to_bf_transformed(instance->parent_controller, result);
+LAB_02209fae:
+  result =
+      generic_activated_ability_2022(player, card, event, 0x10, 4, 1, 1, 0, 1, 0, 0, NULL, NULL);
+  return result;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2206a90; original cards/m19.c:91. */
+int card_ajani_adversary_of_tyrants(int player, int card, event_t event)
+{
+  target_t *ret_location;
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  unsigned int uVar4;
+  target_t *ptVar5;
+  target_t *ptVar6;
+  target_definition_2022_t td1;
+  test_definition_2022_t test_resurrect;
+
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    instance = get_card_instance(player, card);
+    default_target_definition_2022(player, card, &td1, 2);
+    td1.preferred_controller = player;
+    td1.allow_cancel = 3;
+    default_test_definition_2022(&test_resurrect, 2);
+    test_resurrect.cmc = 3;
+    test_resurrect.cmc_flag = 3;
+    if (event == EVENT_ACTIVATE)
+    {
+
+      instance->number_of_targets = '\0';
+      instance->info_slot = 0;
+      iVar2 = new_special_count_grave_2022(player, &test_resurrect);
+      uVar4 = 0;
+      if (0 < iVar2)
+      {
+        iVar2 = graveyard_has_shroud(player);
+        uVar4 = (unsigned int)(iVar2 == 0);
+      }
+      iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Add counters", 1,
+                          10, 1, "Reanimate a creature", uVar4, 10, 0xfffffffe, "Create an emblem",
+                          1, 10, 0xfffffff9, 0, 0, 0, 0);
+      if (iVar2 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (iVar2 == 1)
+      {
+
+        iVar2 = can_target_2022(&td1);
+        if (iVar2 != 0)
+        {
+          ret_location = instance->targets;
+          iVar2 = select_target_2022(player, card, &td1, " Select target creature.", ret_location);
+          if (iVar2 != 0)
+          {
+            state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
+            iVar3 = can_target_2022(&td1);
+            iVar2 = 1;
+            if ((iVar3 != 0) &&
+                (iVar3 = select_target_2022(player, card, &td1, " Select target creature.",
+                                            instance->targets + 1),
+                 iVar3 != 0))
+            {
+              state_untargettable(instance->targets[1].player, instance->targets[1].card, 1);
+              iVar2 = 2;
+            }
+            ptVar5 = ret_location;
+            do
+            {
+              ptVar6 = ptVar5 + 1;
+              state_untargettable(ptVar5->player, ptVar5->card, 0);
+              ptVar5 = ptVar6;
+            } while (ptVar6 != ret_location + iVar2);
+          }
+        }
+      }
+      else if (iVar2 == 2)
+      {
+        select_target_from_grave_source_2022(player, card, player, SFG_0, 1, &test_resurrect, 0);
+      }
+      goto LAB_02206b40;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_02206b40;
+    instance = get_card_instance(player, card);
+    default_target_definition_2022(player, card, &td1, 2);
+    td1.preferred_controller = player;
+    td1.allow_cancel = 3;
+    default_test_definition_2022(&test_resurrect, 2);
+  }
+  test_resurrect.cmc_flag = 3;
+  test_resurrect.cmc = 3;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    iVar2 = instance->info_slot;
+    if (iVar2 == 1)
+    {
+
+      if (instance->number_of_targets != '\0')
+      {
+        iVar2 = 0;
+        do
+        {
+          state_untargettable(instance->targets[iVar2].player, instance->targets[iVar2].card, 0);
+          add_counters_from_source(player, card, instance->targets[iVar2].player,
+                                   instance->targets[iVar2].card, COUNTER_P1_P1, 1);
+          iVar2 = iVar2 + 1;
+        } while (iVar2 < (int)(unsigned int)instance->number_of_targets);
+      }
+      instance->number_of_targets = '\0';
+    }
+    else if (iVar2 == 2)
+    {
+
+      iVar2 = validate_target_from_grave_source(player, card, player, 0);
+      if (-1 < iVar2)
+      {
+        reanimate_permanent(player, card, player, iVar2, REANIMATE_DEFAULT);
+      }
+    }
+    else if (iVar2 == 3)
+    {
+
+      iVar2 = generate_token_by_id_2022(player, card, 0x49bb);
+      instance = get_card_instance(player, iVar2);
+      iVar2 = get_sleighted_color_test(player, card, 0x20);
+      instance->targets[1].card = iVar2;
+    }
+  }
+LAB_02206b40:
+  iVar2 = planeswalker(player, card, event, 4);
+  return iVar2;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x220c4d0; original cards/m19.c:2637. */
+int card_vivien_reid(int player, int card, event_t event)
+{
+  int result;
+  target_definition_2022_t *ptStack_144;
+  card_instance_t *instance;
+  target_definition_2022_t td;
+  test_definition_2022_t test;
+
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    instance = get_card_instance(player, card);
+    default_target_definition_2022(player, card, &td, 0x47);
+    td.extra = (int32_t)is_artifact_or_enchantment_or_flying_creature;
+    td.special = 0x8000;
+    if (event == EVENT_ACTIVATE)
+    {
+
+      instance->number_of_targets = '\0';
+      instance->info_slot = 0;
+      result = can_target_2022(&td);
+      result =
+          dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017",
+                      "Look at the top cards of your library", 1, 5, 1, "Destroy target", result,
+                      10, 0xfffffffd, "Create an Emblem", 1, 0xf, 0xfffffff8, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (result == 2)
+      {
+        new_pick_target_2022(&td, "Choose target artifact, enchantment, or creature with flying",
+                             -1, 0x80);
+      }
+      goto LAB_0220c560;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_0220c560;
+    instance = get_card_instance(player, card);
+    default_target_definition_2022(player, card, &td, 0x47);
+  }
+  ptStack_144 = &td;
+  td.special = 0x8000;
+  td.extra = (int32_t)is_artifact_or_enchantment_or_flying_creature;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    result = instance->info_slot;
+    if (result == 1)
+    {
+      new_default_test_definition_2022(&test, 3, "Select a creature or land card.");
+      reveal_top_cards_of_library_and_choose_2022(player, card, player, 4, 0, TUTOR2022_HAND, 1,
+                                                  TUTOR2022_BOTTOM_OF_DECK_RANDOM, 0, &test);
+    }
+    else if (result == 2)
+    {
+      result = valid_target_2022(ptStack_144);
+      if (result != 0)
+      {
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      }
+    }
+    else if (result == 3)
+    {
+      generate_token_by_id_2022(player, card, 0x4a65);
+    }
+  }
+LAB_0220c560:
+  result = planeswalker(player, card, event, 5);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 native scalar-word handlers. */
+int card_arcades_the_strategist(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2207060; original cards/m19.c:228. */
+int card_arcades_the_strategist(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_2022_t test;
+  check_legend_rule(player, card, event);
+  vigilance_2022(player, card, event);
+  if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (reason_for_trigger_controller == player))
+  {
+    default_test_definition_2022(&test, 2);
+    test.keyword = KEYWORD_DEFENDER;
+    etb_ability_global_2022(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event != EVENT_ETB)
+  {
+    if ((event == EVENT_ABILITIES) && (affected_card_controller == player))
+    {
+      result = check_for_ability(player, affected_card, KEYWORD_DEFENDER);
+      if (result != 0)
+      {
+        result = is_humiliated_for_ability(player, card, AL_STATIC);
+        if (result == 0)
+        {
+          instance = get_card_instance(affected_card_controller, affected_card);
+          instance->token_status = instance->token_status | 0x800;
+        }
+      }
+    }
+    return 0;
+  }
+  draw_a_card(player);
+  return 0;
 }
 
 #endif

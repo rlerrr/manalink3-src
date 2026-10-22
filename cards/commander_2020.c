@@ -268,3 +268,53 @@ LAB_025e72ab:
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 native scalar-word handlers. */
+int card_fierce_guardianship(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x25e6cd0; original cards/commander_2020.c:201. */
+int card_fierce_guardianship(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if (event == EVENT_MODIFY_COST)
+  {
+    if ((player_bits[player] & PB_COMMANDER_IN_PLAY) != 0)
+    {
+      null_casting_cost(player, card);
+      instance->info_slot = 1;
+      return 0;
+    }
+    instance->info_slot = 0;
+  }
+  else
+  {
+    if (event == EVENT_CAN_CAST)
+    {
+    LAB_025e6cfb:
+      result = card_negate(player, card, event);
+      return result;
+    }
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance->number_of_targets = '\0';
+        result = nemesis_freespell(player, card, 0x6c);
+        if (result != 0)
+          goto LAB_025e6cfb;
+        spell_fizzled = 1;
+      }
+    }
+    else if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+             (event == EVENT_CHANGE_TARGET))
+      goto LAB_025e6cfb;
+  }
+  return 0;
+}
+
+#endif

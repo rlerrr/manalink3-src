@@ -217,7 +217,7 @@ static int blighted_land(int player, int card, event_t event,
 }
 
 // Requires the Modifies Casting Cost bit to be set.
-static inline void converge(int player, int card, event_t event)
+void converge(int player, int card, event_t event)
 {
   store_num_colors_paid_in_info_slot(player, card, event);
 }
@@ -5624,3 +5624,72 @@ joined_r0x0244ccd5:
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24558a0; original cards/battle_for_zendikar.c:3584. */
+int card_zada_hedron_grinder(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  int iVar4;
+  int iStack_274;
+  unsigned int uStack_270;
+  int marked[151];
+  check_legend_rule(player, card, event);
+  if ((((trigger_condition == 0xd3) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      (reason_for_trigger_controller == player))
+  {
+    iVar4 = target_me(player, card, trigger_cause_controller, trigger_cause);
+    if (iVar4 != 0)
+    {
+      pcVar1 = get_card_instance(trigger_cause_controller, trigger_cause);
+      if (pcVar1->number_of_targets == '\x01')
+      {
+        sp_ability_trigger_2022(player, event, 2, TYPE_SPELL, NULL, player, card);
+      }
+    }
+  }
+  if (event == EVENT_SPA)
+  {
+    pcVar1 = get_card_instance(trigger_cause_controller, trigger_cause);
+    uStack_270 = pcVar1->internal_card_id;
+    if (uStack_270 == 0xffffffff)
+    {
+      uStack_270 = (unsigned int)pcVar1->backup_internal_card_id;
+    }
+    if (0 < active_cards_count[player])
+    {
+      iVar4 = 0;
+      iStack_274 = 0;
+      do
+      {
+        pcVar2 = in_play(player, iVar4);
+        if (pcVar2 != NULL)
+        {
+          iVar3 = is_what(player, iVar4, 2);
+          if ((card != iVar4) && (iVar3 != 0))
+          {
+            marked[iStack_274] = iVar4;
+            iStack_274 = iStack_274 + 1;
+          }
+        }
+        iVar4 = iVar4 + 1;
+      } while (iVar4 < active_cards_count[player]);
+      if (-1 < iStack_274 + -1)
+      {
+        iVar4 = marked[iStack_274 + -1];
+        do
+        {
+          /* Native 2022 loop has no normal exit or target-index advance once entered. */
+          copy_spell_from_stack_set_target0(player, uStack_270, pcVar1, player, iVar4);
+        } while (true);
+      }
+    }
+  }
+  return 0;
+}
+
+#endif

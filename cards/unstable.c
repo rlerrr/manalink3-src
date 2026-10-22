@@ -2462,7 +2462,7 @@ int card_box_of_free_range_goblins(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     result = roll_d6t(player, player, card, -1, -1);
-    generate_tokens_by_id(player, card, 0x493a, result);
+    generate_tokens_by_id_2022(player, card, 0x493a, result);
     kill_card(player, card, KILL_DESTROY);
   }
   result = basic_spell(player, card, event);
@@ -2652,6 +2652,48 @@ int card_garbage_elemental_c(int player, int card, event_t event)
   }
   howmany = roll_2d6t_difference(player, player, card, -1, -1);
   generate_tokens_by_id(player, card, 0x493a, howmany);
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25c7170; original cards/unstable.c:1233. */
+int card_spike_tournament_grinder(int player, int card, event_t event)
+{
+  int result;
+  test_definition_2022_t test;
+
+  phyrexian_casting_costs_2022(player, card, event, 2, 2, 0, 0, 0, 0, 0);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = has_phyrexian_mana_for_activated_ability_2022(player, card, 0, 4, 0, 0, 0, 0);
+    if (result != 0)
+    {
+      result = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x800, 0, 0, 0, 0,
+                                              0, 0, 0, NULL, NULL);
+      return result;
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    result = charge_phyrexian_mana_for_activated_ability_2022(player, card, 0, 4, 0, 0, 0, 0);
+    if (result != 0)
+    {
+      result = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x800, 0, 0, 0, 0, 0, 0,
+                                              0, NULL, NULL);
+      return result;
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    new_default_test_definition_2022(
+        &test, 0xff, "Select a card that has been banned or restricted in a Constructed format.");
+    test.special_selection_function = test_has_been_banned_or_restricted;
+    generic_wish_effect_2022(player, card, &test, 0x2b);
+  }
   return 0;
 }
 

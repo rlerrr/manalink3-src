@@ -903,8 +903,8 @@ int card_finale_of_promise(int player, int card, event_t event)
             }
             else if (9 < instance->info_slot)
             {
-              copy_spell(player, (unsigned int)cards_data[iVar2].id);
-              copy_spell(player, (unsigned int)cards_data[iVar2].id);
+              copy_spell_2022(player, (unsigned int)cards_data[iVar2].id);
+              copy_spell_2022(player, (unsigned int)cards_data[iVar2].id);
             }
           }
         }
@@ -922,8 +922,8 @@ int card_finale_of_promise(int player, int card, event_t event)
             }
             else if (9 < instance->info_slot)
             {
-              copy_spell(player, (unsigned int)cards_data[iVar5].id);
-              copy_spell(player, (unsigned int)cards_data[iVar5].id);
+              copy_spell_2022(player, (unsigned int)cards_data[iVar5].id);
+              copy_spell_2022(player, (unsigned int)cards_data[iVar5].id);
             }
           }
         }
@@ -1307,7 +1307,7 @@ int card_arlinn_voice_of_the_pack(int player, int card, event_t event)
   }
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    generate_token_by_id(player, card, 0x49a8);
+    generate_token_by_id_2022(player, card, 0x49a8);
   }
 LAB_021c8a7e:
   result = planeswalker(player, card, event, 7);
@@ -2523,7 +2523,7 @@ int card_saheeli_sublime_artificer(int player, int card, event_t event)
   prowess_mode(player, card, event, 2);
   if (event == EVENT_SPA)
   {
-    generate_token_by_id(player, card, 0x4980);
+    generate_token_by_id_2022(player, card, 0x4980);
   }
   else
   {
@@ -4073,7 +4073,7 @@ int card_krenko_tin_street_kingpin(int player, int card, event_t event)
   }
   add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
   howmany = get_power(player, card);
-  generate_tokens_by_id(player, card, 0x493a, howmany);
+  generate_tokens_by_id_2022(player, card, 0x493a, howmany);
   return 0;
 }
 
@@ -7079,7 +7079,7 @@ int card_narsets_reversal(int player, int card, event_t event)
       }
       else
       {
-        copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
+        copy_spell_from_stack_2022(player, instance->targets[0].player, instance->targets[0].card);
         bounce_permanent(instance->targets[0].player, instance->targets[0].card);
       }
     }
@@ -7306,6 +7306,226 @@ int card_ilharg_the_raze_boar(int player, int card, event_t event)
     }
   }
   result = war_god_eternal(player, card, event);
+  return result;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x21cfde0; original cards/war_of_the_spark.c:3231. */
+int card_karn_the_great_creator(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int result;
+  card_instance_t *pcVar3;
+  target_definition_2022_t td;
+  test_definition_2022_t test;
+
+  check_legend_rule(player, card, event);
+  pcVar1 = in_play(player, card);
+  if ((pcVar1 != NULL) &&
+      (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+  {
+    default_test_definition_2022(&test, 0x40);
+    remove_abilities_by_test_2022(1 - player, event, &test, AL_ALL_ACT);
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition_2022(player, card, &td, 0x40);
+    td.preferred_controller = player;
+    td.illegal_type = 2;
+    pcVar1 = get_card_instance(player, card);
+    if (event == EVENT_ACTIVATE)
+    {
+
+      pcVar1->number_of_targets = '\0';
+      pcVar1->info_slot = 0;
+      result =
+          dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Animate an artifact",
+                      1, 5, 1, "Wish for an artifact", 1, 10, 0xfffffffe, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if ((result == 1) && (result = can_target_2022(&td), result != 0))
+      {
+        new_pick_target_2022(&td, "Select target noncreature artifact.", 0, 0x80);
+      }
+      goto LAB_021cfe8e;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_021cfe8e;
+    default_target_definition_2022(player, card, &td, 0x40);
+    td.preferred_controller = player;
+    td.illegal_type = 2;
+    pcVar1 = get_card_instance(player, card);
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    if (pcVar1->info_slot == 1)
+    {
+
+      result = get_cmc(pcVar1->targets[0].player, pcVar1->targets[0].card);
+      result =
+          turn_into_creature(pcVar1->parent_controller, pcVar1->parent_card,
+                             pcVar1->targets[0].player, pcVar1->targets[0].card, 8, result, result);
+      pcVar3 = get_card_instance(player, result);
+      pcVar3->targets[4].player = pcVar1->parent_controller;
+    }
+    else if (pcVar1->info_slot == 2)
+    {
+
+      result = count_rfg_by_type(player, 0x40);
+      if (result != 0)
+      {
+        default_test_definition_2022(&test, 0x40);
+        result = new_global_tutor_2022(player, player, 3, 1, 0, 1, &test);
+        if (-1 < result)
+          goto LAB_021cfe8e;
+      }
+      default_test_definition_2022(&test, 0x40);
+      generic_wish_effect_2022(player, card, &test, 0x1ac2);
+    }
+  }
+LAB_021cfe8e:
+  result = planeswalker(player, card, event, 5);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 native scalar-word handlers. */
+int card_narset_parter_of_veils(int player, int card, event_t event);
+int card_teyo_the_shieldmage(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x21d1ff0; original cards/war_of_the_spark.c:4246. */
+int card_narset_parter_of_veils(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_2022_t test;
+
+  check_legend_rule(player, card, event);
+  result = -player + 1;
+  if ((((cards_drawn_this_turn[result] != 0) && (trigger_condition == TRIGGER_REPLACE_CARD_DRAW)) &&
+       (card == affected_card)) &&
+      ((player == affected_card_controller && (result == reason_for_trigger_controller))))
+  {
+    suppress_draw = 1;
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    new_default_test_definition_2022(&test, 3, "Select a nonland, noncreature card.");
+    test.type_flag = 1;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = count_counters(player, card, COUNTER_LOYALTY);
+      if (result < 2)
+      {
+        return 0;
+      }
+      goto LAB_021d2090;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = '\0';
+      instance->info_slot = 0;
+      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "\001\003",
+                           "\001\014", "\001\017", "Look at top 4", 1, 5, 0xfffffffe, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      goto LAB_021d2090;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_021d2090;
+    new_default_test_definition_2022(&test, 3, "Select a nonland, noncreature card.");
+    test.type_flag = 1;
+    get_card_instance(player, card);
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    reveal_top_cards_of_library_and_choose_2022(player, card, player, 4, 0, TUTOR2022_HAND, 1,
+                                                TUTOR2022_BOTTOM_OF_DECK_RANDOM, 0, &test);
+  }
+LAB_021d2090:
+  result = planeswalker(player, card, event, 5);
+  return result;
+}
+
+
+/* ManalinkEh 2022: 0x21d7080; original cards/war_of_the_spark.c:6163. */
+int card_teyo_the_shieldmage(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  token_generation_2022_t token;
+
+  check_legend_rule(player, card, event);
+  instance = in_play(player, card);
+  if ((instance != NULL) &&
+      (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+  {
+    give_hexproof_to_player(player, card, event);
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = count_counters(player, card, COUNTER_LOYALTY);
+      if (result < 2)
+      {
+        return 0;
+      }
+      goto LAB_021d70fa;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = '\0';
+      instance->info_slot = 0;
+      result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "\001\003",
+                           "\001\014", "\001\017", "Create a wall", 1, 5, 0xfffffffe, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      goto LAB_021d70fa;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_021d70fa;
+    get_card_instance(player, card);
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    default_token_definition_2022(player, card, 0x49a3, &token);
+    token.pow = 0;
+    token.tou = 3;
+    token.color_forced = ' ';
+    token.key_plus = KEYWORD_DEFENDER;
+    generate_token_2022(&token);
+  }
+LAB_021d70fa:
+  result = planeswalker(player, card, event, 5);
   return result;
 }
 

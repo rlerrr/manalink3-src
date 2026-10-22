@@ -2221,7 +2221,7 @@ int card_chicken_egg(int player, int card, event_t event)
     if (result == 6)
     {
       kill_card(player, card, KILL_SACRIFICE);
-      generate_token_by_id(player, card, 0x45ed);
+      generate_token_by_id_2022(player, card, 0x45ed);
     }
   }
   return 0;

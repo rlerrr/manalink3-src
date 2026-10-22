@@ -4751,11 +4751,11 @@ int card_increasing_vengeance(int player, int card, event_t event)
       if (result != 0)
       {
         instance = get_card_instance(player, card);
-        copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
+        copy_spell_from_stack_2022(player, instance->targets[0].player, instance->targets[0].card);
         result = get_flashback(player, card);
         if (result != 0)
         {
-          copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
+          copy_spell_from_stack_2022(player, instance->targets[0].player, instance->targets[0].card);
           kill_card(player, card, KILL_EXILE);
         }
       }

@@ -1486,7 +1486,7 @@ int card_serra_the_benevolent(int player, int card, event_t event)
     }
     else if (result == 3)
     {
-      generate_token_by_id(player, card, 0x4ee9);
+      generate_token_by_id_2022(player, card, 0x4ee9);
     }
   }
 LAB_0233c0ab:
@@ -2052,7 +2052,7 @@ int card_wrenn_and_six(int player, int card, event_t event)
     }
     else if (iVar2 == 3)
     {
-      generate_token_by_id(player, card, 0x4f2a);
+      generate_token_by_id_2022(player, card, 0x4f2a);
     }
   }
 LAB_0233e3e8:
@@ -4067,6 +4067,84 @@ int card_hexdrinker(int player, int card, event_t event)
   }
   result = level_up_2022(player, card, event, 1, 0, 0, 0, 0, 0, 2, 1, 3, 4, 4,
                          KEYWORD_PROT_INSTANTS, SP_KEYWORD_0, 8, 6, 6, KEYWORD_0, SP_KEYWORD_0);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2335b80; original cards/modern_horizons.c:2540. */
+static int sac_at_eot(int player, int card, event_t event)
+{
+  char cVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_player)
+  {
+    instance = get_card_instance(player, card);
+    if ((((trigger_condition == TRIGGER_EOT) && (card == affected_card)) &&
+         (player == affected_card_controller)) &&
+        (player == reason_for_trigger_controller))
+    {
+      iVar2 = instance->targets[1].player;
+      if (iVar2 < 1)
+      {
+        if (event == EVENT_TRIGGER)
+        {
+          event_result = event_result | 2;
+        }
+        else if (event == EVENT_RESOLVE_TRIGGER)
+        {
+          cVar1 = instance->damage_target_player;
+          iVar2 = instance->damage_target_card;
+          iVar4 = check_state((int)cVar1, iVar2, STATE_OUBLIETTED);
+          if (iVar4 == 0)
+          {
+            kill_card((int)cVar1, iVar2, KILL_SACRIFICE);
+          }
+          else
+          {
+            kill_card(player, card, KILL_EXILE);
+          }
+        }
+      }
+      else
+      {
+        instance->targets[1].player = iVar2 + -1;
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x233b5c0; original cards/modern_horizons.c:2569. */
+int card_planebound_accomplice(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_2022_t this_test;
+
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    instance = get_card_instance(player, card);
+    new_default_test_definition_2022(&this_test, 0x100, "Select a planeswalker card.");
+    result = new_global_tutor_2022(player, player, 4, 4, 0, 2, &this_test);
+    if (-1 < result)
+    {
+      create_targetted_legacy_effect(instance->parent_controller, instance->parent_card, sac_at_eot,
+                                     player, result);
+    }
+  }
+  result = generic_activated_ability_2022(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
   return result;
 }
 

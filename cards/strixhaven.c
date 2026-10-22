@@ -780,7 +780,7 @@ int card_rootha_mercurial_artist(int player, int card, event_t event)
       result = counterspell_validate(player, card, &td, 0);
       if (result != 0)
       {
-        copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
+        copy_spell_from_stack_2022(player, instance->targets[0].player, instance->targets[0].card);
       }
     }
   }
@@ -2486,12 +2486,12 @@ LAB_023cf585:
 /* ManalinkEh 2022: 0x23c7630; original cards/strixhaven.c:2571. */
 int ris_legacy(int player, int card, event_t event)
 {
-  test_definition_t test;
+  test_definition_2022_t test;
 
   if ((event == EVENT_ABILITIES) || (event == EVENT_CAST_SPELL))
   {
-    default_test_definition(&test, 0x100);
-    remove_abilities_by_test(1 - player, event, &test, AL_LOYALTY);
+    default_test_definition_2022(&test, 0x100);
+    remove_abilities_by_test_2022(1 - player, event, &test, AL_LOYALTY);
   }
   if (event == EVENT_CLEANUP)
   {
@@ -5709,7 +5709,7 @@ int card_culmination_of_studies(int player, int card, event_t event)
         get_sleighted_color_test(player, card, 0x10);
       } while (true);
     }
-    generate_tokens_by_id(player, card, 0x4998, 0);
+    generate_tokens_by_id_2022(player, card, 0x4998, 0);
     draw_cards(player, 0);
     damage_player(1 - player, 0, player, card);
     kill_card(player, card, KILL_DESTROY);
@@ -6267,7 +6267,7 @@ int card_rowan_scholar_of_sparks(int player, int card, event_t event)
     }
     else
     {
-      generate_token_by_id(player, card, 0x5903);
+      generate_token_by_id_2022(player, card, 0x5903);
     }
   }
   result = planeswalker(player, card, event, 2);
@@ -7190,7 +7190,7 @@ int card_rowan_scholar_of_sparks_emblem(int player, int card, event_t event)
       charge_mana(player, COLOR_COLORLESS, 2);
       if (spell_fizzled != 1)
       {
-        copy_spell_from_stack(player, trigger_cause_controller, trigger_cause);
+        copy_spell_from_stack_2022(player, trigger_cause_controller, trigger_cause);
       }
     }
   }
@@ -7255,7 +7255,7 @@ int card_storm_kiln_artist(int player, int card, event_t event)
     }
     return 0;
   }
-  generate_token_by_id(player, card, 0x4998);
+  generate_token_by_id_2022(player, card, 0x4998);
   return 0;
 }
 
@@ -7360,7 +7360,7 @@ int card_wandering_archaic(int player, int card, event_t event)
   {
     return 0;
   }
-  copy_spell_from_stack(player, trigger_cause_controller, trigger_cause);
+  copy_spell_from_stack_2022(player, trigger_cause_controller, trigger_cause);
   return 0;
 }
 
@@ -11528,6 +11528,219 @@ int card_pestilent_cauldron(int player, int card, event_t event)
     }
   }
   return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23dfc10; original cards/strixhaven.c:8243. */
+int card_explore_the_vastlands(int player, int card, event_t event)
+{
+  enum
+  {
+    TUTOR_0 = 0
+  };
+
+  int result;
+  unsigned int t_player;
+  const char *msg;
+  unsigned int uStack_ec;
+  test_definition_2022_t test;
+
+  mdfc_back(player, card, event);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    new_default_test_definition_2022(&test, 0x39, "Select an instant, sorcery or land card.");
+    test.ai_selection_mode = 1;
+
+    uStack_ec = 0;
+    do
+    {
+      t_player = uStack_ec ^ current_turn;
+
+      result = reveal_top_cards_of_library_and_choose_who_chooses_2022(
+          player, card, t_player, t_player, 5, 0, TUTOR2022_TPLAYER_HAND, 1, TUTOR2022_0, 0, &test);
+      if (result == -1)
+      {
+        put_top_x_on_bottom_in_random_order(t_player, 5);
+      }
+      else
+      {
+        result = is_what(t_player, result, 1);
+        if (result == 0)
+        {
+          msg = "Select a land card.";
+          result = 1;
+        }
+        else
+        {
+          msg = "Select an instant or sorcery card.";
+          result = 0x38;
+        }
+        new_default_test_definition_2022(&test, result, msg);
+        reveal_top_cards_of_library_and_choose_who_chooses_2022(
+            player, card, t_player, t_player, 4, 0, TUTOR2022_TPLAYER_HAND, 1,
+            TUTOR2022_BOTTOM_OF_DECK_RANDOM, 0, &test);
+      }
+      gain_life_2022(t_player, 3);
+      uStack_ec = uStack_ec + 1;
+    } while (uStack_ec != 2);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 native scalar-word handlers. */
+int lukka_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x23c7b30; original cards/strixhaven.c:4404. */
+int lukka_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  result = (int)instance->damage_target_player;
+  if (-1 < instance->damage_target_player)
+  {
+    haste(result, instance->damage_target_card, event);
+    result = (int)instance->damage_target_player;
+  }
+  if (result == current_turn)
+  {
+    result = upkeep_trigger(player, card, event);
+    if (result != 0)
+    {
+      result = check_state((int)instance->damage_target_player, instance->damage_target_card,
+                           STATE_OUBLIETTED);
+      if (result == 0)
+      {
+        kill_card((int)instance->damage_target_player, instance->damage_target_card, KILL_EXILE);
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23d4a50; original cards/strixhaven.c:4419. */
+int card_lukka_wayward_bonder(int player, int card, event_t event)
+{
+  bool bVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *instance;
+  test_definition_2022_t *ptStack_1c8;
+  test_definition_2022_t this_test;
+  test_definition_2022_t this_test2;
+
+  check_legend_rule(player, card, event);
+  mdfc_back(player, card, event);
+  bVar1 = event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE;
+  if (bVar1)
+  {
+    instance = get_card_instance(player, card);
+    new_default_test_definition_2022(&this_test, 2, "Select target creature card.");
+    iVar2 = graveyard_has_shroud(player);
+    if (iVar2 == 0)
+    {
+    LAB_023d4cf8:
+      ptStack_1c8 = &this_test;
+      iVar2 = new_special_count_grave_2022(player, ptStack_1c8);
+      iVar2 = dialog_impl(player, card, event, "\001\002", "\001\017", "Discard & draw", 1, 10, 1,
+                          "Reanimate target creature", (unsigned int)(iVar2 != 0), 0x14, 0xfffffffe,
+                          "Emblem", 1, 5, 0xfffffff9, 0, 0, 0, 0);
+      if (event != EVENT_CAN_ACTIVATE)
+      {
+        if (bVar1)
+          goto LAB_023d4dc6;
+        goto LAB_023d4bb6;
+      }
+    }
+    else
+    {
+      iVar2 = dialog_impl(player, card, event, "\001\002", "\001\017", "Discard & draw", 1, 10, 1,
+                          "Reanimate target creature", 0, 0x14, 0xfffffffe, "Emblem", 1, 5,
+                          0xfffffff9, 0, 0, 0, 0);
+      if (event != EVENT_CAN_ACTIVATE)
+      {
+      LAB_023d4dc6:
+        ptStack_1c8 = &this_test;
+        instance->number_of_targets = '\0';
+
+        if ((iVar2 == 2) && (iVar2 = select_multiple_cards_from_graveyard_2022(
+                                 player, player, 0, 2, ptStack_1c8, 1, instance->targets),
+                             iVar2 == -1))
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        goto LAB_023d4aa9;
+      }
+    }
+    if (iVar2 == 0)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_023d4aa9;
+
+    instance = get_card_instance(player, card);
+    new_default_test_definition_2022(&this_test, 2, "Select target creature card.");
+    iVar2 = graveyard_has_shroud(player);
+    if (iVar2 == 0)
+      goto LAB_023d4cf8;
+    iVar2 = dialog_impl(player, card, event, "\001\002", "\001\017", "Discard & draw", 1, 10, 1,
+                        "Reanimate target creature", 0, 0x14, 0xfffffffe, "Emblem", 1, 5,
+                        0xfffffff9, 0, 0, 0, 0);
+  LAB_023d4bb6:
+    if (iVar2 == 1)
+    {
+
+      new_default_test_definition_2022(&this_test2, 0xff, "Select a card to discard.");
+      iVar2 = new_select_a_card_2022(player, player, 4, 0, 3, -1, &this_test2);
+      if (iVar2 == -1)
+      {
+        return 0;
+      }
+      iVar3 = is_what(player, iVar2, 2);
+      new_discard_card(player, iVar2, 2, player);
+      draw_cards(player, iVar3 + 1);
+    }
+    else if (iVar2 == 2)
+    {
+
+      iVar2 = validate_target_from_grave_source(player, card, player, 0);
+
+      if ((iVar2 != -1) &&
+          (iVar2 = reanimate_permanent(player, card, player, iVar2, REANIMATE_DEFAULT), -1 < iVar2))
+      {
+        create_targetted_legacy_effect(player, card, lukka_legacy, player, iVar2);
+      }
+    }
+    else if (iVar2 == 3)
+    {
+      generate_token_by_id_2022(player, card, 0x58bd);
+    }
+  }
+LAB_023d4aa9:
+  iVar2 = planeswalker(player, card, event, 5);
+  return iVar2;
 }
 
 #endif

@@ -8779,3 +8779,105 @@ int card_pledge_of_loyalty(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 native scalar-word handlers. */
+static int effect_sacrifice_when_lose_control_then_gain_life_equal_toughness(int player, int card,
+                                                                      event_t event);
+
+/* ManalinkEh 2022: 0x2488740; original cards/invasion.c:7125. */
+static int effect_sacrifice_when_lose_control_then_gain_life_equal_toughness(int player, int card,
+                                                                      event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  if (event == EVENT_CARDCONTROLLED)
+  {
+    instance = get_card_instance(player, card);
+    if (((instance != NULL) && (instance->damage_target_card == affected_card)) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+      result = check_special_flags2_2022((int)instance->damage_target_player,
+                                         instance->damage_target_card, SF2_CANNOT_BE_SACRIFICED);
+      if (result == 0)
+      {
+        kill_card((int)instance->damage_target_player, instance->damage_target_card,
+                  KILL_SACRIFICE);
+        result = get_toughness((int)instance->damage_target_player, instance->damage_target_card);
+        gain_life_2022(player, result);
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x249c930; original cards/invasion.c:7141. */
+int card_spinal_embrace(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_2022_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition_2022(player, card, &td, 2);
+        td.allowed_controller = 1 - player;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target_2022(&td);
+          if ((result != 0) && (result = instance->targets[0].player, result != player))
+          {
+            untap_card(result, instance->targets[0].card);
+            result = gain_control_until_eot_haste(player, card, instance->targets[0].player,
+                                                  instance->targets[0].card);
+            alternate_legacy_text(1, player, result);
+            result = create_targetted_legacy_effect(
+                player, card, effect_sacrifice_when_lose_control_then_gain_life_equal_toughness,
+                instance->targets[0].player, instance->targets[0].card);
+            alternate_legacy_text(2, player, result);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0249c9a0;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition_2022(player, card, &td, 2);
+  td.allowed_controller = 1 - player;
+  get_card_instance(player, card);
+LAB_0249c9a0:
+  result = generic_spell_2022(player, card, event, 0x81, &td,
+                              "Select target creature you don\'t control to untap & gain control.",
+                              1, NULL);
+  return result;
+}
+
+#endif

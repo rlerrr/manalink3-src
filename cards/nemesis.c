@@ -3613,7 +3613,7 @@ int card_mogg_alarm(int player, int card, event_t event)
     }
     else if (event == EVENT_RESOLVE_SPELL)
     {
-      generate_tokens_by_id(player, card, 0x493a, 2);
+      generate_tokens_by_id_2022(player, card, 0x493a, 2);
       kill_card(player, card, KILL_DESTROY);
       return 0;
     }

@@ -1743,3 +1743,33 @@ int count_permanents_you_control_but_you_dont_own(int player, int type)
   } while (player_00 != 2);
   return iVar3;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23e1320; original cards/commander.c:14. */
+int vow_2022(int player, int card, event_t event, int pow, int tou, int key, int s_key)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_ABILITIES)
+  {
+    instance = in_play(player, card);
+    if ((instance != NULL) && (-1 < instance->damage_target_player))
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if (result == 0)
+      {
+        if (((instance->damage_target_card == affected_card) &&
+             (result = (int)instance->damage_target_player, affected_card_controller == result)) &&
+            (result != player))
+        {
+          cannot_attack_2022(result, instance->damage_target_card, EVENT_ABILITIES);
+        }
+      }
+    }
+  }
+  result = generic_aura_2022(player, card, event, player, pow, tou, key, s_key, 0, 0, 0);
+  return result;
+}
+
+#endif

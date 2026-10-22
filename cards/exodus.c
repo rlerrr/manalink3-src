@@ -4294,3 +4294,108 @@ int card_dizzying_gaze(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 native scalar-word handlers. */
+int card_furnace_brood(int player, int card, event_t event);
+int card_medicine_bag(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x264e100; original cards/exodus.c:3779. */
+int card_furnace_brood(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_2022_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    if (player != 1)
+      goto LAB_0264e155;
+    td.required_state = 0x4000;
+    get_card_instance(1, card);
+  LAB_0264e219:
+    result = (GAA_REGENERATION | GAA_CAN_TARGET | GAA_UNTAPPED);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td, 2);
+    if (player == 1)
+    {
+      td.required_state = 0x4000;
+      instance = get_card_instance(1, card);
+      if ((event != EVENT_RESOLVE_ACTIVATION) || (result = valid_target_2022(&td), result == 0))
+        goto LAB_0264e219;
+    LAB_0264e259:
+      cannot_regenerate_until_eot(instance->parent_controller, instance->parent_card,
+                                  instance->targets[0].player, instance->targets[0].card);
+      if (player == 1)
+        goto LAB_0264e219;
+    }
+    else
+    {
+    LAB_0264e155:
+      instance = get_card_instance(player, card);
+      if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target_2022(&td), result != 0))
+        goto LAB_0264e259;
+    }
+    result = 5;
+  }
+  result = generic_activated_ability_2022(player, card, event, result, 0, 0, 0, 0, 0, 0, 0, &td,
+                                          "TARGET_CREATURE");
+  return result;
+}
+
+
+/* ManalinkEh 2022: 0x264e5c0; original cards/exodus.c:3873. */
+int card_medicine_bag(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_2022_t td;
+
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    td.preferred_controller = player;
+    td.required_state = 0x4000;
+    if (player != 1)
+    {
+      get_card_instance(player, card);
+      goto LAB_0264e637;
+    }
+  LAB_0264e6f0:
+    td.special = TARGET_SPECIAL_REGENERATION;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td, 2);
+    if (player == 1)
+      goto LAB_0264e6f0;
+  }
+  td.required_state = 0x4000;
+  td.preferred_controller = player;
+  instance = get_card_instance(player, card);
+  if (((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target_2022(&td), result != 0)) &&
+      (result = can_be_regenerated(instance->targets[0].player, instance->targets[0].card),
+       result != 0))
+  {
+    regenerate_target(instance->targets[0].player, instance->targets[0].card);
+  }
+LAB_0264e637:
+  result = generic_activated_ability_2022(
+      player, card, event, (GAA_REGENERATION | GAA_DISCARD | GAA_CAN_TARGET | GAA_UNTAPPED), 1, 0,
+      0, 0, 0, 0, 0, &td, "TARGET_CREATURE");
+  return result;
+}
+
+#endif

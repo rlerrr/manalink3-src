@@ -1365,7 +1365,8 @@ void remove_abilities(int player, int card, event_t event, ability_loss_t mode);
 void remove_abilities_by_test(int player, event_t event, test_definition_t *test,
                               ability_loss_t mode);
 
-/* ManalinkEh 2022: 0x26dda70; original functions/abilities.c:332. */
+/* Retained 208-byte test-layout compatibility implementation.
+ * The native 2022 entry is remove_abilities_by_test_2022 below. */
 void remove_abilities_by_test(int player, event_t event, test_definition_t *test,
                               ability_loss_t mode)
 {
@@ -7699,6 +7700,37 @@ int can_produce_mana_2022(int player, int card)
     uVar3 = (unsigned int)((instance->ext->special_flags & SF_MANA_PRODUCER_DISABLED_FOR_AI) == 0);
   }
   return uVar3;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26dda70; original functions/abilities.c:332. */
+void remove_abilities_by_test_2022(int player, event_t event, test_definition_2022_t *test,
+                                   ability_loss_t mode)
+{
+  ability_loss_t aVar1;
+  card_instance_t *instance;
+  int result;
+
+  if ((((event == EVENT_ABILITIES) || (event == EVENT_CAST_SPELL)) &&
+       (instance = in_play(affected_card_controller, affected_card), instance != NULL)) &&
+      (((player == 2 || (affected_card_controller == player)) &&
+        ((test == NULL ||
+          (result = new_make_test_in_play_2022(affected_card_controller, affected_card, -1, test),
+           result != 0))))))
+  {
+    instance = get_card_instance(affected_card_controller, affected_card);
+    aVar1 = instance->targets[0x11].card;
+    if (-1 < (int)aVar1)
+    {
+      mode = mode | aVar1;
+    }
+    instance->targets[0x11].card = mode;
+    return;
+  }
+  return;
 }
 
 #endif

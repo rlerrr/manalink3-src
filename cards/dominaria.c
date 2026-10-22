@@ -1577,7 +1577,7 @@ int card_lyra_dawnbringer(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x22c9680; original cards/dominaria.c:2131. */
 static void memorial_to_glory_impl(int player, int card, target_definition_t *td)
 {
-  generate_tokens_by_id(player, card, 0x4986, 2);
+  generate_tokens_by_id_2022(player, card, 0x4986, 2);
   return;
 }
 
@@ -3548,7 +3548,7 @@ int card_teferi_hero_of_dominaria(int player, int card, event_t event)
       }
       else if (iVar1 == 3)
       {
-        generate_token_by_id(player, card, 0x485b);
+        generate_token_by_id_2022(player, card, 0x485b);
       }
       else if (iVar1 == 1)
       {
@@ -4284,7 +4284,7 @@ int card_history_of_benalia(int player, int card, event_t event)
 
   if ((event & ~EVENT_SET_LEGACY_EFFECT_NAME) == EVENT_CHAPTER1)
   {
-    generate_token_by_id(player, card, 0x4958);
+    generate_token_by_id_2022(player, card, 0x4958);
   }
   else if (event == EVENT_CHAPTER3)
   {
@@ -5632,7 +5632,7 @@ int the_mirari_conjecture_legacy(int player, int card, event_t event)
   sp_ability_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
   if (event == EVENT_SPA)
   {
-    copy_spell_from_stack(player, trigger_cause_controller, trigger_cause);
+    copy_spell_from_stack_2022(player, trigger_cause_controller, trigger_cause);
   }
   result = eot_trigger(player, card, event);
   if (result == 0)

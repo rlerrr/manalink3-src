@@ -1,10 +1,15 @@
 # October 2022 source recovery
 
 Implemented directly in the `cards/` and `functions/` source files, starting
-2026-10-17. Latest recovery pass: 2026-10-21.
+2026-10-17. Latest recovery pass: 2026-10-22.
 Missing target set files were created with `#include "manalink.h"`; implementations
 already present in the source were retained, with scoped repairs and lifecycle
 fragments recorded separately.
+
+The built-in Wish/card-picker dialog UI is [temporarily out of scope](recovery-scope.md)
+by user request. Two typed chooser stubs return no selection and are tracked
+separately from recovered implementations. Surrounding Wish helpers and card
+handlers remain in scope; interactive selection awaits UI integration.
 
 A [2020-to-2022 modification pilot](recovery-comparison-pilot.md) now compares
 30 shared functions using a saved Ghidra Version Tracking session: 13 confirmed
@@ -22,7 +27,7 @@ estimate of remaining implementations or changed gameplay.
 
 ## Recovered source
 
-- **4,123 function implementations:** 3,053 functions named `card_*` and 1,070
+- **4,212 function implementations:** 3,102 functions named `card_*` and 1,110
   helpers, in **139 checked C source units**, including units containing only
   recovered engine/AI fragments.
 - The second pass added **340 implementations: 273 `card_*` functions and 67
@@ -288,16 +293,67 @@ estimate of remaining implementations or changed gameplay.
   and Oath of Lim-Dul's callback. Fifty-seven earlier recovered callers gain
   native loss bindings; the gain worker's two loss calls and the loss engine's
   Oath callback are coordinated with the recovered implementations.
+- The sixtieth pass added **eight implementations: six `card_*` functions and
+  two public helpers**. Native Vow and Lace APIs, plus three retained helpers
+  exposed with verified public linkage, unblock Vow of Torment, Moonlace,
+  Kari Zev, Metallic Mimic, Glinting Creeper and Radiant Epicure. The retained
+  helper bodies are not counted again.
+- The sixty-first pass added **15 implementations: six `card_*` functions and
+  nine helpers**. Four missing private token-cleanup callbacks, three private
+  constructors and two public native API consumers unblock Chance for Glory,
+  Sapphire Charm, Planebound Accomplice, Tilonalli's Summoner, Hornet Cannon
+  and Norritt. The existing cantrip callback becomes public without counting
+  its retained body again.
+- The sixty-second pass added **six implementations: two `card_*` functions
+  and four helpers**. The temporary-exile worker and its two public wrappers
+  preserve meld pairs, ownership, picture fields and discard-on-return modes.
+  Two retained Origins helpers gain public linkage, unblocking Nicol Bolas,
+  the Ravager and Conqueror's Galleon with its private combat-end callback.
+- The sixty-third pass added **six implementations: two `card_*` functions
+  and four helpers**. Native spell-copy frontends and the forced-target worker
+  unblock Zada and Ink-Treader Nephilim. Fifteen earlier recovered callers now
+  use the native copy APIs. Zada's native loop with no normal exit is preserved
+  and explicitly annotated.
 - 21 previously missing C files were created. They include Strixhaven, Modern
   Horizons 1/2, Commander Legends, Throne of Eldraine, War of the Spark,
   Zendikar Rising, Commander 2020, and `functions/draft.c`.
-- 526 recovered functions retain private/static linkage, including nine private
-  implementation helpers whose names begin with `card_`. There are 553 recovered
+- The sixty-fourth pass added **eight implementations: seven `card_*` functions
+  and one private helper**. It recovers Kamahl's Will, Kamahl, Heart of Krosa,
+  Daughter of Autumn, Hazduhr the Abbot, Barbed-Back Wurm, Flowering Field and
+  Verdant Field, with the shared white-creature damage predicate in Homelands.
+- The sixty-fifth pass added **three implementations: one `card_*` function
+  and two public helpers**. Native color/land-word replacement separates the
+  acting card from the target, preserves chained substitutions and unlocks
+  Balduvian Shaman.
+- The sixty-sixth pass added **two `card_*` implementations**, Ajani, Adversary
+  of Tyrants and Mu Yanling, Sky Dancer. It also binds 72 earlier recovered
+  functions to the existing native token frontends, with 77 verified call sites
+  across 27 source units.
+- The sixty-seventh pass added **six implementations: four `card_*` functions
+  and two public helpers**. Filter-aware Wish/card-list APIs unlock Granted,
+  Mastermind's Acquisition, Vivien, Arkbow Ranger and Spike, Tournament Grinder.
+  Two built-in dialog entry stubs are tracked separately and excluded from
+  these counts; the UI implementation is out of scope by user request.
+- The sixty-eighth pass added **one `card_*` implementation**, Karn, the Great
+  Creator. It also corrects one earlier ability-filter helper interface and
+  migrates Blood Sun and the Revel in Silence effect to the native filter
+  layout. These three corrections do not add to the implementation total.
+- The sixty-ninth pass added **nine implementations: three `card_*` functions
+  and six public helpers**. Native library reveal/selection APIs unlock Vivien
+  Reid, Turntimber Symbiosis and Explore the Vastlands. The existing EXE deck
+  viewer remains an external call; no additional dialog code is recovered.
+- The seventieth pass added **25 implementations: 15 `card_*` functions and
+  ten helpers**. Scoped flag-word recovery and four native phasing functions
+  unlock more handlers. The first successful GCC 9.3 32-bit DLL/debug build is
+  verified separately; two earlier terminal labels receive null statements
+  solely to satisfy GCC C grammar.
+- 540 recovered functions retain private/static linkage, including nine private
+  implementation helpers whose names begin with `card_`. There are 579 recovered
   public helpers; shared declarations live in the existing `manalink.h`.
 - Every function has its target address and original DWARF source unit/line
   recorded immediately above its implementation.
-- Of the recovered symbols, 3,039 are referenced by the target registration
-  records; 2,957 serve at least one record marked CODED. The remaining functions
+- Of the recovered symbols, 3,088 are referenced by the target registration
+  records; 3,003 serve at least one record marked CODED. The remaining functions
   include callbacks and helper entry points. Counts are functions, not unique
   playable cards or completed mechanics. `cards/stubs.c::card_crab` preserves
   the target's no-op placeholder and is labeled accordingly.
@@ -2332,6 +2388,470 @@ definitions and the linker unchanged. The canonical cache has 4,637 rows and
 4,579 original names. Broader lifecycle/dispatch integration, earlier manual
 consumers, native linking and gameplay verification remain pending.
 
+The sixtieth pass recovers `vow_2022` (`0x23e1320`) in `cards/commander.c`
+and `lace_2022` (`0x24bd8f0`) in `cards/unlimited.c`. Vow checks the abilities
+event, the affected attached creature and its opposing controller before calling
+the native cannot-attack helper. It uses the recovered aura API. Lace retains
+the native spell-event routing and two 84-byte target definitions at DWARF frame
+offsets -188 and -104. Its resolution path writes the boolean target-validation
+result into the four-byte info slot at offset 56. The original source contains
+assignments in those conditions; the native XOR/TEST/SETNE and dword stores
+confirm that behavior, which is preserved rather than corrected.
+
+The existing `converge` and `is_creature_type` bodies now have public linkage.
+Converge is a five-byte tail jump to the retained sunburst storage wrapper;
+the private color-payment worker and wrapper are preserved and hash-verified.
+The creature predicate accepts exactly subtypes 1 through 4095, matching the
+native unsigned comparison. The retained Innistrad exile callback also becomes
+public, as `exile_at_end_of_combat_2022`; its definition and local token callback
+reference are renamed to avoid the separate private Commander 2015 helper.
+Its body remains unchanged. None of these three retained implementations is
+added to the recovery count.
+
+These helpers unlock six handlers: Vow of Torment, Moonlace, Kari Zev, Skyship
+Raider, Metallic Mimic, Glinting Creeper and Radiant Epicure. Eight native operand
+sites bind the six cards to their shared helpers, including Kari Zev's immediate
+callback pointer to `0x2073940` and Radiant Epicure's recovered life-loss/gain
+calls. All 4,123 earlier implementation records and all prior interface
+components remain unchanged. Earlier source token prefixes survive after
+reversing only the three linkage edits and the Innistrad helper rename.
+Headers gain five prototypes; definitions, linker script, fragments, globals
+and stack registry are unchanged. All 139 source units, ABI checks and
+provenance checks pass; the separate Commander 2015 source also passes syntax
+checking with its original private callback intact. The canonical export cache
+now has 4,639 rows and 4,581 original names. Native linking and gameplay
+verification remain pending.
+
+The sixty-first pass recovers four missing private delayed-token callbacks in
+their original units: `effect_sacrifice_at_next_eot` (`0x2377110`, Mirage),
+`effect_destroy_at_next_eot` (`0x212c130`, Stronghold), `remove_eot_unless_cb`
+(`0x218f5b0`, Rivals of Ixalan) and `sac_at_eot` (`0x2335b80`, Modern Horizons).
+They retain the native end-step guard, attachment coordinates, countdown in
+`targets[1].player`, mandatory-trigger flag and phased-out checks. Tilonalli's
+cleanup also checks the controller's city's blessing. Despite its name, the
+destroy callback passes `KILL_SACRIFICE`; the native outgoing mode is 3, and
+that behavior is retained. Constructors for sacrifice, destroy and the
+city's-blessing exception are also recovered as private helpers in those units.
+
+`last_chance_legacy_2022` (`0x21b8dc0`) and `effect_nettling_imp_2022`
+(`0x24bc200`) use the recovered game-loss and attack APIs. Their earlier source
+helpers remain untouched. The existing `cantrip_legacy` (`0x23eb810`) body
+matches the native callback and is exposed with public linkage, without adding
+another recovered implementation. Norritt's native target definitions occupy
+84-byte locals at frame offsets -188 and -104. Its color-text facade returns a
+`const char*`, while the native activation API accepts `char*`; an explicit
+qualifier cast is confined to that prompt argument. The native helper return
+in EAX is stored unchanged into outgoing argument 12 before the activation
+call. The source facade, forwarding wrapper and activation worker body hashes
+are recorded as supporting interface evidence.
+
+The six handlers are Chance for Glory, Sapphire Charm, Planebound Accomplice,
+Tilonalli's Summoner, Hornet Cannon and Norritt. Nine native immediate operands
+verify the direct helper calls and callback pointers of these cards and their
+three constructors. All 4,131 earlier implementation records, interface
+components, fragments, globals and stack evidence remain unchanged. Every
+earlier source token prefix survives after reversing the single cantrip linkage
+edit. The header gains three prototypes; definitions and the linker script are
+unchanged. All 139 source units, ABI checks, provenance checks and compiler-part
+call checks pass. The canonical cache retains 4,639 rows and 4,581 original
+names. Native linking and gameplay verification remain pending.
+
+The sixty-second pass recovers `remove_until_upkeep_impl` (`0x2685a40`) in
+`functions/functions.c`, followed by `remove_until_upkeep` (`0x2685c10`) and
+`remove_until_upkeep_discard_cards_equal_to_toughness` (`0x2685c50`). All three
+are public in the target symbols. The worker's six arguments have concrete
+stack locations. Its malformed packed read is reconstructed from the adjacent
+unsigned 16-bit `card_data_t.id` and `reserved2` fields, preserving the original
+32-bit value. Native addressing confirms a 72-byte card-data stride and ID
+offset 36; the picture ID and image number use two-byte stores at instance
+offsets 100 and 102.
+
+The worker retains the native three meld-ID branches and two-element `csvids`
+array at DWARF frame offset -28. It exiles the original target, creates one or
+two return legacies as appropriate, preserves ownership from state bit 12,
+records whose upkeep to use and writes the native discard marker, either -1 or
+66. The wrappers pass exactly 0 and 1 in outgoing argument 5. The constructor's
+callback pointer is bound to the already recovered `remove_until_upkeep_legacy`
+at `0x269f000`; that implementation remains unchanged.
+
+The existing Origins `return_to_bf_transformed_impl` (`0x20d9140`) and
+`exile_and_return_to_bf_transformed` (`0x20d9fd0`) bodies match the native
+exports and gain public linkage. Neither body is counted again. The newly
+recovered private `transform_at_end_of_combat` (`0x22128b0`) preserves its live
+attachment and phased-out checks, controller-preserving blink callback and
+legacy removal. These dependencies unlock Nicol Bolas, the Ravager and
+Conqueror's Galleon in their original card-set units. Five native operands
+verify the two wrappers and the card-to-callback chains, alongside the two
+outgoing wrapper mode stores.
+
+All 4,146 earlier implementation records and interface components remain
+unchanged. Earlier source token prefixes survive after restoring only the two
+Origins static qualifiers; both retained body hashes match. The header gains
+five prototypes, with definitions, linker script, fragments, globals and stack
+registry unchanged. All 139 source units, ABI checks, provenance checks and
+compiler-part checks pass. The canonical cache now contains 4,640 rows and
+4,582 original names. Native linking, deeper blink/transform comparison and
+gameplay verification remain pending.
+
+The sixty-third pass recovers private `real_copy_spell_2022` (`0x2668490`) in
+`functions/play_spell_for_free.c`. Its six physical arguments use EAX, EDX and
+ECX plus three stack words. The optional sixth argument supplies a forced
+`target_t`; the worker writes that target and sets the one-byte target count
+to 1. The ordinary clone path preserves the info slot, the four-byte
+end-of-turn toughness word and all 19 target slots. It combines the source's
+three native special-flag words with the requested flags and the copied-spell
+marker through the recovered extension APIs. Its null-source path retains
+the native X-value assignment and distinct flag behavior.
+
+The public frontends are `copy_spell_2022` (`0x2668690`),
+`copy_spell_from_stack_2022` (`0x26686d0`) and the newly available
+`copy_spell_from_stack_set_target0` (`0x2668720`). The forced-target frontend
+adds `SF_TARGETS_ALREADY_SET`, producing the native `0x200c0000` flag word;
+the other two pass `0xc0000` and no forced target. DWARF places the target
+pair at frame offset -16. The existing private `free_spell_player` and
+`free_spell_card` globals retain their original declarations and -1
+initializers. The worker preserves stack insertion, fallback placement, land
+bookkeeping and card-state cleanup. A fresh export with the existing
+address-matched EXE prototype recovers the three-argument `dispatch_event`
+call to `0x4359b0`; the native outgoing event is `EVENT_SPELL_COPIED`
+(`0x5c00`). The older cached zero-argument spelling was incomplete analysis.
+
+Zada, Hedron Grinder and Ink-Treader Nephilim now use the forced-target
+frontend and recovered spell-trigger API. Their fixed snapshots are verified
+as `int[151]` at frame offset -624 and `int[2][151]` at -1228, respectively.
+Ink-Treader retains its two per-player counters, legal-target filtering and
+native player/reverse-target iteration. Zada has a confirmed native control-flow
+oddity: after selecting the last saved target, the call at `0x2455a49` is
+followed by the unconditional `EB E0` branch at `0x2455a4e`, returning to
+`0x2455a30`. That loop has no normal exit or target-index advance. The
+reconstruction preserves it with a source comment and manifest annotation.
+The target registration points to this handler and marks it CODED; recovery
+does not imply that the handler is suitable for gameplay without a later fix.
+
+Fifteen earlier recovered functions in 11 source units now call the native
+copy frontends with exact call/jump evidence; ten earlier manual bodies await
+coordinated migration. All 4,152 earlier records survive except for these
+explicit identifier bindings, each retaining its complete prior record.
+Earlier source token prefixes survive after reversing the bindings. Original
+five-argument copy source and its public frontends, prior interface components,
+fragments, globals and stack evidence remain unchanged. The header adds three
+public prototypes; definitions and the linker script are unchanged. All 139
+source units, ABI checks, provenance checks and compiler-part checks pass. The
+canonical cache has 4,642 rows and 4,584 original names. Native linking and
+gameplay verification remain pending.
+
+The sixty-fourth pass recovers Kamahl's Will (`0x25a9da0`) and Kamahl, Heart
+of Krosa (`0x25aa4f0`) in `cards/commander_legends.c`. Their decompiler CPU-flag
+expressions resolve to signed phase comparisons: the threshold is `PHASE_MAIN1`
+(20) on the controller's turn and `PHASE_BEFORE_BLOCKING` (22) on the other
+turn. Native `CMP`/`SETLE` instructions and the decrement/mask/add sequence
+verify an AI adjustment of +20 through the threshold and -20 afterward. The
+Will handler retains its separate iteration increment, two 84-byte target
+definitions and the `int[151]` damage-source snapshot at frame offset -624.
+The Heart handler retains its target definition at frame offset -104. Existing
+global bindings and signed 32-bit phase/AI storage are checked separately.
+
+The private five-argument `damage_dealt_to_white_creature` predicate
+(`0x2120600`) returns null for a suitable damage object or the native color-aware
+error text. It remains static in `cards/homelands.c`. Daughter of Autumn
+(`0x2124160`) and Hazduhr the Abbot (`0x2125a30`) each have two verified native
+pointer stores selecting that predicate. This helper unlocked Hazduhr without
+additional manual reconstruction. No public header declaration was needed.
+
+Four handlers also regain their native prompt boundaries: Daughter of Autumn,
+Barbed-Back Wurm (`0x23897c0`), Flowering Field (`0x2602b50`) and Verdant Field
+(`0x2607b60`). Local `char*` casts preserve the prompt pointer where the source
+facade uses a const-qualified result. The predicate uses the same local bridge
+for its return value. Exact native calls/tail jumps and outgoing four-byte
+pointer stores are recorded; the Field handlers retain their literal and null
+prompt alternatives. Existing text and activation helper bodies are unchanged
+and their hashes remain pinned. Balduvian Shaman was screened but remains
+pending: its native four-argument text-changing helper is incompatible with
+the retained two-argument source API and needs separate recovery.
+
+All 4,158 earlier implementation records, interface components and C token
+prefixes survive unchanged. Header, definitions, linker script, fragments,
+globals and the stack registry are unchanged. All 139 source units, ABI checks,
+provenance checks and compiler-part checks pass. The canonical cache retains
+4,642 rows and 4,584 original names. Native linking and gameplay verification
+remain pending.
+
+The sixty-fifth pass recovers the public four-argument
+`replace_all_instances_of_one_color_word_with_another_2022` (`0x267f930`) and
+`replace_all_instances_of_one_basic_land_type_word_with_another_2022`
+(`0x267fdc0`) in `functions/functions.c`. Each receives acting player/card and
+target player/card separately. The acting player controls the chooser and AI
+selection path; target identity supplies the text-mask cache, native extension
+flag and six-byte substitution map. Previously substituted words are offered
+as choices, and the final loop updates all entries mapping to the old word.
+The raw native AI priorities, dialog controls, literal labels and cache writes
+are preserved, including the combined rules/type mask for basic-land words.
+
+Both decompilations incorrectly render the final chooser result as a partial
+stack-word assignment. Native `MOV [EBP-44], EAX` stores the complete four-byte
+result after `dialog_impl`; subsequent reads and mapping writes use only its
+low byte. The source restores that complete unsigned-word assignment and
+retains the byte casts at both consumers. DWARF independently records each
+option array as `int[6]`; native indexed stores place its base at `EBP-36`,
+separate from the saved result at `EBP-44`. The source retains distinct scalar
+and array storage. The existing two-argument helpers and three retained mask-extraction
+helper bodies are unchanged and hash-pinned. The native zero-valued `SF3_0`
+enumerator is added to the existing flag type without changing other values.
+
+Balduvian Shaman (`0x23f08c0`) is recovered in `cards/ice_age.c` with its native
+target/activation interfaces and the new four-argument color-word helper.
+Its target definition is verified at frame offset -104. Exact native operands
+bind the private cumulative-upkeep predicate and `effect_basha` callback. A
+local pointer-qualification cast at activation prompt argument 12 preserves
+the color-text helper's pointer bits; the return, outgoing store and callee
+instructions are recorded. Existing prompt/activation source helpers and both
+callbacks retain their body hashes. Mind Bend, Sleight of Mind and Magical
+Hack still use their original source bodies; their native four-argument
+consumer paths have been exported for separate recovery.
+
+All 4,166 earlier implementation records, interface components and C token
+prefixes survive unchanged. The header gains two public prototypes, and
+definitions gain only `SF3_0`; linker script, fragments, globals and stack
+registry are unchanged. All 139 source units, ABI checks, provenance checks
+and compiler-part checks pass. The canonical cache now contains 4,644 rows
+and 4,586 original names. Native linking and gameplay verification remain
+pending.
+
+The sixty-sixth pass completes the pipeline mapping for the four already
+recovered public token ID/copy frontends. These were previously recovered
+without general automatic caller translation. New candidates now select
+`generate_token_by_id_2022`, `generate_tokens_by_id_2022`,
+`generate_reserved_token_by_id_2022` and `copy_token_2022` when those native
+helpers are available. Seventy-two earlier recovered functions in 27 source
+units receive identifier-only migrations, verified against 77 exact native
+call/jump destinations. Each keeps its complete previous manifest record.
+Fifty-three earlier manual bodies remain pending coordinated migration.
+No additional helper implementations are counted for this wiring.
+
+The single-token frontend returns an integer, whereas the older source helper
+returns void. Correcting caller selection unlocks Ajani, Adversary of Tyrants
+(`0x2206a90`) in `cards/m19.c` and Mu Yanling, Sky Dancer (`0x23982c0`) in
+`cards/m20.c`. At both emblem-creation sites, the native EAX token result
+passes unchanged to outgoing argument 1 of `get_card_instance`. Ajani passes
+emblem ID `0x49bb` and writes its sleighted color mask at offset 128.
+Mu Yanling passes `0x4f99`, writes its hacked subtype at offset 124 and copies
+the one-byte Island substitution at offset 278. Exact ID stores, calls,
+returned-ID stores and emblem word/byte stores are recorded independently.
+
+DWARF verifies Ajani's 84-byte target definition at frame offset -320 and
+216-byte resurrection test at -236. Mu Yanling has its target definition at
+-104 and 76-byte token definition at -180. Both handlers preserve the native
+target selection, planeswalker modes and remaining event control flow. The
+source uses the recovered target/test/token APIs without record-layout casts.
+
+The Wish investigation also traced the four-argument native filter interface
+through `new_card_from_list` to the newer C++ card-selection UI. That path
+still needs recovery; its chooser wrappers are not replaced with the older
+source chooser. Karn's native ability-suppression filter also needs coordinated
+layout migration with its existing callers. Those findings do not add to the
+recovered-implementation count.
+
+All 4,169 earlier records survive except for the 72 documented identifier
+bindings. Earlier source token prefixes survive after reversing only those
+bindings. Prior helper bodies and interface components, fragments, globals and
+stack evidence are unchanged. Header, definitions and linker script are
+byte-identical. All 139 source units, ABI checks, provenance checks and
+compiler-part checks pass. The canonical cache retains 4,644 rows and 4,586
+original names. Native linking and gameplay verification remain pending.
+
+The sixty-seventh pass applies the user's scope change for the built-in
+Wish/card-picker dialog. `functions/choose_a_card.cpp` now provides two typed
+C-linkage stubs, `choose_a_card_test_ct` (`0x26ef820`) and
+`choose_a_card_test_ct_allow_cancel` (`0x26ef860`). Both ignore their arguments
+and return -1, including the mandatory-selection entry point. The dialog UI
+and its dialog-specific internals remain out of scope. These are explicitly
+marked placeholders, not recovered native bodies, and are excluded from the
+implementation/helper totals. The manifest has separate stub and scope ledgers,
+the provenance audit pins their source bodies, and automatic promotion honors
+the source-unit exclusion. The normal makefile already discovers C++ source
+units; the new stub unit passes a separate 32-bit C++ syntax check.
+
+`new_card_from_list_2022` (`0x268ecf0`) in `functions/functions.c` preserves the
+native 216-byte test filter, type/color masks, mandatory/cancel chooser branch
+and optional CSVID-to-IID conversion. The C/C++ analysis type-name conflicts
+are projected onto the typed stub boundaries without record-layout casts;
+the constraints pointer is not dereferenced by either stub. The existing
+CSVID lookup preserves the -1 no-selection sentinel. Exact native calls at
+`0x268ed5c` and `0x268ed83` bind the two dialog entries. Original type-only
+card-list source remains unchanged.
+
+`generic_wish_effect_2022` (`0x20590c0`) in `cards/judgement.c` preserves the
+native filter-aware Wish logic: Death Wish life loss, the human card-list path,
+AI selection from its filtered library with fallback card ID, hand addition,
+reveal and rules-engine bookkeeping. It uses the recovered selection and
+life-loss APIs. Interactive card selection remains stubbed; the native
+surrounding flow is not replaced by a guessed dialog implementation. The
+original type-only Wish helper remains unchanged.
+
+Granted (`0x25d04e0`), Mastermind's Acquisition (`0x2190ed0`), Vivien, Arkbow
+Ranger (`0x239a660`) and Spike, Tournament Grinder (`0x25c7170`) now call the
+filter-aware helper from their original set files. Four exact native call
+destinations and the 216-byte source filter types are checked separately.
+Their records explicitly carry the stubbed-dialog limitation. Karn remains
+pending its ability-suppression filter migration. The library-reveal chooser
+investigation also remains pending; no library-reveal bodies were accepted
+during the Wish scope pivot.
+
+All 4,171 earlier implementation records, interface components and C token
+prefixes survive unchanged. The header adds two helper prototypes and two
+stub-boundary declarations. Definitions, linker script, fragments, globals
+and stack registry are unchanged. All 139 C source units, the separate C++
+stub unit, ABI checks, provenance checks and compiler-part checks pass. The
+canonical cache now contains 4,646 rows and 4,588 original names. Native
+linking, interactive UI integration and gameplay verification remain pending.
+
+The sixty-eighth pass corrects the earlier recovery of
+`remove_abilities_by_test` (`0x26dda70`). Its native record now identifies
+`remove_abilities_by_test_2022` in `functions/abilities.c`, accepting a
+216-byte test definition and calling `new_make_test_in_play_2022`. The
+previous 208-byte compatibility implementation retains its body and old
+prototype; it is explicitly labeled as compatibility source rather than the
+native entry. This is an interface correction at an already counted address,
+not an additional helper implementation.
+
+The helper retains its native event gates, optional null filter, affected-card
+controller selection and ability-loss mask merge. Exact instructions verify
+the four-byte mask at instance offset 256, the signed negative-sentinel test,
+conditional OR and final store. DWARF records the four physical arguments at
+frame offsets 0, 4, 8 and 12. The source ABI check verifies the 208/216-byte
+filter distinction, four-byte ability-loss type and mask slot.
+
+Blood Sun (`0x2191920`) and `ris_legacy` (`0x23c7630`, the Revel in Silence
+effect) now use the 216-byte filter, matching initializer and corrected helper.
+Their native test locals are recorded at frame offsets -236 and -232.
+Four exact native calls cover the filter initializer and ability-suppression
+dependencies. Changes are limited to three recorded identifier substitutions.
+Each earlier record is retained in its migration evidence. Blood Sun's prior
+entry-trigger binding remains unchanged and is checked by reversing only the
+new substitutions to recover its exact predecessor body before replaying that
+older proof. The previous interface component is not rewritten.
+
+This unlocks Karn, the Great Creator (`0x21cfde0`) in
+`cards/war_of_the_spark.c`. The native static-ability filter uses the corrected
+helper; animation, exile retrieval, planeswalker modes and filter-aware Wish
+fallback retain their exported flow. Exact native filter and Wish calls are
+recorded separately. Its Wish branch still carries the explicitly stubbed
+interactive-dialog limitation from the preceding pass.
+
+All 4,177 earlier records survive except the documented helper-interface
+correction and two caller migrations. Earlier C token prefixes survive after
+reversing only those caller bindings. Header gains one public prototype;
+definitions, linker script, fragments, globals and stack registry are
+unchanged. The C++ dialog stubs and scope ledger are unchanged. All 139 C
+units, the separate C++ stub unit, ABI checks, provenance checks and
+compiler-part checks pass. The canonical cache retains 4,646 rows and 4,588
+original names. Native linking and gameplay verification remain pending.
+
+The sixty-ninth pass recovers six native library reveal/selection helpers in
+`functions/tutors.c`, with `_2022` APIs retaining the original three source
+bodies. `reveal_top_cards_of_library_2022` (`0x26526c0`) clamps the count and
+uses the existing Magic.exe deck viewer. The shared worker
+`reveal_top_cards_of_library_and_choose_fn_who_chooses_2022` (`0x2654d60`)
+restores the chosen-IID VLA, 216-byte filter, chooser routing, destination
+switches, remaining-card disposition and delayed graveyard/battlefield entry.
+The ordinary, type-based, callback and explicit-chooser frontends are
+`0x2655580`, `0x26555e0`, `0x2655740` and `0x26557a0` respectively.
+
+DWARF's array upper bound is a reference to an artificial variable. Decoding
+that variable's location expression proves `num_to_pick - 1`; its DIE offset
+must not be treated as a constant array length. Native allocation scales the
+count by four and probes/subtracts that size from the stack. The display
+buffer is 100 bytes, while four lexical diagnostic buffers are 200 bytes;
+all five share frame offset -220. A 200-byte union preserves those views.
+The type frontend restores the two compiler-inlined string-length scans.
+
+Six read-only title/diagnostic values and nine materialization sites restore
+the worker's complete variadic arguments, including the source filename and
+native line numbers 884, 902, 945 and 999. The title reads `card_ptr_t.name`
+at offset eight after `get_id`; DWARF distinguishes `full_name` at offset
+four. The ABI check caught and corrected an initial mistaken field choice.
+No target binary was executed. Fifty-six native helper call sites are pinned,
+along with the VLA, argument-frame, callback and return instruction ranges.
+
+Native behavior is retained even where surprising: the callback frontend
+ignores its `fn` argument and passes NULL; the standalone reveal helper uses
+a 50-byte local with a formatting bound of 100; the remaining-card
+`TUTOR2022_TPLAYER_HAND` arm gives cards to `1 - t_player`. A single ordinary
+battlefield entry returns the created card slot, while attacking entry and
+graveyard batching return counts. Ownership, played-from-deck flags and the
+callback-before-entry ordering follow the native worker.
+
+This unlocks Vivien Reid (`0x220c4d0`) in `cards/m19.c`, Explore the Vastlands
+(`0x23dfc10`) in `cards/strixhaven.c` and Turntimber Symbiosis (`0x230f420`) in
+`cards/zendikar_rising.c`. Four exact library-selection calls are recorded.
+Turntimber's pointer to `three_counters_for_mv_less_than_three` is verified
+separately, along with the native wrapper that discards it; this recovery
+does not silently repair that behavior.
+
+`show_deck_exe` (`Magic.exe:0x479360`) remains the existing six-argument engine
+boundary. No deck-viewer dialog procedure is decompiled or counted. The
+Wish/card-picker stubs and their scope exclusion are unchanged. All 4,178
+previous records and C token prefixes survive unchanged; the header gains
+one callback typedef and six prototypes. Definitions, linker, fragments,
+globals and the shared stack registry are unchanged. All 139 C units, the
+separate C++ stub unit, ABI, provenance and compiler-part checks pass. The
+canonical cache now has 4,649 rows and 4,591 original names. Native linking
+and gameplay verification remain pending.
+
+The seventieth pass recovers 21 implementations through caller-specific
+DWARF enums and exact native scalar/global operands, then four more dependent
+card handlers. Named scalar values remove ambiguous-address screening failures
+without relaxing the address checks. Thirty-five source-expression changes and
+64 native helper call sites are recorded in `native_word_cards_2022`.
+
+Narset, Parter of Veils reads the opponent's two-byte `cards_drawn_this_turn`
+element at `0x4ef1f4`, using native opponent-index arithmetic. Approach of the
+Second Sun and Fierce Guardianship restore four-byte `player_bits` indexing at
+`0x4ef1a4`, including byte-two flag tests. Native Approach history uses bits
+22/23; distinct `PB2022_` names preserve those values without changing the older
+Shandalar-only declarations. Each used enum is checked in its caller's CU;
+COFF absolute symbols establish the engine array addresses and DWARF establishes
+their types. Source ABI checks confirm both array strides and flag-word widths.
+
+Defender, regeneration-mode, regeneration-target, phased-state and sacrifice
+restriction masks unlock Portcullis Vine, Arcades, Teyo, Soldevi Sentry,
+Furnace Brood, Medicine Bag, Jungle Troll and Mischievous Poltergeist. The
+remaining initial helpers are Lukka's legacy, Xathrid's legacy, the trample/
+regeneration effect, the Oubliette pair and the control-loss sacrifice effect.
+Native `phase_in_impl`, `phase_in`, `phase_out_impl` and `phase_out` are recovered
+under `_2022` names in `cards/mirage.c`; old source bodies remain unchanged.
+These preserve recursive attachment handling, the new cannot-phase-in flag,
+source-aware counters, target layout and the native detach/return behavior.
+
+The follow-up handlers are Lukka, Wayward Bonder, Spinal Embrace, Out of Time
+and Run Wild. Their four native helper/callback operands are pinned separately.
+The batch adds one checked C source unit, `cards/arabian_nights.c`, and raises
+the canonical cache to 4,652 rows and 4,594 original names. All 4,187 previous
+records survive except two documented C-grammar portability changes, each
+retaining its exact previous record. Brainstone and Kenrith receive only null
+statements after terminal labels; Kenrith's earlier life-callee proof is checked
+against the exactly restored predecessor body without rewriting that component.
+
+The user also requested a complete build. [The build procedure](recovery-build.md)
+now succeeds with GCC/G++ 9.3 and `-m32`, with warnings allowed. It compiles 164 C
+and two C++ units, assembles 20 linked helper/card objects plus the fixed veneer,
+links a PE32 DLL and separates its debug file. The veneer is loaded exactly once
+by the linker script. Twenty-four historical C files absent from both release
+CU inventories and ten duplicate assembly wrappers are excluded; the original
+files remain in place. The unique `is_not_dead` assembly entry remains linked.
+Header globals become extern declarations: `card_coded` remains an absolute EXE
+symbol, while the DLL-owned legacy-title pointer has one C definition. Import
+archives are explicitly generated as i386 using a 32-bit assembler.
+
+The [build verification record](recovery-evidence/native-build.json) checks the
+PE32 machine, base `0x02000000`, entry/exports at RVAs `0x1000`/`0x1006`, nonempty
+DWARF data, all 21 new public symbols, both import archives and the selected
+source/object inputs. All 140 recovery C units, the separate C++ stub unit, ABI,
+provenance and compiler-part checks pass. Native linking now succeeds. Runtime
+integration, the existing veneer/registration table, remaining legacy API
+migrations and gameplay verification still need work; neither DLL nor game was
+executed. Wish dialog stubs remain unchanged and out of scope.
+
 Some code retains decompiler-style temporaries and control flow. Numeric
 constants are retained where a reliable symbolic reconstruction has not been
 established. These are provisional reconstructed implementations, not claims of
@@ -2343,17 +2863,20 @@ original formatting, original macros or proven behavioral equivalence.
   the current `manalink.h` and `defs.h`. This also rejected missing dependencies,
   incompatible argument lists, unresolved identifiers and uninitialized locals
   reported by the checker.
-- All 139 complete modified/new source units passed Clang's 32-bit C syntax
+- All 140 complete modified/new source units passed Clang's 32-bit C syntax
   checks. `functions/rules_engine.c` needs the checker-only Windows compatibility
   definition `strncasecmp=_strnicmp` for existing configuration parsing code.
   Its game source was not changed for that portability issue.
 - Recovered string/character literals were checked against the raw exports.
-- All 4,123 recorded raw-export hashes and source provenance markers were checked,
+- All 4,212 recorded raw-export hashes and source provenance markers were checked,
   along with supporting exports, forty source fragments, fifty-four recovered global
-  declarations, local enum values, array endpoint replacements and 1,599
+  declarations, local enum values, array endpoint replacements and 1,704
   recovered literal arguments, plus two independently verified literal pointer
-  stores, sixteen reconstructed literal references and 1,695 manually
+  stores, sixteen reconstructed literal references and 1,841 manually
   reconstructed/qualified function body hashes.
+- The two out-of-scope dialog stubs are source-hash checked and compiled as one
+  32-bit C++ syntax unit. They are tracked independently of recovered native
+  implementation counts and native-behavior claims.
 - Reconstructed stack-storage body hashes were checked for all 88 functions in
   the shared storage registry, and the known cross-type local cast pattern is
   rejected. The selector union and counted-picker VLA are checked separately.

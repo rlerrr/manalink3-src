@@ -154,7 +154,7 @@ extern int unknown62BCEC;
 extern int mana_paid[7];	// Mana paid in the last successful call to charge_mana().
 extern int mana_pool[2][8];
 extern int available_slots;
-char card_coded[30000/8];
+extern char card_coded[30000/8];
 extern int creatures_dead_this_turn;
 extern int activation_card;
 extern int ai_is_speculating;
@@ -225,7 +225,7 @@ extern int PAY_MANA_RED;
 extern int PAY_MANA_WHITE;
 extern int PAY_MANA_ARTIFACT;
 
-char* set_legacy_effect_name_addr;
+extern char* set_legacy_effect_name_addr;
 
 int pick_creature_to_regen(target_definition_t td);
 int is_creature_dead(void);
@@ -3516,6 +3516,111 @@ int lose_life_2022(int player, int amount);
 /* October 2022 Oath life-loss callback API. */
 #ifndef SHANDALAR
 void oath_of_lim_dul_lifeloss_trigger_2022(int player, int card, int amount);
+#endif
+
+/* Existing shared card helpers: public in October 2022. */
+void converge(int player, int card, event_t event);
+int is_creature_type(int new_type);
+int exile_at_end_of_combat_2022(int player, int card, event_t event);
+
+/* October 2022 Vow and Lace APIs. */
+#ifndef SHANDALAR
+int vow_2022(int player, int card, event_t event, int pow, int tou, int key, int s_key);
+int lace_2022(int player, int card, event_t event, int color_test);
+#endif
+
+/* October 2022 delayed-effect callbacks and retained cantrip helper. */
+#ifndef SHANDALAR
+int last_chance_legacy_2022(int player, int card, event_t event);
+int effect_nettling_imp_2022(int player, int card, event_t event);
+int cantrip_legacy(int player, int card, event_t event);
+#endif
+
+/* October 2022 temporary-exile worker and retained transform callbacks. */
+#ifndef SHANDALAR
+int remove_until_upkeep_impl(int player, int card, int t_player, int t_card, int whose_upkeep,
+                             int discard_cards_equal_to_toughness);
+void return_to_bf_transformed_impl(int player, int card);
+void exile_and_return_to_bf_transformed(int player, int card);
+#endif
+
+/* Interfaces recovered from October 2022 DWARF. */
+int remove_until_upkeep(int player, int card, int t_player, int t_card, int whose_upkeep);
+int remove_until_upkeep_discard_cards_equal_to_toughness(int player, int card, int t_player,
+                                                         int t_card, int whose_upkeep);
+
+/* October 2022 spell-copy APIs. */
+#ifndef SHANDALAR
+int copy_spell_2022(int player, int csvid);
+int copy_spell_from_stack_2022(int player, int t_player, int t_card);
+int copy_spell_from_stack_set_target0(int player, int iid, card_instance_t *copied,
+                                      int target0_player, int target0_card);
+#endif
+
+/* October 2022 color and basic-land word replacement APIs. */
+#ifndef SHANDALAR
+void replace_all_instances_of_one_color_word_with_another_2022(int player, int card, int t_player,
+                                                               int t_card);
+void replace_all_instances_of_one_basic_land_type_word_with_another_2022(int player, int card,
+                                                                         int t_player, int t_card);
+#endif
+
+/* October 2022 filter-aware Wish APIs and out-of-scope dialog boundaries. */
+#ifndef SHANDALAR
+int choose_a_card_test_ct(char *prompt, test_definition_2022_t *constraints, color_test_t colors, type_t types);
+int choose_a_card_test_ct_allow_cancel(char *prompt, test_definition_2022_t *constraints, color_test_t colors, type_t types);
+int new_card_from_list_2022(int player, int mode, test_definition_2022_t *test);
+void generic_wish_effect_2022(int player, int card, test_definition_2022_t *test, int ai_card);
+#endif
+
+/* October 2022 ability suppression with the native filter layout. */
+#ifndef SHANDALAR
+void remove_abilities_by_test_2022(int player, event_t event, test_definition_2022_t *test,
+                                   ability_loss_t mode);
+#endif
+
+/* October 2022 library reveal and selection APIs. */
+#ifndef SHANDALAR
+typedef int (*library_reveal_callback_2022_t)(int player, int card);
+int reveal_top_cards_of_library_2022(int player, int num_cards);
+int reveal_top_cards_of_library_and_choose_fn_who_chooses_2022(
+    int src_player, int src_card, int t_player, int who_chooses, int num_cards, int must_select,
+    tutor_destination_2022_t destination_chosen, int reveal_chosen,
+    tutor_destination_2022_t destination_rest, int reveal_rest, test_definition_2022_t *test,
+    library_reveal_callback_2022_t fn);
+int reveal_top_cards_of_library_and_choose_2022(int src_player, int src_card, int t_player,
+                                                int num_cards, int must_select,
+                                                tutor_destination_2022_t destination_chosen,
+                                                int reveal_chosen,
+                                                tutor_destination_2022_t destination_rest,
+                                                int reveal_rest, test_definition_2022_t *test);
+int reveal_top_cards_of_library_and_choose_type_2022(int src_player, int src_card, int t_player,
+                                                     int num_cards, int must_select,
+                                                     tutor_destination_2022_t destination_chosen,
+                                                     int reveal_chosen,
+                                                     tutor_destination_2022_t destination_rest,
+                                                     int reveal_rest, type_t legal_types);
+int reveal_top_cards_of_library_and_choose_fn_2022(int src_player, int src_card, int t_player,
+                                                   int num_cards, int must_select,
+                                                   tutor_destination_2022_t destination_chosen,
+                                                   int reveal_chosen,
+                                                   tutor_destination_2022_t destination_rest,
+                                                   int reveal_rest, test_definition_2022_t *test,
+                                                   library_reveal_callback_2022_t fn);
+int reveal_top_cards_of_library_and_choose_who_chooses_2022(
+    int src_player, int src_card, int t_player, int who_chooses, int num_cards, int must_select,
+    tutor_destination_2022_t destination_chosen, int reveal_chosen,
+    tutor_destination_2022_t destination_rest, int reveal_rest, test_definition_2022_t *test);
+#endif
+
+/* October 2022 native flag-word helper interfaces. */
+#ifndef SHANDALAR
+int lukka_legacy(int player, int card, event_t event);
+int phase_out_target_until_source_leaves_play(int s_player, int s_card, int t_player, int t_card);
+void phase_in_impl_2022(int player, int card, int sf2, int mode);
+void phase_in_2022(int player, int card);
+int phase_out_impl_2022(int player, int card, int sf2, int mode);
+int phase_out_2022(int player, int card);
 #endif
 
 #ifdef __cplusplus

@@ -162,6 +162,7 @@ int card_brainstone(int player, int card, event_t event)
         result = result + -1;
       }
     LAB_0222efdd:
+      ;
     } while (0 < result);
   }
   result = generic_activated_ability(player, card, event, 9, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
@@ -321,7 +322,7 @@ int card_crack_open(int player, int card, event_t event)
           if (result != 0)
           {
             kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-            generate_token_by_id(player, card, 0x4998);
+            generate_token_by_id_2022(player, card, 0x4998);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -512,9 +513,9 @@ int card_fae_offering(int player, int card, event_t event)
       iVar2 = get_specific_storm_count(player);
       if (iVar1 < iVar2)
       {
-        generate_token_by_id(player, card, 0x4917);
-        generate_token_by_id(player, card, 0x5077);
-        generate_token_by_id(player, card, 0x4998);
+        generate_token_by_id_2022(player, card, 0x4917);
+        generate_token_by_id_2022(player, card, 0x5077);
+        generate_token_by_id_2022(player, card, 0x4998);
       }
     }
   }
@@ -932,7 +933,7 @@ int card_late_to_dinner(int player, int card, event_t event)
           if (result != -1)
           {
             reanimate_permanent(player, card, player, result, REANIMATE_DEFAULT);
-            generate_token_by_id(player, card, 0x5077);
+            generate_token_by_id_2022(player, card, 0x5077);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -1485,7 +1486,7 @@ int card_strike_it_rich(int player, int card, event_t event)
     }
     else if (event == EVENT_RESOLVE_SPELL)
     {
-      generate_token_by_id(player, card, 0x4998);
+      generate_token_by_id_2022(player, card, 0x4998);
       result = get_flashback(player, card);
       if (result == 0)
       {
@@ -2220,7 +2221,7 @@ int card_hard_evidence(int player, int card, event_t event)
 
   if (event == EVENT_RESOLVE_SPELL)
   {
-    generate_token_by_id(player, card, 0x59d6);
+    generate_token_by_id_2022(player, card, 0x59d6);
     investigate(player, card, player);
     kill_card(player, card, KILL_DESTROY);
   }
@@ -2496,7 +2497,7 @@ int card_ragavan_nimble_pilferer(int player, int card, event_t event)
     {
       while (uVar4 != 0)
       {
-        generate_token_by_id(player, card, 0x4998);
+        generate_token_by_id_2022(player, card, 0x4998);
         exile_top_x_card_you_may_play_them(player, card, 1, NULL, iStack_20, MPCFE_UNTIL_EOT);
         uVar4 = uVar4 - 1;
         *puStack_1c = uVar4;
@@ -2704,7 +2705,7 @@ int card_sweep_the_skies(int player, int card, event_t event)
     else if (event == EVENT_RESOLVE_SPELL)
     {
       instance = get_card_instance(player, card);
-      generate_tokens_by_id(player, card, 0x4995, (unsigned int)instance->eot_toughness0);
+      generate_tokens_by_id_2022(player, card, 0x4995, (unsigned int)instance->eot_toughness0);
       kill_card(player, card, KILL_DESTROY);
     }
     else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
@@ -5164,7 +5165,7 @@ int card_tavern_scoundrel(int player, int card, event_t event)
   {
     if (affected_card == 1)
     {
-      generate_tokens_by_id(player, card, 0x4998, 2);
+      generate_tokens_by_id_2022(player, card, 0x4998, 2);
     }
   }
   else if ((((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
@@ -5372,7 +5373,7 @@ int card_the_underworld_cookbook(int player, int card, event_t event)
 
     if (instance->mode == '\x01')
     {
-      generate_token_by_id(player, card, 0x5077);
+      generate_token_by_id_2022(player, card, 0x5077);
       return 0;
     }
 
@@ -5524,7 +5525,7 @@ int card_tireless_provisioner(int player, int card, event_t event)
     result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\003",
                          "Food token", 1, ((life[player] < 6) - 1 & 0xffffffec) + 0x1e,
                          "Treasure token", 1, 0x14, 0, 0, 0, 0);
-    generate_token_by_id(player, card, ((result == 1) - 1 & 0xfffff921) + 0x5077);
+    generate_token_by_id_2022(player, card, ((result == 1) - 1 & 0xfffff921) + 0x5077);
   }
   return 0;
 }
@@ -7168,7 +7169,7 @@ int card_etherium_spinner(int player, int card, event_t event)
   {
     return 0;
   }
-  generate_token_by_id(player, card, 0x4995);
+  generate_token_by_id_2022(player, card, 0x4995);
   return 0;
 }
 
@@ -8105,7 +8106,7 @@ int card_chitterspitter(int player, int card, event_t event)
   }
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    generate_token_by_id(player, card, 0x4991);
+    generate_token_by_id_2022(player, card, 0x4991);
   }
   result = generic_activated_ability(player, card, event, 1, 0, 0, 0, 1, 0, 0, 0, NULL, NULL);
   return result;
@@ -10311,6 +10312,157 @@ int card_scurry_oak(int player, int card, event_t event)
   token.pow = 1;
   token.color_forced = '\b';
   generate_token_2022(&token);
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2236f60; original cards/modern_horizons_2.c:3463. */
+int card_glinting_creeper(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  converge(player, card, event);
+  instance = get_card_instance(player, card);
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, instance->info_slot);
+  if (((event == EVENT_BLOCK_LEGALITY) && (current_turn == player)) && (attacking_card == card))
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      result = get_power(affected_card_controller, affected_card);
+      if (result < 3)
+      {
+        event_result = event_result | 1;
+      }
+    }
+  }
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x223bd60; original cards/modern_horizons_2.c:5148. */
+int card_radiant_epicure(int player, int card, event_t event)
+{
+  int amount;
+  card_instance_t *instance;
+
+  converge(player, card, event);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+
+  instance = get_card_instance(player, card);
+  amount = instance->info_slot;
+  lose_life_2022(1 - player, amount);
+  gain_life_2022(player, amount);
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x223af70; original cards/modern_horizons_2.c:4868. */
+int card_out_of_time(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int (*paiVar5)[2];
+  int iVar6;
+  int iStack_4d0;
+  int (*paiStack_4cc)[2];
+  int marked[151][2];
+
+  if (event == EVENT_CAN_CAST)
+  {
+    return 1;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      iVar3 = count_subtype(1 - player, 2, -1);
+      ai_modifier = ai_modifier + iVar3 * 5;
+      iVar3 = count_subtype(player, 2, -1);
+      ai_modifier = ai_modifier + iVar3 * -5;
+    }
+    etb_ability_2022(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
+    goto LAB_0223b0f4;
+  }
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  iVar3 = current_turn;
+  if (event != EVENT_ETB)
+    goto LAB_0223b0f4;
+
+  iVar6 = active_cards_count[current_turn] + -1;
+  if (iVar6 < 0)
+  {
+    iVar4 = 0;
+    iVar6 = 1 - current_turn;
+    iVar3 = active_cards_count[iVar6] + -1;
+    if (-1 < iVar3)
+      goto LAB_0223b02b;
+  LAB_0223b1f0:
+    iVar3 = 0;
+  }
+  else
+  {
+    iVar4 = 0;
+    do
+    {
+      instance = in_play(iVar3, iVar6);
+      if ((instance != NULL) && (iVar2 = is_what(iVar3, iVar6, 2), iVar2 != 0))
+      {
+        marked[iVar4][0] = iVar3;
+        marked[iVar4][1] = iVar6;
+        iVar4 = iVar4 + 1;
+      }
+      iVar6 = iVar6 + -1;
+    } while (iVar6 != -1);
+    iVar6 = 1 - current_turn;
+    iVar3 = active_cards_count[iVar6];
+    while (iVar3 = iVar3 + -1, -1 < iVar3)
+    {
+    LAB_0223b02b:
+      while ((instance = in_play(iVar6, iVar3),
+              instance != NULL && (iVar2 = is_what(iVar6, iVar3, 2), iVar2 != 0)))
+      {
+        marked[iVar4][1] = iVar3;
+        marked[iVar4][0] = iVar6;
+        iVar4 = iVar4 + 1;
+        iVar3 = iVar3 + -1;
+        if (iVar3 < 0)
+          goto LAB_0223b065;
+      }
+    }
+  LAB_0223b065:
+    if (iVar4 < 1)
+      goto LAB_0223b1f0;
+    paiVar5 = (int (*)[2])(&iStack_4d0 + iVar4 * 2);
+    iStack_4d0 = iVar4;
+    do
+    {
+      iVar3 = (*paiVar5)[1];
+      iVar6 = (*paiVar5)[0];
+      paiStack_4cc = paiVar5;
+      untap_card(iVar6, iVar3);
+      phase_out_target_until_source_leaves_play(player, card, iVar6, iVar3);
+      paiVar5 = paiVar5 + -1;
+      iVar3 = iStack_4d0;
+    } while (paiStack_4cc != marked);
+  }
+  add_counters_from_source(player, card, player, card, COUNTER_TIME, iVar3);
+LAB_0223b0f4:
+  vanishing(player, card, event, 0);
   return 0;
 }
 

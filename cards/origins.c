@@ -32,7 +32,7 @@ static void renown(int player, int card, event_t event, int n)
 	}
 }
 
-static void
+void
 return_to_bf_transformed_impl(int player, int card)
 {
   // These won't have been set yet.  (Though the actual values on the card that they're redundant to will have been.)
@@ -45,7 +45,7 @@ return_to_bf_transformed_impl(int player, int card)
   inst->internal_card_id = inst->targets[12].card;
 }
 
-static void exile_and_return_to_bf_transformed(int player, int card)
+void exile_and_return_to_bf_transformed(int player, int card)
 {
   blink_effect(player, card, &return_to_bf_transformed_impl);
 }

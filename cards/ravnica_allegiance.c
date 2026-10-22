@@ -559,7 +559,7 @@ int card_smothering_tithe(int player, int card, event_t event)
     charge_mana(1 - player, COLOR_ANY, 2);
     if (spell_fizzled == 1)
     {
-      generate_token_by_id(player, card, 0x4998);
+      generate_token_by_id_2022(player, card, 0x4998);
     }
   }
   if (event != EVENT_SHOULD_AI_PLAY)
@@ -2371,7 +2371,7 @@ int card_hero_of_precinct_one(int player, int card, event_t event)
   {
     return 0;
   }
-  generate_token_by_id(player, card, 0x494c);
+  generate_token_by_id_2022(player, card, 0x494c);
   return 0;
 }
 
@@ -3550,7 +3550,7 @@ int card_repudiate_replicate(int player, int card, event_t event)
       }
       if (((uVar3 & 2) != 0) && (result = valid_target(&td), result != 0))
       {
-        copy_token(player, card, player, instance->targets[0].card);
+        copy_token_2022(player, card, player, instance->targets[0].card);
       }
       kill_card(player, card, KILL_DESTROY);
       result = can_target(&td);

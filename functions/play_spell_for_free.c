@@ -868,3 +868,136 @@ int escape_spell(int player, int g_pos)
   }
   return -1;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2668490; original functions/play_spell_for_free.c:47. */
+static int real_copy_spell_2022(int player, int internal_id, int special_flags, int special_flags3,
+                                card_instance_t *copied, target_t *forced_target)
+{
+  unsigned char bVar1;
+  int32_t iVar2;
+  int card;
+  card_instance_t *instance;
+  int iVar4;
+  unsigned int uVar5;
+
+  card = add_card_to_hand(player, internal_id);
+  instance = get_card_instance(player, card);
+  if (copied == NULL)
+  {
+    instance->info_slot = x_value;
+  }
+  else
+  {
+    instance->info_slot = copied->info_slot;
+    instance->eot_toughness = copied->eot_toughness;
+    iVar4 = 0;
+    do
+    {
+      iVar2 = copied->targets[iVar4].player;
+      instance->targets[iVar4].card = copied->targets[iVar4].card;
+      instance->targets[iVar4].player = iVar2;
+      iVar4 = iVar4 + 1;
+    } while (iVar4 != 0x13);
+    uVar5 = get_special_flags_by_instance_2022(copied);
+    set_special_flags_2022(player, card, uVar5 | special_flags);
+    uVar5 = get_special_flags2_by_instance_2022(copied);
+    set_special_flags2_2022(player, card, uVar5 | SF2_COPIED_FROM_STACK);
+    uVar5 = get_special_flags3_by_instance_2022(copied);
+    set_special_flags3_2022(player, card, uVar5 | special_flags3);
+  }
+  if (forced_target != NULL)
+  {
+    iVar2 = forced_target->player;
+    instance->targets[0].card = forced_target->card;
+    instance->targets[0].player = iVar2;
+    instance->number_of_targets = '\x01';
+  }
+  free_spell_player = player;
+  free_spell_card = card;
+  convert_to_token(player, card);
+  iVar4 = put_card_on_stack(player, card, 0);
+  if (iVar4 == 0)
+  {
+    iVar4 = can_legally_play_iid(player, internal_id);
+    if (iVar4 == 0)
+    {
+      obliterate_card(player, card);
+      free_spell_card = -1;
+      return card;
+    }
+    hand_count[player] = hand_count[player] + -1;
+    real_put_into_play(player, card);
+    bVar1 = cards_data[internal_id].type;
+    card_on_stack_controller = player;
+    card_on_stack = card;
+  }
+  else
+  {
+    put_card_on_stack(player, card, 1);
+    put_card_on_stack3(player, card);
+    bVar1 = cards_data[internal_id].type;
+  }
+  if ((bVar1 & 1) != 0)
+  {
+    land_can_be_played = land_can_be_played | 1;
+  }
+  dispatch_event(player, card, EVENT_SPELL_COPIED);
+  free_spell_card = -1;
+  return card;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2668690; original functions/play_spell_for_free.c:111. */
+int copy_spell_2022(int player, int csvid)
+{
+  int result;
+  result = get_internal_card_id_from_csv_id(csvid);
+  result = real_copy_spell_2022(player, result, (SF_NOT_CAST | SF_PLAYED_FOR_FREE), 0, NULL, NULL);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26686d0; original functions/play_spell_for_free.c:116. */
+int copy_spell_from_stack_2022(int player, int t_player, int t_card)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int internal_id;
+
+  instance = get_card_instance(t_player, t_card);
+  internal_id = instance->internal_card_id;
+  if (internal_id == 0xffffffff)
+  {
+    internal_id = (unsigned int)instance->backup_internal_card_id;
+  }
+  result = real_copy_spell_2022(player, internal_id, (SF_NOT_CAST | SF_PLAYED_FOR_FREE), 0,
+                                instance, NULL);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2668720; original functions/play_spell_for_free.c:125. */
+int copy_spell_from_stack_set_target0(int player, int iid, card_instance_t *copied,
+                                      int target0_player, int target0_card)
+{
+  int result;
+  target_t targ;
+  targ.player = target0_player;
+  targ.card = target0_card;
+  result = real_copy_spell_2022(
+      player, iid, (SF_NOT_CAST | SF_PLAYED_FOR_FREE | SF_TARGETS_ALREADY_SET), 0, copied, &targ);
+  return result;
+}
+
+#endif

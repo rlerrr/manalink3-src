@@ -2413,3 +2413,62 @@ Creatures it was blocking that had become blocked by only ~ this combat become u
 	return 0;
 }
 
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 native scalar-word handlers. */
+static int oubliette_legacy(int player, int card, event_t event);
+int phase_out_target_until_source_leaves_play(int s_player, int s_card, int t_player, int t_card);
+
+/* ManalinkEh 2022: 0x22bbcd0; original cards/arabian_nights.c:2127. */
+static int oubliette_legacy(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int player_00;
+  if (trigger_condition != 0xd4)
+  {
+    return 0;
+  }
+  if (((card == affected_card) && (affected_card_controller == player)) && (event == EVENT_TRIGGER))
+  {
+    instance = get_card_instance(player, card);
+    if (((instance->targets[1].card == trigger_cause) &&
+         (result = instance->targets[1].player, result == trigger_cause_controller)) &&
+        (result == reason_for_trigger_controller))
+    {
+      player_00 = (int)instance->damage_target_player;
+      result = instance->damage_target_card;
+      remove_special_flags3_2022(player_00, result, SF3_CANNOT_PHASE_IN);
+      phase_in_2022(player_00, result);
+      if (instance->targets[2].card == 0x1bf)
+      {
+        tap_card(player_00, result);
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  return 0;
+}
+
+
+/* ManalinkEh 2022: 0x22c1900; original cards/arabian_nights.c:2148. */
+int phase_out_target_until_source_leaves_play(int s_player, int s_card, int t_player, int t_card)
+{
+  int card;
+  card_instance_t *instance;
+  int result;
+
+  set_special_flags3_2022(t_player, t_card, SF3_CANNOT_PHASE_IN);
+  card = create_targetted_legacy_effect(s_player, s_card, oubliette_legacy, t_player, t_card);
+  instance = get_card_instance(s_player, card);
+  instance->targets[1].player = s_player;
+  instance->targets[1].card = s_card;
+  instance->number_of_targets = '\x02';
+  result = get_id(s_player, s_card);
+  instance->targets[2].card = result;
+  phase_out_2022(t_player, t_card);
+  return card;
+}
+
+#endif

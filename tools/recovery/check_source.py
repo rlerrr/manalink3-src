@@ -214,6 +214,67 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
             stream.write('_Static_assert(offsetof(card_instance_t,targets[17].card)==256, "common activation permission word");\n')
             stream.write('\n'.join(f'_Static_assert({name}=={number}, "native activation flag");' for name,number in component['flags']['members'].items())+'\n')
             stream.write('\n'.join(f'_Static_assert({name}=={number}, "native activation enum value");' for name,number in component['enum_values'].items())+'\n')
+    if interfaces.get('ability_filter_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(test_definition_2022_t)==216 && sizeof(test_definition_t)==208 && sizeof(ability_loss_t)==4 && offsetof(card_instance_t,targets[17].card)==256 && sizeof(((card_instance_t*)0)->targets[17].card)==4, "native ability-loss filter and stored mask");\n')
+    if interfaces.get('native_word_cards_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(cards_drawn_this_turn)==4 && sizeof(cards_drawn_this_turn[0])==2 && sizeof(player_bits)==8 && sizeof(player_bits[0])==4, "native indexed draw-count and player flag words");\n')
+            stream.write('_Static_assert(PB2022_CAST_APPROACH_OF_THE_SECOND_SUN1==4194304 && PB2022_CAST_APPROACH_OF_THE_SECOND_SUN2==8388608 && PB_COMMANDER_IN_PLAY==524288 && SF3_CANNOT_PHASE_IN==8388608, "native and retained legacy cast-history flags");\n')
+            stream.write('_Static_assert(sizeof(target_definition_2022_t)==84 && sizeof(test_definition_2022_t)==216 && sizeof(token_generation_2022_t)==76 && sizeof(((test_definition_2022_t*)0)->keyword)==4 && sizeof(((token_generation_2022_t*)0)->key_plus)==4 && sizeof(((target_definition_2022_t*)0)->special)==4 && ((char)0x80)<0, "native scalar-word aggregate fields and signed phasing type byte");\n')
+            component=interfaces['native_word_cards_2022']
+            values={name:number for enums in component['unit_enums'].values() for name,number in enums.items()}
+            for name,number in values.items():
+                if name.startswith('PB_CAST_APPROACH'):name=name.replace('PB_','PB2022_',1)
+                stream.write(f'_Static_assert({name}=={number}, "native caller flag enumerator");\n')
+    if interfaces.get('library_reveal_2022'):
+        from library_reveal_body import STORAGE
+        with layout.open('a') as stream:
+            stream.write('\n'+STORAGE+'\n_Static_assert(sizeof(library_reveal_text_2022_t)==200 && offsetof(library_reveal_text_2022_t,display)==0 && offsetof(library_reveal_text_2022_t,diagnostic)==0 && sizeof(((library_reveal_text_2022_t*)0)->display)==100, "native library reveal overlapping text views");\n')
+            stream.write('_Static_assert(sizeof(library_reveal_callback_2022_t)==4 && sizeof(test_definition_2022_t)==216 && offsetof(test_definition_2022_t,qty)==174 && offsetof(test_definition_2022_t,create_minideck)==194 && sizeof(((test_definition_2022_t*)0)->qty)==2 && sizeof(((test_definition_2022_t*)0)->create_minideck)==2, "native library reveal filter and callback");\n')
+            stream.write('_Static_assert(sizeof(card_ptr_t)==152 && offsetof(card_ptr_t,name)==8 && offsetof(card_ptr_t,full_name)==4 && sizeof(card_data_t)==72 && offsetof(card_data_t,id)==36 && sizeof(((card_data_t*)0)->id)==2 && STATE_OWNED_BY_OPPONENT==4096 && (STATE_TAPPED | STATE_ATTACKING)==20 && SF_PLAYED_FROM_DECK==65536 && TYPE_EFFECT==128 && TYPE_NONEFFECT==127 && TYPE_ANY==255 && TYPE_NONE==0, "native library reveal name ID and entry state");\n')
+    if interfaces.get('wish_helpers_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(void*)==4 && sizeof(color_test_t)==4 && sizeof(type_t)==4 && sizeof(test_definition_2022_t)==216, "typed Wish dialog stub boundary widths");\n')
+    if interfaces.get('token_emblem_cards_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(offsetof(card_instance_t,targets[1].player)==124 && offsetof(card_instance_t,targets[1].card)==128 && offsetof(card_instance_t,hack_mode[2])==278 && sizeof(((card_instance_t*)0)->hack_mode[2])==1, "native emblem payload stores");\n')
+            stream.write('_Static_assert(sizeof(target_definition_2022_t)==84 && sizeof(test_definition_2022_t)==216 && sizeof(token_generation_2022_t)==76, "native emblem card aggregate locals");\n')
+    if interfaces.get('text_change_helpers_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(offsetof(card_instance_t,color_id)==64 && offsetof(card_instance_t,hack_mode)==276 && sizeof(((card_instance_t*)0)->color_id)==6 && sizeof(((card_instance_t*)0)->hack_mode)==6 && sizeof(int[6])==24, "native text mapping and chooser storage");\n')
+            stream.write('_Static_assert(SF3_0==0 && SF3_HARDCODED_SLEIGHT_WORDS_REPLACED==8192 && SF3_HARDCODED_HACK_WORDS_REPLACED==16384, "native text-cache flags");\n')
+    if interfaces.get('phase_ai_cards_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(current_phase)==4 && sizeof(current_turn)==4 && sizeof(ai_modifier)==4 && PHASE_MAIN1==20 && PHASE_BEFORE_BLOCKING==22, "native signed phase AI comparisons");\n')
+            stream.write('_Static_assert(sizeof(target_definition_2022_t)==84 && sizeof(int[151])==604 && sizeof(char*)==4, "native phase and prompt scratch storage");\n')
+    if interfaces.get('spell_copy_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(card_instance_t)==300 && offsetof(card_instance_t,info_slot)==56 && sizeof(((card_instance_t*)0)->info_slot)==4 && offsetof(card_instance_t,eot_toughness)==76 && sizeof(((card_instance_t*)0)->eot_toughness)==4, "native copied scalar words");\n')
+            stream.write('_Static_assert(offsetof(card_instance_t,targets)==116 && sizeof(target_t)==8 && sizeof(((card_instance_t*)0)->targets)==152 && offsetof(card_instance_t,number_of_targets)==54 && sizeof(((card_instance_t*)0)->number_of_targets)==1, "native forced-copy target block");\n')
+            stream.write('_Static_assert(sizeof(int[151])==604 && sizeof(int[2][151])==1208 && sizeof(int[2])==8, "native spell-copy card snapshots");\n')
+            stream.write('\n'.join(f'_Static_assert((uint32_t){name}=={number & 0xffffffff}U, "native spell-copy enum bits");' for name,number in interfaces['spell_copy_2022']['enum_values'].items())+'\n')
+    if interfaces.get('temporary_exile_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(card_data_t)==72 && offsetof(card_data_t,id)==36 && offsetof(card_data_t,reserved2)==38 && sizeof(((card_data_t*)0)->id)==2 && sizeof(((card_data_t*)0)->reserved2)==2, "temporary exile packed ID load");\n')
+            stream.write('_Static_assert(offsetof(card_instance_t,display_pic_csv_id)==100 && offsetof(card_instance_t,display_pic_num)==102 && sizeof(((card_instance_t*)0)->display_pic_csv_id)==2 && sizeof(((card_instance_t*)0)->display_pic_num)==2 && sizeof(int[2])==8, "temporary exile picture and meld pair storage");\n')
+            stream.write('_Static_assert(offsetof(card_instance_t,targets[0].player)==116 && offsetof(card_instance_t,targets[0].card)==120 && offsetof(card_instance_t,targets[1].player)==124 && offsetof(card_instance_t,targets[1].card)==128, "temporary exile return packet");\n')
+            stream.write('_Static_assert(offsetof(card_instance_t,targets[13].player)==220 && offsetof(card_instance_t,targets[13].card)==224 && offsetof(card_instance_t,targets[12].card)==216 && offsetof(card_instance_t,internal_card_id)==108, "retained transform callback stores");\n')
+    if interfaces.get('delayed_callbacks_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n'+'\n'.join(f'_Static_assert({name}=={number}, "native delayed callback enum");'
+                for name,number in interfaces['delayed_callbacks_2022']['enum_values'].items())+'\n')
+            stream.write('_Static_assert(offsetof(card_instance_t,targets[1].player)==124 && sizeof(((card_instance_t*)0)->targets[1].player)==4 && sizeof(((card_instance_t*)0)->damage_target_player)==1, "native delayed counter and attachment storage");\n')
+    if interfaces.get('shared_card_exposures_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n'+'\n'.join(f'_Static_assert({name}=={number}, "native retained card helper enum");'
+                for name,number in interfaces['shared_card_exposures_2022']['enum_values'].items())+'\n')
+            stream.write('_Static_assert(SUBTYPE_MIN_CREATURE_SUBTYPE==1 && SUBTYPE_MAX_CREATURE_SUBTYPE==4095, "native creature subtype predicate bounds");\n')
+    if interfaces.get('shared_card_frontends_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n'+'\n'.join(f'_Static_assert({name}=={number}, "native Vow/Lace enum");'
+                for name,number in interfaces['shared_card_frontends_2022']['enum_values'].items())+'\n')
+            stream.write('_Static_assert(sizeof(target_definition_2022_t)==84 && offsetof(card_instance_t,info_slot)==56 && sizeof(((card_instance_t*)0)->info_slot)==4, "native Lace target locals and boolean slot");\n')
     if interfaces.get('oath_life_loss_2022'):
         with layout.open('a') as stream:
             stream.write('\n_Static_assert(sizeof(target_t)==8 && sizeof(target_definition_2022_t)==84 && TARGET_SPECIAL_NOT_ME==0x4000 && TARGET_SPECIAL_EXTRA_FUNCTION==0x8000 && TYPE_PERMANENT==0x47 && KILL_SACRIFICE==3, "native Oath target/VLA/predicate/sacrifice layout");\n')
@@ -368,16 +429,27 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
         with layout.open("a") as stream:
             stream.write("\n" + "\n".join(assertions) + "\n")
     abi = subprocess.run(command + [str(layout)], capture_output=True, text=True)
+    stub_results={}
+    for source in sorted({s['source'] for s in manifest.get('source_stubs',[])}):
+        result=subprocess.run([command[0],'-target','i686-pc-windows-msvc','-std=gnu++17','-fsyntax-only',
+            '-Werror=return-type','-Werror=uninitialized','-I',str(root),str(root/source)],capture_output=True,text=True)
+        stub_results[source]=dict(exit_code=result.returncode,diagnostics=result.stderr)
+    (analysis/'source-stub-syntax-final.json').write_text(json.dumps(stub_results,indent=2))
+    manifest['source_stub_syntax_check']=dict(passed=sum(r['exit_code']==0 for r in stub_results.values()),
+        failed=[s for s,r in stub_results.items() if r['exit_code']!=0],target='i686-pc-windows-msvc',language='gnu++17',
+        counted_as_recovered_implementations=False,tests_run=False)
     summary = dict(passed=sum(r["exit_code"] == 0 for r in results.values()),
                    failed=[s for s,r in results.items() if r["exit_code"] != 0],
                    abi_exit_code=abi.returncode, abi_diagnostics=abi.stderr,
                    target="i686-pc-windows-msvc", language="gnu99", tests_run=False,
                    compatibility_defines={"functions/rules_engine.c": "strncasecmp=_strnicmp"})
+    summary['stub_source_units_checked']=len(stub_results)
+    summary['stub_source_failed']=manifest['source_stub_syntax_check']['failed']
     (analysis / "source-check-summary.json").write_text(json.dumps(summary, indent=2))
     manifest["source_syntax_check"] = summary
     (root / "docs/recovery-evidence/recovered-functions.json").write_text(json.dumps(manifest, indent=2))
     print(json.dumps(summary, indent=2))
-    raise SystemExit(bool(summary["failed"] or abi.returncode))
+    raise SystemExit(bool(summary["failed"] or summary['stub_source_failed'] or abi.returncode))
 
 
 if __name__ == "__main__":

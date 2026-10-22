@@ -5656,3 +5656,29 @@ int card_yuan_shao_the_indecicive(int player, int card, event_t event)
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21b8dc0; original cards/portal_1_2_3k.c:621. */
+int last_chance_legacy_2022(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (current_turn == player)
+  {
+    result = eot_trigger(player, card, event);
+    if (result != 0)
+    {
+      instance = get_card_instance(player, card);
+      instance->targets[1].player = instance->targets[1].player + -1;
+      instance = get_card_instance(player, card);
+      if (instance->targets[1].player < 1)
+      {
+        lose_the_game_2022(player);
+      }
+    }
+  }
+  return 0;
+}
+
+#endif

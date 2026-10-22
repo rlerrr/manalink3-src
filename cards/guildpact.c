@@ -3766,3 +3766,92 @@ static void replicate_blue_red_2022_impl(int player, int card, int cless, int bl
   }
   return;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x252f1a0; original cards/guildpact.c:1298. */
+int card_ink_treader_nephilim(int player, int card, event_t event)
+{
+  int *piVar1;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  int iVar5;
+  unsigned int player_00;
+  unsigned int uVar6;
+  unsigned int uStack_4e4;
+  unsigned int uStack_4dc;
+  int mc[2];
+  target_t targ;
+  int marked[2][151];
+  if (((((trigger_condition == 0xd3) && (card == affected_card)) &&
+        (player == affected_card_controller)) &&
+       ((reason_for_trigger_controller == player &&
+         (iVar5 = target_me(player, card, trigger_cause_controller, trigger_cause),
+          iVar5 != 0)))) &&
+      (pcVar2 = get_card_instance(trigger_cause_controller, trigger_cause),
+       pcVar2->number_of_targets == '\x01'))
+  {
+    sp_ability_trigger_2022(2, event, 2, TYPE_SPELL, NULL, player, card);
+  }
+  if (event == EVENT_SPA)
+  {
+    pcVar2 = get_card_instance(trigger_cause_controller, trigger_cause);
+    uStack_4dc = pcVar2->internal_card_id;
+    if (uStack_4dc == 0xffffffff)
+    {
+      uStack_4dc = (unsigned int)pcVar2->backup_internal_card_id;
+    }
+    mc[0] = 0;
+    mc[1] = 0;
+    uVar6 = 0;
+    do
+    {
+      player_00 = current_turn ^ uVar6;
+      if (0 < active_cards_count[player_00])
+      {
+        iVar5 = 0;
+        do
+        {
+          targ.player = player_00;
+          targ.card = iVar5;
+          pcVar3 = in_play(player_00, iVar5);
+          if ((((pcVar3 != NULL) && (iVar4 = is_what(player_00, iVar5, 2), iVar4 != 0)) &&
+               ((player != player_00 || (card != iVar5)))) &&
+              (iVar4 = can_legally_target(trigger_cause_controller, trigger_cause, &targ),
+               iVar4 != 0))
+          {
+            iVar4 = mc[player_00];
+            mc[player_00] = iVar4 + 1;
+            marked[player_00][iVar4] = iVar5;
+          }
+          iVar5 = iVar5 + 1;
+        } while (iVar5 < active_cards_count[player_00]);
+      }
+      uVar6 = uVar6 + 1;
+    } while (uVar6 != 2);
+    mc[0] = mc[0] + -1;
+    mc[1] = mc[1] + -1;
+    uStack_4e4 = 0;
+    do
+    {
+      uVar6 = uStack_4e4 ^ current_turn;
+      iVar5 = mc[uVar6];
+      if (-1 < iVar5)
+      {
+        do
+        {
+          piVar1 = marked[uVar6] + iVar5;
+          iVar5 = iVar5 + -1;
+          copy_spell_from_stack_set_target0(player, uStack_4dc, pcVar2, uVar6, *piVar1);
+          mc[uVar6] = iVar5;
+        } while (iVar5 != -1);
+      }
+      uStack_4e4 = uStack_4e4 + 1;
+    } while (uStack_4e4 != 2);
+    return 0;
+  }
+  return 0;
+}
+
+#endif

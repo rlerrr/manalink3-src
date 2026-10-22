@@ -571,7 +571,7 @@ int card_quasiduplicate(int player, int card, event_t event)
           result = valid_target(&td);
           if (result != 0)
           {
-            copy_token(player, card, player, instance->targets[0].card);
+            copy_token_2022(player, card, player, instance->targets[0].card);
           }
           result = get_flashback(player, card);
           if (result == 0)
@@ -2771,7 +2771,7 @@ int card_murmuring_mystic(int player, int card, event_t event)
   {
     return 0;
   }
-  generate_token_by_id(player, card, 0x4b5e);
+  generate_token_by_id_2022(player, card, 0x4b5e);
   return 0;
 }
 
@@ -3043,7 +3043,7 @@ int card_ral_izzet_viceroy(int player, int card, event_t event)
     }
     else if (iVar1 == 3)
     {
-      generate_token_by_id(player, card, 0x4c0c);
+      generate_token_by_id_2022(player, card, 0x4c0c);
     }
     else if (iVar1 == 1)
     {
@@ -3876,6 +3876,78 @@ int card_flower_flourish(int player, int card, event_t event)
   get_card_instance(player, card);
 LAB_0261cf1d:
   result = hybrid_split_card(player, card, event, 0x4ba7, 1, 10, 0x4ba6, 1, 8);
+  return result;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x261a7d0; original cards/guilds_of_ravnica.c:504. */
+int card_chance_for_glory(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    result = basic_spell(player, card, event);
+    return result;
+  }
+  pump_creatures_until_eot_2022(player, card, player, 1, 0, 0, 0, -0x7ffff800, NULL);
+  result = check_battlefield_for_id(1 - player, 0x2ddf);
+  if (result == 0)
+  {
+
+    result = create_legacy_effect(player, card, last_chance_legacy_2022);
+    alternate_legacy_text(2, player, result);
+    instance = get_card_instance(player, result);
+    instance->targets[1].player = 2;
+    result = time_walk_effect(player, card);
+    alternate_legacy_text(2, player, result);
+  }
+  else
+  {
+    kill_card(player, card, KILL_DESTROY);
+  }
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 native scalar-word handlers. */
+int card_portcullis_vine(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x261f9f0; original cards/guilds_of_ravnica.c:3054. */
+int card_portcullis_vine(int player, int card, event_t event)
+{
+  int result;
+  test_definition_2022_t test;
+  if (event == EVENT_ACTIVATE)
+  {
+    new_default_test_definition_2022(&test, 2, "Select a creature with defender to sacrifice.");
+    test.keyword = KEYWORD_DEFENDER;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    new_default_test_definition_2022(&test, 2, "Select a creature with defender to sacrifice.");
+    test.keyword = KEYWORD_DEFENDER;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      draw_a_card(player);
+    }
+  }
+  result = generic_activated_ability_with_sacrifice_as_cost_2022(
+      player, card, event, GAA_LITERAL_PROMPT | GAA_UNTAPPED, 2, 0, 0, 0, 0, 0, 0, NULL,
+      "Select a creature with defender to sacrifice.", ~TYPE_NONE, &test, SARV_0);
   return result;
 }
 

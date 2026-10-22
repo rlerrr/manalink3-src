@@ -1096,7 +1096,7 @@ int card_field_of_the_dead(int player, int card, event_t event)
   }
   if (event == EVENT_ETB)
   {
-    generate_token_by_id(player, card, 0x49ac);
+    generate_token_by_id_2022(player, card, 0x49ac);
   }
   iVar1 = plain_mana_producer_tapped(player, card, event);
   return iVar1;
@@ -2673,6 +2673,268 @@ static int can_cast_this(int iid, int unused, int player, int card)
 
   result = has_mana_to_cast_iid(player, EVENT_CAN_CAST, iid);
   return result;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x23982c0; original cards/m20.c:1863. */
+int card_mu_yanling_sky_dancer(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  target_definition_2022_t *ptStack_b4;
+  token_generation_2022_t token;
+  target_definition_2022_t td;
+
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    td.preferred_controller = 1 - player;
+    td.allow_cancel = 3;
+    pcVar1 = get_card_instance(player, card);
+    if (event == EVENT_ACTIVATE)
+    {
+
+      pcVar1->number_of_targets = '\0';
+      pcVar1->info_slot = 0;
+      pcVar1->targets[0].card = -1;
+      pcVar1->targets[0].player = -1;
+      iVar2 = check_battlefield_for_id(player, 0x4f99);
+      iVar4 = -0x19;
+      if (iVar2 == 0)
+      {
+        iVar2 = get_hacked_subtype(player, card, 0x5002);
+        iVar2 = count_subtype(player, 1, iVar2);
+        iVar4 = count_counters(player, card, COUNTER_LOYALTY);
+        iVar4 = iVar2 * 5 + iVar4 * 5 + -0x19;
+      }
+      iVar2 = can_target_2022(&td);
+      iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Debuff a creature",
+                          1, iVar2 * 10, 2, "Elemental Bird token", 1, 10, 0xfffffffd, "Emblem", 1,
+                          iVar4, 0xfffffff8, 0, 0, 0, 0);
+      if (iVar2 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (iVar2 == 1)
+      {
+        pcVar1->number_of_targets = '\0';
+        new_pick_target_2022(&td, "TARGET_CREATURE", 0, 0);
+        if (pcVar1->targets[0].card == -1)
+        {
+          spell_fizzled = 1;
+        }
+      }
+      goto LAB_0239834e;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_0239834e;
+    default_target_definition_2022(player, card, &td, 2);
+    td.preferred_controller = 1 - player;
+    td.allow_cancel = 3;
+    pcVar1 = get_card_instance(player, card);
+  }
+  ptStack_b4 = &td;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    iVar2 = pcVar1->info_slot;
+    if (iVar2 == 1)
+    {
+      iVar2 = valid_target_2022(ptStack_b4);
+      if (iVar2 != 0)
+      {
+        create_targetted_legacy_effect(player, card, fx_yanling_debuff, pcVar1->targets[0].player,
+                                       pcVar1->targets[0].card);
+      }
+    }
+    else if (iVar2 == 2)
+    {
+      default_token_definition_2022(player, card, 0x4f65, &token);
+      token.tou = 4;
+      token.pow = 4;
+      token.color_forced = '\x04';
+      generate_token_2022(&token);
+    }
+    else if (iVar2 == 3)
+    {
+
+      iVar2 = generate_token_by_id_2022(player, card, 0x4f99);
+      pcVar3 = get_card_instance(player, iVar2);
+      iVar2 = get_hacked_subtype(pcVar1->parent_controller, pcVar1->parent_card, 0x5002);
+      pcVar3->targets[1].player = iVar2;
+      pcVar3->hack_mode[2] = pcVar1->hack_mode[2];
+    }
+  }
+LAB_0239834e:
+  iVar2 = planeswalker(player, card, event, 2);
+  return iVar2;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x239a660; original cards/m20.c:2897. */
+int card_vivien_arkbow_ranger(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int amt;
+  unsigned int uVar4;
+  target_definition_2022_t *ptStack_1f0;
+  target_definition_2022_t *ptStack_1ec;
+  target_definition_2022_t *ptStack_1e8;
+  target_definition_2022_t td;
+  target_definition_2022_t td_control;
+  target_definition_2022_t td_cp;
+  test_definition_2022_t test;
+
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    td.preferred_controller = player;
+    default_target_definition_2022(player, card, &td_control, 2);
+    td_control.preferred_controller = player;
+    td_control.allowed_controller = player;
+    default_target_definition_2022(player, card, &td_cp, 0x102);
+    instance = get_card_instance(player, card);
+    if (event == EVENT_ACTIVATE)
+    {
+
+      instance->number_of_targets = '\0';
+      instance->info_slot = 0;
+      instance->targets[0].card = -1;
+      instance->targets[0].player = -1;
+      iVar2 = can_target_2022(&td_control);
+      uVar4 = 0;
+      if (iVar2 != 0)
+      {
+        iVar2 = can_target_2022(&td_cp);
+        uVar4 = (unsigned int)(iVar2 != 0);
+      }
+      iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017",
+                          "Add two +1/+1 counters", 1, 10, 1, "A creature deals damage", uVar4, 10,
+                          0xfffffffd, "Living Wish", 1, 0x14, 0xfffffffb, 0, 0, 0, 0);
+      if (iVar2 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (iVar2 == 1)
+      {
+        iVar2 = target_available_2022(player, card, &td);
+        if (iVar2 == 1)
+        {
+          pick_target_2022(&td, "ASHNODS_BATTLEGEAR");
+        }
+        else
+        {
+
+          iVar2 = new_pick_target_2022(&td, "ASHNODS_BATTLEGEAR", 0, 0);
+          if ((iVar2 == 0) ||
+              (iVar2 = new_pick_target_2022(&td, "ASHNODS_BATTLEGEAR", 1, 0), iVar2 == 0))
+          {
+            spell_fizzled = 1;
+          }
+        }
+      }
+      else if ((iVar2 == 2) &&
+               ((iVar2 = new_pick_target_2022(&td_control, "ASHNODS_BATTLEGEAR", 0, 1),
+                 iVar2 == 0 ||
+                     (iVar2 = new_pick_target_2022(&td_cp, "TARGET_CREATURE_OR_PLANESWALKER", 1, 1),
+                      iVar2 == 0))))
+      {
+        instance->number_of_targets = '\0';
+      }
+      goto LAB_0239a736;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_0239a736;
+    default_target_definition_2022(player, card, &td, 2);
+    td.preferred_controller = player;
+    default_target_definition_2022(player, card, &td_control, 2);
+    td_control.preferred_controller = player;
+    td_control.allowed_controller = player;
+    default_target_definition_2022(player, card, &td_cp, 0x102);
+    instance = get_card_instance(player, card);
+  }
+  ptStack_1e8 = &td_control;
+  ptStack_1ec = &td;
+  ptStack_1f0 = &td_cp;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    iVar2 = instance->info_slot;
+    if (iVar2 == 1)
+    {
+
+      if (instance->number_of_targets == '\x01')
+      {
+        iVar2 = valid_target_2022(ptStack_1ec);
+        if (iVar2 != 0)
+        {
+          add_counters_from_source(player, card, instance->targets[0].player,
+                                   instance->targets[0].card, COUNTER_P1_P1, 2);
+          pump_ability_until_eot_no_repeat_2022(instance->parent_controller, instance->parent_card,
+                                                instance->targets[0].player,
+                                                instance->targets[0].card, 0x80, 0);
+        }
+      }
+      else
+      {
+        iVar2 = 0;
+        do
+        {
+          iVar3 = validate_target_2022(player, card, ptStack_1ec, iVar2);
+          if (iVar3 != 0)
+          {
+            add_counters_from_source(player, card, instance->targets[iVar2].player,
+                                     instance->targets[iVar2].card, COUNTER_P1_P1, 1);
+            pump_ability_until_eot_no_repeat_2022(
+                instance->parent_controller, instance->parent_card, instance->targets[iVar2].player,
+                instance->targets[iVar2].card, 0x80, 0);
+          }
+          iVar2 = iVar2 + 1;
+        } while (iVar2 != 2);
+      }
+    }
+    else if (iVar2 == 2)
+    {
+      iVar2 = valid_target_2022(ptStack_1e8);
+      if ((iVar2 != 0) && (iVar2 = validate_target_2022(player, card, ptStack_1f0, 1), iVar2 != 0))
+      {
+        iVar2 = instance->targets[0].card;
+        iVar3 = instance->targets[0].player;
+        amt = get_power(iVar3, iVar2);
+        damage_creature(instance->targets[1].player, instance->targets[1].card, amt, iVar3, iVar2);
+      }
+    }
+    else if (iVar2 == 3)
+    {
+      default_test_definition_2022(&test, 2);
+      generic_wish_effect_2022(player, card, &test, 0x4fb7);
+    }
+  }
+LAB_0239a736:
+  iVar2 = planeswalker(player, card, event, 4);
+  return iVar2;
 }
 
 #endif

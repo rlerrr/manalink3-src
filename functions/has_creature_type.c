@@ -267,7 +267,7 @@ static int is_basic_land_subtype(int subtype){
 }
 */
 
-static int is_creature_type(int new_type){
+int is_creature_type(int new_type){
 	return new_type >= SUBTYPE_MIN_CREATURE_SUBTYPE && new_type <= SUBTYPE_MAX_CREATURE_SUBTYPE;
 }
 

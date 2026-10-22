@@ -97,7 +97,7 @@ int card_bake_into_a_pie(int player, int card, event_t event)
           {
             instance = get_card_instance(player, card);
             kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-            generate_token_by_id(player, card, 0x5077);
+            generate_token_by_id_2022(player, card, 0x5077);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -440,7 +440,7 @@ int card_giant_opportunity(int player, int card, event_t event)
       result = new_sacrifice(player, card, player, SAC_ALL_OR_NONE | SAC_DONE, &test);
       if (result == 0)
       {
-        generate_tokens_by_id(player, card, 0x5077, 3);
+        generate_tokens_by_id_2022(player, card, 0x5077, 3);
       }
       else
       {
@@ -1427,7 +1427,7 @@ int card_witchs_oven(int player, int card, event_t event)
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
       instance = get_card_instance(player, card);
-      generate_tokens_by_id(player, card, 0x5077, instance->info_slot);
+      generate_tokens_by_id_2022(player, card, 0x5077, instance->info_slot);
       return 0;
     }
   }
@@ -2667,7 +2667,7 @@ int card_garruk_cursed_huntsman(int player, int card, event_t event)
     }
     else if (result == 3)
     {
-      generate_token_by_id(player, card, 0x5085);
+      generate_token_by_id_2022(player, card, 0x5085);
     }
   }
 LAB_025cf875:
@@ -2764,7 +2764,7 @@ int card_hearts_desire(int player, int card, event_t event)
       goto LAB_025d08f1;
     if (event == EVENT_RESOLVE_SPELL)
     {
-      generate_token_by_id(player, card, 0x494c);
+      generate_token_by_id_2022(player, card, 0x494c);
     }
   }
 LAB_025d0948:
@@ -3153,7 +3153,7 @@ int card_oko_thief_of_crowns(int player, int card, event_t event)
     result = instance->info_slot;
     if (result == 1)
     {
-      generate_token_by_id(player, card, 0x5077);
+      generate_token_by_id_2022(player, card, 0x5077);
     }
     else if (result == 2)
     {
@@ -3958,7 +3958,7 @@ int card_treats_to_share(int player, int card, event_t event)
       goto LAB_025d5dc1;
     if (event == EVENT_RESOLVE_SPELL)
     {
-      generate_token_by_id(player, card, 0x5077);
+      generate_token_by_id_2022(player, card, 0x5077);
     }
   }
 LAB_025d5e18:
@@ -4238,6 +4238,7 @@ int card_kenrith_the_returned_king(int player, int card, event_t event)
     }
   default:
   LAB_025d0d5c:
+    ;
   }
   return 0;
 }
@@ -4469,7 +4470,7 @@ int card_castle_ardenvale(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       if ((event == EVENT_RESOLVE_ACTIVATION) && (0 < instance->info_slot))
       {
-        generate_token_by_id(player, card, 0x494c);
+        generate_token_by_id_2022(player, card, 0x494c);
       }
       return 0;
     }
@@ -5197,7 +5198,7 @@ int card_lucky_clover(int player, int card, event_t event)
   {
     return 0;
   }
-  copy_spell_from_stack(player, trigger_cause_controller, trigger_cause);
+  copy_spell_from_stack_2022(player, trigger_cause_controller, trigger_cause);
   return 0;
 }
 
@@ -5874,6 +5875,67 @@ int card_doom_foretold(int player, int card, event_t event)
     }
   }
   result = global_enchantment(player, card, event);
+  return result;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25d04e0; original cards/throne_of_eldraine.c:2556. */
+int card_granted(int player, int card, event_t event)
+{
+  int result;
+  test_definition_2022_t test;
+
+  if (event == EVENT_CAN_CAST)
+    goto LAB_025d0514;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card != affected_card) || (player != affected_card_controller))
+      goto LAB_025d053c;
+  LAB_025d0563:
+    if (player != affected_card_controller)
+    {
+    LAB_025d056b:
+      result = adventure(player, card, event, 0x5064);
+      return result;
+    }
+  }
+  else
+  {
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      if (event == EVENT_CAN_CHANGE_TARGET)
+        goto LAB_025d0514;
+      if (event == EVENT_CHANGE_TARGET)
+        goto LAB_025d056b;
+    LAB_025d053c:
+      if ((event != EVENT_COUNTERSPELL && event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR))
+      {
+        return 0;
+      }
+      if (event == EVENT_CAST_SPELL)
+      {
+        if (affected_card != card)
+          goto LAB_025d056b;
+        goto LAB_025d0563;
+      }
+    }
+    if (event != EVENT_CAN_CHANGE_TARGET)
+    {
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+        default_test_definition_2022(&test, 2);
+        test.type_flag = 1;
+        generic_wish_effect_2022(player, card, &test, 0x50ca);
+      }
+      goto LAB_025d056b;
+    }
+  }
+LAB_025d0514:
+  result = basic_spell(player, card, event);
   return result;
 }
 

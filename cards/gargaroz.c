@@ -472,7 +472,7 @@ int card_wild_ricochet(int player, int card, event_t event)
         {
           instance = get_card_instance(player, card);
           deflect_multi_targets(player, card, EVENT_RESOLVE_SPELL, &td);
-          copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
+          copy_spell_from_stack_2022(player, instance->targets[0].player, instance->targets[0].card);
         }
         kill_card(player, card, KILL_DESTROY);
         return 0;

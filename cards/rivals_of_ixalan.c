@@ -1423,7 +1423,7 @@ static void ascend(int player, int card, event_t event)
         return;
       }
     }
-    generate_reserved_token_by_id(player, 0x47a0);
+    generate_reserved_token_by_id_2022(player, 0x47a0);
   }
   return;
 }
@@ -1923,7 +1923,7 @@ int card_polyraptor(int player, int card, event_t event)
     result = damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card);
     if (result != 0)
     {
-      copy_token(player, card, player, card);
+      copy_token_2022(player, card, player, card);
       return 0;
     }
   }
@@ -1949,7 +1949,7 @@ int card_tendershoot_dryad(int player, int card, event_t event)
     }
     return 0;
   }
-  generate_token_by_id(player, card, 0x497d);
+  generate_token_by_id_2022(player, card, 0x497d);
   return 0;
 }
 
@@ -4365,7 +4365,7 @@ int card_blood_sun(int player, int card, event_t event)
   unsigned int uVar1;
   card_instance_t *instance;
   int result;
-  test_definition_t test;
+  test_definition_2022_t test;
 
   etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
@@ -4378,8 +4378,8 @@ int card_blood_sun(int player, int card, event_t event)
     result = is_humiliated_for_ability(player, card, AL_STATIC);
     if (result == 0)
     {
-      default_test_definition(&test, 1);
-      remove_abilities_by_test(2, event, &test, AL_ALL_NM);
+      default_test_definition_2022(&test, 1);
+      remove_abilities_by_test_2022(2, event, &test, AL_ALL_NM);
     }
   }
   else
@@ -4643,6 +4643,208 @@ int card_daring_buccaneer(int player, int card, event_t event)
 
   result = buddy_creature_2022(player, card, event, SUBTYPE_PIRATE, 2);
   return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x218f5b0; original cards/rivals_of_ixalan.c:1427. */
+static int remove_eot_unless_cb(int player, int card, event_t event)
+{
+  char cVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  instance = get_card_instance(player, card);
+  if ((((-1 < instance->damage_target_player) &&
+        (instance = get_card_instance(player, card), trigger_condition == TRIGGER_EOT)) &&
+       (card == affected_card)) &&
+      ((player == affected_card_controller && (player == reason_for_trigger_controller))))
+  {
+    iVar2 = instance->targets[1].player;
+    if (iVar2 < 1)
+    {
+      if (event == EVENT_TRIGGER)
+      {
+        event_result = event_result | 2;
+      }
+      else if (event == EVENT_RESOLVE_TRIGGER)
+      {
+        cVar1 = instance->damage_target_player;
+        iVar2 = instance->damage_target_card;
+        iVar4 = check_state((int)cVar1, iVar2, STATE_OUBLIETTED);
+        if ((iVar4 == 0) && (iVar4 = has_the_citys_blessing(player), iVar4 == 0))
+        {
+          kill_card((int)cVar1, iVar2, KILL_EXILE);
+          return 0;
+        }
+        kill_card(player, card, KILL_EXILE);
+      }
+    }
+    else
+    {
+      instance->targets[1].player = iVar2 + -1;
+    }
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static void remove_token_at_end_of_next_turn_unless_cb(token_generation_2022_t *token, int beast,
+                                                       int number);
+
+/* ManalinkEh 2022: 0x218eda0; original cards/rivals_of_ixalan.c:1456. */
+static void remove_token_at_end_of_next_turn_unless_cb(token_generation_2022_t *token, int beast,
+                                                       int number)
+{
+  int card;
+  card_instance_t *instance;
+
+  card = create_targetted_legacy_effect(token->s_player, token->s_card, remove_eot_unless_cb,
+                                        token->t_player, beast);
+  if ((current_phase == 0x1f) && (-1 < card))
+  {
+    instance = get_card_instance(token->s_player, card);
+    instance->targets[1].player = 1;
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x2192290; original cards/rivals_of_ixalan.c:1464. */
+int card_tilonallis_summoner(int player, int card, event_t event)
+{
+  xtrigger_t xVar1;
+  declare_attackers_trigger_t mode;
+  card_instance_t *instance;
+  int result;
+  token_generation_2022_t token;
+
+  ascend(player, card, event);
+  store_attackers_2022(player, card, event, 0, player, card, NULL);
+  xVar1 = trigger_condition;
+  if (trigger_condition == 0xe5)
+  {
+    xVar1 = xtrigger_impl_value_dont_use_directly;
+  }
+  if (((event == EVENT_DECLARE_ATTACKERS) || (xVar1 == XTRIGGER_ATTACKING)) &&
+      (result = has_mana(player, 4, 1), result != 0))
+  {
+
+    if ((player != 0) || (mode = DAT_RESOLVE_TRIGGER_OPTIONAL, ai_is_speculating == 1))
+    {
+      result = has_mana_multi(player, 1, 0, 0, 0, 1, 0);
+      mode = (unsigned int)(result != 0) * 2;
+    }
+    dat_ability(player, card, event, mode, 1);
+  }
+  if (event == EVENT_DAT_ABILITY)
+  {
+
+    instance = get_card_instance(player, card);
+    instance->number_of_targets = '\0';
+    result = charge_mana_multi_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, -1, 0,
+                                               0, 0, 1, 0);
+    if (result != 0)
+    {
+      default_token_definition_2022(player, card, 0x4926, &token);
+      token.tou = 1;
+      token.pow = 1;
+      token.qty = (unsigned char)x_value;
+      token.action = TOKEN2022_ACTION_ATTACKING;
+      token.special_code_on_generation = remove_token_at_end_of_next_turn_unless_cb;
+      generate_token_2022(&token);
+    }
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2190ed0; original cards/rivals_of_ixalan.c:774. */
+int card_masterminds_acquisition(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  test_definition_2022_t test;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    get_card_instance(player, card);
+    result = basic_spell(player, card, EVENT_CAN_CAST);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    instance = get_card_instance(player, card);
+    if (event != EVENT_CHANGE_TARGET)
+      goto LAB_02190f1a;
+  }
+  else
+  {
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+  }
+  instance->number_of_targets = '\0';
+  result = check_special_flags2_2022(player, card, -0x80000000);
+  if (result != 0)
+  {
+    return 0;
+  }
+
+  result = dialog_impl(player, card, event, "\001\002", "Tutor", 1, 5, "Wish", 1, 5, 0, 0, 0, 0);
+  if (result == 0)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+LAB_02190f1a:
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+
+    if (instance->info_slot == 1)
+    {
+      new_default_test_definition_2022(&test, 0xff, "SELECT_CARD");
+      new_global_tutor_2022(player, player, 1, 1, 0, 1, &test);
+    }
+    else if (instance->info_slot == 2)
+    {
+      default_test_definition_2022(&test, 0xff);
+      generic_wish_effect_2022(player, card, &test, 0x312a);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return 0;
 }
 
 #endif

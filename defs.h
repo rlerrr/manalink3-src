@@ -2429,6 +2429,7 @@ typedef enum
 /* Special flags  3*/
 typedef enum
 {
+	SF3_0 = 0, /* Recovered October 2022 zero-valued flag name. */
 	SF3_REANIMATED							= 1<<0,
 	SF3_MANACOST_NULLIFIED					= 1<<1,
 	SF3_ENCHANTED_PERMANENT_DYING			= 1<<2,
@@ -4129,6 +4130,17 @@ enum
 #ifndef SHANDALAR
 /* October 2022 life replacement trigger; retain the original event domain. */
 enum { XTRIGGER2022_REPLACE_GAIN_LIFE = 0x01000600 };
+#endif
+
+
+/* October 2022 Approach cast-history bits and phase-in restriction. */
+#ifndef SHANDALAR
+enum
+{
+  PB2022_CAST_APPROACH_OF_THE_SECOND_SUN1 = 0x400000,
+  PB2022_CAST_APPROACH_OF_THE_SECOND_SUN2 = 0x800000,
+  SF3_CANNOT_PHASE_IN = 0x800000
+};
 #endif
 
 #endif

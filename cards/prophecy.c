@@ -6337,3 +6337,167 @@ int card_barbed_field(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2602b50; original cards/prophecy.c:2573. */
+int card_flowering_field(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int player_00;
+  event_t event_00;
+  target_definition_2022_t *td_00;
+  const char *prompt;
+  target_definition_2022_t td;
+  iVar1 = is_humiliated_for_ability(player, card, AL_STATIC);
+  if ((iVar1 == 0) &&
+      (instance = get_card_instance(player, card), -1 < instance->damage_target_player))
+  {
+    instance = get_card_instance(player, card);
+    player_00 = (int)instance->damage_target_player;
+    iVar1 = instance->damage_target_card;
+    default_target_definition_2022(player_00, iVar1, &td, 0xff);
+    td.extra = damage_card;
+    td.special = 0x20;
+    td.illegal_abilities = 0;
+    td_00 = &td;
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      prompt = "TARGET_DAMAGE";
+      iVar3 = 0x1000005;
+      event_00 = EVENT_CAN_ACTIVATE;
+    LAB_02602df4:
+      iVar1 =
+          granted_generic_activated_ability_2022(player, card, player_00, iVar1, event_00, iVar3, 0,
+                                                 0, 0, 0, 0, 0, 0, td_00, (char *)prompt);
+      return iVar1;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = '\0';
+      iVar3 = pick_target_2022(td_00, "TARGET_DAMAGE");
+      if (iVar3 != 0)
+      {
+        prompt = NULL;
+        td_00 = NULL;
+        iVar3 = 1;
+        event_00 = EVENT_ACTIVATE;
+        goto LAB_02602df4;
+      }
+    }
+    else
+    {
+      if (event != EVENT_RESOLVE_ACTIVATION)
+        goto LAB_02602b7e;
+      iVar3 = validate_target_2022(player_00, iVar1, td_00, 0);
+      if (iVar3 != 0)
+      {
+        instance = get_card_instance(player_00, iVar1);
+        prevent_damage(instance->targets[0].player, instance->targets[0].card, 1);
+      }
+    }
+  LAB_02602b8e:
+    if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+        (event == EVENT_CHANGE_TARGET))
+      goto LAB_02602ba8;
+  }
+  else
+  {
+  LAB_02602b7e:
+    if (event == EVENT_CAN_CAST)
+      goto LAB_02602ba8;
+    if (event != EVENT_CAST_SPELL)
+      goto LAB_02602b8e;
+    if ((card == affected_card) && (player == affected_card_controller))
+      goto LAB_02602ba8;
+  }
+  if ((((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+         (2 < event - EVENT_POWER)) &&
+        ((event != EVENT_RESOLVE_MOVING_AURA &&
+          ((event != EVENT_CHANGE_TYPE && (event != EVENT_SET_COLOR)))))) &&
+       (event != EVENT_GET_SELECTED_CARD)) &&
+      (event != EVENT_STATIC_EFFECTS))
+  {
+    return 0;
+  }
+LAB_02602ba8:
+  default_target_definition_2022(player, card, &td, 1);
+  if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+  {
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+  }
+  iVar1 = aura(player, card, event, &td, "TARGET_LAND");
+  return iVar1;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2607b60; original cards/prophecy.c:4542. */
+int card_verdant_field(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *pcVar2;
+  int player_00;
+  int iVar3;
+  card_instance_t *pcVar4;
+  event_t event_00;
+  target_definition_2022_t *td;
+  const char *prompt;
+  target_definition_2022_t td_la;
+  iVar1 = is_humiliated_for_ability(player, card, AL_STATIC);
+  if (iVar1 == 0)
+  {
+    pcVar2 = get_card_instance(player, card);
+    td = &td_la;
+    if (-1 < pcVar2->damage_target_player)
+    {
+      pcVar2 = get_card_instance(player, card);
+      player_00 = (int)pcVar2->damage_target_player;
+      iVar1 = pcVar2->damage_target_card;
+      default_target_definition_2022(player_00, iVar1, td, 2);
+      td_la.preferred_controller = player;
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        prompt = "TARGET_CREATURE";
+        iVar3 = 5;
+        event_00 = EVENT_CAN_ACTIVATE;
+      LAB_02607d24:
+        iVar1 =
+            granted_generic_activated_ability_2022(player, card, player_00, iVar1, event_00, iVar3,
+                                                   0, 0, 0, 0, 0, 0, 0, td, (char *)prompt);
+        return iVar1;
+      }
+      if (event == EVENT_ACTIVATE)
+      {
+        pcVar2->number_of_targets = '\0';
+        iVar3 = pick_target_2022(td, "TARGET_CREATURE");
+        if (iVar3 != 0)
+        {
+          prompt = NULL;
+          td = NULL;
+          iVar3 = 1;
+          event_00 = EVENT_ACTIVATE;
+          goto LAB_02607d24;
+        }
+      }
+      else if ((event == EVENT_RESOLVE_ACTIVATION) &&
+               (iVar3 = validate_target_2022(player_00, iVar1, td, 0), iVar3 != 0))
+      {
+        pcVar4 = get_card_instance(player_00, iVar1);
+        pump_ability_until_eot_2022(pcVar2->parent_controller, pcVar2->parent_card,
+                                    pcVar4->targets[0].player, pcVar4->targets[0].card, 1, 1, 0, 0);
+      }
+    }
+  }
+  default_target_definition_2022(player, card, &td_la, 1);
+  td_la.preferred_controller = player;
+  iVar1 = aura_literal_prompt(player, card, event, &td_la, "Select target land.");
+  return iVar1;
+}
+
+#endif

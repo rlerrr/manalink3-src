@@ -1369,7 +1369,7 @@ int card_emerias_call(int player, int card, event_t event)
       goto LAB_02308e74;
     }
   }
-  generate_tokens_by_id(player, card, 0x5509, 2);
+  generate_tokens_by_id_2022(player, card, 0x5509, 2);
   default_pump_ability_definition(player, card, &pump, 0, 0, 0, 0x800);
   pump.paue_flags = 0x8000;
   default_test_definition(&test, 2);
@@ -4547,3 +4547,59 @@ int mdfc_back_boltland(int player, int card, event_t event)
   result = mdfc_back(player, card, event);
   return result;
 }
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x230f420; original cards/zendikar_rising.c:3616. */
+int card_turntimber_symbiosis(int player, int card, event_t event)
+{
+  int result;
+  test_definition_2022_t test;
+
+  if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
+       event == EVENT_PLAY_FIRST_HALF) ||
+      (event == EVENT_CAN_CAST))
+  {
+  LAB_0230f453:
+    if (event != EVENT_RESOLVE_SPELL)
+      goto LAB_0230f458;
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      goto LAB_0230f458;
+    }
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      if (event != EVENT_CAN_CHANGE_TARGET)
+      {
+        if (event != EVENT_CHANGE_TARGET)
+        {
+          return 0;
+        }
+        goto LAB_0230f458;
+      }
+      goto LAB_0230f453;
+    }
+  }
+  default_test_definition_2022(&test, 2);
+  reveal_top_cards_of_library_and_choose_fn_2022(player, card, player, 7, 0, TUTOR2022_PLAY, 1,
+                                                 TUTOR2022_BOTTOM_OF_DECK_RANDOM, 0, &test,
+                                                 three_counters_for_mv_less_than_three);
+  kill_card(player, card, KILL_DESTROY);
+LAB_0230f458:
+  result = mdfc_front_impl(player, card, event, 1, 0);
+  return result;
+}
+
+#endif

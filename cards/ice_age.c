@@ -236,7 +236,7 @@ int charge_snow_mana(int player, int card, int snow, int cless)
   return 1;
 }
 
-static int cantrip_legacy(int player, int card, event_t event){
+int cantrip_legacy(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 	if( upkeep_trigger_no_check(player, card, event) ){
 		int count = count_upkeeps(current_turn);
@@ -11695,6 +11695,155 @@ void oath_of_lim_dul_lifeloss_trigger_2022(int player, int card, int amount)
       discard_card(tgts[i].player, tgts[i].card);
     else
       kill_card(tgts[i].player, tgts[i].card, KILL_SACRIFICE);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2403af0; original cards/ice_age.c:7162. */
+int card_norritt(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  const char *prompt;
+  int iVar3;
+  target_definition_2022_t *ptStack_bc;
+  target_definition_2022_t td;
+  target_definition_2022_t td2;
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    td.allowed_controller = current_turn;
+    td.required_subtype = 0xd1;
+    td.special = 0x1000;
+    td.illegal_state = 0x1000;
+    default_target_definition_2022(player, card, &td2, 2);
+    td2.required_color = get_sleighted_color_test(player, card, 4);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x10000005, 0, 0, 0,
+                                             0, 0, 0, 0, &td, NULL);
+      if ((iVar2 == 0) &&
+          (iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0,
+                                                  0, 0, 0, &td2, NULL),
+           iVar2 == 0))
+      {
+        return 0;
+      }
+      return 1;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance = get_card_instance(player, card);
+      ai_modifier = ai_modifier + ((1 - player == current_turn) - 1 & 0xffffffd0) + 0x18;
+      iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0, 0, 0,
+                                             0, &td2, NULL);
+      iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x10000005, 0, 0, 0,
+                                             0, 0, 0, 0, &td, NULL);
+      iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Untap target blue creature",
+                          iVar2, 5, "Target creature must attack", iVar3, ai_modifier, 0, 0, 0, 0);
+      if (iVar2 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      instance->info_slot = iVar2;
+      if (iVar2 != 1)
+      {
+        if (iVar2 != 2)
+        {
+          return 0;
+        }
+        generic_activated_ability_2022(
+            player, card, EVENT_ACTIVATE, 0x10000007, 0, 0, 0, 0, 0, 0, 0, &td,
+            "Select target non-wall creature active player has, to attack.");
+        return 0;
+      }
+      prompt = get_sleighted_color_text(player, card, "Select target %s creature.", 2);
+      generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 7, 0, 0, 0, 0, 0, 0, 0, &td2,
+                                     (char *)prompt);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td, 2);
+    td.allowed_controller = current_turn;
+    td.required_subtype = 0xd1;
+    td.special = 0x1000;
+    td.illegal_state = 0x1000;
+    default_target_definition_2022(player, card, &td2, 2);
+    td2.required_color = get_sleighted_color_test(player, card, 4);
+  }
+  ptStack_bc = &td2;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    instance = get_card_instance(player, card);
+    iVar2 = instance->info_slot;
+    if (iVar2 == 1)
+    {
+      iVar2 = valid_target_2022(ptStack_bc);
+      if (iVar2 != 0)
+      {
+        untap_card(instance->targets[0].player, instance->targets[0].card);
+      }
+      iVar2 = instance->info_slot;
+    }
+    if ((iVar2 == 2) && (iVar2 = valid_target_2022(&td), iVar2 != 0))
+    {
+      iVar2 = get_original_internal_card_id(instance->parent_controller, instance->parent_card);
+      iVar3 = 1 - player;
+      iVar2 = add_card_to_hand(iVar3, iVar2);
+      create_targetted_legacy_effect(iVar3, iVar2, effect_nettling_imp_2022,
+                                     instance->targets[0].player, instance->targets[0].card);
+      obliterate_card(iVar3, iVar2);
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23f08c0; original cards/ice_age.c:1020. */
+int card_balduvian_shaman(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  const char *prompt;
+  int result;
+  target_definition_2022_t td;
+
+  default_target_definition_2022(player, card, &td, 4);
+  td.required_color = get_sleighted_color_test(player, card, 0x20);
+  td.preferred_controller = player;
+  td.allowed_controller = player;
+  td.extra = (int32_t)doesnt_have_cumulative_upkeep;
+  td.special = 0x8000;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    result = valid_target_2022(&td);
+    if (result != 0)
+    {
+      replace_all_instances_of_one_color_word_with_another_2022(
+          player, card, instance->targets[0].player, instance->targets[0].card);
+      create_targetted_legacy_effect(instance->parent_controller, instance->parent_card,
+                                     effect_basha, instance->targets[0].player,
+                                     instance->targets[0].card);
+    }
+  }
+  prompt = get_sleighted_color_text(
+      player, card, "Select target %s enchantment you control that doesn\'t have cumulative upkeep",
+      5);
+  result = generic_activated_ability_2022(player, card, event, 7, 0, 0, 0, 0, 0, 0, 0, &td,
+                                          (char *)prompt);
+  return result;
 }
 
 #endif

@@ -1855,7 +1855,7 @@ int card_the_first_iroan_games(int player, int card, event_t event)
 
   if (event == EVENT_CHAPTER1)
   {
-    generate_token_by_id(player, card, 0x494e);
+    generate_token_by_id_2022(player, card, 0x494e);
   }
   else if (event == EVENT_CHAPTER2)
   {
@@ -1884,7 +1884,7 @@ int card_the_first_iroan_games(int player, int card, event_t event)
   }
   else if (event == EVENT_CHAPTER4)
   {
-    generate_token_by_id(player, card, 0x493f);
+    generate_token_by_id_2022(player, card, 0x493f);
   }
   result = saga(player, card, event, 4);
   return result;

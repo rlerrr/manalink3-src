@@ -6570,3 +6570,60 @@ int card_wandering_mage(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 native scalar-word handlers. */
+int card_soldevi_sentry(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x20ad0c0; original cards/alliances.c:5072. */
+int card_soldevi_sentry(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  target_definition_2022_t td;
+  default_target_definition_2022(player, card, &td, 0);
+  iVar3 = 1 - player;
+  td.zone = 0x1000;
+  td.allowed_controller = iVar3;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    iVar3 = can_target_2022(&td);
+    if (iVar3 != 0)
+    {
+      iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, GAA_REGENERATION, 1,
+                                             0, 0, 0, 0, 0, 0, NULL, NULL);
+      return iVar3;
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    instance = get_card_instance(player, card);
+    iVar2 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE,
+                                           (GAA_REGENERATION | GAA_CAN_ONLY_TARGET_OPPONENT), 1, 0,
+                                           0, 0, 0, 0, 0, &td, NULL);
+    if (iVar2 != 0)
+    {
+      instance->targets[0].player = iVar3;
+      instance->targets[0].card = -1;
+      instance->number_of_targets = '\x01';
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    instance = get_card_instance(player, card);
+    iVar3 = valid_target_2022(&td);
+    if ((iVar3 != 0) &&
+        (iVar3 = can_regenerate(instance->parent_controller, instance->parent_card), iVar3 != 0))
+    {
+      regenerate_target(instance->parent_controller, instance->parent_card);
+      draw_some_cards_if_you_want(instance->parent_controller, instance->parent_card,
+                                  instance->targets[0].player, 1);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+#endif

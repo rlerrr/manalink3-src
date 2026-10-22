@@ -206,6 +206,14 @@ LIFE_API_NAMES={name:name+'_2022' for name in ('can_lose_the_game','player_can_g
 LIFE_ENUM_NAMES={'XTRIGGER_REPLACE_GAIN_LIFE':'XTRIGGER2022_REPLACE_GAIN_LIFE'}
 CANNOT_LOSE_API_NAMES={name:name+'_2022' for name in ('cannot_lose_the_game','cannot_lose_the_game_for_having_less_than_0_life')}
 LIFE_LOSS_API_NAMES={'lose_life':'lose_life_2022','oath_of_lim_dul_lifeloss_trigger':'oath_of_lim_dul_lifeloss_trigger_2022'}
+SHARED_CARD_API_NAMES={'vow':'vow_2022','lace':'lace_2022','exile_at_end_of_combat':'exile_at_end_of_combat_2022'}
+DELAYED_CALLBACK_API_NAMES={'last_chance_legacy':'last_chance_legacy_2022','effect_nettling_imp':'effect_nettling_imp_2022'}
+COPY_API_NAMES={'copy_spell':'copy_spell_2022','copy_spell_from_stack':'copy_spell_from_stack_2022'}
+TEXT_CHANGE_API_NAMES={name:name+'_2022' for name in ('replace_all_instances_of_one_color_word_with_another','replace_all_instances_of_one_basic_land_type_word_with_another')}
+TOKEN_FRONTEND_API_NAMES={name:name+'_2022' for name in ('generate_token_by_id','generate_tokens_by_id','generate_reserved_token_by_id','copy_token')}
+WISH_API_NAMES={name:name+'_2022' for name in ('new_card_from_list','generic_wish_effect')}
+ABILITY_FILTER_API_NAMES={'remove_abilities_by_test':'remove_abilities_by_test_2022'}
+LIBRARY_REVEAL_API_NAMES={name:name+'_2022' for name in ('reveal_top_cards_of_library','reveal_top_cards_of_library_and_choose','reveal_top_cards_of_library_and_choose_type','reveal_top_cards_of_library_and_choose_fn','reveal_top_cards_of_library_and_choose_who_chooses','reveal_top_cards_of_library_and_choose_fn_who_chooses')}
 TUTOR_DESTINATION_NAMES={name:name.replace('TUTOR_','TUTOR2022_',1) for name in ('TUTOR_0','TUTOR_HAND','TUTOR_DECK','TUTOR_GRAVE','TUTOR_PLAY','TUTOR_PLAY_TAPPED','TUTOR_RFG','TUTOR_EXILE','TUTOR_GET_ID','TUTOR_PLAY_ATTACKING','TUTOR_GET_POSITION','TUTOR_BOTTOM_OF_DECK','TUTOR_TPLAYER_HAND','TUTOR_BOTTOM_OF_DECK_RANDOM','TUTOR_HAND_AND_MARK','TUTOR_OPPOSITION_AGENT')}
 TUTOR_ORIGIN_NAMES={name:name.replace('TUTOR_FROM_','TUTOR_FROM2022_',1) for name in ('TUTOR_FROM_DECK','TUTOR_FROM_GRAVE','TUTOR_FROM_RFG','TUTOR_FROM_HAND','TUTOR_FROM_GRAVE_NOTARGET','TUTOR_FROM_DECK_AUTO')}
 TUTOR_DOMAIN_NAMES={'tutor_t':'tutor_destination_2022_t','tutor_from_t':'tutor_from_2022_t'}
@@ -244,7 +252,7 @@ def project_extension_flags(text):
     return re.sub(r'\(\((\w+)->field_21\)\.ext\)->(special_flags[23]?)\b',replace,text),projections
 
 
-def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=(), state_mask_replacements=(), keyword_mask_replacements=(), use_keyword_accessors_2022=False, use_extension_flags_2022=False, use_mana_api_2022=False, use_token_api_2022=False, use_test_api_2022=False, use_target_api_2022=False, use_sacrifice_api_2022=False, use_spell_api_2022=False, use_ability_api_2022=False, use_pump_api_2022=False, use_activated_api_2022=False, use_attack_api_2022=False, use_entry_api_2022=False, use_level_buddy_api_2022=False, use_phyrexian_api_2022=False, use_spell_trigger_api_2022=False, use_death_trigger_api_2022=False, use_action_api_2022=False, use_global_tutor_api_2022=False, use_specific_cip_api_2022=False, use_life_api_2022=False, use_cannot_lose_api_2022=False, use_life_loss_api_2022=False):
+def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=(), state_mask_replacements=(), keyword_mask_replacements=(), use_keyword_accessors_2022=False, use_extension_flags_2022=False, use_mana_api_2022=False, use_token_api_2022=False, use_test_api_2022=False, use_target_api_2022=False, use_sacrifice_api_2022=False, use_spell_api_2022=False, use_ability_api_2022=False, use_pump_api_2022=False, use_activated_api_2022=False, use_attack_api_2022=False, use_entry_api_2022=False, use_level_buddy_api_2022=False, use_phyrexian_api_2022=False, use_spell_trigger_api_2022=False, use_death_trigger_api_2022=False, use_action_api_2022=False, use_global_tutor_api_2022=False, use_specific_cip_api_2022=False, use_life_api_2022=False, use_cannot_lose_api_2022=False, use_life_loss_api_2022=False, use_shared_card_api_2022=False, use_delayed_callback_api_2022=False, use_copy_api_2022=False, use_text_change_api_2022=False, use_token_frontend_api_2022=False, use_wish_api_2022=False, use_ability_filter_api_2022=False, use_library_reveal_api_2022=False):
     text = strip_comments(text).strip()
     for replacement in state_mask_replacements:
         text = text.replace(replacement['original'], replacement['replacement'])
@@ -274,7 +282,10 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
         (use_specific_cip_api_2022,SPECIFIC_CIP_API_NAMES),
         (use_life_api_2022,{**LIFE_API_NAMES,**LIFE_ENUM_NAMES}),
         (use_cannot_lose_api_2022,CANNOT_LOSE_API_NAMES),
-        (use_life_loss_api_2022,LIFE_LOSS_API_NAMES)]:
+        (use_life_loss_api_2022,LIFE_LOSS_API_NAMES),
+        (use_shared_card_api_2022,SHARED_CARD_API_NAMES),
+        (use_delayed_callback_api_2022,DELAYED_CALLBACK_API_NAMES),
+        (use_copy_api_2022,COPY_API_NAMES),(use_text_change_api_2022,TEXT_CHANGE_API_NAMES),(use_token_frontend_api_2022,TOKEN_FRONTEND_API_NAMES),(use_wish_api_2022,WISH_API_NAMES),(use_ability_filter_api_2022,ABILITY_FILTER_API_NAMES),(use_library_reveal_api_2022,LIBRARY_REVEAL_API_NAMES)]:
         if enabled:
             text=re.sub(r'\b(?:'+'|'.join(mapping)+r')\b',lambda m:mapping[m[0]],text)
     for replacement in keyword_mask_replacements:
@@ -444,6 +455,8 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
         text = re.sub(r"\b" + temporaries.pop() + r"\b", "result", text)
     for name in overlapping_globals:
         text = re.sub(r"\b_" + re.escape(name) + r"\b", name, text)
+    # GCC 9 rejects a label immediately before the closing brace.
+    text = re.sub(r"(\b[A-Za-z_]\w*:\s*)(?=\})", r"\1;\n", text)
     text = re.sub(r"\bRECOVERY_LITERAL_(\d+)\b", lambda m: literals[int(m[1])], text)
     text = re.sub(r"\)\s*\n\s*\n\{", ")\n{", text)
     return text + "\n"
@@ -529,8 +542,17 @@ def main():
     life_interface_ready = 'life_core_2022' in recovered_interfaces
     cannot_lose_interface_ready = 'cannot_lose_core_2022' in recovered_interfaces
     life_loss_interface_ready = 'life_loss_2022' in recovered_interfaces
+    shared_card_interface_ready = 'shared_card_frontends_2022' in recovered_interfaces
+    delayed_callback_interface_ready = 'delayed_callbacks_2022' in recovered_interfaces
+    copy_interface_ready = 'spell_copy_2022' in recovered_interfaces
+    text_change_interface_ready = 'text_change_helpers_2022' in recovered_interfaces
+    token_frontend_interface_ready = 'token_frontends_2022' in recovered_interfaces
+    wish_interface_ready = 'wish_helpers_2022' in recovered_interfaces
+    ability_filter_interface_ready = 'ability_filter_2022' in recovered_interfaces
+    library_reveal_interface_ready = 'library_reveal_2022' in recovered_interfaces
     recovered_manifest = root / 'docs/recovery-evidence/recovered-functions.json'
-    recovered_addresses = {f['address']:f['name'] for f in json.loads(recovered_manifest.read_text()).get('accepted_functions',[])} if recovered_manifest.exists() else {}
+    recovered_state = json.loads(recovered_manifest.read_text()) if recovered_manifest.exists() else {}
+    recovered_addresses = {f['address']:f['name'] for f in recovered_state.get('accepted_functions',[])}
     target_interface_ready = all(key in recovered_interfaces for key in ['target_initializers_2022','target_validation_2022','target_selection_2022'])
     storage_path = root / 'docs/recovery-evidence/stack-storage.json'
     storage_evidence = json.loads(storage_path.read_text()) if storage_path.exists() else {}
@@ -540,6 +562,9 @@ def main():
     keyword_masks = json.loads(keyword_path.read_text())['functions'] if keyword_path.exists() else {}
     for row in csv.DictReader((exports / "export.tsv").open(), delimiter="\t"):
         name = row["name"]
+        if row['source'] in recovered_state.get('out_of_scope_source_units',{}):
+            rejected[name]='out of scope: '+recovered_state['out_of_scope_source_units'][row['source']]
+            continue
         if row["status"] != "ok" or not row["source"].endswith(".c"):
             rejected[name] = "unsupported export or C++ source"
             continue
@@ -622,7 +647,15 @@ def main():
                      use_specific_cip_api_2022=specific_cip_interface_ready,
                      use_life_api_2022=life_interface_ready,
                      use_cannot_lose_api_2022=cannot_lose_interface_ready,
-                     use_life_loss_api_2022=life_loss_interface_ready)
+                     use_life_loss_api_2022=life_loss_interface_ready,
+                     use_shared_card_api_2022=shared_card_interface_ready,
+                     use_delayed_callback_api_2022=delayed_callback_interface_ready,
+                     use_copy_api_2022=copy_interface_ready,
+                     use_text_change_api_2022=text_change_interface_ready,
+                     use_token_frontend_api_2022=token_frontend_interface_ready,
+                     use_wish_api_2022=wish_interface_ready,
+                     use_ability_filter_api_2022=ability_filter_interface_ready,
+                     use_library_reveal_api_2022=library_reveal_interface_ready)
         storage_proof = None
         prepared_storage = storage_evidence.get('candidates', {}).get(row['address'])
         if prepared_storage:
@@ -774,6 +807,46 @@ def main():
             if calls:
                 candidates[name]['phyrexian_interface_2022']=dict(calls=calls)
                 adaptations.append('Native Phyrexian availability, casting and activated-cost APIs; original interfaces retained.')
+        if library_reveal_interface_ready:
+            calls={old:new for old,new in LIBRARY_REVEAL_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['library_reveal_interface_2022']=dict(calls=calls)
+                adaptations.append('Native library reveal and selection helpers with 216-byte filters; existing engine deck-viewer boundary retained.')
+        if ability_filter_interface_ready:
+            calls={old:new for old,new in ABILITY_FILTER_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['ability_filter_interface_2022']=dict(calls=calls)
+                adaptations.append('Native ability-suppression helper with the recovered 216-byte filter API; legacy interface retained.')
+        if wish_interface_ready:
+            calls={old:new for old,new in WISH_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['wish_interface_2022']=dict(calls=calls,dialog_selection_stubbed=True)
+                adaptations.append('Native filter-aware Wish/card-list helpers; built-in chooser UI is explicitly stubbed out of scope.')
+        if token_frontend_interface_ready:
+            calls={old:new for old,new in TOKEN_FRONTEND_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['token_frontend_interface_2022']=dict(calls=calls)
+                adaptations.append('Native token ID/copy frontends, including the single-token integer result; original interfaces retained.')
+        if text_change_interface_ready:
+            calls={old:new for old,new in TEXT_CHANGE_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['text_change_interface_2022']=dict(calls=calls)
+                adaptations.append('Native four-argument color and basic-land text replacement APIs; original source interfaces retained.')
+        if copy_interface_ready:
+            calls={old:new for old,new in COPY_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
+            if calls:
+                candidates[name]['copy_interface_2022']=dict(calls=calls)
+                adaptations.append('Native spell-copy APIs with preserved flags and copy-event dispatch; original source helpers retained.')
+        if delayed_callback_interface_ready:
+            translations={old:new for old,new in DELAYED_CALLBACK_API_NAMES.items() if re.search(r'\b'+old+r'\b',code_only(strip_comments(raw)))}
+            if translations:
+                candidates[name]['delayed_callback_interface_2022']=dict(translations=translations)
+                adaptations.append('Native delayed callbacks using recovered life and attack APIs; original source helpers retained.')
+        if shared_card_interface_ready:
+            translations={old:new for old,new in SHARED_CARD_API_NAMES.items() if re.search(r'\b'+old+r'\b',code_only(strip_comments(raw)))}
+            if translations:
+                candidates[name]['shared_card_interface_2022']=dict(translations=translations)
+                adaptations.append('Native Vow and Lace helpers; original source interfaces retained.')
         if life_loss_interface_ready:
             calls={old:new for old,new in LIFE_LOSS_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
             if calls:

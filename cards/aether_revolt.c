@@ -2565,7 +2565,7 @@ int card_hope_of_ghirapur(int player, int card, event_t event)
     if ((event == EVENT_RESOLVE_ACTIVATION) &&
         (instance = get_card_instance(player, card), 0 < instance->targets[1].player))
     {
-      result = generate_reserved_token_by_id(player, 0x6160);
+      result = generate_reserved_token_by_id_2022(player, 0x6160);
       instance = get_card_instance(player, result);
       instance->targets[0].player = 1 - player;
       instance->targets[0].card = 5;
@@ -8719,6 +8719,88 @@ LAB_020c08cc:
     suppress_draw = 1;
     set_life_total(player, amount);
     kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20c4400; original cards/aether_revolt.c:2809. */
+int card_kari_zev_skyship_raider(int player, int card, event_t event)
+{
+  token_generation_2022_t token;
+
+  check_legend_rule(player, card, event);
+  menace(player, card, event);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event != EVENT_DAT_ABILITY)
+  {
+    return 0;
+  }
+  default_token_definition_2022(player, card, 0x4975, &token);
+  token.pow = 2;
+  token.tou = 1;
+  token.color_forced = '\x10';
+  token.legacy = '\x01';
+  token.special_code_for_legacy = exile_at_end_of_combat_2022;
+  token.action = TOKEN2022_ACTION_ATTACKING;
+  generate_token_2022(&token);
+  return 0;
+}
+
+/* ManalinkEh 2022: 0x20c5540; original cards/aether_revolt.c:3128. */
+int card_metallic_mimic(int player, int card, event_t event)
+{
+  unsigned int new_type;
+  int result;
+  card_instance_t *instance;
+  test_definition_2022_t test;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (player != 1)
+    {
+      instance = get_card_instance(player, card);
+      result = select_a_subtype(player, card);
+      instance->info_slot = result;
+      return 0;
+    }
+    state_untargettable(1, card, 1);
+    instance = get_card_instance(1, card);
+    result = select_a_subtype(1, card);
+    instance->info_slot = result;
+    state_untargettable(1, card, 0);
+  }
+  else if (event == EVENT_CHANGE_TYPE)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      instance = get_card_instance(player, card);
+      add_a_subtype_2022(player, card, instance->info_slot);
+    }
+  }
+  else if (((event == EVENT_CAST_SPELL) || (event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE)) &&
+           (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+  {
+
+    instance = get_card_instance(player, card);
+    new_type = instance->info_slot;
+    result = is_creature_type(new_type);
+    if (result != 0)
+    {
+      default_test_definition_2022(&test, 2);
+      test.not_me = 1;
+      if ((affected_card_controller == player) &&
+          (test.subtype = new_type,
+           result = new_make_test_in_play_2022(player, affected_card, -1, &test), result != 0))
+      {
+        enters_the_battlefield_with_counters(affected_card_controller, affected_card, event,
+                                             COUNTER_P1_P1, 1);
+      }
+    }
   }
   return 0;
 }

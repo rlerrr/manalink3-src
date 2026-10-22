@@ -7278,3 +7278,140 @@ static int ward_enchantment(int player, int card, event_t event, int keyword)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24bd8f0; original cards/unlimited.c:162. */
+int lace_2022(int player, int card, event_t event, int color_test)
+{
+  card_instance_t *instance;
+  int result;
+  color_test_t new_color;
+
+  target_definition_2022_t td;
+  target_definition_2022_t td1;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
+             (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  default_target_definition_2022(player, card, &td, 0x47);
+  if (player == 1)
+  {
+    td.illegal_color = color_test;
+    counterspell_target_definition_2022(1, card, &td1, 0xff);
+    td1.illegal_color = color_test;
+  }
+  else
+  {
+    counterspell_target_definition_2022(player, card, &td1, 0xff);
+  }
+  instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_CAST)
+  {
+    result = generic_spell_2022(player, card, EVENT_CAN_CAST, 2, &td1, NULL, 1, NULL);
+    if (result == 0)
+    {
+      result =
+          generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_PERMANENT", 1, NULL);
+      return result;
+    }
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      result = generic_spell_2022(player, card, EVENT_CAN_CAST, 2, &td1, NULL, 1, NULL);
+      if (result != 0)
+      {
+        instance->info_slot = 0x42;
+        result = generic_spell_2022(player, card, EVENT_CAST_SPELL, 2, &td1, NULL, 1, NULL);
+        return result;
+      }
+      generic_spell_2022(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_PERMANENT", 1, NULL);
+      if (spell_fizzled != 1)
+      {
+        instance->info_slot = 0x43;
+      }
+    }
+    return 0;
+  }
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    return 0;
+  }
+  result = valid_target_2022(&td);
+  instance->info_slot = result != 0;
+  if (result == 0)
+  {
+    result = counterspell_validate_2022(player, card, &td1, 0);
+    instance->info_slot = result != 0;
+    if (result == 0)
+      goto LAB_024bdb4f;
+  }
+  new_color = get_sleighted_color_test(player, card, color_test);
+  change_color(player, card, instance->targets[0].player, instance->targets[0].card, new_color,
+               CHANGE_COLOR_SET);
+LAB_024bdb4f:
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24bc200; original cards/unlimited.c:4602. */
+int effect_nettling_imp_2022(int player, int card, event_t event)
+{
+  int card_00;
+  unsigned char bVar1;
+  card_instance_t *instance;
+  int player_00;
+
+  instance = get_card_instance(player, card);
+  player_00 = (int)instance->damage_target_player;
+  card_00 = instance->damage_target_card;
+  bVar1 = (instance->damage_target_player >> 7 ^ 0xffU) &
+          ((unsigned char)((unsigned int)card_00 >> 0x18) ^ 0xff);
+  if ((char)bVar1 < '\0')
+  {
+    attack_if_able_2022(player_00, card_00, event);
+  }
+  if ((((event == EVENT_CLEANUP) || (event == EVENT_SHOULD_AI_PLAY)) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    if ((char)bVar1 < '\0')
+    {
+      instance = in_play(player_00, card_00);
+      if (instance != NULL)
+      {
+        instance = get_card_instance(player_00, card_00);
+        if ((instance->state & (STATE_SUMMON_SICK | STATE_ATTACKED)) == 0)
+        {
+          kill_card(player_00, card_00, KILL_DESTROY);
+        }
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return 0;
+}
+
+#endif

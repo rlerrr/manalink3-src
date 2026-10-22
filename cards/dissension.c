@@ -5079,7 +5079,7 @@ int card_supply_demand(int player, int card, event_t event)
       if ((uVar3 & 1) != 0)
       {
         instance->targets[1].card = x_value;
-        generate_tokens_by_id(player, card, 0x497d, result);
+        generate_tokens_by_id_2022(player, card, 0x497d, result);
         uVar3 = instance->info_slot;
       }
       if ((uVar3 & 2) != 0)

@@ -1,0 +1,20 @@
+# Historical aggregate/draft helper files absent from both the 2020 and
+# October 2022 DLL compilation-unit inventories. Keep them in the repository,
+# but do not link their duplicate or obsolete implementations into the DLL.
+EXCLUDED_CFILES = \
+  cards/artifacts.c cards/artifact_creatures.c cards/auto_targets.c \
+  cards/black_creatures.c cards/black_enchantments.c cards/black_oneshot.c \
+  cards/blue_creatures.c cards/blue_enchantments.c cards/blue_oneshot.c \
+  cards/green_creatures.c cards/green_enchantments.c cards/green_oneshot.c \
+  cards/jatill.c cards/lands.c cards/recoded_cards.c \
+  cards/red_creatures.c cards/red_enchantments.c cards/red_oneshot.c \
+  cards/white_creatures.c cards/white_enchantments.c cards/white_oneshot.c \
+  functions/ability_icons.c functions/affect_me.c functions/jatill.c
+
+# These old wrappers are already implemented by the active C source units.
+EXCLUDED_AFILES = \
+  cards/sabertooth_nishoba.asm functions/generic_protection_from.asm \
+  functions/get_card_instance.asm functions/get_power.asm functions/display_error_message.asm \
+  functions/protection_from_black.asm functions/protection_from_blue.asm \
+  functions/protection_from_green.asm functions/protection_from_red.asm \
+  functions/protection_from_white.asm

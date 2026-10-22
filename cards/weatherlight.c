@@ -5373,3 +5373,29 @@ LAB_022f7678:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 native scalar-word handlers. */
+int card_mischievous_poltergeist(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x22f87f0; original cards/weatherlight.c:4685. */
+int card_mischievous_poltergeist(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    instance = get_card_instance(player, card);
+    result = can_regenerate(instance->parent_controller, instance->parent_card);
+    if (result != 0)
+    {
+      regenerate_target(instance->parent_controller, instance->parent_card);
+    }
+  }
+  result = generic_activated_ability_2022(player, card, event, GAA_REGENERATION, 0, 0, 0, 0, 0, 0,
+                                          1, NULL, NULL);
+  return result;
+}
+
+#endif

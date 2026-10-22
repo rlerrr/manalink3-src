@@ -2799,7 +2799,7 @@ int card_splinterfright(int player, int card, event_t event){
 	return card_revenant(player, card, event);
 }
 
-static int exile_at_end_of_combat(int player, int card, event_t event)
+int exile_at_end_of_combat_2022(int player, int card, event_t event)
 {
   if (end_of_combat_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY))
 	{
@@ -2826,7 +2826,7 @@ void saint_traft_ability(int player, int card, event_t event, int attacker_playe
 		token.key_plus = KEYWORD_FLYING;
 		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
 		token.legacy = 1;
-		token.special_code_for_legacy = &exile_at_end_of_combat;
+		token.special_code_for_legacy = &exile_at_end_of_combat_2022;
 		token.action = TOKEN_ACTION_ATTACKING;
 		generate_token(&token);
 	}

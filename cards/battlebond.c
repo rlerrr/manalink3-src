@@ -463,7 +463,7 @@ int bonus_round_legacy(int player, int card, event_t event)
       result = new_specific_spell_played(player, card, event, 2, 2, &test);
       if (result != 0)
       {
-        copy_spell_from_stack(trigger_cause_controller, trigger_cause_controller, trigger_cause);
+        copy_spell_from_stack_2022(trigger_cause_controller, trigger_cause_controller, trigger_cause);
       }
     }
   }

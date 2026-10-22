@@ -3630,7 +3630,7 @@ int card_spawning_pit(int player, int card, event_t event)
     }
     if (iVar2 == 2)
     {
-      generate_token_by_id(instance->parent_controller, instance->parent_card, 0x4988);
+      generate_token_by_id_2022(instance->parent_controller, instance->parent_card, 0x4988);
       return 0;
     }
   }

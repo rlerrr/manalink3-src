@@ -3279,7 +3279,7 @@ int card_chain_stasis(int player, int card, event_t event)
               if (spell_fizzled != 1)
               {
                 result = get_id(player, card);
-                copy_spell(instance->targets[0].player, result);
+                copy_spell_2022(instance->targets[0].player, result);
               }
             }
           }
@@ -3354,3 +3354,257 @@ LAB_021291c0:
   result = disabling_targeted_aura(player, card, event, &td, "Select target creature.", 0);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2120600; original cards/homelands.c:1177. */
+static char *damage_dealt_to_white_creature(int who_chooses, int player, int card, int target_player,
+                                     int target_card)
+{
+  card_instance_t *instance;
+  char *pcVar2;
+  int result;
+  unsigned int uVar4;
+  unsigned int uVar5;
+
+  instance = get_card_instance(player, card);
+  if ((instance->internal_card_id == damage_card) && (-1 < instance->damage_target_card))
+  {
+    result = is_what((int)instance->damage_target_player, instance->damage_target_card, 2);
+    if (result != 0)
+    {
+      uVar4 = get_color((int)instance->damage_target_player, instance->damage_target_card);
+      uVar5 = get_sleighted_color_test(target_player, target_card, 0x20);
+      if ((uVar4 & uVar5) != 0)
+      {
+        return NULL;
+      }
+    }
+  }
+  pcVar2 = (char *)get_sleighted_color_text(target_player, target_card,
+                                            "Must be damage card dealt to target %s creature.", 5);
+  return pcVar2;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2124160; original cards/homelands.c:1189. */
+int card_daughter_of_autumn(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  const char *prompt;
+  int iVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  target_definition_2022_t td;
+
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition_2022(player, card, &td, 0);
+    td.special = 0x8000;
+    td.extra = (int32_t)damage_dealt_to_white_creature;
+    pcVar1 = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x1000004, 0, 0, 0,
+                                             0, 0, 1, 0, &td, NULL);
+      return iVar3;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      prompt = get_sleighted_color_text(player, card,
+                                        "Select damage card dealt to target %s creature.", 5);
+      generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 6, 0, 0, 0, 0, 0, 1, 0, &td,
+                                     (char *)prompt);
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      pcVar4 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
+      iVar2 = has_mana(player, 5, 1);
+      iVar3 = pcVar4->info_slot;
+      if (iVar2 < pcVar4->info_slot)
+      {
+        iVar3 = iVar2;
+      }
+      iVar2 = pcVar1->targets[1].player;
+      if (iVar2 == player)
+      {
+        iVar2 = get_toughness(player, pcVar1->targets[1].card);
+        if (iVar2 < iVar3)
+        {
+          iVar2 = pcVar1->targets[1].player;
+          ai_modifier = ai_modifier + 0x18;
+        }
+        else
+        {
+          ai_modifier = ai_modifier + -0x30;
+          iVar2 = pcVar1->targets[1].player;
+        }
+      }
+      if (1 - player != iVar2)
+      {
+        return 0;
+      }
+      iVar2 = get_toughness(iVar2, pcVar1->targets[1].card);
+      if (iVar2 <= iVar3)
+      {
+        ai_modifier = ai_modifier + 0x30;
+        return 0;
+      }
+      ai_modifier = ai_modifier + 0x18;
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td, 0);
+    td.special = 0x8000;
+    td.extra = (int32_t)damage_dealt_to_white_creature;
+    pcVar1 = get_card_instance(player, card);
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION) &&
+      (iVar3 = validate_target_2022(player, card, &td, 0), iVar3 != 0))
+  {
+    pcVar4 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
+    prevent_the_next_n_damage(pcVar1->parent_controller, pcVar1->parent_card,
+                              (int)pcVar4->damage_target_player, pcVar4->damage_target_card, 1,
+                              PREVENT_REDIRECT, pcVar1->parent_controller, pcVar1->parent_card);
+    return 0;
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2125a30; original cards/homelands.c:1809. */
+int card_hazduhr_the_abbot(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int result;
+  card_instance_t *pcVar3;
+  const char *prompt;
+  int32_t argument3;
+  target_definition_2022_t *ptStack_68;
+  target_definition_2022_t td;
+
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition_2022(player, card, &td, 0);
+    td.special = 0x8000;
+    td.extra = (int32_t)damage_dealt_to_white_creature;
+    pcVar1 = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x1000005, 0, 0, 0,
+                                              0, 0, 0, 0, &td, NULL);
+      if (result == 0)
+      {
+        return 0;
+      }
+      return 99;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      pcVar1->info_slot = 0;
+      result = charge_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+
+      prompt = get_sleighted_color_text(player, card,
+                                        "Select damage card dealt to target %s creature.", 5);
+      new_pick_target_2022(&td, prompt, 0, 0x80);
+      pcVar3 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
+      argument3 = pcVar3->info_slot;
+      if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+      {
+        while (result = has_mana(player, 0, argument3), result == 0)
+        {
+          argument3 = argument3 + -1;
+        }
+        charge_mana(player, COLOR_COLORLESS, argument3);
+        if (spell_fizzled != 1)
+        {
+          pcVar1->info_slot = argument3;
+        }
+      }
+      else
+      {
+        charge_mana(player, COLOR_COLORLESS, -1);
+        if (spell_fizzled != 1)
+        {
+          pcVar1->info_slot = x_value;
+          add_state(player, card, 0x10);
+          tapped_for_mana_color = -1;
+        }
+      }
+      result = pcVar1->targets[1].player;
+      if (result == player)
+      {
+        result = get_toughness(player, pcVar1->targets[1].card);
+        if (result < argument3)
+        {
+          result = pcVar1->targets[1].player;
+          ai_modifier = ai_modifier + 0x18;
+        }
+        else
+        {
+          ai_modifier = ai_modifier + -0x30;
+          result = pcVar1->targets[1].player;
+        }
+      }
+      if (1 - player != result)
+      {
+        return 0;
+      }
+      result = get_toughness(result, pcVar1->targets[1].card);
+      if (result <= argument3)
+      {
+        ai_modifier = ai_modifier + 0x30;
+        return 0;
+      }
+      ai_modifier = ai_modifier + 0x18;
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td, 0);
+    td.special = 0x8000;
+    td.extra = (int32_t)damage_dealt_to_white_creature;
+    pcVar1 = get_card_instance(player, card);
+  }
+  ptStack_68 = &td;
+  if ((event == EVENT_RESOLVE_ACTIVATION) &&
+      (result = validate_target_2022(player, card, ptStack_68, 0), result != 0))
+  {
+
+    pcVar3 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
+    prevent_the_next_n_damage(pcVar1->parent_controller, pcVar1->parent_card,
+                              (int)pcVar3->damage_target_player, pcVar3->damage_target_card,
+                              pcVar1->info_slot, PREVENT_REDIRECT, pcVar1->parent_controller,
+                              pcVar1->parent_card);
+    return 0;
+  }
+  return 0;
+}
+
+#endif

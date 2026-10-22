@@ -1776,7 +1776,7 @@ int card_thundering_spineback(int player, int card, event_t event)
     }
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
-      generate_token_by_id(player, card, 0x491d);
+      generate_token_by_id_2022(player, card, 0x491d);
     }
   }
   result = generic_activated_ability(player, card, event, 0, 5, 0, 0, 1, 0, 0, 0, NULL, NULL);
@@ -4198,7 +4198,7 @@ int card_treasure_map(int player, int card, event_t event)
       if (2 < result)
       {
         remove_all_counters_from_source(player, card, player, card, COUNTER_LANDMARK);
-        generate_tokens_by_id(player, card, 0x4998, 3);
+        generate_tokens_by_id_2022(player, card, 0x4998, 3);
         instance = get_card_instance(player, card);
         result = instance->parent_card;
         instance = get_card_instance(player, card);
@@ -4445,3 +4445,65 @@ LAB_02218bc6:
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22128b0; original cards/ixalan.c:2582. */
+static int transform_at_end_of_combat(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  result = end_of_combat_trigger(player, card, event, 2);
+  if (result == 0)
+  {
+    return 0;
+  }
+  pcVar2 = get_card_instance(player, card);
+  pcVar3 = in_play((int)pcVar2->damage_target_player, pcVar2->damage_target_card);
+  if (pcVar3 != NULL)
+  {
+    result = check_state((int)pcVar2->damage_target_player, pcVar2->damage_target_card,
+                         STATE_OUBLIETTED);
+    if (result == 0)
+    {
+      blink_effect_controller((int)pcVar2->damage_target_player, pcVar2->damage_target_card,
+                              return_to_bf_transformed_impl);
+    }
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22182e0; original cards/ixalan.c:2593. */
+int card_conquerors_galleon(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+
+  double_faced_card(player, card, event);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    result = create_targetted_legacy_effect(player, card, transform_at_end_of_combat, player, card);
+    alternate_legacy_text(2, player, result);
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    instance = get_card_instance(player, card);
+    result = turn_into_creature(instance->parent_controller, instance->parent_card,
+                                instance->parent_controller, instance->parent_card, 1, 0, 0);
+    result = alternate_legacy_text(1, player, result);
+    return result;
+  }
+  result = vehicle(player, card, event, 4);
+  return result;
+}
+
+#endif

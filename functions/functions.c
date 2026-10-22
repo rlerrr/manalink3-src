@@ -1,4 +1,8 @@
 #include "manalink.h"
+
+/* DLL-owned storage shared by C and C++; card_coded is an EXE symbol. */
+char *set_legacy_effect_name_addr = NULL;
+
 #include <windows.h>
 
 /* Private callback recovered below; used by the October 2022 deflection helpers. */
@@ -28218,6 +28222,465 @@ LAB_0268f526:
     } while (iVar5 < active_cards_count[iVar3]);
   }
   return iStack_4cc;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2685a40; original functions/functions.c:562. */
+int remove_until_upkeep_impl(int player, int card, int t_player, int t_card, int whose_upkeep,
+                             int discard_cards_equal_to_toughness)
+{
+  unsigned int uVar1;
+  unsigned int uVar2;
+  bool bVar3;
+  card_instance_t *instance;
+  int iVar5;
+  int card_00;
+  int iVar6;
+  unsigned int csvid;
+  uint16_t uStack_28;
+  int csvids[2];
+
+  instance = in_play(t_player, t_card);
+  if (instance != NULL)
+  {
+    iVar5 = is_token(t_player, t_card);
+    card_00 = get_original_internal_card_id(t_player, t_card);
+    instance = get_card_instance(t_player, t_card);
+    csvids[0] = -1;
+    uVar1 = instance->state;
+    csvids[1] = -1;
+    uVar2 =
+        (unsigned int)cards_data[card_00].id | ((unsigned int)cards_data[card_00].reserved2 << 16);
+    csvid = uVar2 & 0xffff;
+    iVar6 = get_card_image_number(csvid, t_player, t_card);
+    uStack_28 = (uint16_t)iVar6;
+    if ((csvid == 0x3eae || csvid == 0x3ef4) || (bVar3 = false, csvid == 0x3efb))
+    {
+      unmeld(csvid, csvids, csvids + 1);
+      card_00 = get_internal_card_id_from_csv_id(csvids[0]);
+      bVar3 = true;
+      uStack_28 = 0;
+    }
+    kill_card(t_player, t_card, KILL_EXILE);
+    if (iVar5 == 0)
+    {
+      iVar5 = is_what(-1, card_00, 0x47);
+      if (iVar5 != 0)
+      {
+        while (true)
+        {
+          iVar5 = create_legacy_effect(player, card, remove_until_upkeep_legacy);
+          instance = get_card_instance(player, iVar5);
+          instance->targets[0].card = card_00;
+          instance->targets[0].player = uVar1 >> 0xc & 1;
+          instance->targets[1].player = whose_upkeep;
+          instance->targets[1].card = -(unsigned int)(discard_cards_equal_to_toughness == 0) | 0x42;
+          instance->display_pic_csv_id = (uint16_t)uVar2;
+          instance->display_pic_num = uStack_28;
+          if (!bVar3)
+            break;
+          card_00 = get_internal_card_id_from_csv_id(csvids[1]);
+          bVar3 = false;
+        }
+        return iVar5;
+      }
+    }
+  }
+  return -1;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2685c10; original functions/functions.c:596. */
+int remove_until_upkeep(int player, int card, int t_player, int t_card, int whose_upkeep)
+{
+  int result;
+
+  result = remove_until_upkeep_impl(player, card, t_player, t_card, whose_upkeep, 0);
+  return result;
+}
+
+/* ManalinkEh 2022: 0x2685c50; original functions/functions.c:600. */
+int remove_until_upkeep_discard_cards_equal_to_toughness(int player, int card, int t_player,
+                                                         int t_card, int whose_upkeep)
+{
+  int result;
+
+  result = remove_until_upkeep_impl(player, card, t_player, t_card, whose_upkeep, 1);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x267f930; original functions/functions.c:6234. */
+void replace_all_instances_of_one_color_word_with_another_2022(int player, int card, int t_player,
+                                                               int t_card)
+{
+  unsigned int uVar1;
+  card_instance_t *instance;
+  int32_t iVar3;
+  int iVar4;
+  int iVar5;
+  int iVar6;
+  uint32_t uVar7;
+  int iVar8;
+  uint32_t uStack_38;
+  uint32_t uStack_34;
+  unsigned int uStack_30;
+  int iStack_2c;
+  int options[6];
+
+  if (player == 1)
+  {
+    options[1] = 0;
+    options[2] = 0;
+    options[3] = 0;
+    options[4] = 0;
+    options[5] = 0;
+    iVar5 = get_id(t_player, t_card);
+    iVar3 = cards_ptr[iVar5]->sleight_color;
+    instance = get_card_instance(t_player, t_card);
+    if ((instance->ext->special_flags3 & SF3_HARDCODED_SLEIGHT_WORDS_REPLACED) == SF3_0)
+    {
+      set_special_flags3_2022(t_player, t_card, 0x2000);
+      iVar5 = get_id(t_player, t_card);
+      iVar3 = get_colors_to_sleight_from_text(iVar5);
+      iVar5 = get_id(t_player, t_card);
+      cards_ptr[iVar5]->sleight_color = iVar3;
+    }
+    iVar5 = 1;
+    do
+    {
+      while (((iVar3 >> ((unsigned char)iVar5 & 0x1f) & 1U) != 0 &&
+              (instance = get_card_instance(t_player, t_card), instance->color_id[iVar5] == '\0')))
+      {
+        options[iVar5] = 1;
+        iVar5 = iVar5 + 1;
+        if (iVar5 == 6)
+          goto LAB_0267fcf0;
+      }
+      iVar5 = iVar5 + 1;
+    } while (iVar5 != 6);
+  LAB_0267fcf0:
+    iVar5 = 1;
+    do
+    {
+      while (instance = get_card_instance(t_player, t_card), instance->color_id[iVar5] == '\0')
+      {
+        iVar5 = iVar5 + 1;
+        if (iVar5 == 6)
+          goto LAB_0267fd33;
+      }
+      instance = get_card_instance(t_player, t_card);
+      iVar8 = iVar5 + 1;
+      options[instance->color_id[iVar5]] = 1;
+      iVar5 = iVar8;
+    } while (iVar8 != 6);
+  LAB_0267fd33:
+    iStack_2c = options[3];
+    iVar5 = options[1];
+    iVar8 = options[4];
+    iVar4 = options[2];
+    iVar6 = options[5];
+  }
+  else
+  {
+    iStack_2c = 1;
+    iVar5 = 1;
+    iVar8 = 1;
+    iVar4 = 1;
+    iVar6 = 1;
+  }
+  uVar1 = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\014", "\001\003", "\001\004",
+                      "From Black...", iVar5, 1, "From Blue...", iVar4, 1, "From Green...",
+                      iStack_2c, 1, "From Red...", iVar8, 1, "From White...", iVar6, 1, 0, 0, 0, 0);
+  options[1] = 0;
+  options[2] = 0;
+  options[3] = 0;
+  options[4] = 0;
+  options[5] = 0;
+  options[uVar1] = 1;
+  if ((uVar1 == 4) || (uVar1 == 1))
+  {
+    uStack_34 = 10;
+  }
+  else
+  {
+    uStack_34 = 1;
+  }
+  if ((uVar1 == 2) || (uVar1 == 5))
+  {
+    uStack_38 = 10;
+  }
+  else
+  {
+    uStack_38 = 1;
+  }
+  if (uVar1 - 1 < 2)
+  {
+    uVar7 = 10;
+    iVar5 = 1;
+  }
+  else
+  {
+    uVar7 = 1;
+    iVar5 = (-(unsigned int)(uVar1 - 3 < 2) & 9) + 1;
+  }
+  uStack_30 = (unsigned int)(options[3] == 0);
+  iVar5 = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\002", "\001\014", "\001\003",
+                      "\001\004", "...to Black", (unsigned int)(options[1] == 0),
+                      (-(unsigned int)((uVar1 - 3 & 0xfffffffd) == 0) & 9) + 1, "...to Blue",
+                      (unsigned int)(options[2] == 0), iVar5, "...to Green", uStack_30, uVar7,
+                      "...to Red", (unsigned int)(options[4] == 0), uStack_38, "...to White",
+                      (unsigned int)(options[5] == 0), uStack_34, 0, 0, 0, 0);
+  instance = get_card_instance(t_player, t_card);
+  uStack_30 = (unsigned int)iVar5;
+  if (instance->color_id[uVar1] == '\0')
+  {
+    instance = get_card_instance(t_player, t_card);
+    instance->color_id[uVar1] = (uint8_t)uStack_30;
+  }
+  iVar5 = 1;
+  do
+  {
+    while (instance = get_card_instance(t_player, t_card), instance->color_id[iVar5] == uVar1)
+    {
+      instance = get_card_instance(t_player, t_card);
+      iVar8 = iVar5 + 1;
+      instance->color_id[iVar5] = (uint8_t)uStack_30;
+      iVar5 = iVar8;
+      if (iVar8 == 6)
+      {
+        return;
+      }
+    }
+    iVar5 = iVar5 + 1;
+  } while (iVar5 != 6);
+  return;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x267fdc0; original functions/functions.c:6289. */
+void replace_all_instances_of_one_basic_land_type_word_with_another_2022(int player, int card,
+                                                                         int t_player, int t_card)
+{
+  unsigned int uVar1;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  int iVar4;
+  int iVar5;
+  int iVar6;
+  uint32_t uVar7;
+  int iVar8;
+  uint32_t uStack_38;
+  uint32_t uStack_34;
+  unsigned int uStack_30;
+  int iStack_2c;
+  int options[6];
+
+  if (player == 1)
+  {
+    options[1] = 0;
+    options[2] = 0;
+    options[3] = 0;
+    options[4] = 0;
+    options[5] = 0;
+    iVar5 = get_id(t_player, t_card);
+    uVar1 = (unsigned int)cards_ptr[iVar5]->hack_colors;
+    instance = get_card_instance(t_player, t_card);
+    if ((instance->ext->special_flags3 & SF3_HARDCODED_HACK_WORDS_REPLACED) == SF3_0)
+    {
+      set_special_flags3_2022(t_player, t_card, 0x4000);
+      iVar5 = get_id(t_player, t_card);
+      uVar1 = get_colors_to_hack_from_type_text(iVar5);
+      uVar3 = get_colors_to_hack_from_rules_text(iVar5);
+      uVar1 = uVar1 | uVar3;
+      iVar5 = get_id(t_player, t_card);
+      cards_ptr[iVar5]->hack_colors = (uint8_t)uVar1;
+    }
+    iVar5 = 1;
+    do
+    {
+      while ((((int)uVar1 >> ((unsigned char)iVar5 & 0x1f) & 1U) != 0 &&
+              (instance = get_card_instance(t_player, t_card), instance->hack_mode[iVar5] == '\0')))
+      {
+        options[iVar5] = 1;
+        iVar5 = iVar5 + 1;
+        if (iVar5 == 6)
+          goto LAB_02680190;
+      }
+      iVar5 = iVar5 + 1;
+    } while (iVar5 != 6);
+  LAB_02680190:
+    iVar5 = 1;
+    do
+    {
+      while (instance = get_card_instance(t_player, t_card), instance->hack_mode[iVar5] == '\0')
+      {
+        iVar5 = iVar5 + 1;
+        if (iVar5 == 6)
+          goto LAB_026801d9;
+      }
+      instance = get_card_instance(t_player, t_card);
+      iVar8 = iVar5 + 1;
+      options[instance->hack_mode[iVar5]] = 1;
+      iVar5 = iVar8;
+    } while (iVar8 != 6);
+  LAB_026801d9:
+    iStack_2c = options[3];
+    iVar5 = options[1];
+    iVar8 = options[4];
+    iVar4 = options[2];
+    iVar6 = options[5];
+  }
+  else
+  {
+    iStack_2c = 1;
+    iVar5 = 1;
+    iVar8 = 1;
+    iVar4 = 1;
+    iVar6 = 1;
+  }
+  uVar1 = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\014", "\001\003", "\001\004",
+                      "From Swamp...", iVar5, 1, "From Island...", iVar4, 1, "From Forest...",
+                      iStack_2c, 1, "From Mountain...", iVar8, 1, "From Plain...", iVar6, 1, 0, 0,
+                      0, 0);
+  options[1] = 0;
+  options[2] = 0;
+  options[3] = 0;
+  options[4] = 0;
+  options[5] = 0;
+  options[uVar1] = 1;
+  if ((uVar1 == 4) || (uVar1 == 1))
+  {
+    uStack_34 = 10;
+  }
+  else
+  {
+    uStack_34 = 1;
+  }
+  if ((uVar1 == 2) || (uVar1 == 5))
+  {
+    uStack_38 = 10;
+  }
+  else
+  {
+    uStack_38 = 1;
+  }
+  if (uVar1 - 1 < 2)
+  {
+    uVar7 = 10;
+    iVar5 = 1;
+  }
+  else
+  {
+    uVar7 = 1;
+    iVar5 = (-(unsigned int)(uVar1 - 3 < 2) & 9) + 1;
+  }
+  uStack_30 = (unsigned int)(options[3] == 0);
+  iVar5 = dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\014", "\001\002", "\001\003",
+                      "\001\004", "...to Swamp", (unsigned int)(options[1] == 0),
+                      (-(unsigned int)((uVar1 - 3 & 0xfffffffd) == 0) & 9) + 1, "...to Island",
+                      (unsigned int)(options[2] == 0), iVar5, "...to Forest", uStack_30, uVar7,
+                      "...to Mountain", (unsigned int)(options[4] == 0), uStack_38, "...to Plain",
+                      (unsigned int)(options[5] == 0), uStack_34, 0, 0, 0, 0);
+  instance = get_card_instance(t_player, t_card);
+  uStack_30 = (unsigned int)iVar5;
+  if (instance->hack_mode[uVar1] == '\0')
+  {
+    instance = get_card_instance(t_player, t_card);
+    instance->hack_mode[uVar1] = (uint8_t)uStack_30;
+  }
+  iVar5 = 1;
+  do
+  {
+    while (instance = get_card_instance(t_player, t_card), instance->hack_mode[iVar5] == uVar1)
+    {
+      instance = get_card_instance(t_player, t_card);
+      iVar8 = iVar5 + 1;
+      instance->hack_mode[iVar5] = (uint8_t)uStack_30;
+      iVar5 = iVar8;
+      if (iVar8 == 6)
+      {
+        return;
+      }
+    }
+    iVar5 = iVar5 + 1;
+  } while (iVar5 != 6);
+  return;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x268ecf0; original functions/functions.c:13906.
+ * Built-in chooser UI is stubbed; see functions/choose_a_card.cpp. */
+int new_card_from_list_2022(int player, int mode, test_definition_2022_t *test)
+{
+  uint16_t uVar1;
+  int result;
+  color_test_t colors;
+  type_t types;
+
+  if (ai_is_speculating == 1)
+  {
+    result = -1;
+  }
+  else
+  {
+    types = test->type;
+    if (types == TYPE_ANY)
+    {
+      types = TARGET_TYPE_PLANESWALKER | TYPE_ANY;
+    }
+    uVar1 = test->type_flag;
+    if (uVar1 == 4)
+    {
+      types = types & ~TARGET_TYPE_PLANESWALKER;
+    }
+    else if ((unsigned short)uVar1 < 5)
+    {
+      if (uVar1 == 1)
+      {
+        types = types ^ ~TYPE_NONE;
+      }
+      else if (uVar1 == 2)
+      {
+        types = types & ~TYPE_CREATURE;
+      }
+    }
+    else if (uVar1 == 9)
+    {
+      types = types & ~TYPE_ARTIFACT | TYPE_CREATURE;
+    }
+    colors = (test->color_flag != 2) - COLOR_TEST_BLACK;
+    if ((mode & 1U) == 0)
+    {
+      result = choose_a_card_test_ct_allow_cancel(test->message, test, colors, types);
+    }
+    else
+    {
+      result = choose_a_card_test_ct(test->message, test, colors, types);
+    }
+    if ((mode & 6U) == 4)
+    {
+      result = get_internal_card_id_from_csv_id(result);
+      return result;
+    }
+  }
+  return result;
 }
 
 #endif

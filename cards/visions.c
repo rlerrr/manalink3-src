@@ -4051,7 +4051,7 @@ static int giant_caterpillar_legacy(int player, int card, event_t event)
   {
     return 0;
   }
-  generate_tokens_by_id(player, card, 0x490c, 1);
+  generate_tokens_by_id_2022(player, card, 0x490c, 1);
   kill_card(player, card, KILL_EXILE);
   return 0;
 }

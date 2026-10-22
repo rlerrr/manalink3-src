@@ -144,7 +144,15 @@ def main():
                 use_specific_cip_api_2022=bool(function.get('specific_cip_interface_2022')),
                 use_life_api_2022=bool(function.get('life_interface_2022')),
                 use_cannot_lose_api_2022=bool(function.get('cannot_lose_interface_2022')),
-                use_life_loss_api_2022=bool(function.get('life_loss_interface_2022')))
+                use_life_loss_api_2022=bool(function.get('life_loss_interface_2022')),
+                use_shared_card_api_2022=bool(function.get('shared_card_interface_2022')),
+                use_delayed_callback_api_2022=bool(function.get('delayed_callback_interface_2022')),
+                use_copy_api_2022=bool(function.get('copy_interface_2022')),
+                use_text_change_api_2022=bool(function.get('text_change_interface_2022')),
+                use_token_frontend_api_2022=bool(function.get('token_frontend_interface_2022')),
+                use_wish_api_2022=bool(function.get('wish_interface_2022')),
+                use_ability_filter_api_2022=bool(function.get('ability_filter_interface_2022')),
+                use_library_reveal_api_2022=bool(function.get('library_reveal_interface_2022')))
             formatted = format_bytes(candidate.encode("utf-8"))
             if tokens(current) != tokens(formatted) or comments(current) != comments(formatted):
                 skipped.append(relative + "::" + function["name"])

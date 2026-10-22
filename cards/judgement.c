@@ -2397,3 +2397,47 @@ joined_r0x02058d8d:
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20590c0; original cards/judgement.c:4.
+ * Built-in chooser UI is stubbed; see functions/choose_a_card.cpp. */
+void generic_wish_effect_2022(int player, int card, test_definition_2022_t *test, int ai_card)
+{
+  int result;
+  int revealed_card;
+
+  result = get_id(player, card);
+  if (result == 0x1729)
+  {
+    lose_life_2022(player, (life[player] + 1) / 2);
+  }
+  if (player == 0)
+  {
+    result = new_card_from_list_2022(0, 5, test);
+    add_card_to_hand(0, result);
+  }
+  else
+  {
+    result = new_select_a_card_2022(player, player, 1, 0, 1, -1, test);
+    if (result < 0)
+    {
+      result = get_internal_card_id_from_csv_id(ai_card);
+    }
+    else
+    {
+      result = deck_ptr[player][result];
+    }
+    revealed_card = add_card_to_hand(player, result);
+    reveal_card(player, card, player, revealed_card);
+  }
+  if (result == -1)
+  {
+    return;
+  }
+  result = check_card_for_rules_engine(result);
+  update_rules_engine(result);
+  return;
+}
+
+#endif

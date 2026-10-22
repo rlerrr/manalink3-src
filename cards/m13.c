@@ -2353,3 +2353,29 @@ static int has_mbt_by_iid(int iid, int unused1, int unused2, int unused3)
   }
   return 1;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 native scalar-word handlers. */
+static int xathrid_ability_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x22b48c0; original cards/m13.c:2422. */
+static int xathrid_ability_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+
+  if (event == EVENT_ABILITIES)
+  {
+    instance = in_play(player, card);
+    if (((instance != NULL) && (instance->damage_target_card == affected_card)) &&
+        (instance->damage_target_player == affected_card_controller))
+    {
+      event_result = event_result | KEYWORD_DEFENDER;
+      disable_all_activated_abilities_2022((int)instance->damage_target_player,
+                                           instance->damage_target_card, 1);
+    }
+  }
+  return 0;
+}
+
+#endif

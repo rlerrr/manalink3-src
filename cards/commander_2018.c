@@ -434,7 +434,7 @@ int card_nesting_dragon(int player, int card, event_t event)
   {
     return 0;
   }
-  generate_token_by_id(player, card, 0x33e2);
+  generate_token_by_id_2022(player, card, 0x33e2);
   return 0;
 }
 
@@ -852,7 +852,7 @@ int card_estrid_the_masked(int player, int card, event_t event)
       }
       else if (iVar5 == 2)
       {
-        generate_token_by_id(player, card, 0x4aa4);
+        generate_token_by_id_2022(player, card, 0x4aa4);
       }
       else if (iVar5 == 3)
       {
@@ -1700,7 +1700,7 @@ int card_retrofitter_foundry(int player, int card, event_t event)
     }
     iVar6 = 0x4980;
   }
-  generate_token_by_id(instance->parent_controller, instance->parent_card, iVar6);
+  generate_token_by_id_2022(instance->parent_controller, instance->parent_card, iVar6);
 
   return 0;
 }
@@ -2482,12 +2482,12 @@ int card_saheeli_the_gifted(int player, int card, event_t event)
     iVar1 = pcStack_1d0->info_slot;
     if (iVar1 == 1)
     {
-      generate_token_by_id(player, card, 0x4980);
+      generate_token_by_id_2022(player, card, 0x4980);
     }
     else if (iVar1 == 2)
     {
 
-      iVar1 = generate_reserved_token_by_id(player, 0x6160);
+      iVar1 = generate_reserved_token_by_id_2022(player, 0x6160);
       pcVar2 = get_card_instance(player, iVar1);
       pcVar2->targets[0].player = player;
       pcVar2->targets[0].card = 0x41;

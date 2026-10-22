@@ -1975,7 +1975,7 @@ int card_doomed_dissenter(int player, int card, event_t event)
   {
     return 0;
   }
-  generate_token_by_id(player, card, 0x49ac);
+  generate_token_by_id_2022(player, card, 0x49ac);
   return 0;
 }
 
@@ -3323,7 +3323,7 @@ int card_never_return(int player, int card, event_t event)
                               result != -1))
         {
           rfg_card_from_grave(instance->targets[0].player, result);
-          generate_token_by_id(player, card, 0x49ac);
+          generate_token_by_id_2022(player, card, 0x49ac);
         }
         kill_card(player, card, KILL_DESTROY);
       }
@@ -5120,7 +5120,7 @@ int card_gideon_of_the_trials(int player, int card, event_t event)
     }
     else if (iVar1 == 3)
     {
-      generate_reserved_token_by_id(player, 0x4214);
+      generate_reserved_token_by_id_2022(player, 0x4214);
     }
     else
     {
@@ -5327,7 +5327,7 @@ int card_stir_the_sands(int player, int card, event_t event)
         }
         else if (event == EVENT_RESOLVE_SPELL)
         {
-          generate_tokens_by_id(player, card, 0x49ac, 3);
+          generate_tokens_by_id_2022(player, card, 0x49ac, 3);
           kill_card(player, card, KILL_DESTROY);
         }
         else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
@@ -5338,7 +5338,7 @@ int card_stir_the_sands(int player, int card, event_t event)
     }
     if ((((unsigned int)player_bits[player] >> 24 & 0xff) & 2) == 0)
     {
-      generate_tokens_by_id(player, card, 0x49ac, 1);
+      generate_tokens_by_id_2022(player, card, 0x49ac, 1);
     }
   }
 LAB_022dd593:
@@ -6722,7 +6722,7 @@ int card_drake_haven(int player, int card, event_t event)
       result = charge_mana(player, COLOR_COLORLESS, 1);
       if (result != 0)
       {
-        generate_token_by_id(player, card, 0x4921);
+        generate_token_by_id_2022(player, card, 0x4921);
       }
     }
   }
@@ -8860,6 +8860,57 @@ int card_desiccated_naga(int player, int card, event_t event)
     gain_life(player, 2);
   }
   return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 native scalar-word handlers. */
+int card_approach_of_the_second_sun(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x22d7ab0; original cards/amonkhet.c:175. */
+int card_approach_of_the_second_sun(int player, int card, event_t event)
+{
+  int result;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+      {
+        return 0;
+      }
+      if ((player_bits[player] & PB2022_CAST_APPROACH_OF_THE_SECOND_SUN1) != 0)
+      {
+        player_bits[player] = player_bits[player] | PB2022_CAST_APPROACH_OF_THE_SECOND_SUN2;
+      }
+      result = check_special_flags2_2022(player, card, -0x80000000);
+      if ((result == 0) && ((player_bits[player] & PB2022_CAST_APPROACH_OF_THE_SECOND_SUN1) == 0))
+      {
+        player_bits[player] = player_bits[player] | PB2022_CAST_APPROACH_OF_THE_SECOND_SUN1;
+      }
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      if (((player_bits[player] & PB2022_CAST_APPROACH_OF_THE_SECOND_SUN2) == 0) ||
+          (result = not_played_from_hand(player, card), result != 0))
+      {
+        gain_life_2022(player, 7);
+        put_permanent_under_the_first_x_card_of_its_owners_library(player, card, 6);
+      }
+      else
+      {
+        lose_the_game_2022(1 - player);
+      }
+    }
+    else if ((event != EVENT_CAN_CHANGE_TARGET) && (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  result = basic_spell(player, card, event);
+  return result;
 }
 
 #endif

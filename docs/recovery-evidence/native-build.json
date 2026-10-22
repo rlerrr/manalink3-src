@@ -1,0 +1,79 @@
+{
+  "status": "success",
+  "compiler": "GCC/G++ 9.3.0, x86_64-w64-mingw32 host using -m32",
+  "build_command": "powershell -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
+  "warnings_as_errors": false,
+  "object_inputs": {
+    ".o": 164,
+    ".obj": 2,
+    ".ao": 20
+  },
+  "veneer_object": "ManalinkEh.ao; loaded exactly once by manalink.lds",
+  "machine": "IMAGE_FILE_MACHINE_I386",
+  "optional_header": "PE32",
+  "image_base": "0x2000000",
+  "entry_rva": "0x1000",
+  "exports": {
+    "CodeSectionEx": 4102,
+    "DllEntry": 4096
+  },
+  "files": {
+    "ManalinkEh.dll": {
+      "bytes": 8580161,
+      "sha256": "42e58b38073c4f6eadaaa8573e8779ee5d1655d881d3aa2efc87533a32dc6fc2"
+    },
+    "ManalinkEh.dbg": {
+      "bytes": 92166470,
+      "sha256": "33caffed7442350ff1b98e6c48de0b4e06f2cd3f37e996d6f395b7af9dc5c44a"
+    }
+  },
+  "debug_info_bytes": 82136576,
+  "new_batch_public_symbols_verified": 21,
+  "import_library_i386_members": {
+    "libDrawcardlib.a": 10,
+    "libcapturestackbacktrace.a": 3
+  },
+  "imported_dlls": [
+    "kernel32.dll",
+    "Drawcardlib.dll",
+    "GDI32.dll",
+    "KERNEL32.dll",
+    "MSIMG32.DLL",
+    "msvcrt.dll",
+    "USER32.dll"
+  ],
+  "excluded_c_source_units": [
+    "cards/artifacts.c",
+    "cards/artifact_creatures.c",
+    "cards/auto_targets.c",
+    "cards/black_creatures.c",
+    "cards/black_enchantments.c",
+    "cards/black_oneshot.c",
+    "cards/blue_creatures.c",
+    "cards/blue_enchantments.c",
+    "cards/blue_oneshot.c",
+    "cards/green_creatures.c",
+    "cards/green_enchantments.c",
+    "cards/green_oneshot.c",
+    "cards/jatill.c",
+    "cards/lands.c",
+    "cards/recoded_cards.c",
+    "cards/red_creatures.c",
+    "cards/red_enchantments.c",
+    "cards/red_oneshot.c",
+    "cards/white_creatures.c",
+    "cards/white_enchantments.c",
+    "cards/white_oneshot.c",
+    "functions/ability_icons.c",
+    "functions/affect_me.c",
+    "functions/jatill.c"
+  ],
+  "repairs": [
+    "Two terminal labels receive null statements for GCC 9 C grammar; exact previous records and historical scalar proof retained.",
+    "Header globals become extern declarations: card_coded remains the EXE absolute symbol from manalink.lds; the DLL-owned set_legacy_effect_name_addr pointer has one zero-initialized definition in functions/functions.c.",
+    "Ten duplicate assembly wrappers are omitted; in_play.asm retains is_not_dead while conditionally omitting the two C-replaced wrappers.",
+    "Root veneer object is assembled as a dependency and loaded once by the linker script.",
+    "Both import archives are regenerated with i386 machine and --32 assembler flags."
+  ],
+  "scope": "Compile, assemble, link, separate debug data and inspect output. No game/DLL execution, deployment, gameplay tests or byte matching. The two user-directed Wish dialog stubs remain present and out of scope."
+}

@@ -626,7 +626,7 @@ int card_bloodforged_battle_axe(int player, int card, event_t event)
                                           DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE);
   if (result != 0)
   {
-    copy_token(player, card, player, card);
+    copy_token_2022(player, card, player, card);
   }
   result = vanilla_equipment(player, card, event, 2, 2, 0, 0, 0);
   return result;

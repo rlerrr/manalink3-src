@@ -3572,3 +3572,93 @@ int card_contempt(int player, int card, event_t event)
   return result;
 }
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x212c130; original cards/stronghold.c:3579. */
+static int effect_destroy_at_next_eot(int player, int card, event_t event)
+{
+  char cVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_player)
+  {
+    instance = get_card_instance(player, card);
+    if ((((trigger_condition == TRIGGER_EOT) && (card == affected_card)) &&
+         (player == affected_card_controller)) &&
+        (player == reason_for_trigger_controller))
+    {
+      iVar2 = instance->targets[1].player;
+      if (iVar2 < 1)
+      {
+        if (event == EVENT_TRIGGER)
+        {
+          event_result = event_result | 2;
+        }
+        else if (event == EVENT_RESOLVE_TRIGGER)
+        {
+          cVar1 = instance->damage_target_player;
+          iVar2 = instance->damage_target_card;
+          iVar4 = check_state((int)cVar1, iVar2, STATE_OUBLIETTED);
+          if (iVar4 == 0)
+          {
+            kill_card((int)cVar1, iVar2, KILL_SACRIFICE);
+          }
+          else
+          {
+            kill_card(player, card, KILL_EXILE);
+          }
+        }
+      }
+      else
+      {
+        instance->targets[1].player = iVar2 + -1;
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+static void destroy_token_at_next_eot(token_generation_2022_t *token, int blue_wall, int number);
+
+/* ManalinkEh 2022: 0x212ad10; original cards/stronghold.c:3610. */
+static void destroy_token_at_next_eot(token_generation_2022_t *token, int blue_wall, int number)
+{
+  int card;
+  card_instance_t *instance;
+
+  card = create_targetted_legacy_effect(token->s_player, token->s_card, effect_destroy_at_next_eot,
+                                        token->t_player, blue_wall);
+  if ((current_phase == 0x1f) && (-1 < card))
+  {
+    instance = get_card_instance(token->s_player, card);
+    instance->targets[1].player = 1;
+    return;
+  }
+  return;
+}
+
+/* ManalinkEh 2022: 0x21357f0; original cards/stronghold.c:3619. */
+int card_hornet_cannon(int player, int card, event_t event)
+{
+  int result;
+  token_generation_2022_t token;
+
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    default_token_definition_2022(player, card, 0x4948, &token);
+    token.s_key_plus = 4;
+    token.special_code_on_generation = destroy_token_at_next_eot;
+    generate_token_2022(&token);
+  }
+  result = generic_activated_ability_2022(player, card, event, 1, 3, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+#endif

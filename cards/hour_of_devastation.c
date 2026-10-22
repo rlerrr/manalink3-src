@@ -4332,7 +4332,7 @@ int card_swarm_intelligence(int player, int card, event_t event)
   sp_ability_trigger(player, event, (result != 0) + 1, TYPE_SPELL, NULL, player, card);
   if (event == EVENT_SPA)
   {
-    copy_spell_from_stack(player, trigger_cause_controller, trigger_cause);
+    copy_spell_from_stack_2022(player, trigger_cause_controller, trigger_cause);
   }
   result = global_enchantment(player, card, event);
   return result;

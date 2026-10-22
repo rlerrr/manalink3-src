@@ -331,7 +331,7 @@ int card_blessed_sanctuary(int player, int card, event_t event)
   }
   if (event == EVENT_ETB)
   {
-    generate_token_by_id(player, card, 0x54f2);
+    generate_token_by_id_2022(player, card, 0x54f2);
   }
   result = global_enchantment(player, card, event);
   return result;

@@ -782,7 +782,7 @@ int card_bone_miser(int player, int card, event_t event)
   }
   else
   {
-    generate_token_by_id(player, card, 0x49ac);
+    generate_token_by_id_2022(player, card, 0x49ac);
     if (iVar2 == 0)
     {
       return 0;

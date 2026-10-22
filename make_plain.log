@@ -1,0 +1,640 @@
+﻿gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/artifacts.o cards/artifacts.c
+cards/artifacts.c: In function 'effect_slowtrip':
+cards/artifacts.c:5:33: error: 'KILL_REMOVE' undeclared (first use in this function)
+    5 |         kill_card(player, card, KILL_REMOVE);
+      |                                 ^~~~~~~~~~~
+cards/artifacts.c:5:33: note: each undeclared identifier is reported only once for each function it appears in
+cards/artifacts.c: In function 'card_vedalken_shackles':
+cards/artifacts.c:91:4: error: too few arguments to function 'gain_control_until_source_is_in_play_and_tapped'
+   91 |    gain_control_until_source_is_in_play_and_tapped(player, instance->parent_card, instance->targets[0].player, instance->targets[0].card);
+      |    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from cards/artifacts.c:1:
+./manalink.h:1340:6: note: declared here
+ 1340 | void gain_control_until_source_is_in_play_and_tapped(int player, int card, int t_player, int t_card, gcus_t mode);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cards/artifacts.c: In function 'get_updated_casting_cost_exc_trinisphere':
+cards/artifacts.c:207:12: warning: implicit declaration of function 'get_color_by_id'; did you mean 'get_cmc_by_id'? [-Wimplicit-function-declaration]
+  207 |  int clr = get_color_by_id(player, id);
+      |            ^~~~~~~~~~~~~~~
+      |            get_cmc_by_id
+cards/artifacts.c:207:12: warning: nested extern declaration of 'get_color_by_id' [-Wnested-externs]
+cards/artifacts.c: In function 'card_aether_vial':
+cards/artifacts.c:706:59: warning: implicit declaration of function 'count_ccounters'; did you mean 'count_counters'? [-Wimplicit-function-declaration]
+  706 |  scnprintf(buffer, 100, "Select a Creature with cmc %d.", count_ccounters(player, card));
+      |                                                           ^~~~~~~~~~~~~~~
+      |                                                           count_counters
+cards/artifacts.c:706:59: warning: nested extern declaration of 'count_ccounters' [-Wnested-externs]
+cards/artifacts.c:725:5: warning: implicit declaration of function 'add_ccounter'; did you mean 'add_counter'? [-Wimplicit-function-declaration]
+  725 |     add_ccounter(player, card);
+      |     ^~~~~~~~~~~~
+      |     add_counter
+cards/artifacts.c:725:5: warning: nested extern declaration of 'add_ccounter' [-Wnested-externs]
+cards/artifacts.c: In function 'card_mind_stone':
+cards/artifacts.c:760:26: error: too many arguments to function 'count_permanents_by_type'
+  760 |   if( ! paying_mana() && count_permanents_by_type(player, card, TYPE_LAND) > 6  &&
+      |                          ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from cards/artifacts.c:1:
+./manalink.h:545:5: note: declared here
+  545 | int count_permanents_by_type(int player, type_t type);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+cards/artifacts.c:766:15: warning: implicit declaration of function 'get_forbid_activation_flag' [-Wimplicit-function-declaration]
+  766 |         if( ! get_forbid_activation_flag(player, card) && has_mana(player, COLOR_COLORLESS, 2) ){
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~
+cards/artifacts.c:766:15: warning: nested extern declaration of 'get_forbid_activation_flag' [-Wnested-externs]
+cards/artifacts.c: In function 'effect_illusionary_mask':
+cards/artifacts.c:799:4: warning: implicit declaration of function 'damage_dealt_to_me'; did you mean 'damage_dealt_by_me'? [-Wimplicit-function-declaration]
+  799 |    damage_dealt_to_me(instance->targets[0].player, instance->targets[0].card, event, 0)
+      |    ^~~~~~~~~~~~~~~~~~
+      |    damage_dealt_by_me
+cards/artifacts.c:799:4: warning: nested extern declaration of 'damage_dealt_to_me' [-Wnested-externs]
+cards/artifacts.c:815:28: error: 'KILL_REMOVE' undeclared (first use in this function)
+  815 |    kill_card(player, card, KILL_REMOVE);
+      |                            ^~~~~~~~~~~
+cards/artifacts.c: In function 'card_isochron_scepter':
+cards/artifacts.c:890:67: warning: implicit declaration of function 'can_legally_play'; did you mean 'can_legally_play_iid'? [-Wimplicit-function-declaration]
+  890 |     if( event == EVENT_CAN_ACTIVATE && instance->info_slot > 0 && can_legally_play(player, instance->info_slot ) ){
+      |                                                                   ^~~~~~~~~~~~~~~~
+      |                                                                   can_legally_play_iid
+cards/artifacts.c:890:67: warning: nested extern declaration of 'can_legally_play' [-Wnested-externs]
+cards/artifacts.c: In function 'card_myr_incubator':
+cards/artifacts.c:1135:3: error: too few arguments to function 'generate_tokens_by_id'
+ 1135 |   generate_tokens_by_id(player, CARD_ID_MYR, myr);
+      |   ^~~~~~~~~~~~~~~~~~~~~
+In file included from cards/artifacts.c:1:
+./manalink.h:415:6: note: declared here
+  415 | void generate_tokens_by_id(int player, int card, int csvid, int howmany);
+      |      ^~~~~~~~~~~~~~~~~~~~~
+C:\dev\manalink3-src\make.exe: *** [cards/artifacts.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/black_creatures.o cards/black_creatures.c
+cards/black_creatures.c: In function 'card_swamp_mosquito':
+cards/black_creatures.c:57:13: error: 'poison_counters' undeclared (first use in this function); did you mean 'move_counters'?
+   57 |             poison_counters[1-player]++;
+      |             ^~~~~~~~~~~~~~~
+      |             move_counters
+cards/black_creatures.c:57:13: note: each undeclared identifier is reported only once for each function it appears in
+cards/black_creatures.c: In function 'dark_confidant_effect':
+cards/black_creatures.c:92:3: error: too many arguments to function 'reveal_card'
+   92 |   reveal_card(HUMAN, player, card, t_player, card_added, "Reveals", 0);
+      |   ^~~~~~~~~~~
+In file included from cards/black_creatures.c:1:
+./manalink.h:1246:6: note: declared here
+ 1246 | void reveal_card(int source_player, int source_card, int revealed_player, int revealed_card); // source_player/source_card are the source of the effect.  If they're unknown, put the revealed player/card there and use -1,-1 for revealed_player, revealed_card.
+      |      ^~~~~~~~~~~
+cards/black_creatures.c: In function 'disciple_of_the_vault_legacy':
+cards/black_creatures.c:153:27: error: 'KILL_REMOVE' undeclared (first use in this function)
+  153 |   kill_card(player, card, KILL_REMOVE);
+      |                           ^~~~~~~~~~~
+cards/black_creatures.c: In function 'card_hells_caretaker':
+cards/black_creatures.c:237:39: warning: implicit declaration of function 'get_forbid_activation_flag' [-Wimplicit-function-declaration]
+  237 |  if( event == EVENT_CAN_ACTIVATE && ! get_forbid_activation_flag(player, card) ){
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+cards/black_creatures.c:237:39: warning: nested extern declaration of 'get_forbid_activation_flag' [-Wnested-externs]
+cards/black_creatures.c:253:19: error: 'graveyard_ptr' undeclared (first use in this function); did you mean 'graveyard_source'?
+  253 |      int *grave = graveyard_ptr[player];
+      |                   ^~~~~~~~~~~~~
+      |                   graveyard_source
+cards/black_creatures.c:271:4: error: too many arguments to function 'reanimate_permanent'
+  271 |    reanimate_permanent(player, card, player, selected, 0, 0);
+      |    ^~~~~~~~~~~~~~~~~~~
+In file included from cards/black_creatures.c:1:
+./manalink.h:623:5: note: declared here
+  623 | int reanimate_permanent(int player, int card, int target_graveyard, int selected, reanimate_mode_t action);
+      |     ^~~~~~~~~~~~~~~~~~~
+cards/black_creatures.c: In function 'card_ashen_ghoul':
+cards/black_creatures.c:279:3: error: too few arguments to function 'haste'
+  279 |   haste(player, card);
+      |   ^~~~~
+In file included from cards/black_creatures.c:1:
+./manalink.h:1292:6: note: declared here
+ 1292 | void haste(int player, int card, event_t event);
+      |      ^~~~~
+cards/black_creatures.c:283:23: error: 'graveyard_ptr' undeclared (first use in this function); did you mean 'graveyard'?
+  283 |      int *graveyard = graveyard_ptr[player];
+      |                       ^~~~~~~~~~~~~
+      |                       graveyard
+cards/black_creatures.c: In function 'card_nshadow':
+cards/black_creatures.c:318:3: error: too few arguments to function 'haste'
+  318 |   haste(player, card);
+      |   ^~~~~
+In file included from cards/black_creatures.c:1:
+./manalink.h:1292:6: note: declared here
+ 1292 | void haste(int player, int card, event_t event);
+      |      ^~~~~
+cards/black_creatures.c:322:23: error: 'graveyard_ptr' undeclared (first use in this function); did you mean 'graveyard'?
+  322 |      int *graveyard = graveyard_ptr[player];
+      |                       ^~~~~~~~~~~~~
+      |                       graveyard
+C:\dev\manalink3-src\make.exe: *** [cards/black_creatures.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/black_enchantments.o cards/black_enchantments.c
+cards/black_enchantments.c: In function 'effect_necropotence':
+cards/black_enchantments.c:14:33: error: 'KILL_REMOVE' undeclared (first use in this function)
+   14 |         kill_card(player, card, KILL_REMOVE);
+      |                                 ^~~~~~~~~~~
+cards/black_enchantments.c:14:33: note: each undeclared identifier is reported only once for each function it appears in
+cards/black_enchantments.c: In function 'card_necropotence':
+cards/black_enchantments.c:25:41: warning: implicit declaration of function 'get_forbid_activation_flag' [-Wimplicit-function-declaration]
+   25 |     if(event == EVENT_CAN_ACTIVATE && ! get_forbid_activation_flag(player, card) ){
+      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+cards/black_enchantments.c:25:41: warning: nested extern declaration of 'get_forbid_activation_flag' [-Wnested-externs]
+C:\dev\manalink3-src\make.exe: *** [cards/black_enchantments.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/blue_creatures.o cards/blue_creatures.c
+cards/blue_creatures.c: In function 'card_vodalian_knights':
+cards/blue_creatures.c:43:10: warning: implicit declaration of function 'card_manta_riders'; did you mean 'card_mana_leak'? [-Wimplicit-function-declaration]
+   43 |   return card_manta_riders(player, card, event);
+      |          ^~~~~~~~~~~~~~~~~
+      |          card_mana_leak
+cards/blue_creatures.c:43:10: warning: nested extern declaration of 'card_manta_riders' [-Wnested-externs]
+cards/blue_creatures.c: In function 'card_synchronous_sliver':
+cards/blue_creatures.c:48:9: error: too few arguments to function 'vigilance'
+   48 |         vigilance( affected_card_controller, affected_card );
+      |         ^~~~~~~~~
+In file included from cards/blue_creatures.c:1:
+./manalink.h:344:6: note: declared here
+  344 | void vigilance(int player, int card, event_t event);
+      |      ^~~~~~~~~
+C:\dev\manalink3-src\make.exe: *** [cards/blue_creatures.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/blue_oneshot.o cards/blue_oneshot.c
+cards/blue_oneshot.c: In function 'card_echoing_truth':
+cards/blue_oneshot.c:109:50: error: 'TYPE_NONLAND' undeclared (first use in this function); did you mean 'TYPE_LAND'?
+  109 |     default_target_definition(player, card, &td, TYPE_NONLAND);
+      |                                                  ^~~~~~~~~~~~
+      |                                                  TYPE_LAND
+cards/blue_oneshot.c:109:50: note: each undeclared identifier is reported only once for each function it appears in
+cards/blue_oneshot.c: In function 'effect_mana_drain':
+cards/blue_oneshot.c:453:33: error: 'KILL_REMOVE' undeclared (first use in this function)
+  453 |         kill_card(player, card, KILL_REMOVE);
+      |                                 ^~~~~~~~~~~
+C:\dev\manalink3-src\make.exe: *** [cards/blue_oneshot.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/green_creatures.o cards/green_creatures.c
+cards/green_creatures.c: In function 'card_wall_of_roots':
+cards/green_creatures.c:36:3: warning: implicit declaration of function 'add_0_minus1_counters'; did you mean 'add_minus1_minus1_counters'? [-Wimplicit-function-declaration]
+   36 |   add_0_minus1_counters(player, card, 1);
+      |   ^~~~~~~~~~~~~~~~~~~~~
+      |   add_minus1_minus1_counters
+cards/green_creatures.c:36:3: warning: nested extern declaration of 'add_0_minus1_counters' [-Wnested-externs]
+cards/green_creatures.c: In function 'card_tinder_wall':
+cards/green_creatures.c:65:34: warning: implicit declaration of function 'get_forbid_activation_flag' [-Wimplicit-function-declaration]
+   65 |         if( ! paying_mana() && ! get_forbid_activation_flag(player, card) && has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 1, 0) ){
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+cards/green_creatures.c:65:34: warning: nested extern declaration of 'get_forbid_activation_flag' [-Wnested-externs]
+cards/green_creatures.c: In function 'card_elvish_spirit_guide':
+cards/green_creatures.c:130:23: error: 'EVENT_REVOLVE_ACTIVATION_FROM_HAND' undeclared (first use in this function); did you mean 'EVENT_RESOLVE_ACTIVATION_FROM_HAND'?
+  130 |     else if( event == EVENT_REVOLVE_ACTIVATION_FROM_HAND ){
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                       EVENT_RESOLVE_ACTIVATION_FROM_HAND
+cards/green_creatures.c:130:23: note: each undeclared identifier is reported only once for each function it appears in
+C:\dev\manalink3-src\make.exe: *** [cards/green_creatures.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/green_oneshot.o cards/green_oneshot.c
+cards/green_oneshot.c: In function 'card_farseek':
+cards/green_oneshot.c:77:13: error: 'test_definition_t' {aka 'struct <anonymous>'} has no member named 'multi_subtype_tutor'
+   77 |    this_test.multi_subtype_tutor = 1;
+      |             ^
+cards/green_oneshot.c: In function 'effect_glimpse_of_nature':
+cards/green_oneshot.c:280:33: error: 'KILL_REMOVE' undeclared (first use in this function)
+  280 |         kill_card(player, card, KILL_REMOVE);
+      |                                 ^~~~~~~~~~~
+cards/green_oneshot.c:280:33: note: each undeclared identifier is reported only once for each function it appears in
+C:\dev\manalink3-src\make.exe: *** [cards/green_oneshot.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/jatill.o cards/jatill.c
+cards/jatill.c: In function 'pick_creature_in_a_graveyard':
+cards/jatill.c:106:16: error: 'graveyard_ptr' undeclared (first use in this function); did you mean 'graveyard_source'?
+  106 |   int *grave = graveyard_ptr[instance->targets[0].player];
+      |                ^~~~~~~~~~~~~
+      |                graveyard_source
+cards/jatill.c:106:16: note: each undeclared identifier is reported only once for each function it appears in
+cards/jatill.c: In function 'card_eight_and_a_half_tails':
+cards/jatill.c:170:42: warning: implicit declaration of function 'get_forbid_activation_flag' [-Wimplicit-function-declaration]
+  170 |     if( event == EVENT_CAN_ACTIVATE && ! get_forbid_activation_flag(player, card) ){
+      |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+cards/jatill.c:170:42: warning: nested extern declaration of 'get_forbid_activation_flag' [-Wnested-externs]
+cards/jatill.c: In function 'card_magus_of_the_scroll':
+cards/jatill.c:368:6: error: too many arguments to function 'reveal_card'
+  368 |      reveal_card(HUMAN, player, card, player, selected, "AI Names...", 0);
+      |      ^~~~~~~~~~~
+In file included from cards/jatill.c:1:
+./manalink.h:1246:6: note: declared here
+ 1246 | void reveal_card(int source_player, int source_card, int revealed_player, int revealed_card); // source_player/source_card are the source of the effect.  If they're unknown, put the revealed player/card there and use -1,-1 for revealed_player, revealed_card.
+      |      ^~~~~~~~~~~
+cards/jatill.c:371:5: error: too many arguments to function 'reveal_card'
+  371 |     reveal_card(player, player, card, player, sel2, "You revealed...", 0);
+      |     ^~~~~~~~~~~
+In file included from cards/jatill.c:1:
+./manalink.h:1246:6: note: declared here
+ 1246 | void reveal_card(int source_player, int source_card, int revealed_player, int revealed_card); // source_player/source_card are the source of the effect.  If they're unknown, put the revealed player/card there and use -1,-1 for revealed_player, revealed_card.
+      |      ^~~~~~~~~~~
+cards/jatill.c: In function 'card_arboria':
+cards/jatill.c:462:30: error: 'TRIGGER_DECLARE_ATTACK' undeclared (first use in this function); did you mean 'EA_DECLARE_ATTACK'?
+  462 |     if( trigger_condition == TRIGGER_DECLARE_ATTACK && current_phase == PHASE_DECLARE_ATTACKERS ){
+      |                              ^~~~~~~~~~~~~~~~~~~~~~
+      |                              EA_DECLARE_ATTACK
+cards/jatill.c: In function 'effect_exile_at_eot':
+cards/jatill.c:547:2: error: too few arguments to function 'haste'
+  547 |  haste(p, c);
+      |  ^~~~~
+In file included from cards/jatill.c:1:
+./manalink.h:1292:6: note: declared here
+ 1292 | void haste(int player, int card, event_t event);
+      |      ^~~~~
+cards/jatill.c:549:19: error: 'KILL_REMOVE' undeclared (first use in this function)
+  549 |   kill_card(p, c, KILL_REMOVE);
+      |                   ^~~~~~~~~~~
+cards/jatill.c: In function 'card_teferis_moat':
+cards/jatill.c:561:28: error: 'TRIGGER_DECLARE_ATTACK' undeclared (first use in this function); did you mean 'EA_DECLARE_ATTACK'?
+  561 |   if( trigger_condition == TRIGGER_DECLARE_ATTACK && current_phase == PHASE_DECLARE_ATTACKERS ){
+      |                            ^~~~~~~~~~~~~~~~~~~~~~
+      |                            EA_DECLARE_ATTACK
+C:\dev\manalink3-src\make.exe: *** [cards/jatill.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/lands.o cards/lands.c
+cards/lands.c: In function 'card_dryad_arbor':
+cards/lands.c:31:5: warning: implicit declaration of function 'colored_artifact' [-Wimplicit-function-declaration]
+   31 |     colored_artifact(player, card, event);
+      |     ^~~~~~~~~~~~~~~~
+cards/lands.c:31:5: warning: nested extern declaration of 'colored_artifact' [-Wnested-externs]
+cards/lands.c: In function 'card_forbidden_orchard':
+cards/lands.c:38:9: error: too few arguments to function 'generate_token_by_id'
+   38 |         generate_token_by_id(opp, CARD_ID_SPIRIT);
+      |         ^~~~~~~~~~~~~~~~~~~~
+In file included from cards/lands.c:1:
+./manalink.h:413:6: note: declared here
+  413 | void generate_token_by_id(int player, int card, int csvid);
+      |      ^~~~~~~~~~~~~~~~~~~~
+cards/lands.c: In function 'karoo_attempted_fix':
+cards/lands.c:58:13: error: too many arguments to function 'count_permanents_by_type'
+   58 |         if( count_permanents_by_type(player, card, TYPE_LAND) == 0 ){
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from cards/lands.c:1:
+./manalink.h:545:5: note: declared here
+  545 | int count_permanents_by_type(int player, type_t type);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+cards/lands.c:67:29: error: too many arguments to function 'count_permanents_by_type'
+   67 |         if( player == AI && count_permanents_by_type(player, card, TYPE_LAND) > 1 ){
+      |                             ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from cards/lands.c:1:
+./manalink.h:545:5: note: declared here
+  545 | int count_permanents_by_type(int player, type_t type);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+C:\dev\manalink3-src\make.exe: *** [cards/lands.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/modern_horizons_2.o cards/modern_horizons_2.c
+cards/modern_horizons_2.c: In function 'card_brainstone':
+cards/modern_horizons_2.c:164:5: error: label at end of compound statement
+  164 |     LAB_0222efdd:
+      |     ^~~~~~~~~~~~
+cards/modern_horizons_2.c: In function 'card_dermotaxi':
+cards/modern_horizons_2.c:9258:24: warning: taking address of packed member of 'struct card_instance_struct' may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 9258 |         ret_location = pcStack_ec->targets;
+      |                        ^~~~~~~~~~
+C:\dev\manalink3-src\make.exe: *** [cards/modern_horizons_2.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/recoded_cards.o cards/recoded_cards.c
+cards/recoded_cards.c: In function 'card_zombie_master2':
+cards/recoded_cards.c:17:11: warning: implicit declaration of function 'get_forbid_activation_flag' [-Wimplicit-function-declaration]
+   17 |     if( ! get_forbid_activation_flag(player, card) && is_creature_dead() && ( land_can_be_played & 0x200) ){
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+cards/recoded_cards.c:17:11: warning: nested extern declaration of 'get_forbid_activation_flag' [-Wnested-externs]
+cards/recoded_cards.c: In function 'card_bribery':
+cards/recoded_cards.c:89:72: warning: passing argument 4 of 'steal_permanent_from_target_opponent_deck' makes pointer from integer without a cast [-Wint-conversion]
+   89 |  return steal_permanent_from_target_opponent_deck(player, card, event, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+      |                                                                        ^~~~~~~~~~~~~
+      |                                                                        |
+      |                                                                        int
+In file included from cards/recoded_cards.c:1:
+./manalink.h:1040:103: note: expected 'test_definition_t *' {aka 'struct <anonymous> *'} but argument is of type 'int'
+ 1040 | int steal_permanent_from_target_opponent_deck(int player, int card, event_t event, test_definition_t *this_test);
+      |                                                                                    ~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+cards/recoded_cards.c:89:9: error: too many arguments to function 'steal_permanent_from_target_opponent_deck'
+   89 |  return steal_permanent_from_target_opponent_deck(player, card, event, TYPE_CREATURE, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from cards/recoded_cards.c:1:
+./manalink.h:1040:5: note: declared here
+ 1040 | int steal_permanent_from_target_opponent_deck(int player, int card, event_t event, test_definition_t *this_test);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cards/recoded_cards.c: In function 'card_tetravus2':
+cards/recoded_cards.c:198:78: warning: implicit declaration of function 'get_id_by_name' [-Wimplicit-function-declaration]
+  198 |        if( get_id(instance->targets[0].player, instance->targets[0].card) == get_id_by_name("Tetravite") ){
+      |                                                                              ^~~~~~~~~~~~~~
+cards/recoded_cards.c:198:78: warning: nested extern declaration of 'get_id_by_name' [-Wnested-externs]
+cards/recoded_cards.c: In function 'card_slith_firewalker':
+cards/recoded_cards.c:232:5: error: too few arguments to function 'haste'
+  232 |     haste(player, card);
+      |     ^~~~~
+In file included from cards/recoded_cards.c:1:
+./manalink.h:1292:6: note: declared here
+ 1292 | void haste(int player, int card, event_t event);
+      |      ^~~~~
+cards/recoded_cards.c: In function 'maze_of_ith_legacy':
+cards/recoded_cards.c:418:33: error: 'KILL_REMOVE' undeclared (first use in this function)
+  418 |         kill_card(player, card, KILL_REMOVE);
+      |                                 ^~~~~~~~~~~
+cards/recoded_cards.c:418:33: note: each undeclared identifier is reported only once for each function it appears in
+cards/recoded_cards.c: In function 'card_nuisance_engine':
+cards/recoded_cards.c:462:9: error: too few arguments to function 'generate_token_by_id'
+  462 |         generate_token_by_id(player, CARD_ID_PEST);
+      |         ^~~~~~~~~~~~~~~~~~~~
+In file included from cards/recoded_cards.c:1:
+./manalink.h:413:6: note: declared here
+  413 | void generate_token_by_id(int player, int card, int csvid);
+      |      ^~~~~~~~~~~~~~~~~~~~
+cards/recoded_cards.c: In function 'clone_legacy':
+cards/recoded_cards.c:481:20: error: too few arguments to function 'generate_token_by_id'
+  481 |       int effect = generate_token_by_id(player, CARD_ID_EVIL_TWIN_EFFECT);
+      |                    ^~~~~~~~~~~~~~~~~~~~
+In file included from cards/recoded_cards.c:1:
+./manalink.h:413:6: note: declared here
+  413 | void generate_token_by_id(int player, int card, int csvid);
+      |      ^~~~~~~~~~~~~~~~~~~~
+cards/recoded_cards.c: In function 'card_rock_hydra':
+cards/recoded_cards.c:588:10: warning: implicit declaration of function 'card_rock_hydra_exe'; did you mean 'card_rock_hydra'? [-Wimplicit-function-declaration]
+  588 |   return card_rock_hydra_exe(player, card, event);
+      |          ^~~~~~~~~~~~~~~~~~~
+      |          card_rock_hydra
+cards/recoded_cards.c:588:10: warning: nested extern declaration of 'card_rock_hydra_exe' [-Wnested-externs]
+cards/recoded_cards.c: In function 'card_pentavite':
+cards/recoded_cards.c:650:5: warning: implicit declaration of function 'is_aura'; did you mean 'aura'? [-Wimplicit-function-declaration]
+  650 |     is_aura(trigger_cause_controller, trigger_cause, 1)
+      |     ^~~~~~~
+      |     aura
+cards/recoded_cards.c:650:5: warning: nested extern declaration of 'is_aura' [-Wnested-externs]
+cards/recoded_cards.c: In function 'card_giant_spider':
+cards/recoded_cards.c:679:12: warning: implicit declaration of function 'card_giant_spider_exe'; did you mean 'card_giant_spider'? [-Wimplicit-function-declaration]
+  679 |     return card_giant_spider_exe(player, card, event);
+      |            ^~~~~~~~~~~~~~~~~~~~~
+      |            card_giant_spider
+cards/recoded_cards.c:679:12: warning: nested extern declaration of 'card_giant_spider_exe' [-Wnested-externs]
+cards/recoded_cards.c: In function 'card_demonic_tutor':
+cards/recoded_cards.c:704:11: warning: implicit declaration of function 'card_demonic_tutor_exe'; did you mean 'card_demonic_tutor'? [-Wimplicit-function-declaration]
+  704 |    return card_demonic_tutor_exe(player, card, event);
+      |           ^~~~~~~~~~~~~~~~~~~~~~
+      |           card_demonic_tutor
+cards/recoded_cards.c:704:11: warning: nested extern declaration of 'card_demonic_tutor_exe' [-Wnested-externs]
+cards/recoded_cards.c: In function 'card_solemn_simulacrum':
+cards/recoded_cards.c:731:58: error: 'solemn_simulacrum_legacy' undeclared (first use in this function)
+  731 |         int legacy = create_legacy_effect(player, card, &solemn_simulacrum_legacy);
+      |                                                          ^~~~~~~~~~~~~~~~~~~~~~~~
+cards/recoded_cards.c: In function 'card_raise_the_alarm':
+cards/recoded_cards.c:751:4: error: too few arguments to function 'generate_tokens_by_id'
+  751 |    generate_tokens_by_id(player, CARD_ID_SOLDIER, 2);
+      |    ^~~~~~~~~~~~~~~~~~~~~
+In file included from cards/recoded_cards.c:1:
+./manalink.h:415:6: note: declared here
+  415 | void generate_tokens_by_id(int player, int card, int csvid, int howmany);
+      |      ^~~~~~~~~~~~~~~~~~~~~
+cards/recoded_cards.c: In function 'card_battering_ram':
+cards/recoded_cards.c:766:9: warning: implicit declaration of function 'card_battering_ram_exe'; did you mean 'card_battering_ram'? [-Wimplicit-function-declaration]
+  766 |  return card_battering_ram_exe(player, card, event);
+      |         ^~~~~~~~~~~~~~~~~~~~~~
+      |         card_battering_ram
+cards/recoded_cards.c:766:9: warning: nested extern declaration of 'card_battering_ram_exe' [-Wnested-externs]
+cards/recoded_cards.c: In function 'card_ashnods_trasmogrant':
+cards/recoded_cards.c:845:3: warning: implicit declaration of function 'card_ashnods_trasmogrant_exe'; did you mean 'card_ashnods_trasmogrant'? [-Wimplicit-function-declaration]
+  845 |   card_ashnods_trasmogrant_exe(player, card, event);
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |   card_ashnods_trasmogrant
+cards/recoded_cards.c:845:3: warning: nested extern declaration of 'card_ashnods_trasmogrant_exe' [-Wnested-externs]
+cards/recoded_cards.c: In function 'card_willow_satyr':
+cards/recoded_cards.c:995:4: error: too few arguments to function 'gain_control_until_source_is_in_play_and_tapped'
+  995 |    gain_control_until_source_is_in_play_and_tapped(player, instance->parent_card, instance->targets[0].player, instance->targets[0].card);
+      |    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from cards/recoded_cards.c:1:
+./manalink.h:1340:6: note: declared here
+ 1340 | void gain_control_until_source_is_in_play_and_tapped(int player, int card, int t_player, int t_card, gcus_t mode);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cards/recoded_cards.c: In function 'card_orcish_catapult':
+cards/recoded_cards.c:1289:18: error: too few arguments to function 'get_updated_counters_number'
+ 1289 |      int cters = get_updated_counters_number(instance->targets[i+1].player, cnters);
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from cards/recoded_cards.c:1:
+./manalink.h:433:5: note: declared here
+  433 | int get_updated_counters_number(int player, int card, counter_t type, int number);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+cards/recoded_cards.c: In function 'card_volcanic_eruption':
+cards/recoded_cards.c:1311:8: warning: implicit declaration of function 'check_battlefield_for_targettable_subtype'; did you mean 'check_battlefield_for_targettable_id'? [-Wimplicit-function-declaration]
+ 1311 |    if( check_battlefield_for_targettable_subtype(player, card, 1-player, TYPE_LAND, SUBTYPE_MOUNTAIN) &&
+      |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |        check_battlefield_for_targettable_id
+cards/recoded_cards.c:1311:8: warning: nested extern declaration of 'check_battlefield_for_targettable_subtype' [-Wnested-externs]
+cards/recoded_cards.c: In function 'card_living_artifact':
+cards/recoded_cards.c:1833:8: error: too few arguments to function 'count_counters'
+ 1833 |    if( count_counters(player, card) > 0 ){
+      |        ^~~~~~~~~~~~~~
+In file included from cards/recoded_cards.c:1:
+./manalink.h:428:5: note: declared here
+  428 | int count_counters(int player, int card, counter_t type); // use -1 to get total count
+      |     ^~~~~~~~~~~~~~
+cards/recoded_cards.c:1841:7: error: too few arguments to function 'remove_counter'
+ 1841 |       remove_counter(player, card);
+      |       ^~~~~~~~~~~~~~
+In file included from cards/recoded_cards.c:1:
+./manalink.h:444:20: note: declared here
+  444 | static inline void remove_counter(int player, int card, counter_t type) { remove_counters(player, card, type, 1); }
+      |                    ^~~~~~~~~~~~~~
+cards/recoded_cards.c: In function 'card_biorythm':
+cards/recoded_cards.c:1895:27: error: too many arguments to function 'count_permanents_by_type'
+ 1895 |    set_life_total(player, count_permanents_by_type(player, card, TYPE_CREATURE));
+      |                           ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from cards/recoded_cards.c:1:
+./manalink.h:545:5: note: declared here
+  545 | int count_permanents_by_type(int player, type_t type);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+cards/recoded_cards.c:1896:29: error: too many arguments to function 'count_permanents_by_type'
+ 1896 |    set_life_total(1-player, count_permanents_by_type(1-player, card, TYPE_CREATURE));
+      |                             ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from cards/recoded_cards.c:1:
+./manalink.h:545:5: note: declared here
+  545 | int count_permanents_by_type(int player, type_t type);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+cards/recoded_cards.c: In function 'card_soul_net':
+cards/recoded_cards.c:2186:4: error: too few arguments to function 'charge_mana_while_resolving'
+ 2186 |    charge_mana_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, COLOR_COLORLESS, 1);
+      |    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from cards/recoded_cards.c:1:
+./manalink.h:505:5: note: declared here
+  505 | int charge_mana_while_resolving(int player, int card, event_t event, int charged_player, color_t color, int amount);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+cards/recoded_cards.c: In function 'card_nevinyrrals_disk':
+cards/recoded_cards.c:2268:39: error: 'TYPE_NONLAND' undeclared (first use in this function); did you mean 'TYPE_LAND'?
+ 2268 |   default_test_definition(&this_test, TYPE_NONLAND);
+      |                                       ^~~~~~~~~~~~
+      |                                       TYPE_LAND
+cards/recoded_cards.c: In function 'card_goblin_shrine':
+cards/recoded_cards.c:2292:10: warning: implicit declaration of function 'card_goblin_shrine_exe'; did you mean 'card_goblin_shrine'? [-Wimplicit-function-declaration]
+ 2292 |   return card_goblin_shrine_exe(player, card, event);
+      |          ^~~~~~~~~~~~~~~~~~~~~~
+      |          card_goblin_shrine
+cards/recoded_cards.c:2292:10: warning: nested extern declaration of 'card_goblin_shrine_exe' [-Wnested-externs]
+cards/recoded_cards.c: In function 'card_animate_dead':
+cards/recoded_cards.c:2366:4: error: too many arguments to function 'reanimate_permanent'
+ 2366 |    reanimate_permanent(player, card, instance->targets[0].player, selected, 9, 0);
+      |    ^~~~~~~~~~~~~~~~~~~
+In file included from cards/recoded_cards.c:1:
+./manalink.h:623:5: note: declared here
+  623 | int reanimate_permanent(int player, int card, int target_graveyard, int selected, reanimate_mode_t action);
+      |     ^~~~~~~~~~~~~~~~~~~
+cards/recoded_cards.c: In function 'card_arena':
+cards/recoded_cards.c:2950:45: warning: taking address of packed member of 'struct card_instance_struct' may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 2950 |      if (!ai_choice_for_arena(player, card, &instance->targets[1])){
+      |                                             ^~~~~~~~~~~~~~~~~~~~~
+cards/recoded_cards.c:2961:44: warning: taking address of packed member of 'struct card_instance_struct' may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 2961 |      if (ai_choice_for_arena(player, card, &instance->targets[0])){
+      |                                            ^~~~~~~~~~~~~~~~~~~~~
+C:\dev\manalink3-src\make.exe: *** [cards/recoded_cards.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/red_creatures.o cards/red_creatures.c
+cards/red_creatures.c: In function 'card_gorilla_shaman':
+cards/red_creatures.c:13:43: warning: implicit declaration of function 'get_forbid_activation_flag' [-Wimplicit-function-declaration]
+   13 |     if( event == EVENT_CAN_ACTIVATE  && ! get_forbid_activation_flag(player, card) ){
+      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+cards/red_creatures.c:13:43: warning: nested extern declaration of 'get_forbid_activation_flag' [-Wnested-externs]
+cards/red_creatures.c: In function 'card_simian_spirit_guide':
+cards/red_creatures.c:69:23: error: 'EVENT_REVOLVE_ACTIVATION_FROM_HAND' undeclared (first use in this function); did you mean 'EVENT_RESOLVE_ACTIVATION_FROM_HAND'?
+   69 |     else if( event == EVENT_REVOLVE_ACTIVATION_FROM_HAND ){
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                       EVENT_RESOLVE_ACTIVATION_FROM_HAND
+cards/red_creatures.c:69:23: note: each undeclared identifier is reported only once for each function it appears in
+cards/red_creatures.c: In function 'card_fire_imp':
+cards/red_creatures.c:97:53: warning: passing argument 4 of 'cip_damage_creature' makes pointer from integer without a cast [-Wint-conversion]
+   97 |     return cip_damage_creature(player, card, event, 2);
+      |                                                     ^
+      |                                                     |
+      |                                                     int
+In file included from cards/red_creatures.c:1:
+./manalink.h:936:83: note: expected 'target_definition_t *' {aka 'struct <anonymous> *'} but argument is of type 'int'
+  936 | int cip_damage_creature(int player, int card, event_t event, target_definition_t *td1, const char *prompt, int amount);
+      |                                                              ~~~~~~~~~~~~~~~~~~~~~^~~
+cards/red_creatures.c:97:12: error: too few arguments to function 'cip_damage_creature'
+   97 |     return cip_damage_creature(player, card, event, 2);
+      |            ^~~~~~~~~~~~~~~~~~~
+In file included from cards/red_creatures.c:1:
+./manalink.h:936:5: note: declared here
+  936 | int cip_damage_creature(int player, int card, event_t event, target_definition_t *td1, const char *prompt, int amount);
+      |     ^~~~~~~~~~~~~~~~~~~
+C:\dev\manalink3-src\make.exe: *** [cards/red_creatures.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/red_enchantments.o cards/red_enchantments.c
+cards/red_enchantments.c: In function 'effect_sneak_attack':
+cards/red_enchantments.c:6:9: error: too few arguments to function 'haste'
+    6 |         haste( instance->targets[0].player, instance->targets[0].card );
+      |         ^~~~~
+In file included from cards/red_enchantments.c:1:
+./manalink.h:1292:6: note: declared here
+ 1292 | void haste(int player, int card, event_t event);
+      |      ^~~~~
+cards/red_enchantments.c:10:33: error: 'KILL_REMOVE' undeclared (first use in this function)
+   10 |         kill_card(player, card, KILL_REMOVE);
+      |                                 ^~~~~~~~~~~
+cards/red_enchantments.c:10:33: note: each undeclared identifier is reported only once for each function it appears in
+C:\dev\manalink3-src\make.exe: *** [cards/red_enchantments.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/red_oneshot.o cards/red_oneshot.c
+cards/red_oneshot.c: In function 'card_hammer_of_bogardan':
+cards/red_oneshot.c:24:12: warning: implicit declaration of function 'card_volcanic_hammer' [-Wimplicit-function-declaration]
+   24 |     return card_volcanic_hammer(player, card, event);
+      |            ^~~~~~~~~~~~~~~~~~~~
+cards/red_oneshot.c:24:12: warning: nested extern declaration of 'card_volcanic_hammer' [-Wnested-externs]
+cards/red_oneshot.c: In function 'card_goblin_tutor':
+cards/red_oneshot.c:86:13: error: too many arguments to function 'reveal_card'
+   86 |             reveal_card(player, player, card, player, card, "You rolled 1, no effect", 1);
+      |             ^~~~~~~~~~~
+In file included from cards/red_oneshot.c:1:
+./manalink.h:1246:6: note: declared here
+ 1246 | void reveal_card(int source_player, int source_card, int revealed_player, int revealed_card); // source_player/source_card are the source of the effect.  If they're unknown, put the revealed player/card there and use -1,-1 for revealed_player, revealed_card.
+      |      ^~~~~~~~~~~
+cards/red_oneshot.c:89:13: error: too many arguments to function 'reveal_card'
+   89 |             reveal_card(player, player, card, player, card, "You rolled 2, search for Goblin Tutor", 1);
+      |             ^~~~~~~~~~~
+In file included from cards/red_oneshot.c:1:
+./manalink.h:1246:6: note: declared here
+ 1246 | void reveal_card(int source_player, int source_card, int revealed_player, int revealed_card); // source_player/source_card are the source of the effect.  If they're unknown, put the revealed player/card there and use -1,-1 for revealed_player, revealed_card.
+      |      ^~~~~~~~~~~
+cards/red_oneshot.c:92:13: error: too many arguments to function 'reveal_card'
+   92 |             reveal_card(player, player, card, player, card, "You rolled 3, find an Enchantment", 1);
+      |             ^~~~~~~~~~~
+In file included from cards/red_oneshot.c:1:
+./manalink.h:1246:6: note: declared here
+ 1246 | void reveal_card(int source_player, int source_card, int revealed_player, int revealed_card); // source_player/source_card are the source of the effect.  If they're unknown, put the revealed player/card there and use -1,-1 for revealed_player, revealed_card.
+      |      ^~~~~~~~~~~
+cards/red_oneshot.c:96:13: error: too many arguments to function 'reveal_card'
+   96 |             reveal_card(player, player, card, player, card, "You rolled 4, find an Artifact", 1);
+      |             ^~~~~~~~~~~
+In file included from cards/red_oneshot.c:1:
+./manalink.h:1246:6: note: declared here
+ 1246 | void reveal_card(int source_player, int source_card, int revealed_player, int revealed_card); // source_player/source_card are the source of the effect.  If they're unknown, put the revealed player/card there and use -1,-1 for revealed_player, revealed_card.
+      |      ^~~~~~~~~~~
+cards/red_oneshot.c:100:13: error: too many arguments to function 'reveal_card'
+  100 |             reveal_card(player, player, card, player, card, "You rolled 5, find a Creature", 1);
+      |             ^~~~~~~~~~~
+In file included from cards/red_oneshot.c:1:
+./manalink.h:1246:6: note: declared here
+ 1246 | void reveal_card(int source_player, int source_card, int revealed_player, int revealed_card); // source_player/source_card are the source of the effect.  If they're unknown, put the revealed player/card there and use -1,-1 for revealed_player, revealed_card.
+      |      ^~~~~~~~~~~
+cards/red_oneshot.c:104:13: error: too many arguments to function 'reveal_card'
+  104 |             reveal_card(player, player, card, player, card, "You rolled 6, find an Instant or Sorcery", 1);
+      |             ^~~~~~~~~~~
+In file included from cards/red_oneshot.c:1:
+./manalink.h:1246:6: note: declared here
+ 1246 | void reveal_card(int source_player, int source_card, int revealed_player, int revealed_card); // source_player/source_card are the source of the effect.  If they're unknown, put the revealed player/card there and use -1,-1 for revealed_player, revealed_card.
+      |      ^~~~~~~~~~~
+cards/red_oneshot.c: In function 'card_fork':
+cards/red_oneshot.c:170:19: warning: implicit declaration of function 'card_fork_orig'; did you mean 'card_fork'? [-Wimplicit-function-declaration]
+  170 |     int result =  card_fork_orig(player, card, event);
+      |                   ^~~~~~~~~~~~~~
+      |                   card_fork
+cards/red_oneshot.c:170:19: warning: nested extern declaration of 'card_fork_orig' [-Wnested-externs]
+C:\dev\manalink3-src\make.exe: *** [cards/red_oneshot.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/throne_of_eldraine.o cards/throne_of_eldraine.c
+cards/throne_of_eldraine.c: In function 'adventure_effect':
+cards/throne_of_eldraine.c:1544:15: warning: taking address of packed member of 'struct card_instance_struct' may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1544 |     piVar24 = &instance->targets[0].card;
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~
+cards/throne_of_eldraine.c:1627:19: warning: taking address of packed member of 'struct card_instance_struct' may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1627 |         ptVar23 = instance->targets;
+      |                   ^~~~~~~~
+cards/throne_of_eldraine.c: In function 'card_lochmere_serpent':
+cards/throne_of_eldraine.c:4007:22: warning: taking address of packed member of 'struct card_instance_struct' may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 4007 |       ret_location = instance->targets;
+      |                      ^~~~~~~~
+cards/throne_of_eldraine.c: In function 'card_kenrith_the_returned_king':
+cards/throne_of_eldraine.c:4240:3: error: label at end of compound statement
+ 4240 |   LAB_025d0d5c:
+      |   ^~~~~~~~~~~~
+C:\dev\manalink3-src\make.exe: *** [cards/throne_of_eldraine.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/white_creatures.o cards/white_creatures.c
+cards/white_creatures.c: In function 'card_magus_of_the_tabernacle':
+cards/white_creatures.c:49:12: warning: implicit declaration of function 'card_pendrell_mists' [-Wimplicit-function-declaration]
+   49 |     return card_pendrell_mists(player, card, event);
+      |            ^~~~~~~~~~~~~~~~~~~
+cards/white_creatures.c:49:12: warning: nested extern declaration of 'card_pendrell_mists' [-Wnested-externs]
+cards/white_creatures.c: In function 'double_strike':
+cards/white_creatures.c:76:9: error: 'poison_counters' undeclared (first use in this function); did you mean 'move_counters'?
+   76 |         poison_counters[AI] = buddy;
+      |         ^~~~~~~~~~~~~~~
+      |         move_counters
+cards/white_creatures.c:76:9: note: each undeclared identifier is reported only once for each function it appears in
+C:\dev\manalink3-src\make.exe: *** [cards/white_creatures.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o cards/white_oneshot.o cards/white_oneshot.c
+cards/white_oneshot.c: In function 'card_dust_to_dust':
+cards/white_oneshot.c:66:72: error: 'KILL_REMOVE' undeclared (first use in this function)
+   66 |      kill_card(instance->targets[i].player, instance->targets[i].card, KILL_REMOVE);
+      |                                                                        ^~~~~~~~~~~
+cards/white_oneshot.c:66:72: note: each undeclared identifier is reported only once for each function it appears in
+cards/white_oneshot.c: In function 'effect_festival':
+cards/white_oneshot.c:131:33: error: 'KILL_REMOVE' undeclared (first use in this function)
+  131 |         kill_card(player, card, KILL_REMOVE);
+      |                                 ^~~~~~~~~~~
+C:\dev\manalink3-src\make.exe: *** [cards/white_oneshot.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o functions/ability_icons.o functions/ability_icons.c
+functions/ability_icons.c: In function 'get_ability_image':
+functions/ability_icons.c:34:6: warning: implicit declaration of function 'get_forbid_activation_flag_by_instance' [-Wimplicit-function-declaration]
+   34 |  if (get_forbid_activation_flag_by_instance(instance) & 4){
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+functions/ability_icons.c:34:6: warning: nested extern declaration of 'get_forbid_activation_flag_by_instance' [-Wnested-externs]
+functions/ability_icons.c:86:38: error: 'SF_INFECT_REMOVED' undeclared (first use in this function)
+   86 |     && (instance->targets[14].card & SF_INFECT_REMOVED))){
+      |                                      ^~~~~~~~~~~~~~~~~
+functions/ability_icons.c:86:38: note: each undeclared identifier is reported only once for each function it appears in
+C:\dev\manalink3-src\make.exe: *** [functions/ability_icons.o] Error 1
+gcc -O2 -m32 -ggdb2 -march=i586 -mpreferred-stack-boundary=2 -fno-omit-frame-pointer -fno-tree-vrp -I.. -I. -Wbad-function-cast -Wstrict-prototypes -Wnested-externs -c -o functions/affect_me.o functions/affect_me.c
+functions/affect_me.c:3:5: error: redefinition of 'affect_me'
+    3 | int affect_me(int player, int card)
+      |     ^~~~~~~~~
+In file included from functions/affect_me.c:1:
+./manalink.h:376:19: note: previous definition of 'affect_me' was here
+  376 | static inline int affect_me(int player, int card) { return card == affected_card && player == affected_card_controller; }
+      |                   ^~~~~~~~~
+C:\dev\manalink3-src\make.exe: *** [functions/affect_me.o] Error 1
+C:\dev\manalink3-src\make.exe: Target `all' not remade because of errors.

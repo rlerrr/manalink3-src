@@ -7787,3 +7787,17 @@ int card_trickbind(int player, int card, event_t event)
 }
 
 #endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x20f6010; original cards/time_spiral.c:4059. */
+int card_moonlace(int player, int card, event_t event)
+{
+  int result;
+
+  result = lace_2022(player, card, event, 1);
+  return result;
+}
+
+#endif
