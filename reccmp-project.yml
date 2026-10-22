@@ -1,0 +1,10 @@
+# Local binaries and debug sidecars are configured by tools/reccmp_project.py setup.
+targets:
+  MANALINK2022:
+    filename: ManalinkEh.dll
+    hash:
+      sha256: 52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5
+    # Matching comes from the CSV; no mass source-comment annotations needed.
+    source-root: config/reccmp
+    data-sources:
+      - config/reccmp/functions.csv

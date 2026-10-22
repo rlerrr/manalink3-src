@@ -21,3 +21,8 @@ objects and logs under `.recovery/build-gcc93/`. Warnings are allowed by default
 set `WERROR=-Werror` when invoking make to restore fatal warnings. See
 [build details and validation scope](docs/recovery-build.md). The build is not
 gameplay validated, and the Wish dialog entry points remain explicit stubs.
+
+The local DWARF-enabled reccmp fork can compare this build with the October
+2022 Hotfix. Run `python tools/reccmp_project.py setup`, then use the commands
+in [the reccmp project guide](docs/reccmp.md) to inspect functions or generate
+a searchable assembly-diff report.
