@@ -8881,3 +8881,150 @@ LAB_0249c9a0:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+static int effect_defiling_tears(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2488450; original cards/invasion.c:5297. */
+static int effect_defiling_tears(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int player_00;
+  iVar1 = effect_follows_control_of_attachment(player, card, event);
+  if (iVar1 != 0)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  if (instance->damage_target_player < '\0')
+  {
+  LAB_0248849c:
+    if (current_phase == 0x22)
+    {
+      kill_card(player, card, KILL_EXILE);
+    }
+  }
+  else
+  {
+    instance = get_card_instance(player, card);
+    player_00 = (int)instance->damage_target_player;
+    iVar1 = instance->damage_target_card;
+    if (event == EVENT_SET_COLOR)
+    {
+      if ((iVar1 == affected_card) && (player_00 == affected_card_controller))
+      {
+        event_result = 2;
+      }
+    LAB_024884f3:
+      if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+        goto LAB_024885c6;
+    }
+    else
+    {
+      if (event == EVENT_POWER)
+      {
+        if ((iVar1 == affected_card) && (player_00 == affected_card_controller))
+        {
+          event_result = event_result + 1;
+        }
+        goto LAB_024884f3;
+      }
+      if (event != EVENT_TOUGHNESS)
+      {
+        if (event == EVENT_ABILITIES)
+        {
+          if ((iVar1 == affected_card) && (player_00 == affected_card_controller))
+          {
+            event_result = event_result | 0x280;
+          }
+          goto LAB_0248849c;
+        }
+        goto LAB_024884f3;
+      }
+      if ((iVar1 == affected_card) && (player_00 == affected_card_controller))
+      {
+        event_result = event_result + -1;
+      }
+    LAB_024885c6:
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+        goto LAB_0248849c;
+    }
+    if (player_00 != -1)
+    {
+      if ((event == EVENT_RESOLVE_ACTIVATION) &&
+          (iVar3 = can_regenerate(player_00, iVar1), iVar3 != 0))
+      {
+        regenerate_target(player_00, iVar1);
+      }
+      iVar1 = granted_generic_activated_ability_2022(
+          player, card, player_00, iVar1, event, GAA_REGENERATION, 0, 1, 0, 0, 0, 0, 0, NULL, NULL);
+      return iVar1;
+    }
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x24975d0; original cards/invasion.c:5345. */
+int card_defiling_tears(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_2022_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition_2022(player, card, &td, 2);
+        td.preferred_controller = player;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target_2022(&td);
+          if (result != 0)
+          {
+            create_targetted_legacy_activate(player, card, effect_defiling_tears,
+                                             instance->targets[0].player,
+                                             instance->targets[0].card);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02497639;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition_2022(player, card, &td, 2);
+  td.preferred_controller = player;
+  get_card_instance(player, card);
+LAB_02497639:
+  result = generic_spell_2022(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  return result;
+}
+
+#endif

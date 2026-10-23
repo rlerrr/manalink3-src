@@ -11847,3 +11847,84 @@ int card_balduvian_shaman(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23ee460; original cards/ice_age.c:60. */
+int control_a_snow_land_2022(int player, int must_be_untapped)
+{
+  card_instance_t *instance;
+  int result;
+  int card;
+
+  card = active_cards_count[player] + -1;
+  if (-1 < card)
+  {
+    do
+    {
+      instance = in_play(player, card);
+      if ((((instance != NULL) && (result = is_what(player, card, 1), result != 0)) &&
+           (result = has_subtype(player, card, SUBTYPE_SNOW), result != 0)) &&
+          ((must_be_untapped != 1 || (result = is_tapped(player, card), result == 0))))
+      {
+        return 1;
+      }
+      card = card + -1;
+    } while (card != -1);
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23eb6c0; original cards/ice_age.c:4331. */
+static char *target_is_nonsnow(int who_chooses, int player, int card, int targeting_player,
+                        int targeting_card)
+{
+  int result;
+  result = has_subtype(player, card, SUBTYPE_SNOW);
+  return result ? (char *)EXE_STR(0x73964c) : NULL;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23faff0; original cards/ice_age.c:4337. */
+int card_hallowed_ground(int player, int card, event_t event)
+{
+  int result;
+  target_definition_2022_t td;
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition_2022(player, card, &td, 1);
+    td.special = 0x8000;
+    td.extra = (int32_t)target_is_nonsnow;
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = global_enchantment(player, card, event);
+      return result;
+    }
+    default_target_definition_2022(player, card, &td, 1);
+    td.preferred_controller = player;
+    td.allowed_controller = player;
+    td.special = 0x8000;
+    td.extra = (int32_t)target_is_nonsnow;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      action_on_target(player, card, 0, ACT_BOUNCE);
+    }
+  }
+  result = generic_activated_ability_2022(player, card, event, 6, 0, 0, 0, 0, 0, 2, 0, &td,
+                                          "Select target non-snow land you control.");
+  return result;
+}
+
+#endif

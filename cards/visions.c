@@ -6048,3 +6048,59 @@ int card_urborg_mindsucker(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+static int check_for_spitting_drake(int player);
+int card_matopi_golem(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2014020; original cards/visions.c:4455. */
+static int check_for_spitting_drake(int player)
+{
+  card_instance_t *instance;
+  int result;
+  int card;
+
+  if (active_cards_count[player] < 1)
+  {
+    return 0;
+  }
+  card = 0;
+  while (
+      ((instance = in_play(player, card),
+        instance == NULL || (result = get_card_name(player, card), result != 0xade)) ||
+       (result = check_special_flags2_2022(player, card, SF2_CANNOT_BE_SACRIFICED), result != 0)))
+  {
+    card = card + 1;
+    if (active_cards_count[player] <= card)
+    {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+
+/* ManalinkEh 2022: 0x2022ea0; original cards/visions.c:4577. */
+int card_matopi_golem(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    instance = get_card_instance(player, card);
+    result = can_regenerate(instance->parent_controller, instance->parent_card);
+    if (result != 0)
+    {
+      regenerate_target(instance->parent_controller, instance->parent_card);
+      add_counters_from_source(player, card, instance->parent_controller, instance->parent_card,
+                               COUNTER_M1_M1, 1);
+    }
+  }
+  result = generic_activated_ability_2022(player, card, event, GAA_REGENERATION, 1, 0, 0, 0, 0, 0,
+                                          0, NULL, NULL);
+  return result;
+}
+
+#endif

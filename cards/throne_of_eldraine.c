@@ -5940,3 +5940,251 @@ LAB_025d0514:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+int card_embercleave(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x25cdd60; original cards/throne_of_eldraine.c:1554. */
+int card_embercleave(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  target_definition_2022_t td;
+  check_legend_rule(player, card, event);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    if (event == EVENT_CAN_CAST)
+    {
+    LAB_025cde20:
+      iVar1 = flash(player, card, event);
+      return iVar1;
+    }
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_025cde20;
+    }
+    else if (event == EVENT_MODIFY_COST)
+    {
+      iVar1 = count_attackers(player);
+      COST_COLORLESS = COST_COLORLESS - (char)iVar1;
+    }
+    goto LAB_025cddce;
+  }
+  default_target_definition_2022(player, card, &td, 2);
+  td.preferred_controller = player;
+  td.allowed_controller = player;
+  td.allow_cancel = 0;
+  instance = get_card_instance(player, card);
+  iVar1 = can_target_2022(&td);
+  if ((iVar1 != 0) &&
+      (iVar1 = new_pick_target_2022(&td, "Select target creature you control.", 0, 0x80),
+       iVar1 != 0))
+  {
+    iVar1 = is_sick(instance->targets[0].player, instance->targets[0].card);
+    if (iVar1 == 0)
+    {
+      iVar3 = check_for_ability(instance->targets[0].player, instance->targets[0].card,
+                                KEYWORD_DEFENDER);
+      iVar1 = 0x2a;
+      if (iVar3 != 0)
+        goto LAB_025cded0;
+    }
+    else
+    {
+    LAB_025cded0:
+      iVar1 = -0x2a;
+    }
+    ai_modifier = ai_modifier + iVar1;
+    equip_target_creature(player, card, instance->targets[0].player, instance->targets[0].card);
+  }
+  instance->number_of_targets = '\0';
+LAB_025cddce:
+  iVar1 =
+      vanilla_equipment(player, card, event, 3, 1, 1, (KEYWORD_DOUBLE_STRIKE | KEYWORD_TRAMPLE), 0);
+  return iVar1;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25cd080; original cards/throne_of_eldraine.c:1261. */
+int card_dance_of_the_manse(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int32_t *piVar5;
+  int iStack_158;
+  int iStack_154;
+  char buffer[100];
+  test_definition_2022_t test;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    get_card_instance(player, card);
+    iVar3 = generic_spell_2022(player, card, EVENT_CAN_CAST, 4, NULL, NULL, 0, NULL);
+    return iVar3;
+  }
+  if (event != EVENT_CAST_SPELL)
+  {
+    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+    {
+      if (event == EVENT_CHANGE_TARGET)
+      {
+        get_card_instance(player, card);
+        return 0;
+      }
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      return 0;
+    }
+    iVar3 = instance->info_slot;
+    iVar4 = 0;
+    if (0 < iVar3)
+    {
+      do
+      {
+        while ((iVar2 = validate_target_from_grave(player, card, player, iVar4),
+                iVar2 == -1 || (iVar2 = reanimate_permanent_2022(player, card, player, iVar2,
+                                                                 REANIMATE2022_DEFAULT),
+                                iVar3 < 6)))
+        {
+          iVar4 = iVar4 + 1;
+          if (iVar3 == iVar4)
+            goto LAB_025cd15c;
+        }
+        iVar4 = iVar4 + 1;
+        turn_into_creature(player, card, player, iVar2, 0, 4, 4);
+      } while (iVar3 != iVar4);
+    }
+  LAB_025cd15c:
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+  iVar3 = check_special_flags2_2022(player, card, -0x80000000);
+  if (iVar3 != 0)
+  {
+    return 0;
+  }
+  iVar4 = has_mana(player, 7, 1);
+  default_test_definition_2022(&test, 0xff);
+  test.cmc = iVar4 + 1;
+  test.special_selection_function = dotm_selection;
+  test.cmc_flag = 3;
+  iVar2 = new_special_count_grave_2022(player, &test);
+  iVar3 = iVar4;
+  if (iVar2 < iVar4)
+  {
+    iVar3 = iVar2;
+  }
+  if ((iVar3 < 1) || (iVar2 = graveyard_has_shroud(player), iVar2 != 0))
+  {
+    instance->info_slot = 0;
+    ai_modifier = ai_modifier + -0x30;
+    return 0;
+  }
+  iStack_158 = iVar3;
+  if (0x13 < iVar3)
+  {
+    iStack_158 = 0x13;
+  }
+  if (ai_is_speculating == 1)
+  {
+    buffer[0] = '\0';
+  }
+  else if (iVar3 == 1)
+  {
+    scnprintf(buffer, 100, "Select artifact or non-Aura ench. card with cmc %d or less.", iVar4);
+  }
+  else
+  {
+    sprintf(buffer, "Select up to %d art. or non-Aura ench. with cmc %d or less.", iStack_158,
+            iVar4);
+  }
+  new_default_test_definition_2022(&test, 0xff, buffer);
+  iVar3 = select_multiple_cards_from_graveyard_2022(player, player, 0, 1, &test, iStack_158,
+                                                    instance->targets);
+  iStack_154 = 0;
+  if (0 < iVar3)
+  {
+    piVar5 = &instance->targets[0].card;
+    do
+    {
+      iVar4 = get_cmc_by_internal_id(*piVar5);
+      if (iStack_154 < iVar4)
+      {
+        iStack_154 = iVar4;
+      }
+      piVar5 = piVar5 + 2;
+    } while (piVar5 != &instance->targets[iVar3].card);
+  }
+  if (iVar3 < iStack_154)
+  {
+    iVar3 = iStack_154;
+  }
+  if (player == 1)
+  {
+    iVar4 = iVar3;
+    if (iVar3 < 6)
+    {
+      iVar4 = 6;
+    }
+    iVar4 = charge_mana(1, COLOR_COLORLESS, iVar4);
+    if (spell_fizzled != 1)
+    {
+      if (iVar4 < iVar3)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      goto LAB_025cd405;
+    }
+    spell_fizzled = 0;
+    iVar4 = charge_mana(1, COLOR_COLORLESS, iVar3);
+  }
+  else
+  {
+    iVar4 = charge_mana(player, COLOR_COLORLESS, -1);
+  }
+  if (iVar4 < iVar3)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+  if (spell_fizzled == 1)
+  {
+    return 0;
+  }
+LAB_025cd405:
+  set_x_for_x_spells(player, card, EVENT_CAST_SPELL, iVar4);
+  return 0;
+}
+
+#endif

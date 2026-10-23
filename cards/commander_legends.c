@@ -5829,15 +5829,15 @@ LAB_025a5553:
 /* ManalinkEh 2022: 0x25acd50; original cards/commander_legends.c:4156. */
 int card_nadiers_nightblade(int player, int card, event_t event)
 {
-  test_definition_t test;
+  test_definition_2022_t test;
 
   if ((((trigger_condition == 0xd4) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       (reason_for_trigger_controller == player))
   {
-    default_test_definition(&test, 0xff);
+    default_test_definition_2022(&test, 0xff);
     test.type_flag = 6;
-    test_leaves_play_mode(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test, 1, 1);
+    test_leaves_play_mode_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test, 1, 1);
   }
   if (event != EVENT_LEAVES_PLAY_ABILITY)
   {
@@ -5852,7 +5852,7 @@ int card_nadiers_nightblade(int player, int card, event_t event)
 int card_nadier_agent_of_the_duskenel(int player, int card, event_t event)
 {
   int result;
-  test_definition_t test;
+  test_definition_2022_t test;
 
   check_legend_rule(player, card, event);
   leaves_play_2022(player, card, event, 1, 1);
@@ -5860,9 +5860,9 @@ int card_nadier_agent_of_the_duskenel(int player, int card, event_t event)
        (player == affected_card_controller)) &&
       (reason_for_trigger_controller == player))
   {
-    default_test_definition(&test, 0xff);
+    default_test_definition_2022(&test, 0xff);
     test.type_flag = 6;
-    test_leaves_play(player, card, event, player, &test, 1, 1);
+    test_leaves_play_2022(player, card, event, player, &test, 1, 1);
   }
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
@@ -8308,6 +8308,358 @@ int card_kamahl_heart_of_krosa(int player, int card, event_t event)
     instance = get_card_instance(player, result);
     instance->targets[9].card = 0x3a;
     return 0;
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+int card_kodama_of_the_east_tree(int player, int card, event_t event);
+int card_akroma_vision_of_ixidor(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x25ab390; original cards/commander_legends.c:3577. */
+int card_kodama_of_the_east_tree(int player, int card, event_t event)
+{
+  int result;
+  char buffer[100];
+  test_definition_2022_t test;
+  check_legend_rule(player, card, event);
+  if ((trigger_condition == 0xdb) && (trigger_cause_controller == player))
+  {
+    result = check_special_flags3_2022(player, trigger_cause, SF3_IN_PLAY_VIA_KODAMA_EAST_TREE);
+    if (result == 0)
+    {
+      default_test_definition_2022(&test, 0x47);
+      test.not_me = 1;
+      result = duh_mode(player);
+      etb_ability_global_2022(player, event, (result != 0) + 1, TYPE_NONE, &test, player, card);
+    }
+  }
+  if (event == EVENT_ETB)
+  {
+    result = get_cmc(trigger_cause_controller, trigger_cause);
+    scnprintf(buffer, 100, "Select a permanent card with CMC %d or less.", result);
+    new_default_test_definition_2022(&test, 0x47, buffer);
+    test.cmc_flag = 3;
+    test.cmc = result + 1;
+    result = new_select_a_card_2022(player, player, 4, 0, 1, -1, &test);
+    if (-1 < result)
+    {
+      set_special_flags_2022(player, result, SF_NOT_CAST);
+      set_special_flags3_2022(player, result, SF3_IN_PLAY_VIA_KODAMA_EAST_TREE);
+      put_into_play(player, result);
+    }
+  }
+  return 0;
+}
+
+
+/* ManalinkEh 2022: 0x25a2c20; original cards/commander_legends.c:143. */
+int card_akroma_vision_of_ixidor(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  unsigned int uVar4;
+  unsigned int uVar5;
+  unsigned int uVar6;
+  int iVar7;
+  unsigned int uVar8;
+  check_legend_rule(player, card, event);
+  vigilance_2022(player, card, event);
+  iVar1 = beginning_of_combat_2022(player, card, event, 2);
+  if ((iVar1 != 0) && (0 < active_cards_count[player]))
+  {
+    iVar1 = 0;
+    do
+    {
+      while (((instance = in_play(player, iVar1),
+               instance != NULL && (iVar3 = is_what(player, iVar1, 2), card != iVar1)) &&
+              (iVar3 != 0)))
+      {
+        uVar4 = get_abilities(player, iVar1, EVENT_ABILITIES, -1);
+        uVar5 = get_special_abilities_2022(player, iVar1);
+        iVar3 = get_id(player, iVar1);
+        uVar6 = num_bits_set(uVar4 & (KEYWORD_DOUBLE_STRIKE | KEYWORD_REACH | KEYWORD_FIRST_STRIKE |
+                                      KEYWORD_TRAMPLE | KEYWORD_FLYING));
+        uVar5 =
+            num_bits_set(uVar5 & (SP_KEYWORD_HEXPROOF | SP_KEYWORD_MENACE |
+                                  SP_KEYWORD_INDESTRUCTIBLE | SP_KEYWORD_DEATHTOUCH |
+                                  SP_KEYWORD_VIGILANCE | SP_KEYWORD_HASTE | SP_KEYWORD_LIFELINK));
+        uVar8 = 1;
+        if ((uVar4 & (KEYWORD_PROT_LANDS | KEYWORD_PROT_CREATURES | KEYWORD_PROT_SORCERIES |
+                      KEYWORD_PROT_INSTANTS | KEYWORD_PROT_ARTIFACTS | KEYWORD_PROT_COLORED)) == 0)
+        {
+          iVar7 = is_protected_from_2022(player, iVar1, -1, -1, IPF2022_QUERY);
+          uVar8 = (unsigned int)(iVar7 != 0);
+        }
+        iVar7 = general_has_partner_2022(iVar3);
+        uVar4 = 1;
+        if (iVar7 == 0)
+        {
+          uVar4 = get_partner_with_id(iVar3);
+          uVar4 = (uVar4 ^ 0xffffffff) >> 0x1f;
+        }
+        iVar3 = uVar8 + uVar6 + uVar5 + uVar4;
+        if (iVar3 == 0)
+          break;
+        iVar7 = iVar1 + 1;
+        pump_until_eot_merge_previous_2022(player, card, player, iVar1, iVar3, iVar3);
+        iVar1 = iVar7;
+        if (active_cards_count[player] <= iVar7)
+        {
+          return 0;
+        }
+      }
+      iVar1 = iVar1 + 1;
+    } while (iVar1 < active_cards_count[player]);
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25adb40; original cards/commander_legends.c:4471. */
+int card_plague_reaver(int player, int card, event_t event)
+{
+  int32_t iVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  bool bVar6;
+
+  union
+  {
+    target_definition_2022_t target;
+    test_definition_2022_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
+
+  iVar2 = eot_trigger(player, card, event);
+  if ((iVar2 != 0) && (current_turn == player))
+  {
+    default_test_definition_2022(&recovered_stack_td.test, 2);
+    new_manipulate_all_2022(player, card, player, &recovered_stack_td.test, ACT_KILL_SACRIFICE);
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition_2022(player, card, &recovered_stack_td.target, 2);
+    recovered_stack_td.target.zone = 0x1000;
+    pcVar3 = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (hand_count[player] < 2)
+      {
+        return 0;
+      }
+      iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x400008, 0, 0, 0, 0,
+                                             0, 0, 0, &recovered_stack_td.target, NULL);
+      return iVar2;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      iVar2 = count_subtype(player, 2, -1);
+      iVar5 = count_subtype(1 - player, 2, -1);
+      ai_modifier = ai_modifier + iVar2 * 0x14 + -0x3c + iVar5 * 10;
+      iVar2 = get_owner(player, card);
+      pcVar3->targets[1].player = iVar2;
+      iVar2 = get_original_internal_card_id(player, card);
+      pcVar3->targets[1].card = iVar2;
+      new_multidiscard(player, 2, 4, player);
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x400008, 0, 0, 0, 0, 0, 0, 0,
+                                     &recovered_stack_td.target, NULL);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &recovered_stack_td.target, 2);
+    recovered_stack_td.target.zone = 0x1000;
+    pcVar3 = get_card_instance(player, card);
+  }
+  if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    return 0;
+  }
+  iVar2 = create_legacy_effect(player, card, plague_reaver_effect);
+  pcVar4 = get_card_instance(player, iVar2);
+  iVar1 = pcVar3->targets[0].player;
+  pcVar4->targets[1].card = pcVar3->targets[1].card;
+  bVar6 = current_phase == 4;
+  pcVar4->targets[0].player = iVar1;
+  pcVar4->targets[1].player = (unsigned int)bVar6;
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25a2780; original cards/commander_legends.c:1595. */
+static int get_color_identity_of_all_commanders_2022(int player)
+{
+  unsigned char bVar1;
+  int result;
+  unsigned int uVar3;
+  card_instance_t *instance;
+  int commander_code;
+  unsigned int uVar5;
+
+  uVar5 = 0;
+  commander_code = 1;
+  do
+  {
+    if (commander_code == 0)
+    {
+      commander_code = 1;
+    }
+    result = get_commander_id(player, commander_code);
+    if (result != -1)
+    {
+      bVar1 = cards_data[result].color;
+      uVar3 = get_color_from_remainder_text((unsigned int)cards_data[result].id);
+      uVar5 = uVar5 | bVar1 | uVar3;
+      if (cards_data[result].id == 0x56c6)
+      {
+        result = locate_edh_card_2022(player);
+        if (-1 < result)
+        {
+          instance = get_card_instance(player, result);
+          uVar3 = instance->targets[6].card;
+          if (-1 < (int)uVar3)
+          {
+            uVar5 = uVar5 | uVar3;
+          }
+        }
+      }
+    }
+    commander_code = commander_code + 1;
+  } while (commander_code != 3);
+  return uVar5;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25b16c0; original cards/commander_legends.c:5923. */
+int card_war_room(int player, int card, event_t event)
+{
+  uint32_t uVar1;
+  int iVar2;
+  unsigned int uVar3;
+  int iVar4;
+  card_instance_t *instance;
+
+  if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+  {
+    if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+    {
+      instance = get_card_instance(player, card);
+    LAB_025b16f9:
+      if ((event == EVENT_RESOLVE_ACTIVATION) && (instance->mode != '\0'))
+      {
+        draw_a_card(player);
+        return 0;
+      }
+      return 0;
+    }
+    goto LAB_025b17c3;
+  }
+  instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    iVar2 = get_color_identity_of_all_commanders_2022(player);
+    uVar1 = real_count_colors(iVar2);
+    iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 1, 4, 0, 0, 0, 0, 0,
+                                           uVar1, NULL, NULL);
+    if (iVar2 != 0)
+    {
+      return 1;
+    }
+    event = EVENT_CAN_ACTIVATE;
+    goto LAB_025b17c3;
+  }
+  if (event != EVENT_ACTIVATE)
+    goto LAB_025b16f9;
+  iVar2 = get_color_identity_of_all_commanders_2022(player);
+  uVar1 = real_count_colors(iVar2);
+  instance->mode = '\0';
+  iVar2 = paying_mana();
+  if (iVar2 == 0)
+  {
+    iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 1, 4, 0, 0, 0, 0, 0,
+                                           uVar1, NULL, NULL);
+    uVar3 = (unsigned int)(5 < (int)uVar1);
+    if (iVar2 == 0)
+      goto LAB_025b1802;
+    iVar4 = do_dialog(player, player, card, -1, -1,
+                      " Produce mana\n Draw a card and lose life\n Cancel", 1);
+    iVar2 = life[player];
+    life[player] = iVar2 - uVar3;
+    if (((iVar2 - uVar3 == 0) ||
+         ((ai_is_speculating != 1 && ((player != 1 || (((unsigned char)trace_mode & 2) != 0)))))) &&
+        (iVar4 != 0))
+    {
+      if (iVar4 != 1)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      add_state(player, card, 0x10);
+      generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 1, 3, 0, 0, 0, 0, 0, uVar1, NULL,
+                                     NULL);
+      if (spell_fizzled != 1)
+      {
+        instance->mode = '\x01';
+        return 0;
+      }
+      remove_state(player, card, 0x10);
+      return 0;
+    }
+  }
+  else
+  {
+    uVar3 = (unsigned int)(5 < (int)uVar1);
+  LAB_025b1802:
+    life[player] = life[player] - uVar3;
+  }
+  event = EVENT_ACTIVATE;
+LAB_025b17c3:
+  iVar2 = mana_producer(player, card, event);
+  return iVar2;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25a88e0; original cards/commander_legends.c:2592. */
+int card_hellkite_courser(int player, int card, event_t event)
+{
+  int target_card;
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    target_card = put_commander_from_command_zone_to_2022(player, 4);
+    if (-1 < target_card)
+    {
+      create_targetted_legacy_effect(player, card, hellkite_courser_effect, player, target_card);
+    }
   }
   return 0;
 }

@@ -8806,3 +8806,287 @@ int card_metallic_mimic(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20c3280; original cards/aether_revolt.c:2475. */
+int card_indomitable_creativity(int player, int card, event_t event)
+{
+  target_t *ptVar1;
+  target_t *ptVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  int iVar6;
+
+  card_instance_t *pcStack_f0;
+  target_definition_2022_t td;
+  test_definition_2022_t reveal_test;
+
+  pcVar4 = get_card_instance(player, card);
+  if (event == EVENT_RESOLVE_GENERAL_EFFECT)
+  {
+    default_test_definition_2022(&reveal_test, 0x42);
+    uint32_t counts = (uint32_t)pcVar4->targets[10].player;
+    unsigned int first_count = counts & 0xffffU;
+    unsigned int second_count = counts >> 16;
+    if (first_count != 0)
+    {
+      for (unsigned int i = 0; i != first_count; ++i)
+        reveal_card_until_you_reveal_test_2022(player, player, &reveal_test, 0x144);
+      shuffle(player);
+    }
+    if ((int)second_count < 1)
+      return 0;
+    for (unsigned int i = 0; i != second_count; ++i)
+      reveal_card_until_you_reveal_test_2022(player, 1 - player, &reveal_test, 0x144);
+    shuffle(1 - player);
+    return 0;
+  }
+  if (event == EVENT_CAN_CAST)
+  {
+
+    default_target_definition_2022(player, card, &td, 0x42);
+    td.allow_cancel = 3;
+
+    td.illegal_abilities = get_protections_from_2022(player, card);
+    if (player != 1)
+      goto LAB_020c366f;
+  LAB_020c3430:
+    td.preferred_controller = 1;
+    td.special = 0x8000;
+    td.extra = (int32_t)not_indestructible;
+    if (event == EVENT_CAN_CAST)
+    {
+    LAB_020c366f:
+
+      iVar5 = generic_spell_2022(player, card, EVENT_CAN_CAST, 5, &td, NULL, 1, NULL);
+      return iVar5;
+    }
+    if (event == EVENT_CAST_SPELL)
+      goto LAB_020c3462;
+  LAB_020c3323:
+    if (event == EVENT_CHANGE_TARGET)
+      goto LAB_020c3330;
+  LAB_020c34ed:
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      pcStack_f0 = NULL;
+      if (pcVar4->number_of_targets != '\0')
+      {
+        iVar5 = 0;
+        do
+        {
+          while (true)
+          {
+
+            iVar6 = validate_target_2022(player, card, &td, iVar5);
+            if (iVar6 == 0)
+              break;
+
+            pcStack_f0 = legacy_permanents_destroyed_this_way_accumulate_2022(
+                player, card, pcStack_f0, pcVar4->targets[iVar5].player,
+                pcVar4->targets[iVar5].card);
+            ptVar3 = pcVar4->targets + iVar5;
+            ptVar1 = pcVar4->targets + iVar5;
+            iVar5 = iVar5 + 1;
+
+            kill_card(ptVar1->player, ptVar3->card, KILL_DESTROY);
+            if ((int)(unsigned int)pcVar4->number_of_targets <= iVar5)
+              goto LAB_020c3598;
+          }
+          iVar5 = iVar5 + 1;
+        } while (iVar5 < (int)(unsigned int)pcVar4->number_of_targets);
+      }
+    LAB_020c3598:
+
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+
+      default_target_definition_2022(player, card, &td, 0x42);
+      td.allow_cancel = 3;
+
+      td.illegal_abilities = get_protections_from_2022(player, card);
+      if (player == 1)
+        goto LAB_020c3430;
+    LAB_020c3462:
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+
+      iVar5 = check_special_flags2_2022(player, card, 0x2000);
+      if (iVar5 == 0)
+      {
+
+        iVar5 = check_special_flags2_2022(player, card, 0x8000);
+        if (iVar5 == 0)
+          goto LAB_020c379f;
+      }
+
+      set_special_flags2_2022(player, card, 0x20000);
+
+      iVar5 = played_for_free(player, card);
+      if (iVar5 != 0)
+      {
+        return 0;
+      }
+    LAB_020c34c9:
+
+      iVar5 = is_token(player, card);
+      if (iVar5 == 0)
+      {
+
+        iVar5 = has_mana(player, 7, 1);
+
+        iVar6 = target_available_2022(-1, card, &td);
+        if (iVar6 < iVar5)
+        {
+          iVar5 = iVar6;
+        }
+
+        iVar5 = pick_up_to_n_targets_2022(&td, "PUTREFY", iVar5);
+        if (iVar5 == 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        pcVar4->info_slot = 0;
+        if (player == 0)
+        {
+
+          iVar5 = charge_mana(0, COLOR_ANY, iVar5);
+
+          set_x_for_x_spells(0, card, event, iVar5);
+        }
+        else
+        {
+
+          iVar5 = target_available_2022(player, card, &td);
+          while (true)
+          {
+
+            iVar6 = has_mana(player, 7, iVar5);
+            if (iVar6 != 0)
+              break;
+            iVar5 = iVar5 + -1;
+          }
+          if (iVar5 == 0)
+          {
+            ai_modifier = ai_modifier + -0x32;
+          }
+
+          charge_mana(player, COLOR_ANY, iVar5);
+          if (spell_fizzled != 1)
+          {
+
+            set_x_for_x_spells(player, card, event, iVar5);
+          }
+        }
+      }
+    LAB_020c34e0:
+      if (event != EVENT_CHANGE_TARGET)
+        goto LAB_020c34ed;
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+
+        default_target_definition_2022(player, card, &td, 0x42);
+        td.allow_cancel = 3;
+
+        td.illegal_abilities = get_protections_from_2022(player, card);
+        if (player == 1)
+          goto LAB_020c3430;
+        goto LAB_020c3323;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+
+      default_target_definition_2022(player, card, &td, 0x42);
+      td.allow_cancel = 3;
+
+      td.illegal_abilities = get_protections_from_2022(player, card);
+      if (player == 1)
+        goto LAB_020c3430;
+    LAB_020c3330:
+
+      iVar5 = check_special_flags2_2022(player, card, 0x10000);
+      if (iVar5 != 0)
+      {
+        int target_count = pcVar4->number_of_targets;
+        int t_array[target_count];
+        int shown = 0;
+        while (shown < pcVar4->number_of_targets)
+        {
+          int target_card = pcVar4->targets[shown].card;
+          int target_player = pcVar4->targets[shown].player;
+          ++shown;
+          if (target_card == -1)
+            t_array[shown - 1] =
+                get_internal_card_id_from_csv_id(player == target_player ? 0x615a : 0x6161);
+          else
+            t_array[shown - 1] = get_card_instance(target_player, target_card)->internal_card_id;
+        }
+        return show_deck_2022(
+            player, t_array, shown,
+            " Select the target to change (Rules Engine = you, Deadbox = opponent)", 0,
+            ENGINE_DONE_LABEL);
+      }
+
+      iVar5 = check_special_flags2_2022(player, card, 0x2000);
+      if (iVar5 == 0)
+      {
+
+        iVar5 = check_special_flags2_2022(player, card, 0x8000);
+        if (iVar5 != 0)
+          goto LAB_020c336e;
+      LAB_020c379f:
+
+        set_special_flags2_2022(player, card, 0x20000);
+
+        iVar5 = played_for_free(player, card);
+        if (iVar5 == 0)
+          goto LAB_020c34c9;
+        goto LAB_020c34e0;
+      }
+    LAB_020c336e:
+      td.allow_cancel = 0;
+      td.who_chooses = attacking_card_controller;
+
+      set_special_flags2_2022(player, card, 0x20000);
+
+      iVar5 = played_for_free(player, card);
+      if (iVar5 == 0)
+        goto LAB_020c34c9;
+    }
+    iVar5 = pcVar4->targets[0].card;
+    if (iVar5 != -1)
+    {
+
+      state_untargettable(pcVar4->targets[0].player, iVar5, 0);
+    }
+  }
+  return 0;
+}
+
+#endif

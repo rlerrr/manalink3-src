@@ -9474,7 +9474,7 @@ int card_silverquill_pledgemage(int player, int card, event_t event)
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static void add_hofry_legacy(token_generation_t *token, int card_added, int number);
+static void add_hofry_legacy(token_generation_2022_t *token, int card_added, int number);
 int rushed_rebirth_legacy(int player, int card, event_t event);
 static int hofri_legacy(int player, int card, event_t event);
 
@@ -9503,7 +9503,7 @@ static int hofri_legacy(int player, int card, event_t event)
 }
 
 /* ManalinkEh 2022: 0x23c76d0; original cards/strixhaven.c:2877. */
-static void add_hofry_legacy(token_generation_t *token, int card_added, int number)
+static void add_hofry_legacy(token_generation_2022_t *token, int card_added, int number)
 {
   unsigned int uVar1;
   int card;
@@ -9532,7 +9532,7 @@ static int hofri_effect(int player, int card, event_t event)
   int grave_id;
   target_t *ptVar7;
   unsigned int player_00;
-  token_generation_t token;
+  token_generation_2022_t token;
 
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -9618,10 +9618,10 @@ static int hofri_effect(int player, int card, event_t event)
             if (iVar5 == iVar6)
             {
               rfg_card_from_grave(player_00, grave_id);
-              default_token_definition(player, card, (unsigned int)cards_data[iVar5].id, &token);
+              default_token_definition_2022(player, card, (unsigned int)cards_data[iVar5].id, &token);
               token.special_code_on_generation = add_hofry_legacy;
               token.action_argument = uVar1;
-              generate_token(&token);
+              generate_token_2022(&token);
               break;
             }
             grave_id = grave_id + 1;
@@ -10525,7 +10525,7 @@ int card_hofri_ghostforge(int player, int card, event_t event)
   union
   {
     test_definition_t test;
-    token_generation_t token;
+    token_generation_2022_t token;
     uint8_t bytes[216];
   } recovered_stack_test;
 
@@ -10611,11 +10611,11 @@ int card_hofri_ghostforge(int player, int card, event_t event)
           if (iVar4 == iVar5)
           {
             rfg_card_from_grave(player_00, grave_id);
-            default_token_definition(player, card, (unsigned int)cards_data[iVar4].id,
+            default_token_definition_2022(player, card, (unsigned int)cards_data[iVar4].id,
                                      &recovered_stack_test.token);
             recovered_stack_test.token.special_code_on_generation = add_hofry_legacy;
             recovered_stack_test.token.action_argument = (int32_t)(uVar1);
-            generate_token(&recovered_stack_test.token);
+            generate_token_2022(&recovered_stack_test.token);
             break;
           }
           grave_id = grave_id + 1;
@@ -11741,6 +11741,74 @@ int card_lukka_wayward_bonder(int player, int card, event_t event)
 LAB_023d4aa9:
   iVar2 = planeswalker(player, card, event, 5);
   return iVar2;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23dd3c0; original cards/strixhaven.c:7355. */
+int card_tanazir_quandrix(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+
+  int mc;
+  int marked[151];
+  target_definition_2022_t td;
+  check_legend_rule(player, card, event);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    td.allowed_controller = player;
+    instance = get_card_instance(player, card);
+    iVar1 = new_pick_target_2022(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
+    if (iVar1 != 0)
+    {
+      iVar1 = count_counters(instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1);
+      if (iVar1 == 0)
+      {
+        ai_modifier = ai_modifier + -0x60;
+      }
+      add_counters_from_source(player, card, instance->targets[0].player, instance->targets[0].card,
+                               COUNTER_P1_P1, iVar1);
+    }
+    dat_ability(player, card, EVENT_ETB, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+    return 0;
+  }
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+
+  if (((event == EVENT_DAT_ABILITY) &&
+       (iVar1 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014", "\001\003",
+                            "Set P/T of your creatures", 1, 10, "Decline", 1, 5, 0, 0, 0, 0),
+        iVar1 == 1)) &&
+      (iVar1 = active_cards_count[player] + -1, -1 < iVar1))
+  {
+    mc = 0;
+    do
+    {
+      instance = in_play(player, iVar1);
+      if (instance != (card_instance_t *)0 && is_what(player, iVar1, 2))
+        marked[mc++] = iVar1;
+      --iVar1;
+    } while (iVar1 != -1);
+    if (mc > 0)
+    {
+      int *cursor = marked + mc - 1;
+      do
+      {
+        int toughness = get_toughness(player, card);
+        int power = get_power(player, card);
+        set_pt_and_abilities_until_eot(player, card, player, *cursor, power, toughness, 0, 0, 8);
+        if (cursor == marked)
+          break;
+        --cursor;
+      } while (1);
+    }
+  }
+  return 0;
 }
 
 #endif

@@ -10506,3 +10506,42 @@ int card_pretenders_claim(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x216cda0; original cards/mercadian_masques.c:4385. */
+char *colored_damage_source_that_damages_me_2022(int who_chooses, int player, int card,
+                                                 int targeting_player, int targeting_card)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+  unsigned int uVar4;
+
+  pcVar1 = get_card_instance(player, card);
+  if (((pcVar1->internal_card_id == damage_card) &&
+       (pcVar1->damage_target_player == who_chooses)) &&
+      (pcVar1->damage_target_card == -1))
+  {
+    uVar4 = (unsigned int)pcVar1->initial_color;
+    pcVar2 = in_play((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    if (pcVar2 != NULL)
+    {
+      result = check_special_flags_2022((int)pcVar1->damage_source_player,
+                                        pcVar1->damage_source_card, 0x40);
+      if (result != 0)
+      {
+        return "damaging a Planeswalker.";
+      }
+      uVar4 = get_color((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    }
+    pcVar1 = get_card_instance(targeting_player, targeting_card);
+    if ((pcVar1->info_slot & uVar4) != 0)
+    {
+      return NULL;
+    }
+  }
+  return (char *)EXE_STR(0x739060);
+}
+
+#endif

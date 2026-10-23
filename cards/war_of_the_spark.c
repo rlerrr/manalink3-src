@@ -5830,7 +5830,7 @@ int card_god_eternal_rhonas(int player, int card, event_t event)
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static void ugins_token_processing(token_generation_t *token, int beast, int number);
+static void ugins_token_processing(token_generation_2022_t *token, int beast, int number);
 static int ugin_the_ineffable_effect(int player, int card, event_t event);
 
 /* ManalinkEh 2022: 0x21c76e0; original cards/war_of_the_spark.c:6686. */
@@ -5887,7 +5887,7 @@ static int ugin_the_ineffable_effect(int player, int card, event_t event)
 }
 
 /* ManalinkEh 2022: 0x21c7140; original cards/war_of_the_spark.c:6711. */
-static void ugins_token_processing(token_generation_t *token, int beast, int number)
+static void ugins_token_processing(token_generation_2022_t *token, int beast, int number)
 {
   int *piVar1;
   int card;
@@ -5917,7 +5917,7 @@ int card_ugin_the_ineffable(int player, int card, event_t event)
   int result;
   unsigned int uVar3;
   target_definition_t *ptStack_b4;
-  token_generation_t token;
+  token_generation_2022_t token;
   target_definition_t td;
 
   check_legend_rule(player, card, event);
@@ -5974,24 +5974,24 @@ int card_ugin_the_ineffable(int player, int card, event_t event)
 
         if (*deck_ptr[player] == -1)
         {
-          default_token_definition(player, card, 0x498d, &token);
+          default_token_definition_2022(player, card, 0x498d, &token);
           token.tou = 2;
           token.pow = 2;
           token.color_forced = '\x01';
           token.no_sleight = '\x01';
-          generate_token(&token);
+          generate_token_2022(&token);
         }
         else
         {
           show_deck(player, deck_ptr[player], 1, "Here\'s the top card of your deck", 0,
                     ENGINE_DONE_LABEL);
-          default_token_definition(player, card, 0x498d, &token);
+          default_token_definition_2022(player, card, 0x498d, &token);
           token.tou = 2;
           token.pow = 2;
           token.color_forced = '\x01';
           token.no_sleight = '\x01';
           token.special_code_on_generation = ugins_token_processing;
-          generate_token(&token);
+          generate_token_2022(&token);
           obliterate_top_card_of_deck(player);
           play_sound_effect(WAV_DESTROY);
         }
@@ -7526,6 +7526,489 @@ int card_teyo_the_shieldmage(int player, int card, event_t event)
   }
 LAB_021d70fa:
   result = planeswalker(player, card, event, 5);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21ca670; original cards/war_of_the_spark.c:956. */
+int card_command_the_dreadhorde(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  unsigned int uVar5;
+  unsigned int uVar6;
+  target_t *ret_location;
+  uint8_t uStack_100;
+  int iStack_f0;
+  int iStack_ec;
+  test_definition_2022_t test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      instance = get_card_instance(player, card);
+      if ((((card == affected_card) && (player == affected_card_controller)) &&
+           ((iVar1 = count_graveyard_by_type(player, 0x102),
+             iVar1 != 0 || (iVar1 = count_graveyard_by_type(1 - player, 0x102), iVar1 != 0)))) &&
+          ((iVar1 = graveyard_has_shroud(player),
+            iVar1 == 0 || (iVar1 = graveyard_has_shroud(1 - player), iVar1 == 0))))
+      {
+        instance->info_slot = 0;
+        new_default_test_definition_2022(
+            &test, 0x102, "Select any number of creature and/or planeswalker cards.");
+        iStack_f0 = count_graveyard_by_type(2, 0x102);
+        if (10 < iStack_f0)
+        {
+          iStack_f0 = 10;
+        }
+        iStack_ec = 0;
+        uVar5 = 0;
+        do
+        {
+          uVar6 = current_turn ^ uVar5;
+          iVar1 = count_graveyard_by_type(uVar6, 0x102);
+          if (iVar1 != 0)
+          {
+            ret_location = instance->targets + iStack_ec;
+            iVar1 = select_multiple_cards_from_graveyard_2022(player, uVar6, 0, 1, &test,
+                                                              iStack_f0 - iStack_ec, ret_location);
+            iVar3 = iVar1 + iStack_ec;
+            if (iStack_ec < iVar3)
+            {
+              do
+              {
+                if (-1 < ret_location->player)
+                {
+                  iVar4 = get_cmc_by_internal_id(ret_location->card);
+                  instance->info_slot = instance->info_slot + iVar4;
+                }
+                ret_location = ret_location + 1;
+              } while (instance->targets + iVar3 != ret_location);
+            }
+            iStack_ec = iVar3;
+            if (current_turn == uVar6)
+            {
+              uStack_100 = (uint8_t)iVar1;
+              ((unsigned char *)&instance->info_slot)[1] = uStack_100;
+            }
+          }
+          uVar5 = uVar5 + 1;
+        } while (uVar5 != 2);
+      }
+      goto LAB_021ca6be;
+    }
+    if ((event == EVENT_CAN_CHANGE_TARGET) || (event == EVENT_RESOLVE_SPELL))
+    {
+      instance = get_card_instance(player, card);
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+        damage_player(player, (unsigned int)((unsigned char *)&instance->info_slot)[0], player,
+                      card);
+        uVar5 = (unsigned int)((unsigned char *)&instance->info_slot)[1];
+        if (uVar5 != 0)
+        {
+          uVar6 = 0;
+          do
+          {
+            iVar1 = validate_target_from_grave(player, card, current_turn, uVar6);
+            if (iVar1 != -1)
+            {
+              reanimate_permanent_2022(player, card, current_turn, iVar1, REANIMATE2022_DEFAULT);
+            }
+            uVar6 = uVar6 + 1;
+          } while (uVar5 != uVar6);
+        }
+        if (uVar5 < 9)
+        {
+          do
+          {
+            iVar1 = validate_target_from_grave(player, card, 1 - current_turn, uVar5);
+            if (iVar1 != -1)
+            {
+              reanimate_permanent_2022(player, card, 1 - current_turn, iVar1,
+                                       REANIMATE2022_DEFAULT);
+            }
+            uVar5 = uVar5 + 1;
+          } while (uVar5 != 9);
+        }
+        kill_card(player, card, KILL_DESTROY);
+      }
+      goto LAB_021ca6be;
+    }
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+  }
+  get_card_instance(player, card);
+LAB_021ca6be:
+  iVar1 = basic_spell(player, card, event);
+  return iVar1;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* October 2022 private event context at 0x2774010. */
+static event_t vivien_current_event_2022;
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21c7a50; original cards/war_of_the_spark.c:6853. */
+static char *vivien_has_mana_to_cast_target_2022(int who_chooses, int player, int card,
+                                          int targeting_player, int targeting_card)
+{
+  int result;
+  char *pcVar2;
+  result = get_id(player, card);
+  result = has_mana_to_cast_id(who_chooses, vivien_current_event_2022, result);
+  pcVar2 = NULL;
+  if (result == 0)
+  {
+    pcVar2 = "not enough mana";
+  }
+  return pcVar2;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21c78a0; original cards/war_of_the_spark.c:6883. */
+static int vivien_flash_ability(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_2022_t td;
+
+  vivien_current_event_2022 = event;
+  base_target_definition_2022(player, card, &td, 2);
+  td.preferred_controller = player;
+  td.allowed_controller = player;
+  td.zone = 0x100;
+  if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+  {
+    if (td.extra == -1)
+      goto LAB_021c7968;
+  LAB_021c793f:
+    if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+      goto LAB_021c7900;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+    LAB_021c7997:
+      result = is_humiliated_for_ability((int)instance->damage_target_player,
+                                         instance->damage_target_card, AL_STATIC);
+      if (result != 0)
+      {
+        return 0;
+      }
+      result = can_target_2022(&td);
+      return result;
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (td.extra != -1)
+      {
+        instance = get_card_instance(player, card);
+        goto LAB_021c7997;
+      }
+    LAB_021c7968:
+      td.extra = (int32_t)vivien_has_mana_to_cast_target_2022;
+      td.special = td.special | 0x8000;
+      goto LAB_021c793f;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance = get_card_instance(player, card);
+      goto LAB_021c79d9;
+    }
+  LAB_021c7900:
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    instance = get_card_instance(player, card);
+  }
+  if (event != EVENT_ACTIVATE)
+  {
+    return 0;
+  }
+LAB_021c79d9:
+  instance->number_of_targets = '\0';
+  result = pick_next_target_noload_2022(&td, "Select a creature card");
+  if ((result != 0) &&
+      (result = charge_mana_from_id(player, instance->targets[0].card, EVENT_ACTIVATE, -1),
+       result != 0))
+  {
+    result = instance->targets[0].card;
+    instance->number_of_targets = '\0';
+    play_card_in_hand_for_free(instance->targets[0].player, result);
+    cant_be_responded_to = 1;
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21d8c90; original cards/war_of_the_spark.c:6915. */
+int card_vivien_champion_of_the_wilds(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int amount;
+  target_definition_2022_t *ptStack_140;
+  target_definition_2022_t td_creature;
+  test_definition_2022_t test;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    iVar3 = create_targetted_legacy_activate(player, card, vivien_flash_ability, player, card);
+    alternate_legacy_text(1, player, iVar3);
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      default_target_definition_2022(player, card, &td_creature, 2);
+      td_creature.preferred_controller = player;
+      instance = get_card_instance(player, card);
+      if (event == EVENT_ACTIVATE)
+      {
+        instance->number_of_targets = '\0';
+        instance->info_slot = 0;
+        iVar3 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Pump a creature",
+                            1, 5, 1, "Look at the top three cards", 1, 10, 0xfffffffe, 0, 0, 0, 0);
+        if (iVar3 == 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        if (iVar3 == 1)
+        {
+          instance->number_of_targets = '\0';
+          iVar3 = can_target_2022(&td_creature);
+          if (iVar3 != 0)
+          {
+            pick_target_2022(&td_creature, "TARGET_CREATURE");
+          }
+        }
+        goto LAB_021d8d16;
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+        goto LAB_021d8d16;
+      default_target_definition_2022(player, card, &td_creature, 2);
+      td_creature.preferred_controller = player;
+      instance = get_card_instance(player, card);
+    }
+    ptStack_140 = &td_creature;
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      if (instance->info_slot == 1)
+      {
+        iVar3 = valid_target_2022(ptStack_140);
+        if (iVar3 != 0)
+        {
+          iVar3 = create_targetted_legacy_effect(
+              player, card, fx_vigilance_reach_until_your_next_turn, instance->targets[0].player,
+              instance->targets[0].card);
+          alternate_legacy_text(1, player, iVar3);
+        }
+      }
+      else
+      {
+        if ((instance->info_slot == 2) && (amount = count_deck(player), amount != 0))
+        {
+          new_default_test_definition_2022(&test, 0xff, "Select a card to exile.");
+          if (player == 1)
+          {
+            test.type = 2;
+          }
+          if (3 < amount)
+          {
+            amount = 3;
+          }
+          test.create_minideck = (unsigned short)amount;
+          test.no_shuffle = 1;
+          iVar3 =
+              new_select_a_card_2022(player, player, 1, (unsigned int)(player == 0), 1, -1, &test);
+          if (iVar3 == -1)
+          {
+            new_default_test_definition_2022(&test, 0xff, "Select a card to exile.");
+            iVar3 = new_select_a_card_2022(player, player, 1, 1, 1, -1, &test);
+          }
+          iVar1 = deck_ptr[player][iVar3];
+          rfg_card_in_deck(player, iVar3);
+          remove_card_from_rfg(player, (unsigned int)cards_data[iVar1].id);
+          if ((cards_data[iVar1].type & 2) == 0)
+          {
+            iVar3 = create_legacy_activate(player, card, look_at_card);
+            iVar3 = alternate_legacy_text(2, player, iVar3);
+            if (iVar3 != -1)
+            {
+              instance = get_card_instance(player, iVar3);
+              instance->targets[0].player = player;
+              instance->targets[0].card = iVar1;
+            }
+          }
+          else
+          {
+            iVar3 = create_may_play_card_from_exile_effect(
+                player, card, player, (unsigned int)cards_data[iVar1].id, MPCFE_FACE_DOWN);
+            alternate_legacy_text(2, player, iVar3);
+          }
+          if (amount + -1 != 0)
+          {
+            put_top_x_on_bottom_in_random_order(player, amount + -1);
+          }
+        }
+      }
+    }
+  }
+LAB_021d8d16:
+  iVar3 = planeswalker(player, card, event, 4);
+  return iVar3;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21d4b10; original cards/war_of_the_spark.c:5205. */
+int count_type_in_hand_2022(int player, type_t type)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int card;
+
+  iVar3 = 0;
+  if (0 < active_cards_count[player])
+  {
+    card = 0;
+    iVar3 = 0;
+    do
+    {
+      instance = in_hand(player, card);
+      if (instance != NULL)
+      {
+        iVar2 = is_what(player, card, type);
+        iVar3 = (iVar3 + 1) - (unsigned int)(iVar2 == 0);
+      }
+      card = card + 1;
+    } while (card < active_cards_count[player]);
+  }
+  return iVar3;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21d4b70; original cards/war_of_the_spark.c:5213. */
+int card_ral_storm_conduit(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_2022_t td;
+
+  check_legend_rule(player, card, event);
+  magecraft_trigger(player, event, 2, TYPE_ANY, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    opponent_or_pw_target_definition_2022(player, card, &td);
+    result = can_target_2022(&td);
+    if ((result != 0) &&
+        (result = new_pick_target_2022(&td, "TARGET_OPPONENT_OR_PLANESWALKER", 0, 1), result != 0))
+    {
+      damage_target0(player, card, 1);
+    }
+    instance = get_card_instance(player, card);
+    instance->number_of_targets = '\0';
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      instance = get_card_instance(player, card);
+      if (event == EVENT_ACTIVATE)
+      {
+        instance->number_of_targets = '\0';
+        instance->info_slot = 0;
+        result = count_type_in_hand_2022(player, TYPE_SPELL);
+        result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Scry 1", 1, 5,
+                             2, "Copy your next spell", 1, result * 10, 0xfffffffe, 0, 0, 0, 0);
+        if (result == 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        goto LAB_021d4bed;
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+        goto LAB_021d4bed;
+      instance = get_card_instance(player, card);
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      if (instance->info_slot == 1)
+      {
+        scry(player, 1);
+      }
+      else if (instance->info_slot == 2)
+      {
+        create_legacy_effect(player, card, doublecast_legacy);
+      }
+    }
+  }
+LAB_021d4bed:
+  result = planeswalker(player, card, event, 4);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21cd780; original cards/war_of_the_spark.c:2149. */
+int card_firemind_vessel(int player, int card, event_t event)
+{
+  int result;
+  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  if (result == 0)
+  {
+    comes_into_play_tapped(player, card, event);
+  }
+  result = artifact_mana_all_different_colors_2022(player, card, event, 2, 0);
   return result;
 }
 

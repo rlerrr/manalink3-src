@@ -8914,3 +8914,249 @@ int card_approach_of_the_second_sun(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22d74b0; original cards/amonkhet.c:80. */
+static int embalm_2022_impl(int player, int card, event_t event, int cid, int x, int u, int g, int r,
+                     int w)
+{
+  int result;
+  token_generation_2022_t token;
+  if (event == EVENT_GRAVEYARD_ABILITY)
+  {
+    result = has_mana_multi(player, x, 0, u, g, r, w);
+    if ((result != 0) &&
+        (result = can_sorcery_be_played(player, EVENT_GRAVEYARD_ABILITY), result != 0))
+    {
+      return GA_EMBALM | GA_BASIC;
+    }
+  }
+  else if (event == EVENT_PAY_FLASHBACK_COSTS)
+  {
+    charge_mana_multi(player, x, 0, u, g, r, w);
+    if (spell_fizzled != 1)
+    {
+      return GAPAID_EXILE;
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATED_GRAVEYARD_ABILITY)
+  {
+    default_token_definition_2022(player, card, cid, &token);
+    token.color_forced = ' ';
+    token.no_sleight = '\x01';
+    token.special_flags3 = SF3_EMBALMED_OR_ETERNALIZED;
+    generate_token_2022(&token);
+  }
+  return (unsigned int)(event == EVENT_CAN_CAST);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22d94b0; original cards/amonkhet.c:814. */
+int card_trueheart_duelist(int player, int card, event_t event)
+{
+  int result;
+  creature_can_block_additional(player, card, event, 1);
+  result = embalm_2022_impl(player, card, event, 0x429f, 2, 0, 0, 0, 1);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22d9520; original cards/amonkhet.c:825. */
+int card_unwavering_initiate(int player, int card, event_t event)
+{
+  int result;
+  vigilance_2022(player, card, event);
+  result = embalm_2022_impl(player, card, event, 0x42a1, 4, 0, 0, 0, 1);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22d9c50; original cards/amonkhet.c:980. */
+int card_aven_initiate(int player, int card, event_t event)
+{
+  int result;
+  result = embalm_2022_impl(player, card, event, 0x41c9, 6, 1, 0, 0, 0);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22da5b0; original cards/amonkhet.c:1207. */
+int card_labyrinth_guardian(int player, int card, event_t event)
+{
+  int result;
+  if ((event != EVENT_GRAVEYARD_ABILITY && event != EVENT_PAY_FLASHBACK_COSTS) &&
+      (event != EVENT_RESOLVE_ACTIVATED_GRAVEYARD_ABILITY))
+  {
+    result = card_skulking_ghost(player, card, event);
+    return result;
+  }
+  result = embalm_2022_impl(player, card, event, 0x423c, 3, 1, 0, 0, 0);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22dafd0; original cards/amonkhet.c:1455. */
+int card_tah_crop_skirmisher(int player, int card, event_t event)
+{
+  int result;
+  result = embalm_2022_impl(player, card, event, 0x4292, 3, 1, 0, 0, 0);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22db120; original cards/amonkhet.c:1488. */
+int card_vizier_of_many_faces(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  result = enters_the_battlefield_as_copy_of_any_creature(player, card, event);
+  if (result != 0)
+  {
+    result = check_special_flags3_2022(player, card, 0x40000);
+    if (result != 0)
+    {
+      instance = get_card_instance(player, card);
+      instance->initial_color = ' ';
+    }
+  }
+  result = embalm_2022_impl(player, card, event, 0x42a4, 3, 2, 0, 0, 0);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22dee30; original cards/amonkhet.c:2921. */
+int card_heart_piercer_manticore(int player, int card, event_t event)
+{
+  int result;
+  unsigned int uVar2;
+  unsigned int player_00;
+  target_definition_2022_t td2;
+  test_definition_2022_t test;
+  result = duh_mode(player);
+  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (event == EVENT_ETB)
+  {
+    new_default_test_definition_2022(&test, 2, "Select another creature to sacrifice.");
+    test.not_me = 1;
+    default_target_definition_2022(player, card, &td2, 0x102);
+    td2.zone = 0x1200;
+    uVar2 = new_sacrifice_2022(
+        player, card, player, SAC2022_RETURN_CHOICE | SAC2022_JUST_MARK | SAC2022_NO_CANCEL, &test);
+    if (uVar2 != 0)
+    {
+      result = can_target_2022(&td2);
+      if (result != 0)
+      {
+        result = new_pick_target_2022(&td2, "TARGET_ANY", 0, 0);
+        if (result != 0)
+        {
+          player_00 = (int)uVar2 >> 0x10 & 0xff;
+          result = get_power(player_00, uVar2 >> 0x18);
+          kill_card(player_00, uVar2 >> 0x18, KILL_SACRIFICE);
+          damage_target0(player, card, result);
+        }
+      }
+    }
+  }
+  result = embalm_2022_impl(player, card, event, 0x422a, 5, 0, 0, 1, 0);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22e08c0; original cards/amonkhet.c:3525. */
+int card_honored_hydra(int player, int card, event_t event)
+{
+  int result;
+  result = embalm_2022_impl(player, card, event, 0x4230, 3, 0, 1, 0, 0);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22e2560; original cards/amonkhet.c:4146. */
+int card_aven_wind_guide(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  vigilance_2022(player, card, event);
+  result = is_humiliated_for_ability(player, card, AL_STATIC);
+  if (result == 0)
+  {
+    instance = in_play(player, card);
+    if (((event == EVENT_ABILITIES) && (instance != NULL)) && (affected_card_controller == player))
+    {
+      result = is_token(player, affected_card);
+      if (result != 0)
+      {
+        vigilance_2022(affected_card_controller, affected_card, EVENT_ABILITIES);
+        event_result = event_result | 0x20;
+      }
+    }
+  }
+  result = embalm_2022_impl(player, card, event, 0x41ca, 4, 1, 0, 0, 1);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22e35a0; original cards/amonkhet.c:4481. */
+int card_temmet_vizier_of_naktamun(int player, int card, event_t event)
+{
+  int result;
+  target_t tgt;
+  target_definition_2022_t td;
+  check_legend_rule(player, card, event);
+  result = beginning_of_combat_2022(player, card, event, player);
+  if (result != 0)
+  {
+    base_target_definition_2022(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    td.allow_cancel = 0;
+    td.special = 0x8000;
+    td.extra = (int32_t)target_is_token_too_2022;
+    result = can_target_2022(&td);
+    if (result != 0)
+    {
+      result = select_target_2022(player, card + -1000, &td,
+                                  "Select target creature token you control.", &tgt);
+      if (result != 0)
+      {
+        pump_ability_until_eot_2022(player, card, tgt.player, tgt.card, 1, 1, 0, 0x10);
+      }
+    }
+  }
+  result = embalm_2022_impl(player, card, event, 0x4294, 3, 1, 0, 0, 1);
+  return result;
+}
+
+#endif

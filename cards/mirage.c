@@ -10884,3 +10884,65 @@ int phase_out_2022(int player, int card)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2392f60; original cards/mirage.c:9152. */
+int card_tidal_wave(int player, int card, event_t event)
+{
+  int result;
+  token_generation_2022_t token;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    default_token_definition_2022(player, card, 0x49a3, &token);
+    token.pow = 5;
+    token.tou = 5;
+    token.color_forced = '\x04';
+    token.key_plus = KEYWORD_DEFENDER;
+    token.special_code_on_generation = sacrifice_token_at_next_eot;
+    generate_token_2022(&token);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = generic_spell_2022(player, card, event, 0, NULL, NULL, 0, NULL);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x238f920; original cards/mirage.c:7991. */
+int card_prismatic_circle(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_2022_t td;
+
+  cumulative_upkeep(player, card, event, 1, 0, 0, 0, 0, 0);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    result = choose_a_color_and_show_legacy(player, card, 1 - player, -1);
+    instance = get_card_instance(player, card);
+    instance->info_slot = 1U << ((unsigned char)result & 0x1f);
+  }
+  else if ((((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
+            (event == EVENT_RESOLVE_ACTIVATION)) ||
+           (event == EVENT_CLEANUP))
+  {
+    default_target_definition_2022(player, card, &td, 0x80);
+    td.special = 0x8000;
+    td.extra = (int32_t)colored_damage_source_that_damages_me_2022;
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target_2022(&td), result != 0))
+    {
+      prevent_damage(instance->targets[0].player, instance->targets[0].card, -1);
+    }
+    result = generic_activated_ability_2022(player, card, event, 0x1000004, 1, 0, 0, 0, 0, 0, 0,
+                                            &td, "TARGET_DAMAGE");
+    return result;
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+#endif

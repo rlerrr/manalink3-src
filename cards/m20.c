@@ -2938,3 +2938,138 @@ LAB_0239a736:
 }
 
 #endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x2395ad0; original cards/m20.c:594. */
+int card_chandra_acolyte_of_flame(int player, int card, event_t event)
+{
+  int *piVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  int iVar4;
+  card_instance_t *pcVar5;
+  unsigned int uVar6;
+  unsigned int uVar7;
+  uint32_t uVar8;
+  token_generation_2022_t token;
+  test_definition_2022_t test;
+
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    new_default_test_definition_2022(
+        &test, 0x38, "Select an instant or sorcery card with converted mana cost 3 or less.");
+    test.cmc = 4;
+    test.cmc_flag = 3;
+    test.type_flag = 2;
+    test.special_selection_function = can_cast_this;
+    pcVar2 = get_card_instance(player, card);
+    if (event == EVENT_ACTIVATE)
+    {
+
+      pcVar2->number_of_targets = '\0';
+      pcVar2->info_slot = 0;
+
+      iVar3 = count_graveyard(player);
+      piVar1 = graveyard_ptr_mutable[player];
+      if (-1 < iVar3)
+      {
+        do
+        {
+          iVar4 = is_what(-1, piVar1[iVar3], 0x38);
+          if (((iVar4 != 0) && (iVar4 = get_cmc_by_internal_id(piVar1[iVar3]), iVar4 < 4)) &&
+              (iVar4 = has_mana_to_cast_id(player, EVENT_CAN_CAST,
+                                           (unsigned int)cards_data[piVar1[iVar3]].id),
+               iVar4 != 0))
+          {
+            uVar8 = 0x14;
+            goto LAB_02395dad;
+          }
+          iVar3 = iVar3 + -1;
+        } while (iVar3 != -1);
+      }
+      uVar8 = 0xffffffec;
+    LAB_02395dad:
+      iVar3 = new_special_count_grave_2022(player, &test);
+      iVar3 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Add loyalty", 1, 5,
+                          0, "Elemental tokens", 1, 10, 0, "Cast from graveyard", iVar3, uVar8,
+                          0xfffffffe, 0, 0, 0, 0);
+      if ((iVar3 == 0) || ((iVar3 == 3 && (iVar3 = select_target_from_grave_source_2022(
+                                               player, card, player, SFG_0, 2, &test, 1),
+                                           iVar3 == -1))))
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      goto LAB_02395b64;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_02395b64;
+    new_default_test_definition_2022(
+        &test, 0x38, "Select an instant or sorcery card with converted mana cost 3 or less.");
+    test.cmc = 4;
+    test.cmc_flag = 3;
+    test.type_flag = 2;
+    test.special_selection_function = can_cast_this;
+    pcVar2 = get_card_instance(player, card);
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+
+    iVar3 = pcVar2->info_slot;
+    if (iVar3 == 1)
+    {
+
+      iVar3 = active_cards_count[player] + -1;
+      if (-1 < iVar3)
+      {
+        do
+        {
+          pcVar5 = in_play(player, iVar3);
+          if ((pcVar5 != NULL) && (iVar4 = is_planeswalker(player, iVar3), iVar4 != 0))
+          {
+            uVar6 = get_color(player, iVar3);
+            uVar7 = get_sleighted_color_test(pcVar2->parent_controller, pcVar2->parent_card, 0x10);
+            if ((uVar6 & uVar7) != 0)
+            {
+              add_counters_from_source(player, card, player, iVar3, COUNTER_LOYALTY, 1);
+            }
+          }
+          iVar3 = iVar3 + -1;
+        } while (iVar3 != -1);
+      }
+    }
+    else if (iVar3 == 2)
+    {
+      default_token_definition_2022(player, card, 0x4926, &token);
+      token.tou = 1;
+      token.pow = 1;
+      token.qty = '\x02';
+      token.special_code_on_generation = haste_and_sacrifice_token_at_end_of_next_turn_2022;
+      generate_token_2022(&token);
+    }
+    else
+    {
+
+      if (((iVar3 == 3) &&
+           (iVar3 = validate_target_from_grave_source(player, card, player, 1), iVar3 != -1)) &&
+          (iVar4 = charge_mana_from_id(
+               player, -1, EVENT_RESOLVE_ACTIVATION,
+               (unsigned int)cards_data[graveyard_ptr_mutable[player][iVar3]].id),
+           iVar4 != 0))
+      {
+        play_card_in_grave_for_free_and_exile_it(player, player, iVar3);
+      }
+    }
+  }
+LAB_02395b64:
+  iVar3 = planeswalker(player, card, event, 4);
+  return iVar3;
+}
+
+#endif

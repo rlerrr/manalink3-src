@@ -33,13 +33,50 @@ def main():
     baseline=json.loads((cache/'batch70-before/docs/recovery-evidence/recovered-functions.json').read_text());before={f['address'] for f in baseline['accepted_functions']}
     public=[f for f in manifest['accepted_functions'] if f['address'] not in before and not f['static']]
     assert all('_'+f['name'] in names for f in public),[f['name'] for f in public if '_'+f['name'] not in names]
+    migrated_leaves=[f for f in manifest['accepted_functions'] if f.get('leaves_test_evidence')]
+    assert all('_'+f['name'] in names and '_'+f['name'].removesuffix('_2022') in names for f in migrated_leaves)
+    reveal_callbacks=[f for f in manifest['accepted_functions'] if f.get('reveal_destroy_evidence') and f['static']]
+    for callback in reveal_callbacks:
+        records=[s for s in debug.symbols if s[0]=='_'+callback['name']]
+        assert len(records)==1 and records[0][2]>0 and records[0][4]==3
+    flash_private=[f for f in manifest['accepted_functions'] if f.get('flash_casting_evidence') and f['static']]
+    for function in flash_private:
+        records=[s for s in debug.symbols if s[0]=='_'+function['name']]
+        assert len(records)==1 and records[0][2]>0 and records[0][4]==3
+    flash_globals=[g for g in manifest['source_globals'] if g['name'] in {'vivien_current_event_2022','flash_current_event_2022'}]
+    for global_ in flash_globals:
+        records=[s for s in debug.symbols if s[0]=='_'+global_['name']]
+        assert len(records)==1 and records[0][2]>0 and records[0][4]==3
+        assert debug.pe.sections[records[0][2]-1].Name.rstrip(b'\0')==b'.bss'
+    snow_callbacks=[f for f in manifest['accepted_functions'] if f.get('snow_consumer_evidence') and f['static']]
+    for callback in snow_callbacks:
+        records=[s for s in debug.symbols if s[0]=='_'+callback['name']]
+        assert len(records)==1 and records[0][2]>0 and records[0][4]==3
+    embalm_workers=[f for f in manifest['accepted_functions'] if f.get('embalm_family_evidence') and f['static']]
+    for worker in embalm_workers:
+        records=[s for s in debug.symbols if s[0]=='_'+worker['name']]
+        assert len(records)==1 and records[0][2]>0 and records[0][4]==3
+    memorial_private=[f for f in manifest['accepted_functions'] if f.get('memorial_family_evidence') and f['static']]
+    for worker in memorial_private:
+        records=[s for s in debug.symbols if s[0]=='_'+worker['name']]
+        assert len(records)==1 and records[0][2]>0 and records[0][4]==3
+    storm_state=0
+    if any(f.get('storm_family_evidence') for f in manifest['accepted_functions']):
+        records=[s for s in debug.symbols if s[0]=='_rules_engine_card']
+        assert len(records)==1 and records[0][2]>0 and records[0][4]==3
+        section=debug.pe.sections[records[0][2]-1]
+        assert section.Name.rstrip(b'\0')==b'.data'
+        assert pe.get_data(section.VirtualAddress+records[0][1],8)==b'\xff'*8
+        storm_state=1
     for name in ['_card_coded','_set_legacy_effect_name_addr']:
         records=[s for s in debug.symbols if s[0]==name];assert len(records)==1 and records[0][4]==2
         if name=='_card_coded':
             address=int(re.search(r'(?m)^_card_coded\s*=\s*(0x[0-9a-fA-F]+)',(root/'manalink.lds').read_text())[1],16)
             assert records[0][2]==-1 and records[0][1]==address
         else:assert records[0][2]>0
-    log=(cache/'build-gcc93/build.log').read_text();link=next(line for line in log.splitlines() if line.startswith('g++ -m32 -shared'))
+    raw_log=(cache/'build-gcc93/build.log').read_bytes()
+    log=raw_log.decode('utf-16' if raw_log.startswith((b'\xff\xfe',b'\xfe\xff')) else 'utf-8-sig')
+    link=next(line for line in log.splitlines() if line.startswith('g++ -m32 -shared'))
     inputs=re.findall(r'\.recovery/build-gcc93/obj/[^\s]+\.(?:o|obj|ao)\b',link)
     counts={suffix:sum(x.endswith(suffix) for x in inputs) for suffix in ['.o','.obj','.ao']};assert counts=={'.o':164,'.obj':2,'.ao':20}
     assert len(inputs)==len(set(inputs)) and 'obj/ManalinkEh.ao' not in link
@@ -58,9 +95,11 @@ def main():
     report=dict(status='success',compiler='GCC/G++ 9.3.0, x86_64-w64-mingw32 host using -m32',
         build_command='powershell -ExecutionPolicy Bypass -File tools/build-recovery.ps1',warnings_as_errors=False,
         object_inputs=counts,veneer_object='ManalinkEh.ao; loaded exactly once by manalink.lds',
+        private_embalm_workers_verified=len(embalm_workers),
+        private_memorial_helpers_verified=len(memorial_private),
         machine='IMAGE_FILE_MACHINE_I386',optional_header='PE32',image_base=hex(pe.OPTIONAL_HEADER.ImageBase),entry_rva=hex(pe.OPTIONAL_HEADER.AddressOfEntryPoint),exports=exports,
         files={p.name:dict(bytes=p.stat().st_size,sha256=sha(p.read_bytes())) for p in [dll,dbg]},debug_info_bytes=debug.sections['.debug_info'].SizeOfRawData,
-        new_batch_public_symbols_verified=len(public),import_library_i386_members={n:archive_members(root/n) for n in ['libDrawcardlib.a','libcapturestackbacktrace.a']},
+        new_batch_public_symbols_verified=len(public),migrated_leaves_test_native_symbols_verified=len(migrated_leaves),private_reveal_callback_symbols_verified=len(reveal_callbacks),private_flash_callback_symbols_verified=len(flash_private),private_flash_event_globals_verified=len(flash_globals),private_snow_callback_symbols_verified=len(snow_callbacks),retained_storm_state_verified=storm_state,import_library_i386_members={n:archive_members(root/n) for n in ['libDrawcardlib.a','libcapturestackbacktrace.a']},
         imported_dlls=[x.dll.decode() for x in pe.DIRECTORY_ENTRY_IMPORT],excluded_c_source_units=excluded,
         repairs=['Two terminal labels receive null statements for GCC 9 C grammar; exact previous records and historical scalar proof retained.',
                  'Header globals become extern declarations: card_coded remains the EXE absolute symbol from manalink.lds; the DLL-owned set_legacy_effect_name_addr pointer has one zero-initialized definition in functions/functions.c.',

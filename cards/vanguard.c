@@ -2989,3 +2989,121 @@ void put_commander_in_the_command_zone_from_play(int player, int card)
   obliterate_card(player, card);
   return;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+int general_has_partner_2022(int csvid);
+int get_partner_with_id(int csvid);
+
+/* ManalinkEh 2022: 0x22c63c0; original cards/vanguard.c:1466. */
+int general_has_partner_2022(int csvid)
+{
+  if (csvid < 0x40ff)
+  {
+    if (0x40c7 < csvid)
+    {
+      switch (csvid)
+      {
+      case 0x40c8:
+      case 0x40d0:
+      case 0x40e2:
+      case 0x40e3:
+      case 0x40e4:
+      case 0x40e5:
+      case 0x40e7:
+      case 0x40ef:
+      case 0x40f0:
+      case 0x40f5:
+      case 0x40f6:
+      case 0x40fa:
+      case 0x40fb:
+      case 0x40fd:
+      case 0x40fe:
+        goto code_r0x022c63e0;
+      }
+    }
+  }
+  else
+  {
+    switch (csvid)
+    {
+    case 0x562f:
+    case 0x5630:
+    case 0x5631:
+    case 0x5634:
+    case 0x563b:
+    case 0x563c:
+    case 0x564a:
+    case 0x564c:
+    case 0x5658:
+    case 0x565b:
+    case 0x565f:
+    case 0x5664:
+    case 0x566c:
+    case 0x566d:
+    case 0x566e:
+    case 0x5672:
+    case 0x5678:
+    case 0x567e:
+    case 0x5682:
+    case 0x5685:
+    case 0x5687:
+    case 0x5688:
+    case 0x568b:
+    case 0x568c:
+    case 0x5691:
+    case 0x5694:
+    case 0x5697:
+    case 0x569a:
+    case 0x569f:
+    case 0x56a6:
+    case 0x56aa:
+    case 0x56ac:
+    case 0x56b1:
+    case 0x56b3:
+    case 0x56b7:
+    case 0x56b9:
+    case 0x56bb:
+    case 0x56c4:
+    case 0x56c6:
+    case 0x56c8:
+    case 0x56c9:
+    code_r0x022c63e0:
+      return 1;
+    }
+  }
+  return 0;
+}
+
+
+/* ManalinkEh 2022: 0x22c6410; original cards/vanguard.c:1531. */
+int get_partner_with_id(int csvid)
+{
+  int result;
+  result = -1;
+  if (csvid - 0x48a6U < 0x3b)
+  {
+    static const int16_t partner_with_ids[59] = {
+        18651, -1, -1, -1, -1, -1,    -1, 18643, -1,    18625, -1,    -1, -1, -1,    -1,
+        -1,    -1, -1, -1, -1, 18656, -1, -1,    18648, -1,    -1,    -1, -1, 18653, -1,
+        -1,    -1, -1, -1, -1, -1,    -1, -1,    -1,    -1,    -1,    -1, -1, -1,    -1,
+        18605, -1, -1, -1, -1, 18621, -1, -1,    18598, -1,    18626, -1, -1, 18618};
+    result = partner_with_ids[(uint32_t)csvid - 0x48a6U];
+  }
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22c69b0; original cards/vanguard.c:1881. */
+int put_commander_from_command_zone_to_2022(int player, int where)
+{
+  int result;
+  result = put_commander_from_command_zone_to_impl(player, where, 0, NULL);
+  return result;
+}
+
+#endif

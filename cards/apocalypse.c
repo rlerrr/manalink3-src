@@ -334,6 +334,241 @@ int card_aether_mutation(int player, int card, event_t event){
 	return 0;
 }
 
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x205ffb0; original cards/apocalypse.c:135. */
+static int ap_disciples_2022(int player, int card, event_t event, color_test_t colors)
+{
+  card_instance_t *instance;
+  int32_t iVar2;
+  int iVar3;
+  unsigned int uVar4;
+  unsigned int uVar5;
+  int blue;
+  int red;
+  target_definition_2022_t *td_00;
+  uint32_t uStack_128;
+  unsigned int uStack_124;
+  unsigned int uStack_120;
+  unsigned int uStack_11c;
+  target_definition_2022_t *ptStack_118;
+  target_definition_2022_t *ptStack_114;
+  target_definition_2022_t *ptStack_110;
+  target_definition_2022_t td;
+  target_definition_2022_t td2;
+  target_definition_2022_t td3;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    td_00 = &td;
+    default_target_definition_2022(player, card, td_00, 2);
+    td.preferred_controller = player;
+    default_target_definition_2022(player, card, &td2, 2);
+    default_target_definition_2022(player, card, &td3, 0);
+    td3.extra = damage_card;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (((colors & COLOR_TEST_WHITE) != COLOR_TEST_0) &&
+          (iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x1000005, 0, 0,
+                                                  0, 0, 0, 1, 0, &td3, NULL),
+           iVar3 != 0))
+      {
+        return 99;
+      }
+      if (((((colors & COLOR_TEST_BLACK) == COLOR_TEST_0) ||
+            (iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 1, 0, 0,
+                                                    0, 0, 0, &td2, NULL),
+             iVar3 == 0)) &&
+           (((colors & COLOR_TEST_BLUE) == COLOR_TEST_0 ||
+             (iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 1,
+                                                     0, 0, 0, 0, td_00, NULL),
+              iVar3 == 0)))) &&
+          (((colors & COLOR_TEST_RED) == COLOR_TEST_0 ||
+            (iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0,
+                                                    1, 0, 0, td_00, NULL),
+             iVar3 == 0))))
+      {
+        if ((colors & COLOR_TEST_GREEN) == COLOR_TEST_0)
+        {
+          return 0;
+        }
+        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x200001, 0, 0, 0,
+                                               1, 0, 0, 0, NULL, NULL);
+        if (iVar3 == 0)
+        {
+          return 0;
+        }
+        iVar3 = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+        return iVar3;
+      }
+      return 1;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      uVar5 = 0;
+      instance->info_slot = 0;
+      instance->number_of_targets = '\0';
+      if ((colors & COLOR_TEST_BLACK) != COLOR_TEST_0)
+      {
+        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 1, 0, 0, 0,
+                                               0, 0, &td2, NULL);
+        uVar5 = (unsigned int)(iVar3 != 0);
+      }
+      uStack_11c = 0;
+      if ((colors & COLOR_TEST_BLUE) != COLOR_TEST_0)
+      {
+        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 1, 0, 0,
+                                               0, 0, td_00, NULL);
+        uStack_11c = (unsigned int)(iVar3 != 0);
+      }
+      uStack_120 = 0;
+      if ((colors & COLOR_TEST_GREEN) != COLOR_TEST_0)
+      {
+        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x200001, 0, 0, 0,
+                                               1, 0, 0, 0, NULL, NULL);
+        uStack_120 = (unsigned int)(iVar3 != 0);
+      }
+      uStack_124 = 0;
+      if ((colors & COLOR_TEST_RED) != COLOR_TEST_0)
+      {
+        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0, 1,
+                                               0, 0, td_00, NULL);
+        uStack_124 = (unsigned int)(iVar3 != 0);
+      }
+      uVar4 = 0;
+      if ((colors & COLOR_TEST_WHITE) != COLOR_TEST_0)
+      {
+        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x1000005, 0, 0, 0,
+                                               0, 0, 1, 0, &td3, NULL);
+        uVar4 = (unsigned int)(iVar3 != 0);
+      }
+      if (current_phase < 0x17)
+      {
+        uStack_128 = 10;
+        iVar3 = 1;
+      }
+      else
+      {
+        uStack_128 = 1;
+        iVar3 = (unsigned int)(current_phase == 0x18) * 9 + 1;
+      }
+      iVar3 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\004", "Give -2/-0", uVar5,
+                          uStack_128, "Give Flying", uStack_11c, iVar3, "Get mana", uStack_120, 1,
+                          "Give +2/+0", uStack_124, iVar3, "Prevent damage", uVar4,
+                          (-(unsigned int)(uVar4 == 0) & 0xffffffcf) + 0x32, 0, 0, 0, 0);
+      if (iVar3 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (iVar3 == 2)
+      {
+        red = 0;
+        blue = 1;
+        iVar3 = 0;
+      }
+      else if (iVar3 == 1)
+      {
+        red = 0;
+        blue = 0;
+        iVar3 = 1;
+        td_00 = &td2;
+      }
+      else
+      {
+        if (iVar3 == 3)
+        {
+          charge_mana_for_activated_ability_2022(player, card, 0, 0, 0, 1, 0, 0);
+          if (spell_fizzled == 1)
+          {
+            return 0;
+          }
+          produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_ANY_COLORED, 1);
+          return 0;
+        }
+        if (iVar3 != 4)
+        {
+          if (iVar3 != 5)
+          {
+            return 0;
+          }
+          iVar3 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x1000005, 0, 0, 0,
+                                                 0, 0, 1, 0, &td3, "TARGET_DAMAGE");
+          return iVar3;
+        }
+        red = 1;
+        blue = 0;
+        iVar3 = 0;
+      }
+      iVar3 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 5, 0, iVar3, blue, 0,
+                                             red, 0, 0, td_00, "TARGET_CREATURE");
+      return iVar3;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td, 2);
+    td.preferred_controller = player;
+    default_target_definition_2022(player, card, &td2, 2);
+    default_target_definition_2022(player, card, &td3, 0);
+    td3.extra = damage_card;
+    instance = get_card_instance(player, card);
+  }
+  ptStack_110 = &td;
+  ptStack_114 = &td3;
+  ptStack_118 = &td2;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    iVar2 = instance->info_slot;
+    if (iVar2 == 1)
+    {
+      iVar3 = valid_target_2022(ptStack_118);
+      if (iVar3 != 0)
+      {
+        pump_until_eot_merge_previous_alt(instance->parent_controller, instance->parent_card,
+                                          instance->targets[0].player, instance->targets[0].card,
+                                          -2, 0, 2);
+      }
+      iVar2 = instance->info_slot;
+    }
+    if (iVar2 == 2)
+    {
+      iVar3 = valid_target_2022(ptStack_110);
+      if (iVar3 != 0)
+      {
+        pump_ability_until_eot_no_repeat_alt(instance->parent_controller, instance->parent_card,
+                                             instance->targets[0].player, instance->targets[0].card,
+                                             0x20, 0, 1);
+      }
+      iVar2 = instance->info_slot;
+    }
+    if (iVar2 == 4)
+    {
+      iVar3 = valid_target_2022(ptStack_110);
+      if (iVar3 != 0)
+      {
+        pump_until_eot_merge_previous_alt(instance->parent_controller, instance->parent_card,
+                                          instance->targets[0].player, instance->targets[0].card, 2,
+                                          0, 1);
+      }
+      iVar2 = instance->info_slot;
+    }
+    if ((iVar2 == 5) && (iVar3 = valid_target_2022(ptStack_114), iVar3 != 0))
+    {
+      prevent_damage(instance->targets[0].player, instance->targets[0].card, 1);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+#endif
+
+/* ManalinkEh 2022: 0x2061850; original cards/apocalypse.c:332. */
 int card_ana_disciple(int player, int card, event_t event){
 /*
 Ana Disciple |G
@@ -341,7 +576,11 @@ Creature — Human Wizard 1/1
 {U}, {T}: Target creature gains flying until end of turn.
 {B}, {T}: Target creature gets -2/-0 until end of turn.
 */
+	#ifndef SHANDALAR
+	return ap_disciples_2022(player, card, event, COLOR_TEST_BLUE | COLOR_TEST_BLACK);
+#else
 	return ap_disciples(player, card, event, COLOR_BLACK, COLOR_BLUE);
+#endif
 }
 
 int card_ana_sanctuary(int player, int card, event_t event){
@@ -584,6 +823,7 @@ int card_captains_maneuver(int player, int card, event_t event){
 	return 0;
 }
 
+/* ManalinkEh 2022: 0x2062680; original cards/apocalypse.c:586. */
 int card_ceta_disciple(int player, int card, event_t event){
 /*
 Ceta Disciple |U
@@ -591,7 +831,11 @@ Creature — Merfolk Wizard 1/1
 {R}, {T}: Target creature gets +2/+0 until end of turn.
 {G}, {T}: Add one mana of any color to your mana pool.
 */
+	#ifndef SHANDALAR
+	return ap_disciples_2022(player, card, event, COLOR_TEST_RED | COLOR_TEST_GREEN);
+#else
 	return ap_disciples(player, card, event, COLOR_GREEN, COLOR_RED);
+#endif
 }
 
 int card_cetavolver(int player, int card, event_t event){
@@ -974,6 +1218,7 @@ int card_death_grasp(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_X_SPELL | GS_CAN_TARGET, &td, "TARGET_ANY", 1, NULL);
 }
 
+/* ManalinkEh 2022: 0x2063de0; original cards/apocalypse.c:1003. */
 int card_dega_disciple(int player, int card, event_t event){
 /*
 Dega Disciple |W
@@ -981,7 +1226,11 @@ Creature — Human Wizard 1/1
 {B}, {T}: Target creature gets -2/-0 until end of turn.
 {R}, {T}: Target creature gets +2/+0 until end of turn.
 */
+	#ifndef SHANDALAR
+	return ap_disciples_2022(player, card, event, COLOR_TEST_RED | COLOR_TEST_BLACK);
+#else
 	return ap_disciples(player, card, event, COLOR_BLACK, COLOR_RED);
+#endif
 }
 
 int card_dega_sanctuary(int player, int card, event_t event){
@@ -2942,4 +3191,22 @@ static int whirlpool_rider_part_2022(int player, int card, event_t event)
   return result;
 }
 
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2066c10; original cards/apocalypse.c:1873. */
+int card_necra_disciple(int player, int card, event_t event)
+{
+  return ap_disciples_2022(player, card, event, COLOR_TEST_WHITE | COLOR_TEST_GREEN);
+}
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20680a0; original cards/apocalypse.c:2278. */
+int card_raka_disciple(int player, int card, event_t event)
+{
+  return ap_disciples_2022(player, card, event, COLOR_TEST_WHITE | COLOR_TEST_BLUE);
+}
 #endif

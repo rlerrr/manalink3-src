@@ -1363,3 +1363,103 @@ int card_kindred_charge(int player, int card, event_t event)
   iVar1 = basic_spell(player, card, event);
   return iVar1;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x228f070; original cards/commander_2017.c:618. */
+int card_arahbo_roar_of_the_world(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+
+  union
+  {
+    target_definition_2022_t target;
+    test_definition_2022_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
+
+  check_legend_rule(player, card, event);
+  pcVar1 = get_card_instance(player, card);
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    iVar2 = engine_any_legal_attacker_2022(player);
+    if (iVar2 == 0)
+    {
+      event_flags = event_flags | 0x1000000;
+    }
+  }
+  else if (event == EVENT_BEGIN_COMBAT)
+  {
+    if ((current_turn == player) &&
+        (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar2 == 0))
+    {
+      default_target_definition_2022(player, card, &recovered_stack_td.target, 2);
+      recovered_stack_td.target.required_subtype = 0x1f;
+      recovered_stack_td.target.preferred_controller = player;
+      recovered_stack_td.target.allowed_controller = player;
+      recovered_stack_td.target.special = 0x4000;
+      pcVar1->number_of_targets = '\0';
+      iVar2 = can_target_2022(&recovered_stack_td.target);
+      if ((iVar2 != 0) && (iVar2 = new_pick_target_2022(&recovered_stack_td.target,
+                                                        "Select target Cat you control", 0, 0x81),
+                           iVar2 != 0))
+      {
+        pump_ability_until_eot_2022(player, card, pcVar1->targets[0].player,
+                                    pcVar1->targets[0].card, 3, 3, 0, 0);
+      }
+    }
+  }
+  else if ((event == EVENT_DECLARE_ATTACKERS) &&
+           (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar2 == 0))
+  {
+    default_test_definition_2022(&recovered_stack_td.test, 2);
+    iVar2 = duh_mode(player);
+    store_attackers_2022(player, card, EVENT_DECLARE_ATTACKERS,
+                         (iVar2 != 0) +
+                             (DAT_STORE_IN_INFO_SLOT | DAT_TRACK | DAT_RESOLVE_TRIGGER_OPTIONAL),
+                         player, -1, &recovered_stack_td.test);
+  }
+  iVar2 = duh_mode(player);
+  iVar2 = resolve_declare_attackers_trigger_2022(
+      player, card, event,
+      (iVar2 != 0) + (DAT_STORE_IN_INFO_SLOT | DAT_TRACK | DAT_RESOLVE_TRIGGER_OPTIONAL));
+  if (((iVar2 != 0) && (iVar3 = has_mana_multi(player, 1, 0, 0, 1, 0, 1), iVar3 != 0)) &&
+      (iVar2 = iVar2 + -1, -1 < iVar2))
+  {
+    do
+    {
+      pcVar4 = in_play(current_turn,
+                       (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + iVar2));
+      if ((pcVar4 != NULL) && (iVar3 = has_mana_multi(player, 1, 0, 0, 1, 0, 1), iVar3 != 0))
+      {
+        pcVar4 = get_card_instance(
+            current_turn,
+            (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + iVar2));
+        pcVar4->token_status = pcVar4->token_status | 0x20000;
+        iVar3 = charge_mana_multi_while_resolving(player, card, EVENT_RESOLVE_TRIGGER, player, 1, 0,
+                                                  0, 1, 0, 1);
+        if (iVar3 != 0)
+        {
+          iVar3 =
+              get_power(current_turn,
+                        (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + iVar2));
+          pump_ability_until_eot_2022(
+              player, card, current_turn,
+              (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + iVar2), iVar3,
+              iVar3, 0x80, 0);
+        }
+        pcVar4 = get_card_instance(
+            current_turn,
+            (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + iVar2));
+        pcVar4->token_status = pcVar4->token_status & 0xfffdffff;
+      }
+      iVar2 = iVar2 + -1;
+    } while (iVar2 != -1);
+  }
+  return 0;
+}
+
+#endif

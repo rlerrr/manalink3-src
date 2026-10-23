@@ -9,6 +9,8 @@
     ".ao": 20
   },
   "veneer_object": "ManalinkEh.ao; loaded exactly once by manalink.lds",
+  "private_embalm_workers_verified": 1,
+  "private_memorial_helpers_verified": 6,
   "machine": "IMAGE_FILE_MACHINE_I386",
   "optional_header": "PE32",
   "image_base": "0x2000000",
@@ -19,16 +21,22 @@
   },
   "files": {
     "ManalinkEh.dll": {
-      "bytes": 8580161,
-      "sha256": "42e58b38073c4f6eadaaa8573e8779ee5d1655d881d3aa2efc87533a32dc6fc2"
+      "bytes": 8644413,
+      "sha256": "3ae7ce9a4fac284d449164a4f38965c4bad8226289363ccd458d4d380ce60501"
     },
     "ManalinkEh.dbg": {
-      "bytes": 92166470,
-      "sha256": "33caffed7442350ff1b98e6c48de0b4e06f2cd3f37e996d6f395b7af9dc5c44a"
+      "bytes": 92361894,
+      "sha256": "8b2f092d17dcb48f5396b75aed9d446e2ee4ff753470cd28f01a5faa4ba5a334"
     }
   },
-  "debug_info_bytes": 82136576,
-  "new_batch_public_symbols_verified": 21,
+  "debug_info_bytes": 82241536,
+  "new_batch_public_symbols_verified": 132,
+  "migrated_leaves_test_native_symbols_verified": 2,
+  "private_reveal_callback_symbols_verified": 1,
+  "private_flash_callback_symbols_verified": 3,
+  "private_flash_event_globals_verified": 2,
+  "private_snow_callback_symbols_verified": 1,
+  "retained_storm_state_verified": 1,
   "import_library_i386_members": {
     "libDrawcardlib.a": 10,
     "libcapturestackbacktrace.a": 3

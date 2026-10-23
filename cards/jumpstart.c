@@ -1244,3 +1244,110 @@ int card_lightning_phoenix(int player, int card, event_t event)
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+int card_towering_titan(int player, int card, event_t event);
+int card_neyith_of_the_dire_hunt(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2375b00; original cards/jumpstart.c:1059. */
+int card_towering_titan(int player, int card, event_t event)
+{
+  int result;
+  test_definition_2022_t test;
+  result = get_toughness_sum(player);
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, result);
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      pump_creatures_until_eot_no_repeat_2022(player, card, 2, 0, 0x80, 0, NULL);
+    }
+  }
+  default_test_definition_2022(&test, 2);
+  test.keyword = KEYWORD_DEFENDER;
+  result = generic_activated_ability_with_sacrifice_as_cost_2022(
+      player, card, event, GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, TYPE_CREATURE, &test, SARV_0);
+  return result;
+}
+
+
+/* ManalinkEh 2022: 0x2374670; original cards/jumpstart.c:547. */
+int card_neyith_of_the_dire_hunt(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  target_definition_2022_t td;
+  check_legend_rule(player, card, event);
+  if (event == EVENT_FIGHT)
+  {
+    if (affected_card_controller == player)
+    {
+      draw_a_card(player);
+    }
+  }
+  else if (event == EVENT_DECLARE_BLOCKERS)
+  {
+    if ((current_turn == player) && (iVar3 = active_cards_count[player] + -1, -1 < iVar3))
+    {
+      do
+      {
+        instance = in_play(player, iVar3);
+        if ((instance != NULL) &&
+            (((iVar2 = is_what(player, iVar3, 2),
+               iVar2 != 0 && (iVar2 = is_attacking(player, iVar3), iVar2 != 0)) &&
+              (iVar2 = count_my_blockers(player, iVar3), 0 < iVar2))))
+        {
+          draw_cards(player, iVar2);
+        }
+        iVar3 = iVar3 + -1;
+      } while (iVar3 != -1);
+    }
+  }
+  else if (event == EVENT_CHANGE_TYPE)
+  {
+    iVar3 = engine_any_legal_attacker_2022(player);
+    if (iVar3 == 0)
+    {
+      event_flags = event_flags | EA_FORCE_ATTACK;
+      return 0;
+    }
+  }
+  else if (((event == EVENT_BEGIN_COMBAT) &&
+            (iVar3 = is_humiliated_for_ability(player, card, AL_TRIG), iVar3 == 0)) &&
+           (current_turn == player))
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    iVar3 = can_target_2022(&td);
+    if (iVar3 != 0)
+    {
+      iVar3 = get_cost_mod_for_activated_abilities_2022(player, card, 2, 0, 0, 1, 0, 0);
+      iVar2 = has_mana_hybrid(player, 1, 4, 3, iVar3);
+      if (iVar2 != 0)
+      {
+        iVar2 = engine_any_legal_attacker_2022(player);
+        iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\026", "\001\003",
+                            "Double a creature's power", 1, (iVar2 + 1) * 0xf, "Pass", 1, 1, 0, 0,
+                            0, 0);
+        if (((iVar2 == 1) &&
+             (charge_mana_hybrid(player, card, 1, 4, 3, iVar3), spell_fizzled != 1)) &&
+            (new_pick_target_2022(&td, "TARGET_CREATURE", 0, 1), spell_fizzled != 1))
+        {
+          instance = get_card_instance(player, card);
+          iVar3 = get_power(instance->targets[0].player, instance->targets[0].card);
+          pump_ability_until_eot_2022(player, card, instance->targets[0].player,
+                                      instance->targets[0].card, iVar3, 0, 0, 0x1000);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+#endif

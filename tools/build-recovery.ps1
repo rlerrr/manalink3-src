@@ -33,10 +33,18 @@ try {
             '-d' "$library.def" '-l' "lib$library.a"
         if ($LASTEXITCODE -ne 0) { throw "Could not create the 32-bit $library import library." }
     }
-    & (Join-Path $buildRoot 'make.exe') '-k' "-j$Jobs" 'CC=gcc -m32' 'CXX=g++ -m32' `
-        'DLLTOOL=dlltool -m i386 -f --32' 'ASM=yasm' 'WERROR=' `
-        'OBJDIR=.recovery/build-gcc93/obj/' *> $log
-    $buildExitCode = $LASTEXITCODE
+    # Windows PowerShell 5.1 wraps redirected native stderr as error records.
+    # GCC warnings must reach the log without terminating an otherwise valid
+    # build. The native process exit code still determines success or failure.
+    $ErrorActionPreference = 'Continue'
+    try {
+        & (Join-Path $buildRoot 'make.exe') '-k' "-j$Jobs" 'CC=gcc -m32' 'CXX=g++ -m32' `
+            'DLLTOOL=dlltool -m i386 -f --32' 'ASM=yasm' 'WERROR=' `
+            'OBJDIR=.recovery/build-gcc93/obj/' *> $log
+        $buildExitCode = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = 'Stop'
+    }
 } finally {
     Pop-Location
     $env:PATH = $previousPath

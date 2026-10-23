@@ -4072,3 +4072,28 @@ LAB_0257ae35:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+int card_yixlid_jailer(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x257d680; original cards/future_sight.c:3979. */
+int card_yixlid_jailer(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      player_bits[player] = player_bits[player] | PB_GY_ABILITIES_DISABLED;
+      player_bits[1 - player] = player_bits[1 - player] | PB_GY_ABILITIES_DISABLED;
+    }
+  }
+  return 0;
+}
+
+#endif

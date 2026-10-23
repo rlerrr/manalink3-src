@@ -3706,3 +3706,16 @@ int card_arcbound_fiend(int player, int card, event_t event)
   result = modular(player, card, event, 3);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22549e0; original cards/darksteel.c:2362. */
+int card_quicksilver_behemoth(int player, int card, event_t event)
+{
+  int result;
+  affinity(player, card, event, 0x40, -1);
+  result = card_windscouter(player, card, event);
+  return result;
+}
+
+#endif

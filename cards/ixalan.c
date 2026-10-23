@@ -4507,3 +4507,41 @@ int card_conquerors_galleon(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+int card_dowsing_dagger(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2218990; original cards/ixalan.c:2702. */
+int card_dowsing_dagger(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  token_generation_2022_t token;
+  double_faced_card(player, card, event);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    target_opponent_2022(player, card);
+    default_token_definition_2022(player, card, 0x4973, &token);
+    token.qty = '\x02';
+    token.tou = 2;
+    instance = get_card_instance(player, card);
+    token.key_plus = KEYWORD_DEFENDER;
+    token.t_player = instance->targets[0].player;
+    generate_token_2022(&token);
+  }
+  result = equipped_creature_deals_damage(player, card, event,
+                                          DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE |
+                                              DDBM_TRIGGER_OPTIONAL);
+  if (result != 0)
+  {
+    unattach(player, card);
+    transform(player, card);
+  }
+  result = vanilla_equipment(player, card, event, 2, 2, 1, 0, 0);
+  return result;
+}
+
+#endif

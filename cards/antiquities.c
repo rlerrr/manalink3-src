@@ -3110,3 +3110,47 @@ int triskelion_like_creature(int player, int card, event_t event, int amount_of_
       generic_activated_ability(player, card, event, 0x44, c, b, u, g, r, w, 0, &td, "TARGET_ANY");
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22444f0; original cards/antiquities.c:687. */
+char *damage_from_artifact_source_2022(int who_chooses, int player, int card)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  unsigned int uVar3;
+  int result;
+
+  pcVar1 = get_card_instance(player, card);
+  if (pcVar1->internal_card_id != damage_card)
+  {
+    return "must be a damage card";
+  }
+  if ((pcVar1->damage_target_player == who_chooses) && (pcVar1->damage_target_card == -1))
+  {
+    uVar3 = pcVar1->targets[3].player;
+    pcVar2 = in_play((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    if (pcVar2 == NULL)
+    {
+      uVar3 = uVar3 & 0x40;
+    }
+    else
+    {
+      uVar3 = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 0x40);
+    }
+    if (uVar3 == 0)
+    {
+      return "must be damage from artifact source";
+    }
+    result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
+    if ((result == 0) || (result = check_special_flags_2022((int)pcVar1->damage_source_player,
+                                                            pcVar1->damage_source_card, 0x40),
+                          result == 0))
+    {
+      return NULL;
+    }
+  }
+  return "must be damage dealt to you";
+}
+
+#endif

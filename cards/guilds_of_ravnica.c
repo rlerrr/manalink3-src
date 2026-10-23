@@ -439,7 +439,7 @@ LAB_0261e1e5:
 }
 
 /* ManalinkEh 2022: 0x2619110; original cards/guilds_of_ravnica.c:2237. */
-static void haste_and_must_attack_until_eot(token_generation_t *token, int beast, int number)
+static void haste_and_must_attack_until_eot(token_generation_2022_t *token, int beast, int number)
 {
   pump_ability_until_eot_2022(token->s_player, token->s_card, token->t_player, beast, 0, 0, 0, 0x404);
   return;
@@ -3949,6 +3949,54 @@ int card_portcullis_vine(int player, int card, event_t event)
       player, card, event, GAA_LITERAL_PROMPT | GAA_UNTAPPED, 2, 0, 0, 0, 0, 0, 0, NULL,
       "Select a creature with defender to sacrifice.", ~TYPE_NONE, &test, SARV_0);
   return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x261e2f0; original cards/guilds_of_ravnica.c:2241. */
+int card_legion_warboss(int player, int card, event_t event)
+{
+  int result;
+  token_generation_2022_t token;
+  mentor(player, card, event);
+  result = beginning_of_combat_2022(player, card, event, player);
+  if (result == 0)
+  {
+    return 0;
+  }
+  default_token_definition_2022(player, card, 0x493a, &token);
+  result = engine_any_legal_attacker_2022(player);
+  if (result == 0)
+  {
+    token.action = TOKEN2022_ACTION_ATTACKING;
+  }
+  token.special_code_on_generation = haste_and_must_attack_until_eot;
+  generate_token_2022(&token);
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2621080; original cards/guilds_of_ravnica.c:3786. */
+int card_thousand_year_storm(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  sp_ability_trigger_2022(player, event, 2, TYPE_SPELL, NULL, player, card);
+  if (event == EVENT_SPA)
+  {
+    for (iVar1 = 0; iVar2 = get_storminstantsorcery_count_2022(player), iVar1 < iVar2;
+         iVar1 = iVar1 + 1)
+    {
+      copy_spell_from_stack_2022(player, trigger_cause_controller, trigger_cause);
+    }
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
 }
 
 #endif

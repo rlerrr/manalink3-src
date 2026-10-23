@@ -7734,3 +7734,166 @@ void remove_abilities_by_test_2022(int player, event_t event, test_definition_20
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26e09d0; original functions/abilities.c:2981. */
+void protection_from_type(int player, int card, event_t event, type_t type)
+{
+  card_instance_t *instance;
+  int result;
+  int p;
+  int c;
+  if ((type & (TYPE_ARTIFACT | TYPE_INSTANT | TYPE_SORCERY | TYPE_CREATURE | TYPE_LAND)) !=
+      TYPE_NONE)
+  {
+    backtrace_and_abort("functions/abilities.c:2983\n!(type & (TYPE_ARTIFACT | TYPE_INSTANT | "
+                        "TYPE_SORCERY | TYPE_CREATURE | TYPE_LAND))");
+  }
+  if (event == EVENT_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      set_misc_protection_2022_impl(player, card);
+      return;
+    }
+  }
+  else if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    if (((unsigned int)event_result >> 24 & 0xff) == '\x06')
+    {
+      event_result = event_result | 1;
+      return;
+    }
+    get_protection_source(1, &p, &c);
+    instance = get_card_instance(p, c);
+    if (instance->internal_card_id == damage_card)
+    {
+      if ((type & instance->targets[3].player) == TYPE_NONE)
+      {
+        return;
+      }
+    }
+    else
+    {
+      result = is_what(p, c, type);
+      if (result == 0)
+      {
+        return;
+      }
+    }
+    event_result = event_result | 1;
+    return;
+  }
+  return;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26e0b90; original functions/abilities.c:3018. */
+void protection_from_colorless(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int p;
+  int c;
+  if (event == EVENT_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      set_misc_protection_2022_impl(player, card);
+      return;
+    }
+  }
+  else if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    if (((unsigned int)event_result >> 24 & 0xff) == '\x06')
+    {
+      event_result = event_result | 1;
+      return;
+    }
+    get_protection_source(1, &p, &c);
+    uVar1 = get_color(p, c);
+    if ((uVar1 & 0x3e) == 0)
+    {
+      event_result = event_result | 1;
+      return;
+    }
+  }
+  return;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26e0d00; original functions/abilities.c:3048. */
+void protection_from_monocolored(int player, int card, event_t event)
+{
+  int result;
+  int p;
+  int c;
+  if (event == EVENT_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      set_misc_protection_2022_impl(player, card);
+      return;
+    }
+  }
+  else if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    if (((unsigned int)event_result >> 24 & 0xff) == '\x06')
+    {
+      event_result = event_result | 1;
+      return;
+    }
+    get_protection_source(1, &p, &c);
+    result = count_colors(p, c);
+    if (result == 1)
+    {
+      event_result = event_result | 1;
+      return;
+    }
+  }
+  return;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26e0f50; original functions/abilities.c:3089. */
+void cannot_be_target_of_abilities(int player, int card, event_t event)
+{
+  int result;
+  int p;
+  int c;
+  if (event == EVENT_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      set_misc_protection_2022_impl(player, card);
+      return;
+    }
+  }
+  else if ((((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+            (player == affected_card_controller)) &&
+           (((unsigned int)event_result >> 24 & 0xff) == '\x05'))
+  {
+    get_protection_source(1, &p, &c);
+    result = is_being_cast(p, c);
+    if (result == 0)
+    {
+      event_result = event_result | 1;
+      return;
+    }
+  }
+  return;
+}
+
+#endif

@@ -3649,3 +3649,171 @@ int card_sunder_shaman(int player, int card, event_t event)
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+static int tin_street_dodger_legacy(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x25bb910; original cards/ravnica_allegiance.c:3947. */
+static int tin_street_dodger_legacy(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int result;
+
+  pcVar1 = get_card_instance(player, card);
+  if (event == EVENT_BLOCK_LEGALITY)
+  {
+    pcVar2 = get_card_instance(player, card);
+    if (((-1 < pcVar2->damage_target_player) &&
+         (pcVar1->damage_target_player == attacking_card_controller)) &&
+        (pcVar1->damage_target_card == attacking_card))
+    {
+      result = check_for_ability(affected_card_controller, affected_card, KEYWORD_DEFENDER);
+      if (result == 0)
+      {
+        event_result = 1;
+      }
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x25c3d60; original cards/ravnica_allegiance.c:3958. */
+int card_tin_street_dodger(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  haste(player, card, event);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+  LAB_025c3d9c:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_025c3dff;
+  }
+  else
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      if ((current_turn != player) || (0x17 < current_phase))
+      {
+        ai_modifier = ai_modifier + -1000;
+      }
+      goto LAB_025c3dff;
+    }
+    if (event != EVENT_RESOLVE_ACTIVATION)
+    {
+      if (event != EVENT_CLEANUP)
+      {
+        return 0;
+      }
+      goto LAB_025c3d9c;
+    }
+  }
+
+  instance = get_card_instance(player, card);
+  create_targetted_legacy_effect(player, card, tin_street_dodger_legacy,
+                                 instance->parent_controller, instance->parent_card);
+LAB_025c3dff:
+  result = generic_activated_ability_2022(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25c2250; original cards/ravnica_allegiance.c:3080. */
+int card_revival_revenge(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int can_play_first_half;
+  unsigned int uVar2;
+  int result;
+
+  target_definition_2022_t td;
+  char msg[100];
+  test_definition_2022_t this_test;
+  memcpy(msg, "Select a creature card with CMC 3 or less.", 43);
+  memset(msg + 43, 0, 57);
+  new_default_test_definition_2022(&this_test, 2, msg);
+  this_test.cmc = 4;
+  this_test.cmc_flag = 3;
+  default_target_definition_2022(player, card, &td, 0);
+  td.zone = 0x1000;
+  td.allowed_controller = 1 - player;
+  if (event == EVENT_PLAY_FIRST_HALF)
+  {
+    result = generic_spell_2022(player, card, EVENT_CAST_SPELL, 8, NULL, NULL, 1, &this_test);
+    return result;
+  }
+  if (event == EVENT_PLAY_SECOND_HALF)
+  {
+    new_pick_target_2022(&td, "TARGET_OPPONENT", 0, 1);
+    return 0;
+  }
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+        goto LAB_025c237e;
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          uVar2 = instance->info_slot;
+          if ((uVar2 & 1) != 0)
+          {
+            result = validate_target_from_grave_source(player, card, player, 0);
+            if (result != -1)
+            {
+              reanimate_permanent_2022(player, card, player, result, REANIMATE2022_DEFAULT);
+            }
+            uVar2 = instance->info_slot;
+          }
+          if ((uVar2 & 2) != 0)
+          {
+            gain_life_2022(player, life[player]);
+            result = valid_target_2022(&td);
+            if (result != 0)
+            {
+              uVar2 = round_up_value(life[instance->targets[0].player]);
+              lose_life_2022(instance->targets[0].player, uVar2);
+            }
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_025c237e;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+        goto LAB_025c237e;
+    }
+  }
+  get_card_instance(player, card);
+LAB_025c237e:
+  result = can_target_2022(&td);
+  can_play_first_half =
+      generic_spell_2022(player, card, EVENT_CAN_CAST, 8, NULL, NULL, 1, &this_test);
+  result =
+      hybrid_split_card(player, card, event, 0x4d02, can_play_first_half, 5, 0x4d01, result, 10);
+  return result;
+}
+
+#endif

@@ -755,3 +755,113 @@ int manipulate_all_2022(int player, int card, int t_player, int type, int flag1,
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26677f0; original functions/manipulate_and_damage_all.c:299. */
+int new_damage_all_2022(int player, int card, int targ_player, int dmg, int mode,
+                        test_definition_2022_t *this_test)
+{
+  int player_00;
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iStack_1c;
+  int iStack_18;
+  int iStack_14;
+
+  if (dmg < 1)
+  {
+    return 0;
+  }
+  iStack_18 = 0;
+  if (this_test != NULL)
+  {
+    iStack_18 = new_get_test_score_2022(this_test);
+  }
+  iStack_14 = 0;
+  iStack_1c = 0;
+  player_00 = current_turn;
+LAB_0266787a:
+  if ((targ_player != player_00) && (iVar1 = 1, targ_player != 2))
+    goto LAB_02667870;
+  do
+  {
+    iVar1 = active_cards_count[player_00] + -1;
+    if (-1 < iVar1)
+    {
+    LAB_026678e2:
+      do
+      {
+        instance = in_play(player_00, iVar1);
+        if (instance != NULL)
+        {
+          if (this_test == NULL)
+          {
+            iVar3 = is_what(player_00, iVar1, 2);
+            if (((iVar3 != 0) && ((mode & 1U) != 0)) ||
+                ((iVar3 = is_what(player_00, iVar1, 0x100), iVar3 != 0 && ((mode & 0x20U) != 0))))
+              goto LAB_02667915;
+          }
+          else
+          {
+            iVar3 = new_make_test_in_play_2022(player_00, iVar1, iStack_18, this_test);
+            if (iVar3 == 0)
+            {
+              is_what(player_00, iVar1, 2);
+              is_what(player_00, iVar1, 0x100);
+            }
+            else
+            {
+            LAB_02667915:
+              if (((card != iVar1) || (player != player_00)) ||
+                  (((mode & 4U) == 0 && ((this_test == NULL || (this_test->not_me != 1))))))
+              {
+                iVar3 = damage_creature(player_00, iVar1, dmg, player, card);
+                if (-1 < iVar3)
+                {
+                  instance = get_card_instance(player, iVar3);
+                  if ((mode & 0x10U) != 0)
+                  {
+                    instance->targets[3].card = instance->targets[3].card | 0x20;
+                  }
+                  if ((mode & 8U) != 0)
+                  {
+                    instance->targets[3].card = instance->targets[3].card | 0x80;
+                  }
+                }
+                iStack_1c = iStack_1c + dmg;
+                iVar1 = iVar1 + -1;
+                if (iVar1 == -1)
+                  break;
+                goto LAB_026678e2;
+              }
+            }
+          }
+        }
+        iVar1 = iVar1 + -1;
+      } while (iVar1 != -1);
+    }
+    if ((mode & 2U) != 0)
+    {
+      damage_player(player_00, dmg, player, card);
+    }
+    do
+    {
+      player_00 = current_turn;
+      iVar1 = iStack_14 + 1;
+      current_turn = player_00;
+      if (1 < iVar1)
+      {
+        return iStack_1c;
+      }
+    LAB_02667870:
+      iStack_14 = iVar1;
+      if (iVar1 == 0)
+        goto LAB_0266787a;
+      player_00 = 1 - player_00;
+    } while ((player_00 != targ_player) && (targ_player != 2));
+  } while (true);
+}
+
+#endif

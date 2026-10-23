@@ -3999,3 +3999,88 @@ int card_arcades_the_strategist(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+int card_chromium_the_mutable(int player, int card, event_t event);
+int card_aethershield_artificer(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2207550; original cards/m19.c:359. */
+int card_chromium_the_mutable(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  test_definition_2022_t test;
+
+  check_legend_rule(player, card, event);
+  cannot_be_countered(player, card, event);
+  instance = get_card_instance(player, card);
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = flash(player, card, event);
+      return result;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      default_test_definition_2022(&test, 2);
+      test.subtype = 0x5b;
+      test.toughness = 1;
+      test.power = 1;
+      result = humiliate_and_set_pt_abilities_2022(player, card, instance->parent_controller,
+                                                   instance->parent_card, 4, &test);
+      instance = get_card_instance(player, result);
+      instance->targets[4].player = (SP_KEYWORD_HEXPROOF | SP_KEYWORD_UNBLOCKABLE);
+    }
+  }
+  result =
+      generic_activated_ability_2022(player, card, event, 0x20, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+
+/* ManalinkEh 2022: 0x2206800; original cards/m19.c:24. */
+int card_aethershield_artificer(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_2022_t td;
+  default_target_definition_2022(player, card, &td, 2);
+  td.special = 8;
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  td.allow_cancel = 0;
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    result = engine_any_legal_attacker_2022(player);
+    if ((result == 0) && (current_turn == player))
+    {
+      event_flags = event_flags | EA_FORCE_ATTACK;
+    }
+  }
+  else if ((event == EVENT_BEGIN_COMBAT) && (current_turn == player))
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      result = can_target_2022(&td);
+      if (result != 0)
+      {
+        result = new_pick_target_2022(&td, "Select target artifact creature you control", 0, 0x80);
+        if (result != 0)
+        {
+          instance = get_card_instance(player, card);
+          result = instance->targets[0].card;
+          instance = get_card_instance(player, card);
+          pump_ability_until_eot_2022(player, card, instance->targets[0].player, result, 2, 2, 0,
+                                      0x800);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+#endif

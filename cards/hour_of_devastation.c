@@ -5191,3 +5191,214 @@ int card_dreamstealer(int player, int card, event_t event)
   result = eternalize(player, card, event, CARD_ID_DREAMSTEALER, 4, 2, 0, 0, 0, 0);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+int card_god_pharaohs_gift(int player, int card, event_t event);
+int card_majestic_myriarch(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x20d5cb0; original cards/hour_of_devastation.c:3014. */
+int card_god_pharaohs_gift(int player, int card, event_t event)
+{
+  int *piVar1;
+  card_instance_t *instance;
+  int result;
+  token_generation_2022_t token;
+  test_definition_2022_t test;
+
+  new_default_test_definition_2022(&test, 2, "Select a creature card to exile.");
+  instance = get_card_instance(player, card);
+  instance->number_of_targets = '\0';
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    result = engine_any_legal_attacker_2022(player);
+    if (result == 0)
+    {
+      event_flags = event_flags | EA_FORCE_ATTACK;
+      return 0;
+    }
+  }
+  else if ((event == EVENT_BEGIN_COMBAT) && (current_turn == player))
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      instance = in_play(player, card);
+      if (instance != NULL)
+      {
+        result = count_graveyard_by_type(player, 2);
+        if (0 < result)
+        {
+          result = graveyard_has_shroud(player);
+          if (result == 0)
+          {
+            piVar1 = graveyard_ptr_mutable[player];
+            result = new_select_a_card_2022(player, player, 2, 0, 2, -1, &test);
+            if (result != -1)
+            {
+              default_token_definition_2022(player, card,
+                                            (unsigned int)cards_data[piVar1[result]].id, &token);
+              token.action = TOKEN2022_ACTION_ADD_SUBTYPE | TOKEN2022_ACTION_HASTE;
+              token.pow = 4;
+              token.tou = 4;
+              token.action_argument = 0xde;
+              token.color_forced = '\x02';
+              generate_token_2022(&token);
+              rfg_card_from_grave(player, result);
+            }
+          }
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+
+/* ManalinkEh 2022: 0x20d1930; original cards/hour_of_devastation.c:1659. */
+int card_majestic_myriarch(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  unsigned int uVar4;
+  unsigned int uStack_18;
+  unsigned int uStack_14;
+  if (event - EVENT_POWER < 2)
+  {
+    if (((card == affected_card) && (affected_card_controller == player)) && (player != -1))
+    {
+      iVar1 = count_subtype(player, 2, -1);
+      set_characteristic_pt(iVar1 * 2);
+    }
+  }
+  else if ((event == EVENT_CHANGE_TYPE) && (current_turn == player))
+  {
+    iVar1 = engine_any_legal_attacker_2022(player);
+    if (iVar1 == 0)
+    {
+      event_flags = event_flags | EA_FORCE_ATTACK;
+    }
+  }
+  if ((-1 < player) && (-1 < card))
+  {
+    iVar1 = beginning_of_phase(player, card, event, 2, -1, 0x15);
+    if (iVar1 != 0)
+    {
+      instance = in_play(player, card);
+      if (instance != NULL)
+      {
+        iVar1 = is_humiliated_for_ability(player, card, AL_TRIG);
+        if (iVar1 == 0)
+        {
+          uStack_14 = 0;
+          if (active_cards_count[player] < 1)
+          {
+            uStack_18 = 0;
+          }
+          else
+          {
+            iVar1 = 0;
+            uStack_18 = 0;
+            do
+            {
+              instance = in_play(player, iVar1);
+              if (instance != NULL)
+              {
+                iVar3 = is_what(player, iVar1, 2);
+                if (iVar3 != 0)
+                {
+                  uVar4 = get_abilities(player, iVar1, EVENT_ABILITIES, -1);
+                  uStack_14 =
+                      uStack_14 | uVar4 & (KEYWORD_DOUBLE_STRIKE | KEYWORD_REACH |
+                                           KEYWORD_FIRST_STRIKE | KEYWORD_TRAMPLE | KEYWORD_FLYING);
+                  uVar4 = get_special_abilities_2022(player, iVar1);
+                  uStack_18 = uStack_18 | uVar4 & (SP_KEYWORD_HEXPROOF | SP_KEYWORD_MENACE |
+                                                   SP_KEYWORD_INDESTRUCTIBLE |
+                                                   SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_VIGILANCE |
+                                                   SP_KEYWORD_HASTE | SP_KEYWORD_LIFELINK);
+                }
+              }
+              iVar1 = iVar1 + 1;
+            } while (iVar1 < active_cards_count[player]);
+          }
+          pump_ability_until_eot_2022(player, card, player, card, 0, 0, uStack_14, uStack_18);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20d3ad0; original cards/hour_of_devastation.c:2416. */
+int card_claim_fame(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  target_definition_2022_t td;
+  char msg[100];
+  test_definition_2022_t this_test;
+  memcpy(msg, "Select a creature card with CMC 2 or less.", 43);
+  memset(msg + 43, 0, 57);
+  new_default_test_definition_2022(&this_test, 2, msg);
+  this_test.cmc = 3;
+  this_test.cmc_flag = 3;
+  default_target_definition_2022(player, card, &td, 2);
+  instance = get_card_instance(player, card);
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_GRAVEYARD_ABILITY)
+    {
+      result = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_CREATURE", 1, NULL);
+      if ((result != 0) &&
+          (result = can_sorcery_be_played(player, EVENT_GRAVEYARD_ABILITY), result != 0))
+      {
+        result = aftermath(player, card, EVENT_GRAVEYARD_ABILITY, 1, 0, 0, 0, 1, 0, 0);
+        return result;
+      }
+    }
+    else
+    {
+      if (event == EVENT_PLAY_FIRST_HALF)
+      {
+        result = generic_spell_2022(player, card, EVENT_CAST_SPELL, 8, NULL, NULL, 1, &this_test);
+        return result;
+      }
+      if (event == EVENT_PLAY_SECOND_HALF)
+      {
+        generic_spell_2022(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_CREATURE", 1, NULL);
+      }
+      else if (event == EVENT_RESOLVE_SPELL)
+      {
+        result = get_aftermath(player, card);
+        if (result == 0)
+        {
+          result = validate_target_from_grave_source(player, card, player, 0);
+          if (result != -1)
+          {
+            reanimate_permanent_2022(player, card, player, result, REANIMATE2022_DEFAULT);
+          }
+        }
+        else
+        {
+          pump_ability_until_eot_2022(player, card, instance->targets[0].player,
+                                      instance->targets[0].card, 2, 0, 0, 4);
+          kill_card(player, card, KILL_EXILE);
+        }
+        kill_card(player, card, KILL_DESTROY);
+      }
+    }
+    result = aftermath(player, card, event, 1, 0, 0, 0, 1, 0, 0);
+    return result;
+  }
+  result = generic_spell_2022(player, card, EVENT_CAN_CAST, 8, NULL, NULL, 1, &this_test);
+  return result;
+}
+
+#endif

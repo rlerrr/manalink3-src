@@ -2785,3 +2785,118 @@ LAB_0266afdc:
   iVar4 = choose_a_color_exe(player, prompt, 1, iVar4, available);
   return iVar4;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x266c7a0; original functions/produce_mana.c:1308. */
+int artifact_mana_all_one_color_2022(int player, int card, event_t event, int amount, int sac)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = is_tapped(player, card);
+    if (((result == 0) && (result = is_animated_and_sick(player, card), result == 0)) &&
+        (result = can_produce_mana_2022(player, card), result != 0))
+    {
+      if (sac == 0)
+      {
+        return 1;
+      }
+      result = can_sacrifice_as_cost_2022(player, 1, 0x40, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+      return (unsigned int)(result != 0);
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    if (sac == 0)
+    {
+      ai_modifier = ai_modifier + -0xc;
+      instance = get_card_instance(player, card);
+      produce_mana_tapped_all_one_color_with_default_impl(
+          player, card, (unsigned int)instance->mana_color, amount, COLOR_TEST_COLORLESS, 1, 1);
+    }
+    else
+    {
+      ai_modifier = ai_modifier + -0x24;
+      instance = get_card_instance(player, card);
+      produce_mana_tapped_all_one_color_with_default_impl(
+          player, card, (unsigned int)instance->mana_color, amount, COLOR_TEST_COLORLESS, 1, 1);
+      if (spell_fizzled != 1)
+      {
+        kill_card(player, card, KILL_SACRIFICE);
+        return 0;
+      }
+    }
+  }
+  else if (((event == EVENT_COUNT_MANA) && (card == affected_card)) &&
+           ((player == affected_card_controller &&
+             (result =
+                  artifact_mana_all_one_color_2022(player, card, EVENT_CAN_ACTIVATE, amount, sac),
+              result != 0))))
+  {
+    instance = get_card_instance(player, card);
+    declare_mana_available_maybe_hex(player, (unsigned int)instance->mana_color, amount);
+    return 0;
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26712f0; original functions/produce_mana.c:1327. */
+int artifact_mana_all_different_colors_2022(int player, int card, event_t event, int amount,
+                                            int sac)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = is_tapped(player, card);
+    if (((result == 0) && (result = is_animated_and_sick(player, card), result == 0)) &&
+        (result = can_produce_mana_2022(player, card), result != 0))
+    {
+      if (sac == 0)
+      {
+        return 1;
+      }
+      result = can_sacrifice_as_cost_2022(player, 1, 0x40, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+      return (unsigned int)(result != 0);
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    if (sac == 0)
+    {
+      ai_modifier = ai_modifier + -0xc;
+      instance = get_card_instance(player, card);
+      produce_mana_tapped_all_different_colors_2022_impl(
+          player, card, (unsigned int)instance->mana_color, amount, NULL);
+      return 0;
+    }
+    ai_modifier = ai_modifier + -0x24;
+    instance = get_card_instance(player, card);
+    produce_mana_tapped_all_different_colors_2022_impl(
+        player, card, (unsigned int)instance->mana_color, amount, NULL);
+    if (spell_fizzled != 1)
+    {
+      kill_card(player, card, KILL_SACRIFICE);
+      return 0;
+    }
+  }
+  else if (((event == EVENT_COUNT_MANA) && (card == affected_card)) &&
+           ((player == affected_card_controller &&
+             (result =
+                  artifact_mana_all_one_color_2022(player, card, EVENT_CAN_ACTIVATE, amount, sac),
+              result != 0))))
+  {
+    instance = get_card_instance(player, card);
+    declare_mana_available_maybe_hex(player, (unsigned int)instance->mana_color, amount);
+    return 0;
+  }
+  return 0;
+}
+
+#endif

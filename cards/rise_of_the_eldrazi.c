@@ -5386,3 +5386,77 @@ int level_up_2022(int player, int card, event_t event, int x, int b, int u, int 
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+int card_aura_finesse(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x24aff70; original cards/rise_of_the_eldrazi.c:1538. */
+int card_aura_finesse(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_2022_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition_2022(player, card, &td, 4);
+        td.required_subtype = 0x4000;
+        td.allowed_controller = player;
+        td.preferred_controller = player;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target_2022(&td);
+          if (result == 0)
+          {
+            return 0;
+          }
+          set_special_flags_2022(instance->targets[0].player, instance->targets[0].card,
+                                 SF_MOVE_AURA_LEGAL_TARGET);
+          result = call_card_function(instance->targets[0].player, instance->targets[0].card,
+                                      EVENT_CAN_MOVE_AURA);
+          if (result != 0)
+          {
+            call_card_function(instance->targets[0].player, instance->targets[0].card,
+                               EVENT_MOVE_AURA);
+            call_card_function(instance->targets[0].player, instance->targets[0].card,
+                               EVENT_RESOLVE_MOVING_AURA);
+          }
+          remove_special_flags_2022(instance->targets[0].player, instance->targets[0].card,
+                                    SF_MOVE_AURA_LEGAL_TARGET);
+          draw_a_card(player);
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_024b0035;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition_2022(player, card, &td, 4);
+  td.required_subtype = 0x4000;
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  get_card_instance(player, card);
+LAB_024b0035:
+  result =
+      generic_spell_2022(player, card, event, 0x81, &td, "Select target Aura you control", 1, NULL);
+  return result;
+}
+
+#endif

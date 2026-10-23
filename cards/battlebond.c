@@ -1650,3 +1650,86 @@ LAB_02027990:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+int card_okaun_eye_of_chaos(int player, int card, event_t event);
+int card_zndrsplt_eye_of_wisdom(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x2027e50; original cards/battlebond.c:757. */
+int card_okaun_eye_of_chaos(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int power;
+  check_legend_rule(player, card, event);
+  partner_with(player, card, event, 0x48e0);
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    result = engine_any_legal_attacker_2022(player);
+    if ((result == 0) && (current_turn == player))
+    {
+      event_flags = event_flags | EA_FORCE_ATTACK;
+    }
+  }
+  else if (event == EVENT_BEGIN_COMBAT)
+  {
+    if (current_turn == player)
+    {
+      do
+      {
+        result = flip_a_coin(player, card);
+        instance = get_card_instance(player, card);
+        instance->regen_status =
+            instance->regen_status | (KEYWORD_RECALC_POWER | KEYWORD_RECALC_TOUGHNESS);
+      } while (result == 1);
+    }
+  }
+  else if ((event == EVENT_COIN_FLIP_WON_OR_LOST) && (affected_card == 1))
+  {
+    result = get_toughness(player, card);
+    power = get_power(player, card);
+    pump_until_eot_merge_previous_2022(player, card, player, card, power, result);
+  }
+  return 0;
+}
+
+
+/* ManalinkEh 2022: 0x2028690; original cards/battlebond.c:1080. */
+int card_zndrsplt_eye_of_wisdom(int player, int card, event_t event)
+{
+  int result;
+  check_legend_rule(player, card, event);
+  partner_with(player, card, event, 0x48ba);
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    result = engine_any_legal_attacker_2022(player);
+    if ((result == 0) && (current_turn == player))
+    {
+      event_flags = event_flags | EA_FORCE_ATTACK;
+    }
+  }
+  else if (event == EVENT_BEGIN_COMBAT)
+  {
+    if (current_turn == player)
+    {
+      do
+      {
+        result = flip_a_coin(player, card);
+        if (result != 1)
+        {
+          return 0;
+        }
+        result = flip_a_coin(player, card);
+      } while (result == 1);
+    }
+  }
+  else if ((event == EVENT_COIN_FLIP_WON_OR_LOST) && (affected_card == 1))
+  {
+    draw_a_card(player);
+  }
+  return 0;
+}
+
+#endif

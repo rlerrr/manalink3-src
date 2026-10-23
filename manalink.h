@@ -3623,6 +3623,131 @@ int phase_out_impl_2022(int player, int card, int sf2, int mode);
 int phase_out_2022(int player, int card);
 #endif
 
+/* October 2022 native legal-attacker query, verified against Magic.exe. */
+#ifndef SHANDALAR
+static inline int engine_any_legal_attacker_2022(int player)
+{
+  return EXE_FN(int, 0x434be0, int)(player);
+}
+int general_has_partner_2022(int csvid);
+int get_partner_with_id(int csvid);
+#endif
+
+/* October 2022 haste and delayed-removal APIs, including native token callbacks. */
+#ifndef SHANDALAR
+int haste_and_remove_eot_2022(int player, int card, event_t event);
+int haste_and_sacrifice_eot_2022(int player, int card, event_t event);
+int haste_and_remove_at_beginning_of_next_end_step_2022(int player, int card, int t_player,
+                                                        int t_card, int kill_mode);
+void haste_and_sacrifice_token_at_end_of_next_turn_2022(token_generation_2022_t *token, int beast,
+                                                        int number);
+void haste_and_remove_token_at_end_of_next_turn_2022(token_generation_2022_t *token, int beast,
+                                                     int number);
+#endif
+
+/* October 2022 reanimation APIs and four-argument before-ETB callback. */
+#ifndef SHANDALAR
+typedef void (*ReanimationBeforeEtb_2022)(int, int, int, int);
+int new_reanimate_all_2022(int player, int card, int targ_player, test_definition_2022_t *this_test,
+                           reanimate_mode_2022_t action);
+int reanimate_permanent_2022(int player, int card, int target_graveyard, int selected,
+                             reanimate_mode_2022_t action);
+int reanimate_permanent_with_effect_2022(int player, int card, int target_graveyard, int selected,
+                                         reanimate_mode_2022_t action, CardFunction effect_fn);
+int reanimate_permanent_with_counter_and_effect_2022(int player, int card, int target_graveyard,
+                                                     int selected, reanimate_mode_2022_t action,
+                                                     counter_t counter_type, CardFunction effect_fn);
+int reanimate_permanent_with_function_2022(int player, int card, int target_graveyard, int selected,
+                                           reanimate_mode_2022_t action,
+                                           ReanimationBeforeEtb_2022 before_etb);
+void reanimate_all_2022(int player, int card, int targ_player, int type, int flag1, int subtype,
+                        int flag2, int color, int flag3, int id, int flag4, int cc, int flag5,
+                        reanimate_mode_2022_t action);
+int effect_unearth_2022(int player, int card, event_t event);
+void ereboss_titan_effect_2022(int player);
+int upkeep_trigger_mode_impl_2022(int player, int card, event_t event,
+                                  resolve_trigger_t trigger_mode, int no_check);
+#endif
+
+/* October 2022 miscellaneous protection frontends. */
+#ifndef SHANDALAR
+void protection_from_type(int player, int card, event_t event, type_t type);
+void protection_from_colorless(int player, int card, event_t event);
+void protection_from_monocolored(int player, int card, event_t event);
+void cannot_be_target_of_abilities(int player, int card, event_t event);
+#endif
+
+/* October 2022 leaves-play trigger API with native test definitions. */
+#ifndef SHANDALAR
+int test_leaves_play_mode_2022(int triggering_player, int triggering_card, event_t event,
+                               int controller, resolve_trigger_t mode, test_definition_2022_t *test,
+                               int can_be_suppressed, int can_be_duplicated);
+int test_leaves_play_2022(int triggering_player, int triggering_card, event_t event, int controller,
+                          test_definition_2022_t *test, int can_be_suppressed,
+                          int can_be_duplicated);
+#endif
+
+/* October 2022 area damage with native creature/planeswalker tests. */
+#ifndef SHANDALAR
+int new_damage_all_2022(int player, int card, int targ_player, int dmg, int mode,
+                        test_definition_2022_t *this_test);
+#endif
+
+/* October 2022 native reveal and destruction-tracking APIs. */
+#ifndef SHANDALAR
+card_instance_t *legacy_permanents_destroyed_this_way_accumulate_2022(
+    int src_player, int src_card, card_instance_t *previous_effect, int tgt_player, int tgt_card);
+int reveal_card_until_you_reveal_test_2022(int player, int t_player, test_definition_2022_t *test,
+                                           int flags);
+#endif
+
+/* October 2022 casting-as-flash API with native target definitions. */
+#ifndef SHANDALAR
+int can_play_cards_as_though_they_had_flash_2022(int player, int card, event_t event,
+                                                 target_definition_2022_t *td, char *prompt,
+                                                 int literal);
+#endif
+
+/* October 2022 shared snow-land predicate. */
+#ifndef SHANDALAR
+int control_a_snow_land_2022(int player, int must_be_untapped);
+#endif
+
+/* October 2022 command-zone destination wrapper. */
+#ifndef SHANDALAR
+int put_commander_from_command_zone_to_2022(int player, int where);
+#endif
+
+/* October 2022 public card callbacks and shared Windscouter entry point. */
+#ifndef SHANDALAR
+int bounce_at_end_of_combat_2022(int player, int card, event_t event);
+char *damage_from_artifact_source_2022(int who_chooses, int player, int card);
+int card_windscouter(int player, int card, event_t event);
+#endif
+
+/* October 2022 storm bookkeeping and hand-type reader APIs. */
+#ifndef SHANDALAR
+void increment_storm_count_2022(int player, int mode);
+int get_specific_storm_count_2022(int player);
+int get_storm_count_2022(void);
+int get_stormcreature_count_2022(int k);
+int get_storminstantsorcery_count_2022(int k);
+int get_stormenchantment_count_2022(int k);
+int get_stormcolor_count_2022(int player, color_t clr);
+int count_type_in_hand_2022(int player, type_t type);
+#endif
+
+/* October 2022 artifact mana helpers and shared target predicates. */
+#ifndef SHANDALAR
+int artifact_mana_all_one_color_2022(int player, int card, event_t event, int amount, int sac);
+int artifact_mana_all_different_colors_2022(int player, int card, event_t event, int amount,
+                                            int sac);
+char *is_land_or_nonblack_creature_2022(int who_chooses, int player, int card, int targeting_player,
+                                        int targeting_card);
+char *colored_damage_source_that_damages_me_2022(int who_chooses, int player, int card,
+                                                 int targeting_player, int targeting_card);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

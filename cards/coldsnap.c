@@ -3912,3 +3912,47 @@ int card_drelnoch(int player, int card, event_t event)
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x216b6c0; original cards/coldsnap.c:3799. */
+int card_zombie_musher(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  if (event == EVENT_BLOCK_LEGALITY)
+  {
+    iVar1 = is_humiliated_for_ability(player, card, AL_STATIC);
+    if ((((iVar1 == 0) && (attacking_card_controller == player)) && (attacking_card == card)) &&
+        (iVar1 = control_a_snow_land_2022(1 - current_turn, 0), iVar1 != 0))
+    {
+      event_result = 1;
+    }
+  }
+  else if ((((unsigned int)land_can_be_played >> 8 & 0xff) & 2) != 0)
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar1 = get_cost_mod_for_activated_abilities_2022(player, card, 0, 0, 0, 0, 0, 0);
+      iVar2 = can_use_activated_abilities_2022(player, card);
+      if ((iVar2 != 0) && (iVar1 = has_snow_mana(player, 1, iVar1), iVar1 != 0))
+      {
+        iVar1 = can_regenerate(player, card);
+        return iVar1;
+      }
+    }
+    else if (event == EVENT_ACTIVATE)
+    {
+      iVar1 = get_cost_mod_for_activated_abilities_2022(player, card, 0, 0, 0, 0, 0, 0);
+      charge_snow_mana(player, card, 1, iVar1);
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      iVar1 = regeneration(player, card, EVENT_RESOLVE_ACTIVATION, 1, 0, 0, 0, 0, 0);
+      return iVar1;
+    }
+  }
+  return 0;
+}
+
+#endif

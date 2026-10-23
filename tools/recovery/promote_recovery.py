@@ -214,6 +214,17 @@ TOKEN_FRONTEND_API_NAMES={name:name+'_2022' for name in ('generate_token_by_id',
 WISH_API_NAMES={name:name+'_2022' for name in ('new_card_from_list','generic_wish_effect')}
 ABILITY_FILTER_API_NAMES={'remove_abilities_by_test':'remove_abilities_by_test_2022'}
 LIBRARY_REVEAL_API_NAMES={name:name+'_2022' for name in ('reveal_top_cards_of_library','reveal_top_cards_of_library_and_choose','reveal_top_cards_of_library_and_choose_type','reveal_top_cards_of_library_and_choose_fn','reveal_top_cards_of_library_and_choose_who_chooses','reveal_top_cards_of_library_and_choose_fn_who_chooses')}
+TOKEN_DELAY_API_NAMES={name:name+'_2022' for name in ('haste_and_remove_eot','haste_and_sacrifice_eot','haste_and_remove_at_beginning_of_next_end_step','haste_and_sacrifice_token_at_end_of_next_turn','haste_and_remove_token_at_end_of_next_turn')}
+REANIMATION_API_NAMES={name:name+'_2022' for name in ('new_reanimate_all','reanimate_permanent','reanimate_permanent_with_effect','reanimate_permanent_with_counter_and_effect','reanimate_permanent_with_function','reanimate_all','effect_unearth','ereboss_titan_effect','upkeep_trigger_mode_impl')}
+REANIMATION_ENUM_VALUES=dict(REANIMATE_DEFAULT=0,REANIMATE_TAP=1,REANIMATE_NO_CONTROL_LEGACY=2,REANIMATE_UNEARTH=4,REANIMATE_ADD_BLACK_ZOMBIE=8,REANIMATE_HASTE_AND_EXILE_AT_EOT=16,REANIMATE_PLUS1_PLUS1_COUNTER=32,REANIMATE_MINUS1_MINUS1_COUNTER=64,REANIMATE_HASTE_UNTIL_EOT=128,REANIMATE_ATTACH_AS_AURA=256,REANIMATE_RETURN_TO_HAND=512,REANIMATE_ALL_UNDER_CASTERS_CONTROL=1024,REANIMATE_UNDER_OWNER_CONTROL=2048,REANIMATE_SPECIAL_R_ALL=4096,REANIMATE_HASTE_AND_EXILE_AT_YOUR_UPKEEP=8192,REANIMATE_SPECIAL_LIVING_DEAD=16384,REANIMATE_RETURN_TO_PLAY_TRANSFORMED=32768,REANIMATE_ATTACH_AURA_TO_REANIMATOR=65536,REANIMATEXTRA_RETURN_TO_HAND2=-1,REANIMATEXTRA_LEAVE_IN_GRAVEYARD=-2,REANIMATEXTRA_EXILE_FROM_GRAVEYARD=-3)
+REANIMATION_DOMAIN_NAMES={name:name.replace('REANIMATE_','REANIMATE2022_',1).replace('REANIMATEXTRA_','REANIMATEXTRA2022_',1) for name in REANIMATION_ENUM_VALUES}
+REANIMATION_DOMAIN_NAMES['reanimate_mode_t']='reanimate_mode_2022_t'
+LEAVES_TEST_API_NAMES={name:name+'_2022' for name in ('test_leaves_play','test_leaves_play_mode')}
+DAMAGE_ALL_API_NAMES={'new_damage_all':'new_damage_all_2022'}
+REVEAL_DESTROY_API_NAMES={name:name+'_2022' for name in ('reveal_card_until_you_reveal_test','legacy_permanents_destroyed_this_way_accumulate')}
+FLASH_API_NAMES={'can_play_cards_as_though_they_had_flash':'can_play_cards_as_though_they_had_flash_2022'}
+SNOW_API_NAMES={'control_a_snow_land':'control_a_snow_land_2022'}
+COMMAND_ZONE_API_NAMES={'put_commander_from_command_zone_to':'put_commander_from_command_zone_to_2022'}
 TUTOR_DESTINATION_NAMES={name:name.replace('TUTOR_','TUTOR2022_',1) for name in ('TUTOR_0','TUTOR_HAND','TUTOR_DECK','TUTOR_GRAVE','TUTOR_PLAY','TUTOR_PLAY_TAPPED','TUTOR_RFG','TUTOR_EXILE','TUTOR_GET_ID','TUTOR_PLAY_ATTACKING','TUTOR_GET_POSITION','TUTOR_BOTTOM_OF_DECK','TUTOR_TPLAYER_HAND','TUTOR_BOTTOM_OF_DECK_RANDOM','TUTOR_HAND_AND_MARK','TUTOR_OPPOSITION_AGENT')}
 TUTOR_ORIGIN_NAMES={name:name.replace('TUTOR_FROM_','TUTOR_FROM2022_',1) for name in ('TUTOR_FROM_DECK','TUTOR_FROM_GRAVE','TUTOR_FROM_RFG','TUTOR_FROM_HAND','TUTOR_FROM_GRAVE_NOTARGET','TUTOR_FROM_DECK_AUTO')}
 TUTOR_DOMAIN_NAMES={'tutor_t':'tutor_destination_2022_t','tutor_from_t':'tutor_from_2022_t'}
@@ -252,7 +263,7 @@ def project_extension_flags(text):
     return re.sub(r'\(\((\w+)->field_21\)\.ext\)->(special_flags[23]?)\b',replace,text),projections
 
 
-def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=(), state_mask_replacements=(), keyword_mask_replacements=(), use_keyword_accessors_2022=False, use_extension_flags_2022=False, use_mana_api_2022=False, use_token_api_2022=False, use_test_api_2022=False, use_target_api_2022=False, use_sacrifice_api_2022=False, use_spell_api_2022=False, use_ability_api_2022=False, use_pump_api_2022=False, use_activated_api_2022=False, use_attack_api_2022=False, use_entry_api_2022=False, use_level_buddy_api_2022=False, use_phyrexian_api_2022=False, use_spell_trigger_api_2022=False, use_death_trigger_api_2022=False, use_action_api_2022=False, use_global_tutor_api_2022=False, use_specific_cip_api_2022=False, use_life_api_2022=False, use_cannot_lose_api_2022=False, use_life_loss_api_2022=False, use_shared_card_api_2022=False, use_delayed_callback_api_2022=False, use_copy_api_2022=False, use_text_change_api_2022=False, use_token_frontend_api_2022=False, use_wish_api_2022=False, use_ability_filter_api_2022=False, use_library_reveal_api_2022=False):
+def clean(text, overlapping_globals=(), local_type_declarations=(), array_boundaries=(), state_mask_replacements=(), keyword_mask_replacements=(), use_keyword_accessors_2022=False, use_extension_flags_2022=False, use_mana_api_2022=False, use_token_api_2022=False, use_test_api_2022=False, use_target_api_2022=False, use_sacrifice_api_2022=False, use_spell_api_2022=False, use_ability_api_2022=False, use_pump_api_2022=False, use_activated_api_2022=False, use_attack_api_2022=False, use_entry_api_2022=False, use_level_buddy_api_2022=False, use_phyrexian_api_2022=False, use_spell_trigger_api_2022=False, use_death_trigger_api_2022=False, use_action_api_2022=False, use_global_tutor_api_2022=False, use_specific_cip_api_2022=False, use_life_api_2022=False, use_cannot_lose_api_2022=False, use_life_loss_api_2022=False, use_shared_card_api_2022=False, use_delayed_callback_api_2022=False, use_copy_api_2022=False, use_text_change_api_2022=False, use_token_frontend_api_2022=False, use_wish_api_2022=False, use_ability_filter_api_2022=False, use_library_reveal_api_2022=False, use_token_delay_api_2022=False, use_reanimation_api_2022=False, use_leaves_test_api_2022=False, use_damage_all_api_2022=False, use_reveal_destroy_api_2022=False, use_flash_api_2022=False, use_snow_api_2022=False, use_command_zone_api_2022=False):
     text = strip_comments(text).strip()
     for replacement in state_mask_replacements:
         text = text.replace(replacement['original'], replacement['replacement'])
@@ -261,6 +272,8 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
         literals.append(match[0])
         return f"RECOVERY_LITERAL_{len(literals)-1}"
     text = re.sub(LITERAL, save_literal, text)
+    if use_reanimation_api_2022:
+        text=re.sub(r'\b_func_void_int_int_int_int\s*\*','ReanimationBeforeEtb_2022 ',text)
     if use_token_api_2022:
         mapping = {**TOKEN_API_NAMES, 'token_generation_t':'token_generation_2022_t', 'token_action_t':'token_action_2022_t'}
         text = re.sub(r'\b(?:TOKEN_ACTION_\w+|' + '|'.join(mapping) + r')\b',
@@ -285,7 +298,7 @@ def clean(text, overlapping_globals=(), local_type_declarations=(), array_bounda
         (use_life_loss_api_2022,LIFE_LOSS_API_NAMES),
         (use_shared_card_api_2022,SHARED_CARD_API_NAMES),
         (use_delayed_callback_api_2022,DELAYED_CALLBACK_API_NAMES),
-        (use_copy_api_2022,COPY_API_NAMES),(use_text_change_api_2022,TEXT_CHANGE_API_NAMES),(use_token_frontend_api_2022,TOKEN_FRONTEND_API_NAMES),(use_wish_api_2022,WISH_API_NAMES),(use_ability_filter_api_2022,ABILITY_FILTER_API_NAMES),(use_library_reveal_api_2022,LIBRARY_REVEAL_API_NAMES)]:
+        (use_copy_api_2022,COPY_API_NAMES),(use_text_change_api_2022,TEXT_CHANGE_API_NAMES),(use_token_frontend_api_2022,TOKEN_FRONTEND_API_NAMES),(use_wish_api_2022,WISH_API_NAMES),(use_ability_filter_api_2022,ABILITY_FILTER_API_NAMES),(use_library_reveal_api_2022,LIBRARY_REVEAL_API_NAMES),(use_token_delay_api_2022,TOKEN_DELAY_API_NAMES),(use_reanimation_api_2022,{**REANIMATION_API_NAMES,**REANIMATION_DOMAIN_NAMES}),(use_leaves_test_api_2022,LEAVES_TEST_API_NAMES),(use_damage_all_api_2022,DAMAGE_ALL_API_NAMES),(use_reveal_destroy_api_2022,REVEAL_DESTROY_API_NAMES),(use_flash_api_2022,FLASH_API_NAMES),(use_snow_api_2022,SNOW_API_NAMES),(use_command_zone_api_2022,COMMAND_ZONE_API_NAMES)]:
         if enabled:
             text=re.sub(r'\b(?:'+'|'.join(mapping)+r')\b',lambda m:mapping[m[0]],text)
     for replacement in keyword_mask_replacements:
@@ -550,6 +563,14 @@ def main():
     wish_interface_ready = 'wish_helpers_2022' in recovered_interfaces
     ability_filter_interface_ready = 'ability_filter_2022' in recovered_interfaces
     library_reveal_interface_ready = 'library_reveal_2022' in recovered_interfaces
+    token_delay_interface_ready = 'token_delay_2022' in recovered_interfaces
+    reanimation_interface_ready = 'reanimation_2022' in recovered_interfaces
+    leaves_test_interface_ready = 'leaves_test_native_2022' in recovered_interfaces
+    damage_all_interface_ready = 'native_aggregate_consumers_2022' in recovered_interfaces
+    reveal_destroy_interface_ready = 'reveal_destroy_native_2022' in recovered_interfaces
+    flash_interface_ready = 'flash_casting_native_2022' in recovered_interfaces
+    snow_interface_ready = 'snow_consumers_native_2022' in recovered_interfaces
+    command_zone_interface_ready = 'commander_consumers_native_2022' in recovered_interfaces
     recovered_manifest = root / 'docs/recovery-evidence/recovered-functions.json'
     recovered_state = json.loads(recovered_manifest.read_text()) if recovered_manifest.exists() else {}
     recovered_addresses = {f['address']:f['name'] for f in recovered_state.get('accepted_functions',[])}
@@ -655,7 +676,15 @@ def main():
                      use_token_frontend_api_2022=token_frontend_interface_ready,
                      use_wish_api_2022=wish_interface_ready,
                      use_ability_filter_api_2022=ability_filter_interface_ready,
-                     use_library_reveal_api_2022=library_reveal_interface_ready)
+                     use_library_reveal_api_2022=library_reveal_interface_ready,
+                     use_token_delay_api_2022=token_delay_interface_ready,
+                     use_reanimation_api_2022=reanimation_interface_ready,
+                     use_leaves_test_api_2022=leaves_test_interface_ready,
+                     use_damage_all_api_2022=damage_all_interface_ready,
+                     use_reveal_destroy_api_2022=reveal_destroy_interface_ready,
+                     use_flash_api_2022=flash_interface_ready,
+                     use_snow_api_2022=snow_interface_ready,
+                     use_command_zone_api_2022=command_zone_interface_ready)
         storage_proof = None
         prepared_storage = storage_evidence.get('candidates', {}).get(row['address'])
         if prepared_storage:
@@ -807,6 +836,39 @@ def main():
             if calls:
                 candidates[name]['phyrexian_interface_2022']=dict(calls=calls)
                 adaptations.append('Native Phyrexian availability, casting and activated-cost APIs; original interfaces retained.')
+        if command_zone_interface_ready:
+            translations={old:new for old,new in COMMAND_ZONE_API_NAMES.items() if re.search(r'\b'+old+r'\b',code_only(strip_comments(raw)))}
+            if translations:
+                candidates[name]['command_zone_interface_2022']=dict(translations=translations)
+        if snow_interface_ready:
+            translations={old:new for old,new in SNOW_API_NAMES.items() if re.search(r'\b'+old+r'\b',code_only(strip_comments(raw)))}
+            if translations:
+                candidates[name]['snow_interface_2022']=dict(translations=translations)
+        if flash_interface_ready:
+            translations={old:new for old,new in FLASH_API_NAMES.items() if re.search(r'\b'+old+r'\b',code_only(strip_comments(raw)))}
+            if translations:
+                candidates[name]['flash_interface_2022']=dict(translations=translations)
+        if reveal_destroy_interface_ready:
+            translations={old:new for old,new in REVEAL_DESTROY_API_NAMES.items() if re.search(r'\b'+old+r'\b',code_only(strip_comments(raw)))}
+            if translations:
+                candidates[name]['reveal_destroy_interface_2022']=dict(translations=translations)
+        if damage_all_interface_ready:
+            translations={old:new for old,new in DAMAGE_ALL_API_NAMES.items() if re.search(r'\b'+old+r'\b',code_only(strip_comments(raw)))}
+            if translations:
+                candidates[name]['damage_all_interface_2022']=dict(translations=translations)
+        if leaves_test_interface_ready:
+            translations={old:new for old,new in LEAVES_TEST_API_NAMES.items() if re.search(r'\b'+old+r'\b',code_only(strip_comments(raw)))}
+            if translations:
+                candidates[name]['leaves_test_interface_2022']=dict(translations=translations)
+        if reanimation_interface_ready:
+            translations={old:new for old,new in {**REANIMATION_API_NAMES,**REANIMATION_DOMAIN_NAMES}.items() if re.search(r'\b'+old+r'\b',code_only(strip_comments(raw)))}
+            if translations:
+                candidates[name]['reanimation_interface_2022']=dict(translations=translations)
+        if token_delay_interface_ready:
+            translations={old:new for old,new in TOKEN_DELAY_API_NAMES.items() if re.search(r'\b'+old+r'\b',code_only(strip_comments(raw)))}
+            if translations:
+                candidates[name]['token_delay_interface_2022']=dict(translations=translations)
+                adaptations.append('Native haste/delayed-removal helpers and typed 76-byte token callbacks; original APIs retained.')
         if library_reveal_interface_ready:
             calls={old:new for old,new in LIBRARY_REVEAL_API_NAMES.items() if re.search(r'\b'+old+r'\s*\(',code_only(strip_comments(raw)))}
             if calls:

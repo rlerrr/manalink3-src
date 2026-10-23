@@ -1398,7 +1398,7 @@ static int give_token_haste_legacy(int player, int card, event_t event)
 }
 
 /* ManalinkEh 2022: 0x22c95e0; original cards/dominaria.c:1352. */
-static void give_token_haste(token_generation_t *token, int beast, int number)
+static void give_token_haste(token_generation_2022_t *token, int beast, int number)
 {
   int card;
   card_instance_t *instance;
@@ -1575,18 +1575,18 @@ int card_lyra_dawnbringer(int player, int card, event_t event)
 }
 
 /* ManalinkEh 2022: 0x22c9680; original cards/dominaria.c:2131. */
-static void memorial_to_glory_impl(int player, int card, target_definition_t *td)
+static void memorial_to_glory_impl(int player, int card, target_definition_2022_t *td)
 {
   generate_tokens_by_id_2022(player, card, 0x4986, 2);
   return;
 }
 
 /* ManalinkEh 2022: 0x22c94f0; original cards/dominaria.c:2143. */
-static void memorial_to_unity_impl(int player, int card, target_definition_t *td)
+static void memorial_to_unity_impl(int player, int card, target_definition_2022_t *td)
 {
   int amount;
   int revealed_card;
-  test_definition_t this_test;
+  test_definition_2022_t this_test;
 
   amount = count_deck(player);
   if (amount != 0)
@@ -1595,10 +1595,10 @@ static void memorial_to_unity_impl(int player, int card, target_definition_t *td
     {
       amount = 5;
     }
-    new_default_test_definition(&this_test, 2, "Select a creature card.");
+    new_default_test_definition_2022(&this_test, 2, "Select a creature card.");
     this_test.create_minideck = (unsigned short)amount;
     this_test.no_shuffle = 1;
-    revealed_card = new_global_tutor(player, player, 1, 1, 0, 1, &this_test);
+    revealed_card = new_global_tutor_2022(player, player, 1, 1, 0, 1, &this_test);
     if (-1 < revealed_card)
     {
       amount = amount + -1;
@@ -2703,7 +2703,7 @@ static int flame_of_keld_legacy(int player, int card, event_t event)
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
 /* ManalinkEh 2022: 0x22c9630; original cards/dominaria.c:2103. */
-static void memorial_to_folly_impl(int player, int card, target_definition_t *td)
+static void memorial_to_folly_impl(int player, int card, target_definition_2022_t *td)
 {
   int grave_position;
 
@@ -2717,19 +2717,19 @@ static void memorial_to_folly_impl(int player, int card, target_definition_t *td
 }
 
 /* ManalinkEh 2022: 0x22c95d0; original cards/dominaria.c:2119. */
-static void memorial_to_genius_impl(int player, int card, target_definition_t *td)
+static void memorial_to_genius_impl(int player, int card, target_definition_2022_t *td)
 {
   draw_cards(player, 2);
   return;
 }
 
 /* ManalinkEh 2022: 0x22ca2c0; original cards/dominaria.c:2169. */
-static void memorial_to_war_impl(int player, int card, target_definition_t *td)
+static void memorial_to_war_impl(int player, int card, target_definition_2022_t *td)
 {
   int result;
   card_instance_t *instance;
 
-  result = valid_target(td);
+  result = valid_target_2022(td);
   if (result == 0)
   {
     return;
@@ -6126,12 +6126,12 @@ int card_helm_of_the_host(int player, int card, event_t event)
 {
   enum
   {
-    TOKEN_ACTION_ISNT_LEGENDARY = 256
+    TOKEN2022_ACTION_ISNT_LEGENDARY = 256
   };
 
   int result;
   card_instance_t *instance;
-  token_generation_t token;
+  token_generation_2022_t token;
 
   result = beginning_of_combat_2022(player, card, event, player);
   if (result != 0)
@@ -6139,11 +6139,11 @@ int card_helm_of_the_host(int player, int card, event_t event)
     instance = is_equipping(player, card);
     if (instance != NULL)
     {
-      copy_token_definition(player, card, &token, (int)instance->damage_target_player,
+      copy_token_definition_2022(player, card, &token, (int)instance->damage_target_player,
                             instance->damage_target_card);
       token.special_code_on_generation = give_token_haste;
-      token.action = TOKEN_ACTION_ISNT_LEGENDARY;
-      generate_token(&token);
+      token.action = TOKEN2022_ACTION_ISNT_LEGENDARY;
+      generate_token_2022(&token);
     }
   }
   result = basic_equipment(player, card, event, 5);
@@ -6674,6 +6674,222 @@ void lichs_mastery_lifeloss_trigger_2022(int player, int card, int amount)
     else
       kill_card(tgts[i].player, tgts[i].card, KILL_EXILE);
   }
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x22d2db0; original cards/dominaria.c:2976. */
+int card_shanna_sisays_legacy(int player, int card, event_t event)
+{
+  int result;
+
+  check_legend_rule(player, card, event);
+  if (event - EVENT_POWER < 2)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      result = count_permanents_by_type(player, TYPE_CREATURE);
+      event_result = event_result + result;
+    }
+  }
+  else if ((((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+            (player == affected_card_controller)) &&
+           ((((unsigned int)event_result >> 24 & 0xff) == '\x05' &&
+             (attacking_card_controller != player))))
+  {
+    cannot_be_target_of_abilities(player, card, EVENT_PROT_MISC);
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22ca5c0; original cards/dominaria.c:20. */
+static int dominaria_memorial_2022_impl(int player, int card, event_t event, int x, int b, int u, int g,
+                                 int r, int w, int target_in_grave, const char *label,
+                                 target_definition_2022_t *td, char *prompt,
+                                 void (*impl)(int, int, target_definition_2022_t *))
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  card_instance_t *instance;
+  unsigned int uVar6;
+  const char *puStack_ec;
+  test_definition_2022_t test;
+  if ((event != EVENT_RESOLVE_ACTIVATION) &&
+      (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE))
+  {
+  LAB_022ca5ef:
+    iVar1 = mana_producer_tapped(player, card, event);
+    return iVar1;
+  }
+  new_default_test_definition_2022(&test, 2, "Select target creature card.");
+  iVar1 = landsofcolor_controlled[player][7];
+  iVar2 = paying_mana();
+  uVar6 = 0;
+  if (iVar2 == 0)
+  {
+    if (target_in_grave == 0)
+    {
+      iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE,
+                                             (-(unsigned int)(td == NULL) & 0xfffffffc) + 0xd,
+                                             x + 1, b, u, g, r, w, 0, td, prompt);
+      uVar6 = (unsigned int)(iVar2 != 0);
+    }
+    else
+    {
+      iVar2 = generic_activated_ability_with_target_in_grave_2022(
+          player, card, EVENT_CAN_ACTIVATE, GAA_SACRIFICE_ME | GAA_UNTAPPED, x + 1, b, u, g, r, w,
+          0, NULL, prompt, TYPE_NONE, &test, 8);
+      uVar6 = (unsigned int)(iVar2 != 0);
+    }
+  }
+  iVar2 = paying_mana();
+  iVar3 = mana_producer(player, card, EVENT_CAN_ACTIVATE);
+  iVar4 = paying_mana();
+  puStack_ec = "\001\026";
+  if (iVar4 == 0)
+  {
+    puStack_ec = "\001\027";
+  }
+  iVar1 = dialog_impl(player, card, event, "\001\016", puStack_ec, "Produce mana", iVar3, iVar2,
+                      label, uVar6, iVar1 + -6, 0, 0, 0, 0);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    return iVar1;
+  }
+  if (iVar1 == 0)
+  {
+    return 0;
+  }
+  if (iVar1 != 2)
+    goto LAB_022ca5ef;
+  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE)
+  {
+    (*impl)(player, card, td);
+    return 0;
+  }
+  add_state(player, card, 0x10);
+  charge_mana_for_activated_ability_2022(player, card, x, b, u, g, r, w);
+  if (target_in_grave == 0)
+  {
+    if (td != NULL)
+    {
+      if (spell_fizzled == 1)
+        goto LAB_022ca96e;
+      instance = get_card_instance(player, card);
+      if ((td->zone == 0x1000) && (td->allowed_controller == 1 - player))
+      {
+        instance->targets[0].player = 1 - player;
+        instance->targets[0].card = -1;
+        instance->number_of_targets = '\x01';
+      }
+      else
+      {
+        instance->number_of_targets = '\0';
+        pick_target_2022(td, prompt);
+      }
+    }
+  }
+  else
+  {
+    if (spell_fizzled == 1)
+      goto LAB_022ca96e;
+    iVar1 = select_target_from_grave_source_2022(player, card, player, SFG_0, 2, &test, 0);
+    if (iVar1 == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+  }
+  if (spell_fizzled != 1)
+  {
+    kill_card(player, card, KILL_SACRIFICE);
+    tapped_for_mana_color = -1;
+    return 0;
+  }
+LAB_022ca96e:
+  remove_state(player, card, 0x10);
+  tapped_for_mana_color = -1;
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22d07e0; original cards/dominaria.c:2109. */
+int card_memorial_to_folly(int player, int card, event_t event)
+{
+  int result;
+  result = dominaria_memorial_2022_impl(player, card, event, 2, 1, 0, 0, 0, 0, 1,
+                                        "Return a creature to your hand", NULL,
+                                        "Select target creature card.", memorial_to_folly_impl);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22d0850; original cards/dominaria.c:2122. */
+int card_memorial_to_genius(int player, int card, event_t event)
+{
+  int result;
+  result = dominaria_memorial_2022_impl(player, card, event, 4, 0, 1, 0, 0, 0, 0, "Draw", NULL,
+                                        NULL, memorial_to_genius_impl);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22d08c0; original cards/dominaria.c:2134. */
+int card_memorial_to_glory(int player, int card, event_t event)
+{
+  int result;
+  result = dominaria_memorial_2022_impl(player, card, event, 3, 0, 0, 0, 0, 1, 0, "Create tokens",
+                                        NULL, NULL, memorial_to_glory_impl);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22d0930; original cards/dominaria.c:2160. */
+int card_memorial_to_unity(int player, int card, event_t event)
+{
+  int result;
+  result = dominaria_memorial_2022_impl(player, card, event, 2, 0, 0, 1, 0, 0, 0,
+                                        "Dig for a creature", NULL, NULL, memorial_to_unity_impl);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22d09a0; original cards/dominaria.c:2173. */
+int card_memorial_to_war(int player, int card, event_t event)
+{
+  int result;
+  target_definition_2022_t td;
+  if (((unsigned int)(event - EVENT_RESOLVE_ACTIVATION) < 2) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition_2022(player, card, &td, 1);
+  }
+  result = dominaria_memorial_2022_impl(player, card, event, 4, 0, 0, 0, 1, 0, 0, "Destroy a land",
+                                        &td, "TARGET_LAND", memorial_to_war_impl);
+  return result;
 }
 
 #endif

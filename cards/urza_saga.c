@@ -8198,3 +8198,108 @@ LAB_020555c1:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2058980; original cards/urza_saga.c:7537. */
+int card_wall_of_junk(int player, int card, event_t event)
+{
+  int result;
+  if (1 - player == current_turn)
+  {
+    result = blocking(player, card, event);
+    if (result != 0)
+    {
+      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      if (result == 0)
+      {
+        create_targetted_legacy_effect(player, card, bounce_at_end_of_combat_2022, player, card);
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2056200; original cards/urza_saga.c:6731. */
+int card_rune_of_protection_artifacts(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int result;
+  card_instance_t *pcVar3;
+  target_definition_2022_t td;
+
+  if (event - EVENT_CAN_ACTIVATE_FROM_HAND < 3)
+  {
+    result = cycling(player, card, event, 2, 0, 0, 0, 0, 0);
+    return result;
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition_2022(player, card, &td, 0x80);
+    td.special = 0x8000;
+    td.extra = (int32_t)damage_from_artifact_source_2022;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = global_enchantment(player, card, event);
+      return result;
+    }
+    default_target_definition_2022(player, card, &td, 0x80);
+    td.special = 0x8000;
+    td.extra = (int32_t)damage_from_artifact_source_2022;
+    pcVar1 = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      result = valid_target_2022(&td);
+      if (result != 0)
+      {
+        pcVar3 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
+        prevent_damage(pcVar1->targets[0].player, pcVar1->targets[0].card, pcVar3->info_slot);
+      }
+    }
+  }
+  result = generic_activated_ability_2022(player, card, event, 0x1000004, 0, 0, 0, 0, 0, 1, 0, &td,
+                                          "TARGET_DAMAGE");
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2043f20; original cards/urza_saga.c:660. */
+char *is_land_or_nonblack_creature_2022(int who_chooses, int player, int card, int targeting_player,
+                                        int targeting_card)
+{
+  int result;
+  unsigned int uVar2;
+  unsigned int uVar3;
+  char *pcVar4;
+  result = is_what(player, card, 1);
+  if (result != 0)
+  {
+    return NULL;
+  }
+  result = is_what(player, card, 2);
+  if (result != 0)
+  {
+    uVar2 = get_color(player, card);
+    uVar3 = get_sleighted_color_test(targeting_player, targeting_card, 2);
+    if ((uVar2 & uVar3) == 0)
+    {
+      return NULL;
+    }
+  }
+  pcVar4 = (char *)get_sleighted_color_text(targeting_player, targeting_card,
+                                            "must be a land or a non%s creature.", 1);
+  return pcVar4;
+}
+
+#endif

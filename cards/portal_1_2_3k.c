@@ -5682,3 +5682,63 @@ int last_chance_legacy_2022(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21bfed0; original cards/portal_1_2_3k.c:2789. */
+int card_stream_of_acid(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  const char *prompt;
+  int result;
+  target_definition_2022_t td;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition_2022(player, card, &td, 0x47);
+        td.special = 0x8000;
+        td.extra = (int32_t)is_land_or_nonblack_creature_2022;
+        instance = get_card_instance(player, card);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target_2022(&td);
+          if (result != 0)
+          {
+            kill_card(instance->targets[0].player, instance->targets[0].card, KILL_BURY);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_021bff48;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition_2022(player, card, &td, 0x47);
+  td.special = 0x8000;
+  td.extra = (int32_t)is_land_or_nonblack_creature_2022;
+  get_card_instance(player, card);
+LAB_021bff48:
+  prompt = get_sleighted_color_text(player, card, "Select target land or non%s creature.", 1);
+  result = generic_spell_2022(player, card, event, 0x81, &td, prompt, 1, NULL);
+  return result;
+}
+
+#endif

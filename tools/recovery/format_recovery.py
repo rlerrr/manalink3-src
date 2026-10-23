@@ -152,7 +152,15 @@ def main():
                 use_token_frontend_api_2022=bool(function.get('token_frontend_interface_2022')),
                 use_wish_api_2022=bool(function.get('wish_interface_2022')),
                 use_ability_filter_api_2022=bool(function.get('ability_filter_interface_2022')),
-                use_library_reveal_api_2022=bool(function.get('library_reveal_interface_2022')))
+                use_library_reveal_api_2022=bool(function.get('library_reveal_interface_2022')),
+                use_token_delay_api_2022=bool(function.get('token_delay_interface_2022')),
+                use_reanimation_api_2022=bool(function.get('reanimation_interface_2022')),
+                use_leaves_test_api_2022=bool(function.get('leaves_test_interface_2022')),
+                use_damage_all_api_2022=bool(function.get('damage_all_interface_2022')),
+                use_reveal_destroy_api_2022=bool(function.get('reveal_destroy_interface_2022')),
+                use_flash_api_2022=bool(function.get('flash_interface_2022')),
+                use_snow_api_2022=bool(function.get('snow_interface_2022')),
+                use_command_zone_api_2022=bool(function.get('command_zone_interface_2022')))
             formatted = format_bytes(candidate.encode("utf-8"))
             if tokens(current) != tokens(formatted) or comments(current) != comments(formatted):
                 skipped.append(relative + "::" + function["name"])

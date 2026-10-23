@@ -217,6 +217,10 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
     if interfaces.get('ability_filter_2022'):
         with layout.open('a') as stream:
             stream.write('\n_Static_assert(sizeof(test_definition_2022_t)==216 && sizeof(test_definition_t)==208 && sizeof(ability_loss_t)==4 && offsetof(card_instance_t,targets[17].card)==256 && sizeof(((card_instance_t*)0)->targets[17].card)==4, "native ability-loss filter and stored mask");\n')
+    if interfaces.get('reveal_destroy_native_2022'):
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(card_instance_t)==300 && offsetof(card_instance_t,eot_toughness)==76 && sizeof(((card_instance_t*)0)->eot_toughness)==4 && offsetof(card_instance_t,targets[10].player)==196 && sizeof(target_t)==8, "native packed destruction counters");\n')
+            stream.write('_Static_assert(sizeof(test_definition_2022_t)==216 && offsetof(test_definition_2022_t,qty)==174 && sizeof(((test_definition_2022_t*)0)->qty)==2 && sizeof(target_definition_2022_t)==84, "native reveal quantity and separate target/test storage");\n')
     if interfaces.get('native_word_cards_2022'):
         with layout.open('a') as stream:
             stream.write('\n_Static_assert(sizeof(cards_drawn_this_turn)==4 && sizeof(cards_drawn_this_turn[0])==2 && sizeof(player_bits)==8 && sizeof(player_bits[0])==4, "native indexed draw-count and player flag words");\n')

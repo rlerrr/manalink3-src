@@ -6501,3 +6501,112 @@ int card_verdant_field(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2604fb0; original cards/prophecy.c:3401. */
+int card_noxious_field(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int player_00;
+
+  union
+  {
+    target_definition_2022_t target;
+    test_definition_2022_t test;
+    uint8_t bytes[216];
+  } recovered_stack_td;
+
+  result = is_humiliated_for_ability(player, card, AL_STATIC);
+  if (result == 0)
+  {
+    instance = get_card_instance(player, card);
+    if (-1 < instance->damage_target_player)
+    {
+      instance = get_card_instance(player, card);
+      if (event == EVENT_ACTIVATE)
+      {
+        player_00 = (int)instance->damage_target_player;
+        result = instance->damage_target_card;
+      }
+      else
+      {
+        if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+          goto LAB_02604fec;
+        player_00 = (int)instance->damage_target_player;
+        result = instance->damage_target_card;
+        if (event == EVENT_RESOLVE_ACTIVATION)
+        {
+          default_test_definition_2022(&recovered_stack_td.test, 2);
+          new_damage_all_2022(player_00, result, 2, 1, 2, &recovered_stack_td.test);
+        }
+      }
+      result = granted_generic_activated_ability_2022(player, card, player_00, result, event, 1, 0,
+                                                      0, 0, 0, 0, 0, 0, NULL, NULL);
+      return result;
+    }
+  }
+LAB_02604fec:
+  default_target_definition_2022(player, card, &recovered_stack_td.target, 1);
+  recovered_stack_td.target.preferred_controller = player;
+  result =
+      aura_literal_prompt(player, card, event, &recovered_stack_td.target, "Select target land.");
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25fb3e0; original cards/prophecy.c:4852. */
+int bounce_at_end_of_combat_2022(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  result = end_of_combat_trigger(player, card, event, 2);
+  if (result != 0)
+  {
+    instance = get_card_instance(player, card);
+    result =
+        check_state((int)instance->damage_target_player, instance->damage_target_card, 0x800000);
+    if (result == 0)
+    {
+      bounce_permanent((int)instance->damage_target_player, instance->damage_target_card);
+    }
+  }
+  if ((((trigger_condition == 0xcc) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((reason_for_trigger_controller == player && (event == EVENT_END_TRIGGER))))
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2608540; original cards/prophecy.c:4867. */
+int card_windscouter(int player, int card, event_t event)
+{
+  int result;
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event != EVENT_DAT_ABILITY)
+  {
+    result = blocking(player, card, event);
+    if (result != 0)
+    {
+      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      if (result == 0)
+        goto LAB_026085b0;
+    }
+    return 0;
+  }
+LAB_026085b0:
+  create_targetted_legacy_effect(player, card, bounce_at_end_of_combat_2022, player, card);
+  return 0;
+}
+
+#endif

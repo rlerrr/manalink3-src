@@ -4241,3 +4241,60 @@ int card_fold_into_aether(int player, int card, event_t event)
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20328f0; original cards/fifth_dawn.c:3512. */
+int card_salvaging_station(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+
+  char msg[100];
+  test_definition_2022_t this_test;
+
+  if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    count_for_gfp_ability_2022(player, card, 0x77, 2, 2, NULL);
+    instance = in_play(player, card);
+    if (instance == NULL)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    instance = in_play(player, card);
+    if (instance == NULL)
+      goto LAB_02032951;
+  }
+  result = duh_mode(player);
+  result = resolve_gfp_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (result != 0)
+  {
+    untap_card(player, card);
+  }
+LAB_02032951:
+  if ((((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
+       (event == EVENT_RESOLVE_ACTIVATION)) ||
+      (result = 0, event == EVENT_CLEANUP))
+  {
+    memcpy(msg, "Select a noncreature artifact with CMC 1 or less.", 50);
+    memset(msg + 50, 0, 50);
+    new_default_test_definition_2022(&this_test, 0x40, msg);
+    this_test.type_flag = 2;
+    this_test.cmc = 2;
+    this_test.cmc_flag = 3;
+    if ((event == EVENT_RESOLVE_ACTIVATION) &&
+        (result = validate_target_from_grave_source(player, card, player, 0), result != -1))
+    {
+      reanimate_permanent_2022(player, -1, player, result, REANIMATE2022_DEFAULT);
+    }
+    result = generic_activated_ability_with_target_in_grave_2022(player, card, event, GAA_UNTAPPED,
+                                                                 0, 0, 0, 0, 0, 0, 0, NULL, NULL,
+                                                                 TYPE_NONE, &this_test, 8);
+  }
+  return result;
+}
+
+#endif

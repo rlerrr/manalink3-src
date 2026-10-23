@@ -1695,3 +1695,132 @@ int card_yorion_sky_nomad(int player, int card, event_t event)
   iVar1 = hybrid(player, card, event);
   return iVar1;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2288d90; original cards/ikoria.c:350. */
+int card_eerie_ultimatum(int player, int card, event_t event)
+{
+  if (event == EVENT_CAST_SPELL && (card != affected_card || player != affected_card_controller))
+    return 0;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    test_definition_2022_t test;
+    /* Native selection storage is not initialized before the predicate reads it. */
+    int chosen[2][151];
+    new_default_test_definition_2022(&test, 0x47, "Select a permanent card.");
+    test.value_for_special_selection_function = (int)chosen[1];
+    test.no_shuffle = 1;
+    test.special_selection_function = test_not_in_array;
+    test.id = 0x388;
+    test.id_flag = 1;
+    int shroud = graveyard_has_shroud(player);
+    if (shroud == 0)
+    {
+      int num_chosen = 0;
+      while (1)
+      {
+        int selected = new_select_a_card_2022(player, player, 5, 0, 5, 0, &test);
+        if (selected == -1)
+          break;
+        int iid = graveyard_ptr_mutable[player][selected];
+        if (has_subtype_by_id_2022(player, (unsigned int)cards_data[iid].id, SUBTYPE_AURA))
+        {
+          int temporary = add_card_to_hand(player, iid);
+          if (temporary < 0)
+            continue;
+          add_state(player, temporary, 0x20);
+          set_special_flags3_2022(player, card, 0x40);
+          --hand_count[player];
+          int can_cast = call_card_function(player, temporary, EVENT_CAN_CAST);
+          obliterate_card_and_recycle(player, temporary);
+          if (can_cast == 0)
+            continue;
+        }
+        chosen[0][num_chosen] = selected;
+        chosen[1][num_chosen] = turn_card_in_grave_face_down(player, selected);
+        ++num_chosen;
+      }
+      for (int i = 0; i < num_chosen; ++i)
+        turn_card_in_grave_face_up(player, chosen[0][i], chosen[1][i]);
+
+      /* Native zero-selection path also sorts a zero-length GNU VLA. */
+      int to_reanimate[num_chosen];
+      for (int i = 0; i < num_chosen; ++i)
+        to_reanimate[i] = chosen[0][i];
+      descending_qsort(num_chosen, to_reanimate);
+      if (num_chosen > 0)
+      {
+        int reanimated[num_chosen];
+        for (int i = 0; i < num_chosen; ++i)
+        {
+          reanimated[i] = reanimate_permanent_2022(player, card, player, to_reanimate[i],
+                                                   REANIMATE2022_DEFAULT);
+          state_untargettable(player, reanimated[i], 1);
+        }
+        for (int i = shroud; i < num_chosen; ++i)
+          state_untargettable(player, reanimated[i], 0);
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  if (event == EVENT_CAN_CAST || event == EVENT_CAST_SPELL || event == EVENT_RESOLVE_SPELL ||
+      event == EVENT_CAN_CHANGE_TARGET || event == EVENT_CHANGE_TARGET)
+    return basic_spell(player, card, event);
+  return 0;
+}
+
+#endif
+
+#ifndef SHANDALAR
+/* Recovered October 2022 implementations; see docs/recovery-progress.md. */
+
+/* ManalinkEh 2022: 0x228c300; original cards/ikoria.c:2225. */
+int card_the_ozolith(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_2022_t td;
+  test_definition_2022_t test;
+
+  check_legend_rule(player, card, event);
+  default_test_definition_2022(&test, 2);
+  test.special_selection_function = has_counter;
+  test_leaves_play_2022(player, card, event, player, &test, 1, 0);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+    move_counters_from_source(player, card, player, card, trigger_cause_controller, trigger_cause,
+                              ~COUNTER_P1_P1, -1);
+    return 0;
+  }
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    result = engine_any_legal_attacker_2022(player);
+    if (result == 0)
+    {
+      event_flags = event_flags | 0x1000000;
+      return 0;
+    }
+  }
+  else if (event == EVENT_BEGIN_COMBAT)
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if ((result == 0) && (current_turn == player))
+    {
+
+      default_target_definition_2022(player, card, &td, 2);
+      instance = get_card_instance(player, card);
+      instance->number_of_targets = '\0';
+      new_pick_target_2022(&td, "Select a creature for The Ozolith\'s counters.", 0, 0x81);
+      if (spell_fizzled != 1)
+      {
+        move_counters_from_source(player, card, instance->targets[0].player,
+                                  instance->targets[0].card, player, card, ~COUNTER_P1_P1, -1);
+      }
+      instance->number_of_targets = '\0';
+    }
+  }
+  return 0;
+}
+
+#endif

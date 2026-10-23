@@ -3485,8 +3485,8 @@ int card_soulherder(int player, int card, event_t event)
   /* DWARF locals share this frame offset; keep every typed view. */
   union
   {
-    target_definition_t target;
-    test_definition_t test;
+    target_definition_2022_t target;
+    test_definition_2022_t test;
     uint8_t bytes[216];
   } recovered_stack_td;
 
@@ -3496,13 +3496,13 @@ int card_soulherder(int player, int card, event_t event)
         (current_turn != player))
       goto LAB_0233cafe;
 
-    default_target_definition(player, card, &recovered_stack_td.target, 2);
+    default_target_definition_2022(player, card, &recovered_stack_td.target, 2);
     recovered_stack_td.target.allowed_controller = player;
     recovered_stack_td.target.preferred_controller = player;
     recovered_stack_td.target.special = 0x4000;
     instance = get_card_instance(player, card);
     instance->number_of_targets = '\0';
-    result = can_target(&recovered_stack_td.target);
+    result = can_target_2022(&recovered_stack_td.target);
     trig_mode = RESOLVE_TRIGGER_0;
     if (result != 0)
     {
@@ -3511,7 +3511,7 @@ int card_soulherder(int player, int card, event_t event)
     }
     result = eot_trigger_mode(player, card, event, player, trig_mode);
     if ((result != 0) &&
-        (result = pick_target(&recovered_stack_td.target, "ASHNODS_BATTLEGEAR"), result != 0))
+        (result = pick_target_2022(&recovered_stack_td.target, "ASHNODS_BATTLEGEAR"), result != 0))
     {
       blink_effect(instance->targets[0].player, instance->targets[0].card, NULL);
     }
@@ -3522,8 +3522,8 @@ int card_soulherder(int player, int card, event_t event)
           (instance = get_card_instance(trigger_cause_controller, trigger_cause),
            instance->kill_code == '\x04'))))))
   {
-    default_test_definition(&recovered_stack_td.test, 2);
-    test_leaves_play(player, card, event, 2, &recovered_stack_td.test, 1, 1);
+    default_test_definition_2022(&recovered_stack_td.test, 2);
+    test_leaves_play_2022(player, card, event, 2, &recovered_stack_td.test, 1, 1);
   }
 LAB_0233cafe:
   if (event == EVENT_LEAVES_PLAY_ABILITY)

@@ -3322,3 +3322,204 @@ int card_kestia_the_cultivator(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2561cc0; original cards/commander_2018.c:580. */
+int card_entreat_the_dead(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  unsigned int uVar4;
+  unsigned int uVar5;
+  int32_t value;
+  int iVar6;
+
+  unsigned int uStack_154;
+  char buf[100];
+  test_definition_2022_t this_test;
+
+  new_default_test_definition_2022(&this_test, 2, "Select a creature card.");
+  pcVar1 = get_card_instance(player, card);
+  if (event == EVENT_CAN_CAST)
+  {
+    iVar6 = generic_spell_2022(player, card, EVENT_CAN_CAST, 0xc, NULL, NULL, 1, &this_test);
+    return iVar6;
+  }
+  if (event != EVENT_CAST_SPELL)
+  {
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      return 0;
+    }
+    if (0 < pcVar1->info_slot)
+    {
+      iVar6 = 0;
+      do
+      {
+        iVar2 = validate_target_from_grave(player, card, player, iVar6);
+        if (iVar2 != -1)
+        {
+          reanimate_permanent_2022(player, card, player, iVar2, REANIMATE2022_DEFAULT);
+        }
+        iVar6 = iVar6 + 1;
+      } while (iVar6 < pcVar1->info_slot);
+    }
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+  iVar6 = check_special_flags2_2022(player, card, -0x80000000);
+  if (iVar6 != 0)
+  {
+    return 0;
+  }
+  pcVar3 = get_card_instance(player, card);
+  pcVar3->info_slot = 0;
+  iVar6 = check_special_flags2_2022(player, card, 0x100000);
+  if (iVar6 == 0)
+  {
+    iVar6 = played_for_free(player, card);
+    if (iVar6 != 0)
+    {
+      return 0;
+    }
+    iVar6 = is_token(player, card);
+    if (iVar6 != 0)
+    {
+      return 0;
+    }
+    uVar4 = count_graveyard_by_type(player, 2);
+    uVar5 = has_mana(player, 7, 1);
+    uVar5 = round_down_value(uVar5);
+    if ((int)uVar4 < (int)uVar5)
+    {
+      uVar5 = uVar4;
+    }
+    if ((0 < (int)uVar5) && (iVar6 = graveyard_has_shroud(player), iVar6 == 0))
+    {
+      uStack_154 = uVar5;
+      if (0x13 < (int)uVar5)
+      {
+        uStack_154 = 0x13;
+      }
+      if (ai_is_speculating == 1)
+      {
+        buf[0] = '\0';
+      }
+      else if (uVar5 == 1)
+      {
+        memcpy(buf, "Select a creature card.", 24);
+      }
+      else
+      {
+        sprintf(buf, "Select up to %d creature cards.", uStack_154);
+      }
+      new_default_test_definition_2022(&this_test, 2, buf);
+      iVar6 = select_multiple_cards_from_graveyard_2022(player, player, 0, 1, &this_test,
+                                                        uStack_154, pcVar1->targets);
+      pcVar1->info_slot = iVar6;
+      if (iVar6 < 1)
+      {
+        return 0;
+      }
+      iVar6 = charge_mana_for_double_x(player, 0);
+      value = iVar6 / 2;
+    LAB_02561f41:
+      set_x_for_x_spells(player, card, EVENT_CAST_SPELL, value);
+      return 0;
+    }
+  }
+  else
+  {
+    iVar6 = count_graveyard_by_type(player, 2);
+    iVar2 = has_mana(player, 7, 1);
+    if (iVar2 < iVar6)
+    {
+      iVar6 = iVar2;
+    }
+    if ((0 < iVar6) && (iVar2 = graveyard_has_shroud(player), iVar2 == 0))
+    {
+      uStack_154 = iVar6;
+      if (0x13 < iVar6)
+      {
+        uStack_154 = 0x13;
+      }
+      if (ai_is_speculating == 1)
+      {
+        buf[0] = '\0';
+      }
+      else if (iVar6 == 1)
+      {
+        memcpy(buf, "Select a creature card.", 24);
+      }
+      else
+      {
+        sprintf(buf, "Select up to %d creature cards.", uStack_154);
+      }
+      new_default_test_definition_2022(&this_test, 2, buf);
+      iVar6 = select_multiple_cards_from_graveyard_2022(player, player, 0, 1, &this_test,
+                                                        uStack_154, pcVar1->targets);
+      pcVar1->info_slot = iVar6;
+      if (0 < iVar6)
+      {
+        charge_mana(player, COLOR_COLORLESS, iVar6);
+      }
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      value = pcVar1->info_slot;
+      goto LAB_02561f41;
+    }
+  }
+  ai_modifier = ai_modifier + -0x30;
+  pcVar1->info_slot = 0;
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2565940; original cards/commander_2018.c:1789. */
+int card_tuvasa_the_sunlit(int player, int card, event_t event)
+{
+  int result;
+  check_legend_rule(player, card, event);
+  if (((trigger_condition == 0xd3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = get_stormenchantment_count_2022(player);
+    if (result == 1)
+    {
+      sp_ability_trigger_2022(player, event, 2, TYPE_ENCHANTMENT, NULL, player, card);
+    }
+  }
+  if (event != EVENT_SPA)
+  {
+    if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
+        (player == affected_card_controller))
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if (result == 0)
+      {
+        result = count_subtype(player, 4, -1);
+        event_result = event_result + result;
+      }
+    }
+    return 0;
+  }
+  draw_a_card(player);
+  return 0;
+}
+
+#endif

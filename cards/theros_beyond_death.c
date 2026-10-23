@@ -4126,3 +4126,255 @@ int card_the_binding_of_the_titans(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* Recovered October 2022 flag and combat-query consumers. */
+int card_shadowspear(int player, int card, event_t event);
+
+/* ManalinkEh 2022: 0x23600c0; original cards/theros_beyond_death.c:3339. */
+int card_shadowspear(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+
+  check_legend_rule(player, card, event);
+  instance = in_play(player, card);
+  if ((((instance == NULL) ||
+        (iVar2 = is_humiliated_for_ability(player, card, AL_STATIC), iVar2 != 0)) ||
+       (instance = is_equipping(player, card), instance == NULL)) ||
+      (instance = get_card_instance(player, card), 2 < event - EVENT_POWER))
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      instance = get_card_instance(player, card);
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0,
+                                               0, 0, NULL, NULL);
+        if (iVar2 == 0)
+        {
+          iVar2 = basic_equipment(player, card, EVENT_CAN_ACTIVATE, 2);
+          return iVar2;
+        }
+        return 1;
+      }
+      if (event == EVENT_ACTIVATE)
+      {
+        iVar2 = can_activate_basic_equipment(player, card, EVENT_ACTIVATE, 2);
+        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0,
+                                               0, 0, NULL, NULL);
+        iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Equip", iVar2, 5,
+                            "Cripple opponent's creatures", iVar3, 8, 0, 0, 0, 0);
+        if (iVar2 == 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        if (iVar2 != 1)
+        {
+          if (iVar2 != 2)
+          {
+            return 0;
+          }
+          ai_modifier = ai_modifier + ((1 - player == current_turn) - 1 & 0xffffffe8) + 0x30;
+          iVar2 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0, 1, 0, 0, 0, 0, 0,
+                                                 0, NULL, NULL);
+          return iVar2;
+        }
+        iVar2 = basic_equipment(player, card, EVENT_ACTIVATE, 2);
+        return iVar2;
+      }
+      goto LAB_0236012e;
+    }
+  }
+  else if ((instance->damage_target_card == affected_card) &&
+           (instance->damage_target_player == affected_card_controller))
+  {
+    iVar2 = vanilla_equipment(player, card, event, 2, 1, 1, 0x80, 2);
+    return iVar2;
+  }
+  if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+LAB_0236012e:
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    if (instance->info_slot == 1)
+    {
+      iVar2 = basic_equipment(player, card, EVENT_RESOLVE_ACTIVATION, 2);
+      return iVar2;
+    }
+    if (instance->info_slot == 2)
+    {
+      negate_ability_and_special_ability_until_eot(
+          instance->parent_controller, instance->parent_card, 1 - instance->parent_controller, -1,
+          KEYWORD_0, (SP_KEYWORD_HEXPROOF | SP_KEYWORD_INDESTRUCTIBLE));
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x235b4c0; original cards/theros_beyond_death.c:801. */
+int card_calix_destinys_hand(int player, int card, event_t event)
+{
+  int card_00;
+  int card_01;
+  int player_00;
+  int target_player_id;
+  int target_card;
+  bool bVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  unsigned int uVar5;
+  int iVar6;
+  int iStack_1a8;
+  target_definition_2022_t *ptStack_198;
+  target_definition_2022_t *ptStack_194;
+  target_definition_2022_t td;
+  target_definition_2022_t td1;
+  test_definition_2022_t test;
+  int csvids[2];
+
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition_2022(player, card, &td, 6);
+    td.allowed_controller = 1 - player;
+    default_target_definition_2022(player, card, &td1, 4);
+    td1.allowed_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = '\0';
+      instance->info_slot = 0;
+      iVar3 = can_target_2022(&td);
+      uVar5 = 0;
+      if (iVar3 != 0)
+      {
+        iVar3 = can_target_2022(&td1);
+        uVar5 = (unsigned int)(iVar3 != 0);
+      }
+      iVar3 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Reveal top 4", 1,
+                          5, 1, "Obliviate", uVar5, 10, 0xfffffffd, "Replenish", 1, 0x14,
+                          0xfffffff9, 0, 0, 0, 0);
+      if (iVar3 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if ((iVar3 == 2) &&
+          (iVar3 = new_pick_target_2022(
+               &td, "Select target creature or enchantment you don\'t control.", 0, 0x81),
+           iVar3 != 0))
+      {
+        new_pick_target_2022(&td1, "Select target enchantment you control.", 1, 0x81);
+      }
+      goto LAB_0235b56f;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_0235b56f;
+    default_target_definition_2022(player, card, &td, 6);
+    td.allowed_controller = 1 - player;
+    default_target_definition_2022(player, card, &td1, 4);
+    td1.allowed_controller = player;
+    instance = get_card_instance(player, card);
+  }
+  ptStack_194 = &td;
+  ptStack_198 = &td1;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    iVar3 = instance->info_slot;
+    if (iVar3 == 1)
+    {
+      new_default_test_definition_2022(&test, 4, "Select an enchantment card");
+      reveal_top_cards_of_library_and_choose_2022(player, card, player, 4, 0, TUTOR2022_HAND, 1,
+                                                  TUTOR2022_BOTTOM_OF_DECK_RANDOM, 0, &test);
+    }
+    else if (iVar3 == 2)
+    {
+      iVar3 = valid_target_2022(ptStack_194);
+      if ((iVar3 != 0) && (iVar3 = validate_target_2022(player, card, ptStack_198, 1), iVar3 != 0))
+      {
+        iVar3 = instance->parent_controller;
+        card_00 = instance->targets[0].card;
+        card_01 = instance->parent_card;
+        player_00 = instance->targets[0].player;
+        target_player_id = instance->targets[1].player;
+        target_card = instance->targets[1].card;
+        iVar4 = is_token(player_00, card_00);
+        if ((iVar4 == 0) && (instance = in_play(player_00, card_00), instance != NULL))
+        {
+          iStack_1a8 = get_original_internal_card_id(player_00, card_00);
+          uVar5 = (unsigned int)cards_data[iStack_1a8].id;
+          if ((uVar5 == 0x3eae || uVar5 == 0x3ef4) || (uVar5 == 0x3efb))
+          {
+            unmeld(uVar5, &csvids[0], &csvids[1]);
+            iStack_1a8 = get_internal_card_id_from_csv_id(csvids[0]);
+            bVar1 = true;
+          }
+          else
+          {
+            bVar1 = false;
+          }
+          do
+          {
+            iVar4 = find_attached_legacy_effect_not_full(iVar3, card_01, calix_obliviation_legacy,
+                                                         target_player_id, target_card);
+            if (iVar4 == -1)
+            {
+              iVar4 = create_targetted_legacy_effect(iVar3, card_01, calix_obliviation_legacy,
+                                                     target_player_id, target_card);
+              instance = get_card_instance(player, iVar4);
+              iVar4 = get_owner(player_00, card_00);
+              instance->targets[0].player = iVar4;
+              instance->targets[0].card = iStack_1a8;
+            }
+            else
+            {
+              instance = get_card_instance(player, iVar4);
+              iVar4 = 1;
+              do
+              {
+                if (instance->targets[iVar4].player == -1)
+                {
+                  iVar6 = get_owner(player_00, card_00);
+                  instance->targets[iVar4].player = iVar6;
+                  instance->targets[iVar4].card = iStack_1a8;
+                  break;
+                }
+                iVar4 = iVar4 + 1;
+              } while (iVar4 != 0x12);
+            }
+            if (!bVar1)
+              break;
+            bVar1 = false;
+            iStack_1a8 = get_internal_card_id_from_csv_id(csvids[0]);
+          } while (true);
+        }
+        kill_card(player_00, card_00, KILL_EXILE);
+      }
+    }
+    else if (iVar3 == 3)
+    {
+      default_test_definition_2022(&test, 4);
+      new_reanimate_all_2022(player, card, player, &test, REANIMATE2022_DEFAULT);
+    }
+  }
+LAB_0235b56f:
+  iVar3 = planeswalker(player, card, event, 4);
+  return iVar3;
+}
+
+#endif
