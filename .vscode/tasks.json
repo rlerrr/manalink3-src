@@ -1,0 +1,46 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build ManalinkEh.dll",
+            "detail": "gcc 9.3.0 -m32 build via tools/build-recovery.ps1",
+            "type": "shell",
+            "command": "powershell.exe",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}\\tools\\build-recovery.ps1"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true,
+                "focus": false
+            },
+            "problemMatcher": {
+                "owner": "gcc",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "severity": [],
+                "pattern": {
+                    "regexp": "^(.*?):(\\d+):(\\d*):\\s+(?:fatal )?(error|warning|note):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            },
+            // gcc 9 core dumps the whole translation unit even on unrelated
+            // parse errors; don't let the task auto-open problems pane spam.
+            "isBackground": false
+        }
+    ]
+}
