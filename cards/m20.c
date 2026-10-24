@@ -3073,3 +3073,46 @@ LAB_02395b64:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23955e0; original cards/m20.c:431. */
+int card_cavalier_of_gales(int player, int card, event_t event)
+{
+  int result;
+  int card_00;
+  int owner;
+  int position;
+  test_definition_2022_t this_test;
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    draw_cards(player, 3);
+    new_default_test_definition_2022(&this_test, 0xff, "Select a card to put on top.");
+    result = hand_count[player];
+    if (2 < result)
+    {
+      result = 2;
+    }
+    while (0 < result)
+    {
+      card_00 = new_select_a_card_2022(player, player, 4, 1, 3, -1, &this_test);
+      if (card_00 != -1)
+      {
+        put_on_top_of_deck(player, card_00);
+        result = result + -1;
+      }
+    }
+  }
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if ((result != 0) &&
+      (result = find_in_owners_graveyard(player, card, &owner, &position), result != 0))
+  {
+    from_graveyard_to_deck(owner, position, 3);
+    scry(player, 2);
+    return 0;
+  }
+  return 0;
+}
+
+#endif

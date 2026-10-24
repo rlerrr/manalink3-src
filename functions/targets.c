@@ -4674,3 +4674,51 @@ int autoselect_target_2022(int player, int card, int i, int j, int k, int who_ch
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* October 2022 private targeting result at 0x27748c8 (native function-local static). */
+static target_t targeted_subtype_spell_result_2022;
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2661a70; original functions/targets.c:2092. */
+target_t *becomes_target_of_subtype_spell_2022(int player, int card, event_t event, int t_player,
+                                               int t_card, int controlled_by,
+                                               resolve_trigger_t trigger_mode,
+                                               int targeting_subtype)
+{
+  int result;
+  if (trigger_condition != TRIGGER_SPELL_CAST)
+  {
+    return NULL;
+  }
+  if ((((((card == affected_card) && (player == affected_card_controller)) &&
+         (reason_for_trigger_controller == player)) &&
+        ((controlled_by == 2 || (trigger_cause_controller == controlled_by)))) &&
+       (((unsigned int)event - (unsigned int)EVENT_TRIGGER < 2U &&
+         ((result = target_me(t_player, t_card, trigger_cause_controller, trigger_cause),
+           result != 0 &&
+               (result = is_what(trigger_cause_controller, trigger_cause, TYPE_LAND | TYPE_EFFECT),
+                result == 0)))))) &&
+      (result = has_subtype(trigger_cause_controller, trigger_cause, targeting_subtype),
+       result != 0))
+  {
+    if (event != EVENT_TRIGGER)
+    {
+      targeted_subtype_spell_result_2022.player = trigger_cause_controller;
+      targeted_subtype_spell_result_2022.card = trigger_cause;
+      return &targeted_subtype_spell_result_2022;
+    }
+    if (trigger_mode == RESOLVE_TRIGGER_DUH)
+    {
+      result = duh_mode(player);
+      trigger_mode = (result != 0) + RESOLVE_TRIGGER_OPTIONAL;
+    }
+    event_result = event_result | trigger_mode;
+  }
+  return NULL;
+}
+
+#endif

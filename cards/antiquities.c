@@ -3154,3 +3154,63 @@ char *damage_from_artifact_source_2022(int who_chooses, int player, int card)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2244410; original cards/antiquities.c:12. */
+static int kill_legacy_if_source_is_not_in_play_or_untapped_2022(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  result = instance->targets[1].player;
+  if (-1 < result)
+  {
+    other_leaves_play_2022(player, card, result, instance->targets[1].card, event, 0, 0);
+    uVar1 = instance->targets[3].player;
+    if ((((0 < (int)uVar1) && ((uVar1 & 1) != 0)) &&
+         (result = is_tapped(instance->targets[1].player, instance->targets[1].card),
+          result == 0)) ||
+        (event == EVENT_LEAVES_PLAY_ABILITY))
+    {
+      kill_card(instance->targets[2].player, instance->targets[2].card, KILL_EXILE);
+      kill_card(player, card, KILL_EXILE);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2245110; original cards/antiquities.c:33. */
+int pump_until_source_is_in_play_and_tapped_2022(int player, int card, int t_player, int t_card,
+                                                 int pow, int tou, int key, int s_key, int mode)
+{
+  int result;
+  card_instance_t *instance;
+  int card_00;
+  pump_ability_2022_t pump;
+
+  default_pump_ability_definition_2022(player, card, &pump, pow, tou, key, s_key);
+  result = pump_ability_2022(player, card, t_player, t_card, &pump);
+  instance = get_card_instance(player, card);
+  instance->targets[1].player = t_player;
+  instance->targets[1].card = t_card;
+  card_00 = create_targetted_legacy_effect(
+      player, card, kill_legacy_if_source_is_not_in_play_or_untapped_2022, t_player, t_card);
+  instance = get_card_instance(player, card_00);
+  instance->targets[1].card = card;
+  instance->targets[1].player = player;
+  instance->targets[2].player = player;
+  instance->targets[2].card = result;
+  instance->targets[3].player = mode;
+  add_status(player, card_00, 0x10000);
+  return result;
+}
+
+#endif

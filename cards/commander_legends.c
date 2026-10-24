@@ -8665,3 +8665,298 @@ int card_hellkite_courser(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25a5e60; original cards/commander_legends.c:1616. */
+int card_commanders_plate(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  unsigned int uVar5;
+  unsigned int uVar6;
+  uint32_t data;
+  inst_info_t iVar7;
+  target_definition_2022_t *td_00;
+  const char *prompt;
+  target_definition_2022_t td;
+  target_definition_2022_t td1;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    iVar2 = get_color_identity_of_all_commanders_2022(player);
+    iVar3 = 0;
+    data = 0;
+    do
+    {
+      if ((iVar2 >> ((unsigned char)iVar3 & 0x1f) & 1U) == 0)
+      {
+        data = data | 1 << ((unsigned char)iVar3 + 10 & 0x1f);
+      }
+      iVar3 = iVar3 + 1;
+    } while (iVar3 != 5);
+    pcVar1 = get_card_instance(player, card);
+    set_inst_info(pcVar1, 0x5651, data, 0);
+  LAB_025a5ead:
+    if (event != EVENT_CLEANUP)
+    {
+      return 0;
+    }
+  LAB_025a5eb9:
+    default_target_definition_2022(player, card, &td, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    default_target_definition_2022(player, card, &td1, 2);
+  }
+  else
+  {
+    if ((unsigned int)event - (unsigned int)EVENT_POWER < 3U)
+    {
+      pcVar1 = get_card_instance(player, card);
+      if ((((pcVar1->damage_target_card == affected_card) &&
+            (pcVar1->damage_target_player == affected_card_controller)) &&
+           (pcVar4 = is_equipping(player, card), pcVar4 != NULL)) &&
+          (iVar2 = is_humiliated_for_ability(player, card, AL_STATIC), iVar2 == 0))
+      {
+        if ((unsigned int)event - (unsigned int)EVENT_POWER < 2U)
+        {
+          event_result = event_result + 3;
+          return 0;
+        }
+        iVar7 = inst_info(pcVar1, 0x5651);
+        event_result = event_result | iVar7.data;
+      }
+    LAB_025a5ea7:
+      if (event != EVENT_RESOLVE_ACTIVATION)
+        goto LAB_025a5ead;
+      goto LAB_025a5eb9;
+    }
+    if ((event != EVENT_CAN_ACTIVATE) && (event != EVENT_ACTIVATE))
+      goto LAB_025a5ea7;
+    td_00 = &td;
+    default_target_definition_2022(player, card, td_00, 2);
+    td.allowed_controller = player;
+    td.preferred_controller = player;
+    default_target_definition_2022(player, card, &td1, 2);
+    td1.special = 0x8000;
+    td1.extra = (int32_t)is_commander;
+    td1.allowed_controller = player;
+    td1.preferred_controller = player;
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x100, 5, 0, 0, 0, 0,
+                                             0, 0, td_00, NULL);
+      if (iVar2 != 0)
+      {
+        return 1;
+      }
+      iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x100, 3, 0, 0, 0, 0,
+                                             0, 0, &td1, NULL);
+      return iVar2;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 4, 5, 0, 0, 0, 0, 0,
+                                             0, td_00, NULL);
+      uVar6 = 0;
+      if (iVar2 != 0)
+      {
+        iVar2 = can_sorcery_be_played(player, EVENT_ACTIVATE);
+        uVar6 = (unsigned int)(iVar2 != 0);
+      }
+      iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 4, 3, 0, 0, 0, 0, 0,
+                                             0, &td1, NULL);
+      uVar5 = 0;
+      if (iVar2 != 0)
+      {
+        iVar2 = can_sorcery_be_played(player, EVENT_ACTIVATE);
+        uVar5 = (unsigned int)(iVar2 != 0);
+      }
+      iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "Normal equip",
+                          uVar6, 1, "Commander equip", uVar5, 5, 0, 0, 0, 0);
+      if (iVar2 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (iVar2 == 1)
+      {
+        prompt = "Select target creature you control.";
+        iVar2 = 5;
+      LAB_025a61bd:
+        iVar2 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x102, iVar2, 0, 0, 0,
+                                               0, 0, 0, td_00, (char *)prompt);
+        return iVar2;
+      }
+      if (iVar2 == 2)
+      {
+        prompt = "Select target commander creature you control.";
+        iVar2 = 3;
+        td_00 = &td1;
+        goto LAB_025a61bd;
+      }
+      goto LAB_025a5f22;
+    }
+  }
+  td1.allowed_controller = player;
+  td1.special = 0x8000;
+  td1.extra = (int32_t)is_commander;
+  td1.preferred_controller = td1.allowed_controller;
+  if (event != EVENT_RESOLVE_ACTIVATION)
+    goto LAB_025a5f22;
+  pcVar1 = get_card_instance(player, card);
+  iVar2 = pcVar1->info_slot;
+  if (iVar2 == 1)
+  {
+    iVar2 = validate_target_2022(player, card, &td, 0);
+    if (iVar2 == 0)
+    {
+      iVar2 = pcVar1->info_slot;
+      goto LAB_025a63cd;
+    }
+  }
+  else
+  {
+  LAB_025a63cd:
+    if ((iVar2 != 2) || (iVar2 = validate_target_2022(player, card, &td1, 0), iVar2 == 0))
+      goto LAB_025a5f22;
+  }
+  equip_target_creature(pcVar1->parent_controller, pcVar1->parent_card, pcVar1->targets[0].player,
+                        pcVar1->targets[0].card);
+LAB_025a5f22:
+  iVar2 = generic_activated_ability_2022(player, card, event, 0x102, 5, 0, 0, 0, 0, 0, 0, &td,
+                                         "Select target creature you control.");
+  return iVar2;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25abb10; original cards/commander_legends.c:3784. */
+int card_livio_oathsworn_sentinel(int player, int card, event_t event)
+{
+  enum
+  {
+    COUNTER_AEGIS = 173
+  };
+  check_legend_rule(player, card, event);
+  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
+      event != EVENT_CLEANUP)
+    return 0;
+  target_definition_2022_t td;
+  default_target_definition_2022(player, card, &td, 2);
+  td.preferred_controller = player;
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (generic_activated_ability_2022(player, card, event, 0x40004, 1, 0, 0, 0, 0, 1, 0, &td,
+                                       NULL))
+      return 1;
+    return generic_activated_ability_2022(player, card, event, 1, 2, 0, 0, 0, 0, 1, 0, NULL, NULL);
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+    instance->number_of_targets = 0;
+    int abils[2];
+    abils[0] = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x40004, 1, 0, 0, 0,
+                                              0, 1, 0, &td, NULL);
+    abils[1] = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 1, 2, 0, 0, 0, 0, 1,
+                                              0, NULL, NULL);
+    int choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\033", "\001\016",
+                             "Exile with Aegis counter", abils[0], 10, "Return the exiled cards",
+                             abils[1], 20, 0, 0, 0, 0);
+    if (choice == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (choice == 1)
+      generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x40004, 1, 0, 0, 0, 0, 1, 0,
+                                     &td, "TARGET_CREATURE");
+    else if (choice == 2)
+      generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 1, 2, 0, 0, 0, 0, 1, 0, NULL,
+                                     NULL);
+    return 0;
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    if (instance->mode == 1)
+    {
+      if (valid_target_2022(&td))
+      {
+        card_instance_t *target =
+            get_card_instance(instance->targets[0].player, instance->targets[0].card);
+        char buffer[100];
+        scnprintf(buffer, 100, " Exile %s", get_card_name_by_instance(target));
+        int controller = instance->targets[0].player;
+        int choice =
+            dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, "\001\002", "\001\014", "\001\003",
+                        "\001\010", controller, "\001\007", controller, instance->targets[0].card,
+                        buffer, 1, controller == player ? 20 : -20, "Decline", 1, 10, 0, 0, 0, 0);
+        if (choice == 1)
+        {
+          int target_card = instance->targets[0].card;
+          int target_player = instance->targets[0].player;
+          int iid = get_original_internal_card_id(target_player, target_card);
+          int owner = get_owner(target_player, target_card);
+          int legacy;
+          if (player == owner)
+            legacy = create_legacy_effect(player, card, card_exiled_with_aegis_counter);
+          else
+            legacy = create_legacy_effect_for_opponent(player, card, card_exiled_with_aegis_counter,
+                                                       -1, -1);
+          if (legacy != -1)
+          {
+            add_counters_from_source(player, card, owner, legacy, COUNTER_AEGIS, 1);
+            card_instance_t *leg = get_card_instance(owner, legacy);
+            unsigned csvid = (uint16_t)cards_data[iid].id;
+            leg->targets[0].card = iid;
+            leg->display_pic_csv_id = csvid;
+            leg->targets[0].player = owner;
+            leg->eot_toughness = 0x300;
+            leg->display_pic_num =
+                (uint16_t)get_card_image_number(csvid, target_player, target_card);
+          }
+          kill_card(target_player, target_card, KILL_EXILE);
+        }
+      }
+    }
+    else if (instance->mode == 2)
+    {
+      int marked[100][2];
+      int count = 0;
+      for (int phase = 0; phase < 2; ++phase)
+      {
+        int p = phase == 0 ? current_turn : 1 - current_turn;
+        for (int c = active_cards_count[p] - 1; c >= 0; --c)
+        {
+          if (in_play(p, c) && is_what(p, c, 0x80) && count_counters(p, c, COUNTER_AEGIS) &&
+              get_card_instance(p, c)->info_slot_fn == card_exiled_with_aegis_counter)
+          {
+            marked[count][0] = p;
+            marked[count++][1] = c;
+          }
+        }
+      }
+      for (int i = count - 1; i >= 0; --i)
+      {
+        int p = marked[i][0], c = marked[i][1];
+        card_instance_t *effect = get_card_instance(p, c);
+        int owner = effect->targets[0].player, iid = effect->targets[0].card;
+        kill_card(p, c, KILL_EXILE);
+        int position = find_iid_in_rfg(owner, iid);
+        if (position >= 0)
+        {
+          remove_card_from_rfg_by_position(owner, position);
+          int added = add_card_to_hand(owner, iid);
+          put_into_play(owner, added);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+#endif

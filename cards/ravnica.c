@@ -7775,3 +7775,93 @@ LAB_024e37c0:
   return result;
 }
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24e0b90; original cards/ravnica.c:71. */
+int will_tap_permanent_for_convoke_2022(int player, int card, int *clrs)
+{
+  unsigned int clr;
+  int result;
+  unsigned int uVar2;
+  unsigned int uVar3;
+  unsigned int uVar4;
+  unsigned int uVar5;
+  unsigned int uVar6;
+
+  clr = get_color(player, card);
+  if (clr == 0)
+  {
+    if (*clrs != 0)
+    {
+      *clrs = *clrs + -1;
+      return 1;
+    }
+  }
+  else
+  {
+    result = real_count_colors(clr);
+    if (result == 1)
+    {
+      result = 1;
+      do
+      {
+        uVar5 = (int)clr >> ((unsigned char)result & 0x1f) & 1;
+        if (uVar5 != 0)
+        {
+          if (0 < clrs[result])
+          {
+            clrs[result] = clrs[result] + -1;
+            return uVar5;
+          }
+        }
+        result = result + 1;
+      } while (result != 6);
+      if (*clrs != 0)
+      {
+        *clrs = *clrs + -1;
+        return 1;
+      }
+    }
+    else
+    {
+      uVar5 = 0;
+      if ((clr & 0x20) != 0)
+      {
+        uVar5 = (unsigned int)(clrs[5] != 0);
+      }
+      uVar2 = 0;
+      if ((clr & 0x10) != 0)
+      {
+        uVar2 = (unsigned int)(clrs[4] != 0);
+      }
+      uVar3 = 0;
+      if ((clr & 8) != 0)
+      {
+        uVar3 = (unsigned int)(clrs[3] != 0);
+      }
+      uVar4 = 0;
+      if ((clr & 4) != 0)
+      {
+        uVar4 = (unsigned int)(clrs[2] != 0);
+      }
+      uVar6 = 0;
+      if ((clr & 2) != 0)
+      {
+        uVar6 = (unsigned int)(clrs[1] != 0);
+      }
+      result =
+          dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "Tap for Colorless", *clrs, 0,
+                      "Tap for Black", uVar6, 0, "Tap for Blue", uVar4, 0, "Tap for Green", uVar3,
+                      0, "Tap for Red", uVar2, 0, "Tap for White", uVar5, 0, 0, 0, 0, 0);
+      if (result != 0)
+      {
+        clrs[result + -1] = clrs[result + -1] + -1;
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
+#endif

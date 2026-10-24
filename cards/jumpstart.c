@@ -1351,3 +1351,151 @@ int card_neyith_of_the_dire_hunt(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2375ee0; original cards/jumpstart.c:1137. */
+int card_zurzoth_chaos_rider(int player, int card, event_t event)
+{
+  int result;
+  int who_draws;
+  unsigned int player_00;
+  test_definition_2022_t test;
+  check_legend_rule(player, card, event);
+  who_draws = 1 - player;
+  result = card_drawn_trigger(player, card, event, who_draws, RESOLVE_TRIGGER_MANDATORY);
+  if (((result != 0) && (who_draws != current_turn)) && (cards_drawn_this_turn[who_draws] == 1))
+  {
+    make_devil_2022(player, card, player, 1, 1);
+  }
+  if (event != EVENT_DECLARE_ATTACKERS)
+  {
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+    result = current_turn;
+    if (event != EVENT_DAT_ABILITY)
+    {
+      return 0;
+    }
+    draw_cards(current_turn, 1);
+    discard(result, 1, player);
+    player_00 = current_turn ^ 1;
+    draw_cards(player_00, 1);
+    discard(player_00, 1, player);
+    return 0;
+  }
+  default_test_definition_2022(&test, 2);
+  test.subtype = 0x2e;
+  store_attackers_2022(player, card, EVENT_DECLARE_ATTACKERS, 0, player, -1, &test);
+  dat_ability(player, card, EVENT_DECLARE_ATTACKERS, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2374a00; original cards/jumpstart.c:613. */
+int card_ormos_archive_keeper(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  if (trigger_condition == TRIGGER_REPLACE_CARD_DRAW && affect_me(player, card) &&
+      reason_for_trigger_controller == player && suppress_draw == 0 &&
+      !is_humiliated_for_ability(player, card, AL_STATIC) && deck_ptr[player][0] == -1)
+  {
+    if (event == EVENT_TRIGGER)
+    {
+      event_result |= 2;
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 5);
+      suppress_draw = 1;
+      return 0;
+    }
+  }
+  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
+      event != EVENT_CLEANUP)
+    return 0;
+  int searched[2][3] = {{-1, -1, -1}, {-1, -1, -1}};
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (!generic_activated_ability_2022(player, card, event, 0, 1, 0, 2, 0, 0, 0, 0, NULL, NULL))
+      return 0;
+    int count = 0;
+    for (int i = 0; i < active_cards_count[player]; ++i)
+    {
+      if (in_hand(player, i) && test_not_in_array(get_original_internal_card_id(player, i),
+                                                  (int32_t)(intptr_t)searched, -1, -1))
+      {
+        ++count;
+        if (count == 3)
+          return 1;
+        searched[0][count] = get_original_internal_card_id(player, i);
+      }
+    }
+    return 0;
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+    test_definition_2022_t test;
+    new_default_test_definition_2022(&test, 0xff, "Select a card to discard.");
+    test.value_for_special_selection_function = (int32_t)(intptr_t)searched;
+    test.special_selection_function = test_not_in_array;
+    test.zone = 0x100;
+    test.id_flag = 1;
+    test.id = (uint16_t)cards_data[iid_draw_a_card].id;
+    unsigned capacity = (unsigned)hand_count[player];
+    int hand_copy[2][capacity];
+    int count = 0;
+    for (int phase = 0; phase < 2; ++phase)
+    {
+      int p = phase == 0 ? current_turn : 1 - current_turn;
+      for (int c = active_cards_count[p] - 1; c >= 0; --c)
+      {
+        if (player == p && in_hand(player, c))
+        {
+          hand_copy[0][count] = get_original_internal_card_id(player, c);
+          hand_copy[1][count++] = c;
+        }
+      }
+    }
+    if (count != 0)
+    {
+      int chosen = 0;
+      do
+      {
+        int selected =
+            select_card_from_zone_2022(player, player, hand_copy[0], count, 0, 5, -1, &test);
+        if (selected < 0 || selected == searched[1][0] || selected == searched[1][1])
+        {
+          if (chosen < 3)
+          {
+            spell_fizzled = 1;
+            return 0;
+          }
+          break;
+        }
+        searched[0][chosen] = hand_copy[0][selected];
+        searched[1][chosen] = hand_copy[1][selected];
+        ++chosen;
+        hand_copy[0][selected] = iid_draw_a_card;
+      } while (chosen != 3);
+      generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0, 1, 0, 2, 0, 0, 0, 0, NULL,
+                                     NULL);
+      if (spell_fizzled != 1)
+      {
+        discard_card(player, searched[1][0]);
+        discard_card(player, searched[1][1]);
+        discard_card(player, searched[1][2]);
+        return 1;
+      }
+    }
+    return 0;
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+    draw_cards(player, 5);
+  return 0;
+}
+
+#endif

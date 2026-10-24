@@ -3357,3 +3357,86 @@ LAB_02109fd0:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21095e0; original cards/urza_destiny.c:2883. */
+int card_mantis_engine(int player, int card, event_t event)
+{
+  uint32_t uVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  event_t event_00;
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if (((card == affected_card) && (player == affected_card_controller)) &&
+        (iVar5 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0, 2, 0, 0, 0, 0,
+                                                0, 0, NULL, NULL),
+         iVar5 != 0))
+    {
+      check_abilities_keywords_2022 = check_abilities_keywords_2022 | 0x100;
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      event_00 = EVENT_CAN_ACTIVATE;
+    LAB_02109888:
+      iVar5 = generic_activated_ability_2022(player, card, event_00, 0, 2, 0, 0, 0, 0, 0, 0, NULL,
+                                             NULL);
+      return iVar5;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      if (((current_turn != player) || (iVar5 = 10, 0x14 < current_phase)) &&
+          (iVar5 = 1, current_turn == 1 - player))
+      {
+        iVar5 = (unsigned int)(current_phase < 0x17) * 9 + 1;
+      }
+      if (((current_phase == 0x18) && (iVar3 = is_unblocked(player, card), iVar3 == 0)) &&
+          (iVar3 = check_for_ability(player, card, 0x100), iVar3 == 0))
+      {
+        uVar1 = 10;
+      }
+      else
+      {
+        uVar1 = 1;
+      }
+      iVar5 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Gains flying", 1, iVar5,
+                          "Gains first strike", 1, uVar1, 0, 0, 0, 0);
+      if (iVar5 == 0)
+      {
+        spell_fizzled = 1;
+      }
+      else if (iVar5 - 1U < 2)
+      {
+        event_00 = EVENT_ACTIVATE;
+        goto LAB_02109888;
+      }
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      instance = get_card_instance(player, card);
+      iVar5 = instance->parent_controller;
+      iVar3 = instance->parent_card;
+      iVar4 = instance->info_slot;
+      if (iVar4 == 1)
+      {
+        iVar4 = pump_ability_until_eot_2022(iVar5, iVar3, iVar5, iVar3, 0, 0, 0x20, 0);
+        alternate_legacy_text(1, player, iVar4);
+        iVar4 = instance->info_slot;
+      }
+      if (iVar4 == 2)
+      {
+        iVar5 = pump_ability_until_eot_2022(iVar5, iVar3, iVar5, iVar3, 0, 0, 0x100, 0);
+        alternate_legacy_text(2, player, iVar5);
+      }
+    }
+  }
+  return 0;
+}
+
+#endif

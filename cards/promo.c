@@ -1460,3 +1460,206 @@ int card_yule_ooze(int player, int card, event_t event)
     }
   } while (true);
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2410b40; original cards/promo.c:1401. */
+int card_snow_mercy(int player, int card, event_t event)
+{
+  unsigned char bVar1;
+  card_instance_t *pcVar2;
+  int result;
+  wav_t soundnum;
+  card_instance_t *pcVar4;
+  unsigned int uVar5;
+  test_definition_2022_t test;
+
+  pcVar2 = damage_being_dealt(event);
+  if (((((pcVar2 != NULL) && (pcVar2->damage_target_card == -1)) &&
+        (pcVar2->damage_target_player == player)) &&
+       ((result = damage_is_to_planeswalker(pcVar2),
+         result == 0 && ((pcVar2->targets[3].player & 2) != 0)))) &&
+      ((pcVar4 = in_play((int)pcVar2->damage_source_player, pcVar2->damage_source_card),
+        pcVar4 != NULL &&
+            (result = is_humiliated_for_ability(player, card, AL_TRIG), result == 0))))
+  {
+    pcVar4 = get_card_instance(player, card);
+    bVar1 = pcVar4->number_of_targets;
+    if (bVar1 < 10)
+    {
+      pcVar4->targets[bVar1].player = (int)pcVar2->damage_source_player;
+      pcVar4->targets[bVar1].card = pcVar2->damage_source_card;
+      pcVar4->number_of_targets = bVar1 + 1;
+    }
+    else
+    {
+      add_counters_from_source(player, card, (int)pcVar2->damage_source_player,
+                               pcVar2->damage_source_card, COUNTER_GLOBE, 1);
+    }
+  }
+  if (((trigger_condition == 0xd7) && (card == affected_card)) &&
+      ((player == affected_card_controller &&
+        ((reason_for_trigger_controller == player &&
+          (result = is_humiliated_for_ability(player, card, AL_TRIG), result == 0))))))
+  {
+    pcVar2 = get_card_instance(player, card);
+    if (event != EVENT_TRIGGER)
+    {
+      if (event == EVENT_RESOLVE_TRIGGER)
+      {
+        if (pcVar2->number_of_targets != '\0')
+        {
+          result = 0;
+          do
+          {
+            add_counters_from_source(player, card, pcVar2->targets[result].player,
+                                     pcVar2->targets[result].card, COUNTER_GLOBE, 1);
+            result = result + 1;
+          } while (result < (int)(unsigned int)pcVar2->number_of_targets);
+        }
+        pcVar2->number_of_targets = '\0';
+        goto LAB_02410ec7;
+      }
+      goto LAB_02410b7a;
+    }
+    if (pcVar2->number_of_targets != '\0')
+    {
+      event_result = event_result | 2;
+    }
+  }
+  else
+  {
+  LAB_02410b7a:
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      uVar5 = (unsigned int)(event != EVENT_ACTIVATE);
+      if (event == EVENT_ACTIVATE)
+      {
+        pcVar2 = get_card_instance(player, card);
+        pcVar2->state = pcVar2->state | 0x10;
+        result = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0, 0, 0, 0, 0, 0, 0,
+                                                0, NULL, NULL);
+        pcVar2 = get_card_instance(player, card);
+        pcVar2->state = pcVar2->state & 0xffffffef;
+        if (result == 0)
+        {
+          return 0;
+        }
+        if (spell_fizzled == 1)
+        {
+          return result;
+        }
+        uVar5 = 0;
+        do
+        {
+          if ((uVar5 & 1) == 0)
+          {
+            tap_card(player, card);
+            if (ai_is_speculating != 1)
+            {
+              EXE_FN(int, 0x437ec0, int, int)(0, 0xff);
+              soundnum = WAV_FASTFX;
+            LAB_02410d1d:
+              play_sound_effect(soundnum);
+              sleepms(0x15e);
+            }
+          }
+          else
+          {
+            untap_card(player, card);
+            if (ai_is_speculating != 1)
+            {
+              EXE_FN(int, 0x437ec0, int, int)(0, 0xff);
+              soundnum = WAV_UNTAP;
+              goto LAB_02410d1d;
+            }
+          }
+          uVar5 = uVar5 + 1;
+          if (uVar5 == 4)
+          {
+            pcVar2 = get_card_instance(player, card);
+            pcVar2->state = pcVar2->state | 0x10;
+            return result;
+          }
+        } while (true);
+      }
+      goto LAB_02410ba4;
+    }
+  }
+  if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+  {
+  LAB_02410ec7:
+    result = global_enchantment(player, card, event);
+    return result;
+  }
+  uVar5 = 1;
+LAB_02410ba4:
+  result =
+      generic_activated_ability_2022(player, card, event, uVar5, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    return result;
+  }
+  default_test_definition_2022(&test, 2);
+  test.special_selection_function = has_globe_counter;
+  new_manipulate_all_2022(player, card, 2, &test, ACT_TAP);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2411220; original cards/promo.c:1526. */
+int card_stocking_tiger(int player, int card, event_t event)
+{
+  if (event == EVENT_RESOLVE_SPELL && !is_humiliated_for_ability(player, card, AL_STATIC))
+  {
+    EXPANSION_t expansion = (EXPANSION_t)-1;
+    if (ai_is_speculating == 1 || (player == 1 && (trace_mode & 2) == 0))
+    {
+      expansion = EXPANSION_THE_DARK;
+      announce_expansion_choice(player, card, expansion);
+    }
+    else if ((trace_mode & 2) != 0 && player != 0)
+    {
+      EXE_FN(int, 0x4a70c0, int, int)(1, 26);
+      expansion = dblword_628C10;
+      announce_expansion_choice(player, card, expansion);
+    }
+    else
+    {
+      choose_packs(1, PACK_ALLOW_BOOSTER, &expansion, NULL);
+      if ((trace_mode & 2) != 0)
+      {
+        dblword_628C10 = expansion;
+        byte_628C0C = 26;
+        EXE_FN(int, 0x4a6bc0, int, int)(0, 26);
+      }
+    }
+    if (is_valid_pack(expansion, 1))
+      get_card_instance(player, card)->targets[3].card =
+          ((uint32_t)expansion & 0xffff) | 0x3f7c0000;
+  }
+  if (has_combat_damage_been_inflicted_to_a_player(player, card, event))
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    uint32_t stored = instance->targets[3].card;
+    if ((uint16_t)(stored >> 16) == 0x3f7c)
+    {
+      EXPANSION_t expansion = stored & 0xffff;
+      if (is_valid_pack(expansion, 1))
+      {
+        instance->targets[3].card = -1;
+        int capacity = pack_size(expansion, 1);
+        int csvids[capacity];
+        int num_csvids = make_pack_2022(expansion, 1, csvids);
+        for (int i = 0; i < num_csvids; ++i)
+          add_card_to_hand(player, get_internal_card_id_from_csv_id(csvids[i]));
+      }
+    }
+  }
+  return 0;
+}
+
+#endif

@@ -6188,3 +6188,86 @@ LAB_025cd405:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25cf1b0; original cards/throne_of_eldraine.c:2027. */
+int card_fires_of_invention(int player, int card, event_t event)
+{
+  if (!is_humiliated_for_ability(player, card, AL_STATIC))
+  {
+    if (event == EVENT_MODIFY_COST_GLOBAL)
+    {
+      if (affected_card_controller == player && !is_what(player, affected_card, 1) &&
+          (get_specific_storm_count_2022(affected_card_controller) > 1 || current_turn != player))
+        infinite_casting_cost();
+    }
+    else if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (get_specific_storm_count_2022(player) > 1 || current_turn != player)
+        return 0;
+      int lands = count_permanents_by_type(player, TYPE_LAND);
+      for (int i = 0; i < active_cards_count[player]; ++i)
+      {
+        if (in_hand(player, i) && !is_what(player, i, 1) && get_cmc(player, i) <= lands)
+        {
+          int legal = can_legally_play_card_in_hand(player, i);
+          if ((legal == 99 && (is_what(player, i, 0x20) || is_what(player, i, 0x22))) ||
+              (legal == 1 &&
+               (is_what(player, i, 0x10) || can_sorcery_be_played(player, EVENT_CAN_ACTIVATE) ||
+                is_what(player, i, 2) || can_sorcery_be_played(player, EVENT_CAN_ACTIVATE) ||
+                flash(player, i, EVENT_CAN_ACTIVATE))))
+          {
+            return legal;
+          }
+        }
+      }
+      return 0;
+    }
+    else if (event == EVENT_ACTIVATE && get_specific_storm_count_2022(player) < 2 &&
+             current_turn == player)
+    {
+      unsigned capacity = (unsigned)hand_count[player];
+      int playable[2][capacity];
+      int lands = count_permanents_by_type(player, TYPE_LAND);
+      int count = 0;
+      for (int i = 0; i < active_cards_count[player]; ++i)
+      {
+        if (in_hand(player, i) && !is_what(player, i, 1) && get_cmc(player, i) <= lands)
+        {
+          int legal = can_legally_play_card_in_hand(player, i);
+          if ((legal == 99 && (is_what(player, i, 0x20) || is_what(player, i, 0x22))) ||
+              (legal == 1 &&
+               (is_what(player, i, 0x10) || can_sorcery_be_played(player, EVENT_CAN_ACTIVATE) ||
+                is_what(player, i, 2) || can_sorcery_be_played(player, EVENT_CAN_ACTIVATE) ||
+                flash(player, i, EVENT_CAN_ACTIVATE))))
+          {
+            playable[0][count] = get_card_instance(player, i)->internal_card_id;
+            playable[1][count++] = i;
+          }
+        }
+      }
+      char buffer[100];
+      scnprintf(buffer, 100,
+                "Select a non-land card with mana value less than or equal to %d to play.", lands);
+      test_definition_2022_t test;
+      _Static_assert(sizeof(test) == 216, "native Fires of Invention filter");
+      new_default_test_definition_2022(&test, 1, buffer);
+      test.cmc = lands + 1;
+      test.cmc_flag = 3;
+      test.type_flag = 1;
+      int selected =
+          select_card_from_zone_2022(player, player, playable[0], count, 0, 2, -1, &test);
+      if (selected == -1)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      play_card_in_hand_for_free(player, playable[1][selected]);
+      cant_be_responded_to = 1;
+    }
+  }
+  return global_enchantment(player, card, event);
+}
+
+#endif

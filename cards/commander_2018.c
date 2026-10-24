@@ -3523,3 +3523,188 @@ int card_tuvasa_the_sunlit(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2564cc0; original cards/commander_2018.c:1543. */
+int card_saheelis_directive(int player, int card, event_t event)
+{
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card || player != affected_card_controller)
+      goto native_improvise;
+    improvise_2022(player, card, EVENT_CAST_SPELL);
+    generic_spell_2022(player, card, EVENT_CAST_SPELL, GS2022_X_SPELL, NULL, NULL, 0, NULL);
+    if (spell_fizzled == 1)
+      return 0;
+    card_instance_t *instance = get_card_instance(player, card);
+    int adjustment = -48;
+    if (instance->info_slot > 5)
+      adjustment = instance->info_slot * 12;
+    ai_modifier += adjustment;
+    return 0;
+  }
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int deck_count = count_deck(player);
+    int max = instance->info_slot;
+    if (deck_count < max)
+      max = deck_count;
+    if (max != 0)
+    {
+      int cage = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM2022_DECK);
+      show_deck_2022(player, deck_ptr[player], max, "Cards revealed by Saheeli's Directive", 0,
+                     ENGINE_DONE_LABEL);
+      if (cage == 0)
+      {
+        int deck_copy[max];
+        for (int i = 0; i < max; ++i)
+        {
+          deck_copy[i] = deck_ptr[player][0];
+          remove_card_from_deck(player, 0);
+        }
+        char msg[100];
+        scnprintf(msg, sizeof(msg), "Select an artifact card with CMC <= %d.", max);
+        test_definition_2022_t test;
+        new_default_test_definition_2022(&test, TYPE_ARTIFACT, msg);
+        test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
+        test.cmc = max + 1;
+        int amount = max;
+        do
+        {
+          int selected =
+              select_card_from_zone_2022(player, player, deck_copy, amount, 0, 1, -1, &test);
+          if (selected == -1)
+          {
+            if (amount != 0)
+            {
+              if (amount > 0)
+                for (int i = cage; i < amount; ++i)
+                  raw_put_iid_on_top_of_deck(player, deck_copy[i]);
+              mill(player, amount);
+            }
+            break;
+          }
+          is_what(-1, deck_copy[selected], TYPE_CREATURE);
+          int card_added = add_card_to_hand(player, deck_copy[selected]);
+          set_special_flags_2022(player, card_added, SF_PLAYED_FROM_DECK);
+          put_into_play(player, card_added);
+          --amount;
+          for (int i = selected; i < amount; ++i)
+            deck_copy[i] = deck_copy[i + 1];
+        } while (amount != 0);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  else if (event == EVENT_CAN_CAST || event == EVENT_CHANGE_TARGET)
+    improvise_2022(player, card, event);
+  else if (event != EVENT_CAN_CHANGE_TARGET)
+    goto native_improvise;
+  return generic_spell_2022(player, card, event, GS2022_X_SPELL, NULL, NULL, 0, NULL);
+
+native_improvise:
+  return improvise_2022(player, card, event);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2560470; original cards/commander_2018.c:906. */
+static int rfg_at_end_of_combat(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  result = end_of_combat_trigger(player, card, event, 2);
+  if (result == 0)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  kill_card((int)instance->damage_target_player, instance->damage_target_card, KILL_EXILE);
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2562b60; original cards/commander_2018.c:915. */
+int card_gyrus_waker_of_corpses(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_CAST_SPELL || event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE) &&
+      card == affected_card && player == affected_card_controller)
+  {
+    if (!check_special_flags2_2022(player, card, 0x100) && !played_for_free(player, card) &&
+        !is_token(player, card))
+    {
+      int mp = x_value + 3;
+      int cost = get_updated_casting_cost(player, card, -1, event, 0);
+      ++hack_silent_counters;
+      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, cost + mp);
+      --hack_silent_counters;
+    }
+  }
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+  {
+    test_definition_2022_t this_test;
+    default_test_definition_2022(&this_test, TYPE_CREATURE);
+    int power = get_power(player, card);
+    scnprintf(this_test.message, 100, "Select target creatrue card with power less than %d", power);
+    this_test.power = get_power(player, card);
+    this_test.power_flag = 3;
+    if (new_special_count_grave_2022(player, &this_test) && !graveyard_has_shroud(player))
+    {
+      int grave_count = count_graveyard(player);
+      int playable[2][grave_count];
+      memset(playable, 0xff, sizeof playable);
+      int count = 0;
+      int scanned = 0;
+      int *grave = graveyard_ptr_mutable[player];
+      int iid = *grave;
+      while (iid != -1)
+      {
+        if (is_what(-1, iid, TYPE_CREATURE))
+        {
+          int base_power = cards_data[grave[scanned]].power;
+          if (base_power < get_power(player, card))
+          {
+            playable[0][count] = grave[scanned];
+            playable[1][count] = scanned;
+            ++count;
+          }
+        }
+        ++scanned;
+        iid = grave[scanned];
+      }
+      if (scanned != 0)
+      {
+        int selected =
+            select_card_from_zone_2022(player, player, playable[0], count, 0, 1, -1, &this_test);
+        if (selected == -1)
+        {
+          spell_fizzled = 1;
+        }
+        else
+        {
+          int csvid = cards_data[playable[0][selected]].id;
+          rfg_card_from_grave(player, playable[1][selected]);
+          token_generation_2022_t token;
+          default_token_definition_2022(player, card, csvid, &token);
+          token.no_sleight = 1;
+          token.legacy = 1;
+          token.special_code_for_legacy = rfg_at_end_of_combat;
+          token.action = TOKEN2022_ACTION_ATTACKING;
+          generate_token_2022(&token);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+#endif

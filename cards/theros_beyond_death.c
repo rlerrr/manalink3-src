@@ -4378,3 +4378,389 @@ LAB_0235b56f:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x235a200; original cards/theros_beyond_death.c:53. */
+static int escape_with_counters_2022_impl(int player, int card, event_t event, int colorless, int black,
+                                   int green, int red, int num_exile, int num_counters)
+{
+  int result;
+  if ((((event == EVENT_CAST_SPELL) || (event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE)) &&
+       (affected_card == card)) &&
+      (affected_card_controller == player))
+  {
+    result = check_special_flags3_2022(player, card, 0x80000);
+    if (result != 0)
+    {
+      enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, num_counters);
+    }
+  }
+  if ((event != EVENT_GRAVEYARD_ABILITY) && (event != EVENT_PAY_FLASHBACK_COSTS))
+  {
+    return 0;
+  }
+  result = escape_part_2022(player, card, event, colorless, black, 0, green, red, 0, num_exile);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x235e820; original cards/theros_beyond_death.c:2384. */
+int card_loathsome_chimera(int player, int card, event_t event)
+{
+  int result;
+  result = escape_with_counters_2022_impl(player, card, event, 4, 0, 1, 0, 3, 1);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x235f610; original cards/theros_beyond_death.c:2937. */
+int card_ox_of_agonas(int player, int card, event_t event)
+{
+  int result;
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    discard_all(player);
+    draw_cards(player, 3);
+  }
+  result = escape_with_counters_2022_impl(player, card, event, 0, 0, 0, 2, 8, 1);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2362150; original cards/theros_beyond_death.c:4373. */
+int card_underworld_charger(int player, int card, event_t event)
+{
+  int result;
+  cannot_block(player, card, event);
+  result = escape_with_counters_2022_impl(player, card, event, 4, 1, 0, 0, 3, 2);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23623d0; original cards/theros_beyond_death.c:4471. */
+int card_voracious_typhon(int player, int card, event_t event)
+{
+  int result;
+  result = escape_with_counters_2022_impl(player, card, event, 5, 0, 2, 0, 4, 3);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2362540; original cards/theros_beyond_death.c:4557. */
+int card_woe_strider(int player, int card, event_t event)
+{
+  int result;
+  test_definition_2022_t test;
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    generate_token_by_id_2022(player, card, 0x4939);
+  }
+  else
+  {
+    if (((event == EVENT_GRAVEYARD_ABILITY) || (event == EVENT_PAY_FLASHBACK_COSTS)) ||
+        (((event == EVENT_CAST_SPELL || (event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE)) &&
+          ((card == affected_card && (player == affected_card_controller))))))
+    {
+      result = escape_with_counters_2022_impl(player, card, event, 3, 2, 0, 0, 4, 2);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+      goto LAB_023625b3;
+  }
+  if ((1U < (unsigned int)event - (unsigned int)EVENT_RESOLVE_ACTIVATION) &&
+      (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    scry(player, 1);
+  }
+LAB_023625b3:
+  new_default_test_definition_2022(&test, 2, "Select a creature to sacrifice.");
+  test.not_me = 1;
+  result = generic_activated_ability_with_sacrifice_as_cost_2022(
+      player, card, event, GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, TYPE_NONE, &test, SARV_0);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x235ffa0; original cards/theros_beyond_death.c:3211. */
+int card_renata_called_to_the_hunt(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_2022_t test;
+  check_legend_rule(player, card, event);
+  if (event == EVENT_POWER)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      result = devotion(player, card, 3, 0);
+      set_characteristic_pt(result);
+    }
+  }
+  else if ((event == EVENT_CAST_SPELL) || (event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE))
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if (result == 0)
+      {
+        default_test_definition_2022(&test, 2);
+        test.not_me = 1;
+        test_enters_the_battlefield_with_counters_2022(player, card, event, player, &test,
+                                                       COUNTER_P1_P1, 1);
+      }
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2359bb0; original cards/theros_beyond_death.c:4212. */
+static int breach_effect(int player, int card, event_t event)
+{
+  int *piVar1;
+  card_ptr_t *pcVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int iVar5;
+  unsigned int uVar6;
+  int card_00;
+  int iVar7;
+  int iVar8;
+  int iVar9;
+  int iStack_358;
+  int iStack_354;
+  int opts[100][2];
+
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      instance = get_card_instance(player, card);
+      if (-1 < instance->damage_target_player)
+      {
+        iVar4 = get_id((int)instance->damage_target_player, instance->damage_target_card);
+        if (iVar4 != 0x52b7)
+        {
+          kill_card(player, card, KILL_EXILE);
+        }
+      }
+    }
+  }
+  else if (event == EVENT_CAN_ACTIVATE)
+  {
+    piVar1 = graveyard_ptr_mutable[player];
+    if ((*piVar1 != -1) && ((player_bits[player] & PB_GY_ABILITIES_DISABLED) == 0))
+    {
+      instance = get_card_instance(player, card);
+      iVar4 = instance->targets[0].card;
+      instance = get_card_instance(player, card);
+      iVar4 = is_humiliated_for_ability(instance->targets[0].player, iVar4, AL_STATIC);
+      if (iVar4 == 0)
+      {
+        iVar4 = count_graveyard(player);
+        if (0 < iVar4)
+        {
+          iVar9 = 0;
+          do
+          {
+            iVar7 = piVar1[iVar9];
+            if ((cards_data[iVar7].type & 1) == 0)
+            {
+              iVar5 = add_card_to_hand(player, iVar7);
+              add_state(player, iVar5, 0x20);
+              hand_count[player] = hand_count[player] + -1;
+              pcVar2 = cards_ptr[cards_data[iVar7].id];
+              uVar6 = escape_part_2022(
+                  player, iVar5, EVENT_GRAVEYARD_ABILITY, (unsigned int)pcVar2->req_colorless,
+                  (unsigned int)pcVar2->req_black, (unsigned int)pcVar2->req_blue,
+                  (unsigned int)pcVar2->req_green, (unsigned int)pcVar2->req_red,
+                  (unsigned int)pcVar2->req_white, 3);
+              obliterate_card_and_recycle(player, iVar5);
+              if (uVar6 != 0)
+              {
+                return (-(unsigned int)((uVar6 & 0x400) == 0) & 0xffffff9e) + 99;
+              }
+            }
+            iVar9 = iVar9 + 1;
+          } while (iVar4 != iVar9);
+        }
+      }
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    char buffer[3000];
+    iStack_354 = scnprintf(buffer, 3000, " Cancel\n");
+    piVar1 = graveyard_ptr_mutable[player];
+    iVar4 = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM2022_GRAVE);
+    iVar9 = grafdiggers_cages(player, TYPE_SPELL, TUTOR_FROM2022_GRAVE);
+    if ((player_bits[player] & PB_GY_ABILITIES_DISABLED) == 0)
+    {
+      iVar7 = count_graveyard(player);
+      hack_allow_sorcery_if_rules_engine_is_only_effect = 1;
+      if (0 < iVar7)
+      {
+        iStack_358 = 1;
+        iVar5 = 0;
+        do
+        {
+          iVar8 = piVar1[iVar5];
+          if ((cards_data[iVar8].type & 1) == 0)
+          {
+            card_00 = add_card_to_hand(player, iVar8);
+            add_state(player, card_00, 0x20);
+            hand_count[player] = hand_count[player] + -1;
+            pcVar2 = cards_ptr[cards_data[iVar8].id];
+            uVar6 = escape_part_2022(
+                player, card_00, EVENT_GRAVEYARD_ABILITY, (unsigned int)pcVar2->req_colorless,
+                (unsigned int)pcVar2->req_black, (unsigned int)pcVar2->req_blue,
+                (unsigned int)pcVar2->req_green, (unsigned int)pcVar2->req_red,
+                (unsigned int)pcVar2->req_white, 3);
+            if (uVar6 != 0)
+            {
+              if ((cards_data[iVar8].type & 2) == 0)
+              {
+                if ((iVar9 == 0) || ((cards_data[iVar8].type & 0x38) == 0))
+                  goto LAB_0235a00c;
+              }
+              else if (iVar4 == 0)
+              {
+              LAB_0235a00c:
+                if ((uVar6 & 0x2000) != 0)
+                {
+                  iVar8 = scnprintf(buffer + iStack_354, 3000 - iStack_354, " Breach %s\n",
+                                    pcVar2->name);
+                  iStack_354 = iStack_354 + iVar8;
+                  opts[iStack_358][0] = iVar5;
+                  opts[iStack_358][1] = uVar6;
+                  iStack_358 = iStack_358 + 1;
+                }
+              }
+            }
+            obliterate_card_and_recycle(player, card_00);
+          }
+          iVar5 = iVar5 + 1;
+        } while (iVar7 != iVar5);
+      }
+    }
+    iVar4 = do_dialog(player, player, card, -1, -1, buffer, 1);
+    if (iVar4 == 0)
+    {
+      spell_fizzled = 1;
+      hack_allow_sorcery_if_rules_engine_is_only_effect = 0;
+      return 0;
+    }
+    if ((opts[iVar4][1] & 0x2000U) != 0)
+    {
+      iVar4 = opts[iVar4][0];
+      iVar7 = add_card_to_hand(player, piVar1[iVar4]);
+      add_state(player, iVar7, 0x20);
+      hand_count[player] = hand_count[player] + -1;
+      instance = get_card_instance(player, iVar7);
+      iVar9 = graveyard_source[player][iVar4];
+      instance->targets[3].card = iVar9;
+      iVar5 = get_id(player, iVar7);
+      pcVar2 = cards_ptr[iVar5];
+      iVar5 = escape_part_2022(player, iVar7, EVENT_PAY_FLASHBACK_COSTS,
+                               (unsigned int)pcVar2->req_colorless, (unsigned int)pcVar2->req_black,
+                               (unsigned int)pcVar2->req_blue, (unsigned int)pcVar2->req_green,
+                               (unsigned int)pcVar2->req_red, (unsigned int)pcVar2->req_white, 3);
+      if ((iVar5 == 0) || (spell_fizzled == 1))
+      {
+        obliterate_card(player, iVar7);
+        spell_fizzled = 1;
+        hack_allow_sorcery_if_rules_engine_is_only_effect = 0;
+        return 0;
+      }
+      iVar4 = find_in_graveyard_by_source(player, iVar9, iVar4);
+      if (iVar5 == 1)
+      {
+        iVar4 = play_card_in_grave_for_free(player, player, iVar4);
+        set_special_flags3_2022(player, iVar4, 0x80000);
+        cant_be_responded_to = 1;
+      }
+      obliterate_card(player, iVar7);
+    }
+    hack_allow_sorcery_if_rules_engine_is_only_effect = 0;
+    return 0;
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2361fd0; original cards/theros_beyond_death.c:4332. */
+int card_underworld_breach(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  if (((event == EVENT_STATIC_EFFECTS) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    if (0 < active_cards_count[player])
+    {
+      iVar1 = 0;
+      do
+      {
+        instance = in_play(player, iVar1);
+        if ((((instance != NULL) && (iVar3 = is_what(player, iVar1, 0x80), iVar3 != 0)) &&
+             (instance = get_card_instance(player, iVar1),
+              instance->info_slot_fn == breach_effect)) &&
+            (((instance->damage_target_player == player &&
+               (instance->damage_target_card == card)) ||
+              ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
+          goto LAB_02361fec;
+        iVar1 = iVar1 + 1;
+      } while (iVar1 < active_cards_count[player]);
+    }
+    iVar1 = create_targetted_legacy_activate(player, card, breach_effect, player, card);
+    instance = get_card_instance(player, iVar1);
+    instance->targets[0].player = player;
+    instance->targets[0].card = card;
+    instance->number_of_targets = '\x01';
+  }
+LAB_02361fec:
+  iVar1 = is_humiliated_for_ability(player, card, AL_TRIG);
+  if (((iVar1 == 0) && (iVar1 = check_state(player, card, STATE_OUBLIETTED), iVar1 == 0)) &&
+      (iVar1 = eot_trigger(player, card, event), iVar1 != 0))
+  {
+    kill_card(player, card, KILL_SACRIFICE);
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
+}
+
+#endif

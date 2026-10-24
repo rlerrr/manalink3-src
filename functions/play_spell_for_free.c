@@ -1001,3 +1001,291 @@ int copy_spell_from_stack_set_target0(int player, int iid, card_instance_t *copi
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26695a0; original functions/play_spell_for_free.c:535. */
+int effect_may_play_card_from_exile_2022(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  unsigned int uVar6;
+  unsigned int uVar7;
+  int iStack_100;
+  int iStack_fc;
+  unsigned int uStack_f8;
+  int iid;
+  test_definition_2022_t test;
+
+  instance = get_card_instance(player, card);
+  iVar5 = instance->targets[0].player;
+  iVar4 = instance->targets[0].card;
+  uVar7 = instance->targets[1].player;
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((uVar7 & 4) != 0)
+    {
+      return 0;
+    }
+    iVar5 = check_rfg(iVar5, iVar4);
+    if (iVar5 != 0)
+    {
+      return 0;
+    }
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  if (event == EVENT_CLEANUP)
+  {
+    uVar7 = uVar7 & 8;
+  joined_r0x02669883:
+    if (uVar7 == 0)
+    {
+      return 0;
+    }
+  LAB_02669889:
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  if (event == EVENT_BEGIN_TURN)
+  {
+    if (((uVar7 & 0x20) == 0) || (current_turn != player))
+    {
+      if ((uVar7 & 0x400) != 0)
+      {
+        if (current_turn != player)
+        {
+          return 0;
+        }
+        goto LAB_02669bf1;
+      }
+    }
+    else
+    {
+      instance->targets[1].player = uVar7 | 8;
+      if ((uVar7 & 0x400) != 0)
+      {
+      LAB_02669bf1:
+        instance->targets[1].card = 0;
+        uVar7 = uVar7 & 0x40;
+        goto joined_r0x02669883;
+      }
+    }
+    if ((uVar7 & 0x40) == 0)
+    {
+      return 0;
+    }
+    if (current_turn != player)
+    {
+      return 0;
+    }
+    goto LAB_02669889;
+  }
+  if ((1U < (unsigned int)event - (unsigned int)EVENT_RESOLVE_ACTIVATION) &&
+      (event != EVENT_ACTIVATE))
+  {
+    return 0;
+  }
+  uVar6 = 0;
+  if ((((uVar7 & 4) != 0) && (uVar6 = 0, ai_is_speculating != 1)) && (uVar6 = 1, player == 1))
+  {
+    uVar6 = (unsigned int)trace_mode >> 1 & 1;
+  }
+  uStack_f8 = uVar7 & 4;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (instance->targets[1].card == 0x2a)
+    {
+      return 0;
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    return 0;
+  }
+  iid = get_internal_card_id_from_csv_id(iVar4);
+  iStack_fc = can_legally_play_iid_now(player, iid, event);
+  if (((uVar7 & 0x100) != 0) && (iVar2 = get_trap_condition(player, 0x60d), iVar2 == 0))
+  {
+    iStack_fc = 0;
+  }
+  if (((uVar7 & 0x400) != 0) && ((current_turn != player || (instance->targets[1].card == 1))))
+  {
+    iStack_fc = 0;
+  }
+  if ((uVar7 & 0x200) != 0)
+  {
+    default_test_definition_2022(&test, 0x100);
+    test.subtype = 0x7041;
+    iVar2 = check_battlefield_for_special_card_2022(player, card, player, 0, &test);
+    if (iVar2 == 0)
+    {
+      iStack_fc = 0;
+    }
+  }
+  if ((uStack_f8 == 0) && (iVar2 = check_rfg(iVar5, iVar4), iVar2 == 0))
+  {
+  LAB_02669a30:
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      return uVar6;
+    }
+    iStack_100 = 0;
+  LAB_02669a43:
+    iStack_fc = 0;
+    goto LAB_02669717;
+  }
+  if ((uVar7 & 1) == 0)
+  {
+    if ((uVar7 & 2) == 0)
+    {
+      iVar2 = has_mana_to_cast_iid(player, event, iid);
+      if ((iVar2 == 0) || (iVar2 = has_no_mana_cost(-1, iid), iVar2 != 0))
+        goto LAB_02669a30;
+      goto LAB_02669704;
+    }
+    iVar2 = get_cmc_by_id(iVar4);
+    iStack_100 = get_updated_casting_cost(player, -1, iid, event, iVar2);
+    iVar2 = is_what(-1, iid, 0x40);
+    iVar2 = has_mana(player, (-(unsigned int)(iVar2 == 0) ^ 0xffffffff) & 6, iStack_100);
+    if ((iVar2 == 0) || (iVar2 = has_no_mana_cost(-1, iid), iVar2 != 0))
+    {
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        return uVar6;
+      }
+      goto LAB_02669a43;
+    }
+  }
+  else
+  {
+  LAB_02669704:
+    iStack_100 = 0;
+  }
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (iStack_fc != 0)
+    {
+      return iStack_fc;
+    }
+    return uVar6;
+  }
+LAB_02669717:
+  if (event != EVENT_ACTIVATE)
+  {
+    return 0;
+  }
+  if ((uVar6 != 0) &&
+      (iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\014", "\001\003", "\001\013",
+                           (unsigned int)instance->display_pic_csv_id, "Play card", iStack_fc, 1,
+                           "Look at card", 1, 0xffffffff, 0, 0, 0, 0),
+       iVar2 == 2))
+  {
+    show_deck_2022(player, &iid, 1, "Face-down card in exile", 0, ENGINE_OK_LABEL);
+    spell_fizzled = 1;
+    return 0;
+  }
+  instance->targets[1].card = 0x2a;
+  if ((uVar7 & 1) == 0)
+  {
+    if ((uVar7 & 2) == 0)
+    {
+      charge_mana_from_id(player, -1, EVENT_ACTIVATE, iVar4);
+    }
+    else
+    {
+      iVar2 = is_what(-1, iid, 0x40);
+      charge_mana(player, (-(unsigned int)(iVar2 == 0) ^ ~COLOR_COLORLESS) & COLOR_ARTIFACT,
+                  iStack_100);
+    }
+    iVar2 = spell_fizzled;
+    instance->targets[1].card = -1;
+    if (iVar2 == 1)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    spell_fizzled = 0;
+    instance->targets[1].card = -1;
+  }
+  kill_card(player, card, KILL_EXILE);
+  if (uStack_f8 != 0)
+  {
+    add_csvid_to_rfg(iVar5, iVar4);
+  }
+  if ((uVar7 & 0x80) == 0)
+  {
+    play_card_in_exile_for_free_impl(player, iVar5, iVar4, 0, -1);
+  }
+  else
+  {
+    iVar2 = get_internal_card_id_from_csv_id(iVar4);
+    iVar3 = can_legally_play_iid(player, iVar2);
+    if (iVar3 != 0)
+    {
+      remove_card_from_rfg(iVar5, iVar4);
+      iVar4 = add_card_to_hand(player, iVar2);
+      set_special_flags_2022(player, iVar4, 0x100000);
+      if (player != iVar5)
+      {
+        if ((player == 0) && (iVar5 == 1))
+        {
+          add_state(0, iVar4, 0x1000);
+        }
+        else
+        {
+          remove_state(player, iVar4, 0x1000);
+        }
+      }
+      iVar5 = real_play_spell_for_free(player, iVar4, -0x80000000);
+      if (iVar5 == 0)
+      {
+        obliterate_card(player, iVar4);
+      }
+    }
+  }
+  cant_be_responded_to = 1;
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2668150; original functions/play_spell_for_free.c:665. */
+int create_may_play_card_from_exile_effect_2022(int player, int card, int whose_exile_zone,
+                                                int csvid, mpcfe_mode_t mode)
+{
+  int card_00;
+  card_instance_t *instance;
+
+  if ((mode & MPCFE_ATTACH) == 0)
+  {
+    card_00 = create_legacy_activate(player, card, effect_may_play_card_from_exile_2022);
+  }
+  else
+  {
+    card_00 = create_targetted_legacy_activate(player, card, effect_may_play_card_from_exile_2022,
+                                               player, card);
+  }
+  if (card_00 != -1)
+  {
+    instance = get_card_instance(player, card_00);
+    instance->targets[1].player = mode;
+    instance->targets[0].player = whose_exile_zone;
+    instance->targets[0].card = csvid;
+    if ((mode & MPCFE_FACE_DOWN) == 0)
+    {
+      create_card_name_legacy(player, card_00, csvid);
+      return card_00;
+    }
+  }
+  return card_00;
+}
+
+#endif

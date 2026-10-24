@@ -3081,3 +3081,26 @@ int card_treacherous_link(int player, int card, event_t event)
   return result;
 }
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25b2290; original cards/urza_legacy.c:392. */
+char *target_is_attached_to_creature_2022(int who_chooses, int player, int card,
+                                          int targeting_player, int targeting_card)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if (-1 < instance->damage_target_card)
+  {
+    result = is_what((int)instance->damage_target_player, instance->damage_target_card, 2);
+    if (result != 0)
+    {
+      return NULL;
+    }
+  }
+  return "attached to a creature";
+}
+
+#endif

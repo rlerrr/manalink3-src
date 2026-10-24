@@ -2344,3 +2344,265 @@ void count_mana_2022(void)
     for (int source = 0; source < source_counts[player]; ++source)
       dispatch_event(player, mana_sources[player][source], EVENT_COUNT_MANA);
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26af860; original functions/engine.c:1523. */
+STATIC_ASSERT(offsetof(card_data_t, cc) + 1 == 0x2c, spell_cost_x_byte_2022);
+STATIC_ASSERT(offsetof(card_data_t, type) == 0x28, spell_cost_type_byte_2022);
+/* Native 2022 behavior: snapshot copies seven words but rollback reads eight signed bytes.
+ * The rollback call receives the sign-extended first byte cast to a pointer (0x26afb5b).
+ * The summary byte address advances by player, independently of the 32-byte mana row. */
+int charge_spell_cost_2022(card_data_t *cd, int player, int card)
+{
+  uint8_t uVar1;
+  int8_t sVar2;
+  uint32_t uVar3;
+  bool bVar4;
+  char *pcVar5;
+  int iVar6;
+  unsigned char bVar7;
+  int8_t *psVar8;
+  unsigned int uVar9;
+  int *piVar10;
+  int *piVar11;
+  int (*paiVar12)[8];
+  unsigned char bVar13;
+  int iVar14;
+  int iVar15;
+  int v7[8];
+
+  bVar13 = 0;
+  pcVar5 = EXE_BYTE_PTR(0x55cf18);
+  uVar1 = cd->cc[1];
+  do
+  {
+    pay_mana_xbugrwaU[(uintptr_t)pcVar5 - 0x55cf18] = (int)*pcVar5;
+    iVar15 = pay_mana_xbugrwaU[0];
+    pcVar5 = pcVar5 + 1;
+  } while (pcVar5 != (char *)0x55cf1e);
+  if ((cd->type & 0x40) != 0)
+  {
+    pay_mana_xbugrwaU[0] = 0;
+    pay_mana_xbugrwaU[6] = iVar15;
+  }
+  iVar15 = pay_mana_xbugrwaU[6];
+  if (((player == 0) || (((unsigned char)trace_mode & 2) != 0)) && (ai_is_speculating != 1))
+  {
+    iVar15 = 0;
+    iVar14 = 0;
+    if (uVar1 != 0xff)
+    {
+    LAB_026afa15:
+      iVar15 = EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, iVar14, iVar15);
+      return iVar15;
+    }
+    iVar15 = EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, 0, 0);
+    if (iVar15 == 0)
+    {
+      return 0;
+    }
+    piVar10 = mana_paid;
+    piVar11 = (int *)((int8_t *)0x55cef0);
+    for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)
+    {
+      *piVar11 = *piVar10;
+      piVar10 = piVar10 + (unsigned int)bVar13 * -2 + 1;
+      piVar11 = piVar11 + (unsigned int)bVar13 * -2 + 1;
+    }
+    psVar8 = ((int8_t *)0x55cf20);
+    do
+    {
+      v7[(uintptr_t)psVar8 - 0x55cf20] = (int)*psVar8;
+      psVar8 = psVar8 + 1;
+    } while (psVar8 != (int8_t *)0x55cf28);
+    if (((int8_t *)0x55cf20)[0] < 0)
+    {
+      pcVar5 = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);
+      psVar8 = ((int8_t *)0x55cf20);
+      sVar2 = ((int8_t *)0x55cf20)[0];
+      while (true)
+      {
+        psVar8 = psVar8 + 1;
+        uVar3 = (uint32_t)v7[(uintptr_t)psVar8 - 0x55cf21];
+        mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] =
+            mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] - (int)sVar2;
+        *pcVar5 = *pcVar5 - (char)uVar3;
+        if (psVar8 == (int8_t *)0x55cf28)
+          break;
+        sVar2 = *psVar8;
+      }
+    }
+    charge_mana(player, COLOR_COLORLESS, -1);
+  }
+  else
+  {
+    if ((cd->type & 0x40) != 0)
+    {
+      iVar14 = 6;
+      pay_mana_xbugrwaU[6] = 0;
+      goto LAB_026afa15;
+    }
+    iVar15 = EXE_FN(int, 0x4302c0, int, int, int, int)(player, card, 0, 0);
+    if (uVar1 != 0xff)
+    {
+      return iVar15;
+    }
+    if (iVar15 == 0)
+    {
+      return 0;
+    }
+    piVar10 = mana_paid;
+    piVar11 = (int *)((int8_t *)0x55cef0);
+    for (iVar15 = 7; iVar15 != 0; iVar15 = iVar15 + -1)
+    {
+      *piVar11 = *piVar10;
+      piVar10 = piVar10 + (unsigned int)bVar13 * -2 + 1;
+      piVar11 = piVar11 + (unsigned int)bVar13 * -2 + 1;
+    }
+    psVar8 = ((int8_t *)0x55cf20);
+    do
+    {
+      v7[(uintptr_t)psVar8 - 0x55cf20] = (int)*psVar8;
+      psVar8 = psVar8 + 1;
+    } while (psVar8 != (int8_t *)0x55cf28);
+    if (((int8_t *)0x55cf20)[0] < 0)
+    {
+      pcVar5 = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);
+      psVar8 = ((int8_t *)0x55cf20);
+      sVar2 = ((int8_t *)0x55cf20)[0];
+      while (true)
+      {
+        psVar8 = psVar8 + 1;
+        piVar10 = &mana_pool[player][(uintptr_t)psVar8 - 0x55cf21];
+        *piVar10 = *piVar10 - (int)sVar2;
+        *pcVar5 = *pcVar5 - (char)(uint32_t)v7[(uintptr_t)psVar8 - 0x55cf21];
+        if (psVar8 == (int8_t *)0x55cf28)
+          break;
+        sVar2 = *psVar8;
+      }
+    }
+    iVar15 = max_x_value;
+    if (player == 0)
+    {
+      max_x_value = has_mana(0, 7, 1);
+      charge_mana(0, COLOR_COLORLESS, -1);
+      max_x_value = iVar15;
+    }
+    else
+    {
+      if (ai_is_speculating == 1)
+      {
+        iVar15 = internal_rand(2);
+        if (iVar15 == 0)
+        {
+          iVar6 = has_mana(player, 7, 1);
+          iVar15 = 0;
+          iVar14 = iVar15;
+          if (iVar6 != 0)
+          {
+            iVar15 = internal_rand(iVar6);
+            iVar15 = iVar15 + 1;
+            iVar14 = iVar15;
+          }
+        }
+        else
+        {
+          iVar15 = has_mana(player, 7, 1);
+          EXE_DWORD(0x7a2fe4) = iVar15;
+          if ((life[0] < iVar15) && (iVar14 = internal_rand(3), iVar14 == 0))
+          {
+            EXE_DWORD(0x7a2fe4) = life[0];
+            iVar15 = life[0];
+          }
+          iVar14 = EXE_DWORD(0x7a2fe4);
+          if ((max_x_value != -1) && (max_x_value < EXE_DWORD(0x7a2fe4)))
+          {
+            EXE_DWORD(0x7a2fe4) = max_x_value;
+            iVar15 = max_x_value;
+            iVar14 = EXE_DWORD(0x7a2fe4);
+          }
+        }
+        EXE_DWORD(0x7a2fe4) = iVar14;
+        EXE_FN(void, 0x498f20, void)();
+      }
+      else
+      {
+        EXE_FN(int, 0x499050, void)();
+        iVar15 = EXE_DWORD(0x7a2fe4);
+      }
+      iVar14 = max_x_value;
+      max_x_value = iVar15;
+      charge_mana(player, COLOR_COLORLESS, -1);
+      max_x_value = iVar14;
+    }
+  }
+  sVar2 = ((int8_t *)0x55cf20)[0];
+  iVar15 = (int)((int8_t *)0x55cf20)[0];
+  if (((int8_t *)0x55cf20)[7] != 0)
+  {
+    psVar8 = ((int8_t *)0x55cf20);
+    bVar4 = false;
+    iVar14 = iVar15;
+    while (true)
+    {
+      psVar8 = psVar8 + 1;
+      iVar6 = mana_pool[player][(uintptr_t)psVar8 - 0x55cf21];
+      if (iVar14 != iVar6 >> 0x1f)
+      {
+        bVar4 = true;
+      }
+      mana_pool[player][(uintptr_t)psVar8 - 0x55cf21] = iVar14 + iVar6;
+      if (psVar8 == (int8_t *)0x55cf28)
+        break;
+      iVar14 = (int)*psVar8;
+    }
+    if (bVar4)
+    {
+      uVar9 = 0;
+      iVar15 = 0;
+      do
+      {
+        piVar10 = mana_pool[player] + iVar15;
+        bVar7 = (unsigned char)iVar15;
+        iVar15 = iVar15 + 1;
+        uVar9 = uVar9 | (unsigned int)(0 < *piVar10) << (bVar7 & 0x1f);
+      } while (iVar15 != 8);
+      iVar15 = (int)(char)uVar9;
+      EXE_FN(int, 0x4301a0, int, int)(0, iVar15);
+      paiVar12 = mana_pool + player;
+      for (iVar14 = 8; iVar14 != 0; iVar14 = iVar14 + -1)
+      {
+        (*paiVar12)[0] = 0;
+        paiVar12 = (int (*)[8])((int)paiVar12 + ((unsigned int)bVar13 * -2 + 1) * 4);
+      }
+    }
+    else
+    {
+      *(int8_t *)(EXE_BYTE_PTR(0x4ef4fc) + player) =
+          *(char *)(EXE_BYTE_PTR(0x4ef4fc) + player) + sVar2;
+    }
+  }
+  if (x_value == 0)
+  {
+    ai_modifier = ai_modifier + -100;
+  }
+  if (spell_fizzled == 1)
+  {
+    EXE_FN(int, 0x430260, int *)((int *)(int)((int8_t *)0x55cef0)[0]);
+    psVar8 = ((int8_t *)0x55cef0);
+    pcVar5 = (char *)(EXE_BYTE_PTR(0x4ef4fc) + player);
+    do
+    {
+      sVar2 = *psVar8;
+      iVar15 = (int)sVar2;
+      mana_pool[player][(uintptr_t)psVar8 - 0x55cef0] =
+          mana_pool[player][(uintptr_t)psVar8 - 0x55cef0] + iVar15;
+      psVar8 = psVar8 + 1;
+      *pcVar5 = *pcVar5 + sVar2;
+    } while (psVar8 != (int8_t *)0x55cef8);
+  }
+  return iVar15;
+}
+
+#endif

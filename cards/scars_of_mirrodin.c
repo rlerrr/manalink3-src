@@ -6520,3 +6520,223 @@ void minus_proliferate_auto_single_permanent_or_player(int player, int card, int
   }
   return;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24383e0; original cards/scars_of_mirrodin.c:106. */
+void proliferate_auto_single_permanent_or_player_2022(int player, int card, int p, int c)
+{
+  unsigned char bVar1;
+  unsigned char bVar2;
+  int result;
+  counter_t type;
+  if ((c == -1) || (result = count_counters(p, c, ~COUNTER_P1_P1), result < 1))
+  {
+    if ((1 - player == p) && (POISON_COUNTERS(p) != '\0'))
+    {
+      poison(p, 1);
+    }
+    if (p != player)
+    {
+      return;
+    }
+    bVar1 = EXPERIENCE_COUNTERS(p);
+    bVar2 = ENERGY_COUNTERS(p);
+    if (bVar1 != 0)
+    {
+      if (bVar2 != 0)
+      {
+        if (bVar1 <= bVar2)
+          goto LAB_024384fc;
+        goto LAB_024384ba;
+      }
+      if (bVar1 != 0)
+      {
+      LAB_024384fc:
+        add_experience(p, 1);
+        return;
+      }
+    }
+    if (bVar2 != 0)
+    {
+    LAB_024384ba:
+      add_energy(p, 1);
+      return;
+    }
+  }
+  else
+  {
+    type = choose_existing_counter_type(player, player, card, p, c,
+                                        CECT_AI_NO_DIALOG | CECT_AI_CAN_CANCEL, -1, -1);
+    if (type != COUNTER_invalid)
+    {
+      add_counters_from_source(player, card, p, c, type, 1);
+    }
+  }
+  return;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2438530; original cards/scars_of_mirrodin.c:141. */
+void proliferate_manual_single_permanent_or_player_2022(int player, int card, int p, int c,
+                                                        int add_untargettable)
+{
+  int result;
+  counter_t type;
+  player_counter_names_t type_00;
+  unsigned int uStack_14;
+  if (c != -1)
+  {
+    type = choose_existing_counter_type(player, player, card, p, c, CECT_HUMAN_CAN_CANCEL, -1, -1);
+    if (type != COUNTER_invalid)
+    {
+      if (add_untargettable != 0)
+      {
+        state_untargettable(p, c, 1);
+      }
+      add_counters_from_source(player, card, p, c, type, 1);
+      return;
+    }
+    spell_fizzled = 0;
+    return;
+  }
+  uStack_14 = 0;
+  type_00 = PCOUNTER_POISON;
+  do
+  {
+    result = count_player_counters(p, type_00);
+    if (result != 0)
+    {
+      uStack_14 = uStack_14 | 1 << ((unsigned char)type_00 & 0x1f);
+    }
+    type_00 = type_00 + PCOUNTER_EXPERIENCE;
+  } while (type_00 != (PCOUNTER_ENERGY | PCOUNTER_EXPERIENCE));
+  if (uStack_14 == 0)
+  {
+    return;
+  }
+  result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\014", "\001\003", "\001\004",
+                       "Poison counter", uStack_14 & 1, 1, "Experience counter", uStack_14 & 2, 1,
+                       "Energy counter", uStack_14 & 4, 1, 0, 0, 0, 0);
+  add_player_counters(p, result + PCOUNTER_invalid, 1);
+  return;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2438700; original cards/scars_of_mirrodin.c:171. */
+void proliferate_2022(int player, int card)
+{
+  int32_t iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  unsigned int p;
+  unsigned int uStack_78;
+  int chosen_players[2];
+  target_t tgt;
+  target_definition_2022_t td;
+
+  if ((player == 1) || (iVar4 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\014", "\001\003",
+                                            "Automatic", 1, 1, "Manual", 1, 1, 0, 0, 0, 0),
+                        iVar4 == 1))
+  {
+    uStack_78 = 0;
+    do
+    {
+      p = uStack_78 ^ current_turn;
+      proliferate_auto_single_permanent_or_player_2022(player, card, p, -1);
+      iVar4 = active_cards_count[p] + -1;
+      if (-1 < active_cards_count[p] + -1)
+      {
+        do
+        {
+          while (((instance = in_play(p, iVar4),
+                   instance != NULL && (iVar3 = is_what(p, iVar4, 0x47), iVar3 != 0)) &&
+                  (iVar3 = count_counters(p, iVar4, ~COUNTER_P1_P1), 0 < iVar3)))
+          {
+            iVar3 = iVar4 + -1;
+            proliferate_auto_single_permanent_or_player_2022(player, card, p, iVar4);
+            iVar4 = iVar3;
+            if (iVar3 == -1)
+              goto LAB_024387b8;
+          }
+          iVar4 = iVar4 + -1;
+        } while (iVar4 != -1);
+      }
+    LAB_024387b8:
+      uStack_78 = uStack_78 + 1;
+    } while (uStack_78 != 2);
+  }
+  else if (iVar4 == 2)
+  {
+    base_target_definition_2022(player, card, &td, 0x47);
+    td.allow_cancel = 2;
+    td.special = 0x40000;
+    td.extra = 0xff;
+    td.zone = 0x1200;
+    iVar4 = count_player_counters(0, PCOUNTER_invalid);
+    if ((iVar4 == 0) && (iVar4 = count_player_counters(1, PCOUNTER_invalid), iVar4 == 0))
+    {
+      td.zone = 0x200;
+    }
+    else
+    {
+      iVar4 = count_player_counters(player, PCOUNTER_invalid);
+      if (iVar4 == 0)
+      {
+        td.special = td.special | 0x2000000;
+      }
+      else
+      {
+        iVar4 = count_player_counters(1 - player, PCOUNTER_invalid);
+        if (iVar4 == 0)
+        {
+          td.special = td.special | 0x4000000;
+        }
+      }
+    }
+    chosen_players[0] = 0;
+    chosen_players[1] = 0;
+  LAB_024388f8:
+    iVar4 = can_target_2022(&td);
+    do
+    {
+      if (iVar4 == 0)
+      {
+      LAB_02438971:
+        remove_untargettable_from_all();
+        return;
+      }
+      load_text_2022(NULL, "PROLIFERATE");
+      iVar4 = select_target_2022(player, card + -1000, &td, text_lines[0], &tgt);
+      if (iVar4 == 0)
+        goto LAB_02438971;
+      if (tgt.card == -1)
+        goto LAB_024389b0;
+      proliferate_manual_single_permanent_or_player_2022(player, card, tgt.player, tgt.card, 1);
+      iVar4 = can_target_2022(&td);
+    } while (true);
+  }
+  return;
+LAB_024389b0:
+  if (chosen_players[tgt.player] != 1)
+  {
+    proliferate_manual_single_permanent_or_player_2022(player, card, tgt.player, -1, 0);
+    iVar1 = tgt.player;
+    chosen_players[tgt.player] = 1;
+    if ((chosen_players[1 - iVar1] != 0) ||
+        (iVar4 = count_player_counters(1 - iVar1, PCOUNTER_invalid), iVar4 == 0))
+    {
+      td.zone = 0x200;
+    }
+  }
+  goto LAB_024388f8;
+}
+
+#endif

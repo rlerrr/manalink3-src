@@ -4848,3 +4848,137 @@ LAB_02190f1a:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2194e80; original cards/rivals_of_ixalan.c:2467. */
+int card_metzali_tower_of_triumph(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  int iVar4;
+  unsigned int uVar5;
+  int iVar8;
+  target_definition_2022_t td;
+
+  if (event != EVENT_CAN_ACTIVATE)
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      instance = get_card_instance(player, card);
+      default_target_definition_2022(player, card, &td, 2);
+      td.required_state = (unsigned int)(0x1d < current_phase) * 2 + 2;
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+        goto LAB_02194eaf;
+      instance = get_card_instance(player, card);
+      default_target_definition_2022(player, card, &td, 2);
+      td.required_state = 2;
+      if (0x1d < current_phase)
+      {
+        td.required_state = 4;
+        goto joined_r0x02194f30;
+      }
+    }
+    td.illegal_abilities = 0;
+    if (event != EVENT_ACTIVATE)
+    {
+    joined_r0x02194f30:
+      if (event == EVENT_RESOLVE_ACTIVATION)
+      {
+        td.illegal_abilities = 0;
+        iVar1 = instance->info_slot;
+        if (iVar1 == 2)
+        {
+          damage_player(1 - player, 2, player, card);
+          iVar1 = instance->info_slot;
+        }
+        if (iVar1 == 3)
+        {
+          iVar1 = target_available_2022(player, card, &td);
+          if (iVar1 != 0)
+          {
+            int capacity = target_available_2022(player, card, &td);
+            int targ_array[capacity];
+            memset(targ_array, 0xff, capacity * sizeof(int));
+            int count = 0;
+            for (int c = 0; c < active_cards_count[current_turn]; ++c)
+            {
+              instance = in_play(current_turn, c);
+              if (instance != NULL && would_validate_arbitrary_target_2022(&td, current_turn, c))
+                targ_array[count++] = c;
+            }
+            int selected = internal_rand(target_available_2022(player, card, &td));
+            kill_card(current_turn, targ_array[selected], KILL_DESTROY);
+          }
+        }
+      }
+      return 0;
+    }
+    instance->info_slot = 0;
+    iVar1 = paying_mana();
+    if (iVar1 == 0)
+    {
+
+      int abil_damage = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 1, 1, 0, 0,
+                                                       0, 1, 0, 0, NULL, NULL);
+      int abil_destroy = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 1, 2, 0,
+                                                        0, 0, 0, 1, 0, NULL, NULL);
+      int priority_destroy = -100;
+      if (current_turn != player)
+        priority_destroy = target_available_2022(player, card, &td) ? 15 : 0;
+      iVar1 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Produce mana", 1,
+                          8, "Damage opponent", abil_damage, 10, "Destroy Creature that attacked",
+                          abil_destroy, priority_destroy, 0, 0, 0, 0);
+
+      if (iVar1 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      instance->info_slot = iVar1;
+      if (iVar1 != 1)
+      {
+        if (iVar1 == 2)
+        {
+          add_state(player, card, 0x10);
+          iVar4 = 0;
+          iVar8 = 1;
+          iVar1 = 1;
+        }
+        else
+        {
+          if (iVar1 != 3)
+          {
+            return 0;
+          }
+          add_state(player, card, 0x10);
+          iVar4 = 1;
+          iVar8 = 0;
+          iVar1 = 2;
+        }
+        generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 1, iVar1, 0, 0, 0, iVar8,
+                                       iVar4, 0, NULL, NULL);
+        if (spell_fizzled != 1)
+        {
+          return 0;
+        }
+        remove_state(player, card, 0x10);
+        return 0;
+      }
+    }
+    else
+    {
+      instance->info_slot = 1;
+    }
+    event = EVENT_ACTIVATE;
+  }
+LAB_02194eaf:
+  iVar1 = mana_producer(player, card, event);
+  return iVar1;
+}
+
+#endif

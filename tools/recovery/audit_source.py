@@ -124,7 +124,7 @@ def main():
                                  function.get('native_entry_callee_binding_2022') or function.get('level_buddy_evidence') or
                                  function.get('native_level_buddy_callee_binding_2022') or function.get('native_dependency_bindings_2022') or
                                  function.get('ward_guard_evidence') or function.get('phyrexian_cost_evidence') or
-                                 function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022') or function.get('global_tutor_evidence') or function.get('energy_card_evidence') or function.get('specific_cip_evidence') or function.get('activation_operand_evidence') or function.get('life_core_evidence') or function.get('native_life_callee_binding_2022') or function.get('cannot_lose_evidence') or function.get('native_cannot_lose_callee_binding_2022') or function.get('lichs_mastery_evidence') or function.get('life_loss_evidence') or function.get('native_life_loss_callee_binding_2022') or function.get('oath_life_loss_evidence') or function.get('shared_card_frontend_evidence') or function.get('delayed_callback_evidence') or function.get('norritt_prompt_evidence') or function.get('temporary_exile_evidence') or function.get('transform_cleanup_evidence') or function.get('spell_copy_evidence') or function.get('forced_copy_card_evidence') or function.get('native_copy_callee_binding_2022') or function.get('phase_ai_evidence') or function.get('prompt_boundary_evidence') or function.get('text_change_evidence') or function.get('text_change_card_evidence') or function.get('native_token_frontend_callee_binding_2022') or function.get('wish_helper_evidence') or function.get('ability_filter_evidence') or function.get('library_reveal_evidence') or function.get('native_word_evidence') or function.get('combat_mask_evidence') or function.get('token_delay_evidence') or function.get('callback_token_card_evidence') or function.get('reanimation_evidence') or function.get('reanimation_card_evidence') or function.get('reanimation_tail_evidence') or function.get('protection_frontend_evidence') or function.get('leaves_test_evidence') or function.get('native_aggregate_evidence') or function.get('reveal_destroy_evidence') or function.get('disciple_evidence') or function.get('flash_casting_evidence') or function.get('snow_consumer_evidence') or function.get('commander_consumer_evidence') or function.get('public_card_callback_evidence') or function.get('storm_family_evidence') or function.get('mana_predicate_card_evidence') or function.get('embalm_family_evidence') or function.get('memorial_family_evidence'))
+                                 function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022') or function.get('global_tutor_evidence') or function.get('energy_card_evidence') or function.get('specific_cip_evidence') or function.get('activation_operand_evidence') or function.get('life_core_evidence') or function.get('native_life_callee_binding_2022') or function.get('cannot_lose_evidence') or function.get('native_cannot_lose_callee_binding_2022') or function.get('lichs_mastery_evidence') or function.get('life_loss_evidence') or function.get('native_life_loss_callee_binding_2022') or function.get('oath_life_loss_evidence') or function.get('shared_card_frontend_evidence') or function.get('delayed_callback_evidence') or function.get('norritt_prompt_evidence') or function.get('temporary_exile_evidence') or function.get('transform_cleanup_evidence') or function.get('spell_copy_evidence') or function.get('forced_copy_card_evidence') or function.get('native_copy_callee_binding_2022') or function.get('phase_ai_evidence') or function.get('prompt_boundary_evidence') or function.get('text_change_evidence') or function.get('text_change_card_evidence') or function.get('native_token_frontend_callee_binding_2022') or function.get('wish_helper_evidence') or function.get('ability_filter_evidence') or function.get('library_reveal_evidence') or function.get('native_word_evidence') or function.get('combat_mask_evidence') or function.get('token_delay_evidence') or function.get('callback_token_card_evidence') or function.get('reanimation_evidence') or function.get('reanimation_card_evidence') or function.get('reanimation_tail_evidence') or function.get('protection_frontend_evidence') or function.get('leaves_test_evidence') or function.get('native_aggregate_evidence') or function.get('reveal_destroy_evidence') or function.get('disciple_evidence') or function.get('flash_casting_evidence') or function.get('snow_consumer_evidence') or function.get('commander_consumer_evidence') or function.get('public_card_callback_evidence') or function.get('storm_family_evidence') or function.get('mana_predicate_card_evidence') or function.get('embalm_family_evidence') or function.get('memorial_family_evidence') or function.get('spell_cost_evidence') or function.get('aer_free_helper_evidence') or function.get('aer_helper_caller_migration_2022') or function.get('saheeli_directive_evidence') or function.get('card_helper_batch_evidence') or function.get('combat_ai_consumer_evidence') or function.get('casting_reveal_family_evidence') or function.get('grave_pump_consumer_evidence') or function.get('packed_filter_consumer_evidence') or function.get('copy_exile_consumer_evidence') or function.get('graveyard_selection_evidence') or function.get('hogaak_family_evidence') or function.get('flag_target_consumer_evidence') or function.get('mode_storage_consumer_evidence') or function.get('library_vla_consumer_evidence') or function.get('target_vla_consumer_evidence') or function.get('letter_effect_evidence') or function.get('rules_text_consumer_evidence') or function.get('clock_card_evidence') or function.get('pack_utility_evidence') or function.get('pack_generator_evidence') or function.get('pack_chooser_evidence') or function.get('alternate_casting_evidence') or function.get('exile_return_card_evidence') or function.get('selection_storage_card_evidence') or function.get('final_card_handler_evidence') or function.get('legacy_helper_family_evidence') or function.get('havengul_utility_evidence'))
             if target_validation:
                 literal_input = target_validation_input(literal_input, target_validation, function['address'], machine_bytes)
                 for change in target_validation['changes']:
@@ -490,7 +490,7 @@ def main():
                         function.get('entry_trigger_evidence') or function.get('native_entry_callee_binding_2022') or
                         function.get('level_buddy_evidence') or function.get('native_level_buddy_callee_binding_2022') or
                         function.get('native_dependency_bindings_2022') or function.get('ward_guard_evidence') or
-                        function.get('phyrexian_cost_evidence') or function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022') or function.get('global_tutor_evidence') or function.get('energy_card_evidence') or function.get('specific_cip_evidence') or function.get('activation_operand_evidence') or function.get('life_core_evidence') or function.get('native_life_callee_binding_2022') or function.get('cannot_lose_evidence') or function.get('native_cannot_lose_callee_binding_2022') or function.get('lichs_mastery_evidence') or function.get('life_loss_evidence') or function.get('native_life_loss_callee_binding_2022') or function.get('oath_life_loss_evidence') or function.get('shared_card_frontend_evidence') or function.get('delayed_callback_evidence') or function.get('norritt_prompt_evidence') or function.get('temporary_exile_evidence') or function.get('transform_cleanup_evidence') or function.get('spell_copy_evidence') or function.get('forced_copy_card_evidence') or function.get('native_copy_callee_binding_2022') or function.get('phase_ai_evidence') or function.get('prompt_boundary_evidence') or function.get('text_change_evidence') or function.get('text_change_card_evidence') or function.get('native_token_frontend_callee_binding_2022') or function.get('wish_helper_evidence') or function.get('ability_filter_evidence') or function.get('library_reveal_evidence') or function.get('native_word_evidence') or function.get('combat_mask_evidence') or function.get('token_delay_evidence') or function.get('callback_token_card_evidence') or function.get('reanimation_evidence') or function.get('reanimation_card_evidence') or function.get('reanimation_tail_evidence') or function.get('protection_frontend_evidence') or function.get('leaves_test_evidence') or function.get('native_aggregate_evidence') or function.get('reveal_destroy_evidence') or function.get('disciple_evidence') or function.get('flash_casting_evidence') or function.get('snow_consumer_evidence') or function.get('commander_consumer_evidence') or function.get('public_card_callback_evidence') or function.get('storm_family_evidence') or function.get('mana_predicate_card_evidence') or function.get('embalm_family_evidence') or function.get('memorial_family_evidence'))
+                        function.get('phyrexian_cost_evidence') or function.get('native_phyrexian_callee_binding_2022') or function.get('spell_trigger_evidence') or function.get('dependency_repair_evidence') or function.get('death_trigger_evidence') or function.get('native_death_trigger_callee_binding_2022') or function.get('action_core_evidence') or function.get('native_action_callee_binding_2022') or function.get('global_tutor_evidence') or function.get('energy_card_evidence') or function.get('specific_cip_evidence') or function.get('activation_operand_evidence') or function.get('life_core_evidence') or function.get('native_life_callee_binding_2022') or function.get('cannot_lose_evidence') or function.get('native_cannot_lose_callee_binding_2022') or function.get('lichs_mastery_evidence') or function.get('life_loss_evidence') or function.get('native_life_loss_callee_binding_2022') or function.get('oath_life_loss_evidence') or function.get('shared_card_frontend_evidence') or function.get('delayed_callback_evidence') or function.get('norritt_prompt_evidence') or function.get('temporary_exile_evidence') or function.get('transform_cleanup_evidence') or function.get('spell_copy_evidence') or function.get('forced_copy_card_evidence') or function.get('native_copy_callee_binding_2022') or function.get('phase_ai_evidence') or function.get('prompt_boundary_evidence') or function.get('text_change_evidence') or function.get('text_change_card_evidence') or function.get('native_token_frontend_callee_binding_2022') or function.get('wish_helper_evidence') or function.get('ability_filter_evidence') or function.get('library_reveal_evidence') or function.get('native_word_evidence') or function.get('combat_mask_evidence') or function.get('token_delay_evidence') or function.get('callback_token_card_evidence') or function.get('reanimation_evidence') or function.get('reanimation_card_evidence') or function.get('reanimation_tail_evidence') or function.get('protection_frontend_evidence') or function.get('leaves_test_evidence') or function.get('native_aggregate_evidence') or function.get('reveal_destroy_evidence') or function.get('disciple_evidence') or function.get('flash_casting_evidence') or function.get('snow_consumer_evidence') or function.get('commander_consumer_evidence') or function.get('public_card_callback_evidence') or function.get('storm_family_evidence') or function.get('mana_predicate_card_evidence') or function.get('embalm_family_evidence') or function.get('memorial_family_evidence') or function.get('spell_cost_evidence') or function.get('aer_free_helper_evidence') or function.get('aer_helper_caller_migration_2022') or function.get('saheeli_directive_evidence') or function.get('card_helper_batch_evidence') or function.get('combat_ai_consumer_evidence') or function.get('casting_reveal_family_evidence') or function.get('grave_pump_consumer_evidence') or function.get('packed_filter_consumer_evidence') or function.get('copy_exile_consumer_evidence') or function.get('graveyard_selection_evidence') or function.get('hogaak_family_evidence') or function.get('flag_target_consumer_evidence') or function.get('mode_storage_consumer_evidence') or function.get('library_vla_consumer_evidence') or function.get('target_vla_consumer_evidence') or function.get('letter_effect_evidence') or function.get('rules_text_consumer_evidence') or function.get('clock_card_evidence') or function.get('pack_utility_evidence') or function.get('pack_generator_evidence') or function.get('pack_chooser_evidence') or function.get('alternate_casting_evidence') or function.get('exile_return_card_evidence') or function.get('selection_storage_card_evidence') or function.get('final_card_handler_evidence') or function.get('legacy_helper_family_evidence') or function.get('havengul_utility_evidence'))
             if consumer:
                 for call in consumer['canonical_calls']:
                     at=int(call['address'],16);data=bytes.fromhex(call['bytes'])
@@ -885,6 +885,9 @@ def main():
             if aggregate_stack_aliases(body):
                 raise ValueError("Cross-type stack cast remains without verified storage")
             earlier_body=body
+            if function.get('aer_helper_caller_migration_2022'):
+                from recover_aer_helper_callers import historical_view
+                _,earlier_body=historical_view(function,body)
             if function.get('memorial_callback_migration_2022'):
                 from recover_memorial_family import historical_view
                 _,earlier_body=historical_view(function,body)
@@ -1072,6 +1075,9 @@ def main():
             for address,detail in scalar_callers['functions'].items():
                 entry=entries[address];recorded={k:v for k,v in detail.items() if k!='previous_record'}
                 body=function_body(sources[entry['source']],entry['name'])
+                if entry.get('aer_helper_caller_migration_2022'):
+                    from recover_aer_helper_callers import historical_view
+                    entry,body=historical_view(entry,body,binding)
                 if entry.get('memorial_callback_migration_2022'):
                     from recover_memorial_family import historical_view
                     entry,body=historical_view(entry,body,binding)
@@ -1253,6 +1259,195 @@ def main():
             audit_component(callback_token_cards,manifest,sources,machine_bytes)
         except (AssertionError,ValueError,OSError,KeyError,StopIteration) as error:
             issues.append(dict(source='cards/guilds_of_ravnica.c',name='callback_token_cards_2022',error=str(error)))
+    havengul_utility=interfaces.get('havengul_utility_helpers_native_2022')
+    if havengul_utility:
+        try:
+            from recover_havengul_utility_helpers import audit_component
+            audit_component(havengul_utility,manifest,sources,machine_bytes,root)
+        except Exception as error:
+            issues.append(dict(source='cards/dark_ascension.c',name='havengul_utility_helpers_native_2022',error=str(error)))
+    legacy_families=interfaces.get('legacy_helper_families_native_2022')
+    if legacy_families:
+        try:
+            from recover_legacy_helper_families import audit_component
+            audit_component(legacy_families,manifest,sources,machine_bytes,root)
+        except Exception as error:
+            issues.append(dict(source='cards/betrayers_of_kamigawa.c',name='legacy_helper_families_native_2022',error=str(error)))
+    final_cards=interfaces.get('final_card_handlers_native_2022')
+    if final_cards:
+        try:
+            from recover_final_card_handlers import audit_component
+            audit_component(final_cards,manifest,sources,machine_bytes,root)
+        except Exception as error:
+            issues.append(dict(source='cards/war_of_the_spark.c',name='final_card_handlers_native_2022',error=str(error)))
+    selection_storage=interfaces.get('selection_storage_cards_native_2022')
+    if selection_storage:
+        try:
+            from recover_selection_storage_cards import audit_component
+            audit_component(selection_storage,manifest,sources,machine_bytes,root)
+        except Exception as error:
+            issues.append(dict(source='cards/jumpstart.c',name='selection_storage_cards_native_2022',error=str(error)))
+    exile_return=interfaces.get('exile_return_cards_native_2022')
+    if exile_return:
+        try:
+            from recover_exile_return_cards import audit_component
+            audit_component(exile_return,manifest,sources,machine_bytes,root)
+        except (ValueError,AssertionError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/modern_horizons_2.c',name='exile_return_cards_native_2022',error=str(error)))
+    alternate_casting=interfaces.get('alternate_casting_native_2022')
+    if alternate_casting:
+        try:
+            from recover_alternate_casting import audit_component
+            audit_component(alternate_casting,manifest,sources,machine_bytes,root)
+        except (ValueError,AssertionError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/dominaria.c',name='alternate_casting_native_2022',error=str(error)))
+    pack_chooser=interfaces.get('pack_chooser_native_2022')
+    if pack_chooser:
+        try:
+            from recover_pack_chooser import audit_component
+            audit_component(pack_chooser,manifest,sources,machine_bytes,root)
+        except (ValueError,AssertionError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/packs.c',name='pack_chooser_native_2022',error=str(error)))
+    pack_generator=interfaces.get('pack_generator_native_2022')
+    if pack_generator:
+        try:
+            from recover_pack_generator import audit_component
+            audit_component(pack_generator,manifest,sources,machine_bytes,root)
+        except (ValueError,AssertionError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/packs.c',name='pack_generator_native_2022',error=str(error)))
+    pack_utilities=interfaces.get('pack_utilities_native_2022')
+    if pack_utilities:
+        try:
+            from recover_pack_utilities import audit_component
+            audit_component(pack_utilities,manifest,sources,machine_bytes,root)
+        except (ValueError,AssertionError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/packs.c',name='pack_utilities_native_2022',error=str(error)))
+    clock_cards=interfaces.get('clock_cards_native_2022')
+    if clock_cards:
+        try:
+            from recover_clock_cards import audit_component
+            audit_component(clock_cards,manifest,sources,machine_bytes,root)
+        except (ValueError,AssertionError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/windows.c',name='clock_cards_native_2022',error=str(error)))
+    rules_text_consumers=interfaces.get('rules_text_consumers_native_2022')
+    if rules_text_consumers:
+        try:
+            from recover_rules_text_consumers import audit_component
+            audit_component(rules_text_consumers,manifest,sources,machine_bytes,root)
+        except (ValueError,AssertionError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/unglued_unhinged.c',name='rules_text_consumers_native_2022',error=str(error)))
+    letter_effects=interfaces.get('letter_effects_native_2022')
+    if letter_effects:
+        try:
+            from recover_letter_effects import audit_component
+            audit_component(letter_effects,manifest,sources,machine_bytes,root)
+        except (ValueError,AssertionError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/unglued_unhinged.c',name='letter_effects_native_2022',error=str(error)))
+    target_vla_consumers=interfaces.get('target_vla_consumers_native_2022')
+    if target_vla_consumers:
+        try:
+            from recover_target_vla_consumers import audit_component
+            audit_component(target_vla_consumers,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/aether_revolt.c',name='target_vla_consumers_native_2022',error=str(error)))
+    library_vla_consumers=interfaces.get('library_vla_consumers_native_2022')
+    if library_vla_consumers:
+        try:
+            from recover_library_vla_consumers import audit_component
+            audit_component(library_vla_consumers,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/ixalan.c',name='library_vla_consumers_native_2022',error=str(error)))
+    mode_storage_consumers=interfaces.get('mode_storage_consumers_native_2022')
+    if mode_storage_consumers:
+        try:
+            from recover_mode_storage_consumers import audit_component
+            audit_component(mode_storage_consumers,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/functions.c',name='mode_storage_consumers_native_2022',error=str(error)))
+    flag_target_consumers=interfaces.get('flag_target_consumers_native_2022')
+    if flag_target_consumers:
+        try:
+            from recover_flag_target_consumers import audit_component
+            audit_component(flag_target_consumers,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/functions.c',name='flag_target_consumers_native_2022',error=str(error)))
+    hogaak_family=interfaces.get('hogaak_family_native_2022')
+    if hogaak_family:
+        try:
+            from recover_hogaak_family import audit_component
+            audit_component(hogaak_family,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/modern_horizons.c',name='hogaak_family_native_2022',error=str(error)))
+    graveyard_selection=interfaces.get('graveyard_selection_native_2022')
+    if graveyard_selection:
+        try:
+            from recover_graveyard_selection_family import audit_component
+            audit_component(graveyard_selection,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/theros_beyond_death.c',name='graveyard_selection_native_2022',error=str(error)))
+    copy_exile_consumers=interfaces.get('copy_exile_consumers_native_2022')
+    if copy_exile_consumers:
+        try:
+            from recover_copy_exile_consumers import audit_component
+            audit_component(copy_exile_consumers,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/functions.c',name='copy_exile_consumers_native_2022',error=str(error)))
+    packed_filter_consumers=interfaces.get('packed_filter_consumers_native_2022')
+    if packed_filter_consumers:
+        try:
+            from recover_packed_filter_consumers import audit_component
+            audit_component(packed_filter_consumers,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/ikoria.c',name='packed_filter_consumers_native_2022',error=str(error)))
+    grave_pump_consumers=interfaces.get('grave_pump_consumers_native_2022')
+    if grave_pump_consumers:
+        try:
+            from recover_grave_pump_consumers import audit_component
+            audit_component(grave_pump_consumers,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/deadbox.c',name='grave_pump_consumers_native_2022',error=str(error)))
+    casting_reveal_family=interfaces.get('casting_reveal_family_native_2022')
+    if casting_reveal_family:
+        try:
+            from recover_casting_reveal_family import audit_component
+            audit_component(casting_reveal_family,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='functions/functions.c',name='casting_reveal_family_native_2022',error=str(error)))
+    combat_ai_consumers=interfaces.get('combat_ai_consumers_native_2022')
+    if combat_ai_consumers:
+        try:
+            from recover_combat_ai_consumers import audit_component
+            audit_component(combat_ai_consumers,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/prophecy.c',name='combat_ai_consumers_native_2022',error=str(error)))
+    card_helper_batch=interfaces.get('card_helper_batch_native_2022')
+    if card_helper_batch:
+        try:
+            from recover_card_helper_batch import audit_component
+            audit_component(card_helper_batch,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,OSError,KeyError) as error:
+            issues.append(dict(source='cards/theros_beyond_death.c',name='card_helper_batch_native_2022',error=str(error)))
+    saheeli_directive=interfaces.get('saheeli_directive_native_2022')
+    if saheeli_directive:
+        try:
+            from recover_saheeli_directive import audit_component
+            audit_component(saheeli_directive,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,KeyError) as error:
+            issues.append(dict(source='cards/commander_2018.c',name='saheeli_directive_native_2022',error=str(error)))
+    aer_helpers=interfaces.get('aer_helper_callers_native_2022')
+    if aer_helpers:
+        try:
+            from recover_aer_helper_callers import audit_component
+            audit_component(aer_helpers,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,KeyError) as error:
+            issues.append(dict(source='cards/aether_revolt.c',name='aer_helper_callers_native_2022',error=str(error)))
+    spell_cost=interfaces.get('spell_cost_native_2022')
+    if spell_cost:
+        try:
+            from recover_spell_cost import audit_component
+            audit_component(spell_cost,manifest,sources,machine_bytes,root)
+        except (AssertionError,ValueError,KeyError) as error:
+            issues.append(dict(source='functions/engine.c',name='spell_cost_native_2022',error=str(error)))
     memorial_family=interfaces.get('memorial_family_native_2022')
     if memorial_family:
         try:
@@ -1712,6 +1907,16 @@ def main():
                     raise ValueError('Dependency frontier function evidence mismatch')
                 for reference in detail['canonical_calls']+detail['function_references']:
                     target=targets[reference['target']]
+                    # Earlier callers still use the retained compatibility body after
+                    # this native eligibility helper receives its qualified interface.
+                    if (reference['target']=='2693060' and target.get('flag_target_consumer_evidence')
+                            and reference['name']=='can_counter_triggered_ability'):
+                        previous=target['previous_recovery']
+                        retained=next(r for r in interfaces['flag_target_consumers_native_2022']['retained_bodies']
+                                      if r['name']==reference['name'] and r['source']==previous['source'])
+                        assert previous['address']==reference['target'] and previous['name']==reference['name']
+                        assert hashlib.sha256(function_body(sources[previous['source']].replace('\r\n','\n'),previous['name']).encode()).hexdigest()==retained['body_sha256']
+                        target=previous
                     if target['name']!=reference['name'] or (target['static'] and target['source']!=entry['source']):
                         raise ValueError('Dependency frontier private owner/callee identity mismatch')
         except (ValueError,OSError,KeyError) as error:

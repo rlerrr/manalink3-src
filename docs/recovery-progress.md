@@ -1,7 +1,7 @@
 # October 2022 source recovery
 
 Implemented directly in the `cards/` and `functions/` source files, starting
-2026-10-17. Latest recovery pass: 2026-10-23.
+2026-10-17. Latest recovery pass: 2026-10-24.
 Missing target set files were created with `#include "manalink.h"`; implementations
 already present in the source were retained, with scoped repairs and lifecycle
 fragments recorded separately.
@@ -27,8 +27,8 @@ estimate of remaining implementations or changed gameplay.
 
 ## Recovered source
 
-- **4,340 function implementations:** 3,173 functions named `card_*` and 1,167
-  helpers, in **140 checked C source units**, including units containing only
+- **4,589 function implementations:** 3,328 functions named `card_*` and 1,261
+  helpers, in **143 checked C source units**, including units containing only
   recovered engine/AI fragments.
 - The second pass added **340 implementations: 273 `card_*` functions and 67
   helpers**. The first pass contributed 1,066 implementations.
@@ -426,13 +426,124 @@ estimate of remaining implementations or changed gameplay.
   and one private helper**. All five Memorial lands use the corrected native
   worker signature. Five existing resolvers are migrated to native target/test
   interfaces, with exact previous records and reversible source views retained.
-- 557 recovered functions retain private/static linkage, including nine private
-  implementation helpers whose names begin with `card_`. There are 619 recovered
+- The eighty-ninth pass added **five implementations: two `card_*` functions
+  and three helpers**. Native spell-cost payment and the Improvise worker/frontend
+  unblock Inspiring Statuary and Skyclave Shade. The accepted Improvise cost
+  modifier gains native targeting; signed-byte/index/EXE-call evidence and two
+  post-initializer controller stores are verified.
+- The ninetieth pass added **one private helper** and corrected helper bindings
+  in **fifteen existing card handlers**. Four Expertise handlers now call the
+  two-register native free-cast specialization with the correct limit; eleven
+  handlers use the native Improvise frontend. Eighteen native call/tail sites
+  and exact reversible history are verified; migrations are not new functions.
+- The ninety-first pass added **one `card_*` implementation**, Saheeli's
+  Directive. Complete native range coverage and concrete DWARF recover its
+  variable-length reveal array, formatted prompt and selection/restore/mill
+  loops, with native event, Cage, zero-count and failure paths retained.
+- The ninety-second pass adds **ten implementations: seven `card_*` functions
+  and three helpers**. One specialized Escape helper unlocks five handlers;
+  the counter-entry and subtype-target helpers unlock Renata and Fugitive Druid.
+  One combined check/build verifies the entire batch, including thirty Escape
+  caller constants and the private eight-byte targeting result.
+- The ninety-third pass adds **30 implementations: 28 `card_*` functions
+  and two private callbacks** across fourteen set files. Three native combat-AI
+  accumulators resolve the shared blocker; 95 exact global operands, 115 native
+  calls and eight callback operands are verified in one combined check/build.
+- The ninety-fourth pass adds **fifteen implementations: eight `card_*`
+  functions and seven helpers**. Spectacle, Amplify, counter-based boosting,
+  hand reveal, coercion/discard and filtered top-deck exile are recovered as one
+  batch. Native signatures, 24 caller cost constants, fixed hand arrays and
+  the formatted prompt frame are checked; the combined GCC build passes.
+- The ninety-fifth pass adds **thirteen implementations: seven `card_*`
+  functions and six helpers**. Graveyard recovery, sustained pumps, Suspend
+  targeting, both hand-reveal flags and a fixed historic-permanent prompt are
+  recovered together. `functions/deadbox.c` becomes the 141st checked C unit;
+  the full source/ABI/provenance and GCC build checks pass.
+- The ninety-sixth pass adds **fifteen implementations: eleven `card_*`
+  functions and four public helpers**. Devil creation, Overload and creature
+  mana production support a batch with native packed-field, prompt, fixed-table
+  and overlapping-stack recovery. Return to Ravnica becomes the 142nd checked
+  C unit, and all fifteen new public symbols pass the combined build check.
+- The ninety-seventh pass adds **fifteen implementations: ten `card_*`
+  functions and five helpers**. Permanent copying and exile-play effects are
+  recovered with Kess, Echoing Equation, both Valakut cards and six other
+  handlers. Fourteen public symbols and the private copy callback pass the
+  combined source/ABI/provenance/compiler-part and GCC build checks.
+- The ninety-eighth pass adds **nine implementations: five `card_*`
+  functions and four private helpers**. Underworld Breach, Chainer, Liliana,
+  Genesis Ultimatum and Gyrus recover native graveyard/deck selection with four
+  reconstructed VLA frames. The complete batch passes source/ABI/provenance,
+  compiler-part and GCC build checks; private symbols are resolved by source
+  ownership to distinguish a callback homonym and GCC outlining.
+- The ninety-ninth pass adds **seven implementations: one `card_*`
+  function and six helpers**. Hogaak's Convoke/Delve family, native mana-text
+  formatting and shared Convoke color chooser are recovered together. The
+  optimized predicate has seven physical parameters and one nonphysical source
+  parameter; four VLAs and all three hybrid-cost call frames are verified.
+  Six public symbols and the private predicate pass the combined build checks.
+- The hundredth pass adds **19 implementations: 15 `card_*` functions and four
+  helpers**, and upgrades one previously accepted counter helper to its native
+  target layout while retaining its exact predecessor record and legacy body.
+  Nimble Obstructionist, the two Hourglass bodies, Command handlers and other
+  flag/target consumers are recovered with their callback dependencies.
+- The hundred-and-first pass adds **14 implementations: ten `card_*`
+  functions and four helpers**. Three modal handlers, full target-definition
+  copies, packed limb/damage state, Lutri's deck test and native subtype/expansion
+  tables are recovered with the activated-ability counter actions.
+- The hundred-and-second pass adds **ten implementations: seven `card_*`
+  functions and three helpers**. Six library-selection VLAs and fourteen
+  outgoing selection/formatting/casting frames are restored alongside Planewide
+  Celebration and the native Proliferate family. Native queue, ownership,
+  cancellation and Cage-gate quirks are preserved.
+- The hundred-and-third pass adds **eight implementations: six `card_*`
+  functions and two helpers**. Four target-display VLAs, Metzali's random
+  candidates and complete dialog frame, Aether Tide's hand/discard arrays and
+  both multiple-X payment interfaces are recovered together.
+- The hundred-and-fourth pass adds **nine implementations: four `card_*`
+  functions and five private helpers**. Spark Fiend, Togglodyte, Now I Know My
+  ABC's and Staff of the Letter Magus regain their state/name helpers, native
+  character-fold tables, alphabet bitmap and consonant choices.
+- The hundred-and-fifth pass adds **three implementations: two `card_*`
+  functions and one shared helper**. Punctuate and Capital Offense use the
+  recovered rules-text normalizer. Bloodletter's native character folding and
+  sacrifice/damage dependencies are repaired without counting it again.
+- The hundred-and-sixth pass adds **eight implementations: three `card_*`
+  functions and five shared helpers**. Elvish House Party, Old-Fashioned Vampire
+  and Snow Mercy regain the native Windows date/time/delay helpers and exact
+  two-argument redraw boundary.
+- The hundred-and-seventh pass adds **five helper implementations** and all
+  198 native pack descriptions in the newly restored `functions/packs.c`.
+  Availability, sizing, announcements and two private choice/pool workers are
+  recovered together; their generator and card callers remain pending.
+- The hundred-and-eighth pass adds **three pack-generation helpers**, including
+  the native weighted tables and qualified 2022 wrapper.
+- The hundred-and-ninth pass adds **five pack-chooser implementations**, including
+  Booster Tutor, Stocking Tiger and the native dialog template/callback.
+- The hundred-and-tenth pass adds **ten implementations: six `card_*` functions
+  and four qualified graveyard-replacement helpers**.
+- The hundred-and-eleventh pass adds **five implementations: four `card_*`
+  functions and the private Void-counter constructor**.
+- The hundred-and-twelfth pass adds **six `card_*` functions**, restoring Ormos,
+  Pelt Collector, Blaze of Glory, Dispossess, Hot Fix and Mise.
+- The hundred-and-thirteenth pass adds **five `card_*` functions**, restoring both
+  Nicol Bolas cards, Tamiyo, God-Eternal Kefnet and Aryel. The named card-handler
+  inventory now has no missing names; modified existing bodies, helpers and
+  deferred interactive chooser integration remain separate work.
+- The hundred-and-fourteenth pass adds **nine implementations: four modified
+  `card_*` functions and five legacy/selection helpers**. Bruna, Personal
+  Incarnation, Toshiro and Seht's Tiger receive qualified `_2022` versions beside
+  their retained original handlers; these are four existing card identities.
+- The hundred-and-fifteenth pass adds **nine implementations: one modified
+  `card_*` function and eight helpers**. Havengul Lich receives its permission,
+  selection and borrowed-ability helpers, alongside commander-state,
+  expansion-viewer and fixed-mana wrappers. Its original handler/helpers remain.
+- 593 recovered functions retain private/static linkage, including nine private
+  implementation helpers whose names begin with `card_`. There are 677 recovered
   public helpers; shared declarations live in the existing `manalink.h`.
 - Every function has its target address and original DWARF source unit/line
   recorded immediately above its implementation.
-- Of the recovered symbols, 3,159 are referenced by the target registration
-  records; 3,074 serve at least one record marked CODED. The remaining functions
+- Of the recovered symbols, 3,308 are referenced by the target registration
+  records; 3,219 serve at least one record marked CODED. The remaining functions
   include callbacks and helper entry points. Counts are functions, not unique
   playable cards or completed mechanics. `cards/stubs.c::card_crab` preserves
   the target's no-op placeholder and is labeled accordingly.
@@ -3657,22 +3768,1590 @@ symbols. Reccmp metadata is refreshed against this build with 18,246 pairs and
 4,191 ledger mappings; the earlier HTML report is unchanged. Gameplay
 integration remains downstream.
 
+## Native spell-cost payment and Improvise (pass 89)
+
+`charge_spell_cost_2022` is recovered at `0x26af860` in
+`functions/engine.c`. Its three native stack parameters are card data, player
+and card. DWARF and compile-time assertions establish the 72-byte card-data
+layout, type byte at offset 40 and X-cost byte at offset 44. Six signed EXE
+cost bytes feed 32-bit mana words; native operand algebra establishes the
+32-byte mana-pool row and the local eight-int snapshot at frame offset -52.
+Typed Ghidra EXE boundaries restore four arguments to `0x4302c0`, two to
+`0x4301a0` and one pointer to `0x430260`. Their actual EXE bodies and DLL
+materializations are pinned in the evidence.
+
+The native payment routine contains unusual bookkeeping that is preserved
+and annotated in source. It copies seven 32-bit mana-paid words into the
+snapshot region but subsequently reads eight signed bytes from that region.
+Its summary-byte pointer advances by player with a one-byte stride, while
+the integer mana pool uses the separate 32-byte row stride. On rollback,
+the native code sign-extends the snapshot's first byte, passes that integer
+word as a pointer, and calls the EXE routine that dereferences a seven-int
+array. The reconstruction preserves that exact argument. AI/X selection,
+maximum restoration, byte wrap behavior, fizzle handling and native
+return-register values are retained. Runtime integration must review these
+observed paths; the build checks do not execute them.
+
+The private `cast_spell_with_improvise_2022_impl` and public `improvise_2022`
+are recovered in `cards/aether_revolt.c`. Native instructions put the allowed
+controller store after each of two target initializers; the decompiler had
+hoisted one store before the branch. Both stores are restored to initialized
+84-byte targets. The worker retains its native fifteen-int artifact array,
+selection/cancellation, temporary untargetability, cleanup, mana/X payment,
+tapping and flag behavior. The already accepted cost modifier is migrated
+to the native target initializer and availability API through reversible token
+substitutions, with its exact predecessor record retained. Older Improvise
+helper bodies remain unchanged.
+
+Inspiring Statuary retains native global-cost and cast-event routing through
+those helpers. Skyclave Shade preserves its kicker/counter behavior,
+land-play/current-turn graveyard eligibility and payment result through the
+recovered spell-cost routine. All direct native calls and callback references
+in the six affected entries are checked.
+
+The ledger reaches 4,345 implementations: 3,175 named `card_*` and 1,170
+helpers. Of the 4,340 prior records, 4,339 remain unchanged and one is migrated
+with exact reversible history. Restoring that migration recovers every prior
+C token prefix. Two public declarations are added; earlier interface components,
+fragments, globals, shared stack/mask registries and Wish stubs are unchanged.
+There are 558 private functions, including 549 private helpers, and 621 public
+helpers. Registration coverage reaches 3,161 symbols, including 3,076 with a
+CODED record. The canonical cache stays at 4,686 rows and 4,628 original names.
+Source/ABI, provenance, compiler-part and GCC 9.3 PE32 build checks pass,
+including four new public symbols and both private Improvise helpers. GCC
+specializes the rebuilt casting worker as `.constprop.0`; its local executable
+COFF symbol is explicitly verified. Reccmp metadata is refreshed against this
+build with 18,253 pairs and 4,198 ledger mappings; the earlier HTML report is
+unchanged. Gameplay integration remains downstream.
+
+## Expertise specialization and recovered helper callers (pass 90)
+
+The native private `_av_free_spell.isra.0.part.0` at `0x20bc560` takes only
+player in EAX and the mana-value limit in EDX. Its abstract source `card`
+parameter has no physical location. The earlier three-parameter Ghidra import
+had treated the limit as a card slot and invented a third argument. Applying
+the concrete two-register signature yields the recovered private
+`av_free_spell_2022(player, max_cmc)` in `cards/aether_revolt.c`.
+
+The native helper uses a 216-byte test to select a nonland card from hand
+with mana value below `max_cmc + 1`, then casts the selected hand slot for
+free. DWARF and native word stores establish its test object, flags and cost
+bound. The four native Expertise callers already guard their positive hand
+counts; the native part has no additional hand-count guard. The older source
+helper and both legacy Improvise bodies remain unchanged.
+
+Kari Zev's Expertise, Rishkar's Expertise, Sram's Expertise and Yahenni's
+Expertise now pass the native limits 2, 5, 3 and 3 to the new helper. Each
+EDX constant and EAX setup is pinned with its direct call. Four fresh caller
+exports are retained separately from their original canonical exports and
+confirm the two-argument calls. The unnecessary third arguments are removed;
+other source operations remain unchanged.
+
+Eleven accepted handlers now call `improvise_2022`: Enraged Giant, Fen Hauler,
+Foundry Assembler, Freejam Regent, Herald of Anguish, Maverick Thopterist,
+Metallic Rebuke, Reverse Engineer, Sly Requisitioner, Sweatworks Brawler and
+Whir of Invention. Fourteen native Improvise calls/tail jumps and the four
+Expertise calls are verified, including multiple event paths and Foundry
+Assembler's tail jump. No broad name-only replacement changes legacy callers.
+
+All fifteen changed records retain complete predecessor records and exact
+reversible source substitutions. Earlier native pump, enters-play and death
+trigger evidence is replayed against those historical views. Of 4,345 prior
+records, 4,330 remain unchanged and fifteen are migrated; these migrations
+add no function count. Restoring them and removing the scoped private forward
+declaration recovers all previous C token prefixes. Headers, earlier interface
+components, fragments, globals, shared stack/mask registries and Wish stubs
+remain unchanged.
+
+The ledger reaches 4,346 functions: 3,175 named `card_*` and 1,171 helpers.
+There are 559 private functions, including 550 private helpers, and 621 public
+helpers. Registration coverage stays at 3,161 symbols, including 3,076 with a
+CODED record. The canonical cache remains at 4,686 rows and 4,628 original
+names. Source/ABI, provenance, compiler-part and GCC 9.3 PE32 build checks
+pass, including the new worker's private executable COFF symbol. Reccmp
+metadata is refreshed against this build with 18,253 pairs and 4,199 ledger
+mappings; the earlier HTML report is unchanged. Gameplay integration remains
+downstream.
+
+## Saheeli's Directive variable-length reveal buffer (pass 91)
+
+`card_saheelis_directive` at `0x2564cc0` is recovered in
+`cards/commander_2018.c`. Eight contiguous native ranges cover all 1,028 bytes.
+Concrete DWARF gives `deck_copy` an integer element type and a
+`DW_FORM_exprloc` upper bound of `DW_OP_breg2: -1`, establishing an EDX-counted
+`int[max]` array. The native code computes `max * 4`, probes/subtracts that
+allocation, uses the resulting buffer after its 32-byte outgoing call area,
+and restores the saved stack before destroying the source. The range proof
+retains the complete routing, allocation, selection and cleanup paths.
+
+Resolution reads the card's X value after querying deck length and uses the
+signed minimum as the reveal count. A zero count goes directly to the common
+generic-spell call and skips explicit self-destruction. With a nonzero count,
+the native Cage query precedes revealing the cards; a nonzero Cage result
+skips extraction and selection, then destroys the source. These native paths
+are preserved. On the selection path, the revealed cards are copied out of
+the deck, a 100-byte prompt is formatted and a native 216-byte test is built.
+The lost fourth `scnprintf` argument is recovered from its ESP+12 store, and
+the prompt's exact read-only bytes are checked against its immediate operand.
+The prompt and mana-value filter use the initial reveal count, including when
+the available deck is shorter than X.
+
+All eight selector arguments are recovered from the dynamic call frame.
+Each selected artifact retains the ignored creature-type query, hand insertion,
+played-from-deck flag and put-into-play sequence. No guard is invented for a
+failed hand insertion. The selected row is removed by left compaction, and
+the remaining count drives the next selection. Cancelling restores the
+remaining IDs to the top in ascending buffer order, then mills that count;
+selecting every row leaves no remainder to mill. The buffer's lexical scope
+matches native stack restoration before source destruction.
+
+Casting and fallback events use the recovered native Improvise frontend.
+The matching cast path calls Improvise and the X-spell handler, checks fizzle,
+and preserves the signed AI adjustment: -48 through X=5 and twelve times X
+above that. Nonmatching casts and other fallback events return through
+Improvise; can-cast, target-change and resolve paths retain their native
+generic-spell routing. Three native Improvise calls and two generic-spell calls
+are verified alongside the other recovered native helper calls.
+
+All 4,346 previous records and C token prefixes remain unchanged. Headers,
+earlier interfaces, fragments, globals, shared stack/mask registries and Wish
+stubs are unchanged. The ledger reaches 4,347 functions: 3,176 named `card_*`
+and 1,171 helpers. Registration coverage reaches 3,162 symbols, including
+3,077 with a CODED record. The canonical cache remains at 4,686 rows and 4,628
+original names. Source/ABI, provenance, compiler-part and GCC 9.3 PE32 build
+checks pass, including the new public card symbol. Reccmp metadata is refreshed
+against this build with 18,254 pairs and 4,200 ledger mappings; the earlier
+HTML report is unchanged. Gameplay integration remains downstream.
+
+## Escape and shared-helper consumer batch (pass 92)
+
+Ten implementations are recovered together in their original source units:
+Loathsome Chimera, Ox of Agonas, Underworld Charger, Voracious Typhon, Woe
+Strider, Renata, Called to the Hunt and Fugitive Druid, with three shared
+helpers. The complete native bodies cover 1,847 bytes.
+
+Concrete DWARF specializes `escape_with_counters` to nine physical arguments:
+player/card/event in EAX/EDX/ECX and six stack words. Blue and white mana are
+constant zero without physical locations. Applying that interface before
+export removes invented caller arguments; all thirty cost/exile/counter
+constants are checked against native stack stores. The helper calls the
+accepted private Escape worker directly and applies entry counters only when
+the native Escape flag is present. Ox's discard/draw, Charger's blocking
+restriction and Woe Strider's Goat/sacrifice/scry paths are retained, including
+its unsigned event-range gate.
+
+`test_enters_the_battlefield_with_counters_2022` retains the affected-player
+guard, native 216-byte test API and direct counter-entry tail call. Renata's
+other-creature filter, devotion power and static-ability gate are preserved.
+The subtype-target trigger helper checks spell-cast events, target/controller,
+land/effect exclusions and subtype, preserving its optional/mandatory trigger
+mode and unsigned trigger-event range. Its eight-byte native BSS result is
+recovered as a private `target_t`, allowing Fugitive Druid's Aura-trigger draw.
+The existing Morningtide helper and earlier Escape bodies remain unchanged.
+
+All 4,347 prior function records and C token prefixes remain unchanged. The
+ledger reaches **4,357 implementations: 3,183 `card_*` and 1,174 helpers**.
+There are 560 private functions, including 551 private helpers, and 623 public
+helpers. Registration coverage reaches 3,169 symbols, including 3,084 with a
+CODED record. The raw cache remains at 4,686 rows and 4,628 original names.
+One combined source/ABI, provenance, compiler-part and GCC 9.3 PE32 build
+passes; all nine public additions, the private Escape worker and private BSS
+result are verified. Reccmp metadata is refreshed against this build with
+18,263 pairs and 4,210 ledger mappings; the earlier HTML report remains unchanged.
+Gameplay validation remains downstream.
+
+## Combat-AI accumulator consumer batch (pass 93)
+
+The native combat initializer identifies three EXE-owned 32-bit lvalues:
+
+| Binding | Address | Native role |
+| --- | --- | --- |
+| `check_abilities_power_2022` | `0x739b50` | Power estimate |
+| `check_abilities_toughness_2022` | `0x7a371c` | Toughness estimate |
+| `check_abilities_keywords_2022` | `0x78fef0` | Keyword estimate |
+
+Five checked machine ranges in `setup_ai_combat_data` seed these slots from
+`EVENT_POWER`, `EVENT_TOUGHNESS` and `EVENT_ABILITIES`, dispatch
+`EVENT_CHECK_ABILITIES`, then accumulate the results into the per-card combat
+record. The initializer is supporting machine evidence and remains unrecovered.
+The bindings use existing `EXE_DWORD` lvalues without adding DLL-owned storage.
+The old power-address comment is corrected from `0x789b50` to `0x739b50` to
+match the native operand; no existing source behavior changes with that comment.
+
+These bindings recover **28 handlers and two private callbacks together**:
+Rhet-Crop Spearmaster, Elvish Berserker, Goblin Snowman, Soul Kiss, Urborg
+Phantom, Ferocity, Brushwagg, Leering Gargoyle, Phyrexian Prowler, Norwood
+Warrior, Town Sentry, Zhao Zilong, Tiger General, Fault Riders, Glittering Lion,
+Glittering Lynx, Crown of Flames, Flailing Drake, Flowstone Giant, Flowstone
+Salamander, Tahngarth's Rage, Mantis Engine, Retaliation, Kyscu Drake, Mob
+Mentality, Raging Gorilla, Dwarven Berserker, Avizoa and Nature's Kiss.
+Glittering Lion/Lynx retain their private activation callbacks.
+
+The full bodies cover 17,467 native bytes. All 95 accumulator memory operands
+are checked for exact address and four-byte width. Native call/callback targets,
+216-byte tests, 84-byte targets and both unsigned Aura event-range guards are
+verified. Existing oddities remain intact, including AI-only estimates, unused
+queries, Glittering callback scan limits/flag calculations and Raging Gorilla's
+power-only AI estimate. No gameplay changes are inferred from printed card text.
+
+All 4,357 prior records and C token prefixes remain unchanged. The ledger
+reaches **4,387 implementations: 3,211 `card_*` functions and 1,176 helpers**,
+with 562 private functions (553 private helpers) and 623 public helpers.
+Registration coverage reaches 3,197 symbols, including 3,112 with a CODED
+record. The raw cache remains at 4,686 rows and 4,628 original names.
+Source/ABI, provenance, compiler-part and GCC 9.3 PE32 build checks pass,
+including all 28 new public symbols and both private callbacks. Two preexisting
+Invasion format-extra-argument diagnostics are suppressed only around the old
+prefix in the scratch compilation; new bodies retain strict format checks and
+the actual source remains unchanged. Reccmp metadata is refreshed against this
+build with 18,297 pairs and 4,244 ledger mappings; the earlier HTML report is
+unchanged. Gameplay validation remains downstream.
+
+## Spectacle, Amplify and native filtering batch (pass 94)
+
+Fifteen implementations are recovered together in four original source units.
+The handlers are Drill Bit, Light Up the Stage, Rix Maadi Reveler, Skewer the
+Critics, Spawn of Mayhem, Spikewheel Acrobat, Aven Warhawk and Zegana, Utopian
+Speaker. Seven helpers provide specialized Spectacle and Amplify workers,
+native hand reveal, counter-based boosts, coercion, its private discard worker
+and filtered top-deck exile. The complete native bodies cover 6,065 bytes.
+
+Concrete DWARF gives Spectacle six physical arguments: three registers and
+three stack words for colorless, black and red mana. Blue, green and white are
+constant zero without physical locations. Eight call/tail frames verify all
+24 caller cost constants, including the EBP-relative incoming slots used by
+tail calls. Native life-loss trap, payment choice, free/token gates, fizzle,
+return values and `info_slot` bit operations remain intact. Spawn of Mayhem's
+separate upkeep-event branches and Rix Maadi Reveler's flag reset are preserved.
+
+Amplify's part uses player/card/amount in EAX/EDX/ECX. Its abstract `event`
+parameter has a GNU parameter reference without a physical argument; Aven's
+resolve-spell guard and ECX amount one are verified in native instructions.
+The formatted prompt uses four actual words and one `%s`; the invented fifth
+argument is removed with the specialized snprintf wrapper and caller stores
+checked. The existing subtype callback and native 216-byte test are retained.
+
+The hand-reveal helper has two native `int[100]` arrays and separate manual/auto
+paths. Coercion has two `int[50]` arrays and two 216-byte tests. Their DWARF
+stack offsets identify a decompiler end pointer formed from an adjacent array;
+reconstruction expresses that same address as `ai_hand + count - 1`, keeping C
+pointer arithmetic within its owning array. The 28-byte coercion definition and
+all seven member offsets are verified against DWARF and checked at compile
+time. Native cancellation loops, hand compaction, chooser behavior and return
+values remain intact. Filtered exile preserves the target-player deck, optional
+test, source-name prompt and last-effect return. The boost helper retains its
+unsigned three-event gate and native special-ability call.
+
+All 4,387 prior records, six legacy helper bodies and C token prefixes remain
+unchanged. Earlier fragments, globals, interfaces and dialog stubs are retained.
+The ledger reaches **4,402 implementations: 3,219 `card_*` functions and 1,183
+helpers**, with 565 private functions (556 private helpers) and 627 public
+helpers. Registration coverage reaches 3,205 symbols, including 3,120 with a
+CODED record. Four fresh helper exports raise the raw cache to 4,690 rows and
+4,632 original names. Source/ABI, provenance, compiler-part and GCC 9.3 PE32
+build checks pass. All twelve public additions and two private standalone
+workers have symbols. GCC inlines Amplify into Aven Warhawk: its 213-byte
+concrete DWARF inline range, amount-one location expression, abstract origin,
+parent bounds and eight callees are verified instead of requiring a standalone
+symbol. Reccmp metadata is refreshed with 18,306 pairs and 4,259 ledger
+mappings. Fourteen additions have explicit CSV mappings; the inlined Amplify
+worker has no standalone mapping. The earlier HTML report remains unchanged.
+Gameplay validation remains downstream.
+
+## Graveyard, sustained-pump and target-consumer batch (pass 95)
+
+Thirteen implementations are recovered together in their original source units.
+The seven handlers are Thrilling Encore, Cry of the Carnarium, Flowstone Armor,
+Endoskeleton, Timecrafting, Wandering Eye and Thran Temporal Gateway. Six helpers
+supply the current-turn deadbox scan, graveyard ID lookup, sustained-pump
+constructor/lifetime callback and two Suspend/time-counter predicates. The
+complete native bodies cover 3,862 bytes.
+
+The deadbox scan walks 36 DWORD cells between instance offsets `0x74` and
+`0x104`. Reconstruction indexes the first eighteen `target_t` pairs directly,
+using their player/card fields, preserving four-byte steps, sign/type checks,
+optional planeswalker exclusion, every reload and the increment-before-call
+order. Concrete DWARF verifies the 300-byte instance, nineteen-element target
+array and eight-byte pair layout. The helper keeps the separate acting-player
+and target-player parameters. Its ID lookup searches the selected graveyard
+backward and preserves native reanimation, return-to-hand, leave-in-place and
+exile-only modes. Cry's APNAP passes and existing private end-step callback are
+retained; neither native handler is rewritten from printed card text.
+
+The pump constructor uses the verified native 48-byte definition and creates
+its private lifetime callback. The callback uses native leaves-play notification
+and optional untapped-source removal, exiling both effects in the native order.
+Three unsigned activation-event gates are restored in Flowstone Armor,
+Endoskeleton and Thran Temporal Gateway. Existing target preferences, costs and
+source/target references remain intact.
+
+Both target predicates retain their original Time Spiral source unit and old
+static bodies. Their qualified variants receive shared C declarations for
+Timecrafting's native cross-unit callback references, despite the native COFF
+symbols having private linkage. The localized EXE-owned error pointer remains
+`EXE_STR(0x728f6c)`; no on-disk message is invented. Wandering Eye sets the native
+`PB_HAND_REVEALED` bit in both existing player-bit array elements. Gateway's
+alignment-dependent copy becomes the exact 32-byte prompt and eighteen zero
+bytes in a 50-byte buffer, followed by the native 216-byte test and historic
+predicate. The original wording, `Select an historical permanent.`, is retained.
+
+All 4,402 prior records, six legacy helper bodies, C token prefixes, earlier
+interfaces, fragments, globals and dialog stubs remain unchanged. The ledger
+reaches **4,415 implementations: 3,226 `card_*` functions and 1,189 helpers**,
+with 566 private functions (557 private helpers) and 632 public helpers.
+Registration coverage reaches 3,212 symbols, including 3,127 with a CODED
+record. Three fresh helper exports raise the raw cache to 4,693 rows and 4,635
+original names. All 141 C units pass source/ABI checks; provenance,
+compiler-part and GCC 9.3 PE32 build checks pass, including twelve public symbols
+and the private pump callback. Reccmp metadata is refreshed with 18,316 pairs
+and 4,273 ledger mappings. Twelve additions have explicit CSV mappings; the
+base Suspend predicate has a public symbol plus a private compiler-outlined
+`.part.0` body, so the current strict DWARF name matcher leaves it unmapped.
+The earlier HTML report remains unchanged. Gameplay validation remains downstream.
+
+## Packed-field, filtering and Overload batch (pass 96)
+
+Fifteen implementations are recovered together in their original source files:
+eleven handlers and four shared helpers covering 8,893 native bytes. The cards
+are Zurzoth, Chaos Rider; Search for Azcanta; Rampaging Ferocidon; Cavalier of
+Gales; Secret Salvage; Umori, the Collector; Vivien, Monsters' Advocate;
+Incubation Druid; Winds of Abandon; Break the Ice; and Damn. The helper variants
+restore Devil creation, Overload eligibility/payment and creature mana production
+while retaining all four older helper bodies.
+
+Concrete DWARF verifies the 300-byte card instance and its four-byte anonymous
+union at offset 56. Incubation Druid retains separate byte-zero selection and
+byte-one activation state; Overload payment temporarily saves, clears and
+restores the entire word around the normal-cast eligibility query. Three
+Overload consumers keep the native bit-two test. The mana helper retains its
+unsigned two-event rating gate and calls the previously recovered seven-argument
+worker. These implementations preserve the native decisions and return paths.
+
+Cavalier's native 216-byte test and later graveyard position share a stack
+address. Reconstruction gives the two nonoverlapping phases distinct typed
+locals rather than reading a test buffer as an integer. Umori's seven-entry
+initializer is verified byte for byte as `{2, 4, 8, 48, 64, 256, 9}`; its native
+random-choice bound and scan expressions remain unchanged. Three Secret Salvage
+branches copy the same 32 bytes, including the terminating NUL, and clear the
+remaining 68 bytes of the prompt buffer. Its card-name address is expressed
+through the verified 72-byte card-data record and name member at offset one.
+
+Vivien retains its two previously recovered private callbacks and packs a
+one-counter quantity in the low word with the chosen counter ID in the high
+word of the 76-byte token definition's action argument at offset 52. Ferocidon's
+life-gain locks use the existing two-element player-bit array and the native
+`PB_CANT_GAIN_LIFE` value. Azcanta keeps the accepted deck-view boundary's
+32-bit pointer representation for its final button-label argument. All 71
+calls/tail jumps and six callback references to accepted or new implementations
+are checked against native instruction operands and source names.
+
+All 4,415 prior records, C token prefixes, four legacy helper bodies, earlier
+interfaces, globals, fragments and dialog stubs remain unchanged. The ledger
+reaches **4,430 implementations: 3,237 `card_*` functions and 1,193 helpers**,
+including 566 private functions (557 private helpers) and 636 public helpers.
+Three fresh raw exports bring the canonical cache to 4,696 rows and 4,638
+original names. Return to Ravnica becomes the 142nd checked C unit.
+All 142 C units pass source/ABI checks, and provenance, compiler-part and GCC
+9.3 PE32 build checks pass with all fifteen new public symbols verified.
+Registration coverage reaches 3,223 symbols, including 3,138 with a CODED
+record. Reccmp metadata is refreshed with 18,331 pairs and 4,292 ledger mappings;
+all fifteen additions have explicit CSV mappings. The earlier HTML report is
+unchanged. Gameplay validation remains downstream.
+
+## Permanent-copy, exile-play and field-consumer batch (pass 97)
+
+Fifteen implementations, covering 10,428 native bytes, are recovered in their
+original source units. Ten handlers are Kess, Dissident Mage; Valakut
+Exploration; Echoing Equation; Kaervek's Purge; Hidden Retreat; Valakut
+Awakening; Hall of Gemstone; Vectis Gloves; Rise and Shine; and Mirrorwing
+Dragon. Five helpers supply the permanent-copy constructor/private lifetime
+callback, token-characteristic copy and exile-play constructor/callback.
+The native variants use distinct names; all five older helper bodies remain.
+
+The permanent-copy family preserves repeat-effect lookup and removal, token
+characteristic forwarding, optional artifact type, temporary-token flags,
+copyable special information, source/target references and the sequence of
+characteristic recalculations. Its private callback retains native static
+linkage. Both the constructor and callback use the existing verified native
+extension flag words. Native enum evidence gives the missing legend-rule mask
+as `0x01000000`; the callback retains the native call to remove that mask from
+the first flag word after checking the third word. The constructor's unusual
+scan comparisons and special-information source are preserved as decoded.
+Echoing Equation marks creatures before applying the recovered constructor.
+
+The exile-play family keeps face-down viewing, mana payment modes, land and
+spell eligibility, turn/cleanup lifetimes, the reentrancy sentinel, optional
+requirements and ownership handling. Its dialog alias is resolved from the
+actual native pointer operand to `Look at card`; the deck viewer retains the
+live localized EXE `OK` label. Its activation-event interval is explicitly
+unsigned. Valakut Exploration constructs the native effect, identifies it by
+its callback and retained tag, and preserves the end-step scan/damage count.
+Earlier accepted callers outside this batch retain their earlier helper
+bindings; broader runtime migration remains downstream.
+
+Kess's two `int[500]` arrays and frame locations are verified against concrete
+DWARF. The spurious `positions[499] = 0x228fa90` write is removed: that address
+is the return site of the native stack-probe call, which precedes stack
+allocation, rather than a source initializer. Two separate `int[151]` marked
+arrays are verified for Echoing Equation and Rise and Shine. The latter uses
+the already recovered native Overload helpers. Valakut Awakening's prompt is
+reconstructed as exactly 52 copied bytes including the NUL and 48 zero bytes.
+Its native conditional draw and selection behavior remain intact.
+
+Hall of Gemstone writes seven columns of each `int[2][8]` mana-override row.
+The native base, 32-byte row stride, four-byte stores and seven-iteration bound
+are verified; column seven remains untouched. Kaervek's Purge reads the upper
+word of `eot_toughness`; Hidden Retreat retains a byte-zero write to `info_slot`.
+Vectis Gloves tests the existing player-bit word with the verified
+`PB_NONSTANDARD_LANDWALK_DISABLED` mask. Mirrorwing preserves both full-word
+slot copies, eighteen target-pair copies, native stack handling and the
+unsigned trigger-event gate. All 59 calls/tail jumps and seven callback
+references to accepted or new implementations are checked against native
+operands and source names.
+
+All 4,430 prior records, C token prefixes, earlier interfaces, globals,
+fragments and dialog stubs remain unchanged. The ledger reaches **4,445
+implementations: 3,247 `card_*` functions and 1,198 helpers**, including 567
+private functions (558 private helpers) and 640 public helpers. Three fresh
+exports bring the raw cache to 4,699 rows and 4,641 original names. Source/ABI
+checks pass for all 142 C units; provenance, compiler-part and GCC 9.3 PE32
+build checks pass, including fourteen new public symbols and the private copy
+callback. Registration coverage reaches 3,233 symbols, including 3,147 with a
+CODED record. Reccmp metadata is refreshed with 18,343 pairs and
+4,309 ledger mappings; all fifteen additions have explicit CSV
+mappings. The earlier HTML report remains unchanged. Gameplay validation
+remains downstream.
+
+## Graveyard-selection and dynamic-stack family (pass 98)
+
+Nine implementations, covering 6,655 native bytes, are recovered together in
+their original source units. Five handlers are Underworld Breach; Chainer,
+Nightmare Adept; Liliana, Untouched by Death; Genesis Ultimatum; and Gyrus,
+Waker of Corpses. Four private helpers implement the three graveyard casting
+selectors and Gyrus's end-of-combat token exile callback.
+
+Chainer, Liliana and Gyrus use two-row variable-length integer arrays. Their
+first rows contain candidate card IDs; their second rows contain corresponding
+graveyard positions. Concrete allocation instructions establish eight bytes per
+graveyard entry, four-byte elements and the row stride. DWARF confirms the
+array ranks, fixed first dimension, dynamic bound forms and local locations.
+Reference-form and expression-form DWARF bounds are not interpreted as enormous
+constant array sizes. Source uses the native count-driven VLAs, including the
+GNU zero-size case, without invented selection caps or cancellation behavior.
+Chainer and Liliana retain their legality, mana and timing checks, graveyard
+pointer reloads and original prompts.
+
+Chainer pays for the selected ID, then plays its stored graveyard position and
+removes the permission effect. Liliana's native final call instead passes
+`play_card_in_grave_for_free(player, selected, 1)` despite constructing a
+position row. Its three outgoing arguments and call target are verified
+directly. This oddity is retained for downstream integration rather than
+silently changed to the apparent intended behavior. The original guards,
+cleanup and return paths are preserved.
+
+Breach's activation allocates a 3,000-byte text buffer and uses a separate fixed
+`int opts[100][2]` table. The native 3,000/2,999 debug constants, allocation,
+buffer base, formatter capacity and table location resolve the misleading
+2,968-byte Ghidra buffer. Synthetic return-address writes are removed only
+after each value is matched to a concrete native call return site. The
+player-bit byte test becomes the verified `PB_GY_ABILITIES_DISABLED` word mask;
+the chosen option's byte test becomes its second word's `0x2000` bit. All three
+Escape calls bind to the already recovered private `escape_part_2022` worker
+at their actual native target. Fake-card creation/recycling, Cage checks,
+graveyard source lookup, sorcery override lifetime and native bounds remain.
+
+Genesis Ultimatum retains a variable-length saved-ID array capped at five
+looked-at cards. It removes all chosen permanents before putting any into play,
+then takes the remaining cards from the live deck after those effects, and
+preserves the final spell destruction/basic-spell call sequence. Gyrus restores
+the missing `%d` formatting argument from the concrete outgoing stack store.
+Its typo `creatrue`, repeated power queries, signed base-power comparison,
+minus-one array initialization and gate on all scanned graveyard cards remain.
+The token's no-sleight/legacy bytes, native attacking action and private combat
+exile callback are verified against the 76-byte token definition and stores.
+
+All 4,445 prior records, C token prefixes, headers, interfaces, globals,
+fragments and dialog stubs remain unchanged. The ledger reaches **4,454
+implementations: 3,252 `card_*` functions and 1,202 helpers**, including 571
+private functions (562 private helpers) and 640 public helpers. One fresh
+callback export brings the raw cache to 4,700 rows and 4,642 original names.
+All 142 C units pass source/ABI checks; provenance, compiler-part and GCC 9.3
+PE32 build checks pass with five new public card symbols and four private
+callback symbols. Private callback checks pair executable local COFF symbols
+with their DWARF owning source unit, distinguishing the end-of-combat homonym
+and Breach's compiler-outlined `.part.0` implementation. All 36 calls/tail jumps
+and six callback references to accepted or new implementations are verified.
+Registration coverage reaches 3,238 symbols, all five additions marked CODED,
+for 3,152 CODED handler symbols overall. Reccmp metadata is refreshed with
+18,351 pairs and 4,317 ledger mappings. Seven additions have explicit
+CSV mappings; the current strict global-name matcher excludes Breach's split
+body and the private end-of-combat homonym. Both are verified in the build by
+source ownership. The earlier HTML report remains unchanged. Gameplay
+validation remains downstream.
+
+## Hogaak Convoke/Delve family (pass 99)
+
+Seven implementations, covering 5,144 native bytes, are recovered together:
+Hogaak, Arisen Necropolis; its Convoke predicate, eligibility check, hybrid
+Convoke payment and Delve casting helpers; the native mana-text formatter; and
+the shared creature/color chooser. Each lives in its original Modern Horizons,
+Ravnica or functions source unit. The older formatter and private Ravnica
+chooser bodies remain unchanged; native variants receive qualified names.
+
+Concrete DWARF proves that the predicate takes player, generic cost and black
+cost in EAX/EDX/ECX, then blue, green, red and white in four stack words. Its
+source `card` parameter has only a GNU parameter reference and no physical
+location. A focused Ghidra interface removes that ghost argument before all
+callers are exported. All five caller targets are verified, and the three
+eligibility frames are decoded independently as two black, black/green and two
+green, with the other colored costs zero. Source retains the native generic
+cost clamping and the distinction between a successful predicate result of one
+and the creature-using result of two.
+
+The predicate and payment helper each allocate a tapped-card VLA and a
+five-column card/color history VLA. Four-byte and twenty-byte allocation
+strides, dynamic DWARF bounds and zero/minus-one initializations are verified.
+Their fifty-attempt loops retain colored-cost priority, generic fallback,
+history across attempts, temporary tapped-state marks, removal on failed trials
+and actual tap calls on payment. Live card-count reloads remain distinct from
+the counts used for allocation. These trial algorithms are reconstructed as
+decoded rather than replaced with an ideal Convoke solver.
+
+Hybrid payment keeps six mana fields, ten option words, six-bit-per-color
+encoding and a 500-byte prompt. The missing payment-label `%s` argument is
+restored from its concrete fourth outgoing stack word. The formatter uses the
+native 216-byte test domain and preserves its X/40 handling, color order and
+100-byte text buffer. The public Ravnica chooser preserves single-color
+priority, multicolor dialog choices and native color masks. Human payment
+retains cancellation, target reset, fixed player-zero tap/rollback calls and
+the native lack of a final residual-cost check when no target remains. No
+synthetic fallback option or extra bounds check is added to native exceptional
+paths; their downstream gameplay validation remains pending.
+
+Delve casting retains the reverse search for the source ID, temporary graveyard
+face-down/face-up calls, selection limits, payment order and post-payment exile
+loop. Its overlapping pointer loop becomes an explicit reverse copy of nine
+eight-byte target pairs, preserving slot zero for Convoke targeting. Both the
+from-hand and from-grave card paths use the recovered helpers and retain their
+native fizzle/return behavior. All eighteen calls/tail jumps to accepted or new
+implementations are checked against native operands and source names.
+
+All 4,454 prior records, C token prefixes, earlier interfaces, globals,
+fragments and dialog stubs remain unchanged. Five helper declarations are
+added to the existing header. The ledger reaches **4,461 implementations:
+3,253 `card_*` functions and 1,208 helpers**, including 572 private functions
+(563 private helpers) and 645 public helpers. One fresh formatter export brings
+the raw cache to 4,701 rows and 4,643 original names. All 142 C units pass
+source/ABI checks; provenance, compiler-part and GCC 9.3 PE32 build checks pass,
+including six new public symbols and the private predicate. Registration
+coverage reaches 3,239 symbols, including 3,153 marked CODED. Reccmp metadata
+is refreshed with 18,357 pairs and 4,324 ledger mappings; all seven
+additions have explicit CSV mappings. The earlier HTML report remains unchanged.
+Gameplay validation remains downstream.
+
+## Native flag/target consumers (pass 100)
+
+This batch adds **19 implementations: 15 card handlers and four helpers** in
+their original source units. The cards are Nimble Obstructionist, Orcish Healer,
+Scouting Trek, Energy Vortex, Seedling Charm, Time and Tide, Samite Ministration,
+Infinite Hourglass, Shadrix Silverquill, Commander's Plate, Path of Ancestry,
+Quandrix Command, Desperate Gambit, Fungus Elemental and Emergence Zone.
+The helpers are the public activated-ability eligibility function and
+attached-Aura predicate, and the private Hourglass and flash-land callbacks.
+The triggered-ability eligibility helper is also reconstructed with the native
+84-byte target definition; its earlier accepted record is retained verbatim in
+`previous_recovery` and is not counted as a new implementation. Both older
+counter helper bodies and Urza's Legacy's older private Aura predicate remain
+unchanged. Trickbind still binds the retained legacy helper; migration of that
+older caller remains downstream.
+
+Nimble's cycling path uses the verified four-byte stack record, eight-byte
+player/card pairs and the disabled-graveyard-abilities bit in the player word.
+Its two counter eligibility dependencies use the native target layout and typed
+stack fields. The four-byte, public, zero-initialized `card_is_being_cycled`
+word is restored in `functions/functions.c` from DWARF and release COFF/BSS
+evidence at `0x2775470`. Native unsigned event ranges are restored for Nimble,
+Orcish Healer, Commander's Plate, the activated-ability helper and the flash
+callback. Time and Tide calls the already recovered native phase workers.
+Commander's Plate binds the accepted all-commanders specialization with its
+one physical argument rather than an invented stack argument.
+
+Quandrix's local `CommandChoices` enum comes from its owning DWARF lexical
+block: five values from zero through four, four-byte storage and a two-entry
+array. Its cast/resolution loops terminate at `choices + 2`; the preceding
+can-cast phase reuses the low two bytes of the first word as separate flags.
+Shadrix's 100-byte text buffer shares a native stack location with a later
+76-byte token object. Separate C objects restore those phases, with verified
+2/1 stats, flying, forced color 34 and the chosen controller. Its two label
+pointers and Emergence Zone's stored `SELECT_CARD` pointer are checked against
+exact read-only native bytes. Desperate Gambit's callback variable has the
+three-argument handler type; native byte writes to the info slot remain byte
+writes. Orcish Healer's format call has four physical arguments; the fifth
+argument in the raw decompilation is stale outgoing storage from the preceding
+color-text call and is removed using the exact instruction sequence.
+
+Scouting Trek restores its deck-sized VLA and select/remove/shuffle/put-back
+sequence. **The native put-back loop reads `count + 1` entries**, including
+one uninitialized entry beyond those selected; selecting the whole deck can
+also read beyond the array. This behavior is retained and called out in source
+for downstream review. No inferred gameplay fix is mixed into the recovery.
+Energy Vortex's indirect call is retained as a typed, one-argument cdecl EXE
+boundary at `0x499010`; its 56-byte entry returns zero. The EXE function itself
+is not counted as recovered. Hourglass and its callback access the live
+four-byte EXE control word at `0x736808`.
+
+The evidence covers 20 native bodies totaling **20,557 bytes**, 167 direct
+canonical calls and 15 callback references. All 4,460 unaffected predecessor
+records and all earlier C token prefixes survive unchanged; the one migrated
+record retains its exact history and compatibility body. Earlier interfaces,
+57 existing globals, fragments, storage/mask registries and dialog stubs are
+unchanged. Three public helper declarations and the cycling extern are added.
+The ledger reaches **4,480 functions: 3,268 `card_*` functions and 1,212 helpers**,
+including 574 private functions (565 private helpers) and 647 public helpers.
+The raw cache has 4,704 rows and 4,646 original names. Registration coverage
+reaches 3,254 symbols, including 3,167 marked CODED. Source/ABI checks pass for
+all 142 C units and the dialog-stub C++ unit; compiler-part and GCC 9.3 PE32
+build checks pass, including 17 new public symbols, two private callbacks,
+both migrated/retained counter symbols and the public cycling BSS word.
+Reccmp metadata is refreshed against this DLL/DBG pair with 18,380 pairs and
+4,347 ledger mappings. All 20 processed bodies have explicit mappings and the
+metadata/input hashes are verified; the earlier HTML report is unchanged.
+Gameplay validation remains downstream.
+
+## Modal and packed-state consumers (pass 101)
+
+This batch adds **14 implementations: ten card handlers and four public
+helpers** in their original source units. The handlers are Verdant Command,
+Very Cryptic Command variants B and E, Inscription of Abundance, Penance,
+Lutri the Spellchaser, Vision Charm, The Fallen Apart, Symbol Status and Sly
+Spy variant A. The helpers are native cast, validate, raw-counter and resolve
+operations for activated abilities at `0x2692e80`, `0x2692ef0`, `0x2692fc0` and
+`0x2692ff0`. Qualified names retain all four older compatibility bodies.
+Verdant uses these helpers and the eligibility function recovered in pass 100;
+other earlier callers remain bound to their existing interfaces.
+
+Three function-local `CommandChoices` enums are restored from their owning
+DWARF lexical blocks, with four-byte storage and exact labels/values. Each
+handler has two choices, immediately before the next native stack object;
+all loop endpoints become `choices + 2`. Verdant's graveyard AI priority is
+an integer during the earlier phase, separated from the later choice pointer
+that reuses storage. The native uninitialized human-priority inputs are
+retained. Very Cryptic Command B's two validations of the same target index
+are also retained and checked against both call frames. Inscription's nine
+21-word copies become full 84-byte target assignments, preserving trailing
+flags and the original order of controller overrides. Its eight-byte
+information accessor remains the verified EDX:EAX interface.
+
+Lutri's source-level dynamic `int` array is supported by DWARF's
+`DW_OP_breg3 -1` upper bound and the native four-times-slot-count allocation.
+**The native zero fill clears only `available_slots` bytes**, leaving much of
+the integer array uninitialized. That behavior is retained in source. The
+scan uses unsigned 16-bit card IDs and stops at the deck sentinel or 500
+entries; the can-cast flag uses a full zero-extended information-slot write.
+Penance retains its single-byte flag write. The Fallen Apart and Sly Spy
+retain signed limb bytes and packed damage counts, with singular/plural
+label pointers restored from exact native read-only bytes.
+
+Vision Charm's local subtype arrays contain exactly five and thirteen
+integers at `0x2723acc` and `0x2723ae0`. **Native indexing uses the shifted
+bit masks, which can exceed those array bounds.** The original table sizes,
+contents and indexing are preserved and annotated for downstream review.
+Its phase-out call binds the previously recovered native worker. Symbol
+Status restores the 198-byte expansion bitmap, the three partial-word clear
+bytes and the array-end sentinel. The imported rarity record's first-byte
+expansion read is checked against the native load.
+
+Symbol Status also needs Drawcardlib's existing `get_config_data` export.
+The release IAT entry at `0x27b5370` and both three-argument call frames
+support a typed import for the two integer queries; this is a dependency
+boundary, not a recovered Drawcardlib implementation. The existing root
+`Drawcardlib.def` gains only that export name. The build regenerates an i386
+import archive with eleven members, and the output DLL's import is verified.
+
+The evidence covers **13,856 native bytes**, 131 canonical calls and nine
+callback references. All 4,480 previous records, C token prefixes, earlier
+interfaces, 58 globals, fragments, storage/mask registries and dialog stubs
+remain unchanged. The header adds four helper declarations and the import.
+The ledger reaches **4,494 functions: 3,278 `card_*` functions and 1,216 helpers**,
+including 574 private functions (565 private helpers) and 651 public helpers.
+Four focused helper exports bring the raw cache to 4,708 rows and 4,650
+original names. Registration coverage reaches 3,264 symbols, including 3,176
+marked CODED. All 142 C units and the separate dialog-stub C++ unit pass
+source/ABI checks; provenance, compiler-part and GCC 9.3 PE32 build checks
+pass, including all fourteen new public symbols and the Drawcardlib import.
+Reccmp metadata is refreshed with 18,392 pairs and 4,363 ledger mappings.
+Thirteen additions have direct mappings. GCC emits the new raw-counter entry
+as a five-byte tail jump to the retained compatibility body; both public
+symbols and the exact jump target are verified. Its declaration has no concrete
+DWARF range, so the current reccmp name matcher omits that one entry. Current
+DLL/DBG/CSV hashes are verified; the earlier HTML report remains unchanged.
+Gameplay validation remains downstream.
+
+## Library-selection VLAs and Proliferate (pass 102)
+
+This batch adds **ten implementations: seven card handlers and three public
+helpers** in their original source units. The cards are Hazoret's Undying
+Fury, Sunbird's Invocation, Gishath, Sun's Avatar, Niv-Mizzet Reborn, Kamahl's
+Druidic Vow, Emergent Ultimatum and Planewide Celebration. The native automatic,
+manual and top-level Proliferate helpers receive qualified interfaces;
+all three older helper bodies and their earlier callers remain unchanged.
+
+Six dynamic arrays are reconstructed from native allocation/stride evidence
+and DWARF type/bound/location records. Sunbird uses a two-row integer table:
+one row preserves the revealed IIDs, while the second substitutes the draw-card
+placeholder for ineligible choices. After removing the revealed cards, it
+returns the unchosen entries to the top in reverse order, casts the selected
+IID and moves the remaining count to the bottom. Live deck reads after the
+legality check and the original count adjustment are retained. The other
+arrays hold shrinking Hazoret cast candidates, Gishath/Niv/Vow library copies
+and Emergent's final casting queue. Emergent's dynamic upper bound is absent
+from DWARF; its native allocation and surrounding frame supply the evidence.
+Large reference-valued bounds in the other DIEs are recorded as references,
+never interpreted as enormous static arrays.
+
+Fourteen native outgoing frames are saved: seven eight-argument zone selectors,
+three formatting calls and four free-casting calls. Hazoret casts using
+`1 - player` as exile owner; Emergent uses `player`. Niv retains an extra
+format argument even though its prompt has no conversion. Kamahl's formatted
+CMC limit and test threshold use the clamped revealed-card count. Native
+Grafdigger's Cage gates skip the complete Gishath/Kamahl selection blocks.
+Cancellation restores remaining copies in their native forward order before
+random bottoming or milling. Early returns, including Emergent's zero-chosen
+and one-card cases, retain their original cleanup behavior.
+
+**Hazoret and Emergent compact their queues with an extra read at the current
+count**, potentially outside the array. Both reads are preserved and annotated
+for downstream review. Emergent also initializes a second test object while
+passing the first to the cast chooser; that native detail is retained. Its two
+message updates copy exactly 55 and 31 bytes, including each terminator.
+All restored prompt bytes and copy extents are checked against the release.
+
+Planewide stores four choices in the four bytes of its information slot, then
+reuses the native choice-array stack location for a 76-byte token object.
+The phases become separate C objects with verified 2/2 stats, forced color 62
+and `no_sleight = 1`. The declaration following a native label is enclosed in
+a compound statement for GCC 9's C grammar. Proliferate's native target uses
+the 84-byte layout; its two helpers retain the original counter-kind chooser
+and player-counter behavior. Poison, experience and energy use offsets zero,
+one and two in the verified four-byte player row.
+
+The evidence covers **8,440 native bytes**, 52 canonical calls and four callback
+references. All 4,494 previous records, C token prefixes, earlier interfaces,
+58 globals, fragments, storage/mask registries, Drawcardlib imports and dialog
+stubs remain unchanged. Three helper declarations are added. The ledger reaches
+**4,504 functions: 3,285 `card_*` functions and 1,219 helpers**, including 574
+private functions (565 private helpers) and 654 public helpers. Three focused
+helper exports bring the raw cache to 4,711 rows and 4,653 original names.
+Registration coverage reaches 3,271 symbols, including 3,183 marked CODED.
+All 142 C units and the dialog-stub C++ unit pass source/ABI checks; the GCC 9.3
+PE32 build and all ten new public symbols pass verification. Reccmp metadata
+is refreshed with 18,401 pairs and 4,375 ledger mappings. Nine additions map
+directly. GCC outlines the manual Proliferate helper into a public entry and
+private `.part.0` body sharing a DWARF name; both COFF symbols and owning-CU
+DWARF ranges are verified, while the current name matcher omits that ambiguous
+entry. All DLL/DBG/CSV identities are checked; the earlier HTML report is
+unchanged. Gameplay validation remains downstream.
+
+## Target-display and hand-selection arrays (pass 103)
+
+This batch adds **eight implementations: six card handlers and two public
+helpers** in their original source units. The cards are Force of Vigor, Mass
+Manipulation, Release the Gremlins, Builder's Bane, Metzali, Tower of Triumph
+and Aether Tide. Native multiple-X and double-X charging at `0x268db60` and
+`0x268dc30` receive qualified interfaces, retaining both older helper bodies.
+The double-X wrapper passes the constant multiplier two to the new native
+multiple-X implementation. Original human/speculative branches, `hack_xx`
+restoration, integer division, total-payment return and cancellation remain
+unchanged.
+
+Seven integer VLAs replace corrupted stack/pointer expressions. The first four
+are target displays sized from the target-count byte. Each reads the original
+player/card pair, obtains a permanent's IID or the native self/opponent player
+placeholder (`0x615a`/`0x6161`), then passes the live fill count through the
+six-word `show_deck` frame. Each caption is checked against release bytes.
+Mass Manipulation's target-player expression becomes `targets[i].player`:
+the native address arithmetic is `64 + (i + 14) * 8 - 60`, equal to the verified
+116-byte target base plus an eight-byte row stride.
+
+Metzali restores an availability-sized candidate array initialized to -1. It
+scans permanents belonging to `current_turn`, retains those passing the native
+target predicate, and selects using a fresh `target_available` result as the
+random bound. **The native bound is not replaced by the number of filled
+entries.** Its decompilation had lost the entire dialog tail. The restored
+18-word call preserves both activated-ability results, two control strings,
+three option triples and four terminators. The destruction priority is -100
+on the controller's turn, and either 15 or zero on the other turn depending
+on target availability. Ability conditions and mana parameters remain native.
+
+Aether Tide snapshots original IIDs and hand positions in a two-row VLA. A
+second hand-count read, when the native scan runs, independently sizes its
+discard array. The eight-word chooser frame retains mode three and cancel
+value -1. Cancellation before paying all required discards sets `spell_fizzled`
+and returns. **Compaction reads one extra entry from each snapshot row**;
+those reads are retained and annotated. The later mana charge uses the native
+32-bit target-count-minus-information-slot result, and actual discards occur
+only if payment did not fizzle. Native selection, temporary untargetability,
+copy/free-cast gates and cleanup order remain unchanged.
+
+Spell-specific behavior is preserved rather than normalized across the four
+related display handlers: Force's pitch-cost/retarget path and destruction
+loop, Mass Manipulation's human/AI X handling, Gremlins' token quantity from
+the original target count and Builder's Bane's post-kill life calculation.
+Six unused synthetic return-PC temporaries and their stand-alone constant
+assignments are removed only after verifying that no remaining reads exist.
+The earlier selector-storage recovery and its provenance remain unchanged.
+
+The evidence covers **10,063 native bytes**, 120 canonical calls and two
+callback references. Seven outgoing frames record four displays, the discard
+chooser, the dialog and the random call. All 4,504 earlier records, C token
+prefixes, interfaces, 58 globals, fragments, storage/mask registries,
+Drawcardlib imports and dialog stubs survive. Two helper declarations are
+added. The ledger reaches **4,512 functions: 3,291 `card_*` functions and
+1,221 helpers**, including 574 private functions (565 private helpers) and
+656 public helpers. Two focused exports bring the raw cache to 4,713 rows and
+4,655 original names. Registration coverage reaches 3,277 symbols, including
+3,188 marked CODED. All 142 C units and the dialog-stub C++ unit pass source/ABI
+checks; provenance, compiler-part and GCC 9.3 PE32 build checks pass, including
+all eight new public symbols. Reccmp metadata is refreshed with 18,407 pairs
+and 4,383 ledger mappings; all eight additions have explicit mappings, and
+current DLL/DBG/CSV identities are verified. The earlier HTML report is
+unchanged. Gameplay validation remains downstream.
+
+## Letter-name, dice and toggle handlers (pass 104)
+
+Recovered four card handlers and five private helpers in the original
+`cards/unglued_unhinged.c` and `cards/unstable.c` source files:
+
+- Spark Fiend and Togglodyte, including their private effect-name callbacks.
+- Now I Know My ABC's and its permanent-name alphabet collector.
+- Staff of the Letter Magus and its seventeen-consonant chooser.
+- The event-specialized `txtfx.part.0` compiler body, represented as the private
+  three-argument `txtfx_name_2022` helper. The existing four-argument public
+  `txtfx` body and its earlier callers remain unchanged.
+
+The callbacks pass player, card and marker in EAX, EDX and ECX. Applying that
+interface before exporting removes the fictitious fourth stack argument and
+incorrect event operand. Both callbacks retain their native event gates.
+Spark Fiend retains its initial/upkeep dice paths, packed marker/point state
+and `Don't roll` sentinel. Togglodyte retains its spell-triggered toggle,
+attack/block restrictions and combat-damage prevention.
+
+Two native indexed loads use the complete 256-byte table at `0x273f300`.
+Local read-only copies retain byte-exact uppercase/accent folding, AE ligature
+handling for the alphabet collector, and sharp-s/thorn rules for the Staff.
+The collector's 26-byte bitmap begins at EBP-0x22: the store at
+EBP+character-0x83 corresponds to `letter[character - 'a']`. Its reduction
+checks the first byte followed by 25 remaining bytes, ending at EBP-8.
+Fictitious pre-array storage and unused return-PC locals are removed.
+
+The chooser copies seventeen native pointers from `0x27211c0`, preserving
+the order B, C, D, F, G, H, J, K, L, M, P, Q, V, W, X, Y, Z. Human, AI,
+speculation and trace-mode paths retain native unchecked choice indexing.
+Staff's two long-name special cases preserve exact spelling, capitalization
+and first/second-byte fast paths. Ordinary name lookup continues using the
+existing shared source implementation.
+
+All 4,512 previous records and source token prefixes survive unchanged,
+as do headers, 58 globals, earlier interfaces, storage/mask registries,
+Drawcardlib imports and both out-of-scope chooser stubs. The nine new bodies
+cover 2,539 native bytes, 22 canonical dependency operands and five callback
+references. The ledger reaches **4,521 functions: 3,295 `card_*` functions and
+1,226 helpers**, including 579 private functions (570 private helpers) and
+656 public helpers. Refreshed raw exports leave the cache at 4,713 rows and
+4,656 distinct names. Registration coverage reaches 3,281 symbols, including
+3,192 marked CODED.
+
+All 142 C units, the dialog-stub C++ unit, source/ABI/provenance and
+compiler-part checks pass. The GCC 9.3 PE32 build succeeds; all four new public
+card symbols and five local helper symbols are verified. Gameplay validation
+remains downstream. This pass identified Bloodletter's earlier empty-string
+indexed-load artifact, which uses the same native fold table. Pass 105 repairs
+that previous recovery and retains its exact predecessor record and body.
+
+Reccmp metadata is refreshed with 18,419 pairs and 4,395 ledger mappings.
+All nine additions map directly, including the explicitly named compiler
+part; resolving that name also makes three earlier ledger entries eligible.
+Current DLL/DBG/CSV identities are verified. The earlier HTML report is
+unchanged.
+
+## Rules-text parsing and consumers (pass 105)
+
+Recovered the shared `get_rules_text` helper in `cards/unglued_unhinged.c`,
+Punctuate in that file, and Capital Offense in `cards/unstable.c`. The helper
+retains its empty-text special case, `strlen(original) + 1` character VLA,
+exact original-text copy and native `\n--FLIP--\n` truncation. Its two 300-byte
+back-face patterns are built from the following card's name: the native load
+uses `0x73bb04 + csvid * 4`, four bytes after the `cards_ptr` base. Patterns
+end in ` - ` and `)` and are applied in the original order.
+
+The pipe-token walker preserves the raw native control flow and cursor
+movements for numeric, colored, hybrid, half, Phyrexian, escaped-pipe and
+unknown codes. Optional reminder removal stops at the first closing `)`;
+an unmatched opening parenthesis terminates the output. No bounds checks or
+nested-parenthesis behavior are added. The suspicious `|/` path is preserved:
+native code writes the word `or`, advances the output cursor by one, then
+overwrites the second byte on the next write. This remains a downstream
+behavior question, rather than an inferred source repair.
+
+Punctuate uses the verified `msvcrt.dll!strpbrk` thunk at `0x2701da8`, through
+IAT slot `0x27b5514`. Its exact eighteen punctuation bytes include Windows
+dash and quotation characters; octal C escapes preserve those bytes. Every
+match advances the search pointer by one, and damage remains half the match
+count. Capital Offense requests reminder removal, counts ASCII uppercase
+bytes and applies the native negative pump. Its current character is restored
+as a register local instead of fictitiously writing each byte over `rules[0]`.
+Both handlers retain their original target, resolution and cleanup paths.
+
+Bloodletter's indexed first-character load now uses the complete native
+256-byte table at `0x273f300`. Its sacrifice and mass-damage calls bind to
+the recovered native helpers. All other control flow is retained. Its exact
+previous manifest record and source body are stored in the component evidence
+and `previous_recovery`; the other 4,520 previous entries remain unchanged.
+The source-prefix check allows only this explicit predecessor replacement.
+
+Three new implementations bring the ledger to **4,524 functions: 3,297
+`card_*` functions and 1,227 helpers**, including 579 private functions
+(570 private helpers) and 657 public helpers. Registration coverage reaches
+3,283 symbols, including 3,194 marked CODED. Four refreshed exports retain
+4,713 raw rows and 4,656 distinct names. The recovered/repaired bodies cover
+1,991 native bytes and thirteen canonical dependency operands.
+
+All 142 C units, the dialog-stub C++ unit, source/ABI/provenance checks and
+compiler-part audit pass. The GCC 9.3 PE32 build and all three new public
+symbols are verified. Headers gain only the shared rules-text declaration;
+globals, earlier components, storage/mask registries, Drawcardlib imports and
+both out-of-scope chooser stubs remain unchanged. Gameplay validation remains
+downstream.
+
+Reccmp metadata is refreshed with 18,422 pairs and 4,398 ledger mappings.
+All three additions and repaired Bloodletter map directly. Current DLL/DBG/CSV
+identities are verified; the earlier HTML report remains unchanged.
+
+## Native Windows clock helpers and consumers (pass 106)
+
+Recovered `localtime_date`, `localtime_hour_minute`, `localtime_hour`,
+`time_in_ms` and `sleepms` in their original `functions/windows.c` source file,
+alongside Elvish House Party, Old-Fashioned Vampire and Snow Mercy in their
+original set files. The two earlier display-copy helpers and the rest of the
+Windows source remain unchanged.
+
+The Windows `SYSTEMTIME` object is sixteen bytes. Native DWARF and compile-time
+assertions agree on year/month/day/hour/minute offsets 0/2/6/8/10. The date
+formatter retains `%02d/%02d/%d` and returns the same persistent eighteen-byte
+function-local static buffer on every call. Its rebuilt DWARF array bound,
+address expression, local COFF symbol and BSS allocation are verified. This
+local static is separate from the 58 recovered file-scope global declarations.
+The packed hour/minute helper returns the hour in the high word and minute in
+the low word, both zero extended; the hour-only helper returns the native
+24-hour value.
+
+The millisecond helper calls `QueryPerformanceFrequency` before
+`QueryPerformanceCounter`. Its lowered arithmetic is
+`((ticks * 32 - ticks) * 4 + ticks) * 8`, a wrapped 64-bit multiply by 1000,
+followed by the signed `__divdi3` quotient and the returned low 32 bits.
+The recovered source expresses that operation with an unsigned multiply and
+signed division, preserving native truncation and wrap behavior. The two
+eight-byte Windows counter objects are checked. Native ignored API status
+returns and absence of division/failure guards are retained. `sleepms` remains
+a direct Windows `Sleep` call with the original 32-bit argument conversion.
+
+Elvish House Party uses the twelve-hour value, with zero converted to twelve,
+for the affected card's power/toughness events. Old-Fashioned Vampire retains
+its 18:30-inclusive to 05:30-exclusive night interval and original event gates,
+including the absence of an affected-card check in that handler. No cached
+clock or inferred gameplay correction is introduced.
+
+Snow Mercy retains the ten-entry damage-source queue, immediate Globe-counter
+overflow, trigger collection/reset and mass-tap callback. Its temporary state
+changes, four tap/untap iterations, sound choices, 350 ms delay, final tapped
+state and speculation gates are preserved. Both `redisplay_all()` artifacts
+actually call the existing executable boundary `0x437ec0` with two stack words,
+0 and 255. Those exact DLL frames and the matching executable prefix are
+verified; no redraw or dialog implementation is decompiled here.
+
+The ledger reaches **4,532 functions: 3,300 `card_*` functions and 1,232 helpers**,
+including 579 private functions (570 private helpers) and 662 public helpers.
+All 4,524 previous records and C token prefixes survive unchanged. Five header
+declarations are added; previous globals, fragments, interfaces, storage/mask
+registries, Drawcardlib imports and out-of-scope chooser stubs remain unchanged.
+Eight refreshed exports retain 4,713 raw rows and 4,656 distinct names.
+Registration coverage reaches 3,286 symbols, including 3,197 marked CODED.
+The new bodies cover 1,709 native bytes, fifteen canonical dependency operands
+and one callback reference.
+
+All 142 C units, the dialog-stub C++ unit, source/ABI/provenance and compiler-part
+checks pass. The GCC 9.3 PE32 build succeeds. All eight new public symbols,
+the private date buffer and all four Windows API imports are verified.
+Gameplay validation remains downstream.
+
+Reccmp metadata is refreshed with 18,431 pairs and 4,407 ledger mappings.
+All eight additions map directly; Snow Mercy's new use also makes the earlier
+private Globe-counter callback visible to the matcher. Current DLL/DBG/CSV
+identities are verified. The earlier HTML report remains unchanged.
+
+## Pack utility foundation and native descriptions (pass 107)
+
+The original `functions/packs.c` file was absent. It now contains five recovered
+helpers: `is_valid_pack`, `pack_size`, `announce_expansion_choice`, and the
+private `add_to_csvid_choices_2022` and `add_card_to_pack_2022` workers. This
+is a backend foundation for Booster Tutor and Stocking Tiger. The full pack
+generator, its remaining helpers, the selection dialog and both card handlers
+are still pending. No substitute generator or additional GUI stub is added.
+
+Native DWARF bounds and structure layouts identify 43 immutable rarity-description
+arrays and the 198-entry `pack_contents` table. All 44 objects are reconstructed
+from 4,536 native data bytes, preserving every count, sentinel, pointer alias and
+subarray offset. Rarity rows are eight bytes; pack records are twelve bytes.
+The rebuilt DLL's 43 array byte sequences match the native input exactly, and
+all 396 booster/starter pointers are verified against their relocated objects.
+The separate `no_boosters` and `no_starters` objects retain pointer identity.
+
+`Expansions.h` already contained identifiers through value 169. All those
+values match native DWARF and remain unchanged. Thirty missing enumerators
+extend that existing enum: zero, values 170 through 197, and the `LAST` alias.
+There are 199 native enumerator names representing 198 distinct values.
+The public utilities use the existing `EXPANSION_t` type. The private draft
+rarity enum and record types stay in the original pack source unit.
+
+The two `.isra.0` workers have field-split interfaces. The append worker takes
+the count address, pool-pointer address and card ID in three registers. The
+pack-add worker takes three register arguments and six stack words, including
+both original field addresses. Ghidra receives these interfaces before export;
+the typed C helper names are qualified to distinguish their physical shapes.
+The clone importer gains backward-compatible support for an `int **` parameter.
+
+Append allocation starts at 200 entries, doubles at native boundaries and
+retains the original 3,200-entry stop and fatal messages. Pack-add keeps the
+local pool copy, native random draws, basic/snow-land duplicate exceptions,
+last-entry removal, forced-duplicate fallback and diagnostic behavior.
+Diagnostics use the verified native `fprintf` import and stderr, whose runtime
+shim computes `_iob + 2 * 32`. Both exact format strings are restored.
+
+The validity predicate retains its native unsigned range and excluded sets.
+The sizing caller keeps the original expansion operand in ECX across that
+predicate, which never writes ECX; the decompiler's fictitious clobbered
+register local is removed. Conditional rows retain the maximum-of-two size
+calculation and native assertions. Announcement keeps its speculation/player
+gates, text-file offsets and all three native dialog-control literals.
+
+The ledger reaches **4,537 functions: 3,300 `card_*` functions and 1,237 helpers**,
+including 581 private functions (572 private helpers) and 665 public helpers.
+All 4,532 previous records and C token prefixes survive unchanged. The 44 new
+table objects bring the file-scope global registry to 102 declarations; earlier
+globals, fragments, interfaces, storage/mask registries and chooser stubs remain
+unchanged. Raw exports retain 4,713 rows and 4,656 distinct names. The five
+bodies cover 1,416 native bytes and six canonical dependency operands.
+
+All 143 C units and the dialog-stub C++ unit pass source/ABI checks. Provenance,
+compiler-part and GCC 9.3 PE32 build checks pass. The build now includes 165 C
+objects, two C++ objects and twenty linked assembly objects. All three public
+utility symbols and all 44 table objects are verified. GCC removes the two
+unreferenced private workers until their generator caller is recovered;
+their source bodies and native provenance are retained. Gameplay validation
+remains downstream.
+
+A fresh inventory finds **23 missing `card_*` handler names**. The 2022 DWARF
+inventory is checked against accepted addresses, current C definitions and
+rebuilt executable COFF function symbols so macro-generated handlers are
+recognized. This count excludes helper dependencies and unverified changes
+within retained 2020 handlers. Dispossess and Mise depend on the chooser UI
+already set aside by the user.
+
+Reccmp metadata is refreshed with 18,434 pairs and 4,410 ledger mappings.
+All three public additions map directly. The two unreferenced private workers
+are absent from the rebuilt function table and are correctly omitted by the
+matcher. Current DLL/DBG/CSV identities are verified; the earlier HTML report
+remains unchanged.
+
+## Weighted pack generator and native wrapper (pass 108)
+
+The full pack generator is now recovered in `functions/packs.c`, together with
+its public wrapper and the release's original `test_packs` entry point. The
+private generator is named `make_pack_normal_2022`; the wrapper is
+`make_pack_2022`, preserving the unrelated two-argument draft helper already
+present in `cards/draft.c`. This batch recovers three helpers covering 4,570
+native code bytes and 33 canonical dependency operands.
+
+Eighteen immutable count/card tables restore all 878 weighted rows from 7,024
+native data bytes. Their mixed `-1` and `0` terminators remain exact. A local
+nineteen-entry initializer preserves all eighteen pointers and the final null
+entry; its native copy spans 152 bytes. The generator retains 44 choice pools,
+the three contraption weights `{16, 7, 2}`, the set-specific rarity/land/DFC
+branches, native random draw order, duplicate fallback and testing-mode retry
+limits. Native quirks remain unchanged rather than being corrected to card rules.
+
+The typed reconstruction restores the five-byte `Rarities` header followed by
+expansion-rarity bytes and the seven-entry subtype array ending at record offset
+146. Compile-time assertions check both layouts. The public wrapper keeps its
+output pointer in ECX across `is_valid_pack`, which does not write ECX. Its
+temporary allocation, normal/test mode choice, failure diagnostics and free
+sequence retain the release behavior. The final empty switch arm has an explicit
+null statement for GCC 9 C grammar, recorded as a scoped reconstruction.
+
+`test_packs` retains its four-byte static once gate, expansion loop, timing
+conditions and native 32-bit elapsed subtraction before float conversion.
+The `fprintf`, `fflush` and stderr boundaries are checked against native
+imports/shims. This recovers the original entry point as source; it has not
+been executed.
+
+The ledger reaches **4,540 functions: 3,300 `card_*` functions and 1,240 helpers**,
+including 582 private functions (573 private helpers) and 667 public helpers.
+All 4,537 preceding records and C token prefixes survive unchanged. The global
+registry now contains 120 declarations, including the eighteen weight arrays.
+The 143 C units, C++ stub unit, provenance/compiler-part audits and GCC 9.3
+PE32 build pass. All eighteen rebuilt weight arrays match native bytes; the
+generator, both previously unused private workers and the once gate are
+verified in the rebuilt debug data.
+
+The pack selection GUI and its card consumers remain pending. The inventory
+still contains 23 missing card-handler names; this batch closes their shared
+generator dependency. Gameplay validation remains downstream.
+
+Reccmp metadata now contains 18,439 pairs and 4,415 ledger mappings. All three
+additions and the two previously omitted private workers map directly. The
+current release/build DLL/DBG and CSV hashes are verified; the older HTML report
+is unchanged.
+
+## Pack chooser, Booster Tutor and Stocking Tiger (pass 109)
+
+The remaining three functions in the original `functions/packs.c` are recovered:
+`dlgproc_choose_a_pack`, `generate_choose_a_pack_dlg_template` and `choose_packs`.
+Booster Tutor and Stocking Tiger are recovered in their original set files,
+using the native generator and chooser. This batch covers 4,466 native code
+bytes, 24 canonical dependency operands, one callback reference and 41 direct
+or register-load IAT references.
+
+The complete 294-byte dialog template is restored byte for byte with four-byte
+alignment. Its eight controls are six pack comboboxes (IDs 1101–1106), OK and
+Cancel; the template uses 10-point MS Sans Serif and a 186-by-116 dialog area.
+The 64-byte argument structure contains six eight-byte expansion/booster rows.
+The private callback retains its stdcall ABI and `_dlgproc_choose_a_pack@16`
+COFF symbol. Its background image, expansion names, brush, pens and argument
+pointer retain their function-local static lifetime. The public chooser's
+counter starts at -1 and increments with native 32-bit wrapping.
+
+Correct Win32 stdcall import signatures remove the decompiler's accumulating
+stack-pointer artifacts. The typed reconstruction restores the original
+279-byte path buffer, 300-byte item buffers, 48-byte owner-draw structure,
+56-byte ANSI text metrics and 16-byte rectangles. Native painting retains
+palette handling, the double-buffer/critical-section sequence, focus colors,
+expansion symbols, dragging, cancellation rules and object cleanup. All
+template styles, control coordinates, class ordinals and strings are decoded
+in the evidence. The native `blt_expansion_symbol` Drawcardlib import is added;
+the import library now contains twelve i386 members. The import-definition
+audit checks this exact append against its predecessor, including the earlier
+configuration import, rather than discarding the prior definition hash.
+
+Booster Tutor restores two integer VLAs sized by `pack_size`; Stocking Tiger
+restores one. The native stack-probe sites and four-byte element widths are
+recorded. Both retain their distinct AI expansion choices, packet tag 26 and
+explicit `(0, 26)` send / `(1, 26)` receive frames. Booster Tutor uses the
+216-byte native filter and recovered selector/show-deck APIs. Its display and
+selection bound remains the maximum pack capacity, even if generation returns
+fewer cards, and selection retries retain the native no-cancel loop. Stocking
+Tiger keeps the `0x3f7c` high-word expansion marker, clears it before generation
+and adds the generated contents after qualifying combat damage. Its marker
+storage remains at card-instance offset `0x90`.
+
+Other native quirks remain explicit: a nonzero `DialogBoxIndirectParamA`
+result, including -1, is treated as success; the expansion-name guard checks
+`num_textlines > expansion + 6` before an `expansion + 7` lookup. These are
+source recovery choices, not gameplay fixes.
+
+The ledger reaches **4,545 functions: 3,302 `card_*` functions and 1,243 helpers**,
+including 583 private functions (574 private helpers) and 669 public helpers.
+All 4,540 preceding records and C token prefixes survive unchanged. The template
+brings the global registry to 121 declarations. All 143 C units and the C++ stub
+unit pass syntax/ABI checks; provenance, compiler-part and GCC 9.3 PE32 build
+checks pass. Native verification checks the complete template bytes, callback
+linkage, seven persistent local objects and all 28 drawing/Win32 imports.
+The Wish/card-picker stubs and their scoped deferral remain unchanged. The
+fresh native-name/accepted-ledger/executable-COFF inventory finds **21 missing
+card-handler names**, excluding changes within retained 2020 handlers. No game
+or dialog was executed; gameplay validation remains downstream.
+
+Reccmp metadata now contains 18,444 pairs and 4,420 ledger mappings. All five
+additions map directly, including the private callback through its DWARF name.
+Current release/build DLL/DBG and CSV identities are verified. The older HTML
+report remains unchanged.
+
+## Alternate hand/graveyard casting and replacement filters (pass 110)
+
+Six card handlers are recovered in their original set files: As Foretold,
+Fires of Invention, Jodah, Archmage Eternal, Abandoned Sarcophagus, Lurrus of
+the Dream-Den and Muldrotha, the Gravetide. Four shared graveyard-replacement
+helpers are recovered in `functions/functions.c` under qualified `_2022`
+names, using the native 216-byte test filter. The four existing 208-byte
+filter APIs and their bodies remain intact. The batch covers 8,856 native
+code bytes, 33 canonical dependency operands and four private callback
+references.
+
+Each card restores a two-row integer VLA. The first row contains internal
+card IDs and the second their original hand or graveyard positions. Three
+arrays use `hand_count[player]`; three use `count_graveyard(player)`. Native
+stack-probe frames confirm eight bytes per candidate capacity, and every
+array has its own native allocation. All six card filters retain the 216-byte
+layout and the selector uses the qualified native interface. Existing
+`has_cycling` and `muldrotha_legacy` callback bodies are retained, with their
+native pointer operands recorded.
+
+As Foretold preserves upkeep counters, the `targets[3].player` once-use marker
+and cleanup reset. Fires of Invention retains the storm-count/turn gates,
+land-count ceiling, infinite-cost restriction and 100-byte prompt buffer.
+Both preserve the native 99/1 legality branches and the repeated sorcery-timing
+predicate calls. Jodah pays WUBRG before constructing candidates, keeps original
+hand positions and retains the AI rule that uses this path only when normal
+payment is unavailable. It tests `spell_fizzled != 1`, as the binary does.
+
+Abandoned Sarcophagus preserves its cycling exclusion and native enable mask
+`0xA`; the older header's Milled-enable value is different, so it is not used
+to replace that literal. Its numeric trigger gate `8` remains unchanged.
+The four replacement helpers restore the library, nonlibrary and battlefield
+paths, native filter calls, trigger/resolve events, exile flags, sounds and
+replacement ordering. The newly typed APIs keep 216-byte pointers throughout
+instead of passing them through the older 208-byte interface.
+
+Lurrus keeps its 500-entry companion deck scan and the native active-card query
+checks, including rejection of active entries with mana value at most two.
+That unusual condition is verified against the branch instructions and is
+not changed to match card rules. The turn, humiliation and once-use checks
+remain in `EVENT_CAN_ACTIVATE`; activation pays, marks usage and plays the
+stored graveyard position in the native order.
+
+Muldrotha finds or creates its matching attachment legacy and stores used types
+there when present. Its `-1` mask is normalized only during the native
+can-activate path. The full 27-word type chooser includes five control strings,
+the Artifact/Creature/Enchantment/Land/Planeswalker order, each availability and
+weight operand, and four trailing zero words. Its type-state update precedes
+playing the stored graveyard position. Activation returns the saved zero
+confirmed at the native epilogue, resolving misleading pointer-valued output
+from the decompiler.
+
+The ledger reaches **4,555 functions: 3,308 `card_*` functions and 1,247 helpers**,
+including 583 private functions (574 private helpers) and 673 public helpers.
+All 4,545 previous records and C token prefixes survive unchanged; global,
+fragment, storage/mask and dialog-stub registries retain their previous data.
+All 143 C units and the C++ stub unit pass source/ABI checks. Provenance,
+compiler-part and GCC 9.3 PE32 build checks pass. Binary verification checks
+all ten new public symbols, both generations of the four filter APIs and the
+six two-row array shapes. GCC omits the three hand-size bounds in DWARF; those
+bounds are checked through source and original native allocation evidence.
+The inventory now finds **15 missing card-handler names**. No game code was
+executed; gameplay integration and validation remain downstream.
+
+Reccmp metadata now contains 18,452 pairs and 4,432 ledger mappings. All ten
+additions and both previously unused private callbacks map directly. The four
+replacement-helper RVAs now use explicit `_2022` mappings instead of their
+earlier same-name matches to retained 2020 bodies. Current release/build DLL/DBG
+and CSV identities are verified; the older HTML report remains unchanged.
+
+## Exile/return records, Aegis and Void counters (pass 111)
+
+Endless Sands, Izzet Chemister, Livio, Oathsworn Sentinel and Dauthi Voidwalker
+are recovered in their original set files, together with the private
+`create_dauthi_voidwalker_legacy` constructor. The five functions cover 12,582
+native code bytes, 43 canonical dependency operands and five callback
+references. Existing Aegis/Void legacy callback bodies remain intact.
+
+The packed exile-list value is restored as a 32-bit word: bit 31 is the owner
+and the low 31 bits are the internal ID. The decompiler's wrapped pointer
+arithmetic resolves to 72-byte card-data records, with the ID at byte 36 and
+short name at byte 1. Sands retains its parent-linked exile count, token path,
+AI regeneration, differing capability/payment costs and detached-list return
+loop. Remembered cards enter under the activating player, while the encoded
+owner identifies the exile zone to remove them from.
+
+Chemister restores its variable-length integer list using the recorded exile
+amount, with the original four-byte stack-probe allocation. Its two 216-byte
+filter objects are distinct: the native code initializes the second one with
+the play-for-free prompt but passes the first, exile-selection filter to the
+chooser. That mismatch is preserved. Its compaction loop also retains the
+final `ic[k + 1]` read through the old count. Native owner checks, casting from
+`1 - player`, repeated can-cast probes, payment/detach/sacrifice ordering and
+conditional detached cleanup remain unchanged. The full 17-word activation
+dialog is restored, including the decompiler's missing ability arguments.
+
+Livio restores its two activation choices and complete 21-word consent dialog,
+including controller, target display, availability and AI weights. The Aegis
+legacy records original ID, owner, display image and native `0x300` text flags.
+Its return path uses the native **100-by-2 integer table**, sharing a native
+stack region with the separate 100-byte prompt buffer. It collects in descending
+active-player/nonactive-player order and processes the list in reverse. No
+additional capacity guard is introduced; the source retains the release's
+behavior. The controller's consent remains necessary before exiling.
+
+Dauthi restores the **31-by-3 integer table**, all 93 zero-initialized words,
+owner/ID/effect rows and both full **59-word dialog pages**. Each page has fifteen
+card choices, navigation and four trailing zero words. Card values are evaluated
+in native descending order, including inactive zero rows; native navigation gates
+and weights are retained. The original one-based fill can write index 31 despite
+the 31-row declaration, and selection adds no new row guard. Those native bounds
+quirks are documented rather than corrected. The private constructor's entry
+parameters occupy EAX/EDX/ECX according to its initial DWARF location-list ranges;
+the recovered source keeps the same three logical arguments and private ownership.
+Void and Aegis counter values are respectively 170 and 173.
+
+The six restored dialog calls contain **193 argument words** in total. Native
+literals, control opcodes, callback pointers, filter/target layouts, local array
+bounds and the Chemister allocation/compaction/filter operands are replayed by
+the provenance audit. The ledger reaches **4,560 functions: 3,312 `card_*`
+functions and 1,248 helpers**, including 584 private functions (575 private
+helpers) and 673 public helpers. All 4,555 previous records and C token prefixes
+survive unchanged, along with headers, globals, fragments, masks and chooser
+stubs. All 143 C units, the C++ stub unit, source/ABI/provenance/compiler-part
+checks and the GCC 9.3 PE32 build pass. Binary verification checks all four new
+public symbols, the private constructor and both callbacks, the fixed tables,
+VLA shape and distinct filters. The inventory now finds **11 missing card-handler
+names**. No game code was executed; gameplay integration remains downstream.
+
+Reccmp metadata now contains 18,459 pairs and 4,439 ledger mappings. All five
+additions and the now-emitted Aegis/Void callbacks map directly. Current
+release/build DLL/DBG and CSV identities are verified; the older HTML report
+remains unchanged.
+
+
+## Selection/storage and deferred chooser callers (pass 112)
+
+Six handlers are recovered in their original source files: Ormos, Archive Keeper;
+Pelt Collector; Blaze of Glory; Dispossess; Hot Fix; and Mise. This adds 4,566
+native instruction bytes and raises the ledger to **4,566 functions: 3,318
+`card_*` functions and 1,248 helpers**. The 584 private functions, 575 private
+helpers, 673 public helpers, 143 checked C units and 121 recovered globals are
+unchanged. All 4,560 previous records and C token prefixes survive unchanged,
+along with headers, imports, shared registries, chooser stubs and the Git index.
+
+Ormos retains its two-by-three sentinel array, two-row hand VLA, distinct-card
+callback and native choice/payment/discard order. Its CAN_ACTIVATE path stores
+the first distinct IID in slot one, and its selection loop compares zone indices
+with saved hand positions. These native indexing quirks are preserved.
+Pelt Collector retains 21 power slots split between target player/card fields,
+the pending byte at offset 204, resolved byte at offset 208, the four-byte power
+VLA and native sorting. It increments the pending low byte before looking for
+a free slot and clears only nine target pairs afterward. No bounds guard or
+extra cleanup is introduced.
+
+Hot Fix retains the AI/speculation branches, wrapped 32-bit clock subtraction,
+packet 28 send/receive arguments and EXE tag/payload globals. Blaze of Glory
+reads the runtime EXE legacy global at `0x728368` and keeps its signed phase
+limit and generic-spell dispatch after destruction. Dispossess retains its
+fourteen-word dialog and unchecked no-artifact fallback.
+
+The native Dispossess call targets the DLL's three-argument `choose_a_card`
+wrapper at `0x26ef720`, not the EXE binding with that name. Both native thin
+wrappers call the same implementation with identical options; the three-argument
+entry supplies a NULL filter. Its recovered caller therefore delegates to the
+existing typed `choose_a_card_test_ct` stub with NULL. Mise uses that typed
+entry with its 216-byte filter. These two card bodies are recovered, but their
+interactive named-card selection still depends on the deferred dialog UI.
+The stub continues to return -1; native unconditional uses are retained.
+No dialog internals are added or counted as recovered helpers.
+
+All source/ABI, provenance and compiler-part checks and the GCC 9.3 PE32 build
+pass. Binary verification checks all six public symbols, Ormos's fixed/VLA
+arrays, Pelt's VLA and three distinct 216-byte filter locals. A fresh inventory
+against native names, accepted records and rebuilt executable COFF symbols
+finds **five missing card-handler names**: Nicol Bolas, God-Pharaoh; Tamiyo,
+Collector of Tales; Nicol Bolas, Dragon-God; God-Eternal Kefnet; and Aryel,
+Knight of Windgrace. This inventory does not measure modified existing 2020
+handlers or remaining helpers. No game code was executed.
+
+Reccmp metadata now contains **18,465 pairs and 4,445 ledger mappings**. All six
+additions map directly; current release/build DLL/DBG and CSV hashes are verified.
+The older HTML report remains unchanged.
+
+
+## Final missing named card handlers (pass 113)
+
+Nicol Bolas, God-Pharaoh; Tamiyo, Collector of Tales; Nicol Bolas, Dragon-God;
+God-Eternal Kefnet; and Aryel, Knight of Windgrace are recovered in their original
+three set files. Their 9,796 native instruction bytes include 61 canonical
+calls, five indirect handler dispatches and seven full dialogs containing
+173 argument words. The ledger reaches **4,571 functions: 3,323 `card_*`
+functions and 1,248 helpers**. All 4,566 previous records and C token prefixes,
+headers, imports, globals, fragments, shared registries, chooser stubs and the
+Git index survive unchanged.
+
+God-Pharaoh retains its count-deck-sized exile VLA, AP/NAP reveal, unchecked
+activation target and native mode-9 exile permission. Tamiyo retains a 501-entry
+array of eight-byte count/IID pairs, the first maximum count and its forward
+removal loop, which advances after compacting the deck. In the human branch it
+initializes `test2` but passes the distinct `test` to the named-card chooser.
+The native mismatch is preserved. That chooser is still the existing deferred
+UI stub; Tamiyo's interactive naming remains pending alongside Mise/Dispossess.
+
+Dragon-God retains all five indirect calls to other card handlers. Its native
+14-IID table still checks `ac > 14`, potentially allowing a fifteenth write;
+no capacity repair is substituted. All fourteen names, including inactive zero
+entries, are looked up in reverse order before the 53-word nested chooser.
+The selection index remains unchecked. The first scan sets/clears player bit
+`0x40000`; the nested scan saves/restores the complete player words. The stored
+mode is byte `0x52`, and the selected IID is word `0x4c`.
+
+Kefnet retains its separate replacement/drawn triggers, repeated instance reads,
+all native mana-availability branches, cost reduction, copy/payment calls and
+cleanup timing. The branches cover artifacts, Phyrexian mana, both hybrid forms,
+Reaper King and the graveyard creature adjustment. The dialog deliberately uses
+`EVENT_RESOLVE_ACTIVATION` inside the draw-trigger resolution, matching native code.
+Aryel retains its target-count-sized tap VLA, repeated availability queries and
+payment/untargettable/tap/cancellation order. The 75-byte formatted prompt and
+76-byte token are distinct source objects. The native token write is the
+four-byte special-keyword word at offset 36, verified by a source assertion,
+the original instruction and rebuilt DWARF.
+
+All 143 C units, the C++ stub unit, source/ABI, provenance and compiler-part
+checks and the GCC 9.3 PE32 build pass. Rebuilt debug checks cover the five new
+public symbols, three fixed arrays, two VLAs, three 216-byte filters and Aryel's
+token layout. The VLA upper bounds use the native DWARF expression
+`DW_OP_breg0 -1`; they are not interpreted as constant array lengths.
+
+The [function inventory](recovery-evidence/function-inventory.json), reproduced
+with `python tools/recovery/inventory_missing_functions.py --output .recovery/function-inventory.json`, compares the native range/name inventory,
+accepted addresses and rebuilt executable COFF symbols. It finds **zero missing
+card-handler names across 15,066 native ranges and 15,064 distinct names**.
+This does not establish complete 2020-to-2022 modification coverage or gameplay
+correctness. At pass 113, the 116 unmatched non-card ranges needed separate review: 63 already
+have source bodies whose code emission is absent, 15 belong to the deferred
+chooser UI unit, and 38 lack a body under that name in the named source unit.
+The last group includes compiler/C++ artifacts and possible aliases as well as
+helper candidates; it is not a count of proven missing implementations.
+
+Reccmp metadata contains **18,470 pairs and 4,450 ledger mappings**. All five
+additions map directly, and current release/build DLL/DBG and CSV hashes are
+verified. No game code was executed; runtime integration remains downstream.
+
+
+## Modified card/legacy families (pass 114)
+
+Four existing card identities now have recovered 2022 versions beside their
+original implementations: Bruna, Light of Alabaster; Personal Incarnation;
+Toshiro Umezawa; and Seht's Tiger. The `_2022` entry points and five recovered
+legacy/selection helpers add **nine function implementations**, covering 4,854
+native instruction bytes, 34 canonical calls and seven callback references.
+The ledger reaches **4,580 functions: 3,327 `card_*` functions and 1,253 helpers**,
+including 588 private functions (579 private helpers) and 674 public helpers.
+All 4,571 previous accepted records, C token prefixes and the Git index survive
+unchanged. The older card entry points and two retained helper bodies are
+hash-pinned; downstream dispatch is not migrated by this recovery batch.
+
+Bruna's native `.isra.0` worker has two live register arguments, EAX and EDX.
+DWARF describes the original event argument through a parameter reference, but
+it is absent from the physical worker. The fresh export uses the verified
+two-argument signature. Separate source objects represent the native reused
+stack slot's 84-byte target and 216-byte filter lifetimes. The existing
+`check_targets_for_bruna` implementation is retained, including the zero-versus
+negative-result behavior used by the native loops; hand/grave tutor ordering
+and human cancellation are preserved.
+
+Personal Incarnation gains the public `effect_personal_incarnation` legacy and
+private `is_damaging_stored_creature` predicate. Its native ownership-transfer
+path creates a temporary card under the other player, creates the EXE activated
+legacy using the runtime word at `0x739d5c`, stores the callback and original
+creature coordinates, then obliterates the temporary card. The positive-life
+death gate, inclusive active-card-count scan, repeated owner/state reads,
+separate attached/stored damage predicates and redirection rules are retained.
+One declaration is appended to `manalink.h`; existing declarations, other
+headers, import definitions, globals and shared registries are preserved.
+
+Toshiro gains its native attached legacy and qualified card handler together.
+The legacy follows control, detaches when its source dies, clears status
+`0x10000` and writes byte 206 in the pending-trigger state. The legacy masks its
+resolved count to the low byte; the parent handler uses the full result. Both
+selection loops retain two-row, four-byte VLAs, repeated candidate scans,
+failed-payment retries, cancellation and the post-cast candidate decrement.
+The native no-candidate retry and unchecked storage behavior are preserved.
+
+Seht's Tiger gains its protection legacy with player bit `0x04000000`, the
+high-byte protection-event tag 6 and expiry at turn start. Its card handler
+retains cleanup of the info slot and the x86 color shift masked to five bits.
+The original color-choice UI is used; the deferred Wish/card-picker unit is
+unchanged.
+
+All 143 C units and the C++ stub unit pass source/ABI checks. Provenance and
+compiler-part audits pass, as does the GCC 9.3 PE32 build. Binary inspection
+verifies five new public symbols, all four private helpers, both Toshiro VLAs
+and Bruna's separate target/filter layouts. No game code was executed.
+Reccmp contains **18,475 pairs and 4,459 ledger mappings**; all nine native
+addresses map directly to their recovered implementations, with input and CSV
+hashes verified. The current function inventory still has zero missing
+card-handler names. Unmatched non-card ranges fall from 116 to 111: 63 existing
+source bodies without emitted code, 15 deferred chooser UI ranges and 33
+source-absent helper/compiler-artifact candidates requiring further review.
+
+
+## Havengul permissions and utility boundaries (pass 115)
+
+Havengul Lich's 2022 handler and five private helpers are recovered together,
+alongside three public helpers for commander state, forced-expansion viewing
+and fixed mana production. The batch adds **nine implementations** covering
+4,025 native bytes, 27 canonical call sites, five callback references and five
+indirect handler-dispatch sites. The ledger reaches **4,589 functions: 3,328
+`card_*` functions and 1,261 helpers**, including 593 private functions (584
+private helpers) and 677 public helpers. All 4,580 previous records, C token
+prefixes and the Git index survive unchanged. The old Havengul card, its older
+helpers and the already-recovered attachment callback are hash-pinned.
+
+Two compiler-specialized interfaces are verified before fresh export. The
+creature-in-grave query has only player/card in EAX/EDX and checks both
+graveyards; its logical `t_player` parameter is absent. The attached-legacy
+finder has player/card/target-player in EAX/EDX/ECX and a target-card stack word;
+its logical function-pointer argument is fixed to `havengul_lich_legacy`.
+The qualified source workers preserve those physical signatures. The new
+four-argument selection predicate uses its callback player directly, rather
+than reading the older implementation's saved target controller.
+
+The permission legacy records the graveyard owner, source ID, position hint,
+IID, source creature and mode, then relocates the grave entry by source ID
+before activation. It snapshots state before destroying itself and retains
+native payment, play/exile/control and borrowed-ability storage behavior.
+The can-use helper scans only card words in target pairs 1 through 18. The main
+handler scans both words in those pairs into the native **eight-IID array**,
+without adding a capacity guard. The differing scans and unchecked capacity
+remain explicit. Borrowed activation state uses tag `0x80000000`, excludes
+that exact sentinel and resolves through native IID mask `0x0fffffff`.
+The original missing-position/played-card fallback behavior is also retained.
+
+`is_commander_in_command_zone_2022` checks the nonnegative commander-state word
+and bits 0/8. `show_deck_force_expansion_2022` prepares the viewer, sets the
+expansion, calls the existing six-argument EXE viewer at `0x479360`, then resets
+the expansion global to zero. `mana_producer_fixed_2022` preserves added-color,
+land-transmutation and per-color override precedence. Its fallback is the
+existing four-argument EXE entry at `0x47b6c0`, verified from the original tail
+jump; the initial zero-argument decompile is not used. Three declarations are
+appended to `manalink.h`; existing EXE/linker bindings, globals, imports, shared
+registries and deferred chooser stubs remain unchanged. The viewer wrapper
+uses the established UI boundary without recovering dialog internals.
+
+All 143 C units, the C++ stub unit, source/ABI, provenance and compiler-part
+checks and the GCC 9.3 PE32 build pass. Binary verification checks four new
+public symbols, five private helpers, the eight-IID array, both 216-byte filter
+locals and the viewer/mana EXE targets. The newly referenced retained
+`havengul_lich_legacy` is now emitted and checked as a private callback; it is
+not counted as a new implementation. No game code was executed.
+
+Reccmp contains **18,482 pairs and 4,469 ledger mappings**. All nine additions
+and the retained attachment callback map directly; current inputs and CSV
+hashes are verified. The function inventory still finds zero missing card-handler
+names. Unmatched non-card ranges fall to 105: 62 existing source bodies without
+emitted code, 15 deferred chooser UI ranges and 28 source-absent helper/compiler
+candidates requiring review. Downstream dispatch and gameplay integration remain
+separate work.
+
 ## Checks performed
 
 - The accepted batch passed a combined 32-bit C syntax/interface check against
   the current `manalink.h` and `defs.h`. This also rejected missing dependencies,
   incompatible argument lists, unresolved identifiers and uninitialized locals
   reported by the checker.
-- All 140 complete modified/new source units passed Clang's 32-bit C syntax
+- All 143 complete modified/new source units passed Clang's 32-bit C syntax
   checks. `functions/rules_engine.c` needs the checker-only Windows compatibility
   definition `strncasecmp=_strnicmp` for existing configuration parsing code.
   Its game source was not changed for that portability issue.
 - Recovered string/character literals were checked against the raw exports.
-- All 4,340 recorded raw-export hashes and source provenance markers were checked,
-  along with supporting exports, forty-four source fragments, fifty-six recovered global
-  declarations, local enum values, array endpoint replacements and 1,748
+- All 4,589 recorded raw-export hashes and source provenance markers were checked,
+  along with supporting exports, forty-four source fragments, 121 recovered global
+  declarations, local enum values, array endpoint replacements and 1,908
   recovered literal arguments, plus two independently verified literal pointer
-  stores, eighteen reconstructed literal references and 1,977 manually
+  stores, nineteen reconstructed literal references and 2,240 manually
   reconstructed/qualified function body hashes.
 - The two out-of-scope dialog stubs are source-hash checked and compiled as one
   32-bit C++ syntax unit. They are tracked independently of recovered native
@@ -4030,6 +5709,19 @@ own accesses.
   three consumers with 216-byte shared target/test unions; verify per-unit
   layouts, native calls, Arahbo's EXE boundary and Plague Reaver's private
   callback while retaining the historical stack registry and legacy APIs.
+- `recover_saheeli_directive.py` and `saheeli_directive_body.py`: reconstruct
+  the complete native VLA/variadic call frame with eight full range proofs,
+  concrete array-bound DWARF, native prompt bytes and preserved event,
+  Cage/zero-count, selection/compaction and restoration/mill paths.
+- `recover_aer_helper_callers.py`: recover the two-register Expertise helper
+  using `ApplyRecoveryCloneInterfaces.java`, pin four fresh caller exports and
+  bind fifteen accepted handlers through eighteen verified call/tail sites.
+  Preserve predecessor records and replay earlier scalar proofs through exact
+  reversible source views.
+- `ApplyRecoverySpellCost.java` and `recover_spell_cost.py`: restore three
+  typed EXE boundaries and signed byte views, recover spell-cost payment and
+  Improvise/card consumers, and verify local/global index algebra, native odd
+  rollback/snapshot behavior, post-initializer stores and the modifier migration.
 - `ApplyRecoveryMemorial.java` and `recover_memorial_family.py`: apply the
   concrete fourteen-argument native Memorial signature, recover five lands and
   migrate five existing resolver interfaces. Verify callback dispatch, AI priority,
@@ -4151,10 +5843,144 @@ For Miara exports, apply `ApplyRecoveryMiara.java` after the base ABI import and
 before `ExportRecovery.java`; the private worker takes player and amount in two
 registers, while its abstract source `card` parameter has no physical location.
 Both known direct callers are checked before applying that signature.
+For Expertise exports, run `recover_aer_helper_callers.py --prepare` to verify
+the two-register signature and write `.recovery/aer-free-spell-clone.tsv` and
+its five export requests. Apply `ApplyRecoveryCloneInterfaces.java` with that
+TSV before exporting the helper and four callers. The caller exports are pinned
+separately to preserve the earlier canonical raw hashes.
+For spell-cost exports, apply `ApplyRecoverySpellCost.java` before exporting
+payment and its consumers. It types the three EXE boundaries and two signed
+byte views; the source reconstruction verifies their DLL materializations and
+actual EXE bytes, local snapshot layout and address/index algebra.
 For Memorial exports, apply `ApplyRecoveryMemorial.java` to the imported
 abstract signature before `ExportRecovery.java`. It removes the nonphysical
 `ai` parameter while retaining native target and resolver types. The recovery
 script verifies concrete DWARF register/stack locations and the GNU reference.
+For the Hogaak family, run `recover_hogaak_family.py --prepare`, apply
+`ApplyRecoveryCloneInterfaces.java` with `.recovery/hogaak-clone-interface.tsv`,
+and export `.recovery/export-request-hogaak-family.tsv`. The companion
+`hogaak_bodies.py` expresses the typed trial/payment reconstruction. `--apply`
+checks the physical worker interface, three hybrid call frames, native array
+ranks/strides, formatting operand, target shift and dependency operands before
+compiling and appending the seven functions.
+For the letter-name/text-effect family, run `recover_letter_effects.py --prepare`,
+apply `ApplyRecoveryCloneInterfaces.java` with `.recovery/letter-effects-clone.tsv`,
+then export the nine entries in `.recovery/export-request-letter-effects.tsv`.
+The private `txtfx.part.0` body has three physical register arguments and is
+named `txtfx_name_2022`. `--apply` checks the complete native folding and
+consonant tables, exact long-name literals, bitmap addressing, callback
+operands and original linkage before appending the complete batch.
+For rules-text consumers, run `recover_rules_text_consumers.py --prepare` and
+export its four requests with `ExportRecovery.java`. The companion
+`rules_text_bodies.py` restores the typed VLA and back-face pattern setup.
+`--apply` compiles the helper, both new cards and repaired Bloodletter together,
+verifies native literals/imports/field addresses and dependency operands, and
+retains the repaired card's exact previous record and body.
+For clock/redraw consumers, run `recover_clock_cards.py --prepare` and export
+its eight requests. `--apply` checks Windows structure/buffer DWARF, the four
+native API imports, signed runtime divider, date format and both redraw frames
+before compiling and appending the helper/card batch. The shared audit replays
+the reconstruction; the native build verifier also checks the date buffer's
+private BSS symbol and the rebuilt Windows imports.
+For pack utilities, run `recover_pack_utilities.py --prepare`, apply
+`ApplyRecoveryCloneInterfaces.java` with `.recovery/pack-utility-clones.tsv`,
+then export its five requests. `pack_native_tables.py` decodes native array
+bounds, typed records and pointer identities. `--apply` compiles the complete
+new source unit against the extended expansion header and checks every table,
+helper interface, diagnostic and native dependency before appending the batch.
+For weighted pack generation, run `recover_pack_generator.py --prepare` and
+export its three requests after applying the pack utility clone interfaces.
+`pack_generator_tables.py` checks all weighted arrays, choice-pool bounds,
+native initializer pointers and local once storage. `--apply` restores the
+complete generator/wrapper/self-check batch, compiles it and records native
+layout, diagnostic/import, dependency and scoped reconstruction evidence.
+For the pack chooser/card consumers, run `recover_pack_chooser.py --prepare`.
+Apply `ApplyRecoveryPackDialogInterfaces.java` with the generated
+`pack-dialog-imports.tsv` and `ApplyRecoveryRuntime.java` with
+`pack-dialog-exe.tsv`, then export the five requests. `pack_chooser_bodies.py`
+contains the typed dialog and VLA projections. `--apply` checks native template
+bytes, storage, literals, packet frames, IAT/dependency operands and all source
+bodies before appending the batch. The shared provenance audit replays this
+projection; native-build verification checks the emitted callback, resource,
+local statics and imports.
+For alternate hand/graveyard casting, run `recover_alternate_casting.py --prepare`
+and export the ten requests with `ExportRecovery.java`. The companion
+`alternate_casting_bodies.py` restores the six typed VLA handlers. `--apply`
+checks native allocations, filter layouts, retained older APIs/callbacks,
+exact prompts/control bytes and all dependency operands before compiling and
+appending the batch. The shared audit replays this projection, while native
+build verification checks both filter generations and all six array shapes.
+For the exile/return handlers, run `recover_exile_return_cards.py --prepare`
+and export its five requests. `exile_return_card_bodies.py` restores the typed
+packed words, array/record views, separate Chemister filters and complete dialog
+calls. `--apply` checks original DWARF/native storage, all six modal argument
+counts, literals, allocation/compaction/filter operands and private callbacks
+before compiling and appending the batch. The shared provenance audit replays
+the projection; native-build verification checks the three private symbols,
+fixed/VLA shapes and both Chemister filters.
+For the Havengul/utility batch, run `recover_havengul_utility_helpers.py --prepare`,
+apply `ApplyRecoveryCloneInterfaces.java` with `.recovery/havengul-utility-clones.tsv`,
+and export `.recovery/export-request-havengul-utility-helpers.tsv` into
+`.recovery/decompiled-havengul-utility-helpers`. The companion
+`havengul_utility_bodies.py` restores the typed projections. `--apply` validates
+physical parameters, fixed storage, filter layout, legacy/state operands,
+callback identities, utility EXE boundaries and retained bodies before compiling
+and appending the nine implementations. The shared provenance audit replays the
+proof; native-build checks cover private symbols, storage/filter sizes, EXE
+calls and the retained attachment callback. Original Havengul entry/helper
+bodies and the EXE mana binding remain available beside the qualified versions.
+For modified Bruna/Personal Incarnation/Toshiro/Seht's Tiger families, run
+`recover_legacy_helper_families.py --prepare`, apply
+`ApplyRecoveryCloneInterfaces.java` with `.recovery/legacy-helper-family-clones.tsv`,
+and export `.recovery/export-request-legacy-helper-families.tsv` into
+`.recovery/decompiled-legacy-helper-families`. The companion
+`legacy_helper_family_bodies.py` restores the typed bodies. `--apply` verifies
+native linkage, physical arguments, VLA bounds/allocations, packed state,
+legacy/protection operands and retained dependencies before compiling and
+appending the nine implementations. The shared provenance audit replays the
+proof; the native build verifier checks private symbols, VLA shapes and Bruna
+layouts. Existing card implementations retain their names; recovered versions
+use `_2022` until downstream dispatch migration.
+For the graveyard-selection and dynamic-stack family, run
+`recover_graveyard_selection_family.py --prepare` and export the nine requests
+in `.recovery/export-request-graveyard-selection-family.tsv`. The companion
+`graveyard_selection_bodies.py` expresses the typed VLA reconstructions.
+`--apply` verifies the native ranks, allocation/call frames, formatting operand,
+probe artifacts, flag views and callback operands before compiling the batch;
+the shared provenance audit replays the same reconstruction.
+For permanent-copy/exile-play and field-consumer exports, run
+`recover_copy_exile_consumers.py --prepare` and export the fifteen requests
+in `.recovery/export-request-copy-exile-consumers.tsv`. Its `--apply` mode
+checks both helper families, native linkage, physical/local type evidence,
+stack-probe artifact, fixed prompt, field/table widths and dependency operands
+before compiling and appending the complete batch.
+For packed-field/filter/Overload exports, run
+`recover_packed_filter_consumers.py --prepare` and export the fifteen requests
+in `.recovery/export-request-packed-filter-consumers.tsv`. Its `--apply` mode
+verifies the native field layouts, stack phases, fixed table, prompt copies,
+packed token argument and native dependency operands before appending the batch.
+For graveyard/pump/target consumer exports, run
+`recover_grave_pump_consumers.py --prepare` and export the thirteen requests in
+`.recovery/export-request-grave-pump-consumers.tsv`. Its `--apply` mode validates
+the native iterator, layouts, callbacks, prompt and event ranges, then appends
+the complete batch and registers any newly checked source unit.
+For Spectacle/Amplify and filtering exports, run
+`recover_casting_reveal_family.py --prepare`, apply
+`ApplyRecoveryCloneInterfaces.java` with `.recovery/casting-reveal-clones.tsv`,
+and export `.recovery/export-request-casting-reveal-family.tsv`. The `--apply`
+mode validates all fifteen functions, native helper dependencies, fixed arrays,
+coercion layout and caller frames before appending the complete batch.
+For combat-AI consumer exports, run `recover_combat_ai_consumers.py --prepare`
+and apply `ApplyRecoveryCombatGlobals.java` before exporting the thirty entries
+in `.recovery/export-request-combat-ai-consumers.tsv`. Its `--apply` mode checks
+the initializer and every consumer operand, compiles all fourteen candidate
+source units together and appends the functions to their original set files.
+For Escape/counter/target-consumer exports, run
+`recover_card_helper_batch.py --prepare` and apply
+`ApplyRecoveryCloneInterfaces.java` with `.recovery/escape-clone-interface.tsv`
+before exporting the ten requests in `.recovery/export-request-card-helper-batch.tsv`.
+`recover_card_helper_batch.py --apply` compiles and audits the complete batch
+before appending it; the shared provenance audit subsequently replays the proof.
 For Embalm exports, run `recover_embalm_family.py --prepare` to validate the
 black-mana-zero specialization and create `.recovery/embalm-clone-interface.tsv`
 and its request list. Apply `ApplyRecoveryCloneInterfaces.java` with that TSV

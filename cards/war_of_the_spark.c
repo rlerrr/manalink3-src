@@ -8013,3 +8013,921 @@ int card_firemind_vessel(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21c7b60; original cards/war_of_the_spark.c:1698. */
+static int effect_enable_flash_land_2022(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_2022_t td;
+
+  if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  if ((1U < (unsigned int)event - (unsigned int)EVENT_RESOLVE_ACTIVATION) &&
+      (event != EVENT_ACTIVATE))
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  base_target_definition_2022(player, card, &td, instance->targets[2].player);
+  td.illegal_type = instance->targets[2].card;
+  td.preferred_controller = player;
+  td.allowed_controller = player;
+  td.zone = 0x100;
+  result = can_play_cards_as_though_they_had_flash_2022(
+      player, card, event, &td, (char *)instance->targets[3].player, instance->targets[3].card);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21cc160; original cards/war_of_the_spark.c:1721. */
+int card_emergence_zone(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *instance;
+  unsigned int uVar5;
+  bool bVar6;
+  bool bVar7;
+  target_definition_2022_t td;
+  bVar6 = event != EVENT_CAN_ACTIVATE;
+  bVar7 = event != EVENT_ACTIVATE;
+  if ((event != EVENT_RESOLVE_ACTIVATION) && (bVar7 && bVar6))
+  {
+    iVar1 = mana_producer(player, card, event);
+    return iVar1;
+  }
+  base_target_definition_2022(player, card, &td, 0xff);
+  td.illegal_type = 1;
+  td.preferred_controller = player;
+  td.allowed_controller = player;
+  td.zone = 0x100;
+  iVar1 = paying_mana();
+  if (iVar1 == 0)
+  {
+    iVar1 = can_target_2022(&td);
+    iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 9, 3, 0, 0, 0, 0, 0, 0,
+                                           NULL, NULL);
+    iVar3 = is_tapped(player, card);
+    if ((iVar3 == 0) && (iVar3 = is_animated_and_sick(player, card), iVar3 == 0))
+    {
+      iVar3 = can_produce_mana_2022(player, card);
+      uVar5 = (unsigned int)(iVar3 != 0);
+    }
+    else
+    {
+      uVar5 = 0;
+    }
+    iVar1 = dialog_impl(player, card, event, "Add 1", uVar5, 0xffffffff, "Flash", iVar2,
+                        -(unsigned int)(iVar1 == 0) | 1, 0, 0, 0, 0);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      return iVar1;
+    }
+    if (bVar7 && bVar6)
+    {
+      if (iVar1 != 2)
+      {
+        return 0;
+      }
+      iVar1 = create_legacy_activate(player, card, effect_enable_flash_land_2022);
+      if (iVar1 == -1)
+      {
+        return 0;
+      }
+      instance = get_card_instance(player, iVar1);
+      instance->targets[2].card = 1;
+      instance->targets[3].player = (int32_t)"SELECT_CARD";
+      instance->targets[3].card = 0;
+      if (stack_size < 1)
+      {
+        return 0;
+      }
+      allow_response_to_activation(player, card);
+      return 0;
+    }
+    if (iVar1 != 1)
+    {
+      if (iVar1 != 2)
+      {
+        return 0;
+      }
+      add_state(player, card, 0x10);
+      generic_activated_ability_2022(player, card, event, 8, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
+      if (spell_fizzled == 1)
+      {
+        remove_state(player, card, 0x10);
+      }
+      tapped_for_mana_color = -1;
+      return 0;
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar1 = is_tapped(player, card);
+      if ((iVar1 == 0) && (iVar1 = is_animated_and_sick(player, card), iVar1 == 0))
+      {
+        iVar1 = can_produce_mana_2022(player, card);
+        uVar5 = (unsigned int)(iVar1 != 0);
+      }
+      else
+      {
+        uVar5 = 0;
+      }
+      return uVar5;
+    }
+    if (bVar7 && bVar6)
+    {
+      return 0;
+    }
+  }
+  mana_producer(player, card, event);
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21d3830; original cards/war_of_the_spark.c:4709. */
+int card_niv_mizzet_reborn(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    int num_cards = count_deck(player);
+    if (num_cards != 0)
+    {
+      if (num_cards > 10)
+        num_cards = 10;
+      show_deck_2022(current_turn, deck_ptr[player], num_cards,
+                     "Cards revealed by Niv-Mizzet Reborn", 0, ENGINE_DONE_LABEL);
+      show_deck_2022(current_turn ^ 1, deck_ptr[player], num_cards,
+                     "Cards revealed by Niv-Mizzet Reborn", 0, ENGINE_DONE_LABEL);
+      int deck_copy[num_cards];
+      for (int i = 0; i < num_cards; ++i)
+      {
+        deck_copy[i] = deck_ptr[player][0];
+        remove_card_from_deck(player, 0);
+      }
+      char msg[100];
+      const char *prompt = "Select a card from a Guild you haven't chosen";
+      scnprintf(msg, 100, prompt, num_cards);
+      test_definition_2022_t test;
+      new_default_test_definition_2022(&test, TYPE_ANY, msg);
+      int chosen = 0;
+      int remaining = num_cards;
+      do
+      {
+        test.special_selection_function = not_selected;
+        test.value_for_special_selection_function = chosen;
+        int selected =
+            select_card_from_zone_2022(player, player, deck_copy, remaining, 0, 1, -1, &test);
+        if (selected == -1)
+        {
+          if (remaining == 0)
+            return 0;
+          for (int i = 0; i < remaining; ++i)
+            raw_put_iid_on_top_of_deck(player, deck_copy[i]);
+          put_top_x_on_bottom_in_random_order(player, remaining);
+          return 0;
+        }
+        --remaining;
+        add_card_to_hand(player, deck_copy[selected]);
+        chosen |= colors_to_guilds(deck_copy[selected]);
+        for (int i = selected; i < remaining; ++i)
+          deck_copy[i] = deck_copy[i + 1];
+      } while (remaining != 0);
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21d4080; original cards/war_of_the_spark.c:4902. */
+int card_planewide_celebration(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  unsigned int uVar2;
+  int iVar3;
+  unsigned int uVar4;
+  int iVar5;
+  int iVar6;
+  int iStack_148;
+  int iStack_140;
+  int *piStack_138;
+  int choices[4];
+  int aiStack_124[2];
+  int iStack_11c;
+  int iStack_118;
+  uint16_t uStack_10c;
+  test_definition_2022_t this_test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      new_default_test_definition_2022(&this_test, 0x47, "Select a card to return to your hand.");
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance->number_of_targets = '\0';
+        iStack_140 = count_graveyard_by_type(player, 0x47);
+        iVar6 = check_special_flags2_2022(player, card, -0x80000000);
+        if (iVar6 == 0)
+        {
+          piStack_138 = choices;
+          choices[0] = 0;
+          choices[1] = 0;
+          choices[2] = 0;
+          choices[3] = 0;
+          instance->info_slot = 0;
+          iStack_148 = 0;
+          do
+          {
+            iVar6 = 0x14 - life[player];
+            if (choices[0] == 4)
+            {
+              iVar6 = 0xf - life[player];
+            }
+            if (choices[1] == 4)
+            {
+              iVar6 = iVar6 + -5;
+            }
+            if (choices[2] == 4)
+            {
+              iVar6 = iVar6 + -5;
+            }
+            iVar5 = generic_spell_2022(player, card, EVENT_CAN_CAST, 8, NULL, NULL, 1, &this_test);
+            iVar6 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "\001\002",
+                                "Generate a Citizen", 1, 5,
+                                "Return a permanent card from grave to hand",
+                                (unsigned int)(iVar5 != 0 && iStack_140 != 0), 10, "Proliferate", 1,
+                                10, "Gain 4 life", 1, iVar6, 0, 0, 0, 0);
+            if (iVar6 == 0)
+            {
+              spell_fizzled = 1;
+              return 0;
+            }
+            *piStack_138 = iVar6;
+            if (iVar6 == 2)
+            {
+              iStack_140 = iStack_140 + -1;
+              iStack_148 = iStack_148 + 1;
+            }
+            piStack_138 = piStack_138 + 1;
+          } while (choices + 4 != piStack_138);
+          ((unsigned char *)&instance->info_slot)[0] =
+              ((unsigned char *)&instance->info_slot)[0] + (char)choices[0];
+          ((unsigned char *)&instance->info_slot)[1] =
+              ((unsigned char *)&instance->info_slot)[1] + (char)choices[1];
+          ((unsigned char *)&instance->info_slot)[2] =
+              ((unsigned char *)&instance->info_slot)[2] + (char)choices[2];
+          ((unsigned char *)&instance->info_slot)[3] =
+              ((unsigned char *)&instance->info_slot)[3] + (char)choices[3];
+          if (iStack_148 != 0)
+          {
+            select_multiple_cards_from_graveyard_2022(player, player, 1, 1, &this_test, iStack_148,
+                                                      instance->targets);
+          }
+        }
+      }
+      goto LAB_021d422f;
+    }
+    if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+    {
+      new_default_test_definition_2022(&this_test, 0x47, "Select a card to return to your hand.");
+      instance = get_card_instance(player, card);
+      if (event == EVENT_RESOLVE_SPELL)
+      {
+        uVar2 = instance->info_slot;
+        iVar6 = 0;
+        iVar5 = 0;
+        do
+        {
+          uVar4 = uVar2 >> 8;
+          if (iVar6 == 1)
+          {
+          LAB_021d4114:
+            uVar4 = uVar4 & 0xff;
+          joined_r0x021d4117:
+            if (uVar4 == 2)
+              goto LAB_021d425e;
+          }
+          else
+          {
+            if (iVar6 != 2)
+            {
+            LAB_021d4107:
+              uVar4 = uVar2;
+              if (iVar6 != 3)
+                goto LAB_021d4114;
+              uVar4 = uVar2 >> 0x18;
+              goto joined_r0x021d4117;
+            }
+            if ((char)(uVar2 >> 0x10) != '\x02')
+            {
+              iVar6 = 3;
+              goto LAB_021d4107;
+            }
+          LAB_021d425e:
+            iVar3 = validate_target_from_grave(player, card, player, iVar5);
+            if (iVar3 == -1)
+            {
+              kill_card(player, card, KILL_DESTROY);
+              return 0;
+            }
+            iVar5 = iVar5 + 1;
+            uVar2 = instance->info_slot;
+          }
+          iVar6 = iVar6 + 1;
+        } while (iVar6 != 4);
+        iVar6 = 0;
+        do
+        {
+          uVar4 = uVar2 >> 8 & 0xff;
+          if (iVar6 == 1)
+          {
+          LAB_021d414a:
+            if (uVar4 == 1)
+              goto LAB_021d43a0;
+          }
+          else
+          {
+            if (iVar6 != 2)
+            {
+            LAB_021d413c:
+              uVar4 = uVar2 & 0xff;
+              if (iVar6 == 3)
+              {
+                uVar4 = uVar2 >> 0x18;
+              }
+              goto LAB_021d414a;
+            }
+            if ((char)(uVar2 >> 0x10) != '\x01')
+            {
+              iVar6 = 3;
+              goto LAB_021d413c;
+            }
+          LAB_021d43a0:
+            {
+              token_generation_2022_t token;
+              default_token_definition_2022(player, card, 0x4915, &token);
+              token.pow = 2;
+              token.tou = 2;
+              token.color_forced = 62;
+              token.no_sleight = 1;
+              generate_token_2022(&token);
+            }
+            uVar2 = instance->info_slot;
+          }
+          iVar6 = iVar6 + 1;
+        } while (iVar6 != 4);
+        iVar5 = 0;
+        iVar6 = 0;
+        do
+        {
+          uVar4 = uVar2 >> 8 & 0xff;
+          if (iVar5 == 1)
+          {
+          LAB_021d417a:
+            if (uVar4 == 2)
+              goto LAB_021d4350;
+          }
+          else
+          {
+            if (iVar5 != 2)
+            {
+            LAB_021d416c:
+              uVar4 = uVar2 & 0xff;
+              if (iVar5 == 3)
+              {
+                uVar4 = uVar2 >> 0x18;
+              }
+              goto LAB_021d417a;
+            }
+            if ((char)(uVar2 >> 0x10) != '\x02')
+            {
+              iVar5 = 3;
+              goto LAB_021d416c;
+            }
+          LAB_021d4350:
+            iVar3 = validate_target_from_grave(player, card, player, iVar6);
+            if (iVar3 == -1)
+            {
+              iVar6 = iVar6 + 1;
+              uVar2 = instance->info_slot;
+            }
+            else
+            {
+              from_grave_to_hand(player, iVar3, 1);
+              iVar6 = iVar6 + 1;
+              uVar2 = instance->info_slot;
+            }
+          }
+          iVar5 = iVar5 + 1;
+        } while (iVar5 != 4);
+        iVar6 = 0;
+        do
+        {
+          uVar4 = uVar2 >> 8 & 0xff;
+          if (iVar6 == 1)
+          {
+          LAB_021d41aa:
+            if (uVar4 == 3)
+              goto LAB_021d4388;
+          }
+          else
+          {
+            if (iVar6 != 2)
+            {
+            LAB_021d419c:
+              uVar4 = uVar2 & 0xff;
+              if (iVar6 == 3)
+              {
+                uVar4 = uVar2 >> 0x18;
+              }
+              goto LAB_021d41aa;
+            }
+            if ((char)(uVar2 >> 0x10) != '\x03')
+            {
+              iVar6 = 3;
+              goto LAB_021d419c;
+            }
+          LAB_021d4388:
+            proliferate_2022(player, card);
+            uVar2 = instance->info_slot;
+          }
+          iVar6 = iVar6 + 1;
+          if (iVar6 == 4)
+          {
+            iVar6 = 0;
+          LAB_021d41c8:
+            uVar4 = uVar2;
+            if (iVar6 == 3)
+              goto LAB_021d420c;
+          LAB_021d41d1:
+            if ((uVar4 & 0xff) == 4)
+              goto LAB_021d42f0;
+            do
+            {
+              iVar6 = iVar6 + 1;
+              if (iVar6 == 4)
+              {
+              LAB_021d4218:
+                kill_card(player, card, KILL_DESTROY);
+                goto LAB_021d422f;
+              }
+              uVar2 = instance->info_slot;
+              uVar4 = uVar2 >> 8;
+              if (iVar6 == 1)
+                goto LAB_021d41d1;
+              if (iVar6 != 2)
+                goto LAB_021d41c8;
+              if ((char)(uVar2 >> 0x10) != '\x04')
+              {
+                iVar6 = 3;
+              LAB_021d420c:
+                if (uVar2 >> 0x18 != 4)
+                  goto LAB_021d4218;
+              }
+            LAB_021d42f0:
+              gain_life_2022(player, 4);
+            } while (true);
+          }
+        } while (true);
+      }
+      goto LAB_021d422f;
+    }
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+  }
+  new_default_test_definition_2022(&this_test, 0x47, "Select a card to return to your hand.");
+  get_card_instance(player, card);
+LAB_021d422f:
+  iVar6 = basic_spell(player, card, event);
+  return iVar6;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21d6820; original cards/war_of_the_spark.c:5943. */
+int card_tamiyo_collector_of_tales(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE || event == EVENT_RESOLVE_ACTIVATION ||
+      event == EVENT_CLEANUP)
+  {
+    test_definition_2022_t test;
+    default_test_definition_2022(&test, 0xff);
+    test.ai_selection_mode = 1;
+    card_instance_t *instance = get_card_instance(player, card);
+    if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = 0;
+      instance->info_slot = 0;
+      int choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Reveal top 4",
+                               1, 5, 1, "Return a card from your graveyard to your hand",
+                               get_grave(player)[0] != -1, 10, -3, 0, 0, 0, 0);
+      if (choice == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (choice == 2)
+        generic_activated_ability_with_target_in_grave_2022(player, card, EVENT_ACTIVATE, GAA_NONE,
+                                                            0, 0, 0, 0, 0, 0, 0, NULL, NULL,
+                                                            TYPE_NONE, &test, 8);
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      if (instance->info_slot == 2)
+      {
+        int selected = validate_target_from_grave_source(player, card, player, 0);
+        if (selected != -1)
+          from_grave_to_hand(player, selected, 1);
+      }
+      else if (instance->info_slot == 1)
+      {
+        int on_top = deck_ptr[player][0];
+        int chosen;
+        if (ai_is_speculating == 1 || (player == 1 && (trace_mode & 2) == 0))
+        {
+          chosen = get_internal_card_id_from_csv_id(0x2ee2);
+          if (on_top != -1)
+          {
+            target_t counts[501];
+            for (int i = 0; i != 501; ++i)
+            {
+              counts[i].player = -1;
+              counts[i].card = -1;
+            }
+            int highest_count = 1;
+            for (int i = 0; deck_ptr[player][i] != -1; ++i)
+            {
+              if (!is_what(-1, deck_ptr[player][i], 1))
+              {
+                int iid = deck_ptr[player][i];
+                int j = 0;
+                while (counts[j].card != iid && counts[j].card != -1)
+                  ++j;
+                if (counts[j].card == -1)
+                {
+                  counts[j].card = iid;
+                  counts[j].player = 1;
+                }
+                else
+                {
+                  ++counts[j].player;
+                  if (counts[j].player > highest_count)
+                    highest_count = counts[j].player;
+                }
+              }
+            }
+            for (int i = 0; i != 501; ++i)
+              if (counts[i].player == highest_count)
+              {
+                chosen = counts[i].card;
+                break;
+              }
+          }
+        }
+        else
+        {
+          test_definition_2022_t test2;
+          new_default_test_definition_2022(&test2, 1, "");
+          test2.type_flag = 1;
+          int csvid = choose_a_card_test_ct("Choose a nonland card name.", &test, (color_test_t)-1,
+                                            (type_t)~TYPE_LAND);
+          chosen = get_internal_card_id_from_csv_id(csvid);
+        }
+        if (player == 1 || (trace_mode & 2) != 0)
+          look_at_iid(player, card, chosen, "chooses:");
+        int qty = count_deck(player);
+        if (qty != 0)
+        {
+          int amount = qty > 4 ? 4 : qty;
+          show_deck_2022(current_turn, deck_ptr[player], amount,
+                         "Cards revealed by Tamiyo, Teller of Tales", 0, ENGINE_DONE_LABEL);
+          show_deck_2022(current_turn ^ 1, deck_ptr[player], amount,
+                         "Cards revealed by Tamiyo, Teller of Tales", 0, ENGINE_DONE_LABEL);
+          int remaining = amount;
+          if (qty > 0)
+          {
+            for (int i = 0; i < amount; ++i)
+            {
+              if (deck_ptr[player][i] == chosen)
+              {
+                add_card_to_hand(player, chosen);
+                remove_card_from_deck(player, i);
+                --remaining;
+              }
+            }
+          }
+          if (remaining != 0)
+            mill(player, remaining);
+        }
+      }
+    }
+  }
+  return planeswalker(player, card, event, 5);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21d25c0; original cards/war_of_the_spark.c:4372. */
+int card_nicol_bolas_dragon_god(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    for (int p = 0; p != 2; ++p)
+    {
+      for (int c = 0; c < active_cards_count[p]; ++c)
+      {
+        if (in_play(p, c) && is_what(p, c, 0x100) && get_id(p, c) != 0x4df9)
+        {
+          int iid = get_card_instance(p, c)->internal_card_id;
+          if (cards_data[iid].code_pointer(player, card, EVENT_CAN_ACTIVATE) == 99)
+            return 99;
+        }
+      }
+    }
+    return planeswalker(player, card, EVENT_CAN_ACTIVATE, 4);
+  }
+  if (event == EVENT_ACTIVATE || event == EVENT_RESOLVE_ACTIVATION || event == EVENT_CLEANUP)
+  {
+    target_definition_2022_t td;
+    default_target_definition_2022(player, card, &td, 0x102);
+    card_instance_t *instance = get_card_instance(player, card);
+    if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = 0;
+      instance->info_slot = 0;
+      player_bits[0] |= 0x40000;
+      player_bits[1] |= 0x40000;
+      int ab1 = 0;
+      for (int p = 0; p != 2; ++p)
+      {
+        for (int c = 0; c < active_cards_count[p]; ++c)
+        {
+          if (in_play(p, c) && is_planeswalker(p, c) && get_id(p, c) != 0x4df9)
+          {
+            int iid = get_card_instance(p, c)->internal_card_id;
+            int act = cards_data[iid].code_pointer(player, card, EVENT_CAN_ACTIVATE);
+            if (act != 0)
+            {
+              ab1 = act;
+              break;
+            }
+          }
+        }
+      }
+      player_bits[0] &= 0xfffbffff;
+      player_bits[1] &= 0xfffbffff;
+      int destroy_available = can_target_2022(&td);
+      int choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "\001\014",
+                               "Use another pw's ability", ab1, 10, 0, "Draw and opp chooses", 1, 5,
+                               1, "Destroy", destroy_available, 10, -3, "Opp needs a hero", 1, 20,
+                               -8, 0, 0, 0, 0);
+      if (choice == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (choice == 1)
+      {
+        instance->number_of_targets = 0;
+        uint32_t oldpb0 = player_bits[0], oldpb1 = player_bits[1];
+        int activable[14] = {0};
+        player_bits[0] |= 0x40000;
+        player_bits[1] |= 0x40000;
+        int ac = 0;
+        for (int p = 0; p != 2; ++p)
+        {
+          for (int c = 0; c < active_cards_count[p]; ++c)
+          {
+            if (ac > 14)
+              break;
+            if (in_play(p, c) && is_planeswalker(p, c) && get_id(p, c) != 0x4df9)
+            {
+              int iid = get_card_instance(p, c)->internal_card_id;
+              if (cards_data[iid].code_pointer(player, card, EVENT_CAN_ACTIVATE))
+                activable[ac++] = iid;
+            }
+          }
+        }
+        if (ac == 0)
+        {
+          spell_fizzled = 1;
+          player_bits[0] = oldpb0;
+          player_bits[1] = oldpb1;
+          return 0;
+        }
+        player_bits[0] = oldpb0;
+        player_bits[1] = oldpb1;
+        const char *names[14];
+        for (int i = 13; i >= 0; --i)
+          names[i] = get_card_name_by_id((uint16_t)cards_data[activable[i]].id);
+        int choice2 = dialog_impl(
+            player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\004", "\001\026", names[0],
+            activable[0], 1, names[1], activable[1], 1, names[2], activable[2], 1, names[3],
+            activable[3], 1, names[4], activable[4], 1, names[5], activable[5], 1, names[6],
+            activable[6], 1, names[7], activable[7], 1, names[8], activable[8], 1, names[9],
+            activable[9], 1, names[10], activable[10], 1, names[11], activable[11], 1, names[12],
+            activable[12], 1, names[13], activable[13], 1, 0, 0, 0, 0);
+        if (choice2 == 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        uint32_t iid = activable[choice2 - 1];
+        cards_data[iid].code_pointer(player, card, EVENT_ACTIVATE);
+        if (spell_fizzled != 1)
+        {
+          get_card_instance(player, card)->eot_toughness = iid;
+          ++instance->targets[9].card;
+        }
+      }
+      else if (choice == 3)
+        new_pick_target_2022(&td, "TARGET_CREATURE_OR_PLANESWALKER", 0, 1);
+      instance->unk52 = (uint8_t)choice;
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      unsigned choice = instance->unk52;
+      if (choice == 1)
+      {
+        uint32_t iid = get_card_instance(player, card)->eot_toughness;
+        cards_data[iid].code_pointer(player, card, EVENT_RESOLVE_ACTIVATION);
+      }
+      else if (choice == 2)
+      {
+        int opponent = 1 - player;
+        draw_a_card(player);
+        unsigned nothing_available = 0;
+        if (hand_count[opponent] == 0)
+          nothing_available =
+              can_sacrifice_2022(player, opponent, 1, TYPE_PERMANENT, SUBTYPE_INVALID) == 0;
+        int sacrifice_available =
+            can_sacrifice_2022(player, opponent, 1, TYPE_PERMANENT, SUBTYPE_INVALID);
+        int choice2 =
+            dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, "\001\014", "\001\003", "\001\010",
+                        opponent, "\001\026", "\001\016", "\001\004", "Discard a card",
+                        hand_count[opponent], 10, "Sac a permanent", sacrifice_available, 5,
+                        "Do nothing", nothing_available, 0, 0, 0, 0, 0);
+        if (choice2 == 1)
+          discard(opponent, 0, player);
+        else if (choice2 == 2)
+          impose_sacrifice_2022(player, card, opponent, 1, 0x47, 0, 0, 0, 0, 0, 0, 0, -1, 0);
+      }
+      else if (choice == 3)
+      {
+        if (valid_target_2022(&td))
+          kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      }
+      else if (choice == 4)
+      {
+        int opponent = 1 - player;
+        for (int c = active_cards_count[opponent] - 1; c >= 0; --c)
+        {
+          if (in_play(opponent, c) && (is_what(opponent, c, 0x100) ||
+                                       (is_what(opponent, c, 2) && is_legendary(opponent, c))))
+            return planeswalker(player, card, event, 4);
+        }
+        lose_the_game_2022(opponent);
+      }
+    }
+  }
+  return planeswalker(player, card, event, 4);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21ce5c0; original cards/war_of_the_spark.c:2522. */
+int card_god_eternal_kefnet(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  if (trigger_condition == 0xcf && cards_drawn_this_turn[player] == 0 && affect_me(player, card) &&
+      reason_for_trigger_controller == player && trigger_cause_controller == player &&
+      suppress_draw == 0 && deck_ptr[player][0] != -1 &&
+      !is_humiliated_for_ability(player, card, AL_TRIG))
+  {
+    if (event == EVENT_TRIGGER)
+      event_result |= (duh_mode(player) != 0) + 1;
+    else if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      show_deck_2022(current_turn, deck_ptr[player], 1, "God-Eternal Kefnet reveals:", 0,
+                     ENGINE_DONE_LABEL);
+      show_deck_2022(current_turn ^ 1, deck_ptr[player], 1, "God-Eternal Kefnet reveals:", 0,
+                     ENGINE_DONE_LABEL);
+      int *deck = deck_ptr[player];
+      card_instance_t *instance = get_card_instance(player, card);
+      instance->info_slot = *deck;
+    }
+  }
+  if (trigger_condition == 0xd0 && cards_drawn_this_turn[player] == 1 &&
+      (cards_data[get_card_instance(player, card)->info_slot].type & 0x38) != 0 &&
+      (cards_data[get_card_instance(player, card)->info_slot].type & 2) == 0 &&
+      affect_me(player, card) && reason_for_trigger_controller == player &&
+      trigger_cause_controller == player && suppress_draw == 0 &&
+      !is_humiliated_for_ability(player, card, AL_TRIG))
+  {
+    if (event == EVENT_TRIGGER)
+      event_result |= 2;
+    else if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      int iid = get_card_instance(player, card)->info_slot;
+      uint32_t id = (uint16_t)cards_data[iid].id;
+      int available;
+      if (id == 0x25ad)
+        available = can_cast_reaper_king(player, -1, EVENT_RESOLVE_TRIGGER);
+      else
+      {
+        card_ptr_t *cp = cards_ptr[id];
+        uint32_t original_cless = cp->req_colorless;
+        if (original_cless == 0x28)
+          original_cless = 0;
+        int cless =
+            get_updated_casting_cost(player, -1, iid, EVENT_RESOLVE_TRIGGER, original_cless) - 2;
+        if (cless < 0)
+          cless = 0;
+        if (id == 0x2ded)
+        {
+          cless -= count_graveyard_by_type(player, 2);
+          if (cless < 0)
+            cless = 0;
+        }
+        uint32_t artifact = cards_data[iid].type & 0x40;
+        if (is_phyrexian(id))
+          available = has_phyrexian_mana_2022(player, cless, cp->req_black, cp->req_blue,
+                                              cp->req_green, cp->req_red, cp->req_white, artifact);
+        else if (is_normal_hybrid(cp))
+        {
+          int c1 = get_colors_for_hybrid(-1, iid, 0, 0);
+          int c2 = get_colors_for_hybrid(-1, iid, c1, 0);
+          int number = get_number_of_hybrid_mana(-1, iid, 0, 0);
+          available = has_mana_hybrid(player, number, c1, c2, cless);
+        }
+        else if (is_monocolor_hybrid(cp))
+        {
+          int c1 = get_color_for_monocolored_hybrid(-1, iid);
+          int number = get_number_of_monocolored_hybrid_mana(-1, iid, 0);
+          available = has_mana_for_monocolor_hybrid(player, number, c1, 0);
+        }
+        else if (artifact)
+          available = has_mana_multi_a(player, cless, cp->req_black, cp->req_blue, cp->req_green,
+                                       cp->req_red, cp->req_white);
+        else
+          available = has_mana_multi(player, cless, cp->req_black, cp->req_blue, cp->req_green,
+                                     cp->req_red, cp->req_white);
+      }
+      if (available && dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, "\001\002", "\001\014",
+                                   "\001\021", iid, "Copy top card", 1, 10, 0, 0, 0, 0) == 1)
+      {
+        if (charge_mana_from_id_minus_two(player, -1, EVENT_RESOLVE_TRIGGER,
+                                          (uint16_t)cards_data[iid].id))
+          copy_spell_2022(player, (uint16_t)cards_data[iid].id);
+      }
+      get_card_instance(player, card)->info_slot = 0;
+    }
+    else if (event == EVENT_CLEANUP)
+      get_card_instance(player, card)->info_slot = 0;
+  }
+  else if (event == EVENT_CLEANUP)
+    get_card_instance(player, card)->info_slot = 0;
+  return war_god_eternal(player, card, event);
+}
+
+#endif

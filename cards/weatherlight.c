@@ -5399,3 +5399,341 @@ int card_mischievous_poltergeist(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22eeb00; original cards/weatherlight.c:1424. */
+int card_dwarven_berserker(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (current_turn == player)) &&
+        (current_phase < 0x18))
+    {
+      check_abilities_keywords_2022 = check_abilities_keywords_2022 | 0x80;
+      check_abilities_power_2022 = check_abilities_power_2022 + 3;
+    }
+  }
+  else if (event == EVENT_DECLARE_BLOCKERS)
+  {
+    result = is_attacking(player, card);
+    if (result != 0)
+    {
+      result = is_unblocked(player, card);
+      if (result == 0)
+      {
+        result = is_humiliated_for_ability(player, card, AL_TRIG);
+        if (result == 0)
+        {
+          pump_ability_until_eot_2022(player, card, player, card, 3, 0, 0x80, 0);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22f68b0; original cards/weatherlight.c:4032. */
+int card_avizoa(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      result = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x2000, 0, 0, 0, 0,
+                                              0, 0, 0, NULL, NULL);
+      if (result != 0)
+      {
+        check_abilities_power_2022 = check_abilities_power_2022 + 2;
+        check_abilities_toughness_2022 = check_abilities_toughness_2022 + 2;
+      }
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    instance = get_card_instance(player, card);
+    result = pump_until_eot_2022(instance->parent_controller, instance->parent_card,
+                                 instance->parent_controller, instance->parent_card, 2, 2);
+    alternate_legacy_text(1, player, result);
+    result = target_player_skips_next_untap(player, card, player);
+    alternate_legacy_text(2, player, result);
+  }
+  result =
+      generic_activated_ability_2022(player, card, event, 0x2000, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22f8980; original cards/weatherlight.c:4719. */
+int card_natures_kiss(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+
+  pcVar1 = get_card_instance(player, card);
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if ((((pcVar1->damage_target_card == affected_card) &&
+          (affected_card_controller == pcVar1->damage_target_player)) &&
+         (pcVar1->damage_target_player == player)) &&
+        ((pcVar1 = in_play(player, card),
+          pcVar1 != NULL &&
+              (iVar2 = card_natures_kiss(player, card, EVENT_CAN_ACTIVATE), iVar2 != 0))))
+    {
+      iVar2 = has_mana(player, 7, 1);
+      iVar3 = count_graveyard(player);
+      if (iVar3 < iVar2)
+      {
+        iVar2 = iVar3;
+      }
+      check_abilities_power_2022 = check_abilities_power_2022 + iVar2;
+      check_abilities_toughness_2022 = check_abilities_toughness_2022 + iVar2;
+    }
+  LAB_022f8a48:
+    if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+        (event == EVENT_CHANGE_TARGET))
+      goto LAB_022f8a18;
+  }
+  else
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar2 = count_graveyard(player);
+      if (0 < iVar2)
+      {
+        iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0,
+                                               0, 0, NULL, NULL);
+        return iVar2;
+      }
+      goto LAB_022f8a48;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0, 1, 0, 0, 0, 0, 0, 0, NULL,
+                                     NULL);
+      if (spell_fizzled != 1)
+      {
+        iVar2 = count_graveyard(player);
+        rfg_card_from_grave(player, iVar2 + -1);
+      }
+      goto LAB_022f8a48;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      pcVar1 = get_card_instance(player, card);
+      pcVar4 = in_play((int)pcVar1->damage_target_player, pcVar1->damage_target_card);
+      if (pcVar4 != NULL)
+      {
+        pump_until_eot_merge_previous_2022(player, card, (int)pcVar1->damage_target_player,
+                                           pcVar1->damage_target_card, 1, 1);
+      }
+    }
+    else
+    {
+      if (event == EVENT_CAN_CAST)
+        goto LAB_022f8a18;
+      if (event != EVENT_CAST_SPELL)
+        goto LAB_022f8a48;
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_022f8a18;
+    }
+  }
+  if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+       ((((2U < (unsigned int)event - (unsigned int)EVENT_POWER &&
+           (event != EVENT_RESOLVE_MOVING_AURA)) &&
+          (event != EVENT_CHANGE_TYPE)) &&
+         ((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)))))) &&
+      (event != EVENT_STATIC_EFFECTS))
+  {
+    return 0;
+  }
+LAB_022f8a18:
+  iVar2 = vanilla_aura_2022(player, card, event, player);
+  return iVar2;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22f72b0; original cards/weatherlight.c:4245. */
+int card_desperate_gambit(int player, int card, event_t event)
+{
+  int target_card;
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int (*func_ptr)(int, int, event_t);
+  target_definition_2022_t td;
+
+  default_target_definition_2022(player, card, &td, 0x47);
+  td.preferred_controller = player;
+  td.allowed_controller = player;
+  td.illegal_abilities = 0;
+  instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_CAST)
+  {
+    iVar2 = counterspell_2022(player, card, EVENT_CAN_CAST, NULL, 0);
+    if (iVar2 != 0)
+    {
+      return iVar2;
+    }
+    iVar2 = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    if (iVar2 != 0)
+    {
+      return (-(unsigned int)((land_can_be_played & 4U) == 0) & 0xffffff9e) + 99;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      instance->info_slot = 0;
+      iVar2 = counterspell_2022(player, card, EVENT_CAN_CAST, NULL, 0);
+      if (iVar2 == 0)
+      {
+        iVar2 = generic_spell_2022(
+            player, card, EVENT_CAST_SPELL, 0x81, &td,
+            "Choose a source you control if win the flip deals double damage else prevented it.", 1,
+            NULL);
+        return iVar2;
+      }
+      counterspell_2022(player, card, EVENT_CAST_SPELL, NULL, 0);
+      ((unsigned char *)&instance->info_slot)[0] = 1;
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (instance->info_slot == 1)
+    {
+      iVar2 = counterspell_validate_2022(player, card, NULL, 0);
+    }
+    else
+    {
+      iVar2 = valid_target_2022(&td);
+    }
+    if (iVar2 != 0)
+    {
+      iVar2 = instance->targets[0].player;
+      target_card = instance->targets[0].card;
+      if (iVar2 != -1)
+      {
+        iVar3 = flip_a_coin(player, card);
+        if (iVar3 == 0)
+        {
+          if (instance->info_slot != 1)
+          {
+            create_targetted_legacy_effect(player, card, source_damage_prevented, player,
+                                           target_card);
+            goto LAB_022f737e;
+          }
+          func_ptr = source_damage_prevented;
+        }
+        else
+        {
+          if (instance->info_slot != 1)
+          {
+            create_targetted_legacy_effect(player, card, source_deals_double_damage, player,
+                                           target_card);
+            goto LAB_022f737e;
+          }
+          func_ptr = source_deals_double_damage;
+        }
+        iVar3 = create_legacy_effect(player, card, func_ptr);
+        instance = get_card_instance(player, iVar3);
+        instance->targets[0].player = iVar2;
+        instance->targets[0].card = target_card;
+      }
+    }
+  LAB_022f737e:
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22f78e0; original cards/weatherlight.c:4397. */
+int card_fungus_elemental(int player, int card, event_t event)
+{
+  const char *pcVar1;
+  card_instance_t *instance;
+  int result;
+  test_definition_2022_t test;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    instance = get_card_instance(player, card);
+    instance->info_slot = instance->info_slot | 2;
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      pcVar1 = get_hacked_land_text(player, card, "Select a %s to sacrifice", 0x5001);
+      new_default_test_definition_2022(&test, 0x47, pcVar1);
+      test.subtype = get_hacked_subtype(player, card, 0x5001);
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        result = generic_activated_ability_with_sacrifice_as_cost_2022(
+            player, card, EVENT_CAN_ACTIVATE, GAA_NONE, 0, 0, 0, 1, 0, 0, 0, NULL, NULL, TYPE_NONE,
+            &test, SARV_0);
+        if (result == 0)
+        {
+          return 0;
+        }
+        instance = get_card_instance(player, card);
+        if (((unsigned int)instance->info_slot & 2) == 0)
+        {
+          return 0;
+        }
+        return 1;
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      {
+        return 0;
+      }
+      pcVar1 = get_hacked_land_text(player, card, "Select a %s to sacrifice", 0x5001);
+      new_default_test_definition_2022(&test, 0x47, pcVar1);
+      test.subtype = get_hacked_subtype(player, card, 0x5001);
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      result = generic_activated_ability_with_sacrifice_as_cost_2022(
+          player, card, EVENT_ACTIVATE, GAA_NONE, 0, 0, 0, 1, 0, 0, 0, NULL, NULL, TYPE_NONE, &test,
+          SARV_0);
+      return result;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      add_counters_from_source(player, card, player, card, COUNTER_P2_P2, 1);
+      return 0;
+    }
+    if (event == EVENT_CLEANUP)
+    {
+      instance = get_card_instance(player, card);
+      instance->info_slot = 0;
+    }
+  }
+  return 0;
+}
+
+#endif

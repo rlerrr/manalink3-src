@@ -3494,3 +3494,19 @@ int reveal_top_cards_of_library_and_choose_who_chooses_2022(
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2650ca0; original functions/tutors.c:18. */
+int show_deck_force_expansion_2022(int player, const int *deck, int num_cards, const char *prompt,
+                                   int suppress_done_label, const char *done_label, int expansion)
+{
+  call_sub_437E20_unless_ai_is_speculating();
+  hack_show_deck_force_expansion = expansion;
+  int result = show_deck_exe(player, deck, num_cards, prompt, suppress_done_label,
+                             (int32_t)(intptr_t)done_label);
+  hack_show_deck_force_expansion = 0;
+  return result;
+}
+
+#endif

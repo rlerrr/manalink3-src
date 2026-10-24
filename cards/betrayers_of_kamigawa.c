@@ -3822,3 +3822,168 @@ int ninjutsu_2022(int player, int card, event_t event, int cless, int black, int
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25686b0; original cards/betrayers_of_kamigawa.c:3291. */
+static int toshiro_effect(int player, int card, event_t event)
+{
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if (affect_me(player, card))
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      if (instance->damage_target_player >= 0 &&
+          get_id(instance->damage_target_player, instance->damage_target_card) != 0x1da0)
+        kill_card(player, card, KILL_EXILE);
+    }
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player >= 0 &&
+        effect_follows_control_of_attachment(player, card, 0x4700))
+      return 0;
+  }
+  else
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    if (instance->damage_target_player >= 0 &&
+        effect_follows_control_of_attachment(player, card, event))
+      return 0;
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
+    {
+      instance = get_card_instance(player, card);
+      if (in_play(affected_card_controller, affected_card) &&
+          is_this_dying(affected_card_controller, affected_card))
+      {
+        if (instance->damage_target_card == affected_card &&
+            instance->damage_target_player == affected_card_controller)
+        {
+          instance->damage_target_card = -1;
+          instance->damage_target_player = -1;
+          remove_status(player, card, 0x10000);
+          if (instance->targets[11].player < 0)
+            instance->targets[11].player = 0;
+          ((uint8_t *)&instance->targets[11].player)[2] = 1;
+        }
+        count_for_gfp_ability_2022(player, card, 0x77, 1 - player, 2, NULL);
+      }
+    }
+  }
+  int result = resolve_gfp_ability_2022(player, card, event,
+                                        (duh_mode(player) != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (result && !check_status(player, card, 0x10000))
+  {
+    unsigned amount = (uint32_t)result & 0xff;
+    for (;;)
+    {
+      int playable[2][amount];
+      int pc = 0;
+      const int *grave = get_grave(player);
+      for (int i = 0; grave[i] != -1; ++i)
+      {
+        if (is_what(-1, grave[i], 0x30) && can_play_iid(player, event, grave[i]))
+        {
+          playable[0][pc] = grave[i];
+          playable[1][pc] = i;
+          if (++pc == amount)
+            break;
+        }
+      }
+      if (pc == 0)
+        continue;
+      test_definition_2022_t this_test;
+      new_default_test_definition_2022(&this_test, 0xff, "Select an Instant to play");
+      int selected =
+          select_card_from_zone_2022(player, player, playable[0], pc, 0, 1, -1, &this_test);
+      if (selected == -1)
+        break;
+      if (!charge_mana_from_id(player, card, event, (uint16_t)cards_data[playable[0][selected]].id))
+        continue;
+      play_card_in_grave_for_free_and_exile_it(player, player, playable[1][selected]);
+      if (--pc <= 0)
+        break;
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+  if (event == EVENT_CLEANUP && !check_status(player, card, 0x10000))
+    kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25705a0; original cards/betrayers_of_kamigawa.c:3372. */
+int card_toshiro_umezawa_2022(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if (affect_me(player, card))
+    {
+      int found = 0;
+      for (int c = 0; c < active_cards_count[player]; ++c)
+      {
+        if (in_play(player, c) && is_what(player, c, 0x80))
+        {
+          card_instance_t *instance = get_card_instance(player, c);
+          if (instance->info_slot_fn == toshiro_effect &&
+              ((instance->damage_target_player == player && instance->damage_target_card == card) ||
+               (instance->targets[0].player == player && instance->targets[0].card == card)))
+          {
+            found = 1;
+            break;
+          }
+        }
+      }
+      if (!found)
+      {
+        int legacy = create_targetted_legacy_effect(player, card, toshiro_effect, player, card);
+        card_instance_t *instance = get_card_instance(player, legacy);
+        instance->targets[0].player = player;
+        instance->targets[0].card = card;
+        instance->number_of_targets = 1;
+        add_status(player, legacy, 0x10000);
+      }
+    }
+  }
+  else if (event == EVENT_GRAVEYARD_FROM_PLAY)
+    count_for_gfp_ability_2022(player, card, 0x77, 1 - player, 2, NULL);
+  int amount = resolve_gfp_ability_2022(player, card, event,
+                                        (duh_mode(player) != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  if (amount && !graveyard_has_shroud(player))
+  {
+    for (;;)
+    {
+      int playable[2][amount];
+      int pc = 0;
+      const int *grave = get_grave(player);
+      for (int i = 0; grave[i] != -1; ++i)
+      {
+        if (is_what(-1, grave[i], 0x30) && can_play_iid(player, event, grave[i]))
+        {
+          playable[0][pc] = grave[i];
+          playable[1][pc] = i;
+          if (++pc == amount)
+            break;
+        }
+      }
+      if (pc == 0)
+        continue;
+      test_definition_2022_t this_test;
+      new_default_test_definition_2022(&this_test, 0xff, "Select an Instant to play");
+      int selected =
+          select_card_from_zone_2022(player, player, playable[0], pc, 0, 1, -1, &this_test);
+      if (selected == -1)
+        break;
+      if (!charge_mana_from_id(player, card, event, (uint16_t)cards_data[playable[0][selected]].id))
+        continue;
+      play_card_in_grave_for_free_and_exile_it(player, player, playable[1][selected]);
+      if (--pc <= 0)
+        break;
+    }
+  }
+  return bushido(player, card, event, 1);
+}
+
+#endif

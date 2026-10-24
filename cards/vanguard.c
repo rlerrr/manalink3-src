@@ -3107,3 +3107,20 @@ int put_commander_from_command_zone_to_2022(int player, int where)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22c6540; original cards/vanguard.c:1686. */
+int is_commander_in_command_zone_2022(int player)
+{
+  int edh_card = locate_edh_card_2022(player);
+  if (edh_card != -1)
+  {
+    int32_t state = get_card_instance(player, edh_card)->targets[3].player;
+    if (state >= 0)
+      return ((state >> 8) | state) & 1;
+  }
+  return 0;
+}
+
+#endif

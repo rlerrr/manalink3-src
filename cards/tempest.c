@@ -7349,3 +7349,294 @@ int card_opportunist(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x215b1f0; original cards/tempest.c:6414. */
+int card_fugitive_druid(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_t *ptVar3;
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      ptVar3 = becomes_target_of_subtype_spell_2022(player, card, event, player, card, 2,
+                                                    RESOLVE_TRIGGER_MANDATORY, 0x4000);
+      if (ptVar3 != NULL)
+      {
+        draw_cards(player, 1);
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x215a450; original cards/tempest.c:6136. */
+int card_crown_of_flames(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  if (event == EVENT_SHOULD_AI_PLAY)
+  {
+    instance = get_card_instance(player, card);
+    iVar1 = 0;
+    if (instance->damage_target_player == player)
+    {
+      iVar1 = has_mana(player, 4, 1);
+      iVar1 = iVar1 * (((player == 1) - 1 & 0xffffffe8) + 0xc);
+    }
+    ai_modifier = ai_modifier + iVar1;
+  }
+  else if (event == EVENT_CHECK_ABILITIES)
+  {
+    instance = get_card_instance(player, card);
+    iVar1 = instance->damage_target_card;
+    instance = get_card_instance(player, card);
+    if ((((iVar1 == affected_card) &&
+          (instance->damage_target_player == affected_card_controller)) &&
+         (instance = get_card_instance(player, card), instance->damage_target_player == player)) &&
+        ((instance = in_play(player, card),
+          instance != NULL &&
+              (iVar1 = can_use_activated_abilities_2022(player, card), iVar1 != 0))))
+    {
+      iVar1 = has_mana(player, 4, 1);
+      check_abilities_power_2022 = check_abilities_power_2022 + iVar1;
+    }
+  }
+  iVar1 = is_humiliated_for_ability(player, card, AL_NM_NL_ACT);
+  if ((iVar1 == 0) &&
+      (instance = get_card_instance(player, card), instance->damage_target_player != -1))
+  {
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar1 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 0, 0, 1, 0,
+                                             0, NULL, NULL);
+      return iVar1;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      iVar1 = has_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 1, 0);
+      iVar3 = has_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 1, 0);
+      iVar1 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Boost enchanted +1/0.", iVar3,
+                          0x14, "Bounce Crown of Flames.", iVar1, 5, 0, 0, 0, 0);
+      if (iVar1 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      iVar1 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0, 0, 0, 0, 0, 1, 0, 0,
+                                             NULL, NULL);
+      return iVar1;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      iVar1 = instance->info_slot;
+      if (iVar1 == 1)
+      {
+        pump_until_eot_merge_previous_2022(instance->parent_controller, instance->parent_card,
+                                           (int)instance->damage_target_player,
+                                           instance->damage_target_card, 1, 0);
+        iVar1 = instance->info_slot;
+      }
+      if (iVar1 == 2)
+      {
+        bounce_permanent(instance->parent_controller, instance->parent_card);
+      }
+    }
+  }
+  iVar1 = vanilla_aura_2022(player, card, event, player);
+  return iVar1;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x215acc0; original cards/tempest.c:6305. */
+int card_flailing_drake(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if (((card == affected_card) && (player == affected_card_controller)) && (current_phase < 0x18))
+    {
+      check_abilities_power_2022 = check_abilities_power_2022 + -1;
+      check_abilities_toughness_2022 = check_abilities_toughness_2022 + -1;
+    }
+  }
+  else if (event == EVENT_DECLARE_BLOCKERS)
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      instance = get_card_instance(player, card);
+      if ((current_turn == player) && ((instance->state & 4) != 0))
+      {
+        for_each_creature_blocking_me(current_turn, card, blocked_by_me_or_my_blocker_gets_1_1,
+                                      current_turn, card);
+      }
+      if ((1 - current_turn == player) && ((instance->state & 8) != 0))
+      {
+        for_each_creature_blocked_by_me(player, card, blocked_by_me_or_my_blocker_gets_1_1, player,
+                                        card);
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x215adf0; original cards/tempest.c:6329. */
+int card_flowstone_giant(int player, int card, event_t event)
+{
+  int result;
+  unsigned int uVar2;
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      uVar2 = get_toughness(player, card);
+      if ((uVar2 & 1) == 0)
+      {
+        result = (int)uVar2 / 2 + -1;
+      }
+      else
+      {
+        result = (int)(uVar2 - 1) / 2;
+      }
+      result = generic_shade_amt_can_pump_2022(player, card, 2, 0, 0, 0, 0, 0, 1, 0, result);
+      check_abilities_power_2022 = check_abilities_power_2022 + result;
+      check_abilities_toughness_2022 = check_abilities_toughness_2022 - result;
+    }
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    result =
+        generic_shade_merge_pt(player, card, EVENT_RESOLVE_ACTIVATION, 0, 0, 0, 0, 0, 1, 0, 2, -2);
+    return result;
+  }
+  result = generic_activated_ability_2022(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x215afa0; original cards/tempest.c:6364. */
+int card_flowstone_salamander(int player, int card, event_t event)
+{
+  int result;
+  target_definition_2022_t td2;
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if (((((current_turn == player) && (card == affected_card)) &&
+          (player == affected_card_controller)) &&
+         ((current_phase < 0x18 &&
+           (result = can_use_activated_abilities_2022(player, card), result != 0)))) &&
+        (result = has_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 0, 0), result != 0))
+    {
+      result = has_mana(player, 4, 1);
+      check_abilities_power_2022 = check_abilities_power_2022 + result;
+      check_abilities_toughness_2022 = check_abilities_toughness_2022 + result;
+    }
+  }
+  else if (((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
+           ((event == EVENT_RESOLVE_ACTIVATION || (event == EVENT_CLEANUP))))
+  {
+    default_target_definition_2022(player, card, &td2, 2);
+    td2.special = 0x8000;
+    td2.extra = (int32_t)is_blocking_flowstone_salamander;
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target_2022(&td2), result != 0))
+    {
+      damage_target0(player, card, 1);
+    }
+    result =
+        generic_activated_ability_2022(player, card, event, 6, 0, 0, 0, 0, 1, 0, 0, &td2,
+                                       "Select target creature blocking this deal 1 damage to it.");
+    return result;
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x215dda0; original cards/tempest.c:7324. */
+int card_tahngarths_rage(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int result;
+  card_instance_t *pcVar3;
+
+  pcVar1 = get_card_instance(player, card);
+  if ((((event == EVENT_CHECK_ABILITIES) && (pcVar1->damage_target_card == affected_card)) &&
+       (affected_card_controller == pcVar1->damage_target_player)) &&
+      (pcVar1->damage_target_player == player))
+  {
+    pcVar3 = in_play(player, card);
+    if ((pcVar3 != NULL) && (current_phase < 0x18))
+    {
+      check_abilities_power_2022 = check_abilities_power_2022 + 5;
+      check_abilities_toughness_2022 = check_abilities_toughness_2022 + 1;
+    }
+  }
+  result = is_humiliated_for_ability(player, card, AL_STATIC);
+  if (result == 0)
+  {
+    pcVar3 = get_card_instance(player, card);
+    if (-1 < pcVar3->damage_target_player)
+    {
+      if (event == EVENT_POWER)
+      {
+        if (pcVar1->damage_target_card == affected_card)
+        {
+          pcVar3 = in_play(player, card);
+          if (pcVar3 != NULL)
+          {
+            result = is_attacking((int)pcVar1->damage_target_player, pcVar1->damage_target_card);
+            if (result == 0)
+            {
+              event_result = event_result + -2;
+            }
+            else
+            {
+              event_result = event_result + 3;
+            }
+          }
+        }
+      }
+      else if ((event == EVENT_TOUGHNESS) && (pcVar1->damage_target_card == affected_card))
+      {
+        pcVar3 = in_play(player, card);
+        if (pcVar3 != NULL)
+        {
+          result = is_attacking((int)pcVar1->damage_target_player, pcVar1->damage_target_card);
+          if (result == 0)
+          {
+            event_result = event_result + -1;
+          }
+        }
+      }
+    }
+  }
+  result = aura(player, card, event, NULL, NULL);
+  return result;
+}
+
+#endif

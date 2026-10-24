@@ -7415,3 +7415,181 @@ int effect_nettling_imp_2022(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24bf650; original cards/unlimited.c:900. */
+int card_blaze_of_glory(int player, int card, event_t event)
+{
+  if (event == EVENT_CAN_CAST)
+  {
+    if ((int32_t)current_phase > 0x16)
+      return 0;
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if (!affect_me(player, card))
+      return 0;
+  }
+  else if (event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET &&
+           event != EVENT_CHANGE_TARGET)
+    return 0;
+  target_definition_2022_t td;
+  default_target_definition_2022(player, card, &td, 2);
+  td.allowed_controller = 1 - current_turn;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (valid_target_2022(&td))
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      create_legacy_effect_exe(player, card, EXE_DWORD(0x728368), instance->targets[0].player,
+                               instance->targets[0].card);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell_2022(player, card, event, 1, &td, "BLAZE_OF_GLORY", 1, NULL);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24bad70; original cards/unlimited.c:4819. */
+static const char *is_damaging_stored_creature(int who_chooses, int player, int card)
+{
+  card_instance_t *dmg = get_card_instance(player, card);
+  if (dmg->internal_card_id == damage_card && dmg->damage_target_player == aff_player &&
+      dmg->damage_target_card == aff_card && dmg->info_slot > 0)
+    return NULL;
+  return "must damage Personal Incarnation";
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24bc2e0; original cards/unlimited.c:4828. */
+int effect_personal_incarnation(int player, int card, event_t event)
+{
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if (affect_me(player, card))
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      if (instance->targets[9].player >= 0)
+      {
+        if (get_id(instance->targets[9].player, instance->targets[9].card) != 0xb5)
+          kill_card(player, card, KILL_EXILE);
+        if (!in_play(instance->targets[9].player, instance->targets[9].card))
+          kill_card(player, card, KILL_EXILE);
+      }
+    }
+  }
+  else if (event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE ||
+           event == EVENT_RESOLVE_ACTIVATION || event == EVENT_CLEANUP)
+  {
+    if (get_card_instance(player, card)->targets[9].player != -1)
+    {
+      card_instance_t *instance = get_card_instance(player, card);
+      int p = instance->targets[9].player, c = instance->targets[9].card;
+      target_definition_2022_t td;
+      default_target_definition_2022(player, card, &td, 0x80);
+      td.special = 0x8000;
+      td.extra = (int32_t)(intptr_t)is_damaging_stored_creature;
+      aff_card = c;
+      aff_player = p;
+      if (event == EVENT_RESOLVE_ACTIVATION && valid_target_2022(&td))
+      {
+        card_instance_t *dmg =
+            get_card_instance(instance->targets[0].player, instance->targets[0].card);
+        int owner = get_owner(p, c);
+        prevent_the_next_n_damage(p, c, dmg->damage_target_player, dmg->damage_target_card, 1,
+                                  PREVENT_REDIRECT, owner, -1);
+      }
+      return generic_activated_ability_2022(player, card, event, 0x1000004, 0, 0, 0, 0, 0, 0, 0,
+                                            &td, "TARGET_DAMAGE");
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24ca360; original cards/unlimited.c:4879. */
+int card_personal_incarnation_2022(int player, int card, event_t event)
+{
+  if (this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) &&
+      life[get_owner(player, card)] > 0)
+  {
+    uint32_t amount = round_up_value(life[get_owner(player, card)]);
+    lose_life_2022(get_owner(player, card), amount);
+  }
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if (get_owner(player, card) != player && affect_me(player, card))
+    {
+      int found = 0;
+      for (int p = 0; p != 2; ++p)
+      {
+        for (int c = 0; c <= active_cards_count[p]; ++c)
+        {
+          if (in_play(p, c) && is_what(p, c, 0x80))
+          {
+            card_instance_t *instance = get_card_instance(p, c);
+            if (instance->info_slot_fn == effect_personal_incarnation &&
+                instance->targets[9].player == player && instance->targets[9].card == card)
+            {
+              if (p == player)
+                kill_card(player, c, KILL_EXILE);
+              else
+              {
+                if (p == 1)
+                  return 0;
+                found = 1;
+              }
+            }
+          }
+        }
+      }
+      if (!found)
+      {
+        card_instance_t *instance = get_card_instance(player, card);
+        int p = 1 - player;
+        int fake = add_card_to_hand(p, instance->internal_card_id);
+        int legacy = create_legacy_effect_exe(p, fake, EXE_DWORD(0x739d5c), -1, -1);
+        card_instance_t *leg = get_card_instance(p, legacy);
+        leg->info_slot_fn = effect_personal_incarnation;
+        leg->targets[9].player = player;
+        leg->targets[9].card = card;
+        leg->number_of_targets = 1;
+        obliterate_card(p, fake);
+      }
+    }
+  }
+  else if ((event == EVENT_CAN_ACTIVATE || event == EVENT_ACTIVATE ||
+            event == EVENT_RESOLVE_ACTIVATION || event == EVENT_CLEANUP) &&
+           get_owner(player, card) == player)
+  {
+    target_definition_2022_t td;
+    default_target_definition_2022(player, card, &td, 0x80);
+    td.special = 0x8000;
+    td.extra = (int32_t)(intptr_t)is_damaging_attached_creature;
+    td.illegal_abilities = 0;
+    card_instance_t *instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION && valid_target_2022(&td))
+    {
+      card_instance_t *dmg =
+          get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      prevent_the_next_n_damage(instance->parent_controller, instance->parent_card,
+                                dmg->damage_target_player, dmg->damage_target_card, 1,
+                                PREVENT_REDIRECT, instance->parent_controller, -1);
+    }
+    return generic_activated_ability_2022(player, card, event, 0x1000004, 0, 0, 0, 0, 0, 0, 0, &td,
+                                          "TARGET_DAMAGE");
+  }
+  return 0;
+}
+
+#endif

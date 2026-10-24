@@ -3748,6 +3748,188 @@ char *colored_damage_source_that_damages_me_2022(int who_chooses, int player, in
                                                  int targeting_player, int targeting_card);
 #endif
 
+/* October 2022 spell-cost payment and native Improvise frontend. */
+#ifndef SHANDALAR
+int charge_spell_cost_2022(card_data_t *cd, int player, int card);
+int improvise_2022(int player, int card, event_t event);
+#endif
+
+/* October 2022 counter-entry and subtype-target trigger helpers. */
+#ifndef SHANDALAR
+target_t *becomes_target_of_subtype_spell_2022(int player, int card, event_t event, int t_player,
+                                               int t_card, int controlled_by,
+                                               resolve_trigger_t trigger_mode,
+                                               int targeting_subtype);
+void test_enters_the_battlefield_with_counters_2022(int player, int card, event_t event,
+                                                    int t_player, test_definition_2022_t *test,
+                                                    counter_t type, int number);
+#endif
+
+/* October 2022 EXE-owned combat-AI accumulators (32-bit lvalues). */
+#ifndef SHANDALAR
+#define check_abilities_power_2022 EXE_DWORD(0x739b50)
+#define check_abilities_toughness_2022 EXE_DWORD(0x7a371c)
+#define check_abilities_keywords_2022 EXE_DWORD(0x78fef0)
+#endif
+
+/* October 2022 native hand reveal and counter-based continuous boosts. */
+#ifndef SHANDALAR
+typedef char recovery_ec_definition_2022_layout[(sizeof(ec_definition_t) == 28 && offsetof(ec_definition_t, target_player) == 0 && offsetof(ec_definition_t, who_choses) == 4 && offsetof(ec_definition_t, effect) == 8 && offsetof(ec_definition_t, cards_to_reveal) == 12 && offsetof(ec_definition_t, qty) == 16 && offsetof(ec_definition_t, ai_selection_mode) == 20 && offsetof(ec_definition_t, special_selection_function) == 24) ? 1 : -1];
+int reveal_cards_from_your_hand_2022(int player, int card, test_definition_2022_t *this_test);
+void boost_creatures_by_counters_2022(int player, int card, event_t event, int counter_type,
+                                      int amount, int pow, int tou, int key, int s_key, bct_t flags);
+int new_effect_coercion_2022(ec_definition_t *this_definition, test_definition_2022_t *this_test);
+int exile_top_x_card_you_may_play_them_2022(int player, int card, int howmany,
+                                            test_definition_2022_t *test, int t_player,
+                                            mpcfe_mode_t flags);
+#endif
+
+/* October 2022 graveyard, sustained-pump and Suspend-target helpers. */
+#ifndef SHANDALAR
+void seek_grave_to_reanimate_this_turn_2022(int player, int t_player, int selected_type,
+                                            reanimate_mode_2022_t mode);
+int pump_until_source_is_in_play_and_tapped_2022(int player, int card, int t_player, int t_card,
+                                                 int pow, int tou, int key, int s_key, int mode);
+char *target_must_be_permanent_or_suspend_2022(int who_chooses, int player, int card,
+                                               int targeting_player, int targeting_card);
+char *target_must_be_permanent_or_suspend_and_have_time_counters_2022(int who_chooses, int player,
+                                                                      int card,
+                                                                      int targeting_player,
+                                                                      int targeting_card);
+int seek_grave_for_id_to_reanimate_2022(int player, int card, int t_player, int id,
+                                        reanimate_mode_2022_t mode);
+#endif
+
+/* October 2022 Devil token, Overload and creature-mana helpers. */
+#ifndef SHANDALAR
+void make_devil_2022(int s_player, int s_card, int t_player, int qty, int sleight);
+int pay_overload_2022(int player, int card, int colorless, int black, int blue, int green, int red,
+                      int white);
+int overload_2022(int player, int card, event_t event, int colorless, int black, int blue,
+                  int green, int red, int white);
+int mana_producing_creature_all_one_color_2022(int player, int card, event_t event,
+                                               int reluctance_to_fight, color_test_t available,
+                                               int num_mana);
+#endif
+
+/* October 2022 permanent-copy and exile-play helpers. */
+#ifndef SHANDALAR
+int copy_token_characteristics_for_clone_2022(int player, int card, int t_player, int t_card);
+int real_shapeshift_target_2022(int src_player, int src_card, int t_player, int t_card,
+                                int turn_into_player, int turn_into_card, int mode);
+int effect_may_play_card_from_exile_2022(int player, int card, event_t event);
+int create_may_play_card_from_exile_effect_2022(int player, int card, int whose_exile_zone,
+                                                int csvid, mpcfe_mode_t mode);
+#endif
+
+/* October 2022 Hogaak Convoke/Delve and mana text APIs. */
+#ifndef SHANDALAR
+int can_cast_hogaak(int player, int card, event_t event, int from_grave);
+int charge_mana_hybrid_to_hogaak_convoke(int player, int card, int number, int first_color,
+                                         int second_color, int colorless);
+int cast_hogaak(int player, int card, event_t event, int from_grave);
+void mana_into_string_2022(int cless, int black, int blue, int green, int red, int white,
+                           test_definition_2022_t *this_test);
+int will_tap_permanent_for_convoke_2022(int player, int card, int *clrs);
+#endif
+
+/* October 2022 counter-ability eligibility and cycling state. */
+#ifndef SHANDALAR
+char *target_is_attached_to_creature_2022(int who_chooses, int player, int card,
+                                          int targeting_player, int targeting_card);
+int can_counter_activated_ability_2022(int player, int card, event_t event,
+                                       target_definition_2022_t *td);
+int can_counter_triggered_ability_2022(int player, int card, event_t event,
+                                       target_definition_2022_t *td);
+extern int card_is_being_cycled;
+#endif
+
+/* October 2022 native activated-ability counter actions. */
+#ifndef SHANDALAR
+int cast_counter_activated_ability_2022(int player, int card, int target_pos);
+int validate_counter_activated_ability_2022(int player, int card, target_definition_2022_t *td,
+                                            int target_pos);
+void raw_counter_activated_ability_2022(int tgt_player, int tgt_card);
+int resolve_counter_activated_ability_2022(int player, int card, target_definition_2022_t *td,
+                                           int target_pos);
+__attribute__((dllimport)) void get_config_data(int config, int item, int *result);
+#endif
+
+/* October 2022 Proliferate helpers with native target layout. */
+#ifndef SHANDALAR
+void proliferate_auto_single_permanent_or_player_2022(int player, int card, int p, int c);
+void proliferate_manual_single_permanent_or_player_2022(int player, int card, int p, int c,
+                                                        int add_untargettable);
+void proliferate_2022(int player, int card);
+#endif
+
+/* October 2022 native multiple-X mana charging. */
+#ifndef SHANDALAR
+int charge_mana_for_multi_x_2022(int player, int color, int num_x);
+int charge_mana_for_double_x_2022(int player, int color);
+#endif
+
+/* October 2022 native rules-text normalization. */
+#ifndef SHANDALAR
+void get_rules_text(char *out_buf, int player, int card, int remove_reminder_text);
+#endif
+
+/* October 2022 native Windows date, clock and delay helpers. */
+#ifndef SHANDALAR
+char *localtime_date(void);
+int localtime_hour_minute(void);
+int localtime_hour(void);
+int time_in_ms(void);
+void sleepms(int ms);
+#endif
+
+/* October 2022 native pack expansion identifiers and public utilities. */
+#ifndef SHANDALAR
+int is_valid_pack(EXPANSION_t expansion, int booster);
+int pack_size(EXPANSION_t expansion, int booster);
+void announce_expansion_choice(int player, int card, EXPANSION_t expansion);
+#endif
+
+/* October 2022 native weighted pack generation and self-check entry point. */
+#ifndef SHANDALAR
+int make_pack_2022(EXPANSION_t expansion, int booster, int *out_csvids);
+int test_packs(int run_time_test);
+#endif
+
+/* October 2022 native pack selection flags and chooser. */
+#ifndef SHANDALAR
+typedef int pack_flags_t;
+enum { PACK_0 = 0, PACK_ALLOW_BOOSTER = 1, PACK_ALLOW_STARTER = 2, PACK_ALLOW_CANCEL = 4 };
+int choose_packs(int num_packs, pack_flags_t flags, EXPANSION_t *expansions, int *is_booster);
+#endif
+
+/* October 2022 graveyard-replacement helpers with native filter layout. */
+#ifndef SHANDALAR
+void if_a_card_would_be_put_into_graveyard_from_play_exile_it_instead_2022(
+    int player, int card, int event, int t_player, test_definition_2022_t *test);
+int if_a_card_would_be_put_into_graveyard_from_library_do_something_instead_2022(
+    int player, int card, int event, int t_player, resolve_trigger_t trigger_mode,
+    test_definition_2022_t *test);
+int if_a_card_would_be_put_into_graveyard_from_anywhere_but_library_do_something_instead_2022(
+    int player, int card, int event, int t_player, resolve_trigger_t trigger_mode,
+    test_definition_2022_t *test);
+void if_a_card_would_be_put_into_graveyard_from_anywhere_exile_it_instead_2022(
+    int player, int card, int event, int t_player, test_definition_2022_t *test);
+#endif
+
+/* October 2022 Personal Incarnation owner-controlled legacy. */
+#ifndef SHANDALAR
+int effect_personal_incarnation(int player, int card, event_t event);
+#endif
+
+/* October 2022 commander, expansion-viewer and fixed-mana helpers. */
+#ifndef SHANDALAR
+int is_commander_in_command_zone_2022(int player);
+int show_deck_force_expansion_2022(int player, const int *deck, int num_cards, const char *prompt,
+                                   int suppress_done_label, const char *done_label, int expansion);
+int mana_producer_fixed_2022(int player, int card, event_t event, int base_color);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

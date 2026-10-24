@@ -2698,3 +2698,836 @@ int card_spike_tournament_grinder(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25c5920; original cards/unstable.c:576. */
+int card_very_cryptic_command_b(int player, int card, event_t event)
+{
+  typedef enum
+  {
+    CHOICE_UNTAP = 1,
+    CHOICE_TAP = 2,
+    CHOICE_DISCARD_DRAW = 3,
+    CHOICE_RAISE = 4
+  } CommandChoices;
+  CommandChoices CVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  card_instance_t *instance;
+  unsigned int uVar6;
+  CommandChoices *pCVar7;
+  CommandChoices *pCVar8;
+  int iStack_278;
+  CommandChoices choices[2];
+  target_definition_2022_t td_permanent;
+  target_definition_2022_t td_player;
+  test_definition_2022_t test_instant_sorcery;
+  test_definition_2022_t test;
+
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if ((event != EVENT_RESOLVE_SPELL && event != EVENT_CAN_CHANGE_TARGET) &&
+             (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  default_target_definition_2022(player, card, &td_permanent, 0x47);
+  td_permanent.preferred_controller = player;
+  iVar2 = target_available_2022(player, card, &td_permanent);
+  default_target_definition_2022(player, card, &td_player, 0);
+  td_player.zone = 0x1000;
+  iVar3 = can_target_2022(&td_player);
+  new_default_test_definition_2022(&test_instant_sorcery, 0x38,
+                                   "Select target instant or sorcery card.");
+  iVar4 = new_special_count_grave_2022(player, &test_instant_sorcery);
+  uVar6 = 0;
+  if (0 < iVar4)
+  {
+    iVar4 = graveyard_has_shroud(player);
+    uVar6 = (unsigned int)(iVar4 == 0);
+  }
+  choices[0] = dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
+                           "Untap", (unsigned int)(1 < iVar2), 1, "Tap", iVar3, 1, "Discard, draw",
+                           1, 1, "Graveyard to hand", uVar6, 1, 0, 0, 0, 0);
+  if (event == EVENT_CAN_CAST)
+  {
+    return (unsigned int)(choices[0] != 0);
+  }
+  instance = get_card_instance(player, card);
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      pCVar8 = choices;
+      instance->number_of_targets = '\0';
+      iVar2 = 0;
+      do
+      {
+        if (spell_fizzled == 1)
+        {
+          return 0;
+        }
+        CVar1 = *pCVar8;
+        if (CVar1 == CHOICE_TAP)
+        {
+          iVar3 = iVar2 + 1;
+          new_pick_target_2022(&td_player, "TARGET_PLAYER", iVar2, 1);
+        }
+        else if (CVar1 == CHOICE_RAISE)
+        {
+          iVar3 = iVar2 + 1;
+          select_target_from_grave_source_2022(player, card, player, SFG_0, 2,
+                                               &test_instant_sorcery, iVar2);
+        }
+        else
+        {
+          iVar3 = iVar2;
+          if (CVar1 == CHOICE_UNTAP)
+          {
+            pick_up_to_n_targets_2022(&td_permanent, "TARGET_PERMANENT", 2);
+            iVar3 = iVar2 + 2;
+          }
+        }
+        pCVar8 = pCVar8 + 1;
+        iVar2 = iVar3;
+      } while (choices + 2 != pCVar8);
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    pCVar8 = choices;
+    iStack_278 = 0;
+    iVar2 = 0;
+    pCVar7 = pCVar8;
+    do
+    {
+      CVar1 = *pCVar7;
+      if (CVar1 == CHOICE_TAP)
+      {
+        iVar3 = validate_target_2022(player, card, &td_player, iVar2);
+        if (iVar3 != 0)
+          goto LAB_025c5d0b;
+      LAB_025c5d41:
+        instance->targets[iVar2].player = -1;
+        iVar2 = iVar2 + 1;
+      }
+      else if (CVar1 == CHOICE_RAISE)
+      {
+        iVar3 = validate_target_from_grave_source(player, card, player, iVar2);
+        if (iVar3 < 0)
+          goto LAB_025c5d41;
+      LAB_025c5d0b:
+        iVar2 = iVar2 + 1;
+        iStack_278 = iStack_278 + 1;
+      }
+      else if (CVar1 == CHOICE_UNTAP)
+      {
+        iVar3 = validate_target_2022(player, card, &td_permanent, iVar2);
+        if (iVar3 == 0)
+        {
+          instance->targets[iVar2].player = -1;
+        }
+        else
+        {
+          iStack_278 = iStack_278 + 1;
+        }
+        iVar3 = validate_target_2022(player, card, &td_permanent, iVar2);
+        if (iVar3 == 0)
+        {
+          instance->targets[iVar2 + 1].player = -1;
+        }
+        else
+        {
+          iStack_278 = iStack_278 + 1;
+        }
+        iVar2 = iVar2 + 2;
+      }
+      pCVar7 = pCVar7 + 1;
+    } while (pCVar7 != choices + 2);
+    if (iStack_278 < 1)
+    {
+      spell_fizzled = 1;
+    }
+    else
+    {
+      iVar2 = 0;
+      do
+      {
+        CVar1 = *pCVar8;
+        if (CVar1 == CHOICE_DISCARD_DRAW)
+        {
+          iVar3 = hand_count[player];
+          discard_all(player);
+          draw_cards(player, iVar3);
+        }
+        else if (CVar1 < CHOICE_RAISE)
+        {
+          if (CVar1 == CHOICE_UNTAP)
+          {
+            iVar3 = instance->targets[iVar2].player;
+            if (-1 < iVar3)
+            {
+              untap_card(iVar3, instance->targets[iVar2].card);
+            }
+            iVar3 = instance->targets[iVar2 + 1].player;
+            if (-1 < iVar3)
+            {
+              untap_card(iVar3, instance->targets[iVar2 + 1].card);
+            }
+            iVar2 = iVar2 + 2;
+          }
+          else if (CVar1 == CHOICE_TAP)
+          {
+            if (-1 < instance->targets[iVar2].player)
+            {
+              default_test_definition_2022(&test, 0x47);
+              test.special_selection_function = test_words_in_name_val;
+              test.value_for_special_selection_function = 1;
+              new_manipulate_all_2022(player, card, instance->targets[iVar2].player, &test,
+                                      ACT_TAP);
+            }
+            goto LAB_025c5ba2;
+          }
+        }
+        else if (CVar1 == CHOICE_RAISE)
+        {
+          if ((-1 < instance->targets[iVar2].player) &&
+              (iVar3 = validate_target_from_grave_source(player, card, player, iVar2), -1 < iVar3))
+          {
+            from_grave_to_hand(player, iVar3, 0);
+          }
+        LAB_025c5ba2:
+          iVar2 = iVar2 + 1;
+        }
+        pCVar8 = pCVar8 + 1;
+      } while (pCVar8 != choices + 2);
+    }
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25c5f90; original cards/unstable.c:760. */
+int card_very_cryptic_command_e(int player, int card, event_t event)
+{
+  typedef enum
+  {
+    CHOICE_COUNTER = 1,
+    CHOICE_BOUNCE = 2,
+    CHOICE_UNTAP = 3,
+    CHOICE_MILL = 4
+  } CommandChoices;
+  CommandChoices CVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  card_instance_t *instance;
+  target_definition_2022_t *td;
+  CommandChoices *pCVar6;
+  CommandChoices *pCVar7;
+  int iStack_200;
+  CommandChoices choices[2];
+  target_definition_2022_t td_spell;
+  target_definition_2022_t td_creature;
+  target_definition_2022_t td_player;
+  test_definition_2022_t test;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    counterspell_target_definition_2022(player, card, &td_spell, 0);
+    td_spell.special = 0x8000;
+    td_spell.extra = (int32_t)target_has_black_border;
+    iVar2 = counterspell_2022(player, card, EVENT_CAN_CAST, &td_spell, -1);
+    default_target_definition_2022(player, card, &td_creature, 2);
+    iVar3 = can_target_2022(&td_creature);
+    default_target_definition_2022(player, card, &td_player, 0);
+    td_player.zone = 0x1000;
+    iVar4 = can_target_2022(&td_player);
+    iVar3 = dialog_impl(player, card, EVENT_CAN_CAST, "\001\005", choices + 1, "\001\015",
+                        "\001\002", "Counter spell", iVar2, 1, "Creature to hand", iVar3, 1,
+                        "Untap permanents", 1, 1, "Mill", iVar4, 1, 0, 0, 0, 0);
+    if (iVar3 != 0)
+    {
+      return (-(unsigned int)(iVar2 == 0) & 0xffffff9e) + 99;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      counterspell_target_definition_2022(player, card, &td_spell, 0);
+      td_spell.special = 0x8000;
+      td_spell.extra = (int32_t)target_has_black_border;
+      iVar2 = counterspell_2022(player, card, EVENT_CAN_CAST, &td_spell, -1);
+      default_target_definition_2022(player, card, &td_creature, 2);
+      iVar3 = can_target_2022(&td_creature);
+      default_target_definition_2022(player, card, &td_player, 0);
+      td_player.zone = 0x1000;
+      iVar4 = can_target_2022(&td_player);
+      choices[0] = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\005", choices + 1, "\001\015",
+                               "\001\002", "Counter spell", iVar2, 1, "Creature to hand", iVar3, 1,
+                               "Untap permanents", 1, 1, "Mill", iVar4, 1, 0, 0, 0, 0);
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        if (player == 1)
+        {
+          ai_modifier = ai_modifier + -0x54;
+        }
+        instance->number_of_targets = '\0';
+        pCVar7 = choices;
+        iVar2 = 0;
+        do
+        {
+          if (spell_fizzled == 1)
+          {
+            return 0;
+          }
+          CVar1 = *pCVar7;
+          if (CVar1 == CHOICE_BOUNCE)
+          {
+            iVar3 = iVar2 + 1;
+            new_pick_target_2022(&td_creature, "TARGET_CREATURE", iVar2, 1);
+          }
+          else if (CVar1 == CHOICE_MILL)
+          {
+            iVar3 = iVar2 + 1;
+            new_pick_target_2022(&td_player, "TARGET_PLAYER", iVar2, 1);
+          }
+          else
+          {
+            iVar3 = iVar2;
+            if (CVar1 == CHOICE_COUNTER)
+            {
+              iVar3 = iVar2 + 1;
+              counterspell_2022(player, card, EVENT_CAST_SPELL, &td_spell, iVar2);
+            }
+          }
+          pCVar7 = pCVar7 + 1;
+          iVar2 = iVar3;
+        } while (choices + 2 != pCVar7);
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL || event == EVENT_CAN_CHANGE_TARGET) ||
+           (event == EVENT_CHANGE_TARGET))
+  {
+    counterspell_target_definition_2022(player, card, &td_spell, 0);
+    td_spell.special = 0x8000;
+    td_spell.extra = (int32_t)target_has_black_border;
+    iVar2 = counterspell_2022(player, card, EVENT_CAN_CAST, &td_spell, -1);
+    default_target_definition_2022(player, card, &td_creature, 2);
+    iVar3 = can_target_2022(&td_creature);
+    default_target_definition_2022(player, card, &td_player, 0);
+    td_player.zone = 0x1000;
+    iVar4 = can_target_2022(&td_player);
+    choices[0] = dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
+                             "Counter spell", iVar2, 1, "Creature to hand", iVar3, 1,
+                             "Untap permanents", 1, 1, "Mill", iVar4, 1, 0, 0, 0, 0);
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      pCVar7 = choices;
+      iStack_200 = 0;
+      iVar2 = 0;
+      pCVar6 = pCVar7;
+      do
+      {
+        CVar1 = *pCVar6;
+        td = &td_creature;
+        if ((CVar1 == CHOICE_BOUNCE) || (td = &td_player, CVar1 == CHOICE_MILL))
+        {
+          iVar3 = validate_target_2022(player, card, td, iVar2);
+          if (iVar3 == 0)
+            goto LAB_025c66e9;
+        LAB_025c66b1:
+          iVar2 = iVar2 + 1;
+          iStack_200 = iStack_200 + 1;
+        }
+        else if (CVar1 == CHOICE_COUNTER)
+        {
+          iVar3 = counterspell_validate_2022(player, card, &td_spell, iVar2);
+          if (iVar3 != 0)
+            goto LAB_025c66b1;
+        LAB_025c66e9:
+          instance->targets[iVar2].player = -1;
+          iVar2 = iVar2 + 1;
+        }
+        pCVar6 = pCVar6 + 1;
+      } while (choices + 2 != pCVar6);
+      iVar2 = 0;
+      if (iStack_200 < 1)
+      {
+        spell_fizzled = 1;
+      }
+      else
+      {
+        do
+        {
+          CVar1 = *pCVar7;
+          if (CVar1 == CHOICE_UNTAP)
+          {
+            default_test_definition_2022(&test, 0x47);
+            test.special_selection_function = test_has_any_watermark;
+            new_manipulate_all_2022(player, card, player, &test, ACT_UNTAP);
+          }
+          else
+          {
+            if (CVar1 < CHOICE_MILL)
+            {
+              if (CVar1 == CHOICE_COUNTER)
+              {
+                iVar3 = instance->targets[iVar2].player;
+                if (-1 < iVar3)
+                {
+                  real_counter_a_spell(player, card, iVar3, instance->targets[iVar2].card);
+                }
+              }
+              else
+              {
+                if (CVar1 != CHOICE_BOUNCE)
+                  goto LAB_025c6211;
+                iVar3 = instance->targets[iVar2].player;
+                if (-1 < iVar3)
+                {
+                  bounce_permanent(iVar3, instance->targets[iVar2].card);
+                }
+              }
+            }
+            else
+            {
+              if (CVar1 != CHOICE_MILL)
+                goto LAB_025c6211;
+              iVar4 = roll_xd6t(player, 2, player, card, instance->targets[iVar2].player, -1);
+              iVar3 = instance->targets[iVar2].player;
+              if (-1 < iVar3)
+              {
+                mill(iVar3, iVar4);
+              }
+            }
+            iVar2 = iVar2 + 1;
+          }
+        LAB_025c6211:
+          pCVar7 = pCVar7 + 1;
+        } while (choices + 2 != pCVar7);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25c6ed0; original cards/unstable.c:1141. */
+int card_sly_spy_a(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  const char *puVar4;
+  unsigned int uVar5;
+  int iVar6;
+  int card_00;
+  unsigned int uStack_118;
+  int iStack_110;
+  int times_damaged[2];
+  ec_definition_t ec;
+  test_definition_2022_t test;
+  iVar1 = damage_dealt_by_me(player, card, event,
+                             DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
+                                 DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (iVar1 != 0)
+  {
+    instance = get_card_instance(player, card);
+    uStack_118 = 0;
+    uVar5 = instance->targets[1].player;
+    instance->targets[1].player = 0;
+    times_damaged[0] = uVar5 & 0xff;
+    times_damaged[1] = uVar5 >> 8 & 0xff;
+    do
+    {
+      uVar5 = uStack_118 ^ current_turn;
+      iStack_110 = 0;
+      iVar1 = times_damaged[uVar5];
+      if (0 < iVar1)
+      {
+        do
+        {
+          iVar6 = -1;
+          card_00 = 0;
+          if (0 < active_cards_count[uVar5])
+          {
+            do
+            {
+              instance = in_hand(uVar5, card_00);
+              if ((instance != NULL) && (iVar3 = words_in_name(uVar5, card_00), iVar6 < iVar3))
+              {
+                iVar6 = iVar3;
+              }
+              card_00 = card_00 + 1;
+            } while (card_00 < active_cards_count[uVar5]);
+            if (-1 < iVar6)
+            {
+              default_ec_definition(uVar5, player, &ec);
+              ec.effect = 1;
+              new_default_test_definition_2022(&test, 0xff, "");
+              test.special_selection_function = test_words_in_name_val;
+              if (iVar6 == 1)
+              {
+                puVar4 = "";
+              }
+              else
+              {
+                puVar4 = "s";
+              }
+              test.value_for_special_selection_function = iVar6;
+              sprintf(test.message, "Select a card with %d word%s in its name.", iVar6, puVar4);
+              new_effect_coercion_2022(&ec, &test);
+            }
+          }
+          iStack_110 = iStack_110 + 1;
+        } while (iStack_110 != iVar1);
+      }
+      uStack_118 = uStack_118 + 1;
+    } while (uStack_118 != 2);
+    return 0;
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25c4e40; original cards/unstable.c:48. */
+static char choose_a_consonant_not_nrst(int player, int src_player, int src_card)
+{
+  char cVar1;
+  int result;
+  char *choices[17] = {"B", "C", "D", "F", "G", "H", "J", "K", "L",
+                       "M", "P", "Q", "V", "W", "X", "Y", "Z"};
+  char buf[300];
+
+  if ((ai_is_speculating != 1) && ((player != 1 || (((unsigned char)trace_mode & 2) != 0))))
+  {
+    result = do_dialog_lots_of_choices(player, src_player, src_card, choices, 0x11);
+    return *choices[result];
+  }
+  result = recorded_rand(player, 0x11);
+  if (ai_is_speculating == 1)
+  {
+    cVar1 = *choices[result];
+  }
+  else
+  {
+    sprintf(buf, " %s\n", choices[result]);
+    do_dialog(player, src_player, src_card, -1, -1, buf, 0);
+    cVar1 = *choices[result];
+  }
+  return cVar1;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25c8c00; original cards/unstable.c:2331. */
+int card_staff_of_the_letter_magus(int player, int card, event_t event)
+{
+  static const unsigned char native_name_fold[256] = {
+      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+      0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,
+      0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c,
+      0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,
+      0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a,
+      0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,
+      0x7a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
+      0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77,
+      0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 0x2c, 0x66, 0x84, 0x85, 0x86,
+      0x87, 0x5e, 0x25, 0x73, 0x3c, 0x8c, 0x8d, 0x7a, 0x8f, 0x90, 0x27, 0x27, 0x22, 0x22, 0x95,
+      0x2d, 0x2d, 0x7e, 0x99, 0x73, 0x3e, 0x9c, 0x9d, 0x7a, 0x79, 0x5f, 0x21, 0x24, 0x24, 0x24,
+      0x24, 0x7c, 0x25, 0x22, 0x40, 0x5e, 0x3c, 0x7e, 0x2d, 0x40, 0x7e, 0x5e, 0x2b, 0x32, 0x33,
+      0x27, 0x75, 0x26, 0x2e, 0x2c, 0x31, 0x5e, 0x3e, 0x31, 0x32, 0x33, 0x3f, 0x61, 0x61, 0x61,
+      0x61, 0x61, 0x61, 0xc6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69, 0x64, 0x6e,
+      0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2a, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xde, 0xdf, 0x61,
+      0x61, 0x61, 0x61, 0x61, 0x61, 0xe6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69,
+      0x64, 0x6e, 0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2f, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xfe,
+      0x79,
+  };
+  unsigned char bVar1;
+  char cVar2;
+  card_instance_t *instance;
+  const char *pcVar4;
+  int result;
+  unsigned char *pbVar6;
+  unsigned int uVar7;
+  unsigned char bVar8;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    cVar2 = choose_a_consonant_not_nrst(player, player, card);
+    make_txtfx(player, card, fx_staff_of_the_letter_magus, CARD_ID_STAFF_OF_THE_LETTER_MAGUS,
+               (int)cVar2);
+    sp_ability_trigger_2022(2, EVENT_RESOLVE_SPELL, 2, TYPE_ANY, NULL, player, card);
+    return 0;
+  }
+  sp_ability_trigger_2022(2, event, 2, TYPE_ANY, NULL, player, card);
+  if (event != EVENT_SPA)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  uVar7 = instance->targets[5].player;
+  if ((short)(uVar7 >> 0x10) != 0x46b5)
+  {
+    return 0;
+  }
+  uVar7 = uVar7 & 0xffff;
+  if (0x18 < uVar7 - 0x42)
+  {
+    return 0;
+  }
+  pcVar4 = strchr("AEIOUNRST", uVar7);
+  if (pcVar4 != NULL)
+  {
+    return 0;
+  }
+  cVar2 = (char)uVar7 + ' ';
+  result = get_card_name(trigger_cause_controller, trigger_cause);
+  if (result == 0x45a5)
+  {
+    uVar7 = 0x4f;
+    pbVar6 =
+        (unsigned char *)"Our Market Research Shows That Players Like Really Long Card Names So We "
+                         "Made this Card to Have the Absolute Longest Card Name Ever Elemental";
+  }
+  else
+  {
+    if (result == 0x45d5)
+    {
+      bVar8 = 0x68;
+      pbVar6 = (unsigned char *)"The Ultimate Nightmare of Wizards of the Coast Customer Service";
+      uVar7 = 0x54;
+      goto LAB_025c8d64;
+    }
+    pbVar6 = (unsigned char *)get_card_name_by_id(result);
+    uVar7 = (unsigned int)*pbVar6;
+    if (*pbVar6 == 0)
+    {
+      return 0;
+    }
+  }
+  bVar8 = pbVar6[1];
+LAB_025c8d64:
+  result = 0;
+  while (true)
+  {
+    bVar1 = native_name_fold[uVar7];
+    if (bVar1 == 0xdf)
+    {
+      if (cVar2 == 's')
+      {
+        result = result + 2;
+      }
+    }
+    else if ((bVar1 & 0xdf) == 0xde)
+    {
+      if ((cVar2 == 't') || (cVar2 == 'h'))
+      {
+        result = result + 1;
+      }
+    }
+    else if ((unsigned int)bVar1 == (int)cVar2)
+    {
+      result = result + (unsigned int)((unsigned char)(bVar1 + 0x9f) < 0x1a);
+    }
+    if (bVar8 == 0)
+      break;
+    uVar7 = (unsigned int)bVar8;
+    bVar8 = pbVar6[2];
+    pbVar6 = pbVar6 + 1;
+  }
+  if (0 < result)
+  {
+    gain_life_2022(player, result);
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25c6880; original cards/unstable.c:939. */
+int card_capital_offense(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  const char *pcVar3;
+  char current_char;
+  target_definition_2022_t td;
+  char rules[3000];
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    result = vanilla_instant_pump_2022(player, card, event, 2, 1 - player, -1, -1, 0, 0);
+    return result;
+  }
+  default_target_definition_2022(player, card, &td, 2);
+  result = valid_target_2022(&td);
+  if (result != 0)
+  {
+    instance = get_card_instance(player, card);
+    get_rules_text(rules, instance->targets[0].player, instance->targets[0].card, 1);
+    current_char = rules[0];
+    if (current_char != '\0')
+    {
+      result = 0;
+      pcVar3 = rules;
+      do
+      {
+        result = result + (unsigned int)((unsigned char)(current_char + 0xbfU) < 0x1a);
+        pcVar3 = pcVar3 + 1;
+        current_char = *pcVar3;
+      } while (current_char != '\0');
+      if (0 < result)
+      {
+        pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
+                            -result, -result);
+      }
+    }
+  }
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25c6aa0; original cards/unstable.c:1038. */
+int card_old_fashioned_vampire(int player, int card, event_t event)
+{
+  bool bVar1;
+  unsigned int uVar2;
+  int result;
+  unsigned int uVar4;
+  if (event - EVENT_POWER < 3)
+  {
+    uVar2 = localtime_hour_minute();
+    uVar4 = uVar2 >> 0x10;
+    if (uVar4 == 5)
+    {
+      bVar1 = (uVar2 & 0xffff) < 0x1e;
+    }
+    else if (uVar4 == 0x12)
+    {
+      bVar1 = 0x1d < (uVar2 & 0xffff);
+    }
+    else
+    {
+      bVar1 = 0xd < uVar4 - 5;
+    }
+    if (bVar1)
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if (result == 0)
+      {
+        if (event == EVENT_ABILITIES)
+        {
+          deathtouch_2022(player, card, EVENT_ABILITIES);
+        }
+        else
+        {
+          event_result = event_result + 2;
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x25c8380; original cards/unstable.c:1972. */
+int card_hot_fix(int player, int card, event_t event)
+{
+  if (event != EVENT_RESOLVE_SPELL)
+    return basic_spell(player, card, event);
+  int32_t started;
+  uint32_t needs_shuffle;
+  if (ai_is_speculating == 1)
+  {
+    started = 0;
+    goto rearrange;
+  }
+  if (player == 1 && (trace_mode & 2) == 0)
+  {
+    rearrange_top_x(1, 1, 500);
+    started = 0;
+    if (ai_is_speculating != 1)
+      goto check_ai_clock;
+    if ((trace_mode & 2) != 0)
+      goto receive_result;
+    goto finish;
+  }
+  started = time_in_ms();
+rearrange:
+  rearrange_top_x(player, player, 500);
+  if (ai_is_speculating == 1)
+    needs_shuffle = started < -10000;
+  else
+  {
+  check_ai_clock:
+    if (player == 1 && (trace_mode & 2) == 0)
+      needs_shuffle = started < -10000;
+    else
+    {
+      int32_t ended = time_in_ms();
+      needs_shuffle = (int32_t)((uint32_t)ended - (uint32_t)started) > 10000;
+    }
+  }
+  if ((trace_mode & 2) != 0)
+  {
+    if (player == 1)
+      goto receive_result;
+    EXE_DWORD(0x78fee8) = needs_shuffle;
+    EXE_BYTE(0x78fee4) = 28;
+    EXE_FN(int, 0x4a6bc0, int, int)(0, 28);
+  }
+check_shuffle:
+  if (needs_shuffle != 0)
+    shuffle(player);
+finish:
+  kill_card(player, card, KILL_DESTROY);
+  return basic_spell(player, card, event);
+receive_result:
+  EXE_FN(int, 0x4a70c0, int, int)(1, 28);
+  needs_shuffle = EXE_DWORD(0x78fee8);
+  goto check_shuffle;
+}
+
+#endif

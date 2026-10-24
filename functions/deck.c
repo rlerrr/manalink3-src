@@ -3267,3 +3267,57 @@ int counterspell_resolve_unless_pay_x_2022(int player, int card, target_definiti
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b9770; original functions/deck.c:2918. */
+int seek_grave_for_id_to_reanimate_2022(int player, int card, int t_player, int id,
+                                        reanimate_mode_2022_t mode)
+{
+  int *piVar1;
+  int iVar2;
+  int iVar3;
+
+  piVar1 = graveyard_ptr_mutable[t_player];
+  iVar2 = count_graveyard(t_player);
+  iVar2 = iVar2 + -1;
+  if (iVar2 < 0)
+  {
+  LAB_026b97e9:
+    iVar2 = -1;
+  }
+  else
+  {
+    do
+    {
+      if ((unsigned int)cards_data[piVar1[iVar2]].id == id)
+      {
+        if (REANIMATEXTRA2022_RETURN_TO_HAND2 < mode)
+        {
+          iVar2 = reanimate_permanent_2022(player, card, t_player, iVar2, mode);
+          return iVar2;
+        }
+        if (mode == REANIMATEXTRA2022_RETURN_TO_HAND2)
+        {
+          iVar3 = add_card_to_hand(t_player, piVar1[iVar2]);
+          remove_card_from_grave(t_player, iVar2);
+          return iVar3;
+        }
+        if (mode == REANIMATEXTRA2022_LEAVE_IN_GRAVEYARD)
+        {
+          return iVar2;
+        }
+        if (mode == REANIMATEXTRA2022_EXILE_FROM_GRAVEYARD)
+        {
+          rfg_card_from_grave(t_player, iVar2);
+          return -1;
+        }
+        goto LAB_026b97e9;
+      }
+      iVar2 = iVar2 + -1;
+    } while (iVar2 != -1);
+  }
+  return iVar2;
+}
+
+#endif

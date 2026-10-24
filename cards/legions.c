@@ -2198,3 +2198,49 @@ int card_krosan_vorine(int player, int card, event_t event)
   result = provoke(player, card, event);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24a6470; original cards/legions.c:60. */
+static void amplify_2022_impl(int player, int card, int amount)
+{
+  card_instance_t *instance;
+  int result;
+  const char *__format_1;
+  test_definition_2022_t test;
+
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    add_state(player, card, 0x800000);
+    new_default_test_definition_2022(&test, 0, "");
+    if (ai_is_speculating != 1)
+    {
+      __format_1 = get_card_name_by_instance(instance);
+      snprintf(test.message, 100, "Select a card that shares a subtype with %s.", __format_1);
+    }
+    test.value_for_special_selection_function = card & 0xffffU | player << 0x10;
+    test.special_selection_function = test_shares_creature_subtype;
+    result = reveal_cards_from_your_hand_2022(player, card, &test);
+    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, amount * result);
+    remove_state(player, card, 0x800000);
+  }
+  return;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24a67c0; original cards/legions.c:129. */
+int card_aven_warhawk(int player, int card, event_t event)
+{
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    return 0;
+  }
+  amplify_2022_impl(player, card, 1);
+  return 0;
+}
+
+#endif

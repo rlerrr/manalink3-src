@@ -3662,3 +3662,83 @@ int card_hornet_cannon(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2135530; original cards/stronghold.c:3524. */
+int card_hidden_retreat(int player, int card, event_t event)
+{
+  int32_t iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int card_00;
+  target_definition_2022_t td_spell;
+  test_definition_2022_t this_test;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    counterspell_target_definition_2022(player, card, &td_spell, 0x38);
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (hand_count[player] < 1)
+      {
+        return 0;
+      }
+      iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x400, 0, 0, 0, 0, 0,
+                                             0, 0, &td_spell, NULL);
+      if (iVar3 == 0)
+      {
+        return 0;
+      }
+      return 99;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      if (hand_count[player] < 1)
+      {
+        return 0;
+      }
+      instance->info_slot = 0;
+      iVar3 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x400, 0, 0, 0, 0, 0, 0,
+                                             0, &td_spell, NULL);
+      if (iVar3 == 0)
+      {
+        return 0;
+      }
+      new_default_test_definition_2022(&this_test, 0xff,
+                                       "Select a card to put on top of your library");
+      iVar3 = new_global_tutor_2022(player, player, 4, 10, 0, 3, &this_test);
+      if (iVar3 == -2)
+      {
+        return 0;
+      }
+      ((unsigned char *)&instance->info_slot)[0] = 1;
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      iVar3 = global_enchantment(player, card, event);
+      return iVar3;
+    }
+    counterspell_target_definition_2022(player, card, &td_spell, 0x38);
+    instance = get_card_instance(player, card);
+  }
+  if ((((event == EVENT_RESOLVE_ACTIVATION) && (instance->info_slot == 1)) &&
+       (iVar3 = counterspell_validate_2022(player, card, &td_spell, 0), iVar3 != 0)) &&
+      ((iVar3 = instance->targets[0].player, iVar3 != -1 && (instance->info_slot == 1))))
+  {
+    iVar1 = instance->targets[0].card;
+    card_00 = create_legacy_effect(player, card, source_type_spell_damage_prevented);
+    instance = get_card_instance(player, card_00);
+    instance->targets[0].player = iVar3;
+    instance->targets[0].card = iVar1;
+    return 0;
+  }
+  return 0;
+}
+
+#endif

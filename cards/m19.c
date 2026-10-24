@@ -4084,3 +4084,217 @@ int card_aethershield_artificer(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22063c0; original cards/m19.c:1308. */
+static int liliana_reanimation_legacy(int player, int card, event_t event)
+{
+  int iVar5;
+  int iVar7;
+  int iVar9;
+  int *piVar6;
+  if (!in_play(player, card))
+    return 0;
+  if (is_humiliated_for_ability(player, card, AL_STATIC))
+    return 0;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    iVar5 = *graveyard_ptr_mutable[player];
+    if (iVar5 != -1)
+    {
+      iVar9 = 0;
+      do
+      {
+
+        iVar5 = has_subtype_by_id_2022(player, (unsigned int)cards_data[iVar5].id, SUBTYPE_ZOMBIE);
+        if (iVar5 == 0)
+        {
+        LAB_02206450:
+          piVar6 = graveyard_ptr_mutable[player];
+        }
+        else
+        {
+
+          iVar5 = is_what(-1, *(int *)((int)graveyard_ptr_mutable[player] + iVar9), 2);
+          piVar6 = graveyard_ptr_mutable[player];
+          if (iVar5 != 0)
+          {
+
+            iVar5 = can_legally_play_iid(player, *(int *)((int)piVar6 + iVar9));
+            piVar6 = graveyard_ptr_mutable[player];
+            if (iVar5 != 0)
+            {
+
+              iVar7 =
+                  has_mana_to_cast_iid(player, EVENT_CAN_ACTIVATE, *(int *)((int)piVar6 + iVar9));
+              if (iVar7 == 0)
+                goto LAB_02206450;
+              if (iVar5 == 99)
+              {
+                return 99;
+              }
+
+              iVar5 = can_sorcery_be_played(player, EVENT_CAN_ACTIVATE);
+              if ((iVar5 != 0) || (piVar6 = graveyard_ptr_mutable[player],
+                                   (cards_data[*(int *)((int)piVar6 + iVar9)].type & 0x30) != 0))
+              {
+                return 1;
+              }
+            }
+          }
+        }
+        iVar9 = iVar9 + 4;
+        iVar5 = *(int *)((int)piVar6 + iVar9);
+      } while (iVar5 != -1);
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    int grave_count = count_graveyard(player);
+    int playable[2][grave_count];
+    int count = 0;
+    int i = 0;
+    int *grave = graveyard_ptr_mutable[player];
+    int iid = *grave;
+    test_definition_2022_t this_test;
+    while (iid != -1)
+    {
+      if (!has_subtype_by_id_2022(player, cards_data[iid].id, SUBTYPE_ZOMBIE))
+      {
+        grave = graveyard_ptr_mutable[player];
+        goto next_card;
+      }
+      iid = graveyard_ptr_mutable[player][i];
+      if (!is_what(-1, iid, TYPE_CREATURE))
+      {
+        grave = graveyard_ptr_mutable[player];
+        goto next_card;
+      }
+      grave = graveyard_ptr_mutable[player];
+      int legal = can_legally_play_iid(player, grave[i]);
+      grave = graveyard_ptr_mutable[player];
+      if (!legal)
+        goto next_card;
+      if (!has_mana_to_cast_iid(player, EVENT_ACTIVATE, grave[i]))
+      {
+        grave = graveyard_ptr_mutable[player];
+        goto next_card;
+      }
+      int sorcery_ok = can_sorcery_be_played(player, EVENT_ACTIVATE);
+      grave = graveyard_ptr_mutable[player];
+      iid = grave[i];
+      if (sorcery_ok || (cards_data[iid].type & 0x30))
+      {
+        playable[0][count] = iid;
+        playable[1][count] = i;
+        ++count;
+      }
+    next_card:
+      iid = grave[i + 1];
+      ++i;
+    }
+    new_default_test_definition_2022(&this_test, 0xff, "Select a Zombie card to play.");
+    int selected =
+        select_card_from_zone_2022(player, player, playable[0], count, 0, 1, -1, &this_test);
+    if (selected != -1 &&
+        charge_mana_from_id(player, -1, EVENT_ACTIVATE, cards_data[playable[0][selected]].id))
+    {
+      play_card_in_grave_for_free(player, selected, 1);
+      cant_be_responded_to = 1;
+      return 0;
+    }
+    spell_fizzled = 1;
+    return 0;
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2209a10; original cards/m19.c:1383. */
+int card_liliana_untouched_by_death(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  target_definition_2022_t *ptStack_6c;
+  card_instance_t *pcStack_68;
+  target_definition_2022_t td;
+
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    pcStack_68 = get_card_instance(player, card);
+    default_target_definition_2022(player, card, &td, 2);
+    td.preferred_controller = 1 - player;
+    if (event == EVENT_ACTIVATE)
+    {
+      pcStack_68->number_of_targets = '\0';
+      pcStack_68->info_slot = 0;
+      iVar1 = count_subtype(player, 0x47, 0xde);
+      iVar2 = count_graveyard_by_subtype(player, SUBTYPE_ZOMBIE);
+      iVar3 = can_target_2022(&td);
+      iVar1 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Mill yourself", 1,
+                          5, 1, "Target creature gets -X/-X", iVar3, iVar1 * 5, 0xfffffffe,
+                          "Cast Zombies from your graveyard", 1, iVar2 * 5, 0xfffffffd, 0, 0, 0, 0);
+      if (iVar1 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      if (iVar1 == 2)
+      {
+        new_pick_target_2022(&td, "TARGET_CREATURE", 0, 1);
+      }
+      goto LAB_02209a8d;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      goto LAB_02209a8d;
+    pcStack_68 = get_card_instance(player, card);
+    default_target_definition_2022(player, card, &td, 2);
+    td.preferred_controller = 1 - player;
+  }
+  ptStack_6c = &td;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    iVar1 = pcStack_68->info_slot;
+    if (iVar1 == 1)
+    {
+      iVar1 = create_legacy_effect(player, card, liliana_mill_legacy);
+      pcVar4 = get_card_instance(player, iVar1);
+      pcVar4->targets[0].player = pcStack_68->parent_controller;
+      mill(player, 3);
+    }
+    else if (iVar1 == 2)
+    {
+      iVar1 = valid_target_2022(ptStack_6c);
+      if (iVar1 != 0)
+      {
+        iVar1 = count_subtype(player, -1, 0xde);
+        pump_until_eot_merge_previous_2022(pcStack_68->parent_controller, pcStack_68->parent_card,
+                                           pcStack_68->targets[0].player,
+                                           pcStack_68->targets[0].card, -iVar1, -iVar1);
+      }
+    }
+    else if (iVar1 == 3)
+    {
+      create_legacy_activate(player, card, liliana_reanimation_legacy);
+    }
+  }
+LAB_02209a8d:
+  iVar1 = planeswalker(player, card, event, 4);
+  return iVar1;
+}
+
+#endif

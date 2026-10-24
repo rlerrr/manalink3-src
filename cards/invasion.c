@@ -9028,3 +9028,220 @@ LAB_02497639:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x249e010; original cards/invasion.c:7565. */
+int card_urborg_phantom(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  cannot_block(player, card, event);
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if (((card == affected_card) && (player == affected_card_controller)) &&
+        (result = card_urborg_phantom(player, card, EVENT_CAN_ACTIVATE), result != 0))
+    {
+      if (1 - player == current_turn)
+      {
+        result = get_power(player, card);
+        check_abilities_power_2022 = check_abilities_power_2022 - result;
+        check_abilities_toughness_2022 = check_abilities_toughness_2022 + 0x3fff;
+      }
+      else
+      {
+        check_abilities_toughness_2022 = check_abilities_toughness_2022 + 0x3fff;
+      }
+    }
+  }
+  else
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 1, 0, 0, 0,
+                                              0, NULL, NULL);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      if (((current_turn == player) && (result = is_unblocked(current_turn, card), result != 0)) ||
+          ((1 - player == current_turn &&
+            (instance = get_card_instance(player, card), instance->blocking == 0xff))))
+      {
+        ai_modifier = ai_modifier + -0x19;
+      }
+      result = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0, 0, 0, 1, 0, 0, 0, 0,
+                                              NULL, NULL);
+      return result;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      instance = get_card_instance(player, card);
+      maze_of_ith_effect(instance->parent_controller, instance->parent_card,
+                         instance->parent_controller, instance->parent_card);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x249bde0; original cards/invasion.c:6869. */
+int card_scouting_trek(int player, int card, event_t event)
+{
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    test_definition_2022_t this_test;
+    new_default_test_definition_2022(&this_test, TYPE_LAND, "Select a basic land card.");
+    this_test.subtype = 0x2000;
+    this_test.no_shuffle = 1;
+    int deck_count = count_deck(player);
+    int tutored[deck_count];
+    int count = 0;
+    for (;;)
+    {
+      int selected = new_select_a_card_2022(player, player, 1, 0, 1, -1, &this_test);
+      if (selected == -1)
+        break;
+      tutored[count] = deck_ptr[player][selected];
+      ++count;
+      remove_card_from_deck(player, selected);
+    }
+    shuffle(player);
+    if (count > 0)
+    {
+      for (int i = 0; i != count + 1; ++i)
+        raw_put_iid_on_top_of_deck(player, tutored[i]);
+    }
+    if (count > 1)
+      rearrange_top_x(player, player, count);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return basic_spell(player, card, event);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x249b3a0; original cards/invasion.c:6662. */
+int card_samite_ministration(int player, int card, event_t event)
+{
+  int target_card;
+  card_instance_t *instance;
+  int result;
+  int card_00;
+  target_definition_2022_t td;
+  target_definition_2022_t td_ai;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition_2022(player, card, &td, 0xff);
+    td.preferred_controller = 1 - player;
+    td.zone = 0x1200;
+    td.illegal_abilities = 0;
+    default_target_definition_2022(player, card, &td_ai, 0);
+    td_ai.extra = damage_card;
+    get_card_instance(player, card);
+    result = counterspell_2022(player, card, EVENT_CAN_CAST, NULL, 0);
+    if (result != 0)
+    {
+      return result;
+    }
+    result = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    if (result != 0)
+    {
+      return (-(unsigned int)((land_can_be_played & 4U) == 0) & 0xffffff9e) + 99;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition_2022(player, card, &td, 0xff);
+      td.preferred_controller = 1 - player;
+      td.zone = 0x1200;
+      td.illegal_abilities = 0;
+      default_target_definition_2022(player, card, &td_ai, 0);
+      td_ai.extra = damage_card;
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance->info_slot = 0;
+        result = counterspell_2022(player, card, EVENT_CAN_CAST, NULL, 0);
+        if (result == 0)
+        {
+          generic_spell_2022(player, card, EVENT_CAST_SPELL, 0x81, &td,
+                             "Select a source, prevent all damage it will deal this turn.", 1,
+                             NULL);
+        }
+        else
+        {
+          counterspell_2022(player, card, EVENT_CAST_SPELL, NULL, 0);
+          ((unsigned char *)&instance->info_slot)[0] = 1;
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition_2022(player, card, &td, 0xff);
+    td.preferred_controller = 1 - player;
+    td.zone = 0x1200;
+    td.illegal_abilities = 0;
+    default_target_definition_2022(player, card, &td_ai, 0);
+    td_ai.extra = damage_card;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      if (instance->info_slot == 1)
+      {
+        result = counterspell_validate_2022(player, card, NULL, 0);
+      }
+      else
+      {
+        result = valid_target_2022(&td);
+      }
+      if (result != 0)
+      {
+        result = instance->targets[0].player;
+        target_card = instance->targets[0].card;
+        if (result != -1)
+        {
+          if (instance->info_slot == 1)
+          {
+            card_00 = create_legacy_effect(
+                player, card, source_damage_prevented_if_black_or_red_damage_source_controller);
+            instance = get_card_instance(player, card_00);
+            instance->targets[0].player = result;
+            instance->targets[0].card = target_card;
+          }
+          else
+          {
+            create_targetted_legacy_effect(
+                player, card, source_damage_prevented_if_black_or_red_damage_source_controller,
+                result, target_card);
+          }
+        }
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition_2022(player, card, &td, 0xff);
+    td.preferred_controller = 1 - player;
+    td.zone = 0x1200;
+    td.illegal_abilities = 0;
+    default_target_definition_2022(player, card, &td_ai, 0);
+    td_ai.extra = damage_card;
+    get_card_instance(player, card);
+  }
+  return 0;
+}
+
+#endif

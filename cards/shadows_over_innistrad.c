@@ -7978,3 +7978,22 @@ LAB_0229f537:
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x229f8c0; original cards/shadows_over_innistrad.c:81. */
+void make_devil_2022(int s_player, int s_card, int t_player, int qty, int sleight)
+{
+  token_generation_2022_t token;
+  default_token_definition_2022(s_player, s_card, 0x491c, &token);
+  token.t_player = t_player;
+  token.qty = (unsigned char)qty;
+  token.tou = 1;
+  token.no_sleight = sleight == 0;
+  token.pow = 1;
+  token.color_forced = '\x10';
+  generate_token_2022(&token);
+  return;
+}
+
+#endif

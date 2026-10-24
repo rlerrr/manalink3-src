@@ -1748,14 +1748,32 @@ int card_bloodletter(int player, int card, event_t event)
   unsigned char *pbVar4;
   int card_00;
   int *piVar5;
+  static const unsigned char native_name_fold[256] = {
+      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+      0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,
+      0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c,
+      0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,
+      0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a,
+      0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,
+      0x7a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
+      0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77,
+      0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 0x2c, 0x66, 0x84, 0x85, 0x86,
+      0x87, 0x5e, 0x25, 0x73, 0x3c, 0x8c, 0x8d, 0x7a, 0x8f, 0x90, 0x27, 0x27, 0x22, 0x22, 0x95,
+      0x2d, 0x2d, 0x7e, 0x99, 0x73, 0x3e, 0x9c, 0x9d, 0x7a, 0x79, 0x5f, 0x21, 0x24, 0x24, 0x24,
+      0x24, 0x7c, 0x25, 0x22, 0x40, 0x5e, 0x3c, 0x7e, 0x2d, 0x40, 0x7e, 0x5e, 0x2b, 0x32, 0x33,
+      0x27, 0x75, 0x26, 0x2e, 0x2c, 0x31, 0x5e, 0x3e, 0x31, 0x32, 0x33, 0x3f, 0x61, 0x61, 0x61,
+      0x61, 0x61, 0x61, 0xc6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69, 0x64, 0x6e,
+      0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2a, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xde, 0xdf, 0x61,
+      0x61, 0x61, 0x61, 0x61, 0x61, 0xe6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69,
+      0x64, 0x6e, 0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2f, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xfe,
+      0x79,
+  };
   unsigned char bVar6;
   int letter[26];
-
   bVar6 = 0;
   if (((event == EVENT_STATIC_EFFECTS) && (instance = in_play(player, card), instance != NULL)) &&
       (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar2 == 0))
   {
-
     piVar5 = letter;
     for (iVar2 = 0x1a; iVar2 != 0; iVar2 = iVar2 + -1)
     {
@@ -1774,10 +1792,9 @@ int card_bloodletter(int player, int card, event_t event)
           if (((instance != NULL) && (iVar3 = is_what(iVar2, card_00, 1), iVar3 == 0)) &&
               (iVar3 = is_what(iVar2, card_00, 0x47), iVar3 != 0))
           {
-
             iVar3 = get_card_name(iVar2, card_00);
             pbVar4 = (unsigned char *)get_card_name_by_id(iVar3);
-            bVar6 = ""[*pbVar4];
+            bVar6 = native_name_fold[*pbVar4];
             if ((bVar6 & 0xdf) == 0xc6)
             {
               letter[0] = letter[0] + 1;
@@ -1797,13 +1814,13 @@ int card_bloodletter(int player, int card, event_t event)
             if (2 < iVar3)
             {
             LAB_023051a0:
-              iVar2 = can_sacrifice_this_as_cost(player, card);
+              iVar2 = can_sacrifice_this_as_cost_2022(player, card);
               if (iVar2 == 0)
               {
                 return 0;
               }
               kill_card(player, card, KILL_SACRIFICE);
-              new_damage_all(player, card, 2, 2, 3, NULL);
+              new_damage_all_2022(player, card, 2, 2, 3, NULL);
               return 0;
             }
           }
@@ -2486,6 +2503,945 @@ int card_hungry_hungry_heifer(int player, int card, event_t event)
   }
   kill_card(player, card, KILL_SACRIFICE);
   return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2305650; original cards/unglued_unhinged.c:1769. */
+int card_the_fallen_apart(int player, int card, event_t event)
+{
+  int32_t iVar1;
+  bool bVar2;
+  bool bVar3;
+  int iVar4;
+  card_instance_t *instance;
+  const char *puVar6;
+  unsigned int uVar7;
+  const char *puVar8;
+  const char *pcStack_278;
+  int iStack_274;
+  char limbs[600];
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    instance = get_card_instance(player, card);
+    instance->targets[5].card = 0x45d40202;
+    iVar4 = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (iVar4 != 0)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    iVar4 = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (iVar4 != 0)
+      goto LAB_02305688;
+  }
+  iVar4 = damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card);
+  if (iVar4 != 0)
+  {
+    instance = get_card_instance(player, card);
+    iVar1 = instance->targets[5].card;
+    if ((short)((unsigned int)iVar1 >> 0x10) != 0x45d4)
+    {
+      return 0;
+    }
+    iStack_274 = (int)(char)((unsigned int)iVar1 >> 8);
+    bVar2 = 0 < iStack_274;
+    uVar7 = (unsigned int)(char)iVar1;
+    bVar3 = 0 < (int)uVar7;
+    if ((bVar2) || (bVar3))
+    {
+      if (ai_is_speculating == 1)
+      {
+        limbs[0] = '\0';
+      }
+      else
+      {
+        if (uVar7 == 1)
+        {
+          puVar8 = "";
+        }
+        else
+        {
+          puVar8 = "s";
+        }
+        if (iStack_274 == 1)
+        {
+          puVar6 = "";
+        }
+        else
+        {
+          puVar6 = "s";
+        }
+        sprintf(limbs, "%d arm%s, %d leg%s", iStack_274, puVar6, uVar7, puVar8);
+      }
+      pcStack_278 = limbs;
+      iVar4 =
+          dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014", "\001\003",
+                      "\001\011", pcStack_278, "Remove arm", bVar2,
+                      ((1 < iStack_274) - 1 & 0xfffffc19) + 1000, "Remove leg", (unsigned int)bVar3,
+                      ((1 < (int)uVar7) - 1 & 0xfffffc19) + 1000, 0, 0, 0, 0);
+      if (iVar4 == 0)
+      {
+        if (bVar2)
+        {
+          iStack_274 = iStack_274 + -1;
+        }
+      }
+      else
+      {
+        uVar7 = (uVar7 - 1) + (unsigned int)!bVar3;
+      }
+      instance->targets[5].card = iStack_274 << 8 | uVar7 | 0x45d40000;
+    }
+  }
+LAB_02305688:
+  if ((((event == EVENT_ABILITIES) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((instance = in_play(player, card),
+        instance != NULL &&
+            (iVar4 = is_humiliated_for_ability(player, card, AL_STATIC), iVar4 == 0))))
+  {
+    iVar1 = instance->targets[5].card;
+    if ((short)((unsigned int)iVar1 >> 0x10) == 0x45d4)
+    {
+      if ((char)iVar1 < '\x01')
+      {
+        cannot_attack_2022(player, card, EVENT_ABILITIES);
+      }
+      if ('\0' < (char)((unsigned int)iVar1 >> 8))
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      cannot_attack_2022(player, card, EVENT_ABILITIES);
+    }
+    cannot_block(player, card, EVENT_ABILITIES);
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2305d40; original cards/unglued_unhinged.c:2189. */
+int card_symbol_status(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  const Rarities *pRVar4;
+  char *pcVar5;
+  int card_00;
+  int any_expansion_symbols;
+  int no_early_core_sets;
+  char expansions[198];
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    expansions[0] = '\0';
+    expansions[1] = '\0';
+    expansions[2] = '\0';
+    expansions[3] = '\0';
+    expansions[4] = '\0';
+    expansions[5] = '\0';
+    pcVar5 = expansions + 6;
+    for (iVar1 = 0x30; iVar1 != 0; iVar1 = iVar1 + -1)
+    {
+      pcVar5[0] = '\0';
+      pcVar5[1] = '\0';
+      pcVar5[2] = '\0';
+      pcVar5[3] = '\0';
+      pcVar5 = pcVar5 + 4;
+    }
+    get_config_data(0xffffffff, 1, &any_expansion_symbols);
+    if (any_expansion_symbols != 0)
+    {
+      get_config_data(3, 2, &no_early_core_sets);
+      iVar1 = 0;
+      do
+      {
+        card_00 = 0;
+        if (0 < active_cards_count[iVar1])
+        {
+          do
+          {
+            instance = in_play(iVar1, card_00);
+            if ((instance != NULL) && (iVar3 = is_what(iVar1, card_00, 0x47), iVar3 != 0))
+            {
+              iVar3 = get_id(iVar1, card_00);
+              pRVar4 = get_rarity(iVar3);
+              if (pRVar4->default_expansion < 0xc6)
+              {
+                expansions[pRVar4->default_expansion] = '\x01';
+              }
+            }
+            card_00 = card_00 + 1;
+          } while (card_00 < active_cards_count[iVar1]);
+        }
+        iVar1 = iVar1 + 1;
+      } while (iVar1 != 2);
+      if (no_early_core_sets != 0)
+      {
+        expansions[0x12] = '\0';
+        expansions[0xb] = '\0';
+        expansions[7] = '\0';
+        expansions[2] = 0;
+        expansions[3] = 0;
+        expansions[4] = 0;
+      }
+      pcVar5 = expansions + 1;
+      iVar1 = 0;
+      do
+      {
+        iVar1 = (iVar1 + 1) - (unsigned int)(*pcVar5 == '\0');
+        pcVar5 = pcVar5 + 1;
+      } while (pcVar5 != expansions + 198);
+      if (0 < iVar1)
+      {
+        generate_tokens_by_id_2022(player, card, 0x4d58, iVar1);
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  iVar1 = basic_spell(player, card, event);
+  return iVar1;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2302cb0; original cards/unglued_unhinged.c:227. */
+static int txtfx_name_2022(int player, int card, int marker)
+{
+  unsigned int uVar1;
+  card_instance_t *instance;
+  unsigned int uVar3;
+
+  instance = get_displayed_card_instance(player, card);
+  instance = get_displayed_card_instance((int)instance->damage_target_player,
+                                         instance->damage_target_card);
+  uVar1 = instance->targets[5].player;
+  uVar3 = uVar1 & 0xffff;
+  if (uVar1 >> 0x10 != marker)
+  {
+    uVar3 = 0x7fffffff;
+  }
+  return uVar3;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2302a30; original cards/unglued_unhinged.c:1547. */
+static int num_letters_permanents_names_include(int player)
+{
+  static const unsigned char native_name_fold[256] = {
+      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+      0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d,
+      0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c,
+      0x2d, 0x2e, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,
+      0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a,
+      0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,
+      0x7a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
+      0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77,
+      0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 0x2c, 0x66, 0x84, 0x85, 0x86,
+      0x87, 0x5e, 0x25, 0x73, 0x3c, 0x8c, 0x8d, 0x7a, 0x8f, 0x90, 0x27, 0x27, 0x22, 0x22, 0x95,
+      0x2d, 0x2d, 0x7e, 0x99, 0x73, 0x3e, 0x9c, 0x9d, 0x7a, 0x79, 0x5f, 0x21, 0x24, 0x24, 0x24,
+      0x24, 0x7c, 0x25, 0x22, 0x40, 0x5e, 0x3c, 0x7e, 0x2d, 0x40, 0x7e, 0x5e, 0x2b, 0x32, 0x33,
+      0x27, 0x75, 0x26, 0x2e, 0x2c, 0x31, 0x5e, 0x3e, 0x31, 0x32, 0x33, 0x3f, 0x61, 0x61, 0x61,
+      0x61, 0x61, 0x61, 0xc6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69, 0x64, 0x6e,
+      0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2a, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xde, 0xdf, 0x61,
+      0x61, 0x61, 0x61, 0x61, 0x61, 0xe6, 0x63, 0x65, 0x65, 0x65, 0x65, 0x69, 0x69, 0x69, 0x69,
+      0x64, 0x6e, 0x6f, 0x6f, 0x6f, 0x6f, 0x6f, 0x2f, 0x6f, 0x75, 0x75, 0x75, 0x75, 0x79, 0xfe,
+      0x79,
+  };
+  unsigned char bVar1;
+  card_instance_t *instance;
+  int iVar3;
+  unsigned char *pbVar4;
+  int iVar5;
+  char *pcVar6;
+  char letter[26];
+  letter[0] = '\0';
+  letter[1] = '\0';
+  letter[2] = '\0';
+  letter[3] = '\0';
+  letter[4] = '\0';
+  letter[5] = '\0';
+  pcVar6 = letter + 6;
+  for (iVar5 = 5; iVar5 != 0; iVar5 = iVar5 + -1)
+  {
+    pcVar6[0] = '\0';
+    pcVar6[1] = '\0';
+    pcVar6[2] = '\0';
+    pcVar6[3] = '\0';
+    pcVar6 = pcVar6 + 4;
+  }
+  if (active_cards_count[player] < 1)
+  {
+    letter[0] = '\0';
+  }
+  else
+  {
+    iVar5 = 0;
+    do
+    {
+      instance = in_play(player, iVar5);
+      if (instance != NULL)
+      {
+        iVar3 = is_what(player, iVar5, 0x47);
+        if (iVar3 != 0)
+        {
+          iVar3 = get_card_name(player, iVar5);
+          pbVar4 = (unsigned char *)get_card_name_by_id(iVar3);
+          bVar1 = *pbVar4;
+          while (bVar1 != 0)
+          {
+            pbVar4 = pbVar4 + 1;
+            bVar1 = native_name_fold[bVar1];
+            if ((bVar1 & 0xdf) == 0xc6)
+            {
+              letter[0] = '\x01';
+              letter[4] = '\x01';
+            }
+            else if ((unsigned char)(bVar1 + 0x9f) < 0x1a)
+            {
+              letter[bVar1 - 0x61] = 1;
+            }
+            bVar1 = *pbVar4;
+          }
+        }
+      }
+      iVar5 = iVar5 + 1;
+    } while (iVar5 < active_cards_count[player]);
+  }
+  iVar5 = 0;
+  for (iVar3 = 0; iVar3 < 26; ++iVar3)
+  {
+    iVar5 += letter[iVar3] != 0;
+  }
+  return iVar5;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2302d00; original cards/unglued_unhinged.c:690. */
+static int fx_spark_fiend(int player, int card, event_t event)
+{
+  int result;
+
+  if (event == EVENT_SET_LEGACY_EFFECT_NAME)
+  {
+    result = txtfx_name_2022(player, card, 0x45c4);
+    if (result != 0x7fffffff)
+    {
+      if (result != 0x2f02)
+      {
+        sprintf(set_legacy_effect_name_addr, "%d", result);
+        return 0;
+      }
+      strncpy(set_legacy_effect_name_addr, "Don\'t roll", 0xb);
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2302d80; original cards/unglued_unhinged.c:2416. */
+static int fx_togglodyte(int player, int card, event_t event)
+{
+  int result;
+  const char *argument2;
+
+  if (event == EVENT_SET_LEGACY_EFFECT_NAME)
+  {
+    result = txtfx_name_2022(player, card, 0x45d8);
+    if (result != 0x7fffffff)
+    {
+      argument2 = "On";
+      if (result == 0)
+      {
+        argument2 = "Off";
+      }
+      strcpy(set_legacy_effect_name_addr, argument2);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2303c00; original cards/unglued_unhinged.c:702. */
+int card_spark_fiend(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int val;
+  card_instance_t *instance;
+  unsigned int uVar3;
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    upkeep_trigger_ability(player, card, event, player);
+    if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+    {
+      instance = get_card_instance(player, card);
+      uVar1 = instance->targets[5].player;
+      if ((short)(uVar1 >> 0x10) == 0x45c4)
+      {
+        if ((short)uVar1 != 0x2f02)
+        {
+          uVar3 = roll_xd6t(player, 2, player, card, -1, -1);
+          if (uVar3 == 7)
+          {
+            kill_card(player, card, KILL_SACRIFICE);
+          }
+          else if (uVar3 == (uVar1 & 0xffff))
+          {
+            make_txtfx(player, card, fx_spark_fiend, CARD_ID_SPARK_FIEND, 0x2f02);
+          }
+        }
+      }
+      else
+      {
+        roll_xd6t(player, 2, player, card, -1, -1);
+      }
+    }
+    return 0;
+  }
+  val = roll_xd6t(player, 2, player, card, -1, -1);
+  if ((val - 2U < 2) || (val == 0xc))
+  {
+    kill_card(player, card, KILL_SACRIFICE);
+  }
+  else
+  {
+    if ((val - 7U & 0xfffffffb) == 0)
+    {
+      val = 0x2f02;
+    }
+    make_txtfx(player, card, fx_spark_fiend, CARD_ID_SPARK_FIEND, val);
+  }
+  upkeep_trigger_ability(player, card, EVENT_ETB, player);
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2306480; original cards/unglued_unhinged.c:2423. */
+int card_togglodyte(int player, int card, event_t event)
+{
+  int32_t iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  unsigned int val;
+
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    make_txtfx(player, card, fx_togglodyte, CARD_ID_TOGGLODYTE, 1);
+    iVar2 = new_specific_spell_played(player, card, EVENT_RESOLVE_SPELL, 2, 2, NULL);
+    if (iVar2 == 0)
+      goto LAB_023064d4;
+  LAB_02306640:
+    instance = get_card_instance(player, card);
+    iVar1 = instance->targets[5].player;
+    if ((short)((unsigned int)iVar1 >> 0x10) == 0x45d8)
+    {
+      val = (unsigned int)((short)iVar1 == 0);
+    }
+    else
+    {
+      val = 1;
+    }
+    make_txtfx(player, card, fx_togglodyte, CARD_ID_TOGGLODYTE, val);
+  }
+  else
+  {
+    iVar2 = new_specific_spell_played(player, card, event, 2, 2, NULL);
+    if (iVar2 != 0)
+      goto LAB_02306640;
+  }
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    iVar2 = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (iVar2 == 0)
+    {
+      instance = get_card_instance(player, card);
+      iVar1 = instance->targets[5].player;
+      if (((short)((unsigned int)iVar1 >> 0x10) == 0x45d8) && ((short)iVar1 == 0))
+      {
+        cannot_attack_2022(player, card, EVENT_ABILITIES);
+        cannot_block(player, card, EVENT_ABILITIES);
+      }
+    }
+  }
+LAB_023064d4:
+  instance = combat_damage_being_prevented(event);
+  if (((instance != NULL) && (instance->damage_source_player == player)) &&
+      (instance->damage_source_card == card))
+  {
+    iVar2 = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (iVar2 == 0)
+    {
+      instance = get_card_instance(player, card);
+      iVar1 = instance->targets[5].player;
+      if (((short)((unsigned int)iVar1 >> 0x10) == 0x45d8) && ((short)iVar1 == 0))
+      {
+        prevent_damage(affected_card_controller, affected_card, -1);
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2304fc0; original cards/unglued_unhinged.c:1579. */
+int card_now_i_know_my_abcs(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  if ((trigger_condition == 0xc9) && (event - EVENT_TRIGGER < 2))
+  {
+    if (((current_turn == player) &&
+         (iVar1 = num_letters_permanents_names_include(player), 0x19 < iVar1)) &&
+        (iVar1 = upkeep_trigger(player, card, event), iVar1 != 0))
+    {
+      lose_the_game_2022(1 - player);
+    }
+  }
+  else if ((event == EVENT_SHOULD_AI_PLAY) && (current_phase == 0x1f))
+  {
+    iVar2 = num_letters_permanents_names_include(player);
+    iVar1 = iVar2 + -10;
+    if (0 < iVar1)
+    {
+      iVar3 = iVar1;
+      if (player != 1)
+      {
+        iVar3 = 10 - iVar2;
+      }
+      ai_modifier = ai_modifier + iVar1 * iVar3;
+    }
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2302de0; original cards/unglued_unhinged.c:39. */
+void get_rules_text(char *out_buf, int player, int card, int remove_reminder_text)
+{
+  char cVar1;
+  char saved_code;
+  int result;
+  char *pcVar5;
+  const char *pcVar7;
+  char cVar8;
+  const char *pcVar11;
+  const char *pcVar12;
+  char *pcVar13 = out_buf;
+  char *pcVar14;
+  char dfcbackpat1[300];
+  char dfcbackpat2[300];
+
+  result = get_id(player, card);
+  if (result == 0x33c4)
+  {
+    *out_buf = '\0';
+    return;
+  }
+  const char *orig_rules = cards_ptr[result]->rules_text;
+  unsigned int rules_size = strlen(orig_rules) + 1;
+  char rules[rules_size];
+  memcpy(rules, orig_rules, rules_size);
+  pcVar12 = rules;
+  pcVar5 = strstr(rules, "\n--FLIP--\n");
+  if (pcVar5 != NULL)
+  {
+    *pcVar5 = '\0';
+  }
+  dfcbackpat1[0] = '\n';
+  dfcbackpat1[1] = '(';
+  dfcbackpat1[2] = '\0';
+  strcpy(dfcbackpat1 + 2, cards_ptr[result + 1]->name);
+  strcpy(dfcbackpat2, dfcbackpat1);
+  strcat(dfcbackpat1, " - ");
+  strcat(dfcbackpat2, ")");
+  pcVar5 = strstr(rules, dfcbackpat1);
+  if (pcVar5 != NULL)
+  {
+    *pcVar5 = '\0';
+  }
+  pcVar5 = strstr(rules, dfcbackpat2);
+  if (pcVar5 != NULL)
+  {
+    *pcVar5 = '\0';
+  }
+  cVar8 = *pcVar12;
+  pcVar5 = out_buf + 1;
+LAB_02302f4a:
+  pcVar7 = pcVar12 + 1;
+  *out_buf = cVar8;
+  pcVar11 = pcVar12;
+  pcVar13 = pcVar5;
+  pcVar14 = out_buf;
+  if (cVar8 == '(')
+    goto LAB_02302f6f;
+  while (cVar8 != '|')
+  {
+    pcVar12 = pcVar7;
+    out_buf = pcVar13;
+    if (cVar8 == '\0')
+    {
+      return;
+    }
+    while (true)
+    {
+      cVar8 = pcVar11[1];
+      pcVar13 = out_buf + 1;
+      *out_buf = cVar8;
+      pcVar7 = pcVar12 + 1;
+      pcVar11 = pcVar12;
+      pcVar14 = out_buf;
+      if (cVar8 != '(')
+        break;
+    LAB_02302f6f:
+      pcVar12 = pcVar7;
+      out_buf = pcVar13;
+      if (remove_reminder_text != 0)
+      {
+        *pcVar14 = '\0';
+        pcVar5 = strchr(pcVar7, ')');
+        if (pcVar5 == NULL)
+        {
+          return;
+        }
+        pcVar12 = pcVar5 + 1;
+        cVar8 = pcVar5[1];
+        pcVar5 = pcVar13;
+        out_buf = pcVar14;
+        goto LAB_02302f4a;
+      }
+    }
+  }
+  cVar8 = pcVar11[1];
+  pcVar12 = pcVar7;
+  pcVar5 = pcVar13;
+  switch (cVar8)
+  {
+  case '/':
+    out_buf[0] = 'o';
+    out_buf[1] = 'r';
+    cVar8 = pcVar11[2];
+    pcVar12 = pcVar11 + 2;
+    pcVar5 = pcVar13 + 1;
+    out_buf = pcVar13;
+    goto LAB_02302f4a;
+  case '0':
+  case '3':
+  case '4':
+  case '5':
+  case '6':
+  case '7':
+  case '8':
+  case '9':
+  case 'A':
+  case 'C':
+  case 'E':
+  case 'I':
+  case 'L':
+  case 'Q':
+  case 'S':
+  case 'T':
+  case 'X':
+    cVar8 = pcVar11[2];
+    *out_buf = '\0';
+    pcVar12 = pcVar11 + 2;
+    goto LAB_02302f4a;
+  case '1':
+    cVar8 = pcVar11[2];
+    *out_buf = '\0';
+    if ((unsigned char)(cVar8 - 0x30U) < 10)
+    {
+    code_r0x0230309b:
+      cVar8 = pcVar11[3];
+      pcVar12 = pcVar11 + 3;
+      goto LAB_02302f4a;
+    }
+    break;
+  case '2':
+    cVar8 = pcVar11[2];
+    *out_buf = '\0';
+    saved_code = cVar8;
+    pcVar12 = strchr("0BUGRW", (int)cVar8);
+    cVar8 = saved_code;
+    if (pcVar12 != NULL)
+      goto code_r0x0230309b;
+    break;
+  default:
+    goto LAB_02303000;
+  case 'B':
+  case 'G':
+  case 'R':
+  case 'U':
+  case 'W':
+    cVar1 = pcVar11[2];
+    *out_buf = '\0';
+    if (cVar8 == cVar1)
+    {
+      result = 1;
+    }
+    else
+    {
+      pcVar12 = strchr("BUGRW", (int)cVar1);
+      result = (pcVar12 != (char *)0) + 1;
+    }
+    pcVar12 = pcVar7 + result;
+    cVar8 = *pcVar12;
+    goto LAB_02302f4a;
+  case 'H':
+    cVar8 = pcVar11[2];
+    *out_buf = '\0';
+    if ((unsigned char)(cVar8 - 0x31U) < 2)
+      goto code_r0x0230309b;
+    break;
+  case 'P':
+    cVar1 = pcVar11[2];
+    pcVar12 = pcVar7;
+    pcVar7 = strchr("BUGRW", (int)cVar1);
+    if (pcVar7 != NULL)
+    {
+      *out_buf = '\0';
+      goto code_r0x0230309b;
+    }
+    goto LAB_02303000;
+  case '|':
+    goto code_r0x0230305c;
+  }
+  pcVar12 = pcVar11 + 2;
+  goto LAB_02302f4a;
+code_r0x0230305c:
+  cVar8 = pcVar11[2];
+  pcVar12 = pcVar11 + 2;
+  pcVar5 = pcVar13 + 1;
+  out_buf = pcVar13;
+  goto LAB_02302f4a;
+LAB_02303000:
+  pcVar5 = pcVar13 + 1;
+  out_buf = pcVar13;
+  goto LAB_02302f4a;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2305a70; original cards/unglued_unhinged.c:1989. */
+int card_punctuate(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  const char *pcVar3;
+  const char *punct;
+  target_definition_2022_t td;
+  char rules[3000];
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition_2022(player, card, &td, 2);
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          result = valid_target_2022(&td);
+          if (result != 0)
+          {
+            instance = get_card_instance(player, card);
+            get_rules_text(rules, instance->targets[0].player, instance->targets[0].card, 0);
+            pcVar3 = rules;
+            result = 0;
+            while ((punct = strpbrk(pcVar3, "!?,;:\226\227()/\"\224\223'\221\222&.")) != NULL)
+            {
+              pcVar3 = punct + 1;
+              result = result + 1;
+            }
+            damage_creature(instance->targets[0].player, instance->targets[0].card, result / 2,
+                            player, card);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_02305acb;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition_2022(player, card, &td, 2);
+LAB_02305acb:
+  result = generic_spell_2022(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2305c30; original cards/unglued_unhinged.c:2072. */
+int card_elvish_house_party(int player, int card, event_t event)
+{
+  int result;
+  if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      result = localtime_hour();
+      result = result % 0xc;
+      if (result == 0)
+      {
+        result = 0xc;
+      }
+      set_characteristic_pt(result);
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2305250; original cards/unglued_unhinged.c:1679. */
+int card_booster_tutor(int player, int card, event_t event)
+{
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    EXPANSION_t expansion = (EXPANSION_t)-1;
+    if (ai_is_speculating == 1 || (player == 1 && (trace_mode & 2) == 0))
+    {
+      expansion = EXPANSION_ARABIAN_NIGHTS;
+      announce_expansion_choice(player, card, expansion);
+    }
+    else if ((trace_mode & 2) != 0 && player != 0)
+    {
+      EXE_FN(int, 0x4a70c0, int, int)(1, 26);
+      expansion = dblword_628C10;
+      announce_expansion_choice(player, card, expansion);
+    }
+    else
+    {
+      choose_packs(1, PACK_ALLOW_BOOSTER, &expansion, NULL);
+      if ((trace_mode & 2) != 0)
+      {
+        dblword_628C10 = expansion;
+        byte_628C0C = 26;
+        EXE_FN(int, 0x4a6bc0, int, int)(0, 26);
+      }
+    }
+    if (is_valid_pack(expansion, 1))
+    {
+      int capacity = pack_size(expansion, 1);
+      int csvids[capacity];
+      int iids[capacity];
+      int num_csvids = make_pack_2022(expansion, 1, csvids);
+      for (int i = 0; i < num_csvids; ++i)
+        iids[i] = get_internal_card_id_from_csv_id(csvids[i]);
+      if (ai_is_speculating != 1 && player == 1)
+        show_deck_2022(0, iids, capacity, "Booster contents", 0, ENGINE_DONE_LABEL);
+      test_definition_2022_t test;
+      _Static_assert(sizeof(test) == 216, "native Booster Tutor filter");
+      default_test_definition_2022(&test, 0xff);
+      int selected;
+      do
+      {
+        selected = select_card_from_zone_2022(player, player, iids, capacity, 1, 1, -1, &test);
+      } while (selected < 0 || selected >= capacity);
+      int added = add_card_to_hand(player, iids[selected]);
+      if (player == 1)
+        reveal_card(1, card, 1, added);
+    }
+    kill_card(player, card, 2);
+  }
+  return basic_spell(player, card, event);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2304e30; original cards/unglued_unhinged.c:1497. */
+int card_mise(int player, int card, event_t event)
+{
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    int top = deck_ptr[player][0];
+    uint32_t csvid;
+    if (ai_is_speculating == 1 || (player == 1 && (trace_mode & 2) == 0))
+    {
+      csvid = 0x2ee2;
+      if (top != -1 && !is_what(-1, top, 1))
+        csvid = (uint16_t)cards_data[top].id;
+    }
+    else
+    {
+      test_definition_2022_t test;
+      new_default_test_definition_2022(&test, 1, "");
+      test.type_flag = 1;
+      csvid = choose_a_card_test_ct("Choose a nonland card name.", &test, (color_test_t)-1,
+                                    (type_t)~TYPE_LAND);
+    }
+    if (player == 1 || (trace_mode & 2) != 0)
+      look_at_iid(player, card, get_internal_card_id_from_csv_id(csvid), "chooses:");
+    if (top != -1)
+    {
+      reveal_card_iid(player, card, top);
+      if ((uint16_t)cards_data[top].id == csvid)
+        draw_cards(player, 3);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return basic_spell(player, card, event);
 }
 
 #endif

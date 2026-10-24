@@ -4097,3 +4097,50 @@ int card_yixlid_jailer(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2571c90; original cards/future_sight.c:2924. */
+static int sehts_tiger_legacy(int player, int card, event_t event)
+{
+  if (in_play(player, card) && !is_humiliated_for_ability(player, card, AL_STATIC))
+    player_bits[player] |= 0x4000000;
+  if (event == EVENT_PROT_MISC)
+  {
+    if (affected_card_controller == player && affected_card == -1)
+    {
+      if (((uint32_t)event_result >> 24) != 6)
+      {
+        uint32_t color = get_color(attacking_card_controller, attacking_card);
+        if ((get_card_instance(player, card)->targets[1].card & color) == 0)
+          return 0;
+      }
+      event_result |= 1;
+    }
+  }
+  else if (event == EVENT_BEGIN_TURN)
+    kill_card(player, card, KILL_EXILE);
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x257a9d0; original cards/future_sight.c:2940. */
+int card_sehts_tiger_2022(int player, int card, event_t event)
+{
+  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    int legacy = create_legacy_effect(player, card, sehts_tiger_legacy);
+    int color = get_deck_color(player, 1 - player);
+    color = choose_a_color(player, color);
+    get_card_instance(player, legacy)->targets[1].card = 1u << ((uint32_t)color & 31);
+  }
+  else if (event == EVENT_CLEANUP)
+    get_card_instance(player, card)->info_slot = 0;
+  return flash(player, card, event);
+}
+
+#endif

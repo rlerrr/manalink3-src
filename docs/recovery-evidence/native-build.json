@@ -4,13 +4,516 @@
   "build_command": "powershell -ExecutionPolicy Bypass -File tools/build-recovery.ps1",
   "warnings_as_errors": false,
   "object_inputs": {
-    ".o": 164,
+    ".o": 165,
     ".obj": 2,
     ".ao": 20
   },
   "veneer_object": "ManalinkEh.ao; loaded exactly once by manalink.lds",
   "private_embalm_workers_verified": 1,
   "private_memorial_helpers_verified": 6,
+  "private_spell_cost_helpers_verified": 2,
+  "private_spell_cost_symbols": {
+    "modify_cost_for_improvise": "_modify_cost_for_improvise",
+    "cast_spell_with_improvise_2022_impl": "_cast_spell_with_improvise_2022_impl.constprop.0"
+  },
+  "private_aer_free_helpers_verified": 1,
+  "private_card_batch_helpers_verified": 1,
+  "private_subtype_result_globals_verified": 1,
+  "private_combat_ai_callbacks_verified": 2,
+  "private_casting_reveal_helpers_verified": 3,
+  "private_casting_reveal_symbols": {
+    "spectacle_2022_impl": "_spectacle_2022_impl",
+    "discard_card_by_int_id_2022_impl": "_discard_card_by_int_id_2022_impl"
+  },
+  "private_casting_reveal_inlined": {
+    "amplify_2022_impl": {
+      "parent": "card_aven_warhawk",
+      "address": "0x22d12e8",
+      "bytes": 213,
+      "sha256": "672e8e0c2abfe81d6b43ac00a39c5f7a458e5b726d532d1cc21b432e51b178fa",
+      "amount": 1,
+      "callees": [
+        "add_counters_from_source",
+        "add_state",
+        "get_card_name_by_instance",
+        "in_play",
+        "new_default_test_definition_2022",
+        "remove_state",
+        "reveal_cards_from_your_hand_2022",
+        "snprintf"
+      ]
+    }
+  },
+  "private_grave_pump_callbacks_verified": 1,
+  "private_copy_exile_callbacks_verified": 1,
+  "private_graveyard_selection_callbacks_verified": 4,
+  "private_hogaak_workers_verified": 1,
+  "private_graveyard_selection_symbols": {
+    "breach_effect": {
+      "source": "cards/theros_beyond_death.c",
+      "address": "0x25581b0",
+      "end": "0x2558236",
+      "coff_name": "_breach_effect"
+    },
+    "chainers_legacy": {
+      "source": "cards/commander_2019.c",
+      "address": "0x20f1bf0",
+      "end": "0x20f1f53",
+      "coff_name": "_chainers_legacy"
+    },
+    "liliana_reanimation_legacy": {
+      "source": "cards/m19.c",
+      "address": "0x2314ba0",
+      "end": "0x2314f6c",
+      "coff_name": "_liliana_reanimation_legacy"
+    },
+    "rfg_at_end_of_combat": {
+      "source": "cards/commander_2018.c",
+      "address": "0x20eb2b0",
+      "end": "0x20eb30d",
+      "coff_name": "_rfg_at_end_of_combat"
+    }
+  },
+  "migrated_counter_eligibility_helpers_verified": 1,
+  "private_flag_target_callbacks_verified": 2,
+  "public_cycling_state_globals_verified": 1,
+  "drawcard_config_imports_verified": 1,
+  "mode_counter_tail_thunks_verified": {
+    "raw_counter_activated_ability_2022": {
+      "address": "0x26a3960",
+      "target": "0x26809d0",
+      "bytes": "e96bd0fdff",
+      "retained_target": "raw_counter_activated_ability"
+    }
+  },
+  "outlined_proliferate_symbols_verified": {
+    "proliferate_manual_single_permanent_or_player_2022": [
+      {
+        "coff_name": "_proliferate_manual_single_permanent_or_player_2022.part.0",
+        "address": "0x24a3290",
+        "storage": 3
+      },
+      {
+        "coff_name": "_proliferate_manual_single_permanent_or_player_2022",
+        "address": "0x24b5ca0",
+        "storage": 2
+      }
+    ]
+  },
+  "native_pack_tables_verified": 44,
+  "private_pack_utility_symbols": {
+    "add_to_csvid_choices_2022": "_add_to_csvid_choices_2022",
+    "add_card_to_pack_2022": "_add_card_to_pack_2022"
+  },
+  "private_pack_utility_unreferenced": [],
+  "native_pack_weight_tables_verified": 18,
+  "private_pack_generator_symbols": {
+    "make_pack_normal_2022": "_make_pack_normal_2022"
+  },
+  "private_pack_once_buffers": [
+    {
+      "address": "0x278b938",
+      "bytes": 4,
+      "coff_name": "_once.39347",
+      "source": "functions/packs.c",
+      "function": "test_packs"
+    }
+  ],
+  "private_pack_dialog_symbols": {
+    "dlgproc_choose_a_pack": "_dlgproc_choose_a_pack@16"
+  },
+  "private_pack_dialog_statics": [
+    {
+      "name": "idx",
+      "function": "choose_packs",
+      "address": "0x2714d38",
+      "bytes": 4,
+      "coff_name": "_idx.96745"
+    },
+    {
+      "name": "winbk_questn",
+      "function": "dlgproc_choose_a_pack",
+      "address": "0x278b930",
+      "bytes": 4,
+      "coff_name": "_winbk_questn.96663"
+    },
+    {
+      "name": "expansion_names",
+      "function": "dlgproc_choose_a_pack",
+      "address": "0x278b920",
+      "bytes": 4,
+      "coff_name": "_expansion_names.96664"
+    },
+    {
+      "name": "brush",
+      "function": "dlgproc_choose_a_pack",
+      "address": "0x278b92c",
+      "bytes": 4,
+      "coff_name": "_brush.96665"
+    },
+    {
+      "name": "pen1",
+      "function": "dlgproc_choose_a_pack",
+      "address": "0x278b928",
+      "bytes": 4,
+      "coff_name": "_pen1.96666"
+    },
+    {
+      "name": "pen2",
+      "function": "dlgproc_choose_a_pack",
+      "address": "0x278b924",
+      "bytes": 4,
+      "coff_name": "_pen2.96667"
+    },
+    {
+      "name": "args",
+      "function": "dlgproc_choose_a_pack",
+      "address": "0x278b934",
+      "bytes": 4,
+      "coff_name": "_args.96668"
+    }
+  ],
+  "native_pack_dialog_template_bytes_verified": 294,
+  "pack_dialog_api_imports_verified": {
+    "blt_expansion_symbol": "Drawcardlib.dll",
+    "BitBlt": "GDI32.dll",
+    "CreatePen": "GDI32.dll",
+    "CreateSolidBrush": "GDI32.dll",
+    "DeleteObject": "GDI32.dll",
+    "ExtTextOutA": "GDI32.dll",
+    "GetStockObject": "GDI32.dll",
+    "GetTextMetricsA": "GDI32.dll",
+    "RestoreDC": "GDI32.dll",
+    "SaveDC": "GDI32.dll",
+    "SetBkColor": "GDI32.dll",
+    "SetTextColor": "GDI32.dll",
+    "EnterCriticalSection": "KERNEL32.dll",
+    "LeaveCriticalSection": "KERNEL32.dll",
+    "DialogBoxIndirectParamA": "USER32.dll",
+    "DrawFocusRect": "USER32.dll",
+    "EndDialog": "USER32.dll",
+    "FillRect": "USER32.dll",
+    "GetClientRect": "USER32.dll",
+    "GetDlgItem": "USER32.dll",
+    "GetFocus": "USER32.dll",
+    "GetSysColor": "USER32.dll",
+    "GetSysColorBrush": "USER32.dll",
+    "SendDlgItemMessageA": "USER32.dll",
+    "SendMessageA": "USER32.dll",
+    "SetDlgItemTextA": "USER32.dll",
+    "SetFocus": "USER32.dll",
+    "ShowWindow": "USER32.dll"
+  },
+  "alternate_casting_filter_abi_bytes": {
+    "if_a_card_would_be_put_into_graveyard_from_anywhere_exile_it_instead_2022": 216,
+    "if_a_card_would_be_put_into_graveyard_from_anywhere_exile_it_instead": 208,
+    "if_a_card_would_be_put_into_graveyard_from_play_exile_it_instead": 208,
+    "if_a_card_would_be_put_into_graveyard_from_library_do_something_instead": 208,
+    "if_a_card_would_be_put_into_graveyard_from_anywhere_but_library_do_something_instead": 208,
+    "if_a_card_would_be_put_into_graveyard_from_play_exile_it_instead_2022": 216,
+    "if_a_card_would_be_put_into_graveyard_from_library_do_something_instead_2022": 216,
+    "if_a_card_would_be_put_into_graveyard_from_anywhere_but_library_do_something_instead_2022": 216
+  },
+  "alternate_casting_vla_shapes": {
+    "card_as_foretold": {
+      "source": "cards/amonkhet.c",
+      "rows": 2,
+      "element_bytes": 4,
+      "dynamic_bound_form": null,
+      "dynamic_bound_reference": null,
+      "bound_evidence": "GCC omits this hand-bound value; source declaration and original native probe/scale are checked by provenance"
+    },
+    "card_muldrotha_the_gravetide": {
+      "source": "cards/dominaria.c",
+      "rows": 2,
+      "element_bytes": 4,
+      "dynamic_bound_form": "DW_FORM_ref4",
+      "dynamic_bound_reference": 48563,
+      "bound_evidence": "DWARF runtime reference"
+    },
+    "card_jodah_archmage_eternal": {
+      "source": "cards/dominaria.c",
+      "rows": 2,
+      "element_bytes": 4,
+      "dynamic_bound_form": null,
+      "dynamic_bound_reference": null,
+      "bound_evidence": "GCC omits this hand-bound value; source declaration and original native probe/scale are checked by provenance"
+    },
+    "card_abandoned_sarcophagus": {
+      "source": "cards/hour_of_devastation.c",
+      "rows": 2,
+      "element_bytes": 4,
+      "dynamic_bound_form": "DW_FORM_ref4",
+      "dynamic_bound_reference": 580906,
+      "bound_evidence": "DWARF runtime reference"
+    },
+    "card_lurrus_of_the_dream_den": {
+      "source": "cards/ikoria.c",
+      "rows": 2,
+      "element_bytes": 4,
+      "dynamic_bound_form": "DW_FORM_ref4",
+      "dynamic_bound_reference": 42825,
+      "bound_evidence": "DWARF runtime reference"
+    },
+    "card_fires_of_invention": {
+      "source": "cards/throne_of_eldraine.c",
+      "rows": 2,
+      "element_bytes": 4,
+      "dynamic_bound_form": null,
+      "dynamic_bound_reference": null,
+      "bound_evidence": "GCC omits this hand-bound value; source declaration and original native probe/scale are checked by provenance"
+    }
+  },
+  "retained_havengul_attachment_symbol": "_havengul_lich_legacy",
+  "private_havengul_symbols": {
+    "can_cast_this_havengul_2022": "_can_cast_this_havengul_2022",
+    "can_cast_creature_havengul_2022": "_can_cast_creature_havengul_2022.constprop.0",
+    "find_attached_havengul_legacy_2022": "_find_attached_havengul_legacy_2022",
+    "spell_has_flashback_legacy_for_hl": "_spell_has_flashback_legacy_for_hl",
+    "can_use_stolen_havengul_2022": "_can_use_stolen_havengul_2022"
+  },
+  "havengul_storage_bytes": {
+    "test": 216,
+    "act_array": {
+      "elements": 8,
+      "element_bytes": 4
+    },
+    "this_test": 216
+  },
+  "havengul_utility_exe_boundaries": {
+    "mana_producer_fixed_2022": {
+      "exe_targets": [
+        "47b6c0"
+      ]
+    },
+    "show_deck_force_expansion_2022": {
+      "exe_targets": [
+        "471d60",
+        "479360"
+      ]
+    }
+  },
+  "private_legacy_family_symbols": {
+    "bruna_ability": "_bruna_ability",
+    "is_damaging_stored_creature": "_is_damaging_stored_creature",
+    "toshiro_effect": "_toshiro_effect",
+    "sehts_tiger_legacy": "_sehts_tiger_legacy"
+  },
+  "legacy_family_vla_shapes": {
+    "card_toshiro_umezawa_2022": {
+      "source": "cards/betrayers_of_kamigawa.c",
+      "rows": 2,
+      "element_bytes": 4,
+      "upper_bounds": [
+        1,
+        [
+          145,
+          136,
+          126,
+          6,
+          49,
+          28
+        ]
+      ],
+      "bound_forms": [
+        "DW_FORM_data1",
+        "DW_FORM_exprloc"
+      ]
+    },
+    "toshiro_effect": {
+      "source": "cards/betrayers_of_kamigawa.c",
+      "rows": 2,
+      "element_bytes": 4,
+      "upper_bounds": [
+        1,
+        [
+          145,
+          136,
+          126,
+          6,
+          49,
+          28
+        ]
+      ],
+      "bound_forms": [
+        "DW_FORM_data1",
+        "DW_FORM_exprloc"
+      ]
+    }
+  },
+  "bruna_distinct_layout_bytes": {
+    "this_test": 216,
+    "td": 84
+  },
+  "final_card_handler_array_shapes": {
+    "card_aryel_knight_of_windgrace::to_tap": {
+      "source": "cards/dominaria.c",
+      "upper_bounds": [
+        [
+          112,
+          127
+        ]
+      ],
+      "bound_forms": [
+        "DW_FORM_exprloc"
+      ],
+      "element_bytes": 4
+    },
+    "card_aryel_knight_of_windgrace::buffer": {
+      "source": "cards/dominaria.c",
+      "upper_bounds": [
+        74
+      ],
+      "bound_forms": [
+        "DW_FORM_data1"
+      ],
+      "element_bytes": 1
+    },
+    "card_nicol_bolas_god_pharaoh::removed": {
+      "source": "cards/hour_of_devastation.c",
+      "upper_bounds": [
+        [
+          112,
+          127
+        ]
+      ],
+      "bound_forms": [
+        "DW_FORM_exprloc"
+      ],
+      "element_bytes": 4
+    },
+    "card_nicol_bolas_dragon_god::activable": {
+      "source": "cards/war_of_the_spark.c",
+      "upper_bounds": [
+        13
+      ],
+      "bound_forms": [
+        "DW_FORM_data1"
+      ],
+      "element_bytes": 4
+    },
+    "card_tamiyo_collector_of_tales::counts": {
+      "source": "cards/war_of_the_spark.c",
+      "upper_bounds": [
+        500
+      ],
+      "bound_forms": [
+        "DW_FORM_data2"
+      ],
+      "element_bytes": 8
+    }
+  },
+  "final_card_handler_filter_bytes": {
+    "card_nicol_bolas_god_pharaoh::test": 216,
+    "card_tamiyo_collector_of_tales::test": 216,
+    "card_tamiyo_collector_of_tales::test2": 216
+  },
+  "aryel_token_layout": {
+    "bytes": 76,
+    "special_keywords_offset": 36
+  },
+  "selection_storage_array_shapes": {
+    "card_pelt_collector::array": {
+      "source": "cards/guilds_of_ravnica.c",
+      "upper_bounds": [
+        42810
+      ],
+      "bound_forms": [
+        "DW_FORM_ref4"
+      ],
+      "element_bytes": 4
+    },
+    "card_ormos_archive_keeper::searched": {
+      "source": "cards/jumpstart.c",
+      "upper_bounds": [
+        1,
+        2
+      ],
+      "bound_forms": [
+        "DW_FORM_data1",
+        "DW_FORM_data1"
+      ],
+      "element_bytes": 4
+    },
+    "card_ormos_archive_keeper::hand_copy": {
+      "source": "cards/jumpstart.c",
+      "upper_bounds": [
+        1,
+        40806
+      ],
+      "bound_forms": [
+        "DW_FORM_data1",
+        "DW_FORM_ref4"
+      ],
+      "element_bytes": 4
+    }
+  },
+  "selection_storage_filter_bytes": {
+    "card_pelt_collector::test": 216,
+    "card_ormos_archive_keeper::test": 216,
+    "card_mise::test": 216
+  },
+  "private_exile_return_symbols": {
+    "create_dauthi_voidwalker_legacy": "_create_dauthi_voidwalker_legacy",
+    "card_exiled_with_void_counter": "_card_exiled_with_void_counter",
+    "card_exiled_with_aegis_counter": "_card_exiled_with_aegis_counter"
+  },
+  "exile_return_array_shapes": {
+    "card_izzet_chemister::ic": {
+      "source": "cards/commander_2017.c",
+      "upper_bounds": [
+        null
+      ],
+      "bound_forms": [
+        null
+      ],
+      "element_bytes": 4
+    },
+    "card_livio_oathsworn_sentinel::marked": {
+      "source": "cards/commander_legends.c",
+      "upper_bounds": [
+        99,
+        1
+      ],
+      "bound_forms": [
+        "DW_FORM_data1",
+        "DW_FORM_data1"
+      ],
+      "element_bytes": 4
+    },
+    "card_dauthi_voidwalker::exiled": {
+      "source": "cards/modern_horizons_2.c",
+      "upper_bounds": [
+        30,
+        2
+      ],
+      "bound_forms": [
+        "DW_FORM_data1",
+        "DW_FORM_data1"
+      ],
+      "element_bytes": 4
+    }
+  },
+  "chemister_distinct_filter_bytes": {
+    "test": 216,
+    "this_test": 216
+  },
+  "private_letter_effect_helpers_verified": 5,
+  "private_clock_buffers_verified": 1,
+  "private_clock_buffers": [
+    {
+      "address": "0x278bdb8",
+      "bytes": 18,
+      "coff_name": "_date_buffer.96992",
+      "source": "functions/windows.c"
+    }
+  ],
+  "clock_api_imports_verified": {
+    "GetLocalTime": "KERNEL32.dll",
+    "QueryPerformanceCounter": "KERNEL32.dll",
+    "QueryPerformanceFrequency": "KERNEL32.dll",
+    "Sleep": "KERNEL32.dll"
+  },
   "machine": "IMAGE_FILE_MACHINE_I386",
   "optional_header": "PE32",
   "image_base": "0x2000000",
@@ -21,16 +524,16 @@
   },
   "files": {
     "ManalinkEh.dll": {
-      "bytes": 8644413,
-      "sha256": "3ae7ce9a4fac284d449164a4f38965c4bad8226289363ccd458d4d380ce60501"
+      "bytes": 8883332,
+      "sha256": "9b3bcae5df0cd6fd464c412b685ad362d88a248f1971d605e2abd7aa00d6f947"
     },
     "ManalinkEh.dbg": {
-      "bytes": 92361894,
-      "sha256": "8b2f092d17dcb48f5396b75aed9d446e2ee4ff753470cd28f01a5faa4ba5a334"
+      "bytes": 92992424,
+      "sha256": "ec0733af20c81d61980520415f6f93ea5af9ec2a2a4dbfea54a276cb0bc0139d"
     }
   },
-  "debug_info_bytes": 82241536,
-  "new_batch_public_symbols_verified": 132,
+  "debug_info_bytes": 82570240,
+  "new_batch_public_symbols_verified": 345,
   "migrated_leaves_test_native_symbols_verified": 2,
   "private_reveal_callback_symbols_verified": 1,
   "private_flash_callback_symbols_verified": 3,
@@ -38,7 +541,7 @@
   "private_snow_callback_symbols_verified": 1,
   "retained_storm_state_verified": 1,
   "import_library_i386_members": {
-    "libDrawcardlib.a": 10,
+    "libDrawcardlib.a": 12,
     "libcapturestackbacktrace.a": 3
   },
   "imported_dlls": [

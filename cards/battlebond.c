@@ -1733,3 +1733,20 @@ int card_zndrsplt_eye_of_wisdom(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2028540; original cards/battlebond.c:1007. */
+int card_thrilling_encore(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    seek_grave_to_reanimate_this_turn_2022(player, 2, -0x7ffffffe, REANIMATE2022_DEFAULT);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
+}
+
+#endif

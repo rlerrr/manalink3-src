@@ -6452,3 +6452,44 @@ static int player_sacrifices_the_creature_with_highest_power_part_2022(int playe
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2199b20; original cards/khans_of_tarkir.c:89. */
+void boost_creatures_by_counters_2022(int player, int card, event_t event, int counter_type,
+                                      int amount, int pow, int tou, int key, int s_key, bct_t flags)
+{
+  card_instance_t *instance;
+  int result;
+  if (((((((unsigned int)event - (unsigned int)EVENT_POWER < 3U) &&
+          (instance = in_play(player, card), instance != NULL)) &&
+         (instance = in_play(affected_card_controller, affected_card), instance != NULL)) &&
+        ((result = is_humiliated_for_ability(player, card, AL_STATIC),
+          result == 0 &&
+              (result = is_what(affected_card_controller, affected_card, 2), result != 0)))) &&
+       (((flags & BCT_CONTROLLER_ONLY) == 0 || (player == affected_card_controller)))) &&
+      (((((flags & BCT_INCLUDE_SELF) != 0 || (affected_card != card)) ||
+         (player != affected_card_controller)) &&
+        (result = count_counters(affected_card_controller, affected_card, counter_type),
+         amount <= result))))
+  {
+    if (event == EVENT_POWER)
+    {
+      event_result = event_result + pow;
+    }
+    else if (event == EVENT_TOUGHNESS)
+    {
+      event_result = event_result + tou;
+    }
+    else if (event == EVENT_ABILITIES)
+    {
+      event_result = event_result | key;
+      special_abilities_2022(affected_card_controller, affected_card, EVENT_ABILITIES, s_key,
+                             player, card);
+      return;
+    }
+  }
+  return;
+}
+
+#endif

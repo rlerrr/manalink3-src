@@ -11928,3 +11928,702 @@ int card_hallowed_ground(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23fa6e0; original cards/ice_age.c:4194. */
+int card_goblin_snowman(int player, int card, event_t event)
+{
+  unsigned char bVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  target_definition_2022_t td;
+  iVar4 = 1 - player;
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (current_turn == iVar4)) &&
+        (current_phase < 0x18))
+    {
+      iVar4 = get_power(player, card);
+      check_abilities_power_2022 = check_abilities_power_2022 - iVar4;
+      check_abilities_toughness_2022 = check_abilities_toughness_2022 + 0x3fff;
+    }
+    default_target_definition_2022(player, card, &td, 2);
+    return 0;
+  }
+  if ((current_turn == iVar4) && (event == EVENT_DECLARE_BLOCKERS))
+  {
+    iVar4 = blocking(player, card, EVENT_DECLARE_BLOCKERS);
+    if ((iVar4 != 0) && (iVar4 = is_humiliated_for_ability(player, card, AL_TRIG), iVar4 == 0))
+    {
+      maze_of_ith_effect(player, card, player, card);
+    }
+    default_target_definition_2022(player, card, &td, 2);
+  }
+  else
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      instance = get_card_instance(player, card);
+      if (current_phase != 0x18)
+      {
+        return 0;
+      }
+      if (current_turn == player)
+      {
+        return 0;
+      }
+      if (instance->blocking == 0xff)
+      {
+        return 0;
+      }
+      iVar4 = would_validate_arbitrary_target_2022(&td, iVar4, (unsigned int)instance->blocking);
+      if (iVar4 == 0)
+      {
+        return 0;
+      }
+      iVar4 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 1, 0, 0, 0, 0, 0, 0,
+                                             0, NULL, NULL);
+      return iVar4;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance = get_card_instance(player, card);
+      if (current_phase != 0x18)
+      {
+        return 0;
+      }
+      if (current_turn == player)
+      {
+        return 0;
+      }
+      if (instance->blocking == 0xff)
+      {
+        return 0;
+      }
+      iVar3 = would_validate_arbitrary_target_2022(&td, iVar4, (unsigned int)instance->blocking);
+      if (iVar3 == 0)
+      {
+        return 0;
+      }
+      add_state(player, card, 0x10);
+      iVar3 = charge_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 0, 0);
+      if ((iVar3 != 0) && (iVar3 = new_pick_target_2022(
+                               &td, "Select target creature Goblin Snowman is blocking.", 0, 0x80),
+                           iVar3 != 0))
+      {
+        bVar1 = instance->blocking;
+        instance->targets[0].player = iVar4;
+        instance->targets[0].card = (unsigned int)bVar1;
+        instance->info_slot = 1;
+        instance->number_of_targets = '\x01';
+      }
+      if (spell_fizzled != 1)
+      {
+        return 0;
+      }
+      remove_state(player, card, 0x10);
+      return 0;
+    }
+  }
+  if (((event == EVENT_RESOLVE_ACTIVATION) &&
+       (instance = get_card_instance(player, card), 0 < instance->info_slot)) &&
+      (iVar4 = valid_target_2022(&td), iVar4 != 0))
+  {
+    damage_creature(instance->targets[0].player, instance->targets[0].card, 1, player, card);
+    return 0;
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2409280; original cards/ice_age.c:8826. */
+int card_soul_kiss(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  int iVar4;
+  card_instance_t *pcVar5;
+
+  if (event == EVENT_SHOULD_AI_PLAY)
+  {
+    pcVar2 = get_card_instance(player, card);
+    iVar3 = 0;
+    if (pcVar2->damage_target_player == player)
+    {
+      iVar3 = (((player == 1) - 1 & 0xffffffe8) + 0xc) * landsofcolor_controlled[player][1];
+    }
+    ai_modifier = ai_modifier + iVar3;
+    get_card_instance(player, card);
+    pcVar2 = get_card_instance(player, card);
+    if (-1 < pcVar2->damage_target_player)
+    {
+    LAB_02409453:
+      if (event == EVENT_RESOLVE_ACTIVATION)
+      {
+        pcVar2 = get_card_instance(player, card);
+        pcVar5 = in_play((int)pcVar2->damage_target_player, pcVar2->damage_target_card);
+        if (pcVar5 != NULL)
+        {
+          pump_until_eot_merge_previous_2022(pcVar2->parent_controller, pcVar2->parent_card,
+                                             (int)pcVar2->damage_target_player,
+                                             pcVar2->damage_target_card, 2, 2);
+        }
+      LAB_024094a9:
+        iVar3 =
+            generic_activated_ability_2022(player, card, event, 0, 0, 1, 0, 0, 0, 0, 1, NULL, NULL);
+        return iVar3;
+      }
+      if (event == EVENT_CLEANUP)
+      {
+        pcVar2 = get_card_instance(player, card);
+        pcVar2->targets[0x12].player = 0;
+        goto LAB_024094a9;
+      }
+      goto LAB_024093b8;
+    }
+  LAB_02409382:
+    if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+        (event == EVENT_CHANGE_TARGET))
+      goto LAB_02409397;
+  }
+  else
+  {
+    pcVar2 = get_card_instance(player, card);
+    if (event == EVENT_CHECK_ABILITIES)
+    {
+      if ((((pcVar2->damage_target_card == affected_card) &&
+            (affected_card_controller == pcVar2->damage_target_player)) &&
+           (pcVar2->damage_target_player == player)) &&
+          (pcVar5 = in_play(player, card), pcVar5 != NULL))
+      {
+        uVar1 = pcVar2->targets[0x12].player;
+        iVar3 = 3 - (uVar1 & (int)(uVar1 ^ 0xffffffff) >> 0x1f);
+        if (life[player] + -1 < iVar3)
+        {
+          iVar3 = life[player] + -1;
+        }
+        if (0 < iVar3)
+        {
+          iVar4 = has_mana(player, 1, 1);
+          if (iVar4 < iVar3)
+          {
+            iVar3 = iVar4;
+          }
+          check_abilities_power_2022 = check_abilities_power_2022 + iVar3 * 2;
+          check_abilities_toughness_2022 = check_abilities_toughness_2022 + iVar3 * 2;
+        }
+      }
+      get_card_instance(player, card);
+      goto LAB_02409382;
+    }
+    pcVar2 = get_card_instance(player, card);
+    if (-1 < pcVar2->damage_target_player)
+    {
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        pcVar2 = get_card_instance(player, card);
+        if (pcVar2->targets[0x12].player == 3)
+        {
+          return 0;
+        }
+        goto LAB_024094a9;
+      }
+      if (event == EVENT_ACTIVATE)
+      {
+        generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0, 0, 1, 0, 0, 0, 0, 1, NULL,
+                                       NULL);
+        if (spell_fizzled == 1)
+        {
+          return 0;
+        }
+        pcVar2 = get_card_instance(player, card);
+        pcVar2->targets[0x12].player = pcVar2->targets[0x12].player + 1;
+        return 0;
+      }
+      goto LAB_02409453;
+    }
+  LAB_024093b8:
+    if (event == EVENT_CAN_CAST)
+      goto LAB_02409397;
+    if (event != EVENT_CAST_SPELL)
+      goto LAB_02409382;
+    if ((card == affected_card) && (player == affected_card_controller))
+      goto LAB_02409397;
+  }
+  if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) != EVENT_CAN_MOVE_AURA) &&
+       ((((2U < (unsigned int)event - (unsigned int)EVENT_POWER &&
+           (event != EVENT_RESOLVE_MOVING_AURA)) &&
+          (event != EVENT_CHANGE_TYPE)) &&
+         ((event != EVENT_SET_COLOR && (event != EVENT_GET_SELECTED_CARD)))))) &&
+      (event != EVENT_STATIC_EFFECTS))
+  {
+    return 0;
+  }
+LAB_02409397:
+  iVar3 = vanilla_aura_2022(player, card, event, player);
+  return iVar3;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23ec740; original cards/ice_age.c:5043. */
+static int infinite_hourglass_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      instance = get_card_instance(player, card);
+      iVar4 = instance->targets[0].player;
+      if (-1 < iVar4)
+      {
+        iVar4 = get_id(iVar4, instance->targets[0].card);
+        if (iVar4 != 0x7c2)
+        {
+          kill_card(player, card, KILL_EXILE);
+        }
+        instance = in_play(instance->targets[0].player, instance->targets[0].card);
+        if (instance == NULL)
+        {
+          kill_card(player, card, KILL_EXILE);
+        }
+      }
+    }
+    instance = get_card_instance(player, card);
+    if (instance->targets[0].player != -1)
+    {
+      get_card_instance(player, card);
+    }
+  }
+  else
+  {
+    instance = get_card_instance(player, card);
+    if (instance->targets[0].player != -1)
+    {
+      instance = get_card_instance(player, card);
+      if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+      {
+        iVar4 = instance->targets[0].card;
+        iVar5 = instance->targets[0].player;
+        iVar2 = granted_generic_activated_ability_2022(iVar5, iVar4, player, card, event, 0x8000, 3,
+                                                       0, 0, 0, 0, 0, 0, NULL, NULL);
+        if (event != EVENT_CAN_ACTIVATE)
+          goto LAB_023ec823;
+        if ((current_phase == 4) && (iVar3 = count_counters(iVar5, iVar4, COUNTER_TIME), 0 < iVar3))
+        {
+          if (iVar2 == 0)
+          {
+            return 0;
+          }
+          if (ai_is_speculating != 1)
+          {
+            if (player != 1)
+            {
+              return iVar2;
+            }
+            if (((unsigned char)trace_mode & 2) != 0)
+            {
+              return iVar2;
+            }
+          }
+          iVar4 = count_counters(iVar5, iVar4, COUNTER_TIME);
+          if (iVar4 < 1)
+          {
+            return iVar2;
+          }
+          iVar4 = count_subtype(iVar5, 2, -1);
+          iVar5 = count_subtype(1 - player, 2, -1);
+          if (iVar5 <= iVar4 + 1)
+          {
+            return iVar2;
+          }
+          EXE_DWORD(0x736808) = EXE_DWORD(0x736808) | 3;
+          return iVar2;
+        }
+      }
+      else if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+      {
+        iVar4 = instance->targets[0].card;
+        iVar5 = instance->targets[0].player;
+        iVar2 = granted_generic_activated_ability_2022(iVar5, iVar4, player, card, event, 0x8000, 3,
+                                                       0, 0, 0, 0, 0, 0, NULL, NULL);
+      LAB_023ec823:
+        if (event != EVENT_RESOLVE_ACTIVATION)
+        {
+          return iVar2;
+        }
+        remove_counters_from_source(iVar5, iVar4, iVar5, iVar4, COUNTER_TIME, 1);
+        return iVar2;
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24044c0; original cards/ice_age.c:7368. */
+int card_orcish_healer(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  const char *__format_1;
+  unsigned int uVar5;
+  int iVar6;
+  unsigned int uStack_188;
+  unsigned int uStack_184;
+  int iStack_17c;
+  target_definition_2022_t *ptStack_178;
+  target_definition_2022_t *ptStack_174;
+  target_definition_2022_t td;
+  target_definition_2022_t td2;
+  target_definition_2022_t td3;
+  char msg[100];
+
+  if (((event == EVENT_ACTIVATE) ||
+       ((unsigned int)event - (unsigned int)EVENT_RESOLVE_ACTIVATION < 2U)) ||
+      (event == EVENT_CLEANUP))
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    iVar1 = 1 - player;
+    td.preferred_controller = iVar1;
+    if (player == 1)
+    {
+      td.required_state = 0x4000;
+      default_target_definition_2022(1, card, &td2, 2);
+      td2.required_color = get_sleighted_color_test(1, card, 10);
+      td2.required_state = 0x4000;
+      td2.preferred_controller = 1;
+      td2.special = 0x800000;
+      default_target_definition_2022(1, card, &td3, 2);
+      td3.required_color = get_sleighted_color_test(1, card, 10);
+      td3.preferred_controller = 1;
+      instance = get_card_instance(1, card);
+      iStack_17c = 0x800007;
+    }
+    else
+    {
+      default_target_definition_2022(player, card, &td2, 2);
+      td2.required_color = get_sleighted_color_test(player, card, 10);
+      td2.required_state = 0x4000;
+      td2.preferred_controller = player;
+      default_target_definition_2022(player, card, &td3, 2);
+      td3.required_color = get_sleighted_color_test(player, card, 10);
+      td3.preferred_controller = player;
+      instance = get_card_instance(player, card);
+      iStack_17c = 7;
+    }
+    ptStack_174 = &td3;
+    ptStack_178 = &td2;
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (((land_can_be_played & 0x200U) != 0) &&
+          ((iVar1 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 2, 0, 0,
+                                                   1, 0, 0, ptStack_178, NULL),
+            iVar1 != 0 ||
+                (iVar1 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0,
+                                                        0, 2, 1, 0, 0, ptStack_178, NULL),
+                 iVar1 != 0))))
+      {
+        return 99;
+      }
+      iVar1 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0, 0, 0,
+                                             0, ptStack_174, NULL);
+      if (((iVar1 != 0) &&
+           ((iVar1 = has_mana_multi(player, 0, 2, 0, 0, 1, 0),
+             iVar1 != 0 || (iVar1 = has_mana_multi(player, 0, 0, 0, 2, 1, 0), iVar1 != 0)))) ||
+          (iVar1 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, iStack_17c, 0,
+                                                  0, 0, 0, 2, 0, 0, &td, NULL),
+           iVar1 != 0))
+      {
+        return 1;
+      }
+    }
+    else if (event == EVENT_ACTIVATE)
+    {
+      iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, iStack_17c, 0, 0, 0,
+                                             0, 2, 0, 0, &td, NULL);
+      iVar6 = 0;
+      uStack_184 = land_can_be_played & 0x200;
+      if (uStack_184 != 0)
+      {
+        uStack_184 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 2, 0, 0,
+                                                    1, 0, 0, ptStack_178, NULL);
+        iVar6 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 2, 1,
+                                               0, 0, ptStack_178, NULL);
+      }
+      iVar4 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0, 0, 0,
+                                             0, ptStack_174, NULL);
+      uVar5 = 0;
+      if (iVar4 != 0)
+      {
+        iVar4 = has_mana_multi(player, 0, 2, 0, 0, 1, 0);
+        uVar5 = 1;
+        if (iVar4 == 0)
+        {
+          iVar4 = has_mana_multi(player, 0, 0, 0, 2, 1, 0);
+          uVar5 = (unsigned int)(iVar4 != 0);
+        }
+      }
+      uStack_188 = 0;
+      if (iVar1 == instance->targets[0].player)
+      {
+        iVar1 = can_regenerate(iVar1, instance->targets[0].card);
+        uStack_188 = (unsigned int)(iVar1 != 0);
+      }
+      iVar1 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016",
+                          "Creature can't regenerate", iVar3, uStack_188,
+                          "Regenerate target creature", uStack_184, 1, "Regenerate target creature",
+                          iVar6, 1, "Regeneration shield", uVar5, 1, 0, 0, 0, 0);
+      if (iVar1 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      __format_1 =
+          get_sleighted_color_text2(player, card, "Select target %s or %s creature.", 1, 3);
+      snprintf(msg, 100, "%s", __format_1);
+      if (iVar1 == 1)
+      {
+        generic_activated_ability_2022(
+            player, card, EVENT_ACTIVATE, iStack_17c, 0, 0, 0, 0, 2, 0, 0, &td,
+            "Select target creature. It can\'t be regenerated this turn.");
+      }
+      else
+      {
+        if (iVar1 == 2)
+        {
+          iVar3 = 0;
+          iVar1 = 2;
+        }
+        else
+        {
+          if (iVar1 != 3)
+          {
+            if (iVar1 != 4)
+            {
+              return 0;
+            }
+            iVar1 = has_mana_multi(player, 0, 2, 0, 0, 1, 0);
+            if (iVar1 == 0)
+            {
+              iVar3 = 2;
+              iVar1 = 0;
+            }
+            else
+            {
+              iVar3 = 0;
+              iVar1 = 2;
+            }
+            iVar1 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 7, 0, iVar1, 0,
+                                                   iVar3, 1, 0, 0, ptStack_174, msg);
+            return iVar1;
+          }
+          iVar3 = 2;
+          iVar1 = 0;
+        }
+        generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 7, 0, iVar1, 0, iVar3, 1, 0, 0,
+                                       ptStack_178, msg);
+      }
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      iVar1 = instance->info_slot;
+      if (iVar1 == 1)
+      {
+        iVar1 = valid_target_2022(&td);
+        if (iVar1 != 0)
+        {
+          iVar1 =
+              cannot_regenerate_until_eot(instance->parent_controller, instance->parent_card,
+                                          instance->targets[0].player, instance->targets[0].card);
+          alternate_legacy_text(1, player, iVar1);
+        }
+        iVar1 = instance->info_slot;
+      }
+      if ((iVar1 - 2U < 3) &&
+          ((iVar1 = valid_target_2022(ptStack_178),
+            iVar1 != 0 || (iVar1 = valid_target_2022(ptStack_174), iVar1 != 0))))
+      {
+        iVar1 = regenerate_or_shield(instance->parent_controller, instance->parent_card,
+                                     instance->targets[0].player, instance->targets[0].card);
+        alternate_legacy_text(2, instance->parent_controller, iVar1);
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23fd2e0; original cards/ice_age.c:5108. */
+int card_infinite_hourglass(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *instance;
+  int found[2];
+
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    add_counters_from_source(player, card, player, card, COUNTER_TIME, 1);
+    iVar1 = count_counters(player, card, COUNTER_TIME);
+    boost_creature_type(player, card, EVENT_UPKEEP_TRIGGER_ABILITY, ~SUBTYPE_INVALID, iVar1, 0, 0,
+                        BCT_INCLUDE_SELF);
+  }
+  else
+  {
+    iVar1 = count_counters(player, card, COUNTER_TIME);
+    boost_creature_type(player, card, event, ~SUBTYPE_INVALID, iVar1, 0, 0, BCT_INCLUDE_SELF);
+    iVar1 = current_turn;
+    if (event == EVENT_STATIC_EFFECTS)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      found[0] = -1;
+      found[1] = -1;
+      iVar2 = active_cards_count[current_turn] + -1;
+      if (-1 < iVar2)
+      {
+        do
+        {
+          instance = in_play(iVar1, iVar2);
+          if ((((instance != NULL) && (iVar3 = is_what(iVar1, iVar2, 0x80), iVar3 != 0)) &&
+               (instance = get_card_instance(iVar1, iVar2),
+                instance->info_slot_fn == infinite_hourglass_legacy)) &&
+              ((instance->targets[0].player == player && (instance->targets[0].card == card))))
+          {
+            found[iVar1] = iVar2;
+          }
+          iVar2 = iVar2 + -1;
+        } while (iVar2 != -1);
+      }
+      iVar1 = 1 - current_turn;
+      iVar2 = active_cards_count[iVar1] + -1;
+      if (-1 < iVar2)
+      {
+        do
+        {
+          instance = in_play(iVar1, iVar2);
+          if (((instance != NULL) && (iVar3 = is_what(iVar1, iVar2, 0x80), iVar3 != 0)) &&
+              ((instance = get_card_instance(iVar1, iVar2),
+                instance->info_slot_fn == infinite_hourglass_legacy &&
+                    ((instance->targets[0].player == player &&
+                      (instance->targets[0].card == card))))))
+          {
+            found[iVar1] = iVar2;
+          }
+          iVar2 = iVar2 + -1;
+        } while (iVar2 != -1);
+      }
+      if (-1 < found[player])
+      {
+        kill_card(player, found[player], KILL_EXILE);
+      }
+      iVar1 = 1 - player;
+      if (found[iVar1] != -1)
+      {
+        return 0;
+      }
+      instance = get_card_instance(player, card);
+      iVar2 = add_card_to_hand(iVar1, instance->internal_card_id);
+      iVar3 = create_legacy_activate(iVar1, iVar2, infinite_hourglass_legacy);
+      instance = get_card_instance(iVar1, iVar3);
+      instance->targets[0].player = player;
+      instance->targets[0].card = card;
+      instance->number_of_targets = '\x01';
+      obliterate_card(iVar1, iVar2);
+      return 0;
+    }
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      iVar1 = generic_activated_ability_2022(player, card, event, 0x8000, 3, 0, 0, 0, 0, 0, 0, NULL,
+                                             NULL);
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        if (current_phase != 4)
+        {
+          return 0;
+        }
+        iVar2 = count_counters(player, card, COUNTER_TIME);
+        if (iVar2 < 1)
+        {
+          return 0;
+        }
+        if (iVar1 == 0)
+        {
+          return 0;
+        }
+        if (ai_is_speculating != 1)
+        {
+          if (player != 1)
+          {
+            return iVar1;
+          }
+          if (((unsigned char)trace_mode & 2) != 0)
+          {
+            return iVar1;
+          }
+        }
+        iVar2 = count_counters(player, card, COUNTER_TIME);
+        if (iVar2 < 1)
+        {
+          return iVar1;
+        }
+        iVar2 = count_subtype(player, 2, -1);
+        iVar3 = count_subtype(1 - player, 2, -1);
+        if (iVar2 + 1 < iVar3)
+        {
+          EXE_DWORD(0x736808) = EXE_DWORD(0x736808) | 3;
+          return iVar1;
+        }
+        return iVar1;
+      }
+      goto LAB_023fd580;
+    }
+  }
+  if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+  {
+    return 0;
+  }
+  iVar1 =
+      generic_activated_ability_2022(player, card, event, 0x8000, 3, 0, 0, 0, 0, 0, 0, NULL, NULL);
+LAB_023fd580:
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    remove_counters_from_source(player, card, player, card, COUNTER_TIME, 1);
+    return iVar1;
+  }
+  return iVar1;
+}
+
+#endif

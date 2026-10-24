@@ -1893,3 +1893,69 @@ int generate_reserved_token_by_id_2022(int player, int csvid)
   result = generate_token_by_id_part_2022(player, -1, csvid, 1, 1);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2665690; original functions/token_generation.c:87. */
+int copy_token_characteristics_for_clone_2022(int player, int card, int t_player, int t_card)
+{
+  uint8_t uVar1;
+  int32_t iVar2;
+  unsigned char bVar3;
+  int iVar4;
+  card_instance_t *pcVar5;
+  card_instance_t *pcVar6;
+  uint32_t uStack_14;
+
+  iVar4 = get_id(t_player, t_card);
+  uStack_14 = 0;
+  if (cards_ptr[iVar4]->card_type == 8)
+  {
+    pcVar5 = get_card_instance(player, card);
+    pcVar6 = get_card_instance(t_player, t_card);
+    uStack_14 = pcVar6->original_internal_card_id;
+    if (uStack_14 == 0xffffffff)
+    {
+      uStack_14 = (uint32_t)pcVar6->backup_internal_card_id;
+    }
+    iVar2 = pcVar6->targets[7].player;
+    pcVar5->targets[7].card = pcVar6->targets[7].card;
+    pcVar5->targets[7].player = iVar2;
+    iVar2 = pcVar6->targets[8].card;
+    pcVar5->targets[8].player = pcVar6->targets[8].player;
+    pcVar5->targets[8].card = iVar2;
+    uVar1 = cards_data[uStack_14].color;
+    iVar4 = get_internal_card_id_from_csv_id(iVar4);
+    if (uVar1 == cards_data[iVar4].color)
+    {
+      bVar3 = pcVar5->initial_color & 0x3e;
+    }
+    else
+    {
+      bVar3 = cards_data[uStack_14].color & 0x3e;
+      pcVar5->initial_color = bVar3;
+    }
+    pcVar5->color = bVar3;
+    pcVar5->regen_status = pcVar5->regen_status | 0x10000000;
+    if ((t_player < 0) || (t_card < 0))
+    {
+      iVar4 = 0;
+    }
+    else
+    {
+      iVar4 = get_copyable_special_infos_part_2022(t_player, t_card);
+    }
+    pcVar5 = get_card_instance(player, card);
+    pcVar5->targets[0xe].player = iVar4;
+    iVar4 = check_special_flags2_2022(t_player, t_card, 0x80);
+    uStack_14 = 1;
+    if (iVar4 != 0)
+    {
+      uStack_14 = 1;
+      set_special_flags2_2022(player, card, 0x80);
+    }
+  }
+  return uStack_14;
+}
+
+#endif

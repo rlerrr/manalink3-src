@@ -10545,3 +10545,64 @@ char *colored_damage_source_that_damages_me_2022(int who_chooses, int player, in
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x217f970; original cards/mercadian_masques.c:5953. */
+int card_ferocity(int player, int card, event_t event)
+{
+  char cVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  int player_00;
+
+  instance = get_card_instance(player, card);
+  cVar1 = instance->damage_target_player;
+  player_00 = (int)cVar1;
+  iVar3 = instance->damage_target_card;
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if ((((iVar3 == affected_card) && (affected_card_controller == player_00)) &&
+         (player == player_00)) &&
+        (instance = in_play(player, card), instance != NULL))
+    {
+      check_abilities_power_2022 = check_abilities_power_2022 + 1;
+      check_abilities_toughness_2022 = check_abilities_toughness_2022 + 1;
+    }
+    in_play(player, card);
+  }
+  else
+  {
+    instance = in_play(player, card);
+    if ((((event == EVENT_DECLARE_BLOCKERS & (unsigned char)(cVar1 >> 7 ^ 0xffU) >> 7) != 0) &&
+         (instance != NULL)) &&
+        (iVar4 = is_humiliated_for_ability(player, card, AL_TRIG), iVar4 == 0))
+    {
+      if (current_turn == player_00)
+      {
+        iVar4 = is_attacking(player_00, iVar3);
+        if (((iVar4 != 0) && (iVar4 = is_unblocked(player_00, iVar3), iVar4 == 0)) &&
+            (iVar4 = do_dialog(player, player, card, -1, -1, " Put a +1/+1 counter\n Pass", 0),
+             iVar4 == 0))
+        {
+          add_counters_from_source(player, card, player_00, iVar3, COUNTER_P1_P1, 1);
+        }
+        if (current_turn == player_00)
+          goto LAB_0217f9c1;
+      }
+      iVar4 = blocking(player_00, iVar3, EVENT_DECLARE_BLOCKERS);
+      if ((iVar4 != 0) &&
+          (iVar4 = do_dialog(player, player, card, -1, -1, " Put a +1/+1 counter\n Pass", 0),
+           iVar4 == 0))
+      {
+        add_counters_from_source(player, card, player_00, iVar3, COUNTER_P1_P1, 1);
+      }
+    }
+  }
+LAB_0217f9c1:
+  iVar3 = aura_pref_controller(player, card, event, player, NULL);
+  return iVar3;
+}
+
+#endif

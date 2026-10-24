@@ -6104,3 +6104,502 @@ int card_matopi_golem(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20227c0; original cards/visions.c:4467. */
+int card_kyscu_drake(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  unsigned int uVar4;
+  test_definition_2022_t test;
+
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if (((card == affected_card) && (player == affected_card_controller)) &&
+        (iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x2000, 0, 0, 0,
+                                                1, 0, 0, 0, NULL, NULL),
+         iVar2 != 0))
+    {
+      check_abilities_toughness_2022 = check_abilities_toughness_2022 + 1;
+    }
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      instance = get_card_instance(player, card);
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x2000, 0, 0, 0, 1,
+                                               0, 0, 0, NULL, NULL);
+        if (iVar2 == 0)
+        {
+          iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 8, 0, 0, 0, 0, 0,
+                                                 0, 0, NULL, NULL);
+          if (iVar2 == 0)
+          {
+            return 0;
+          }
+          iVar2 = check_for_spitting_drake(player);
+          if (iVar2 == 0)
+          {
+            return 0;
+          }
+        }
+        return 1;
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      {
+        return 0;
+      }
+      instance = get_card_instance(player, card);
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance->info_slot = 0;
+      iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x2000, 0, 0, 0, 1,
+                                             0, 0, 0, NULL, NULL);
+      iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 8, 0, 0, 0, 0, 0, 0,
+                                             0, NULL, NULL);
+      uVar4 = 0;
+      if (iVar3 != 0)
+      {
+        iVar3 = check_for_spitting_drake(player);
+        uVar4 = (unsigned int)(iVar3 != 0);
+      }
+      iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Boost toughness", iVar2, 5,
+                          "Sac Spitting Drake", uVar4, 10, 0, 0, 0, 0);
+      if (iVar2 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      instance->info_slot = iVar2;
+      if (iVar2 == 1)
+      {
+        iVar2 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x2000, 0, 0, 0, 1, 0,
+                                               0, 0, NULL, NULL);
+        return iVar2;
+      }
+      if ((iVar2 == 2) && (iVar2 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0,
+                                                                  0, 0, 0, 0, 0, 0, 0, NULL, NULL),
+                           iVar2 != 0))
+      {
+        new_default_test_definition_2022(&test, 0x47, "Select a Spitting Drake to sacrifice.");
+        test.id = 0xade;
+        uVar4 =
+            new_sacrifice_2022(player, card, player,
+                               SAC2022_RETURN_CHOICE | SAC2022_AS_COST | SAC2022_JUST_MARK, &test);
+        if (uVar4 == 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        kill_card(player, uVar4 >> 0x18, KILL_SACRIFICE);
+        kill_card(player, card, KILL_SACRIFICE);
+      }
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      iVar2 = instance->info_slot;
+      if (iVar2 == 1)
+      {
+        pump_until_eot_2022(player, instance->parent_card, player, instance->parent_card, 0, 1);
+        iVar2 = instance->info_slot;
+      }
+      if (iVar2 == 2)
+      {
+        new_default_test_definition_2022(&test, 0xff, "Select a card named Viashivan Dragon.");
+        test.id = 0xaf6;
+        new_global_tutor_2022(player, player, 1, 4, 0, 5, &test);
+      }
+    }
+    else if (event == EVENT_CLEANUP)
+    {
+      instance = get_card_instance(player, card);
+      instance->targets[2].player = 0;
+      return 0;
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2022fb0; original cards/visions.c:4594. */
+int card_mob_mentality(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  int iVar5;
+
+  pcVar1 = get_card_instance(player, card);
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if (((pcVar1->damage_target_card == affected_card) &&
+         (affected_card_controller == pcVar1->damage_target_player)) &&
+        ((pcVar1->damage_target_player == player &&
+          (pcVar1 = in_play(player, card), pcVar1 != NULL))))
+    {
+      iVar2 = count_attackers(player);
+      if (0 < active_cards_count[player])
+      {
+        iVar5 = 0;
+        do
+        {
+          pcVar1 = in_play(player, iVar5);
+          if (((pcVar1 != NULL) && (iVar4 = is_what(player, iVar5, 2), iVar4 != 0)) &&
+              ((iVar4 = is_attacking(player, iVar5),
+                iVar4 == 0 && (iVar4 = has_subtype(player, iVar5, SUBTYPE_WALL), iVar4 == 0))))
+          {
+            return 0;
+          }
+          iVar5 = iVar5 + 1;
+        } while (iVar5 < active_cards_count[player]);
+      }
+      check_abilities_power_2022 = check_abilities_power_2022 + iVar2;
+    }
+    get_card_instance(player, card);
+  }
+  else
+  {
+    pcVar3 = get_card_instance(player, card);
+    if ((-1 < pcVar3->damage_target_player) && (event == EVENT_DECLARE_ATTACKERS))
+    {
+      iVar2 = count_attackers(player);
+      if (0 < active_cards_count[player])
+      {
+        iVar5 = 0;
+        do
+        {
+          pcVar3 = in_play(player, iVar5);
+          if ((((pcVar3 != NULL) && (iVar4 = is_what(player, iVar5, 2), iVar4 != 0)) &&
+               (iVar4 = is_attacking(player, iVar5), iVar4 == 0)) &&
+              (iVar4 = has_subtype(player, iVar5, SUBTYPE_WALL), iVar4 == 0))
+          {
+            return 0;
+          }
+          iVar5 = iVar5 + 1;
+        } while (iVar5 < active_cards_count[player]);
+      }
+      pump_until_eot_2022(player, card, (int)pcVar1->damage_target_player,
+                          pcVar1->damage_target_card, iVar2, 0);
+    }
+  }
+  iVar2 = generic_aura_2022(player, card, event, player, 0, 0, 0x80, 0, 0, 0, 0);
+  return iVar2;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2023bf0; original cards/visions.c:4892. */
+int card_raging_gorilla(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      check_abilities_power_2022 = check_abilities_power_2022 + 2;
+    }
+  }
+  else
+  {
+    if (((event == EVENT_DECLARE_BLOCKERS) &&
+         (result = is_humiliated_for_ability(player, card, AL_TRIG), result == 0)) &&
+        (((instance = get_card_instance(player, card),
+           (instance->state & 4) != 0 && (result = is_unblocked(player, card), result == 0)) ||
+          ((current_turn != player &&
+            (result = blocking(player, card, EVENT_DECLARE_BLOCKERS), result != 0))))))
+    {
+      pump_until_eot_2022(player, card, player, card, 2, -2);
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2024970; original cards/visions.c:5251. */
+int card_time_and_tide(int player, int card, event_t event)
+{
+  bool bVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  unsigned int uVar5;
+  int iVar6;
+  iVar2 = current_turn;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    iVar6 = active_cards_count[current_turn] + -1;
+    if (iVar6 < 0)
+    {
+      bVar1 = false;
+      iVar6 = 1 - current_turn;
+      iVar2 = active_cards_count[iVar6] + -1;
+      if (-1 < iVar2)
+        goto LAB_02024a63;
+    }
+    else
+    {
+      bVar1 = false;
+      do
+      {
+        instance = in_play(iVar2, iVar6);
+        if (((instance != NULL) && (iVar4 = is_what(iVar2, iVar6, 2), iVar4 != 0)) &&
+            (instance = get_card_instance(iVar2, iVar6), -1 < instance->internal_card_id))
+        {
+          uVar5 = instance->state & 0x800022;
+          if (uVar5 == 0x800002)
+          {
+            phase_in_impl_2022(iVar2, iVar6, 0x4000000, 1);
+            bVar1 = true;
+          }
+          else if (uVar5 == 2)
+          {
+            phase_out_impl_2022(iVar2, iVar6, 0x4000000, 1);
+            bVar1 = true;
+          }
+        }
+        iVar6 = iVar6 + -1;
+      } while (iVar6 != -1);
+      iVar6 = 1 - current_turn;
+      iVar2 = active_cards_count[iVar6];
+      while (iVar4 = current_turn, iVar2 = iVar2 + -1, -1 < iVar2)
+      {
+      LAB_02024a63:
+        instance = in_play(iVar6, iVar2);
+        if (((instance != NULL) && (iVar4 = is_what(iVar6, iVar2, 2), iVar4 != 0)) &&
+            (instance = get_card_instance(iVar6, iVar2), -1 < instance->internal_card_id))
+        {
+          uVar5 = instance->state & 0x800022;
+          if (uVar5 == 0x800002)
+          {
+            phase_in_impl_2022(iVar6, iVar2, 0x4000000, 1);
+            bVar1 = true;
+          }
+          else if (uVar5 == 2)
+          {
+            phase_out_impl_2022(iVar6, iVar2, 0x4000000, 1);
+            bVar1 = true;
+          }
+        }
+      }
+      if (bVar1)
+      {
+        iVar2 = active_cards_count[current_turn] + -1;
+        if (-1 < iVar2)
+        {
+          do
+          {
+            instance = in_play(iVar4, iVar2);
+            if (((instance != NULL) && (iVar6 = is_what(iVar4, iVar2, 2), iVar6 != 0)) &&
+                (instance = get_card_instance(iVar4, iVar2), -1 < instance->internal_card_id))
+            {
+              uVar5 = instance->state & 0x800022;
+              if (uVar5 == 0x800002)
+              {
+                phase_in_impl_2022(iVar4, iVar2, 0xc000000, 0);
+              }
+              else
+              {
+                if ((uVar5 == 2) &&
+                    (iVar6 = check_special_flags_2022(iVar4, iVar2, 0xc000000), iVar6 != 0))
+                {
+                  phase_out_impl_2022(iVar4, iVar2, iVar6, 0);
+                }
+              }
+            }
+            iVar2 = iVar2 + -1;
+          } while (iVar2 != -1);
+        }
+        iVar2 = 1 - current_turn;
+        iVar6 = active_cards_count[iVar2] + -1;
+        if (-1 < iVar6)
+        {
+          do
+          {
+            instance = in_play(iVar2, iVar6);
+            if (((instance != NULL) && (iVar4 = is_what(iVar2, iVar6, 2), iVar4 != 0)) &&
+                (instance = get_card_instance(iVar2, iVar6), -1 < instance->internal_card_id))
+            {
+              uVar5 = instance->state & 0x800022;
+              if (uVar5 == 0x800002)
+              {
+                phase_in_impl_2022(iVar2, iVar6, 0xc000000, 0);
+              }
+              else
+              {
+                if ((uVar5 == 2) &&
+                    (iVar4 = check_special_flags_2022(iVar2, iVar6, 0xc000000), iVar4 != 0))
+                {
+                  phase_out_impl_2022(iVar2, iVar6, iVar4, 0);
+                }
+              }
+            }
+            iVar6 = iVar6 + -1;
+          } while (iVar6 != -1);
+        }
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  iVar2 = basic_spell(player, card, event);
+  return iVar2;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20253c0; original cards/visions.c:5438. */
+int card_vision_charm(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  int iVar6;
+  static const int land_subtypes[13] = {20481, 20482, 20486, 20487, 20489, 20480, 20492,
+                                        20483, 20484, 20485, 20488, 20490, 20491};
+  static const int basic_land_subtypes[5] = {20489, 20482, 20481, 20486, 20487};
+  target_definition_2022_t td;
+  target_definition_2022_t td3;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition_2022(player, card, &td, 0);
+    td.zone = 0x1000;
+    default_target_definition_2022(player, card, &td3, 0x40);
+    td3.preferred_controller = player;
+    get_card_instance(player, card);
+    iVar2 = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    if ((iVar2 == 0) &&
+        (iVar2 = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td3, NULL, 1, NULL),
+         iVar2 == 0))
+    {
+      return 0;
+    }
+    return 1;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition_2022(player, card, &td, 0);
+      td.zone = 0x1000;
+      default_target_definition_2022(player, card, &td3, 0x40);
+      td3.preferred_controller = player;
+      pcVar1 = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        pcVar1->number_of_targets = '\0';
+        iVar2 = check_special_flags2_2022(player, card, -0x80000000);
+        if (iVar2 == 0)
+        {
+          iVar3 = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+          iVar5 = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td3, NULL, 1, NULL);
+          iVar6 = check_battlefield_for_subtype(1 - player, 1, 0x5009);
+          iVar2 = 1;
+          iVar6 = (-(unsigned int)(iVar6 == 0) & 0xfffffff7) + 10;
+          if (0x16 < current_phase)
+          {
+            iVar6 = 1;
+            iVar2 = (unsigned int)(0x18 < current_phase) * 9 + 1;
+          }
+          iVar2 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "Target player mills",
+                              iVar3, 5, "Change landtype", 1, iVar2, "Target artifact phase out",
+                              iVar5, iVar6, 0, 0, 0, 0);
+          if (iVar2 == 0)
+          {
+            spell_fizzled = 1;
+            return 0;
+          }
+        }
+        if (pcVar1->info_slot == 1)
+        {
+          iVar2 =
+              generic_spell_2022(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_PLAYER", 1, NULL);
+        }
+        else
+        {
+          if (pcVar1->info_slot != 3)
+          {
+            return 0;
+          }
+          iVar2 = generic_spell_2022(player, card, EVENT_CAST_SPELL, 0x81, &td3,
+                                     "Select target artifact it phases out.", 1, NULL);
+        }
+        return iVar2;
+      }
+    }
+  }
+  else if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+           (event == EVENT_CHANGE_TARGET))
+  {
+    default_target_definition_2022(player, card, &td, 0);
+    td.zone = 0x1000;
+    default_target_definition_2022(player, card, &td3, 0x40);
+    td3.preferred_controller = player;
+    pcVar1 = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      iVar2 = pcVar1->info_slot;
+      if (iVar2 == 2)
+      {
+        pcVar1 = get_card_instance(player, card);
+        iVar2 = get_deck_color(player, 1 - player);
+        iVar3 = do_dialog(player, player, card, -1, -1,
+                          " Forest\n Island\n Mountain\n Plains\n Swamp\n Desert\n Gate\n Lair\n "
+                          "Locus\n Mine\n Power-Plant\n Tower\n Urza\'s",
+                          iVar2 + -1);
+        pcVar1->targets[0].player = 1 << ((unsigned char)iVar3 & 0x1f);
+        pcVar4 = get_card_instance(player, card);
+        iVar2 = do_dialog(player, player, card, -1, -1,
+                          " Swamp\n Island\n Forest\n Mountain\n Plains", iVar2 + -1);
+        iVar2 = 1 << ((unsigned char)iVar2 & 0x1f);
+        pcVar4->targets[0].card = iVar2;
+        iVar2 = basic_land_subtypes[iVar2];
+        iVar3 = land_subtypes[pcVar1->targets[0].player];
+        iVar5 = create_legacy_effect(player, card, vision_charm_landchange);
+        pcVar1 = get_card_instance(player, iVar5);
+        pcVar1->targets[1].player = iVar3;
+        pcVar1->targets[1].card = iVar2;
+      }
+      else if (iVar2 == 3)
+      {
+        iVar2 = valid_target_2022(&td3);
+        if (iVar2 != 0)
+        {
+          phase_out_2022(pcVar1->targets[0].player, pcVar1->targets[0].card);
+        }
+      }
+      else if ((iVar2 == 1) && (iVar2 = valid_target_2022(&td), iVar2 != 0))
+      {
+        mill(pcVar1->targets[0].player, 4);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+#endif

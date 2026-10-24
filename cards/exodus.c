@@ -4399,3 +4399,380 @@ LAB_0264e637:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2643f00; original cards/exodus.c:488. */
+int card_elvish_berserker(int player, int card, event_t event)
+{
+  if ((((event == EVENT_CHECK_ABILITIES) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((current_turn == player && (current_phase < 0x18))))
+  {
+    check_abilities_power_2022 = check_abilities_power_2022 + 1;
+    check_abilities_toughness_2022 = check_abilities_toughness_2022 + 1;
+  }
+  pump_when_blocked(player, card, event, 1, 1, 0);
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x264ee80; original cards/exodus.c:4081. */
+int card_penance(int player, int card, event_t event)
+{
+  int target_card;
+  card_instance_t *instance;
+  int result;
+  int card_00;
+  target_definition_2022_t td;
+  test_definition_2022_t this_test;
+
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition_2022(player, card, &td, 0xff);
+    td.preferred_controller = 1 - player;
+    td.zone = 0x1200;
+    td.illegal_abilities = 0;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      if (hand_count[player] < 1)
+      {
+        return 0;
+      }
+      result = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x400, 0, 0, 0, 0,
+                                              0, 0, 0, NULL, NULL);
+      if (result == 0)
+      {
+        result = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 4, 0, 0, 0, 0, 0,
+                                                0, 0, &td, NULL);
+        if (result == 0)
+        {
+          return 0;
+        }
+        return (-(unsigned int)((land_can_be_played & 4U) == 0) & 0xffffff9e) + 99;
+      }
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      if (hand_count[player] < 1)
+      {
+        return 0;
+      }
+      instance->info_slot = 0;
+      new_default_test_definition_2022(&this_test, 0xff,
+                                       "Select a card to put on top of your library");
+      result = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x400, 0, 0, 0, 0, 0, 0,
+                                              0, NULL, NULL);
+      if (result == 0)
+      {
+        result = new_global_tutor_2022(player, player, 4, 10, 0, 3, &this_test);
+        if (result == -2)
+        {
+          return 0;
+        }
+        result = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 4, 0, 0, 0, 0, 0, 0,
+                                                0, &td, "TARGET_ANY");
+        return result;
+      }
+      if (spell_fizzled == 1)
+      {
+        return 0;
+      }
+      result = new_global_tutor_2022(player, player, 4, 10, 0, 3, &this_test);
+      if (result == -2)
+      {
+        return 0;
+      }
+      counterspell_2022(player, card, EVENT_ACTIVATE, NULL, 0);
+      ((unsigned char *)&instance->info_slot)[0] = 1;
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      result = global_enchantment(player, card, event);
+      return result;
+    }
+    default_target_definition_2022(player, card, &td, 0xff);
+    td.preferred_controller = 1 - player;
+    td.zone = 0x1200;
+    td.illegal_abilities = 0;
+    instance = get_card_instance(player, card);
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    if (instance->info_slot == 1)
+    {
+      result = counterspell_validate_2022(player, card, NULL, 0);
+    }
+    else
+    {
+      result = valid_target_2022(&td);
+    }
+    if (result != 0)
+    {
+      result = instance->targets[0].player;
+      target_card = instance->targets[0].card;
+      if (result != -1)
+      {
+        if (instance->info_slot == 1)
+        {
+          card_00 = create_legacy_effect(
+              player, card, source_damage_prevented_if_black_red_damage_source_controller);
+          instance = get_card_instance(player, card_00);
+          instance->targets[0].player = result;
+          instance->targets[0].card = target_card;
+          return 0;
+        }
+        create_targetted_legacy_effect(
+            player, card, source_damage_prevented_if_black_red_damage_source_controller, result,
+            target_card);
+        return 0;
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x264c8d0; original cards/exodus.c:3314. */
+int card_aether_tide(int player, int card, event_t event)
+{
+  target_t *ptVar1;
+  int iVar2;
+  target_t *ptVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  unsigned int uVar6;
+  unsigned int uVar7;
+  uint8_t *puVar8;
+  card_instance_t *pcVar9;
+  int iVar10;
+  int iVar11;
+  int32_t iVar12;
+  unsigned int uVar13;
+  target_definition_2022_t *ptVar14;
+  int iVar15;
+  unsigned int uStack_158;
+  uint8_t *puStack_154;
+  unsigned int uStack_150;
+  card_instance_t *pcStack_14c;
+  card_instance_t *pcStack_148;
+  uint8_t *puStack_144;
+  target_definition_2022_t *ptStack_140;
+  target_definition_2022_t td;
+  test_definition_2022_t this_test;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    new_default_test_definition_2022(&this_test, 2, "Select a creature card to discard.");
+    this_test.zone = 0x100;
+    get_card_instance(player, card);
+    iVar15 = generic_spell_2022(player, card, EVENT_CAN_CAST, 5, &td, NULL, 1, NULL);
+    if (iVar15 == 0)
+    {
+      return 0;
+    }
+    iVar15 = check_hand_for_type(player, card, 2);
+    if (iVar15 == 0)
+    {
+      return 0;
+    }
+    iVar15 = check_battlefield_for_special_card_2022(player, card, player, 0, &this_test);
+    return iVar15;
+  }
+  if (event != EVENT_CAST_SPELL)
+  {
+    if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
+        (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+    ptStack_140 = &td;
+    default_target_definition_2022(player, card, ptStack_140, 2);
+    new_default_test_definition_2022(&this_test, 2, "Select a creature card to discard.");
+    this_test.zone = 0x100;
+    pcVar4 = get_card_instance(player, card);
+    if (event != EVENT_RESOLVE_SPELL)
+    {
+      return 0;
+    }
+    iVar15 = 0;
+    if (pcVar4->number_of_targets != '\0')
+    {
+      do
+      {
+        while (true)
+        {
+          iVar5 = validate_target_2022(player, card, ptStack_140, iVar15);
+          if (iVar5 == 0)
+            break;
+          ptVar3 = pcVar4->targets + iVar15;
+          ptVar1 = pcVar4->targets + iVar15;
+          iVar15 = iVar15 + 1;
+          bounce_permanent(ptVar1->player, ptVar3->card);
+          if ((int)(unsigned int)pcVar4->number_of_targets <= iVar15)
+            goto LAB_0264c9c1;
+        }
+        iVar15 = iVar15 + 1;
+      } while (iVar15 < (int)(unsigned int)pcVar4->number_of_targets);
+    }
+  LAB_0264c9c1:
+    kill_card(player, card, KILL_DESTROY);
+    return 0;
+  }
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+  ptStack_140 = &td;
+  default_target_definition_2022(player, card, ptStack_140, 2);
+  new_default_test_definition_2022(&this_test, 2, "Select a creature card to discard.");
+  this_test.zone = 0x100;
+  pcVar4 = get_card_instance(player, card);
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+  set_special_flags2_2022(player, card, 0x20000);
+  pcVar4->number_of_targets = '\0';
+  iVar15 = played_for_free(player, card);
+  if (iVar15 == 0)
+  {
+    iVar15 = is_token(player, card);
+    if (iVar15 != 0)
+      goto LAB_0264cf00;
+  }
+  else
+  {
+  LAB_0264cf00:
+    iVar15 = check_special_flags2_2022(player, card, -0x80000000);
+    if (iVar15 == 0)
+    {
+      return 0;
+    }
+  }
+  iVar15 = check_special_flags2_2022(player, card, -0x80000000);
+  if (iVar15 == 0)
+  {
+    pcVar4->info_slot = x_value;
+    iVar15 = check_battlefield_for_special_card_2022(player, card, player, 4, &this_test);
+    if (iVar15 < x_value)
+    {
+      iVar12 = check_battlefield_for_special_card_2022(player, card, player, 4, &this_test);
+      pcVar4->info_slot = iVar12;
+      goto LAB_0264cafc;
+    }
+  }
+  iVar12 = pcVar4->info_slot;
+LAB_0264cafc:
+  ptVar14 = ptStack_140;
+  iVar15 = 0;
+  if (0 < iVar12)
+  {
+    do
+    {
+      iVar5 = can_target_2022(ptVar14);
+      if (iVar5 == 0)
+        break;
+      iVar5 = check_special_flags2_2022(player, card, -0x80000000);
+      if (iVar5 == 0)
+      {
+        iVar5 = has_mana(player, 0, iVar15 + 1);
+        if (iVar5 == 0)
+          break;
+      }
+      iVar5 = new_pick_target_2022(ptVar14, "TARGET_CREATURE", iVar15, 0);
+      if (iVar5 == 0)
+        break;
+      ptVar3 = pcVar4->targets + iVar15;
+      ptVar1 = pcVar4->targets + iVar15;
+      iVar15 = iVar15 + 1;
+      state_untargettable(ptVar1->player, ptVar3->card, 1);
+    } while (iVar15 < pcVar4->info_slot);
+  }
+  if (pcVar4->number_of_targets != '\0')
+  {
+    iVar15 = 0;
+    do
+    {
+      ptVar3 = pcVar4->targets + iVar15;
+      ptVar1 = pcVar4->targets + iVar15;
+      iVar15 = iVar15 + 1;
+      state_untargettable(ptVar1->player, ptVar3->card, 0);
+    } while (iVar15 < (int)(unsigned int)pcVar4->number_of_targets);
+  }
+  uVar6 = check_special_flags2_2022(player, card, -0x80000000);
+  if (uVar6 == 0)
+  {
+    int hand_slots = hand_count[player];
+    int original_hand[2][hand_slots];
+    int ohc = 0;
+    int discard_slots = hand_slots;
+    if (active_cards_count[player] > 0)
+    {
+      for (int c = 0; c < active_cards_count[player]; ++c)
+      {
+        if (in_hand(player, c) != NULL)
+        {
+          original_hand[0][ohc] = get_original_internal_card_id(player, c);
+          original_hand[1][ohc] = c;
+          ++ohc;
+        }
+      }
+      discard_slots = hand_count[player];
+    }
+    int to_discard[discard_slots];
+    int tdc = 0;
+    while (tdc < (unsigned int)pcVar4->number_of_targets)
+    {
+      int selected =
+          select_card_from_zone_2022(player, player, original_hand[0], ohc, 0, 3, -1, &this_test);
+      if (selected == -1)
+      {
+        if (tdc < (unsigned int)pcVar4->number_of_targets)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        break;
+      }
+      to_discard[tdc++] = original_hand[1][selected];
+      for (int k = selected; k < ohc; ++k)
+      {
+        original_hand[0][k] = original_hand[0][k + 1];
+        original_hand[1][k] = original_hand[1][k + 1];
+      }
+      --ohc;
+    }
+    charge_mana(player, 0,
+                (int)((uint32_t)pcVar4->number_of_targets - (uint32_t)pcVar4->info_slot));
+    if (spell_fizzled != 1)
+    {
+      for (int i = 0; i < (unsigned int)pcVar4->number_of_targets; ++i)
+        discard_card(player, to_discard[i]);
+    }
+  }
+  return 0;
+}
+
+#endif

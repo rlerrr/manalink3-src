@@ -4000,3 +4000,89 @@ int card_thousand_year_storm(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x261f430; original cards/guilds_of_ravnica.c:2896. */
+int card_pelt_collector(int player, int card, event_t event)
+{
+  _Static_assert(offsetof(card_instance_t, targets) == 116 && sizeof(target_t) == 8,
+                 "native split power slots");
+  if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card))
+  {
+    test_definition_2022_t test;
+    default_test_definition_2022(&test, 2);
+    test.power = get_power(player, card);
+    test.power_flag = 2;
+    test.not_me = 1;
+    etb_ability_global_2022(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_ETB)
+    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  else if (event == EVENT_GRAVEYARD_FROM_PLAY)
+  {
+    if (is_this_dying(affected_card_controller, affected_card) &&
+        affected_card_controller == player && affected_card != card &&
+        is_what(player, affected_card, 2))
+    {
+      int dying_power = get_power(affected_card_controller, affected_card);
+      if (get_power(player, card) < dying_power &&
+          !check_for_death_trigger_removal(affected_card_controller, affected_card))
+      {
+        card_instance_t *instance = get_card_instance(player, card);
+        if (instance->targets[11].player < 0)
+          instance->targets[11].player = 0;
+        uint8_t *pending = (uint8_t *)&instance->targets[11].player;
+        *pending = (uint8_t)(*pending + 1);
+        for (int pos = 0; pos != 21; ++pos)
+        {
+          int32_t *slot =
+              pos < 10 ? &instance->targets[pos].player : &instance->targets[pos - 10].card;
+          if (*slot == -1)
+          {
+            *slot = get_power(affected_card_controller, affected_card);
+            break;
+          }
+        }
+      }
+    }
+  }
+  int resolved = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (!resolved && (event == EVENT_ETB || event == EVENT_GRAVEYARD_FROM_PLAY))
+    return 0;
+  if (resolved)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    unsigned amount = (uint32_t)instance->targets[11].card & 0xff;
+    int array[amount];
+    for (unsigned pos = 0; pos < amount; ++pos)
+      array[pos] = pos < 10 ? instance->targets[pos].player : instance->targets[pos - 10].card;
+    for (unsigned i = 1; i < amount; ++i)
+    {
+      for (unsigned j = i; j < amount; ++j)
+      {
+        if (array[j] < array[i - 1])
+        {
+          int temp = array[i - 1];
+          array[i - 1] = array[j];
+          array[j] = temp;
+        }
+      }
+    }
+    for (unsigned i = 0; i < amount; ++i)
+      if (array[i] > get_power(player, card))
+        add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    instance->targets[11].card = 0;
+    for (int i = 0; i != 9; ++i)
+    {
+      instance->targets[i].player = -1;
+      instance->targets[i].card = -1;
+    }
+  }
+  if (event == EVENT_ABILITIES && !is_humiliated_for_ability(player, card, AL_STATIC) &&
+      count_counters(player, card, COUNTER_P1_P1) > 2)
+    event_result |= 0x80;
+  return 0;
+}
+
+#endif

@@ -284,3 +284,63 @@ int has_type_dead_this_turn_in_grave(int player, test_definition_t *this_test){
 	}
 	return 0;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2671e30; original functions/deadbox.c:179. */
+void seek_grave_to_reanimate_this_turn_2022(int player, int t_player, int selected_type,
+                                            reanimate_mode_2022_t mode)
+{
+  int result;
+  card_instance_t *instance;
+  int player_00;
+  int dead_slot;
+
+  player_00 = 0;
+  do
+  {
+    if (((t_player == player_00) || (t_player == 2)) &&
+        (result = get_deadbox_card(player_00), -1 < result))
+    {
+      instance = get_card_instance(player_00, result);
+      dead_slot = 0;
+      do
+      {
+        while (((dead_slot & 1 ? instance->targets[dead_slot / 2].card
+                               : instance->targets[dead_slot / 2].player) < 0 ||
+                (result = is_what(-1,
+                                  (dead_slot & 1 ? instance->targets[dead_slot / 2].card
+                                                 : instance->targets[dead_slot / 2].player),
+                                  selected_type & 0x3fffffff),
+                 result == 0)))
+        {
+        LAB_02671ea0:
+          dead_slot = dead_slot + 1;
+          if (dead_slot == 36)
+            goto LAB_02671e61;
+        }
+        result = (dead_slot & 1 ? instance->targets[dead_slot / 2].card
+                                : instance->targets[dead_slot / 2].player);
+        if ((selected_type & 0x40000000U) != 0)
+        {
+          result = is_planeswalker(-1, result);
+          if (result != 0)
+            goto LAB_02671ea0;
+          result = (dead_slot & 1 ? instance->targets[dead_slot / 2].card
+                                  : instance->targets[dead_slot / 2].player);
+        }
+        dead_slot = dead_slot + 1;
+        seek_grave_for_id_to_reanimate_2022(player, -1, player_00,
+                                            (unsigned int)cards_data[result].id, mode);
+      } while (dead_slot != 36);
+    }
+  LAB_02671e61:
+    player_00 = player_00 + 1;
+    if (player_00 == 2)
+    {
+      return;
+    }
+  } while (true);
+}
+
+#endif

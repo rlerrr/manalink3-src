@@ -7801,3 +7801,54 @@ int card_moonlace(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20e7ea0; original cards/time_spiral.c:1026. */
+char *target_must_be_permanent_or_suspend_2022(int who_chooses, int player, int card,
+                                               int targeting_player, int targeting_card)
+{
+  int result;
+  card_instance_t *instance;
+
+  result = is_what(player, card, 0x47);
+  if (result == 0)
+  {
+    instance = get_card_instance(player, card);
+    if (((instance->internal_card_id != LEGACY_EFFECT_CUSTOM) ||
+         (instance->info_slot_fn != generic_suspend_legacy)) &&
+        (cards_data[instance->internal_card_id].id != 0x2178))
+    {
+      return (char *)EXE_STR(0x728f6c);
+    }
+  }
+  return NULL;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20ea700; original cards/time_spiral.c:3214. */
+char *target_must_be_permanent_or_suspend_and_have_time_counters_2022(int who_chooses, int player,
+                                                                      int card,
+                                                                      int targeting_player,
+                                                                      int targeting_card)
+{
+  char *pcVar1;
+  int result;
+
+  pcVar1 = target_must_be_permanent_or_suspend_2022(who_chooses, player, card, targeting_player,
+                                                    targeting_card);
+  if (pcVar1 == NULL)
+  {
+    result = count_counters(player, card, COUNTER_TIME);
+    if (result == 0)
+    {
+      return "must have counters";
+    }
+  }
+  return pcVar1;
+}
+
+#endif

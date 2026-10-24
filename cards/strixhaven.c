@@ -11812,3 +11812,501 @@ int card_tanazir_quandrix(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23c97f0; original cards/strixhaven.c:391. */
+int card_echoing_equation(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *pcVar2;
+  card_instance_t *pcVar3;
+  int iVar4;
+  int *piVar5;
+  bool bVar6;
+  int iStack_2c4;
+  target_definition_2022_t td;
+  int marked[151];
+  mdfc_back(player, card, event);
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition_2022(player, card, &td, 2);
+        td.allowed_controller = player;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          iVar1 = valid_target_2022(&td);
+          if ((iVar1 != 0) &&
+              (pcVar2 = get_card_instance(player, card), 0 < active_cards_count[player]))
+          {
+            iStack_2c4 = 0;
+            iVar1 = 0;
+            do
+            {
+              pcVar3 = in_play(player, iVar1);
+              if (((pcVar3 != NULL) && (iVar4 = is_what(player, iVar1, 2), iVar4 != 0)) &&
+                  (pcVar2->targets[0].card != iVar1))
+              {
+                marked[iStack_2c4] = iVar1;
+                iStack_2c4 = iStack_2c4 + 1;
+              }
+              iVar1 = iVar1 + 1;
+            } while (iVar1 < active_cards_count[player]);
+            if (0 < iStack_2c4)
+            {
+              piVar5 = marked + iStack_2c4 + -1;
+              do
+              {
+                iVar1 = *piVar5;
+                set_special_flags3_2022(player, iVar1, 0x1000000);
+                real_shapeshift_target_2022(player, card, player, iVar1, pcVar2->targets[0].player,
+                                            pcVar2->targets[0].card, 9);
+                bVar6 = piVar5 != marked;
+                piVar5 = piVar5 + -1;
+              } while (bVar6);
+            }
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_023c9866;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition_2022(player, card, &td, 2);
+  td.allowed_controller = player;
+LAB_023c9866:
+  iVar1 = generic_spell_2022(player, card, event, 0x81, &td, "Select target creature you control.",
+                             1, NULL);
+  return iVar1;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23daf20; original cards/strixhaven.c:6537. */
+int card_shadrix_silverquill(int player, int card, event_t event)
+{
+  int iVar1;
+  unsigned int t_player;
+  int iVar2;
+  const char *puVar3;
+  int iVar4;
+  uint32_t uStack_1c4;
+  int iStack_1c0;
+  int iStack_1bc;
+  int iStack_1ac;
+  unsigned int uStack_1a4;
+  int abils[4];
+  target_definition_2022_t td;
+  char buffer1[100];
+  char buffer2[100];
+  char buffer3[100];
+  check_legend_rule(player, card, event);
+  iVar1 = beginning_of_combat_2022(player, card, event, player);
+  if (iVar1 != 0)
+  {
+    default_target_definition_2022(player, card, &td, 0);
+    td.zone = 0x1000;
+    iVar1 = would_validate_arbitrary_target_2022(&td, player, -1);
+    if ((iVar1 != 0) ||
+        (iVar1 = would_validate_arbitrary_target_2022(&td, 1 - player, -1), iVar1 != 0))
+    {
+      abils[0] = -1;
+      abils[1] = -1;
+      abils[2] = -1;
+      abils[3] = -1;
+      uStack_1a4 = 0;
+      do
+      {
+        iVar4 = abils[3];
+        iVar2 = abils[2];
+        iVar1 = abils[1];
+        t_player = uStack_1a4 ^ current_turn;
+        if (player == t_player)
+        {
+          iStack_1c0 = ((6 < life[player]) - 1 & 0xffffffe7) + 0x1e;
+          puVar3 = "You";
+          iStack_1bc = count_subtype(player, 2, -1);
+          uStack_1c4 = 10;
+          iStack_1bc = iStack_1bc * 10;
+        }
+        else
+        {
+          puVar3 = "Opponent";
+          iStack_1c0 = (2 - life[1 - player]) * 10;
+          iStack_1bc = count_subtype(player, 2, -1);
+          uStack_1c4 = 0xfffffff6;
+          iStack_1bc = iStack_1bc * -5;
+        }
+        scnprintf(buffer1, 100, "%s get token", puVar3);
+        scnprintf(buffer2, 100, "%s draw and lose 1 life", puVar3);
+        scnprintf(buffer3, 100, "%s get counters", puVar3);
+        iStack_1ac = 0;
+        if (iVar4 == -1)
+        {
+          iStack_1ac = player_is_valid_target(player, card, t_player);
+        }
+        iVar4 = 0;
+        if (iVar2 == -1)
+        {
+          iVar4 = player_is_valid_target(player, card, t_player);
+        }
+        iVar2 = 0;
+        if (iVar1 == -1)
+        {
+          iVar2 = player_is_valid_target(player, card, t_player);
+        }
+        iVar1 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014", "\001\004",
+                            buffer1, iVar2, uStack_1c4, buffer2, iVar4, iStack_1c0, buffer3,
+                            iStack_1ac, iStack_1bc, 0, 0, 0, 0);
+        abils[iVar1] = t_player;
+        uStack_1a4 = uStack_1a4 + 1;
+      } while (uStack_1a4 != 2);
+      iVar1 = 1;
+    LAB_023db247:
+      do
+      {
+        iVar2 = abils[iVar1];
+        if (-1 < iVar2)
+        {
+          if (iVar1 == 1)
+          {
+            token_generation_2022_t token;
+            default_token_definition_2022(player, card, 0x58a7, &token);
+            token.pow = 2;
+            token.tou = 1;
+            token.key_plus = KEYWORD_FLYING;
+            token.color_forced = 34;
+            token.t_player = iVar2;
+            generate_token_2022(&token);
+          }
+          else
+          {
+            if (iVar1 == 2)
+            {
+              draw_cards(iVar2, 1);
+              iVar1 = 3;
+              lose_life_2022(iVar2, 1);
+              goto LAB_023db247;
+            }
+            if (iVar1 == 3)
+            {
+              manipulate_type(player, card, iVar2, TYPE_CREATURE,
+                              ACT_ADD_COUNTERS_BASE | ACT_KILL_BURY);
+              return 0;
+            }
+          }
+        }
+        iVar1 = iVar1 + 1;
+        if (iVar1 == 4)
+        {
+          return 0;
+        }
+      } while (true);
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23d8240; original cards/strixhaven.c:5482. */
+int card_quandrix_command(int player, int card, event_t event)
+{
+  typedef enum
+  {
+    CHOICE_INVALID_TARGET = 0,
+    CHOICE_BOUNCE = 1,
+    CHOICE_COUNTERSPELL = 2,
+    CHOICE_P1_P1_COUNTERS = 3,
+    CHOICE_RECYCLE = 4
+  } CommandChoices;
+  CommandChoices CVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  char cVar6;
+  CommandChoices *pCVar7;
+  const char *prompt;
+  actions_2022_t raw_action;
+  uint32_t uStack_268;
+  int iStack_264;
+  int iStack_260;
+  unsigned int uStack_258;
+  target_definition_2022_t *ptStack_254;
+  target_definition_2022_t *ptStack_250;
+  card_instance_t *instance;
+  CommandChoices *pCStack_248;
+  target_definition_2022_t *ptStack_244;
+  CommandChoices choices[2];
+  target_definition_2022_t td;
+  target_definition_2022_t td2;
+  target_definition_2022_t td3;
+  target_definition_2022_t td4;
+  test_definition_2022_t test;
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition_2022(player, card, &td, 0x102);
+    counterspell_target_definition_2022(player, card, &td2, 0x44);
+    default_target_definition_2022(player, card, &td3, 2);
+    td3.preferred_controller = player;
+    default_target_definition_2022(player, card, &td4, 0);
+    td4.zone = 0x1000;
+    td4.preferred_controller = player;
+    new_default_test_definition_2022(&test, 0xff, "Select target card.");
+    get_card_instance(player, card);
+    choices[0] = CHOICE_INVALID_TARGET;
+    iVar2 = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    if (iVar2 != 0)
+    {
+      ((unsigned char *)&choices[0])[0] = 1;
+    }
+    iVar2 = counterspell_2022(player, card, EVENT_CAN_CAST, &td2, 0);
+    if (iVar2 != 0)
+    {
+      ((unsigned char *)&choices[0])[1] = 1;
+    }
+    iVar2 = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td3, NULL, 1, NULL);
+    if (iVar2 != 0)
+    {
+      ((unsigned char *)&choices[0])[0] += CHOICE_BOUNCE;
+    }
+    iVar2 = generic_spell_2022(player, card, EVENT_CAN_CAST, 0x1000, NULL, NULL, 3, &test);
+    if (iVar2 != 0)
+    {
+      ((unsigned char *)&choices[0])[0] += CHOICE_BOUNCE;
+    }
+    cVar6 = (char)(choices[0] >> 8);
+    if ((unsigned char)choices[0] < 2)
+    {
+      if ((unsigned char)choices[0] == 0)
+      {
+        return 0;
+      }
+      iVar2 = 99;
+      if (cVar6 == '\0')
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      iVar2 = (-(unsigned int)(cVar6 == '\0') & 0xffffff9e) + 99;
+    }
+    return iVar2;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+  LAB_023d8279:
+    default_target_definition_2022(player, card, &td, 0x102);
+    counterspell_target_definition_2022(player, card, &td2, 0x44);
+    default_target_definition_2022(player, card, &td3, 2);
+    td3.preferred_controller = player;
+    default_target_definition_2022(player, card, &td4, 0);
+    td4.zone = 0x1000;
+    td4.preferred_controller = player;
+    new_default_test_definition_2022(&test, 0xff, "Select target card.");
+    instance = get_card_instance(player, card);
+    if (ai_is_speculating != 1)
+    {
+    LAB_023d8356:
+      if ((player != 1) || (((unsigned char)trace_mode & 2) != 0))
+      {
+        if (event == EVENT_RESOLVE_SPELL)
+          goto LAB_023d8369;
+        uStack_268 = 1;
+        iStack_260 = 1;
+        iStack_264 = 1;
+        goto LAB_023d854e;
+      }
+    }
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+    LAB_023d8369:
+      ptStack_244 = &td;
+      ptStack_250 = &td2;
+      ptStack_254 = &td3;
+      CVar1 = dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
+                          "\001\033", "Bounce target creature or planeswalker", 0, 1,
+                          "Counter target artifact or enchantment spell", 0, 1,
+                          "Target creature gets 2 +1/+1 counters", 0, 1, "Recycle 3 target cards",
+                          0, 1, 0, 0, 0, 0);
+      pCStack_248 = choices;
+      iStack_264 = 0;
+      uStack_258 = 0;
+      choices[0] = CVar1;
+      do
+      {
+        switch (CVar1)
+        {
+        case CHOICE_INVALID_TARGET:
+          goto code_r0x023d849a;
+        case CHOICE_BOUNCE:
+          iVar2 = validate_target_2022(player, card, ptStack_244, uStack_258);
+          if (iVar2 != 0)
+          {
+            raw_action = ACT_BOUNCE;
+          code_r0x023d8484:
+            action_on_target(player, card, uStack_258, raw_action);
+          }
+          goto code_r0x023d849a;
+        case CHOICE_COUNTERSPELL:
+          counterspell_2022(player, card, EVENT_RESOLVE_SPELL, ptStack_250, uStack_258);
+          uStack_258 = uStack_258 + 1;
+          break;
+        case CHOICE_P1_P1_COUNTERS:
+          iVar2 = validate_target_2022(player, card, ptStack_254, uStack_258);
+          if (iVar2 != 0)
+          {
+            raw_action = ACT_ADD_COUNTERS_BASE | ACT_KILL_DESTROY;
+            goto code_r0x023d8484;
+          }
+        code_r0x023d849a:
+          uStack_258 = uStack_258 + 1;
+          break;
+        case CHOICE_RECYCLE:
+          iVar2 = uStack_258 + 1;
+          do
+          {
+            iVar3 = instance->targets[iVar2].player;
+            if (iVar3 == -1)
+              break;
+            iVar3 = validate_target_from_grave_source(player, card, iVar3 >> 0x10, iVar2);
+            if (iVar3 != -1)
+            {
+              iVar4 = instance->targets[uStack_258].player;
+              iVar3 = add_card_to_hand(iVar4, graveyard_ptr_mutable[iVar4][iVar3]);
+              put_on_top_of_deck(instance->targets[uStack_258].player, iVar3);
+              iStack_264 = iStack_264 + 1;
+            }
+            iVar2 = iVar2 + 1;
+          } while (iVar2 <= (int)(uStack_258 + 3));
+          if (iStack_264 != 0)
+          {
+            shuffle(instance->targets[uStack_258].player);
+          }
+        }
+        pCStack_248 = pCStack_248 + 1;
+        if (pCStack_248 == choices + 2)
+        {
+          kill_card(player, card, KILL_DESTROY);
+          return 0;
+        }
+        CVar1 = *pCStack_248;
+      } while (true);
+    }
+  }
+  else
+  {
+    if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      goto LAB_023d8279;
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td, 0x102);
+    counterspell_target_definition_2022(player, card, &td2, 0x44);
+    default_target_definition_2022(player, card, &td3, 2);
+    td3.preferred_controller = player;
+    default_target_definition_2022(player, card, &td4, 0);
+    td4.zone = 0x1000;
+    td4.preferred_controller = player;
+    new_default_test_definition_2022(&test, 0xff, "Select target card.");
+    instance = get_card_instance(player, card);
+    if (ai_is_speculating != 1)
+      goto LAB_023d8356;
+  }
+  iStack_260 = count_graveyard(player);
+  uStack_268 = 10;
+  iStack_260 = iStack_260 * 2;
+  iStack_264 = 0x14;
+LAB_023d854e:
+  ptStack_244 = &td;
+  ptStack_250 = &td2;
+  ptStack_254 = &td3;
+  iVar2 = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, ptStack_244, NULL, 1, NULL);
+  iVar3 = counterspell_2022(player, card, EVENT_CAN_CAST, ptStack_250, 0);
+  iVar4 = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, ptStack_254, NULL, 1, NULL);
+  iVar5 = generic_spell_2022(player, card, EVENT_CAN_CAST, 0x1000, NULL, NULL, 3, &test);
+  CVar1 = dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
+                      "\001\033", "Bounce target creature or planeswalker", iVar2, uStack_268,
+                      "Counter target artifact or enchantment spell", iVar3, 1,
+                      "Target creature gets 2 +1/+1 counters", iVar4, iStack_264,
+                      "Recycle 3 target cards", iVar5, iStack_260, 0, 0, 0, 0);
+  if (((event != EVENT_CAST_SPELL) || (card != affected_card)) ||
+      (player != affected_card_controller))
+  {
+    return 0;
+  }
+  instance->number_of_targets = '\0';
+  pCVar7 = choices;
+  iVar2 = 0;
+  choices[0] = CVar1;
+  do
+  {
+    switch (CVar1)
+    {
+    case CHOICE_INVALID_TARGET:
+      spell_fizzled = 1;
+      break;
+    case CHOICE_BOUNCE:
+      prompt = "Select target creature or planeswalker to bounce.";
+      goto code_r0x023d8c4b;
+    case CHOICE_COUNTERSPELL:
+      counterspell_2022(player, card, EVENT_CAST_SPELL, ptStack_250, iVar2);
+      iVar2 = iVar2 + 1;
+      break;
+    case CHOICE_P1_P1_COUNTERS:
+      prompt = "Select target creature to get +1/+1 counters";
+    code_r0x023d8c4b:
+      iVar3 = new_pick_target_2022(ptStack_244, prompt, iVar2, 0x81);
+      if (iVar3 == 0)
+      {
+        return 0;
+      }
+      iVar2 = iVar2 + 1;
+      break;
+    case CHOICE_RECYCLE:
+      select_multiple_cards_from_either_graveyard_2022(player, card, SFG_NO_SPELL_FIZZLED, 1, 1,
+                                                       &test, 3, instance->targets + iVar2 + 1);
+    }
+    pCVar7 = pCVar7 + 1;
+    if (pCVar7 == choices + 2)
+    {
+      return 0;
+    }
+    CVar1 = *pCVar7;
+  } while (true);
+}
+
+#endif

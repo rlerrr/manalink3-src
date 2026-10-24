@@ -2089,3 +2089,86 @@ int copy_to_display_end(int any_changes)
   LeaveCriticalSection(critical_section_for_display);
   return any_changes;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x265cf80; original functions/windows.c:3224. */
+char *localtime_date(void)
+{
+  static char date_buffer[18];
+  SYSTEMTIME systime;
+  _Static_assert(sizeof(SYSTEMTIME) == 16, "native SYSTEMTIME size");
+  _Static_assert(offsetof(SYSTEMTIME, wYear) == 0 && offsetof(SYSTEMTIME, wMonth) == 2 &&
+                     offsetof(SYSTEMTIME, wDay) == 6 && offsetof(SYSTEMTIME, wHour) == 8 &&
+                     offsetof(SYSTEMTIME, wMinute) == 10,
+                 "native SYSTEMTIME field offsets");
+  GetLocalTime(&systime);
+  sprintf(date_buffer, "%02d/%02d/%d", (unsigned int)systime.wMonth, (unsigned int)systime.wDay,
+          (unsigned int)systime.wYear);
+  return date_buffer;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x265cfd0; original functions/windows.c:3235. */
+int localtime_hour_minute(void)
+{
+  SYSTEMTIME systime;
+  _Static_assert(sizeof(SYSTEMTIME) == 16, "native SYSTEMTIME size");
+  _Static_assert(offsetof(SYSTEMTIME, wYear) == 0 && offsetof(SYSTEMTIME, wMonth) == 2 &&
+                     offsetof(SYSTEMTIME, wDay) == 6 && offsetof(SYSTEMTIME, wHour) == 8 &&
+                     offsetof(SYSTEMTIME, wMinute) == 10,
+                 "native SYSTEMTIME field offsets");
+  GetLocalTime(&systime);
+  return (int)(((uint32_t)systime.wHour << 16) | (uint32_t)systime.wMinute);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x265d000; original functions/windows.c:3244. */
+int localtime_hour(void)
+{
+  SYSTEMTIME systime;
+  _Static_assert(sizeof(SYSTEMTIME) == 16, "native SYSTEMTIME size");
+  _Static_assert(offsetof(SYSTEMTIME, wYear) == 0 && offsetof(SYSTEMTIME, wMonth) == 2 &&
+                     offsetof(SYSTEMTIME, wDay) == 6 && offsetof(SYSTEMTIME, wHour) == 8 &&
+                     offsetof(SYSTEMTIME, wMinute) == 10,
+                 "native SYSTEMTIME field offsets");
+  GetLocalTime(&systime);
+  return (unsigned int)systime.wHour;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x265d020; original functions/windows.c:3249. */
+int time_in_ms(void)
+{
+  int result;
+  LARGE_INTEGER ticks;
+  _Static_assert(sizeof(LARGE_INTEGER) == 8, "native performance-counter size");
+  LARGE_INTEGER frequency;
+  QueryPerformanceFrequency(&frequency);
+  QueryPerformanceCounter(&ticks);
+  int64_t scaled_ticks = (int64_t)((uint64_t)ticks.QuadPart * UINT64_C(1000));
+  result = (int)(scaled_ticks / frequency.QuadPart);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x265d090; original functions/windows.c:3266. */
+void sleepms(int ms)
+{
+  Sleep(ms);
+  return;
+}
+
+#endif

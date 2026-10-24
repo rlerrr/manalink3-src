@@ -6893,3 +6893,434 @@ int card_memorial_to_war(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22d4cb0; original cards/dominaria.c:3801. */
+int card_thran_temporal_gateway(int player, int card, event_t event)
+{
+  int result;
+  char msg[50];
+  test_definition_2022_t this_test;
+  if (event != EVENT_ACTIVATE)
+  {
+    if ((1U < (unsigned int)event - (unsigned int)EVENT_RESOLVE_ACTIVATION) &&
+        (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      memset(msg, 0, sizeof msg);
+      memcpy(msg, "Select an historical permanent.", 32);
+      new_default_test_definition_2022(&this_test, 0x47, msg);
+      this_test.special_selection_function = is_historic;
+      new_global_tutor_2022(player, player, 4, 4, 0, 2, &this_test);
+    }
+  }
+  result = generic_activated_ability_2022(player, card, event, 1, 4, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22cefa0; original cards/dominaria.c:1597. */
+int card_kamahls_druidic_vow(int player, int card, event_t event)
+{
+  if (event == EVENT_CAN_CAST)
+  {
+    if (check_battlefield_for_subtype(player, TYPE_CREATURE, 0x2001))
+      return 1;
+    return check_battlefield_for_subtype(player, 0x100, -1) != 0;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card == affected_card && player == affected_card_controller)
+    {
+      generic_spell_2022(player, card, event, 4, NULL, NULL, 0, NULL);
+      if (spell_fizzled != 1)
+      {
+        card_instance_t *instance = get_card_instance(player, card);
+        ai_modifier += instance->info_slot > 5 ? instance->info_slot * 12 : -48;
+      }
+    }
+    return 0;
+  }
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    card_instance_t *instance = get_card_instance(player, card);
+    int num_cards = count_deck(player);
+    if (instance->info_slot < num_cards)
+      num_cards = instance->info_slot;
+    if (num_cards != 0)
+    {
+      int gc_flag = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM2022_DECK);
+      show_deck_2022(player, deck_ptr[player], num_cards, "Cards revealed by Kamahl's Druidic Vow",
+                     0, ENGINE_DONE_LABEL);
+      if (gc_flag == 0)
+      {
+        int deck_copy[num_cards];
+        for (int i = 0; i < num_cards; ++i)
+        {
+          deck_copy[i] = deck_ptr[player][0];
+          remove_card_from_deck(player, 0);
+        }
+        char msg[100];
+        scnprintf(msg, 100, "Select a land and/or legendary permanent card with CMC <= %d.",
+                  num_cards);
+        test_definition_2022_t test;
+        new_default_test_definition_2022(&test, 0x47, msg);
+        test.cmc = num_cards + 1;
+        test.special_selection_function = is_land_or_legendary_by_internal_id;
+        test.cmc_flag = 3;
+        int remaining = num_cards;
+        do
+        {
+          int selected =
+              select_card_from_zone_2022(player, player, deck_copy, remaining, 0, 1, -1, &test);
+          if (selected == -1)
+          {
+            if (remaining != 0)
+            {
+              for (int i = 0; i < remaining; ++i)
+                raw_put_iid_on_top_of_deck(player, deck_copy[i]);
+              mill(player, remaining);
+            }
+            break;
+          }
+          int added = add_card_to_hand(player, deck_copy[selected]);
+          set_special_flags_2022(player, added, 0x10000);
+          put_into_play(player, added);
+          --remaining;
+          for (int i = selected; i < remaining; ++i)
+            deck_copy[i] = deck_copy[i + 1];
+        } while (remaining != 0);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  else if (event != EVENT_CAN_CHANGE_TARGET && event != EVENT_CHANGE_TARGET)
+    return 0;
+  return generic_spell_2022(player, card, event, 4, NULL, NULL, 0, NULL);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22ceb70; original cards/dominaria.c:1505. */
+int card_jodah_archmage_eternal(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (has_mana_multi(player, 0, 1, 1, 1, 1, 1))
+    {
+      int result = 0;
+      for (int i = 0; i < active_cards_count[player]; ++i)
+      {
+        if (in_hand(player, i) && !is_what(player, i, 1))
+        {
+          int legal = can_legally_play_iid(player, get_original_internal_card_id(player, i));
+          if (legal != 0 && (player == 0 || (player == 1 && !has_mana_to_cast_id(1, EVENT_CAN_CAST,
+                                                                                 get_id(1, i)))))
+          {
+            result = legal;
+            if (legal == 99)
+              return 99;
+          }
+        }
+      }
+      return result;
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    charge_mana_multi(player, 0, 1, 1, 1, 1, 1);
+    if (spell_fizzled != 1)
+    {
+      unsigned capacity = (unsigned)hand_count[player];
+      int playable[2][capacity];
+      int count = 0;
+      for (int i = 0; i < active_cards_count[player]; ++i)
+      {
+        if (in_hand(player, i) && !is_what(player, i, 1))
+        {
+          int legal = can_legally_play_iid(player, get_original_internal_card_id(player, i));
+          if (legal != 0 && (player == 0 || (player == 1 && !has_mana_to_cast_id(1, EVENT_CAN_CAST,
+                                                                                 get_id(1, i)))))
+          {
+            playable[0][count] = get_original_internal_card_id(player, i);
+            playable[1][count++] = i;
+          }
+        }
+      }
+      test_definition_2022_t test;
+      _Static_assert(sizeof(test) == 216, "native Jodah filter");
+      new_default_test_definition_2022(&test, 0xff, "Select a card to play.");
+      test.zone = 0x100;
+      int selected =
+          select_card_from_zone_2022(player, player, playable[0], count, 0, 2, -1, &test);
+      if (selected == -1)
+        spell_fizzled = 1;
+      else
+      {
+        play_card_in_hand_for_free(player, playable[1][selected]);
+        cant_be_responded_to = 1;
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22d0bd0; original cards/dominaria.c:2270. */
+int card_muldrotha_the_gravetide(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  card_instance_t *instance = get_card_instance(player, card);
+  for (int i = 0; i < active_cards_count[player]; ++i)
+  {
+    card_instance_t *leg = in_play(player, i);
+    if (leg && leg->internal_card_id == LEGACY_EFFECT_CUSTOM &&
+        leg->info_slot == (int32_t)(intptr_t)muldrotha_legacy &&
+        leg->damage_source_player == player && leg->damage_source_card == card &&
+        leg->damage_target_player == player && leg->damage_target_card == card)
+    {
+      instance = get_card_instance(player, i);
+      break;
+    }
+  }
+  if (event == EVENT_STATIC_EFFECTS && affect_me(player, card))
+  {
+    int found = 0;
+    for (int i = 0; i < active_cards_count[player]; ++i)
+    {
+      if (in_play(player, i) && is_what(player, i, 0x80))
+      {
+        card_instance_t *leg = get_card_instance(player, i);
+        if (leg->info_slot == (int32_t)(intptr_t)muldrotha_legacy &&
+            ((leg->damage_target_player == player && leg->damage_target_card == card) ||
+             (leg->targets[0].player == player && leg->targets[0].card == card)))
+        {
+          found = 1;
+          break;
+        }
+      }
+    }
+    if (!found)
+    {
+      int legacy = create_targetted_legacy_effect(player, card, muldrotha_legacy, player, card);
+      card_instance_t *leg = get_card_instance(player, legacy);
+      leg->targets[0].player = player;
+      leg->targets[0].card = card;
+      leg->number_of_targets = 1;
+      add_status(player, legacy, 0x10000);
+    }
+  }
+  if (!in_play(player, card) || is_humiliated_for_ability(player, card, AL_STATIC))
+    return 0;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (current_turn == player)
+    {
+      int used_types = instance->targets[1].player;
+      if (used_types == -1)
+        instance->targets[1].player = used_types = 0;
+      for (int i = 0; get_grave(player)[i] != -1; ++i)
+      {
+        int types = get_type_with_iid(-1, -1, get_grave(player)[i]);
+        if ((types & 0x147) != 0 && (types | used_types) != used_types)
+        {
+          int legal = can_legally_play_iid_now(player, get_grave(player)[i], EVENT_CAN_ACTIVATE);
+          if (legal != 0 && has_mana_to_cast_iid(player, EVENT_CAN_ACTIVATE, get_grave(player)[i]))
+            return legal;
+        }
+      }
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    int used_types = instance->targets[1].player;
+    unsigned capacity = (unsigned)count_graveyard(player);
+    int playable[2][capacity];
+    int count = 0;
+    for (int i = 0; get_grave(player)[i] != -1; ++i)
+    {
+      int types = get_type_with_iid(-1, -1, get_grave(player)[i]);
+      if ((types & 0x147) != 0 && (types | used_types) != used_types &&
+          can_legally_play_iid_now(player, get_grave(player)[i], EVENT_ACTIVATE) &&
+          has_mana_to_cast_iid(player, EVENT_ACTIVATE, get_grave(player)[i]))
+      {
+        playable[0][count] = get_grave(player)[i];
+        playable[1][count++] = i;
+      }
+    }
+    test_definition_2022_t test;
+    _Static_assert(sizeof(test) == 216, "native Muldrotha filter");
+    new_default_test_definition_2022(&test, 0xff, "Select a permanent card to play.");
+    int selected = select_card_from_zone_2022(player, player, playable[0], count, 0, 1, -1, &test);
+    if (selected != -1 && charge_mana_from_id(player, -1, EVENT_ACTIVATE,
+                                              (uint16_t)cards_data[playable[0][selected]].id))
+    {
+      int types = get_type_with_iid(-1, -1, playable[0][selected]);
+      if (num_bits_set(types) < 2)
+        instance->targets[1].player |= types;
+      else
+      {
+        int choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "\001\003",
+                                 "\001\004", "\001\016", "Artifact",
+                                 (types & 0x40) != 0 && (used_types & 0x40) == 0, 1, "Creature",
+                                 (types & 2) != 0 && (used_types & 2) == 0, 1, "Enchantment",
+                                 (types & 4) != 0 && (used_types & 4) == 0, 1, "Land",
+                                 (types & 1) != 0 && (used_types & 1) == 0, 1, "Planeswalker",
+                                 (types & 0x100) != 0 && (used_types & 0x100) == 0, 1, 0, 0, 0, 0);
+        switch (choice)
+        {
+        case 1:
+          instance->targets[1].player |= 0x40;
+          break;
+        case 2:
+          instance->targets[1].player |= 2;
+          break;
+        case 3:
+          instance->targets[1].player |= 4;
+          break;
+        case 4:
+          instance->targets[1].player |= 1;
+          break;
+        case 5:
+          instance->targets[1].player |= 0x100;
+          break;
+        default:
+          spell_fizzled = 1;
+          return 0;
+        }
+      }
+      play_card_in_grave_for_free(player, player, playable[1][selected]);
+      cant_be_responded_to = 1;
+      return 0;
+    }
+    spell_fizzled = 1;
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22cb2d0; original cards/dominaria.c:255. */
+int card_aryel_knight_of_windgrace(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  vigilance_2022(player, card, event);
+  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
+      event != EVENT_CLEANUP)
+    return 0;
+  target_definition_2022_t td1, td;
+  default_target_definition_2022(player, card, &td1, 2);
+  td1.allowed_controller = player;
+  td1.preferred_controller = player;
+  td1.special = 0x4000;
+  td1.illegal_abilities = 0;
+  td1.illegal_state = 1;
+  td1.allow_cancel = 3;
+  default_target_definition_2022(player, card, &td, 2);
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    td.power_requirement = target_available_2022(player, card, &td1) | 0x2000;
+    if (generic_activated_ability_2022(player, card, event, 1, 2, 0, 0, 0, 0, 1, 0, NULL, NULL))
+      return 1;
+    return generic_activated_ability_2022(player, card, event, 5, 0, 1, 0, 0, 0, 0, 0, &td, NULL) !=
+           0;
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+    td.power_requirement = target_available_2022(player, card, &td1) | 0x2000;
+    instance->info_slot = 0;
+    int ab1 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 1, 2, 0, 0, 0, 0, 1,
+                                             0, NULL, NULL);
+    int ab2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 1, 0, 0, 0, 0,
+                                             0, &td, NULL);
+    int choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\016", "Knight token",
+                             ab1, 5, "Destroy a creature", ab2, 10, 0, 0, 0, 0);
+    if (choice == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (choice == 1)
+      return generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 1, 2, 0, 0, 0, 0, 1, 0,
+                                            NULL, NULL);
+    if (choice != 2)
+      return 0;
+    if (!charge_mana_for_activated_ability_2022(player, card, 0, 1, 0, 0, 0, 0))
+    {
+      remove_state(player, card, 0x10);
+      spell_fizzled = 1;
+      return 0;
+    }
+    add_state(player, card, 0x10);
+    tapped_for_mana_color = -1;
+    int to_tap[target_available_2022(player, card, &td1)];
+    int ttc = 0;
+    while (ttc < target_available_2022(player, card, &td1) && can_target_2022(&td1))
+    {
+      instance->number_of_targets = 0;
+      if (!new_pick_target_2022(&td1, "Select a Knight you control to tap.", 0, 0x80))
+        break;
+      to_tap[ttc++] = instance->targets[0].card;
+      state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
+      instance->number_of_targets = 0;
+    }
+    for (int i = 0; i < ttc; ++i)
+    {
+      state_untargettable(player, to_tap[i], 0);
+      if (spell_fizzled == 1)
+        remove_state(player, card, 0x10);
+      else
+        tap_card(player, to_tap[i]);
+    }
+    instance->number_of_targets = 0;
+    td.power_requirement = ttc | 0x2000;
+    char buffer[75];
+    scnprintf(buffer, 75, "Select target creature with power less than or equal to %d", ttc);
+    new_pick_target_2022(&td, buffer, 0, 0x81);
+    instance->eot_toughness = ttc;
+    if (spell_fizzled != 1)
+      return 0;
+    for (int i = 0; i < ttc; ++i)
+      remove_state(player, to_tap[i], 0x10);
+    remove_state(player, card, 0x10);
+    return 0;
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    if (instance->info_slot == 1)
+    {
+      token_generation_2022_t token;
+      default_token_definition_2022(player, card, 0x4958, &token);
+      _Static_assert(offsetof(token_generation_2022_t, s_key_plus) == 36,
+                     "native token keyword word");
+      token.s_key_plus = 8;
+      generate_token_2022(&token);
+    }
+    if (instance->info_slot == 2)
+    {
+      td.power_requirement = instance->eot_toughness | 0x2000;
+      if (validate_target_2022(player, card, &td, 0))
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+    }
+    instance->eot_toughness = 0xffffffff;
+  }
+  return 0;
+}
+
+#endif

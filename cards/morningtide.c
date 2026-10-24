@@ -3880,3 +3880,26 @@ LAB_0227dd45:
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x227ed50; original cards/morningtide.c:148. */
+void test_enters_the_battlefield_with_counters_2022(int player, int card, event_t event,
+                                                    int t_player, test_definition_2022_t *test,
+                                                    counter_t type, int number)
+{
+  int result;
+  if (affected_card_controller == t_player)
+  {
+    result = new_make_test_in_play_2022(affected_card_controller, affected_card, -1, test);
+    if (result != 0)
+    {
+      enters_the_battlefield_with_counters(affected_card_controller, affected_card, event, type,
+                                           number);
+      return;
+    }
+  }
+  return;
+}
+
+#endif

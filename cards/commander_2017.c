@@ -1463,3 +1463,302 @@ int card_arahbo_roar_of_the_world(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x228fa80; original cards/commander_2017.c:792. */
+int card_kess_dissident_mage(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int *piVar4;
+  int iStack_108c;
+  test_definition_2022_t test;
+  int iids[500];
+  int positions[500];
+  check_legend_rule(player, card, event);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if ((((current_turn == player) &&
+          (instance = get_card_instance(player, card), instance->info_slot != 0x42)) &&
+         (instance = in_play(player, card), instance != NULL)) &&
+        (iVar1 = is_humiliated_for_ability(player, card, AL_STATIC), iVar1 == 0))
+    {
+      piVar4 = graveyard_ptr_mutable[player];
+      iVar1 = *piVar4;
+      iVar3 = 0;
+      if (iVar1 != -1)
+      {
+        while ((
+            ((cards_data[iVar1].type & 0x38) == 0 ||
+             (iVar1 = has_mana_to_cast_iid(player, EVENT_CAN_ACTIVATE, iVar1), iVar1 == 0)) ||
+            ((iVar1 = is_suspend_only_card(-1, *piVar4),
+              iVar1 != 0 || ((iVar1 = can_legally_play_iid_now(player, *piVar4, EVENT_CAN_ACTIVATE),
+                              iVar1 == 0 || (iVar3 = iVar1, iVar1 != 99)))))))
+        {
+          iVar1 = piVar4[1];
+          piVar4 = piVar4 + 1;
+          if (iVar1 == -1)
+          {
+            return iVar3;
+          }
+        }
+        return 99;
+      }
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    piVar4 = graveyard_ptr_mutable[player];
+    iStack_108c = 0;
+    iVar1 = *piVar4;
+    if (iVar1 != -1)
+    {
+      iVar3 = 0;
+      do
+      {
+        if (((((cards_data[iVar1].type & 0x38) != 0) &&
+              (iVar1 = has_mana_to_cast_iid(player, EVENT_ACTIVATE, iVar1), iVar1 != 0)) &&
+             (iVar1 = is_suspend_only_card(-1, piVar4[iVar3]), iVar1 == 0)) &&
+            (iVar1 = can_legally_play_iid_now(player, piVar4[iVar3], EVENT_ACTIVATE), iVar1 != 0))
+        {
+          iids[iStack_108c] = piVar4[iVar3];
+          positions[iStack_108c] = iVar3;
+          iStack_108c = iStack_108c + 1;
+        }
+        iVar3 = iVar3 + 1;
+        iVar1 = piVar4[iVar3];
+      } while (iVar1 != -1);
+    }
+    default_test_definition_2022(&test, 0);
+    iVar1 = select_card_from_zone_2022(player, player, iids, iStack_108c, 0, 1, -1, &test);
+    if ((iVar1 == -1) || (iVar3 = charge_mana_from_id(player, -1, EVENT_ACTIVATE,
+                                                      (unsigned int)cards_data[iids[iVar1]].id),
+                          iVar3 == 0))
+    {
+      spell_fizzled = 1;
+    }
+    else
+    {
+      play_card_in_grave_for_free_and_exile_it(player, player, positions[iVar1]);
+      cant_be_responded_to = 1;
+      instance = get_card_instance(player, card);
+      instance->info_slot = 0x42;
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    instance = get_card_instance(player, card);
+    instance->info_slot = 0;
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2290a90; original cards/commander_2017.c:1186. */
+int card_path_of_ancestry(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  unsigned int uVar5;
+
+  pcVar1 = get_card_instance(player, card);
+  iVar2 = is_humiliated_for_ability(player, card, AL_TRIG);
+  if (iVar2 == 0)
+  {
+    comes_into_play_tapped(player, card, event);
+  }
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (0 < active_cards_count[player])
+    {
+      iVar2 = 0;
+      do
+      {
+        pcVar4 = in_play(player, iVar2);
+        if ((pcVar4 != NULL) && (iVar3 = get_id(player, iVar2), iVar3 == 0x3953))
+        {
+          pcVar4 = get_card_instance(player, iVar2);
+          iVar2 = pcVar4->targets[2].player;
+          pcVar1->targets[2].player = iVar2;
+          pcVar1->info_slot = (unsigned int)cards_data[iVar2].color;
+          uVar5 = get_color_from_remainder_text((unsigned int)cards_data[iVar2].id);
+          uVar5 = uVar5 | pcVar1->info_slot;
+          iVar2 = pcVar4->targets[2].card;
+          pcVar1->info_slot = uVar5;
+          if (-1 < iVar2)
+          {
+            pcVar1->info_slot = uVar5 | cards_data[iVar2].color;
+            uVar5 = get_color_from_remainder_text((unsigned int)cards_data[iVar2].id);
+            uVar5 = uVar5 | pcVar1->info_slot;
+            pcVar1->info_slot = uVar5;
+            pcVar1->targets[2].card = pcVar4->targets[2].card;
+          }
+          goto LAB_02290b57;
+        }
+        iVar2 = iVar2 + 1;
+      } while (iVar2 < active_cards_count[player]);
+    }
+    uVar5 = pcVar1->info_slot;
+  LAB_02290b57:
+    play_land_sound_effect_force_color(player, card, uVar5);
+  }
+  else if (event == EVENT_CAN_ACTIVATE)
+  {
+    event = EVENT_CAN_ACTIVATE;
+  }
+  else if ((event == EVENT_ACTIVATE) && (0 < pcVar1->info_slot))
+  {
+    mana_producer(player, card, EVENT_ACTIVATE);
+    iVar2 = create_legacy_effect(player, card, path_of_ancestry_legacy);
+    pcVar4 = get_card_instance(player, iVar2);
+    pcVar4->targets[0].player = tapped_for_mana_color;
+    pcVar4 = get_card_instance(player, iVar2);
+    pcVar4->targets[2].player = pcVar1->targets[2].player;
+    pcVar4 = get_card_instance(player, iVar2);
+    pcVar4->targets[2].card = pcVar1->targets[2].card;
+    add_status(player, iVar2, 0x10000);
+    return 0;
+  }
+  iVar2 = mana_producer(player, card, event);
+  return iVar2;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x228e160; original cards/commander_2017.c:340. */
+int card_izzet_chemister(int player, int card, event_t event)
+{
+  haste(player, card, event);
+  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
+      event != EVENT_CLEANUP)
+    return 0;
+  char buffer[50];
+  scnprintf(buffer, 50, "Select a card to exile");
+  test_definition_2022_t test;
+  new_default_test_definition_2022(&test, 0x38, buffer);
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (generic_activated_ability_2022(player, card, event, 9, 1, 0, 0, 0, 1, 0, 0, NULL, NULL) &&
+        exiledby_count(player, card, player) > 0 &&
+        exiledby_choose(player, card, 0x4398, EXBY_CAN_CAST, 1, "", 1))
+      return exiledby_choose(player, card, 0x4398, EXBY_CAN_CAST, 1, "", 1);
+    if (generic_activated_ability_with_target_in_grave_2022(player, card, event, GAA_UNTAPPED, 0, 0,
+                                                            0, 0, 1, 0, 0, NULL, NULL, TYPE_NONE,
+                                                            &test, 8))
+      return 1;
+    return player == 0 && exiledby_count(0, card, 0) > 0;
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+    int have_exile = exiledby_count(player, card, player) > 0;
+    int abilities[5];
+    abilities[0] = generic_activated_ability_with_target_in_grave_2022(
+        player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, 0, 0, 0, 0, 1, 0, 0, NULL, NULL, TYPE_NONE,
+        &test, 8);
+    abilities[1] = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 9, 1, 0, 0, 0,
+                                                  1, 0, 0, NULL, NULL);
+    abilities[2] = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 9, 1, 0, 0, 0,
+                                                  1, 0, 0, NULL, NULL);
+    abilities[3] = player == 0 && have_exile;
+    abilities[4] = 0;
+    int weight = exiledby_count(player, card, player) * 2;
+    int can_cast = player == 1 ? abilities[1] != 0 && have_exile : abilities[2];
+    int choice = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Exile from graveyard",
+                             abilities[0], 6, "Cast spells from exile", can_cast, weight,
+                             "Show exiled cards", abilities[3], 0, 0, 0, 0, 0);
+    if (choice == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (choice == 3)
+    {
+      exiledby_choose(player, card, 0x4398, EXBY_CHOOSE, 0, "Card", 1);
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (choice == 1)
+    {
+      instance->number_of_targets = 0;
+      generic_activated_ability_with_target_in_grave_2022(player, card, EVENT_ACTIVATE,
+                                                          GAA_UNTAPPED, 0, 0, 0, 0, 1, 0, 0, NULL,
+                                                          NULL, TYPE_NONE, &test, 8);
+      return 0;
+    }
+    if (choice != 2)
+      return 0;
+    instance->number_of_targets = 0;
+    add_state(player, card, 0x10);
+    if (charge_mana_for_activated_ability_2022(player, card, 1, 0, 0, 0, 1, 0))
+    {
+      instance->targets[1].player = exiledby_count(player, card, player);
+      instance->targets[1].card = exiledby_detach(player, card);
+      kill_card(player, card, KILL_SACRIFICE);
+    }
+    if (spell_fizzled == 1)
+      remove_state(player, card, 0x10);
+    tapped_for_mana_color = -1;
+    return 0;
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    if (instance->info_slot == 1)
+    {
+      int selected = validate_target_from_grave_source(player, card, player, 0);
+      if (selected >= 0)
+      {
+        int leg = 0, idx = 0;
+        exiledby_remember(player, instance->parent_card, player, get_grave(player)[selected], &leg,
+                          &idx);
+        rfg_card_from_grave(player, selected);
+      }
+    }
+    if (instance->info_slot == 2)
+    {
+      int leg = 0, idx = 0;
+      int amount = instance->targets[1].player;
+      if (amount > 0)
+      {
+        int ic[amount];
+        int count = 0;
+        int *location;
+        while ((location = exiledby_find_any(player - 2, instance->targets[1].card, &leg, &idx)) !=
+               NULL)
+        {
+          uint32_t packed = (uint32_t)*location;
+          *location = -1;
+          int iid = packed & 0x7fffffff;
+          if (check_rfg(packed >> 31, (uint16_t)cards_data[iid].id))
+            ic[count++] = iid;
+        }
+        test_definition_2022_t this_test;
+        while (count > 0)
+        {
+          new_default_test_definition_2022(&this_test, 0xff, "Select a card to play for free");
+          int selected = select_card_from_zone_2022(player, player, ic, count, 0, 1, -1, &test);
+          if (selected == -1)
+            break;
+          unsigned csvid = (uint16_t)cards_data[ic[selected]].id;
+          for (int k = selected; k < count; ++k)
+            ic[k] = ic[k + 1];
+          --count;
+          play_card_in_exile_for_free(player, 1 - player, csvid);
+        }
+        exiledby_destroy_detached(player, instance->targets[1].card);
+      }
+    }
+  }
+  return 0;
+}
+
+#endif

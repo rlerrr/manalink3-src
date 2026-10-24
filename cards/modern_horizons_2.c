@@ -10467,3 +10467,739 @@ LAB_0223b0f4:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x222f0a0; original cards/modern_horizons_2.c:1089. */
+int card_break_the_ice(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  target_definition_2022_t td;
+  test_definition_2022_t this_test;
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition_2022(player, card, &td, 1);
+    td.special = 0x8000;
+    td.extra = (int32_t)target_is_snow_or_can_produce_colorless;
+    instance = get_card_instance(player, card);
+    result = basic_spell(player, card, EVENT_CAN_CAST);
+    if (result != 0)
+    {
+      if (instance->info_slot == 1)
+      {
+        return 1;
+      }
+      result = can_target_2022(&td);
+      return result;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition_2022(player, card, &td, 1);
+      td.special = 0x8000;
+      td.extra = (int32_t)target_is_snow_or_can_produce_colorless;
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance->number_of_targets = '\0';
+        result = check_special_flags2_2022(player, card, -0x80000000);
+        if ((result != 0) ||
+            (uVar3 = pay_overload_2022(player, card, 4, 2, 0, 0, 0, 0), uVar3 == 1))
+        {
+          new_pick_target_2022(&td, "Select land that is snow or could produce |C.", 0, 0x81);
+          if (spell_fizzled == 1)
+          {
+            return 0;
+          }
+          uVar3 = 1;
+        }
+        instance->info_slot = instance->info_slot | uVar3;
+      }
+    }
+  }
+  else if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+           (event == EVENT_CHANGE_TARGET))
+  {
+    default_target_definition_2022(player, card, &td, 1);
+    td.special = 0x8000;
+    td.extra = (int32_t)target_is_snow_or_can_produce_colorless;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      if (((unsigned int)instance->info_slot & 2) == 0)
+      {
+        result = valid_target_2022(&td);
+        if (result != 0)
+        {
+          kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+        }
+      }
+      else
+      {
+        default_test_definition_2022(&this_test, 1);
+        this_test.special_selection_function = is_snow_or_can_produce_colorless;
+        new_manipulate_all_2022(player, card, 2, &this_test, ACT_KILL_DESTROY);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  result = overload_2022(player, card, event, 4, 2, 0, 0, 0, 0);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2231430; original cards/modern_horizons_2.c:1895. */
+int card_damn2(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  target_definition_2022_t td;
+  test_definition_2022_t this_test;
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    instance = get_card_instance(player, card);
+    result = basic_spell(player, card, EVENT_CAN_CAST);
+    if (result != 0)
+    {
+      if (instance->info_slot == 1)
+      {
+        return 1;
+      }
+      result = can_target_2022(&td);
+      return result;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition_2022(player, card, &td, 2);
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance->number_of_targets = '\0';
+        result = check_special_flags2_2022(player, card, -0x80000000);
+        if ((result != 0) ||
+            (uVar3 = pay_overload_2022(player, card, 2, 0, 0, 0, 0, 2), uVar3 == 1))
+        {
+          new_pick_target_2022(&td, "TARGET_CREATURE", 0, 1);
+          if (spell_fizzled == 1)
+          {
+            return 0;
+          }
+          uVar3 = 1;
+        }
+        instance->info_slot = instance->info_slot | uVar3;
+      }
+    }
+  }
+  else if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+           (event == EVENT_CHANGE_TARGET))
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      if (((unsigned int)instance->info_slot & 2) == 0)
+      {
+        result = valid_target_2022(&td);
+        if (result != 0)
+        {
+          kill_card(instance->targets[0].player, instance->targets[0].card, KILL_BURY);
+        }
+      }
+      else
+      {
+        default_test_definition_2022(&this_test, 2);
+        new_manipulate_all_2022(player, card, 2, &this_test, ACT_KILL_BURY);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  result = overload_2022(player, card, event, 2, 0, 0, 0, 0, 2);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2242b50; original cards/modern_horizons_2.c:7296. */
+int card_vectis_gloves(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  unsigned int uVar4;
+  int card_00;
+
+  if (((((event == EVENT_BLOCK_LEGALITY) &&
+         (instance = is_equipping(player, card), instance != NULL)) &&
+        (iVar1 = is_humiliated_for_ability(player, card, AL_STATIC), iVar1 == 0)) &&
+       (((player_bits[player] & PB_NONSTANDARD_LANDWALK_DISABLED) == 0 &&
+         (instance = get_card_instance(player, card),
+          attacking_card_controller == instance->damage_target_player)))) &&
+      (attacking_card == instance->damage_target_card))
+  {
+    iVar1 = 1 - player;
+    uVar4 = 0;
+    if (0 < active_cards_count[iVar1])
+    {
+      card_00 = 0;
+      do
+      {
+        instance = in_play(iVar1, card_00);
+        if (((instance != NULL) && (iVar3 = is_what(iVar1, card_00, 1), iVar3 != 0)) &&
+            (iVar3 = is_what(iVar1, card_00, 0x40), iVar3 != 0))
+        {
+          uVar4 = 1;
+          break;
+        }
+        card_00 = card_00 + 1;
+      } while (card_00 < active_cards_count[iVar1]);
+    }
+    event_result = event_result | uVar4;
+  }
+  iVar1 = vanilla_equipment(player, card, event, 2, 2, 0, 0, 0);
+  return iVar1;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x223c8c0; original cards/modern_horizons_2.c:5364. */
+int card_rise_and_shine(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  unsigned int uVar3;
+  int iVar4;
+  int *piVar5;
+  bool bVar6;
+  int iStack_2c4;
+  target_definition_2022_t td;
+  int marked[151];
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition_2022(player, card, &td, 0x40);
+    td.illegal_type = 2;
+    td.allowed_controller = player;
+    instance = get_card_instance(player, card);
+    iVar4 = basic_spell(player, card, EVENT_CAN_CAST);
+    if (iVar4 != 0)
+    {
+      if (instance->info_slot == 1)
+      {
+        return 1;
+      }
+      iVar4 = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+      return iVar4;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition_2022(player, card, &td, 0x40);
+      td.illegal_type = 2;
+      td.allowed_controller = player;
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance->number_of_targets = '\0';
+        iVar4 = check_special_flags2_2022(player, card, -0x80000000);
+        if ((iVar4 != 0) || (uVar3 = pay_overload_2022(player, card, 4, 0, 2, 0, 0, 0), uVar3 == 1))
+        {
+          new_pick_target_2022(&td, "Select targer noncreature artifact", 0, 0x81);
+          if (spell_fizzled == 1)
+          {
+            return 0;
+          }
+          uVar3 = 1;
+        }
+        instance->info_slot = instance->info_slot | uVar3;
+      }
+    }
+  }
+  else if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+           (event == EVENT_CHANGE_TARGET))
+  {
+    default_target_definition_2022(player, card, &td, 0x40);
+    td.illegal_type = 2;
+    td.allowed_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      if (((unsigned int)instance->info_slot & 2) == 0)
+      {
+        iVar4 = valid_target_2022(&td);
+        if (iVar4 != 0)
+        {
+          add_counters_from_source(player, card, instance->targets[0].player,
+                                   instance->targets[0].card, COUNTER_P1_P1, 4);
+          artifact_animation(player, card, instance->targets[0].player, instance->targets[0].card,
+                             0, 0, 0, 0, 0);
+        }
+      }
+      else
+      {
+        if (0 < active_cards_count[player])
+        {
+          iVar4 = 0;
+          iStack_2c4 = 0;
+          do
+          {
+            while (((instance = in_play(player, iVar4),
+                     instance != NULL && (iVar2 = is_what(player, iVar4, 0x40), iVar2 != 0)) &&
+                    (iVar2 = is_what(player, iVar4, 2), iVar2 == 0)))
+            {
+              marked[iStack_2c4] = iVar4;
+              iStack_2c4 = iStack_2c4 + 1;
+              iVar4 = iVar4 + 1;
+              if (active_cards_count[player] <= iVar4)
+                goto LAB_0223c9d0;
+            }
+            iVar4 = iVar4 + 1;
+          } while (iVar4 < active_cards_count[player]);
+        LAB_0223c9d0:
+          if (0 < iStack_2c4)
+          {
+            piVar5 = marked + iStack_2c4 + -1;
+            do
+            {
+              iVar4 = *piVar5;
+              add_counters_from_source(player, card, player, iVar4, COUNTER_P1_P1, 4);
+              artifact_animation(player, card, player, iVar4, 0, 0, 0, 0, 0);
+              bVar6 = marked != piVar5;
+              piVar5 = piVar5 + -1;
+            } while (bVar6);
+          }
+        }
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  iVar4 = overload_2022(player, card, event, 4, 0, 2, 0, 0, 0);
+  return iVar4;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2242d30; original cards/modern_horizons_2.c:7339. */
+int card_verdant_command(int player, int card, event_t event)
+{
+  typedef enum
+  {
+    CHOICE_INVALID_TARGET = 0,
+    CHOICE_SQUIRREL = 1,
+    CHOICE_COUNTER_PW_ABIL = 2,
+    CHOICE_EXILE_CARD = 3,
+    CHOICE_3_LIFE = 4
+  } CommandChoices;
+  CommandChoices CVar1;
+  int iVar2;
+  int iVar3;
+  CommandChoices *pCVar4;
+  const char *prompt;
+  card_instance_t *instance;
+  CommandChoices *pCStack_220;
+  test_definition_2022_t *ptStack_21c;
+  target_definition_2022_t *ptStack_218;
+  int iStack_214;
+  int priority3;
+  target_definition_2022_t *ptStack_210;
+  CommandChoices choices[2];
+  int abils[5];
+  int priority[5];
+  token_generation_2022_t token;
+  target_definition_2022_t td_spell;
+  target_definition_2022_t td_player;
+  test_definition_2022_t test;
+  if (event == EVENT_CAN_CAST)
+  {
+  LAB_02242f74:
+    counter_activated_target_definition_2022(player, card, &td_spell, 0x100);
+    iStack_214 = can_counter_activated_ability_2022(player, card, event, &td_spell);
+    default_target_definition_2022(player, card, &td_player, 0);
+    td_player.zone = 0x1000;
+    new_default_test_definition_2022(&test, 0xff, "Select target card to exile.");
+    instance = get_card_instance(player, card);
+  }
+  else
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      goto LAB_02242f74;
+    }
+    if ((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET))
+    {
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+      goto LAB_02242f74;
+    }
+    counter_activated_target_definition_2022(player, card, &td_spell, 0x100);
+    iStack_214 = can_counter_activated_ability_2022(player, card, event, &td_spell);
+    default_target_definition_2022(player, card, &td_player, 0);
+    td_player.zone = 0x1000;
+    new_default_test_definition_2022(&test, 0xff, "Select target card to exile.");
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      abils[0] = 0x1010101;
+      abils[1] = 0x1010101;
+      abils[2] = 0x1010101;
+      abils[3] = 0x1010101;
+      abils[4] = 0x1010101;
+      choices[0] =
+          dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\005", choices + 1, "\001\015",
+                      "\001\002", "2 tapped Squirrels", 0x1010101, 0x1010101,
+                      "Counter PW loyalty ability", 0x1010101, 0x1010101, "Exile card in grave",
+                      0x1010101, 0x1010101, "Gain 3 life", 0x1010101, 0x1010101, 0, 0, 0, 0);
+      goto LAB_02242f45;
+    }
+  }
+  ptStack_21c = &test;
+  ptStack_218 = &td_player;
+  abils[1] = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, ptStack_218, NULL, 1, NULL);
+  abils[2] = (int)(iStack_214 != 0);
+  abils[3] = generic_spell_2022(player, card, EVENT_CAN_CAST, 0x1000, NULL, NULL, 1, ptStack_21c);
+  abils[4] = abils[1];
+  if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
+  {
+    iVar3 = 1 - player;
+    iVar2 = count_subtype(iVar3, 2, -1);
+    priority[1] = iVar2 * 5;
+    priority[2] = (-(unsigned int)(abils[2] == 0) & 0xfff0bdc1) + 1000000;
+    iVar2 = graveyard_has_shroud(iVar3);
+    priority3 = 5;
+    if (iVar2 == 0)
+    {
+      priority3 = count_graveyard(iVar3);
+    }
+    priority[4] = ((life[player] < 6) - 1 & 0xffffffd8) + 0x32;
+  }
+  else
+  {
+    priority3 = priority[3];
+  }
+  pCVar4 = choices;
+  CVar1 = dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
+                      "2 tapped Squirrels", abils[1], priority[1], "Counter PW loyalty ability",
+                      abils[2], priority[2], "Exile card in grave", abils[3], priority3,
+                      "Gain 3 life", abils[4], priority[4], 0, 0, 0, 0);
+  if (event == EVENT_CAN_CAST)
+  {
+    if (iStack_214 != 0)
+    {
+      CVar1 = 99;
+    }
+    return CVar1;
+  }
+  choices[0] = CVar1;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    instance->number_of_targets = '\0';
+    iVar3 = 0;
+    do
+    {
+      switch (CVar1)
+      {
+      case CHOICE_INVALID_TARGET:
+        spell_fizzled = 1;
+        break;
+      case CHOICE_SQUIRREL:
+        prompt = "Select target player to get squirrels.";
+        goto code_r0x02243558;
+      case CHOICE_COUNTER_PW_ABIL:
+        cast_counter_activated_ability_2022(player, card, iVar3);
+        iVar3 = iVar3 + 1;
+        break;
+      case CHOICE_EXILE_CARD:
+        iVar2 = select_target_from_either_grave_2022(player, card, SFG_0, 3, 1, ptStack_21c, iVar3,
+                                                     iVar3 + 1);
+        if (iVar2 == -1)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        iVar3 = iVar3 + 2;
+        break;
+      case CHOICE_3_LIFE:
+        prompt = "Select target player to gain life.";
+      code_r0x02243558:
+        td_player.preferred_controller = player;
+        iVar2 = new_pick_target_2022(ptStack_218, prompt, iVar3, 0x81);
+        if (iVar2 == 0)
+        {
+          return 0;
+        }
+        iVar3 = iVar3 + 1;
+      }
+      pCVar4 = pCVar4 + 1;
+      if (pCVar4 == choices + 2)
+      {
+        return 0;
+      }
+      CVar1 = *pCVar4;
+    } while (true);
+  }
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    return 0;
+  }
+LAB_02242f45:
+  ptStack_210 = &td_spell;
+  ptStack_218 = &td_player;
+  pCStack_220 = choices;
+  iVar3 = 0;
+LAB_02242f52:
+  do
+  {
+    switch (*pCStack_220)
+    {
+    case CHOICE_INVALID_TARGET:
+      goto code_r0x022432f5;
+    case CHOICE_SQUIRREL:
+      iVar2 = validate_target_2022(player, card, ptStack_218, iVar3);
+      if (iVar2 == 0)
+        goto code_r0x022432f5;
+      default_token_definition_2022(player, card, 0x4991, &token);
+      token.t_player = instance->targets[iVar3].player;
+      token.tou = 1;
+      token.pow = 1;
+      token.color_forced = '\b';
+      token.qty = '\x02';
+      token.action = TOKEN2022_ACTION_TAPPED;
+      generate_token_2022(&token);
+      goto code_r0x022432f6;
+    case CHOICE_COUNTER_PW_ABIL:
+      resolve_counter_activated_ability_2022(player, card, ptStack_210, iVar3);
+      goto code_r0x022432f5;
+    case CHOICE_EXILE_CARD:
+      iVar2 = validate_target_from_grave_source(player, card, instance->targets[iVar3].player,
+                                                iVar3 + 1);
+      if (iVar2 != -1)
+      {
+        rfg_card_from_grave(instance->targets[iVar3].player, iVar2);
+      }
+      iVar3 = iVar3 + 2;
+      break;
+    case CHOICE_3_LIFE:
+      iVar2 = validate_target_2022(player, card, ptStack_218, iVar3);
+      if (iVar2 != 0)
+      {
+        gain_life_2022(instance->targets[iVar3].player, 3);
+      }
+    }
+    pCStack_220 = pCStack_220 + 1;
+  } while (pCStack_220 != choices + 2);
+code_r0x02243242:
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+code_r0x022432f5:
+code_r0x022432f6:
+  iVar3 = iVar3 + 1;
+  pCStack_220 = pCStack_220 + 1;
+  if (pCStack_220 == choices + 2)
+    goto code_r0x02243242;
+  goto LAB_02242f52;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x222b230; original cards/modern_horizons_2.c:1987. */
+static int create_dauthi_voidwalker_legacy(int player, int card, int iid)
+{
+  enum
+  {
+    COUNTER_VOID = 170
+  };
+  int legacy =
+      create_legacy_effect_for_opponent(player, card, card_exiled_with_void_counter, -1, -1);
+  if (legacy != -1)
+  {
+    int owner = 1 - player;
+    add_counters_from_source(player, card, owner, legacy, COUNTER_VOID, 1);
+    card_instance_t *leg = get_card_instance(owner, legacy);
+    int source_card = leg->damage_source_card;
+    unsigned csvid = (uint16_t)cards_data[iid].id;
+    leg->display_pic_csv_id = csvid;
+    leg->targets[0].card = iid;
+    leg->targets[0].player = owner;
+    leg->eot_toughness = 0x300;
+    leg->display_pic_num =
+        (uint16_t)get_card_image_number(csvid, leg->damage_source_player, source_card);
+  }
+  return legacy;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2231790; original cards/modern_horizons_2.c:2001. */
+int card_dauthi_voidwalker(int player, int card, event_t event)
+{
+  enum
+  {
+    COUNTER_VOID = 170
+  };
+  shadow(player, card, event);
+  int opponent = 1 - player;
+  if (if_a_card_would_be_put_into_graveyard_from_library_do_something_instead_2022(
+          player, card, event, opponent, RESOLVE_TRIGGER_MANDATORY, NULL))
+  {
+    create_dauthi_voidwalker_legacy(player, card,
+                                    deck_ptr[trigger_cause_controller][trigger_cause]);
+    rfg_card_in_deck(trigger_cause_controller, trigger_cause);
+    replace_milled = 1;
+  }
+  if (if_a_card_would_be_put_into_graveyard_from_anywhere_but_library_do_something_instead_2022(
+          player, card, event, opponent, RESOLVE_TRIGGER_MANDATORY, NULL))
+  {
+    create_dauthi_voidwalker_legacy(player, card, trigger_cause);
+    add_card_to_rfg(trigger_cause_controller, trigger_cause);
+    play_sound_effect(WAV_DESTROY);
+    replace_milled = 1;
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+    int count = 0;
+    for (int c = 0; c < active_cards_count[opponent]; ++c)
+      if (in_play(opponent, c) && is_what(opponent, c, 0x80) &&
+          count_counters(opponent, c, COUNTER_VOID))
+        ++count;
+    ai_modifier += count * 10;
+  }
+  else if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    int exiled[31][3] = {{0}};
+    if (active_cards_count[opponent] > 0)
+    {
+      int best_index = -1, max_value = -99, count = 0;
+      for (int c = 0; c < active_cards_count[opponent] && count < 31; ++c)
+      {
+        if (in_play(opponent, c) && is_what(opponent, c, 0x80) &&
+            count_counters(opponent, c, COUNTER_VOID))
+        {
+          card_instance_t *leg = get_card_instance(opponent, c);
+          int iid = leg->targets[0].card, owner = leg->targets[0].player;
+          if (check_rfg(owner, (uint16_t)cards_data[iid].id))
+          {
+            int found = 0;
+            for (int d = 0; d <= count; ++d)
+              if (exiled[d][1] == iid)
+              {
+                found = 1;
+                break;
+              }
+            if (!found)
+            {
+              ++count;
+              exiled[count][0] = owner;
+              exiled[count][1] = iid;
+              exiled[count][2] = c;
+              int value = my_base_value_by_id((uint16_t)cards_data[iid].id);
+              if (value > max_value)
+              {
+                max_value = value;
+                best_index = count;
+              }
+            }
+          }
+        }
+      }
+      if (count != 0)
+      {
+        const char *labels[15];
+        int weights[15];
+        for (int i = 14; i >= 0; --i)
+          labels[i] = count > i ? cards_data[exiled[i + 1][1]].name : " ";
+        int choice;
+        for (;;)
+        {
+          for (int i = 14; i >= 0; --i)
+            weights[i] = my_base_value_by_id((uint16_t)cards_data[exiled[i + 1][1]].id);
+          choice = dialog_impl(
+              player, card, EVENT_RESOLVE_ACTIVATION, "\001\014", "\001\002", "\001\004",
+              "\001\003", labels[0], count > 0, weights[0], labels[1], count > 1, weights[1],
+              labels[2], count > 2, weights[2], labels[3], count > 3, weights[3], labels[4],
+              count > 4, weights[4], labels[5], count > 5, weights[5], labels[6], count > 6,
+              weights[6], labels[7], count > 7, weights[7], labels[8], count > 8, weights[8],
+              labels[9], count > 9, weights[9], labels[10], count > 10, weights[10], labels[11],
+              count > 11, weights[11], labels[12], count > 12, weights[12], labels[13], count > 13,
+              weights[13], labels[14], count > 14, weights[14], "Continue >>", count > 15,
+              (best_index < 16 ? 0 : 999), 0, 0, 0, 0);
+          if (choice != 16)
+            break;
+          int allow_back =
+              ai_is_speculating != 1 && (player != 1 || ((uint32_t)trace_mode >> 1 & 1));
+          const char *saved_labels[15];
+          for (int i = 0; i < 15; ++i)
+            saved_labels[i] = labels[i];
+          for (int i = 14; i >= 0; --i)
+          {
+            int iid = exiled[i + 16][1];
+            weights[i] = my_base_value_by_id((uint16_t)cards_data[iid].id);
+            labels[i] = count > i + 15 ? cards_data[iid].name : " ";
+          }
+          int second = dialog_impl(
+              player, card, EVENT_RESOLVE_ACTIVATION, "\001\014", "\001\002", "\001\004",
+              "\001\003", labels[0], count > 15, weights[0], labels[1], count > 16, weights[1],
+              labels[2], count > 17, weights[2], labels[3], count > 18, weights[3], labels[4],
+              count > 19, weights[4], labels[5], count > 20, weights[5], labels[6], count > 21,
+              weights[6], labels[7], count > 22, weights[7], labels[8], count > 23, weights[8],
+              labels[9], count > 24, weights[9], labels[10], count > 25, weights[10], labels[11],
+              count > 26, weights[11], labels[12], count > 27, weights[12], labels[13], count > 28,
+              weights[13], labels[14], count > 29, weights[14], "<<Back", allow_back, -999, 0, 0, 0,
+              0);
+          for (int i = 0; i < 15; ++i)
+            labels[i] = saved_labels[i];
+          if (second != 16)
+          {
+            choice = second + 15;
+            break;
+          }
+        }
+        create_may_play_card_from_exile_effect_2022(player, card, exiled[choice][0],
+                                                    (uint16_t)cards_data[exiled[choice][1]].id,
+                                                    MPCFE_UNTIL_EOT | MPCFE_FOR_FREE);
+      }
+    }
+  }
+  return generic_activated_ability_2022(player, card, event, 9, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+}
+
+#endif

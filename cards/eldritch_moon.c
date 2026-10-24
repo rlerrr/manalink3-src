@@ -6555,3 +6555,105 @@ int card_minds_dilation(int player, int card, event_t event)
   iVar1 = global_enchantment(player, card, event);
   return iVar1;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x247ea50; original cards/eldritch_moon.c:4282. */
+int card_mirrorwing_dragon(int player, int card, event_t event)
+{
+  int32_t iVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  int iVar6;
+  int iVar7;
+  unsigned int iid;
+  int iStack_14;
+  if (trigger_condition == TRIGGER_SPELL_CAST)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (reason_for_trigger_controller == player)) &&
+        ((((unsigned int)event - (unsigned int)EVENT_TRIGGER < 2U &&
+           (pcVar2 = in_play(player, card), pcVar2 != NULL)) &&
+          (iVar3 = is_humiliated_for_ability(player, card, AL_TRIG), iVar3 == 0))))
+    {
+      pcVar2 = get_card_instance(trigger_cause_controller, trigger_cause);
+      iVar3 = target_me(player, card, trigger_cause_controller, trigger_cause);
+      if (((iVar3 != 0) && (pcVar4 = get_card_instance(trigger_cause_controller, trigger_cause),
+                            pcVar4->number_of_targets == '\x01')) &&
+          (iVar3 = is_what(trigger_cause_controller, trigger_cause, 0x38), iVar3 != 0))
+      {
+        iVar3 = 0;
+        if (event == EVENT_TRIGGER)
+        {
+          event_result = event_result | 2;
+        }
+        else
+        {
+          do
+          {
+            for (iStack_14 = 0; iStack_14 < active_cards_count[iVar3]; iStack_14 = iStack_14 + 1)
+            {
+              if ((((trigger_cause_controller == iVar3) &&
+                    (pcVar4 = in_play(iVar3, iStack_14), pcVar4 != NULL)) &&
+                   (iVar5 = is_what(iVar3, iStack_14, 2), iStack_14 != card)) &&
+                  (iVar5 != 0))
+              {
+                iid = pcVar2->internal_card_id;
+                if (iid == 0xffffffff)
+                {
+                  iid = (unsigned int)pcVar2->backup_internal_card_id;
+                }
+                iVar5 = add_card_to_hand(trigger_cause_controller, iid);
+                pcVar4 = get_card_instance(trigger_cause_controller, iVar5);
+                pcVar4->info_slot = pcVar2->info_slot;
+                pcVar4->eot_toughness = pcVar2->eot_toughness;
+                iVar7 = 1;
+                do
+                {
+                  iVar1 = pcVar2->targets[iVar7].player;
+                  pcVar4->targets[iVar7].card = pcVar2->targets[iVar7].card;
+                  pcVar4->targets[iVar7].player = iVar1;
+                  iVar7 = iVar7 + 1;
+                } while (iVar7 != 0x13);
+                pcVar4->targets[0].card = iStack_14;
+                pcVar4->targets[0].player = iVar3;
+                pcVar4->number_of_targets = '\x01';
+                set_special_flags2_2022(trigger_cause_controller, iVar5, -0x80000000);
+                convert_to_token(trigger_cause_controller, iVar5);
+                set_special_flags_2022(trigger_cause_controller, iVar5, 0x200c0000);
+                iVar7 = put_card_on_stack(trigger_cause_controller, iVar5, 0);
+                if (iVar7 == 0)
+                {
+                  iVar6 = can_legally_play_iid(trigger_cause_controller, iid);
+                  iVar7 = trigger_cause_controller;
+                  if (iVar6 == 0)
+                  {
+                    obliterate_card(trigger_cause_controller, iVar5);
+                  }
+                  else
+                  {
+                    hand_count[trigger_cause_controller] =
+                        hand_count[trigger_cause_controller] + -1;
+                    real_put_into_play(iVar7, iVar5);
+                  }
+                }
+                else
+                {
+                  put_card_on_stack(trigger_cause_controller, iVar5, 1);
+                  put_card_on_stack3(trigger_cause_controller, iVar5);
+                }
+              }
+            }
+            iVar3 = iVar3 + 1;
+          } while (iVar3 < 2);
+        }
+      }
+    }
+    return 0;
+  }
+  return 0;
+}
+
+#endif

@@ -6650,3 +6650,77 @@ int card_dark_impostor(int player, int card, event_t event)
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2340190; original cards/avacyn_restored.c:5705. */
+static void bruna_ability(int player, int card)
+{
+  while (check_targets_for_bruna(player, card, 0) != 0)
+  {
+    if (player == 0)
+    {
+      target_definition_2022_t td;
+      base_target_definition_2022(0, card, &td, 4);
+      td.required_subtype = 0x4002;
+      card_instance_t *instance = get_card_instance(0, card);
+      instance->number_of_targets = 0;
+      if (!pick_next_target_noload_2022(&td, "Select an Aura card with enchant creature."))
+      {
+        spell_fizzled = 0;
+        break;
+      }
+      card_instance_t *aura =
+          get_card_instance(instance->targets[0].player, instance->targets[0].card);
+      aura->damage_target_player = 0;
+      aura->damage_target_card = card;
+    }
+    else
+    {
+      int result = check_targets_for_bruna(player, card, 1);
+      if (result >= 0)
+      {
+        card_instance_t *aura = get_card_instance(1 - player, result);
+        aura->damage_target_player = player;
+        aura->damage_target_card = card;
+      }
+    }
+  }
+  test_definition_2022_t this_test;
+  new_default_test_definition_2022(&this_test, 4, "Select an Aura card with enchant creature.");
+  this_test.subtype = 0x4002;
+  while (new_special_count_grave_2022(player, &this_test))
+  {
+    int result = new_global_tutor_2022(player, player, 2, 1, 0, 2, &this_test);
+    if (result < 0)
+      break;
+    put_into_play_aura_attached_to_target_2022(player, result, player, card);
+  }
+  this_test.zone = 0x100;
+  while (check_battlefield_for_special_card_2022(player, card, player, 0, &this_test))
+  {
+    int result = new_select_a_card_2022(player, player, 4, 0, 2, -1, &this_test);
+    if (result < 0)
+      break;
+    put_into_play_aura_attached_to_target_2022(player, result, player, card);
+  }
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x234ffc0; original cards/avacyn_restored.c:5758. */
+int card_bruna_light_of_alabaster_2022(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  vigilance_2022(player, card, event);
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event == EVENT_DAT_ABILITY)
+    bruna_ability(player, card);
+  if (blocking(player, card, event) && !is_humiliated_for_ability(player, card, AL_TRIG))
+    bruna_ability(player, card);
+  return 0;
+}
+
+#endif

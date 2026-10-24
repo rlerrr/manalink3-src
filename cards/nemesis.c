@@ -4500,3 +4500,103 @@ int card_skyshroud_cutter(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x209ba10; original cards/nemesis.c:3682. */
+int card_phyrexian_prowler(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  fading(player, card, event, 3);
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    result = can_use_activated_abilities_2022(player, card);
+    if ((((result != 0) && (result = count_counters(player, card, COUNTER_FADE), 0 < result)) &&
+         (card == affected_card)) &&
+        (player == affected_card_controller))
+    {
+      result = count_counters(player, card, COUNTER_FADE);
+      check_abilities_power_2022 = check_abilities_power_2022 + result;
+      result = count_counters(player, card, COUNTER_FADE);
+      check_abilities_toughness_2022 = check_abilities_toughness_2022 + result;
+    }
+    return 0;
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+  LAB_0209baa1:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_0209baa6;
+  }
+  else if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    if (event != EVENT_CLEANUP)
+    {
+      return 0;
+    }
+    goto LAB_0209baa1;
+  }
+  instance = get_card_instance(player, card);
+  pump_until_eot_merge_previous_2022(instance->parent_controller, instance->parent_card,
+                                     instance->parent_controller, instance->parent_card, 1, 1);
+LAB_0209baa6:
+  result = generic_activated_ability_2022(player, card, event, 0, 0, 0, 0, 0, 0, 0, 0x1290100, NULL,
+                                          NULL);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2099ea0; original cards/nemesis.c:3102. */
+int card_flowstone_armor(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_2022_t td;
+
+  choose_to_untap(player, card, event);
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1U < (unsigned int)event - (unsigned int)EVENT_RESOLVE_ACTIVATION) &&
+        (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td, 2);
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target_2022(&td), result != 0))
+    {
+      pump_until_source_is_in_play_and_tapped_2022(
+          instance->parent_controller, instance->parent_card, instance->targets[0].player,
+          instance->targets[0].card, 1, -1, 0, 0, 1);
+    }
+  }
+  result = generic_activated_ability_2022(player, card, event, 5, 3, 0, 0, 0, 0, 0, 0, &td,
+                                          "TARGET_CREATURE");
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x209c750; original cards/nemesis.c:3984. */
+int card_wandering_eye(int player, int card, event_t event)
+{
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    player_bits[0] = player_bits[0] | PB_HAND_REVEALED;
+    player_bits[1] = player_bits[1] | PB_HAND_REVEALED;
+  }
+  return 0;
+}
+
+#endif

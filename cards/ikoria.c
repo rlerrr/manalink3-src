@@ -1824,3 +1824,569 @@ int card_the_ozolith(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x228c4f0; original cards/ikoria.c:2289. */
+int card_umori_the_collector(int player, int card, event_t event)
+{
+  bool bVar1;
+  int iVar2;
+  card_instance_t *instance;
+  int iVar4;
+  type_t tVar5;
+  int *piVar6;
+  int *piVar7;
+  type_t tStack_38;
+  int types[7];
+  if (event == EVENT_QUERY)
+  {
+    if (attacking_card == 2)
+    {
+      piVar6 = deck_ptr[player];
+      tStack_38 =
+          TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_SPELL | TYPE_ENCHANTMENT | TYPE_CREATURE;
+      bVar1 = false;
+      piVar7 = piVar6 + 500;
+      do
+      {
+        if (*piVar6 == -1)
+          break;
+        iVar2 = is_what(-1, *piVar6, 1);
+        if (iVar2 == 0)
+        {
+          iVar2 = *piVar6;
+          iVar4 = get_internal_card_id_from_csv_id(0x53b2);
+          if ((bVar1) || (iVar2 != iVar4))
+          {
+            tVar5 = get_type_with_iid(-1, -1, *piVar6);
+            tStack_38 = tStack_38 & tVar5;
+            if (tStack_38 == TYPE_NONE)
+            {
+              return 0;
+            }
+          }
+          else
+          {
+            bVar1 = true;
+          }
+        }
+        piVar6 = piVar6 + 1;
+      } while (piVar6 != piVar7);
+      iVar2 = 0;
+      if (0 < active_cards_count[player])
+      {
+        do
+        {
+          while (iVar4 = is_what(player, iVar2, 1), iVar4 == 0)
+          {
+            iVar4 = get_id(player, iVar2);
+            if ((!bVar1) && (iVar4 == 0x53b2))
+            {
+              bVar1 = true;
+              break;
+            }
+            tVar5 = get_type(player, card);
+            tStack_38 = tStack_38 & tVar5;
+            if (tStack_38 == TYPE_NONE)
+            {
+              return 0;
+            }
+            iVar2 = iVar2 + 1;
+            if (active_cards_count[player] <= iVar2)
+            {
+              return 1;
+            }
+          }
+          iVar2 = iVar2 + 1;
+        } while (iVar2 < active_cards_count[player]);
+      }
+      return 1;
+    }
+    check_legend_rule(player, card, EVENT_QUERY);
+    goto LAB_0228c537;
+  }
+  check_legend_rule(player, card, event);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    memcpy(types, (const int[]){2, 4, 8, 48, 64, 256, 9}, sizeof types);
+    iVar2 = internal_rand(5);
+    iVar2 = do_dialog(
+        player, player, card, -1, -1,
+        " Creature\n Enchantment\n Sorcery\n Instant\n Artifact\n Planeswalker\n Tribal", iVar2);
+    instance = get_card_instance(player, card);
+    instance->targets[1].card = types[iVar2];
+    goto LAB_0228c537;
+  }
+  if (((event != EVENT_MODIFY_COST_GLOBAL) || (affected_card_controller != player)) ||
+      (iVar2 = is_humiliated_for_ability(player, card, AL_STATIC), iVar2 != 0))
+    goto LAB_0228c537;
+  instance = get_card_instance(player, card);
+  iVar2 = instance->targets[1].card;
+  if (iVar2 < 0)
+  {
+    if (iVar2 != 9)
+      goto LAB_0228c537;
+  LAB_0228c5cc:
+    iVar2 = is_tribal(affected_card_controller, affected_card);
+  }
+  else
+  {
+    if (iVar2 == 9)
+      goto LAB_0228c5cc;
+    iVar2 = is_what(affected_card_controller, affected_card, iVar2);
+  }
+  if (iVar2 != 0)
+  {
+    COST_COLORLESS = COST_COLORLESS + -1;
+  }
+LAB_0228c537:
+  iVar2 = hybrid(player, card, event);
+  return iVar2;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x228c7f0; original cards/ikoria.c:2445. */
+int card_vivien_monsters_advocate(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  int iStack_70;
+  int counters[4];
+  token_generation_2022_t token;
+
+  check_legend_rule(player, card, event);
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    create_targetted_legacy_activate(player, card, vivien_library_ability, player, card);
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      instance = get_card_instance(player, card);
+      if (event == EVENT_ACTIVATE)
+      {
+        instance->number_of_targets = '\0';
+        instance->info_slot = 0;
+        iStack_70 = 0;
+        if ((player == 1) && (0 < active_cards_count[1]))
+        {
+          iVar2 = 0;
+          do
+          {
+            instance = in_hand(1, iVar2);
+            if ((instance != NULL) && (iVar3 = is_what(1, iVar2, 2), iVar3 != 0))
+            {
+              iVar3 = get_original_internal_card_id(1, iVar2);
+              iVar3 = has_mana_to_cast_iid(1, EVENT_ACTIVATE, iVar3);
+              if ((iVar3 != 0) && (iVar3 = get_cmc(1, iVar2), iStack_70 < iVar3))
+              {
+                iStack_70 = iVar3;
+              }
+            }
+            iVar2 = iVar2 + 1;
+          } while (iVar2 < active_cards_count[1]);
+        }
+        iVar2 =
+            dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Create a beast", 1,
+                        3, 1, "Double your next creature", 1, iStack_70, 0xfffffffe, 0, 0, 0, 0);
+        if (iVar2 == 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        goto LAB_0228c841;
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+        goto LAB_0228c841;
+      instance = get_card_instance(player, card);
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      if (instance->info_slot == 1)
+      {
+        iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Vigilance", 1, 1,
+                            "Reach", 1, 1, "Trample", 1, 1, 0, 0, 0, 0);
+        counters[0] = 0;
+        counters[1] = 0x9a;
+        counters[2] = 0x98;
+        counters[3] = 0x99;
+        default_token_definition_2022(player, card, 0x4907, &token);
+        token.action_argument = 1;
+        token.action = TOKEN2022_ACTION_ADD_COUNTERS;
+        token.action_argument = (((unsigned int)(unsigned short)counters[iVar2] << 16) | 1U);
+        generate_token_2022(&token);
+      }
+      else if (instance->info_slot == 2)
+      {
+        create_legacy_effect(player, card, vivien_doubling_legacy);
+      }
+    }
+  }
+LAB_0228c841:
+  iVar2 = planeswalker(player, card, event, 3);
+  return iVar2;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2289940; original cards/ikoria.c:705. */
+int card_genesis_ultimatum(int player, int card, event_t event)
+{
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card || player != affected_card_controller)
+      return 0;
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    test_definition_2022_t test;
+    new_default_test_definition_2022(&test, 0x47, "Select a permanent card to put into play.");
+    int to_look = count_deck(player);
+    if (to_look != 0)
+    {
+      if (to_look > 5)
+        to_look = 5;
+      int added[to_look];
+      int count = 0;
+      int remaining = to_look;
+      do
+      {
+        test.create_minideck = (unsigned short)remaining;
+        int selected = new_select_a_card_2022(player, player, 1, 0, 5, -1, &test);
+        if (selected == -1)
+          break;
+        added[count] = deck_ptr[player][selected];
+        remove_card_from_deck(player, selected);
+        ++count;
+        --remaining;
+      } while (remaining != 0);
+      for (int i = 0; i < count; ++i)
+      {
+        int card_added = add_card_to_hand(player, added[i]);
+        set_special_flags_2022(player, card_added, 0x10000);
+        put_into_play(player, card_added);
+      }
+      for (int i = 0; i < remaining; ++i)
+      {
+        add_card_to_hand(player, *deck_ptr[player]);
+        remove_card_from_deck(player, 0);
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  else if (event != EVENT_CAN_CAST && event != EVENT_CAN_CHANGE_TARGET &&
+           event != EVENT_CHANGE_TARGET)
+  {
+    return 0;
+  }
+  return basic_spell(player, card, event);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x228b8f0; original cards/ikoria.c:1560. */
+int card_lutri_the_spellchaser(int player, int card, event_t event)
+{
+  int **ppiVar1;
+  int iVar2;
+  int *piVar3;
+  card_instance_t *instance;
+  int iVar5;
+  unsigned int uVar6;
+  int **ppiVar8;
+  int *piStack_68;
+  target_definition_2022_t td;
+
+  if ((event == EVENT_QUERY) && (attacking_card == 2))
+  {
+    int options[available_slots];
+    memset(options, 0, available_slots);
+    int *deck = deck_ptr[player];
+    for (int i = 0; i != 500; ++i)
+    {
+      int iid = deck[i];
+      if (iid == -1)
+        return 1;
+      if ((cards_data[iid].type & TYPE_LAND) == 0)
+      {
+        unsigned int csvid = (uint16_t)cards_data[iid].id;
+        if (options[csvid] != 0)
+          return 0;
+        options[csvid] = 1;
+      }
+    }
+    return 1;
+  }
+  check_legend_rule(player, card, event);
+  if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((instance = get_card_instance(player, card),
+        instance->info_slot == 1 &&
+            (iVar2 = check_special_flags_2022(player, card, 0x40000), iVar2 == 0))))
+  {
+    etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  }
+  if (event == EVENT_ETB)
+  {
+    counterspell_target_definition_2022(player, card, &td, 0);
+    iVar2 = counterspell_validate_2022(player, card, &td, 0);
+    if (iVar2 != 0)
+    {
+      instance = get_card_instance(player, card);
+      copy_spell_from_stack_2022(player, instance->targets[0].player, instance->targets[0].card);
+    }
+  LAB_0228b97c:
+    iVar2 = hybrid(player, card, event);
+  }
+  else
+  {
+    if (event == EVENT_CAN_CAST)
+    {
+      instance = get_card_instance(player, card);
+      counterspell_target_definition_2022(player, card, &td, 0);
+      td.allowed_controller = player;
+      iVar2 = counterspell_2022(player, card, EVENT_CAN_CAST, &td, 0);
+      if (iVar2 == 0)
+      {
+        iVar5 = 1;
+      }
+      else
+      {
+        iVar5 = 99;
+      }
+      instance->info_slot = (unsigned int)(iVar2 != 0);
+      return iVar5;
+    }
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card != affected_card) || (player != affected_card_controller))
+        goto LAB_0228b97c;
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) &&
+          ((player == affected_card_controller &&
+            (hybrid(player, card, EVENT_CAST_SPELL), spell_fizzled != 1))))
+      {
+        counterspell_target_definition_2022(player, card, &td, 0);
+        td.allowed_controller = player;
+        if (instance->info_slot == 1)
+        {
+          counterspell_2022(player, card, EVENT_CAST_SPELL, &td, 0);
+        }
+        else
+        {
+          ai_modifier = ai_modifier + -0x1e;
+        }
+      }
+    }
+    else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+    {
+      get_card_instance(player, card);
+    }
+    else
+    {
+      if (event != EVENT_CHANGE_TARGET)
+        goto LAB_0228b97c;
+      get_card_instance(player, card);
+    }
+    iVar2 = 0;
+  }
+  return iVar2;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2289140; original cards/ikoria.c:411. */
+int card_emergent_ultimatum(int player, int card, event_t event)
+{
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card || player != affected_card_controller)
+        return 0;
+    }
+    else if (event == EVENT_RESOLVE_SPELL)
+    {
+      int number = count_deck(player);
+      if (number > 0)
+      {
+        if (number > 3)
+          number = 3;
+        iid_t searched[3] = {-1, -1, -1};
+        test_definition_2022_t test;
+        new_default_test_definition_2022(&test, TYPE_ANY, "Select a monocolored card.");
+        test.value_for_special_selection_function = (int)searched;
+        test.color_flag = 3;
+        test.special_selection_function = test_not_in_array;
+        int num_chosen = 0;
+        do
+        {
+          int selected = new_select_a_card_2022(player, player, 1, 0, 2, -1, &test);
+          if (selected < 0)
+          {
+            if (num_chosen == 0)
+              return 0;
+            break;
+          }
+          int iid = deck_ptr[player][selected];
+          searched[num_chosen++] = iid;
+          add_csvid_to_rfg(player, (uint16_t)cards_data[iid].id);
+          remove_card_from_deck(player, selected);
+        } while (num_chosen < number);
+        test.special_selection_function = NULL;
+        memcpy(test.message, "Select a card to shuffle back into opponent's library.", 55);
+        test.value_for_special_selection_function = -1;
+        int selected =
+            select_card_from_zone_2022(1 - player, player, searched, num_chosen, 1, 2, 0, &test);
+        remove_card_from_rfg(player, (uint16_t)cards_data[searched[selected]].id);
+        put_iid_under_the_first_x_cards_of_library(player, searched[selected], 0);
+        searched[selected] = -1;
+        shuffle(player);
+        --num_chosen;
+        if (num_chosen == 0)
+          return 0;
+        int to_cast[num_chosen];
+        int cast_count = 0;
+        for (int i = 0; i != 3; ++i)
+          if (searched[i] != -1)
+            to_cast[cast_count++] = searched[i];
+        memcpy(test.message, "Select a card to play for free", 31);
+        while (cast_count > 0)
+        {
+          test_definition_2022_t this_test2;
+          new_default_test_definition_2022(&this_test2, TYPE_ANY, "Select a card to play for free");
+          int s = select_card_from_zone_2022(player, player, to_cast, cast_count, 0, 2, -1, &test);
+          if (s == -1)
+            break;
+          unsigned int csvid = (uint16_t)cards_data[to_cast[s]].id;
+          for (int k = s; k < cast_count; ++k)
+            to_cast[k] = to_cast[k + 1];
+          --cast_count;
+          play_card_in_exile_for_free(player, player, csvid);
+        }
+      }
+      kill_card(player, card, KILL_EXILE);
+    }
+    else if (event != EVENT_CAN_CHANGE_TARGET && event != EVENT_CHANGE_TARGET)
+      return 0;
+  }
+  return basic_spell(player, card, event);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x228b340; original cards/ikoria.c:1464. */
+int card_lurrus_of_the_dream_den(int player, int card, event_t event)
+{
+  if (event == EVENT_QUERY && attacking_card == 2)
+  {
+    const int *deck = deck_ptr[player];
+    int lurrus_count = 0;
+    for (int i = 0; i < 500 && deck[i] != -1; ++i)
+    {
+      if (is_what(-1, deck[i], 0x47) && get_cmc_by_internal_id(deck[i]) > 2)
+      {
+        int iid = deck[i];
+        int lurrus_iid = get_internal_card_id_from_csv_id(0x5359);
+        if (lurrus_count != 0 || iid != lurrus_iid)
+          return 0;
+        lurrus_count = 1;
+      }
+    }
+    for (int i = 0; i < active_cards_count[player]; ++i)
+    {
+      if (!is_what(player, i, 0x47) || get_cmc(player, i) < 3)
+        return 0;
+      int id = get_id(player, i);
+      if (lurrus_count != 0 || id != 0x5359)
+        return 0;
+      lurrus_count = 1;
+    }
+    return 1;
+  }
+  check_legend_rule(player, card, event);
+  lifelink(player, card, event);
+  if (event == EVENT_QUERY)
+    return 0;
+  if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
+      event != EVENT_CLEANUP)
+    return 0;
+  card_instance_t *instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    if (is_humiliated_for_ability(player, card, AL_STATIC) || current_turn != player ||
+        instance->info_slot == 0x42)
+      return 0;
+    const int *grave = get_grave(player);
+    int result = 0;
+    for (int i = 0; i < count_graveyard(player); ++i)
+    {
+      if (is_what(-1, grave[i], 0x47) && !is_what(-1, grave[i], 1) &&
+          get_cmc_by_internal_id(grave[i]) <= 2 &&
+          has_mana_to_cast_iid(player, EVENT_CAN_ACTIVATE, grave[i]) &&
+          (is_what(-1, grave[i], 0x30) || can_sorcery_be_played(player, EVENT_CAN_ACTIVATE)))
+      {
+        int legal = can_legally_play_iid(player, grave[i]);
+        if (legal == 99)
+          return 99;
+        if (legal != 0)
+          result = legal;
+      }
+    }
+    return result;
+  }
+  if (event == EVENT_ACTIVATE)
+  {
+    unsigned capacity = (unsigned)count_graveyard(player);
+    int playable[2][capacity];
+    const int *grave = get_grave(player);
+    int count = 0;
+    for (int i = 0; i < count_graveyard(player); ++i)
+    {
+      if (is_what(-1, grave[i], 0x47) && !is_what(-1, grave[i], 1) &&
+          get_cmc_by_internal_id(grave[i]) < 3 &&
+          has_mana_to_cast_iid(player, EVENT_CAN_ACTIVATE, grave[i]) &&
+          (is_what(-1, grave[i], 0x30) || can_sorcery_be_played(player, EVENT_CAN_ACTIVATE)) &&
+          can_legally_play_iid(player, grave[i]))
+      {
+        playable[0][count] = grave[i];
+        playable[1][count++] = i;
+      }
+    }
+    test_definition_2022_t test;
+    _Static_assert(sizeof(test) == 216, "native Lurrus filter");
+    new_default_test_definition_2022(&test, 0xff, "Select a permanent card to play.");
+    int selected = select_card_from_zone_2022(player, player, playable[0], count, 0, 1, -1, &test);
+    if (selected != -1 && charge_mana_from_id(player, -1, EVENT_ACTIVATE,
+                                              (uint16_t)cards_data[playable[0][selected]].id))
+    {
+      instance->info_slot = 0x42;
+      play_card_in_grave_for_free(player, player, playable[1][selected]);
+      cant_be_responded_to = 1;
+      return 0;
+    }
+    spell_fizzled = 1;
+  }
+  else if (event == EVENT_CLEANUP)
+    instance->info_slot = 0;
+  return 0;
+}
+
+#endif

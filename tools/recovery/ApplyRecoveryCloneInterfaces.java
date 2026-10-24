@@ -15,7 +15,7 @@ public class ApplyRecoveryCloneInterfaces extends GhidraScript {
             if (fields.length < 5 || getFunctionAt(toAddr(fields[0])) == null)
                 throw new Exception("Invalid clone interface: " + line);
             for (int i = 4; i < fields.length; ++i)
-                if (!fields[i].matches("(?:int|int_ptr):[A-Za-z_][A-Za-z_0-9]*"))
+                if (!fields[i].matches("(?:int|int_ptr|int_ptr_ptr):[A-Za-z_][A-Za-z_0-9]*"))
                     throw new Exception("Invalid clone parameter: " + fields[i]);
             if (!fields[2].equals("int") && !fields[2].equals("void"))
                 throw new Exception("Invalid clone return type");
@@ -32,7 +32,7 @@ public class ApplyRecoveryCloneInterfaces extends GhidraScript {
             for (int i = 4; i < fields.length; ++i) {
                 String[] parameter = fields[i].split(":");
                 DataType type = parameter[0].equals("int") ? IntegerDataType.dataType :
-                    new PointerDataType(IntegerDataType.dataType, currentProgram.getDataTypeManager());
+                    new PointerDataType(parameter[0].equals("int_ptr_ptr") ? new PointerDataType(IntegerDataType.dataType, currentProgram.getDataTypeManager()) : IntegerDataType.dataType, currentProgram.getDataTypeManager());
                 parameters.add(new ParameterImpl(parameter[1], type, currentProgram));
             }
             function.replaceParameters(parameters, Function.FunctionUpdateType.DYNAMIC_STORAGE_ALL_PARAMS,

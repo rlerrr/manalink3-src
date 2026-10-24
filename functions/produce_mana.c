@@ -2900,3 +2900,93 @@ int artifact_mana_all_different_colors_2022(int player, int card, event_t event,
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x266c5c0; original functions/produce_mana.c:1288. */
+int mana_producing_creature_all_one_color_2022(int player, int card, event_t event,
+                                               int reluctance_to_fight, color_test_t available,
+                                               int num_mana)
+{
+  int result;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = is_tapped(player, card);
+    if ((((result == 0) && (result = is_sick(player, card), result == 0)) &&
+         (result = can_produce_mana_2022(player, card), result != 0)) &&
+        ((player != 1 || (0 < num_mana))))
+    {
+      result = check_special_flags2_2022(player, card, 0x10);
+      return (unsigned int)(result == 0);
+    }
+  }
+  else
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      produce_mana_tapped_all_one_color_with_default_impl(player, card, available, num_mana,
+                                                          COLOR_TEST_COLORLESS, 1, 1);
+      return 0;
+    }
+    if (event == EVENT_COUNT_MANA)
+    {
+      if (((card == affected_card) && (player == affected_card_controller)) &&
+          (result = mana_producing_creature_all_one_color_2022(
+               player, card, EVENT_CAN_ACTIVATE, reluctance_to_fight, available, num_mana),
+           result != 0))
+      {
+        declare_mana_available_maybe_hex(player, available, num_mana);
+        return 0;
+      }
+    }
+    else if ((((reluctance_to_fight != 0) &&
+               ((unsigned int)event - (unsigned int)EVENT_ATTACK_RATING < 2U)) &&
+              (card == affected_card)) &&
+             (player == affected_card_controller))
+    {
+      result = landsofcolor_controlled[player][7] + 2;
+      if (event == EVENT_ATTACK_RATING)
+      {
+        ai_defensive_modifier = reluctance_to_fight / result + ai_defensive_modifier;
+        return 0;
+      }
+      ai_defensive_modifier = ai_defensive_modifier - (reluctance_to_fight << 2) / result;
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x266d3f0; original functions/produce_mana.c:130. */
+int mana_producer_fixed_2022(int player, int card, event_t event, int base_color)
+{
+  if (event == EVENT_ACTIVATE)
+  {
+    if (is_what(player, card, 1))
+    {
+      int added = mana_colors_added[player];
+      if (added != 0)
+        return produce_mana_tapped_all_one_color_with_default_impl(
+            player, card, added | color_to_color_test(base_color), 1, COLOR_TEST_COLORLESS, 0, 1);
+      if (multi_mana_transmutation[player][0] != 0 && mana_doublers(player, TYPE_LAND) > 1)
+      {
+        color_t color = single_color_test_bit_to_color(multi_mana_transmutation[player][0]);
+        produce_mana_tapped_impl(player, card, color, multi_mana_transmutation[player][1], 1, 1);
+        return 0;
+      }
+    }
+    int override = check_special_flags2_2022(player, card, 0x40);
+    if (card >= 0 && override && mana_quantity_override[player][base_color] != 0)
+    {
+      produce_mana_tapped_impl(player, card, mana_color_override[player][base_color],
+                               mana_quantity_override[player][base_color], 1, 1);
+      return 0;
+    }
+  }
+  return mana_producer_fixed(player, card, event, base_color);
+}
+
+#endif

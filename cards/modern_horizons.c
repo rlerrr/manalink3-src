@@ -4149,3 +4149,691 @@ int card_planebound_accomplice(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x233de70; original cards/modern_horizons.c:3912. */
+int card_winds_of_abandon(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  unsigned int uVar4;
+  int iVar5;
+  target_definition_2022_t td;
+  test_definition_2022_t test;
+  test_definition_2022_t this_test;
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    td.allowed_controller = 1 - player;
+    instance = get_card_instance(player, card);
+    iVar5 = generic_spell_2022(player, card, EVENT_CAN_CAST, 0, NULL, NULL, 0, NULL);
+    if (iVar5 != 0)
+    {
+      if (instance->info_slot == 1)
+      {
+        return 1;
+      }
+      iVar5 = can_target_2022(&td);
+      return iVar5;
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition_2022(player, card, &td, 2);
+      td.allowed_controller = 1 - player;
+      instance = get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        instance->number_of_targets = '\0';
+        iVar5 = check_special_flags2_2022(player, card, -0x80000000);
+        if ((iVar5 != 0) || (uVar4 = pay_overload_2022(player, card, 4, 0, 0, 0, 0, 2), uVar4 == 1))
+        {
+          new_pick_target_2022(&td, "Select target creature you don\'t control.", 0, 0x81);
+          if (spell_fizzled == 1)
+          {
+            return 0;
+          }
+          uVar4 = 1;
+        }
+        instance->info_slot = instance->info_slot | uVar4;
+      }
+    }
+  }
+  else if (((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET)) ||
+           (event == EVENT_CHANGE_TARGET))
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    iVar5 = 1 - player;
+    td.allowed_controller = iVar5;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      if (((unsigned int)instance->info_slot & 2) == 0)
+      {
+        iVar5 = valid_target_2022(&td);
+        if (iVar5 != 0)
+        {
+          kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
+          iVar5 = instance->targets[0].player;
+          if ((iVar5 == 1) ||
+              (iVar5 = do_dialog(iVar5, player, card, -1, -1, " Search a basic land\n Pass", 0),
+               iVar5 == 0))
+          {
+            new_default_test_definition_2022(&this_test, 1, "Select a basic land card.");
+            this_test.subtype = 0x2000;
+            iVar5 = instance->targets[0].player;
+            new_global_tutor_2022(iVar5, iVar5, 1, 5, 0, 5, &this_test);
+          }
+        }
+      }
+      else
+      {
+        default_test_definition_2022(&test, 2);
+        iVar2 = new_manipulate_all_2022(player, card, iVar5, &test, ACT_KILL_REMOVE);
+        if ((player == 0) ||
+            (iVar3 = do_dialog(iVar5, player, card, -1, -1, " Search for basic lands\n Pass", 0),
+             iVar3 == 0))
+        {
+          new_default_test_definition_2022(&this_test, 1, "Select a basic land card.");
+          this_test.subtype = 0x2000;
+          this_test.qty = (unsigned short)iVar2;
+          new_global_tutor_2022(iVar5, iVar5, 1, 5, 0, 5, &this_test);
+        }
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  iVar5 = overload_2022(player, card, event, 4, 0, 0, 0, 0, 2);
+  return iVar5;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2335930; original cards/modern_horizons.c:1533. */
+static int has_convoked_mana_for_hogaak_impl(int player, int cless, int black, int blue, int green,
+                                      int red, int white)
+{
+  int size = active_cards_count[player];
+  int tapped[size];
+  int tapped_for_color[size][5];
+  memset(tapped_for_color, 0, sizeof tapped_for_color);
+  int attempt = 0;
+  int scan_size = size;
+  for (;;)
+  {
+    int clrs[6] = {cless, black, blue, green, red, white};
+    int result = 0;
+    int tc = 0;
+    if (scan_size > 0)
+    {
+      int i = 0;
+      do
+      {
+        if (in_play(player, i) && !is_tapped(player, i) && is_what(player, i, TYPE_CREATURE))
+        {
+          unsigned int color = get_color(player, i);
+          for (int k = 1; k != 6; ++k)
+          {
+            if ((color >> k & 1U) && clrs[k] > 0 && tapped_for_color[i][k - 1] != 1)
+            {
+              --clrs[k];
+              tapped_for_color[i][k - 1] = 1;
+              add_state(player, i, STATE_TAPPED);
+              tapped[tc++] = i;
+              goto after_creature;
+            }
+          }
+          if (clrs[0] != 0)
+          {
+            --clrs[0];
+            add_state(player, i, STATE_TAPPED);
+            tapped[tc++] = i;
+          }
+        }
+      after_creature:
+        if (clrs[0] + clrs[1] + clrs[2] + clrs[3] + clrs[4] + clrs[5] == 0)
+          result = 1;
+        ++i;
+      } while (i < active_cards_count[player]);
+      for (int i = 0; i < tc; ++i)
+        remove_state(player, tapped[i], STATE_TAPPED);
+      if (tc > 0 && result != 0)
+        return 2;
+    }
+    ++attempt;
+    if (attempt > 49 || result != 0)
+      return result;
+    scan_size = active_cards_count[player];
+  }
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23394f0; original cards/modern_horizons.c:1581. */
+int can_cast_hogaak(int player, int card, event_t event, int from_grave)
+{
+  int iVar1;
+  int iVar2;
+  unsigned int uVar3;
+
+  iVar1 = get_updated_casting_cost(player, card, -1, event, -1);
+  iVar2 = count_graveyard(player);
+  uVar3 = iVar2 - (unsigned int)(from_grave != 0);
+  uVar3 = iVar1 - (uVar3 & (int)(uVar3 ^ 0xffffffff) >> 0x1f);
+  uVar3 = uVar3 & (int)(uVar3 ^ 0xffffffff) >> 0x1f;
+  iVar1 = has_convoked_mana_for_hogaak_impl(player, uVar3, 2, 0, 0, 0, 0);
+  if (iVar1 != 2)
+  {
+    iVar1 = has_convoked_mana_for_hogaak_impl(player, uVar3, 1, 0, 1, 0, 0);
+    if (iVar1 != 2)
+    {
+      iVar1 = has_convoked_mana_for_hogaak_impl(player, uVar3, 0, 0, 2, 0, 0);
+      return (unsigned int)(iVar1 == 2);
+    }
+  }
+  return 1;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2339600; original cards/modern_horizons.c:1725. */
+int charge_mana_hybrid_to_hogaak_convoke(int player, int card, int number, int first_color,
+                                         int second_color, int colorless)
+{
+  int mana[6] = {0, 0, 0, 0, 0, 0};
+  int mana2[10];
+  char buffer[500];
+  test_definition_2022_t this_test;
+  int pos = scnprintf(buffer, 500, " Cancel\n");
+  int options = 1;
+  if (number >= 0)
+  {
+    int i = number;
+    do
+    {
+      mana[first_color] = i;
+      mana[second_color] = number - i;
+      if (has_convoked_mana_for_hogaak_impl(player, colorless, mana[1], mana[2], mana[3], mana[4],
+                                            mana[5]))
+      {
+        mana2[options] = 0;
+        mana_into_string_2022(colorless, mana[1], mana[2], mana[3], mana[4], mana[5], &this_test);
+        pos += scnprintf(buffer + pos, 500 - pos, " Pay %s\n", this_test.message);
+        for (int color = 1; color != 6; ++color)
+        {
+          for (int k = 0; k < mana[color]; ++k)
+          {
+            mana2[options] |= 1U << (((color - 1) * 6 + k) & 31);
+          }
+        }
+        ++options;
+      }
+      --i;
+    } while (i != -1);
+  }
+  int choice = 1;
+  if (number >= 0 && options >= 3 && player == 0)
+  {
+    choice = do_dialog(0, 0, card, -1, -1, buffer, 1);
+    if (choice == 0)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+  }
+  unsigned int encoded = mana2[choice];
+  for (int i = 0; i != 6; ++i)
+    mana[i] = 0;
+  for (int color = 1; color != 6; ++color)
+  {
+    for (int k = 0; k != 6; ++k)
+    {
+      if (encoded >> ((color - 1) * 6 + k) & 1U)
+        ++mana[color];
+    }
+  }
+  target_definition_2022_t td;
+  default_target_definition_2022(player, card, &td, TYPE_CREATURE);
+  td.allowed_controller = player;
+  td.preferred_controller = player;
+  int size = active_cards_count[player];
+  td.illegal_state = 1;
+  td.illegal_abilities = 0;
+  td.allow_cancel = 1;
+  int tapped[size];
+  memset(tapped, 0xff, sizeof tapped);
+  card_instance_t *instance = get_card_instance(player, card);
+  if (player != 0)
+  {
+    int color_size = active_cards_count[player];
+    int tapped_for_color[color_size][5];
+    memset(tapped_for_color, 0, sizeof tapped_for_color);
+    int attempts_left = 50;
+    int scan_size = color_size;
+    for (;;)
+    {
+      int clrs[6] = {colorless, mana[1], mana[2], mana[3], mana[4], mana[5]};
+      int tc = 0;
+      if (scan_size > 0)
+      {
+        int i = 0;
+        do
+        {
+          if (in_play(player, i) && !is_tapped(player, i) && is_what(player, i, TYPE_CREATURE))
+          {
+            unsigned int color = get_color(player, i);
+            for (int k = 1; k != 6; ++k)
+            {
+              if ((color >> k & 1U) && clrs[k] > 0 && tapped_for_color[i][k - 1] != 1)
+              {
+                --clrs[k];
+                tapped_for_color[i][k - 1] = 1;
+                add_state(player, i, STATE_TAPPED);
+                tapped[tc++] = i;
+                goto after_creature;
+              }
+            }
+            if (clrs[0] != 0)
+            {
+              add_state(player, i, STATE_TAPPED);
+              tapped[tc++] = i;
+              --clrs[0];
+            }
+          }
+        after_creature:
+          if (clrs[0] + clrs[1] + clrs[2] + clrs[3] + clrs[4] + clrs[5] == 0)
+          {
+            if (spell_fizzled != 1)
+            {
+              for (int j = 0; j < tc; ++j)
+                tap_card(player, tapped[j]);
+              return (unsigned int)(spell_fizzled != 1);
+            }
+            break;
+          }
+          ++i;
+        } while (i < active_cards_count[player]);
+        for (int j = 0; j < tc; ++j)
+          remove_state(player, tapped[j], STATE_TAPPED);
+      }
+      --attempts_left;
+      if (attempts_left == 0)
+      {
+        spell_fizzled = 1;
+        return (unsigned int)(spell_fizzled != 1);
+      }
+      scan_size = active_cards_count[player];
+    }
+  }
+  int clrs[6] = {colorless, mana[1], mana[2], mana[3], mana[4], mana[5]};
+  int tc = 0;
+  do
+  {
+    if (!can_target_2022(&td))
+      break;
+    if (!select_target_2022(0, card, &td, "Select a creature to tap for Convoke.", NULL))
+    {
+      spell_fizzled = 1;
+      goto rollback;
+    }
+    instance->number_of_targets = 0;
+    if (will_tap_permanent_for_convoke_2022(instance->targets[0].player, instance->targets[0].card,
+                                            clrs))
+    {
+      add_state(instance->targets[0].player, instance->targets[0].card, STATE_TAPPED);
+      tapped[tc++] = instance->targets[0].card;
+    }
+  } while (clrs[1] + clrs[0] + clrs[2] + clrs[3] + clrs[4] + clrs[5] != 0);
+  if (spell_fizzled == 1)
+  {
+  rollback:
+    for (int i = 0; i < tc; ++i)
+      remove_state(0, tapped[i], STATE_TAPPED);
+  }
+  else
+  {
+    for (int i = 0; i < tc; ++i)
+      tap_card(0, tapped[i]);
+  }
+  return (unsigned int)(spell_fizzled != 1);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2339e70; original cards/modern_horizons.c:1781. */
+int cast_hogaak(int player, int card, event_t event, int from_grave)
+{
+  unsigned short uVar1;
+  card_ptr_t *pcVar2;
+  int *piVar3;
+  int32_t iVar4;
+  int32_t *piVar5;
+  card_instance_t *instance;
+  int iVar7;
+  unsigned int cless;
+  unsigned int uVar8;
+  unsigned int uVar9;
+  int iVar10;
+  target_t *ptVar11;
+  unsigned int uStack_f4;
+  test_definition_2022_t this_test;
+
+  instance = get_card_instance(player, card);
+  iVar7 = get_id(player, card);
+  pcVar2 = cards_ptr[iVar7];
+  cless = get_updated_casting_cost(player, card, -1, EVENT_CAST_SPELL, -1);
+  iVar7 = has_convoked_mana_for_hogaak_impl(
+      player, cless, (unsigned int)pcVar2->req_black, (unsigned int)pcVar2->req_blue,
+      (unsigned int)pcVar2->req_green, (unsigned int)pcVar2->req_red,
+      (unsigned int)pcVar2->req_white);
+  if (iVar7 == 2)
+  {
+    iVar7 = do_dialog(player, player, card, -1, -1, " Use Delve\n Don\'t use Delve\n Cancel", 1);
+    if (iVar7 == 2)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    if (iVar7 != 0)
+    {
+      if (iVar7 != 1)
+      {
+        return 0;
+      }
+      charge_mana_hybrid_to_hogaak_convoke(player, card, 2, 1, 3, cless);
+      return (unsigned int)(spell_fizzled != 1);
+    }
+  }
+  iVar7 = count_graveyard(player);
+  uVar8 = iVar7 - (unsigned int)(from_grave != 0);
+  uVar8 = uVar8 & (int)(uVar8 ^ 0xffffffff) >> 0x1f;
+  uStack_f4 = cless;
+  if ((int)uVar8 < (int)cless)
+  {
+    uStack_f4 = uVar8;
+  }
+  new_default_test_definition_2022(&this_test, 0xff, "Select a card to exile for Delve.");
+  if (from_grave != 0)
+  {
+    piVar3 = graveyard_ptr_mutable[player];
+    do
+    {
+      uVar1 = cards_data[piVar3[uVar8]].id;
+      uVar9 = get_id(player, card);
+      if (uVar1 == uVar9)
+      {
+        iVar7 = turn_card_in_grave_face_down(player, uVar8);
+        goto LAB_02339fcb;
+      }
+      uVar8 = uVar8 - 1;
+    } while (uVar8 != 0xffffffff);
+  }
+  iVar7 = -1;
+LAB_02339fcb:
+  iVar10 = select_multiple_cards_from_graveyard_2022(player, player, 0, 3, &this_test, uStack_f4,
+                                                     instance->targets);
+  for (int i = 9; i > 0; --i)
+  {
+    instance->targets[i] = instance->targets[i - 1];
+  }
+  if (from_grave != 0)
+  {
+    turn_card_in_grave_face_up(player, uVar8, iVar7);
+  }
+  charge_mana_hybrid_to_hogaak_convoke(player, card, 2, 1, 3, cless - iVar10);
+  if (spell_fizzled != 1)
+  {
+    if (0 < iVar10)
+    {
+      ptVar11 = instance->targets + 1;
+      do
+      {
+        piVar5 = &ptVar11->player;
+        ptVar11 = ptVar11 + 1;
+        rfg_card_from_grave(player, *piVar5);
+      } while (ptVar11 != instance->targets + iVar10 + 1);
+    }
+    return 1;
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x233a1b0; original cards/modern_horizons.c:1846. */
+int card_hogaak_arisen_necropolis(int player, int card, event_t event)
+{
+  int result;
+  check_legend_rule(player, card, event);
+  if (event == EVENT_MODIFY_COST)
+  {
+    result = can_cast_hogaak(player, card, EVENT_MODIFY_COST, 0);
+    if (result == 0)
+    {
+      infinite_casting_cost();
+    }
+    else
+    {
+      null_casting_cost(player, card);
+    }
+  }
+  else if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      result = played_for_free(player, card);
+      if ((result != 0) || (result = is_token(player, card), result != 0))
+      {
+        return 1;
+      }
+      result = cast_hogaak(player, card, EVENT_CAST_SPELL, 0);
+      if (result == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+    }
+  }
+  else if (event == EVENT_GRAVEYARD_ABILITY)
+  {
+    result = can_sorcery_be_played(player, EVENT_GRAVEYARD_ABILITY);
+    if ((result != 0) &&
+        (result = can_cast_hogaak(player, card, EVENT_GRAVEYARD_ABILITY, 1), result != 0))
+    {
+      return 2;
+    }
+  }
+  else if (event == EVENT_PAY_FLASHBACK_COSTS)
+  {
+    result = cast_hogaak(player, card, EVENT_PAY_FLASHBACK_COSTS, 1);
+    return (unsigned int)(result != 0);
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2338530; original cards/modern_horizons.c:1125. */
+int card_force_of_vigor(int player, int card, event_t event)
+{
+  target_t *ptVar1;
+  int iVar2;
+  target_t *ptVar3;
+  unsigned int uVar5;
+  card_instance_t *pcVar6;
+  int iVar7;
+  card_instance_t *pcVar8;
+  int iVar9;
+  int iVar10;
+  target_definition_2022_t td;
+
+  if (event == EVENT_MODIFY_COST)
+  {
+    if (current_turn != player)
+    {
+      iVar9 = get_sleighted_color(player, card, 3);
+      al_pitchspell(player, card, EVENT_MODIFY_COST, iVar9, 0);
+    }
+    default_target_definition_2022(player, card, &td, 0x44);
+    return 0;
+  }
+  default_target_definition_2022(player, card, &td, 0x44);
+  if (event == EVENT_CAN_CAST)
+  {
+    iVar9 = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td, "DISENCHANT", 1, NULL);
+    return iVar9;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    pcVar8 = get_card_instance(player, card);
+    iVar9 = check_special_flags2_2022(player, card, 0x2000);
+    if (iVar9 == 0)
+    {
+      check_special_flags2_2022(player, card, 0x8000);
+    }
+  }
+  else
+  {
+    if (event != EVENT_CHANGE_TARGET)
+      goto LAB_023387ea;
+    pcVar8 = get_card_instance(player, card);
+    iVar9 = check_special_flags2_2022(player, card, 0x10000);
+    if (iVar9 != 0)
+    {
+      int count = (unsigned int)pcVar8->number_of_targets;
+      int t_array[count];
+      int tac = 0;
+      if (pcVar8->number_of_targets != 0)
+      {
+        do
+        {
+          int c = pcVar8->targets[tac].card;
+          int p = pcVar8->targets[tac].player;
+          ++tac;
+          if (c == -1)
+            t_array[tac - 1] = get_internal_card_id_from_csv_id(p == player ? 0x615a : 0x6161);
+          else
+            t_array[tac - 1] = get_card_instance(p, c)->internal_card_id;
+        } while (tac < (unsigned int)pcVar8->number_of_targets);
+      }
+      return show_deck_2022(player, t_array, tac,
+                            " Select the target to change (Rules Engine = you, Deadbox = opponent)",
+                            0, ENGINE_DONE_LABEL);
+    }
+    iVar9 = check_special_flags2_2022(player, card, 0x4000);
+    if (iVar9 != 0)
+    {
+      td.zone = 0x200;
+      td.required_type = 2;
+    }
+    iVar9 = check_special_flags2_2022(player, card, 0x2000);
+    if (iVar9 == 0)
+    {
+      iVar9 = check_special_flags2_2022(player, card, 0x8000);
+      if (iVar9 == 0)
+        goto LAB_023386fc;
+    }
+    td.who_chooses = attacking_card_controller;
+    td.allow_cancel = 0;
+  }
+LAB_023386fc:
+  if (current_turn != player)
+  {
+    iVar9 = casting_al_pitchspell(player, card, event, 3, 0);
+    if (iVar9 == 0)
+    {
+      spell_fizzled = 1;
+    }
+  }
+  pcVar8->number_of_targets = '\0';
+  iVar9 = 0;
+  do
+  {
+    iVar10 = can_target_2022(&td);
+    if (iVar10 == 0)
+      break;
+    iVar10 = new_pick_target_2022(&td, "DISENCHANT", iVar9, 0);
+    if (iVar10 == 0)
+      break;
+    ptVar3 = pcVar8->targets + iVar9;
+    ptVar1 = pcVar8->targets + iVar9;
+    iVar9 = iVar9 + 1;
+    state_untargettable(ptVar1->player, ptVar3->card, 1);
+  } while (iVar9 != 2);
+  iVar9 = pcVar8->targets[0].player;
+  if ((iVar9 != -1) && (iVar10 = pcVar8->targets[0].card, iVar10 != -1))
+  {
+    state_untargettable(iVar9, iVar10, 0);
+  }
+  iVar9 = pcVar8->targets[1].player;
+  if ((iVar9 != -1) && (iVar10 = pcVar8->targets[1].card, iVar10 != -1))
+  {
+    state_untargettable(iVar9, iVar10, 0);
+  }
+  if (event == EVENT_CHANGE_TARGET)
+  {
+    iVar9 = pcVar8->targets[0].player;
+    if ((iVar9 != -1) && (iVar10 = pcVar8->targets[0].card, iVar10 != -1))
+    {
+      state_untargettable(iVar9, iVar10, 0);
+    }
+    iVar9 = pcVar8->targets[1].player;
+    if (iVar9 == -1)
+    {
+      return 0;
+    }
+    iVar10 = pcVar8->targets[1].card;
+    if (iVar10 == -1)
+    {
+      return 0;
+    }
+    state_untargettable(iVar9, iVar10, 0);
+    return 0;
+  }
+LAB_023387ea:
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    return 0;
+  }
+  iVar9 = 0;
+  pcVar8 = get_card_instance(player, card);
+  if (pcVar8->number_of_targets != '\0')
+  {
+    do
+    {
+      ptVar3 = pcVar8->targets + iVar9;
+      ptVar1 = pcVar8->targets + iVar9;
+      iVar9 = iVar9 + 1;
+      kill_card(ptVar1->player, ptVar3->card, KILL_DESTROY);
+    } while (iVar9 < (int)(unsigned int)pcVar8->number_of_targets);
+  }
+  pcVar8->number_of_targets = '\0';
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
+}
+
+#endif

@@ -4545,3 +4545,236 @@ int card_dowsing_dagger(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2213cd0; original cards/ixalan.c:628. */
+int card_search_for_azcanta(int player, int card, event_t event)
+{
+  int result;
+  double_faced_card(player, card, event);
+  check_legend_rule(player, card, event);
+  upkeep_trigger_ability_mode(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    if (*deck_ptr[player] != -1)
+    {
+      result =
+          show_deck_2022(player, deck_ptr[player], 1, "Top card of library", 0, (int)"Into grave?");
+      if (result == -1)
+      {
+        mill(player, 1);
+      }
+    }
+    result = count_graveyard(player);
+    if (6 < result)
+    {
+      transform(player, card);
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2215490; original cards/ixalan.c:1420. */
+int card_rampaging_ferocidon(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  test_definition_2022_t test;
+  menace(player, card, event);
+  instance = in_play(player, card);
+  if ((event == EVENT_STATIC_EFFECTS) && (instance != NULL))
+  {
+    if (card != affected_card)
+    {
+      if (trigger_condition != TRIGGER_COMES_INTO_PLAY)
+      {
+        return 0;
+      }
+      goto LAB_022154d9;
+    }
+    if (player != affected_card_controller)
+    {
+      if (trigger_condition != TRIGGER_COMES_INTO_PLAY)
+      {
+        return 0;
+      }
+      goto LAB_0221552e;
+    }
+    player_bits[0] = player_bits[0] | PB_CANT_GAIN_LIFE;
+    player_bits[1] = player_bits[1] | PB_CANT_GAIN_LIFE;
+    if (trigger_condition != TRIGGER_COMES_INTO_PLAY)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    if ((trigger_condition != TRIGGER_COMES_INTO_PLAY) || (card != affected_card))
+      goto LAB_022154d9;
+  LAB_0221552e:
+    if (affected_card_controller != player)
+      goto LAB_022154d9;
+  }
+  default_test_definition_2022(&test, 2);
+  test.not_me = 1;
+  etb_ability_global_2022(2, event, 2, TYPE_NONE, &test, player, card);
+LAB_022154d9:
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  damage_player(trigger_cause_controller, 1, player, card);
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2215840; original cards/ixalan.c:1521. */
+int card_sunbirds_invocation(int player, int card, event_t event)
+{
+  if (trigger_condition == 0xd3 && card == affected_card && player == affected_card_controller &&
+      reason_for_trigger_controller == player)
+  {
+    if (!not_played_from_hand(trigger_cause_controller, trigger_cause))
+      sp_ability_trigger_2022(player, event, 2, TYPE_ANY, NULL, player, card);
+  }
+  if (event == EVENT_SPA)
+  {
+    int amount = get_cmc(trigger_cause_controller, trigger_cause);
+    int num_cards = count_deck(player);
+    if (amount <= num_cards)
+      num_cards = amount;
+    if (num_cards == 0)
+      return 0;
+    show_deck_2022(player, deck_ptr[player], num_cards, "Cards revealed by Sunbird's Invocation.",
+                   0, ENGINE_DONE_LABEL);
+    int selection_array[2][num_cards];
+    int eligible = 0;
+    if (num_cards > 0)
+    {
+      for (int i = 0; i != num_cards; ++i)
+      {
+        int iid = deck_ptr[player][i];
+        selection_array[0][i] = iid;
+        selection_array[1][i] = iid;
+        if (!can_legally_play_iid(player, iid) ||
+            get_cmc_by_internal_id(deck_ptr[player][i]) >
+                get_cmc(trigger_cause_controller, trigger_cause) ||
+            (cards_data[deck_ptr[player][i]].type & TYPE_LAND))
+        {
+          selection_array[1][i] = iid_draw_a_card;
+        }
+        else
+          ++eligible;
+      }
+      for (int i = 0; i != num_cards; ++i)
+        remove_card_from_deck(player, 0);
+    }
+    int selected_iid = -1;
+    if (eligible != 0)
+    {
+      test_definition_2022_t this_test;
+      new_default_test_definition_2022(&this_test, TYPE_LAND, "Select a spell to cast.");
+      this_test.type_flag = 1;
+      this_test.id = 0x388;
+      this_test.id_flag = 1;
+      int s = select_card_from_zone_2022(player, player, selection_array[1], num_cards, 0, 2, -1,
+                                         &this_test);
+      if (s != -1)
+      {
+        selected_iid = selection_array[0][s];
+        selection_array[0][s] = -1;
+        selection_array[1][s] = iid_draw_a_card;
+      }
+    }
+    for (int i = num_cards - 1; i >= 0; --i)
+      if (selection_array[0][i] != -1)
+        raw_put_iid_on_top_of_deck(player, selection_array[0][i]);
+    int bottom_count = num_cards;
+    if (selected_iid != -1)
+    {
+      fake_play_card_in_zone_for_free(player, player, selected_iid, 0x10000);
+      bottom_count = num_cards - 1;
+    }
+    put_top_x_on_bottom_in_random_order(player, bottom_count);
+  }
+  return global_enchantment(player, card, event);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2217170; original cards/ixalan.c:2213. */
+int card_gishath_suns_avatar(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  vigilance_2022(player, card, event);
+  haste(player, card, event);
+  if (damage_dealt_by_me(player, card, event,
+                         DDBM_MUST_DAMAGE_PLAYER | DDBM_REPORT_DAMAGE_DEALT |
+                             DDBM_MUST_BE_COMBAT_DAMAGE))
+  {
+    int amount = get_card_instance(player, card)->targets[16].player;
+    if (amount == -1)
+      return 0;
+    int count = count_deck(player);
+    if (count < amount)
+      amount = count;
+    if (amount != 0)
+    {
+      int gc_flag = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM2022_DECK);
+      show_deck_2022(0, deck_ptr[player], amount, "Cards revealed by Gishath, Sun's Avatar", 0,
+                     ENGINE_DONE_LABEL);
+      show_deck_2022(1, deck_ptr[player], amount, "Cards revealed by Gishath, Sun's Avatar", 0,
+                     ENGINE_DONE_LABEL);
+      if (gc_flag == 0)
+      {
+        int deck_copy[amount];
+        for (int i = 0; i < amount; ++i)
+        {
+          deck_copy[i] = deck_ptr[player][0];
+          remove_card_from_deck(player, 0);
+        }
+        char msg[100];
+        scnprintf(msg, 100, "Select a Dinosaur creature card.");
+        test_definition_2022_t test;
+        new_default_test_definition_2022(&test, TYPE_CREATURE, msg);
+        test.subtype = 0xf0;
+        int remaining = amount;
+        do
+        {
+          int selected =
+              select_card_from_zone_2022(player, player, deck_copy, remaining, 0, 1, -1, &test);
+          if (selected == -1)
+          {
+            if (remaining != 0)
+            {
+              for (int i = 0; i < remaining; ++i)
+                raw_put_iid_on_top_of_deck(player, deck_copy[i]);
+              put_top_x_on_bottom_in_random_order(player, remaining);
+            }
+            break;
+          }
+          if (deck_copy[selected] != -1)
+            fake_play_card_in_zone_for_free(player, player, deck_copy[selected], 0x10000);
+          --remaining;
+          for (int i = selected; i < remaining; ++i)
+            deck_copy[i] = deck_copy[i + 1];
+        } while (remaining != 0);
+      }
+    }
+  }
+  if (event == EVENT_PHASE_CHANGED && current_phase == 0x22)
+    get_card_instance(player, card)->targets[16].player = 0;
+  return 0;
+}
+
+#endif

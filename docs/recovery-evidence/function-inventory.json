@@ -1,0 +1,905 @@
+{
+  "native_card_function_ranges": 15066,
+  "native_card_names": 15064,
+  "missing_card_names": 0,
+  "missing_cards": {},
+  "unmatched_native_ranges": 105,
+  "unmatched_categories": {
+    "existing source body; COFF emission absent": 62,
+    "source body absent in named unit; investigate": 28,
+    "deferred chooser UI": 15
+  },
+  "unmatched": [
+    {
+      "address": "2028e70",
+      "name": "instant_equipment",
+      "source": "cards/fifth_dawn.c",
+      "native_bytes": 1149,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "20354d0",
+      "name": "tribute",
+      "source": "cards/born_of_the_gods.c",
+      "native_bytes": 347,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "2065a90",
+      "name": "check_deck_for_test",
+      "source": "cards/apocalypse.c",
+      "native_bytes": 117,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "212ba50",
+      "name": "dream_halls_effect",
+      "source": "cards/stronghold.c",
+      "native_bytes": 1379,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "2186250",
+      "name": "gating",
+      "source": "cards/planeshift.c",
+      "native_bytes": 360,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "21997c0",
+      "name": "outlast",
+      "source": "cards/khans_of_tarkir.c",
+      "native_bytes": 193,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "225a450",
+      "name": "surge",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_bytes": 409,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "225a5f0",
+      "name": "modify_casting_cost_for_surge",
+      "source": "cards/oath_of_the_gatewatch.c",
+      "native_bytes": 164,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "227e1f0",
+      "name": "get_max_sac_for_scapeshift",
+      "source": "cards/morningtide.c",
+      "native_bytes": 1351,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "227e910",
+      "name": "cmc_mod_for_prowl",
+      "source": "cards/morningtide.c",
+      "native_bytes": 305,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "227ea50",
+      "name": "pay_prowl",
+      "source": "cards/morningtide.c",
+      "native_bytes": 392,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "227ebe0",
+      "name": "prowl",
+      "source": "cards/morningtide.c",
+      "native_bytes": 120,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "229e840",
+      "name": "damage_my_blockers",
+      "source": "cards/shadows_over_innistrad.c",
+      "native_bytes": 308,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "229eb60",
+      "name": "whenever_a_clue_is_sacrificed",
+      "source": "cards/shadows_over_innistrad.c",
+      "native_bytes": 257,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "229f1e0",
+      "name": "make_human_soldier",
+      "source": "cards/shadows_over_innistrad.c",
+      "native_bytes": 81,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "229f240",
+      "name": "make_wolf",
+      "source": "cards/shadows_over_innistrad.c",
+      "native_bytes": 79,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "229f290",
+      "name": "delirium_upkeep_trigger",
+      "source": "cards/shadows_over_innistrad.c",
+      "native_bytes": 107,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "229f300",
+      "name": "delirium_boost",
+      "source": "cards/shadows_over_innistrad.c",
+      "native_bytes": 237,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "22b41a0",
+      "name": "m13_ring",
+      "source": "cards/m13.c",
+      "native_bytes": 1735,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "22b49b0",
+      "name": "uthden_m13_creature",
+      "source": "cards/m13.c",
+      "native_bytes": 143,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "22c34b0",
+      "name": "effect_prodigal_sorcerer",
+      "source": "cards/vanguard.c",
+      "native_bytes": 209,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "22c3bc0",
+      "name": "get_random_card_special",
+      "source": "cards/vanguard.c",
+      "native_bytes": 306,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "2311120",
+      "name": "threshold_boost",
+      "source": "cards/torment.c",
+      "native_bytes": 174,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "23114c0",
+      "name": "do_flashback_with_life",
+      "source": "cards/torment.c",
+      "native_bytes": 250,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "231a270",
+      "name": "monument",
+      "source": "cards/dragons_of_tarkir.c",
+      "native_bytes": 443,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "239bdd0",
+      "name": "boost_if_you_control_an_artifact",
+      "source": "cards/kaladesh.c",
+      "native_bytes": 292,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "240d360",
+      "name": "ai_choice_for_arena",
+      "source": "cards/promo.c",
+      "native_bytes": 402,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "24381f0",
+      "name": "som_spellbombs",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_bytes": 100,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "2438a60",
+      "name": "generic_artifact_with_proliferate",
+      "source": "cards/scars_of_mirrodin.c",
+      "native_bytes": 210,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "244ce50",
+      "name": "process",
+      "source": "cards/battle_for_zendikar.c",
+      "native_bytes": 211,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "244d140",
+      "name": "blighted_land",
+      "source": "cards/battle_for_zendikar.c",
+      "native_bytes": 725,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "244d4c0",
+      "name": "process_as_cost",
+      "source": "cards/battle_for_zendikar.c",
+      "native_bytes": 109,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "2471a10",
+      "name": "hanweir_battlements_meld_ability",
+      "source": "cards/eldritch_moon.c",
+      "native_bytes": 348,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "24723f0",
+      "name": "modify_casting_cost_for_emerge",
+      "source": "cards/eldritch_moon.c",
+      "native_bytes": 329,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "2472540",
+      "name": "pay_cost_for_emerge",
+      "source": "cards/eldritch_moon.c",
+      "native_bytes": 616,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "24889b0",
+      "name": "invasion_dragon",
+      "source": "cards/invasion.c",
+      "native_bytes": 464,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "24a61c0",
+      "name": "provoke_impl",
+      "source": "cards/legions.c",
+      "native_bytes": 403,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "24d0b20",
+      "name": "strive",
+      "source": "cards/journey_into_nyx.c",
+      "native_bytes": 512,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "24d1010",
+      "name": "pump_xenagos",
+      "source": "cards/journey_into_nyx.c",
+      "native_bytes": 147,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "24e0240",
+      "name": "dimir_doppelganger_impl",
+      "source": "cards/ravnica.c",
+      "native_bytes": 765,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "24e06d0",
+      "name": "radiant_damage",
+      "source": "cards/ravnica.c",
+      "native_bytes": 169,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "24fe9c0",
+      "name": "sphinx_ambassador_ability",
+      "source": "cards/m10.c",
+      "native_bytes": 440,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "25692e0",
+      "name": "genju",
+      "source": "cards/betrayers_of_kamigawa.c",
+      "native_bytes": 972,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "2571f90",
+      "name": "discard_id_from_hand",
+      "source": "cards/future_sight.c",
+      "native_bytes": 101,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "258e050",
+      "name": "vivid_land",
+      "source": "cards/lorwyn.c",
+      "native_bytes": 533,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "258e640",
+      "name": "boost_if_subtype_is_present",
+      "source": "cards/lorwyn.c",
+      "native_bytes": 193,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "25e7a60",
+      "name": "sigil_of_the_new_dawn_ability",
+      "source": "cards/onslaught.c",
+      "native_bytes": 582,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "25e7f50",
+      "name": "crown",
+      "source": "cards/onslaught.c",
+      "native_bytes": 877,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "265c8f0",
+      "name": "wndproc_FullCardClass_hook",
+      "source": "functions/windows.c",
+      "native_bytes": 1674,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "265b7c0",
+      "name": "keywords_to_str",
+      "source": "functions/windows.c",
+      "native_bytes": 1239,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26590a0",
+      "name": "legacy_name_or_text",
+      "source": "functions/windows.c",
+      "native_bytes": 321,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "2658260",
+      "name": "wndproc_LifeClass_hook",
+      "source": "functions/windows.c",
+      "native_bytes": 503,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "2657e30",
+      "name": "wndproc_MainClass_hook",
+      "source": "functions/windows.c",
+      "native_bytes": 420,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "26577b0",
+      "name": "wndproc_ShowListCard_hook",
+      "source": "functions/windows.c",
+      "native_bytes": 845,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "2659e30",
+      "name": "wndproc_CardClass_hook",
+      "source": "functions/windows.c",
+      "native_bytes": 6415,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "2656390",
+      "name": "stretchblt_from_bmp",
+      "source": "functions/windows.c",
+      "native_bytes": 209,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "26564e0",
+      "name": "paint_two_counter_types",
+      "source": "functions/windows.c",
+      "native_bytes": 103,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "2656550",
+      "name": "paint_quarter_of_four_counter_types",
+      "source": "functions/windows.c",
+      "native_bytes": 760,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "2657690",
+      "name": "memcpy_displayed_inst_and_ext",
+      "source": "functions/windows.c",
+      "native_bytes": 273,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "265bca0",
+      "name": "draw_fullcard_special_effect_card",
+      "source": "functions/windows.c",
+      "native_bytes": 3075,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "265c8b0",
+      "name": "draw_fullcard_special_effect_card",
+      "source": "functions/windows.c",
+      "native_bytes": 52,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "265d3b0",
+      "name": "fill_arr",
+      "source": "functions/targets.c",
+      "native_bytes": 386,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "2662180",
+      "name": "write_deck_file",
+      "source": "functions/draft.c",
+      "native_bytes": 585,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "268fdf0",
+      "name": "how_much_life_can_i_pay_impl",
+      "source": "functions/functions.c",
+      "native_bytes": 62,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26afd30",
+      "name": "put_card_on_stack",
+      "source": "functions/engine.c",
+      "native_bytes": 1862,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26ae510",
+      "name": "put_card_on_stack2",
+      "source": "functions/engine.c",
+      "native_bytes": 250,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26adc00",
+      "name": "fx_activation_906",
+      "source": "functions/engine.c",
+      "native_bytes": 143,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26ac340",
+      "name": "ai_choose_attackers",
+      "source": "functions/engine.c",
+      "native_bytes": 6109,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26ac0a0",
+      "name": "setup_ai_combat_data",
+      "source": "functions/engine.c",
+      "native_bytes": 669,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26aa700",
+      "name": "enforce_minimum_blockers",
+      "source": "functions/engine.c",
+      "native_bytes": 400,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26aa890",
+      "name": "ai_assign_one_blocker",
+      "source": "functions/engine.c",
+      "native_bytes": 3339,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26aa280",
+      "name": "is_legal_block_impl2",
+      "source": "functions/engine.c",
+      "native_bytes": 1138,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26a8440",
+      "name": "mod_pow_unblocked",
+      "source": "functions/engine.c",
+      "native_bytes": 255,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26a9420",
+      "name": "create_legacy_activate_from_iid",
+      "source": "functions/engine.c",
+      "native_bytes": 251,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26b2840",
+      "name": "obliterate_card_from_deck_impl",
+      "source": "functions/deck.c",
+      "native_bytes": 49,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "26b53d0",
+      "name": "kill_card_impl",
+      "source": "functions/deck.c",
+      "native_bytes": 1574,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "26c78f0",
+      "name": "random_rogue",
+      "source": "functions/rules_engine.c",
+      "native_bytes": 201,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26c3530",
+      "name": "increase_trap_condition_impl",
+      "source": "functions/rules_engine.c",
+      "native_bytes": 689,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "26c7890",
+      "name": "limit_allowed_in_deck",
+      "source": "functions/rules_engine.c",
+      "native_bytes": 57,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26cbf50",
+      "name": "allow_response_to_trigger",
+      "source": "functions/events.c",
+      "native_bytes": 137,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26ceac0",
+      "name": "count_counters_impl",
+      "source": "functions/counters.c",
+      "native_bytes": 292,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "26eb060",
+      "name": "dlgproc_do_dialog_hook",
+      "source": "functions/dialog.c",
+      "native_bytes": 279,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "26ed920",
+      "name": "is_displayed_as_attached",
+      "source": "functions/equipments.c",
+      "native_bytes": 214,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "270d580",
+      "name": "__adjust_heap<char const**, int, char const*, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",
+      "source": "functions/utility.cpp",
+      "native_bytes": 295,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "270d6b0",
+      "name": "__heap_select<char const**, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",
+      "source": "functions/utility.cpp",
+      "native_bytes": 222,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "27096c0",
+      "name": "_M_rehash",
+      "source": "functions/utility.cpp",
+      "native_bytes": 530,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "270d810",
+      "name": "__insertion_sort<char const**, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",
+      "source": "functions/utility.cpp",
+      "native_bytes": 170,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "270d8c0",
+      "name": "__introsort_loop<char const**, int, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(char const*, char const*)> >",
+      "source": "functions/utility.cpp",
+      "native_bytes": 539,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "26eea60",
+      "name": "less_const_char",
+      "source": "functions/utility.cpp",
+      "native_bytes": 29,
+      "source_body_present": true,
+      "category": "existing source body; COFF emission absent"
+    },
+    {
+      "address": "26eea80",
+      "name": "iid",
+      "source": "functions/utility.cpp",
+      "native_bytes": 16,
+      "source_body_present": false,
+      "category": "source body absent in named unit; investigate"
+    },
+    {
+      "address": "2711000",
+      "name": "_GLOBAL__sub_I_choose_a_card",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 48,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "26ef020",
+      "name": "__tcf_0",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 25,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "26ef4d0",
+      "name": "__introsort_loop<__gnu_cxx::__normal_iterator<std::pair<char const*, csvid_t>*, std::vector<std::pair<char const*, csvid_t> > >, int, __gnu_cxx::__ops::_Iter_comp_iter<dlgproc_choose_a_card_helper(HWND, color_test_t, type_t, test_definition_t*)::<lambda(const StrCsvid&, const StrCsvid&)> > >",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 583,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "270a880",
+      "name": "_M_realloc_insert<std::pair<char const*, csvid_t> >",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 373,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "26ef8a0",
+      "name": "choose_a_card_get_last_options",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 167,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "26ef7e0",
+      "name": "choose_a_card_test",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 55,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "26ef7a0",
+      "name": "choose_a_card_iid",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 62,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "26ef760",
+      "name": "choose_a_card_allow_cancel_with_defaults",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 49,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "26ef720",
+      "name": "choose_a_card",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 51,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "26efbb0",
+      "name": "dlgproc_choose_a_card",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 4914,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "26ef950",
+      "name": "dlgproc_choose_a_card_helper",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 606,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "26ef040",
+      "name": "__adjust_heap<__gnu_cxx::__normal_iterator<std::pair<char const*, csvid_t>*, std::vector<std::pair<char const*, csvid_t> > >, int, std::pair<char const*, csvid_t>, __gnu_cxx::__ops::_Iter_comp_iter<dlgproc_choose_a_card_helper(HWND, color_test_t, type_t, test_definition_t*)::<lambda(const StrCsvid&, const StrCsvid&)> > >",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 388,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "26ef1d0",
+      "name": "__unguarded_linear_insert<__gnu_cxx::__normal_iterator<std::pair<char const*, csvid_t>*, std::vector<std::pair<char const*, csvid_t> > >, __gnu_cxx::__ops::_Val_comp_iter<dlgproc_choose_a_card_helper(HWND, color_test_t, type_t, test_definition_t*)::<lambda(const StrCsvid&, const StrCsvid&)> > >",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 76,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "26ef220",
+      "name": "__insertion_sort<__gnu_cxx::__normal_iterator<std::pair<char const*, csvid_t>*, std::vector<std::pair<char const*, csvid_t> > >, __gnu_cxx::__ops::_Iter_comp_iter<dlgproc_choose_a_card_helper(HWND, color_test_t, type_t, test_definition_t*)::<lambda(const StrCsvid&, const StrCsvid&)> > >",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 147,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    },
+    {
+      "address": "26ef2c0",
+      "name": "choose_a_card_impl",
+      "source": "functions/choose_a_card.cpp",
+      "native_bytes": 475,
+      "source_body_present": false,
+      "category": "deferred chooser UI"
+    }
+  ],
+  "source_sha256": {
+    "cards/fifth_dawn.c": "76afda4266fdcc58fdc0d47722902cbc6dbbe583261aa872248ba3d48fbdaf15",
+    "cards/born_of_the_gods.c": "4f930ede2b8f97e0820625aad5501a7f626b400ba2f30e5bb67213fc5c5576cd",
+    "cards/apocalypse.c": "9c401ae3cfcef873c1d5c6881f9c8859ae12b38d666ced08014615d15c686319",
+    "cards/stronghold.c": "6ab5a0d96e921aa107bd91c7e499e122d910090a44ad7d45ca69332098688ce5",
+    "cards/planeshift.c": "452ea9f50252f120620549e09102acb969334a6c646a307977148c4bab1c7641",
+    "cards/khans_of_tarkir.c": "b52449517d6f3c69c907783e1fada156e2b588622729fab2e4f93026c7ceeb64",
+    "cards/oath_of_the_gatewatch.c": "904c487b32cae62f50caabd09f4656875b718468422f6c8e6857d7404b3e25fb",
+    "cards/morningtide.c": "89381bb4f3644ada17c0488d5ced6711a8e94a9708ace394e0304106b207627c",
+    "cards/shadows_over_innistrad.c": "5a3557a91d91041f499a440235db79e1b4879afef7579d78806c6871ad973161",
+    "cards/m13.c": "893c577e2a97e75d373982e50a0e1b6a46550127de5640f6dfb1fe191a47da9c",
+    "cards/vanguard.c": "a222a789cf0144e11e07d292cc61481a7edf8573d17ecf73da961711477de7c9",
+    "cards/torment.c": "72a6cde73f48bda2c14a85ff64c761f53be55d524254cbd95bc1563e60b9751b",
+    "cards/dragons_of_tarkir.c": "aae1bc5e4f890a19516764a8621be183efe5421a8e6a11ba982fd24b34229bba",
+    "cards/kaladesh.c": "8c52e348a29863e7bad887f629868d423ff96100e1fa4febc10b78822f339a86",
+    "cards/promo.c": "55b98758f6d49ab64c4191ad7766674d82b721b01a33319caac97d0e30283735",
+    "cards/scars_of_mirrodin.c": "e685b4c79dc1fdc43d727e527efc4730f57d3e000f54b2ab7ab29ec35cc0c797",
+    "cards/battle_for_zendikar.c": "102cf8cc2280db9845c2db1695d6129c77da9e0d208d9c18e1ba9a6a3291bdd4",
+    "cards/eldritch_moon.c": "450e2fb17627e720fe3391079107325b4aeaaf12a3b646a8b81517aee8948a03",
+    "cards/invasion.c": "5cdc86fe246af869192e3b740cf293a81d27fc55cb2affc842e868551d6fabd8",
+    "cards/legions.c": "e15fb9a6f60da9b98c6f6984fee508b9c088e724ee24e78e5bab4c3270f7fc0b",
+    "cards/journey_into_nyx.c": "aea20dff857a08b49aff68b9cab33980ec65d9e28b55ce27ef297c37710cec35",
+    "cards/ravnica.c": "d86e7d19aaedfda08f2c9884f071682e51589e0f8297be23b969bffa7ecb01d2",
+    "cards/m10.c": "f57bf44048311a02550ea3f4d5617b635b6eeed908703d4b85c7497d355f1cd5",
+    "cards/betrayers_of_kamigawa.c": "fea93ba9531196c387a994d3abc0be0ab20d04935edf1240b50760dde6e856c9",
+    "cards/future_sight.c": "d474c848612515abaffec10e11517bfe10daee970d78f293ebb9bde678b5d6e3",
+    "cards/lorwyn.c": "a73beedfb74d596d675d747336e8aeb43c7083e4148825e1726c17be8a73747a",
+    "cards/onslaught.c": "e3536f211d2a862fe5453ada20361f39fe21beb6c9eab56ab44286c752a67f71",
+    "functions/windows.c": "5cb433896b3f3605365654b7edd3fae4ebf7c91c612bd27c7f1531f269c588a1",
+    "functions/targets.c": "c78ebe4778f930a66d93640d539f9af44563bfef227a2840fda788fe38e03d14",
+    "functions/draft.c": "7258c362c0b6f78f827fdcb6b06fa8e71dd198960e999aa096780a9421f5773c",
+    "functions/functions.c": "a2c6fbdcc3078509408a7b06b310993a05b9edbcfc69b52f6f3601e7d7ad2b9a",
+    "functions/engine.c": "1b1723803a4227de63a3232b59203be51d09aee8225a51bcd4a4d237325adebd",
+    "functions/deck.c": "4e0052f6d2bd1706dd09937c27f1d8ebd5d2bdbc25211e2b8eb3b84cbd20c1cd",
+    "functions/rules_engine.c": "e97712411b83634e0fa071e08e8aec2337fc4018437ee7d773362081e9c1cb72",
+    "functions/events.c": "869429a1304cd13d4c8a29de567d181da4582feb72e51f013d58f8954e8d16ad",
+    "functions/counters.c": "78a6cdc8587edd4b7a30e971c349a16d279a170d377a407438643fd3923c01da",
+    "functions/dialog.c": "80e111cc03f95a9142c3297bb32c327b558e4b2ca0d1897c3b4d9cbc5be99480",
+    "functions/equipments.c": "73454c9b65431d62f1119651b62639253beb18d7d525bdc35ab0a10f7b7c5dcb",
+    "functions/utility.cpp": "2d7fe4b31a3b02569c87d0e34e24484e3eb69c9fbab2efdbab885024d8b18502",
+    "functions/choose_a_card.cpp": "9485995a863e1f07934815abcc5a5521f0ca73d3994fc4ef0764b3986355e18c"
+  },
+  "inputs": {
+    "C:\\dev\\manalink3-src\\.recovery\\2022-functions.csv": "cd5a8d856379ef3d5f536437de59d94174ad4abfdd0089adde0e9cb5bc09e1d6",
+    "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
+    "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+    "C:\\dev\\manalink3-src\\ManalinkEh.dll": "9b3bcae5df0cd6fd464c412b685ad362d88a248f1971d605e2abd7aa00d6f947",
+    "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "ec0733af20c81d61980520415f6f93ea5af9ec2a2a4dbfea54a276cb0bc0139d"
+  },
+  "accepted_functions": 4589,
+  "scope": "Name/address inventory only. Existing source can be inlined or omitted; unmatched ranges require review. Does not establish helper completion, 2020-to-2022 modification coverage or gameplay correctness."
+}

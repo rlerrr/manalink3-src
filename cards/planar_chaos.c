@@ -3842,3 +3842,113 @@ LAB_023be778:
   result = morph(player, card, event, 0, 0, 1, 0, 0, 0);
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23be9f0; original cards/planar_chaos.c:3388. */
+int card_timecrafting(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  const char *prompt;
+  target_definition_2022_t td;
+
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition_2022(player, card, &td, 199);
+    td.preferred_controller = 2;
+    td.special = 0x8000;
+    td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters_2022;
+    get_card_instance(player, card);
+    iVar2 = generic_spell_2022(player, card, EVENT_CAN_CAST, 5, &td, NULL, 1, NULL);
+    return iVar2;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td, 199);
+    td.preferred_controller = 2;
+    td.special = 0x8000;
+    td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters_2022;
+    instance = get_card_instance(player, card);
+    iVar2 = check_special_flags2_2022(player, card, -0x80000000);
+    if ((iVar2 == 0) && (spell_fizzled != 1))
+    {
+      iVar2 = can_target_2022(&td);
+      iVar3 = can_target_2022(&td);
+      iVar2 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014",
+                          "Remove X Time Counters", iVar3, 10, "Add X Time Counters", iVar2, 5, 0,
+                          0, 0, 0);
+      if (iVar2 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      instance->targets[5].player = iVar2;
+      if (iVar2 == 1)
+      {
+        prompt = "Select target permanent or suspended legacy with a time counter.";
+      }
+      else
+      {
+        if (iVar2 != 2)
+          goto LAB_023bea99;
+        prompt = "Select target permanent or Suspend legacy card to add counters.";
+      }
+      iVar2 = generic_spell_2022(player, card, EVENT_CAST_SPELL, 0x85, &td, prompt, 1, NULL);
+      return iVar2;
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition_2022(player, card, &td, 199);
+    td.preferred_controller = 2;
+    td.special = 0x8000;
+    td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters_2022;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      iVar2 = instance->targets[5].player;
+      if (iVar2 == 1)
+      {
+        iVar2 = valid_target_2022(&td);
+        if (iVar2 != 0)
+        {
+          remove_counters_from_source(player, card, instance->targets[0].player,
+                                      instance->targets[0].card, COUNTER_TIME, instance->info_slot);
+        }
+      }
+      else if ((iVar2 == 2) && (iVar2 = valid_target_2022(&td), iVar2 != 0))
+      {
+        add_counters_from_source(player, card, instance->targets[0].player,
+                                 instance->targets[0].card, COUNTER_TIME, instance->info_slot);
+      }
+      kill_card(player, card, KILL_DESTROY);
+    }
+  }
+  else
+  {
+    if (event != EVENT_CHANGE_TARGET)
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td, 199);
+    td.preferred_controller = 2;
+    td.special = 0x8000;
+    td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters_2022;
+    get_card_instance(player, card);
+  }
+LAB_023bea99:
+  iVar2 = generic_spell_2022(player, card, event, 5, &td, NULL, 1, NULL);
+  return iVar2;
+}
+
+#endif

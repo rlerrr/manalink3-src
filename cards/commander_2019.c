@@ -1160,3 +1160,171 @@ LAB_023b3741:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23b1850; original cards/commander_2019.c:260. */
+static int chainers_legacy(int player, int card, event_t event)
+{
+  int iVar6;
+  int iVar7;
+  int iVar8;
+  int *piVar4;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    iVar6 = *graveyard_ptr_mutable[player];
+    if (iVar6 != -1)
+    {
+      iVar8 = 0;
+      do
+      {
+
+        iVar6 = is_what(-1, iVar6, 2);
+        piVar4 = graveyard_ptr_mutable[player];
+        if (iVar6 != 0)
+        {
+
+          iVar6 = can_legally_play_iid(player, *(int *)((int)piVar4 + iVar8));
+          piVar4 = graveyard_ptr_mutable[player];
+          if (iVar6 != 0)
+          {
+
+            iVar7 = has_mana_to_cast_iid(player, EVENT_CAN_ACTIVATE, *(int *)((int)piVar4 + iVar8));
+            if (iVar7 == 0)
+            {
+              piVar4 = graveyard_ptr_mutable[player];
+            }
+            else
+            {
+              if (iVar6 == 99)
+              {
+                return 99;
+              }
+
+              iVar6 = can_sorcery_be_played(player, EVENT_CAN_ACTIVATE);
+              if ((iVar6 != 0) || (piVar4 = graveyard_ptr_mutable[player],
+                                   (cards_data[*(int *)((int)piVar4 + iVar8)].type & 0x30) != 0))
+              {
+                return 1;
+              }
+            }
+          }
+        }
+        iVar8 = iVar8 + 4;
+        iVar6 = *(int *)((int)piVar4 + iVar8);
+      } while (iVar6 != -1);
+    }
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    int grave_count = count_graveyard(player);
+    int playable[2][grave_count];
+    int count = 0;
+    int i = 0;
+    int *grave = graveyard_ptr_mutable[player];
+    int iid = *grave;
+    test_definition_2022_t this_test;
+    while (iid != -1)
+    {
+      if (!is_what(-1, iid, TYPE_CREATURE))
+      {
+        grave = graveyard_ptr_mutable[player];
+        goto next_card;
+      }
+      grave = graveyard_ptr_mutable[player];
+      int legal = can_legally_play_iid(player, grave[i]);
+      grave = graveyard_ptr_mutable[player];
+      if (!legal)
+        goto next_card;
+      if (!has_mana_to_cast_iid(player, EVENT_ACTIVATE, grave[i]))
+      {
+        grave = graveyard_ptr_mutable[player];
+        goto next_card;
+      }
+      int sorcery_ok = can_sorcery_be_played(player, EVENT_ACTIVATE);
+      grave = graveyard_ptr_mutable[player];
+      iid = grave[i];
+      if (sorcery_ok || (cards_data[iid].type & 0x30))
+      {
+        playable[0][count] = iid;
+        playable[1][count] = i;
+        ++count;
+      }
+    next_card:
+      iid = grave[i + 1];
+      ++i;
+    }
+    new_default_test_definition_2022(&this_test, 0xff, "Select a creature card to play.");
+    int selected =
+        select_card_from_zone_2022(player, player, playable[0], count, 0, 1, -1, &this_test);
+    if (selected != -1 &&
+        charge_mana_from_id(player, -1, EVENT_ACTIVATE, cards_data[playable[0][selected]].id))
+    {
+      play_card_in_grave_for_free(player, player, playable[1][selected]);
+      cant_be_responded_to = 1;
+      kill_card(player, card, KILL_EXILE);
+      return 0;
+    }
+    spell_fizzled = 1;
+    return 0;
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x23b26b0; original cards/commander_2019.c:329. */
+int card_chainer_nightmare_adept(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_2022_t test;
+  check_legend_rule(player, card, event);
+  if ((((trigger_condition == TRIGGER_COMES_INTO_PLAY) &&
+        (result = not_played_from_hand(trigger_cause_controller, trigger_cause), result != 0)) &&
+       (card == affected_card)) &&
+      ((player == affected_card_controller && (reason_for_trigger_controller == player))))
+  {
+    new_default_test_definition_2022(&test, 2, "");
+    test.type_flag = 3;
+    etb_ability_global_2022(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_ETB)
+  {
+    result = pump_ability_until_eot_no_repeat_2022(player, card, trigger_cause_controller,
+                                                   trigger_cause, 0, 4);
+    if (current_turn == player)
+    {
+      instance = get_card_instance(player, result);
+      instance->targets[7].player = 1;
+    }
+    return 0;
+  }
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+  LAB_023b2721:
+    if (event != EVENT_RESOLVE_ACTIVATION)
+      goto LAB_023b2726;
+  }
+  else if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    if (event != EVENT_CLEANUP)
+    {
+      return 0;
+    }
+    goto LAB_023b2721;
+  }
+  create_legacy_activate(player, card, chainers_legacy);
+LAB_023b2726:
+  result =
+      generic_activated_ability_2022(player, card, event, 0x2020, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
+}
+
+#endif

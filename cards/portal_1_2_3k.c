@@ -5742,3 +5742,97 @@ LAB_021bff48:
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21c3d10; original cards/portal_1_2_3k.c:4141. */
+int card_norwood_warrior(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (current_turn == player)) &&
+        (current_phase < 0x18))
+    {
+      check_abilities_power_2022 = check_abilities_power_2022 + 1;
+      check_abilities_toughness_2022 = check_abilities_toughness_2022 + 1;
+    }
+  }
+  else if (event == EVENT_DECLARE_BLOCKERS)
+  {
+    result = is_attacking(player, card);
+    if (result != 0)
+    {
+      result = is_unblocked(player, card);
+      if (result == 0)
+      {
+        result = is_humiliated_for_ability(player, card, AL_TRIG);
+        if (result == 0)
+        {
+          pump_ability_until_eot_2022(player, card, player, card, 1, 1, 0, 0);
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21c48d0; original cards/portal_1_2_3k.c:4401. */
+int card_town_sentry(int player, int card, event_t event)
+{
+  int result;
+  if ((((event == EVENT_CHECK_ABILITIES) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((current_turn != player && (current_phase < 0x18))))
+  {
+    check_abilities_toughness_2022 = check_abilities_toughness_2022 + 2;
+  }
+  result = blocking(player, card, event);
+  if (result != 0)
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      pump_ability_until_eot_2022(player, card, player, card, 0, 2, 0, 0);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x21c4dc0; original cards/portal_1_2_3k.c:4504. */
+int card_zhao_zilong_tiger_general(int player, int card, event_t event)
+{
+  int result;
+  check_legend_rule(player, card, event);
+  horsemanship2(player, card, event);
+  if ((((event == EVENT_CHECK_ABILITIES) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((current_turn != player && (current_phase < 0x18))))
+  {
+    check_abilities_power_2022 = check_abilities_power_2022 + 1;
+    check_abilities_toughness_2022 = check_abilities_toughness_2022 + 1;
+  }
+  result = blocking(player, card, event);
+  if (result != 0)
+  {
+    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      pump_ability_until_eot_2022(player, card, player, card, 1, 1, 0, 0);
+      return 0;
+    }
+  }
+  return 0;
+}
+
+#endif

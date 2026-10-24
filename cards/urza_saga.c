@@ -8303,3 +8303,84 @@ char *is_land_or_nonblack_creature_2022(int who_chooses, int player, int card, i
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2056030; original cards/urza_saga.c:6691. */
+int card_retaliation(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    iVar1 = is_attacking(affected_card_controller, affected_card);
+    if (((iVar1 != 0) && (current_turn == player)) && (current_phase < 0x18))
+    {
+      check_abilities_power_2022 = check_abilities_power_2022 + 1;
+      check_abilities_toughness_2022 = check_abilities_toughness_2022 + 1;
+    }
+  }
+  else
+  {
+    if (((event == EVENT_DECLARE_BLOCKERS) && (current_turn == player)) &&
+        ((iVar1 = is_humiliated_for_ability(player, card, AL_TRIG),
+          iVar1 == 0 && (iVar1 = 0, 0 < active_cards_count[player]))))
+    {
+      do
+      {
+        instance = in_play(player, iVar1);
+        if (((instance != NULL) && (iVar3 = is_what(player, iVar1, 2), iVar3 != 0)) &&
+            ((iVar3 = is_attacking(player, iVar1), card != iVar1 && (iVar3 != 0))))
+        {
+          for_each_creature_blocking_me(player, iVar1, retaliation_legacy, player, iVar1);
+        }
+        iVar1 = iVar1 + 1;
+      } while (iVar1 < active_cards_count[player]);
+    }
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x20552e0; original cards/urza_saga.c:6413. */
+int card_endoskeleton(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_2022_t td;
+
+  choose_to_untap(player, card, event);
+  if (event == EVENT_ACTIVATE)
+  {
+    default_target_definition_2022(player, card, &td, 2);
+    td.preferred_controller = player;
+    get_card_instance(player, card);
+  }
+  else
+  {
+    if ((1U < (unsigned int)event - (unsigned int)EVENT_RESOLVE_ACTIVATION) &&
+        (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition_2022(player, card, &td, 2);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target_2022(&td), result != 0))
+    {
+      pump_until_source_is_in_play_and_tapped_2022(
+          instance->parent_controller, instance->parent_card, instance->targets[0].player,
+          instance->targets[0].card, 0, 3, 0, 0, 1);
+    }
+  }
+  result = generic_activated_ability_2022(player, card, event, 5, 2, 0, 0, 0, 0, 0, 0, &td,
+                                          "TARGET_CREATURE");
+  return result;
+}
+
+#endif

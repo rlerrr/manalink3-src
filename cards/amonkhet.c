@@ -9160,3 +9160,197 @@ int card_temmet_vizier_of_naktamun(int player, int card, event_t event)
 }
 
 #endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22d8f10; original cards/amonkhet.c:648. */
+int card_rhet_crop_spearmaster(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_CHECK_ABILITIES)
+  {
+    if ((card != affected_card) || (player != affected_card_controller))
+    {
+      result = duh_mode(player);
+      if (result != 0)
+      {
+        dat_ability(player, card, EVENT_CHECK_ABILITIES, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+        return 0;
+      }
+      dat_ability(player, card, EVENT_CHECK_ABILITIES, DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+      return 0;
+    }
+    if (current_turn == player)
+    {
+      check_abilities_keywords_2022 = check_abilities_keywords_2022 | 0x100;
+      check_abilities_power_2022 = check_abilities_power_2022 + 1;
+    }
+    result = duh_mode(player);
+    if (result == 0)
+    {
+      dat_ability(player, card, EVENT_CHECK_ABILITIES, DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+    }
+    else
+    {
+      dat_ability(player, card, EVENT_CHECK_ABILITIES, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+    }
+  }
+  else
+  {
+    result = duh_mode(player);
+    dat_ability(player, card, event, (result != 0) + DAT_RESOLVE_TRIGGER_OPTIONAL, 0);
+    if (event == EVENT_DAT_ABILITY)
+    {
+      result = does_not_untap_effect(player, card, player, card, 0, 1);
+      result = alternate_legacy_text(2, player, result);
+      if (result != 0)
+      {
+        result = pump_ability_until_eot_2022(player, card, player, card, 1, 0, 0x100, 0);
+        alternate_legacy_text(1, player, result);
+      }
+    }
+  }
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22d9770; original cards/amonkhet.c:894. */
+int card_as_foretold(int player, int card, event_t event)
+{
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    add_counters_from_source(player, card, player, card, COUNTER_TIME, 1);
+  }
+  else if (event == EVENT_CAN_ACTIVATE)
+  {
+    for (int i = 0; i < active_cards_count[player]; ++i)
+    {
+      if (in_hand(player, i) && !is_what(player, i, 1) &&
+          get_cmc(player, i) <= count_counters(player, card, COUNTER_TIME) &&
+          get_card_instance(player, card)->targets[3].player != 0x42)
+      {
+        int legal = can_legally_play_card_in_hand(player, i);
+        if ((legal == 99 && (is_what(player, i, 0x20) || is_what(player, i, 0x22))) ||
+            (legal == 1 &&
+             (is_what(player, i, 0x10) || can_sorcery_be_played(player, EVENT_CAN_ACTIVATE) ||
+              is_what(player, i, 2) || can_sorcery_be_played(player, EVENT_CAN_ACTIVATE) ||
+              flash(player, i, EVENT_CAN_ACTIVATE))))
+        {
+          return legal;
+        }
+      }
+    }
+    return 0;
+  }
+  else if (event == EVENT_ACTIVATE)
+  {
+    unsigned capacity = (unsigned)hand_count[player];
+    int playable[2][capacity];
+    int count = 0;
+    for (int i = 0; i < active_cards_count[player]; ++i)
+    {
+      if (in_hand(player, i) && !is_what(player, i, 1) &&
+          get_cmc(player, i) <= count_counters(player, card, COUNTER_TIME) &&
+          get_card_instance(player, card)->targets[3].player != 0x42)
+      {
+        int legal = can_legally_play_card_in_hand(player, i);
+        if ((legal == 99 && (is_what(player, i, 0x20) || is_what(player, i, 0x22))) ||
+            (legal == 1 &&
+             (is_what(player, i, 0x10) || can_sorcery_be_played(player, EVENT_CAN_ACTIVATE) ||
+              is_what(player, i, 2) || can_sorcery_be_played(player, EVENT_CAN_ACTIVATE) ||
+              flash(player, i, EVENT_CAN_ACTIVATE))))
+        {
+          playable[0][count] = get_card_instance(player, i)->internal_card_id;
+          playable[1][count++] = i;
+        }
+      }
+    }
+    test_definition_2022_t test;
+    _Static_assert(sizeof(test) == 216, "native As Foretold filter");
+    new_default_test_definition_2022(&test, 1, "Select a spell to cast.");
+    test.type_flag = 1;
+    int selected = select_card_from_zone_2022(player, player, playable[0], count, 0, 2, -1, &test);
+    if (selected == -1)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    play_card_in_hand_for_free(player, playable[1][selected]);
+    cant_be_responded_to = 1;
+    get_card_instance(player, card)->targets[3].player = 0x42;
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    get_card_instance(player, card)->targets[3].player = 0;
+  }
+  return global_enchantment(player, card, event);
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x22dbd60; original cards/amonkhet.c:1745. */
+int card_dispossess(int player, int card, event_t event)
+{
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (!affect_me(player, card))
+      return 0;
+  }
+  else if (event != EVENT_CAN_CAST && event != EVENT_RESOLVE_SPELL &&
+           event != EVENT_CAN_CHANGE_TARGET && event != EVENT_CHANGE_TARGET)
+    return 0;
+  int opponent = 1 - player;
+  target_definition_2022_t td;
+  default_target_definition_2022(player, card, &td, 0);
+  td.zone = 0x1000;
+  td.allowed_controller = opponent;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    if (valid_target_2022(&td))
+    {
+      uint32_t csvid;
+      if (ai_is_speculating == 1 || (player == 1 && (trace_mode & 2) == 0))
+      {
+        int iid = -1;
+        for (int i = 0; i < 500 && deck_ptr[opponent][i] != -1; ++i)
+          if (is_what(-1, deck_ptr[opponent][i], 0x40))
+          {
+            iid = deck_ptr[opponent][i];
+            break;
+          }
+        if (iid == -1)
+        {
+          const int *grave = get_grave(opponent);
+          for (int i = 0; i < 500 && grave[i] != -1; ++i)
+            if (is_what(-1, grave[i], 0x40))
+            {
+              iid = grave[i];
+              break;
+            }
+        }
+        if (player == 1)
+          ai_modifier += iid == -1 ? -100 : 100;
+        csvid = (uint16_t)cards_data[iid].id;
+        const char *name = get_card_name_by_id(csvid);
+        dialog_impl(player, card, EVENT_ACTIVATE, "\001\014", "\001\003", "\001\021", iid, name, 1,
+                    1, 0, 0, 0, 0);
+      }
+      else
+      {
+        csvid = choose_a_card_test_ct("Choose an artifact card name.", NULL, (color_test_t)-1,
+                                      TYPE_ARTIFACT);
+      }
+      lobotomy_effect_2022(player, opponent, csvid, -1, 0);
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
+  return generic_spell_2022(player, card, event, 0x40, &td, "TARGET_OPPONENT", 1, NULL);
+}
+
+#endif
