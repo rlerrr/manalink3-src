@@ -1,0 +1,19 @@
+{
+  "debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "functions": {
+    "0x25b2290": {
+      "die_offset": "0x543ffbc",
+      "source": "cards/urza_legacy.c",
+      "address": "0x25b2290",
+      "end": "0x25b22dc",
+      "bytes": 76
+    },
+    "0x25e73f0": {
+      "die_offset": "0x58bee29",
+      "source": "cards/onslaught.c",
+      "address": "0x25e73f0",
+      "end": "0x25e743c",
+      "bytes": 76
+    }
+  }
+}

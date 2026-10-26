@@ -8,7 +8,9 @@ from recover_activation_costs import ADDRESSES, CONTROL_SITES
 from recover_literals import readonly_string
 
 
-def audit_component(component, manifest, sources, machine_bytes, image):
+def audit_component(component, manifest, sources, machine_bytes, image, root=None):
+    from unify_scalar_helpers import retained_source_body,ROOT
+    if root is None:root=ROOT
     def require(condition, message):
         if not condition:
             raise ValueError(message)
@@ -69,7 +71,7 @@ def audit_component(component, manifest, sources, machine_bytes, image):
         require(readonly_string(image, int(literal['address'], 16)) == bytes.fromhex(literal['bytes']),
                 'Specialized activation native prompt mismatch')
     color = component['source_color_helper']
-    body = function_body(sources[color['source']], color['name']).replace('\r\n', '\n')
+    body = retained_source_body(root, color['source'], color['name'])
     require(hashlib.sha256(body.encode()).hexdigest() == color['body_sha256'] and
             color['preserves_native_uninitialized_format'] is True and
             'get_sleighted_color_text' in color['inline_names'],

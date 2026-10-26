@@ -2392,7 +2392,7 @@ int card_reap_intellect(int player, int card, event_t event){
 
 			int i;
 			for(i=0; i<ec; i++){
-				lobotomy_effect(player, 1-player, exiled[i], LOBOTOMY_NO_SHUFFLE);
+				lobotomy_effect(player, 1-player, exiled[i], -1, LOBOTOMY_NO_SHUFFLE);
 			}
 			shuffle(1-player);
 		}

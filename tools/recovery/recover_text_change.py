@@ -26,7 +26,8 @@ PROMPT_REPLACEMENT=PROMPT_ORIGINAL.replace('&td,prompt)','&td,(char *)prompt)')
 PROMPT_SITES={'23f0945':'e826f92800','23f094e':'89442430','23f09a0':'e85bd12a00'}
 
 
-def audit_card(component,manifest,sources,machine_bytes):
+def audit_card(component,manifest,sources,machine_bytes,root=None):
+    if root is None:root=Path(__file__).resolve().parents[2]
     def require(ok,message):
         if not ok:raise ValueError(message)
     entry=next(f for f in manifest['accepted_functions'] if f['address']==CARD);detail=component['function']
@@ -47,7 +48,8 @@ def audit_card(component,manifest,sources,machine_bytes):
         require(len(ins)==1 and ins[0].bytes==data and any(o.type==X86_OP_IMM and o.imm==int(ref['target'],16) for o in ins[0].operands) and
             re.search(r'\b'+ref['name']+r'\b',body),'Shaman native callback operand mismatch')
     for support in component['source_interfaces']:
-        require(sha(function_body(sources[support['source']].replace('\r\n','\n'),support['name']).encode())==support['body_sha256'],
+        from unify_scalar_helpers import retained_source_body
+        require(sha(retained_source_body(root,support['source'],support['name'],source_view=sources).encode())==support['body_sha256'],
             'Shaman retained source interface changed')
 
 
@@ -124,7 +126,8 @@ def audit_component(component,manifest,sources,machine_bytes,root,header=None,de
             'Text-change byte result consumers mismatch')
         require(body.count('options[instance->'+member+'[iVar5]] = 1;')==1 and 't_player, t_card' in body,'Text-change chained mapping/target identity missing')
     for support in component['retained_source_helpers']:
-        require(sha(function_body(sources['functions/functions.c'].replace('\r\n','\n'),support['name']).encode())==support['body_sha256'],
+        from unify_scalar_helpers import retained_source_body
+        require(sha(retained_source_body(root,'functions/functions.c',support['name']).encode())==support['body_sha256'],
             'Text-change retained source helper body changed')
     require(component['layout']==dict(color_offset=64,hack_offset=276,mapping_bytes=6,options_bytes=24,result_store_bytes=4,result_read_bytes=1),
         'Text-change native storage widths mismatch')

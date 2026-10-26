@@ -1,0 +1,404 @@
+{
+  "source": "functions/functions.c",
+  "retained_name": "new_reanimate_all_impl",
+  "recovered_name": "new_reanimate_all_impl_2022",
+  "predecessor_definition": "static int new_reanimate_all_impl(int player, int card, int targ_player, test_definition_t *this_test, reanimate_mode_t action,\n\t\t\t\t\t\t\t\t\tcounter_t counter_type, int (*effect_fn)(int, int, event_t), void (*before_etb)(int, int)){\n\tint csvid = card == -1 ? -1 : get_id(player, card);\n\tint result = 0;\n\tint i;\n\tint grafdiggers_cage_flag = check_battlefield_for_id(2, CARD_ID_GRAFDIGGERS_CAGE);\n\tint to_reanimate[2][500];\n\tint trc[2] = {0, 0};\n\tint ereboss_titan_flag = -1;\n\n\t// To prevent unwanted interactions, global reanimation will be done in 3 steps.\n\t// First step: removing from graveyards all cards that match \"test\" and storing in the players arrays\n\tfor (i = 0; i < 2; ++i){\n\t\tif (targ_player == i || targ_player == ANYBODY){\n\t\t\tint count;\n\t\t\tint lower_limit = (i == targ_player && csvid == CARD_ID_CLEANSING_MEDITATION) ? get_card_instance(player, card)->info_slot : -1;\n\n\t\t\tconst int* grave = get_grave(i);\n\t\t\tfor (count = count_graveyard(i)-1; count > lower_limit; --count){\n\t\t\t\tif (is_what(-1, grave[count], TYPE_PERMANENT) && new_make_test(i, grave[count], -1, this_test)){\n\t\t\t\t\tif( targ_player != ANYBODY && is_what(-1, grave[count], TYPE_CREATURE) ){\n\t\t\t\t\t\tereboss_titan_flag = 1-i;\n\t\t\t\t\t}\n\t\t\t\t\tif( ! is_what(-1, grave[count], TYPE_CREATURE) || (is_what(-1, grave[count], TYPE_CREATURE) && ! grafdiggers_cage_flag) ){\n\t\t\t\t\t\tif( trc[i] < 500 ){\n\t\t\t\t\t\t\tto_reanimate[i][trc[i]] = grave[count];\n\t\t\t\t\t\t\ttrc[i]++;\n\t\t\t\t\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\t\t\t\t\trfg_card_from_grave(i, count);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\telse{\n\t\t\t\t\t\t\t\tremove_card_from_grave(i, count);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\tresult++;\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n\n\t// Intermediate step: if REANIMATE_SPECIAL_LIVING_DEAD is used, each player will sacrifice all his creatures.\n\t// As now, there is no card that says \"When THIS dies, DO SOMETHING with target exiled card\",\n\t// so we're pretty saved from unwanted interactions\n\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\ttest_definition_t this_test2;\n\t\tdefault_test_definition(&this_test2, TYPE_CREATURE);\n\t\tAPNAP(p, {new_manipulate_all(player, card, p, &this_test2, KILL_SACRIFICE);});\n\t}\n\n\t// Second step: adding to player's hands all the card from the player's arrays\n\t// If (action & REANIMATE_ALL_UNDER_CASTERS_CONTROL), they will be all added to PLAYER's hand and their \"state\" will be set accordingly.\n\tif( action & REANIMATE_ALL_UNDER_CASTERS_CONTROL ){\n\t\tfor(i=0; i<trc[player]; i++){\n\t\t\tint good = 1;\n\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\tif( ! check_rfg(player, cards_data[to_reanimate[player][i]].id) ){\n\t\t\t\t\tgood = 0;\n\t\t\t\t}\n\t\t\t}\n\t\t\tif( good ){\n\t\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\t\tremove_card_from_rfg(player, cards_data[to_reanimate[player][i]].id);\n\t\t\t\t}\n\t\t\t\tint card_added = add_card_to_hand(player, to_reanimate[player][i]);\n\t\t\t\tto_reanimate[player][i] = card_added;\n\t\t\t}\n\t\t}\n\t\tint ntrc = trc[player];\n\t\tfor(i=0; i<trc[1-player]; i++){\n\t\t\tint good = 1;\n\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\tif( ! check_rfg(1-player, cards_data[to_reanimate[1-player][i]].id) ){\n\t\t\t\t\tgood = 0;\n\t\t\t\t}\n\t\t\t}\n\t\t\tif( good ){\n\t\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\t\tremove_card_from_rfg(player, cards_data[to_reanimate[1-player][i]].id);\n\t\t\t\t}\n\t\t\t\tint card_added = add_card_to_hand(player, to_reanimate[1-player][i]);\n\t\t\t\tget_card_instance(player, card_added)->state ^= STATE_OWNED_BY_OPPONENT;\n\t\t\t\tto_reanimate[player][ntrc] = card_added;\n\t\t\t\tntrc++;\n\t\t\t}\n\t\t}\n\t\ttrc[player] = ntrc;\n\t\ttrc[1-player] = 0;\n\t}\n\telse{\n\t\tfor (i = 0; i < 2; ++i){\n\t\t\tint k;\n\t\t\tfor(k=0; k<trc[i]; k++){\n\t\t\t\tint good = 1;\n\t\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\t\tif( ! check_rfg(i, cards_data[to_reanimate[i][k]].id) ){\n\t\t\t\t\t\tgood = 0;\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tif( good ){\n\t\t\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\t\t\tremove_card_from_rfg(i, cards_data[to_reanimate[i][k]].id);\n\t\t\t\t\t}\n\t\t\t\t\tint card_added = add_card_to_hand(i, to_reanimate[i][k]);\n\t\t\t\t\tto_reanimate[i][k] = card_added;\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n\n\t// Thirs step: calling \"reanimate_permanent\" with REANIMATE_SPECIAL_R_ALL so it won't try to remove the cards from graveyards again\n\t// \"reanimate_permanent_impl\" will set flags, effects and interactions properly and put the card into play.\n\taction |= REANIMATE_SPECIAL_R_ALL;\n\tif( action & REANIMATE_ALL_UNDER_CASTERS_CONTROL ){\n\t\tint k;\n\t\tfor(k=0; k<trc[player]; k++){\n\t\t\treanimate_permanent_impl(player, card, player, to_reanimate[player][k], action, COUNTER_invalid, NULL, NULL);\n\t\t}\n\t}\n\telse{\n\t\tAPNAP(p,{\n\t\t\t\t\tint k;\n\t\t\t\t\tfor(k=0; k<trc[p]; k++){\n\t\t\t\t\t\treanimate_permanent_impl(p, -1, p, to_reanimate[p][k], action, COUNTER_invalid, NULL, NULL);\n\t\t\t\t\t}\n\t\t\t\t};\n\t\t);\n\t}\n\n\tif( ereboss_titan_flag > -1 ){\n\t\tereboss_titan_effect(ereboss_titan_flag);\n\t}\n\n\treturn result;\n}",
+  "predecessor_definition_sha256": "524d7ad3d462c7b8ed6e23d24942110d088a428bd933412863112e8ffdac1e6b",
+  "predecessor_body": "new_reanimate_all_impl(int player, int card, int targ_player, test_definition_t *this_test, reanimate_mode_t action,\n\t\t\t\t\t\t\t\t\tcounter_t counter_type, int (*effect_fn)(int, int, event_t), void (*before_etb)(int, int)){\n\tint csvid = card == -1 ? -1 : get_id(player, card);\n\tint result = 0;\n\tint i;\n\tint grafdiggers_cage_flag = check_battlefield_for_id(2, CARD_ID_GRAFDIGGERS_CAGE);\n\tint to_reanimate[2][500];\n\tint trc[2] = {0, 0};\n\tint ereboss_titan_flag = -1;\n\n\t\n\t\n\tfor (i = 0; i < 2; ++i){\n\t\tif (targ_player == i || targ_player == ANYBODY){\n\t\t\tint count;\n\t\t\tint lower_limit = (i == targ_player && csvid == CARD_ID_CLEANSING_MEDITATION) ? get_card_instance(player, card)->info_slot : -1;\n\n\t\t\tconst int* grave = get_grave(i);\n\t\t\tfor (count = count_graveyard(i)-1; count > lower_limit; --count){\n\t\t\t\tif (is_what(-1, grave[count], TYPE_PERMANENT) && new_make_test(i, grave[count], -1, this_test)){\n\t\t\t\t\tif( targ_player != ANYBODY && is_what(-1, grave[count], TYPE_CREATURE) ){\n\t\t\t\t\t\tereboss_titan_flag = 1-i;\n\t\t\t\t\t}\n\t\t\t\t\tif( ! is_what(-1, grave[count], TYPE_CREATURE) || (is_what(-1, grave[count], TYPE_CREATURE) && ! grafdiggers_cage_flag) ){\n\t\t\t\t\t\tif( trc[i] < 500 ){\n\t\t\t\t\t\t\tto_reanimate[i][trc[i]] = grave[count];\n\t\t\t\t\t\t\ttrc[i]++;\n\t\t\t\t\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\t\t\t\t\trfg_card_from_grave(i, count);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\telse{\n\t\t\t\t\t\t\t\tremove_card_from_grave(i, count);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\tresult++;\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n\n\t\n\t\n\t\n\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\ttest_definition_t this_test2;\n\t\tdefault_test_definition(&this_test2, TYPE_CREATURE);\n\t\tAPNAP(p, {new_manipulate_all(player, card, p, &this_test2, KILL_SACRIFICE);});\n\t}\n\n\t\n\t\n\tif( action & REANIMATE_ALL_UNDER_CASTERS_CONTROL ){\n\t\tfor(i=0; i<trc[player]; i++){\n\t\t\tint good = 1;\n\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\tif( ! check_rfg(player, cards_data[to_reanimate[player][i]].id) ){\n\t\t\t\t\tgood = 0;\n\t\t\t\t}\n\t\t\t}\n\t\t\tif( good ){\n\t\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\t\tremove_card_from_rfg(player, cards_data[to_reanimate[player][i]].id);\n\t\t\t\t}\n\t\t\t\tint card_added = add_card_to_hand(player, to_reanimate[player][i]);\n\t\t\t\tto_reanimate[player][i] = card_added;\n\t\t\t}\n\t\t}\n\t\tint ntrc = trc[player];\n\t\tfor(i=0; i<trc[1-player]; i++){\n\t\t\tint good = 1;\n\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\tif( ! check_rfg(1-player, cards_data[to_reanimate[1-player][i]].id) ){\n\t\t\t\t\tgood = 0;\n\t\t\t\t}\n\t\t\t}\n\t\t\tif( good ){\n\t\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\t\tremove_card_from_rfg(player, cards_data[to_reanimate[1-player][i]].id);\n\t\t\t\t}\n\t\t\t\tint card_added = add_card_to_hand(player, to_reanimate[1-player][i]);\n\t\t\t\tget_card_instance(player, card_added)->state ^= STATE_OWNED_BY_OPPONENT;\n\t\t\t\tto_reanimate[player][ntrc] = card_added;\n\t\t\t\tntrc++;\n\t\t\t}\n\t\t}\n\t\ttrc[player] = ntrc;\n\t\ttrc[1-player] = 0;\n\t}\n\telse{\n\t\tfor (i = 0; i < 2; ++i){\n\t\t\tint k;\n\t\t\tfor(k=0; k<trc[i]; k++){\n\t\t\t\tint good = 1;\n\t\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\t\tif( ! check_rfg(i, cards_data[to_reanimate[i][k]].id) ){\n\t\t\t\t\t\tgood = 0;\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\tif( good ){\n\t\t\t\t\tif( action & REANIMATE_SPECIAL_LIVING_DEAD ){\n\t\t\t\t\t\tremove_card_from_rfg(i, cards_data[to_reanimate[i][k]].id);\n\t\t\t\t\t}\n\t\t\t\t\tint card_added = add_card_to_hand(i, to_reanimate[i][k]);\n\t\t\t\t\tto_reanimate[i][k] = card_added;\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n\n\t\n\t\n\taction |= REANIMATE_SPECIAL_R_ALL;\n\tif( action & REANIMATE_ALL_UNDER_CASTERS_CONTROL ){\n\t\tint k;\n\t\tfor(k=0; k<trc[player]; k++){\n\t\t\treanimate_permanent_impl(player, card, player, to_reanimate[player][k], action, COUNTER_invalid, NULL, NULL);\n\t\t}\n\t}\n\telse{\n\t\tAPNAP(p,{\n\t\t\t\t\tint k;\n\t\t\t\t\tfor(k=0; k<trc[p]; k++){\n\t\t\t\t\t\treanimate_permanent_impl(p, -1, p, to_reanimate[p][k], action, COUNTER_invalid, NULL, NULL);\n\t\t\t\t\t}\n\t\t\t\t};\n\t\t);\n\t}\n\n\tif( ereboss_titan_flag > -1 ){\n\t\tereboss_titan_effect(ereboss_titan_flag);\n\t}\n\n\treturn result;\n}",
+  "predecessor_body_sha256": "2f0eebb1f505d439846a0c709311d6232ddcb11d551aaf8be47e7aa82cef3b2e",
+  "accepted_recovery_record": {
+    "address": "269ba70",
+    "name": "new_reanimate_all_impl_2022",
+    "source": "functions/functions.c",
+    "line": "5286",
+    "static": true,
+    "prototype": "static int new_reanimate_all_impl_2022(int player, int card, int targ_player,\n                                test_definition_2022_t *this_test, reanimate_mode_2022_t action);",
+    "raw_sha256": "6f724a9c3fad036cbf1d4747485b7894d50f3491d0f18c88f8e5dd496a8b5c70",
+    "recovered_literals": [],
+    "reanimation_evidence": {
+      "machine_bytes": 3487,
+      "machine_sha256": "7b995896eba11cb88a900dc74acaedc9ca0a3871373486036b5355c475b06b94",
+      "changes": [
+        {
+          "original": "auras[1][0x1f2] = 0x269ba81;",
+          "replacement": "",
+          "occurrences": 1,
+          "kind": "compiler prologue save/probe temporary before array lifetimes",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "auras[1][499] = player;",
+          "replacement": "",
+          "occurrences": 1,
+          "kind": "compiler prologue save/probe temporary before array lifetimes",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "int to_reanimate [2] [500];",
+          "replacement": "int RECOVERY_FLAT_to_reanimate[1000];",
+          "occurrences": 1,
+          "kind": "4000-byte array plane declaration",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "to_reanimate[player][uStack_2040]",
+          "replacement": "to_reanimate[(player) * 500 + (uStack_2040)]",
+          "occurrences": 1,
+          "kind": "array plane row stride 500 ints",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "to_reanimate[iVar11][iVar5]",
+          "replacement": "to_reanimate[(iVar11) * 500 + (iVar5)]",
+          "occurrences": 1,
+          "kind": "array plane row stride 500 ints",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "to_reanimate[player]",
+          "replacement": "(to_reanimate + (player) * 500)",
+          "occurrences": 2,
+          "kind": "array plane row stride 500 ints",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "to_reanimate[iVar11]",
+          "replacement": "(to_reanimate + (iVar11) * 500)",
+          "occurrences": 2,
+          "kind": "array plane row stride 500 ints",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "to_reanimate[uVar9]",
+          "replacement": "(to_reanimate + (uVar9) * 500)",
+          "occurrences": 2,
+          "kind": "array plane row stride 500 ints",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "to_reanimate[0]",
+          "replacement": "(to_reanimate + (0) * 500)",
+          "occurrences": 3,
+          "kind": "array plane row stride 500 ints",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "RECOVERY_FLAT_to_reanimate",
+          "replacement": "to_reanimate",
+          "occurrences": 1,
+          "kind": "finish flattened array declaration",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "int auras [2] [500];",
+          "replacement": "int RECOVERY_FLAT_auras[1000];",
+          "occurrences": 1,
+          "kind": "4000-byte array plane declaration",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "auras[player][uStack_2040]",
+          "replacement": "auras[(player) * 500 + (uStack_2040)]",
+          "occurrences": 1,
+          "kind": "array plane row stride 500 ints",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "auras[iVar11][iVar5]",
+          "replacement": "auras[(iVar11) * 500 + (iVar5)]",
+          "occurrences": 1,
+          "kind": "array plane row stride 500 ints",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "auras[player_00]",
+          "replacement": "(auras + (player_00) * 500)",
+          "occurrences": 2,
+          "kind": "array plane row stride 500 ints",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "auras[player]",
+          "replacement": "(auras + (player) * 500)",
+          "occurrences": 4,
+          "kind": "array plane row stride 500 ints",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "auras[iVar11]",
+          "replacement": "(auras + (iVar11) * 500)",
+          "occurrences": 2,
+          "kind": "array plane row stride 500 ints",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "auras[0]",
+          "replacement": "(auras + (0) * 500)",
+          "occurrences": 5,
+          "kind": "array plane row stride 500 ints",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        },
+        {
+          "original": "RECOVERY_FLAT_auras",
+          "replacement": "auras",
+          "occurrences": 1,
+          "kind": "finish flattened array declaration",
+          "machine_sites": [
+            {
+              "address": "269ba70",
+              "bytes": "5589e557565350b86c200000e84f07060029c4"
+            },
+            {
+              "address": "269ba86",
+              "bytes": "8b0404"
+            }
+          ]
+        }
+      ],
+      "canonical_calls": [
+        {
+          "address": "269bac8",
+          "bytes": "e80334feff",
+          "target": "267eed0",
+          "name": "grafdiggers_cages"
+        },
+        {
+          "address": "269bcc5",
+          "bytes": "e8863a0200",
+          "target": "26bf750",
+          "name": "new_make_test_2022"
+        },
+        {
+          "address": "269bd71",
+          "bytes": "e86a79fdff",
+          "target": "26736e0",
+          "name": "has_subtype_by_id_2022"
+        },
+        {
+          "address": "269be4f",
+          "bytes": "e83c700100",
+          "target": "26b2e90",
+          "name": "add_card_to_hand_invisible"
+        },
+        {
+          "address": "269bef7",
+          "bytes": "e8946f0100",
+          "target": "26b2e90",
+          "name": "add_card_to_hand_invisible"
+        },
+        {
+          "address": "269c003",
+          "bytes": "e82897ffff",
+          "target": "2695730",
+          "name": "reanimate_permanent_impl_2022"
+        },
+        {
+          "address": "269c09b",
+          "bytes": "e89096ffff",
+          "target": "2695730",
+          "name": "reanimate_permanent_impl_2022"
+        },
+        {
+          "address": "269c251",
+          "bytes": "e8da94ffff",
+          "target": "2695730",
+          "name": "reanimate_permanent_impl_2022"
+        },
+        {
+          "address": "269c2df",
+          "bytes": "e84c94ffff",
+          "target": "2695730",
+          "name": "reanimate_permanent_impl_2022"
+        },
+        {
+          "address": "269c2f9",
+          "bytes": "e812e5ffff",
+          "target": "269a810",
+          "name": "ereboss_titan_effect_2022"
+        },
+        {
+          "address": "269c36f",
+          "bytes": "e81c6b0100",
+          "target": "26b2e90",
+          "name": "add_card_to_hand_invisible"
+        },
+        {
+          "address": "269c46f",
+          "bytes": "e81c6a0100",
+          "target": "26b2e90",
+          "name": "add_card_to_hand_invisible"
+        },
+        {
+          "address": "269c529",
+          "bytes": "e882260200",
+          "target": "26bebb0",
+          "name": "default_test_definition_2022"
+        },
+        {
+          "address": "269c54f",
+          "bytes": "e86cabfcff",
+          "target": "26670c0",
+          "name": "new_manipulate_all_2022"
+        }
+      ],
+      "callback_references": []
+    },
+    "reconstruction": "Native single/mass reanimation, upkeep and unearth helpers. Preserve native loop/index/owner quirks and returned-index masks. The mass worker physically receives five arguments; three GNU_parameter_ref parameters are source-only. Two prologue temporary saves precede the array lifetimes; flatten each 4000-byte array at a 500-int row stride. Legacy functions remain unchanged.",
+    "reconstruction_body_sha256": "2d8463295b5de813527e51de7d36f4b2b9f773bacfaa43e6170cbfa86cb4aaf1"
+  },
+  "source_replacement": "/* The unused eight-argument predecessor was retired; native mass reanimation uses the five-argument recovered worker. */",
+  "reason": "Public mass-reanimation frontends now share their native recovered bodies and call the five-argument worker. No live C token refers to this private eight-argument predecessor."
+}

@@ -2350,7 +2350,7 @@ int card_elder_mastery(int player, int card, event_t event)
       new_multidiscard(uVar1 ^ 1, 2, 0, player);
     }
   }
-  result = generic_aura_2022(player, card, event, player, 3, 3, 0x20, 0, 0, 0, 0);
+  result = generic_aura(player, card, event, player, 3, 3, 0x20, 0, 0, 0, 0);
   return result;
 }
 

@@ -2346,7 +2346,7 @@ int card_rhox_faithmender(int player, int card, event_t event)
 static int has_mbt_by_iid(int iid, int unused1, int unused2, int unused3)
 {
   int result;
-  result = check_for_special_ability_2022(-1, iid, (SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_HEXPROOF));
+  result = check_for_special_ability(-1, iid, (SP_KEYWORD_DEATHTOUCH | SP_KEYWORD_HEXPROOF));
   if (result == 0)
   {
     return (unsigned int)((cards_data[iid].static_ability & 0x480) != 0);
@@ -2371,7 +2371,7 @@ static int xathrid_ability_legacy(int player, int card, event_t event)
         (instance->damage_target_player == affected_card_controller))
     {
       event_result = event_result | KEYWORD_DEFENDER;
-      disable_all_activated_abilities_2022((int)instance->damage_target_player,
+      disable_all_activated_abilities((int)instance->damage_target_player,
                                            instance->damage_target_card, 1);
     }
   }

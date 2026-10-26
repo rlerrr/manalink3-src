@@ -1,4 +1,7 @@
 #include "manalink.h"
+
+/* Canonical recovered helper declarations. */
+int retrace(int player, int card, event_t event, int id);
 #include <math.h>
 
 // Functions
@@ -63,42 +66,45 @@ static int hatchling(int player, int card, event_t event, int c1, int c2){
 	return hybrid(player, card, event);
 }
 
-static int retrace(int player, int card, event_t event, int id){
-
-	/* 702.80. Retrace
-	 *
-	 * 702.80a Retrace appears on some instants and sorceries. It represents a static ability that functions while the
-	 * card with retrace is in a player's graveyard. "Retrace" means "You may cast this card from your graveyard by
-	 * discarding a land card as an additional cost to cast it." Casting a spell using its retrace ability follows the
-	 * rules for paying additional costs in rules 601.2b and 601.2f-h. */
-	if( event == EVENT_GRAVEYARD_ABILITY && has_mana_to_cast_id(player, event, id)){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_LAND);
-		this_test.zone = TARGET_ZONE_HAND;
-
-		if( check_battlefield_for_special_card(player, card, player, 0, &this_test) ){
-			if( can_legally_play_iid_now(player, get_card_instance(player, card)->internal_card_id, event) ){
-				return GA_PLAYABLE_FROM_GRAVE;
-			}
-		}
-	}
-
-	if( event == EVENT_PAY_FLASHBACK_COSTS ){
-		charge_mana_from_id(player, -1, event, id);
-		if( spell_fizzled != 1 ){
-			test_definition_t this_test;
-			new_default_test_definition(&this_test, TYPE_LAND, "Select a land card to discard.");
-			int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MIN_VALUE, -1, &this_test);
-			if( selected != -1 ){
-				discard_card(player, selected);
-				return GAPAID_REMOVE;
-			}
-			else{
-				spell_fizzled = 1;
-			}
-		}
-	}
-	return 0;
+int retrace(int player, int card, event_t event, int id)
+{
+  int result;
+  card_instance_t *instance;
+  test_definition_2022_t this_test;
+  if (event == EVENT_GRAVEYARD_ABILITY)
+  {
+    result = has_mana_to_cast_id(player, EVENT_GRAVEYARD_ABILITY, id);
+    if (result != 0)
+    {
+      default_test_definition(&this_test, 1);
+      this_test.zone = 0x100;
+      result = check_battlefield_for_special_card(player, card, player, 0, &this_test);
+      if (result != 0)
+      {
+        instance = get_card_instance(player, card);
+        result =
+            can_legally_play_iid_now(player, instance->internal_card_id, EVENT_GRAVEYARD_ABILITY);
+        if (result != 0)
+        {
+          return 2;
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_PAY_FLASHBACK_COSTS) &&
+           (charge_mana_from_id(player, -1, EVENT_PAY_FLASHBACK_COSTS, id), spell_fizzled != 1))
+  {
+    new_default_test_definition(&this_test, 1, "Select a land card to discard.");
+    result = new_select_a_card(player, player, 4, 0, 3, -1, &this_test);
+    if (result == -1)
+    {
+      spell_fizzled = 1;
+      return 0;
+    }
+    discard_card(player, result);
+    return 1;
+  }
+  return 0;
 }
 
 static int count_chroma(int player, int card, int clr1, int clr2, int must_be_permanent)
@@ -4659,7 +4665,7 @@ int card_springjack_shepherd(int player, int card, event_t event)
 {
   int result;
   result = player;
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -4773,45 +4779,6 @@ static int fod_3(int player, int card, event_t event)
 /* Recovered October 2022 attacker/keyword helpers. */
 
 /* ManalinkEh 2022: 0x23636c0; original cards/eventide.c:71. */
-int retrace_2022(int player, int card, event_t event, int id)
-{
-  int result;
-  card_instance_t *instance;
-  test_definition_2022_t this_test;
-  if (event == EVENT_GRAVEYARD_ABILITY)
-  {
-    result = has_mana_to_cast_id(player, EVENT_GRAVEYARD_ABILITY, id);
-    if (result != 0)
-    {
-      default_test_definition_2022(&this_test, 1);
-      this_test.zone = 0x100;
-      result = check_battlefield_for_special_card_2022(player, card, player, 0, &this_test);
-      if (result != 0)
-      {
-        instance = get_card_instance(player, card);
-        result =
-            can_legally_play_iid_now(player, instance->internal_card_id, EVENT_GRAVEYARD_ABILITY);
-        if (result != 0)
-        {
-          return 2;
-        }
-      }
-    }
-  }
-  else if ((event == EVENT_PAY_FLASHBACK_COSTS) &&
-           (charge_mana_from_id(player, -1, EVENT_PAY_FLASHBACK_COSTS, id), spell_fizzled != 1))
-  {
-    new_default_test_definition_2022(&this_test, 1, "Select a land card to discard.");
-    result = new_select_a_card_2022(player, player, 4, 0, 3, -1, &this_test);
-    if (result == -1)
-    {
-      spell_fizzled = 1;
-      return 0;
-    }
-    discard_card(player, result);
-    return 1;
-  }
-  return 0;
-}
+
 
 #endif

@@ -398,7 +398,7 @@ Artifact Creature - Minotaur Wizard 3/6
 Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less.
 You may cast it without paying its mana cost. Put the exiled cards on the bottom of your library in a random order.) */
 
-	cascade(player, card, event, -1);
+	cascade(player, card, event);
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *instance = get_card_instance(player, card);

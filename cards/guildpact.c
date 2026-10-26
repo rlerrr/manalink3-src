@@ -1,5 +1,8 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+static void replicate(int player, int card, int cless, int blue, int red);
+
 // global functions
 static int haunt_legacy(int player, int card, event_t event){
 
@@ -62,64 +65,7 @@ static int magemark(int player, int card, event_t event, int key){
 	return vanilla_aura(player, card, event, player);
 }
 
-static int replicate(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white, target_definition_t *td, const char *prompt, int one_target_per_spell){
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		int result = 1;
-		if( td != NULL ){
-			load_text(0, prompt);
-			result = select_target(td->player, td->card, td, text_lines[0], NULL);
-			if( ! result ){
-				spell_fizzled = 1;
-			}
-		}
-		if( result == 1 && ! check_special_flags(player, card, SF_NOT_CAST) ){
-			instance->info_slot = 1;
-			if( one_target_per_spell ){
-				state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
-			}
-			while( has_mana_multi(player, cless, black, blue, green, red, white) && can_target(td) ){
-					int choice = do_dialog(player, player, card, -1, -1, " Replicate\n Stop", 0);
-					if( choice == 0 ){
-						charge_mana_multi(player, cless, black, blue, green, red, white);
-						if( spell_fizzled != 1 ){
-							if( td == NULL ){
-								instance->info_slot++;
-							}
-							else{
-								load_text(0, prompt);
-								if( select_target(td->player, td->card, td, text_lines[0], &(instance->targets[instance->info_slot]))){
-									if( one_target_per_spell ){
-										state_untargettable(instance->targets[instance->info_slot].player, instance->targets[instance->info_slot].card, 1);
-									}
-									instance->info_slot++;
-								}
-								else{
-									break;
-								}
-							}
-						}
-						else{
-							break;
-						}
-					}
-					else{
-						break;
-					}
-			}
-			if( one_target_per_spell ){
-				int i;
-				for(i=0; i<instance->info_slot; i++){
-					state_untargettable(instance->targets[i].player, instance->targets[i].card, 0);
-				}
-			}
-		}
-	}
-
-	return 0;
-}
 
 int bloodthirst(int player, int card, event_t event, int counters){
 
@@ -999,37 +945,56 @@ Trample; haste; shroud (This creature can't be the target of spells or abilities
 	return 0;
 }
 
-int card_gigadrowse(int player, int card, event_t event){
-/*CARD_ID_GIGADROWSE	8060
-Gigadrowse	|U
-Instant
-Replicate |U (When you cast this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.)
-Tap target permanent.*/
+int card_gigadrowse(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
 
-	if (!IS_GS_EVENT(player, card, event)){
-		return 0;
-	}
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_PERMANENT);
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		int i;
-		for(i=0; i<instance->info_slot; i++){
-			if( validate_target(player, card, &td, i) ){
-				tap_card(instance->targets[i].player, instance->targets[i].card);
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-	return replicate(player, card, event, MANACOST_U(1), &td, "TARGET_PERMANENT", 1);
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 0x47);
+    get_card_instance(player, card);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_PERMANENT", 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 0x47);
+      get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_PERMANENT", 1, NULL);
+        if (spell_fizzled != 1)
+        {
+          replicate(player, card, 0, 1, 0);
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 0x47);
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = validate_target(player, card, &td, 0);
+      if (result != 0)
+      {
+        tap_card(instance->targets[0].player, instance->targets[0].card);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 0x47);
+    get_card_instance(player, card);
+  }
+  return 0;
 }
 
 int card_glint_eye_nephilim(int player, int card, event_t event){
@@ -1435,39 +1400,61 @@ That creature gains haste until end of turn. Sacrifice it at the beginning of th
 	return global_enchantment(player, card, event);
 }
 
-int card_leap_of_flame(int player, int card, event_t event){
+int card_leap_of_flame(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
 
-/*CARD_ID_LEAP_OF_FLAME	8080
-Leap of Flame	|U|R
-Instant
-Replicate |U|R (When you cast this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.)
-Target creature gets +1/+0 and gains flying and first strike until end of turn.*/
-
-	if (!IS_GS_EVENT(player, card, event)){
-		return 0;
-	}
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.preferred_controller = player;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		int i;
-		for(i=0; i<instance->info_slot; i++){
-			if( validate_target(player, card, &td, i) ){
-				pump_ability_until_eot(player, card, instance->targets[i].player, instance->targets[i].card, 1, 0, KEYWORD_FLYING | KEYWORD_FIRST_STRIKE, 0);
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-	return replicate(player, card, event, MANACOST_UR(1, 1), &td, "TARGET_CREATURE", 0);
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    get_card_instance(player, card);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 2);
+      td.preferred_controller = player;
+      get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_CREATURE", 1, NULL);
+        if (spell_fizzled != 1)
+        {
+          replicate(player, card, 0, 1, 1);
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = validate_target(player, card, &td, 0);
+      if (result != 0)
+      {
+        pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
+                               1, 0, 0x120, 0);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    get_card_instance(player, card);
+  }
+  return 0;
 }
 
 int card_leyline_of_lightning(int player, int card, event_t event){
@@ -1580,40 +1567,62 @@ Creature - Spirit 1/1
 	return generic_activated_ability(player, card, event, GAA_SACRIFICE_CREATURE | GAA_CAN_TARGET, MANACOST_W(1), 0, &td, "TARGET_CREATURE");
 }
 
-int card_mimeofacture(int player, int card, event_t event){
-/*CARD_ID_MIMEOFACTURE	8089
-Mimeofacture	|3|U
-Sorcery
-Replicate |3|U (When you cast this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.)
-Choose target permanent an opponent controls. Search that player's library for a card with the same name and put it onto the battlefield under your control. Then that player shuffles his or her library.*/
+int card_mimeofacture(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
 
-
-	if (!IS_GS_EVENT(player, card, event)){
-		return 0;
-	}
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_PERMANENT);
-	td.allowed_controller = 1-player;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		int i;
-		for(i=0; i<instance->info_slot; i++){
-			if( validate_target(player, card, &td, i) ){
-				tutor_card_with_the_same_name(instance->targets[i].player, instance->targets[i].card, player, instance->targets[i].player,
-												TUTOR_FROM_DECK, TUTOR_PLAY, 0);
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-	return replicate(player, card, event, MANACOST_XU(3, 1), &td, "TARGET_PERMANENT", 0);
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.allowed_controller = 1 - player;
+    get_card_instance(player, card);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 0x47);
+      td.allowed_controller = 1 - player;
+      get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        generic_spell(player, card, EVENT_CAST_SPELL, 0x81, &td,
+                      "Select target permanent an opponent controls.", 1, NULL);
+        if (spell_fizzled != 1)
+        {
+          replicate(player, card, 3, 1, 0);
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.allowed_controller = 1 - player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = validate_target(player, card, &td, 0);
+      if (result != 0)
+      {
+        result = instance->targets[0].player;
+        tutor_card_with_the_same_name(result, instance->targets[0].card, player, result, 1, 4, 0);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 0x47);
+    td.allowed_controller = 1 - player;
+    get_card_instance(player, card);
+  }
+  return 0;
 }
 
 static int effect_mizzium_transreliquat(int player, int card, event_t event)
@@ -2367,36 +2376,53 @@ int card_primeval_light(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PLAYER", 1, NULL);
 }
 
-int card_pyromatics(int player, int card, event_t event){
-	/* Pyromatics	|1|R	0x2006c22
-	 * Instant
-	 * Replicate |1|R
-	 * ~ deals 1 damage to any target. */
-	if (!IS_GS_EVENT(player, card, event)){
-		return 0;
-	}
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
-	td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		int i;
-		for(i=0; i<instance->info_slot; i++){
-			if( validate_target(player, card, &td, i) ){
-				damage_creature(instance->targets[i].player, instance->targets[i].card, 1, player, card);
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-	return replicate(player, card, event, MANACOST_XR(1, 1), &td, "TARGET_ANY", 0);
+int card_pyromatics(int player, int card, event_t event)
+{
+  int result;
+  target_definition_t td;
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 0x102);
+      td.zone = 0x1200;
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ANY", 1, NULL);
+        if (spell_fizzled != 1)
+        {
+          replicate(player, card, 1, 0, 1);
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = validate_target(player, card, &td, 0);
+      if (result != 0)
+      {
+        damage_target0(player, card, 1);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 0x102);
+  }
+  return 0;
 }
 
 int card_rabble_rouser(int player, int card, event_t event)
@@ -2717,37 +2743,56 @@ int card_shadow_lance(int player, int card, event_t event){
 	return generic_aura(player, card, event, player, 0, 0, KEYWORD_FIRST_STRIKE, 0, 0, 0, 0);
 }
 
-int card_shattering_spree(int player, int card, event_t event){
-/*CARD_ID_SHATTERING_SPREE	8125
-Shattering Spree	|R
-Sorcery
-Replicate |R (When you cast this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.)
-Destroy target artifact.*/
+int card_shattering_spree(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
 
-	if (!IS_GS_EVENT(player, card, event)){
-		return 0;
-	}
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_ARTIFACT);
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(&td);
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		int i;
-		for(i=0; i<instance->info_slot; i++){
-			if( validate_target(player, card, &td, i) ){
-				kill_card(instance->targets[i].player, instance->targets[i].card, KILL_DESTROY);
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-	return replicate(player, card, event, MANACOST_R(1), &td, "TARGET_ARTIFACT", 1);
+  if (event == EVENT_CAN_CAST)
+  {
+    default_target_definition(player, card, &td, 0x40);
+    get_card_instance(player, card);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      default_target_definition(player, card, &td, 0x40);
+      get_card_instance(player, card);
+      if ((card == affected_card) && (player == affected_card_controller))
+      {
+        generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_ARTIFACT", 1, NULL);
+        if (spell_fizzled != 1)
+        {
+          replicate(player, card, 0, 0, 1);
+        }
+      }
+    }
+  }
+  else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+  {
+    default_target_definition(player, card, &td, 0x40);
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_SPELL)
+    {
+      result = validate_target(player, card, &td, 0);
+      if (result != 0)
+      {
+        kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
+      }
+      kill_card(player, card, KILL_DESTROY);
+      return 0;
+    }
+  }
+  else if (event == EVENT_CHANGE_TARGET)
+  {
+    default_target_definition(player, card, &td, 0x40);
+    get_card_instance(player, card);
+  }
+  return 0;
 }
 
 int card_shrieking_grotesque(int player, int card, event_t event){
@@ -3432,27 +3477,23 @@ int card_tin_street_hooligan(int player, int card, event_t event){
 	return 0;
 }
 
-int card_train_of_thoughts(int player, int card, event_t event){
-
-/*CARD_ID_TRAIN_OF_THOUGHT	8152
-Train of Thought	|1|U
-Sorcery
-Replicate |1|U (When you cast this spell, copy it for each time you paid its replicate cost.)
-Draw a card.*/
-
-	if( event == EVENT_CAN_CAST ){
-		return basic_spell(player, card, event);
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		int i;
-		for(i=0; i<get_card_instance(player, card)->info_slot; i++){
-			draw_cards(player, 1);
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-	return replicate(player, card, event, MANACOST_XU(1, 1), 0, 0, 0);
+int card_train_of_thoughts(int player, int card, event_t event)
+{
+  int result;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      replicate(player, card, 1, 1, 0);
+    }
+  }
+  else if (event == EVENT_RESOLVE_SPELL)
+  {
+    draw_cards(player, 1);
+    kill_card(player, card, KILL_DESTROY);
+  }
+  result = basic_spell(player, card, event);
+  return result;
 }
 
 int card_ulasht(int player, int card, event_t event){
@@ -3738,11 +3779,11 @@ static char *not_already_dying(int who_chooses, int player, int card)
 
 
 /* ManalinkEh 2022: 0x252b8d0; original cards/guildpact.c:70. */
-static void replicate_blue_red_2022_impl(int player, int card, int cless, int blue, int red)
+static void replicate(int player, int card, int cless, int blue, int red)
 {
   int result;
   card_instance_t *instance;
-  result = check_special_flags_2022(player, card, 0x40000);
+  result = check_special_flags(player, card, 0x40000);
   if (result == 0)
   {
     instance = get_card_instance(player, card);
@@ -3792,7 +3833,7 @@ int card_ink_treader_nephilim(int player, int card, event_t event)
       (pcVar2 = get_card_instance(trigger_cause_controller, trigger_cause),
        pcVar2->number_of_targets == '\x01'))
   {
-    sp_ability_trigger_2022(2, event, 2, TYPE_SPELL, NULL, player, card);
+    sp_ability_trigger(2, event, 2, TYPE_SPELL, NULL, player, card);
   }
   if (event == EVENT_SPA)
   {

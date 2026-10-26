@@ -105,7 +105,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
             ins=instructions[call['address']];require(ins.bytes.hex()==call['bytes'] and ins.operands[0].type==X86_OP_IMM and ins.operands[0].imm==int(call['target'],16) and re.search(r'\b'+call['name']+r'\s*\(',body),'Native flag-word callee binding mismatch')
     require(DEFINITIONS in read(root/'defs.h') or component.get('planning') is True,'Native Approach/phase-in definitions missing')
     for name,digest in component['retained_phasing_bodies'].items():
-        require(sha(function_body(sources['cards/mirage.c'].replace('\r\n','\n'),name).encode())==digest,'Retained original phasing implementation changed')
+        from unify_scalar_helpers import retained_source_body
+        require(sha(retained_source_body(root,'cards/mirage.c',name,source_view=sources).encode())==digest,'Retained original phasing implementation changed')
     narset=function_body(sources[entries['21d1ff0']['source']],entries['21d1ff0']['name'])
     index=re.search(r'cards_drawn_this_turn\[(\w+)\]',narset)
     require(index is not None and re.search(r'\b'+index[1]+r'\s*=\s*-player\s*\+\s*1;',narset),'Narset native opponent-indexed 16-bit draw-count access missing')

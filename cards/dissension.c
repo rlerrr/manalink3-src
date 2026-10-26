@@ -5028,7 +5028,7 @@ int card_wars_toll(int player, int card, event_t event)
       new_manipulate_all(player, card, iVar6, &test, ACT_TAP);
     }
   }
-  iVar6 = declare_attackers_trigger_2022(player, card, event, 0, iVar6, -1);
+  iVar6 = declare_attackers_trigger(player, card, event, 0, iVar6, -1);
 
   if (((iVar6 != 0) && (iVar3 = is_humiliated_for_ability(player, card, AL_TRIG),
                         iVar6 = current_turn, iVar3 == 0)) &&
@@ -5079,7 +5079,7 @@ int card_supply_demand(int player, int card, event_t event)
       if ((uVar3 & 1) != 0)
       {
         instance->targets[1].card = x_value;
-        generate_tokens_by_id_2022(player, card, 0x497d, result);
+        generate_tokens_by_id(player, card, 0x497d, result);
         uVar3 = instance->info_slot;
       }
       if ((uVar3 & 2) != 0)
@@ -5353,7 +5353,7 @@ int card_shielding_plax(int player, int card, event_t event)
   int result;
 
   hybrid(player, card, event);
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     draw_a_card(player);

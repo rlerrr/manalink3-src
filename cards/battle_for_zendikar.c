@@ -3055,7 +3055,7 @@ int card_crumble_to_dust(int player, int card, event_t event)
 		  card_instance_t* inst = get_card_instance(player, card);
 		  int csvid = get_id(inst->targets[0].player, inst->targets[0].card);
 		  kill_card(inst->targets[0].player, inst->targets[0].card, KILL_EXILE);
-		  lobotomy_effect(player, 1-player, csvid, 0);
+		  lobotomy_effect(player, 1-player, csvid, -1, 0);
 		}
 	  kill_card(player, card, KILL_DESTROY);
 	}
@@ -5560,7 +5560,7 @@ static int catacomb_sifter_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_0244ccb0:
-    uVar4 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar4 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar4 == 0)
       goto joined_r0x0244ccd5;
   }
@@ -5596,7 +5596,7 @@ static int catacomb_sifter_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
     }
-    uVar4 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar4 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar4 == 0)
     {
       return 0;
@@ -5648,7 +5648,7 @@ int card_zada_hedron_grinder(int player, int card, event_t event)
       pcVar1 = get_card_instance(trigger_cause_controller, trigger_cause);
       if (pcVar1->number_of_targets == '\x01')
       {
-        sp_ability_trigger_2022(player, event, 2, TYPE_SPELL, NULL, player, card);
+        sp_ability_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
       }
     }
   }

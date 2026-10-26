@@ -1923,7 +1923,7 @@ that creature gains first strike until end of turn. */
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( beginning_of_combat(player, card, event, player, card) ){
+	if( beginning_of_combat(player, card, event, player) ){
 		charge_mana(player, COLOR_RED, 1);
 		if( spell_fizzled == 1 ){
 			instance->info_slot = 1;

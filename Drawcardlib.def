@@ -11,3 +11,6 @@ EXPORTS
   get_border_color
   get_config_data
   blt_expansion_symbol
+  DrawSmallCardEx
+  DrawFullCard
+  DrawFullCardEx

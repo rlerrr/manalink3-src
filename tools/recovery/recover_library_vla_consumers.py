@@ -111,7 +111,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     runtime=Image((root/'.recovery/2022-ManalinkEh.dll').read_bytes());assert component['runtime_sha256']==sha(runtime.data)=='52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5'
     assert component['outgoing_frames']==outgoing_frames(runtime,{r['low_pc'][2:]:r for r in csv.DictReader((root/'.recovery/2022-functions.csv').open()) if r['low_pc'] and r['high_pc']})
     assert component['native_storage']==native_storage(Image(Path('G:/Manalink/ManalinkEh_10_22_Hotfix.dbg').read_bytes()))
-    for old in component['retained_bodies']:assert sha(function_body(read(root/old['source']),old['name']).encode())==old['body_sha256']
+    from unify_scalar_helpers import retained_source_body
+    for old in component['retained_bodies']:assert sha(retained_source_body(root,old['source'],old['name'],source_view=sources).encode())==old['body_sha256']
     for layout in component['unit_layouts'].values():assert layout['test_definition_t']['bytes']==216 and layout['target_definition_t']['bytes']==84
     def local(a,n):return next(v for v in component['locals'][a] if v['name']==n)
     assert local(CELEBRATION,'choices')['location']==local(CELEBRATION,'token')['location']=='(DW_OP_fbreg: -312)'

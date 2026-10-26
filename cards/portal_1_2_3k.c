@@ -1,5 +1,8 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+int last_chance_legacy(int player, int card, event_t event);
+
 // Cards - Portal
 int card_balance_of_power(int player, int card, event_t event){
 
@@ -547,16 +550,25 @@ Creature - Human Assassin 1/1
 									MANACOST0, 0, &td, "Select target tapped creature.");
 }
 
-static int last_chance_legacy(int player, int card, event_t event ){
-
-	if( current_turn == player && eot_trigger(player, card, event) ){
-		get_card_instance(player, card)->targets[1].player--;
-		if( get_card_instance(player, card)->targets[1].player <= 0 ){
-			lose_the_game(player);
-		}
-	}
-
-	return 0;
+int last_chance_legacy(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (current_turn == player)
+  {
+    result = eot_trigger(player, card, event);
+    if (result != 0)
+    {
+      instance = get_card_instance(player, card);
+      instance->targets[1].player = instance->targets[1].player + -1;
+      instance = get_card_instance(player, card);
+      if (instance->targets[1].player < 1)
+      {
+        lose_the_game(player);
+      }
+    }
+  }
+  return 0;
 }
 
 int card_last_chance(int player, int card, event_t event ){
@@ -2706,7 +2718,7 @@ int card_vampiric_touch(int player, int card, event_t event)
           if (result != 0)
           {
             damage_target0(player, card, 2);
-            gain_life_2022(player, 2);
+            gain_life(player, 2);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -2800,7 +2812,7 @@ int card_cloak_of_feathers(int player, int card, event_t event)
           result = valid_target(&td);
           if (result != 0)
           {
-            pump_ability_until_eot_2022(player, card, instance->targets[0].player,
+            pump_ability_until_eot(player, card, instance->targets[0].player,
                                    instance->targets[0].card, 0, 0, 0x20, 0);
             draw_cards(player, 1);
           }
@@ -2828,7 +2840,7 @@ int card_ingenious_thief(int player, int card, event_t event)
   card_instance_t *instance;
   int result;
   target_definition_t td;
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     default_target_definition(player, card, &td, 0);
@@ -2965,7 +2977,7 @@ int card_fruition(int player, int card, event_t event)
   else if (event == EVENT_RESOLVE_SPELL)
   {
     result = count_subtype(2, 1, 0x5001);
-    gain_life_2022(player, result);
+    gain_life(player, result);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -3003,7 +3015,7 @@ int card_burning_cloak(int player, int card, event_t event)
           result = valid_target(&td);
           if (result != 0)
           {
-            pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, 2,
+            pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 2,
                            0);
             damage_creature(instance->targets[0].player, instance->targets[0].card, 2, player,
                             card);
@@ -3163,7 +3175,7 @@ int card_renewing_dawn(int player, int card, event_t event)
   {
     result = get_hacked_subtype(player, card, 0x5006);
     result = count_subtype(1 - player, 1, result);
-    gain_life_2022(player, result * 2);
+    gain_life(player, result * 2);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -3216,7 +3228,7 @@ int card_starlight(int player, int card, event_t event)
     result = check_battlefield_for_special_card(player, card, 1 - player, 4, &this_test);
     if (0 < result)
     {
-      gain_life_2022(player, result * 3);
+      gain_life(player, result * 3);
     }
     kill_card(player, card, KILL_DESTROY);
   }
@@ -3230,7 +3242,7 @@ int card_steadfastness(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    pump_subtype_until_eot_2022(player, card, player, -1, 0, 3, 0, 0);
+    pump_subtype_until_eot(player, card, player, -1, 0, 3, 0, 0);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -3257,7 +3269,7 @@ int card_stern_marshal(int player, int card, event_t event)
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
       instance = get_card_instance(player, card);
-      pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
+      pump_ability_until_eot(instance->parent_controller, instance->parent_card,
                              instance->targets[0].player, instance->targets[0].card, 2, 2, 0, 0);
     }
   }
@@ -3273,7 +3285,7 @@ int card_valorous_charge(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     result = get_sleighted_color_test(player, card, 0x20);
-    pump_color_until_eot_2022(player, card, 2, result, 2, 0, 0, 0);
+    pump_color_until_eot(player, card, 2, result, 2, 0, 0, 0);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -3313,7 +3325,7 @@ int card_natural_spring(int player, int card, event_t event)
           result = valid_target(&td);
           if (result != 0)
           {
-            gain_life_2022(instance->targets[0].player, 8);
+            gain_life(instance->targets[0].player, 8);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -3436,7 +3448,7 @@ int card_angelic_blessing(int player, int card, event_t event)
           result = valid_target(&td);
           if (result != 0)
           {
-            pump_ability_until_eot_2022(player, card, instance->targets[0].player,
+            pump_ability_until_eot(player, card, instance->targets[0].player,
                                    instance->targets[0].card, 3, 3, 0x20, 0);
           }
           kill_card(player, card, KILL_DESTROY);
@@ -3489,7 +3501,7 @@ int card_path_of_peace(int player, int card, event_t event)
             instance = get_card_instance(player, card);
             kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
             result = get_owner(instance->targets[0].player, instance->targets[0].card);
-            gain_life_2022(result, 4);
+            gain_life(result, 4);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -3514,7 +3526,7 @@ int card_natures_cloak(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     result = get_hacked_walk(player, card, 4);
-    pump_color_until_eot_2022(player, card, player, 8, 0, 0, result, 0);
+    pump_color_until_eot(player, card, player, 8, 0, 0, result, 0);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -3550,7 +3562,7 @@ int card_kiss_of_death(int player, int card, event_t event)
           if (result != 0)
           {
             damage_target0(player, card, 4);
-            gain_life_2022(player, 4);
+            gain_life(player, 4);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -3637,7 +3649,7 @@ int card_talas_explorer(int player, int card, event_t event)
   int result;
   int tgt_player;
   target_definition_t td;
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     default_target_definition(player, card, &td, 0);
@@ -3730,7 +3742,7 @@ int card_wind_sail(int player, int card, event_t event)
             ptVar2 = instance->targets + iVar5;
             ptVar1 = instance->targets + iVar5;
             iVar5 = iVar5 + 1;
-            pump_ability_until_eot_2022(player, card, ptVar1->player, ptVar2->card, 0, 0, 0x20, 0);
+            pump_ability_until_eot(player, card, ptVar1->player, ptVar2->card, 0, 0, 0x20, 0);
             if ((int)(unsigned int)instance->number_of_targets <= iVar5)
               goto LAB_021c3971;
           }
@@ -3801,7 +3813,7 @@ int card_goblin_war_cry(int player, int card, event_t event)
               iVar4 = is_what(iVar2, iVar3, 2);
               if ((iVar4 != 0) && (instance->targets[0].card != iVar3))
               {
-                pump_ability_until_eot_2022(player, card, iVar2, iVar3, 0, 0, 0, 0x20);
+                pump_ability_until_eot(player, card, iVar2, iVar3, 0, 0, 0, 0x20);
               }
               iVar3 = iVar3 + 1;
             } while (iVar3 < active_cards_count[iVar2]);
@@ -3857,7 +3869,7 @@ int card_bargain(int player, int card, event_t event)
     if (result != 0)
     {
       draw_cards(1 - player, 1);
-      gain_life_2022(player, 7);
+      gain_life(player, 7);
     }
     kill_card(player, card, KILL_DESTROY);
   }
@@ -3871,7 +3883,7 @@ int card_temple_elder(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    gain_life_2022(player, 1);
+    gain_life(player, 1);
   }
   result =
       generic_activated_ability(player, card, event, 0x10000001, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
@@ -4068,7 +4080,7 @@ int card_wu_spy(int player, int card, event_t event)
   int result;
   target_definition_t td;
   test_definition_t test;
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     default_target_definition(player, card, &td, 2);
@@ -4178,7 +4190,7 @@ int card_desperate_charge(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    pump_subtype_until_eot_2022(player, card, player, -1, 2, 0, 0, 0);
+    pump_subtype_until_eot(player, card, player, -1, 2, 0, 0, 0);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -4214,7 +4226,7 @@ int card_stolen_grain(int player, int card, event_t event)
           if (result != 0)
           {
             damage_target0(player, card, 5);
-            gain_life_2022(player, 5);
+            gain_life(player, 5);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -4297,7 +4309,7 @@ int card_spring_of_eternal_peace(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    gain_life_2022(player, 8);
+    gain_life(player, 8);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -4314,7 +4326,7 @@ int card_dakmor_lancer(int player, int card, event_t event)
   const char *prompt;
   target_definition_t td1;
 
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -4369,7 +4381,7 @@ int card_soul_shred(int player, int card, event_t event)
           if (result != 0)
           {
             damage_target0(player, card, 3);
-            gain_life_2022(player, 3);
+            gain_life(player, 3);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -4423,7 +4435,7 @@ int card_dark_offering(int player, int card, event_t event)
           if (result != 0)
           {
             kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-            gain_life_2022(player, 3);
+            gain_life(player, 3);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -4490,7 +4502,7 @@ int card_harmony_of_nature(int player, int card, event_t event)
         state_untargettable(player, iVar3, 0);
       } while (piVar4 != tapped + iVar2);
     }
-    gain_life_2022(player, iVar2 << 2);
+    gain_life(player, iVar2 << 2);
     kill_card(player, card, KILL_DESTROY);
   }
   iVar2 = basic_spell(player, card, event);
@@ -4712,7 +4724,7 @@ int card_assassins_blade(int player, int card, event_t event)
         do
         {
           instance = in_play_and_attacking(iVar5, iVar2);
-          if ((instance != NULL) && (iVar3 = check_special_flags_2022(iVar5, iVar2, 0x40), iVar3 == 0))
+          if ((instance != NULL) && (iVar3 = check_special_flags(iVar5, iVar2, 0x40), iVar3 == 0))
           {
             return 1;
           }
@@ -4992,7 +5004,7 @@ int card_treetop_defense(int player, int card, event_t event)
       do
       {
         instance = in_play_and_attacking(player_00, iVar1);
-        if ((instance != NULL) && (iVar3 = check_special_flags_2022(player_00, iVar1, 0x40), iVar3 == 0))
+        if ((instance != NULL) && (iVar3 = check_special_flags(player_00, iVar1, 0x40), iVar3 == 0))
         {
           return 1;
         }
@@ -5030,7 +5042,7 @@ int card_scorching_winds(int player, int card, event_t event)
       do
       {
         instance = in_play_and_attacking(player_00, iVar1);
-        if ((instance != NULL) && (iVar3 = check_special_flags_2022(player_00, iVar1, 0x40), iVar3 == 0))
+        if ((instance != NULL) && (iVar3 = check_special_flags(player_00, iVar1, 0x40), iVar3 == 0))
         {
           return 1;
         }
@@ -5084,7 +5096,7 @@ int card_defiant_stand(int player, int card, event_t event)
         do
         {
           instance = in_play_and_attacking(iVar4, iVar2);
-          if ((instance != NULL) && (iVar3 = check_special_flags_2022(iVar4, iVar2, 0x40), iVar3 == 0))
+          if ((instance != NULL) && (iVar3 = check_special_flags(iVar4, iVar2, 0x40), iVar3 == 0))
           {
             return 1;
           }
@@ -5191,7 +5203,7 @@ int card_just_fate(int player, int card, event_t event)
       do
       {
         instance = in_play_and_attacking(iVar4, iVar2);
-        if ((instance != NULL) && (iVar3 = check_special_flags_2022(iVar4, iVar2, 0x40), iVar3 == 0))
+        if ((instance != NULL) && (iVar3 = check_special_flags(iVar4, iVar2, 0x40), iVar3 == 0))
         {
           return 1;
         }
@@ -5242,7 +5254,7 @@ int card_rally_the_troops(int player, int card, event_t event)
       do
       {
         instance = in_play_and_attacking(player_00, iVar1);
-        if ((instance != NULL) && (iVar3 = check_special_flags_2022(player_00, iVar1, 0x40), iVar3 == 0))
+        if ((instance != NULL) && (iVar3 = check_special_flags(player_00, iVar1, 0x40), iVar3 == 0))
         {
           return 1;
         }
@@ -5280,7 +5292,7 @@ int card_warriors_stand(int player, int card, event_t event)
       do
       {
         instance = in_play_and_attacking(player_00, iVar1);
-        if ((instance != NULL) && (iVar3 = check_special_flags_2022(player_00, iVar1, 0x40), iVar3 == 0))
+        if ((instance != NULL) && (iVar3 = check_special_flags(player_00, iVar1, 0x40), iVar3 == 0))
         {
           return 1;
         }
@@ -5452,7 +5464,7 @@ int card_yuan_shaos_infantry(int player, int card, event_t event)
   if (event == EVENT_DAT_ABILITY)
   {
 
-    card_00 = pump_ability_until_eot_2022(player, card, player, card, 0, 0, 0, 0x10);
+    card_00 = pump_ability_until_eot(player, card, player, card, 0, 0, 0, 0x10);
     if (card_00 != -1)
     {
 
@@ -5660,26 +5672,7 @@ int card_yuan_shao_the_indecicive(int player, int card, event_t event)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x21b8dc0; original cards/portal_1_2_3k.c:621. */
-int last_chance_legacy_2022(int player, int card, event_t event)
-{
-  int result;
-  card_instance_t *instance;
-  if (current_turn == player)
-  {
-    result = eot_trigger(player, card, event);
-    if (result != 0)
-    {
-      instance = get_card_instance(player, card);
-      instance->targets[1].player = instance->targets[1].player + -1;
-      instance = get_card_instance(player, card);
-      if (instance->targets[1].player < 1)
-      {
-        lose_the_game_2022(player);
-      }
-    }
-  }
-  return 0;
-}
+
 
 #endif
 
@@ -5710,13 +5703,13 @@ int card_stream_of_acid(int player, int card, event_t event)
     {
       if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
       {
-        default_target_definition_2022(player, card, &td, 0x47);
+        default_target_definition(player, card, &td, 0x47);
         td.special = 0x8000;
-        td.extra = (int32_t)is_land_or_nonblack_creature_2022;
+        td.extra = (int32_t)is_land_or_nonblack_creature;
         instance = get_card_instance(player, card);
         if (event == EVENT_RESOLVE_SPELL)
         {
-          result = valid_target_2022(&td);
+          result = valid_target(&td);
           if (result != 0)
           {
             kill_card(instance->targets[0].player, instance->targets[0].card, KILL_BURY);
@@ -5731,13 +5724,13 @@ int card_stream_of_acid(int player, int card, event_t event)
       }
     }
   }
-  default_target_definition_2022(player, card, &td, 0x47);
+  default_target_definition(player, card, &td, 0x47);
   td.special = 0x8000;
-  td.extra = (int32_t)is_land_or_nonblack_creature_2022;
+  td.extra = (int32_t)is_land_or_nonblack_creature;
   get_card_instance(player, card);
 LAB_021bff48:
   prompt = get_sleighted_color_text(player, card, "Select target land or non%s creature.", 1);
-  result = generic_spell_2022(player, card, event, 0x81, &td, prompt, 1, NULL);
+  result = generic_spell(player, card, event, 0x81, &td, prompt, 1, NULL);
   return result;
 }
 
@@ -5770,7 +5763,7 @@ int card_norwood_warrior(int player, int card, event_t event)
         result = is_humiliated_for_ability(player, card, AL_TRIG);
         if (result == 0)
         {
-          pump_ability_until_eot_2022(player, card, player, card, 1, 1, 0, 0);
+          pump_ability_until_eot(player, card, player, card, 1, 1, 0, 0);
         }
       }
     }
@@ -5798,7 +5791,7 @@ int card_town_sentry(int player, int card, event_t event)
     result = is_humiliated_for_ability(player, card, AL_TRIG);
     if (result == 0)
     {
-      pump_ability_until_eot_2022(player, card, player, card, 0, 2, 0, 0);
+      pump_ability_until_eot(player, card, player, card, 0, 2, 0, 0);
       return 0;
     }
   }
@@ -5828,7 +5821,7 @@ int card_zhao_zilong_tiger_general(int player, int card, event_t event)
     result = is_humiliated_for_ability(player, card, AL_TRIG);
     if (result == 0)
     {
-      pump_ability_until_eot_2022(player, card, player, card, 1, 1, 0, 0);
+      pump_ability_until_eot(player, card, player, card, 1, 1, 0, 0);
       return 0;
     }
   }

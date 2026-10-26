@@ -3,6 +3,13 @@
 
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+int get_stormcolor_count(int player, color_t clr);
+void increment_storm_count(int player, int mode);
+int get_specific_storm_count(int player);
+int get_storm_count(void);
+int get_stormcreature_count(int k);
+
 /* October 2022 independent game-mode flags. */
 other_game_mode_2022_t other_game_mode;
 
@@ -1303,35 +1310,7 @@ static int get_rules_engine_card(int player){
 	return rules_engine_card[player];
 }
 
-void increment_storm_count(int player, int mode){
-	// increment the storm count and stormcreature count if it's the case
-	int rec = get_rules_engine_card(player);
-	if( rec == -1 ){
-		return;
-	}
-	++hack_silent_counters;
-	add_counter(player, rec, COUNTER_VORTEX);
-	if( mode & STORM_CREATURE ){
-		add_counter(player, rec, COUNTER_CHARGE);
-	}
-	--hack_silent_counters;
 
-	if (mode & COLOR_TEST_BLACK){
-		increase_trap_condition(player, TRAP_STORM_BLACK, 1);
-	}
-	if (mode & COLOR_TEST_BLUE){
-		increase_trap_condition(player, TRAP_STORM_BLUE, 1);
-	}
-	if (mode & COLOR_TEST_GREEN){
-		increase_trap_condition(player, TRAP_STORM_GREEN, 1);
-	}
-	if (mode & COLOR_TEST_RED){
-		increase_trap_condition(player, TRAP_STORM_RED, 1);
-	}
-	if (mode & COLOR_TEST_WHITE){
-		increase_trap_condition(player, TRAP_STORM_WHITE, 1);
-	}
-}
 
 static void reset_storm_count(int player, int card){
 	if (player != HUMAN){	// Human rules engine clears both
@@ -1418,35 +1397,13 @@ static void keep_storm_count(int player, int card, event_t event ){
 	}
 }
 
-int get_specific_storm_count(int player){
 
-	int rec = get_rules_engine_card(player);
-	if( rec == -1 ){
-		return 0;
-	}
-	return count_counters(player, rec, COUNTER_VORTEX);
-}
 
-int get_storm_count(void){
-	int total = get_specific_storm_count(AI)+get_specific_storm_count(HUMAN);
-	return total;
-}
 
-int get_stormcreature_count(int k){
-	int rec = get_rules_engine_card(k);
-	if( rec == -1 ){
-		return 0;
-	}
-	return count_counters(k, rec, COUNTER_CHARGE);
-}
 
-int get_stormcolor_count(int player, color_t clr)
-{
-  if (clr >= COLOR_BLACK && clr <= COLOR_WHITE)
-	return get_trap_condition(player, (TRAP_STORM_BLACK - COLOR_BLACK) + clr);
-  else
-	return 0;
-}
+
+
+
 
 #if 0	// unused
 int get_turn_count(void)
@@ -3603,7 +3560,7 @@ int card_rules_engine(int player, int card, event_t event ){
 int get_aftermath(int player, int card)
 {
   int result;
-  result = check_special_flags_2022(player, card, 0x200000);
+  result = check_special_flags(player, card, 0x200000);
   return (unsigned int)(result != 0);
 }
 
@@ -3662,13 +3619,13 @@ STATIC_ASSERT(COUNTER_DEVOTION == 32, storm_native_COUNTER_DEVOTION);
 STATIC_ASSERT(COUNTER_VORTEX == 38, storm_native_COUNTER_VORTEX);
 STATIC_ASSERT(COUNTER_CHARGE == 123, storm_native_COUNTER_CHARGE);
 STATIC_ASSERT(sizeof(storm_mode_2022_t) == 4, storm_native_mode_bytes);
-STATIC_ASSERT(STORM_CREATURE == 1, storm_legacy_creature_mode_preserved);
+STATIC_ASSERT(STORM_CREATURE == 64, storm_canonical_creature_mode);
 #endif
 
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c7f70; original functions/rules_engine.c:1599. */
-void increment_storm_count_2022(int player, int mode)
+void increment_storm_count(int player, int mode)
 {
   int card;
 
@@ -3721,7 +3678,7 @@ void increment_storm_count_2022(int player, int mode)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c81a0; original functions/rules_engine.c:1735. */
-int get_specific_storm_count_2022(int player)
+int get_specific_storm_count(int player)
 {
   int result;
 
@@ -3738,7 +3695,7 @@ int get_specific_storm_count_2022(int player)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c81e0; original functions/rules_engine.c:1744. */
-int get_storm_count_2022(void)
+int get_storm_count(void)
 {
   int iVar1;
   int iVar2;
@@ -3764,7 +3721,7 @@ int get_storm_count_2022(void)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c8240; original functions/rules_engine.c:1749. */
-int get_stormcreature_count_2022(int k)
+int get_stormcreature_count(int k)
 {
   int result;
 
@@ -3815,7 +3772,7 @@ int get_stormenchantment_count_2022(int k)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c90c0; original functions/rules_engine.c:1773. */
-int get_stormcolor_count_2022(int player, color_t clr)
+int get_stormcolor_count(int player, color_t clr)
 {
   int result;
   if (4U < (unsigned int)(clr - COLOR_BLACK))
@@ -3842,9 +3799,9 @@ static void reset_storm_count_2022(int player, int card)
   if (player != HUMAN)
     return;
 
-  base_target_definition_2022(HUMAN, card, &td, TYPE_CREATURE);
+  base_target_definition(HUMAN, card, &td, TYPE_CREATURE);
   td.required_subtype = SUBTYPE_WEREWOLF;
-  if (!can_target_2022(&td))
+  if (!can_target(&td))
   {
     for (int p = 0; p < 2; ++p)
     {
@@ -3918,7 +3875,7 @@ static void keep_storm_count_2022(int player, int card, event_t event)
 
   if (trigger_condition == TRIGGER_SPELL_CAST && card == affected_card &&
       affected_card_controller == HUMAN && reason_for_trigger_controller == HUMAN &&
-      (not_cast = check_special_flags_2022(trigger_cause_controller, trigger_cause, SF_NOT_CAST),
+      (not_cast = check_special_flags(trigger_cause_controller, trigger_cause, SF_NOT_CAST),
        event == EVENT_END_TRIGGER && !not_cast))
   {
     card_instance_t *played = get_card_instance(trigger_cause_controller, trigger_cause);
@@ -3942,7 +3899,7 @@ static void keep_storm_count_2022(int player, int card, event_t event)
       if (get_id(trigger_cause_controller, trigger_cause) == CARD_ID_REACH_THROUGH_MISTS)
         increase_trap_condition_impl(trigger_cause_controller, TRAP_REACH_THROUGH_MISTS, 1, 1);
       unsigned int colors = get_color(trigger_cause_controller, trigger_cause);
-      increment_storm_count_2022(trigger_cause_controller,
+      increment_storm_count(trigger_cause_controller,
                                  mode | (colors & COLOR_TEST_ANY_COLORED));
     }
   }
@@ -3950,4 +3907,54 @@ static void keep_storm_count_2022(int player, int card, event_t event)
     reset_storm_count_2022(player, card);
 }
 /* End ManalinkEh 2022 inline keep_storm_count. */
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26c7890; original functions/rules_engine.c:84. */
+int limit_allowed_in_deck(int csvid)
+{
+  static const int unlimited_list[17] = {91,   126,   164,   188,   239,   2100,  2101, 2102, 2103,
+                                         2104, 20819, 15719, 22636, 19685, 18489, 7107, 13335};
+  for (unsigned int i = 0; i < 17; ++i)
+    if (csvid == unlimited_list[i])
+      return 5000;
+  return csvid == 0x5100 ? 7 : 4;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26c78f0; original functions/rules_engine.c:365. */
+int random_rogue(void)
+{
+  typedef struct
+  {
+    char name[200];
+    char quote[300];
+    char imgname[268];
+    int difficulty;
+    char padding[4004];
+  } rogue_t;
+  rogue_t *rogues = (rogue_t *)0x62c3c0;
+  int num_rogues = EXE_DWORD(0x7370b8);
+  int ok_rogues[num_rogues];
+  read_and_adjust_settings();
+  int num_ok_rogues = 0;
+  for (int i = 0; i < num_rogues; ++i)
+    if (rogues[i].name[0] && rogues[i].imgname[0] && rogues[i].difficulty == opponent_skill)
+      ok_rogues[num_ok_rogues++] = i;
+  if (!num_ok_rogues)
+  {
+    for (int i = 0; i < num_rogues; ++i)
+      if (rogues[i].name[0] && rogues[i].imgname[0])
+        ok_rogues[num_ok_rogues++] = i;
+  }
+  if (num_ok_rogues)
+    return ok_rogues[internal_rand(num_ok_rogues)];
+  popup("Fatal error", "No valid opponents defined in Rogues.csv.");
+  abort();
+}
+
 #endif

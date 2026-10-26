@@ -1,0 +1,127 @@
+{
+  "format": 1,
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "domains": [
+    {
+      "type": "sacrifice_t",
+      "recovery_type": "sacrifice_2022_t",
+      "canonical_definition": "typedef enum\n{\n  SAC_NO_CANCEL = 1,\n  SAC_DONE = 2,\n  SAC_JUST_MARK = 4,\n  SAC_ALL_OR_NONE = 8,\n  SAC_AS_COST = 16,\n  SAC_CAUSED = 32,\n  SAC_RETURN_CHOICE = 64,\n  SAC_OPTIONAL = 128,\n  SAC_SET_TARGETS = 256,\n} sacrifice_t;",
+      "native": [
+        {
+          "source": "functions/sacrifices.c",
+          "die_offset": "0x6d0fb09",
+          "bytes": 4,
+          "members": {
+            "SAC_NO_CANCEL": 1,
+            "SAC_DONE": 2,
+            "SAC_JUST_MARK": 4,
+            "SAC_ALL_OR_NONE": 8,
+            "SAC_AS_COST": 16,
+            "SAC_CAUSED": 32,
+            "SAC_RETURN_CHOICE": 64,
+            "SAC_OPTIONAL": 128,
+            "SAC_SET_TARGETS": 256
+          }
+        }
+      ]
+    },
+    {
+      "type": "is_protected_from_mode_t",
+      "recovery_type": "is_protected_from_mode_2022_t",
+      "canonical_definition": "typedef enum\n{\n  IPF_DAMAGE = 1,\n  IPF_ATTACH_AURA = 2,\n  IPF_ATTACH_EQUIPMENT = 3,\n  IPF_BLOCK = 4,\n  IPF_TARGET = 5,\n  IPF_QUERY = 6,\n} is_protected_from_mode_t;",
+      "native": [
+        {
+          "source": "functions/manipulate_and_damage_all.c",
+          "die_offset": "0x61d474e",
+          "bytes": 4,
+          "members": {
+            "IPF_DAMAGE": 1,
+            "IPF_ATTACH_AURA": 2,
+            "IPF_ATTACH_EQUIPMENT": 3,
+            "IPF_BLOCK": 4,
+            "IPF_TARGET": 5,
+            "IPF_QUERY": 6
+          }
+        },
+        {
+          "source": "functions/abilities.c",
+          "die_offset": "0x6ba3805",
+          "bytes": 4,
+          "members": {
+            "IPF_DAMAGE": 1,
+            "IPF_ATTACH_AURA": 2,
+            "IPF_ATTACH_EQUIPMENT": 3,
+            "IPF_BLOCK": 4,
+            "IPF_TARGET": 5,
+            "IPF_QUERY": 6
+          }
+        },
+        {
+          "source": "functions/sacrifices.c",
+          "die_offset": "0x6d0fa7c",
+          "bytes": 4,
+          "members": {
+            "IPF_DAMAGE": 1,
+            "IPF_ATTACH_AURA": 2,
+            "IPF_ATTACH_EQUIPMENT": 3,
+            "IPF_BLOCK": 4,
+            "IPF_TARGET": 5,
+            "IPF_QUERY": 6
+          }
+        }
+      ]
+    },
+    {
+      "type": "actions_t",
+      "recovery_type": "actions_2022_t",
+      "canonical_definition": "typedef enum\n{\n  ACT_KILL_BURY = 1,\n  ACT_KILL_DESTROY = 2,\n  ACT_KILL_SACRIFICE = 3,\n  ACT_KILL_EXILE = 4,\n  ACT_BOUNCE = 5,\n  ACT_TAP = 6,\n  ACT_UNTAP = 7,\n  ACT_RFG_UNTIL_EOT = 16,\n  ACT_KILL_STATE_BASED_ACTION = 17,\n  ACT_PUT_ON_TOP = 40,\n  ACT_PUT_ON_BOTTOM = 41,\n  ACT_DISABLE_NONMANA_ACTIVATED_ABILITIES = 42,\n  ACT_ENABLE_NONMANA_ACTIVATED_ABILITIES = 43,\n  ACT_HUMILIATE = 44,\n  ACT_DE_HUMILIATE = 45,\n  ACT_MAKE_UNTARGETTABLE = 46,\n  ACT_REMOVE_UNTARGETTABLE = 47,\n  ACT_DISABLE_ALL_ACTIVATED_ABILITIES = 49,\n  ACT_ENABLE_ALL_ACTIVATED_ABILITIES = 50,\n  ACT_GET_COUNT = 51,\n  ACT_GAIN_CONTROL = 52,\n  ACT_DOES_NOT_UNTAP = 53,\n  ACT_PHASE_OUT = 54,\n  ACT_OF_TREASON = 55,\n  ACT_DETAIN = 56,\n  ACT_PARAMETERIZED_ACTIONS_MASK = 4278190080,\n  ACT_ADD_COUNTERS_BASE = 16777216,\n  ACT_REMOVE_COUNTERS_BASE = 33554432,\n} actions_t;\n#define ACT_KILL_REMOVE ACT_KILL_EXILE\n#define ACT_ADD_COUNTERS(counter_type, num) (ACT_ADD_COUNTERS_BASE | (((counter_type) & 0xFF) << 16) | ((num) & 0xFFFF))\n#define ACT_REMOVE_COUNTERS(counter_type, num) (ACT_REMOVE_COUNTERS_BASE | (((counter_type) & 0xFF) << 16) | ((num) & 0xFFFF))",
+      "native": [
+        {
+          "source": "functions/manipulate_and_damage_all.c",
+          "die_offset": "0x61d430e",
+          "bytes": 4,
+          "members": {
+            "ACT_KILL_BURY": 1,
+            "ACT_KILL_DESTROY": 2,
+            "ACT_KILL_SACRIFICE": 3,
+            "ACT_KILL_EXILE": 4,
+            "ACT_BOUNCE": 5,
+            "ACT_TAP": 6,
+            "ACT_UNTAP": 7,
+            "ACT_RFG_UNTIL_EOT": 16,
+            "ACT_KILL_STATE_BASED_ACTION": 17,
+            "ACT_PUT_ON_TOP": 40,
+            "ACT_PUT_ON_BOTTOM": 41,
+            "ACT_DISABLE_NONMANA_ACTIVATED_ABILITIES": 42,
+            "ACT_ENABLE_NONMANA_ACTIVATED_ABILITIES": 43,
+            "ACT_HUMILIATE": 44,
+            "ACT_DE_HUMILIATE": 45,
+            "ACT_MAKE_UNTARGETTABLE": 46,
+            "ACT_REMOVE_UNTARGETTABLE": 47,
+            "ACT_DISABLE_ALL_ACTIVATED_ABILITIES": 49,
+            "ACT_ENABLE_ALL_ACTIVATED_ABILITIES": 50,
+            "ACT_GET_COUNT": 51,
+            "ACT_GAIN_CONTROL": 52,
+            "ACT_DOES_NOT_UNTAP": 53,
+            "ACT_PHASE_OUT": 54,
+            "ACT_OF_TREASON": 55,
+            "ACT_DETAIN": 56,
+            "ACT_PARAMETERIZED_ACTIONS_MASK": 4278190080,
+            "ACT_ADD_COUNTERS_BASE": 16777216,
+            "ACT_REMOVE_COUNTERS_BASE": 33554432
+          }
+        }
+      ],
+      "storage": [
+        {
+          "source": "functions/manipulate_and_damage_all.c",
+          "die_offset": "0x61d4598",
+          "target_tag": "DW_TAG_enumeration_type",
+          "bytes": 4,
+          "encoding": 7
+        }
+      ]
+    }
+  ],
+  "scope": "Native sacrifice/protection/action domains shared by every rebuilt caller; no runtime flag conversion."
+}

@@ -101,7 +101,12 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     assert [dict((k,v) for k,v in e.items() if k!='machine_sha256') for e in component['exe_boundaries']]==EXE_BOUNDARIES
     for e in component['exe_boundaries']:assert sha(exe.pe.get_data(int(e['address'],16)-exe.pe.OPTIONAL_HEADER.ImageBase,int(e['end'],16)-int(e['address'],16)))==e['machine_sha256']
     for n,digest in component['retained_bodies'].items():assert sha(function_body(read(root/'cards/aether_revolt.c'),n).encode())==digest
-    runtime=Image((root/'.recovery/2022-ManalinkEh.dll').read_bytes());overlap=[s.split('\t')[1] for s in (root/'.recovery/absolute-interfaces.tsv').read_text().splitlines() if s.split('\t')[2]=='global'];targets={int(f['address'],16):f for f in manifest['accepted_functions']}
+    runtime=Image((root/'.recovery/2022-ManalinkEh.dll').read_bytes());overlap=[s.split('\t')[1] for s in (root/'.recovery/absolute-interfaces.tsv').read_text().splitlines() if s.split('\t')[2]=='global']
+    # Replay the recorded edge coverage. Adding a qualified implementation later
+    # does not migrate this batch's already accepted caller bodies. Such pending
+    # bindings are recorded separately by the recovering callee's component.
+    recorded_targets={int(site['target'],16) for detail in component['functions'].values() for site in detail['canonical_calls']+detail['callback_references']}
+    targets={int(f['address'],16):f for f in manifest['accepted_functions'] if int(f['address'],16) in recorded_targets|{int(a,16) for a in entries}}
     for a,entry in entries.items():
         detail=component['functions'][a];assert entry['spell_cost_evidence']==detail and entry['static']==(a in {CAST,MODIFIER})
         body=function_body(sources[entry['source']].replace('\r\n','\n'),entry['name']);assert sha(body.encode())==entry['reconstruction_body_sha256']

@@ -110,7 +110,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     entries={f['address']:f for f in manifest['accepted_functions'] if f.get('packed_filter_consumer_evidence')};assert set(entries)==set(ADDRESSES)==set(component['functions'])
     runtime=Image((root/'.recovery/2022-ManalinkEh.dll').read_bytes());assert component['runtime_sha256']==sha(runtime.data)=='52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5'
     assert component['native_layouts_extra']==native_layouts_extra(Image(Path('G:/Manalink/ManalinkEh_10_22_Hotfix.dbg').read_bytes()))
-    for old in component['retained_bodies']:assert sha(function_body(read(root/old['source']),old['name']).encode())==old['body_sha256']
+    from unify_scalar_helpers import retained_source_body
+    for old in component['retained_bodies']:assert sha(retained_source_body(root,old['source'],old['name']).encode())==old['body_sha256']
     for layout in component['unit_layouts'].values():assert layout['test_definition_t']['bytes']==216 and layout['target_definition_t']['bytes']==84
     assert all(any(v['name']==n and v['location']=='(DW_OP_fbreg: -236)' for v in component['locals'][CAVALIER]) for n in ['this_test','position'])
     assert any(v['name']=='types' and v['type']=='int[7]' and v['location']=='(DW_OP_fbreg: -48)' for v in component['locals'][UMORI])

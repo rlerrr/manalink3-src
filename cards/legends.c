@@ -1,5 +1,8 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+void spirit_link_effect(int player, int card, event_t event, int who_gains);
+
 // Functions
 
 static int song(int player, int card, event_t event, int clr){
@@ -4025,7 +4028,7 @@ At the beginning of combat on your turn, you may have Johan gain "Johan can't at
 		cannot_attack(player, card, event);
 	}
 
-	if( beginning_of_combat(player, card, event, player, -1) && ! is_tapped(player, card) ){
+	if( beginning_of_combat(player, card, event, player) && ! is_tapped(player, card) ){
 		card_instance_t *instance = get_card_instance(player, card);
 		int choice = do_dialog(player, player, card, -1, -1, " Give Vigilance to other creatures\n Pass", is_tapped(player, card) );
 		if (choice == 0){
@@ -7282,20 +7285,7 @@ Creature - Beast 1/2
 									&td, get_sleighted_color_text(player, card, "Select target %s creature.", COLOR_RED));
 }
 
-void spirit_link_effect(int player, int card, event_t event, int who_gains){
-// "Whenever enchanted creature deals damage, [who_gains] gain that much life."
-	if( event == EVENT_DEAL_DAMAGE ){
-		card_instance_t *source = get_card_instance(affected_card_controller, affected_card);
-		if( damage_card != source->internal_card_id || source->info_slot <= 0 ||
-			source->damage_source_player != player || source->damage_source_card != card
-		  ){
-			return;
-		}
-		else{
-			gain_life(who_gains, source->info_slot);
-		}
-	}
-}
+
 
 int card_spirit_link(int player, int card, event_t event){ //also code for Vampiric Link
 /* CARD_ID_SPIRIT_LINK	794
@@ -9131,7 +9121,7 @@ Flying
 int card_giant_strength(int player, int card, event_t event)
 {
   int result;
-  result = generic_aura_2022(player, card, event, player, 2, 2, 0, 0, 0, 0, 0);
+  result = generic_aura(player, card, event, player, 2, 2, 0, 0, 0, 0, 0);
   return result;
 }
 
@@ -9157,7 +9147,7 @@ static void spirit_link_effect_part_2022(int player, int card, int who_gains)
 
 
 /* ManalinkEh 2022: 0x22006a0; original cards/legends.c:7383. */
-void spirit_link_effect_2022(int player, int card, event_t event, int who_gains)
+void spirit_link_effect(int player, int card, event_t event, int who_gains)
 {
   if (event != EVENT_DEAL_DAMAGE)
   {

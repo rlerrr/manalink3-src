@@ -3068,7 +3068,7 @@ At the beginning of the end step, destroy all untapped creatures that didn't att
 		}
 	}
 
-	if( beginning_of_combat(player, card, event, ANYBODY, -1) ){
+	if( beginning_of_combat(player, card, event, ANYBODY) ){
 		card_instance_t *instance = get_card_instance(player, card);
 		instance->info_slot = 0;
 		int count = active_cards_count[current_turn]-1;
@@ -3984,7 +3984,7 @@ int deep_water_legacy(int player, int card, event_t event)
           if (((instance != NULL) && (iVar4 = is_what(player_00, iVar2, 1), player == player_00)) &&
               (iVar4 != 0))
           {
-            set_special_flags2_2022(player_00, iVar2, 0x40);
+            set_special_flags2(player_00, iVar2, 0x40);
           }
           iVar2 = iVar2 + 1;
         } while (iVar2 < active_cards_count[player_00]);

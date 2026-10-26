@@ -123,7 +123,8 @@ def audit_phase(component,manifest,sources,machine_bytes,root):
     require(all(bindings[n]==v for n,v in dict(current_turn=0x628670,current_phase=0x4ef184,ai_modifier=0x7a31a8).items()),'Phase-AI retained EXE global binding mismatch')
 
 
-def audit_prompts(component,manifest,sources,machine_bytes):
+def audit_prompts(component,manifest,sources,machine_bytes,root=None):
+    if root is None:root=Path(__file__).resolve().parents[2]
     def require(ok,message):
         if not ok:raise ValueError(message)
     entries={f['address']:f for f in manifest['accepted_functions'] if f.get('prompt_boundary_evidence')}
@@ -149,7 +150,8 @@ def audit_prompts(component,manifest,sources,machine_bytes):
     require([p['name'] for p in component['parameters']['2120600']]==['who_chooses','player','card','target_player','target_card'],
             'Damage-selection predicate parameter order mismatch')
     for support in component['source_interfaces']:
-        require(sha(function_body(sources[support['source']].replace('\r\n','\n'),support['name']).encode())==support['body_sha256'],'Prompt-boundary supporting source interface changed')
+        from unify_scalar_helpers import retained_source_body
+        require(sha(retained_source_body(root,support['source'],support['name'],source_view=sources).encode())==support['body_sha256'],'Prompt-boundary supporting source interface changed')
 
 
 def main():

@@ -320,7 +320,7 @@ int card_imps_mischief(int player, int card, event_t event)
         {
           deflect_one_target(player, card, EVENT_RESOLVE_SPELL, &td_spell);
           iVar1 = get_cmc(instance->targets[0].player, instance->targets[0].card);
-          lose_life_2022(player, iVar1);
+          lose_life(player, iVar1);
         }
         kill_card(player, card, KILL_DESTROY);
         return 0;
@@ -472,7 +472,7 @@ int card_wild_ricochet(int player, int card, event_t event)
         {
           instance = get_card_instance(player, card);
           deflect_multi_targets(player, card, EVENT_RESOLVE_SPELL, &td);
-          copy_spell_from_stack_2022(player, instance->targets[0].player, instance->targets[0].card);
+          copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
         }
         kill_card(player, card, KILL_DESTROY);
         return 0;
@@ -695,11 +695,11 @@ static char *has_only_1_target_and_targets_a_creature_and_can_legally_change_tar
       instance->targets[9].player = targeting_player;
       iVar2 = instance->targets[9].card;
       instance->targets[9].card = targeting_card;
-      set_special_flags2_2022(player, card, 0x10000);
+      set_special_flags2(player, card, 0x10000);
       iVar5 = call_card_function(player, card, EVENT_CAN_CAST);
       instance->targets[9].card = iVar2;
       instance->targets[9].player = iVar1;
-      remove_special_flags2_2022(player, card, 0x10000);
+      remove_special_flags2(player, card, 0x10000);
       pcVar4 = "cannot target this creature";
       if (iVar5 != 0)
       {
@@ -742,11 +742,11 @@ int card_muck_drubb(int player, int card, event_t event)
       {
         ai_modifier = ai_modifier + -10;
       }
-      etb_ability_2022(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
+      etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
     }
     else
     {
-      etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
       result = card_on_stack_controller;
       if ((event == EVENT_ETB) && (instance->info_slot == 1))
       {
@@ -793,11 +793,11 @@ static char *has_only_1_target_and_can_legally_change_target_to_attached(
     pcVar3->targets[9].player = (int)pcVar5->damage_target_player;
     iVar2 = pcVar3->targets[9].card;
     pcVar3->targets[9].card = iVar6;
-    set_special_flags2_2022(spell_player, spell_card, 0x10000);
+    set_special_flags2(spell_player, spell_card, 0x10000);
     iVar6 = call_card_function(spell_player, spell_card, EVENT_CAN_CAST);
     pcVar3->targets[9].player = iVar1;
     pcVar3->targets[9].card = iVar2;
-    remove_special_flags2_2022(spell_player, spell_card, 0x10000);
+    remove_special_flags2(spell_player, spell_card, 0x10000);
     pcVar4 = "cannot target this creature";
     if (iVar6 != 0)
     {
@@ -830,7 +830,7 @@ int card_captured_by_the_consulate(int player, int card, event_t event)
        (iVar3 = is_what(trigger_cause_controller, trigger_cause, 1), iVar3 != 0)) ||
       ((iVar3 = is_token(trigger_cause_controller, trigger_cause),
         iVar3 != 0 ||
-            (iVar3 = check_special_flags_2022(trigger_cause_controller, trigger_cause, 0x40000),
+            (iVar3 = check_special_flags(trigger_cause_controller, trigger_cause, 0x40000),
              iVar3 != 0))))
   {
   LAB_024291ec:
@@ -931,9 +931,9 @@ int card_meddle(int player, int card, event_t event)
           (int32_t)has_only_1_target_and_could_legally_change_target_and_targets_a_creature;
       if ((card == affected_card) && (player == affected_card_controller))
       {
-        set_special_flags2_2022(card_on_stack_controller, card_on_stack, 0x4000);
+        set_special_flags2(card_on_stack_controller, card_on_stack, 0x4000);
         deflect_one_target(player, card, EVENT_CAST_SPELL, &td_spell);
-        remove_special_flags2_2022(card_on_stack_controller, card_on_stack, 0x4000);
+        remove_special_flags2(card_on_stack_controller, card_on_stack, 0x4000);
       }
     }
   }
@@ -1035,11 +1035,11 @@ static char *can_legally_change_target_to_me(int who_chooses, int player, int ca
     instance->targets[9].player = targeting_player;
     iVar2 = instance->targets[9].card;
     instance->targets[9].card = targeting_card;
-    set_special_flags2_2022(player, card, 0x10000);
+    set_special_flags2(player, card, 0x10000);
     iVar5 = call_card_function(player, card, EVENT_CAN_CAST);
     instance->targets[9].card = iVar2;
     instance->targets[9].player = iVar1;
-    remove_special_flags2_2022(player, card, 0x10000);
+    remove_special_flags2(player, card, 0x10000);
     pcVar4 = "cannot target this creature";
     if (iVar5 != 0)
     {
@@ -1058,17 +1058,17 @@ int card_mizzium_meddler(int player, int card, event_t event)
   card_instance_t *pcVar3;
   target_definition_2022_t td_spell;
 
-  counterspell_target_definition_2022(player, card, &td_spell, 0xff);
+  counterspell_target_definition(player, card, &td_spell, 0xff);
   td_spell.special = td_spell.special | 0x8000;
   td_spell.extra = (int32_t)can_legally_change_target_to_me;
   pcVar1 = get_card_instance(player, card);
   result = duh_mode(player);
-  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   player_00 = card_on_stack_controller;
   result = card_on_stack;
   if (event == EVENT_CAN_CAST)
   {
-    result = counterspell_2022(player, card, EVENT_CAN_CAST, &td_spell, 0);
+    result = counterspell(player, card, EVENT_CAN_CAST, &td_spell, 0);
     if (result == 0)
     {
       pcVar1->info_slot = 0;
@@ -1093,10 +1093,10 @@ int card_mizzium_meddler(int player, int card, event_t event)
       pcVar1->targets[0].card = card_on_stack;
       pcVar1->targets[0].player = player_00;
       pcVar1->number_of_targets = '\x01';
-      set_special_flags2_2022(player_00, result, 0x10000);
+      set_special_flags2(player_00, result, 0x10000);
       result = call_card_function(pcVar1->targets[0].player, pcVar1->targets[0].card,
                                   EVENT_CHANGE_TARGET);
-      remove_special_flags2_2022(pcVar1->targets[0].player, pcVar1->targets[0].card, 0x10000);
+      remove_special_flags2(pcVar1->targets[0].player, pcVar1->targets[0].card, 0x10000);
       if (result == -1)
       {
         spell_fizzled = 1;
@@ -1105,7 +1105,7 @@ int card_mizzium_meddler(int player, int card, event_t event)
       {
         pcVar1->info_slot = result;
       }
-      result = counterspell_validate_2022(player, card, &td_spell, 0);
+      result = counterspell_validate(player, card, &td_spell, 0);
       if (result != 0)
       {
 

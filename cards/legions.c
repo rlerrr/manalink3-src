@@ -1,5 +1,8 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+static void amplify(int player, int card, int amount);
+
 // Functions
 
 static int provoke_impl(int src_player, int src_card, int player, int card, event_t event)
@@ -51,17 +54,7 @@ static int provoke(int player, int card, event_t event)
   return 0;
 }
 
-static void amplify(int player, int card, event_t event, int subtype, int amount){
 
-	if( event == EVENT_RESOLVE_SPELL ){
-		add_state(player, card, STATE_OUBLIETTED);
-		test_definition_t this_test;
-		new_default_test_definition(&this_test, 0, get_subtype_text("Select %a card.", subtype));
-		this_test.subtype = subtype;
-		add_1_1_counters(player, card, amount*reveal_cards_from_your_hand(player, card, &this_test));
-		remove_state(player, card, STATE_OUBLIETTED);
-	}
-}
 
 // Cards
 
@@ -270,7 +263,8 @@ Creature - Beast 2/2
 Amplify 1 (As this creature enters the battlefield, put a +1/+1 counter on it for each Beast card you reveal in your hand.)
 |T: Target creature gets +1/+1 until end of turn for each +1/+1 counter on ~. */
 
-	amplify(player, card, event, SUBTYPE_BEAST, 1);
+	if (event == EVENT_RESOLVE_SPELL)
+		amplify(player, card, 1);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -664,7 +658,8 @@ Creature - Zombie 2/2
 Amplify 1 (As this creature enters the battlefield, put a +1/+1 counter on it for each Zombie card you reveal in your hand.)
 Whenever ~ attacks or blocks, you lose 1 life for each +1/+1 counter on it. */
 
-	amplify(player, card, event, SUBTYPE_ZOMBIE, 1);
+	if (event == EVENT_RESOLVE_SPELL)
+		amplify(player, card, 1);
 
 	// Whenever ~ attacks or blocks, you lose 1 life for each +1/+1 counter on it.
 	if( declare_attackers_trigger(player, card, event, 0, player, card) ||
@@ -723,7 +718,8 @@ Creature - Beast 3/3
 Amplify 2 (As this creature enters the battlefield, put two +1/+1 counters on it for each Beast card you reveal in your hand.)
 Provoke (Whenever this creature attacks, you may have target creature defending player controls untap and block it if able.) */
 
-	amplify(player, card, event, SUBTYPE_BEAST, 2);
+	if (event == EVENT_RESOLVE_SPELL)
+		amplify(player, card, 2);
 
 	provoke(player, card, event);
 
@@ -839,7 +835,8 @@ Creature - Zombie 0/0
 Amplify 1 (As this creature enters the battlefield, put a +1/+1 counter on it for each Zombie card you reveal in your hand.)
 At the beginning of your upkeep, if ~ is in your graveyard, you may pay |B|B|B. If you do, return ~ to your hand. */
 
-	amplify(player, card, event, SUBTYPE_ZOMBIE, 1);
+	if (event == EVENT_RESOLVE_SPELL)
+		amplify(player, card, 1);
 
 	if( event == EVENT_GRAVEYARD_ABILITY_UPKEEP && has_mana(player, COLOR_BLACK, 3) ){
 		card_instance_t *instance = get_card_instance( player, card );
@@ -1149,7 +1146,8 @@ int card_kilnmouth_dragon(int player, int card, event_t event){
 	 * Amplify 3
 	 * Flying
 	 * |T: ~ deals damage equal to the number of +1/+1 counters on it to any target. */
-	amplify(player, card, event, SUBTYPE_DRAGON, 3);
+	if (event == EVENT_RESOLVE_SPELL)
+		amplify(player, card, 3);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -2202,7 +2200,7 @@ int card_krosan_vorine(int player, int card, event_t event)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24a6470; original cards/legions.c:60. */
-static void amplify_2022_impl(int player, int card, int amount)
+static void amplify(int player, int card, int amount)
 {
   card_instance_t *instance;
   int result;
@@ -2213,7 +2211,7 @@ static void amplify_2022_impl(int player, int card, int amount)
   if (instance != NULL)
   {
     add_state(player, card, 0x800000);
-    new_default_test_definition_2022(&test, 0, "");
+    new_default_test_definition(&test, 0, "");
     if (ai_is_speculating != 1)
     {
       __format_1 = get_card_name_by_instance(instance);
@@ -2221,7 +2219,7 @@ static void amplify_2022_impl(int player, int card, int amount)
     }
     test.value_for_special_selection_function = card & 0xffffU | player << 0x10;
     test.special_selection_function = test_shares_creature_subtype;
-    result = reveal_cards_from_your_hand_2022(player, card, &test);
+    result = reveal_cards_from_your_hand(player, card, &test);
     add_counters_from_source(player, card, player, card, COUNTER_P1_P1, amount * result);
     remove_state(player, card, 0x800000);
   }
@@ -2239,7 +2237,7 @@ int card_aven_warhawk(int player, int card, event_t event)
   {
     return 0;
   }
-  amplify_2022_impl(player, card, 1);
+  amplify(player, card, 1);
   return 0;
 }
 

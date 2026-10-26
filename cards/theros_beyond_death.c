@@ -35,7 +35,7 @@ int card_alseid_of_lifes_bounty(int player, int card, event_t event)
       if (result != 0)
       {
         uVar3 = select_a_protection(player);
-        pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
+        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
                                instance->targets[0].player, instance->targets[0].card, 0, 0,
                                uVar3 | 0x10000000, 0);
       }
@@ -74,7 +74,7 @@ int card_funeral_rites(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     draw_cards(player, 2);
-    lose_life_2022(player, 2);
+    lose_life(player, 2);
     mill(player, 2);
     kill_card(player, card, KILL_DESTROY);
   }
@@ -86,7 +86,7 @@ int card_funeral_rites(int player, int card, event_t event)
 int card_kunoros_hound_of_athreos(int player, int card, event_t event)
 {
   check_legend_rule(player, card, event);
-  vigilance_2022(player, card, event);
+  vigilance(player, card, event);
   menace(player, card, event);
   lifelink(player, card, event);
   return 0;
@@ -112,7 +112,7 @@ int card_thassas_oracle(int player, int card, event_t event)
   int num_cards;
   int result;
   test_definition_t test;
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     num_cards = devotion(player, card, 2, 0);
@@ -186,7 +186,7 @@ int card_agonizing_remorse(int player, int card, event_t event)
             if (-1 < iVar4)
             {
             LAB_0235a4b8:
-              lose_life_2022(player, 1);
+              lose_life(player, 1);
               break;
             }
             iVar3 = instance->targets[0].player;
@@ -273,7 +273,7 @@ int card_nyx_lotus(int player, int card, event_t event)
 int escape(int player, int card, event_t event, int colorless, int black, int blue, int green,
            int red, int white, int num_exile);
 
-static int escape_part_2022(int player, int card, event_t event, int colorless, int black, int blue,
+static int escape_part(int player, int card, event_t event, int colorless, int black, int blue,
                             int green, int red, int white, int num_exile);
 
 /* ManalinkEh 2022: 0x235a2e0; original cards/theros_beyond_death.c:4. */
@@ -286,7 +286,7 @@ int escape(int player, int card, event_t event, int colorless, int black, int bl
   {
     return 0;
   }
-  result = escape_part_2022(player, card, event, colorless, black, blue, green, red, white, num_exile);
+  result = escape_part(player, card, event, colorless, black, blue, green, red, white, num_exile);
   return result;
 }
 
@@ -337,7 +337,7 @@ int card_cling_to_dust(int player, int card, event_t event)
             }
             else
             {
-              gain_life_2022(player, 3);
+              gain_life(player, 3);
             }
           }
           kill_card(player, card, KILL_DESTROY);
@@ -618,7 +618,7 @@ int card_elspeth_suns_nemesis(int player, int card, event_t event)
           ptVar5 = instance->targets + iVar3;
           ptVar1 = instance->targets + iVar3;
           iVar3 = iVar3 + 1;
-          pump_until_eot_merge_previous_2022(player, card, ptVar1->player, ptVar5->card, 2, 1);
+          pump_until_eot_merge_previous(player, card, ptVar1->player, ptVar5->card, 2, 1);
         } while (iVar3 < (int)(unsigned int)instance->number_of_targets);
       }
       instance->number_of_targets = '\0';
@@ -734,7 +734,7 @@ int card_heliods_intervention(int player, int card, event_t event)
       }
       else if ((instance->eot_toughness == 2) && (iVar5 = valid_target(&td1), iVar5 != 0))
       {
-        gain_life_2022(instance->targets[0].player, iVar2 * 2);
+        gain_life(instance->targets[0].player, iVar2 * 2);
       }
       kill_card(player, card, KILL_DESTROY);
       return 0;
@@ -795,7 +795,7 @@ int card_kroxa_titan_of_deaths_hunger(int player, int card, event_t event)
   }
   lose_life(iVar2, 3);
 LAB_0235e6c0:
-  iVar1 = check_special_flags3_2022(player, card, 0x80000);
+  iVar1 = check_special_flags3(player, card, 0x80000);
   if (iVar1 == 0)
   {
     kill_card(player, card, KILL_SACRIFICE);
@@ -983,7 +983,7 @@ int card_soul_guide_lantern(int player, int card, event_t event)
   card_instance_t *pcStack_ec;
   test_definition_t test;
 
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     if ((*graveyard_ptr_mutable[player] == -1) ||
@@ -1128,7 +1128,7 @@ int card_thassas_intervention(int player, int card, event_t event)
              spell_fizzled != 1))))
       {
         instance->number_of_targets = '\0';
-        iVar3 = check_special_flags2_2022(player, card, -0x80000000);
+        iVar3 = check_special_flags2(player, card, -0x80000000);
         if (iVar3 == 0)
         {
 
@@ -1227,7 +1227,7 @@ int card_uro_titan_of_natures_wrath(int player, int card, event_t event)
     gain_life(player, 3);
     draw_a_card(player);
     new_global_tutor(player, player, 4, 4, 0, 1, &test_land);
-    result = check_special_flags3_2022(player, card, 0x80000);
+    result = check_special_flags3(player, card, 0x80000);
     if (result == 0)
     {
       kill_card(player, card, KILL_SACRIFICE);
@@ -1284,7 +1284,7 @@ static int daxos_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_02359080:
-    uVar4 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar4 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar4 == 0)
       goto joined_r0x023590a5;
   }
@@ -1320,7 +1320,7 @@ static int daxos_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
     }
-    uVar4 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar4 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar4 == 0)
     {
       return 0;
@@ -1411,7 +1411,7 @@ int card_daxos_blessed_by_the_sun(int player, int card, event_t event)
     }
   }
 LAB_0235bde8:
-  iVar1 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  iVar1 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (0 < iVar1)
   {
     do
@@ -1452,7 +1452,7 @@ static int erebos_thb_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_02359348:
-    iVar3 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    iVar3 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (iVar3 == 0)
       goto joined_r0x02359369;
   }
@@ -1488,7 +1488,7 @@ static int erebos_thb_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
     }
-    iVar3 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    iVar3 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (iVar3 == 0)
     {
       return 0;
@@ -1628,7 +1628,7 @@ int card_tymaret_chosen_from_death(int player, int card, event_t event)
       }
       iVar6 = iVar6 + 1;
     } while (iVar6 != 2);
-    gain_life_2022(player, iStack_ec);
+    gain_life(player, iStack_ec);
     return 0;
   }
   if (((card == affected_card) && (affected_card_controller == player)) && (player != -1))
@@ -1855,7 +1855,7 @@ int card_the_first_iroan_games(int player, int card, event_t event)
 
   if (event == EVENT_CHAPTER1)
   {
-    generate_token_by_id_2022(player, card, 0x494e);
+    generate_token_by_id(player, card, 0x494e);
   }
   else if (event == EVENT_CHAPTER2)
   {
@@ -1884,7 +1884,7 @@ int card_the_first_iroan_games(int player, int card, event_t event)
   }
   else if (event == EVENT_CHAPTER4)
   {
-    generate_token_by_id_2022(player, card, 0x493f);
+    generate_token_by_id(player, card, 0x493f);
   }
   result = saga(player, card, event, 4);
   return result;
@@ -1910,7 +1910,7 @@ int card_the_triumph_of_anax(int player, int card, event_t event)
 
         instance = get_card_instance(player, card);
         result = count_counters(player, card, COUNTER_LORE);
-        pump_ability_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
+        pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
                                result, 0, 0x80, 0);
       }
     }
@@ -1971,7 +1971,7 @@ int card_tymaret_calls_the_dead(int player, int card, event_t event)
   {
 
     result = count_subtype(player, -1, 0xde);
-    gain_life_2022(player, result);
+    gain_life(player, result);
     scry(player, result);
   }
   result = saga(player, card, event, 3);
@@ -2180,7 +2180,7 @@ int card_polukranos_unchained(int player, int card, event_t event)
   target_definition_t td;
 
   check_legend_rule(player, card, event);
-  result = check_special_flags3_2022(player, card, 0x80000);
+  result = check_special_flags3(player, card, 0x80000);
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1,
                                        (-(unsigned int)(result == 0) & 0xfffffffa) + 0xc);
   if (event == EVENT_DEAL_DAMAGE)
@@ -3143,7 +3143,7 @@ static int calix_obliviation_legacy(int player, int card, event_t event)
             obliterate_card(player_00, iVar2);
             goto LAB_02358e88;
           }
-          set_special_flags3_2022(player_00, iVar2, 0x40);
+          set_special_flags3(player_00, iVar2, 0x40);
         }
         remove_card_from_rfg(player_00, (unsigned int)cards_data[iid].id);
         put_into_play(player_00, iVar2);
@@ -3201,7 +3201,7 @@ static int athreos_effect(int player, int card, event_t event)
     }
     event_00 = EVENT_STATIC_EFFECTS;
   LAB_02358860:
-    iVar3 = resolve_gfp_ability_2022(player, card, event_00, RESOLVE_TRIGGER_MANDATORY);
+    iVar3 = resolve_gfp_ability(player, card, event_00, RESOLVE_TRIGGER_MANDATORY);
     iVar4 = check_status(player, card, 0x10000);
     if (iVar4 != 0)
     {
@@ -3277,7 +3277,7 @@ static int athreos_effect(int player, int card, event_t event)
       goto LAB_02358860;
     }
   LAB_02358981:
-    iVar3 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    iVar3 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     iVar4 = check_status(player, card, 0x10000);
     if (iVar4 != 0)
       goto joined_r0x023589c4;
@@ -3590,7 +3590,7 @@ int card_haktos_the_unscarred(int player, int card, event_t event)
     if (result != 0)
       goto LAB_0235d815;
   }
-  attack_if_able_2022(player, card, event);
+  attack_if_able(player, card, event);
 LAB_0235d815:
   special_abilities2(player, card, event, SP_KEYWORD2_PROT_MISC);
   if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
@@ -3748,7 +3748,7 @@ int card_nyxbloom_ancient(int player, int card, event_t event)
   else if ((((event == EVENT_COUNT_MANA) && (affected_card_controller == player)) &&
             (result = is_tapped(player, affected_card), result == 0)) &&
            ((result = is_animated_and_sick(affected_card_controller, affected_card),
-             result == 0 && (result = can_produce_mana_2022(affected_card_controller, affected_card),
+             result == 0 && (result = can_produce_mana(affected_card_controller, affected_card),
                              result != 0))))
   {
 
@@ -3787,11 +3787,11 @@ int card_kiora_bests_the_sea_god(int player, int card, event_t event)
 
   if (event == EVENT_CHAPTER1)
   {
-    default_token_definition_2022(player, card, 0x495c, &recovered_stack_token.token);
+    default_token_definition(player, card, 0x495c, &recovered_stack_token.token);
     recovered_stack_token.token.tou = 8;
     recovered_stack_token.token.pow = 8;
     recovered_stack_token.token.s_key_plus = 0x800000;
-    generate_token_2022(&recovered_stack_token.token);
+    generate_token(&recovered_stack_token.token);
   }
   else if (event == EVENT_CHAPTER2)
   {
@@ -3850,7 +3850,7 @@ int card_kiora_bests_the_sea_god(int player, int card, event_t event)
 /* Recovered October 2022 typed consumers and compiler parts. */
 
 /* ManalinkEh 2022: 0x2359940; original cards/theros_beyond_death.c:4. */
-static int escape_part_2022(int player, int card, event_t event, int colorless, int black, int blue,
+static int escape_part(int player, int card, event_t event, int colorless, int black, int blue,
                             int green, int red, int white, int num_exile)
 {
   int32_t *piVar1;
@@ -3880,7 +3880,7 @@ static int escape_part_2022(int player, int card, event_t event, int colorless, 
   else if (event == EVENT_PAY_FLASHBACK_COSTS)
   {
     instance = get_card_instance(player, card);
-    new_default_test_definition_2022(&this_test, 0xff, "Select a card to exile for escape.");
+    new_default_test_definition(&this_test, 0xff, "Select a card to exile for escape.");
     this_test.id = 0x388;
     this_test.id_flag = 1;
     result = charge_mana_multi(player, colorless, black, blue, green, red, white);
@@ -3893,7 +3893,7 @@ static int escape_part_2022(int player, int card, event_t event, int colorless, 
         return -1;
       }
       iid = turn_card_in_grave_face_down(player, position);
-      select_multiple_cards_from_graveyard_2022(player, player, -1, 3, &this_test, num_exile,
+      select_multiple_cards_from_graveyard(player, player, -1, 3, &this_test, num_exile,
                                                 instance->targets);
       result = find_in_graveyard_by_source(player, result, position);
       turn_card_in_grave_face_up(player, result, iid);
@@ -3936,9 +3936,9 @@ int card_ereboss_intervention(int player, int card, event_t event)
 
   if (event == EVENT_CAN_CAST)
   {
-    default_target_definition_2022(player, card, &td, 2);
+    default_target_definition(player, card, &td, 2);
     get_card_instance(player, card);
-    iVar3 = generic_spell_2022(player, card, EVENT_CAN_CAST, 4, NULL, NULL, 0, NULL);
+    iVar3 = generic_spell(player, card, EVENT_CAN_CAST, 4, NULL, NULL, 0, NULL);
     return iVar3;
   }
   if (event != EVENT_CAST_SPELL)
@@ -3949,11 +3949,11 @@ int card_ereboss_intervention(int player, int card, event_t event)
       {
         return 0;
       }
-      default_target_definition_2022(player, card, &td, 2);
+      default_target_definition(player, card, &td, 2);
       get_card_instance(player, card);
       return 0;
     }
-    default_target_definition_2022(player, card, &td, 2);
+    default_target_definition(player, card, &td, 2);
     instance = get_card_instance(player, card);
     if (event != EVENT_RESOLVE_SPELL)
     {
@@ -3963,9 +3963,9 @@ int card_ereboss_intervention(int player, int card, event_t event)
     iVar3 = instance->info_slot;
     if (instance->eot_toughness == 1)
     {
-      pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
+      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
                           -iVar3, -iVar3);
-      gain_life_2022(player, iVar3);
+      gain_life(player, iVar3);
     }
     else
     {
@@ -3997,7 +3997,7 @@ int card_ereboss_intervention(int player, int card, event_t event)
   {
     return 0;
   }
-  default_target_definition_2022(player, card, &td, 2);
+  default_target_definition(player, card, &td, 2);
   instance = get_card_instance(player, card);
   if (card != affected_card)
   {
@@ -4024,7 +4024,7 @@ int card_ereboss_intervention(int player, int card, event_t event)
     uVar5 = (unsigned int)(iVar3 == 0);
   }
 LAB_0235cf67:
-  iVar3 = can_target_2022(&td);
+  iVar3 = can_target(&td);
   uVar4 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\016", "\001\014",
                       "Debuff creature & gain life", iVar3, 5, "Exile cards from graveyards", uVar5,
                       5, 0, 0, 0, 0);
@@ -4037,14 +4037,14 @@ LAB_0235cf67:
   {
     if (uVar4 == 1)
     {
-      generic_spell_2022(player, card, EVENT_CAST_SPELL, 5, &td, "TARGET_CREATURE", 1, NULL);
+      generic_spell(player, card, EVENT_CAST_SPELL, 5, &td, "TARGET_CREATURE", 1, NULL);
       iVar3 = max_x_value;
     }
     else if (uVar4 == 2)
     {
 
       max_x_value = 9;
-      iVar6 = generic_spell_2022(player, card, EVENT_CAST_SPELL, 4, NULL, NULL, 0, NULL);
+      iVar6 = generic_spell(player, card, EVENT_CAST_SPELL, 4, NULL, NULL, 0, NULL);
       if (iVar6 != 0)
       {
         select_multiple_cards_from_either_graveyard_2022(
@@ -4106,18 +4106,18 @@ int card_the_binding_of_the_titans(int player, int card, event_t event)
         target_location = target_location + 1;
       } while (iVar1 != target_location);
     }
-    gain_life_2022(player, iStack_f4);
+    gain_life(player, iStack_f4);
   }
   else if (event == EVENT_CHAPTER3)
   {
-    new_default_test_definition_2022(&test, 3, "Select target creature or land card.");
-    iVar1 = new_special_count_grave_2022(player, &test);
+    new_default_test_definition(&test, 3, "Select target creature or land card.");
+    iVar1 = new_special_count_grave(player, &test);
     if (iVar1 != 0)
     {
       iVar1 = graveyard_has_shroud(player);
       if (iVar1 == 0)
       {
-        new_global_tutor_2022(player, player, 2, 1, 1, 1, &test);
+        new_global_tutor(player, player, 2, 1, 1, 1, &test);
       }
     }
   }
@@ -4151,7 +4151,7 @@ int card_shadowspear(int player, int card, event_t event)
       instance = get_card_instance(player, card);
       if (event == EVENT_CAN_ACTIVATE)
       {
-        iVar2 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0,
+        iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0,
                                                0, 0, NULL, NULL);
         if (iVar2 == 0)
         {
@@ -4163,7 +4163,7 @@ int card_shadowspear(int player, int card, event_t event)
       if (event == EVENT_ACTIVATE)
       {
         iVar2 = can_activate_basic_equipment(player, card, EVENT_ACTIVATE, 2);
-        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0,
+        iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 1, 0, 0, 0, 0,
                                                0, 0, NULL, NULL);
         iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Equip", iVar2, 5,
                             "Cripple opponent's creatures", iVar3, 8, 0, 0, 0, 0);
@@ -4179,7 +4179,7 @@ int card_shadowspear(int player, int card, event_t event)
             return 0;
           }
           ai_modifier = ai_modifier + ((1 - player == current_turn) - 1 & 0xffffffe8) + 0x30;
-          iVar2 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0, 1, 0, 0, 0, 0, 0,
+          iVar2 = generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 1, 0, 0, 0, 0, 0,
                                                  0, NULL, NULL);
           return iVar2;
         }
@@ -4247,20 +4247,20 @@ int card_calix_destinys_hand(int player, int card, event_t event)
   check_legend_rule(player, card, event);
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
-    default_target_definition_2022(player, card, &td, 6);
+    default_target_definition(player, card, &td, 6);
     td.allowed_controller = 1 - player;
-    default_target_definition_2022(player, card, &td1, 4);
+    default_target_definition(player, card, &td1, 4);
     td1.allowed_controller = player;
     instance = get_card_instance(player, card);
     if (event == EVENT_ACTIVATE)
     {
       instance->number_of_targets = '\0';
       instance->info_slot = 0;
-      iVar3 = can_target_2022(&td);
+      iVar3 = can_target(&td);
       uVar5 = 0;
       if (iVar3 != 0)
       {
-        iVar3 = can_target_2022(&td1);
+        iVar3 = can_target(&td1);
         uVar5 = (unsigned int)(iVar3 != 0);
       }
       iVar3 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017", "Reveal top 4", 1,
@@ -4272,11 +4272,11 @@ int card_calix_destinys_hand(int player, int card, event_t event)
         return 0;
       }
       if ((iVar3 == 2) &&
-          (iVar3 = new_pick_target_2022(
+          (iVar3 = new_pick_target(
                &td, "Select target creature or enchantment you don\'t control.", 0, 0x81),
            iVar3 != 0))
       {
-        new_pick_target_2022(&td1, "Select target enchantment you control.", 1, 0x81);
+        new_pick_target(&td1, "Select target enchantment you control.", 1, 0x81);
       }
       goto LAB_0235b56f;
     }
@@ -4285,9 +4285,9 @@ int card_calix_destinys_hand(int player, int card, event_t event)
   {
     if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
       goto LAB_0235b56f;
-    default_target_definition_2022(player, card, &td, 6);
+    default_target_definition(player, card, &td, 6);
     td.allowed_controller = 1 - player;
-    default_target_definition_2022(player, card, &td1, 4);
+    default_target_definition(player, card, &td1, 4);
     td1.allowed_controller = player;
     instance = get_card_instance(player, card);
   }
@@ -4298,14 +4298,14 @@ int card_calix_destinys_hand(int player, int card, event_t event)
     iVar3 = instance->info_slot;
     if (iVar3 == 1)
     {
-      new_default_test_definition_2022(&test, 4, "Select an enchantment card");
-      reveal_top_cards_of_library_and_choose_2022(player, card, player, 4, 0, TUTOR2022_HAND, 1,
+      new_default_test_definition(&test, 4, "Select an enchantment card");
+      reveal_top_cards_of_library_and_choose(player, card, player, 4, 0, TUTOR2022_HAND, 1,
                                                   TUTOR2022_BOTTOM_OF_DECK_RANDOM, 0, &test);
     }
     else if (iVar3 == 2)
     {
-      iVar3 = valid_target_2022(ptStack_194);
-      if ((iVar3 != 0) && (iVar3 = validate_target_2022(player, card, ptStack_198, 1), iVar3 != 0))
+      iVar3 = valid_target(ptStack_194);
+      if ((iVar3 != 0) && (iVar3 = validate_target(player, card, ptStack_198, 1), iVar3 != 0))
       {
         iVar3 = instance->parent_controller;
         card_00 = instance->targets[0].card;
@@ -4368,8 +4368,8 @@ int card_calix_destinys_hand(int player, int card, event_t event)
     }
     else if (iVar3 == 3)
     {
-      default_test_definition_2022(&test, 4);
-      new_reanimate_all_2022(player, card, player, &test, REANIMATE2022_DEFAULT);
+      default_test_definition(&test, 4);
+      new_reanimate_all(player, card, player, &test, REANIMATE2022_DEFAULT);
     }
   }
 LAB_0235b56f:
@@ -4390,7 +4390,7 @@ static int escape_with_counters_2022_impl(int player, int card, event_t event, i
        (affected_card == card)) &&
       (affected_card_controller == player))
   {
-    result = check_special_flags3_2022(player, card, 0x80000);
+    result = check_special_flags3(player, card, 0x80000);
     if (result != 0)
     {
       enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, num_counters);
@@ -4400,7 +4400,7 @@ static int escape_with_counters_2022_impl(int player, int card, event_t event, i
   {
     return 0;
   }
-  result = escape_part_2022(player, card, event, colorless, black, 0, green, red, 0, num_exile);
+  result = escape_part(player, card, event, colorless, black, 0, green, red, 0, num_exile);
   return result;
 }
 
@@ -4424,7 +4424,7 @@ int card_loathsome_chimera(int player, int card, event_t event)
 int card_ox_of_agonas(int player, int card, event_t event)
 {
   int result;
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     discard_all(player);
@@ -4468,10 +4468,10 @@ int card_woe_strider(int player, int card, event_t event)
 {
   int result;
   test_definition_2022_t test;
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    generate_token_by_id_2022(player, card, 0x4939);
+    generate_token_by_id(player, card, 0x4939);
   }
   else
   {
@@ -4495,9 +4495,9 @@ int card_woe_strider(int player, int card, event_t event)
     scry(player, 1);
   }
 LAB_023625b3:
-  new_default_test_definition_2022(&test, 2, "Select a creature to sacrifice.");
+  new_default_test_definition(&test, 2, "Select a creature to sacrifice.");
   test.not_me = 1;
-  result = generic_activated_ability_with_sacrifice_as_cost_2022(
+  result = generic_activated_ability_with_sacrifice_as_cost(
       player, card, event, GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, TYPE_NONE, &test, SARV_0);
   return result;
 }
@@ -4529,9 +4529,9 @@ int card_renata_called_to_the_hunt(int player, int card, event_t event)
       result = is_humiliated_for_ability(player, card, AL_STATIC);
       if (result == 0)
       {
-        default_test_definition_2022(&test, 2);
+        default_test_definition(&test, 2);
         test.not_me = 1;
-        test_enters_the_battlefield_with_counters_2022(player, card, event, player, &test,
+        test_enters_the_battlefield_with_counters(player, card, event, player, &test,
                                                        COUNTER_P1_P1, 1);
       }
     }
@@ -4600,7 +4600,7 @@ static int breach_effect(int player, int card, event_t event)
               add_state(player, iVar5, 0x20);
               hand_count[player] = hand_count[player] + -1;
               pcVar2 = cards_ptr[cards_data[iVar7].id];
-              uVar6 = escape_part_2022(
+              uVar6 = escape_part(
                   player, iVar5, EVENT_GRAVEYARD_ABILITY, (unsigned int)pcVar2->req_colorless,
                   (unsigned int)pcVar2->req_black, (unsigned int)pcVar2->req_blue,
                   (unsigned int)pcVar2->req_green, (unsigned int)pcVar2->req_red,
@@ -4641,7 +4641,7 @@ static int breach_effect(int player, int card, event_t event)
             add_state(player, card_00, 0x20);
             hand_count[player] = hand_count[player] + -1;
             pcVar2 = cards_ptr[cards_data[iVar8].id];
-            uVar6 = escape_part_2022(
+            uVar6 = escape_part(
                 player, card_00, EVENT_GRAVEYARD_ABILITY, (unsigned int)pcVar2->req_colorless,
                 (unsigned int)pcVar2->req_black, (unsigned int)pcVar2->req_blue,
                 (unsigned int)pcVar2->req_green, (unsigned int)pcVar2->req_red,
@@ -4691,7 +4691,7 @@ static int breach_effect(int player, int card, event_t event)
       instance->targets[3].card = iVar9;
       iVar5 = get_id(player, iVar7);
       pcVar2 = cards_ptr[iVar5];
-      iVar5 = escape_part_2022(player, iVar7, EVENT_PAY_FLASHBACK_COSTS,
+      iVar5 = escape_part(player, iVar7, EVENT_PAY_FLASHBACK_COSTS,
                                (unsigned int)pcVar2->req_colorless, (unsigned int)pcVar2->req_black,
                                (unsigned int)pcVar2->req_blue, (unsigned int)pcVar2->req_green,
                                (unsigned int)pcVar2->req_red, (unsigned int)pcVar2->req_white, 3);
@@ -4706,7 +4706,7 @@ static int breach_effect(int player, int card, event_t event)
       if (iVar5 == 1)
       {
         iVar4 = play_card_in_grave_for_free(player, player, iVar4);
-        set_special_flags3_2022(player, iVar4, 0x80000);
+        set_special_flags3(player, iVar4, 0x80000);
         cant_be_responded_to = 1;
       }
       obliterate_card(player, iVar7);

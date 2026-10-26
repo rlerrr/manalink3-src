@@ -1,5 +1,9 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+void boost_creatures_by_counters(int player, int card, event_t event, int counter_type,
+                                      int amount, int pow, int tou, int key, int s_key, bct_t flags);
+
 // Global functions
 
 static int outlast(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white){
@@ -82,33 +86,7 @@ static int turn_face_up_revealing_card(int player, int card, event_t event, int 
 	return 0;
 }
 
-static void boost_creatures_by_counters(int player, int card, event_t event, int counter_type, int amount, int pow, int tou, int key, int s_key, bct_t flags ){
-	if( ! in_play(player, card) || is_humiliated(player, card) ){
-		return;
-	}
-	if( ! is_what(affected_card_controller, affected_card, TYPE_CREATURE) ){
-		return;
-	}
-	if( (flags & BCT_CONTROLLER_ONLY) && affected_card_controller != player ){
-		return;
-	}
-	if( !(flags & BCT_INCLUDE_SELF) && (affected_card_controller == player && affected_card == card) ){
-		return;
-	}
-	if( count_counters(affected_card_controller, affected_card, counter_type) < amount ){
-		return;
-	}
-	if( event == EVENT_POWER ){
-		event_result+=pow;
-	}
-	if( event == EVENT_TOUGHNESS ){
-		event_result+=tou;
-	}
-	if( event == EVENT_ABILITIES ){
-		event_result |= key;
-		special_abilities(affected_card_controller, affected_card, event, s_key, player, card);
-	}
-}
+
 
 const char* is_face_down_creature(int who_chooses, int player, int card)
 {
@@ -3205,7 +3183,7 @@ int card_longshot_squad(int player, int card, event_t event){
 static int meandering_towershell_legacy(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( current_turn == player && beginning_of_combat(player, card, event, RESOLVE_TRIGGER_MANDATORY, player) ){
+	if( current_turn == player && beginning_of_combat(player, card, event, player) ){
 		int iid = instance->targets[0].card;
 		if( iid > -1 && check_rfg(player, cards_data[iid].id) ){
 			int card_added = add_card_to_hand(player, iid);
@@ -5854,19 +5832,19 @@ int card_witness_of_the_ages(int player, int card, event_t event){
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
 #ifndef SHANDALAR
-static int player_sacrifices_the_creature_with_highest_power_part_2022(int player, int card,
+static int player_sacrifices_the_creature_with_highest_power_part(int player, int card,
                                                                        int t_player);
 
 /* ManalinkEh 2022: 0x21a3da0; original cards/khans_of_tarkir.c:4287. */
 int player_sacrifices_the_creature_with_highest_power(int player, int card, int t_player)
 {
   int result;
-  result = can_sacrifice_2022(player, t_player, 1, TYPE_CREATURE, SUBTYPE_INVALID);
+  result = can_sacrifice(player, t_player, 1, TYPE_CREATURE, SUBTYPE_INVALID);
   if (result == 0)
   {
     return 0;
   }
-  result = player_sacrifices_the_creature_with_highest_power_part_2022(player, card, t_player);
+  result = player_sacrifices_the_creature_with_highest_power_part(player, card, t_player);
   return result;
 }
 #endif
@@ -5903,7 +5881,7 @@ static int grim_haruspex_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_02198068:
-    uVar4 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar4 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar4 == 0)
       goto LAB_02198086;
   }
@@ -5942,7 +5920,7 @@ static int grim_haruspex_effect(int player, int card, event_t event)
       this_test.not_me = 1;
       count_for_gfp_ability(player, card, 0x77, player, 0, &this_test);
     }
-    uVar4 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar4 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar4 == 0)
     {
       return 0;
@@ -5991,7 +5969,7 @@ static int kheru_bloodsucker_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_02198238:
-    uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
       goto joined_r0x0219825d;
   }
@@ -6034,7 +6012,7 @@ static int kheru_bloodsucker_effect(int player, int card, event_t event)
       this_test.toughness_flag = 2;
       count_for_gfp_ability(player, card, 0x77, player, 0, &this_test);
     }
-    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
     {
       return 0;
@@ -6088,7 +6066,7 @@ static int sultai_flayer_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_02198597:
-    uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
       goto joined_r0x021985c0;
   }
@@ -6126,7 +6104,7 @@ static int sultai_flayer_effect(int player, int card, event_t event)
       this_test.toughness_flag = 2;
       count_for_gfp_ability(player, card, 0x77, player, 0, &this_test);
     }
-    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
     {
       return 0;
@@ -6216,7 +6194,7 @@ joined_r0x021a29bf:
   if (uVar1 == '\0')
   {
 
-    uVar3 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar3 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     uVar3 = uVar3 & 0xff;
     if (uVar3 != 0)
     {
@@ -6260,7 +6238,7 @@ static int abzan_ascendancy_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_02198e65:
-    iVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    iVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (iVar2 == 0)
       goto LAB_02198e87;
   }
@@ -6295,7 +6273,7 @@ static int abzan_ascendancy_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability_and_store_values(player, card, 0x77, player, 2, NULL, 0x40, 0);
     }
-    iVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    iVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (iVar2 == 0)
     {
       return 0;
@@ -6341,7 +6319,7 @@ void when_another_permanent_dies_add_counters_on_this(int player, int card, even
     this_test.not_me = 1;
     count_for_gfp_ability(player, card, 0x77, 2, 0, &this_test);
   }
-  uVar1 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  uVar1 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (uVar1 != 0)
   {
 
@@ -6358,7 +6336,7 @@ void when_another_permanent_dies_add_counters_on_this(int player, int card, even
 /* Recovered October 2022 split card helpers. */
 
 /* ManalinkEh 2022: 0x2199560; original cards/khans_of_tarkir.c:4287. */
-static int player_sacrifices_the_creature_with_highest_power_part_2022(int player, int card,
+static int player_sacrifices_the_creature_with_highest_power_part(int player, int card,
                                                                        int t_player)
 {
   int iVar1;
@@ -6370,9 +6348,9 @@ static int player_sacrifices_the_creature_with_highest_power_part_2022(int playe
   target_definition_2022_t td;
   test_definition_2022_t this_test;
 
-  default_test_definition_2022(&this_test, 2);
+  default_test_definition(&this_test, 2);
   iVar6 = 0;
-  iVar1 = check_battlefield_for_special_card_2022(player, card, t_player, 0x80, &this_test);
+  iVar1 = check_battlefield_for_special_card(player, card, t_player, 0x80, &this_test);
   iVar3 = active_cards_count[t_player];
   if (0 < iVar3)
   {
@@ -6402,11 +6380,11 @@ static int player_sacrifices_the_creature_with_highest_power_part_2022(int playe
   LAB_02199640:
     if (1 < iVar6)
     {
-      default_target_definition_2022(player, card, &td, 2);
+      default_target_definition(player, card, &td, 2);
       td.allow_cancel = 0;
       td.who_chooses = t_player;
       td.allowed_controller = t_player;
-      iVar3 = new_pick_target_2022(&td, "Select a creature to sacrifice.", 0, 0x80);
+      iVar3 = new_pick_target(&td, "Select a creature to sacrifice.", 0, 0x80);
       if (iVar3 != 0)
       {
         instance = get_card_instance(player, card);
@@ -6456,7 +6434,7 @@ static int player_sacrifices_the_creature_with_highest_power_part_2022(int playe
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2199b20; original cards/khans_of_tarkir.c:89. */
-void boost_creatures_by_counters_2022(int player, int card, event_t event, int counter_type,
+void boost_creatures_by_counters(int player, int card, event_t event, int counter_type,
                                       int amount, int pow, int tou, int key, int s_key, bct_t flags)
 {
   card_instance_t *instance;
@@ -6484,7 +6462,7 @@ void boost_creatures_by_counters_2022(int player, int card, event_t event, int c
     else if (event == EVENT_ABILITIES)
     {
       event_result = event_result | key;
-      special_abilities_2022(affected_card_controller, affected_card, EVENT_ABILITIES, s_key,
+      special_abilities(affected_card_controller, affected_card, EVENT_ABILITIES, s_key,
                              player, card);
       return;
     }

@@ -97,7 +97,8 @@ def audit_helpers(component,manifest,sources,machine_bytes,root):
         require(machine_bytes(int(a,16),5).hex()==data,'Wish dialog native boundary instruction mismatch')
         require(any(c['address']==a and c['target']==target and c['name']==STUBS[target] for c in picker['canonical_calls']),'Wish dialog boundary binding missing')
     for support in component['retained_helpers']:
-        require(sha(function_body(sources[support['source']].replace('\r\n','\n'),support['name']).encode())==support['body_sha256'],'Wish retained source helper changed')
+        from unify_scalar_helpers import retained_source_body
+        require(sha(retained_source_body(root,support['source'],support['name']).encode())==support['body_sha256'],'Wish retained source helper changed')
 
 
 def main():

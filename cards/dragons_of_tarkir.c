@@ -1,32 +1,33 @@
 // -*- c-basic-offset:2 -*-
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+static int exploit_impl(int player, int card, event_t event, resolve_trigger_t mode);
+int exploit(int player, int card, event_t event);
+
 /***** Functions *****/
 
 static int exploit_impl(int player, int card, event_t event, resolve_trigger_t mode)
 {
-	// Should not be called directly, only by exploit() and exploit_allow_ai().
-	etb_ability(player, card, event, mode);
-
-	if( event == EVENT_ETB_ABILITY ){
-		if( can_sacrifice(player, player, 1, TYPE_CREATURE, 0) ){
-			test_definition_t test;
-			new_default_test_definition(&test, TYPE_CREATURE, "");
-			return new_sacrifice(player, card, player, SAC_RETURN_CHOICE, &test);
-		}
-	}
-
-	return 0;
+  int result;
+  test_definition_2022_t test;
+  etb_ability(player, card, event, mode);
+  if ((event == EVENT_ETB) &&
+      (result = can_sacrifice(player, player, 1, TYPE_CREATURE, SUBTYPE_INVALID), result != 0))
+  {
+    new_default_test_definition(&test, 2, "");
+    result = new_sacrifice(player, card, player, SAC2022_RETURN_CHOICE, &test);
+    return result;
+  }
+  return 0;
 }
 
-static int exploit(int player, int card, event_t event)
+int exploit(int player, int card, event_t event)
 {
-  /* 702.109. Exploit
-   *
-   * 702.109a Exploit is a triggered ability. "Exploit" means "When this creature enters the battlefield, you may sacrifice a creature."
-   *
-   * 702.109b A creature with exploit "exploits a creature" when the controller of the exploit ability sacrifices a creature as that ability resolves. */
-  return exploit_impl(player, card, event, RESOLVE_TRIGGER_AI(player));
+  int result;
+  result = duh_mode(player);
+  result = exploit_impl(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  return result;
 }
 
 // Just like exploit(), but if allow_ai is zero, then the AI will decline
@@ -5535,7 +5536,7 @@ int card_display_of_dominance(int player, int card, event_t event)
 
   instance->number_of_targets = '\0';
   iVar3 = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
-  iVar2 = check_special_flags2_2022(player, card, -0x80000000);
+  iVar2 = check_special_flags2(player, card, -0x80000000);
   if (iVar2 != 0)
   {
     return 0;
@@ -5580,29 +5581,10 @@ LAB_023249b0:
 /* Recovered October 2022 entry-trigger helpers. */
 
 /* ManalinkEh 2022: 0x2319fb0; original cards/dragons_of_tarkir.c:6. */
-static int exploit_impl_2022(int player, int card, event_t event, resolve_trigger_t mode)
-{
-  int result;
-  test_definition_2022_t test;
-  etb_ability_2022(player, card, event, mode);
-  if ((event == EVENT_ETB) &&
-      (result = can_sacrifice_2022(player, player, 1, TYPE_CREATURE, SUBTYPE_INVALID), result != 0))
-  {
-    new_default_test_definition_2022(&test, 2, "");
-    result = new_sacrifice_2022(player, card, player, SAC2022_RETURN_CHOICE, &test);
-    return result;
-  }
-  return 0;
-}
+
 
 
 /* ManalinkEh 2022: 0x231a430; original cards/dragons_of_tarkir.c:22. */
-int exploit_2022(int player, int card, event_t event)
-{
-  int result;
-  result = duh_mode(player);
-  result = exploit_impl_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
-  return result;
-}
+
 
 #endif

@@ -1,5 +1,9 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+void seek_grave_to_reanimate_this_turn(int player, int t_player, int selected_type,
+                                            reanimate_mode_2022_t mode);
+
 #define TOKEN_FLAG (1<<31)
 
 void increase_dead_count(int player, int iid, int is_tok){
@@ -176,36 +180,14 @@ int card_deadbox(int player, int card, event_t event){
 	return 0;
 }
 
-static void seek_grave_to_reanimate_this_turn(int player, int selected_type, reanimate_mode_t mode){
 
-	int non_pw = selected_type & GDC_NONPLANESWALKER;
-	selected_type &= ~(GDC_NONTOKEN | GDC_NONPLANESWALKER);	/* we effectively force nontoken anyway, just in case there's a different nontoken card of the same
-															 * name in the graveyard */
-
-	int p, *q;
-	for(p=0; p<2; p++){
-		if( p == player || player == 2 ){
-			int dbc = get_deadbox_card(p);
-			if( dbc > -1 ){
-				card_instance_t *instance = get_card_instance( p, dbc );
-				for (q = &instance->targets[0].player; q <= &instance->targets[17].card; ++q){
-					if (*q != -1 && !(*q & TOKEN_FLAG)
-						&& is_what(-1, *q, selected_type)
-						&& !(non_pw && is_planeswalker(-1, *q))){
-						seek_grave_for_id_to_reanimate(player, -1, p, cards_data[*q].id, mode);
-					}
-				}
-			}
-		}
-	}
-}
 
 void reanimate_all_dead_this_turn(int player, int selected_type){
-	return seek_grave_to_reanimate_this_turn(player, selected_type, REANIMATE_DEFAULT);
+	return seek_grave_to_reanimate_this_turn(player, player, selected_type, REANIMATE_DEFAULT);
 }
 
 void return_all_dead_this_turn_to_hand(int player, int selected_type){
-	return seek_grave_to_reanimate_this_turn(player, selected_type, REANIMATE_RETURN_TO_HAND);
+	return seek_grave_to_reanimate_this_turn(player, player, selected_type, REANIMATE_RETURN_TO_HAND);
 }
 
 int choose_a_dead_this_turn(int player, int card, int t_player, int can_cancel, int ai_selection_mode, test_definition_t *this_test, int target_pos){
@@ -288,7 +270,7 @@ int has_type_dead_this_turn_in_grave(int player, test_definition_t *this_test){
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2671e30; original functions/deadbox.c:179. */
-void seek_grave_to_reanimate_this_turn_2022(int player, int t_player, int selected_type,
+void seek_grave_to_reanimate_this_turn(int player, int t_player, int selected_type,
                                             reanimate_mode_2022_t mode)
 {
   int result;
@@ -330,7 +312,7 @@ void seek_grave_to_reanimate_this_turn_2022(int player, int t_player, int select
                                   : instance->targets[dead_slot / 2].player);
         }
         dead_slot = dead_slot + 1;
-        seek_grave_for_id_to_reanimate_2022(player, -1, player_00,
+        seek_grave_for_id_to_reanimate(player, -1, player_00,
                                             (unsigned int)cards_data[result].id, mode);
       } while (dead_slot != 36);
     }

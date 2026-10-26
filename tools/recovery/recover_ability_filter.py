@@ -34,7 +34,8 @@ def historical_scalar_view(entry,body,binding):
     return previous,restored
 
 
-def audit_component(component,manifest,sources,machine_bytes):
+def audit_component(component,manifest,sources,machine_bytes,root=None):
+    if root is None:root=Path(__file__).resolve().parents[2]
     def require(ok,message):
         if not ok:raise ValueError(message)
     entries={f['address']:f for f in manifest['accepted_functions']};entry=entries[HELPER];detail=component['helper']
@@ -44,7 +45,8 @@ def audit_component(component,manifest,sources,machine_bytes):
     old=component['previous_helper_record'];require(old['address']==HELPER and old['name']=='remove_abilities_by_test' and old['raw_sha256']==entry['raw_sha256'],
         'Ability-filter previous native record mismatch')
     source=sources[entry['source']].replace('\r\n','\n')
-    require(sha(function_body(source,old['name']).encode())==component['legacy_body_sha256'],'Ability-filter retained 208-byte compatibility body changed')
+    from unify_scalar_helpers import retained_source_body
+    require(sha(retained_source_body(root,old['source'],old['name']).encode())==component['legacy_body_sha256'],'Ability-filter historical compatibility body changed')
     require(set(component['callers'])==set(CALLERS),'Ability-filter caller membership mismatch')
     decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True
     for a,migration in component['callers'].items():

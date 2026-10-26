@@ -1,5 +1,15 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+int level_up(int player, int card, event_t event, int x, int b, int u, int g, int r, int w,
+                  int l1power, int l1toughness, int l2, int l2power, int l2toughness,
+                  keyword_t l2key, sp_keyword_t l2sp, int l3, int l3power, int l3toughness,
+                  keyword_t l3key, sp_keyword_t l3sp);
+static void level_up_effects(int player, int card, event_t event, int l2, int l2power,
+                                       int l2toughness, keyword_t l2key, sp_keyword_t l2sp, int l3,
+                                       int l3power, int l3toughness, keyword_t l3key,
+                                       sp_keyword_t l3sp);
+
 // Global functions
 int when_you_cast(int player, int card, event_t event){
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -21,164 +31,10 @@ int annihilator(int player, int card, event_t event, int number)
 
 /* Just the effects of leveling up, not activation.  l2sp/l3sp only work for special abilities that can just be set during EVENT_ABILITIES.  Currently only used
  * for deathtouch, indestructibility, lifelink, and vigilance, all of which are ok. */
-static void level_up_effects(int player, int card, event_t event,
-							 int l1power, int l1toughness,
-							 int l2, int l2power, int l2toughness, keyword_t l2key, sp_keyword_t l2sp,
-							 int l3, int l3power, int l3toughness, keyword_t l3key, sp_keyword_t l3sp)
-{
-  if (event == EVENT_POWER && affect_me(player, card) && l3power > l1power)
-	{
-	  int counters = count_counters(player, card, COUNTER_LEVEL);
-	  if (counters >= l3)
-		event_result += l3power - l1power;
-	  else if (counters >= l2)
-		event_result += l2power - l1power;
-	}
 
-  if (event == EVENT_TOUGHNESS && affect_me(player, card) && l3toughness > l1toughness)
-	{
-	  int counters = count_counters(player, card, COUNTER_LEVEL);
-	  if (counters >= l3)
-		event_result += l3toughness - l1toughness;
-	  else if (counters >= l2)
-		event_result += l2toughness - l1toughness;
-	}
-
-  if (event == EVENT_ABILITIES && affect_me(player, card) && (l3key || l3sp))
-	{
-	  int counters = count_counters(player, card, COUNTER_LEVEL);
-	  if (counters >= l3)
-		{
-		  if (l3key & KEYWORD_BASIC_LANDWALK)
-			l3key = get_hacked_walk(player, card, l3key);
-
-		  if (l3key & KEYWORD_PROT_COLORED)
-			l3key = get_sleighted_protection(player, card, l3key);
-
-		  event_result |= l3key;
-
-		  if (l3sp)
-			special_abilities(player, card, event, l3sp, player, card);
-		}
-	  else if (counters >= l2)
-		{
-		  if (l2key & KEYWORD_BASIC_LANDWALK)
-			l2key = get_hacked_walk(player, card, l2key);
-
-		  if (l2key & KEYWORD_PROT_COLORED)
-			l2key = get_sleighted_protection(player, card, l2key);
-
-		  event_result |= l2key;
-
-		  if (l2sp)
-			special_abilities(player, card, event, l2sp, player, card);
-		}
-	}
-
-  if (event == EVENT_SHOULD_AI_PLAY)
-	{
-	  /* Encourage AI to level up, particularly so that it crosses a level threshold, and preferably level up creatures the more counters they have past a level
-	   * threshold.
-	   *
-	   * Each counter up to l2 is worth (1+number_of_counters) squared.  (+1 so that the first is worth 4, so the AI is willing to tap for it; it counts a
-	   * tapped land as worth 1 less than an untapped one.)
-	   *
-	   * The counter putting it at l2 is worth an extra 24.
-	   *
-	   * Between l2 and l3, each counter is again worth (1+number_of_counters), but number_of_counters is counted from the l2 threshold, not from 0.
-	   *
-	   * The counter putting it at l3 is again worth an extra 24; counters past l3 aren't worth anything.
-	   *
-	   * Three examples:
-	   * Enclave Cryptologist (l2 = 1, l3 = 3)
-	   * Counters	Total modifier
-	   * 0			0
-	   * 1 (l2)		28 (2^2 + 24)
-	   * 2			32 (l2bonus + 2^2)
-	   * 3 (l3)		61 (l2bonus + 3^2 + 24)
-	   *
-	   * Student of Warfare (l2 = 2, l3 = 7)
-	   * 0			0
-	   * 1			4 (2^2)
-	   * 2 (l2)		33 (3^2 + 24)
-	   * 3			37 (l2bonus + 2^2)
-	   * 4			42 (l2bonus + 3^2)
-	   * 5			49 (l2bonus + 4^2)
-	   * 6			58 (l2bonus + 5^2)
-	   * 7 (l3)		93 (l2bonus + 6^2 + 24)
-	   *
-	   * Transcendent Master (l2 = 6, l3 = 12)
-	   * 0			0
-	   * 1			4
-	   * 2			9
-	   * 3			16
-	   * 4			25
-	   * 5			36
-	   * 6 (l2)		73 (7^2 + 24)
-	   * 7			77 (l2bonus + 2^2)
-	   * 8			82 (l2bonus + 3^2)
-	   * 9			89 (l2bonus + 4^2)
-	   * 10			98 (l2bonus + 5^2)
-	   * 11			109 (l2bonus + 6^2)
-	   * 12			146 (l2bonus + 7^2 + 24)
-	   */
-
-	  int counters = count_counters(player, card, COUNTER_LEVEL);
-
-	  if (!counters)
-		return;
-
-	  int mod = 0;
-
-	  if (counters < l2)
-		mod += (1+counters) * (1+counters);
-	  else
-		{
-		  mod += (1+l2) * (1+l2) + 24;
-
-		  if (counters > l2)
-			{
-			  if (counters >= l3)
-				{
-				  counters = l3;
-				  mod += 24;
-				}
-
-			  int past_l2_plus_1 = counters - l2 + 1;
-			  mod += past_l2_plus_1 * past_l2_plus_1;
-			}
-		}
-
-	  if (player == AI)
-		ai_modifier += mod;
-	  else
-		ai_modifier -= mod;
-	}
-}
 
 // Level up, both effects and activation.
-static int level_up(int player, int card, event_t event,
-					int x, int b, int u, int g, int r, int w,
-					int l1power, int l1toughness,
-					int l2, int l2power, int l2toughness, keyword_t l2key, sp_keyword_t l2sp,
-					int l3, int l3power, int l3toughness, keyword_t l3key, sp_keyword_t l3sp)
-{
-  level_up_effects(player, card, event,
-				   l1power, l1toughness,
-				   l2, l2power, l2toughness, l2key, l2sp,
-				   l3, l3power, l3toughness, l3key, l3sp);
 
-  if (event == EVENT_CAN_ACTIVATE)
-	return CAN_ACTIVATE(player, card, MANACOST6(x,b,u,g,r,w)) && can_sorcery_be_played(player, event);
-
-  if (event == EVENT_ACTIVATE)
-	charge_mana_for_activated_ability(player, card, x,b,u,g,r,w);
-
-  if (event == EVENT_RESOLVE_ACTIVATION)
-	add_counter(player, card, COUNTER_LEVEL);
-
-  return 0;
-}
 
 int totem_armor(int player, int card, event_t event, int pow, int tou, int key, int s_key){
 
@@ -1712,10 +1568,7 @@ int card_echo_mage(int player, int card, event_t event){
 	 * LEVEL 4+	2/5
 	 * |U|U, |T: Copy target instant or sorcery spell twice. You may choose new targets for the copies. */
 
-	level_up_effects(player, card, event,
-					2, 3,
-					2, 2, 4, 0,0,
-					4, 2, 5, 0,0);
+	level_up_effects(player, card, event, 2, 2, 4, 0, 0, 4, 2, 5, 0, 0);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -1809,10 +1662,7 @@ int card_enclave_cryptologist(int player, int card, event_t event){
 	 * LEVEL 3+	0/1
 	 * |T: Draw a card. */
 
-	level_up_effects(player, card, event,
-					    0,1,
-					 1, 0,1, 0,0,
-					 3, 0,1, 0,0);
+	level_up_effects(player, card, event, 1, 0, 1, 0, 0, 3, 0, 1, 0, 0);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -2663,10 +2513,7 @@ int card_guul_draz_assassin(int player, int card, event_t event){
 	 * LEVEL 4+	4/4
 	 * |B, |T: Target creature gets -4/-4 until end of turn. */
 
-	level_up_effects(player, card, event,
-					    1,1,
-					 2, 2,2, 0,0,
-					 4, 4,4, 0,0);
+	level_up_effects(player, card, event, 2, 2, 2, 0, 0, 4, 4, 4, 0, 0);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -3201,10 +3048,7 @@ int card_brimstone_mage(int player, int card, event_t event)
 	 * LEVEL 3+
 	 * 2/4
 	 * |T: ~ deals 3 damage to any target. */
-  level_up_effects(player, card, event,
-				      2,2,
-				   1, 2,3, 0,0,
-				   3, 2,4, 0,0);
+  level_up_effects(player, card, event, 1, 2, 3, 0, 0, 3, 2, 4, 0, 0);
 
   if (IS_ACTIVATING(event))
 	{
@@ -4251,10 +4095,7 @@ int card_joraga_treespeaker(int player, int card, event_t event){
 	 * LEVEL 5+	1/4
 	 * Elves you control have "|T: Add |G|G to your mana pool." */
 
-	level_up_effects(player, card, event,
-					    1,1,
-					 1, 1,2, 0,0,
-					 5, 1,4, 0,0);
+	level_up_effects(player, card, event, 1, 1, 2, 0, 0, 5, 1, 4, 0, 0);
 
 	if (!IS_ACTIVATING(event) && !(event == EVENT_COUNT_MANA && affect_me(player, card))){
 		return 0;
@@ -4366,10 +4207,7 @@ int card_kazandu_tuskcaller(int player, int card, event_t event){
 	 * LEVEL 6+	1/1
 	 * |T: Put two 3/3 |Sgreen Elephant creature tokens onto the battlefield. */
 
-	level_up_effects(player, card, event,
-					    1,1,
-					 2, 1,1, 0,0,
-					 6, 1,1, 0,0);
+	level_up_effects(player, card, event, 2, 1, 1, 0, 0, 6, 1, 1, 0, 0);
 
 	if( ! IS_GAA_EVENT(event) ){
 		return 0;
@@ -5085,7 +4923,7 @@ int card_affa_guard_hound(int player, int card, event_t event)
       if (result != 0)
       {
         instance = get_card_instance(player, card);
-        pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, 0, 3);
+        pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 0, 3);
       }
     }
   }
@@ -5115,7 +4953,7 @@ int card_wildheart_invoker(int player, int card, event_t event)
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
       instance = get_card_instance(player, card);
-      pump_ability_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
+      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
                              5, 5, 0x80, 0);
     }
   }
@@ -5212,7 +5050,7 @@ int card_lust_for_war(int player, int card, event_t event)
     }
   }
 LAB_024b657f:
-  result = disabling_aura_2022(player, card, event);
+  result = disabling_aura(player, card, event);
   return result;
 }
 
@@ -5221,7 +5059,7 @@ LAB_024b657f:
 /* Recovered October 2022 Level Up/Buddy helpers. */
 
 /* ManalinkEh 2022: 0x24ac850; original cards/rise_of_the_eldrazi.c:25. */
-static void level_up_effects_part_2022(int player, int card, event_t event, int l2, int l2power,
+static void level_up_effects(int player, int card, event_t event, int l2, int l2power,
                                        int l2toughness, keyword_t l2key, sp_keyword_t l2sp, int l3,
                                        int l3power, int l3toughness, keyword_t l3key,
                                        sp_keyword_t l3sp)
@@ -5267,7 +5105,7 @@ static void level_up_effects_part_2022(int player, int card, event_t event, int 
           }
           if (l2sp != SP_KEYWORD_0)
           {
-            special_abilities_2022(player, card, EVENT_ABILITIES, l2sp, player, card);
+            special_abilities(player, card, EVENT_ABILITIES, l2sp, player, card);
           }
           event_result = event_result | kStack_18;
         }
@@ -5307,7 +5145,7 @@ static void level_up_effects_part_2022(int player, int card, event_t event, int 
         }
         if ((l2sp | l3sp) != SP_KEYWORD_0)
         {
-          special_abilities_2022(player, card, EVENT_ABILITIES, l2sp | l3sp, player, card);
+          special_abilities(player, card, EVENT_ABILITIES, l2sp | l3sp, player, card);
         }
         event_result = kStack_1c | event_result | kStack_18;
       }
@@ -5352,19 +5190,19 @@ static void level_up_effects_part_2022(int player, int card, event_t event, int 
 
 
 /* ManalinkEh 2022: 0x24ace40; original cards/rise_of_the_eldrazi.c:176. */
-int level_up_2022(int player, int card, event_t event, int x, int b, int u, int g, int r, int w,
+int level_up(int player, int card, event_t event, int x, int b, int u, int g, int r, int w,
                   int l1power, int l1toughness, int l2, int l2power, int l2toughness,
                   keyword_t l2key, sp_keyword_t l2sp, int l3, int l3power, int l3toughness,
                   keyword_t l3key, sp_keyword_t l3sp)
 {
   int result;
-  level_up_effects_part_2022(player, card, event, l2, l2power, l2toughness, l2key, l2sp, l3,
+  level_up_effects(player, card, event, l2, l2power, l2toughness, l2key, l2sp, l3,
                              l3power, l3toughness, l3key, l3sp);
   if (event == EVENT_CAN_ACTIVATE)
   {
-    result = can_use_activated_abilities_2022(player, card);
+    result = can_use_activated_abilities(player, card);
     if ((result != 0) &&
-        (result = has_mana_for_activated_ability_2022(player, card, x, b, u, g, r, w), result != 0))
+        (result = has_mana_for_activated_ability(player, card, x, b, u, g, r, w), result != 0))
     {
       result = can_sorcery_be_played(player, EVENT_CAN_ACTIVATE);
       return (unsigned int)(result != 0);
@@ -5374,7 +5212,7 @@ int level_up_2022(int player, int card, event_t event, int x, int b, int u, int 
   {
     if (event == EVENT_ACTIVATE)
     {
-      charge_mana_for_activated_ability_2022(player, card, x, b, u, g, r, w);
+      charge_mana_for_activated_ability(player, card, x, b, u, g, r, w);
       return 0;
     }
     if (event == EVENT_RESOLVE_ACTIVATION)
@@ -5412,19 +5250,19 @@ int card_aura_finesse(int player, int card, event_t event)
     {
       if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
       {
-        default_target_definition_2022(player, card, &td, 4);
+        default_target_definition(player, card, &td, 4);
         td.required_subtype = 0x4000;
         td.allowed_controller = player;
         td.preferred_controller = player;
         instance = get_card_instance(player, card);
         if (event == EVENT_RESOLVE_SPELL)
         {
-          result = valid_target_2022(&td);
+          result = valid_target(&td);
           if (result == 0)
           {
             return 0;
           }
-          set_special_flags_2022(instance->targets[0].player, instance->targets[0].card,
+          set_special_flags(instance->targets[0].player, instance->targets[0].card,
                                  SF_MOVE_AURA_LEGAL_TARGET);
           result = call_card_function(instance->targets[0].player, instance->targets[0].card,
                                       EVENT_CAN_MOVE_AURA);
@@ -5435,7 +5273,7 @@ int card_aura_finesse(int player, int card, event_t event)
             call_card_function(instance->targets[0].player, instance->targets[0].card,
                                EVENT_RESOLVE_MOVING_AURA);
           }
-          remove_special_flags_2022(instance->targets[0].player, instance->targets[0].card,
+          remove_special_flags(instance->targets[0].player, instance->targets[0].card,
                                     SF_MOVE_AURA_LEGAL_TARGET);
           draw_a_card(player);
           kill_card(player, card, KILL_DESTROY);
@@ -5448,14 +5286,14 @@ int card_aura_finesse(int player, int card, event_t event)
       }
     }
   }
-  default_target_definition_2022(player, card, &td, 4);
+  default_target_definition(player, card, &td, 4);
   td.required_subtype = 0x4000;
   td.allowed_controller = player;
   td.preferred_controller = player;
   get_card_instance(player, card);
 LAB_024b0035:
   result =
-      generic_spell_2022(player, card, event, 0x81, &td, "Select target Aura you control", 1, NULL);
+      generic_spell(player, card, event, 0x81, &td, "Select target Aura you control", 1, NULL);
   return result;
 }
 

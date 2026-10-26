@@ -1,5 +1,9 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+const char *target_is_attached_to_creature(int who_chooses, int player, int card,
+                                          int targeting_player, int targeting_card);
+
 // ---- CARDS ----
 
 int card_angels_trumpet(int player, int card, event_t event){
@@ -387,14 +391,7 @@ int card_deranged_hermit(int player, int card, event_t event){
 	return 0;
 }
 
-static const char* target_is_attached_to_creature(int who_chooses, int player, int card, int targeting_player, int targeting_card)
-{
-	card_instance_t* instance = get_card_instance(player, card);
-	if (instance->damage_target_card >= 0 && is_what(instance->damage_target_player, instance->damage_target_card, TYPE_CREATURE))
-		return NULL;
-	else
-		return "attached to a creature";
-}
+
 int card_devout_harpist(int player, int card, event_t event)
 {
 	/* Devout Harpist	|W
@@ -2276,7 +2273,7 @@ static int debuff_for_T_sac(int player, int card, event_t event, int powmod, int
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
       instance = get_card_instance(player, card);
-      pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, powmod,
+      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, powmod,
                      tghmod);
     }
   }
@@ -2433,7 +2430,7 @@ int card_iron_will(int player, int card, event_t event)
       return result;
     }
   }
-  result = vanilla_instant_pump_2022(player, card, event, 2, player, 0, 4, 0, 0);
+  result = vanilla_instant_pump(player, card, event, 2, player, 0, 4, 0, 0);
   return result;
 }
 
@@ -2476,7 +2473,7 @@ int card_pygmy_pyrosaur(int player, int card, event_t event)
 int card_rank_and_file(int player, int card, event_t event)
 {
   test_definition_t this_test;
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -2687,7 +2684,7 @@ int card_parch(int player, int card, event_t event)
       if ((card == affected_card) && (player == affected_card_controller))
       {
         instance->number_of_targets = '\0';
-        iVar3 = check_special_flags2_2022(player, card, -0x80000000);
+        iVar3 = check_special_flags2(player, card, -0x80000000);
         if (iVar3 == 0)
         {
 
@@ -2926,7 +2923,7 @@ int card_tethered_skirge(int player, int card, event_t event)
       ptVar3 = becomes_target_of_spell_or_effect(player, card, event, player, card, 2);
       if (ptVar3 != NULL)
       {
-        lose_life_2022(player, 1);
+        lose_life(player, 1);
       }
     }
   }
@@ -2954,7 +2951,7 @@ int card_cessation(int player, int card, event_t event)
       result = is_humiliated_for_ability(player, card, AL_STATIC);
       if (result == 0)
       {
-        cannot_attack_2022((int)instance->damage_target_player, instance->damage_target_card, event);
+        cannot_attack((int)instance->damage_target_player, instance->damage_target_card, event);
       }
     }
   }
@@ -3085,7 +3082,7 @@ int card_treacherous_link(int player, int card, event_t event)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x25b2290; original cards/urza_legacy.c:392. */
-char *target_is_attached_to_creature_2022(int who_chooses, int player, int card,
+const char *target_is_attached_to_creature(int who_chooses, int player, int card,
                                           int targeting_player, int targeting_card)
 {
   card_instance_t *instance;

@@ -2748,7 +2748,7 @@ LAB_0209954c:
 int card_flowstone_strike(int player, int card, event_t event)
 {
   int result;
-  result = vanilla_instant_pump_2022(player, card, event, 2, 1 - player, 1, -1, 0, 4);
+  result = vanilla_instant_pump(player, card, event, 2, 1 - player, 1, -1, 0, 4);
   return result;
 }
 
@@ -2808,7 +2808,7 @@ LAB_0209b728:
 int card_phyrexian_driver(int player, int card, event_t event)
 {
   test_definition_t test;
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -2827,7 +2827,7 @@ int card_rejuvenation_chamber(int player, int card, event_t event)
   fading(player, card, event, 2);
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    gain_life_2022(player, 2);
+    gain_life(player, 2);
   }
   result = generic_activated_ability(player, card, event, 1, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
   return result;
@@ -3189,7 +3189,7 @@ int card_downhill_charge(int player, int card, event_t event)
 
       result = get_hacked_subtype(player, card, 0x5006);
       result = count_subtype(player, 1, result);
-      pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, result,
+      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, result,
                      0);
     }
     kill_card(player, card, KILL_DESTROY);
@@ -3290,7 +3290,7 @@ int card_noble_stand(int player, int card, event_t event)
           ((iVar3 = blocking(1 - current_turn, iVar1, EVENT_DECLARE_BLOCKERS),
             iVar3 != 0 && (1 - current_turn == player))))
       {
-        gain_life_2022(player, 2);
+        gain_life(player, 2);
       }
       iVar1 = iVar1 + -1;
     } while (iVar1 != -1);
@@ -3435,7 +3435,7 @@ int card_flowstone_thopter(int player, int card, event_t event)
   }
 
   instance = get_card_instance(player, card);
-  pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
+  pump_ability_until_eot(instance->parent_controller, instance->parent_card,
                          instance->parent_controller, instance->parent_card, 1, -1, 0x20, 0);
 LAB_0209a0c7:
   result = generic_activated_ability(player, card, event, 0, 1, 0, 0, 0, 0, 0, 0, NULL, NULL);
@@ -3613,7 +3613,7 @@ int card_mogg_alarm(int player, int card, event_t event)
     }
     else if (event == EVENT_RESOLVE_SPELL)
     {
-      generate_tokens_by_id_2022(player, card, 0x493a, 2);
+      generate_tokens_by_id(player, card, 0x493a, 2);
       kill_card(player, card, KILL_DESTROY);
       return 0;
     }
@@ -3801,7 +3801,7 @@ static int mana_cache_legacy(int player, int card, event_t event)
       {
         return 0;
       }
-      iVar2 = can_produce_mana_2022(iVar3, card_00);
+      iVar2 = can_produce_mana(iVar3, card_00);
       if (iVar2 == 0)
       {
         return 0;
@@ -3821,7 +3821,7 @@ static int mana_cache_legacy(int player, int card, event_t event)
       {
         return 0;
       }
-      iVar3 = can_produce_mana_2022(iVar3, card_00);
+      iVar3 = can_produce_mana(iVar3, card_00);
       return iVar3;
     }
     if (event == EVENT_ACTIVATE)
@@ -3849,7 +3849,11 @@ int card_mana_cache(int player, int card, event_t event)
   int iVar3;
   int card_00;
   int iStack_ec;
-  int found[2];
+  union
+  {
+    int found[2];
+    test_definition_t this_test;
+  } storage;
 
   iVar1 = current_turn;
   if (event == EVENT_STATIC_EFFECTS)
@@ -3857,8 +3861,8 @@ int card_mana_cache(int player, int card, event_t event)
     if ((card == affected_card) && (player == affected_card_controller))
     {
 
-      found[0] = -1;
-      found[1] = -1;
+      storage.found[0] = -1;
+      storage.found[1] = -1;
       iStack_ec = active_cards_count[current_turn] + -1;
       if (-1 < iStack_ec)
       {
@@ -3871,7 +3875,7 @@ int card_mana_cache(int player, int card, event_t event)
                 instance->info_slot_fn == mana_cache_legacy)) &&
               ((instance->targets[0].player == player && (instance->targets[0].card == card))))
           {
-            found[iVar1] = iStack_ec;
+            storage.found[iVar1] = iStack_ec;
           }
           iStack_ec = iStack_ec + -1;
         } while (iStack_ec != -1);
@@ -3890,17 +3894,17 @@ int card_mana_cache(int player, int card, event_t event)
                     ((instance->targets[0].player == player &&
                       (instance->targets[0].card == card))))))
           {
-            found[iVar1] = iStack_ec;
+            storage.found[iVar1] = iStack_ec;
           }
           iStack_ec = iStack_ec + -1;
         } while (iStack_ec != -1);
       }
-      if (-1 < found[player])
+      if (-1 < storage.found[player])
       {
-        kill_card(player, found[player], KILL_EXILE);
+        kill_card(player, storage.found[player], KILL_EXILE);
       }
       iVar1 = 1 - player;
-      if (found[iVar1] == -1)
+      if (storage.found[iVar1] == -1)
       {
 
         instance = get_card_instance(player, card);
@@ -3918,9 +3922,9 @@ int card_mana_cache(int player, int card, event_t event)
       goto LAB_0209aa68;
   LAB_0209aaac:
 
-    new_default_test_definition((test_definition_t *)found, 1, "");
+    new_default_test_definition(&storage.this_test, 1, "");
     iVar1 = check_battlefield_for_special_card(player, card, current_turn, 4,
-                                               (test_definition_t *)found);
+                                               &storage.this_test);
     add_counters_from_source(player, card, player, card, COUNTER_CHARGE, iVar1);
   }
   else
@@ -3933,7 +3937,7 @@ int card_mana_cache(int player, int card, event_t event)
   {
     if ((((card == affected_card) && (player == affected_card_controller)) &&
          (iVar1 = count_counters(player, card, COUNTER_CHARGE), iVar1 != 0)) &&
-        (iVar1 = can_produce_mana_2022(player, card), iVar1 != 0))
+        (iVar1 = can_produce_mana(player, card), iVar1 != 0))
     {
       iVar1 = count_counters(player, card, COUNTER_CHARGE);
       declare_mana_available(player, 0, iVar1);
@@ -3944,7 +3948,7 @@ int card_mana_cache(int player, int card, event_t event)
     iVar1 = count_counters(player, card, COUNTER_CHARGE);
     if ((0 < iVar1) && (current_turn == player))
     {
-      iVar1 = can_produce_mana_2022(player, card);
+      iVar1 = can_produce_mana(player, card);
       return iVar1;
     }
   }
@@ -4118,7 +4122,7 @@ int pale_moon_legacy(int player, int card, event_t event)
     iVar1 = is_what(affected_card_controller, affected_card, 1);
     if (iVar1 != 0)
     {
-      set_special_flags2_2022(affected_card_controller, affected_card, 0x40);
+      set_special_flags2(affected_card_controller, affected_card, 0x40);
     }
   }
   else if (event == EVENT_MODIFY_MANA_PROD)
@@ -4151,7 +4155,7 @@ int pale_moon_legacy(int player, int card, event_t event)
               goto LAB_020903d8;
           }
           iVar3 = card_00 + 1;
-          set_special_flags2_2022(iVar1, card_00, 0x40);
+          set_special_flags2(iVar1, card_00, 0x40);
           card_00 = iVar3;
         } while (iVar3 < active_cards_count[iVar1]);
       }
@@ -4209,7 +4213,7 @@ int card_pale_moon(int player, int card, event_t event)
               goto LAB_020947f0;
           }
           iVar3 = card_00 + 1;
-          set_special_flags2_2022(iVar1, card_00, 0x40);
+          set_special_flags2(iVar1, card_00, 0x40);
           card_00 = iVar3;
         } while (iVar3 < active_cards_count[iVar1]);
       }
@@ -4280,10 +4284,10 @@ int card_laccolith_rig(int player, int card, event_t event)
 
         instance = get_card_instance(player_00, iVar2);
         instance->number_of_targets = '\0';
-        default_target_definition_2022(player_00, iVar2, &td, 2);
+        default_target_definition(player_00, iVar2, &td, 2);
         td.who_chooses = player;
-        iVar3 = can_target_2022(&td);
-        if ((iVar3 != 0) && (iVar3 = pick_target_2022(&td, "TARGET_CREATURE"), iVar3 != 0))
+        iVar3 = can_target(&td);
+        if ((iVar3 != 0) && (iVar3 = pick_target(&td, "TARGET_CREATURE"), iVar3 != 0))
         {
           negate_combat_damage_this_turn(player, card, player_00, iVar2, 0);
           iVar3 = get_power(player_00, iVar2);
@@ -4315,12 +4319,12 @@ int card_lashknife(int player, int card, event_t event)
   {
 
     pcVar1 = get_card_instance(player, card);
-    base_target_definition_2022(player, card, &td2, 2);
+    base_target_definition(player, card, &td2, 2);
     td2.allowed_controller = player;
     td2.preferred_controller = player;
     td2.illegal_state = 1;
     result = check_battlefield_for_subtype(player, 1, 0x5007);
-    if ((result == 0) || (result = can_target_2022(&td2), result == 0))
+    if ((result == 0) || (result = can_target(&td2), result == 0))
     {
       pcVar1->info_slot = 0;
     }
@@ -4355,11 +4359,11 @@ int card_lashknife(int player, int card, event_t event)
                                 " Tap a creature you control\n Play normally\n Cancel", 0),
              result == 0))
         {
-          base_target_definition_2022(player, card, &td2, 2);
+          base_target_definition(player, card, &td2, 2);
           td2.allowed_controller = player;
           td2.preferred_controller = player;
           td2.illegal_state = 1;
-          result = new_pick_target_2022(&td2, "Select a creature you control to tap.", 0, 0x81);
+          result = new_pick_target(&td2, "Select a creature you control to tap.", 0, 0x81);
           if (result == 0)
           {
             spell_fizzled = 1;
@@ -4494,7 +4498,7 @@ int card_skyshroud_cutter(int player, int card, event_t event)
       charge_mana_from_id(player, card, EVENT_CAST_SPELL, result);
       return 0;
     }
-    gain_life_2022(1 - player, 5);
+    gain_life(1 - player, 5);
   }
   return 0;
 }
@@ -4511,7 +4515,7 @@ int card_phyrexian_prowler(int player, int card, event_t event)
   fading(player, card, event, 3);
   if (event == EVENT_CHECK_ABILITIES)
   {
-    result = can_use_activated_abilities_2022(player, card);
+    result = can_use_activated_abilities(player, card);
     if ((((result != 0) && (result = count_counters(player, card, COUNTER_FADE), 0 < result)) &&
          (card == affected_card)) &&
         (player == affected_card_controller))
@@ -4538,10 +4542,10 @@ int card_phyrexian_prowler(int player, int card, event_t event)
     goto LAB_0209baa1;
   }
   instance = get_card_instance(player, card);
-  pump_until_eot_merge_previous_2022(instance->parent_controller, instance->parent_card,
+  pump_until_eot_merge_previous(instance->parent_controller, instance->parent_card,
                                      instance->parent_controller, instance->parent_card, 1, 1);
 LAB_0209baa6:
-  result = generic_activated_ability_2022(player, card, event, 0, 0, 0, 0, 0, 0, 0, 0x1290100, NULL,
+  result = generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 0, 0, 0x1290100, NULL,
                                           NULL);
   return result;
 }
@@ -4560,7 +4564,7 @@ int card_flowstone_armor(int player, int card, event_t event)
   choose_to_untap(player, card, event);
   if (event == EVENT_ACTIVATE)
   {
-    default_target_definition_2022(player, card, &td, 2);
+    default_target_definition(player, card, &td, 2);
     get_card_instance(player, card);
   }
   else
@@ -4570,16 +4574,16 @@ int card_flowstone_armor(int player, int card, event_t event)
     {
       return 0;
     }
-    default_target_definition_2022(player, card, &td, 2);
+    default_target_definition(player, card, &td, 2);
     instance = get_card_instance(player, card);
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target_2022(&td), result != 0))
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
-      pump_until_source_is_in_play_and_tapped_2022(
+      pump_until_source_is_in_play_and_tapped(
           instance->parent_controller, instance->parent_card, instance->targets[0].player,
           instance->targets[0].card, 1, -1, 0, 0, 1);
     }
   }
-  result = generic_activated_ability_2022(player, card, event, 5, 3, 0, 0, 0, 0, 0, 0, &td,
+  result = generic_activated_ability(player, card, event, 5, 3, 0, 0, 0, 0, 0, 0, &td,
                                           "TARGET_CREATURE");
   return result;
 }

@@ -94,7 +94,11 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     assert any(v['name']=='td' and v['location']=='(DW_OP_fbreg: -96)' for v in component['locals']['22d09a0'])
     runtime=Image((root/'.recovery/2022-ManalinkEh.dll').read_bytes());decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True
     overlap=[s.split('\t')[1] for s in (root/'.recovery/absolute-interfaces.tsv').read_text().splitlines() if s.split('\t')[2]=='global']
-    targets={int(f['address'],16):f for f in manifest['accepted_functions']}
+    # Replay the target catalog recorded for these accepted caller bodies.
+    # Recovering a callee later does not migrate this component's callers;
+    # the new callee component records those pending bindings separately.
+    recorded_targets={int(site['target'],16) for detail in component['functions'].values() for site in detail['canonical_calls']+detail['callback_references']}
+    targets={int(f['address'],16):f for f in manifest['accepted_functions'] if int(f['address'],16) in recorded_targets|{int(a,16) for a in entries}}
     for a,entry in entries.items():
         detail=component['functions'][a];assert entry['memorial_family_evidence']==detail and entry['static']==(a==WORKER or a in CALLBACKS)
         body=function_body(sources[SOURCE].replace('\r\n','\n'),entry['name']);assert sha(body.encode())==entry['reconstruction_body_sha256']

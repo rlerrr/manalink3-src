@@ -1,5 +1,8 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+int new_special_count_grave(int player, test_definition_2022_t *this_test);
+
 int count_graveyard_by_color(int player, int selected_color){
 	if( get_global_color_hack(player) & selected_color ){
 		return count_graveyard(player);
@@ -72,25 +75,15 @@ void purge_rfg(int player){
 	rfg[count_rfg(player) - 1] = -1;
 }
 
-static int count_zone_by_type(int player, int type, const int* zone){
-	int count = 0;
-	int i;
-
-	for(i = 0; i < 500 && zone[i] != -1; i++){
-		if( is_what(-1, zone[i], type) ){
-			count++;
-		}
-	}
-
-	return count;
-}
+/* Native zone counting has two physical arguments; the unused player predecessor is retired. */
+static int count_zone_by_type(int type, const int *zone);
 
 int count_graveyard_by_type(int player, int type){
 	int i;
 	int result = 0;
 	for(i=0; i<2; i++){
 		if( i == player || player == 2 ){
-			result += count_zone_by_type(i, type, get_grave(i));
+			result += count_zone_by_type(type, get_grave(i));
 		}
 	}
 	return result;
@@ -131,26 +124,37 @@ int any_in_graveyard_by_subtype(int player, subtype_t subtype)
 }
 
 int count_deck_by_type(int player, int type){
-	return count_zone_by_type(player, type, deck_ptr[player]);
+	return count_zone_by_type(type, deck_ptr[player]);
 }
 
-int new_special_count_grave(int player, test_definition_t *this_test){
-	int result = 0;
-	int test_type = new_get_test_score(this_test);
-	int i;
-	for(i=0; i<2; i++){
-		if( i == player || player == 2 ){
-			int count = 0;
-			const int *grave = get_grave(i);
-			while( grave[count] != -1 ){
-					if( new_make_test(player, grave[count], test_type, this_test) ){
-						result++;
-					}
-					count++;
-			}
-		}
-	}
-	return result;
+int new_special_count_grave(int player, test_definition_2022_t *this_test)
+{
+  int test_type;
+  int iVar1;
+  int *piVar2;
+  int iVar3;
+  int iStack_14;
+
+  test_type = new_get_test_score(this_test);
+  iStack_14 = 0;
+  iVar3 = 0;
+  do
+  {
+    if ((player == iVar3) || (player == 2))
+    {
+      piVar2 = graveyard_ptr_mutable[iVar3];
+      iVar1 = *piVar2;
+      while (iVar1 != -1)
+      {
+        piVar2 = piVar2 + 1;
+        iVar1 = new_make_test(player, iVar1, test_type, this_test);
+        iStack_14 = (iStack_14 + 1) - (unsigned int)(iVar1 == 0);
+        iVar1 = *piVar2;
+      }
+    }
+    iVar3 = iVar3 + 1;
+  } while (iVar3 != 2);
+  return iStack_14;
 }
 
 int special_count_grave(int player, int type, int flag1, int subtype, int flag2, int color, int flag3, int id, int flag4, int cc, int flag5){
@@ -198,9 +202,9 @@ int special_count_zone(int player, int *zone, test_definition_t *this_test)
 
 /* ManalinkEh 2022: 0x26e5c70; original functions/count_graveyard.c:119. */
 /* Concrete compiler clone: only EAX/EDX are ABI arguments. */
-static int count_zone_by_type_2022(int type, int *zone)
+static int count_zone_by_type(int type, const int *zone)
 {
-  int *piVar1;
+  const int *piVar1;
   int iVar2;
   int iVar3;
 
@@ -231,11 +235,11 @@ int count_rfg_by_type(int player, int type)
   iVar2 = 0;
   if ((player & 0xfffffffdU) == 0)
   {
-    iVar2 = count_zone_by_type_2022(type, rfg_ptr[player]);
+    iVar2 = count_zone_by_type(type, rfg_ptr[player]);
   }
   if (player - 1U < 2)
   {
-    iVar1 = count_zone_by_type_2022(type, rfg_ptr[player]);
+    iVar1 = count_zone_by_type(type, rfg_ptr[player]);
     return iVar2 + iVar1;
   }
   return iVar2;
@@ -246,34 +250,6 @@ int count_rfg_by_type(int player, int type)
 /* Recovered October 2022 typed consumers and compiler parts. */
 
 /* ManalinkEh 2022: 0x26e62e0; original functions/count_graveyard.c:192. */
-int new_special_count_grave_2022(int player, test_definition_2022_t *this_test)
-{
-  int test_type;
-  int iVar1;
-  int *piVar2;
-  int iVar3;
-  int iStack_14;
 
-  test_type = new_get_test_score_2022(this_test);
-  iStack_14 = 0;
-  iVar3 = 0;
-  do
-  {
-    if ((player == iVar3) || (player == 2))
-    {
-      piVar2 = graveyard_ptr_mutable[iVar3];
-      iVar1 = *piVar2;
-      while (iVar1 != -1)
-      {
-        piVar2 = piVar2 + 1;
-        iVar1 = new_make_test_2022(player, iVar1, test_type, this_test);
-        iStack_14 = (iStack_14 + 1) - (unsigned int)(iVar1 == 0);
-        iVar1 = *piVar2;
-      }
-    }
-    iVar3 = iVar3 + 1;
-  } while (iVar3 != 2);
-  return iStack_14;
-}
 
 #endif

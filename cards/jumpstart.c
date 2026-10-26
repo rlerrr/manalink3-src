@@ -7,7 +7,7 @@ int card_archaeomender(int player, int card, event_t event)
 {
   int result;
   test_definition_t test;
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     new_default_test_definition(&test, 0x40, "Select target artifact card.");
@@ -31,7 +31,7 @@ int card_brightmare(int player, int card, event_t event)
   card_instance_t *instance;
   target_definition_t td;
   result = duh_mode(player);
-  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -72,7 +72,7 @@ int card_chained_brute(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2373430; original cards/jumpstart.c:153. */
 int card_corsair_captain(int player, int card, event_t event)
 {
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     generate_token_by_id(player, card, 0x4998);
@@ -169,7 +169,7 @@ int card_nocturnal_feeder(int player, int card, event_t event)
     return 0;
   }
   lose_life(1 - player, 2);
-  gain_life_2022(player, 2);
+  gain_life(player, 2);
   return 0;
 }
 
@@ -252,7 +252,7 @@ int card_sethron_hurloon_general(int player, int card, event_t event)
   }
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    pump_subtype_until_eot_2022(player, card, player, 0x77, 1, 0, 0, 0x10004);
+    pump_subtype_until_eot(player, card, player, 0x77, 1, 0, 0, 0x10004);
   }
   return 0;
 }
@@ -266,7 +266,7 @@ int card_tinybones_trinket_thief(int player, int card, event_t event)
   if ((result != 0) && (result = get_trap_condition(1 - player, 0x203), result != 0))
   {
     draw_a_card(player);
-    lose_life_2022(player, 1);
+    lose_life(player, 1);
   }
   if (event != EVENT_ACTIVATE)
   {
@@ -276,7 +276,7 @@ int card_tinybones_trinket_thief(int player, int card, event_t event)
     }
     if ((event == EVENT_RESOLVE_ACTIVATION) && (hand_count[1 - player] == 0))
     {
-      lose_life_2022(1 - player, 10);
+      lose_life(1 - player, 10);
     }
   }
   result = generic_activated_ability(player, card, event, 0, 4, 2, 0, 0, 0, 0, 0, NULL, NULL);
@@ -331,7 +331,7 @@ int card_blessed_sanctuary(int player, int card, event_t event)
   }
   if (event == EVENT_ETB)
   {
-    generate_token_by_id_2022(player, card, 0x54f2);
+    generate_token_by_id(player, card, 0x54f2);
   }
   result = global_enchantment(player, card, event);
   return result;
@@ -344,7 +344,7 @@ int card_scholar_of_the_lost_trove(int player, int card, event_t event)
   test_definition_t test;
 
   result = duh_mode(player);
-  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_ETB)
   {
     default_test_definition(&test, 0x78);
@@ -494,7 +494,7 @@ int card_inniaz_the_gale_force(int player, int card, event_t event)
     if (event == EVENT_CAN_ACTIVATE)
     {
 
-      result = get_cost_mod_for_activated_abilities_2022(player, card, 2, 0, 0, 0, 0, 1);
+      result = get_cost_mod_for_activated_abilities(player, card, 2, 0, 0, 0, 0, 1);
       result = has_mana_hybrid(player, 1, 5, 2, result);
       if (result == 0)
       {
@@ -507,7 +507,7 @@ int card_inniaz_the_gale_force(int player, int card, event_t event)
     if (event == EVENT_ACTIVATE)
     {
 
-      result = get_cost_mod_for_activated_abilities_2022(player, card, 2, 0, 0, 0, 0, 1);
+      result = get_cost_mod_for_activated_abilities(player, card, 2, 0, 0, 0, 0, 1);
       charge_mana_hybrid(player, card, 1, 5, 2, result);
       if (spell_fizzled == 1)
       {
@@ -557,7 +557,7 @@ int card_stone_haven_pilgrim(int player, int card, event_t event)
     result = check_battlefield_for_subtype(player, 0x44, -1);
     if (result != 0)
     {
-      pump_ability_until_eot_2022(player, card, player, card, 1, 1, 0, 2);
+      pump_ability_until_eot(player, card, player, card, 1, 1, 0, 2);
     }
   }
   else if ((((event - EVENT_POW_BOOST < 2) && (current_turn == player)) &&
@@ -577,7 +577,7 @@ int thriving_land(int player, int card, event_t event)
   card_instance_t *instance;
   color_test_t cVar3;
 
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
 
@@ -665,7 +665,7 @@ static int kels_fight_fixer_effect(int player, int card, event_t event)
     }
   }
   result = duh_mode(player);
-  uVar3 = resolve_gfp_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  uVar3 = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if ((uVar3 != 0) && (result = check_status(player, card, 0x10000), result == 0))
   {
 
@@ -781,7 +781,7 @@ int card_kels_fight_fixer(int player, int card, event_t event)
     if (event != EVENT_RESOLVE_ACTIVATION)
       goto LAB_02373d9d;
   }
-  pump_ability_until_eot_no_repeat_2022(pcStack_f0->parent_controller, pcStack_f0->parent_card,
+  pump_ability_until_eot_no_repeat(pcStack_f0->parent_controller, pcStack_f0->parent_card,
                                    pcStack_f0->parent_controller, pcStack_f0->parent_card, 0,
                                    0x800);
 LAB_02373d9d:
@@ -1069,7 +1069,7 @@ int card_trusty_retriever(int player, int card, event_t event)
   unsigned int uVar2;
   test_definition_t this_test;
 
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
 
@@ -1172,7 +1172,7 @@ int card_muxus_goblin_grandee(int player, int card, event_t event)
   test.subtype = 0x4b;
   test.not_me = 1;
   iVar1 = check_battlefield_for_special_card(player, card, player, 4, &test);
-  pump_until_eot_2022(player, card, player, card, iVar1, iVar1);
+  pump_until_eot(player, card, player, card, iVar1, iVar1);
   return 0;
 }
 
@@ -1266,12 +1266,12 @@ int card_towering_titan(int player, int card, event_t event)
     }
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
-      pump_creatures_until_eot_no_repeat_2022(player, card, 2, 0, 0x80, 0, NULL);
+      pump_creatures_until_eot_no_repeat(player, card, 2, 0, 0x80, 0, NULL);
     }
   }
-  default_test_definition_2022(&test, 2);
+  default_test_definition(&test, 2);
   test.keyword = KEYWORD_DEFENDER;
-  result = generic_activated_ability_with_sacrifice_as_cost_2022(
+  result = generic_activated_ability_with_sacrifice_as_cost(
       player, card, event, GAA_NONE, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, TYPE_CREATURE, &test, SARV_0);
   return result;
 }
@@ -1323,11 +1323,11 @@ int card_neyith_of_the_dire_hunt(int player, int card, event_t event)
             (iVar3 = is_humiliated_for_ability(player, card, AL_TRIG), iVar3 == 0)) &&
            (current_turn == player))
   {
-    default_target_definition_2022(player, card, &td, 2);
-    iVar3 = can_target_2022(&td);
+    default_target_definition(player, card, &td, 2);
+    iVar3 = can_target(&td);
     if (iVar3 != 0)
     {
-      iVar3 = get_cost_mod_for_activated_abilities_2022(player, card, 2, 0, 0, 1, 0, 0);
+      iVar3 = get_cost_mod_for_activated_abilities(player, card, 2, 0, 0, 1, 0, 0);
       iVar2 = has_mana_hybrid(player, 1, 4, 3, iVar3);
       if (iVar2 != 0)
       {
@@ -1337,11 +1337,11 @@ int card_neyith_of_the_dire_hunt(int player, int card, event_t event)
                             0, 0);
         if (((iVar2 == 1) &&
              (charge_mana_hybrid(player, card, 1, 4, 3, iVar3), spell_fizzled != 1)) &&
-            (new_pick_target_2022(&td, "TARGET_CREATURE", 0, 1), spell_fizzled != 1))
+            (new_pick_target(&td, "TARGET_CREATURE", 0, 1), spell_fizzled != 1))
         {
           instance = get_card_instance(player, card);
           iVar3 = get_power(instance->targets[0].player, instance->targets[0].card);
-          pump_ability_until_eot_2022(player, card, instance->targets[0].player,
+          pump_ability_until_eot(player, card, instance->targets[0].player,
                                       instance->targets[0].card, iVar3, 0, 0, 0x1000);
         }
       }
@@ -1366,7 +1366,7 @@ int card_zurzoth_chaos_rider(int player, int card, event_t event)
   result = card_drawn_trigger(player, card, event, who_draws, RESOLVE_TRIGGER_MANDATORY);
   if (((result != 0) && (who_draws != current_turn)) && (cards_drawn_this_turn[who_draws] == 1))
   {
-    make_devil_2022(player, card, player, 1, 1);
+    make_devil(player, card, player, 1, 1);
   }
   if (event != EVENT_DECLARE_ATTACKERS)
   {
@@ -1383,9 +1383,9 @@ int card_zurzoth_chaos_rider(int player, int card, event_t event)
     discard(player_00, 1, player);
     return 0;
   }
-  default_test_definition_2022(&test, 2);
+  default_test_definition(&test, 2);
   test.subtype = 0x2e;
-  store_attackers_2022(player, card, EVENT_DECLARE_ATTACKERS, 0, player, -1, &test);
+  store_attackers(player, card, EVENT_DECLARE_ATTACKERS, 0, player, -1, &test);
   dat_ability(player, card, EVENT_DECLARE_ATTACKERS, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
   return 0;
 }
@@ -1420,7 +1420,7 @@ int card_ormos_archive_keeper(int player, int card, event_t event)
   int searched[2][3] = {{-1, -1, -1}, {-1, -1, -1}};
   if (event == EVENT_CAN_ACTIVATE)
   {
-    if (!generic_activated_ability_2022(player, card, event, 0, 1, 0, 2, 0, 0, 0, 0, NULL, NULL))
+    if (!generic_activated_ability(player, card, event, 0, 1, 0, 2, 0, 0, 0, 0, NULL, NULL))
       return 0;
     int count = 0;
     for (int i = 0; i < active_cards_count[player]; ++i)
@@ -1439,7 +1439,7 @@ int card_ormos_archive_keeper(int player, int card, event_t event)
   if (event == EVENT_ACTIVATE)
   {
     test_definition_2022_t test;
-    new_default_test_definition_2022(&test, 0xff, "Select a card to discard.");
+    new_default_test_definition(&test, 0xff, "Select a card to discard.");
     test.value_for_special_selection_function = (int32_t)(intptr_t)searched;
     test.special_selection_function = test_not_in_array;
     test.zone = 0x100;
@@ -1466,7 +1466,7 @@ int card_ormos_archive_keeper(int player, int card, event_t event)
       do
       {
         int selected =
-            select_card_from_zone_2022(player, player, hand_copy[0], count, 0, 5, -1, &test);
+            select_card_from_zone(player, player, hand_copy[0], count, 0, 5, -1, &test);
         if (selected < 0 || selected == searched[1][0] || selected == searched[1][1])
         {
           if (chosen < 3)
@@ -1481,7 +1481,7 @@ int card_ormos_archive_keeper(int player, int card, event_t event)
         ++chosen;
         hand_copy[0][selected] = iid_draw_a_card;
       } while (chosen != 3);
-      generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0, 1, 0, 2, 0, 0, 0, 0, NULL,
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 1, 0, 2, 0, 0, 0, 0, NULL,
                                      NULL);
       if (spell_fizzled != 1)
       {

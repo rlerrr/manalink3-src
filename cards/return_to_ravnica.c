@@ -1,5 +1,11 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+int overload(int player, int card, event_t event, int colorless, int black, int blue,
+                  int green, int red, int white);
+int pay_overload(int player, int card, int colorless, int black, int blue, int green, int red,
+                      int white);
+
 // Functions
 static int detain_legacy(int player, int card, event_t event){
 
@@ -80,57 +86,87 @@ void populate(int player, int card)
 	}
 }
 
-int overload(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white){
-	card_instance_t *instance = get_card_instance(player, card);
-	if( event == EVENT_MODIFY_COST ){
-		int cless = get_updated_casting_cost(player, card, -1, event, colorless);
-		if( has_mana_multi(player, cless, black, blue, green, red, white) ){
-			null_casting_cost(player, card);
-			instance->info_slot = 1;
-		}
-		else{
-			instance->info_slot = 0;
-		}
-	}
-	return 0;
+int overload(int player, int card, event_t event, int colorless, int black, int blue,
+                  int green, int red, int white)
+{
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  if (event == EVENT_MODIFY_COST)
+  {
+    result = get_updated_casting_cost(player, card, -1, EVENT_MODIFY_COST, colorless);
+    result = has_mana_multi(player, result, black, blue, green, red, white);
+    if (result == 0)
+    {
+      instance->info_slot = 0;
+      return 0;
+    }
+    null_casting_cost(player, card);
+    instance->info_slot = 1;
+  }
+  return 0;
 }
 
-int pay_overload(int player, int card, int colorless, int black, int blue, int green, int red, int white){
+int pay_overload(int player, int card, int colorless, int black, int blue, int green, int red,
+                      int white)
+{
+  int old_info_slot;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  bool bVar5;
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( played_for_free(player, card) || is_token(player, card) || instance->info_slot == 0 ){
-		return 1;
-	}
-
-	int double_x = 0;
-	if( colorless == -2 ){
-		double_x = 1;
-		colorless = 0;
-	}
-	int cless = get_updated_casting_cost(player, card, -1, EVENT_CAST_SPELL, colorless);
-	if( has_mana_multi(player, cless, black, blue, green, red, white) ){
-		int choice = do_dialog(player, player, card, -1, -1, " Pay Overload cost\n Play the spell normally\n Cancel", 0);
-		if( choice == 0 ){
-			charge_mana_multi(player, cless, black, blue, green, red, white);
-			if( spell_fizzled != 1 ){
-				if( double_x ){
-					instance->targets[1].player = charge_mana_for_double_x(player, COLOR_COLORLESS);
-					if( spell_fizzled == 1 ){
-						return 0;
-					}
-				}
-				return 2;
-			}
-		}
-		else if( choice == 1 ){
-				return charge_mana_from_id(player, card, EVENT_CAST_SPELL, get_id(player, card));
-		}
-		else{
-			spell_fizzled = 1;
-		}
-	}
-	return 0;
+  instance = get_card_instance(player, card);
+  iVar3 = played_for_free(player, card);
+  if (((iVar3 != 0) || (iVar3 = is_token(player, card), iVar3 != 0)) || (instance->info_slot == 0))
+  {
+    return 1;
+  }
+  bVar5 = colorless == -2;
+  if (bVar5)
+  {
+    colorless = 0;
+  }
+  iVar3 = get_updated_casting_cost(player, card, -1, EVENT_CAST_SPELL, colorless);
+  iVar4 = has_mana_multi(player, iVar3, black, blue, green, red, white);
+  if (iVar4 == 0)
+  {
+    return 0;
+  }
+  old_info_slot = instance->info_slot;
+  instance->info_slot = 0;
+  iVar4 = call_card_function(player, card, EVENT_CAN_CAST);
+  instance->info_slot = old_info_slot;
+  iVar4 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014", "\001\016",
+                      "Pay Overload cost", 1, 10, "Play the spell normally", iVar4, 3, 0, 0, 0, 0);
+  if (iVar4 == 1)
+  {
+    charge_mana_multi(player, iVar3, black, blue, green, red, white);
+    if (spell_fizzled == 1)
+    {
+      return 0;
+    }
+    if (bVar5)
+    {
+      iVar3 = charge_mana_for_double_x(player, 0);
+      bVar5 = spell_fizzled == 1;
+      instance->targets[1].player = iVar3;
+      if (bVar5)
+      {
+        return 0;
+      }
+    }
+    return 2;
+  }
+  if (iVar4 != 2)
+  {
+    spell_fizzled = 1;
+    return 0;
+  }
+  iVar3 = get_id(player, card);
+  iVar3 = charge_mana_from_id(player, card, EVENT_CAST_SPELL, iVar3);
+  return iVar3;
 }
 
 int unleash(int player, int card, event_t event){
@@ -1670,7 +1706,7 @@ int card_dark_reveler(int player, int card, event_t event){
 
 int card_desecration_demon(int player, int card, event_t event){
 
-	if ( beginning_of_combat(player, card, event, ANYBODY, -1) ){
+	if ( beginning_of_combat(player, card, event, ANYBODY) ){
 		if (can_sacrifice(player, 1-player, 1, TYPE_CREATURE, 0)){
 			int ai_choice = 1;
 			if (1-player == AI
@@ -5488,7 +5524,7 @@ int card_slaughter_games(int player, int card, event_t event){
 			else{
 				csvid = new_card_from_list(player, 3, &test);
 			}
-			lobotomy_effect(player, 1-player, csvid, 0);
+			lobotomy_effect(player, 1-player, csvid, -1, 0);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -6878,92 +6914,13 @@ int card_transguild_promenade(int player, int card, event_t event){
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x245c180; original cards/return_to_ravnica.c:94. */
-int pay_overload_2022(int player, int card, int colorless, int black, int blue, int green, int red,
-                      int white)
-{
-  int old_info_slot;
-  card_instance_t *instance;
-  int iVar3;
-  int iVar4;
-  bool bVar5;
 
-  instance = get_card_instance(player, card);
-  iVar3 = played_for_free(player, card);
-  if (((iVar3 != 0) || (iVar3 = is_token(player, card), iVar3 != 0)) || (instance->info_slot == 0))
-  {
-    return 1;
-  }
-  bVar5 = colorless == -2;
-  if (bVar5)
-  {
-    colorless = 0;
-  }
-  iVar3 = get_updated_casting_cost(player, card, -1, EVENT_CAST_SPELL, colorless);
-  iVar4 = has_mana_multi(player, iVar3, black, blue, green, red, white);
-  if (iVar4 == 0)
-  {
-    return 0;
-  }
-  old_info_slot = instance->info_slot;
-  instance->info_slot = 0;
-  iVar4 = call_card_function(player, card, EVENT_CAN_CAST);
-  instance->info_slot = old_info_slot;
-  iVar4 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014", "\001\016",
-                      "Pay Overload cost", 1, 10, "Play the spell normally", iVar4, 3, 0, 0, 0, 0);
-  if (iVar4 == 1)
-  {
-    charge_mana_multi(player, iVar3, black, blue, green, red, white);
-    if (spell_fizzled == 1)
-    {
-      return 0;
-    }
-    if (bVar5)
-    {
-      iVar3 = charge_mana_for_double_x(player, 0);
-      bVar5 = spell_fizzled == 1;
-      instance->targets[1].player = iVar3;
-      if (bVar5)
-      {
-        return 0;
-      }
-    }
-    return 2;
-  }
-  if (iVar4 != 2)
-  {
-    spell_fizzled = 1;
-    return 0;
-  }
-  iVar3 = get_id(player, card);
-  iVar3 = charge_mana_from_id(player, card, EVENT_CAST_SPELL, iVar3);
-  return iVar3;
-}
 
 #endif
 
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x245c0c0; original cards/return_to_ravnica.c:79. */
-int overload_2022(int player, int card, event_t event, int colorless, int black, int blue,
-                  int green, int red, int white)
-{
-  card_instance_t *instance;
-  int result;
 
-  instance = get_card_instance(player, card);
-  if (event == EVENT_MODIFY_COST)
-  {
-    result = get_updated_casting_cost(player, card, -1, EVENT_MODIFY_COST, colorless);
-    result = has_mana_multi(player, result, black, blue, green, red, white);
-    if (result == 0)
-    {
-      instance->info_slot = 0;
-      return 0;
-    }
-    null_casting_cost(player, card);
-    instance->info_slot = 1;
-  }
-  return 0;
-}
 
 #endif

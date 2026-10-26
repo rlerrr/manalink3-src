@@ -90,7 +90,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     entries={f['address']:f for f in manifest['accepted_functions'] if f.get('copy_exile_consumer_evidence')};assert set(entries)==set(ADDRESSES)==set(component['functions'])
     runtime=Image((root/'.recovery/2022-ManalinkEh.dll').read_bytes());assert component['runtime_sha256']==sha(runtime.data)=='52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5'
     assert component['native_storage']==native_storage(Image(Path('G:/Manalink/ManalinkEh_10_22_Hotfix.dbg').read_bytes()))
-    for old in component['retained_bodies']:assert sha(function_body(read(root/old['source']),old['name']).encode())==old['body_sha256']
+    from unify_scalar_helpers import retained_source_body
+    for old in component['retained_bodies']:assert sha(retained_source_body(root,old['source'],old['name'],source_view=sources).encode())==old['body_sha256']
     for layout in component['unit_layouts'].values():assert layout['test_definition_t']['bytes']==216 and layout['target_definition_t']['bytes']==84
     for name,location in [('iids','(DW_OP_fbreg: -4020)'),('positions','(DW_OP_fbreg: -2020)')]:assert any(v['name']==name and v['type']=='int[500]' and v['location']==location for v in component['locals'][KESS])
     for a in [ECHO,RISE]:assert any(v['name']=='marked' and v['type']=='int[151]' and v['location']=='(DW_OP_fbreg: -624)' for v in component['locals'][a])

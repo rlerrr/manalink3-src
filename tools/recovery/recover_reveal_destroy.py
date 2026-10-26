@@ -93,7 +93,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
         initial=[p['location'] if isinstance(p['location'],str) else p['location'][0]['expression'] for p in parameters]
         assert initial==[f'(DW_OP_fbreg: {4*i})' for i in range({'2677c50':3,'269f880':5,'269ad40':4,CARD:3}[a])]
     assert all(any(v['name']==name and v['location']=='(DW_OP_fbreg: -236)' for v in component['locals'][CARD]) for name in ['td','test'])
-    for name,digest in component['retained_bodies'].items():assert sha(function_body(sources['functions/functions.c'].replace('\r\n','\n'),name).encode())==digest
+    from unify_scalar_helpers import retained_source_body
+    for name,digest in component['retained_bodies'].items():assert sha(retained_source_body(root,'functions/functions.c',name).encode())==digest
     decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True
     for a,entry in entries.items():
         detail=component['functions'][a];body=function_body(sources[entry['source']].replace('\r\n','\n'),entry['name'])

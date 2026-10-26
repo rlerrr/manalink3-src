@@ -1,24 +1,18 @@
 #include "manalink.h"
+
+/* Canonical recovered helper declarations. */
+int has_no_mana_cost(int player, int card);
+int copy_spell_from_stack(int player, int t_player, int t_card);
+int copy_spell(int player, int csvid);
+int effect_may_play_card_from_exile(int player, int card, event_t event);
+int create_may_play_card_from_exile_effect(int player, int card, int whose_exile_zone,
+                                                int csvid, mpcfe_mode_t mode);
+static int real_copy_spell(int player, int internal_id, int special_flags, int special_flags3,
+                                card_instance_t *copied, target_t *forced_target);
 static int free_spell_card = -1;
 static int free_spell_player = -1;
 
-int has_no_mana_cost(int player, int card){
-	int csvid = player == -1 ? cards_data[card].id : get_id(player, card);
-	int result = 0;
-	switch( csvid ){
-			case CARD_ID_HYPERGENESIS:
-			case CARD_ID_ANCESTRAL_VISION:
-			case CARD_ID_LIVING_END:
-			case CARD_ID_RESTORE_BALANCE:
-			case CARD_ID_WHEEL_OF_FATE:
-			case CARD_ID_LOTUS_BLOOM:
-				result = 1;
-				break;
-			default:
-				break;
-	}
-	return result;
-}
+
 
 int played_for_free(int player, int card){
 	if( player > -1 && card > -1 ){
@@ -34,71 +28,11 @@ int not_played_from_hand(int player, int card){
 	return 0;
 }
 
-static int real_copy_spell(int player, int internal_id, int special_flags, int special_flags3, card_instance_t* copied){
 
-	int card_added = add_card_to_hand( player, internal_id );
-	if (copied){
-		// Copy X value and target struct to preserve special flags and such.
-		card_instance_t* inst = get_card_instance(player, card_added);
-		inst->info_slot = copied->info_slot;
-		inst->eot_toughness = copied->eot_toughness;
-		int i;
-		for(i=0; i<19; i++){
-			inst->targets[i] = copied->targets[i];
-		}
-		set_special_flags2(player, card_added, SF2_COPIED_FROM_STACK);
-	}
 
-	free_spell_player = player;
-	free_spell_card = card_added;
-	card_data_t* card_d = &cards_data[ internal_id ];
-	convert_to_token(player, card_added);
-	set_special_flags(player, card_added, special_flags);
-	set_special_flags3(player, card_added, special_flags3);
 
-	if( put_card_on_stack(player, card_added, 0) ){
-		put_card_on_stack(player, card_added, 1);
-		put_card_on_stack3(player, card_added) ;
 
-		if(  card_d->type & TYPE_LAND ){
-			land_can_be_played |= LCBP_LAND_HAS_BEEN_PLAYED;
-		}
-	}
-	else if( can_legally_play_iid(player, internal_id)){
 
-			--hand_count[player];
-			real_put_into_play(player, card_added);
-
-			// put the spell on the stack (doesn't actually work...)
-			card_on_stack = card_added;
-			card_on_stack_controller = player;
-
-			// if this was a land, count it as played
-			if( card_d->type & TYPE_LAND ){
-				land_can_be_played |= LCBP_LAND_HAS_BEEN_PLAYED;
-			}
-	}
-	else{
-		obliterate_card(player, card_added);
-	}
-	free_spell_card = -1;
-
-	return card_added;
-}
-
-int copy_spell(int player, int csvid)
-{
-  return real_copy_spell(player, get_internal_card_id_from_csv_id(csvid), SF_NOT_CAST|SF_PLAYED_FOR_FREE, 0, NULL);
-}
-
-int copy_spell_from_stack(int player, int t_player, int t_card){
-	card_instance_t* instance = get_card_instance(t_player, t_card);
-	int iid = instance->internal_card_id;
-	if (iid == -1){
-		iid = instance->backup_internal_card_id;
-	}
-	return real_copy_spell(player, iid, SF_NOT_CAST | SF_PLAYED_FOR_FREE, 0, instance);
-}
 
 target_t totally_bletcherous_hack_dont_reset_x_value = {-1, -1};
 static int totally_bletcherous_hack_put_card_on_stack0_without_resetting_x_value(int player, int card)
@@ -417,129 +351,10 @@ int compute_and_check_casting_cost(int player, int unused, int card)
   return result;
 }
 
-static int effect_may_play_card_from_exile(int player, int card, event_t event)
-{
-  card_instance_t* instance = get_card_instance(player, card);
 
-  int whose_exile_zone = instance->targets[0].player;
-  int csvid = instance->targets[0].card;
-  int mode = instance->targets[1].player;
-  // instance->targets[1].card: set to 42 while activating
-
-  if (event == EVENT_STATIC_EFFECTS)
-	{
-	  if (!(mode & MPCFE_FACE_DOWN) && !check_rfg(whose_exile_zone, csvid))
-		kill_card(player, card, KILL_EXILE);
-	  return 0;
-	}
-
-  if (event == EVENT_CLEANUP && (mode & MPCFE_UNTIL_EOT))
-	kill_card(player, card, KILL_EXILE);
-
-  if (event == EVENT_BEGIN_TURN && (mode & MPCFE_UNTIL_END_OF_YOUR_NEXT_TURN) && current_turn == player)
-	instance->targets[1].player |= MPCFE_UNTIL_EOT;
-
-  if (!IS_ACTIVATING(event))
-	return 0;
-
-  int can_look_at_card = (mode & MPCFE_FACE_DOWN) && !IS_AI(player);
-
-  if (event == EVENT_CAN_ACTIVATE && instance->targets[1].card == 42)	// can't ever activate while paying mana to activate it
-	return 0;
-
-  int can_play, iid, cost;
-  if (event == EVENT_RESOLVE_ACTIVATION)
-	can_play = iid = cost = -1;
-  else
-	{
-	  iid = get_internal_card_id_from_csv_id(csvid);
-
-	  can_play = can_legally_play_iid_now(player, iid, event);	// 0 or 1 or 99
-
-	  if (!(mode & MPCFE_FACE_DOWN) && !check_rfg(whose_exile_zone, csvid))
-		{
-		  can_play = 0;
-		  cost = 0;
-		}
-	  else if (mode & MPCFE_FOR_FREE)
-		cost = 0;
-	  else if (mode & MPCFE_FOR_CMC)
-		{
-		  int cmc = get_cmc_by_id(csvid);
-		  cost = get_updated_casting_cost(player, -1, iid, event, cmc);
-		  if (!has_mana(player, is_what(-1, iid, TYPE_ARTIFACT) ? COLOR_ARTIFACT : COLOR_COLORLESS, cost) || has_no_mana_cost(-1, iid))
-			can_play = 0;
-		}
-	  else
-		{
-		  cost = 0;
-		  if (!has_mana_to_cast_iid(player, event, iid) || has_no_mana_cost(-1, iid))
-			can_play = 0;
-		}
-	}
-
-  if (event == EVENT_CAN_ACTIVATE)
-	return can_play ? can_play : can_look_at_card;	// in the latter case, can always activate to look at the card, but if can_play is 99, return that instead
-
-  if (event == EVENT_ACTIVATE)
-	{
-	  if (can_look_at_card && DIALOG(player, card, event, DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_FULLCARD_CSVID(instance->display_pic_csv_id),
-									 "Play card", can_play, 1,
-									 "Look at card", 1, -1) == 2)
-		{
-		  // About the only way to show information to only one player in a multiplayer game, other than to put a card in his hand.
-		  show_deck(player, &iid, 1, "Face-down card in exile", 0, (int)EXE_STR(0x78f0a8));	// DIALOGBUTTONS[0] - "OK"
-		  cancel = 1;
-		  return 0;
-		}
-
-	  instance->targets[1].card = 42;
-
-	  if (mode & MPCFE_FOR_FREE)
-		cancel = 0;	// just in case
-	  else if (mode & MPCFE_FOR_CMC)
-		charge_mana(player, is_what(-1, iid, TYPE_ARTIFACT) ? COLOR_ARTIFACT : COLOR_COLORLESS, cost);
-	  else
-		charge_mana_from_id(player, -1, event, csvid);
-
-	  instance->targets[1].card = -1;
-
-	  if (cancel == 1)
-		return 0;
-
-	  kill_card(player, card, KILL_EXILE);
-
-	  if (mode & MPCFE_FACE_DOWN)
-		add_csvid_to_rfg(whose_exile_zone, csvid);
-
-	  play_card_in_exile_for_free(player, whose_exile_zone, csvid);
-	  cant_be_responded_to = 1;
-	}
-
-  return 0;
-}
 
 // If MPCFE_FACE_DOWN is set, the card should be obliterated instead of being put in to exile; otherwise, it should already be in exile before calling this.
-int create_may_play_card_from_exile_effect(int player, int card, int whose_exile_zone, int csvid, mpcfe_mode_t mode)
-{
-  int leg;
-  if (mode & MPCFE_ATTACH)
-	leg = create_targetted_legacy_activate(player, card, effect_may_play_card_from_exile, player, card);
-  else
-	leg = create_legacy_activate(player, card, effect_may_play_card_from_exile);
 
-  if (leg != -1)
-	{
-	  card_instance_t* legacy = get_card_instance(player, leg);
-	  legacy->targets[0].player = whose_exile_zone;
-	  legacy->targets[0].card = csvid;
-	  legacy->targets[1].player = mode;
-	  if (!(mode & MPCFE_FACE_DOWN))
-		create_card_name_legacy(player, leg, csvid);	// EVENT_SET_LEGACY_EFFECT_NAME and EVENT_SET_LEGACY_EFFECT_TEXT don't work on activateable effects
-	}
-
-  return leg;
-}
 
 static int spell_has_flashback_legacy(int player, int card, event_t event)
 {
@@ -735,7 +550,7 @@ int card_special_effect(int player, int card, event_t event ){
 		if( flags & SE_EPIC ){
 			card_instance_t *instance = get_card_instance(player, card);
 			if( instance->targets[1].card > -1 && current_turn == instance->targets[0].player && upkeep_trigger(player, card, event) ){
-				real_copy_spell(player, instance->targets[1].card, SF_NOT_CAST | SF_PLAYED_FOR_FREE, SF3_EPIC, NULL);
+				real_copy_spell(player, instance->targets[1].card, SF_NOT_CAST | SF_PLAYED_FOR_FREE, SF3_EPIC, NULL, NULL);
 			}
 		}
 		if( event == EVENT_MODIFY_COST_GLOBAL ){
@@ -853,11 +668,11 @@ int escape_spell(int player, int g_pos)
   {
     remove_card_from_grave(player, g_pos);
     iVar2 = add_card_to_hand(player, iVar2);
-    set_special_flags3_2022(player, iVar2, 0x80000);
+    set_special_flags3(player, iVar2, 0x80000);
     iVar1 = is_what(player, iVar2, 1);
     if (iVar1 != 0)
     {
-      set_special_flags3_2022(player, iVar2, 0x20000);
+      set_special_flags3(player, iVar2, 0x20000);
     }
     iVar1 = real_play_spell_for_free(player, iVar2, 0x10000000);
     if (iVar1 != 0)
@@ -872,7 +687,7 @@ int escape_spell(int player, int g_pos)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2668490; original functions/play_spell_for_free.c:47. */
-static int real_copy_spell_2022(int player, int internal_id, int special_flags, int special_flags3,
+static int real_copy_spell(int player, int internal_id, int special_flags, int special_flags3,
                                 card_instance_t *copied, target_t *forced_target)
 {
   unsigned char bVar1;
@@ -900,12 +715,12 @@ static int real_copy_spell_2022(int player, int internal_id, int special_flags, 
       instance->targets[iVar4].player = iVar2;
       iVar4 = iVar4 + 1;
     } while (iVar4 != 0x13);
-    uVar5 = get_special_flags_by_instance_2022(copied);
-    set_special_flags_2022(player, card, uVar5 | special_flags);
-    uVar5 = get_special_flags2_by_instance_2022(copied);
-    set_special_flags2_2022(player, card, uVar5 | SF2_COPIED_FROM_STACK);
-    uVar5 = get_special_flags3_by_instance_2022(copied);
-    set_special_flags3_2022(player, card, uVar5 | special_flags3);
+    uVar5 = get_special_flags_by_instance(copied);
+    set_special_flags(player, card, uVar5 | special_flags);
+    uVar5 = get_special_flags2_by_instance(copied);
+    set_special_flags2(player, card, uVar5 | SF2_COPIED_FROM_STACK);
+    uVar5 = get_special_flags3_by_instance(copied);
+    set_special_flags3(player, card, uVar5 | special_flags3);
   }
   if (forced_target != NULL)
   {
@@ -953,11 +768,11 @@ static int real_copy_spell_2022(int player, int internal_id, int special_flags, 
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2668690; original functions/play_spell_for_free.c:111. */
-int copy_spell_2022(int player, int csvid)
+int copy_spell(int player, int csvid)
 {
   int result;
   result = get_internal_card_id_from_csv_id(csvid);
-  result = real_copy_spell_2022(player, result, (SF_NOT_CAST | SF_PLAYED_FOR_FREE), 0, NULL, NULL);
+  result = real_copy_spell(player, result, (SF_NOT_CAST | SF_PLAYED_FOR_FREE), 0, NULL, NULL);
   return result;
 }
 
@@ -966,7 +781,7 @@ int copy_spell_2022(int player, int csvid)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26686d0; original functions/play_spell_for_free.c:116. */
-int copy_spell_from_stack_2022(int player, int t_player, int t_card)
+int copy_spell_from_stack(int player, int t_player, int t_card)
 {
   card_instance_t *instance;
   int result;
@@ -978,7 +793,7 @@ int copy_spell_from_stack_2022(int player, int t_player, int t_card)
   {
     internal_id = (unsigned int)instance->backup_internal_card_id;
   }
-  result = real_copy_spell_2022(player, internal_id, (SF_NOT_CAST | SF_PLAYED_FOR_FREE), 0,
+  result = real_copy_spell(player, internal_id, (SF_NOT_CAST | SF_PLAYED_FOR_FREE), 0,
                                 instance, NULL);
   return result;
 }
@@ -995,7 +810,7 @@ int copy_spell_from_stack_set_target0(int player, int iid, card_instance_t *copi
   target_t targ;
   targ.player = target0_player;
   targ.card = target0_card;
-  result = real_copy_spell_2022(
+  result = real_copy_spell(
       player, iid, (SF_NOT_CAST | SF_PLAYED_FOR_FREE | SF_TARGETS_ALREADY_SET), 0, copied, &targ);
   return result;
 }
@@ -1005,7 +820,7 @@ int copy_spell_from_stack_set_target0(int player, int iid, card_instance_t *copi
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26695a0; original functions/play_spell_for_free.c:535. */
-int effect_may_play_card_from_exile_2022(int player, int card, event_t event)
+int effect_may_play_card_from_exile(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int iVar2;
@@ -1118,9 +933,9 @@ int effect_may_play_card_from_exile_2022(int player, int card, event_t event)
   }
   if ((uVar7 & 0x200) != 0)
   {
-    default_test_definition_2022(&test, 0x100);
+    default_test_definition(&test, 0x100);
     test.subtype = 0x7041;
-    iVar2 = check_battlefield_for_special_card_2022(player, card, player, 0, &test);
+    iVar2 = check_battlefield_for_special_card(player, card, player, 0, &test);
     if (iVar2 == 0)
     {
       iStack_fc = 0;
@@ -1184,7 +999,7 @@ LAB_02669717:
                            "Look at card", 1, 0xffffffff, 0, 0, 0, 0),
        iVar2 == 2))
   {
-    show_deck_2022(player, &iid, 1, "Face-down card in exile", 0, ENGINE_OK_LABEL);
+    show_deck(player, &iid, 1, "Face-down card in exile", 0, ENGINE_OK_LABEL);
     spell_fizzled = 1;
     return 0;
   }
@@ -1230,7 +1045,7 @@ LAB_02669717:
     {
       remove_card_from_rfg(iVar5, iVar4);
       iVar4 = add_card_to_hand(player, iVar2);
-      set_special_flags_2022(player, iVar4, 0x100000);
+      set_special_flags(player, iVar4, 0x100000);
       if (player != iVar5)
       {
         if ((player == 0) && (iVar5 == 1))
@@ -1258,7 +1073,7 @@ LAB_02669717:
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2668150; original functions/play_spell_for_free.c:665. */
-int create_may_play_card_from_exile_effect_2022(int player, int card, int whose_exile_zone,
+int create_may_play_card_from_exile_effect(int player, int card, int whose_exile_zone,
                                                 int csvid, mpcfe_mode_t mode)
 {
   int card_00;
@@ -1266,11 +1081,11 @@ int create_may_play_card_from_exile_effect_2022(int player, int card, int whose_
 
   if ((mode & MPCFE_ATTACH) == 0)
   {
-    card_00 = create_legacy_activate(player, card, effect_may_play_card_from_exile_2022);
+    card_00 = create_legacy_activate(player, card, effect_may_play_card_from_exile);
   }
   else
   {
-    card_00 = create_targetted_legacy_activate(player, card, effect_may_play_card_from_exile_2022,
+    card_00 = create_targetted_legacy_activate(player, card, effect_may_play_card_from_exile,
                                                player, card);
   }
   if (card_00 != -1)
@@ -1286,6 +1101,38 @@ int create_may_play_card_from_exile_effect_2022(int player, int card, int whose_
     }
   }
   return card_00;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2667b10; original functions/play_spell_for_free.c:5. */
+int has_no_mana_cost(int player, int card)
+{
+  int csvid = player == -1 ? cards_data[card].id : get_id(player, card);
+  switch (csvid)
+  {
+  case 0x1dd5:
+  case 0x211d:
+  case 0x2181:
+  case 0x2194:
+  case 0x2197:
+  case 0x21c6:
+  case 0x221a:
+  case 0x4e75:
+  case 0x4ebe:
+  case 0x59b6:
+  case 0x5a01:
+  case 0x5a0a:
+  case 0x5a1b:
+  case 0x5a4b:
+  case 0x5a54:
+  case 0x5a72:
+    return 1;
+  default:
+    return 0;
+  }
 }
 
 #endif

@@ -1,5 +1,8 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+int vow(int player, int card, event_t event, int pow, int tou, int key, int s_key);
+
 // global functions
 static int join_forces(int player, int prevent_if_duh){
 	charge_mana(player, COLOR_COLORLESS, -1);
@@ -11,16 +14,29 @@ static int join_forces(int player, int prevent_if_duh){
 	return amount;
 }
 
-static int vow(int player, int card, event_t event, int pow, int tou, int key, int s_key){
-
-	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player > -1 && ! is_humiliated(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->damage_target_player != player ){
-			cannot_attack(instance->damage_target_player, instance->damage_target_card, event);
-		}
-	}
-
-	return generic_aura(player, card, event, player, pow, tou, key, s_key, 0, 0, 0);
+int vow(int player, int card, event_t event, int pow, int tou, int key, int s_key)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_ABILITIES)
+  {
+    instance = in_play(player, card);
+    if ((instance != NULL) && (-1 < instance->damage_target_player))
+    {
+      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      if (result == 0)
+      {
+        if (((instance->damage_target_card == affected_card) &&
+             (result = (int)instance->damage_target_player, affected_card_controller == result)) &&
+            (result != player))
+        {
+          cannot_attack(result, instance->damage_target_card, EVENT_ABILITIES);
+        }
+      }
+    }
+  }
+  result = generic_aura(player, card, event, player, pow, tou, key, s_key, 0, 0, 0);
+  return result;
 }
 
 // cards
@@ -1747,29 +1763,6 @@ int count_permanents_you_control_but_you_dont_own(int player, int type)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x23e1320; original cards/commander.c:14. */
-int vow_2022(int player, int card, event_t event, int pow, int tou, int key, int s_key)
-{
-  int result;
-  card_instance_t *instance;
-  if (event == EVENT_ABILITIES)
-  {
-    instance = in_play(player, card);
-    if ((instance != NULL) && (-1 < instance->damage_target_player))
-    {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
-      if (result == 0)
-      {
-        if (((instance->damage_target_card == affected_card) &&
-             (result = (int)instance->damage_target_player, affected_card_controller == result)) &&
-            (result != player))
-        {
-          cannot_attack_2022(result, instance->damage_target_card, EVENT_ABILITIES);
-        }
-      }
-    }
-  }
-  result = generic_aura_2022(player, card, event, player, pow, tou, key, s_key, 0, 0, 0);
-  return result;
-}
+
 
 #endif

@@ -1213,7 +1213,7 @@ int card_team_spirit(int player, int card, event_t event)
           if (result != 0)
           {
             instance = get_card_instance(player, card);
-            pump_subtype_until_eot_2022(player, card, instance->targets[0].player, -1, 1, 1, 0, 0);
+            pump_subtype_until_eot(player, card, instance->targets[0].player, -1, 1, 1, 0, 0);
           }
           kill_card(player, card, KILL_DESTROY);
         }
@@ -1563,7 +1563,7 @@ int card_double_header(int player, int card, event_t event)
   target_definition_t td;
 
   result = duh_mode(player);
-  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -1625,7 +1625,7 @@ int card_the_cheese_stands_alone(int player, int card, event_t event)
             iVar1 = iVar1 + 1;
           } while (iVar1 < active_cards_count[player]);
         }
-        lose_the_game_2022(1 - player);
+        lose_the_game(1 - player);
       }
     }
   }
@@ -1655,7 +1655,7 @@ static int rock_paper_scissors(int player, int card, event_t event, int beaten)
         result = is_humiliated_for_ability(player, card, AL_STATIC);
         if (result == 0)
         {
-          cannot_attack_2022(affected_card_controller, affected_card, EVENT_ABILITIES);
+          cannot_attack(affected_card_controller, affected_card, EVENT_ABILITIES);
           cannot_block(affected_card_controller, affected_card, EVENT_ABILITIES);
         }
       }
@@ -1735,7 +1735,7 @@ int card_wordmail(int player, int card, event_t event)
     return 0;
   }
 LAB_02304b50:
-  result = vanilla_aura_2022(player, card, event, player);
+  result = vanilla_aura(player, card, event, player);
   return result;
 }
 
@@ -1814,13 +1814,13 @@ int card_bloodletter(int player, int card, event_t event)
             if (2 < iVar3)
             {
             LAB_023051a0:
-              iVar2 = can_sacrifice_this_as_cost_2022(player, card);
+              iVar2 = can_sacrifice_this_as_cost(player, card);
               if (iVar2 == 0)
               {
                 return 0;
               }
               kill_card(player, card, KILL_SACRIFICE);
-              new_damage_all_2022(player, card, 2, 2, 3, NULL);
+              new_damage_all(player, card, 2, 2, 3, NULL);
               return 0;
             }
           }
@@ -2174,7 +2174,7 @@ int card_poultrygeist(int player, int card, event_t event)
     count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
   }
   iVar1 = duh_mode(player);
-  iVar1 = resolve_gfp_ability_2022(player, card, event, (iVar1 != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  iVar1 = resolve_gfp_ability(player, card, event, (iVar1 != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (0 < iVar1)
   {
     do
@@ -2238,7 +2238,7 @@ int card_chicken_egg(int player, int card, event_t event)
     if (result == 6)
     {
       kill_card(player, card, KILL_SACRIFICE);
-      generate_token_by_id_2022(player, card, 0x45ed);
+      generate_token_by_id(player, card, 0x45ed);
     }
   }
   return 0;
@@ -2314,7 +2314,7 @@ int card_growth_spurt(int player, int card, event_t event)
 
   if (event != EVENT_RESOLVE_SPELL)
   {
-    result = vanilla_instant_pump_2022(player, card, event, 2, player, 4, 4, 0, 0);
+    result = vanilla_instant_pump(player, card, event, 2, player, 4, 4, 0, 0);
     return result;
   }
   default_target_definition(player, card, &td, 2);
@@ -2324,7 +2324,7 @@ int card_growth_spurt(int player, int card, event_t event)
 
     instance = get_card_instance(player, card);
     result = roll_d6t(player, player, card, instance->targets[0].player, instance->targets[0].card);
-    pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, result,
+    pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, result,
                    result);
   }
   kill_card(player, card, KILL_DESTROY);
@@ -2479,15 +2479,15 @@ int card_hungry_hungry_heifer(int player, int card, event_t event)
     return 0;
   }
 
-  base_target_definition_2022(player, card, &td, 0x47);
+  base_target_definition(player, card, &td, 0x47);
   td.preferred_controller = player;
   td.allowed_controller = player;
   td.special = 0x8000;
   td.extra = (int32_t)target_must_have_counters;
   instance = get_card_instance(player, card);
   instance->number_of_targets = '\0';
-  result = can_target_2022(&td);
-  if ((result != 0) && (result = pick_target_2022(&td, "TARGET_PERMANENT"), result != 0))
+  result = can_target(&td);
+  if ((result != 0) && (result = pick_target(&td, "TARGET_PERMANENT"), result != 0))
   {
 
     instance->number_of_targets = '\0';
@@ -2611,7 +2611,7 @@ LAB_02305688:
     {
       if ((char)iVar1 < '\x01')
       {
-        cannot_attack_2022(player, card, EVENT_ABILITIES);
+        cannot_attack(player, card, EVENT_ABILITIES);
       }
       if ('\0' < (char)((unsigned int)iVar1 >> 8))
       {
@@ -2620,7 +2620,7 @@ LAB_02305688:
     }
     else
     {
-      cannot_attack_2022(player, card, EVENT_ABILITIES);
+      cannot_attack(player, card, EVENT_ABILITIES);
     }
     cannot_block(player, card, EVENT_ABILITIES);
   }
@@ -2705,7 +2705,7 @@ int card_symbol_status(int player, int card, event_t event)
       } while (pcVar5 != expansions + 198);
       if (0 < iVar1)
       {
-        generate_tokens_by_id_2022(player, card, 0x4d58, iVar1);
+        generate_tokens_by_id(player, card, 0x4d58, iVar1);
       }
     }
     kill_card(player, card, KILL_DESTROY);
@@ -2895,7 +2895,7 @@ int card_spark_fiend(int player, int card, event_t event)
   int val;
   card_instance_t *instance;
   unsigned int uVar3;
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     upkeep_trigger_ability(player, card, event, player);
@@ -2989,7 +2989,7 @@ int card_togglodyte(int player, int card, event_t event)
       iVar1 = instance->targets[5].player;
       if (((short)((unsigned int)iVar1 >> 0x10) == 0x45d8) && ((short)iVar1 == 0))
       {
-        cannot_attack_2022(player, card, EVENT_ABILITIES);
+        cannot_attack(player, card, EVENT_ABILITIES);
         cannot_block(player, card, EVENT_ABILITIES);
       }
     }
@@ -3029,7 +3029,7 @@ int card_now_i_know_my_abcs(int player, int card, event_t event)
          (iVar1 = num_letters_permanents_names_include(player), 0x19 < iVar1)) &&
         (iVar1 = upkeep_trigger(player, card, event), iVar1 != 0))
     {
-      lose_the_game_2022(1 - player);
+      lose_the_game(1 - player);
     }
   }
   else if ((event == EVENT_SHOULD_AI_PLAY) && (current_phase == 0x1f))
@@ -3288,10 +3288,10 @@ int card_punctuate(int player, int card, event_t event)
     {
       if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
       {
-        default_target_definition_2022(player, card, &td, 2);
+        default_target_definition(player, card, &td, 2);
         if (event == EVENT_RESOLVE_SPELL)
         {
-          result = valid_target_2022(&td);
+          result = valid_target(&td);
           if (result != 0)
           {
             instance = get_card_instance(player, card);
@@ -3316,9 +3316,9 @@ int card_punctuate(int player, int card, event_t event)
       }
     }
   }
-  default_target_definition_2022(player, card, &td, 2);
+  default_target_definition(player, card, &td, 2);
 LAB_02305acb:
-  result = generic_spell_2022(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
   return result;
 }
 
@@ -3388,14 +3388,14 @@ int card_booster_tutor(int player, int card, event_t event)
       for (int i = 0; i < num_csvids; ++i)
         iids[i] = get_internal_card_id_from_csv_id(csvids[i]);
       if (ai_is_speculating != 1 && player == 1)
-        show_deck_2022(0, iids, capacity, "Booster contents", 0, ENGINE_DONE_LABEL);
+        show_deck(0, iids, capacity, "Booster contents", 0, ENGINE_DONE_LABEL);
       test_definition_2022_t test;
       _Static_assert(sizeof(test) == 216, "native Booster Tutor filter");
-      default_test_definition_2022(&test, 0xff);
+      default_test_definition(&test, 0xff);
       int selected;
       do
       {
-        selected = select_card_from_zone_2022(player, player, iids, capacity, 1, 1, -1, &test);
+        selected = select_card_from_zone(player, player, iids, capacity, 1, 1, -1, &test);
       } while (selected < 0 || selected >= capacity);
       int added = add_card_to_hand(player, iids[selected]);
       if (player == 1)
@@ -3426,7 +3426,7 @@ int card_mise(int player, int card, event_t event)
     else
     {
       test_definition_2022_t test;
-      new_default_test_definition_2022(&test, 1, "");
+      new_default_test_definition(&test, 1, "");
       test.type_flag = 1;
       csvid = choose_a_card_test_ct("Choose a nonland card name.", &test, (color_test_t)-1,
                                     (type_t)~TYPE_LAND);

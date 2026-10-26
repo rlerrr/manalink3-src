@@ -141,14 +141,16 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     if not component.get('planning'):
         assert CONFIG_IMPORT in read(root/'manalink.h')
         assert read(root/'Drawcardlib.def').splitlines().count('  get_config_data')==1
-        definition=read(root/'Drawcardlib.def')
+        from recover_display_hooks import previous_import_definition
+        definition=previous_import_definition(root,read(root/'Drawcardlib.def'))
         chooser=json.loads((root/'docs/recovery-evidence/interface-recovery.json').read_text()).get('pack_chooser_native_2022')
         if chooser:
             assert chooser['import_definition_append']=='  blt_expansion_symbol\n' and definition.endswith(chooser['import_definition_append'])
             definition=definition.removesuffix(chooser['import_definition_append'])
             assert sha(definition.encode())==chooser['previous_import_definition_sha256']
         assert sha(definition.removesuffix('  get_config_data\n').encode())==component['previous_import_definition_sha256']
-    for old in component['retained_bodies']:assert sha(function_body(read(root/old['source']),old['name']).encode())==old['body_sha256']
+    from unify_scalar_helpers import retained_source_body
+    for old in component['retained_bodies']:assert sha(retained_source_body(root,old['source'],old['name']).encode())==old['body_sha256']
     for layout in component['unit_layouts'].values():assert layout['test_definition_t']['bytes']==216 and layout['target_definition_t']['bytes']==84
     def local(a,n):return next(v for v in component['locals'][a] if v['name']==n)
     for a,end in [(VERDANT,'abils'),(CRYPT_B,'td_permanent'),(CRYPT_E,'td_spell')]:

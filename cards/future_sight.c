@@ -2862,7 +2862,7 @@ int card_shimian_specter(int player, int card, event_t event){
 						int selected = new_select_a_card(player, p, TUTOR_FROM_HAND, cc, AI_MAX_VALUE, -1, &this_test);
 						if( selected != -1 ){
 							int id = get_id(1-player, selected);
-							lobotomy_effect(player, p, id, 1);
+							lobotomy_effect(player, p, id, -1, 1);
 						}
 					}
 				}
@@ -3730,7 +3730,7 @@ int card_grave_scrabbler(int player, int card, event_t event)
   {
     new_default_test_definition(&this_test, 2, "Select target creature.");
     instance = get_card_instance(player, card);
-    result = check_special_flags3_2022(player, card, 0x1000);
+    result = check_special_flags3(player, card, 0x1000);
     if (result != 0)
     {
       select_target_from_either_grave(player, card, SFG_0, 1, 3, &this_test, 0, 1);
@@ -3827,7 +3827,7 @@ int card_second_wind(int player, int card, event_t event)
     return 0;
   }
 LAB_0257a727:
-  result = vanilla_aura_2022(player, card, event, 2);
+  result = vanilla_aura(player, card, event, 2);
   return result;
 }
 
@@ -4002,11 +4002,11 @@ int card_shivan_sand_mage(int player, int card, event_t event)
   int card_00;
   target_definition_2022_t td;
 
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
 
-    default_target_definition_2022(player, card, &td, 199);
+    default_target_definition(player, card, &td, 199);
     td.preferred_controller = 2;
     td.special = 0x8000;
     td.extra = (int32_t)is_permanent_or_suspend_legacy;
@@ -4015,10 +4015,10 @@ int card_shivan_sand_mage(int player, int card, event_t event)
         do_dialog(player, player, card, -1, -1, " Add 2 Time Counters\n Remove 2 Time Counters", 0);
     if (result == 0)
     {
-      result = can_target_2022(&td);
+      result = can_target(&td);
       if (result != 0)
       {
-        result = new_pick_target_2022(
+        result = new_pick_target(
             &td, "Select target permanent or suspended legacy with a time counter.", 0, 0x80);
         if (result != 0)
         {
@@ -4034,10 +4034,10 @@ int card_shivan_sand_mage(int player, int card, event_t event)
     }
     else
     {
-      result = can_target_2022(&td);
+      result = can_target(&td);
       if (result != 0)
       {
-        result = new_pick_target_2022(
+        result = new_pick_target(
             &td, "Select target permanent or Suspend legacy card-remove counters.", 0, 0x80);
         if (result != 0)
         {
@@ -4130,7 +4130,7 @@ static int sehts_tiger_legacy(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x257a9d0; original cards/future_sight.c:2940. */
 int card_sehts_tiger_2022(int player, int card, event_t event)
 {
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     int legacy = create_legacy_effect(player, card, sehts_tiger_legacy);

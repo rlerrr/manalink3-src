@@ -1186,3 +1186,17 @@ int dispatch_event_with_attacker_and_initial_event_result(int new_affected_card_
   pop_affected_card_stack();
   return result;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26cbf50; original functions/events.c:553. */
+void allow_response_to_trigger(int player, int card)
+{
+  const char *name = EXE_FN(const char *, 0x439690, int, int)(player, card);
+  sprintf((char *)0x60a690, "Trigger %s", name);
+  int a1 = EXE_DWORD(0x60a54c) && (player == 0 || (trace_mode & 2)) ? -1 : -2;
+  EXE_FN(int, 0x436a20, int, int, const char *, int)(a1, current_phase, EXE_STR(0x60a690),
+                                                     EVENT_RESOLVE_TRIGGER);
+}
+
+#endif

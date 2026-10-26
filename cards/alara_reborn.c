@@ -1,5 +1,8 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+void cascade(int player, int card, event_t event);
+
 // Functions
 void do_cascade(int player, int card, int override){
 	int my_cmc = get_cmc(player, card);
@@ -53,11 +56,7 @@ void do_cascade(int player, int card, int override){
 	}
 }
 
-void cascade(int player, int card, event_t event, int override){
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) && ! is_token(player, card) && ! check_special_flags(player, card, SF_NOT_CAST) ){
-		do_cascade(player, card, override);
-	}
-}
+
 
 static int has_mana_hybrid_arb(int player, int number, int first_color, int second_color, int colorless, int exc_clr){
 
@@ -299,7 +298,7 @@ Cascade (When you cast this spell, exile cards from the top of your library unti
 You may cast it without paying its mana cost. Put the exiled cards on the bottom of your library in a random order.) */
 
 	exalted(player, card, event, 0, 0);
-	cascade(player, card, event, -1);
+	cascade(player, card, event);
 	return global_enchantment(player, card, event);
 }
 
@@ -462,7 +461,7 @@ You may cast it without paying its mana cost. Put the exiled cards on the bottom
 		return 0;
 	}
 	haste(player, card, event);
-	cascade(player, card, event, -1);
+	cascade(player, card, event);
 	return 0;
 }
 
@@ -487,7 +486,7 @@ Cascade (When you cast this spell, exile cards from the top of your library unti
 You may cast it without paying its mana cost. Put the exiled cards on the bottom of your library in a random order.)
 You gain 4 life. */
 
-	cascade(player, card, event, -1);
+	cascade(player, card, event);
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		gain_life(player, 4);
@@ -836,7 +835,7 @@ int card_drastic_revelation(int player, int card, event_t event){
 
 int card_enigma_sphinx(int player, int card, event_t event){
 
-	cascade(player, card, event, -1);
+	cascade(player, card, event);
 
 	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
 		card_instance_t *instance = get_card_instance(player, card);
@@ -864,7 +863,7 @@ int card_enigma_sphinx(int player, int card, event_t event){
 
 int card_enlisted_wurm(int player, int card, event_t event){
 
-	cascade(player, card, event, -1);
+	cascade(player, card, event);
 
 	return 0;
 }
@@ -1370,7 +1369,7 @@ int card_kathari_bomber(int player, int card, event_t event){
 }
 
 int card_kathari_remnant(int player, int card, event_t event){
-	cascade(player, card, event, -1);
+	cascade(player, card, event);
 	return regeneration(player, card, event, MANACOST_B(1));
 }
 
@@ -2575,8 +2574,7 @@ int card_thought_hemorrhage(int player, int card, event_t event){
 				csvid = card_from_list(player, 3, TYPE_LAND, DOESNT_MATCH, 0, 0, 0, 0, 0, 0, -1, 0);
 			}
 			if( csvid > -1 ){
-				amount = lobotomy_effect(player, instance->targets[0].player, csvid,
-										LOBOTOMY_MUST_FIND_ALL_COPIES | LOBOTOMY_REPORT_ONLY_EXILED_FROM_HAND);
+				amount = lobotomy_effect(player, instance->targets[0].player, csvid, -1, LOBOTOMY_MUST_FIND_ALL_COPIES | LOBOTOMY_REPORT_ONLY_EXILED_FROM_HAND);
 			}
 			damage_player(instance->targets[0].player, amount*3, player, card);
 		}
@@ -2908,7 +2906,7 @@ int card_vengeful_rebirth(int player, int card, event_t event){
 
 int card_violent_outburst(int player, int card, event_t event){
 
-	cascade(player, card, event, -1);
+	cascade(player, card, event);
 
 	if( event == EVENT_RESOLVE_SPELL ){
 		pump_subtype_until_eot(player, card, player, -1, 1, 0, 0, 0);
@@ -2967,7 +2965,7 @@ int card_etherium_abomination(int player, int card, event_t event)
 int card_magefire_wings(int player, int card, event_t event)
 {
   int result;
-  result = generic_aura_2022(player, card, event, player, 2, 0, 0x20, 0, 0, 0, 0);
+  result = generic_aura(player, card, event, player, 2, 0, 0x20, 0, 0, 0, 0);
   return result;
 }
 
@@ -2976,7 +2974,7 @@ int card_marrow_chomper(int player, int card, event_t event)
 {
   card_instance_t *instance;
   devour(player, card, event, 2);
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -3175,7 +3173,7 @@ int card_vedalken_ghoul(int player, int card, event_t event)
         result = is_humiliated_for_ability(player, card, AL_TRIG);
         if (result == 0)
         {
-          lose_life_2022(1 - current_turn, 4);
+          lose_life(1 - current_turn, 4);
         }
       }
     }
@@ -3384,7 +3382,7 @@ void multicascade(int player, int card, event_t event, int amount)
     result = is_token(player, card);
     if (result == 0)
     {
-      result = check_special_flags_2022(player, card, 0x40000);
+      result = check_special_flags(player, card, 0x40000);
       if (result == 0)
       {
         result = get_cmc(player, card);
@@ -3397,7 +3395,7 @@ void multicascade(int player, int card, event_t event, int amount)
 }
 
 /* ManalinkEh 2022: 0x22fabf0; original cards/alara_reborn.c:117. */
-void cascade_2022(int player, int card, event_t event)
+void cascade(int player, int card, event_t event)
 {
   multicascade(player, card, event, 1);
   return;

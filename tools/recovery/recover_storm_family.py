@@ -49,6 +49,9 @@ def layout_checks(layout,counters):
     for name,member in layout['members'].items():text+=f'STATIC_ASSERT(offsetof(rules_engine_globals_t, {name}) == {member["offset"]}, storm_native_offset_{name});\n'
     for name,value_ in counters.items():text+=f'STATIC_ASSERT({name} == {value_}, storm_native_{name});\n'
     text+='STATIC_ASSERT(sizeof(storm_mode_2022_t) == 4, storm_native_mode_bytes);\nSTATIC_ASSERT(STORM_CREATURE == 1, storm_legacy_creature_mode_preserved);\n'
+    if (Path(__file__).resolve().parents[2]/'docs/recovery-evidence/canonical-storm.json').exists():
+        from canonicalize_storm import OLD_ASSERT,NEW_ASSERT
+        text=text.replace(OLD_ASSERT,NEW_ASSERT)
     return text+'#endif\n'
 
 
@@ -84,8 +87,12 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     rules=sources[RULES].replace('\r\n','\n');assert 'static int rules_engine_card[2] = {-1,-1};' in rules and sha(rules_type(rules).encode())==component['rules_type_sha256']
     assert state['counter_values']=={'COUNTER_BLOOD':19,'COUNTER_DEVOTION':32,'COUNTER_VORTEX':38,'COUNTER_CHARGE':123}
     assert layout_checks(state['layout'],state['counter_values']) in rules
-    assert DEFINITIONS in read(root/'defs.h') or component.get('planning')
-    for old in component['retained_bodies']:assert sha(function_body(read(root/old['source']),old['name']).encode())==old['body_sha256']
+    if (root/'docs/recovery-evidence/canonical-storm.json').exists():
+        from canonicalize_storm import verify as verify_storm
+        assert verify_storm(root)['native_values']==FLAGS
+    else:assert DEFINITIONS in read(root/'defs.h') or component.get('planning')
+    from unify_scalar_helpers import retained_source_body
+    for old in component['retained_bodies']:assert sha(retained_source_body(root,old['source'],old['name']).encode())==old['body_sha256']
     assert [(x['source'],x['name']) for x in component['retained_bodies']]==LEGACY
     assert component['legacy_trap_scope']==dict(increment_traps=[0x301,0x403,0x404,0x405,0x406,0x407],value=1,add=1,color_read_traps=[0x403,0x404,0x405,0x406,0x407],persistent_byte_offset=113,nibble_byte_offsets=[121,122,123],nibble_max=15,byte_max=255)
     for a,d in component['legacy_bindings'].items():

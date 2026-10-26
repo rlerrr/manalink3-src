@@ -1,21 +1,11 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+void battle_cry(int player, int card, event_t event);
+
 // GLOBAL FUNCTIONS
 
-static int battle_cry(int player, int card, event_t event)
-{
-  // Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.
-  if (declare_attackers_trigger(player, card, event, 0, player, card))
-	{
-	  test_definition_t test;
-	  new_default_test_definition(&test, TYPE_CREATURE, "");
-	  test.state = STATE_ATTACKING;
-	  test.not_me = 1;
-	  pump_creatures_until_eot(player, card, current_turn, 0, 1, 0, 0, 0, &test);
-	}
 
-  return 0;
-}
 
 
 // CARDS
@@ -3680,7 +3670,7 @@ static int fangren_marauder_effect(int player, int card, event_t event)
     }
   }
   result = duh_mode(player);
-  uVar3 = resolve_gfp_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  uVar3 = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if ((uVar3 != 0) && (result = check_status(player, card, 0x10000), result == 0))
   {
 
@@ -3707,7 +3697,7 @@ static int fangren_marauder_effect(int player, int card, event_t event)
 /* Recovered October 2022 attacker/keyword helpers. */
 
 /* ManalinkEh 2022: 0x232b5e0; original cards/mirrodin_besieged.c:5. */
-void battle_cry_2022(int player, int card, event_t event)
+void battle_cry(int player, int card, event_t event)
 {
   test_definition_2022_t test;
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
@@ -3715,10 +3705,10 @@ void battle_cry_2022(int player, int card, event_t event)
   {
     return;
   }
-  new_default_test_definition_2022(&test, 2, "");
+  new_default_test_definition(&test, 2, "");
   test.state = 4;
   test.not_me = 1;
-  pump_creatures_until_eot_2022(player, card, current_turn, 0, 1, 0, 0, 0, &test);
+  pump_creatures_until_eot(player, card, current_turn, 0, 1, 0, 0, 0, &test);
   return;
 }
 

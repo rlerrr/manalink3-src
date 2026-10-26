@@ -1,5 +1,9 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+void force_a_subtype(int player, int card, subtype_t subtype);
+void add_a_subtype(int player, int card, subtype_t subtype);
+
 /* October 2022 .bss subtype table @ 0x2797020. */
 subtypes_not_in_play_t added_subtypes_not_in_play[2][16];
 #define NUM_SUBTYPES 26
@@ -361,8 +365,14 @@ static void add_force_subtype_impl(int player, int card, subtype_t subtype, int 
 	}
 }
 
-void force_a_subtype(int player, int card, subtype_t subtype){
-	add_force_subtype_impl(player, card, subtype, FORCE_SUBTYPE);
+void force_a_subtype(int player, int card, subtype_t subtype)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  update_alter_remove_creature_subtypes(instance);
+  update_alter_add_subtype(subtype, instance);
+  return;
 }
 
 static int force_a_subtype_until_eot_legacy(int player, int card, event_t event){
@@ -380,8 +390,13 @@ int force_a_subtype_until_eot(int player, int card, int t_player, int t_card, su
 	return legacy;
 }
 
-void add_a_subtype(int player, int card, subtype_t subtype){
-	add_force_subtype_impl(player, card, subtype, ADD_SUBTYPE);
+void add_a_subtype(int player, int card, subtype_t subtype)
+{
+  card_instance_t *instance;
+
+  instance = get_card_instance(player, card);
+  update_alter_add_subtype(subtype, instance);
+  return;
 }
 
 int get_added_subtype(int player, int card){
@@ -2372,25 +2387,31 @@ int remove_a_subtype_permanently(int player, int card, int t_player, int t_card,
 
 
 /* ManalinkEh 2022: 0x2672f30; original functions/has_creature_type.c:492. */
-void force_a_subtype_2022(int player, int card, subtype_t subtype)
-{
-  card_instance_t *instance;
 
-  instance = get_card_instance(player, card);
-  update_alter_remove_creature_subtypes(instance);
-  update_alter_add_subtype(subtype, instance);
-  return;
-}
 
 
 /* ManalinkEh 2022: 0x2672f70; original functions/has_creature_type.c:496. */
-void add_a_subtype_2022(int player, int card, subtype_t subtype)
-{
-  card_instance_t *instance;
 
-  instance = get_card_instance(player, card);
-  update_alter_add_subtype(subtype, instance);
-  return;
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x2672860; original functions/has_creature_type.c:323. */
+void reset_subtypes_from_instance_2022(card_instance_t *inst, iid_t iid)
+{
+  card_ptr_t *cp = cards_ptr[cards_data[iid].id];
+  for (int i = 0; i < 7; ++i)
+  {
+    int16_t st = cp->types[i];
+    if (st < 0)
+      st = 0;
+    if ((st >= 0x1000 && st < 0x100a && ((1u << (st & 31)) & 0x35fu)) || st == 0x2005)
+      st = 0;
+    inst->ext->subtype[i] = st;
+  }
+  for (int i = 7; i < 12; ++i)
+    inst->ext->subtype[i] = 0;
 }
 
 #endif

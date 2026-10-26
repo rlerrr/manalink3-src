@@ -1,5 +1,8 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+void make_devil(int s_player, int s_card, int t_player, int qty, int sleight);
+
 /***** Functions *****/
 
 int delirium(int player){
@@ -76,14 +79,18 @@ static void make_zombie(int s_player, int s_card, int t_player, int qty, int sle
 	generate_token(&token);
 }
 
-static void make_devil(int s_player, int s_card, int t_player, int qty, int sleight){
-	token_generation_t token;
-	default_token_definition(s_player, s_card, CARD_ID_DEVIL, &token);
-	token.t_player = t_player;
-	token.qty = qty;
-	token.pow = token.tou = 1;
-	token.color_forced = (sleight ? get_sleighted_color_test(s_player, s_card, COLOR_TEST_RED) : COLOR_TEST_RED);
-	generate_token(&token);
+void make_devil(int s_player, int s_card, int t_player, int qty, int sleight)
+{
+  token_generation_2022_t token;
+  default_token_definition(s_player, s_card, 0x491c, &token);
+  token.t_player = t_player;
+  token.qty = (unsigned char)qty;
+  token.tou = 1;
+  token.no_sleight = sleight == 0;
+  token.pow = 1;
+  token.color_forced = '\x10';
+  generate_token(&token);
+  return;
 }
 
 static void make_wolf(int s_player, int s_card, int t_player, int qty, int sleight){
@@ -859,7 +866,7 @@ int card_nahiri_machinations(int player, int card, event_t event){
 	 * At the beginning of combat on your turn, target creature you control gains indestructible until end of turn.
 	 * |1|R: ~ deals 1 damage to target blocking creature. */
 
-	if( beginning_of_combat(player, card, event, player, card) ){
+	if( beginning_of_combat(player, card, event, player) ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.allowed_controller = td.preferred_controller = player;
@@ -2015,7 +2022,7 @@ int card_invasive_surgery(int player, int card, event_t event){
 			int csvid = get_id(instance->targets[0].player, instance->targets[0].card);
 			real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
 			if( delirium(player) ){
-				lobotomy_effect(player, instance->targets[0].player, csvid, 0);
+				lobotomy_effect(player, instance->targets[0].player, csvid, -1, 0);
 			}
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -3566,7 +3573,7 @@ int card_pick_the_brain(int player, int card, event_t event){
 			int csvid = get_id(1-player, selected);
 			rfg_card_in_hand(1-player, selected);
 			if( delirium(player) ){
-				lobotomy_effect(player, 1-player, csvid, 0);
+				lobotomy_effect(player, 1-player, csvid, -1, 0);
 			}
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -7637,7 +7644,7 @@ static int lilianas_indignation_legacy(int player, int card, event_t event)
           } while (iVar4 < num_cards_milled);
           if (amount != 0)
           {
-            lose_life_2022(instance->targets[0].player, amount);
+            lose_life(instance->targets[0].player, amount);
           }
         }
         kill_card(player, card, KILL_EXILE);
@@ -7838,7 +7845,7 @@ static int graf_mole_effect(int player, int card, event_t event)
 
     for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
     {
-      gain_life_2022(player, 3);
+      gain_life(player, 3);
     }
     kill_card(player, card, KILL_EXILE);
   }
@@ -7879,7 +7886,7 @@ static int ulvenwald_mysteries_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_0229f514:
-    iVar3 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    iVar3 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (iVar3 == 0)
       goto LAB_0229f537;
   }
@@ -7944,7 +7951,7 @@ static int ulvenwald_mysteries_effect(int player, int card, event_t event)
         pcVar2->targets[1].card = pcVar2->targets[1].card + 1;
       }
     }
-    iVar3 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    iVar3 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (iVar3 == 0)
     {
       return 0;
@@ -7982,18 +7989,6 @@ LAB_0229f537:
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x229f8c0; original cards/shadows_over_innistrad.c:81. */
-void make_devil_2022(int s_player, int s_card, int t_player, int qty, int sleight)
-{
-  token_generation_2022_t token;
-  default_token_definition_2022(s_player, s_card, 0x491c, &token);
-  token.t_player = t_player;
-  token.qty = (unsigned char)qty;
-  token.tou = 1;
-  token.no_sleight = sleight == 0;
-  token.pow = 1;
-  token.color_forced = '\x10';
-  generate_token_2022(&token);
-  return;
-}
+
 
 #endif

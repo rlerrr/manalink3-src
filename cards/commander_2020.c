@@ -35,7 +35,7 @@ int card_bonders_ornament(int player, int card, event_t event)
             return 0;
           }
           add_state(player, card, 0x10);
-          result = charge_mana_for_activated_ability_2022(player, card, 4, 0, 0, 0, 0, 0);
+          result = charge_mana_for_activated_ability(player, card, 4, 0, 0, 0, 0, 0);
           if (result == 0)
           {
             remove_state(player, card, 0x10);
@@ -90,7 +90,7 @@ int card_jirina_kudro(int player, int card, event_t event)
   int iVar3;
   token_generation_t token;
 
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   boost_creature_type(player, card, event, SUBTYPE_HUMAN, 2, 0, 0, BCT_CONTROLLER_ONLY);
 
   if ((event == EVENT_ETB) && (0 < active_cards_count[player]))

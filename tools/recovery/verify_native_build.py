@@ -19,9 +19,39 @@ def archive_members(path):
     assert members>0;return members
 
 
-def main():
+def literal_register_call_targets(insns):
+    """Resolve short straight-line literal loads across unrelated register moves."""
+    from capstone.x86_const import X86_OP_IMM,X86_OP_REG
+    aliases={r:full for full,parts in {'eax':['eax','ax','al','ah'],'ebx':['ebx','bx','bl','bh'],
+             'ecx':['ecx','cx','cl','ch'],'edx':['edx','dx','dl','dh'],
+             'esi':['esi','si'],'edi':['edi','di'],'ebp':['ebp','bp'],'esp':['esp','sp']}.items() for r in parts}
+    targets=set()
+    for index,call in enumerate(insns):
+        if call.mnemonic not in {'call','jmp'} or call.operands[0].type!=X86_OP_REG:continue
+        register=aliases.get(call.reg_name(call.operands[0].reg),call.reg_name(call.operands[0].reg))
+        for previous in reversed(insns[max(0,index-8):index]):
+            if previous.mnemonic in {'call','ret'} or previous.mnemonic.startswith('j'):break
+            written={aliases.get(previous.reg_name(r),previous.reg_name(r)) for r in previous.regs_access()[1]}
+            if register not in written:continue
+            if (previous.mnemonic=='mov' and len(previous.operands)==2 and previous.operands[0].type==X86_OP_REG and
+                previous.operands[0].reg==call.operands[0].reg and previous.operands[1].type==X86_OP_IMM):targets.add(previous.operands[1].imm)
+            break
+    return targets
+
+
+def main(canonical_helpers=None):
     root=Path(__file__).resolve().parents[2];cache=root/'.recovery';dll=root/'ManalinkEh.dll';dbg=root/'ManalinkEh.dbg'
     pe=pefile.PE(str(dll));pe.parse_data_directories();debug=Image(dbg.read_bytes())
+    physical_helpers={}
+    if canonical_helpers:
+        from canonicalize_helpers import ledger_debug_view
+        debug,physical_helpers=ledger_debug_view(debug,root)
+    from verify_helper_domains import verify_compiled as verify_helper_domains
+    helper_domains=verify_helper_domains(debug,root,source=canonical_helpers.get('native_interfaces',{}).get('native_domains',{}) if canonical_helpers else {})
+    from unify_scalar_helpers import verify_build as verify_helper_unification
+    helper_unification=verify_helper_unification(debug,root)
+    from restore_record_storage import verify_build as verify_record_storage
+    canonical_record_storage=verify_record_storage(debug,root)
     assert pe.FILE_HEADER.Machine==debug.pe.FILE_HEADER.Machine==0x14c and pe.OPTIONAL_HEADER.Magic==0x10b
     exports={s.name.decode():s.address for s in pe.DIRECTORY_ENTRY_EXPORT.symbols}
     assert exports['DllEntry']==pe.OPTIONAL_HEADER.AddressOfEntryPoint==0x1000 and exports['CodeSectionEx']==0x1006
@@ -33,7 +63,12 @@ def main():
     assert functions.count('char *set_legacy_effect_name_addr = NULL;')==1 and 'char card_coded[30000/8] =' not in functions
     baseline=json.loads((cache/'batch70-before/docs/recovery-evidence/recovered-functions.json').read_text());before={f['address'] for f in baseline['accepted_functions']}
     public=[f for f in manifest['accepted_functions'] if f['address'] not in before and not f['static']]
-    assert all('_'+f['name'] in names for f in public),[f['name'] for f in public if '_'+f['name'] not in names]
+    def public_symbol(f):
+        if f.get('display_hook_evidence') and 'CALLBACK' in f['prototype']:
+            assert f['name'] in {'wndproc_ShowListCard_hook','wndproc_FullCardClass_hook'}
+            return '_'+f['name']+'@16'
+        return '_'+f['name']
+    assert all(public_symbol(f) in names for f in public),[f['name'] for f in public if public_symbol(f) not in names]
     migrated_leaves=[f for f in manifest['accepted_functions'] if f.get('leaves_test_evidence')]
     assert all('_'+f['name'] in names and '_'+f['name'].removesuffix('_2022') in names for f in migrated_leaves)
     reveal_callbacks=[f for f in manifest['accepted_functions'] if f.get('reveal_destroy_evidence') and f['static']]
@@ -114,7 +149,12 @@ def main():
                     assert len(locations)==1 and locations[0].loc_expr==[0x31,0x9f]
                     assert value(cu.get_top_DIE(),'DW_AT_low_pc')+locations[0].begin_offset==low and value(cu.get_top_DIE(),'DW_AT_low_pc')+locations[0].end_offset==end
                     callees={inherited_value(c,'DW_AT_name') for c in children if c.tag=='DW_TAG_GNU_call_site'}
-                    assert callees=={'in_play','add_state','new_default_test_definition_2022','get_card_name_by_instance','snprintf','reveal_cards_from_your_hand_2022','add_counters_from_source','remove_state'}
+                    expected_callees={'in_play','add_state','new_default_test_definition_2022','get_card_name_by_instance','snprintf','reveal_cards_from_your_hand_2022','add_counters_from_source','remove_state'}
+                    if canonical_helpers:
+                        from canonicalize_helpers import names as canonical_names
+                        logical={v:k for k,v in canonical_names(root).items()}
+                        expected_callees={logical.get(n,n) for n in expected_callees}
+                    assert callees==expected_callees,(callees,expected_callees)
                     native=pe.get_data(low-pe.OPTIONAL_HEADER.ImageBase,end-low);assert len(native)==end-low
                     section=next(s for s in pe.sections if s.VirtualAddress<=low-pe.OPTIONAL_HEADER.ImageBase<s.VirtualAddress+s.Misc_VirtualSize);assert section.Characteristics & 0x20000000
                     instances.append(dict(parent='card_aven_warhawk',address=hex(low),bytes=end-low,sha256=sha(native),amount=1,callees=sorted(callees)))
@@ -296,7 +336,7 @@ def main():
                     assert source=='functions/functions.c'
                     parameter=next(p for p in die.iter_children() if p.tag=='DW_TAG_formal_parameter' and inherited_value(p,'DW_AT_name')=='test')
                     pointer=unqual(type_of(parameter));assert pointer.tag=='DW_TAG_pointer_type'
-                    size=value(unqual(type_of(pointer)),'DW_AT_byte_size');assert size==(216 if name.endswith('_2022') else 208)
+                    size=value(unqual(type_of(pointer)),'DW_AT_byte_size');assert size==216
                     assert name not in alternate_filters;alternate_filters[name]=size
                     symbols=[s for s in debug.symbols if s[0]=='_'+name]
                     assert len(symbols)==1 and symbols[0][2]>0 and symbols[0][3]==32 and symbols[0][4]==2
@@ -314,7 +354,13 @@ def main():
                 assert owner not in alternate_vlas
                 alternate_vlas[owner]=dict(source=source,rows=2,element_bytes=4,dynamic_bound_form=bounds[1].form if bounds[1] else None,dynamic_bound_reference=bounds[1].value if bounds[1] else None,
                     bound_evidence='DWARF runtime reference' if bounds[1] else 'GCC omits this hand-bound value; source declaration and original native probe/scale are checked by provenance')
-        assert len(alternate_filters)==8 and len(alternate_vlas)==6
+        if canonical_helpers:
+            from canonicalize_helpers import names as canonical_names
+            logical={v:k for k,v in canonical_names(root).items()}
+            expected_filters={logical.get(n,n) for n in helper_names}
+            assert set(alternate_filters)==expected_filters,(alternate_filters,expected_filters)
+        else:assert len(alternate_filters)==8
+        assert len(alternate_vlas)==6
     exile_return_symbols={};exile_return_arrays={};exile_return_filters={}
     exile_return_proof=interfaces.get('exile_return_cards_native_2022')
     if exile_return_proof:
@@ -435,6 +481,296 @@ def main():
                     size=value(unqual(type_of(die)),'DW_AT_byte_size');assert size==(84 if name=='td' else 216)
                     bruna_layouts[name]=size
         assert len(family_symbols)==4 and len(family_vlas)==2 and bruna_layouts==dict(td=84,this_test=216)
+    combat_foundation_symbols={};combat_foundation_inlined={};combat_foundation_arrays={};combat_foundation_filters={};combat_foundation_layout={};combat_foundation_exe={};combat_foundation_table_clear=False
+    if interfaces.get('combat_foundations_native_2022'):
+        from export_abi import type_of
+        from pack_native_tables import unqual
+        from capstone import Cs,CS_ARCH_X86,CS_MODE_32
+        from capstone.x86_const import X86_OP_IMM,X86_OP_REG,X86_OP_MEM
+        decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True
+        for f in manifest['accepted_functions']:
+            if not f.get('combat_foundation_evidence') or not f['static']:continue
+            prefix='_'+f['name'];records=[s for s in debug.symbols if s[0]==prefix or re.fullmatch(re.escape(prefix)+r'\.(?:constprop|isra)\.\d+',s[0])]
+            if not records and f['name']=='enforce_minimum_blockers':continue
+            assert len(records)==1 and records[0][2]>0 and records[0][3]==32 and records[0][4]==3,(f['name'],records)
+            combat_foundation_symbols[f['name']]=records[0][0]
+        for cu in debug.dwarf().iter_CUs():
+            if value(cu.get_top_DIE(),'DW_AT_name')!='functions/engine.c':continue
+            for die in cu.iter_DIEs():
+                name=inherited_value(die,'DW_AT_name')
+                if die.tag=='DW_TAG_inlined_subroutine' and name=='enforce_minimum_blockers':
+                    parent=die.get_parent();assert parent.tag=='DW_TAG_subprogram' and value(parent,'DW_AT_name')=='human_assign_blockers_2022'
+                    low=value(die,'DW_AT_low_pc');high=die.attributes['DW_AT_high_pc'];end=high.value if high.form=='DW_FORM_addr' else low+high.value
+                    parent_low=value(parent,'DW_AT_low_pc');parent_high=parent.attributes['DW_AT_high_pc'];parent_end=parent_high.value if parent_high.form=='DW_FORM_addr' else parent_low+parent_high.value
+                    assert parent_low<=low<end<=parent_end
+                    count=next(c for c in die.iter_children() if c.tag=='DW_TAG_variable' and inherited_value(c,'DW_AT_name')=='num_blocking')
+                    assert 'DW_AT_location' in count.attributes
+                    t=unqual(type_of(count));assert t.tag=='DW_TAG_array_type' and value(unqual(type_of(t)),'DW_AT_byte_size')==4
+                    assert [value(c,'DW_AT_upper_bound') for c in t.iter_children() if c.tag=='DW_TAG_subrange_type']==[150]
+                    combat_foundation_inlined[name]=dict(parent='human_assign_blockers_2022',address=hex(low),bytes=end-low,count_array_bytes=604)
+                if die.tag=='DW_TAG_subprogram' and name in {'setup_ai_combat_data','human_assign_blockers_2022','is_legal_block_2022'} and value(die,'DW_AT_low_pc') is not None:
+                    low=value(die,'DW_AT_low_pc');high=die.attributes['DW_AT_high_pc'];end=high.value if high.form=='DW_FORM_addr' else low+high.value
+                    insns=list(decoder.disasm(pe.get_data(low-pe.OPTIONAL_HEADER.ImageBase,end-low),low))
+                    if name=='setup_ai_combat_data':
+                        literals={o.imm for i in insns for o in i.operands if o.type==X86_OP_IMM}
+                        assert {0x609164,1200}<=literals and any(i.mnemonic=='rep stosd' for i in insns)
+                        activating=[o for i in insns for o in i.operands if o.type==X86_OP_MEM and o.mem.disp==0x7a3610]
+                        assert len(activating)==3 and all(o.size==4 for o in activating)
+                        combat_foundation_table_clear=True
+                    else:
+                        targets={i.operands[0].imm for i in insns if i.mnemonic in {'call','jmp'} and i.operands[0].type==X86_OP_IMM}
+                        targets.update(literal_register_call_targets(insns))
+                        for previous,call in zip(insns,insns[1:]):
+                            if (call.mnemonic in {'call','jmp'} and call.operands[0].type==X86_OP_REG and
+                                previous.mnemonic=='mov' and len(previous.operands)==2 and previous.operands[0].type==X86_OP_REG and
+                                previous.operands[0].reg==call.operands[0].reg and previous.operands[1].type==X86_OP_IMM):targets.add(previous.operands[1].imm)
+                        expected={0x499df0} if name=='is_legal_block_2022' else {0x472260,0x4350e0,0x435c80,0x435cd0,0x4d5d32}
+                        assert expected<=targets,(name,expected-targets)
+                        combat_foundation_exe[name]=[f'{a:x}' for a in sorted(expected)]
+                if die.tag not in {'DW_TAG_variable','DW_TAG_typedef'}:continue
+                parent=die.get_parent()
+                while parent is not None and parent.tag!='DW_TAG_subprogram':parent=parent.get_parent()
+                owner=inherited_value(parent,'DW_AT_name') if parent is not None else None
+                if die.tag=='DW_TAG_typedef' and owner=='setup_ai_combat_data' and name=='ai_combat_data_t':
+                    t=unqual(type_of(die));combat_foundation_layout=dict(bytes=value(t,'DW_AT_byte_size'),members={value(c,'DW_AT_name'):value(c,'DW_AT_data_member_location') for c in t.iter_children() if c.tag=='DW_TAG_member'})
+                if owner=='enforce_minimum_blockers' and name=='num_blocking':
+                    t=unqual(type_of(die));assert t.tag=='DW_TAG_array_type' and value(unqual(type_of(t)),'DW_AT_byte_size')==4
+                    bounds=[value(c,'DW_AT_upper_bound') for c in t.iter_children() if c.tag=='DW_TAG_subrange_type'];assert bounds==[150]
+                    combat_foundation_arrays[name]=dict(elements=151,element_bytes=4)
+                if owner=='human_assign_blockers_2022' and name in {'td_choose_blocker','td_block_which_attacker'}:
+                    assert value(unqual(type_of(die)),'DW_AT_byte_size')==84;combat_foundation_filters[name]=84
+        assert len(combat_foundation_symbols)+len(combat_foundation_inlined)==2 and len(combat_foundation_arrays)==1 and len(combat_foundation_filters)==2 and len(combat_foundation_exe)==2 and combat_foundation_table_clear
+        assert combat_foundation_layout==interfaces['combat_foundations_native_2022']['native_storage']['types']['ai_combat_data_t']
+    draft_mana_symbols={};draft_mana_retained={};draft_mana_arrays={};draft_mana_exe={};draft_mana_bytes={};draft_mana_inline=[]
+    if interfaces.get('draft_mana_native_2022'):
+        from collections import Counter
+        from export_abi import type_of
+        from pack_native_tables import unqual
+        from capstone import Cs,CS_ARCH_X86,CS_MODE_32
+        from capstone.x86_const import X86_OP_IMM,X86_OP_MEM
+        decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True
+        owners={'write_deck_file','card_draft_2022','how_much_life_can_i_pay_for_mana_2022','has_mana_multi_a_2022','has_mana_multi_2022'}
+        for f in manifest['accepted_functions']:
+            if not f.get('draft_mana_evidence'):continue
+            prefix='_'+f['name'];syms=[s for s in debug.symbols if s[0]==prefix or (f['static'] and re.fullmatch(re.escape(prefix)+r'\.(?:constprop|isra)\.\d+',s[0]))]
+            assert len(syms)==1 and syms[0][2]>0 and syms[0][3]==32 and syms[0][4]==(3 if f['static'] else 2),(f['name'],syms)
+            draft_mana_symbols[f['name']]=syms[0][0]
+        records=[s for s in debug.symbols if s[0]=='_pick_card'];assert len(records)==1 and records[0][2]>0 and records[0][3]==32 and records[0][4]==3
+        draft_mana_retained['pick_card']=records[0][0]
+        for cu in debug.dwarf().iter_CUs():
+            if value(cu.get_top_DIE(),'DW_AT_name') not in {'functions/draft.c','functions/functions.c'}:continue
+            for die in cu.iter_DIEs():
+                name=inherited_value(die,'DW_AT_name')
+                if die.tag=='DW_TAG_inlined_subroutine' and name=='how_much_life_can_i_pay_for_mana_2022':
+                    parent=die.get_parent()
+                    while parent is not None and parent.tag!='DW_TAG_subprogram':parent=parent.get_parent()
+                    owner=inherited_value(parent,'DW_AT_name');assert owner in {'has_mana_multi_a_2022','has_mana_multi_2022','how_much_life_can_i_pay_for_mana_2022','how_much_life_can_i_pay'}
+                    low=value(die,'DW_AT_low_pc');high=die.attributes['DW_AT_high_pc'];end=high.value if high.form=='DW_FORM_addr' else low+high.value
+                    parent_low=value(parent,'DW_AT_low_pc');parent_high=parent.attributes['DW_AT_high_pc'];parent_end=parent_high.value if parent_high.form=='DW_FORM_addr' else parent_low+parent_high.value
+                    assert parent_low<=low<end<=parent_end;draft_mana_inline.append(dict(parent=owner,address=hex(low),bytes=end-low))
+                if die.tag=='DW_TAG_subprogram' and name in owners and value(die,'DW_AT_low_pc') is not None:
+                    low=value(die,'DW_AT_low_pc');high=die.attributes['DW_AT_high_pc'];end=high.value if high.form=='DW_FORM_addr' else low+high.value
+                    insns=list(decoder.disasm(pe.get_data(low-pe.OPTIONAL_HEADER.ImageBase,end-low),low))
+                    targets={i.operands[0].imm for i in insns if i.mnemonic in {'call','jmp'} and i.operands[0].type==X86_OP_IMM};targets.update(literal_register_call_targets(insns))
+                    expected={'write_deck_file':{0x466020},'card_draft_2022':{0x472120,0x471eb0,0x44e050},'has_mana_multi_a_2022':{0x402be0,0x49d510},'has_mana_multi_2022':{0x402be0}}.get(name)
+                    if expected:
+                        assert expected<=targets,(name,expected-targets);draft_mana_exe[name]=[f'{a:x}' for a in sorted(expected)]
+                    if name in {'has_mana_multi_a_2022','has_mana_multi_2022'}:
+                        stores=[];covered=set()
+                        for i in insns:
+                            if not i.mnemonic.startswith('mov') or not i.operands or i.operands[0].type!=X86_OP_MEM:continue
+                            op=i.operands[0]
+                            if op.mem.base==op.mem.index==0 and 0x55cf10<=op.mem.disp<0x55cf18:
+                                assert 1<=op.size<=8 and op.mem.disp+op.size<=0x55cf18
+                                covered.update(range(op.mem.disp,op.mem.disp+op.size));stores.append(dict(address=hex(i.address),destination=hex(op.mem.disp),bytes=op.size))
+                        assert covered==set(range(0x55cf10,0x55cf18));draft_mana_bytes[name]=stores
+                if die.tag!='DW_TAG_variable':continue
+                parent=die.get_parent()
+                while parent is not None and parent.tag!='DW_TAG_subprogram':parent=parent.get_parent()
+                owner=inherited_value(parent,'DW_AT_name') if parent is not None else None
+                if owner not in {'write_deck_file','card_draft_2022'}:continue
+                t=unqual(type_of(die))
+                if t.tag!='DW_TAG_array_type':continue
+                size=value(unqual(type_of(t)),'DW_AT_byte_size');bounds=[c.attributes.get('DW_AT_upper_bound') for c in t.iter_children() if c.tag=='DW_TAG_subrange_type'];assert len(bounds)==1
+                if name in {'picks','colors','packs','csvids','deck'}:
+                    assert size==(8 if name=='deck' else 4)
+                    if name=='picks':assert bounds[0] is not None and bounds[0].form=='DW_FORM_ref4'
+                    else:assert bounds[0] is None
+                else:
+                    expected=(499,1) if name=='path' else (5,4) if name in {'exps','is_booster'} else (4,4) if name=='basics' else (bounds[0].value,1)
+                    assert bounds[0] is not None and bounds[0].form.startswith('DW_FORM_data') and (bounds[0].value,size)==expected
+                    if name=='buf':assert bounds[0].value in {599,49}
+                key=f'{owner}::{name}:{inherited_value(die,"DW_AT_decl_line")}'
+                draft_mana_arrays[key]=dict(name=name,element_bytes=size,upper_bound=bounds[0].value if bounds[0] else None,bound_form=bounds[0].form if bounds[0] else None)
+        assert len(draft_mana_symbols)==5 and len(draft_mana_retained)==1 and len(draft_mana_arrays)==11 and len(draft_mana_exe)==4 and len(draft_mana_bytes)==2
+        assert Counter((v['name'],v['element_bytes'],v['upper_bound']) for v in draft_mana_arrays.values() if v['name'] in {'path','exps','is_booster','basics','buf'})==Counter([('exps',4,5),('is_booster',4,5),('buf',1,599),('buf',1,49),('basics',4,4),('path',1,499)])
+    display_symbols={};display_arrays={};display_types={};display_statics={};display_exe={};display_stdcall={};display_imports={};display_emptystr=False
+    if interfaces.get('display_hooks_native_2022'):
+        from export_abi import type_of
+        from pack_native_tables import unqual
+        from capstone import Cs,CS_ARCH_X86,CS_MODE_32
+        from capstone.x86_const import X86_OP_IMM
+        decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True
+        worker='draw_fullcard_special_effect_card_impl_2022'
+        for f in manifest['accepted_functions']:
+            if not f.get('display_hook_evidence'):continue
+            name=public_symbol(f);syms=[s for s in debug.symbols if s[0]==name or (f['static'] and re.fullmatch(re.escape(name)+r'\.(?:constprop|isra)\.\d+',s[0]))]
+            assert len(syms)==1 and syms[0][2]>0 and syms[0][3]==32 and syms[0][4]==(3 if f['static'] else 2),(f['name'],syms)
+            display_symbols[f['name']]=syms[0][0]
+        for cu in debug.dwarf().iter_CUs():
+            if value(cu.get_top_DIE(),'DW_AT_name')!='functions/windows.c':continue
+            for die in cu.iter_DIEs():
+                name=inherited_value(die,'DW_AT_name')
+                if die.tag=='DW_TAG_subprogram' and name in {worker,'wndproc_ShowListCard_hook','wndproc_FullCardClass_hook'} and value(die,'DW_AT_low_pc') is not None:
+                    low=value(die,'DW_AT_low_pc');high=die.attributes['DW_AT_high_pc'];end=high.value if high.form=='DW_FORM_addr' else low+high.value
+                    insns=list(decoder.disasm(pe.get_data(low-pe.OPTIONAL_HEADER.ImageBase,end-low),low))
+                    targets={i.operands[0].imm for i in insns if i.mnemonic in {'call','jmp'} and i.operands[0].type==X86_OP_IMM};targets.update(literal_register_call_targets(insns))
+                    expected={0x439010,0x439070,0x466e90} if name==worker else {0x4d34e0,0x46d9a0} if name=='wndproc_ShowListCard_hook' else {0x4389a0,0x438e80,0x438dc0,0x438b00,0x4d1950,0x4d1780,0x4cff20}
+                    assert expected<=targets,(name,expected-targets)
+                    display_exe[name]=[f'{a:x}' for a in sorted(expected)]
+                    if name.startswith('wndproc_'):
+                        returns=[i for i in insns if i.mnemonic=='ret'];assert returns and all(i.op_str=='0x10' for i in returns)
+                        display_stdcall[name]=dict(symbol=display_symbols[name],callee_popped_bytes=16,returns=len(returns))
+                if die.tag not in {'DW_TAG_variable','DW_TAG_typedef'}:continue
+                t=unqual(type_of(die))
+                if die.tag=='DW_TAG_typedef' and name=='inst_and_ext_t':
+                    display_types[name]=dict(bytes=value(t,'DW_AT_byte_size'),members={value(c,'DW_AT_name'):value(c,'DW_AT_data_member_location') for c in t.iter_children() if c.tag=='DW_TAG_member'})
+                if die.tag!='DW_TAG_variable':continue
+                parent=die.get_parent()
+                while parent is not None and parent.tag!='DW_TAG_subprogram':parent=parent.get_parent()
+                owner=inherited_value(parent,'DW_AT_name') if parent is not None else None
+                if name in {'kws_strs','spkws_strs'} or (owner=='wndproc_FullCardClass_hook' and name=='hack_force_expansion'):
+                    loc=value(die,'DW_AT_location');assert isinstance(loc,list) and len(loc)==5 and loc[0]==3
+                    address=int.from_bytes(bytes(loc[1:]),'little');section=next(s for s in pe.sections if s.VirtualAddress<=address-pe.OPTIONAL_HEADER.ImageBase<s.VirtualAddress+s.Misc_VirtualSize)
+                    assert section.Name.rstrip(b'\0')==b'.bss'
+                    size=value(t,'DW_AT_byte_size') if name=='hack_force_expansion' else 4*(1+value(next(c for c in t.iter_children() if c.tag=='DW_TAG_subrange_type'),'DW_AT_upper_bound'))
+                    assert size==(4 if name=='hack_force_expansion' else 128)
+                    display_statics[name]=dict(bytes=size,address=hex(address),section='.bss')
+                key=(owner,name)
+                fixed={('keywords_to_str','strs'):(64,4),('legacy_name_or_text','tmp'):(1999,1),(worker,'card_name'):(99,1),(worker,'rules_text'):(1999,1),(worker,'kwstr'):(999,1),(worker,'et'):(14,1),(worker,'pt'):(14,1)}
+                if key in fixed:
+                    assert t.tag=='DW_TAG_array_type';size=value(unqual(type_of(t)),'DW_AT_byte_size');bounds=[c.attributes.get('DW_AT_upper_bound') for c in t.iter_children() if c.tag=='DW_TAG_subrange_type']
+                    assert len(bounds)==1 and bounds[0].form.startswith('DW_FORM_data') and (bounds[0].value,size)==fixed[key]
+                    display_arrays[owner+'::'+name]=dict(elements=bounds[0].value+1,element_bytes=size)
+                if key==(worker,'emptystr'):
+                    assert value(t,'DW_AT_byte_size')==1;display_emptystr=True
+        assert len(display_symbols)==7 and len(display_arrays)==7 and len(display_statics)==3 and len(display_exe)==3 and len(display_stdcall)==2 and display_emptystr
+        assert display_types['inst_and_ext_t']==interfaces['display_hooks_native_2022']['native_storage']['types']['inst_and_ext_t']
+        for module in pe.DIRECTORY_ENTRY_IMPORT:
+            if module.dll.decode().lower()!='drawcardlib.dll':continue
+            for imported in module.imports:
+                if imported.name and imported.name.decode() in {'DrawFullCard','DrawFullCardEx','DrawSmallCardEx'}:display_imports[imported.name.decode()]=hex(imported.address)
+        assert len(display_imports)==3
+    combat_search_symbols={};combat_search_retained={};combat_search_arrays={};combat_search_types={};combat_search_exe={};combat_search_signed_division=False
+    if interfaces.get('combat_search_native_2022'):
+        from export_abi import type_of
+        from pack_native_tables import unqual
+        from capstone import Cs,CS_ARCH_X86,CS_MODE_32
+        from capstone.x86_const import X86_OP_IMM
+        decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True
+        for name in ['mod_pow_unblocked','ai_assign_one_blocker','enforce_minimum_blockers','qsort_compare_attacker_effectiveness','qsort_cardvalue_ascending']:
+            records=[s for s in debug.symbols if s[0]=='_'+name]
+            assert len(records)==1 and records[0][2]>0 and records[0][3]==32 and records[0][4]==3,(name,records)
+            (combat_search_symbols if name in {'mod_pow_unblocked','ai_assign_one_blocker'} else combat_search_retained)[name]=records[0][0]
+        division=next(s for s in debug.symbols if s[0]=='___divdi3' and s[2]>0)
+        division_address=pe.OPTIONAL_HEADER.ImageBase+debug.pe.sections[division[2]-1].VirtualAddress+division[1]
+        for cu in debug.dwarf().iter_CUs():
+            if value(cu.get_top_DIE(),'DW_AT_name')!='functions/engine.c':continue
+            for die in cu.iter_DIEs():
+                name=inherited_value(die,'DW_AT_name')
+                if die.tag=='DW_TAG_subprogram' and name in {'ai_assign_one_blocker','ai_assign_blockers_2022','ai_choose_attackers'} and value(die,'DW_AT_low_pc') is not None:
+                    low=value(die,'DW_AT_low_pc');high=die.attributes['DW_AT_high_pc'];end=high.value if high.form=='DW_FORM_addr' else low+high.value
+                    insns=list(decoder.disasm(pe.get_data(low-pe.OPTIONAL_HEADER.ImageBase,end-low),low))
+                    targets={i.operands[0].imm for i in insns if i.mnemonic in {'call','jmp'} and i.operands[0].type==X86_OP_IMM}
+                    targets.update(literal_register_call_targets(insns))
+                    if name=='ai_assign_one_blocker':
+                        assert division_address in targets;combat_search_signed_division=True
+                    else:
+                        expected={0x4af6f0,0x435c80,0x435cd0,0x437e20} if name=='ai_assign_blockers_2022' else {0x4b4350,0x4af6f0,0x498e30,0x498e70}
+                        assert expected<=targets,(name,expected-targets)
+                        combat_search_exe[name]=[f'{a:x}' for a in sorted(expected)]
+                if die.tag not in {'DW_TAG_variable','DW_TAG_typedef'}:continue
+                parent=die.get_parent()
+                while parent is not None and parent.tag!='DW_TAG_subprogram':parent=parent.get_parent()
+                owner=inherited_value(parent,'DW_AT_name') if parent is not None else None
+                if owner not in {'ai_assign_one_blocker','ai_choose_attackers'}:continue
+                t=unqual(type_of(die))
+                if die.tag=='DW_TAG_typedef' and name in {'PotentialAttacker','CardPower','ai_combat_data_t'}:
+                    combat_search_types[name]=dict(bytes=value(t,'DW_AT_byte_size'),members={value(c,'DW_AT_name'):value(c,'DW_AT_data_member_location') for c in t.iter_children() if c.tag=='DW_TAG_member'})
+                if die.tag!='DW_TAG_variable' or t.tag!='DW_TAG_array_type':continue
+                bounds=[c.attributes.get('DW_AT_upper_bound') for c in t.iter_children() if c.tag=='DW_TAG_subrange_type'];assert len(bounds)==1 and bounds[0] is not None
+                size=value(unqual(type_of(t)),'DW_AT_byte_size')
+                if name=='outflanked':
+                    assert size==4 and bounds[0].form=='DW_FORM_ref4'
+                    bound=next(c for c in t.iter_children() if c.tag=='DW_TAG_subrange_type').get_DIE_from_attribute('DW_AT_upper_bound')
+                    assert bound.tag=='DW_TAG_variable' and value(bound,'DW_AT_artificial') and 'DW_AT_location' in bound.attributes
+                else:
+                    expected=(149,12) if name=='pot_atck' else (149,1) if name in {'card_to_blocker_pt_idx','card_to_attacker_pt_idx'} else (7,8) if name=='cardpow' else (15,4)
+                    assert bounds[0].form.startswith('DW_FORM_data') and (bounds[0].value,size)==expected,(name,bounds,size)
+                key=f'{owner}::{name}:{inherited_value(die,"DW_AT_decl_line")}'
+                combat_search_arrays[key]=dict(element_bytes=size,upper_bound=bounds[0].value,bound_form=bounds[0].form)
+        assert len(combat_search_arrays)==23 and len(combat_search_exe)==2 and combat_search_signed_division
+        assert combat_search_types['PotentialAttacker']==dict(bytes=12,members=dict(card=0,effectiveness=4,bands=8,one_of_best_7=9))
+        assert combat_search_types['CardPower']==dict(bytes=8,members=dict(card=0,pow=4))
+        assert combat_search_types['ai_combat_data_t']==interfaces['combat_search_native_2022']['native_storage']['types']['ai_combat_data_t']
+    stack_utility_arrays={};stack_utility_boundaries={};stack_utility_rogue_layout={}
+    if interfaces.get('stack_utility_helpers_native_2022'):
+        from export_abi import type_of
+        from pack_native_tables import unqual
+        from capstone import Cs,CS_ARCH_X86,CS_MODE_32
+        from capstone.x86_const import X86_OP_IMM, X86_OP_REG
+        decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True
+        expected_exe={0x430150,0x4301e0,0x430200,0x435940,0x436700,0x4373b0,0x439690,0x436a20,0x471b60,0x4779f0,0x4a7d80,0x4d5d32}
+        for cu in debug.dwarf().iter_CUs():
+            source=value(cu.get_top_DIE(),'DW_AT_name')
+            if source not in {'functions/engine.c','functions/rules_engine.c','functions/events.c'}:continue
+            for die in cu.iter_DIEs():
+                name=inherited_value(die,'DW_AT_name')
+                if die.tag=='DW_TAG_subprogram' and name in {'put_card_on_stack_2022','allow_response_to_trigger'} and value(die,'DW_AT_low_pc') is not None:
+                    low=value(die,'DW_AT_low_pc');high=die.attributes['DW_AT_high_pc'];end=high.value if high.form=='DW_FORM_addr' else low+high.value
+                    code=pe.get_data(low-pe.OPTIONAL_HEADER.ImageBase,end-low)
+                    insns=list(decoder.disasm(code,low))
+                    targets={i.operands[0].imm for i in insns if i.mnemonic in {'call','jmp'} and i.operands[0].type==X86_OP_IMM}
+                    for previous,call in zip(insns,insns[1:]):
+                        if (call.mnemonic in {'call','jmp'} and call.operands[0].type==X86_OP_REG and
+                            previous.mnemonic=='mov' and len(previous.operands)==2 and
+                            previous.operands[0].type==X86_OP_REG and previous.operands[0].reg==call.operands[0].reg and
+                            previous.operands[1].type==X86_OP_IMM):targets.add(previous.operands[1].imm)
+                    expected=expected_exe if name=='put_card_on_stack_2022' else {0x439690,0x436a20}
+                    assert expected<=targets,(name,expected-targets)
+                    stack_utility_boundaries[name]=[f'{a:x}' for a in sorted(expected)]
+                if die.tag not in {'DW_TAG_variable','DW_TAG_typedef'}:continue
+                parent=die.get_parent()
+                while parent is not None and parent.tag!='DW_TAG_subprogram':parent=parent.get_parent()
+                owner=inherited_value(parent,'DW_AT_name') if parent is not None else None
+                if die.tag=='DW_TAG_typedef' and owner=='random_rogue' and name=='rogue_t':
+                    t=unqual(type_of(die));stack_utility_rogue_layout=dict(bytes=value(t,'DW_AT_byte_size'),members={value(c,'DW_AT_name'):value(c,'DW_AT_data_member_location') for c in t.iter_children() if c.tag=='DW_TAG_member'})
+                key=(owner,name)
+                fixed={('put_card_on_stack_2022','str'):(499,1),('put_card_on_stack_2022','trace'):(299,1),('limit_allowed_in_deck','unlimited_list'):(16,4)}
+                if key not in fixed and key!=('random_rogue','ok_rogues'):continue
+                t=unqual(type_of(die));assert t.tag=='DW_TAG_array_type'
+                size=value(unqual(type_of(t)),'DW_AT_byte_size');bounds=[c.attributes.get('DW_AT_upper_bound') for c in t.iter_children() if c.tag=='DW_TAG_subrange_type']
+                assert len(bounds)==1 and bounds[0] is not None
+                if key in fixed:
+                    assert size==fixed[key][1] and bounds[0].value==fixed[key][0] and bounds[0].form.startswith('DW_FORM_data')
+                else:
+                    assert size==4 and bounds[0].form=='DW_FORM_ref4'
+                    subrange=next(c for c in t.iter_children() if c.tag=='DW_TAG_subrange_type')
+                    bound=subrange.get_DIE_from_attribute('DW_AT_upper_bound')
+                    assert bound.tag=='DW_TAG_variable' and value(bound,'DW_AT_artificial')
+                    assert value(unqual(type_of(bound)),'DW_AT_byte_size')==4 and 'DW_AT_location' in bound.attributes
+                    locations=LocationParser(debug.dwarf().location_lists()).parse_from_attribute(bound.attributes['DW_AT_location'],cu['version'],die=bound)
+                    assert locations
+                stack_utility_arrays[owner+'::'+name]=dict(element_bytes=size,upper_bound=bounds[0].value,bound_form=bounds[0].form)
+                if key==('limit_allowed_in_deck','unlimited_list'):
+                    loc=value(die,'DW_AT_location');assert loc[0]==3 and len(loc)==5
+                    address=int.from_bytes(bytes(loc[1:]),'little')
+                    native=interfaces['stack_utility_helpers_native_2022']['native_storage']['unlimited_list']
+                    assert list(struct.unpack('<17i',pe.get_data(address-pe.OPTIONAL_HEADER.ImageBase,68)))==native
+        assert len(stack_utility_arrays)==4 and len(stack_utility_boundaries)==2
+        assert stack_utility_rogue_layout==interfaces['stack_utility_helpers_native_2022']['native_storage']['rogue_layout']
+        linker=(root/'manalink.lds').read_text()
+        assert '_put_card_on_stack = 0x4338F0;' in linker and '_put_card_on_stack2 = 0x433850;' in linker
     havengul_symbols={};havengul_storage={};havengul_boundaries={};havengul_attachment_symbol=None
     if interfaces.get('havengul_utility_helpers_native_2022'):
         from export_abi import type_of
@@ -477,6 +813,38 @@ def main():
                     assert value(unqual(type_of(die)),'DW_AT_byte_size')==216
                     havengul_storage[name]=216
         assert len(havengul_symbols)==5 and len(havengul_storage)==3 and len(havengul_boundaries)==2
+    from verify_mana_payment_build import verify as verify_mana_payment
+    mana_payment_build = verify_mana_payment(debug, pe, interfaces)
+    from verify_stack_activation_build import verify as verify_stack_activation
+    stack_activation_build = verify_stack_activation(debug, pe, interfaces)
+    from verify_engine_state_build import verify as verify_engine_state
+    engine_state_build = verify_engine_state(debug, pe, interfaces)
+    from verify_turn_flow_build import verify as verify_turn_flow
+    turn_flow_build = verify_turn_flow(debug, pe, interfaces)
+    from verify_damage_prevention_build import verify as verify_damage_prevention
+    damage_prevention_build = verify_damage_prevention(debug, pe, interfaces)
+    from verify_card_state_build import verify as verify_card_state
+    card_state_build = verify_card_state(debug, pe, interfaces)
+    from verify_card_queries_build import verify as verify_card_queries
+    card_queries_build = verify_card_queries(debug, pe, interfaces)
+    from verify_type_animation_build import verify as verify_type_animation
+    type_animation_build = verify_type_animation(debug, pe, interfaces)
+    from verify_tap_ai_build import verify as verify_tap_ai
+    tap_ai_build = verify_tap_ai(debug, pe, interfaces)
+    from verify_name_type_build import verify as verify_name_type
+    name_type_build = verify_name_type(debug, pe, interfaces)
+    from verify_color_core_build import verify as verify_color_core
+    color_core_build = verify_color_core(debug, pe, interfaces)
+    from verify_color_hacks_build import verify as verify_color_hacks
+    color_hacks_build = verify_color_hacks(debug, pe, interfaces)
+    from verify_mana_sources_build import verify as verify_mana_sources
+    mana_sources_build = verify_mana_sources(debug, pe, interfaces)
+    from verify_mana_producers_build import verify as verify_mana_producers
+    mana_producers_build = verify_mana_producers(debug, pe, interfaces)
+    from verify_ai_snapshots_build import verify as verify_ai_snapshots
+    ai_snapshots_build = verify_ai_snapshots(debug, pe, interfaces)
+    from verify_mana_ai_phase_build import verify as verify_mana_ai_phase
+    mana_ai_phase_build = verify_mana_ai_phase(debug, pe, interfaces)
     migrated_eligibility=[f for f in manifest['accepted_functions'] if f.get('flag_target_consumer_evidence') and f.get('previous_recovery')]
     for helper in migrated_eligibility:
         for name in [helper['name'],helper['previous_recovery']['name']]:
@@ -510,6 +878,31 @@ def main():
             assert len(records)==1 and records[0][2]>0 and records[0][3]==32 and records[0][4]==2
             record=records[0];symbols[name]=debug.pe.OPTIONAL_HEADER.ImageBase+debug.pe.sections[record[2]-1].VirtualAddress+record[1]
         address=symbols[helper['name']];target=symbols['raw_counter_activated_ability'];code=pe.get_data(address-pe.OPTIONAL_HEADER.ImageBase,5)
+        from unify_scalar_helpers import shared_recovered_names
+        if helper['name'] in shared_recovered_names():
+            assert address==target
+            concrete=[]
+            for cu in debug.dwarf().iter_CUs():
+                if value(cu.get_top_DIE(),'DW_AT_name')!=helper['source']:continue
+                for die in cu.iter_DIEs():
+                    if die.tag!='DW_TAG_subprogram' or inherited_value(die,'DW_AT_name')!=helper['name'] or value(die,'DW_AT_low_pc')!=address:continue
+                    high=die.attributes['DW_AT_high_pc'];concrete.append(high.value if high.form=='DW_FORM_addr' else address+high.value)
+            assert len(set(concrete))==1
+            end=concrete[0]
+            from capstone import Cs,CS_ARCH_X86,CS_MODE_32
+            from capstone.x86_const import X86_OP_MEM,X86_OP_IMM
+            counter_decoder=Cs(CS_ARCH_X86,CS_MODE_32);counter_decoder.detail=True
+            insns=list(counter_decoder.disasm(pe.get_data(address-pe.OPTIONAL_HEADER.ImageBase,end-address),address))
+            assert sum(i.size for i in insns)==end-address
+            instance=next(s for s in debug.symbols if s[0]=='_get_card_instance')
+            instance_at=instance[1] if instance[2]==-1 else debug.pe.OPTIONAL_HEADER.ImageBase+debug.pe.sections[instance[2]-1].VirtualAddress+instance[1]
+            assert [i.operands[0].imm for i in insns if i.mnemonic=='call' and i.operands[0].type==X86_OP_IMM]==[instance_at]
+            stores=[i for i in insns if i.mnemonic=='mov' and i.operands[0].type==X86_OP_MEM and i.operands[0].size==4 and i.operands[0].mem.base and i.operands[0].mem.disp==108 and i.operands[1].type==X86_OP_IMM and i.operands[1].imm & 0xffffffff==0xffffffff]
+            assert len(stores)==1
+            native_counter=Image((cache/'2022-ManalinkEh.dll').read_bytes())
+            assert end-address==33 and stores[0].bytes.hex()==native_counter.pe.get_data(0x2692fd8-0x2000000,7).hex()=='c7406cffffffff'
+            mode_counter_thunks[helper['name']]=dict(address=hex(address),target=hex(target),representation='canonical body resolved through ledger name' if canonical_helpers else 'same-address alias',body_bytes=end-address,internal_id_store=dict(address=hex(stores[0].address),bytes=stores[0].bytes.hex(),offset=108,value=-1,native_instruction='0x2692fd8'))
+            continue
         assert code[0]==0xe9 and address+5+struct.unpack_from('<i',code,1)[0]==target
         mode_counter_thunks[helper['name']]=dict(address=hex(address),target=hex(target),bytes=code.hex(),retained_target='raw_counter_activated_ability')
     outlined_proliferate={}
@@ -576,6 +969,27 @@ def main():
         native_pack_weight_tables_verified=pack_weights_verified,private_pack_generator_symbols=pack_generator_private_symbols,private_pack_once_buffers=pack_once,
         private_pack_dialog_symbols=pack_dialog_symbols,private_pack_dialog_statics=pack_dialog_statics,native_pack_dialog_template_bytes_verified=pack_template_verified,pack_dialog_api_imports_verified=pack_dialog_imports,
         alternate_casting_filter_abi_bytes=alternate_filters,alternate_casting_vla_shapes=alternate_vlas,
+        combat_foundation_private_symbols=combat_foundation_symbols,combat_foundation_inlined=combat_foundation_inlined,combat_foundation_array_shapes=combat_foundation_arrays,combat_foundation_target_bytes=combat_foundation_filters,combat_foundation_record_layout=combat_foundation_layout,combat_foundation_exe_boundaries=combat_foundation_exe,combat_foundation_table_clear=combat_foundation_table_clear,
+        damage_prevention_build=damage_prevention_build,
+        card_state_build=card_state_build,
+        card_queries_build=card_queries_build,
+        type_animation_build=type_animation_build,
+        tap_ai_build=tap_ai_build,
+        name_type_build=name_type_build,
+        color_core_build=color_core_build,
+        color_hacks_build=color_hacks_build,
+        mana_sources_build=mana_sources_build,
+        mana_producers_build=mana_producers_build,
+        ai_snapshots_build=ai_snapshots_build,
+        mana_ai_phase_build=mana_ai_phase_build,
+        turn_flow_build=turn_flow_build,
+        engine_state_build=engine_state_build,
+        stack_activation_build=stack_activation_build,
+        mana_payment_build=mana_payment_build,
+        draft_mana_symbols=draft_mana_symbols,draft_mana_retained_symbols=draft_mana_retained,draft_mana_array_shapes=draft_mana_arrays,draft_mana_exe_boundaries=draft_mana_exe,draft_mana_byte_stores=draft_mana_bytes,draft_mana_inlined=draft_mana_inline,
+        display_hook_symbols=display_symbols,display_hook_array_shapes=display_arrays,display_hook_record_layouts=display_types,display_hook_private_statics=display_statics,display_hook_exe_boundaries=display_exe,display_hook_stdcall=display_stdcall,display_hook_drawcard_imports=display_imports,display_hook_empty_string_verified=display_emptystr,
+        combat_search_private_symbols=combat_search_symbols,combat_search_retained_symbols=combat_search_retained,combat_search_array_shapes=combat_search_arrays,combat_search_record_layouts=combat_search_types,combat_search_exe_boundaries=combat_search_exe,combat_search_signed_division=combat_search_signed_division,
+        stack_utility_array_shapes=stack_utility_arrays,stack_utility_exe_boundaries=stack_utility_boundaries,stack_utility_rogue_layout=stack_utility_rogue_layout,
         retained_havengul_attachment_symbol=havengul_attachment_symbol,
         private_havengul_symbols=havengul_symbols,havengul_storage_bytes=havengul_storage,havengul_utility_exe_boundaries=havengul_boundaries,
         private_legacy_family_symbols=family_symbols,legacy_family_vla_shapes=family_vlas,bruna_distinct_layout_bytes=bruna_layouts,
@@ -583,6 +997,7 @@ def main():
         selection_storage_array_shapes=selection_arrays,selection_storage_filter_bytes=selection_filters,
         private_exile_return_symbols=exile_return_symbols,exile_return_array_shapes=exile_return_arrays,chemister_distinct_filter_bytes=exile_return_filters,
         private_letter_effect_helpers_verified=len(letter_private),private_clock_buffers_verified=len(clock_buffers),private_clock_buffers=clock_buffers,clock_api_imports_verified=clock_imports,
+        helper_unification=helper_unification,canonical_record_storage=canonical_record_storage,
         machine='IMAGE_FILE_MACHINE_I386',optional_header='PE32',image_base=hex(pe.OPTIONAL_HEADER.ImageBase),entry_rva=hex(pe.OPTIONAL_HEADER.AddressOfEntryPoint),exports=exports,
         files={p.name:dict(bytes=p.stat().st_size,sha256=sha(p.read_bytes())) for p in [dll,dbg]},debug_info_bytes=debug.sections['.debug_info'].SizeOfRawData,
         new_batch_public_symbols_verified=len(public),migrated_leaves_test_native_symbols_verified=len(migrated_leaves),private_reveal_callback_symbols_verified=len(reveal_callbacks),private_flash_callback_symbols_verified=len(flash_private),private_flash_event_globals_verified=len(flash_globals),private_snow_callback_symbols_verified=len(snow_callbacks),retained_storm_state_verified=storm_state,import_library_i386_members={n:archive_members(root/n) for n in ['libDrawcardlib.a','libcapturestackbacktrace.a']},
@@ -593,7 +1008,16 @@ def main():
                  'Root veneer object is assembled as a dependency and loaded once by the linker script.',
                  'Both import archives are regenerated with i386 machine and --32 assembler flags.'],
         scope='Compile, assemble, link, separate debug data and inspect output. No game/DLL execution, deployment, gameplay tests or byte matching. The two user-directed Wish dialog stubs remain present and out of scope.')
+    if canonical_helpers:
+        report['canonical_helpers']=dict(source=canonical_helpers,physical_symbols=physical_helpers)
+        report['canonical_helper_domains']=helper_domains
+        report['name_view']='Per-family recovery checks resolve immutable ledger names through the explicit canonical-name map; physical COFF names checked separately, with no emitted compatibility aliases.'
     save_json(cache/'build-gcc93/verification.json',report);print(json.dumps({k:v for k,v in report.items() if k not in {'excluded_c_source_units','repairs'}},indent=2))
 
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    from canonicalize_helpers import load,verify,historical_sources
+    if load():
+        canonical=verify()
+        with historical_sources():main(canonical)
+    else:main()

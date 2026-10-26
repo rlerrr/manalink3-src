@@ -4105,7 +4105,7 @@ int card_ouphe_vandals(int player, int card, event_t event)
       {
         return 0;
       }
-      result = can_use_activated_abilities_2022(player, card);
+      result = can_use_activated_abilities(player, card);
       if (result == 0)
       {
         return 0;
@@ -4120,7 +4120,7 @@ int card_ouphe_vandals(int player, int card, event_t event)
       {
         return 0;
       }
-      result = has_mana_for_activated_ability_2022(player, card, 0, 0, 0, 1, 0, 0);
+      result = has_mana_for_activated_ability(player, card, 0, 0, 0, 1, 0, 0);
       if (result == 0)
       {
         return 0;
@@ -4130,7 +4130,7 @@ int card_ouphe_vandals(int player, int card, event_t event)
     if (event == EVENT_ACTIVATE)
     {
       instance->number_of_targets = '\0';
-      result = charge_mana_for_activated_ability_2022(player, card, 0, 0, 0, 1, 0, 0);
+      result = charge_mana_for_activated_ability(player, card, 0, 0, 0, 1, 0, 0);
       if (result == 0)
       {
         return 0;
@@ -4179,7 +4179,7 @@ int card_summoning_station(int player, int card, event_t event)
     }
   LAB_02033bbb:
     result = duh_mode(player);
-    result = resolve_gfp_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+    result = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
     if (result != 0)
     {
       untap_card(player, card);
@@ -4255,7 +4255,7 @@ int card_salvaging_station(int player, int card, event_t event)
 
   if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
-    count_for_gfp_ability_2022(player, card, 0x77, 2, 2, NULL);
+    count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
     instance = in_play(player, card);
     if (instance == NULL)
     {
@@ -4269,7 +4269,7 @@ int card_salvaging_station(int player, int card, event_t event)
       goto LAB_02032951;
   }
   result = duh_mode(player);
-  result = resolve_gfp_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  result = resolve_gfp_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (result != 0)
   {
     untap_card(player, card);
@@ -4281,16 +4281,16 @@ LAB_02032951:
   {
     memcpy(msg, "Select a noncreature artifact with CMC 1 or less.", 50);
     memset(msg + 50, 0, 50);
-    new_default_test_definition_2022(&this_test, 0x40, msg);
+    new_default_test_definition(&this_test, 0x40, msg);
     this_test.type_flag = 2;
     this_test.cmc = 2;
     this_test.cmc_flag = 3;
     if ((event == EVENT_RESOLVE_ACTIVATION) &&
         (result = validate_target_from_grave_source(player, card, player, 0), result != -1))
     {
-      reanimate_permanent_2022(player, -1, player, result, REANIMATE2022_DEFAULT);
+      reanimate_permanent(player, -1, player, result, REANIMATE2022_DEFAULT);
     }
-    result = generic_activated_ability_with_target_in_grave_2022(player, card, event, GAA_UNTAPPED,
+    result = generic_activated_ability_with_target_in_grave(player, card, event, GAA_UNTAPPED,
                                                                  0, 0, 0, 0, 0, 0, 0, NULL, NULL,
                                                                  TYPE_NONE, &this_test, 8);
   }

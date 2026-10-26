@@ -4236,7 +4236,7 @@ int card_xenagos_god_of_revels(int player, int card, event_t event)
 		return basic_spell(player, card, event);
 	}
 
-	if (beginning_of_combat(player, card, event, player, -1) ){
+	if (beginning_of_combat(player, card, event, player) ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE);
 		td.allowed_controller = td.preferred_controller = player;
@@ -4582,7 +4582,7 @@ int card_touch_of_the_horned_god(int player, int card, event_t event){
 
 int intervention_of_keranos_legacy(int player, int card, event_t event){
 
-	if( beginning_of_combat(player, card, event, player, -1) ){
+	if( beginning_of_combat(player, card, event, player) ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);
 		new_damage_all(player, card, ANYBODY, 3, NDA_ALL_CREATURES, &test);

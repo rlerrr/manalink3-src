@@ -46,7 +46,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     assert worker_parameters[3]['location']=='(DW_OP_fbreg: 0)'
     assert [p['location'] for p in component['parameters']['26a0080']]==[f'(DW_OP_fbreg: {i})' for i in [0,4,8,12,16]]
     for name,digest in component['retained_bodies'].items():
-        assert sha(function_body(sources[SOURCE].replace('\r\n','\n'),name).encode())==digest
+        from unify_scalar_helpers import retained_source_body
+        assert sha(retained_source_body(root,SOURCE,name).encode())==digest
     decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True
     for a,entry in entries.items():
         detail=component['functions'][a];body=function_body(sources[SOURCE].replace('\r\n','\n'),entry['name'])

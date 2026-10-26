@@ -4288,7 +4288,7 @@ int card_yawgmoths_agenda(int player, int card, event_t event)
 int card_aggressive_urge(int player, int card, event_t event)
 {
   int result;
-  result = vanilla_instant_pump_2022(player, card, event, 2, player, 1, 1, 0x1000000, 0);
+  result = vanilla_instant_pump(player, card, event, 2, player, 1, 1, 0x1000000, 0);
   return result;
 }
 
@@ -4346,7 +4346,7 @@ int card_ardent_soldier(int player, int card, event_t event)
 {
   int result;
   kicker(player, card, event, 2, 0, 0, 0, 0, 0);
-  result = check_special_flags_2022(player, card, 0x80);
+  result = check_special_flags(player, card, 0x80);
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1,
                                        (unsigned int)(result != 0));
   return 0;
@@ -4362,7 +4362,7 @@ int card_benalish_emissary(int player, int card, event_t event)
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    result = check_special_flags_2022(player, card, 0x80);
+    result = check_special_flags(player, card, 0x80);
     if (result != 0)
     {
       instance = get_card_instance(player, card);
@@ -4436,7 +4436,7 @@ int card_chaotic_strike(int player, int card, event_t event)
         if (result != 0)
         {
           instance = get_card_instance(player, card);
-          pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, 1,
+          pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, 1,
                          1);
         }
         draw_a_card(player);
@@ -4476,7 +4476,7 @@ int card_crimson_acolyte(int player, int card, event_t event)
       {
         result =
             get_sleighted_protection(instance->parent_controller, instance->parent_card, 0x4000);
-        pump_ability_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
+        pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
                                0, 0, result, 0);
       }
     }
@@ -4683,7 +4683,7 @@ int card_explosive_growth(int player, int card, event_t event)
         iVar2 = valid_target(&td);
         if (iVar2 != 0)
         {
-          iVar2 = check_special_flags_2022(player, card, 0x80);
+          iVar2 = check_special_flags(player, card, 0x80);
           if (iVar2 == 0)
           {
             iVar3 = 2;
@@ -4789,7 +4789,7 @@ int card_hypnotic_cloud(int player, int card, event_t event)
       result = valid_target(&td);
       if (result != 0)
       {
-        result = check_special_flags_2022(player, card, 0x80);
+        result = check_special_flags(player, card, 0x80);
         new_multidiscard(instance->targets[0].player,
                          (-(unsigned int)(result == 0) & 0xfffffffe) + 3, 0, player);
       }
@@ -4812,7 +4812,7 @@ int card_kavu_aggressor(int player, int card, event_t event)
   int result;
   kicker(player, card, event, 4, 0, 0, 0, 0, 0);
   cannot_block(player, card, event);
-  result = check_special_flags_2022(player, card, 0x80);
+  result = check_special_flags(player, card, 0x80);
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1,
                                        (unsigned int)(result != 0));
   return 0;
@@ -4894,7 +4894,7 @@ int card_llanowar_elite(int player, int card, event_t event)
   int result;
   int number;
   kicker(player, card, event, 8, 0, 0, 0, 0, 0);
-  result = check_special_flags_2022(player, card, 0x80);
+  result = check_special_flags(player, card, 0x80);
   number = 0;
   if (result != 0)
   {
@@ -4990,7 +4990,7 @@ int card_obsidian_acolyte(int player, int card, event_t event)
       {
         result =
             get_sleighted_protection(instance->parent_controller, instance->parent_card, 0x800);
-        pump_ability_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
+        pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
                                0, 0, result, 0);
       }
     }
@@ -5050,7 +5050,7 @@ int card_orims_touch(int player, int card, event_t event)
       if (result != 0)
       {
         instance = get_card_instance(player, card);
-        result = check_special_flags_2022(player, card, 0x80);
+        result = check_special_flags(player, card, 0x80);
         if (result == 0)
         {
           result = 2;
@@ -5078,7 +5078,7 @@ int card_pincer_spider(int player, int card, event_t event)
 {
   int result;
   kicker(player, card, event, 3, 0, 0, 0, 0, 0);
-  result = check_special_flags_2022(player, card, 0x80);
+  result = check_special_flags(player, card, 0x80);
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1,
                                        (unsigned int)(result != 0));
   return 0;
@@ -5111,7 +5111,7 @@ int card_power_armor(int player, int card, event_t event)
     {
       result = count_domain(player, card);
       power = count_domain(player, card);
-      pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card, power,
+      pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card, power,
                      result);
     }
   }
@@ -5245,7 +5245,7 @@ LAB_0249adac:
 int card_riptide_crab(int player, int card, event_t event)
 {
   int result;
-  vigilance_2022(player, card, event);
+  vigilance(player, card, event);
   result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (result == 0)
   {
@@ -5306,7 +5306,7 @@ int card_savage_offensive(int player, int card, event_t event)
             (event == EVENT_CHANGE_TARGET)) &&
            (event == EVENT_RESOLVE_SPELL))
   {
-    result = check_special_flags_2022(player, card, 0x80);
+    result = check_special_flags(player, card, 0x80);
     if (result == 0)
     {
       pump_creatures_until_eot(player, card, player, 1, 0, 0, 0x100, 0, NULL);
@@ -5359,7 +5359,7 @@ int card_scorching_lava(int player, int card, event_t event)
       result = valid_target(&td);
       if (result != 0)
       {
-        result = check_special_flags_2022(player, card, 0x80);
+        result = check_special_flags(player, card, 0x80);
         if (result != 0)
         {
           instance = get_card_instance(player, card);
@@ -5500,7 +5500,7 @@ int card_tolarian_emissary(int player, int card, event_t event)
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    result = check_special_flags_2022(player, card, 0x80);
+    result = check_special_flags(player, card, 0x80);
     if (result != 0)
     {
       default_target_definition(player, card, &td, 4);
@@ -5621,7 +5621,7 @@ int card_urborg_skeleton(int player, int card, event_t event)
   {
     do_kicker(player, card, 3, 0, 0, 0, 0, 0);
   }
-  result = check_special_flags_2022(player, card, 0x80);
+  result = check_special_flags(player, card, 0x80);
   if (result != 0)
   {
     enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 1);
@@ -5649,7 +5649,7 @@ int card_wandering_stream(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     result = count_domain(player, card);
-    gain_life_2022(player, result * 2);
+    gain_life(player, result * 2);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -5799,7 +5799,7 @@ int card_hate_weaver(int player, int card, event_t event)
     result = valid_target(&td);
     if (result != 0)
     {
-      pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
+      pump_ability_until_eot(instance->parent_controller, instance->parent_card,
                              instance->targets[0].player, instance->targets[0].card, 1, 0, 0, 0);
       return 0;
     }
@@ -5840,7 +5840,7 @@ int card_might_weaver(int player, int card, event_t event)
       result = valid_target(&td);
       if (result != 0)
       {
-        pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
+        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
                                instance->targets[0].player, instance->targets[0].card, 0, 0, 0x80,
                                0);
       }
@@ -5885,7 +5885,7 @@ int card_rage_weaver(int player, int card, event_t event)
       result = valid_target(&td);
       if (result != 0)
       {
-        pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
+        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
                                instance->targets[0].player, instance->targets[0].card, 0, 0, 0, 4);
       }
     }
@@ -5924,7 +5924,7 @@ static int source_damage_prevented_if_black_or_red_damage_source_controller(int 
       uVar6 = get_sleighted_color_test(player, card, 2);
       if ((uVar4 & (uVar6 | uVar5)) != 0)
       {
-        gain_life_2022(player, iVar3);
+        gain_life(player, iVar3);
         kill_card(player, card, KILL_EXILE);
       }
     }
@@ -5964,7 +5964,7 @@ int card_shivan_emissary(int player, int card, event_t event)
   else
   {
     etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    if ((event == EVENT_ETB) && (result = check_special_flags_2022(player, card, 0x80), result != 0))
+    if ((event == EVENT_ETB) && (result = check_special_flags(player, card, 0x80), result != 0))
     {
       default_target_definition(player, card, &td_1, 2);
       td_1.illegal_color = get_sleighted_color_test(player, card, 2);
@@ -6022,7 +6022,7 @@ int card_sky_weaver(int player, int card, event_t event)
       result = valid_target(&td);
       if (result != 0)
       {
-        pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
+        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
                                instance->targets[0].player, instance->targets[0].card, 0, 0, 0x20,
                                0);
       }
@@ -6108,7 +6108,7 @@ int card_spirit_weaver(int player, int card, event_t event)
       result = valid_target(&td);
       if (result != 0)
       {
-        pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
+        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
                                instance->targets[0].player, instance->targets[0].card, 0, 1, 0, 0);
       }
     }
@@ -6279,7 +6279,7 @@ int card_tainted_well(int player, int card, event_t event)
 {
   int result;
 
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     draw_cards(player, 1);
@@ -6345,7 +6345,7 @@ static int split_card_impl(int player, int card, event_t event, int id_first_hal
         return 0;
       }
     LAB_02486150:
-      iVar8 = check_special_flags2_2022(player, card, -0x80000000);
+      iVar8 = check_special_flags2(player, card, -0x80000000);
       if (iVar8 != 0)
       {
         return 0;
@@ -6391,7 +6391,7 @@ static int split_card_impl(int player, int card, event_t event, int id_first_hal
   uVar7 = is_token(player, card);
   uVar6 = uVar6 | uVar7;
   instance->number_of_targets = '\0';
-  iVar8 = check_special_flags2_2022(player, card, -0x80000000);
+  iVar8 = check_special_flags2(player, card, -0x80000000);
 
   uVar7 = instance->info_slot;
   if (iVar8 == 0)
@@ -6630,7 +6630,7 @@ int card_whip_silk(int player, int card, event_t event)
     }
   }
 LAB_02495314:
-  result = generic_aura_2022(player, card, event, player, 0, 0, 0x400, 0, 0, 0, 0);
+  result = generic_aura(player, card, event, player, 0, 0, 0x400, 0, 0, 0, 0);
   return result;
 }
 
@@ -6724,7 +6724,7 @@ int card_benalish_lancer(int player, int card, event_t event)
     {
       do_kicker(player, card, 2, 0, 0, 0, 0, 1);
     }
-    result = check_special_flags_2022(player, card, 0x80);
+    result = check_special_flags(player, card, 0x80);
     if (result == 0)
     {
       return 0;
@@ -6732,7 +6732,7 @@ int card_benalish_lancer(int player, int card, event_t event)
   }
   else
   {
-    result = check_special_flags_2022(player, card, 0x80);
+    result = check_special_flags(player, card, 0x80);
     if (result == 0)
       goto joined_r0x024966fb;
   }
@@ -6741,7 +6741,7 @@ joined_r0x024966fb:
   if ((((event == EVENT_ABILITIES) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       ((result = is_humiliated_for_ability(player, card, AL_STATIC),
-        result == 0 && (result = check_special_flags_2022(player, card, 0x80), result != 0))))
+        result == 0 && (result = check_special_flags(player, card, 0x80), result != 0))))
   {
     event_result = event_result | 0x100;
   }
@@ -6823,7 +6823,7 @@ int card_duskwalker(int player, int card, event_t event)
     {
       do_kicker(player, card, 3, 1, 0, 0, 0, 0);
     }
-    result = check_special_flags_2022(player, card, 0x80);
+    result = check_special_flags(player, card, 0x80);
     if (result == 0)
     {
       return 0;
@@ -6831,7 +6831,7 @@ int card_duskwalker(int player, int card, event_t event)
   }
   else
   {
-    result = check_special_flags_2022(player, card, 0x80);
+    result = check_special_flags(player, card, 0x80);
     if (result == 0)
       goto joined_r0x02497b87;
   }
@@ -6840,7 +6840,7 @@ joined_r0x02497b87:
   if ((((event == EVENT_ABILITIES) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       ((result = is_humiliated_for_ability(player, card, AL_STATIC),
-        result == 0 && (result = check_special_flags_2022(player, card, 0x80), result != 0))))
+        result == 0 && (result = check_special_flags(player, card, 0x80), result != 0))))
   {
     special_abilities(player, card, EVENT_ABILITIES, 1, player, card);
   }
@@ -6888,7 +6888,7 @@ int card_exotic_curse(int player, int card, event_t event)
     return 0;
   }
 LAB_02497ddd:
-  result = disabling_aura_2022(player, card, event);
+  result = disabling_aura(player, card, event);
   return result;
 }
 
@@ -6903,7 +6903,7 @@ int card_faerie_squadron(int player, int card, event_t event)
     {
       do_kicker(player, card, 3, 0, 1, 0, 0, 0);
     }
-    result = check_special_flags_2022(player, card, 0x80);
+    result = check_special_flags(player, card, 0x80);
     if (result == 0)
     {
       return 0;
@@ -6911,7 +6911,7 @@ int card_faerie_squadron(int player, int card, event_t event)
   }
   else
   {
-    result = check_special_flags_2022(player, card, 0x80);
+    result = check_special_flags(player, card, 0x80);
     if (result == 0)
       goto joined_r0x024982eb;
   }
@@ -6920,7 +6920,7 @@ joined_r0x024982eb:
   if ((((event == EVENT_ABILITIES) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       ((result = is_humiliated_for_ability(player, card, AL_STATIC),
-        result == 0 && (result = check_special_flags_2022(player, card, 0x80), result != 0))))
+        result == 0 && (result = check_special_flags(player, card, 0x80), result != 0))))
   {
     event_result = event_result | 0x20;
   }
@@ -7130,7 +7130,7 @@ int card_pouncing_kavu(int player, int card, event_t event)
     {
       do_kicker(player, card, 2, 0, 0, 0, 1, 0);
     }
-    result = check_special_flags_2022(player, card, 0x80);
+    result = check_special_flags(player, card, 0x80);
     if (result == 0)
     {
       return 0;
@@ -7138,7 +7138,7 @@ int card_pouncing_kavu(int player, int card, event_t event)
   }
   else
   {
-    result = check_special_flags_2022(player, card, 0x80);
+    result = check_special_flags(player, card, 0x80);
     if (result == 0)
       goto joined_r0x0249a397;
   }
@@ -7147,7 +7147,7 @@ joined_r0x0249a397:
   if ((((event == EVENT_ABILITIES) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       ((result = is_humiliated_for_ability(player, card, AL_STATIC),
-        result == 0 && (result = check_special_flags_2022(player, card, 0x80), result != 0))))
+        result == 0 && (result = check_special_flags(player, card, 0x80), result != 0))))
   {
     special_abilities(player, card, EVENT_ABILITIES, 4, player, card);
   }
@@ -7165,7 +7165,7 @@ int card_prison_barricade(int player, int card, event_t event)
     {
       do_kicker(player, card, 1, 0, 0, 0, 0, 1);
     }
-    result = check_special_flags_2022(player, card, 0x80);
+    result = check_special_flags(player, card, 0x80);
     if (result == 0)
     {
       return 0;
@@ -7173,7 +7173,7 @@ int card_prison_barricade(int player, int card, event_t event)
   }
   else
   {
-    result = check_special_flags_2022(player, card, 0x80);
+    result = check_special_flags(player, card, 0x80);
     if (result == 0)
       goto joined_r0x0249a65f;
   }
@@ -7182,7 +7182,7 @@ joined_r0x0249a65f:
   if ((((event == EVENT_ABILITIES) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
       ((result = is_humiliated_for_ability(player, card, AL_STATIC),
-        result == 0 && (result = check_special_flags_2022(player, card, 0x80), result != 0))))
+        result == 0 && (result = check_special_flags(player, card, 0x80), result != 0))))
   {
     add_status(affected_card_controller, affected_card, 0x800);
   }
@@ -7194,7 +7194,7 @@ int card_quirion_sentinel(int player, int card, event_t event)
 {
   int result;
 
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if ((event == EVENT_ETB) &&
       (result = is_humiliated_for_ability(player, card, AL_TRIG), result == 0))
   {
@@ -7215,7 +7215,7 @@ int card_rogue_kavu(int player, int card, event_t event)
   {
     return 0;
   }
-  pump_until_eot_merge_previous_2022(player, card, player, card, 2, 0);
+  pump_until_eot_merge_previous(player, card, player, card, 2, 0);
   return 0;
 }
 
@@ -7512,7 +7512,7 @@ int card_vodalian_serpent(int player, int card, event_t event)
     }
   }
   kicker(player, card, event, 2, 0, 0, 0, 0, 0);
-  iVar1 = check_special_flags_2022(player, card, 0x80);
+  iVar1 = check_special_flags(player, card, 0x80);
   iVar2 = 0;
   if (iVar1 != 0)
   {
@@ -7642,12 +7642,12 @@ int card_agonizing_demise(int player, int card, event_t event)
 
         iVar2 = instance->targets[0].player;
         iVar4 = instance->targets[0].card;
-        iVar3 = check_special_flags_2022(player, card, 0x80);
+        iVar3 = check_special_flags(player, card, 0x80);
         if (iVar3 == 0)
         {
           kill_card(iVar2, iVar4, KILL_BURY);
         }
-        iVar3 = check_special_flags_2022(player, card, 0x80);
+        iVar3 = check_special_flags(player, card, 0x80);
         if (iVar3 != 0)
         {
           kill_card(iVar2, iVar4, KILL_BURY);
@@ -7676,17 +7676,17 @@ int card_bog_initiate(int player, int card, event_t event)
   {
     if ((((card == affected_card) && (player == affected_card_controller)) &&
          (result = has_mana(player, 7, 1), result != 0)) &&
-        (result = can_produce_mana_2022(player, card), result != 0))
+        (result = can_produce_mana(player, card), result != 0))
     {
       declare_mana_available(player, 1, 1);
     }
   }
   else if (event == EVENT_CAN_ACTIVATE)
   {
-    result = can_use_activated_abilities_2022(player, card);
+    result = can_use_activated_abilities(player, card);
     if (result != 0)
     {
-      result = has_mana_for_activated_ability_2022(player, card, 1, 0, 0, 0, 0, 0);
+      result = has_mana_for_activated_ability(player, card, 1, 0, 0, 0, 0, 0);
       return result;
     }
   }
@@ -7887,7 +7887,7 @@ int card_rewards_of_diversity(int player, int card, event_t event)
   }
   if (event == EVENT_SPA)
   {
-    gain_life_2022(player, 4);
+    gain_life(player, 4);
   }
   result = global_enchantment(player, card, event);
   return result;
@@ -8436,7 +8436,7 @@ int card_archaeological_dig(int player, int card, event_t event, int color1)
     {
       return 0;
     }
-    result = can_produce_mana_2022(player, card);
+    result = can_produce_mana(player, card);
     if (result == 0)
     {
       return 0;
@@ -8484,7 +8484,7 @@ int card_archaeological_dig(int player, int card, event_t event, int color1)
   }
   else
   {
-    color = choose_mana_all_one_color_2022(player, COLOR_TEST_ANY, 1, "What kind of mana?",
+    color = choose_mana_all_one_color(player, COLOR_TEST_ANY, 1, "What kind of mana?",
                                            COLOR_TEST_COLORLESS);
   }
   if (color == ~COLOR_COLORLESS)
@@ -8525,8 +8525,8 @@ int card_nomadic_elf(int player, int card, event_t event)
   if (event == EVENT_COUNT_MANA)
   {
     if ((((card == affected_card) && (player == affected_card_controller)) &&
-         (result = can_produce_mana_2022(player, card), result != 0)) &&
-        (result = has_mana_for_activated_ability_2022(player, card, 1, 0, 0, 1, 0, 0), result != 0))
+         (result = can_produce_mana(player, card), result != 0)) &&
+        (result = has_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0), result != 0))
     {
       result = has_mana(player, 3, 1);
       declare_mana_available_hex(player, 0x36, result);
@@ -8535,16 +8535,16 @@ int card_nomadic_elf(int player, int card, event_t event)
   }
   else if (event == EVENT_CAN_ACTIVATE)
   {
-    result = can_produce_mana_2022(player, card);
+    result = can_produce_mana(player, card);
     if (result != 0)
     {
-      result = has_mana_for_activated_ability_2022(player, card, 1, 0, 0, 1, 0, 0);
+      result = has_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0);
       return result;
     }
   }
   else if (event == EVENT_ACTIVATE)
   {
-    result = choose_mana_all_one_color_2022(player, COLOR_TEST_ANY_COLORED, 1, "What kind of mana?",
+    result = choose_mana_all_one_color(player, COLOR_TEST_ANY_COLORED, 1, "What kind of mana?",
                                             COLOR_TEST_COLORLESS);
     if (result == -1)
     {
@@ -8552,7 +8552,7 @@ int card_nomadic_elf(int player, int card, event_t event)
     }
     else
     {
-      charge_mana_for_activated_ability_2022(player, card, 1, 0, 0, 1, 0, 0);
+      charge_mana_for_activated_ability(player, card, 1, 0, 0, 1, 0, 0);
       if (spell_fizzled != 1)
       {
         produce_mana(player, result, 1);
@@ -8627,7 +8627,7 @@ int card_mourning(int player, int card, event_t event)
 
   if (event == EVENT_CHECK_PUMP)
   {
-    result = vanilla_instant_pump_2022(player, card, EVENT_CHECK_PUMP, 2, 1 - player, -2, 0, 0, 0);
+    result = vanilla_instant_pump(player, card, EVENT_CHECK_PUMP, 2, 1 - player, -2, 0, 0, 0);
     return result;
   }
   if (event != EVENT_ACTIVATE)
@@ -8654,7 +8654,7 @@ int card_scavenged_weaponry(int player, int card, event_t event)
 {
   int result;
 
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     draw_cards(player, 1);
@@ -8799,14 +8799,14 @@ static int effect_sacrifice_when_lose_control_then_gain_life_equal_toughness(int
     if (((instance != NULL) && (instance->damage_target_card == affected_card)) &&
         (instance->damage_target_player == affected_card_controller))
     {
-      result = check_special_flags2_2022((int)instance->damage_target_player,
+      result = check_special_flags2((int)instance->damage_target_player,
                                          instance->damage_target_card, SF2_CANNOT_BE_SACRIFICED);
       if (result == 0)
       {
         kill_card((int)instance->damage_target_player, instance->damage_target_card,
                   KILL_SACRIFICE);
         result = get_toughness((int)instance->damage_target_player, instance->damage_target_card);
-        gain_life_2022(player, result);
+        gain_life(player, result);
       }
       kill_card(player, card, KILL_EXILE);
     }
@@ -8843,12 +8843,12 @@ int card_spinal_embrace(int player, int card, event_t event)
     {
       if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
       {
-        default_target_definition_2022(player, card, &td, 2);
+        default_target_definition(player, card, &td, 2);
         td.allowed_controller = 1 - player;
         instance = get_card_instance(player, card);
         if (event == EVENT_RESOLVE_SPELL)
         {
-          result = valid_target_2022(&td);
+          result = valid_target(&td);
           if ((result != 0) && (result = instance->targets[0].player, result != player))
           {
             untap_card(result, instance->targets[0].card);
@@ -8870,11 +8870,11 @@ int card_spinal_embrace(int player, int card, event_t event)
       }
     }
   }
-  default_target_definition_2022(player, card, &td, 2);
+  default_target_definition(player, card, &td, 2);
   td.allowed_controller = 1 - player;
   get_card_instance(player, card);
 LAB_0249c9a0:
-  result = generic_spell_2022(player, card, event, 0x81, &td,
+  result = generic_spell(player, card, event, 0x81, &td,
                               "Select target creature you don\'t control to untap & gain control.",
                               1, NULL);
   return result;
@@ -8960,7 +8960,7 @@ static int effect_defiling_tears(int player, int card, event_t event)
       {
         regenerate_target(player_00, iVar1);
       }
-      iVar1 = granted_generic_activated_ability_2022(
+      iVar1 = granted_generic_activated_ability(
           player, card, player_00, iVar1, event, GAA_REGENERATION, 0, 1, 0, 0, 0, 0, 0, NULL, NULL);
       return iVar1;
     }
@@ -8997,12 +8997,12 @@ int card_defiling_tears(int player, int card, event_t event)
     {
       if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
       {
-        default_target_definition_2022(player, card, &td, 2);
+        default_target_definition(player, card, &td, 2);
         td.preferred_controller = player;
         instance = get_card_instance(player, card);
         if (event == EVENT_RESOLVE_SPELL)
         {
-          result = valid_target_2022(&td);
+          result = valid_target(&td);
           if (result != 0)
           {
             create_targetted_legacy_activate(player, card, effect_defiling_tears,
@@ -9019,11 +9019,11 @@ int card_defiling_tears(int player, int card, event_t event)
       }
     }
   }
-  default_target_definition_2022(player, card, &td, 2);
+  default_target_definition(player, card, &td, 2);
   td.preferred_controller = player;
   get_card_instance(player, card);
 LAB_02497639:
-  result = generic_spell_2022(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
   return result;
 }
 
@@ -9058,7 +9058,7 @@ int card_urborg_phantom(int player, int card, event_t event)
   {
     if (event == EVENT_CAN_ACTIVATE)
     {
-      result = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 1, 0, 0, 0,
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 1, 0, 0, 0,
                                               0, NULL, NULL);
       return result;
     }
@@ -9070,7 +9070,7 @@ int card_urborg_phantom(int player, int card, event_t event)
       {
         ai_modifier = ai_modifier + -0x19;
       }
-      result = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0, 0, 0, 1, 0, 0, 0, 0,
+      result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 0, 0, 1, 0, 0, 0, 0,
                                               NULL, NULL);
       return result;
     }
@@ -9095,7 +9095,7 @@ int card_scouting_trek(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     test_definition_2022_t this_test;
-    new_default_test_definition_2022(&this_test, TYPE_LAND, "Select a basic land card.");
+    new_default_test_definition(&this_test, TYPE_LAND, "Select a basic land card.");
     this_test.subtype = 0x2000;
     this_test.no_shuffle = 1;
     int deck_count = count_deck(player);
@@ -9103,7 +9103,7 @@ int card_scouting_trek(int player, int card, event_t event)
     int count = 0;
     for (;;)
     {
-      int selected = new_select_a_card_2022(player, player, 1, 0, 1, -1, &this_test);
+      int selected = new_select_a_card(player, player, 1, 0, 1, -1, &this_test);
       if (selected == -1)
         break;
       tutored[count] = deck_ptr[player][selected];
@@ -9139,19 +9139,19 @@ int card_samite_ministration(int player, int card, event_t event)
 
   if (event == EVENT_CAN_CAST)
   {
-    default_target_definition_2022(player, card, &td, 0xff);
+    default_target_definition(player, card, &td, 0xff);
     td.preferred_controller = 1 - player;
     td.zone = 0x1200;
     td.illegal_abilities = 0;
-    default_target_definition_2022(player, card, &td_ai, 0);
+    default_target_definition(player, card, &td_ai, 0);
     td_ai.extra = damage_card;
     get_card_instance(player, card);
-    result = counterspell_2022(player, card, EVENT_CAN_CAST, NULL, 0);
+    result = counterspell(player, card, EVENT_CAN_CAST, NULL, 0);
     if (result != 0)
     {
       return result;
     }
-    result = generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
+    result = generic_spell(player, card, EVENT_CAN_CAST, 1, &td, NULL, 1, NULL);
     if (result != 0)
     {
       return (-(unsigned int)((land_can_be_played & 4U) == 0) & 0xffffff9e) + 99;
@@ -9161,26 +9161,26 @@ int card_samite_ministration(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      default_target_definition_2022(player, card, &td, 0xff);
+      default_target_definition(player, card, &td, 0xff);
       td.preferred_controller = 1 - player;
       td.zone = 0x1200;
       td.illegal_abilities = 0;
-      default_target_definition_2022(player, card, &td_ai, 0);
+      default_target_definition(player, card, &td_ai, 0);
       td_ai.extra = damage_card;
       instance = get_card_instance(player, card);
       if ((card == affected_card) && (player == affected_card_controller))
       {
         instance->info_slot = 0;
-        result = counterspell_2022(player, card, EVENT_CAN_CAST, NULL, 0);
+        result = counterspell(player, card, EVENT_CAN_CAST, NULL, 0);
         if (result == 0)
         {
-          generic_spell_2022(player, card, EVENT_CAST_SPELL, 0x81, &td,
+          generic_spell(player, card, EVENT_CAST_SPELL, 0x81, &td,
                              "Select a source, prevent all damage it will deal this turn.", 1,
                              NULL);
         }
         else
         {
-          counterspell_2022(player, card, EVENT_CAST_SPELL, NULL, 0);
+          counterspell(player, card, EVENT_CAST_SPELL, NULL, 0);
           ((unsigned char *)&instance->info_slot)[0] = 1;
         }
       }
@@ -9188,22 +9188,22 @@ int card_samite_ministration(int player, int card, event_t event)
   }
   else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
   {
-    default_target_definition_2022(player, card, &td, 0xff);
+    default_target_definition(player, card, &td, 0xff);
     td.preferred_controller = 1 - player;
     td.zone = 0x1200;
     td.illegal_abilities = 0;
-    default_target_definition_2022(player, card, &td_ai, 0);
+    default_target_definition(player, card, &td_ai, 0);
     td_ai.extra = damage_card;
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_SPELL)
     {
       if (instance->info_slot == 1)
       {
-        result = counterspell_validate_2022(player, card, NULL, 0);
+        result = counterspell_validate(player, card, NULL, 0);
       }
       else
       {
-        result = valid_target_2022(&td);
+        result = valid_target(&td);
       }
       if (result != 0)
       {
@@ -9233,11 +9233,11 @@ int card_samite_ministration(int player, int card, event_t event)
   }
   else if (event == EVENT_CHANGE_TARGET)
   {
-    default_target_definition_2022(player, card, &td, 0xff);
+    default_target_definition(player, card, &td, 0xff);
     td.preferred_controller = 1 - player;
     td.zone = 0x1200;
     td.illegal_abilities = 0;
-    default_target_definition_2022(player, card, &td_ai, 0);
+    default_target_definition(player, card, &td_ai, 0);
     td_ai.extra = damage_card;
     get_card_instance(player, card);
   }

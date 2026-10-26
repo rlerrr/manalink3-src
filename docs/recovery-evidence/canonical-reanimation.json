@@ -1,0 +1,56 @@
+{
+  "format": 1,
+  "predecessor_definition": "typedef enum {\n\t// seek_grave_for_id_to_reanimate compares >= 0\n\n\t// Lots of these aren't meaningfully combineable.\n\tREANIMATE_DEFAULT\t\t\t\t\t= 0,\n\tREANIMATE_TAP\t\t\t\t\t\t= (1<<0),\t// Tap the reanimated permanent\n\tREANIMATE_NO_CONTROL_LEGACY\t\t\t= (1<<1),\t// Don't create a visible legacy if the permanent isn't owned by its new controller\n\tREANIMATE_UNEARTH\t\t\t\t\t= (1<<2),\t// Exile the reanimated permanent at end of turn of if it would leave play\n\tREANIMATE_ADD_BLACK_ZOMBIE\t\t\t= (1<<3),\t// Add color black and subtype Zombie to the reanimated permanent\n\tREANIMATE_HASTE_AND_EXILE_AT_EOT\t= (1<<4),\t// Give the reanimated permanent haste and exile it at end of turn\n\tREANIMATE_PLUS1_PLUS1_COUNTER\t\t= (1<<5),\t// Give the reanimated permanent a +1/+1 counter\n\tREANIMATE_MINUS1_MINUS1_COUNTER\t\t= (1<<6),\t// Give the reanimated permanent a -1/-1 counter\n\tREANIMATE_HASTE_UNTIL_EOT\t\t\t= (1<<7),\t// Give the reanimated permanent haste until end of turn\n\tREANIMATE_ATTACH_AS_AURA\t\t\t= (1<<8),\t// Attach (player/card) to the animated card instead of creating an effect card\n\tREANIMATE_RETURN_TO_HAND\t\t\t= (1<<9),\t// Problematic.  Still tests for Grafdigger's Cage, etc., with the idea that the calling function will put the card onto the battlefield; but that's only true for a couple cases.  Not meaningfully combineable with any other mode.\n\tREANIMATE_ALL_UNDER_CASTERS_CONTROL\t= (1<<10),\t// For reanimate_all(), all creatures come under control of player, not the player whose graveyard they're from.\n\tREANIMATE_UNDER_OWNER_CONTROL\t\t= (1<<11),\t// For special cases like Gift of Immortality\n\tREANIMATE_SPECIAL_R_ALL\t\t\t\t= (1<<12),\t// Used only internally by reanimate all: tells 'reanimate_permanent' that the card to put in play is actually on targ_player hand. Prevents messy effects when stuff like Gravedigger is reanimated.\n\tREANIMATE_HASTE_AND_EXILE_AT_YOUR_UPKEEP\t= (1<<13),\n\tREANIMATE_SPECIAL_LIVING_DEAD\t\t\t\t= (1<<14), // Will be recognized only if is used in \"reanimate_all\".\n\tREANIMATE_RETURN_TO_PLAY_TRANSFORMED\t\t= (1<<15),\n\t// These two valid only for seek_grave_for_id_to_reanimate.  Can't be combined with any of the modes above.\n\tREANIMATEXTRA_RETURN_TO_HAND2 = -1,\t// Doesn't have the problems REANIMATE_RETURN_TO_HAND does, though only valid in seek_grave_for_id_to_reanimate\n\tREANIMATEXTRA_LEAVE_IN_GRAVEYARD = -2,\n} reanimate_mode_t;",
+  "predecessor_sha256": "f3de925f9630df401eb1b458d156bedfce7d00b5c2f0d43081f2c8c288781af5",
+  "recovered_definition": "typedef enum\n{\n  REANIMATE2022_DEFAULT = 0,\n  REANIMATE2022_TAP = 1,\n  REANIMATE2022_NO_CONTROL_LEGACY = 2,\n  REANIMATE2022_UNEARTH = 4,\n  REANIMATE2022_ADD_BLACK_ZOMBIE = 8,\n  REANIMATE2022_HASTE_AND_EXILE_AT_EOT = 16,\n  REANIMATE2022_PLUS1_PLUS1_COUNTER = 32,\n  REANIMATE2022_MINUS1_MINUS1_COUNTER = 64,\n  REANIMATE2022_HASTE_UNTIL_EOT = 128,\n  REANIMATE2022_ATTACH_AS_AURA = 256,\n  REANIMATE2022_RETURN_TO_HAND = 512,\n  REANIMATE2022_ALL_UNDER_CASTERS_CONTROL = 1024,\n  REANIMATE2022_UNDER_OWNER_CONTROL = 2048,\n  REANIMATE2022_SPECIAL_R_ALL = 4096,\n  REANIMATE2022_HASTE_AND_EXILE_AT_YOUR_UPKEEP = 8192,\n  REANIMATE2022_SPECIAL_LIVING_DEAD = 16384,\n  REANIMATE2022_RETURN_TO_PLAY_TRANSFORMED = 32768,\n  REANIMATE2022_ATTACH_AURA_TO_REANIMATOR = 65536,\n  REANIMATEXTRA2022_RETURN_TO_HAND2 = -1,\n  REANIMATEXTRA2022_LEAVE_IN_GRAVEYARD = -2,\n  REANIMATEXTRA2022_EXILE_FROM_GRAVEYARD = -3\n} reanimate_mode_2022_t;",
+  "recovered_sha256": "c6c0be605233d29cf989e45e062f6efba6bea82e0ade8372661e5a531973b234",
+  "canonical_definition": "typedef enum {\n\t// seek_grave_for_id_to_reanimate compares >= 0\n\n\t// Lots of these aren't meaningfully combineable.\n\tREANIMATE_DEFAULT\t\t\t\t\t= 0,\n\tREANIMATE_TAP\t\t\t\t\t\t= (1<<0),\t// Tap the reanimated permanent\n\tREANIMATE_NO_CONTROL_LEGACY\t\t\t= (1<<1),\t// Don't create a visible legacy if the permanent isn't owned by its new controller\n\tREANIMATE_UNEARTH\t\t\t\t\t= (1<<2),\t// Exile the reanimated permanent at end of turn of if it would leave play\n\tREANIMATE_ADD_BLACK_ZOMBIE\t\t\t= (1<<3),\t// Add color black and subtype Zombie to the reanimated permanent\n\tREANIMATE_HASTE_AND_EXILE_AT_EOT\t= (1<<4),\t// Give the reanimated permanent haste and exile it at end of turn\n\tREANIMATE_PLUS1_PLUS1_COUNTER\t\t= (1<<5),\t// Give the reanimated permanent a +1/+1 counter\n\tREANIMATE_MINUS1_MINUS1_COUNTER\t\t= (1<<6),\t// Give the reanimated permanent a -1/-1 counter\n\tREANIMATE_HASTE_UNTIL_EOT\t\t\t= (1<<7),\t// Give the reanimated permanent haste until end of turn\n\tREANIMATE_ATTACH_AS_AURA\t\t\t= (1<<8),\t// Attach (player/card) to the animated card instead of creating an effect card\n\tREANIMATE_RETURN_TO_HAND\t\t\t= (1<<9),\t// Problematic.  Still tests for Grafdigger's Cage, etc., with the idea that the calling function will put the card onto the battlefield; but that's only true for a couple cases.  Not meaningfully combineable with any other mode.\n\tREANIMATE_ALL_UNDER_CASTERS_CONTROL\t= (1<<10),\t// For reanimate_all(), all creatures come under control of player, not the player whose graveyard they're from.\n\tREANIMATE_UNDER_OWNER_CONTROL\t\t= (1<<11),\t// For special cases like Gift of Immortality\n\tREANIMATE_SPECIAL_R_ALL\t\t\t\t= (1<<12),\t// Used only internally by reanimate all: tells 'reanimate_permanent' that the card to put in play is actually on targ_player hand. Prevents messy effects when stuff like Gravedigger is reanimated.\n\tREANIMATE_HASTE_AND_EXILE_AT_YOUR_UPKEEP\t= (1<<13),\n\tREANIMATE_SPECIAL_LIVING_DEAD\t\t\t\t= (1<<14), // Will be recognized only if is used in \"reanimate_all\".\n\tREANIMATE_RETURN_TO_PLAY_TRANSFORMED\t\t= (1<<15),\n\t// These two valid only for seek_grave_for_id_to_reanimate.  Can't be combined with any of the modes above.\n\tREANIMATEXTRA_RETURN_TO_HAND2 = -1,\t// Doesn't have the problems REANIMATE_RETURN_TO_HAND does, though only valid in seek_grave_for_id_to_reanimate\n\tREANIMATEXTRA_LEAVE_IN_GRAVEYARD = -2,\n\tREANIMATE_ATTACH_AURA_TO_REANIMATOR = 65536,\n\tREANIMATEXTRA_EXILE_FROM_GRAVEYARD = -3,\n} reanimate_mode_t;",
+  "canonical_sha256": "29da0e6de3b1e937542652d24134879638357a4d86d582bf4d807ea8ac7ad492",
+  "native_types": {
+    "enum_bytes": 4,
+    "enum_values": {
+      "REANIMATE_DEFAULT": 0,
+      "REANIMATE_TAP": 1,
+      "REANIMATE_NO_CONTROL_LEGACY": 2,
+      "REANIMATE_UNEARTH": 4,
+      "REANIMATE_ADD_BLACK_ZOMBIE": 8,
+      "REANIMATE_HASTE_AND_EXILE_AT_EOT": 16,
+      "REANIMATE_PLUS1_PLUS1_COUNTER": 32,
+      "REANIMATE_MINUS1_MINUS1_COUNTER": 64,
+      "REANIMATE_HASTE_UNTIL_EOT": 128,
+      "REANIMATE_ATTACH_AS_AURA": 256,
+      "REANIMATE_RETURN_TO_HAND": 512,
+      "REANIMATE_ALL_UNDER_CASTERS_CONTROL": 1024,
+      "REANIMATE_UNDER_OWNER_CONTROL": 2048,
+      "REANIMATE_SPECIAL_R_ALL": 4096,
+      "REANIMATE_HASTE_AND_EXILE_AT_YOUR_UPKEEP": 8192,
+      "REANIMATE_SPECIAL_LIVING_DEAD": 16384,
+      "REANIMATE_RETURN_TO_PLAY_TRANSFORMED": 32768,
+      "REANIMATE_ATTACH_AURA_TO_REANIMATOR": 65536,
+      "REANIMATEXTRA_RETURN_TO_HAND2": -1,
+      "REANIMATEXTRA_LEAVE_IN_GRAVEYARD": -2,
+      "REANIMATEXTRA_EXILE_FROM_GRAVEYARD": -3
+    },
+    "effect_fn": {
+      "result": "int",
+      "parameters": [
+        "int",
+        "int",
+        "event_t"
+      ]
+    },
+    "before_etb": {
+      "result": "void",
+      "parameters": [
+        "int",
+        "int",
+        "int",
+        "int"
+      ]
+    }
+  },
+  "predecessor_defs_sha256": "f1eb20dbd32e6c5a52778c0170b423dc556ed5d233988720abe3f98c06c23d64",
+  "canonical_defs_sha256": "5a419665be96ddfba9bf47b1c20f048c896fe7b5ca60dae517a766ce9edf5d29",
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "scope": "Single signed native enum, unchanged old values plus the two missing native members. Versioned type and constants are spelling aliases. Native callback types re-read before migration; accepted recovery records unchanged."
+}

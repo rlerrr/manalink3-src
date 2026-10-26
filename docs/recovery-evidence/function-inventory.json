@@ -3,10 +3,10 @@
   "native_card_names": 15064,
   "missing_card_names": 0,
   "missing_cards": {},
-  "unmatched_native_ranges": 105,
+  "unmatched_native_ranges": 83,
   "unmatched_categories": {
     "existing source body; COFF emission absent": 62,
-    "source body absent in named unit; investigate": 28,
+    "source body absent in named unit; investigate": 6,
     "deferred chooser UI": 15
   },
   "unmatched": [
@@ -395,30 +395,6 @@
       "category": "existing source body; COFF emission absent"
     },
     {
-      "address": "265c8f0",
-      "name": "wndproc_FullCardClass_hook",
-      "source": "functions/windows.c",
-      "native_bytes": 1674,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "265b7c0",
-      "name": "keywords_to_str",
-      "source": "functions/windows.c",
-      "native_bytes": 1239,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "26590a0",
-      "name": "legacy_name_or_text",
-      "source": "functions/windows.c",
-      "native_bytes": 321,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
       "address": "2658260",
       "name": "wndproc_LifeClass_hook",
       "source": "functions/windows.c",
@@ -433,14 +409,6 @@
       "native_bytes": 420,
       "source_body_present": true,
       "category": "existing source body; COFF emission absent"
-    },
-    {
-      "address": "26577b0",
-      "name": "wndproc_ShowListCard_hook",
-      "source": "functions/windows.c",
-      "native_bytes": 845,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
     },
     {
       "address": "2659e30",
@@ -475,132 +443,12 @@
       "category": "existing source body; COFF emission absent"
     },
     {
-      "address": "2657690",
-      "name": "memcpy_displayed_inst_and_ext",
-      "source": "functions/windows.c",
-      "native_bytes": 273,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "265bca0",
-      "name": "draw_fullcard_special_effect_card",
-      "source": "functions/windows.c",
-      "native_bytes": 3075,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "265c8b0",
-      "name": "draw_fullcard_special_effect_card",
-      "source": "functions/windows.c",
-      "native_bytes": 52,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
       "address": "265d3b0",
       "name": "fill_arr",
       "source": "functions/targets.c",
       "native_bytes": 386,
       "source_body_present": true,
       "category": "existing source body; COFF emission absent"
-    },
-    {
-      "address": "2662180",
-      "name": "write_deck_file",
-      "source": "functions/draft.c",
-      "native_bytes": 585,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "268fdf0",
-      "name": "how_much_life_can_i_pay_impl",
-      "source": "functions/functions.c",
-      "native_bytes": 62,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "26afd30",
-      "name": "put_card_on_stack",
-      "source": "functions/engine.c",
-      "native_bytes": 1862,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "26ae510",
-      "name": "put_card_on_stack2",
-      "source": "functions/engine.c",
-      "native_bytes": 250,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "26adc00",
-      "name": "fx_activation_906",
-      "source": "functions/engine.c",
-      "native_bytes": 143,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "26ac340",
-      "name": "ai_choose_attackers",
-      "source": "functions/engine.c",
-      "native_bytes": 6109,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "26ac0a0",
-      "name": "setup_ai_combat_data",
-      "source": "functions/engine.c",
-      "native_bytes": 669,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "26aa700",
-      "name": "enforce_minimum_blockers",
-      "source": "functions/engine.c",
-      "native_bytes": 400,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "26aa890",
-      "name": "ai_assign_one_blocker",
-      "source": "functions/engine.c",
-      "native_bytes": 3339,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "26aa280",
-      "name": "is_legal_block_impl2",
-      "source": "functions/engine.c",
-      "native_bytes": 1138,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "26a8440",
-      "name": "mod_pow_unblocked",
-      "source": "functions/engine.c",
-      "native_bytes": 255,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "26a9420",
-      "name": "create_legacy_activate_from_iid",
-      "source": "functions/engine.c",
-      "native_bytes": 251,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
     },
     {
       "address": "26b2840",
@@ -619,36 +467,12 @@
       "category": "existing source body; COFF emission absent"
     },
     {
-      "address": "26c78f0",
-      "name": "random_rogue",
-      "source": "functions/rules_engine.c",
-      "native_bytes": 201,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
       "address": "26c3530",
       "name": "increase_trap_condition_impl",
       "source": "functions/rules_engine.c",
       "native_bytes": 689,
       "source_body_present": true,
       "category": "existing source body; COFF emission absent"
-    },
-    {
-      "address": "26c7890",
-      "name": "limit_allowed_in_deck",
-      "source": "functions/rules_engine.c",
-      "native_bytes": 57,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
-    },
-    {
-      "address": "26cbf50",
-      "name": "allow_response_to_trigger",
-      "source": "functions/events.c",
-      "native_bytes": 137,
-      "source_body_present": false,
-      "category": "source body absent in named unit; investigate"
     },
     {
       "address": "26ceac0",
@@ -879,14 +703,10 @@
     "cards/future_sight.c": "d474c848612515abaffec10e11517bfe10daee970d78f293ebb9bde678b5d6e3",
     "cards/lorwyn.c": "a73beedfb74d596d675d747336e8aeb43c7083e4148825e1726c17be8a73747a",
     "cards/onslaught.c": "e3536f211d2a862fe5453ada20361f39fe21beb6c9eab56ab44286c752a67f71",
-    "functions/windows.c": "5cb433896b3f3605365654b7edd3fae4ebf7c91c612bd27c7f1531f269c588a1",
+    "functions/windows.c": "124bf869ffc296a6dbff24667f46ee6ca668a272acb7b360074aaf954bd2e811",
     "functions/targets.c": "c78ebe4778f930a66d93640d539f9af44563bfef227a2840fda788fe38e03d14",
-    "functions/draft.c": "7258c362c0b6f78f827fdcb6b06fa8e71dd198960e999aa096780a9421f5773c",
-    "functions/functions.c": "a2c6fbdcc3078509408a7b06b310993a05b9edbcfc69b52f6f3601e7d7ad2b9a",
-    "functions/engine.c": "1b1723803a4227de63a3232b59203be51d09aee8225a51bcd4a4d237325adebd",
-    "functions/deck.c": "4e0052f6d2bd1706dd09937c27f1d8ebd5d2bdbc25211e2b8eb3b84cbd20c1cd",
-    "functions/rules_engine.c": "e97712411b83634e0fa071e08e8aec2337fc4018437ee7d773362081e9c1cb72",
-    "functions/events.c": "869429a1304cd13d4c8a29de567d181da4582feb72e51f013d58f8954e8d16ad",
+    "functions/deck.c": "4dbc00a5e8fae58338b09bfe7038ceaa1e468e86a2b2163e28851006f3271515",
+    "functions/rules_engine.c": "59173c9251d7acd34a5b27d3f4f276f60d6f7ae8148afc21e3bca61286da84a1",
     "functions/counters.c": "78a6cdc8587edd4b7a30e971c349a16d279a170d377a407438643fd3923c01da",
     "functions/dialog.c": "80e111cc03f95a9142c3297bb32c327b558e4b2ca0d1897c3b4d9cbc5be99480",
     "functions/equipments.c": "73454c9b65431d62f1119651b62639253beb18d7d525bdc35ab0a10f7b7c5dcb",
@@ -897,9 +717,9 @@
     "C:\\dev\\manalink3-src\\.recovery\\2022-functions.csv": "cd5a8d856379ef3d5f536437de59d94174ad4abfdd0089adde0e9cb5bc09e1d6",
     "C:\\dev\\manalink3-src\\.recovery\\2022-ManalinkEh.dll": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5",
     "G:\\Manalink\\ManalinkEh_10_22_Hotfix.dbg": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
-    "C:\\dev\\manalink3-src\\ManalinkEh.dll": "9b3bcae5df0cd6fd464c412b685ad362d88a248f1971d605e2abd7aa00d6f947",
-    "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "ec0733af20c81d61980520415f6f93ea5af9ec2a2a4dbfea54a276cb0bc0139d"
+    "C:\\dev\\manalink3-src\\ManalinkEh.dll": "d90fa8b7ea01be768e46538acf9b6a6f0888b2caffd899d6c5eef66e38889e42",
+    "C:\\dev\\manalink3-src\\ManalinkEh.dbg": "5820f208f6697803823eb2d3cfc7436bc0f70f62741e53024f5e578e58a2303b"
   },
-  "accepted_functions": 4589,
+  "accepted_functions": 4871,
   "scope": "Name/address inventory only. Existing source can be inlined or omitted; unmatched ranges require review. Does not establish helper completion, 2020-to-2022 modification coverage or gameplay correctness."
 }

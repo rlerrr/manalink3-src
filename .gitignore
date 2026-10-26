@@ -7,3 +7,4 @@
 /exe_shandalar.c
 /reccmp-user.yml
 /reccmp-build.yml
+__pycache__/

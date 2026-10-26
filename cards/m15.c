@@ -2545,7 +2545,7 @@ int card_stain_the_mind(int player, int card, event_t event){
 			}
 
 			if( id > -1 ){
-				lobotomy_effect(player, opponent, id, 0);
+				lobotomy_effect(player, opponent, id, -1, 0);
 			}
 
 			kill_card(player, card, KILL_DESTROY);
@@ -3103,7 +3103,7 @@ int card_goblin_rabblemaster(int player, int card, event_t event){
 		event_flags |= EA_FORCE_ATTACK;
 	}
 
-	if( beginning_of_combat(player, card, event, player, -1) ){
+	if( beginning_of_combat(player, card, event, player) ){
 		token_generation_t token;
 		default_token_definition(player, card, CARD_ID_GOBLIN, &token);
 		token.pow = token.tou = 1;
@@ -3258,7 +3258,7 @@ int card_mights_tyranny(int player, int card, event_t event){
 	  At the beginning of combat on your turn, if you control all creatures with the greatest power on the battlefield,
 	  gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn.
 	*/
-	if( beginning_of_combat(player, card, event, player, -1) ){
+	if( beginning_of_combat(player, card, event, player) ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);
 		int result = check_battlefield_for_special_card(player, card, ANYBODY, CBFSC_GET_MAX_POW, &test);
@@ -4939,7 +4939,7 @@ static int generator_servant_legacy(int player, int card, event_t event)
     {
       return 0;
     }
-    iVar1 = check_special_flags2_2022(affected_card_controller, affected_card, -0x80000000);
+    iVar1 = check_special_flags2(affected_card_controller, affected_card, -0x80000000);
     if (iVar1 != 0)
     {
       return 0;
@@ -5034,7 +5034,7 @@ static int eternal_thirst_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_021a9b54:
-    uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     pcVar1 = in_play(player, card);
     if (uVar2 == 0)
       goto LAB_021a9b87;
@@ -5070,7 +5070,7 @@ static int eternal_thirst_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, 1 - player, 2, NULL);
     }
-    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     pcVar1 = in_play(player, card);
     if (uVar2 == 0)
     {
@@ -5111,7 +5111,7 @@ int card_might_makes_right(int player, int card, event_t event)
   target_definition_t td;
   test_definition_t test;
 
-  iVar1 = beginning_of_combat_2022(player, card, event, player);
+  iVar1 = beginning_of_combat(player, card, event, player);
   if (iVar1 != 0)
   {
 

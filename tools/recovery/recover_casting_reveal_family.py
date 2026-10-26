@@ -109,7 +109,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     runtime=Image((root/'.recovery/2022-ManalinkEh.dll').read_bytes())
     assert component['runtime_sha256']==sha(runtime.data)=='52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5'
     assert component['specialization']==native_specialization(Image(Path('G:/Manalink/ManalinkEh_10_22_Hotfix.dbg').read_bytes()))
-    for old in component['retained_bodies']:assert sha(function_body(read(root/old['source']),old['name']).encode())==old['body_sha256']
+    from unify_scalar_helpers import retained_source_body
+    for old in component['retained_bodies']:assert sha(retained_source_body(root,old['source'],old['name']).encode())==old['body_sha256']
     for layout in component['unit_layouts'].values():assert layout['test_definition_t']['bytes']==216 and layout['target_definition_t']['bytes']==84
     locals_=component['locals'][REVEAL]
     assert all(any(v['name']==n and v['type']=='int[100]' and v['location']==f'(DW_OP_fbreg: {offset})' for v in locals_) for n,offset in [('revealed',-820),('your_hand',-420)])

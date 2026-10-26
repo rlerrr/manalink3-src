@@ -181,7 +181,10 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     assert '  blt_expansion_symbol\n' in read(root/'Drawcardlib.def') or component.get('planning')
     assert component['import_definition_append']==IMPORT_APPEND
     definition=read(root/'Drawcardlib.def')
-    if not component.get('planning'):assert definition.endswith(IMPORT_APPEND);definition=definition.removesuffix(IMPORT_APPEND)
+    if not component.get('planning'):
+        from recover_display_hooks import previous_import_definition
+        definition=previous_import_definition(root,definition)
+        assert definition.endswith(IMPORT_APPEND);definition=definition.removesuffix(IMPORT_APPEND)
     assert sha(definition.encode())==component['previous_import_definition_sha256']
 
 

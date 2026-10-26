@@ -124,7 +124,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     assert component['exe_boundary']['bytes'].endswith('33c0c9c3')
     assert entries[CAN_TRIG]['previous_recovery']==component['migrated_previous_record'] and entries[CAN_TRIG]['previous_recovery']['name']=='can_counter_triggered_ability'
     assert GLOBAL in manifest['source_globals'] and sources[GLOBAL['source']].count(GLOBAL['declaration'])==1
-    for old in component['retained_bodies']:assert sha(function_body(read(root/old['source']),old['name']).encode())==old['body_sha256']
+    from unify_scalar_helpers import retained_source_body
+    for old in component['retained_bodies']:assert sha(retained_source_body(root,old['source'],old['name']).encode())==old['body_sha256']
     for layout in component['unit_layouts'].values():assert layout['test_definition_t']['bytes']==216 and layout['target_definition_t']['bytes']==84
     def local(a,n):return next(v for v in component['locals'][a] if v['name']==n)
     assert local(SHADRIX,'token')['location']==local(SHADRIX,'buffer3')['location']=='(DW_OP_fbreg: -120)'

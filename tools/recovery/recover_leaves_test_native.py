@@ -74,7 +74,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
             assert entry['leaves_test_evidence']==detail and entry['name']==previous['name']+'_2022'
             assert [p['location'] for p in component['parameters'][a]]==[f'(DW_OP_fbreg: {i*4})' for i in range(8 if a==HELPERS[0] else 7)]
             assert 'test_definition_2022_t *test' in entry['prototype']
-            assert sha(function_body(sources[SOURCE].replace('\r\n','\n'),previous['name']).encode())==component['retained_body_hashes'][a]
+            from unify_scalar_helpers import retained_source_body
+            assert sha(retained_source_body(root,SOURCE,previous['name']).encode())==component['retained_body_hashes'][a]
         else:
             assert entry['leaves_test_caller_migration_2022']==detail and detail['previous_record']==previous
             restored_entry,restored=historical_view(entry,body);assert restored_entry==previous

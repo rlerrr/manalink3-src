@@ -1,5 +1,23 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+void human_autotap_for_mana(int player, int *amt, int *unknown_v46, int unknown_v47);
+int remember_ai_value(int player, int value);
+int recorded_rand(int player, int upperbound);
+int check_timer_for_ai_speculation(void);
+int ai_decision_phase(int player, int *phase_code_to_go_to,
+                           int *becomes_second_arg_of_main_phase_and_discard_phase,
+                           int *becomes_third_arg_of_main_phase);
+void backup_data_for_ai(void);
+void restore_data_for_ai(void);
+void backup_data_for_ai_0(void);
+void restore_data_for_ai_0(void);
+int save_or_load_supplement(int status);
+static int check_destroys_if_blocked_oneside(int lethal_player, int lethal_card, int other_player,
+                                           int other_card);
+int check_destroys_if_blocked(int attack_player, int attack_card, int defend_player,
+                                   int defend_card);
+
 /* October 2022 per-player card and counterability flag storage. */
 static uint8_t backup_card_flags[8];
 static uint8_t backup_your_spells_cant_be_countered_by_color[2];
@@ -37,66 +55,12 @@ static uint8_t backup0_card_counts[2][7];
 int get_usertime_of_current_thread_in_ms(void);	// exe
 extern int start_usertime_of_current_thread_in_ms;
 
-int check_timer_for_ai_speculation(void)
-{
-	int decision_time = get_setting(SETTING_AI_DECISION_TIME);
-	if (decision_time <= 0){
-		decision_time = 5405;
-	}
-	return (100 * (get_usertime_of_current_thread_in_ms() - start_usertime_of_current_thread_in_ms)) / decision_time;
-}
+
 
 int pay_mana_maximally_satisfied(int* pay_mana_array, int x_val, int max_x_val);
 int try_to_pay_for_mana_by_autotapping(int player, int* amt, int* unknown_v46, int autotap_flags, int unknown_v47);
 
-void human_autotap_for_mana(int player, int* amt, int* unknown_v46, int unknown_v47){
-	// First is standard autotapping, straight out of the exe.
 
-	// 1. Try to pay by tapping relevant basic lands.
-	if (!pay_mana_maximally_satisfied(&PAY_MANA_COLORLESS, x_value, max_x_value)){
-		try_to_pay_for_mana_by_autotapping(player, amt, unknown_v46,
-										   AUTOTAP_NO_CREATURES|AUTOTAP_NO_ARTIFACTS|AUTOTAP_NO_DONT_AUTO_TAP|AUTOTAP_NO_NONBASIC_LANDS,
-										   unknown_v47);
-	}
-	// 2. Try to pay by tapping all lands.
-	if (!pay_mana_maximally_satisfied(&PAY_MANA_COLORLESS, x_value, max_x_value)){
-		try_to_pay_for_mana_by_autotapping(player, amt, unknown_v46,
-										   AUTOTAP_NO_CREATURES|AUTOTAP_NO_ARTIFACTS|AUTOTAP_NO_DONT_AUTO_TAP,
-										   unknown_v47);
-	}
-
-	// Everything above here is standard.  New stuff below.
-
-	/* This function is not only called for the human player when you left-double-click to pay a cost, but also for the ai to pay its own costs and when it's
-	 * analyzing what the human could play.  The combinations of AUTOTAP_ flags below are all called afterwards (except when it's a human left-double-clicking),
-	 * as well as all combinations with AUTOTAP_NO_DONT_AUTOTAP not set; so in those cases, don't call them from here. */
-	if ((player != 1 || (trace_mode & 2)) && ai_is_speculating != 1){
-		if (get_setting(SETTING_AUTOTAP_ARTIFACTS)){
-			// 3a. Try to pay by tapping all lands and artifacts
-			if (!pay_mana_maximally_satisfied(&PAY_MANA_COLORLESS, x_value, max_x_value)){
-				try_to_pay_for_mana_by_autotapping(player, amt, unknown_v46,
-												   AUTOTAP_NO_CREATURES|AUTOTAP_NO_DONT_AUTO_TAP,
-												   unknown_v47);
-			}
-
-			if (get_setting(SETTING_AUTOTAP_CREATURES)){
-				// 4a. Try to pay by tapping all lands, artifacts, and creatures
-				if (!pay_mana_maximally_satisfied(&PAY_MANA_COLORLESS, x_value, max_x_value)){
-					try_to_pay_for_mana_by_autotapping(player, amt, unknown_v46,
-													   AUTOTAP_NO_DONT_AUTO_TAP,
-													   unknown_v47);
-				}
-			}
-		} else if (get_setting(SETTING_AUTOTAP_CREATURES)){
-			// 3b. Try to pay by tapping all lands and creatures
-			if (!pay_mana_maximally_satisfied(&PAY_MANA_COLORLESS, x_value, max_x_value)){
-				try_to_pay_for_mana_by_autotapping(player, amt, unknown_v46,
-												   AUTOTAP_NO_ARTIFACTS|AUTOTAP_NO_DONT_AUTO_TAP,
-												   unknown_v47);
-			}
-		}
-	}
-}
 
 void memcpy_suppress_size_warning(void* dest, const void* src, size_t sz);
 
@@ -180,82 +144,9 @@ extern int challenge_round, challenge1, challenge2, challenge3, challenge4;
 BACKUP_AND_SAVE_LIST
 #undef BACKUP_CMD_A
 #undef BACKUP_CMD_S
-void backup_data_for_ai(void)
-{
-  /* Recovered 2022 player-flag fragment: backup_data_for_ai @ 0x26b1700. */
-  memcpy(backup_card_flags, card_flags, sizeof(card_flags));
-  memcpy(backup_your_spells_cant_be_countered_by_color, your_spells_cant_be_countered_by_color, sizeof(your_spells_cant_be_countered_by_color));
-  /* End recovered 2022 player-flag fragment: backup_data_for_ai. */
-  /* Recovered 2022 mana-cache fragment: backup_data_for_ai @ 0x26b1700. */
-  memcpy(backup_mana_colors_added, mana_colors_added, sizeof(mana_colors_added));
-  memcpy(backup_mana_color_override, mana_color_override, sizeof(mana_color_override));
-  memcpy(backup_mana_quantity_override, mana_quantity_override, sizeof(mana_quantity_override));
-  memcpy(backup_multi_mana_transmutation, multi_mana_transmutation, sizeof(multi_mana_transmutation));
-  /* End recovered 2022 mana-cache fragment: backup_data_for_ai. */
-  /* Recovered 2022 dice-cache fragment: backup_data_for_ai @ 0x26b1700. */
-  memcpy(backup_add_to_die_rolls, add_to_die_rolls, sizeof(add_to_die_rolls));
-  memcpy(backup_roll_extra_dice, roll_extra_dice, sizeof(roll_extra_dice));
-  /* End recovered 2022 dice-cache fragment: backup_data_for_ai. */
-  /* Recovered 2022 subtype-table fragment: backup_data_for_ai @ 0x26b1700. */
-  memcpy(backup_added_subtypes_not_in_play, added_subtypes_not_in_play, sizeof(added_subtypes_not_in_play));
-  /* End recovered 2022 subtype-table fragment: backup_data_for_ai. */
-  /* Recovered 2022 card-count fragment: backup_data_for_ai @ 0x26b1700. */
-  memcpy(backup_card_counts, card_counts, sizeof(card_counts));
-  /* End recovered 2022 card-count fragment: backup_data_for_ai. */
-  // 0x498e30
-  memcpy((void*)0x50be70, &must_attack, 0x1a740);
-  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
-  // This target immediately follows 0x50be70.
-  memcpy((void*)0x5265b0, &cards_data[EXE_DWORD(0x7a5380)], 16 * sizeof(card_data_t));
-  EXE_DWORD(0x5b9b3c) = ai_modifier;
 
-  /* Recovered 2022 extension fragment: backup_data_for_ai @ 0x26b1700. */
-  memcpy(backup_card_ext, card_ext, sizeof(card_ext));
-  /* End recovered 2022 extension fragment: backup_data_for_ai. */
-#define BACKUP_CMD_A(data)	memcpy(backup_##data, data, sizeof(data))
-#define BACKUP_CMD_S(data)	backup_##data = data
-  BACKUP_AND_SAVE_LIST
-#undef BACKUP_CMD_A
-#undef BACKUP_CMD_S
-}
 
-void restore_data_for_ai(void)
-{
-  /* Recovered 2022 player-flag fragment: restore_data_for_ai @ 0x26b1900. */
-  memcpy(card_flags, backup_card_flags, sizeof(card_flags));
-  memcpy(your_spells_cant_be_countered_by_color, backup_your_spells_cant_be_countered_by_color, sizeof(your_spells_cant_be_countered_by_color));
-  /* End recovered 2022 player-flag fragment: restore_data_for_ai. */
-  /* Recovered 2022 mana-cache fragment: restore_data_for_ai @ 0x26b1900. */
-  memcpy(mana_colors_added, backup_mana_colors_added, sizeof(mana_colors_added));
-  memcpy(mana_color_override, backup_mana_color_override, sizeof(mana_color_override));
-  memcpy(mana_quantity_override, backup_mana_quantity_override, sizeof(mana_quantity_override));
-  memcpy(multi_mana_transmutation, backup_multi_mana_transmutation, sizeof(multi_mana_transmutation));
-  /* End recovered 2022 mana-cache fragment: restore_data_for_ai. */
-  /* Recovered 2022 dice-cache fragment: restore_data_for_ai @ 0x26b1900. */
-  memcpy(add_to_die_rolls, backup_add_to_die_rolls, sizeof(add_to_die_rolls));
-  memcpy(roll_extra_dice, backup_roll_extra_dice, sizeof(roll_extra_dice));
-  /* End recovered 2022 dice-cache fragment: restore_data_for_ai. */
-  /* Recovered 2022 subtype-table fragment: restore_data_for_ai @ 0x26b1900. */
-  memcpy(added_subtypes_not_in_play, backup_added_subtypes_not_in_play, sizeof(added_subtypes_not_in_play));
-  /* End recovered 2022 subtype-table fragment: restore_data_for_ai. */
-  /* Recovered 2022 card-count fragment: restore_data_for_ai @ 0x26b1900. */
-  memcpy(card_counts, backup_card_counts, sizeof(card_counts));
-  /* End recovered 2022 card-count fragment: restore_data_for_ai. */
-  // 0x498e70
-  memcpy_suppress_size_warning(&must_attack, (void*)0x50be70, 0x1a740);
-  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
-  memcpy(&cards_data[EXE_DWORD(0x7a5380)], (void*)0x5265b0, 16 * sizeof(card_data_t));
-  ai_modifier = EXE_DWORD(0x5b9b3c);
 
-  /* Recovered 2022 extension fragment: restore_data_for_ai @ 0x26b1900. */
-  memcpy(card_ext, backup_card_ext, sizeof(card_ext));
-  /* End recovered 2022 extension fragment: restore_data_for_ai. */
-#define BACKUP_CMD_A(data)	memcpy(data, backup_##data, sizeof(data))
-#define BACKUP_CMD_S(data)	data = backup_##data
-  BACKUP_AND_SAVE_LIST
-#undef BACKUP_CMD_A
-#undef BACKUP_CMD_S
-}
 
 /* Copies the same data as backup_data_for_ai()/restore_data_for_ai(), as well as the following four arrays.  They seem to keep track of damage dealt for
  * Reverse Damage, Reverse Polarity, and Simulacrum.
@@ -268,83 +159,9 @@ void restore_data_for_ai(void)
 BACKUP_AND_SAVE_LIST
 #undef BACKUP_CMD_A
 #undef BACKUP_CMD_S
-void backup_data_for_ai_0(void)
-{
-  /* Recovered 2022 player-flag fragment: backup_data_for_ai_0 @ 0x26b1b00. */
-  memcpy(backup0_card_flags, card_flags, sizeof(card_flags));
-  memcpy(backup0_your_spells_cant_be_countered_by_color, your_spells_cant_be_countered_by_color, sizeof(your_spells_cant_be_countered_by_color));
-  /* End recovered 2022 player-flag fragment: backup_data_for_ai_0. */
-  /* Recovered 2022 mana-cache fragment: backup_data_for_ai_0 @ 0x26b1b00. */
-  memcpy(backup0_mana_colors_added, mana_colors_added, sizeof(mana_colors_added));
-  memcpy(backup0_mana_color_override, mana_color_override, sizeof(mana_color_override));
-  memcpy(backup0_mana_quantity_override, mana_quantity_override, sizeof(mana_quantity_override));
-  memcpy(backup0_multi_mana_transmutation, multi_mana_transmutation, sizeof(multi_mana_transmutation));
-  /* End recovered 2022 mana-cache fragment: backup_data_for_ai_0. */
-  /* Recovered 2022 dice-cache fragment: backup_data_for_ai_0 @ 0x26b1b00. */
-  memcpy(backup0_add_to_die_rolls, add_to_die_rolls, sizeof(add_to_die_rolls));
-  memcpy(backup0_roll_extra_dice, roll_extra_dice, sizeof(roll_extra_dice));
-  /* End recovered 2022 dice-cache fragment: backup_data_for_ai_0. */
-  /* Recovered 2022 subtype-table fragment: backup_data_for_ai_0 @ 0x26b1b00. */
-  memcpy(backup0_added_subtypes_not_in_play, added_subtypes_not_in_play, sizeof(added_subtypes_not_in_play));
-  /* End recovered 2022 subtype-table fragment: backup_data_for_ai_0. */
-  /* Recovered 2022 card-count fragment: backup_data_for_ai_0 @ 0x26b1b00. */
-  memcpy(backup0_card_counts, card_counts, sizeof(card_counts));
-  /* End recovered 2022 card-count fragment: backup_data_for_ai_0. */
-  // 0x498d90
-  // This target immediately follows 0x5265b0 in backup_data_for_ai()/restore_data_for_ai().
-  memcpy((void*)0x526a30, &must_attack, 0x1cd00);
-  EXE_DWORD(0x5bbb44) = 0;
-  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
-  // This target immediately follows 0x526a30.
-  memcpy((void*)0x543730, &cards_data[EXE_DWORD(0x7a5380)], 16 * sizeof(card_data_t));
-  // Immediately followed by displayed_mana_pool[][].
-  ASSERT(stack_size >= 0);
 
-  /* Recovered 2022 extension fragment: backup_data_for_ai_0 @ 0x26b1b00. */
-  memcpy(backup0_card_ext, card_ext, sizeof(card_ext));
-  /* End recovered 2022 extension fragment: backup_data_for_ai_0. */
-#define BACKUP_CMD_A(data)	memcpy(backup0_##data, data, sizeof(data))
-#define BACKUP_CMD_S(data)	backup0_##data = data
-  BACKUP_AND_SAVE_LIST
-#undef BACKUP_CMD_A
-#undef BACKUP_CMD_S
-}
 
-void restore_data_for_ai_0(void)
-{
-  /* Recovered 2022 player-flag fragment: restore_data_for_ai_0 @ 0x26b1d20. */
-  memcpy(card_flags, backup0_card_flags, sizeof(card_flags));
-  memcpy(your_spells_cant_be_countered_by_color, backup0_your_spells_cant_be_countered_by_color, sizeof(your_spells_cant_be_countered_by_color));
-  /* End recovered 2022 player-flag fragment: restore_data_for_ai_0. */
-  /* Recovered 2022 mana-cache fragment: restore_data_for_ai_0 @ 0x26b1d20. */
-  memcpy(mana_colors_added, backup0_mana_colors_added, sizeof(mana_colors_added));
-  memcpy(mana_color_override, backup0_mana_color_override, sizeof(mana_color_override));
-  memcpy(mana_quantity_override, backup0_mana_quantity_override, sizeof(mana_quantity_override));
-  memcpy(multi_mana_transmutation, backup0_multi_mana_transmutation, sizeof(multi_mana_transmutation));
-  /* End recovered 2022 mana-cache fragment: restore_data_for_ai_0. */
-  /* Recovered 2022 dice-cache fragment: restore_data_for_ai_0 @ 0x26b1d20. */
-  memcpy(add_to_die_rolls, backup0_add_to_die_rolls, sizeof(add_to_die_rolls));
-  memcpy(roll_extra_dice, backup0_roll_extra_dice, sizeof(roll_extra_dice));
-  /* End recovered 2022 dice-cache fragment: restore_data_for_ai_0. */
-  /* Recovered 2022 subtype-table fragment: restore_data_for_ai_0 @ 0x26b1d20. */
-  memcpy(added_subtypes_not_in_play, backup0_added_subtypes_not_in_play, sizeof(added_subtypes_not_in_play));
-  /* End recovered 2022 subtype-table fragment: restore_data_for_ai_0. */
-  /* Recovered 2022 card-count fragment: restore_data_for_ai_0 @ 0x26b1d20. */
-  memcpy(card_counts, backup0_card_counts, sizeof(card_counts));
-  /* End recovered 2022 card-count fragment: restore_data_for_ai_0. */
-  // 0x498df0
-  memcpy_suppress_size_warning(&must_attack, (void*)0x526a30, 0x1cd00);
-  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
-  memcpy(&cards_data[EXE_DWORD(0x7a5380)], (void*)0x543730, 16 * sizeof(card_data_t));
-  /* Recovered 2022 extension fragment: restore_data_for_ai_0 @ 0x26b1d20. */
-  memcpy(card_ext, backup0_card_ext, sizeof(card_ext));
-  /* End recovered 2022 extension fragment: restore_data_for_ai_0. */
-#define BACKUP_CMD_A(data)	memcpy(data, backup0_##data, sizeof(data))
-#define BACKUP_CMD_S(data)	data = backup0_##data
-  BACKUP_AND_SAVE_LIST
-#undef BACKUP_CMD_A
-#undef BACKUP_CMD_S
-}
+
 
 void copy_to_display_supplement(void)
 {
@@ -354,56 +171,11 @@ void copy_to_display_supplement(void)
 }
 
 // Not, strictly speaking, the correct place for this, but it lets us use the same list to both backup data for ai speculation and to save it in savefiles.
-int save_or_load_supplement(int status)
-{
-  /* Called at the end of save_or_load_ver1() and save_or_load_ver2().  That's not (quite) at the end of the savefiles; there's additional data saved after each
-   * of those, varying by game_type. */
 
-  // Example usage:
-  // status &= save_or_load_data(some_hunk_of_data, sizeof(some_hunk_of_data));
-
-#define BACKUP_CMD_A(data)	status &= save_or_load_data( data, sizeof(data))
-#define BACKUP_CMD_S(data)	status &= save_or_load_data(&data, sizeof(data))
-  BACKUP_AND_SAVE_LIST
-#undef BACKUP_CMD_A
-#undef BACKUP_CMD_S
-
-  if (EXE_DWORD(0x5bc5f8))	// loading_or_saving: is nonzero if loading a game
-	--turn_count;	// since it gets incremented after loading
-
-  return status;
-}
 #undef BACKUP
 #undef BACKUP_AND_SAVE_LIST
 
-static int check_destroys_if_blocked_oneside(int lethal_player, int lethal_card, int other_player, int other_card)
-{
-  card_instance_t* instance = get_card_instance(lethal_player, lethal_card);
-  int lethal = instance->destroys_if_blocked;
-  int result = 0;
-  if (lethal)
-	{
-	  if ((lethal & DIFB_DESTROYS_ALL) == DIFB_DESTROYS_ALL)	// multiple bits
-		result = 1;
-	  else if ((lethal & DIFB_DESTROYS_WALLS) && has_subtype(other_player, other_card, SUBTYPE_WALL))
-		result = 1;
-	  else if ((lethal & DIFB_DESTROYS_NONWALLS) && !has_subtype(other_player, other_card, SUBTYPE_WALL))
-		result = 1;
 
-	  if (result != 1
-		  && (lethal & DIFB_DESTROYS_UNPROTECTED) && !is_protected_from(other_player, other_card, lethal_player, lethal_card, IPF_DAMAGE))
-		result = 1;
-
-	  if (lethal & (DIFB_ASK_CARD | DIFB_ASK_ALL_CARDS))
-		{
-		  if (lethal & DIFB_ASK_ALL_CARDS)
-			result |= dispatch_event_with_attacker(lethal_player, lethal_card, EVENT_CHECK_DESTROY_IF_BLOCKED, other_player, other_card);
-		  else
-			result |= dispatch_event_with_attacker_to_one_card(lethal_player, lethal_card, EVENT_CHECK_DESTROY_IF_BLOCKED, other_player, other_card);
-		}
-	}
-  return result;
-}
 
 /* Sets bit 1 of return value if (attack_player,attack_card) will auto-destroy (defend_player,defend_card) if the latter blocks the former, and bit 2 if
  * (attack_player,attack_card) will be auto-destroyed by (defend_player,defend_card) if the latter blocks the former.
@@ -411,53 +183,14 @@ static int check_destroys_if_blocked_oneside(int lethal_player, int lethal_card,
  * Formerly checked for intersection between each card's color and the other's enemy_against_color, with an attempt to deal with walls.  Almost no cards used
  * the functionality, and not even all of those did so correctly - it worked properly for Thicket Basilisk/Cockatrice, Abu Ja'far, Abomination, and Venom;
  * partially for Deathgazer; and not at all for Battering Ram. */
-int check_destroys_if_blocked(int attack_player, int attack_card, int defend_player, int defend_card)
-{
-  int result1 = check_destroys_if_blocked_oneside(attack_player, attack_card, defend_player, defend_card);
 
-  int result2 = check_destroys_if_blocked_oneside(defend_player, defend_card, attack_player, attack_card);
-  // swap bits
-  result2 = ((result2 & 1) << 1) | ((result2 & 2) >> 1);
-
-  return result1 | result2;
-}
 
 /* What this seems to do is, during speculation, store value for later retrieval and returns it; and during actual execution, retrieve the value that was stored
  * during the best path.  Not well understood. */
-int remember_ai_value(int player, int value)
-{
-  EXE_DWORD(0x7A2FE4) = 0;
 
-  if (player == AI && !(trace_mode & 2))
-	{
-	  if (ai_is_speculating == 1)
-		{
-		  /* There's special-casing when 99 is retrieved in sub_499050(); it appears that path is always taken during further speculation.  Until this is better
-		   * understood, avoid that number entirely, encoding on storage and retrieval. */
-		  if (value >= 99)
-			++value;
-		  EXE_DWORD(0x7A2FE4) = value;
-		  EXE_FN(void, 0x498F20, void)();
-		}
-	  else
-		EXE_FN(int, 0x499050, void)();
-	}
-  else
-	return value;
-
-  value = EXE_DWORD(0x7A2FE4);
-  if (value >= 99)
-	--value;
-  return value;
-}
 
 // Like internal_rand(), but if player is the AI, stores and retrieves the choice per remember_ai_value()
-int recorded_rand(int player, int upperbound)
-{
-  // 0x401C60
 
-  return remember_ai_value(player, internal_rand(upperbound));
-}
 
 void human_assign_blockers(int player);
 void ai_assign_blockers(int player)
@@ -539,185 +272,7 @@ extern int raw_mana_available[2][8];
 void dispatch_event_raw(event_t event);
 void mana_burn(void);
 int hack_ai_decision_phase_upkeep = 0;
-int ai_decision_phase(int player, int *phase_code_to_go_to, int *becomes_second_arg_of_main_phase_and_discard_phase, int *becomes_third_arg_of_main_phase)
-{
-  // 0x43d590
 
-  // Begin additions
-  int upkeep_speculation = hack_ai_decision_phase_upkeep;
-  hack_ai_decision_phase_upkeep = 0;
-  // End additions
-
-  int store_raw_mana_available[2][8];
-
-  if (trace_mode & 2)
-	{
-	  char str[100];
-	  sprintf(str, "%d: Entering AI Decision Phase.\n", EXE_DWORD(0x60EC40)++);
-	  EXE_FN(void, 0x4a7d80, const char*)(str);	// append_to_trace_txt(str)
-	}
-
-  *phase_code_to_go_to = -1;
-
-  if (ai_is_speculating == 1)
-	{
-	  int p = 1 - player;
-	  int col;
-	  for (col = 0; col <= 7; ++col)
-		{
-		  store_raw_mana_available[p][col] = raw_mana_available[p][col];
-		  raw_mana_available[p][col] = landsofcolor_controlled[p][col];
-		}
-
-	  dispatch_event_raw(EVENT_SHOULD_AI_PLAY);
-
-	  card_instance_t* inst;
-	  int c;
-	  for (c = 0; c < active_cards_count[AI]; ++c)
-		if ((inst = get_card_instance(AI, c))->internal_card_id != -1)
-		  call_card_function_i(inst, AI, c, EVENT_CAN_COUNTER);
-
-	  EXE_FN(void, 0x477070, void)();	// resolve_damage_cards_and_prevent_damage();
-	  EXE_FN(void, 0x477a90, void)();	// regenerate_or_graveyard_triggers();
-
-	  for (p = 0; p <= 1; ++p)
-		for (col = 0; col <= 7; ++col)
-		  raw_mana_available[p][col] = store_raw_mana_available[p][col];	// never initialized for p == player
-
-	  recalculate_all_cards_in_play();
-
-	  int ai_opinion = EXE_FN(int, 0x499160, int)(AI)/*ai_opinion_of_gamestate(AI)*/ + ai_modifier;
-
-	  if (life[AI] > 0)
-		EXE_DWORD(0x60E9FC) |= 4u;
-
-	  int v16 = 0;	// Left uninitialized in exe version
-	  if (EXE_DWORD(0x715B30) < ai_opinion && !EXE_DWORD(0x7A372C))
-		{
-		  EXE_DWORD(0x715B30) = ai_opinion;
-		  EXE_FN(void, 0x4990B0, void)();
-		  v16 = EXE_DWORD(0x60E9FC);
-		  //v10 = EXE_DWORD(0x738B48);	not referenced again
-		}
-
-	  if (EXE_DWORD(0x7282F4) == 999)
-		EXE_DWORD(0x7282F4) = -1;
-
-	  EXE_DWORD(0x7282EC) = 0;
-	  *becomes_third_arg_of_main_phase = 0;
-	  EXE_DWORD(0x7A372C) = 0;
-
-	  if (check_timer_for_ai_speculation() > EXE_DWORD(0x786DCC) / 2
-		  && (5 * (5 * opponent_skill + 5) <= EXE_DWORD(0x738B48)
-			  || ((EXE_DWORD(0x60E9FC) & 4) < 1 ? 200 : 50) < check_timer_for_ai_speculation()))
-		{
-		  ai_is_speculating = 0;
-		  EXE_DWORD(0x7282F4) = -1;
-		  EXE_DWORD(0x60E9FC) = v16;
-		}
-
-	  ++EXE_DWORD(0x738B48);
-
-	  if (EXE_DWORD(0x60EC3C) == 1)
-		{
-		  if (land_can_be_played & TENTATIVE_LCBP_DURING_SECOND_MAIN_PHASE)
-			current_phase = PHASE_MAIN2;
-		  else
-			current_phase = PHASE_MAIN1;
-		  *becomes_second_arg_of_main_phase_and_discard_phase = 1;
-		  *phase_code_to_go_to = 6;
-		}
-
-	  if (EXE_DWORD(0x60EC3C) == 2)
-		{
-		  current_phase = PHASE_NORMAL_COMBAT_DAMAGE;
-		  *becomes_second_arg_of_main_phase_and_discard_phase = 2;
-		  *phase_code_to_go_to = 6;
-		}
-
-	  if (EXE_DWORD(0x60EC3C) == 3)
-		{
-		  *becomes_second_arg_of_main_phase_and_discard_phase = 1;
-		  *phase_code_to_go_to = 7;	// discard
-		}
-
-	  if (EXE_DWORD(0x60EC3C) == 4)
-		{
-		  if (land_can_be_played & TENTATIVE_LCBP_DURING_COMBAT)
-			current_phase = PHASE_MAIN2;
-		  else
-			current_phase = PHASE_MAIN1;
-		  *becomes_third_arg_of_main_phase = 0;
-		  *becomes_second_arg_of_main_phase_and_discard_phase = 4;
-		  *phase_code_to_go_to = 6;
-		}
-
-	  if (EXE_DWORD(0x60EC3C) == 5)
-		{
-		  current_phase = PHASE_NORMAL_COMBAT_DAMAGE;
-		  *becomes_second_arg_of_main_phase_and_discard_phase = 5;
-		  *phase_code_to_go_to = 6;
-		}
-
-	  if (EXE_DWORD(0x60EC3C) == 6)
-		{
-		  current_phase = PHASE_NORMAL_COMBAT_DAMAGE;
-		  *becomes_second_arg_of_main_phase_and_discard_phase = 6;
-		  *phase_code_to_go_to = 6;
-		}
-
-	  if (EXE_DWORD(0x60EC3C) == 7)
-		{
-		  if (land_can_be_played & TENTATIVE_LCBP_DURING_COMBAT)
-			current_phase = PHASE_MAIN2;
-		  else
-			current_phase = PHASE_MAIN1;
-		  *becomes_third_arg_of_main_phase = 0;
-		  *becomes_second_arg_of_main_phase_and_discard_phase = 7;
-		  *phase_code_to_go_to = 6;
-		}
-
-	  if (EXE_DWORD(0x60EC3C) == 8)
-		{
-		  current_phase = PHASE_NORMAL_COMBAT_DAMAGE;
-		  *becomes_second_arg_of_main_phase_and_discard_phase = 8;
-		  *phase_code_to_go_to = 6;
-		}
-
-	  // Begin additions
-	  if (EXE_DWORD(0x60EC3C) == 17)
-		*phase_code_to_go_to = 4;	// upkeep
-	  // End additions
-	}
-
-  // Begin additions
-  if (upkeep_speculation)
-	return 0;
-  // End additions
-
-  if (*phase_code_to_go_to == -1)
-	{
-	  current_phase = PHASE_CLEANUP2;
-	  // v14 = 0;	// not referenced again
-	  EXE_FN(int, 0x439C90, int)(PHASE_CLEANUP2);	// TENTATIVE_check_for_stops(PHASE_CLEANUP2);
-	  mana_burn();
-
-	  if (is_anyone_dead())
-		return 1;
-
-	  if (current_turn == EXE_DWORD(0x4EF1B0)
-		  && EXE_DWORD(0x4EF1AC) == PHASE_CLEANUP2)
-		{
-		  EXE_DWORD(0x4EF1B0) = -1;
-		  EXE_DWORD(0x4EF1AC) = -1;
-		}
-
-	  EXE_FN(int, 0x439A80, void)();
-	  play_sound_effect(WAV_ENDTURN);
-	}
-
-  return 0;
-}
 
 /* ManalinkEh 2022: 0x26b2200; original functions/ai.c:377. */
 int network_rand(int player, int upperbound)
@@ -777,7 +332,7 @@ int can_autotap(int player, int card, autotap_t autotap_flags)
         }
         uVar4 = cards_data[iVar3].extra_ability;
       }
-      if (((((uVar4 & 0x10000) == 0) && (iVar3 = can_produce_mana_2022(player, card), iVar3 != 0)) &&
+      if (((((uVar4 & 0x10000) == 0) && (iVar3 = can_produce_mana(player, card), iVar3 != 0)) &&
            (((autotap_flags & AUTOTAP_NO_BASIC_LANDS) == AUTOTAP_0 ||
              ((iVar3 = is_basic_land(player, card),
                iVar3 == 0 && (iVar3 = query(player, card, -1, QUERY_IS_PLAIN_MANA_PRODUCER),
@@ -804,3 +359,560 @@ int can_autotap(int player, int card, autotap_t autotap_flags)
   }
   return 0;
 }
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1240; original functions/ai.c:340. */
+static int remember_ai_value_impl_2022(int value)
+{
+  if (ai_is_speculating == 1)
+  {
+    if (value >= 99)
+      ++value;
+    EXE_DWORD(0x7a2fe4) = value;
+    EXE_FN(void, 0x498f20, void)();
+  }
+  else
+    EXE_FN(int, 0x499050, void)();
+  value = EXE_DWORD(0x7a2fe4);
+  if (value >= 99)
+    --value;
+  return value;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b2190; original functions/ai.c:340. */
+int remember_ai_value(int player, int value)
+{
+  EXE_DWORD(0x7a2fe4) = 0;
+  if (player == AI && !(trace_mode & 2))
+    return remember_ai_value_impl_2022(value);
+  return value;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b21c0; original functions/ai.c:368. */
+int recorded_rand(int player, int upperbound)
+{
+  int value = internal_rand(upperbound);
+  EXE_DWORD(0x7a2fe4) = 0;
+  if (player == AI && !(trace_mode & 2))
+    return remember_ai_value_impl_2022(value);
+  return value;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1280; original functions/ai.c:6. */
+int check_timer_for_ai_speculation(void)
+{
+  int decision_time = get_setting(SETTING_AI_DECISION_TIME);
+  if (decision_time <= 0)
+  {
+    decision_time = 5405;
+  }
+  return (100 * (get_usertime_of_current_thread_in_ms() - start_usertime_of_current_thread_in_ms)) /
+         decision_time;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b2240; original functions/ai.c:394. */
+int ai_decision_phase(int player, int *phase_code_to_go_to,
+                           int *becomes_second_arg_of_main_phase_and_discard_phase,
+                           int *becomes_third_arg_of_main_phase)
+{
+
+  int upkeep_speculation = hack_ai_decision_phase_upkeep;
+  hack_ai_decision_phase_upkeep = 0;
+
+  int store_raw_mana_available[2][8];
+
+  if (trace_mode & 2)
+  {
+    char str[100];
+    sprintf(str, "%d: Entering AI Decision Phase.\n", EXE_DWORD(0x60EC40)++);
+    EXE_FN(void, 0x4a7d80, const char *)(str);
+  }
+
+  *phase_code_to_go_to = -1;
+
+  if (ai_is_speculating == 1)
+  {
+    int p = 1 - player;
+    int col;
+    for (col = 0; col <= 7; ++col)
+    {
+      store_raw_mana_available[p][col] = raw_mana_available[p][col];
+      raw_mana_available[p][col] = landsofcolor_controlled[p][col];
+    }
+
+    dispatch_event_raw(EVENT_SHOULD_AI_PLAY);
+
+    card_instance_t *instance;
+    int c;
+    for (c = 0; c < active_cards_count[AI]; ++c)
+      if ((instance = get_card_instance(AI, c))->internal_card_id != -1)
+        call_card_function_i(instance, AI, c, EVENT_CAN_COUNTER);
+
+    EXE_FN(void, 0x477070, void)();
+    EXE_FN(void, 0x477a90, void)();
+
+    for (p = 0; p <= 1; ++p)
+      for (col = 0; col <= 7; ++col)
+        raw_mana_available[p][col] = store_raw_mana_available[p][col];
+
+    recalculate_all_cards_in_play();
+
+    int ai_opinion = EXE_FN(int, 0x499160, int)(AI) + ai_modifier;
+
+    if (life[AI] > 0)
+      EXE_DWORD(0x60E9FC) |= 4u;
+
+    int v16 = 0;
+    if (EXE_DWORD(0x715B30) < ai_opinion && !EXE_DWORD(0x7A372C))
+    {
+      EXE_DWORD(0x715B30) = ai_opinion;
+      EXE_FN(void, 0x4990B0, void)();
+      v16 = EXE_DWORD(0x60E9FC);
+    }
+
+    if (EXE_DWORD(0x7282F4) == 999)
+      EXE_DWORD(0x7282F4) = -1;
+
+    EXE_DWORD(0x7282EC) = 0;
+    *becomes_third_arg_of_main_phase = 0;
+    EXE_DWORD(0x7A372C) = 0;
+
+    if (check_timer_for_ai_speculation() > EXE_DWORD(0x786DCC) / 2 &&
+        (5 * (5 * opponent_skill + 5) <= EXE_DWORD(0x738B48) ||
+         ((EXE_DWORD(0x60E9FC) & 4) < 1 ? 200 : 50) < check_timer_for_ai_speculation()))
+    {
+      ai_is_speculating = 0;
+      EXE_DWORD(0x7282F4) = -1;
+      EXE_DWORD(0x60E9FC) = v16;
+    }
+
+    ++EXE_DWORD(0x738B48);
+
+    if (EXE_DWORD(0x60EC3C) == 1)
+    {
+      if (land_can_be_played & TENTATIVE_LCBP_DURING_SECOND_MAIN_PHASE)
+        current_phase = PHASE_MAIN2;
+      else
+        current_phase = PHASE_MAIN1;
+      *becomes_second_arg_of_main_phase_and_discard_phase = 1;
+      *phase_code_to_go_to = 6;
+    }
+
+    if (EXE_DWORD(0x60EC3C) == 2)
+    {
+      current_phase = PHASE_NORMAL_COMBAT_DAMAGE;
+      *becomes_second_arg_of_main_phase_and_discard_phase = 2;
+      *phase_code_to_go_to = 6;
+    }
+
+    if (EXE_DWORD(0x60EC3C) == 3)
+    {
+      *becomes_second_arg_of_main_phase_and_discard_phase = 1;
+      *phase_code_to_go_to = 7;
+    }
+
+    if (EXE_DWORD(0x60EC3C) == 4)
+    {
+      if (land_can_be_played & TENTATIVE_LCBP_DURING_COMBAT)
+        current_phase = PHASE_MAIN2;
+      else
+        current_phase = PHASE_MAIN1;
+      *becomes_third_arg_of_main_phase = 0;
+      *becomes_second_arg_of_main_phase_and_discard_phase = 4;
+      *phase_code_to_go_to = 6;
+    }
+
+    if (EXE_DWORD(0x60EC3C) == 5)
+    {
+      current_phase = PHASE_NORMAL_COMBAT_DAMAGE;
+      *becomes_second_arg_of_main_phase_and_discard_phase = 5;
+      *phase_code_to_go_to = 6;
+    }
+
+    if (EXE_DWORD(0x60EC3C) == 6)
+    {
+      current_phase = PHASE_NORMAL_COMBAT_DAMAGE;
+      *becomes_second_arg_of_main_phase_and_discard_phase = 6;
+      *phase_code_to_go_to = 6;
+    }
+
+    if (EXE_DWORD(0x60EC3C) == 7)
+    {
+      if (land_can_be_played & TENTATIVE_LCBP_DURING_COMBAT)
+        current_phase = PHASE_MAIN2;
+      else
+        current_phase = PHASE_MAIN1;
+      *becomes_third_arg_of_main_phase = 0;
+      *becomes_second_arg_of_main_phase_and_discard_phase = 7;
+      *phase_code_to_go_to = 6;
+    }
+
+    if (EXE_DWORD(0x60EC3C) == 8)
+    {
+      current_phase = PHASE_NORMAL_COMBAT_DAMAGE;
+      *becomes_second_arg_of_main_phase_and_discard_phase = 8;
+      *phase_code_to_go_to = 6;
+    }
+
+    if (EXE_DWORD(0x60EC3C) == 17)
+      *phase_code_to_go_to = 4;
+  }
+
+  if (upkeep_speculation)
+    return 0;
+
+  if (*phase_code_to_go_to == -1)
+  {
+    current_phase = PHASE_CLEANUP2;
+
+    EXE_FN(int, 0x439C90, int)(PHASE_CLEANUP2);
+    mana_burn();
+
+    if (is_anyone_dead())
+      return 1;
+
+    if (current_turn == EXE_DWORD(0x4EF1B0) && EXE_DWORD(0x4EF1AC) == PHASE_CLEANUP2)
+    {
+      EXE_DWORD(0x4EF1B0) = -1;
+      EXE_DWORD(0x4EF1AC) = -1;
+    }
+
+    EXE_FN(int, 0x439A80, void)();
+    play_sound_effect(WAV_ENDTURN);
+  }
+
+  return 0;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* October 2022 private counter-type snapshot scalars. */
+static int backup_counters_added_type;
+static int backup0_counters_added_type;
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1700; original functions/ai.c:195. */
+void backup_data_for_ai(void)
+{
+  memcpy_suppress_size_warning((void *)0x50be70, &must_attack, 0x1a740);
+  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
+  memcpy((void *)0x5265b0, &cards_data[EXE_DWORD(0x7a5380)], 16 * sizeof(card_data_t));
+  EXE_DWORD(0x5b9b3c) = ai_modifier;
+  memcpy(backup_card_ext, card_ext, sizeof(card_ext));
+  memcpy(backup_graveyard_source, graveyard_source, sizeof(graveyard_source));
+  backup_counters_added_type = counters_added_type;
+  backup_next_graveyard_source_id = next_graveyard_source_id;
+  backup_turn_count = turn_count;
+  backup_always_prompt_for_color = always_prompt_for_color;
+  memcpy(backup_mulligans_complete, mulligans_complete, sizeof(mulligans_complete));
+  backup_challenge_round = challenge_round;
+  backup_challenge1 = challenge1;
+  backup_challenge2 = challenge2;
+  backup_challenge3 = challenge3;
+  backup_challenge4 = challenge4;
+  backup_counters_added = counters_added;
+  memcpy(backup_mana_colors_added, mana_colors_added, sizeof(mana_colors_added));
+  memcpy(backup_mana_color_override, mana_color_override, sizeof(mana_color_override));
+  memcpy(backup_mana_quantity_override, mana_quantity_override, sizeof(mana_quantity_override));
+  memcpy(backup_multi_mana_transmutation, multi_mana_transmutation,
+         sizeof(multi_mana_transmutation));
+  memcpy(backup_card_counts, card_counts, sizeof(card_counts));
+  memcpy(backup_card_flags, card_flags, sizeof(card_flags));
+  memcpy(backup_your_spells_cant_be_countered_by_color, your_spells_cant_be_countered_by_color,
+         sizeof(your_spells_cant_be_countered_by_color));
+  memcpy(backup_roll_extra_dice, roll_extra_dice, sizeof(roll_extra_dice));
+  memcpy(backup_add_to_die_rolls, add_to_die_rolls, sizeof(add_to_die_rolls));
+  memcpy(backup_added_subtypes_not_in_play, added_subtypes_not_in_play,
+         sizeof(added_subtypes_not_in_play));
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1900; original functions/ai.c:211. */
+void restore_data_for_ai(void)
+{
+  memcpy_suppress_size_warning(&must_attack, (void *)0x50be70, 0x1a740);
+  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
+  memcpy(&cards_data[EXE_DWORD(0x7a5380)], (void *)0x5265b0, 16 * sizeof(card_data_t));
+  ai_modifier = EXE_DWORD(0x5b9b3c);
+  memcpy(card_ext, backup_card_ext, sizeof(card_ext));
+  memcpy(graveyard_source, backup_graveyard_source, sizeof(graveyard_source));
+  counters_added_type = backup_counters_added_type;
+  next_graveyard_source_id = backup_next_graveyard_source_id;
+  turn_count = backup_turn_count;
+  always_prompt_for_color = backup_always_prompt_for_color;
+  memcpy(mulligans_complete, backup_mulligans_complete, sizeof(mulligans_complete));
+  challenge_round = backup_challenge_round;
+  challenge1 = backup_challenge1;
+  challenge2 = backup_challenge2;
+  challenge3 = backup_challenge3;
+  challenge4 = backup_challenge4;
+  counters_added = backup_counters_added;
+  memcpy(mana_colors_added, backup_mana_colors_added, sizeof(mana_colors_added));
+  memcpy(mana_color_override, backup_mana_color_override, sizeof(mana_color_override));
+  memcpy(mana_quantity_override, backup_mana_quantity_override, sizeof(mana_quantity_override));
+  memcpy(multi_mana_transmutation, backup_multi_mana_transmutation,
+         sizeof(multi_mana_transmutation));
+  memcpy(card_counts, backup_card_counts, sizeof(card_counts));
+  memcpy(card_flags, backup_card_flags, sizeof(card_flags));
+  memcpy(your_spells_cant_be_countered_by_color, backup_your_spells_cant_be_countered_by_color,
+         sizeof(your_spells_cant_be_countered_by_color));
+  memcpy(roll_extra_dice, backup_roll_extra_dice, sizeof(roll_extra_dice));
+  memcpy(add_to_die_rolls, backup_add_to_die_rolls, sizeof(add_to_die_rolls));
+  memcpy(added_subtypes_not_in_play, backup_added_subtypes_not_in_play,
+         sizeof(added_subtypes_not_in_play));
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1b00; original functions/ai.c:237. */
+void backup_data_for_ai_0(void)
+{
+  memcpy_suppress_size_warning((void *)0x526a30, &must_attack, 0x1cd00);
+  EXE_DWORD(0x5bbb44) = 0;
+  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
+  memcpy((void *)0x543730, &cards_data[EXE_DWORD(0x7a5380)], 16 * sizeof(card_data_t));
+  if (stack_size < 0)
+    backtrace_and_abort("functions/ai.c:247\nstack_size >= 0");
+  memcpy(backup0_card_ext, card_ext, sizeof(card_ext));
+  memcpy(backup0_graveyard_source, graveyard_source, sizeof(graveyard_source));
+  backup0_counters_added_type = counters_added_type;
+  backup0_next_graveyard_source_id = next_graveyard_source_id;
+  backup0_turn_count = turn_count;
+  backup0_always_prompt_for_color = always_prompt_for_color;
+  memcpy(backup0_mulligans_complete, mulligans_complete, sizeof(mulligans_complete));
+  backup0_challenge_round = challenge_round;
+  backup0_challenge1 = challenge1;
+  backup0_challenge2 = challenge2;
+  backup0_challenge3 = challenge3;
+  backup0_challenge4 = challenge4;
+  backup0_counters_added = counters_added;
+  memcpy(backup0_mana_colors_added, mana_colors_added, sizeof(mana_colors_added));
+  memcpy(backup0_mana_color_override, mana_color_override, sizeof(mana_color_override));
+  memcpy(backup0_mana_quantity_override, mana_quantity_override, sizeof(mana_quantity_override));
+  memcpy(backup0_multi_mana_transmutation, multi_mana_transmutation,
+         sizeof(multi_mana_transmutation));
+  memcpy(backup0_card_counts, card_counts, sizeof(card_counts));
+  memcpy(backup0_card_flags, card_flags, sizeof(card_flags));
+  memcpy(backup0_your_spells_cant_be_countered_by_color, your_spells_cant_be_countered_by_color,
+         sizeof(your_spells_cant_be_countered_by_color));
+  memcpy(backup0_roll_extra_dice, roll_extra_dice, sizeof(roll_extra_dice));
+  memcpy(backup0_add_to_die_rolls, add_to_die_rolls, sizeof(add_to_die_rolls));
+  memcpy(backup0_added_subtypes_not_in_play, added_subtypes_not_in_play,
+         sizeof(added_subtypes_not_in_play));
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1d20; original functions/ai.c:256. */
+void restore_data_for_ai_0(void)
+{
+  memcpy_suppress_size_warning(&must_attack, (void *)0x526a30, 0x1cd00);
+  STATIC_ASSERT(sizeof(card_data_t) == 72, sizeof_card_data_t_must_be_72);
+  memcpy(&cards_data[EXE_DWORD(0x7a5380)], (void *)0x543730, 16 * sizeof(card_data_t));
+  memcpy(card_ext, backup0_card_ext, sizeof(card_ext));
+  memcpy(graveyard_source, backup0_graveyard_source, sizeof(graveyard_source));
+  counters_added_type = backup0_counters_added_type;
+  next_graveyard_source_id = backup0_next_graveyard_source_id;
+  turn_count = backup0_turn_count;
+  always_prompt_for_color = backup0_always_prompt_for_color;
+  memcpy(mulligans_complete, backup0_mulligans_complete, sizeof(mulligans_complete));
+  challenge_round = backup0_challenge_round;
+  challenge1 = backup0_challenge1;
+  challenge2 = backup0_challenge2;
+  challenge3 = backup0_challenge3;
+  challenge4 = backup0_challenge4;
+  counters_added = backup0_counters_added;
+  memcpy(mana_colors_added, backup0_mana_colors_added, sizeof(mana_colors_added));
+  memcpy(mana_color_override, backup0_mana_color_override, sizeof(mana_color_override));
+  memcpy(mana_quantity_override, backup0_mana_quantity_override, sizeof(mana_quantity_override));
+  memcpy(multi_mana_transmutation, backup0_multi_mana_transmutation,
+         sizeof(multi_mana_transmutation));
+  memcpy(card_counts, backup0_card_counts, sizeof(card_counts));
+  memcpy(card_flags, backup0_card_flags, sizeof(card_flags));
+  memcpy(your_spells_cant_be_countered_by_color, backup0_your_spells_cant_be_countered_by_color,
+         sizeof(your_spells_cant_be_countered_by_color));
+  memcpy(roll_extra_dice, backup0_roll_extra_dice, sizeof(roll_extra_dice));
+  memcpy(add_to_die_rolls, backup0_add_to_die_rolls, sizeof(add_to_die_rolls));
+  memcpy(added_subtypes_not_in_play, backup0_added_subtypes_not_in_play,
+         sizeof(added_subtypes_not_in_play));
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1f10; original functions/ai.c:270. */
+int save_or_load_supplement(int status)
+{
+  status &= save_or_load_data(card_ext, sizeof(card_ext));
+  status &= save_or_load_data(graveyard_source, sizeof(graveyard_source));
+  status &= save_or_load_data(&next_graveyard_source_id, sizeof(next_graveyard_source_id));
+  status &= save_or_load_data(&turn_count, sizeof(turn_count));
+  status &= save_or_load_data(&always_prompt_for_color, sizeof(always_prompt_for_color));
+  status &= save_or_load_data(mulligans_complete, sizeof(mulligans_complete));
+  status &= save_or_load_data(&challenge_round, sizeof(challenge_round));
+  status &= save_or_load_data(&challenge1, sizeof(challenge1));
+  status &= save_or_load_data(&challenge2, sizeof(challenge2));
+  status &= save_or_load_data(&challenge3, sizeof(challenge3));
+  status &= save_or_load_data(&challenge4, sizeof(challenge4));
+  status &= save_or_load_data(&counters_added, sizeof(counters_added));
+  status &= save_or_load_data(&counters_added_type, sizeof(counters_added_type));
+  status &= save_or_load_data(mana_colors_added, sizeof(mana_colors_added));
+  status &= save_or_load_data(mana_color_override, sizeof(mana_color_override));
+  status &= save_or_load_data(mana_quantity_override, sizeof(mana_quantity_override));
+  status &= save_or_load_data(multi_mana_transmutation, sizeof(multi_mana_transmutation));
+  status &= save_or_load_data(card_counts, sizeof(card_counts));
+  status &= save_or_load_data(card_flags, sizeof(card_flags));
+  status &= save_or_load_data(your_spells_cant_be_countered_by_color,
+                              sizeof(your_spells_cant_be_countered_by_color));
+  status &= save_or_load_data(roll_extra_dice, sizeof(roll_extra_dice));
+  status &= save_or_load_data(add_to_die_rolls, sizeof(add_to_die_rolls));
+  status &= save_or_load_data(added_subtypes_not_in_play, sizeof(added_subtypes_not_in_play));
+  if (EXE_DWORD(0x5bc5f8))
+    --turn_count;
+  return status;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1500; original functions/ai.c:54. */
+void human_autotap_for_mana(int player, int *amt, int *unknown_v46, int unknown_v47)
+{
+
+  if (!pay_mana_maximally_satisfied(&PAY_MANA_COLORLESS, x_value, max_x_value))
+  {
+    try_to_pay_for_mana_by_autotapping(player, amt, unknown_v46,
+                                       AUTOTAP_NO_CREATURES | AUTOTAP_NO_ARTIFACTS |
+                                           AUTOTAP_NO_DONT_AUTO_TAP | AUTOTAP_NO_NONBASIC_LANDS,
+                                       unknown_v47);
+  }
+
+  if (!pay_mana_maximally_satisfied(&PAY_MANA_COLORLESS, x_value, max_x_value))
+  {
+    try_to_pay_for_mana_by_autotapping(
+        player, amt, unknown_v46,
+        AUTOTAP_NO_CREATURES | AUTOTAP_NO_ARTIFACTS | AUTOTAP_NO_DONT_AUTO_TAP, unknown_v47);
+  }
+
+  if ((player != 1 || (trace_mode & 2)) && ai_is_speculating != 1)
+  {
+    if (get_setting(SETTING_AUTOTAP_ARTIFACTS))
+    {
+
+      if (!pay_mana_maximally_satisfied(&PAY_MANA_COLORLESS, x_value, max_x_value))
+      {
+        try_to_pay_for_mana_by_autotapping(
+            player, amt, unknown_v46, AUTOTAP_NO_CREATURES | AUTOTAP_NO_DONT_AUTO_TAP, unknown_v47);
+      }
+
+      if (get_setting(SETTING_AUTOTAP_CREATURES))
+      {
+
+        if (!pay_mana_maximally_satisfied(&PAY_MANA_COLORLESS, x_value, max_x_value))
+        {
+          try_to_pay_for_mana_by_autotapping(player, amt, unknown_v46, AUTOTAP_NO_DONT_AUTO_TAP,
+                                             unknown_v47);
+        }
+      }
+    }
+    else if (get_setting(SETTING_AUTOTAP_CREATURES))
+    {
+
+      if (!pay_mana_maximally_satisfied(&PAY_MANA_COLORLESS, x_value, max_x_value))
+      {
+        try_to_pay_for_mana_by_autotapping(
+            player, amt, unknown_v46, AUTOTAP_NO_ARTIFACTS | AUTOTAP_NO_DONT_AUTO_TAP, unknown_v47);
+      }
+    }
+  }
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b1100; original functions/ai.c:292. */
+static int check_destroys_if_blocked_oneside(int lethal_player, int lethal_card, int other_player,
+                                           int other_card)
+{
+  card_instance_t *instance = get_card_instance(lethal_player, lethal_card);
+  int lethal = instance->destroys_if_blocked;
+  int result = 0;
+  if (lethal)
+  {
+    if ((lethal & DIFB_DESTROYS_ALL) == DIFB_DESTROYS_ALL)
+      result = 1;
+    else if ((lethal & DIFB_DESTROYS_WALLS) && has_subtype(other_player, other_card, SUBTYPE_WALL))
+      result = 1;
+    else if ((lethal & DIFB_DESTROYS_NONWALLS) &&
+             !has_subtype(other_player, other_card, SUBTYPE_WALL))
+      result = 1;
+
+    if (result != 1 && (lethal & DIFB_DESTROYS_UNPROTECTED) &&
+        !is_protected_from(other_player, other_card, lethal_player, lethal_card,
+                                IPF2022_DAMAGE))
+      result = 1;
+
+    if (lethal & (DIFB_ASK_CARD | DIFB_ASK_ALL_CARDS))
+    {
+      if (lethal & DIFB_ASK_ALL_CARDS)
+        result |= dispatch_event_with_attacker(
+            lethal_player, lethal_card, EVENT_CHECK_DESTROY_IF_BLOCKED, other_player, other_card);
+      else
+        result |= dispatch_event_with_attacker_to_one_card(
+            lethal_player, lethal_card, EVENT_CHECK_DESTROY_IF_BLOCKED, other_player, other_card);
+    }
+  }
+  return result;
+}
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x26b2140; original functions/ai.c:327. */
+int check_destroys_if_blocked(int attack_player, int attack_card, int defend_player,
+                                   int defend_card)
+{
+  int result1 = check_destroys_if_blocked_oneside(attack_player, attack_card, defend_player,
+                                                       defend_card);
+
+  int result2 = check_destroys_if_blocked_oneside(defend_player, defend_card, attack_player,
+                                                       attack_card);
+
+  result2 = ((result2 & 1) << 1) | ((result2 & 2) >> 1);
+
+  return result1 | result2;
+}
+
+#endif

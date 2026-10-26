@@ -2974,7 +2974,7 @@ int card_dauthi_trapper(int player, int card, event_t event)
     result = valid_target(&td);
     if (result != 0)
     {
-      pump_ability_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
+      pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
                              0, 0, 0, 0x100);
     }
   }
@@ -2989,7 +2989,7 @@ int card_crossbow_ambush(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    pump_subtype_until_eot_2022(player, card, player, -1, 0, 0, 0x400, 0);
+    pump_subtype_until_eot(player, card, player, -1, 0, 0, 0x400, 0);
     kill_card(player, card, KILL_DESTROY);
   }
   result = generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
@@ -3368,7 +3368,7 @@ int card_conviction(int player, int card, event_t event)
     }
   }
 LAB_0212d624:
-  result = generic_aura_2022(player, card, event, player, 1, 3, 0, 0, 0, 0, 0);
+  result = generic_aura(player, card, event, player, 1, 3, 0, 0, 0, 0, 0);
   return result;
 }
 
@@ -3487,7 +3487,7 @@ static int grave_pact_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_0212adb8:
-    iVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    iVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (iVar2 == 0)
       goto LAB_0212adda;
   }
@@ -3522,7 +3522,7 @@ static int grave_pact_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, player, 2, NULL);
     }
-    iVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    iVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (iVar2 == 0)
     {
       return 0;
@@ -3652,12 +3652,12 @@ int card_hornet_cannon(int player, int card, event_t event)
 
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    default_token_definition_2022(player, card, 0x4948, &token);
+    default_token_definition(player, card, 0x4948, &token);
     token.s_key_plus = 4;
     token.special_code_on_generation = destroy_token_at_next_eot;
-    generate_token_2022(&token);
+    generate_token(&token);
   }
-  result = generic_activated_ability_2022(player, card, event, 1, 3, 0, 0, 0, 0, 0, 0, NULL, NULL);
+  result = generic_activated_ability(player, card, event, 1, 3, 0, 0, 0, 0, 0, 0, NULL, NULL);
   return result;
 }
 
@@ -3677,7 +3677,7 @@ int card_hidden_retreat(int player, int card, event_t event)
 
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
-    counterspell_target_definition_2022(player, card, &td_spell, 0x38);
+    counterspell_target_definition(player, card, &td_spell, 0x38);
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
@@ -3685,7 +3685,7 @@ int card_hidden_retreat(int player, int card, event_t event)
       {
         return 0;
       }
-      iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x400, 0, 0, 0, 0, 0,
+      iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x400, 0, 0, 0, 0, 0,
                                              0, 0, &td_spell, NULL);
       if (iVar3 == 0)
       {
@@ -3700,15 +3700,15 @@ int card_hidden_retreat(int player, int card, event_t event)
         return 0;
       }
       instance->info_slot = 0;
-      iVar3 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x400, 0, 0, 0, 0, 0, 0,
+      iVar3 = generic_activated_ability(player, card, EVENT_ACTIVATE, 0x400, 0, 0, 0, 0, 0, 0,
                                              0, &td_spell, NULL);
       if (iVar3 == 0)
       {
         return 0;
       }
-      new_default_test_definition_2022(&this_test, 0xff,
+      new_default_test_definition(&this_test, 0xff,
                                        "Select a card to put on top of your library");
-      iVar3 = new_global_tutor_2022(player, player, 4, 10, 0, 3, &this_test);
+      iVar3 = new_global_tutor(player, player, 4, 10, 0, 3, &this_test);
       if (iVar3 == -2)
       {
         return 0;
@@ -3724,11 +3724,11 @@ int card_hidden_retreat(int player, int card, event_t event)
       iVar3 = global_enchantment(player, card, event);
       return iVar3;
     }
-    counterspell_target_definition_2022(player, card, &td_spell, 0x38);
+    counterspell_target_definition(player, card, &td_spell, 0x38);
     instance = get_card_instance(player, card);
   }
   if ((((event == EVENT_RESOLVE_ACTIVATION) && (instance->info_slot == 1)) &&
-       (iVar3 = counterspell_validate_2022(player, card, &td_spell, 0), iVar3 != 0)) &&
+       (iVar3 = counterspell_validate(player, card, &td_spell, 0), iVar3 != 0)) &&
       ((iVar3 = instance->targets[0].player, iVar3 != -1 && (instance->info_slot == 1))))
   {
     iVar1 = instance->targets[0].card;

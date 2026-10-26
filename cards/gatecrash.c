@@ -1,5 +1,8 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+void evolve(int player, int card, event_t event);
+
 // Functions
 void extort(int player, int card, event_t event){
 
@@ -17,40 +20,76 @@ int battalion(int player, int card, event_t event){
 	return declare_attackers_trigger(player, card, event, 0, player, card) && count_attackers(player) >= 3 ? 1 : 0;
 }
 
-static void evolve(int player, int card, event_t event){
-
-	if( event == EVENT_CAST_SPELL && ! affect_me(player, card) && in_play(player, card) ){
-		if( affected_card_controller == player && is_what(affected_card_controller, affected_card, TYPE_CREATURE) ){
-			if( get_power(trigger_cause_controller, trigger_cause) > get_power(player, card) ||
-				get_toughness(trigger_cause_controller, trigger_cause) > get_toughness(player, card) )
-			{
-				if( current_phase < PHASE_DECLARE_ATTACKERS ){
-					ai_modifier+=20;
-				}
-			}
-		}
-	}
-
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me( player, card ) ){
-		int trig = 0;
-
-		if( is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) ){
-			get_card_instance(trigger_cause_controller, trigger_cause)->regen_status |= KEYWORD_RECALC_POWER | KEYWORD_RECALC_TOUGHNESS;
-			if( get_power(trigger_cause_controller, trigger_cause) > get_power(player, card) ||
-				get_toughness(trigger_cause_controller, trigger_cause) > get_toughness(player, card)
-			  ){
-				trig = 1;
-			}
-		}
-
-		if( trig > 0 ){
-			etb_ability_global(player, event, RESOLVE_TRIGGER_MANDATORY, TYPE_CREATURE, NULL, player, card);
-		}
-	}
-
-	if( event == EVENT_ETB_ABILITY ){
-		add_1_1_counter(player, card);
-	}
+void evolve(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card != affected_card) || (player != affected_card_controller))
+    {
+      instance = in_play(player, card);
+      if ((instance != NULL) && ((affected_card_controller == player &&
+                                  (iVar1 = is_what(player, affected_card, 2), iVar1 != 0))))
+      {
+        iVar1 = get_power(trigger_cause_controller, trigger_cause);
+        iVar3 = get_power(player, card);
+        if (iVar1 <= iVar3)
+        {
+          iVar1 = get_toughness(trigger_cause_controller, trigger_cause);
+          iVar3 = get_toughness(player, card);
+          if (iVar1 <= iVar3)
+            goto LAB_02516c58;
+        }
+        if (current_phase < 0x15)
+        {
+          ai_modifier = ai_modifier + 0x14;
+        }
+      }
+    LAB_02516c58:
+      if (trigger_condition != 0xdb)
+      {
+        return;
+      }
+      goto LAB_02516c68;
+    }
+    if (trigger_condition != 0xdb)
+    {
+      return;
+    }
+  }
+  else
+  {
+    if (trigger_condition != 0xdb)
+      goto LAB_02516bb5;
+  LAB_02516c68:
+    if ((card != affected_card) || (affected_card_controller != player))
+      goto LAB_02516bb5;
+  }
+  iVar1 = is_what(trigger_cause_controller, trigger_cause, 2);
+  if (iVar1 != 0)
+  {
+    instance = get_card_instance(trigger_cause_controller, trigger_cause);
+    instance->regen_status = instance->regen_status | 0x6000000;
+    iVar1 = get_power(trigger_cause_controller, trigger_cause);
+    iVar3 = get_power(player, card);
+    if (iVar1 <= iVar3)
+    {
+      iVar1 = get_toughness(trigger_cause_controller, trigger_cause);
+      iVar3 = get_toughness(player, card);
+      if (iVar1 <= iVar3)
+        goto LAB_02516bb5;
+    }
+    etb_ability_global(player, event, 2, TYPE_CREATURE, NULL, player, card);
+  }
+LAB_02516bb5:
+  if (event != EVENT_ETB)
+  {
+    return;
+  }
+  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  return;
 }
 
 static int cipher_legacy(int player, int card, event_t event){
@@ -6665,7 +6704,7 @@ static int vizkopa_guildmage_legacy(int player, int card, event_t event)
   {
     event_flags = event_flags | 0x200000;
     amount =
-        trigger_gain_life_2022(player, card, EVENT_STATIC_EFFECTS, player, RESOLVE_TRIGGER_MANDATORY);
+        trigger_gain_life(player, card, EVENT_STATIC_EFFECTS, player, RESOLVE_TRIGGER_MANDATORY);
     if (amount == 0)
     {
       return 0;
@@ -6673,7 +6712,7 @@ static int vizkopa_guildmage_legacy(int player, int card, event_t event)
   }
   else
   {
-    amount = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+    amount = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
     if (amount == 0)
       goto joined_r0x02515e30;
   }
@@ -6684,7 +6723,7 @@ static int vizkopa_guildmage_legacy(int player, int card, event_t event)
   }
   else
   {
-    lose_the_game_2022(1 - player);
+    lose_the_game(1 - player);
   }
 joined_r0x02515e30:
   if (event != EVENT_CLEANUP)
@@ -6700,76 +6739,6 @@ joined_r0x02515e30:
 /* Recovered October 2022 entry-trigger helpers. */
 
 /* ManalinkEh 2022: 0x2516b90; original cards/gatecrash.c:23. */
-void evolve_2022(int player, int card, event_t event)
-{
-  int iVar1;
-  card_instance_t *instance;
-  int iVar3;
-  if (event == EVENT_CAST_SPELL)
-  {
-    if ((card != affected_card) || (player != affected_card_controller))
-    {
-      instance = in_play(player, card);
-      if ((instance != NULL) && ((affected_card_controller == player &&
-                                  (iVar1 = is_what(player, affected_card, 2), iVar1 != 0))))
-      {
-        iVar1 = get_power(trigger_cause_controller, trigger_cause);
-        iVar3 = get_power(player, card);
-        if (iVar1 <= iVar3)
-        {
-          iVar1 = get_toughness(trigger_cause_controller, trigger_cause);
-          iVar3 = get_toughness(player, card);
-          if (iVar1 <= iVar3)
-            goto LAB_02516c58;
-        }
-        if (current_phase < 0x15)
-        {
-          ai_modifier = ai_modifier + 0x14;
-        }
-      }
-    LAB_02516c58:
-      if (trigger_condition != 0xdb)
-      {
-        return;
-      }
-      goto LAB_02516c68;
-    }
-    if (trigger_condition != 0xdb)
-    {
-      return;
-    }
-  }
-  else
-  {
-    if (trigger_condition != 0xdb)
-      goto LAB_02516bb5;
-  LAB_02516c68:
-    if ((card != affected_card) || (affected_card_controller != player))
-      goto LAB_02516bb5;
-  }
-  iVar1 = is_what(trigger_cause_controller, trigger_cause, 2);
-  if (iVar1 != 0)
-  {
-    instance = get_card_instance(trigger_cause_controller, trigger_cause);
-    instance->regen_status = instance->regen_status | 0x6000000;
-    iVar1 = get_power(trigger_cause_controller, trigger_cause);
-    iVar3 = get_power(player, card);
-    if (iVar1 <= iVar3)
-    {
-      iVar1 = get_toughness(trigger_cause_controller, trigger_cause);
-      iVar3 = get_toughness(player, card);
-      if (iVar1 <= iVar3)
-        goto LAB_02516bb5;
-    }
-    etb_ability_global_2022(player, event, 2, TYPE_CREATURE, NULL, player, card);
-  }
-LAB_02516bb5:
-  if (event != EVENT_ETB)
-  {
-    return;
-  }
-  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
-  return;
-}
+
 
 #endif

@@ -1,5 +1,6 @@
 """Check recovered C source syntax and fixed x86 slots; does not run tests/build a DLL."""
 import concurrent.futures
+import csv
 import json
 import re
 import subprocess
@@ -8,6 +9,14 @@ from pathlib import Path
 
 def main():
     root = Path(__file__).resolve().parents[2]
+    from canonicalize_records import verify as verify_records
+    canonical_records=verify_records(root)
+    from canonicalize_reanimation import verify as verify_reanimation
+    canonical_reanimation=verify_reanimation(root)
+    from canonicalize_spell_tutor import verify as verify_spell_tutor
+    canonical_spell_tutor=verify_spell_tutor(root)
+    from canonicalize_storm import verify as verify_storm
+    canonical_storm=verify_storm(root)
     analysis = root / ".recovery"
     analysis.mkdir(exist_ok=True)
     manifest = json.loads((root / "docs/recovery-evidence/recovered-functions.json").read_text())
@@ -15,23 +24,36 @@ def main():
                "-std=gnu99", "-fsyntax-only", "-ferror-limit=0", "-fno-color-diagnostics",
                "-Werror=implicit-function-declaration", "-Werror=implicit-int",
                "-Werror=incompatible-pointer-types", "-Werror=return-type",
+               "-Werror=duplicate-decl-specifier",
                "-Wno-ignored-attributes", "-I", str(root)]
 
     def check(source):
-        compatibility = source == "functions/rules_engine.c"
-        result = subprocess.run(command + (["-Dstrncasecmp=_strnicmp"] if compatibility else []) +
+        compatibility = {'functions/rules_engine.c':'strncasecmp=_strnicmp',
+                         'functions/helper_functions.c':'ssize_t=int'}.get(source)
+        # MinGW crtdefs.h defines ssize_t as int for the real -m32 build. The
+        # Microsoft SDK used by this syntax checker does not define that type.
+        result = subprocess.run(command + (["-D"+compatibility] if compatibility else []) +
                                 [str(root / source)], capture_output=True, text=True)
         return source, dict(exit_code=result.returncode, diagnostics=result.stderr,
                             checker_only_compatibility_define=compatibility)
 
+    # Compile all present native C units, including retained units without any
+    # accepted recovered function. Public canonical names can collide there too.
+    native_units={r['source'] for year in ['2020','2022'] for r in csv.DictReader((analysis/f'{year}-units.csv').open())}
+    sources=sorted(p.relative_to(root).as_posix() for folder in ['cards','functions'] for p in (root/folder).glob('*.c') if p.relative_to(root).as_posix() in native_units)
+    assert set(manifest['source_files'])<=set(sources)
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
-        results = dict(pool.map(check, sorted(manifest["source_files"])))
+        results = dict(pool.map(check, sources))
     (analysis / "source-syntax-final.json").write_text(json.dumps(results, indent=2))
 
     layout = analysis / "source-abi.c"
     layout.write_text('''#include "manalink.h"
 #include <stddef.h>
 _Static_assert(sizeof(card_instance_t) == 300, "instance size");
+_Static_assert(sizeof(select_grave_t)==4 && sizeof(declare_attackers_trigger_t)==4, "grave/attack mode words");
+_Static_assert(__builtin_types_compatible_p(__typeof__(&select_card_from_zone),__typeof__(&select_card_from_zone_2022)), "read-only zone selector type");
+_Static_assert(__builtin_types_compatible_p(__typeof__(&get_hacked_land_text),const char *(*)(int,int,const char *,...)), "three fixed variadic land-text parameters");
+_Static_assert(__builtin_types_compatible_p(__typeof__(&mark_up_to_n_targets_noload),int (*)(target_definition_t *,const char *,int,char (*)[151])), "151-byte marked target rows");
 _Static_assert(sizeof(stack_data_t) == 4 && offsetof(stack_data_t, internal_card_id) == 0, "stack card ID word");
 _Static_assert(sizeof(text_lines) == 249 * 300 && sizeof(text_lines[0]) == 300, "native text rows");
 _Static_assert(offsetof(card_instance_t, state) == 8 && sizeof(((card_instance_t*)0)->state) == 4, "state word");
@@ -75,16 +97,24 @@ _Static_assert(sizeof(target_t) == 8 && offsetof(target_t, player) == 0 && offse
     state_values = {}
     keyword_values = {}
     interfaces = json.loads((root / 'docs/recovery-evidence/interface-recovery.json').read_text())
+    if (root/'docs/recovery-evidence/helper-unification.json').exists():
+        with layout.open('a') as stream:
+            for typename in ['event_t','resolve_trigger_t','type_t','subtype_t','ability_loss_t','color_t','color_test_t','change_color_t','prevent_t','fog_special_flags_t']:
+                stream.write(f'\n_Static_assert(sizeof({typename})==4, "shared helper enum ABI: {typename}");\n')
+            stream.write('_Static_assert(sizeof(void*)==4 && sizeof(card_instance_t)==300 && sizeof(card_data_t)==72 && sizeof(card_ptr_t)==152, "shared helper common pointer records");\n')
+            stream.write('_Static_assert(sizeof(int32_t)==4 && sizeof(uint32_t)==4, "native scalar word widths");\n')
+            sharing=json.loads((root/'docs/recovery-evidence/helper-unification.json').read_text())
+            for entry in sharing['helpers']:
+                if entry.get('source_qualification') and entry.get('prototype_scope','header')=='header':
+                    stream.write(f'_Static_assert(__builtin_types_compatible_p(__typeof__(&{entry["retained_name"]}), __typeof__(&{entry["recovered_name"]})), "shared read-only input function type");\n')
     test_core=interfaces.get('test_core_2022')
     if test_core:
         with layout.open('a') as stream:
-            stream.write('\n_Static_assert(sizeof(test_definition_t)==208 && sizeof(test_definition_2022_t)==216 && sizeof(test_selection_predicate_2022_t)==4, "separate test layouts/callback");\n')
+            stream.write('\n_Static_assert(sizeof(test_definition_t)==216 && sizeof(test_definition_2022_t)==216 && sizeof(test_selection_predicate_2022_t)==4, "canonical test layout/callback");\n')
             for member in test_core['layout']['members']:
                 name,offset,width=member['name'],member['offset'],member['bytes']
                 stream.write(f'_Static_assert(offsetof(test_definition_2022_t,{name})=={offset} && sizeof(((test_definition_2022_t*)0)->{name})=={width}, "2022 test member {name}");\n')
-                if name not in {'sp_keyword','sp_keyword_flag'}:
-                    old_offset=offset-(8 if offset>=148 else 0)
-                    stream.write(f'_Static_assert(offsetof(test_definition_t,{name})=={old_offset} && sizeof(((test_definition_t*)0)->{name})=={width}, "retained test member {name}");\n')
+                stream.write(f'_Static_assert(offsetof(test_definition_t,{name})=={offset} && sizeof(((test_definition_t*)0)->{name})=={width}, "canonical test member {name}");\n')
     target_selection = interfaces.get('target_selection_2022')
     if target_selection:
         targets_source = (root / 'functions/targets.c').read_text()
@@ -104,7 +134,7 @@ _Static_assert(sizeof(target_t) == 8 && offsetof(target_t, player) == 0 && offse
     target_initializers = interfaces.get('target_initializers_2022')
     if target_initializers:
         with layout.open('a') as stream:
-            stream.write('\n_Static_assert(sizeof(target_definition_t)==80 && sizeof(target_definition_2022_t)==84, "separate target layouts");\n')
+            stream.write('\n_Static_assert(sizeof(target_definition_t)==84 && sizeof(target_definition_2022_t)==84, "canonical target layout");\n')
             for member in target_initializers['layout']['members']:
                 name, offset = member['name'], member['offset']
                 stream.write(f'_Static_assert(offsetof(target_definition_2022_t,{name})=={offset} && sizeof(((target_definition_2022_t*)0)->{name})==4, "2022 target member {name}");\n')
@@ -145,14 +175,14 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
     token_core = interfaces.get('token_core_2022')
     if token_core:
         with layout.open('a') as stream:
-            stream.write('\n_Static_assert(sizeof(token_generation_t)==72 && sizeof(token_generation_2022_t)==76 && sizeof(token_action_2022_t)==4, "separate token layouts/actions");\n')
+            stream.write('\n_Static_assert(sizeof(token_generation_t)==76 && sizeof(token_generation_2022_t)==76 && sizeof(token_action_2022_t)==4, "canonical token layout/actions");\n')
             for member in token_core['layout']['members']:
                 stream.write(f'_Static_assert(offsetof(token_generation_2022_t,{member["name"]})=={member["offset"]}, "2022 token member {member["name"]}");\n')
                 if member['name'] != 'special_flags3':
                     stream.write(f'_Static_assert(offsetof(token_generation_t,{member["name"]})=={member["offset"]}, "retained token prefix {member["name"]}");\n')
             for name,number in token_core['actions']['members'].items():
                 stream.write(f'_Static_assert({name.replace("TOKEN_ACTION_","TOKEN2022_ACTION_")}=={number}, "2022 token action {name}");\n')
-            stream.write('_Static_assert(TOKEN_ACTION_HASTE==8 && TOKEN_ACTION_CONVERT_INTO_ARTIFACT==32, "retained legacy token actions");\n'
+            stream.write('_Static_assert(TOKEN_ACTION_HASTE==16 && TOKEN_ACTION_CONVERT_INTO_ARTIFACT==64, "canonical token actions");\n'
                          '_Static_assert(offsetof(card_instance_t,token_special_keywords_2022)==292 && sizeof(((card_instance_t*)0)->token_special_keywords_2022)==4 && offsetof(card_instance_t,upkeep_colorless)==292 && offsetof(card_instance_t,upkeep_green)==295, "token keyword mirror overlay");\n'
                          '_Static_assert(sizeof(card_data_t)==72 && offsetof(card_data_t,id)==36 && offsetof(card_data_t,reserved2)==38 && sizeof(engine_dynamic_iid_start_2022)==4, "dynamic token card-data view");\n')
     if interfaces.get('yorion_2022'):
@@ -175,14 +205,14 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
                          '_Static_assert(sizeof(hack_allow_sorcery_if_rules_engine_is_only_effect)==4, "rules-engine sorcery gate word");\n')
     if interfaces.get('sacrifice_core_2022'):
         with layout.open('a') as stream:
-            stream.write('\n_Static_assert(sizeof(sacrifice_2022_t)==4 && sizeof(sacrifice_t)==4, "sacrifice flag domains");\n'
-                         '_Static_assert(SAC_SET_TARGETS==128, "retained legacy sacrifice flag");\n'+
+            stream.write('\n_Static_assert(sizeof(sacrifice_2022_t)==4 && sizeof(sacrifice_t)==4, "sacrifice flag domains");\n'+
+                         ('_Static_assert(SAC_SET_TARGETS==256 && SAC_OPTIONAL==128, "native canonical sacrifice flags");\n' if (root/'docs/recovery-evidence/canonical-helper-domains.json').exists() else '_Static_assert(SAC_SET_TARGETS==128, "retained legacy sacrifice flag");\n')+
                          '\n'.join(f'_Static_assert({name.replace("SAC_","SAC2022_")}=={number}, "native sacrifice flag");'
                                    for name,number in interfaces['sacrifice_core_2022']['enum']['members'].items())+'\n')
     if interfaces.get('generic_spell_2022'):
         with layout.open('a') as stream:
-            stream.write('\n_Static_assert(sizeof(generic_spell_flags_2022_t)==4 && sizeof(generic_spell_flags_t)==4, "spell flag domains");\n'
-                         '_Static_assert(GS_ONE_OR_MULTIPLE_TARGETS==8192 && GS_SAC_PERMANENT_AS_COST==16384, "retained spell flag values");\n'+
+            stream.write('\n_Static_assert(sizeof(generic_spell_flags_2022_t)==4 && sizeof(generic_spell_flags_t)==4, "spell flag domains");\n'+
+                         ('_Static_assert(GS_ONE_OR_MULTIPLE_TARGETS==16384 && GS_SAC_PERMANENT_AS_COST==32768, "native canonical spell flags");\n' if canonical_spell_tutor else '_Static_assert(GS_ONE_OR_MULTIPLE_TARGETS==8192 && GS_SAC_PERMANENT_AS_COST==16384, "retained spell flag values");\n')+
                          '\n'.join(f'_Static_assert({name.replace("GS_","GS2022_")}=={number}, "native spell flag");' for name,number in interfaces['generic_spell_2022']['flags']['members'].items())+'\n'+
                          '\n'.join(f'_Static_assert({name}=={number}, "native spell extension flag");' for name,number in interfaces['generic_spell_2022']['extension_flags'].items() if name not in {'SF_0','SF2_0','SF2_REDIRECT'})+'\n')
     if interfaces.get('split_card_helpers_2022'):
@@ -194,7 +224,7 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
     if interfaces.get('ability_writers_2022'):
         component=interfaces['ability_writers_2022']
         with layout.open('a') as stream:
-            stream.write('\n_Static_assert(sizeof(pump_ability_t)==36 && sizeof(pump_ability_2022_t)==48, "separate pump layouts");\n')
+            stream.write('\n_Static_assert(sizeof(pump_ability_t)==48 && sizeof(pump_ability_2022_t)==48, "canonical pump layout");\n')
             for member in component['pump_layout']['members']:
                 name,offset,width=member['name'],member['offset'],member['bytes']
                 stream.write(f'_Static_assert(offsetof(pump_ability_2022_t,{name})=={offset} && sizeof(((pump_ability_2022_t*)0)->{name})=={width}, "native pump member {name}");\n')
@@ -216,7 +246,7 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
             stream.write('\n'.join(f'_Static_assert({name}=={number}, "native activation enum value");' for name,number in component['enum_values'].items())+'\n')
     if interfaces.get('ability_filter_2022'):
         with layout.open('a') as stream:
-            stream.write('\n_Static_assert(sizeof(test_definition_2022_t)==216 && sizeof(test_definition_t)==208 && sizeof(ability_loss_t)==4 && offsetof(card_instance_t,targets[17].card)==256 && sizeof(((card_instance_t*)0)->targets[17].card)==4, "native ability-loss filter and stored mask");\n')
+            stream.write('\n_Static_assert(sizeof(test_definition_2022_t)==216 && sizeof(test_definition_t)==216 && sizeof(ability_loss_t)==4 && offsetof(card_instance_t,targets[17].card)==256 && sizeof(((card_instance_t*)0)->targets[17].card)==4, "native ability-loss filter and stored mask");\n')
     if interfaces.get('reveal_destroy_native_2022'):
         with layout.open('a') as stream:
             stream.write('\n_Static_assert(sizeof(card_instance_t)==300 && offsetof(card_instance_t,eot_toughness)==76 && sizeof(((card_instance_t*)0)->eot_toughness)==4 && offsetof(card_instance_t,targets[10].player)==196 && sizeof(target_t)==8, "native packed destruction counters");\n')
@@ -323,7 +353,7 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
     if interfaces.get('global_tutor_core_2022'):
         component=interfaces['global_tutor_core_2022']
         with layout.open('a') as stream:
-            stream.write('\n_Static_assert(sizeof(tutor_destination_2022_t)==4 && sizeof(tutor_from_2022_t)==4 && TUTOR_HAND==0 && TUTOR2022_HAND==1, "separate native tutor domains");\n')
+            stream.write('\n_Static_assert(sizeof(tutor_destination_2022_t)==4 && sizeof(tutor_from_2022_t)==4 && TUTOR_HAND=='+('1' if canonical_spell_tutor else '0')+' && TUTOR2022_HAND==1, "native tutor domains");\n')
             stream.write('_Static_assert(sizeof(test_definition_2022_t)==216 && offsetof(test_definition_2022_t,qty)==174 && sizeof(((test_definition_2022_t*)0)->qty)==2 && offsetof(test_definition_2022_t,no_shuffle)==192 && offsetof(test_definition_2022_t,create_minideck)==194 && offsetof(test_definition_2022_t,storage)==212, "native tutor fields");\n')
             stream.write('_Static_assert(sizeof(target_t)==8 && offsetof(card_instance_t,targets)==116 && offsetof(card_instance_t,number_of_targets)==54, "native control-transfer target cursor");\n')
             for group,prefix in [(component['destinations'],'TUTOR_'),(component['origins'],'TUTOR_FROM_')]:
@@ -331,7 +361,12 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
     if interfaces.get('action_core_2022'):
         component=interfaces['action_core_2022']
         with layout.open('a') as stream:
-            stream.write('\n_Static_assert(sizeof(test_definition_2022_t)==216 && offsetof(test_definition_2022_t,not_me)==170 && sizeof(target_definition_2022_t)==84 && sizeof(actions_2022_t)==4 && ((actions_2022_t)-1)>0 && sizeof(counter_t)==4, "native action/copy interfaces");\n')
+            stream.write('\n_Static_assert(sizeof(test_definition_2022_t)==216 && offsetof(test_definition_2022_t,not_me)==170 && sizeof(target_definition_2022_t)==84 && sizeof(actions_2022_t)==4 && sizeof(counter_t)==4, "native action/copy interfaces");\n'+
+                         ('_Static_assert(__builtin_types_compatible_p(actions_t,actions_2022_t), "single native action type");\n'
+                          '#ifndef __clang__\n'
+                          '_Static_assert(((actions_t)-1)>0, "GCC native unsigned action enum");\n'
+                          '#endif\n' if (root/'docs/recovery-evidence/canonical-helper-domains.json').exists() else
+                          '_Static_assert(((actions_2022_t)-1)>0, "native unsigned action word");\n'))
             stream.write('_Static_assert(sizeof(int[2][100])==800 && sizeof(int[151])==604 && sizeof(char[2][151])==302 && sizeof(dblword_628C10)==4 && sizeof(byte_628C0C)==1, "native action/copy fixed arrays and network fields");\n')
             stream.write('\n'.join(f'_Static_assert((uint32_t){("ACT_KILL_REMOVE" if name=="ACT_KILL_EXILE" else name)}=={number}U, "native action enum bits");' for name,number in component['enum_values'].items())+'\n')
     if interfaces.get('death_trigger_core_2022'):
@@ -418,26 +453,56 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
                                       for name,number in keyword_values.items()) + '\n')
         stream.write('\n' + '\n'.join(f'_Static_assert({name} == {number}, "recovered state mask");'
                                       for name,number in state_values.items()) + '\n')
+    if canonical_storm:
+        with layout.open('a') as stream:
+            stream.write('_Static_assert(sizeof(storm_mode_t)==4 && __builtin_types_compatible_p(storm_mode_t,storm_mode_2022_t), "canonical storm mode type");\n')
+            for name,number in canonical_storm['native_values'].items():
+                stream.write(f'_Static_assert({name}=={number} && {name.replace("STORM_","STORM2022_",1)}=={number}, "native canonical storm bit");\n')
+    if canonical_spell_tutor:
+        from canonicalize_spell_tutor import SPECS
+        with layout.open('a') as stream:
+            for typename,modern,_,_ in SPECS:
+                stream.write(f'_Static_assert(sizeof({typename})==4 && __builtin_types_compatible_p({typename},{modern}), "canonical spell/tutor typedef identity");\n')
+                for name,number in canonical_spell_tutor['values'][typename].items():
+                    stream.write(f'_Static_assert({name}=={number}, "canonical native spell/tutor value");\n')
+    if canonical_reanimation:
+        with layout.open('a') as stream:
+            stream.write('\n_Static_assert(sizeof(reanimate_mode_t)==4 && (reanimate_mode_t)-1 < 0, "signed native reanimation word");\n')
+            stream.write('_Static_assert(sizeof(counter_t)==4, "native counter word");\n')
+            stream.write('_Static_assert(__builtin_types_compatible_p(reanimate_mode_t,reanimate_mode_2022_t), "one reanimation enum type");\n')
+            stream.write('_Static_assert(__builtin_types_compatible_p(CardFunction,int (*)(int,int,event_t)), "effect callback type");\n')
+            stream.write('_Static_assert(__builtin_types_compatible_p(ReanimationBeforeEtb_2022,void (*)(int,int,int,int)), "before ETB callback type");\n')
+            from promote_recovery import REANIMATION_DOMAIN_NAMES
+            for name,number in canonical_reanimation['values'].items():
+                stream.write(f'_Static_assert({name}=={number} && {REANIMATION_DOMAIN_NAMES[name]}=={number}, "canonical reanimation action");\n')
     if storage_evidence.exists():
         storage = json.loads(storage_evidence.read_text())
         assertions = []
         for typename, size in storage["source_layouts"].items():
+            size=canonical_records.get('runtime_bytes',{}).get(typename,size)
             assertions.append(f'_Static_assert(sizeof({typename}) == {size}, "source stack view size");')
         for typename, record in storage["target_layouts"].items():
             for member, offset in record["members"].items():
-                # The old test API predates the inserted special-keyword fields;
-                # target flags and token flags3 are separate migration work.
-                if (typename == "test_definition_t" and offset >= 140) or member in {"flags", "special_flags3"}:
-                    continue
                 assertions.append(f'_Static_assert(offsetof({typename}, {member}) == {offset}, "shared stack view offset");')
+        for typename in canonical_records.get('runtime_bytes',{}):
+            modern=typename.removesuffix('_t')+'_2022_t'
+            assertions.append(f'_Static_assert(__builtin_types_compatible_p({typename}, {modern}), "canonical record typedef identity");')
         with layout.open("a") as stream:
             stream.write("\n" + "\n".join(assertions) + "\n")
+    # Layout assertions retain ledger identities; compile them against the actual
+    # canonical declarations, without recreating compatibility aliases in C.
+    from canonicalize_helpers import names,rename,verify as verify_helpers
+    canonical_helpers=verify_helpers(root)
+    if canonical_helpers:layout.write_text(rename(layout.read_text(),names(root)))
     abi = subprocess.run(command + [str(layout)], capture_output=True, text=True)
-    stub_results={}
-    for source in sorted({s['source'] for s in manifest.get('source_stubs',[])}):
+    cpp_results={}
+    cpp_sources=sorted(p.relative_to(root).as_posix() for p in (root/'functions').glob('*.cpp'))
+    for source in cpp_sources:
         result=subprocess.run([command[0],'-target','i686-pc-windows-msvc','-std=gnu++17','-fsyntax-only',
-            '-Werror=return-type','-Werror=uninitialized','-I',str(root),str(root/source)],capture_output=True,text=True)
-        stub_results[source]=dict(exit_code=result.returncode,diagnostics=result.stderr)
+            '-Werror=return-type','-Werror=uninitialized','-Werror=duplicate-decl-specifier','-I',str(root),str(root/source)],capture_output=True,text=True)
+        cpp_results[source]=dict(exit_code=result.returncode,diagnostics=result.stderr)
+    stub_results={s['source']:cpp_results[s['source']] for s in manifest.get('source_stubs',[])}
+    (analysis/'source-cpp-syntax-final.json').write_text(json.dumps(cpp_results,indent=2))
     (analysis/'source-stub-syntax-final.json').write_text(json.dumps(stub_results,indent=2))
     manifest['source_stub_syntax_check']=dict(passed=sum(r['exit_code']==0 for r in stub_results.values()),
         failed=[s for s,r in stub_results.items() if r['exit_code']!=0],target='i686-pc-windows-msvc',language='gnu++17',
@@ -446,14 +511,18 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
                    failed=[s for s,r in results.items() if r["exit_code"] != 0],
                    abi_exit_code=abi.returncode, abi_diagnostics=abi.stderr,
                    target="i686-pc-windows-msvc", language="gnu99", tests_run=False,
-                   compatibility_defines={"functions/rules_engine.c": "strncasecmp=_strnicmp"})
+                   compatibility_defines={"functions/rules_engine.c": "strncasecmp=_strnicmp",
+                                          "functions/helper_functions.c": "ssize_t=int"})
     summary['stub_source_units_checked']=len(stub_results)
+    summary['cpp_source_units_checked']=len(cpp_results)
+    summary['cpp_source_failed']=[s for s,r in cpp_results.items() if r['exit_code']]
+    if canonical_helpers:summary['canonical_helpers']=canonical_helpers
     summary['stub_source_failed']=manifest['source_stub_syntax_check']['failed']
     (analysis / "source-check-summary.json").write_text(json.dumps(summary, indent=2))
     manifest["source_syntax_check"] = summary
     (root / "docs/recovery-evidence/recovered-functions.json").write_text(json.dumps(manifest, indent=2))
     print(json.dumps(summary, indent=2))
-    raise SystemExit(bool(summary["failed"] or summary['stub_source_failed'] or abi.returncode))
+    raise SystemExit(bool(summary["failed"] or summary['cpp_source_failed'] or abi.returncode))
 
 
 if __name__ == "__main__":

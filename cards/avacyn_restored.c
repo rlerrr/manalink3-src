@@ -6477,7 +6477,7 @@ int card_dark_impostor(int player, int card, event_t event)
     pcVar6 = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar5 = can_use_activated_abilities_2022(player, card);
+      iVar5 = can_use_activated_abilities(player, card);
       if (iVar5 == 0)
       {
         return 0;
@@ -6661,11 +6661,11 @@ static void bruna_ability(int player, int card)
     if (player == 0)
     {
       target_definition_2022_t td;
-      base_target_definition_2022(0, card, &td, 4);
+      base_target_definition(0, card, &td, 4);
       td.required_subtype = 0x4002;
       card_instance_t *instance = get_card_instance(0, card);
       instance->number_of_targets = 0;
-      if (!pick_next_target_noload_2022(&td, "Select an Aura card with enchant creature."))
+      if (!pick_next_target_noload(&td, "Select an Aura card with enchant creature."))
       {
         spell_fizzled = 0;
         break;
@@ -6687,22 +6687,22 @@ static void bruna_ability(int player, int card)
     }
   }
   test_definition_2022_t this_test;
-  new_default_test_definition_2022(&this_test, 4, "Select an Aura card with enchant creature.");
+  new_default_test_definition(&this_test, 4, "Select an Aura card with enchant creature.");
   this_test.subtype = 0x4002;
-  while (new_special_count_grave_2022(player, &this_test))
+  while (new_special_count_grave(player, &this_test))
   {
-    int result = new_global_tutor_2022(player, player, 2, 1, 0, 2, &this_test);
+    int result = new_global_tutor(player, player, 2, 1, 0, 2, &this_test);
     if (result < 0)
       break;
-    put_into_play_aura_attached_to_target_2022(player, result, player, card);
+    put_into_play_aura_attached_to_target(player, result, player, card);
   }
   this_test.zone = 0x100;
-  while (check_battlefield_for_special_card_2022(player, card, player, 0, &this_test))
+  while (check_battlefield_for_special_card(player, card, player, 0, &this_test))
   {
-    int result = new_select_a_card_2022(player, player, 4, 0, 2, -1, &this_test);
+    int result = new_select_a_card(player, player, 4, 0, 2, -1, &this_test);
     if (result < 0)
       break;
-    put_into_play_aura_attached_to_target_2022(player, result, player, card);
+    put_into_play_aura_attached_to_target(player, result, player, card);
   }
 }
 
@@ -6714,7 +6714,7 @@ static void bruna_ability(int player, int card)
 int card_bruna_light_of_alabaster_2022(int player, int card, event_t event)
 {
   check_legend_rule(player, card, event);
-  vigilance_2022(player, card, event);
+  vigilance(player, card, event);
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
   if (event == EVENT_DAT_ABILITY)
     bruna_ability(player, card);

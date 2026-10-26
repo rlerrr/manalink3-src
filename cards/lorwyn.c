@@ -1,5 +1,8 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+int buddy_creature(int player, int card, event_t event, subtype_t type, int cless);
+
 // Functions
 int clash(int player, int card){
 	int cmc[2];
@@ -454,67 +457,7 @@ int tapsubtype_ability(int player, int card, int tap_req, target_definition_t *t
 	return 0;
 }
 
-static int buddy_creature(int player, int card, event_t event, subtype_t type){
 
-	if( event == EVENT_MODIFY_COST ){
-		if( count_subtype_in_hand(player, type) < 2 ){
-			COST_COLORLESS += 3;
-		}
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( ! count_subtype_in_hand(player, type) ){
-			ai_modifier -= 256;
-		}
-
-		if( played_for_free(player, card) || is_token(player, card) ){
-			return 0;
-		}
-
-		int choice = 1;
-		int diff = true_get_updated_casting_cost(player, card, -1, event, -1);
-		int amount = MAX(3 + diff, 0);
-		if( count_subtype_in_hand(player, type) ){
-			if( has_mana(player, COLOR_ANY, 3) ){
-				char msg[100];
-				scnprintf(msg, 100, "%s", get_subtype_text("Reveal %a card", type));
-				char msg2[100];
-				scnprintf(msg2, 100, "Pay %d", amount);
-				choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
-								msg, 1, 5,
-								msg2, 1, 1);
-				if( ! choice ){
-					spell_fizzled = 1;
-					return 0;
-				}
-			}
-		}
-		else{
-			return 0; //As it was already charged as the original cost was modified
-		}
-
-		if( choice == 1 ){
-			test_definition_t test;
-			new_default_test_definition(&test, TYPE_ANY, get_subtype_text("Select a %a card.", type));
-			test.subtype = type;
-			test.zone = TARGET_ZONE_HAND;
-
-			int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MIN_VALUE, -1, &test);
-			if( selected > -1 ){
-				reveal_card(player, card, player, selected);
-			}
-			else{
-				spell_fizzled = 1;
-				return 0;
-			}
-		}
-		if( choice == 2 ){
-			charge_mana(player, COLOR_COLORLESS, amount);
-		}
-	}
-
-	return 0;
-}
 
 // Cards
 
@@ -2533,7 +2476,7 @@ Flamekin Bladewhirl	|R
 Creature - Elemental Warrior 2/1
 As an additional cost to cast ~, reveal an Elemental card from your hand or pay |3. */
 
-	return buddy_creature(player, card, event, SUBTYPE_ELEMENTAL);
+	return buddy_creature(player, card, event, SUBTYPE_ELEMENTAL, 3);
 }
 
 int card_flamekin_spitfire(int player, int card, event_t event){
@@ -2874,7 +2817,7 @@ Goldmeadow Stalwart	|W
 Creature - Kithkin Soldier 2/2
 As an additional cost to cast ~, reveal a Kithkin card from your hand or pay |3. */
 
-	return buddy_creature(player, card, event, SUBTYPE_KITHKIN);
+	return buddy_creature(player, card, event, SUBTYPE_KITHKIN, 3);
 }
 
 int card_guile(int player, int card, event_t event)
@@ -5350,7 +5293,7 @@ When ~ enters the battlefield, draw a card. */
 		draw_a_card(player);
 	}
 
-	return buddy_creature(player, card, event, SUBTYPE_MERFOLK);
+	return buddy_creature(player, card, event, SUBTYPE_MERFOLK, 3);
 }
 
 int card_silvergill_douser(int player, int card, event_t event){
@@ -5609,7 +5552,7 @@ Artifact
 
 int card_squeaking_pie_sneak(int player, int card, event_t event){
 	fear(player, card, event);
-	return buddy_creature(player, card, event, SUBTYPE_GOBLIN);
+	return buddy_creature(player, card, event, SUBTYPE_GOBLIN, 3);
 }
 
 int card_stinkdrinker_daredevil(int player, int card, event_t event){
@@ -6329,7 +6272,7 @@ As an additional cost to cast ~, reveal an Elf card from your hand or pay |3.
 Deathtouch (Any amount of damage this deals to a creature is enough to destroy it.) */
 
 	deathtouch(player, card, event);
-	return buddy_creature(player, card, event, SUBTYPE_ELF);
+	return buddy_creature(player, card, event, SUBTYPE_ELF, 3);
 }
 
 int card_wydwen_the_biting_gale( int player, int card, event_t event){
@@ -6399,7 +6342,7 @@ int card_lammastide_weave(int player, int card, event_t event)
           if (iVar2 != 0)
           {
             iVar2 = get_cmc_by_id((unsigned int)cards_data[iVar1].id);
-            gain_life_2022(player, iVar2);
+            gain_life(player, iVar2);
           }
         }
       }
@@ -6530,7 +6473,7 @@ int card_cairn_wanderer(int player, int card, event_t event)
         if ((cards_data[card_00].type & 2) != 0)
         {
           uVar3 = uVar3 | cards_data[card_00].static_ability & 0x4003fdbf;
-          uVar2 = check_for_special_ability_2022(-1, card_00, 0x20f);
+          uVar2 = check_for_special_ability(-1, card_00, 0x20f);
           sp_abilities = sp_abilities | uVar2;
         }
 
@@ -6580,7 +6523,7 @@ static int colfenors_urn_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_0258ce17:
-    iStack_114 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    iStack_114 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (iStack_114 == 0)
       goto LAB_0258ce3f;
   }
@@ -6619,7 +6562,7 @@ static int colfenors_urn_effect(int player, int card, event_t event)
       count_for_gfp_ability_and_store_values(player, card, 0x77, player, 0, &test, 0xf0, 0);
     }
     iStack_114 =
-        resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+        resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (iStack_114 == 0)
     {
       return 0;
@@ -6701,7 +6644,7 @@ LAB_0258ce3f:
 /* Recovered October 2022 Level Up/Buddy helpers. */
 
 /* ManalinkEh 2022: 0x258e270; original cards/lorwyn.c:459. */
-static void buddy_creature_part_2022(int player, int card, event_t event, subtype_t type, int cless)
+static void buddy_creature_part(int player, int card, event_t event, subtype_t type, int cless)
 {
   int iVar1;
   int iVar2;
@@ -6756,10 +6699,10 @@ static void buddy_creature_part_2022(int player, int card, event_t event, subtyp
     }
     ptStack_150 = &test;
     pcVar3 = get_subtype_text("Select a %a card.", type);
-    new_default_test_definition_2022(ptStack_150, 0xff, pcVar3);
+    new_default_test_definition(ptStack_150, 0xff, pcVar3);
     test.subtype = type;
     test.zone = 0x100;
-    iVar1 = new_select_a_card_2022(player, player, 4, 0, 3, -1, ptStack_150);
+    iVar1 = new_select_a_card(player, player, 4, 0, 3, -1, ptStack_150);
     if (iVar1 < 0)
     {
       spell_fizzled = 1;
@@ -6773,7 +6716,7 @@ static void buddy_creature_part_2022(int player, int card, event_t event, subtyp
 
 
 /* ManalinkEh 2022: 0x258f6c0; original cards/lorwyn.c:459. */
-int buddy_creature_2022(int player, int card, event_t event, subtype_t type, int cless)
+int buddy_creature(int player, int card, event_t event, subtype_t type, int cless)
 {
   int result;
   if (event == EVENT_MODIFY_COST)
@@ -6787,7 +6730,7 @@ int buddy_creature_2022(int player, int card, event_t event, subtype_t type, int
   else if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
            (player == affected_card_controller))
   {
-    buddy_creature_part_2022(player, card, EVENT_CAST_SPELL, type, cless);
+    buddy_creature_part(player, card, EVENT_CAST_SPELL, type, cless);
   }
   return 0;
 }

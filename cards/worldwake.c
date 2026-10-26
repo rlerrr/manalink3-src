@@ -2829,7 +2829,7 @@ static int zendikon_legacy(int player, int card, event_t event)
   instance = in_play(player, card);
   if ((instance != NULL) && (instance->targets[0].player != -1))
   {
-    result = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (result != 0)
     {
 
@@ -2944,7 +2944,7 @@ int zendikon(int player, int card, event_t event, int pow, int tgh, color_test_t
       if (((iVar1 == affected_card) &&
            (((player_00 == affected_card_controller &&
               ((unsigned char)(instance->kill_code - 2) < 2)) &&
-             (iVar3 = check_special_flags2_2022(player_00, iVar1, 0x10000000), iVar3 == 0)))) &&
+             (iVar3 = check_special_flags2(player_00, iVar1, 0x10000000), iVar3 == 0)))) &&
           (iVar3 = check_for_death_trigger_removal(player_00, iVar1), iVar3 == 0))
       {
 

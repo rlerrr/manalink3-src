@@ -3,7 +3,7 @@ from audit_source import function_body
 from recover_spell_trigger_native import ADDRESSES,CONTROL_SITES
 
 
-def audit_component(component,manifest,sources,machine_bytes):
+def audit_component(component,manifest,sources,machine_bytes,root):
     def require(condition,message):
         if not condition:raise ValueError(message)
     entries={f['address']:f for f in manifest['accepted_functions'] if f.get('spell_trigger_evidence')}
@@ -31,7 +31,8 @@ def audit_component(component,manifest,sources,machine_bytes):
         require(fragment['original_function']==previous['name'] and fragment['raw_sha256']==previous['raw_sha256'] and
                 fragment['raw_export']=='decompiled-support/'+fragment['address']+'-legacy-spell-trigger.c',
                 'Legacy spell-trigger original export mismatch')
-        body=function_body(sources[fragment['source']],fragment['original_function'])
+        from unify_scalar_helpers import retained_source_body
+        body=retained_source_body(root,fragment['source'],fragment['original_function'])
         require('test_definition_t *test' in body and 'test_definition_2022_t' not in body,
                 'Legacy spell-trigger test interface changed')
     body=function_body(sources['functions/functions.c'],'sp_ability_trigger_impl_2022')

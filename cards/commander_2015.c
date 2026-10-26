@@ -1737,7 +1737,7 @@ int card_ezuri_claw_of_progress(int player, int card, event_t event){
 		add_experience(player, 1);
 	}
 
-	if( EXPERIENCE_COUNTERS(player) && beginning_of_combat(player, card, event, player, -1) ){
+	if( EXPERIENCE_COUNTERS(player) && beginning_of_combat(player, card, event, player) ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE );
 		td.special = TARGET_SPECIAL_NOT_ME;

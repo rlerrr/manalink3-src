@@ -2782,8 +2782,8 @@ static int ageless_sentinels_subtypes_abils(int player, int card, event_t event)
     else if (event == EVENT_CHANGE_TYPE)
     {
       remove_a_subtype(player_00, card_00, SUBTYPE_WALL);
-      add_a_subtype_2022(player_00, card_00, SUBTYPE_BIRD);
-      add_a_subtype_2022(player_00, card_00, SUBTYPE_GIANT);
+      add_a_subtype(player_00, card_00, SUBTYPE_BIRD);
+      add_a_subtype(player_00, card_00, SUBTYPE_GIANT);
     }
   }
   return 0;

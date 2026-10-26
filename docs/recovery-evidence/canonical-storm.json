@@ -1,0 +1,24 @@
+{
+  "predecessor_definition": "typedef enum {\n  STORM_CREATURE\t= (1<<0),\n  STORM_BLACK = COLOR_TEST_BLACK,\n  STORM_BLUE = COLOR_TEST_BLUE,\n  STORM_GREEN = COLOR_TEST_GREEN,\n  STORM_RED = COLOR_TEST_RED,\n  STORM_WHITE = COLOR_TEST_WHITE,\n} storm_mode_t;",
+  "predecessor_sha256": "1ee57c13c08778ac9d0c2c66e4f369971b74cdb1fd6876b6f92a01e4f143a3a5",
+  "recovered_definition": "typedef enum {\n  STORM2022_BLACK = 0x2,\n  STORM2022_BLUE = 0x4,\n  STORM2022_GREEN = 0x8,\n  STORM2022_RED = 0x10,\n  STORM2022_WHITE = 0x20,\n  STORM2022_CREATURE = 0x40,\n  STORM2022_ENCHANTMENT = 0x80,\n  STORM2022_INSTANT_SORCERY = 0x100,\n} storm_mode_2022_t;",
+  "recovered_sha256": "60f0bf16bfdb8bbf07ef39418b285a1005932844e7097f0f981c5bffddc43f09",
+  "canonical_definition": "typedef enum {\n  STORM_CREATURE\t= 64,\n  STORM_BLACK = 2,\n  STORM_BLUE = 4,\n  STORM_GREEN = 8,\n  STORM_RED = 16,\n  STORM_WHITE = 32,\n  STORM_ENCHANTMENT = 128,\n  STORM_INSTANT_SORCERY = 256,\n} storm_mode_t;",
+  "canonical_sha256": "6c7e8fedfbd1aae07b73c4fdd146ea41fdc6637bf1981cc14eef4867cc82b89c",
+  "native_members": {
+    "STORM_BLACK": 2,
+    "STORM_BLUE": 4,
+    "STORM_GREEN": 8,
+    "STORM_RED": 16,
+    "STORM_WHITE": 32,
+    "STORM_CREATURE": 64,
+    "STORM_ENCHANTMENT": 128,
+    "STORM_INSTANT_SORCERY": 256
+  },
+  "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+  "source_assertion": {
+    "original": "STATIC_ASSERT(STORM_CREATURE == 1, storm_legacy_creature_mode_preserved);",
+    "replacement": "STATIC_ASSERT(STORM_CREATURE == 64, storm_canonical_creature_mode);"
+  },
+  "scope": "Canonical native storm mode plus updated compile-time assertion; accepted native implementation records unchanged."
+}

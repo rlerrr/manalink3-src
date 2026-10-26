@@ -3505,7 +3505,7 @@ int card_slobad_goblin_tinkerer(int player, int card, event_t event)
       result = valid_target(&td);
       if (result != 0)
       {
-        pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
+        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
                                instance->targets[0].player, instance->targets[0].card, 0, 0, 0,
                                0x800);
       }
@@ -3542,7 +3542,7 @@ int card_ageless_entity(int player, int card, event_t event)
   int num;
   card_instance_t *instance;
 
-  num = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  num = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (num != 0)
   {
     instance = in_play(player, card);
@@ -3630,7 +3630,7 @@ int card_spawning_pit(int player, int card, event_t event)
     }
     if (iVar2 == 2)
     {
-      generate_token_by_id_2022(instance->parent_controller, instance->parent_card, 0x4988);
+      generate_token_by_id(instance->parent_controller, instance->parent_card, 0x4988);
       return 0;
     }
   }
@@ -3648,7 +3648,7 @@ int card_well_of_lost_dreams(int player, int card, event_t event)
   card_instance_t *instance;
   int iVar5;
 
-  iVar3 = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  iVar3 = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   iVar1 = max_x_value;
   iVar2 = x_value;
 

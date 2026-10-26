@@ -22,8 +22,14 @@ def audit_component(component,manifest,sources,machine_bytes,root):
             TUTOR_TPLAYER_HAND=11,TUTOR_BOTTOM_OF_DECK_RANDOM=12,TUTOR_HAND_AND_MARK=13,TUTOR_OPPOSITION_AGENT=14) and
             component['origins']==dict(TUTOR_FROM_DECK=1,TUTOR_FROM_GRAVE=2,TUTOR_FROM_RFG=3,TUTOR_FROM_HAND=4,TUTOR_FROM_GRAVE_NOTARGET=5,TUTOR_FROM_DECK_AUTO=6),
             'Native tutor enum values mismatch')
-    require((root/'defs.h').read_text().count(definitions(component['destinations'],component['origins']))==1,
-            'Native tutor domain definitions mismatch')
+    if (root/'docs/recovery-evidence/canonical-spell-tutor.json').exists():
+        from canonicalize_spell_tutor import verify as verify_spell_tutor
+        canonical=verify_spell_tutor(root)['values']
+        require(canonical['tutor_t']==component['destinations'] and canonical['tutor_from_t']==component['origins'],
+                'Canonical native tutor definitions mismatch')
+    else:
+        require((root/'defs.h').read_text().count(definitions(component['destinations'],component['origins']))==1,
+                'Native tutor domain definitions mismatch')
     require(component['timestamp_arrays']==dict(card_address='5076f0',player_address='507ec0',elements=500,element_bytes=4),
             'Native control-transfer timestamp layout mismatch')
     linker=(root/'manalink.lds').read_text()

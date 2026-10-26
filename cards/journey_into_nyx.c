@@ -233,7 +233,7 @@ int card_deicide(int player, int card, event_t event){
 			int find_more = has_subtype_by_id(csvid, SUBTYPE_GOD) ? 1 : 0;
 			kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
 			if( find_more ){
-				lobotomy_effect(player, instance->targets[0].player, csvid, 0);
+				lobotomy_effect(player, instance->targets[0].player, csvid, -1, 0);
 			}
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -4512,7 +4512,7 @@ int card_rollicking_throng(int player, int card, event_t event){
 
 int impulsive_charge_legacy(int player, int card, event_t event){
 
-	if( beginning_of_combat(player, card, event, player, -1) ){
+	if( beginning_of_combat(player, card, event, player) ){
 		pump_subtype_until_eot(player, card, player, SUBTYPE_REVELER, 0, 0, 0, SP_KEYWORD_HASTE | SP_KEYWORD_MUST_ATTACK);
 		kill_card(player, card, KILL_EXILE);
 	}
@@ -4573,7 +4573,7 @@ int card_pheres_band_revelers(int player, int card, event_t event){
 
 int impulsive_return_legacy(int player, int card, event_t event){
 
-	if( beginning_of_combat(player, card, event, player, -1) ){
+	if( beginning_of_combat(player, card, event, player) ){
 		damage_player(1-player, count_subtype(ANYBODY, TYPE_PERMANENT, SUBTYPE_REVELER), player, card);
 		kill_card(player, card, KILL_EXILE);
 	}
@@ -4634,7 +4634,7 @@ int card_maddened_oread(int player, int card, event_t event){
 
 int rip_to_pieces_legacy(int player, int card, event_t event){
 
-	if( beginning_of_combat(player, card, event, player, -1) ){
+	if( beginning_of_combat(player, card, event, player) ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
 		new_damage_all(player, card, ANYBODY, 1, NDA_PLAYER_TOO | NDA_ALL_CREATURES, &this_test);

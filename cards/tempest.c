@@ -2819,7 +2819,7 @@ int card_lobotomy(int player, int card, event_t event){
 			}
 
 			if( valid_choice == 1 && id > -1 ){
-				lobotomy_effect(player, 1-player, id, 1);
+				lobotomy_effect(player, 1-player, id, -1, 1);
 			}
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -4999,7 +4999,7 @@ int card_canyon_drake(int player, int card, event_t event)
   {
     if (0 < hand_count[player])
     {
-      result = generic_shade_amt_can_pump_2022(player, card, 2, 0, 1, 0, 0, 0, 0, 0, hand_count[player]);
+      result = generic_shade_amt_can_pump(player, card, 2, 0, 1, 0, 0, 0, 0, 0, hand_count[player]);
       return result;
     }
   }
@@ -5144,7 +5144,7 @@ int card_deadshot(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2147610; original cards/tempest.c:6300. */
 static void blocked_by_me_or_my_blocker_gets_1_1(int player, int card, int t_player, int t_card)
 {
-  pump_ability_until_eot_2022(player, card, t_player, t_card, 1, 1, 0, 0);
+  pump_ability_until_eot(player, card, t_player, t_card, 1, 1, 0, 0);
   return;
 }
 
@@ -5199,7 +5199,7 @@ int card_heartwood_dryad(int player, int card, event_t event)
   {
     return 0;
   }
-  special_abilities_2022(player, card, EVENT_ABILITIES, 0x8000000, player, card);
+  special_abilities(player, card, EVENT_ABILITIES, 0x8000000, player, card);
   return 0;
 }
 
@@ -5311,7 +5311,7 @@ int card_mogg_cannon(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
-      result = pump_ability_until_eot_2022(instance->parent_controller, instance->parent_card,
+      result = pump_ability_until_eot(instance->parent_controller, instance->parent_card,
                                       instance->targets[0].player, instance->targets[0].card, 1, 0,
                                       0x20, 0x10000000);
       instance = get_card_instance(player, result);
@@ -5735,7 +5735,7 @@ int card_marsh_lurker(int player, int card, event_t event)
     this_test.subtype = get_hacked_subtype(player, card, 0x5009);
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
-      pump_ability_until_eot_2022(player, card, player, card, 0, 0, 0, 1);
+      pump_ability_until_eot(player, card, player, card, 0, 0, 0, 1);
     }
   }
   result = generic_activated_ability_with_sacrifice_as_cost(player, card, event, GAA_NONE, 0, 1, 0,
@@ -5798,7 +5798,7 @@ int card_imps_taunt(int player, int card, event_t event)
     if (event == EVENT_RESOLVE_SPELL)
     {
       result = valid_target(&td);
-      if ((result == 0) || (pump_ability_until_eot_2022(player, card, instance->targets[0].player,
+      if ((result == 0) || (pump_ability_until_eot(player, card, instance->targets[0].player,
                                                    instance->targets[0].card, 0, 0, 0, 0x400),
                             instance->info_slot != 1))
       {
@@ -6034,7 +6034,7 @@ int card_ghost_town(int player, int card, event_t event)
       instance->info_slot = iVar3;
       if (iVar3 == 2)
       {
-        iVar3 = charge_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 0, 0);
+        iVar3 = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
         if (iVar3 != 0)
         {
           instance->info_slot = 3;
@@ -6076,7 +6076,7 @@ int card_light_of_day(int player, int card, event_t event)
         uVar4 = get_sleighted_color_test(player, card, 2);
         if ((uVar3 & uVar4) != 0)
         {
-          cannot_attack_2022(affected_card_controller, affected_card, EVENT_ABILITIES);
+          cannot_attack(affected_card_controller, affected_card, EVENT_ABILITIES);
           cannot_block(affected_card_controller, affected_card, EVENT_ABILITIES);
         }
       }
@@ -6407,7 +6407,7 @@ static int sadistic_glee_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_021484d4:
-    uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
       goto LAB_021484f9;
   }
@@ -6442,7 +6442,7 @@ static int sadistic_glee_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
     }
-    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
     {
       return 0;
@@ -6783,7 +6783,7 @@ int card_blood_pet(int player, int card, event_t event)
 
   if (event == EVENT_CAN_ACTIVATE)
   {
-    result = can_use_activated_abilities_2022(player, card);
+    result = can_use_activated_abilities(player, card);
     if (result != 0)
     {
       result = can_sacrifice_this_as_cost(player, card);
@@ -6805,7 +6805,7 @@ int card_blood_pet(int player, int card, event_t event)
       result = can_sacrifice_this_as_cost(player, card);
       if (result != 0)
       {
-        result = can_use_activated_abilities_2022(player, card);
+        result = can_use_activated_abilities(player, card);
         if (result != 0)
         {
           declare_mana_available(player, 1, 1);
@@ -6822,7 +6822,7 @@ int card_watchdog(int player, int card, event_t event)
   card_instance_t *instance;
   int result;
 
-  block_if_able_2022(player, card, event);
+  block_if_able(player, card, event);
   instance = in_play(player, card);
   if (instance != NULL)
   {
@@ -6860,7 +6860,7 @@ int card_havoc(int player, int card, event_t event)
   }
   if (event == EVENT_SPA)
   {
-    lose_life_2022(1 - player, 2);
+    lose_life(1 - player, 2);
   }
   result = global_enchantment(player, card, event);
   return result;
@@ -6902,7 +6902,7 @@ int card_warmth(int player, int card, event_t event)
   }
   if (event == EVENT_SPA)
   {
-    gain_life_2022(player, 2);
+    gain_life(player, 2);
   }
   result = global_enchantment(player, card, event);
   return result;
@@ -7069,13 +7069,13 @@ int tempest_does_not_untap_land(int player, int card, event_t event)
          (life[player] < 2)) &&
         ((cVar5 & COLOR_TEST_COLORLESS) != COLOR_TEST_0))
     {
-      produce_mana_tapped_all_one_color_2022(player, card,
+      produce_mana_tapped_all_one_color(player, card,
                                              mana_colors_added[player] | COLOR_TEST_COLORLESS, 1);
     }
     else
     {
-      produce_mana_tapped_all_one_color_2022(player, card, cVar5, 1);
-      result = check_special_flags2_2022(player, card, 0x40);
+      produce_mana_tapped_all_one_color(player, card, cVar5, 1);
+      result = check_special_flags2(player, card, 0x40);
       if (result == 0)
       {
         if ((chosen_colors &
@@ -7111,9 +7111,9 @@ int tempest_does_not_untap_land(int player, int card, event_t event)
       goto LAB_02148ddd;
     result = is_tapped(player, card);
     if (((result == 0) && (result = is_animated_and_sick(player, card), result == 0)) &&
-        (result = can_produce_mana_2022(player, card), result != 0))
+        (result = can_produce_mana(player, card), result != 0))
     {
-      result = check_special_flags2_2022(player, card, 0x40);
+      result = check_special_flags2(player, card, 0x40);
 
       if (result == 0)
       {
@@ -7216,7 +7216,7 @@ int card_frog_tongue(int player, int card, event_t event)
 {
   int result;
 
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
     draw_a_card(player);
@@ -7324,7 +7324,7 @@ int card_opportunist(int player, int card, event_t event)
 
   if (event == EVENT_ACTIVATE)
   {
-    default_target_definition_2022(player, card, &td, 2);
+    default_target_definition(player, card, &td, 2);
     td.extra = (int32_t)is_already_damaged;
     td.special = 0x8000;
   }
@@ -7334,16 +7334,16 @@ int card_opportunist(int player, int card, event_t event)
     {
       return 0;
     }
-    default_target_definition_2022(player, card, &td, 2);
+    default_target_definition(player, card, &td, 2);
     td.extra = (int32_t)is_already_damaged;
     td.special = 0x8000;
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target_2022(&td), result != 0))
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
       damage_target0(player, card, 1);
     }
   }
   result =
-      generic_activated_ability_2022(player, card, event, 7, 0, 0, 0, 0, 0, 0, 0, &td,
+      generic_activated_ability(player, card, event, 7, 0, 0, 0, 0, 0, 0, 0, &td,
                                      "Select target creature that was dealt damage this turn.");
   return result;
 }
@@ -7406,7 +7406,7 @@ int card_crown_of_flames(int player, int card, event_t event)
          (instance = get_card_instance(player, card), instance->damage_target_player == player)) &&
         ((instance = in_play(player, card),
           instance != NULL &&
-              (iVar1 = can_use_activated_abilities_2022(player, card), iVar1 != 0))))
+              (iVar1 = can_use_activated_abilities(player, card), iVar1 != 0))))
     {
       iVar1 = has_mana(player, 4, 1);
       check_abilities_power_2022 = check_abilities_power_2022 + iVar1;
@@ -7419,14 +7419,14 @@ int card_crown_of_flames(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar1 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 0, 0, 1, 0,
+      iVar1 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 0, 0, 0, 0, 1, 0,
                                              0, NULL, NULL);
       return iVar1;
     }
     if (event == EVENT_ACTIVATE)
     {
-      iVar1 = has_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 1, 0);
-      iVar3 = has_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 1, 0);
+      iVar1 = has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 1, 0);
+      iVar3 = has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 1, 0);
       iVar1 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "Boost enchanted +1/0.", iVar3,
                           0x14, "Bounce Crown of Flames.", iVar1, 5, 0, 0, 0, 0);
       if (iVar1 == 0)
@@ -7434,7 +7434,7 @@ int card_crown_of_flames(int player, int card, event_t event)
         spell_fizzled = 1;
         return 0;
       }
-      iVar1 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0, 0, 0, 0, 0, 1, 0, 0,
+      iVar1 = generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 0, 0, 0, 0, 1, 0, 0,
                                              NULL, NULL);
       return iVar1;
     }
@@ -7443,7 +7443,7 @@ int card_crown_of_flames(int player, int card, event_t event)
       iVar1 = instance->info_slot;
       if (iVar1 == 1)
       {
-        pump_until_eot_merge_previous_2022(instance->parent_controller, instance->parent_card,
+        pump_until_eot_merge_previous(instance->parent_controller, instance->parent_card,
                                            (int)instance->damage_target_player,
                                            instance->damage_target_card, 1, 0);
         iVar1 = instance->info_slot;
@@ -7454,7 +7454,7 @@ int card_crown_of_flames(int player, int card, event_t event)
       }
     }
   }
-  iVar1 = vanilla_aura_2022(player, card, event, player);
+  iVar1 = vanilla_aura(player, card, event, player);
   return iVar1;
 }
 
@@ -7518,7 +7518,7 @@ int card_flowstone_giant(int player, int card, event_t event)
       {
         result = (int)(uVar2 - 1) / 2;
       }
-      result = generic_shade_amt_can_pump_2022(player, card, 2, 0, 0, 0, 0, 0, 1, 0, result);
+      result = generic_shade_amt_can_pump(player, card, 2, 0, 0, 0, 0, 0, 1, 0, result);
       check_abilities_power_2022 = check_abilities_power_2022 + result;
       check_abilities_toughness_2022 = check_abilities_toughness_2022 - result;
     }
@@ -7529,7 +7529,7 @@ int card_flowstone_giant(int player, int card, event_t event)
         generic_shade_merge_pt(player, card, EVENT_RESOLVE_ACTIVATION, 0, 0, 0, 0, 0, 1, 0, 2, -2);
     return result;
   }
-  result = generic_activated_ability_2022(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
+  result = generic_activated_ability(player, card, event, 0, 0, 0, 0, 0, 1, 0, 0, NULL, NULL);
   return result;
 }
 
@@ -7547,8 +7547,8 @@ int card_flowstone_salamander(int player, int card, event_t event)
     if (((((current_turn == player) && (card == affected_card)) &&
           (player == affected_card_controller)) &&
          ((current_phase < 0x18 &&
-           (result = can_use_activated_abilities_2022(player, card), result != 0)))) &&
-        (result = has_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 0, 0), result != 0))
+           (result = can_use_activated_abilities(player, card), result != 0)))) &&
+        (result = has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0), result != 0))
     {
       result = has_mana(player, 4, 1);
       check_abilities_power_2022 = check_abilities_power_2022 + result;
@@ -7558,15 +7558,15 @@ int card_flowstone_salamander(int player, int card, event_t event)
   else if (((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
            ((event == EVENT_RESOLVE_ACTIVATION || (event == EVENT_CLEANUP))))
   {
-    default_target_definition_2022(player, card, &td2, 2);
+    default_target_definition(player, card, &td2, 2);
     td2.special = 0x8000;
     td2.extra = (int32_t)is_blocking_flowstone_salamander;
-    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target_2022(&td2), result != 0))
+    if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td2), result != 0))
     {
       damage_target0(player, card, 1);
     }
     result =
-        generic_activated_ability_2022(player, card, event, 6, 0, 0, 0, 0, 1, 0, 0, &td2,
+        generic_activated_ability(player, card, event, 6, 0, 0, 0, 0, 1, 0, 0, &td2,
                                        "Select target creature blocking this deal 1 damage to it.");
     return result;
   }

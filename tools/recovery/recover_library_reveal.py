@@ -174,7 +174,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     fnbody=function_body(sources[SOURCE],entries['2655740']['name'])
     require(re.search(r'\(library_reveal_callback_2022_t\)0x0',fnbody) is not None,'Library callback frontend must preserve native NULL forwarding')
     for retained in component['retained_helpers']:
-        require(sha(function_body(sources[SOURCE].replace('\r\n','\n'),retained['name']).encode())==retained['body_sha256'],'Library original source helper changed')
+        from unify_scalar_helpers import retained_source_body
+        require(sha(retained_source_body(root,SOURCE,retained['name']).encode())==retained['body_sha256'],'Library original source helper changed')
     require(CALLBACK in read(root/'manalink.h') or component.get('planning') is True,'Library callback typedef missing')
 
 

@@ -1,5 +1,10 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+int ai_can_sleight_card(int player, int card);
+int lace(int player, int card, event_t event, int color_test);
+int effect_nettling_imp(int player, int card, event_t event);
+
 // Generic functions
 int monolith(int player, int card, event_t event, int untap_cost){
 
@@ -161,52 +166,95 @@ static int blast(int player, int card, event_t event, int color){
 	return 0;
 }
 
-static int lace(int player, int card, event_t event, int color_test){
-	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
-	}
+int lace(int player, int card, event_t event, int color_test)
+{
+  card_instance_t *instance;
+  int result;
+  color_test_t new_color;
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_PERMANENT);
-	if( player == AI ){
-		td.illegal_color = color_test;
-	}
+  target_definition_2022_t td;
+  target_definition_2022_t td1;
 
-	target_definition_t td1;
-	counterspell_target_definition(player, card, &td1, TYPE_ANY);
-	if( player == AI ){
-		td1.illegal_color = color_test;
-	}
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_CAST ){
-		int result = generic_spell(player, card, event, GS_COUNTERSPELL, &td1, NULL, 1, NULL);
-		return result ? result : generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PERMANENT", 1, NULL);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		int result = generic_spell(player, card, EVENT_CAN_CAST, GS_COUNTERSPELL, &td1, NULL, 1, NULL);
-		if( result ){
-			instance->info_slot = 66;
-			return generic_spell(player, card, event, GS_COUNTERSPELL, &td1, NULL, 1, NULL);
-		}
-		else{
-			generic_spell(player, card, event, GS_CAN_TARGET, &td, "TARGET_PERMANENT", 1, NULL);
-			if( spell_fizzled != 1 ){
-				instance->info_slot = 67;
-			}
-		}
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( (instance->info_slot = 67 && valid_target(&td)) || (instance->info_slot = 66 && counterspell_validate(player, card, &td1, 0)) ){
-			change_color(player, card, instance->targets[0].player, instance->targets[0].card, get_sleighted_color_test(player, card, color_test), CHANGE_COLOR_SET);
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-	return 0;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
+             (event != EVENT_CHANGE_TARGET))
+    {
+      return 0;
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+  if (player == 1)
+  {
+    td.illegal_color = color_test;
+    counterspell_target_definition(1, card, &td1, 0xff);
+    td1.illegal_color = color_test;
+  }
+  else
+  {
+    counterspell_target_definition(player, card, &td1, 0xff);
+  }
+  instance = get_card_instance(player, card);
+  if (event == EVENT_CAN_CAST)
+  {
+    result = generic_spell(player, card, EVENT_CAN_CAST, 2, &td1, NULL, 1, NULL);
+    if (result == 0)
+    {
+      result =
+          generic_spell(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_PERMANENT", 1, NULL);
+      return result;
+    }
+    return result;
+  }
+  if (event == EVENT_CAST_SPELL)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      result = generic_spell(player, card, EVENT_CAN_CAST, 2, &td1, NULL, 1, NULL);
+      if (result != 0)
+      {
+        instance->info_slot = 0x42;
+        result = generic_spell(player, card, EVENT_CAST_SPELL, 2, &td1, NULL, 1, NULL);
+        return result;
+      }
+      generic_spell(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_PERMANENT", 1, NULL);
+      if (spell_fizzled != 1)
+      {
+        instance->info_slot = 0x43;
+      }
+    }
+    return 0;
+  }
+  if (event != EVENT_RESOLVE_SPELL)
+  {
+    return 0;
+  }
+  result = valid_target(&td);
+  instance->info_slot = result != 0;
+  if (result == 0)
+  {
+    result = counterspell_validate(player, card, &td1, 0);
+    instance->info_slot = result != 0;
+    if (result == 0)
+      goto LAB_024bdb4f;
+  }
+  new_color = get_sleighted_color_test(player, card, color_test);
+  change_color(player, card, instance->targets[0].player, instance->targets[0].card, new_color,
+               CHANGE_COLOR_SET);
+LAB_024bdb4f:
+  kill_card(player, card, KILL_DESTROY);
+  return 0;
 }
 
 static int dmg_source_color = 0;
@@ -3375,7 +3423,7 @@ Artifact
 |2: ~ becomes a 3/6 Golem artifact creature until end of combat. Activate this ability only during combat. */
 
 	// Approximation, or we won't be ever able to animate it before the attack declaration
-	if(	beginning_of_combat(player, card, event, player, -1) ){
+	if(	beginning_of_combat(player, card, event, player) ){
 		card_instance_t *instance = get_card_instance( player, card );
 		if( can_use_activated_abilities(player, card) && has_mana_for_activated_ability(player, card, MANACOST_X(2)) ){
 			int ai_choice = 0;
@@ -3938,7 +3986,7 @@ Change the text of target spell or permanent by replacing all instances of one b
 			}
 		}
 		if( t_player != -1 ){
-			replace_all_instances_of_one_basic_land_type_word_with_another(t_player, t_card);
+			replace_all_instances_of_one_basic_land_type_word_with_another(player, card, t_player, t_card);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -4322,25 +4370,39 @@ At the beginning of your upkeep, if ~ is in your graveyard with three or more cr
 	return 0;
 }
 
-static int effect_nettling_imp(int player, int card, event_t event)
+int effect_nettling_imp(int player, int card, event_t event)
 {
-  // 0x457b10
-  card_instance_t* instance = get_card_instance(player, card);
-  int p = instance->damage_target_player, c = instance->damage_target_card;
+  int card_00;
+  unsigned char bVar1;
+  card_instance_t *instance;
+  int player_00;
 
-  if (p >= 0 && c >= 0)
-	attack_if_able(instance->damage_target_player, instance->damage_target_card, event);
-
-  if ((event == EVENT_CLEANUP || event == EVENT_SHOULD_AI_PLAY) && affect_me(player, card))
-	{
-	  if (p >= 0 && c >= 0
-		  && in_play(p, c)
-		  && !(get_card_instance(p, c)->state & (STATE_SUMMON_SICK | STATE_ATTACKED)))
-		kill_card(p, c, KILL_DESTROY);
-
-	  kill_card(player, card, KILL_DESTROY);
-	}
-
+  instance = get_card_instance(player, card);
+  player_00 = (int)instance->damage_target_player;
+  card_00 = instance->damage_target_card;
+  bVar1 = (instance->damage_target_player >> 7 ^ 0xffU) &
+          ((unsigned char)((unsigned int)card_00 >> 0x18) ^ 0xff);
+  if ((char)bVar1 < '\0')
+  {
+    attack_if_able(player_00, card_00, event);
+  }
+  if ((((event == EVENT_CLEANUP) || (event == EVENT_SHOULD_AI_PLAY)) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    if ((char)bVar1 < '\0')
+    {
+      instance = in_play(player_00, card_00);
+      if (instance != NULL)
+      {
+        instance = get_card_instance(player_00, card_00);
+        if ((instance->state & (STATE_SUMMON_SICK | STATE_ATTACKED)) == 0)
+        {
+          kill_card(player_00, card_00, KILL_DESTROY);
+        }
+      }
+    }
+    kill_card(player, card, KILL_DESTROY);
+  }
   return 0;
 }
 
@@ -5596,13 +5658,16 @@ Ignore this effect for each creature the player didn't control continuously sinc
 	return 0;
 }
 
-int ai_can_sleight_card(int player, int card){
-	int colors_to_sleight = cards_ptr[get_id(player, card)]->sleight_color;
-	if( ! check_special_flags3(player, card, SF3_HARDCODED_SLEIGHT_WORDS_REPLACED) ){
-		set_special_flags3(player, card, SF3_HARDCODED_SLEIGHT_WORDS_REPLACED);
-		cards_ptr[get_id(player, card)]->sleight_color = colors_to_sleight = get_colors_to_sleight_from_text(get_id(player, card));
-	}
-	return colors_to_sleight;
+int ai_can_sleight_card(int player, int card)
+{
+  int colors_to_sleight = cards_ptr[get_id(player, card)]->sleight_color;
+  if (!check_special_flags3(player, card, SF3_HARDCODED_SLEIGHT_WORDS_REPLACED))
+  {
+    set_special_flags3(player, card, SF3_HARDCODED_SLEIGHT_WORDS_REPLACED);
+    cards_ptr[get_id(player, card)]->sleight_color = colors_to_sleight =
+        get_colors_to_sleight_from_text(get_id(player, card));
+  }
+  return colors_to_sleight;
 }
 
 int card_sleight_of_mind(int player, int card, event_t event){
@@ -5662,7 +5727,7 @@ Change the text of target spell or permanent by replacing all instances of one c
 			}
 		}
 		if( t_player != -1 ){
-			replace_all_instances_of_one_color_word_with_another(t_player, t_card);
+			replace_all_instances_of_one_color_word_with_another(player, card, t_player, t_card);
 		}
 		kill_card(player, card, KILL_DESTROY);
 //		return card_sleight_of_mind_exe(player, card, event);
@@ -6931,7 +6996,7 @@ char *black_damage_source(int who_chooses, int player, int card, int targeting_p
       return "illegal color of damage source";
     }
     result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags_2022((int)pcVar1->damage_source_player,
+    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
                                                        pcVar1->damage_source_card, 0x40),
                           result == 0))
     {
@@ -6970,7 +7035,7 @@ char *blue_damage_source(int who_chooses, int player, int card, int targeting_pl
       return "illegal color of damage source";
     }
     result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags_2022((int)pcVar1->damage_source_player,
+    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
                                                        pcVar1->damage_source_card, 0x40),
                           result == 0))
     {
@@ -7009,7 +7074,7 @@ char *green_damage_source(int who_chooses, int player, int card, int targeting_p
       return "illegal color of damage source";
     }
     result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags_2022((int)pcVar1->damage_source_player,
+    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
                                                        pcVar1->damage_source_card, 0x40),
                           result == 0))
     {
@@ -7048,7 +7113,7 @@ char *red_damage_source(int who_chooses, int player, int card, int targeting_pla
       return "illegal color of damage source";
     }
     result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags_2022((int)pcVar1->damage_source_player,
+    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
                                                        pcVar1->damage_source_card, 0x40),
                           result == 0))
     {
@@ -7087,7 +7152,7 @@ char *white_damage_source(int who_chooses, int player, int card, int targeting_p
       return "illegal color of damage source";
     }
     result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags_2022((int)pcVar1->damage_source_player,
+    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
                                                        pcVar1->damage_source_card, 0x40),
                           result == 0))
     {
@@ -7217,8 +7282,8 @@ int card_celestial_prism(int player, int card, event_t event)
     if (((((card == affected_card) && (player == affected_card_controller)) &&
           (result = is_tapped(player, card), result == 0)) &&
          ((result = is_animated_and_sick(player, card),
-           result == 0 && (result = can_produce_mana_2022(player, card), result != 0)))) &&
-        (result = has_mana_for_activated_ability_2022(player, card, 2, 0, 0, 0, 0, 0), result != 0))
+           result == 0 && (result = can_produce_mana(player, card), result != 0)))) &&
+        (result = has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0), result != 0))
     {
       declare_mana_available_hex(player, 0x3e, 1);
       declare_mana_available(player, 0, -1);
@@ -7228,8 +7293,8 @@ int card_celestial_prism(int player, int card, event_t event)
   {
     result = is_tapped(player, card);
     if (((result == 0) && (result = is_animated_and_sick(player, card), result == 0)) &&
-        ((result = can_produce_mana_2022(player, card),
-          result != 0 && ((result = has_mana_for_activated_ability_2022(player, card, 2, 0, 0, 0, 0, 0),
+        ((result = can_produce_mana(player, card),
+          result != 0 && ((result = has_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0),
                            result != 0 && (instance = get_card_instance(player, card),
                                            instance->targets[1].player != 1))))))
     {
@@ -7240,7 +7305,7 @@ int card_celestial_prism(int player, int card, event_t event)
   {
 
     instance = get_card_instance(player, card);
-    color = choose_mana_all_one_color_2022(player, COLOR_TEST_ANY_COLORED, 1, "What kind of mana?",
+    color = choose_mana_all_one_color(player, COLOR_TEST_ANY_COLORED, 1, "What kind of mana?",
                                            COLOR_TEST_COLORLESS);
     if (color == ~COLOR_COLORLESS)
     {
@@ -7248,11 +7313,11 @@ int card_celestial_prism(int player, int card, event_t event)
       return 0;
     }
     instance->targets[1].player = 1;
-    charge_mana_for_activated_ability_2022(player, card, 2, 0, 0, 0, 0, 0);
+    charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0);
     instance->targets[1].player = 0;
     if (spell_fizzled != 1)
     {
-      produce_mana_tapped_2022(player, card, color, 1);
+      produce_mana_tapped(player, card, color, 1);
       return 0;
     }
   }
@@ -7282,137 +7347,14 @@ static int ward_enchantment(int player, int card, event_t event, int keyword)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24bd8f0; original cards/unlimited.c:162. */
-int lace_2022(int player, int card, event_t event, int color_test)
-{
-  card_instance_t *instance;
-  int result;
-  color_test_t new_color;
 
-  target_definition_2022_t td;
-  target_definition_2022_t td1;
-
-  if (event != EVENT_CAN_CAST)
-  {
-    if (event == EVENT_CAST_SPELL)
-    {
-      if (card != affected_card)
-      {
-        return 0;
-      }
-      if (player != affected_card_controller)
-      {
-        return 0;
-      }
-    }
-    else if (((event != EVENT_RESOLVE_SPELL) && (event != EVENT_CAN_CHANGE_TARGET)) &&
-             (event != EVENT_CHANGE_TARGET))
-    {
-      return 0;
-    }
-  }
-  default_target_definition_2022(player, card, &td, 0x47);
-  if (player == 1)
-  {
-    td.illegal_color = color_test;
-    counterspell_target_definition_2022(1, card, &td1, 0xff);
-    td1.illegal_color = color_test;
-  }
-  else
-  {
-    counterspell_target_definition_2022(player, card, &td1, 0xff);
-  }
-  instance = get_card_instance(player, card);
-  if (event == EVENT_CAN_CAST)
-  {
-    result = generic_spell_2022(player, card, EVENT_CAN_CAST, 2, &td1, NULL, 1, NULL);
-    if (result == 0)
-    {
-      result =
-          generic_spell_2022(player, card, EVENT_CAN_CAST, 1, &td, "TARGET_PERMANENT", 1, NULL);
-      return result;
-    }
-    return result;
-  }
-  if (event == EVENT_CAST_SPELL)
-  {
-    if ((card == affected_card) && (player == affected_card_controller))
-    {
-      result = generic_spell_2022(player, card, EVENT_CAN_CAST, 2, &td1, NULL, 1, NULL);
-      if (result != 0)
-      {
-        instance->info_slot = 0x42;
-        result = generic_spell_2022(player, card, EVENT_CAST_SPELL, 2, &td1, NULL, 1, NULL);
-        return result;
-      }
-      generic_spell_2022(player, card, EVENT_CAST_SPELL, 1, &td, "TARGET_PERMANENT", 1, NULL);
-      if (spell_fizzled != 1)
-      {
-        instance->info_slot = 0x43;
-      }
-    }
-    return 0;
-  }
-  if (event != EVENT_RESOLVE_SPELL)
-  {
-    return 0;
-  }
-  result = valid_target_2022(&td);
-  instance->info_slot = result != 0;
-  if (result == 0)
-  {
-    result = counterspell_validate_2022(player, card, &td1, 0);
-    instance->info_slot = result != 0;
-    if (result == 0)
-      goto LAB_024bdb4f;
-  }
-  new_color = get_sleighted_color_test(player, card, color_test);
-  change_color(player, card, instance->targets[0].player, instance->targets[0].card, new_color,
-               CHANGE_COLOR_SET);
-LAB_024bdb4f:
-  kill_card(player, card, KILL_DESTROY);
-  return 0;
-}
 
 #endif
 
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24bc200; original cards/unlimited.c:4602. */
-int effect_nettling_imp_2022(int player, int card, event_t event)
-{
-  int card_00;
-  unsigned char bVar1;
-  card_instance_t *instance;
-  int player_00;
 
-  instance = get_card_instance(player, card);
-  player_00 = (int)instance->damage_target_player;
-  card_00 = instance->damage_target_card;
-  bVar1 = (instance->damage_target_player >> 7 ^ 0xffU) &
-          ((unsigned char)((unsigned int)card_00 >> 0x18) ^ 0xff);
-  if ((char)bVar1 < '\0')
-  {
-    attack_if_able_2022(player_00, card_00, event);
-  }
-  if ((((event == EVENT_CLEANUP) || (event == EVENT_SHOULD_AI_PLAY)) && (card == affected_card)) &&
-      (player == affected_card_controller))
-  {
-    if ((char)bVar1 < '\0')
-    {
-      instance = in_play(player_00, card_00);
-      if (instance != NULL)
-      {
-        instance = get_card_instance(player_00, card_00);
-        if ((instance->state & (STATE_SUMMON_SICK | STATE_ATTACKED)) == 0)
-        {
-          kill_card(player_00, card_00, KILL_DESTROY);
-        }
-      }
-    }
-    kill_card(player, card, KILL_DESTROY);
-  }
-  return 0;
-}
 
 #endif
 
@@ -7435,11 +7377,11 @@ int card_blaze_of_glory(int player, int card, event_t event)
            event != EVENT_CHANGE_TARGET)
     return 0;
   target_definition_2022_t td;
-  default_target_definition_2022(player, card, &td, 2);
+  default_target_definition(player, card, &td, 2);
   td.allowed_controller = 1 - current_turn;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    if (valid_target_2022(&td))
+    if (valid_target(&td))
     {
       card_instance_t *instance = get_card_instance(player, card);
       create_legacy_effect_exe(player, card, EXE_DWORD(0x728368), instance->targets[0].player,
@@ -7447,7 +7389,7 @@ int card_blaze_of_glory(int player, int card, event_t event)
     }
     kill_card(player, card, KILL_DESTROY);
   }
-  return generic_spell_2022(player, card, event, 1, &td, "BLAZE_OF_GLORY", 1, NULL);
+  return generic_spell(player, card, event, 1, &td, "BLAZE_OF_GLORY", 1, NULL);
 }
 
 #endif
@@ -7493,12 +7435,12 @@ int effect_personal_incarnation(int player, int card, event_t event)
       card_instance_t *instance = get_card_instance(player, card);
       int p = instance->targets[9].player, c = instance->targets[9].card;
       target_definition_2022_t td;
-      default_target_definition_2022(player, card, &td, 0x80);
+      default_target_definition(player, card, &td, 0x80);
       td.special = 0x8000;
       td.extra = (int32_t)(intptr_t)is_damaging_stored_creature;
       aff_card = c;
       aff_player = p;
-      if (event == EVENT_RESOLVE_ACTIVATION && valid_target_2022(&td))
+      if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
       {
         card_instance_t *dmg =
             get_card_instance(instance->targets[0].player, instance->targets[0].card);
@@ -7506,7 +7448,7 @@ int effect_personal_incarnation(int player, int card, event_t event)
         prevent_the_next_n_damage(p, c, dmg->damage_target_player, dmg->damage_target_card, 1,
                                   PREVENT_REDIRECT, owner, -1);
       }
-      return generic_activated_ability_2022(player, card, event, 0x1000004, 0, 0, 0, 0, 0, 0, 0,
+      return generic_activated_ability(player, card, event, 0x1000004, 0, 0, 0, 0, 0, 0, 0,
                                             &td, "TARGET_DAMAGE");
     }
   }
@@ -7524,7 +7466,7 @@ int card_personal_incarnation_2022(int player, int card, event_t event)
       life[get_owner(player, card)] > 0)
   {
     uint32_t amount = round_up_value(life[get_owner(player, card)]);
-    lose_life_2022(get_owner(player, card), amount);
+    lose_life(get_owner(player, card), amount);
   }
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -7573,12 +7515,12 @@ int card_personal_incarnation_2022(int player, int card, event_t event)
            get_owner(player, card) == player)
   {
     target_definition_2022_t td;
-    default_target_definition_2022(player, card, &td, 0x80);
+    default_target_definition(player, card, &td, 0x80);
     td.special = 0x8000;
     td.extra = (int32_t)(intptr_t)is_damaging_attached_creature;
     td.illegal_abilities = 0;
     card_instance_t *instance = get_card_instance(player, card);
-    if (event == EVENT_RESOLVE_ACTIVATION && valid_target_2022(&td))
+    if (event == EVENT_RESOLVE_ACTIVATION && valid_target(&td))
     {
       card_instance_t *dmg =
           get_card_instance(instance->targets[0].player, instance->targets[0].card);
@@ -7586,10 +7528,17 @@ int card_personal_incarnation_2022(int player, int card, event_t event)
                                 dmg->damage_target_player, dmg->damage_target_card, 1,
                                 PREVENT_REDIRECT, instance->parent_controller, -1);
     }
-    return generic_activated_ability_2022(player, card, event, 0x1000004, 0, 0, 0, 0, 0, 0, 0, &td,
+    return generic_activated_ability(player, card, event, 0x1000004, 0, 0, 0, 0, 0, 0, 0, &td,
                                           "TARGET_DAMAGE");
   }
   return 0;
 }
+
+#endif
+
+
+#ifndef SHANDALAR
+/* ManalinkEh 2022: 0x24cd640; original cards/unlimited.c:5971. */
+
 
 #endif

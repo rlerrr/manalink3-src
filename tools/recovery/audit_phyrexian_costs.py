@@ -1,12 +1,14 @@
 """Audit Phyrexian private parameters, native data and engine payment fragments."""
 import hashlib
 import struct
+from pathlib import Path
 from audit_source import function_body
 from recover_literals import readonly_string
 from recover_phyrexian_costs import ADDRESSES,PRIVATE,CONTROL_SITES,FLAG
 
 
-def audit_component(component,manifest,sources,machine_bytes,image):
+def audit_component(component,manifest,sources,machine_bytes,image,root=None):
+    if root is None:root=Path(__file__).resolve().parents[2]
     def require(condition,message):
         if not condition:raise ValueError(message)
     entries={f['address']:f for f in manifest['accepted_functions'] if f.get('phyrexian_cost_evidence')}
@@ -45,6 +47,9 @@ def audit_component(component,manifest,sources,machine_bytes,image):
             sites['26af4fe']=='39c6' and sites['26af525']=='83f8ff' and sites['26af7be']=='891504f44e00',
             'Native Krrik flag, cancellation, bound or cost update mismatch')
     engine=component['engine'];source=sources['functions/engine.c'].replace('\r\n','\n')
+    from unify_scalar_helpers import span,retained_source_definition
+    if span(source,'charge_mana') is None:
+        source=retained_source_definition(root,'functions/engine.c','charge_mana')
     require(hashlib.sha256(machine_bytes(0x26ae610,engine['machine_bytes'])).hexdigest()==engine['machine_sha256'], 'Native engine payment body hash mismatch')
     require(hashlib.sha256(function_body(source,'charge_mana').encode()).hexdigest()==engine['body_sha256'], 'Recovered engine payment fragment body mismatch')
     require([f['piece'] for f in engine['fragments']]==['locals','selection','settlement'] and

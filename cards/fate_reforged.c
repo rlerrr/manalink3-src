@@ -525,7 +525,7 @@ int card_citadel_siege(int player, int card, event_t event){
 		choose_khans_or_dragons(player, card, 3*count_subtype(player, TYPE_CREATURE, -1), 2*count_subtype(1-player, TYPE_CREATURE, -1));
 	}
 
-	if( beginning_of_combat(player, card, event, ANYBODY, -1) ){
+	if( beginning_of_combat(player, card, event, ANYBODY) ){
 		card_instance_t *instance = get_card_instance(player, card);
 
 		if( current_turn == player && get_khans_or_dragons(player, card) == KHANS ){
@@ -4232,7 +4232,7 @@ int card_yasova_dragonclaw(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( beginning_of_combat(player, card, event, player, -1) && has_mana_hybrid(player, 2, COLOR_BLUE, COLOR_RED, 1) &&
+	if( beginning_of_combat(player, card, event, player) && has_mana_hybrid(player, 2, COLOR_BLUE, COLOR_RED, 1) &&
 		get_card_instance(player, card)->targets[1].player != 66
 	  ){
 		target_definition_t td;

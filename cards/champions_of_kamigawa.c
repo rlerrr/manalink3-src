@@ -5404,7 +5404,7 @@ static int card_swallowing_plague_impl(int player, int card, event_t event)
         if ((event == EVENT_RESOLVE_SPELL) && (result = valid_target(&td), result != 0))
         {
           damage_target0(player, card, x_value);
-          gain_life_2022(player, x_value);
+          gain_life(player, x_value);
         }
         goto LAB_02609e91;
       }
@@ -5424,7 +5424,7 @@ LAB_02609e91:
 int card_torii_watchguard(int player, int card, event_t event)
 {
   int result;
-  vigilance_2022(player, card, event);
+  vigilance(player, card, event);
   result = soulshift(player, card, event, 4, 1);
   return result;
 }
@@ -5455,7 +5455,7 @@ static int boseiju_legacy(int player, int card, event_t event)
          (result = played_for_free(affected_card_controller, affected_card), result == 0)) &&
         (((result = is_token(affected_card_controller, affected_card),
            result == 0 &&
-               (result = check_special_flags2_2022(affected_card_controller, affected_card, -0x80000000),
+               (result = check_special_flags2(affected_card_controller, affected_card, -0x80000000),
                 result == 0)) &&
           ((result = get_cmc(affected_card_controller, affected_card),
             0 < result && ((affected_card_controller == player &&
@@ -5526,7 +5526,7 @@ int card_boseiju_who_shelters_all(int player, int card, event_t event)
       return 0;
     }
 
-    lose_life_2022(player, 2);
+    lose_life(player, 2);
     result = create_legacy_effect(player, card, boseiju_legacy);
     instance = get_card_instance(player, result);
     instance->targets[1].card = tapped_for_mana_color;
@@ -5794,7 +5794,7 @@ static int card_cranial_extraction_impl(int player, int card, event_t event)
         {
           result = new_card_from_list(player, 3, &test);
         }
-        lobotomy_effect_2022(player, instance->targets[0].player, result, -1, 0);
+        lobotomy_effect(player, instance->targets[0].player, result, -1, 0);
       }
       goto LAB_02609a3c;
     }

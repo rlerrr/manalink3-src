@@ -1,5 +1,8 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+int will_tap_permanent_for_convoke(int player, int card, int *clrs);
+
 // global functions
 
 int has_convoked_mana_extended_generic(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white, int cmc_modifier){
@@ -68,45 +71,89 @@ int has_convoked_mana(int player, int card, int cless, int green, int white ){
 	return has_convoked_mana_extended(player, card, EVENT_CAN_CAST, cless, 0, 0, green, 0, white);
 }
 
-static int will_tap_permanent_for_convoke(int player, int card, int *clrs){
-	int clr = get_color(player, card);
-	if( clr == COLOR_COLORLESS ){
-		if( clrs[0] ){
-			clrs[0]--;
-			return 1;
-		}
-	}
-	else if( real_count_colors(clr) == 1 ){
-			int k;
-			int col_found = 0;
-			for(k=1; k<6; k++){
-				if( (clr & (1<<k)) && clrs[k] > 0 ){
-					clrs[k]--;
-					return 1;
-				}
-			}
-			if( ! col_found ){
-				if( clrs[0] ){
-					clrs[0]--;
-					return 1;
-				}
-			}
-	}
-	else{
-		int choice = DIALOG(player, card, EVENT_CAST_SPELL,
-							DLG_NO_STORAGE,
-							"Tap for Colorless", clrs[COLOR_COLORLESS], 0,
-							"Tap for Black", (clr & COLOR_TEST_COLORLESS) && clrs[COLOR_BLACK], 0,
-							"Tap for Blue", (clr & COLOR_TEST_BLUE) && clrs[COLOR_BLUE], 0,
-							"Tap for Green", (clr & COLOR_TEST_GREEN) && clrs[COLOR_GREEN], 0,
-							"Tap for Red", (clr & COLOR_TEST_RED) && clrs[COLOR_RED], 0,
-							"Tap for White", (clr & COLOR_TEST_WHITE) && clrs[COLOR_WHITE], 0);
-		if( choice ){
-			clrs[choice-1]--;
-			return 1;
-		}
-	}
-	return 0;
+int will_tap_permanent_for_convoke(int player, int card, int *clrs)
+{
+  unsigned int clr;
+  int result;
+  unsigned int uVar2;
+  unsigned int uVar3;
+  unsigned int uVar4;
+  unsigned int uVar5;
+  unsigned int uVar6;
+
+  clr = get_color(player, card);
+  if (clr == 0)
+  {
+    if (*clrs != 0)
+    {
+      *clrs = *clrs + -1;
+      return 1;
+    }
+  }
+  else
+  {
+    result = real_count_colors(clr);
+    if (result == 1)
+    {
+      result = 1;
+      do
+      {
+        uVar5 = (int)clr >> ((unsigned char)result & 0x1f) & 1;
+        if (uVar5 != 0)
+        {
+          if (0 < clrs[result])
+          {
+            clrs[result] = clrs[result] + -1;
+            return uVar5;
+          }
+        }
+        result = result + 1;
+      } while (result != 6);
+      if (*clrs != 0)
+      {
+        *clrs = *clrs + -1;
+        return 1;
+      }
+    }
+    else
+    {
+      uVar5 = 0;
+      if ((clr & 0x20) != 0)
+      {
+        uVar5 = (unsigned int)(clrs[5] != 0);
+      }
+      uVar2 = 0;
+      if ((clr & 0x10) != 0)
+      {
+        uVar2 = (unsigned int)(clrs[4] != 0);
+      }
+      uVar3 = 0;
+      if ((clr & 8) != 0)
+      {
+        uVar3 = (unsigned int)(clrs[3] != 0);
+      }
+      uVar4 = 0;
+      if ((clr & 4) != 0)
+      {
+        uVar4 = (unsigned int)(clrs[2] != 0);
+      }
+      uVar6 = 0;
+      if ((clr & 2) != 0)
+      {
+        uVar6 = (unsigned int)(clrs[1] != 0);
+      }
+      result =
+          dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "Tap for Colorless", *clrs, 0,
+                      "Tap for Black", uVar6, 0, "Tap for Blue", uVar4, 0, "Tap for Green", uVar3,
+                      0, "Tap for Red", uVar2, 0, "Tap for White", uVar5, 0, 0, 0, 0, 0);
+      if (result != 0)
+      {
+        clrs[result + -1] = clrs[result + -1] + -1;
+        return 1;
+      }
+    }
+  }
+  return 0;
 }
 
 int charge_convoked_mana_extended_generic(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white, int check_for_cc_modifier){
@@ -7376,7 +7423,7 @@ int card_searing_meditation(int player, int card, event_t event)
   card_instance_t *instance;
   target_definition_t td;
 
-  result = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  result = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (result != 0)
   {
     instance = in_play(player, card);
@@ -7528,7 +7575,7 @@ void warp_world_effect(int player, int card, int t_player, int tutor_rest)
 
             iVar4 = add_card_to_hand(player_00, iVar4);
             *piVar7 = -1;
-            set_special_flags_2022(player_00, iVar4, 0x10000);
+            set_special_flags(player_00, iVar4, 0x10000);
             piVar7 = piVar7 + 1;
             put_into_play(player_00, iVar4);
             if (piVar7 == piVar6)
@@ -7550,7 +7597,7 @@ void warp_world_effect(int player, int card, int t_player, int tutor_rest)
 
           iVar4 = add_card_to_hand(player_00, iVar4);
           *piVar9 = -1;
-          set_special_flags_2022(player_00, iVar4, 0x10000);
+          set_special_flags(player_00, iVar4, 0x10000);
           piVar9 = piVar9 + 1;
           put_into_play(player_00, iVar4);
         } while (piVar9 != piVar6);
@@ -7696,20 +7743,20 @@ int card_breath_of_fury(int player, int card, event_t event)
   {
 
     instance = get_card_instance(player, card);
-    default_target_definition_2022(player, card, &td, 2);
+    default_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
     td.allowed_controller = player;
-    result = can_target_2022(&td);
+    result = can_target(&td);
     if (result != 0)
     {
-      new_pick_target_2022(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
+      new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
     }
     if ((ai_is_speculating == 0) &&
-        (result = validate_target_2022(player, card, &td, 0), result != 0))
+        (result = validate_target(player, card, &td, 0), result != 0))
     {
       instance->targets[1].player = (int)instance->damage_target_player;
       instance->targets[1].card = instance->damage_target_card;
-      attach_aura_to_target_2022(player, card, event, instance->targets[0].player,
+      attach_aura_to_target(player, card, event, instance->targets[0].player,
                             instance->targets[0].card);
       extra_combat_effect(player, card, event, 1, NULL, 1);
     }
@@ -7769,7 +7816,7 @@ int card_breath_of_fury(int player, int card, event_t event)
     return 0;
   }
 LAB_024e37c0:
-  default_target_definition_2022(player, card, &td, 2);
+  default_target_definition(player, card, &td, 2);
   td.allowed_controller = player;
   result = aura(player, card, event, &td, "TARGET_CREATURE_YOU_CONTROL");
   return result;
@@ -7779,89 +7826,6 @@ LAB_024e37c0:
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x24e0b90; original cards/ravnica.c:71. */
-int will_tap_permanent_for_convoke_2022(int player, int card, int *clrs)
-{
-  unsigned int clr;
-  int result;
-  unsigned int uVar2;
-  unsigned int uVar3;
-  unsigned int uVar4;
-  unsigned int uVar5;
-  unsigned int uVar6;
 
-  clr = get_color(player, card);
-  if (clr == 0)
-  {
-    if (*clrs != 0)
-    {
-      *clrs = *clrs + -1;
-      return 1;
-    }
-  }
-  else
-  {
-    result = real_count_colors(clr);
-    if (result == 1)
-    {
-      result = 1;
-      do
-      {
-        uVar5 = (int)clr >> ((unsigned char)result & 0x1f) & 1;
-        if (uVar5 != 0)
-        {
-          if (0 < clrs[result])
-          {
-            clrs[result] = clrs[result] + -1;
-            return uVar5;
-          }
-        }
-        result = result + 1;
-      } while (result != 6);
-      if (*clrs != 0)
-      {
-        *clrs = *clrs + -1;
-        return 1;
-      }
-    }
-    else
-    {
-      uVar5 = 0;
-      if ((clr & 0x20) != 0)
-      {
-        uVar5 = (unsigned int)(clrs[5] != 0);
-      }
-      uVar2 = 0;
-      if ((clr & 0x10) != 0)
-      {
-        uVar2 = (unsigned int)(clrs[4] != 0);
-      }
-      uVar3 = 0;
-      if ((clr & 8) != 0)
-      {
-        uVar3 = (unsigned int)(clrs[3] != 0);
-      }
-      uVar4 = 0;
-      if ((clr & 4) != 0)
-      {
-        uVar4 = (unsigned int)(clrs[2] != 0);
-      }
-      uVar6 = 0;
-      if ((clr & 2) != 0)
-      {
-        uVar6 = (unsigned int)(clrs[1] != 0);
-      }
-      result =
-          dialog_impl(player, card, EVENT_CAST_SPELL, "\001\014", "Tap for Colorless", *clrs, 0,
-                      "Tap for Black", uVar6, 0, "Tap for Blue", uVar4, 0, "Tap for Green", uVar3,
-                      0, "Tap for Red", uVar2, 0, "Tap for White", uVar5, 0, 0, 0, 0, 0);
-      if (result != 0)
-      {
-        clrs[result + -1] = clrs[result + -1] + -1;
-        return 1;
-      }
-    }
-  }
-  return 0;
-}
 
 #endif

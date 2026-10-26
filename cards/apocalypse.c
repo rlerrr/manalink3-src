@@ -1,5 +1,8 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+static int ap_disciples(int player, int card, event_t event, color_test_t colors);
+
 // Functions
 
 int recruiting(int player, int card, int subtype, int cards_to_look){
@@ -131,152 +134,7 @@ void volver(int player, int card, event_t event, int colorless, int black, int b
 	}
 }
 
-static int ap_disciples(int player, int card, event_t event, int ab1_color, int ab2_color){
 
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.preferred_controller = player;
-
-	target_definition_t td2;
-	default_target_definition(player, card, &td2, TYPE_CREATURE);
-
-	target_definition_t td3;
-	default_target_definition(player, card, &td3, 0);
-	td.extra = damage_card;
-
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	enum{
-		CHOICE_M2_M0 = 1,
-		CHOICE_FLYING,
-		CHOICE_MANA,
-		CHOICE_P2_P0,
-		CHOICE_PREVENT_DAMAGE
-	};
-
-	if( event == EVENT_CAN_ACTIVATE ){
-		// {W}, {T}: Prevent the next 1 damage that would be dealt to target creature or player this turn.
-		// Should be checked first or it won't be usable properly
-		if( ab1_color == COLOR_WHITE || ab2_color == COLOR_WHITE ){
-			if( generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION, MANACOST_W(1), 0,
-				&td3, NULL) )
-			{
-				return 99;
-			}
-		}
-		// {B}, {T}: Target creature gets -2/-0 until end of turn.
-		if( ab1_color == COLOR_BLACK || ab2_color == COLOR_BLACK ){
-			if( generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_B(1), 0, &td2, NULL) ){
-				return 1;
-			}
-		}
-		// {U}, {T}: Target creature gains flying until end of turn.
-		if( ab1_color == COLOR_BLUE || ab2_color == COLOR_BLUE ){
-			if( generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_U(1), 0, &td, NULL) ){
-				return 1;
-			}
-		}
-		// {G}, {T}: Add one mana of any color to your mana pool.
-		if( ab1_color == COLOR_GREEN || ab2_color == COLOR_GREEN ){
-			if( generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_G(1), 0, NULL, NULL) ){
-				return mana_producer(player, card, event);
-			}
-		}
-		// {R}, {T}: Target creature gets +2/+0 until end of turn.
-		if( ab1_color == COLOR_RED || ab2_color == COLOR_RED ){
-			if( generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_R(1), 0, &td, NULL) ){
-				return 1;
-			}
-		}
-	}
-
-	if(event == EVENT_ACTIVATE ){
-		instance->number_of_targets = instance->info_slot = 0;
-		int abilities[6];
-		abilities[0] = 0; //Choice == 0 --> spell_fizzled = 1
-		abilities[1] = (ab1_color == COLOR_BLACK || ab2_color == COLOR_BLACK) &&
-						generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_B(1), 0,
-						&td2, NULL) ? 1 : 0;
-		abilities[2] = (ab1_color == COLOR_BLUE || ab2_color == COLOR_BLUE) &&
-						generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_U(1), 0,
-						&td, NULL) ? 1 : 0;
-		abilities[3] = (ab1_color == COLOR_GREEN || ab2_color == COLOR_GREEN) &&
-						generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST_G(1), 0, NULL, NULL) ? 1 : 0;
-		abilities[4] = (ab1_color == COLOR_RED || ab2_color == COLOR_RED) &&
-						generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_R(1), 0,
-						&td, NULL) ? 1 : 0;
-		abilities[5] = (ab1_color == COLOR_WHITE || ab2_color == COLOR_WHITE) &&
-						generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION,
-						MANACOST_W(1), 0, &td3, NULL) ? 1 : 0;
-
-		int priorities[6];
-		priorities[0] = 0; //Choice == 0 --> spell_fizzled = 1
-		priorities[1] = current_phase < PHASE_DECLARE_BLOCKERS ? 10 : 1;
-		priorities[2] = current_phase == PHASE_AFTER_BLOCKING ? 10 : 1;
-		priorities[3] = 1;
-		priorities[4] = current_phase == PHASE_AFTER_BLOCKING ? 10 : 1;
-		priorities[5] = abilities[5] ? 50 : 0;
-
-		int choice = abilities[3] && paying_mana() ? CHOICE_MANA : 0;
-		if( choice != CHOICE_MANA ){
-			choice = DIALOG(player, card, event, DLG_RANDOM,
-							"Give -2/-0", 		abilities[1], priorities[1],
-							"Give Flying", 		abilities[2], priorities[2],
-							"Get mana", 		abilities[3], priorities[3],
-							"Give +2/+0", 		abilities[4], priorities[4],
-							"Prevent damage", 	abilities[5], priorities[5]);
-
-			if( ! choice ){
-				spell_fizzled = 1;
-				return 0;
-			}
-		}
-
-		if( choice == CHOICE_FLYING ){
-			return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_U(1), 0, &td, "TARGET_CREATURE");
-		}
-		if( choice == CHOICE_M2_M0 ){
-			return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_B(1), 0, &td2, "TARGET_CREATURE");
-		}
-		if( choice == CHOICE_MANA ){
-			if( charge_mana_for_activated_ability(player, card, MANACOST_G(1)) ){
-				produce_mana_tapped(player, card, COLOR_ANY, 1);
-			}
-		}
-		if( choice == CHOICE_P2_P0 ){
-			return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET, MANACOST_R(1), 0, &td, "TARGET_CREATURE");
-		}
-		if( choice == CHOICE_PREVENT_DAMAGE ){
-			return generic_activated_ability(player, card, event, GAA_UNTAPPED | GAA_CAN_TARGET | GAA_DAMAGE_PREVENTION, MANACOST_W(1), 0,
-					&td3, "TARGET_DAMAGE");
-		}
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( instance->info_slot == CHOICE_M2_M0 && valid_target(&td2) ){
-			pump_until_eot(instance->parent_controller, instance->parent_card,
-							instance->targets[0].player, instance->targets[0].card, -2, 0);
-		}
-		if( instance->info_slot == CHOICE_FLYING && valid_target(&td) ){
-			pump_ability_until_eot(instance->parent_controller, instance->parent_card,
-									instance->targets[0].player, instance->targets[0].card, 0, 0, KEYWORD_FLYING, 0);
-		}
-		if( instance->info_slot == CHOICE_P2_P0 && valid_target(&td) ){
-			pump_until_eot(instance->parent_controller, instance->parent_card,
-							instance->targets[0].player, instance->targets[0].card, 2, 0);
-		}
-		if( instance->info_slot == CHOICE_PREVENT_DAMAGE && valid_target(&td3) ){
-			prevent_damage(instance->targets[0].player, instance->targets[0].card, 1);
-		}
-	}
-
-	return 0;
-}
 
 static int desolation_creature(int player, int card, event_t event, type_t type){
 	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
@@ -336,7 +194,7 @@ int card_aether_mutation(int player, int card, event_t event){
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x205ffb0; original cards/apocalypse.c:135. */
-static int ap_disciples_2022(int player, int card, event_t event, color_test_t colors)
+static int ap_disciples(int player, int card, event_t event, color_test_t colors)
 {
   card_instance_t *instance;
   int32_t iVar2;
@@ -360,31 +218,31 @@ static int ap_disciples_2022(int player, int card, event_t event, color_test_t c
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
     td_00 = &td;
-    default_target_definition_2022(player, card, td_00, 2);
+    default_target_definition(player, card, td_00, 2);
     td.preferred_controller = player;
-    default_target_definition_2022(player, card, &td2, 2);
-    default_target_definition_2022(player, card, &td3, 0);
+    default_target_definition(player, card, &td2, 2);
+    default_target_definition(player, card, &td3, 0);
     td3.extra = damage_card;
     instance = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
       if (((colors & COLOR_TEST_WHITE) != COLOR_TEST_0) &&
-          (iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x1000005, 0, 0,
+          (iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x1000005, 0, 0,
                                                   0, 0, 0, 1, 0, &td3, NULL),
            iVar3 != 0))
       {
         return 99;
       }
       if (((((colors & COLOR_TEST_BLACK) == COLOR_TEST_0) ||
-            (iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 1, 0, 0,
+            (iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 0, 1, 0, 0,
                                                     0, 0, 0, &td2, NULL),
              iVar3 == 0)) &&
            (((colors & COLOR_TEST_BLUE) == COLOR_TEST_0 ||
-             (iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 1,
+             (iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 1,
                                                      0, 0, 0, 0, td_00, NULL),
               iVar3 == 0)))) &&
           (((colors & COLOR_TEST_RED) == COLOR_TEST_0 ||
-            (iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0,
+            (iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0,
                                                     1, 0, 0, td_00, NULL),
              iVar3 == 0))))
       {
@@ -392,7 +250,7 @@ static int ap_disciples_2022(int player, int card, event_t event, color_test_t c
         {
           return 0;
         }
-        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x200001, 0, 0, 0,
+        iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x200001, 0, 0, 0,
                                                1, 0, 0, 0, NULL, NULL);
         if (iVar3 == 0)
         {
@@ -410,35 +268,35 @@ static int ap_disciples_2022(int player, int card, event_t event, color_test_t c
       instance->number_of_targets = '\0';
       if ((colors & COLOR_TEST_BLACK) != COLOR_TEST_0)
       {
-        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 1, 0, 0, 0,
+        iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 0, 1, 0, 0, 0,
                                                0, 0, &td2, NULL);
         uVar5 = (unsigned int)(iVar3 != 0);
       }
       uStack_11c = 0;
       if ((colors & COLOR_TEST_BLUE) != COLOR_TEST_0)
       {
-        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 1, 0, 0,
+        iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 1, 0, 0,
                                                0, 0, td_00, NULL);
         uStack_11c = (unsigned int)(iVar3 != 0);
       }
       uStack_120 = 0;
       if ((colors & COLOR_TEST_GREEN) != COLOR_TEST_0)
       {
-        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x200001, 0, 0, 0,
+        iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x200001, 0, 0, 0,
                                                1, 0, 0, 0, NULL, NULL);
         uStack_120 = (unsigned int)(iVar3 != 0);
       }
       uStack_124 = 0;
       if ((colors & COLOR_TEST_RED) != COLOR_TEST_0)
       {
-        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0, 1,
+        iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 5, 0, 0, 0, 0, 1,
                                                0, 0, td_00, NULL);
         uStack_124 = (unsigned int)(iVar3 != 0);
       }
       uVar4 = 0;
       if ((colors & COLOR_TEST_WHITE) != COLOR_TEST_0)
       {
-        iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x1000005, 0, 0, 0,
+        iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x1000005, 0, 0, 0,
                                                0, 0, 1, 0, &td3, NULL);
         uVar4 = (unsigned int)(iVar3 != 0);
       }
@@ -478,12 +336,12 @@ static int ap_disciples_2022(int player, int card, event_t event, color_test_t c
       {
         if (iVar3 == 3)
         {
-          charge_mana_for_activated_ability_2022(player, card, 0, 0, 0, 1, 0, 0);
+          charge_mana_for_activated_ability(player, card, 0, 0, 0, 1, 0, 0);
           if (spell_fizzled == 1)
           {
             return 0;
           }
-          produce_mana_tapped_all_one_color_2022(player, card, COLOR_TEST_ANY_COLORED, 1);
+          produce_mana_tapped_all_one_color(player, card, COLOR_TEST_ANY_COLORED, 1);
           return 0;
         }
         if (iVar3 != 4)
@@ -492,7 +350,7 @@ static int ap_disciples_2022(int player, int card, event_t event, color_test_t c
           {
             return 0;
           }
-          iVar3 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x1000005, 0, 0, 0,
+          iVar3 = generic_activated_ability(player, card, EVENT_ACTIVATE, 0x1000005, 0, 0, 0,
                                                  0, 0, 1, 0, &td3, "TARGET_DAMAGE");
           return iVar3;
         }
@@ -500,7 +358,7 @@ static int ap_disciples_2022(int player, int card, event_t event, color_test_t c
         blue = 0;
         iVar3 = 0;
       }
-      iVar3 = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 5, 0, iVar3, blue, 0,
+      iVar3 = generic_activated_ability(player, card, EVENT_ACTIVATE, 5, 0, iVar3, blue, 0,
                                              red, 0, 0, td_00, "TARGET_CREATURE");
       return iVar3;
     }
@@ -511,10 +369,10 @@ static int ap_disciples_2022(int player, int card, event_t event, color_test_t c
     {
       return 0;
     }
-    default_target_definition_2022(player, card, &td, 2);
+    default_target_definition(player, card, &td, 2);
     td.preferred_controller = player;
-    default_target_definition_2022(player, card, &td2, 2);
-    default_target_definition_2022(player, card, &td3, 0);
+    default_target_definition(player, card, &td2, 2);
+    default_target_definition(player, card, &td3, 0);
     td3.extra = damage_card;
     instance = get_card_instance(player, card);
   }
@@ -526,7 +384,7 @@ static int ap_disciples_2022(int player, int card, event_t event, color_test_t c
     iVar2 = instance->info_slot;
     if (iVar2 == 1)
     {
-      iVar3 = valid_target_2022(ptStack_118);
+      iVar3 = valid_target(ptStack_118);
       if (iVar3 != 0)
       {
         pump_until_eot_merge_previous_alt(instance->parent_controller, instance->parent_card,
@@ -537,7 +395,7 @@ static int ap_disciples_2022(int player, int card, event_t event, color_test_t c
     }
     if (iVar2 == 2)
     {
-      iVar3 = valid_target_2022(ptStack_110);
+      iVar3 = valid_target(ptStack_110);
       if (iVar3 != 0)
       {
         pump_ability_until_eot_no_repeat_alt(instance->parent_controller, instance->parent_card,
@@ -548,7 +406,7 @@ static int ap_disciples_2022(int player, int card, event_t event, color_test_t c
     }
     if (iVar2 == 4)
     {
-      iVar3 = valid_target_2022(ptStack_110);
+      iVar3 = valid_target(ptStack_110);
       if (iVar3 != 0)
       {
         pump_until_eot_merge_previous_alt(instance->parent_controller, instance->parent_card,
@@ -557,7 +415,7 @@ static int ap_disciples_2022(int player, int card, event_t event, color_test_t c
       }
       iVar2 = instance->info_slot;
     }
-    if ((iVar2 == 5) && (iVar3 = valid_target_2022(ptStack_114), iVar3 != 0))
+    if ((iVar2 == 5) && (iVar3 = valid_target(ptStack_114), iVar3 != 0))
     {
       prevent_damage(instance->targets[0].player, instance->targets[0].card, 1);
       return 0;
@@ -577,9 +435,9 @@ Creature — Human Wizard 1/1
 {B}, {T}: Target creature gets -2/-0 until end of turn.
 */
 	#ifndef SHANDALAR
-	return ap_disciples_2022(player, card, event, COLOR_TEST_BLUE | COLOR_TEST_BLACK);
+	return ap_disciples(player, card, event, COLOR_TEST_BLUE | COLOR_TEST_BLACK);
 #else
-	return ap_disciples(player, card, event, COLOR_BLACK, COLOR_BLUE);
+	return ap_disciples(player, card, event, COLOR_TEST_BLACK | COLOR_TEST_BLUE);
 #endif
 }
 
@@ -832,9 +690,9 @@ Creature — Merfolk Wizard 1/1
 {G}, {T}: Add one mana of any color to your mana pool.
 */
 	#ifndef SHANDALAR
-	return ap_disciples_2022(player, card, event, COLOR_TEST_RED | COLOR_TEST_GREEN);
+	return ap_disciples(player, card, event, COLOR_TEST_RED | COLOR_TEST_GREEN);
 #else
-	return ap_disciples(player, card, event, COLOR_GREEN, COLOR_RED);
+	return ap_disciples(player, card, event, COLOR_TEST_GREEN | COLOR_TEST_RED);
 #endif
 }
 
@@ -1227,9 +1085,9 @@ Creature — Human Wizard 1/1
 {R}, {T}: Target creature gets +2/+0 until end of turn.
 */
 	#ifndef SHANDALAR
-	return ap_disciples_2022(player, card, event, COLOR_TEST_RED | COLOR_TEST_BLACK);
+	return ap_disciples(player, card, event, COLOR_TEST_RED | COLOR_TEST_BLACK);
 #else
-	return ap_disciples(player, card, event, COLOR_BLACK, COLOR_RED);
+	return ap_disciples(player, card, event, COLOR_TEST_BLACK | COLOR_TEST_RED);
 #endif
 }
 
@@ -3198,7 +3056,7 @@ static int whirlpool_rider_part_2022(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x2066c10; original cards/apocalypse.c:1873. */
 int card_necra_disciple(int player, int card, event_t event)
 {
-  return ap_disciples_2022(player, card, event, COLOR_TEST_WHITE | COLOR_TEST_GREEN);
+  return ap_disciples(player, card, event, COLOR_TEST_WHITE | COLOR_TEST_GREEN);
 }
 #endif
 
@@ -3207,6 +3065,6 @@ int card_necra_disciple(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x20680a0; original cards/apocalypse.c:2278. */
 int card_raka_disciple(int player, int card, event_t event)
 {
-  return ap_disciples_2022(player, card, event, COLOR_TEST_WHITE | COLOR_TEST_BLUE);
+  return ap_disciples(player, card, event, COLOR_TEST_WHITE | COLOR_TEST_BLUE);
 }
 #endif

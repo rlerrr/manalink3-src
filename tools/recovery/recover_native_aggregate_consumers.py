@@ -66,7 +66,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
             assert entry['name']=='new_damage_all_2022' and 'test_definition_2022_t *this_test' in entry['prototype']
             assert [p['location'] for p in component['parameters'][a]]==[f'(DW_OP_fbreg: {i*4})' for i in range(6)]
             assert 'mode & 0x20U' in body and 'this_test->not_me' in body and 'if (dmg < 1)' in body
-            assert sha(function_body(sources[entry['source']].replace('\r\n','\n'),'new_damage_all').encode())==component['retained_damage_body_sha256']
+            from unify_scalar_helpers import retained_source_body
+            assert sha(retained_source_body(root,entry['source'],'new_damage_all').encode())==component['retained_damage_body_sha256']
             assert entry['prototype'] in read(root/'manalink.h') or component.get('planning')
     arahbo=function_body(sources[entries['228f070']['source']],'card_arahbo_roar_of_the_world')
     assert ENGINE_NAME+'(player)' in arahbo and 'store_attackers_2022(' in arahbo and 'resolve_declare_attackers_trigger_2022(' in arahbo

@@ -1,0 +1,98 @@
+{
+  "format": 1,
+  "domains": [
+    {
+      "canonical_type": "generic_spell_flags_t",
+      "recovery_type": "generic_spell_flags_2022_t",
+      "native_members": {
+        "GS_CAN_TARGET": 1,
+        "GS_COUNTERSPELL": 2,
+        "GS_X_SPELL": 4,
+        "GS_GRAVE_RECYCLER": 8,
+        "GS_REGENERATION": 16,
+        "GS_OPTIONAL_TARGET": 32,
+        "GS_CAN_ONLY_TARGET_OPPONENT": 64,
+        "GS_LITERAL_PROMPT": 128,
+        "GS_DAMAGE_PREVENTION": 256,
+        "GS_AURA": 512,
+        "GS_SAC_CREATURE_AS_COST": 1024,
+        "GS_GRAVE_RECYCLER_OPP_GRAVE": 2048,
+        "GS_GRAVE_RECYCLER_BOTH_GRAVES": 4096,
+        "GS_GRAVE_RECYCLER_FROM_GRAVEYARDS": 8192,
+        "GS_ONE_OR_MULTIPLE_TARGETS": 16384,
+        "GS_SAC_PERMANENT_AS_COST": 32768
+      },
+      "native_bytes": 4,
+      "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "native_enum": {
+        "die": "0x656f2d5",
+        "source": "functions/functions.c"
+      },
+      "predecessor_definition": "typedef enum\n{\n\tGS_CAN_TARGET\t\t\t\t\t= 1<<0,\n\tGS_COUNTERSPELL\t\t\t\t\t= 1<<1,\n\tGS_X_SPELL\t\t\t\t\t\t= 1<<2,\n\tGS_GRAVE_RECYCLER\t\t\t\t= 1<<3,\n\tGS_REGENERATION\t\t\t\t\t= 1<<4,\n\tGS_OPTIONAL_TARGET\t\t\t\t= 1<<5,\n\tGS_CAN_ONLY_TARGET_OPPONENT\t\t= 1<<6,\n\tGS_LITERAL_PROMPT\t\t\t\t= 1<<7,\t// Don't load_text for prompt in GS_CAN_TARGET or GS_GRAVE_RECYCLER\n\tGS_DAMAGE_PREVENTION\t\t\t= 1<<8,\n\tGS_AURA\t\t\t\t\t\t\t= 1<<9,\n\tGS_SAC_CREATURE_AS_COST\t\t\t= 1<<10,\n\tGS_GRAVE_RECYCLER_OPP_GRAVE\t\t= 1<<11,\n\tGS_GRAVE_RECYCLER_BOTH_GRAVES \t= 1<<12,\n\tGS_ONE_OR_MULTIPLE_TARGETS\t \t= 1<<13, //For cards like \"Fire // Ice\"\n\tGS_SAC_PERMANENT_AS_COST\t\t= 1<<14,\n} generic_spell_flags_t;",
+      "predecessor_sha256": "269d6ec2333bb33d37937036d629b9bee1e71b04a327c8aad3937ea1d1ee05fa",
+      "canonical_definition": "typedef enum\n{\n\tGS_CAN_TARGET\t\t\t\t\t= 1,\n\tGS_COUNTERSPELL\t\t\t\t\t= 2,\n\tGS_X_SPELL\t\t\t\t\t\t= 4,\n\tGS_GRAVE_RECYCLER\t\t\t\t= 8,\n\tGS_REGENERATION\t\t\t\t\t= 16,\n\tGS_OPTIONAL_TARGET\t\t\t\t= 32,\n\tGS_CAN_ONLY_TARGET_OPPONENT\t\t= 64,\n\tGS_LITERAL_PROMPT\t\t\t\t= 128,\t// Don't load_text for prompt in GS_CAN_TARGET or GS_GRAVE_RECYCLER\n\tGS_DAMAGE_PREVENTION\t\t\t= 256,\n\tGS_AURA\t\t\t\t\t\t\t= 512,\n\tGS_SAC_CREATURE_AS_COST\t\t\t= 1024,\n\tGS_GRAVE_RECYCLER_OPP_GRAVE\t\t= 2048,\n\tGS_GRAVE_RECYCLER_BOTH_GRAVES \t= 4096,\n\tGS_ONE_OR_MULTIPLE_TARGETS\t \t= 16384, //For cards like \"Fire // Ice\"\n\tGS_SAC_PERMANENT_AS_COST\t\t= 32768,\n  GS_GRAVE_RECYCLER_FROM_GRAVEYARDS = 8192,\n} generic_spell_flags_t;",
+      "canonical_sha256": "33978adc2c68f62227c4f549255b5482f721670046c7aea0417a950b3fc5f6b2"
+    },
+    {
+      "canonical_type": "tutor_t",
+      "recovery_type": "tutor_destination_2022_t",
+      "native_members": {
+        "TUTOR_0": 0,
+        "TUTOR_HAND": 1,
+        "TUTOR_DECK": 2,
+        "TUTOR_GRAVE": 3,
+        "TUTOR_PLAY": 4,
+        "TUTOR_PLAY_TAPPED": 5,
+        "TUTOR_RFG": 6,
+        "TUTOR_EXILE": 6,
+        "TUTOR_GET_ID": 7,
+        "TUTOR_PLAY_ATTACKING": 8,
+        "TUTOR_GET_POSITION": 9,
+        "TUTOR_BOTTOM_OF_DECK": 10,
+        "TUTOR_TPLAYER_HAND": 11,
+        "TUTOR_BOTTOM_OF_DECK_RANDOM": 12,
+        "TUTOR_HAND_AND_MARK": 13,
+        "TUTOR_OPPOSITION_AGENT": 14
+      },
+      "native_bytes": 4,
+      "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "native_enum": {
+        "die": "0x656dbb9",
+        "source": "functions/functions.c"
+      },
+      "predecessor_definition": "typedef enum\n{\n  TUTOR_HAND    = 0,\n  TUTOR_DECK    = 1,\n  TUTOR_GRAVE   = 2,\n  TUTOR_PLAY    = 3,\t// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()\n  TUTOR_PLAY_TAPPED\t\t= 4,\t// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()\n  TUTOR_RFG\t\t\t\t= 5,\n  TUTOR_GET_ID\t\t\t= 6,\t// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()\n  TUTOR_PLAY_ATTACKING  = 7,\t// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()\n  TUTOR_GET_POSITION    = 8,\t// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()\n  TUTOR_BOTTOM_OF_DECK  = 9,\n  TUTOR_TPLAYER_HAND\t= 10,\n  TUTOR_BOTTOM_OF_DECK_RANDOM  = 11,\t// Only valid for the destination_rest parameter of reveal_top_cards_of_library_and_choose()\n  TUTOR_HAND_AND_MARK   = 12, // Add a \"STATE_TARGETTED\" to each card tutored, to be removed lately. See Dwarven Recruiter.\n} tutor_t;",
+      "predecessor_sha256": "80698195b674eac9afeb551fa7d983b9d9e3ee15116ef82f3136e59b49b184fa",
+      "canonical_definition": "typedef enum\n{\n  TUTOR_HAND    = 1,\n  TUTOR_DECK    = 2,\n  TUTOR_GRAVE   = 3,\n  TUTOR_PLAY    = 4,\t// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()\n  TUTOR_PLAY_TAPPED\t\t= 5,\t// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()\n  TUTOR_RFG\t\t\t\t= 6,\n  TUTOR_GET_ID\t\t\t= 7,\t// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()\n  TUTOR_PLAY_ATTACKING  = 8,\t// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()\n  TUTOR_GET_POSITION    = 9,\t// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()\n  TUTOR_BOTTOM_OF_DECK  = 10,\n  TUTOR_TPLAYER_HAND\t= 11,\n  TUTOR_BOTTOM_OF_DECK_RANDOM  = 12,\t// Only valid for the destination_rest parameter of reveal_top_cards_of_library_and_choose()\n  TUTOR_HAND_AND_MARK   = 13, // Add a \"STATE_TARGETTED\" to each card tutored, to be removed lately. See Dwarven Recruiter.\n  TUTOR_0 = 0,\n  TUTOR_EXILE = 6,\n  TUTOR_OPPOSITION_AGENT = 14,\n} tutor_t;",
+      "canonical_sha256": "64a257a3770b6a2544e1c8d4a5588ffad23a7b3a8527ec54acf6b6937651c6eb"
+    },
+    {
+      "canonical_type": "tutor_from_t",
+      "recovery_type": "tutor_from_2022_t",
+      "native_members": {
+        "TUTOR_FROM_DECK": 1,
+        "TUTOR_FROM_GRAVE": 2,
+        "TUTOR_FROM_RFG": 3,
+        "TUTOR_FROM_HAND": 4,
+        "TUTOR_FROM_GRAVE_NOTARGET": 5,
+        "TUTOR_FROM_DECK_AUTO": 6
+      },
+      "native_bytes": 4,
+      "native_debug_sha256": "7cdd6bfea74652b900250faae275c754ef1d32966b9f314a729e46b980337b85",
+      "native_enum": {
+        "die": "0x656dce9",
+        "source": "functions/functions.c"
+      },
+      "predecessor_definition": "typedef enum\n{\n  TUTOR_FROM_DECK\t= 1,\n  TUTOR_FROM_GRAVE\t= 2,\n  TUTOR_FROM_RFG\t= 3,\n  TUTOR_FROM_HAND\t= 4,\n  TUTOR_FROM_GRAVE_NOTARGET\t= 5,\t// just like TUTOR_FROM_GRAVE, but not affected by graveyard_has_shroud\n} tutor_from_t;",
+      "predecessor_sha256": "486b85a87fc839d4427f142cd1a7caf3b185b43cecc20595d83964fc0d91b018",
+      "canonical_definition": "typedef enum\n{\n  TUTOR_FROM_DECK\t= 1,\n  TUTOR_FROM_GRAVE\t= 2,\n  TUTOR_FROM_RFG\t= 3,\n  TUTOR_FROM_HAND\t= 4,\n  TUTOR_FROM_GRAVE_NOTARGET\t= 5,\t// just like TUTOR_FROM_GRAVE, but not affected by graveyard_has_shroud\n  TUTOR_FROM_DECK_AUTO = 6,\n} tutor_from_t;",
+      "canonical_sha256": "cae94d44f21a12266cfc3fea76af647e94cfc814dd217d2399438e2260cbac70"
+    }
+  ],
+  "recovered_spell_definition": "typedef enum\n{\n  GS2022_CAN_TARGET = 1,\n  GS2022_COUNTERSPELL = 2,\n  GS2022_X_SPELL = 4,\n  GS2022_GRAVE_RECYCLER = 8,\n  GS2022_REGENERATION = 16,\n  GS2022_OPTIONAL_TARGET = 32,\n  GS2022_CAN_ONLY_TARGET_OPPONENT = 64,\n  GS2022_LITERAL_PROMPT = 128,\n  GS2022_DAMAGE_PREVENTION = 256,\n  GS2022_AURA = 512,\n  GS2022_SAC_CREATURE_AS_COST = 1024,\n  GS2022_GRAVE_RECYCLER_OPP_GRAVE = 2048,\n  GS2022_GRAVE_RECYCLER_BOTH_GRAVES = 4096,\n  GS2022_GRAVE_RECYCLER_FROM_GRAVEYARDS = 8192,\n  GS2022_ONE_OR_MULTIPLE_TARGETS = 16384,\n  GS2022_SAC_PERMANENT_AS_COST = 32768,\n} generic_spell_flags_2022_t;",
+  "recovered_spell_definition_sha256": "2527b19239b9fa8a948208ca507c6ff14bc471a73d40a54cea43f33faf2df061",
+  "recovered_tutor_definitions": "#ifndef SHANDALAR\n/* October 2022 tutor domains; retain legacy destination values above. */\ntypedef uint32_t tutor_destination_2022_t;\nenum\n{\n  TUTOR2022_0 = 0,\n  TUTOR2022_HAND = 1,\n  TUTOR2022_DECK = 2,\n  TUTOR2022_GRAVE = 3,\n  TUTOR2022_PLAY = 4,\n  TUTOR2022_PLAY_TAPPED = 5,\n  TUTOR2022_RFG = 6,\n  TUTOR2022_EXILE = 6,\n  TUTOR2022_GET_ID = 7,\n  TUTOR2022_PLAY_ATTACKING = 8,\n  TUTOR2022_GET_POSITION = 9,\n  TUTOR2022_BOTTOM_OF_DECK = 10,\n  TUTOR2022_TPLAYER_HAND = 11,\n  TUTOR2022_BOTTOM_OF_DECK_RANDOM = 12,\n  TUTOR2022_HAND_AND_MARK = 13,\n  TUTOR2022_OPPOSITION_AGENT = 14\n};\ntypedef uint32_t tutor_from_2022_t;\nenum\n{\n  TUTOR_FROM2022_DECK = 1,\n  TUTOR_FROM2022_GRAVE = 2,\n  TUTOR_FROM2022_RFG = 3,\n  TUTOR_FROM2022_HAND = 4,\n  TUTOR_FROM2022_GRAVE_NOTARGET = 5,\n  TUTOR_FROM2022_DECK_AUTO = 6\n};\n#endif",
+  "recovered_tutor_definitions_sha256": "ac3439e91db8807c65b028655d1e066ef3c37a451fcb8f167236a1fbb8f481ab",
+  "predecessor_defs_sha256": "5a419665be96ddfba9bf47b1c20f048c896fe7b5ca60dae517a766ce9edf5d29",
+  "canonical_defs_sha256": "ef7b8a3e3a9fd2479c28b9cb7d9b6bb6d939acc91d5c5abfc040c72ad796bfb5",
+  "scope": "Whole-tree native value migration. GS bits 13/14 move to 14/15; native graveyard flag occupies bit13. Tutor destinations shift up by one with reserved zero, exile alias and Opposition Agent; origins retain values with DECK_AUTO added. Accepted native implementations remain unchanged. Literal caller operands remain subject to comparison/recovery review."
+}

@@ -3202,7 +3202,7 @@ int card_aether_storm(int player, int card, event_t event)
       {
         return 0;
       }
-      lose_life_2022(player, 4);
+      lose_life(player, 4);
       return 0;
     }
   }
@@ -3279,7 +3279,7 @@ int card_chain_stasis(int player, int card, event_t event)
               if (spell_fizzled != 1)
               {
                 result = get_id(player, card);
-                copy_spell_2022(instance->targets[0].player, result);
+                copy_spell(instance->targets[0].player, result);
               }
             }
           }
@@ -3318,7 +3318,7 @@ int card_serra_bestiary(int player, int card, event_t event)
     {
       cannot_attack((int)pcVar3->damage_target_player, pcVar3->damage_target_card, event);
       cannot_block((int)pcVar3->damage_target_player, pcVar3->damage_target_card, event);
-      set_special_flags2_2022((int)pcVar3->damage_target_player, pcVar3->damage_target_card, 0x10);
+      set_special_flags2((int)pcVar3->damage_target_player, pcVar3->damage_target_card, 0x10);
     }
   }
   leaves_play_2022(player, card, event, 0, 0);
@@ -3326,7 +3326,7 @@ int card_serra_bestiary(int player, int card, event_t event)
   {
 
     pcVar3 = get_card_instance(player, card);
-    remove_special_flags2_2022((int)pcVar3->damage_target_player, pcVar3->damage_target_card, 0x10);
+    remove_special_flags2((int)pcVar3->damage_target_player, pcVar3->damage_target_card, 0x10);
   }
   else
   {
@@ -3403,13 +3403,13 @@ int card_daughter_of_autumn(int player, int card, event_t event)
   check_legend_rule(player, card, event);
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
-    default_target_definition_2022(player, card, &td, 0);
+    default_target_definition(player, card, &td, 0);
     td.special = 0x8000;
     td.extra = (int32_t)damage_dealt_to_white_creature;
     pcVar1 = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar3 = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x1000004, 0, 0, 0,
+      iVar3 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x1000004, 0, 0, 0,
                                              0, 0, 1, 0, &td, NULL);
       return iVar3;
     }
@@ -3417,7 +3417,7 @@ int card_daughter_of_autumn(int player, int card, event_t event)
     {
       prompt = get_sleighted_color_text(player, card,
                                         "Select damage card dealt to target %s creature.", 5);
-      generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 6, 0, 0, 0, 0, 0, 1, 0, &td,
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 6, 0, 0, 0, 0, 0, 1, 0, &td,
                                      (char *)prompt);
       if (spell_fizzled == 1)
       {
@@ -3465,13 +3465,13 @@ int card_daughter_of_autumn(int player, int card, event_t event)
     {
       return 0;
     }
-    default_target_definition_2022(player, card, &td, 0);
+    default_target_definition(player, card, &td, 0);
     td.special = 0x8000;
     td.extra = (int32_t)damage_dealt_to_white_creature;
     pcVar1 = get_card_instance(player, card);
   }
   if ((event == EVENT_RESOLVE_ACTIVATION) &&
-      (iVar3 = validate_target_2022(player, card, &td, 0), iVar3 != 0))
+      (iVar3 = validate_target(player, card, &td, 0), iVar3 != 0))
   {
     pcVar4 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
     prevent_the_next_n_damage(pcVar1->parent_controller, pcVar1->parent_card,
@@ -3501,13 +3501,13 @@ int card_hazduhr_the_abbot(int player, int card, event_t event)
   check_legend_rule(player, card, event);
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
-    default_target_definition_2022(player, card, &td, 0);
+    default_target_definition(player, card, &td, 0);
     td.special = 0x8000;
     td.extra = (int32_t)damage_dealt_to_white_creature;
     pcVar1 = get_card_instance(player, card);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      result = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x1000005, 0, 0, 0,
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x1000005, 0, 0, 0,
                                               0, 0, 0, 0, &td, NULL);
       if (result == 0)
       {
@@ -3518,7 +3518,7 @@ int card_hazduhr_the_abbot(int player, int card, event_t event)
     if (event == EVENT_ACTIVATE)
     {
       pcVar1->info_slot = 0;
-      result = charge_mana_for_activated_ability_2022(player, card, 0, 0, 0, 0, 0, 0);
+      result = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
       if (result == 0)
       {
         spell_fizzled = 1;
@@ -3527,7 +3527,7 @@ int card_hazduhr_the_abbot(int player, int card, event_t event)
 
       prompt = get_sleighted_color_text(player, card,
                                         "Select damage card dealt to target %s creature.", 5);
-      new_pick_target_2022(&td, prompt, 0, 0x80);
+      new_pick_target(&td, prompt, 0, 0x80);
       pcVar3 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);
       argument3 = pcVar3->info_slot;
       if ((ai_is_speculating == 1) || ((player == 1 && (((unsigned char)trace_mode & 2) == 0))))
@@ -3587,14 +3587,14 @@ int card_hazduhr_the_abbot(int player, int card, event_t event)
     {
       return 0;
     }
-    default_target_definition_2022(player, card, &td, 0);
+    default_target_definition(player, card, &td, 0);
     td.special = 0x8000;
     td.extra = (int32_t)damage_dealt_to_white_creature;
     pcVar1 = get_card_instance(player, card);
   }
   ptStack_68 = &td;
   if ((event == EVENT_RESOLVE_ACTIVATION) &&
-      (result = validate_target_2022(player, card, ptStack_68, 0), result != 0))
+      (result = validate_target(player, card, ptStack_68, 0), result != 0))
   {
 
     pcVar3 = get_card_instance(pcVar1->targets[0].player, pcVar1->targets[0].card);

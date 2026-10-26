@@ -3535,7 +3535,7 @@ int card_moonbow_llusionist(int player, int card, event_t event)
     else
     {
       instance->number_of_targets = '\0';
-      iVar2 = charge_mana_for_activated_ability_2022(player, card, 2, 0, 0, 0, 0, 0);
+      iVar2 = charge_mana_for_activated_ability(player, card, 2, 0, 0, 0, 0, 0);
       if ((iVar2 != 0) &&
           (iVar2 = new_pick_target(
                &td2, "Select a land you control return it to its owner\'s hand.", 0, 0x81),
@@ -3636,7 +3636,7 @@ static int card_choice_of_damnation_impl(int player, int card, event_t event)
           iVar3 = do_dialog(player, player, card, -1, -1, buffer, argument7);
           if (iVar3 == 0)
           {
-            lose_life_2022(instance->targets[0].player, __n_1);
+            lose_life(instance->targets[0].player, __n_1);
           }
           else
           {
@@ -3742,6 +3742,6 @@ int card_freed_from_the_real(int player, int card, event_t event)
     return 0;
   }
 LAB_020b3097:
-  result = vanilla_aura_2022(player, card, event, 2);
+  result = vanilla_aura(player, card, event, 2);
   return result;
 }

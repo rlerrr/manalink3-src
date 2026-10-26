@@ -403,7 +403,7 @@ int card_bloodline_necromancer(int player, int card, event_t event)
   test_definition_t test;
   lifelink(player, card, event);
   result = duh_mode(player);
-  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_ETB)
   {
     new_default_test_definition(&test, 2, "Select target Vampire or Wizard creature card.");
@@ -466,7 +466,7 @@ int card_shifting_shadow(int player, int card, event_t event)
     }
   }
 LAB_0228ecd0:
-  result = generic_aura_2022(player, card, event, 1 - player, 0, 0, 0, 4, 0, 0, 0);
+  result = generic_aura(player, card, event, 1 - player, 0, 0, 0, 4, 0, 0, 0);
   return result;
 }
 
@@ -626,7 +626,7 @@ int card_bloodforged_battle_axe(int player, int card, event_t event)
                                           DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE);
   if (result != 0)
   {
-    copy_token_2022(player, card, player, card);
+    copy_token(player, card, player, card);
   }
   result = vanilla_equipment(player, card, event, 2, 2, 0, 0, 0);
   return result;
@@ -681,7 +681,7 @@ static int path_of_ancestry_legacy(int player, int card, event_t event)
     if (((((card != affected_card) || (affected_card_controller != player)) &&
           (result = played_for_free(affected_card_controller, affected_card), result == 0)) &&
          (((result = is_token(affected_card_controller, affected_card),
-            result == 0 && (result = check_special_flags2_2022(affected_card_controller, affected_card,
+            result == 0 && (result = check_special_flags2(affected_card_controller, affected_card,
                                                           -0x80000000),
                             result == 0)) &&
            ((affected_card_controller == player &&
@@ -799,7 +799,7 @@ int card_taigam_sidisis_hand(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     t_player = instance->targets[0].player;
     instance = get_card_instance(player, card);
-    pump_until_eot_2022(player, instance->parent_card, t_player, t_card, -result, -result);
+    pump_until_eot(player, instance->parent_card, t_player, t_card, -result, -result);
     instance = get_card_instance(player, card);
     instance->info_slot = 0;
   }
@@ -952,7 +952,7 @@ int card_vindictive_lich(int player, int card, event_t event)
         }
         else if (result == 3)
         {
-          lose_life_2022(instance->targets[0].player, 5);
+          lose_life(instance->targets[0].player, 5);
         }
       }
     }
@@ -1396,18 +1396,18 @@ int card_arahbo_roar_of_the_world(int player, int card, event_t event)
     if ((current_turn == player) &&
         (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar2 == 0))
     {
-      default_target_definition_2022(player, card, &recovered_stack_td.target, 2);
+      default_target_definition(player, card, &recovered_stack_td.target, 2);
       recovered_stack_td.target.required_subtype = 0x1f;
       recovered_stack_td.target.preferred_controller = player;
       recovered_stack_td.target.allowed_controller = player;
       recovered_stack_td.target.special = 0x4000;
       pcVar1->number_of_targets = '\0';
-      iVar2 = can_target_2022(&recovered_stack_td.target);
-      if ((iVar2 != 0) && (iVar2 = new_pick_target_2022(&recovered_stack_td.target,
+      iVar2 = can_target(&recovered_stack_td.target);
+      if ((iVar2 != 0) && (iVar2 = new_pick_target(&recovered_stack_td.target,
                                                         "Select target Cat you control", 0, 0x81),
                            iVar2 != 0))
       {
-        pump_ability_until_eot_2022(player, card, pcVar1->targets[0].player,
+        pump_ability_until_eot(player, card, pcVar1->targets[0].player,
                                     pcVar1->targets[0].card, 3, 3, 0, 0);
       }
     }
@@ -1415,15 +1415,15 @@ int card_arahbo_roar_of_the_world(int player, int card, event_t event)
   else if ((event == EVENT_DECLARE_ATTACKERS) &&
            (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar2 == 0))
   {
-    default_test_definition_2022(&recovered_stack_td.test, 2);
+    default_test_definition(&recovered_stack_td.test, 2);
     iVar2 = duh_mode(player);
-    store_attackers_2022(player, card, EVENT_DECLARE_ATTACKERS,
+    store_attackers(player, card, EVENT_DECLARE_ATTACKERS,
                          (iVar2 != 0) +
                              (DAT_STORE_IN_INFO_SLOT | DAT_TRACK | DAT_RESOLVE_TRIGGER_OPTIONAL),
                          player, -1, &recovered_stack_td.test);
   }
   iVar2 = duh_mode(player);
-  iVar2 = resolve_declare_attackers_trigger_2022(
+  iVar2 = resolve_declare_attackers_trigger(
       player, card, event,
       (iVar2 != 0) + (DAT_STORE_IN_INFO_SLOT | DAT_TRACK | DAT_RESOLVE_TRIGGER_OPTIONAL));
   if (((iVar2 != 0) && (iVar3 = has_mana_multi(player, 1, 0, 0, 1, 0, 1), iVar3 != 0)) &&
@@ -1446,7 +1446,7 @@ int card_arahbo_roar_of_the_world(int player, int card, event_t event)
           iVar3 =
               get_power(current_turn,
                         (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + iVar2));
-          pump_ability_until_eot_2022(
+          pump_ability_until_eot(
               player, card, current_turn,
               (unsigned int)*(unsigned char *)((int)&pcVar1->targets[2].player + iVar2), iVar3,
               iVar3, 0x80, 0);
@@ -1531,8 +1531,8 @@ int card_kess_dissident_mage(int player, int card, event_t event)
         iVar1 = piVar4[iVar3];
       } while (iVar1 != -1);
     }
-    default_test_definition_2022(&test, 0);
-    iVar1 = select_card_from_zone_2022(player, player, iids, iStack_108c, 0, 1, -1, &test);
+    default_test_definition(&test, 0);
+    iVar1 = select_card_from_zone(player, player, iids, iStack_108c, 0, 1, -1, &test);
     if ((iVar1 == -1) || (iVar3 = charge_mana_from_id(player, -1, EVENT_ACTIVATE,
                                                       (unsigned int)cards_data[iids[iVar1]].id),
                           iVar3 == 0))
@@ -1644,15 +1644,15 @@ int card_izzet_chemister(int player, int card, event_t event)
   char buffer[50];
   scnprintf(buffer, 50, "Select a card to exile");
   test_definition_2022_t test;
-  new_default_test_definition_2022(&test, 0x38, buffer);
+  new_default_test_definition(&test, 0x38, buffer);
   card_instance_t *instance = get_card_instance(player, card);
   if (event == EVENT_CAN_ACTIVATE)
   {
-    if (generic_activated_ability_2022(player, card, event, 9, 1, 0, 0, 0, 1, 0, 0, NULL, NULL) &&
+    if (generic_activated_ability(player, card, event, 9, 1, 0, 0, 0, 1, 0, 0, NULL, NULL) &&
         exiledby_count(player, card, player) > 0 &&
         exiledby_choose(player, card, 0x4398, EXBY_CAN_CAST, 1, "", 1))
       return exiledby_choose(player, card, 0x4398, EXBY_CAN_CAST, 1, "", 1);
-    if (generic_activated_ability_with_target_in_grave_2022(player, card, event, GAA_UNTAPPED, 0, 0,
+    if (generic_activated_ability_with_target_in_grave(player, card, event, GAA_UNTAPPED, 0, 0,
                                                             0, 0, 1, 0, 0, NULL, NULL, TYPE_NONE,
                                                             &test, 8))
       return 1;
@@ -1662,12 +1662,12 @@ int card_izzet_chemister(int player, int card, event_t event)
   {
     int have_exile = exiledby_count(player, card, player) > 0;
     int abilities[5];
-    abilities[0] = generic_activated_ability_with_target_in_grave_2022(
+    abilities[0] = generic_activated_ability_with_target_in_grave(
         player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, 0, 0, 0, 0, 1, 0, 0, NULL, NULL, TYPE_NONE,
         &test, 8);
-    abilities[1] = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 9, 1, 0, 0, 0,
+    abilities[1] = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 9, 1, 0, 0, 0,
                                                   1, 0, 0, NULL, NULL);
-    abilities[2] = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 9, 1, 0, 0, 0,
+    abilities[2] = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 9, 1, 0, 0, 0,
                                                   1, 0, 0, NULL, NULL);
     abilities[3] = player == 0 && have_exile;
     abilities[4] = 0;
@@ -1690,7 +1690,7 @@ int card_izzet_chemister(int player, int card, event_t event)
     if (choice == 1)
     {
       instance->number_of_targets = 0;
-      generic_activated_ability_with_target_in_grave_2022(player, card, EVENT_ACTIVATE,
+      generic_activated_ability_with_target_in_grave(player, card, EVENT_ACTIVATE,
                                                           GAA_UNTAPPED, 0, 0, 0, 0, 1, 0, 0, NULL,
                                                           NULL, TYPE_NONE, &test, 8);
       return 0;
@@ -1699,7 +1699,7 @@ int card_izzet_chemister(int player, int card, event_t event)
       return 0;
     instance->number_of_targets = 0;
     add_state(player, card, 0x10);
-    if (charge_mana_for_activated_ability_2022(player, card, 1, 0, 0, 0, 1, 0))
+    if (charge_mana_for_activated_ability(player, card, 1, 0, 0, 0, 1, 0))
     {
       instance->targets[1].player = exiledby_count(player, card, player);
       instance->targets[1].card = exiledby_detach(player, card);
@@ -1744,8 +1744,8 @@ int card_izzet_chemister(int player, int card, event_t event)
         test_definition_2022_t this_test;
         while (count > 0)
         {
-          new_default_test_definition_2022(&this_test, 0xff, "Select a card to play for free");
-          int selected = select_card_from_zone_2022(player, player, ic, count, 0, 1, -1, &test);
+          new_default_test_definition(&this_test, 0xff, "Select a card to play for free");
+          int selected = select_card_from_zone(player, player, ic, count, 0, 1, -1, &test);
           if (selected == -1)
             break;
           unsigned csvid = (uint16_t)cards_data[ic[selected]].id;

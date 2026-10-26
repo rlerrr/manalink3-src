@@ -5961,7 +5961,7 @@ Target player discards two cards unless he or she discards an artifact card. */
 /* ManalinkEh 2022: 0x253fd90; original cards/mirrodin.c:2847. */
 int card_leveler(int player, int card, event_t event)
 {
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -6098,7 +6098,7 @@ int card_glissa_sunseeker(int player, int card, event_t event)
   instance = get_card_instance(player, card);
   iVar2 = get_cmc(instance->targets[0].player, instance->targets[0].card);
   iVar2 = has_mana(player, 7, iVar2);
-  if ((iVar2 == 0) || (iVar2 = check_for_special_ability_2022(instance->targets[0].player,
+  if ((iVar2 == 0) || (iVar2 = check_for_special_ability(instance->targets[0].player,
                                                               instance->targets[0].card, 0x800),
                        iVar2 != 0))
     goto LAB_0253d6ae;

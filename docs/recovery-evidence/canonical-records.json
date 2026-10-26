@@ -1,0 +1,637 @@
+{
+  "format": 1,
+  "records": [
+    {
+      "canonical_type": "target_definition_t",
+      "recovery_type": "target_definition_2022_t",
+      "bytes": 84,
+      "native_layout": {
+        "die": "0x5fa9048",
+        "bytes": 84,
+        "members": [
+          {
+            "name": "who_chooses",
+            "offset": 0,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "allowed_controller",
+            "offset": 4,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "preferred_controller",
+            "offset": 8,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "zone",
+            "offset": 12,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "required_type",
+            "offset": 16,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "illegal_type",
+            "offset": 20,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "required_abilities",
+            "offset": 24,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "illegal_abilities",
+            "offset": 28,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "required_color",
+            "offset": 32,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "illegal_color",
+            "offset": 36,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "extra",
+            "offset": 40,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "required_subtype",
+            "offset": 44,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "power_requirement",
+            "offset": 48,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "toughness_requirement",
+            "offset": 52,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "special",
+            "offset": 56,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "required_state",
+            "offset": 60,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "illegal_state",
+            "offset": 64,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "allow_cancel",
+            "offset": 68,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "player",
+            "offset": 72,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "card",
+            "offset": 76,
+            "type": "int32_t",
+            "bytes": 4
+          },
+          {
+            "name": "flags",
+            "offset": 80,
+            "type": "int32_t",
+            "bytes": 4
+          }
+        ]
+      },
+      "predecessor_definition": "typedef struct\n{\n  int32_t who_chooses;\n  int32_t allowed_controller;\n  int32_t preferred_controller;\n  int32_t zone;\n  int32_t required_type;\n  int32_t illegal_type;\n  int32_t required_abilities;\n  int32_t illegal_abilities;\n  int32_t required_color;\n  int32_t illegal_color;\n  int32_t extra;\n  int32_t required_subtype;\n  int32_t power_requirement;\n  int32_t toughness_requirement;\n  int32_t special;\n  int32_t required_state;\n  int32_t illegal_state;\n  int32_t allow_cancel;\t// 0: no cancel.  1: cancel button.  2: done button.  3: both done and cancel buttons.  If done is chosen, select_target returns 0 and sets target.card to -2.\n  int32_t player;\n  int32_t card;\n} target_definition_t;",
+      "predecessor_sha256": "36efd2e05a367b288e5834a0fde4de95255f3cd587723989fc75a65d514a8688",
+      "recovered_definition": "typedef struct\n{\n  int32_t who_chooses;\n  int32_t allowed_controller;\n  int32_t preferred_controller;\n  int32_t zone;\n  int32_t required_type;\n  int32_t illegal_type;\n  int32_t required_abilities;\n  int32_t illegal_abilities;\n  int32_t required_color;\n  int32_t illegal_color;\n  int32_t extra;\n  int32_t required_subtype;\n  int32_t power_requirement;\n  int32_t toughness_requirement;\n  int32_t special;\n  int32_t required_state;\n  int32_t illegal_state;\n  int32_t allow_cancel;\n  int32_t player;\n  int32_t card;\n  int32_t flags;\n} target_definition_2022_t;",
+      "recovered_sha256": "66368fa9724a70c84903cf11647ff49b5ddae5e1ad4e8acd6cc17b679587816a",
+      "canonical_definition": "typedef struct\n{\n  int32_t who_chooses;\n  int32_t allowed_controller;\n  int32_t preferred_controller;\n  int32_t zone;\n  int32_t required_type;\n  int32_t illegal_type;\n  int32_t required_abilities;\n  int32_t illegal_abilities;\n  int32_t required_color;\n  int32_t illegal_color;\n  int32_t extra;\n  int32_t required_subtype;\n  int32_t power_requirement;\n  int32_t toughness_requirement;\n  int32_t special;\n  int32_t required_state;\n  int32_t illegal_state;\n  int32_t allow_cancel;\t// 0: no cancel.  1: cancel button.  2: done button.  3: both done and cancel buttons.  If done is chosen, select_target returns 0 and sets target.card to -2.\n  int32_t player;\n  int32_t card;\n  int32_t flags;\n} target_definition_t;",
+      "canonical_sha256": "d1fa0bb37291b81c5a29dca28c8ee87157d696f5fd51ff8fbe83aad138f799b1"
+    },
+    {
+      "canonical_type": "test_definition_t",
+      "recovery_type": "test_definition_2022_t",
+      "bytes": 216,
+      "native_layout": {
+        "die": "0x67f9298",
+        "bytes": 216,
+        "members": [
+          {
+            "name": "message",
+            "type": "char[100]",
+            "offset": 0,
+            "bytes": 100
+          },
+          {
+            "name": "type",
+            "type": "unsigned int",
+            "offset": 100,
+            "bytes": 4
+          },
+          {
+            "name": "subtype",
+            "type": "unsigned int",
+            "offset": 104,
+            "bytes": 4
+          },
+          {
+            "name": "type_flag",
+            "type": "short unsigned int",
+            "offset": 108,
+            "bytes": 2
+          },
+          {
+            "name": "subtype_flag",
+            "type": "short unsigned int",
+            "offset": 110,
+            "bytes": 2
+          },
+          {
+            "name": "color",
+            "type": "unsigned int",
+            "offset": 112,
+            "bytes": 4
+          },
+          {
+            "name": "id",
+            "type": "int",
+            "offset": 116,
+            "bytes": 4
+          },
+          {
+            "name": "id2",
+            "type": "int",
+            "offset": 120,
+            "bytes": 4
+          },
+          {
+            "name": "color_flag",
+            "type": "short unsigned int",
+            "offset": 124,
+            "bytes": 2
+          },
+          {
+            "name": "id_flag",
+            "type": "short unsigned int",
+            "offset": 126,
+            "bytes": 2
+          },
+          {
+            "name": "cmc",
+            "type": "int",
+            "offset": 128,
+            "bytes": 4
+          },
+          {
+            "name": "keyword",
+            "type": "unsigned int",
+            "offset": 132,
+            "bytes": 4
+          },
+          {
+            "name": "cmc_flag",
+            "type": "short unsigned int",
+            "offset": 136,
+            "bytes": 2
+          },
+          {
+            "name": "keyword_flag",
+            "type": "short unsigned int",
+            "offset": 138,
+            "bytes": 2
+          },
+          {
+            "name": "sp_keyword",
+            "type": "unsigned int",
+            "offset": 140,
+            "bytes": 4
+          },
+          {
+            "name": "sp_keyword_flag",
+            "type": "short unsigned int",
+            "offset": 144,
+            "bytes": 2
+          },
+          {
+            "name": "power",
+            "type": "int",
+            "offset": 148,
+            "bytes": 4
+          },
+          {
+            "name": "toughness",
+            "type": "int",
+            "offset": 152,
+            "bytes": 4
+          },
+          {
+            "name": "power_flag",
+            "type": "short unsigned int",
+            "offset": 156,
+            "bytes": 2
+          },
+          {
+            "name": "toughness_flag",
+            "type": "short unsigned int",
+            "offset": 158,
+            "bytes": 2
+          },
+          {
+            "name": "state",
+            "type": "unsigned int",
+            "offset": 160,
+            "bytes": 4
+          },
+          {
+            "name": "zone",
+            "type": "unsigned int",
+            "offset": 164,
+            "bytes": 4
+          },
+          {
+            "name": "state_flag",
+            "type": "short unsigned int",
+            "offset": 168,
+            "bytes": 2
+          },
+          {
+            "name": "not_me",
+            "type": "short unsigned int",
+            "offset": 170,
+            "bytes": 2
+          },
+          {
+            "name": "ai_selection_mode",
+            "type": "short unsigned int",
+            "offset": 172,
+            "bytes": 2
+          },
+          {
+            "name": "qty",
+            "type": "short unsigned int",
+            "offset": 174,
+            "bytes": 2
+          },
+          {
+            "name": "sub2",
+            "type": "unsigned int",
+            "offset": 176,
+            "bytes": 4
+          },
+          {
+            "name": "sub3",
+            "type": "unsigned int",
+            "offset": 180,
+            "bytes": 4
+          },
+          {
+            "name": "sub4",
+            "type": "unsigned int",
+            "offset": 184,
+            "bytes": 4
+          },
+          {
+            "name": "sub5",
+            "type": "unsigned int",
+            "offset": 188,
+            "bytes": 4
+          },
+          {
+            "name": "no_shuffle",
+            "type": "short unsigned int",
+            "offset": 192,
+            "bytes": 2
+          },
+          {
+            "name": "create_minideck",
+            "type": "short unsigned int",
+            "offset": 194,
+            "bytes": 2
+          },
+          {
+            "name": "special_selection_function",
+            "type": "UNRESOLVED *",
+            "offset": 196,
+            "bytes": 4
+          },
+          {
+            "name": "value_for_special_selection_function",
+            "type": "int",
+            "offset": 200,
+            "bytes": 4
+          },
+          {
+            "name": "painters_servant_hack",
+            "type": "int16_t[2]",
+            "offset": 204,
+            "bytes": 4
+          },
+          {
+            "name": "has_mana_to_pay_cmc",
+            "type": "unsigned char",
+            "offset": 208,
+            "bytes": 1
+          },
+          {
+            "name": "can_legally_play",
+            "type": "unsigned char",
+            "offset": 209,
+            "bytes": 1
+          },
+          {
+            "name": "owner",
+            "type": "unsigned char",
+            "offset": 210,
+            "bytes": 1
+          },
+          {
+            "name": "storage",
+            "type": "int",
+            "offset": 212,
+            "bytes": 4
+          }
+        ]
+      },
+      "predecessor_definition": "typedef struct\n{\n\tchar message[100];\n\tunsigned int type;\n\tunsigned int subtype;\n\tunsigned short int type_flag;\n\tunsigned short int subtype_flag;\n\tunsigned int color;\n\tint id;\n\tint id2;\n\tunsigned short int color_flag;\n\tunsigned short int id_flag;\n\tint cmc;\n\tunsigned int keyword;\n\tunsigned short int cmc_flag;\n\tunsigned short int keyword_flag;\n\tint power;\n\tint toughness;\n\tunsigned short int power_flag;\n\tunsigned short int toughness_flag;\n\tunsigned int state;\n\tunsigned int zone;\n\tunsigned short int state_flag;\n\tunsigned short int not_me;\n\tunsigned short int ai_selection_mode;\n\tunsigned short int qty;\n\tunsigned int sub2;\n\tunsigned int sub3;\n\tunsigned int sub4;\n\tunsigned int sub5;\n\tunsigned short int no_shuffle;\n\tunsigned short int create_minideck;\n\tint (*special_selection_function)(int, int, int, int);// Internal id to parse, value to check contained in \"value_for_special_selection_function\", player, card (-1 if not a card in play/in hand/on the stack).  Return nonzero to pass, zero to fail.\n\tint value_for_special_selection_function;\n\tint16_t painters_servant_hack[2];\n\tunsigned char has_mana_to_pay_cmc;\n\tunsigned char can_legally_play;\n\tunsigned char owner;\n\tint storage; //If > -1, when used in \"new_global_tutor\", will store the result of the tutor on (player, card) targeting part, beginning with \"get_card_instance(player, storage)->targets[0].card\". Will store internal_card_id or csv_id depening on the type of tutor\n} test_definition_t;",
+      "predecessor_sha256": "e3a58ec0d6d7d4ac298b51128ab9529cf5e9f07c384991a02d748b0e5b96d250",
+      "recovered_definition": "typedef struct\n{\n  char message[100];\n  uint32_t type;\n  uint32_t subtype;\n  uint16_t type_flag;\n  uint16_t subtype_flag;\n  uint32_t color;\n  int32_t id;\n  int32_t id2;\n  uint16_t color_flag;\n  uint16_t id_flag;\n  int32_t cmc;\n  uint32_t keyword;\n  uint16_t cmc_flag;\n  uint16_t keyword_flag;\n  uint32_t sp_keyword;\n  uint16_t sp_keyword_flag;\n  int32_t power;\n  int32_t toughness;\n  uint16_t power_flag;\n  uint16_t toughness_flag;\n  uint32_t state;\n  uint32_t zone;\n  uint16_t state_flag;\n  uint16_t not_me;\n  uint16_t ai_selection_mode;\n  uint16_t qty;\n  uint32_t sub2;\n  uint32_t sub3;\n  uint32_t sub4;\n  uint32_t sub5;\n  uint16_t no_shuffle;\n  uint16_t create_minideck;\n  test_selection_predicate_2022_t special_selection_function;\n  int32_t value_for_special_selection_function;\n  int16_t painters_servant_hack[2];\n  uint8_t has_mana_to_pay_cmc;\n  uint8_t can_legally_play;\n  uint8_t owner;\n  int32_t storage;\n} test_definition_2022_t;",
+      "recovered_sha256": "eef7385c834642f24ba7d47d49f03286057f66d4fcc05027e69ef08aea96794f",
+      "canonical_definition": "typedef struct\n{\n\tchar message[100];\n\tunsigned int type;\n\tunsigned int subtype;\n\tunsigned short int type_flag;\n\tunsigned short int subtype_flag;\n\tunsigned int color;\n\tint id;\n\tint id2;\n\tunsigned short int color_flag;\n\tunsigned short int id_flag;\n\tint cmc;\n\tunsigned int keyword;\n\tunsigned short int cmc_flag;\n\tunsigned short int keyword_flag;\n\tunsigned int sp_keyword;\n\tunsigned short int sp_keyword_flag;\n\tint power;\n\tint toughness;\n\tunsigned short int power_flag;\n\tunsigned short int toughness_flag;\n\tunsigned int state;\n\tunsigned int zone;\n\tunsigned short int state_flag;\n\tunsigned short int not_me;\n\tunsigned short int ai_selection_mode;\n\tunsigned short int qty;\n\tunsigned int sub2;\n\tunsigned int sub3;\n\tunsigned int sub4;\n\tunsigned int sub5;\n\tunsigned short int no_shuffle;\n\tunsigned short int create_minideck;\n\tint (*special_selection_function)(int, int, int, int);// Internal id to parse, value to check contained in \"value_for_special_selection_function\", player, card (-1 if not a card in play/in hand/on the stack).  Return nonzero to pass, zero to fail.\n\tint value_for_special_selection_function;\n\tint16_t painters_servant_hack[2];\n\tunsigned char has_mana_to_pay_cmc;\n\tunsigned char can_legally_play;\n\tunsigned char owner;\n\tint storage; //If > -1, when used in \"new_global_tutor\", will store the result of the tutor on (player, card) targeting part, beginning with \"get_card_instance(player, storage)->targets[0].card\". Will store internal_card_id or csv_id depening on the type of tutor\n} test_definition_t;",
+      "canonical_sha256": "7cfbdca89716aed2af662d1fb03fabc02bd7c691fa8b49bae9484b1bb6d99c15"
+    },
+    {
+      "canonical_type": "token_generation_t",
+      "recovery_type": "token_generation_2022_t",
+      "bytes": 76,
+      "native_layout": {
+        "die": "0x61c78cb",
+        "bytes": 76,
+        "members": [
+          {
+            "name": "id",
+            "type": "int",
+            "offset": 0
+          },
+          {
+            "name": "s_player",
+            "type": "int",
+            "offset": 4
+          },
+          {
+            "name": "s_card",
+            "type": "int",
+            "offset": 8
+          },
+          {
+            "name": "eff_player",
+            "type": "int",
+            "offset": 12
+          },
+          {
+            "name": "eff_card",
+            "type": "int",
+            "offset": 16
+          },
+          {
+            "name": "t_player",
+            "type": "int",
+            "offset": 20
+          },
+          {
+            "name": "pow",
+            "type": "int",
+            "offset": 24
+          },
+          {
+            "name": "tou",
+            "type": "int",
+            "offset": 28
+          },
+          {
+            "name": "key_plus",
+            "type": "unsigned int",
+            "offset": 32
+          },
+          {
+            "name": "s_key_plus",
+            "type": "unsigned int",
+            "offset": 36
+          },
+          {
+            "name": "color_forced",
+            "type": "unsigned char",
+            "offset": 40
+          },
+          {
+            "name": "no_sleight",
+            "type": "unsigned char",
+            "offset": 41
+          },
+          {
+            "name": "legacy",
+            "type": "unsigned char",
+            "offset": 42
+          },
+          {
+            "name": "qty",
+            "type": "unsigned char",
+            "offset": 43
+          },
+          {
+            "name": "special_infos",
+            "type": "unsigned int",
+            "offset": 44
+          },
+          {
+            "name": "action",
+            "type": "token_action_t",
+            "offset": 48
+          },
+          {
+            "name": "action_argument",
+            "type": "int",
+            "offset": 52
+          },
+          {
+            "name": "keep_track_of_tokens_generated",
+            "type": "unsigned int",
+            "offset": 56
+          },
+          {
+            "name": "special_code_for_legacy",
+            "type": "UNRESOLVED *",
+            "offset": 60
+          },
+          {
+            "name": "special_code_on_generation",
+            "type": "UNRESOLVED *",
+            "offset": 64
+          },
+          {
+            "name": "special_flags2",
+            "type": "int",
+            "offset": 68
+          },
+          {
+            "name": "special_flags3",
+            "type": "int",
+            "offset": 72
+          }
+        ]
+      },
+      "predecessor_definition": "typedef struct struct_token_generation_t\t// struct name only for forward declaration\n{\n\t// Most of these are only safe with token-only cards (e.g., CARD_ID_SOLDIER).  Exceptions noted below.\n\tint id;\t// A csvid.  Usable with nontokens (though it's already set by default_token_definition() for you)\n\tint s_player;\t// Player/card that originally created this token, or the token this was copied from.  Should not be set directly.\n\tint s_card;\t\t// (part of above)\n\tint eff_player;\t// Player/card currently creating this token.  Should not be set directly.\n\tint eff_card;\t// (part of above)\n\tint t_player;\t// Player currently receiving this token.  Should not be set directly.\n\tint pow;\n\tint tou;\n\tunsigned int key_plus;\n\tunsigned int s_key_plus;\n\tunsigned char color_forced;\n\tunsigned char no_sleight;\n\tunsigned char legacy;\t// Usable with nontokens\n\tunsigned char qty;\n\tunsigned int special_infos;\n\ttoken_action_t action;\t// Usable with nontokens\n\tint action_argument;\t// Usable with nontokens\n\tunsigned int keep_track_of_tokens_generated;\t// Usable with nontokens.  Set to the maximum number of targets in s_player/s_card to set (e.g. setting to 19 will use targets[0]-targets[18]); after generate_token() is called, this will have been set to the actual number used.  Be aware that the returned tokens may no longer be valid due to come-into-play effects.  Avoid using if at all possible.\n\tint (*special_code_for_legacy)(int, int, event_t);\t// Usable with nontokens\n\tvoid (*special_code_on_generation)(struct struct_token_generation_t*, int, int);\t// If set, this is called for each token before it's put in play.  It gets passed the token_generation_t structure, the idx of the card_added, and which number token this is (starting from 0).\n\tint special_flags2;\n} token_generation_t;",
+      "predecessor_sha256": "effcb476f75c499bfe99a17a9c7f09c8d6def039796ed25a0afe90f150c4b039",
+      "recovered_definition": "typedef struct struct_token_generation_2022_t\n{\n  int id;\n  int s_player;\n  int s_card;\n  int eff_player;\n  int eff_card;\n  int t_player;\n  int pow;\n  int tou;\n  unsigned int key_plus;\n  unsigned int s_key_plus;\n  unsigned char color_forced;\n  unsigned char no_sleight;\n  unsigned char legacy;\n  unsigned char qty;\n  unsigned int special_infos;\n  token_action_2022_t action;\n  int action_argument;\n  unsigned int keep_track_of_tokens_generated;\n  int (*special_code_for_legacy)(int, int, event_t);\n  void (*special_code_on_generation)(struct struct_token_generation_2022_t *, int, int);\n  int special_flags2;\n  int special_flags3;\n} token_generation_2022_t;",
+      "recovered_sha256": "7df79d8c21b0161ca5d394d836c5fe794b60a7807bff05a408f344f3dbcc1b1c",
+      "canonical_definition": "typedef struct struct_token_generation_t\t// struct name only for forward declaration\n{\n\t// Most of these are only safe with token-only cards (e.g., CARD_ID_SOLDIER).  Exceptions noted below.\n\tint id;\t// A csvid.  Usable with nontokens (though it's already set by default_token_definition() for you)\n\tint s_player;\t// Player/card that originally created this token, or the token this was copied from.  Should not be set directly.\n\tint s_card;\t\t// (part of above)\n\tint eff_player;\t// Player/card currently creating this token.  Should not be set directly.\n\tint eff_card;\t// (part of above)\n\tint t_player;\t// Player currently receiving this token.  Should not be set directly.\n\tint pow;\n\tint tou;\n\tunsigned int key_plus;\n\tunsigned int s_key_plus;\n\tunsigned char color_forced;\n\tunsigned char no_sleight;\n\tunsigned char legacy;\t// Usable with nontokens\n\tunsigned char qty;\n\tunsigned int special_infos;\n\ttoken_action_t action;\t// Usable with nontokens\n\tint action_argument;\t// Usable with nontokens\n\tunsigned int keep_track_of_tokens_generated;\t// Usable with nontokens.  Set to the maximum number of targets in s_player/s_card to set (e.g. setting to 19 will use targets[0]-targets[18]); after generate_token() is called, this will have been set to the actual number used.  Be aware that the returned tokens may no longer be valid due to come-into-play effects.  Avoid using if at all possible.\n\tint (*special_code_for_legacy)(int, int, event_t);\t// Usable with nontokens\n\tvoid (*special_code_on_generation)(struct struct_token_generation_t*, int, int);\t// If set, this is called for each token before it's put in play.  It gets passed the token_generation_t structure, the idx of the card_added, and which number token this is (starting from 0).\n\tint special_flags2;\n\tint special_flags3;\n} token_generation_t;",
+      "canonical_sha256": "f9c161428ee51a20644765a37a84caeb8c57de056b9214a8761d05b511b58013"
+    },
+    {
+      "canonical_type": "pump_ability_t",
+      "recovery_type": "pump_ability_2022_t",
+      "bytes": 48,
+      "native_layout": {
+        "bytes": 48,
+        "members": [
+          {
+            "name": "source_p",
+            "offset": 0,
+            "type": "int",
+            "bytes": 4
+          },
+          {
+            "name": "source_c",
+            "offset": 4,
+            "type": "int",
+            "bytes": 4
+          },
+          {
+            "name": "pow_mod",
+            "offset": 8,
+            "type": "int",
+            "bytes": 4
+          },
+          {
+            "name": "tou_mod",
+            "offset": 12,
+            "type": "int",
+            "bytes": 4
+          },
+          {
+            "name": "key_mod",
+            "offset": 16,
+            "type": "keyword_t",
+            "bytes": 4
+          },
+          {
+            "name": "skey_mod",
+            "offset": 20,
+            "type": "sp_keyword_t",
+            "bytes": 4
+          },
+          {
+            "name": "paue_flags",
+            "offset": 24,
+            "type": "int",
+            "bytes": 4
+          },
+          {
+            "name": "can_block_additional_creatures",
+            "offset": 28,
+            "type": "int",
+            "bytes": 4
+          },
+          {
+            "name": "eot_removal_method",
+            "offset": 32,
+            "type": "int",
+            "bytes": 4
+          },
+          {
+            "name": "subtype",
+            "offset": 36,
+            "type": "subtype_t",
+            "bytes": 4
+          },
+          {
+            "name": "color",
+            "offset": 40,
+            "type": "color_test_t",
+            "bytes": 4
+          },
+          {
+            "name": "disabling_mode",
+            "offset": 44,
+            "type": "int",
+            "bytes": 4
+          }
+        ]
+      },
+      "predecessor_definition": "typedef struct pump_ability_until_eot_arguments_t\n{\n\tint source_p;\n\tint source_c;\n\tint pow_mod;\n\tint tou_mod;\n\tint key_mod;\n\tint skey_mod;\n\tint paue_flags;\n\tint can_block_additional_creatures;\n\tint eot_removal_method;\n} pump_ability_t;",
+      "predecessor_sha256": "63493e6cfca2e65c5f972b7a38650028766866439bb5361246a0701192e66c03",
+      "recovered_definition": "typedef struct pump_ability_arguments_2022_t\n{\n  int source_p;\n  int source_c;\n  int pow_mod;\n  int tou_mod;\n  keyword_t key_mod;\n  sp_keyword_t skey_mod;\n  int paue_flags;\n  int can_block_additional_creatures;\n  int eot_removal_method;\n  subtype_t subtype;\n  color_test_t color;\n  int disabling_mode;\n} pump_ability_2022_t;",
+      "recovered_sha256": "162a891dc23ccd41edb5c1639d76e804fb998085c0cdad918b24a707f6a057a9",
+      "canonical_definition": "typedef struct pump_ability_until_eot_arguments_t\n{\n\tint source_p;\n\tint source_c;\n\tint pow_mod;\n\tint tou_mod;\n\tkeyword_t key_mod;\n\tsp_keyword_t skey_mod;\n\tint paue_flags;\n\tint can_block_additional_creatures;\n\tint eot_removal_method;\n\tsubtype_t subtype;\n\tcolor_test_t color;\n\tint disabling_mode;\n} pump_ability_t;",
+      "canonical_sha256": "d600af39539a10e669f3a7a1a23f1d40fba74c78aaaedcac9dc0eddf483679ce"
+    }
+  ],
+  "token_action_definition": "typedef enum\n{\n\tTOKEN_ACTION_TAPPED\t\t= 1,\t// Token is put into play tapped\n\tTOKEN_ACTION_ATTACKING_UNTAPPED\t= 2,\t// Token is put into play attacking but not tapped\n\tTOKEN_ACTION_ATTACKING\t= 3,\t// Token is put into play tapped and attacking\n\tTOKEN_ACTION_EQUIP\t\t= 4,\t// Equip source player/card to the (first) generated token.\n\tTOKEN_ACTION_HASTE\t\t= 16,\t// Token gets haste until end of turn.  s_key_plus can set it permanently, but only on token-only cards.\n\tTOKEN_ACTION_DONT_COPY_TOKEN_SOURCE\t= 32,\t// If this token is copied, don't set the copy's source\n\tTOKEN_ACTION_CONVERT_INTO_ARTIFACT\t= 64,\t// Used by Feldon of the Third Way\n\n\t// The following all use action_argument, so are incompatible with each other (except for TOKEN_ACTION_PUMP_POWER, which can combine with TOKEN_ACTION_PUMP_TOUGHNESS)\n\tTOKEN_ACTION_BLOCKING\t= 65536,\t// Token is put into play blocking action_argument.\n\tTOKEN_ACTION_PUMP_POWER\t= 131072,\t// Token gets +X/+0 until end of turn.  X is action_argument.  (Not actually used by anything.)\n\tTOKEN_ACTION_PUMP_TOUGHNESS\t= 262144,\t// Token gets +0/+X until end of turn.  X is action_argument.  (Not actually used by anything.)\n\tTOKEN_ACTION_ADD_SUBTYPE= 524288,\t// Add subtype in action_argument to token.\n\tTOKEN_ACTION_ADD_COUNTERS = 1048576, // 2022: counter type in high 16 bits, quantity in low 16 bits; added after put_into_play.\n\tTOKEN_ACTION_EQUIP_ANY = 8,\n\tTOKEN_ACTION_RECORD_SOURCE_ID = 128,\n\tTOKEN_ACTION_ISNT_LEGENDARY = 256,\n\tTOKEN_ACTION_SKIP_ATTACK_CHECK = 2097152,\n} token_action_t;",
+  "token_action_aliases": "typedef token_action_t token_action_2022_t;\n#define TOKEN2022_ACTION_TAPPED TOKEN_ACTION_TAPPED\n#define TOKEN2022_ACTION_ATTACKING_UNTAPPED TOKEN_ACTION_ATTACKING_UNTAPPED\n#define TOKEN2022_ACTION_ATTACKING TOKEN_ACTION_ATTACKING\n#define TOKEN2022_ACTION_EQUIP TOKEN_ACTION_EQUIP\n#define TOKEN2022_ACTION_EQUIP_ANY TOKEN_ACTION_EQUIP_ANY\n#define TOKEN2022_ACTION_HASTE TOKEN_ACTION_HASTE\n#define TOKEN2022_ACTION_DONT_COPY_TOKEN_SOURCE TOKEN_ACTION_DONT_COPY_TOKEN_SOURCE\n#define TOKEN2022_ACTION_CONVERT_INTO_ARTIFACT TOKEN_ACTION_CONVERT_INTO_ARTIFACT\n#define TOKEN2022_ACTION_RECORD_SOURCE_ID TOKEN_ACTION_RECORD_SOURCE_ID\n#define TOKEN2022_ACTION_ISNT_LEGENDARY TOKEN_ACTION_ISNT_LEGENDARY\n#define TOKEN2022_ACTION_BLOCKING TOKEN_ACTION_BLOCKING\n#define TOKEN2022_ACTION_PUMP_POWER TOKEN_ACTION_PUMP_POWER\n#define TOKEN2022_ACTION_PUMP_TOUGHNESS TOKEN_ACTION_PUMP_TOUGHNESS\n#define TOKEN2022_ACTION_ADD_SUBTYPE TOKEN_ACTION_ADD_SUBTYPE\n#define TOKEN2022_ACTION_ADD_COUNTERS TOKEN_ACTION_ADD_COUNTERS\n#define TOKEN2022_ACTION_SKIP_ATTACK_CHECK TOKEN_ACTION_SKIP_ATTACK_CHECK",
+  "token_action_values": {
+    "TOKEN_ACTION_TAPPED": 1,
+    "TOKEN_ACTION_ATTACKING_UNTAPPED": 2,
+    "TOKEN_ACTION_ATTACKING": 3,
+    "TOKEN_ACTION_EQUIP": 4,
+    "TOKEN_ACTION_EQUIP_ANY": 8,
+    "TOKEN_ACTION_HASTE": 16,
+    "TOKEN_ACTION_DONT_COPY_TOKEN_SOURCE": 32,
+    "TOKEN_ACTION_CONVERT_INTO_ARTIFACT": 64,
+    "TOKEN_ACTION_RECORD_SOURCE_ID": 128,
+    "TOKEN_ACTION_ISNT_LEGENDARY": 256,
+    "TOKEN_ACTION_BLOCKING": 65536,
+    "TOKEN_ACTION_PUMP_POWER": 131072,
+    "TOKEN_ACTION_PUMP_TOUGHNESS": 262144,
+    "TOKEN_ACTION_ADD_SUBTYPE": 524288,
+    "TOKEN_ACTION_ADD_COUNTERS": 1048576,
+    "TOKEN_ACTION_SKIP_ATTACK_CHECK": 2097152
+  },
+  "predecessor_defs_sha256": "5c02ba2cf020c0a6f697c06ca8e648b2236d4608416fb02d7acb844a74321935",
+  "canonical_defs_sha256": "f1eb20dbd32e6c5a52778c0170b423dc556ed5d233988720abe3f98c06c23d64",
+  "scope": "All rebuilt C callers use the recovered runtime layouts. Versioned typedefs are provenance spelling aliases, not old-layout ABI adapters. Historical recovery input records remain immutable."
+}

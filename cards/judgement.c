@@ -1,25 +1,10 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+void generic_wish_effect(int player, int card, test_definition_2022_t *test, int ai_card);
+
 // Functions
-void generic_wish_effect(int player, int card, int type, int ai_card){
-	if( get_id(player, card) == CARD_ID_DEATH_WISH ){
-		int amount = (life[player]+1)/2;
-		lose_life(player, amount);
-	}
-	int iid = -1;
-	if( player == HUMAN ){
-		iid = card_from_list(player, 5, type, 0, 0, 0, 0, 0, 0, 0, -1, 0);
-		add_card_to_hand(player, iid);
-	}
-	else{
-		iid = get_internal_card_id_from_csv_id(ai_card);
-		int card_added = add_card_to_hand(player, iid);
-		reveal_card(player, card, player, card_added);
-	}
-	if (iid != -1){
-		update_rules_engine(check_card_for_rules_engine(iid));
-	}
-}
+
 
 int generic_wish(int player, int card, event_t event, int type, int ai_card){
 /* You may choose a ... card you own from outside the game, reveal that card, and put it into your hand. Exile this. */
@@ -29,7 +14,9 @@ int generic_wish(int player, int card, event_t event, int type, int ai_card){
 	}
 
 	if(event == EVENT_RESOLVE_SPELL){
-		generic_wish_effect(player, card, type, ai_card);
+		test_definition_t wish_test;
+		default_test_definition(&wish_test, type);
+		generic_wish_effect(player, card, &wish_test, ai_card);
 		kill_card(player, card, KILL_EXILE);
 	}
 
@@ -2337,7 +2324,7 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_02058d68:
-    uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
       goto joined_r0x02058d8d;
   }
@@ -2374,7 +2361,7 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
       this_test.subtype = 0x16;
       count_for_gfp_ability_and_store_values(player, card, 0x77, player, 0, &this_test, 0x20, 0);
     }
-    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
     {
       return 0;
@@ -2402,7 +2389,7 @@ joined_r0x02058d8d:
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x20590c0; original cards/judgement.c:4.
  * Built-in chooser UI is stubbed; see functions/choose_a_card.cpp. */
-void generic_wish_effect_2022(int player, int card, test_definition_2022_t *test, int ai_card)
+void generic_wish_effect(int player, int card, test_definition_2022_t *test, int ai_card)
 {
   int result;
   int revealed_card;
@@ -2410,16 +2397,16 @@ void generic_wish_effect_2022(int player, int card, test_definition_2022_t *test
   result = get_id(player, card);
   if (result == 0x1729)
   {
-    lose_life_2022(player, (life[player] + 1) / 2);
+    lose_life(player, (life[player] + 1) / 2);
   }
   if (player == 0)
   {
-    result = new_card_from_list_2022(0, 5, test);
+    result = new_card_from_list(0, 5, test);
     add_card_to_hand(0, result);
   }
   else
   {
-    result = new_select_a_card_2022(player, player, 1, 0, 1, -1, test);
+    result = new_select_a_card(player, player, 1, 0, 1, -1, test);
     if (result < 0)
     {
       result = get_internal_card_id_from_csv_id(ai_card);

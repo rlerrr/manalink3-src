@@ -40,7 +40,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     assert len(component['retained_legacy_bodies'])==3
     for detail in component['retained_legacy_bodies']:
         assert (detail['source'],detail['name']) in LEGACY
-        assert sha(function_body(read(root/detail['source']),detail['name']).encode())==detail['body_sha256']
+        from unify_scalar_helpers import retained_source_body
+        assert sha(retained_source_body(root,detail['source'],detail['name']).encode())==detail['body_sha256']
     wrong=component['excluded_homonym'];assert wrong['address']==HOMONYM and wrong['source']=='cards/stronghold.c' and wrong['native_coff_storage']==3 and wrong['physical_arguments']==4
     assert sha(machine_bytes(int(HOMONYM,16),wrong['machine_bytes']))==wrong['machine_sha256']
     for a,params in component['parameters'].items():

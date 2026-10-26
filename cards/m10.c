@@ -1077,7 +1077,7 @@ int effect_must_attack_on_next_combat(int player, int card, event_t event)
   if (-1 < instance->damage_target_card)
   {
     instance = get_card_instance(player, card);
-    attack_if_able_2022((int)instance->damage_target_player, instance->damage_target_card, event);
+    attack_if_able((int)instance->damage_target_player, instance->damage_target_card, event);
   }
   if ((event == EVENT_PHASE_CHANGED) && (0x1d < current_phase))
   {
@@ -1099,7 +1099,7 @@ int card_sanguine_bond(int player, int card, event_t event)
   card_instance_t *instance;
   int iVar3;
 
-  iVar1 = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  iVar1 = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (iVar1 != 0)
   {
     instance = in_play(player, card);
@@ -1112,7 +1112,7 @@ int card_sanguine_bond(int player, int card, event_t event)
       }
       else
       {
-        lose_the_game_2022(1 - player);
+        lose_the_game(1 - player);
       }
     }
   }

@@ -1169,7 +1169,7 @@ int card_counterbore(int player, int card, event_t event){
 			card_instance_t *instance = get_card_instance(player, card);
 			int csvid = get_id(instance->targets[0].player, instance->targets[0].card);
 			real_counter_a_spell(player, card, instance->targets[0].player, instance->targets[0].card);
-			lobotomy_effect(player, instance->targets[0].player, csvid, 1);
+			lobotomy_effect(player, instance->targets[0].player, csvid, -1, 1);
 		}
 		kill_card(player, card, KILL_DESTROY);
 		return 0;

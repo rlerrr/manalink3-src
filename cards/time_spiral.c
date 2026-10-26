@@ -1,5 +1,13 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,
+                                               int targeting_player, int targeting_card);
+const char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,
+                                                                      int card,
+                                                                      int targeting_player,
+                                                                      int targeting_card);
+
 // Functions
 int generic_suspend_legacy(int player, int card, event_t event){
 	card_instance_t *instance = get_card_instance(player, card);
@@ -986,17 +994,7 @@ int card_chronosavant(int player, int card, event_t event){
 	return 0;
 }
 
-static const char* target_must_be_permanent_or_suspend(int who_chooses, int player, int card, int targeting_player, int targeting_card)
-{
-  if (is_what(player, card, TYPE_PERMANENT))
-	return NULL;
-  card_instance_t* instance = get_card_instance(player, card);
-  if (instance->internal_card_id == LEGACY_EFFECT_CUSTOM && instance->info_slot == (int)generic_suspend_legacy)
-	return NULL;
-  if (cards_data[instance->internal_card_id].id == CARD_ID_GREATER_GARGADON_SUSPENDED)
-	return NULL;
-  return EXE_STR(0x728F6C);//",type"
-}
+
 static const char* target_must_be_permanent_or_suspend_and_have_counters(int who_chooses, int player, int card, int targeting_player, int targeting_card)
 {
   const char* perm_or_susp = target_must_be_permanent_or_suspend(who_chooses, player, card, targeting_player, targeting_card);
@@ -3085,13 +3083,7 @@ When ~ enters the battlefield, you gain 4 life. */
 	return cip_lifegain(player, card, event, 4);
 }
 
-static const char* target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player, int card, int targeting_player, int targeting_card)
-{
-  const char* perm_or_susp = target_must_be_permanent_or_suspend(who_chooses, player, card, targeting_player, targeting_card);
-  if (perm_or_susp)
-	return perm_or_susp;
-  return count_counters(player, card, COUNTER_TIME) ? NULL : "must have counters";
-}
+
 int card_jhoiras_timebug(int player, int card, event_t event){
 
 	/* Jhoira's Timebug	|2
@@ -7544,7 +7536,7 @@ int card_fallen_ideal(int player, int card, event_t event)
           pump_until_eot_merge_previous(granted_to_player, iVar4, granted_to_player, iVar4, 2, 1);
       return iVar4;
     }
-    iVar2 = generic_aura_2022(player, card, event, player, 0, 0, 0x20, 0, 0, 0, 0);
+    iVar2 = generic_aura(player, card, event, player, 0, 0, 0x20, 0, 0, 0, 0);
   }
   return iVar2;
 }
@@ -7657,11 +7649,11 @@ int card_voidmage_husher(int player, int card, event_t event)
         iVar1 = cast_counter_activated_ability(player, card, 0);
         return iVar1;
       }
-      etb_ability_2022(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
+      etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
     }
     else
     {
-      etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
       if (event == EVENT_ETB)
       {
         resolve_counter_activated_ability(player, card, NULL, 0);
@@ -7671,7 +7663,7 @@ int card_voidmage_husher(int player, int card, event_t event)
     return 0;
   }
   bounce_permanent(player, card);
-  etb_ability_2022(player, card, EVENT_SPA, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, EVENT_SPA, RESOLVE_TRIGGER_MANDATORY);
   return 0;
 }
 
@@ -7708,7 +7700,7 @@ static int re_enable_abilities_at_eot(int player, int card, event_t event)
   instance = get_card_instance(player, card);
   if (-1 < instance->damage_target_player)
   {
-    disable_all_activated_abilities_2022((int)instance->damage_target_player,
+    disable_all_activated_abilities((int)instance->damage_target_player,
                                          instance->damage_target_card, 0);
   }
   kill_card(player, card, KILL_EXILE);
@@ -7767,14 +7759,14 @@ int card_trickbind(int player, int card, event_t event)
 
       pcVar1 =
           get_card_instance(stack_cards[stack_size + -1].player, stack_cards[stack_size + -1].card);
-      disable_all_activated_abilities_2022(pcVar1->parent_controller, pcVar1->parent_card, 1);
+      disable_all_activated_abilities(pcVar1->parent_controller, pcVar1->parent_card, 1);
       create_targetted_legacy_effect(player, card, re_enable_abilities_at_eot,
                                      pcVar1->parent_controller, pcVar1->parent_card);
       resolve_counter_activated_ability(player, card, NULL, 0);
     }
     else if (pcVar1->info_slot == 2)
     {
-      disable_all_activated_abilities_2022(pcVar1->targets[0].player, pcVar1->targets[0].card, 1);
+      disable_all_activated_abilities(pcVar1->targets[0].player, pcVar1->targets[0].card, 1);
       create_targetted_legacy_effect(player, card, re_enable_abilities_at_eot,
                                      pcVar1->targets[0].player, pcVar1->targets[0].card);
       resolve_counter_triggered_ability(player, card, NULL, 0);
@@ -7796,7 +7788,7 @@ int card_moonlace(int player, int card, event_t event)
 {
   int result;
 
-  result = lace_2022(player, card, event, 1);
+  result = lace(player, card, event, 1);
   return result;
 }
 
@@ -7805,7 +7797,7 @@ int card_moonlace(int player, int card, event_t event)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x20e7ea0; original cards/time_spiral.c:1026. */
-char *target_must_be_permanent_or_suspend_2022(int who_chooses, int player, int card,
+const char *target_must_be_permanent_or_suspend(int who_chooses, int player, int card,
                                                int targeting_player, int targeting_card)
 {
   int result;
@@ -7830,15 +7822,15 @@ char *target_must_be_permanent_or_suspend_2022(int who_chooses, int player, int 
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x20ea700; original cards/time_spiral.c:3214. */
-char *target_must_be_permanent_or_suspend_and_have_time_counters_2022(int who_chooses, int player,
+const char *target_must_be_permanent_or_suspend_and_have_time_counters(int who_chooses, int player,
                                                                       int card,
                                                                       int targeting_player,
                                                                       int targeting_card)
 {
-  char *pcVar1;
+  const char *pcVar1;
   int result;
 
-  pcVar1 = target_must_be_permanent_or_suspend_2022(who_chooses, player, card, targeting_player,
+  pcVar1 = target_must_be_permanent_or_suspend(who_chooses, player, card, targeting_player,
                                                     targeting_card);
   if (pcVar1 == NULL)
   {

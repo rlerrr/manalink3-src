@@ -2,6 +2,10 @@
 
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+static int get_updated_counters_number_as_cost(int player, int card, counter_t type, int number);
+int get_updated_counters_number(int player, int card, counter_t type, int number);
+
 int hack_silent_counters = 0;
 int counters_added = 0;	// backed up and saved
 
@@ -759,61 +763,9 @@ void get_special_counters_name(char* dest, int csvid, int num)
   get_counter_name_by_type(dest, get_counter_type_by_id(csvid), num);
 }
 
-static int get_updated_counters_number_as_cost(int player, int card, counter_t type, int number)
-{
-  if (card >= 0 && get_id(player, card) == CARD_ID_MELIRAS_KEEPERS && !is_humiliated(player, card))
-	return 0;
 
-  if (type == COUNTER_M1_M1 && (card < 0 || is_what(player, card, TYPE_CREATURE)) && check_battlefield_for_id(player, CARD_ID_MELIRA_SYLVOK_OUTCAST))
-	return 0;
 
-  return number;
-}
 
-int get_updated_counters_number(int player, int card, counter_t type, int number)
-{
-  if (number <= 0)
-	return number;
-
-  number = get_updated_counters_number_as_cost(player, card, type, number);
-  if (!number)
-	return 0;
-
-  if (card >= 0 && is_what(player, card, TYPE_EFFECT))
-	return number;
-
-  card_instance_t* instance;
-  int p, c;
-  for (p = 0; p <= 1; ++p)
-	for (c = 0; c < active_cards_count[p]; ++c)
-	  if ((instance = in_play(p, c)))
-		switch (cards_data[instance->internal_card_id].id)
-		  {
-			case CARD_ID_DOUBLING_SEASON:		// self only: doubles everything
-			  if (p != player)
-				continue;
-			  // else fall through
-			case CARD_ID_SELESNYA_LOFT_GARDENS:	// everyone: doubles everything
-			  number *= 2;
-			  break;
-
-			case CARD_ID_HARDENED_SCALES:
-			  if (p == player && type == COUNTER_P1_P1)
-				number++;
-			  break;
-
-			case CARD_ID_CORPSEJACK_MENACE:		// self only: doubles +1/+1
-			  if (p != player)
-				continue;
-			  // else fall through
-			case CARD_ID_PRIMAL_VIGOR:			// everyone: doubles +1/+1
-			  if (type == COUNTER_P1_P1)
-				number *= 2;
-			  break;
-		  }
-
-  return number;
-}
 
 static void add_or_remove_counters_impl(int player, int card, counter_t type, int num)
 {
@@ -2239,7 +2191,7 @@ enum {
 };
 
 /* ManalinkEh 2022: 0x26d4540; original functions/counters.c:919. */
-static int counter_number_as_cost_2022(int player, int card, counter_t type, int number)
+static int get_updated_counters_number_as_cost(int player, int card, counter_t type, int number)
 {
   int result;
   result = can_have_counters_placed_on_it(player, card);
@@ -2283,7 +2235,7 @@ static int counter_number_2022_impl(int player, int card, counter_t type, int nu
   int card_00;
   int iVar5;
 
-  iVar2 = counter_number_as_cost_2022(player, card, type, number);
+  iVar2 = get_updated_counters_number_as_cost(player, card, type, number);
   if ((iVar2 != 0) && ((card < 0 || (iVar5 = is_what(player, card, 0x80), iVar5 == 0))))
   {
     iVar5 = 0;
@@ -2379,7 +2331,7 @@ static int counter_number_2022_impl(int player, int card, counter_t type, int nu
 }
 
 /* ManalinkEh 2022: 0x26d4810; original functions/counters.c:933. */
-int counter_number_2022(int player, int card, counter_t type, int number)
+int get_updated_counters_number(int player, int card, counter_t type, int number)
 {
   int result;
 
@@ -2788,7 +2740,7 @@ void add_counters_from_source(int player, int card, int t_player, int t_card, co
   }
   if (0 < num)
   {
-    num_00 = counter_number_2022(t_player, t_card, type, num);
+    num_00 = get_updated_counters_number(t_player, t_card, type, num);
     if (0 < num_00)
     {
       add_or_remove_counters_from_source_impl(player, card, t_player, t_card, type, num_00);
@@ -2922,7 +2874,7 @@ static void remove_counters_from_source_2022_impl(int player, int card, int t_pl
           if ((iVar4 != 0) && (iVar4 = pick_target(&td, "TARGET_PLAYER"), iVar4 != 0))
           {
             lose_life(instance->targets[0].player, 1);
-            gain_life_2022(player, 1);
+            gain_life(player, 1);
           }
           iVar2 = iVar2 + 1;
         } while (iStack_70 != iVar2);

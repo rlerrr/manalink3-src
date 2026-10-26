@@ -1236,7 +1236,7 @@ int card_crow_storm(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      result = check_special_flags_2022(player, card, 0x40000);
+      result = check_special_flags(player, card, 0x40000);
       if (result == 0)
       {
         result = get_storm_count();
@@ -1459,7 +1459,7 @@ int card_everythingamajig_c(int player, int card, event_t event)
     {
       if ((((unsigned int)land_can_be_played >> 16 & 0xff) & 4) == 0)
       {
-        iVar3 = can_use_activated_abilities_2022(player, card);
+        iVar3 = can_use_activated_abilities(player, card);
         return (unsigned int)(iVar3 != 0 && iVar2 != 0);
       }
     }
@@ -1557,7 +1557,7 @@ int card_knight_of_the_widget(int player, int card, event_t event)
   int iVar4;
   int card_00;
 
-  vigilance_2022(player, card, event);
+  vigilance(player, card, event);
   if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
        (affected_card_controller == player)) &&
       (player != -1))
@@ -1947,7 +1947,7 @@ int card_everythingamajig_b(int player, int card, event_t event)
                         0, 0, 0, 0, 0, "\001\025", 0, 0, 0, 0);
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar1 = can_use_activated_abilities_2022(player, card);
+      iVar1 = can_use_activated_abilities(player, card);
       return (unsigned int)(iVar1 != 0 && iVar2 != 0);
     }
     if ((event == EVENT_ACTIVATE) && (iVar2 == 3))
@@ -2269,7 +2269,7 @@ int card_go_to_jail(int player, int card, event_t event)
   target_definition_t td;
 
   return_from_oblivion(player, card, event);
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
 
@@ -2429,7 +2429,7 @@ int card_sly_spy_f(int player, int card, event_t event)
       {
         amount = roll_d6t(player, player, card, uVar4, -1);
         iVar3 = iVar3 + 1;
-        lose_life_2022(uVar4, amount);
+        lose_life(uVar4, amount);
       } while (iVar3 != iVar1);
     }
     uStack_20 = uStack_20 + 1;
@@ -2462,7 +2462,7 @@ int card_box_of_free_range_goblins(int player, int card, event_t event)
   if (event == EVENT_RESOLVE_SPELL)
   {
     result = roll_d6t(player, player, card, -1, -1);
-    generate_tokens_by_id_2022(player, card, 0x493a, result);
+    generate_tokens_by_id(player, card, 0x493a, result);
     kill_card(player, card, KILL_DESTROY);
   }
   result = basic_spell(player, card, event);
@@ -2476,8 +2476,8 @@ int card_garbage_elemental_d(int player, int card, event_t event)
   int result;
   target_definition_t td;
 
-  cascade_2022(player, card, event);
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  cascade(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -2570,7 +2570,7 @@ int card_painiac(int player, int card, event_t event)
     return 0;
   }
   power = roll_d6t(player, player, card, -1, -1);
-  pump_until_eot_merge_previous_2022(player, card, player, card, power, 0);
+  pump_until_eot_merge_previous(player, card, player, card, power, 0);
   return 0;
 }
 
@@ -2614,7 +2614,7 @@ int card_earl_of_squirrel(int player, int card, event_t event)
           result = is_humiliated_for_ability(player, card, AL_STATIC);
           if (result == 0)
           {
-            add_a_subtype_2022(affected_card_controller, affected_card, SUBTYPE_SQUIRREL);
+            add_a_subtype(affected_card_controller, affected_card, SUBTYPE_SQUIRREL);
           }
         }
       }
@@ -2644,8 +2644,8 @@ int card_garbage_elemental_c(int player, int card, event_t event)
 {
   int howmany;
 
-  battle_cry_2022(player, card, event);
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  battle_cry(player, card, event);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -2666,33 +2666,33 @@ int card_spike_tournament_grinder(int player, int card, event_t event)
   int result;
   test_definition_2022_t test;
 
-  phyrexian_casting_costs_2022(player, card, event, 2, 2, 0, 0, 0, 0, 0);
+  phyrexian_casting_costs(player, card, event, 2, 2, 0, 0, 0, 0, 0);
   if (event == EVENT_CAN_ACTIVATE)
   {
-    result = has_phyrexian_mana_for_activated_ability_2022(player, card, 0, 4, 0, 0, 0, 0);
+    result = has_phyrexian_mana_for_activated_ability(player, card, 0, 4, 0, 0, 0, 0);
     if (result != 0)
     {
-      result = generic_activated_ability_2022(player, card, EVENT_CAN_ACTIVATE, 0x800, 0, 0, 0, 0,
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0x800, 0, 0, 0, 0,
                                               0, 0, 0, NULL, NULL);
       return result;
     }
   }
   else if (event == EVENT_ACTIVATE)
   {
-    result = charge_phyrexian_mana_for_activated_ability_2022(player, card, 0, 4, 0, 0, 0, 0);
+    result = charge_phyrexian_mana_for_activated_ability(player, card, 0, 4, 0, 0, 0, 0);
     if (result != 0)
     {
-      result = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0x800, 0, 0, 0, 0, 0, 0,
+      result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0x800, 0, 0, 0, 0, 0, 0,
                                               0, NULL, NULL);
       return result;
     }
   }
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    new_default_test_definition_2022(
+    new_default_test_definition(
         &test, 0xff, "Select a card that has been banned or restricted in a Constructed format.");
     test.special_selection_function = test_has_been_banned_or_restricted;
-    generic_wish_effect_2022(player, card, &test, 0x2b);
+    generic_wish_effect(player, card, &test, 0x2b);
   }
   return 0;
 }
@@ -2745,15 +2745,15 @@ int card_very_cryptic_command_b(int player, int card, event_t event)
       return 0;
     }
   }
-  default_target_definition_2022(player, card, &td_permanent, 0x47);
+  default_target_definition(player, card, &td_permanent, 0x47);
   td_permanent.preferred_controller = player;
-  iVar2 = target_available_2022(player, card, &td_permanent);
-  default_target_definition_2022(player, card, &td_player, 0);
+  iVar2 = target_available(player, card, &td_permanent);
+  default_target_definition(player, card, &td_player, 0);
   td_player.zone = 0x1000;
-  iVar3 = can_target_2022(&td_player);
-  new_default_test_definition_2022(&test_instant_sorcery, 0x38,
+  iVar3 = can_target(&td_player);
+  new_default_test_definition(&test_instant_sorcery, 0x38,
                                    "Select target instant or sorcery card.");
-  iVar4 = new_special_count_grave_2022(player, &test_instant_sorcery);
+  iVar4 = new_special_count_grave(player, &test_instant_sorcery);
   uVar6 = 0;
   if (0 < iVar4)
   {
@@ -2785,12 +2785,12 @@ int card_very_cryptic_command_b(int player, int card, event_t event)
         if (CVar1 == CHOICE_TAP)
         {
           iVar3 = iVar2 + 1;
-          new_pick_target_2022(&td_player, "TARGET_PLAYER", iVar2, 1);
+          new_pick_target(&td_player, "TARGET_PLAYER", iVar2, 1);
         }
         else if (CVar1 == CHOICE_RAISE)
         {
           iVar3 = iVar2 + 1;
-          select_target_from_grave_source_2022(player, card, player, SFG_0, 2,
+          select_target_from_grave_source(player, card, player, SFG_0, 2,
                                                &test_instant_sorcery, iVar2);
         }
         else
@@ -2798,7 +2798,7 @@ int card_very_cryptic_command_b(int player, int card, event_t event)
           iVar3 = iVar2;
           if (CVar1 == CHOICE_UNTAP)
           {
-            pick_up_to_n_targets_2022(&td_permanent, "TARGET_PERMANENT", 2);
+            pick_up_to_n_targets(&td_permanent, "TARGET_PERMANENT", 2);
             iVar3 = iVar2 + 2;
           }
         }
@@ -2818,7 +2818,7 @@ int card_very_cryptic_command_b(int player, int card, event_t event)
       CVar1 = *pCVar7;
       if (CVar1 == CHOICE_TAP)
       {
-        iVar3 = validate_target_2022(player, card, &td_player, iVar2);
+        iVar3 = validate_target(player, card, &td_player, iVar2);
         if (iVar3 != 0)
           goto LAB_025c5d0b;
       LAB_025c5d41:
@@ -2836,7 +2836,7 @@ int card_very_cryptic_command_b(int player, int card, event_t event)
       }
       else if (CVar1 == CHOICE_UNTAP)
       {
-        iVar3 = validate_target_2022(player, card, &td_permanent, iVar2);
+        iVar3 = validate_target(player, card, &td_permanent, iVar2);
         if (iVar3 == 0)
         {
           instance->targets[iVar2].player = -1;
@@ -2845,7 +2845,7 @@ int card_very_cryptic_command_b(int player, int card, event_t event)
         {
           iStack_278 = iStack_278 + 1;
         }
-        iVar3 = validate_target_2022(player, card, &td_permanent, iVar2);
+        iVar3 = validate_target(player, card, &td_permanent, iVar2);
         if (iVar3 == 0)
         {
           instance->targets[iVar2 + 1].player = -1;
@@ -2894,10 +2894,10 @@ int card_very_cryptic_command_b(int player, int card, event_t event)
           {
             if (-1 < instance->targets[iVar2].player)
             {
-              default_test_definition_2022(&test, 0x47);
+              default_test_definition(&test, 0x47);
               test.special_selection_function = test_words_in_name_val;
               test.value_for_special_selection_function = 1;
-              new_manipulate_all_2022(player, card, instance->targets[iVar2].player, &test,
+              new_manipulate_all(player, card, instance->targets[iVar2].player, &test,
                                       ACT_TAP);
             }
             goto LAB_025c5ba2;
@@ -2953,15 +2953,15 @@ int card_very_cryptic_command_e(int player, int card, event_t event)
 
   if (event == EVENT_CAN_CAST)
   {
-    counterspell_target_definition_2022(player, card, &td_spell, 0);
+    counterspell_target_definition(player, card, &td_spell, 0);
     td_spell.special = 0x8000;
     td_spell.extra = (int32_t)target_has_black_border;
-    iVar2 = counterspell_2022(player, card, EVENT_CAN_CAST, &td_spell, -1);
-    default_target_definition_2022(player, card, &td_creature, 2);
-    iVar3 = can_target_2022(&td_creature);
-    default_target_definition_2022(player, card, &td_player, 0);
+    iVar2 = counterspell(player, card, EVENT_CAN_CAST, &td_spell, -1);
+    default_target_definition(player, card, &td_creature, 2);
+    iVar3 = can_target(&td_creature);
+    default_target_definition(player, card, &td_player, 0);
     td_player.zone = 0x1000;
-    iVar4 = can_target_2022(&td_player);
+    iVar4 = can_target(&td_player);
     iVar3 = dialog_impl(player, card, EVENT_CAN_CAST, "\001\005", choices + 1, "\001\015",
                         "\001\002", "Counter spell", iVar2, 1, "Creature to hand", iVar3, 1,
                         "Untap permanents", 1, 1, "Mill", iVar4, 1, 0, 0, 0, 0);
@@ -2974,15 +2974,15 @@ int card_very_cryptic_command_e(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      counterspell_target_definition_2022(player, card, &td_spell, 0);
+      counterspell_target_definition(player, card, &td_spell, 0);
       td_spell.special = 0x8000;
       td_spell.extra = (int32_t)target_has_black_border;
-      iVar2 = counterspell_2022(player, card, EVENT_CAN_CAST, &td_spell, -1);
-      default_target_definition_2022(player, card, &td_creature, 2);
-      iVar3 = can_target_2022(&td_creature);
-      default_target_definition_2022(player, card, &td_player, 0);
+      iVar2 = counterspell(player, card, EVENT_CAN_CAST, &td_spell, -1);
+      default_target_definition(player, card, &td_creature, 2);
+      iVar3 = can_target(&td_creature);
+      default_target_definition(player, card, &td_player, 0);
       td_player.zone = 0x1000;
-      iVar4 = can_target_2022(&td_player);
+      iVar4 = can_target(&td_player);
       choices[0] = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\005", choices + 1, "\001\015",
                                "\001\002", "Counter spell", iVar2, 1, "Creature to hand", iVar3, 1,
                                "Untap permanents", 1, 1, "Mill", iVar4, 1, 0, 0, 0, 0);
@@ -3006,12 +3006,12 @@ int card_very_cryptic_command_e(int player, int card, event_t event)
           if (CVar1 == CHOICE_BOUNCE)
           {
             iVar3 = iVar2 + 1;
-            new_pick_target_2022(&td_creature, "TARGET_CREATURE", iVar2, 1);
+            new_pick_target(&td_creature, "TARGET_CREATURE", iVar2, 1);
           }
           else if (CVar1 == CHOICE_MILL)
           {
             iVar3 = iVar2 + 1;
-            new_pick_target_2022(&td_player, "TARGET_PLAYER", iVar2, 1);
+            new_pick_target(&td_player, "TARGET_PLAYER", iVar2, 1);
           }
           else
           {
@@ -3019,7 +3019,7 @@ int card_very_cryptic_command_e(int player, int card, event_t event)
             if (CVar1 == CHOICE_COUNTER)
             {
               iVar3 = iVar2 + 1;
-              counterspell_2022(player, card, EVENT_CAST_SPELL, &td_spell, iVar2);
+              counterspell(player, card, EVENT_CAST_SPELL, &td_spell, iVar2);
             }
           }
           pCVar7 = pCVar7 + 1;
@@ -3031,15 +3031,15 @@ int card_very_cryptic_command_e(int player, int card, event_t event)
   else if ((event == EVENT_RESOLVE_SPELL || event == EVENT_CAN_CHANGE_TARGET) ||
            (event == EVENT_CHANGE_TARGET))
   {
-    counterspell_target_definition_2022(player, card, &td_spell, 0);
+    counterspell_target_definition(player, card, &td_spell, 0);
     td_spell.special = 0x8000;
     td_spell.extra = (int32_t)target_has_black_border;
-    iVar2 = counterspell_2022(player, card, EVENT_CAN_CAST, &td_spell, -1);
-    default_target_definition_2022(player, card, &td_creature, 2);
-    iVar3 = can_target_2022(&td_creature);
-    default_target_definition_2022(player, card, &td_player, 0);
+    iVar2 = counterspell(player, card, EVENT_CAN_CAST, &td_spell, -1);
+    default_target_definition(player, card, &td_creature, 2);
+    iVar3 = can_target(&td_creature);
+    default_target_definition(player, card, &td_player, 0);
     td_player.zone = 0x1000;
-    iVar4 = can_target_2022(&td_player);
+    iVar4 = can_target(&td_player);
     choices[0] = dialog_impl(player, card, event, "\001\005", choices + 1, "\001\015", "\001\002",
                              "Counter spell", iVar2, 1, "Creature to hand", iVar3, 1,
                              "Untap permanents", 1, 1, "Mill", iVar4, 1, 0, 0, 0, 0);
@@ -3056,7 +3056,7 @@ int card_very_cryptic_command_e(int player, int card, event_t event)
         td = &td_creature;
         if ((CVar1 == CHOICE_BOUNCE) || (td = &td_player, CVar1 == CHOICE_MILL))
         {
-          iVar3 = validate_target_2022(player, card, td, iVar2);
+          iVar3 = validate_target(player, card, td, iVar2);
           if (iVar3 == 0)
             goto LAB_025c66e9;
         LAB_025c66b1:
@@ -3065,7 +3065,7 @@ int card_very_cryptic_command_e(int player, int card, event_t event)
         }
         else if (CVar1 == CHOICE_COUNTER)
         {
-          iVar3 = counterspell_validate_2022(player, card, &td_spell, iVar2);
+          iVar3 = counterspell_validate(player, card, &td_spell, iVar2);
           if (iVar3 != 0)
             goto LAB_025c66b1;
         LAB_025c66e9:
@@ -3086,9 +3086,9 @@ int card_very_cryptic_command_e(int player, int card, event_t event)
           CVar1 = *pCVar7;
           if (CVar1 == CHOICE_UNTAP)
           {
-            default_test_definition_2022(&test, 0x47);
+            default_test_definition(&test, 0x47);
             test.special_selection_function = test_has_any_watermark;
-            new_manipulate_all_2022(player, card, player, &test, ACT_UNTAP);
+            new_manipulate_all(player, card, player, &test, ACT_UNTAP);
           }
           else
           {
@@ -3193,7 +3193,7 @@ int card_sly_spy_a(int player, int card, event_t event)
             {
               default_ec_definition(uVar5, player, &ec);
               ec.effect = 1;
-              new_default_test_definition_2022(&test, 0xff, "");
+              new_default_test_definition(&test, 0xff, "");
               test.special_selection_function = test_words_in_name_val;
               if (iVar6 == 1)
               {
@@ -3205,7 +3205,7 @@ int card_sly_spy_a(int player, int card, event_t event)
               }
               test.value_for_special_selection_function = iVar6;
               sprintf(test.message, "Select a card with %d word%s in its name.", iVar6, puVar4);
-              new_effect_coercion_2022(&ec, &test);
+              new_effect_coercion(&ec, &test);
             }
           }
           iStack_110 = iStack_110 + 1;
@@ -3290,10 +3290,10 @@ int card_staff_of_the_letter_magus(int player, int card, event_t event)
     cVar2 = choose_a_consonant_not_nrst(player, player, card);
     make_txtfx(player, card, fx_staff_of_the_letter_magus, CARD_ID_STAFF_OF_THE_LETTER_MAGUS,
                (int)cVar2);
-    sp_ability_trigger_2022(2, EVENT_RESOLVE_SPELL, 2, TYPE_ANY, NULL, player, card);
+    sp_ability_trigger(2, EVENT_RESOLVE_SPELL, 2, TYPE_ANY, NULL, player, card);
     return 0;
   }
-  sp_ability_trigger_2022(2, event, 2, TYPE_ANY, NULL, player, card);
+  sp_ability_trigger(2, event, 2, TYPE_ANY, NULL, player, card);
   if (event != EVENT_SPA)
   {
     return 0;
@@ -3371,7 +3371,7 @@ LAB_025c8d64:
   }
   if (0 < result)
   {
-    gain_life_2022(player, result);
+    gain_life(player, result);
   }
   return 0;
 }
@@ -3391,11 +3391,11 @@ int card_capital_offense(int player, int card, event_t event)
   char rules[3000];
   if (event != EVENT_RESOLVE_SPELL)
   {
-    result = vanilla_instant_pump_2022(player, card, event, 2, 1 - player, -1, -1, 0, 0);
+    result = vanilla_instant_pump(player, card, event, 2, 1 - player, -1, -1, 0, 0);
     return result;
   }
-  default_target_definition_2022(player, card, &td, 2);
-  result = valid_target_2022(&td);
+  default_target_definition(player, card, &td, 2);
+  result = valid_target(&td);
   if (result != 0)
   {
     instance = get_card_instance(player, card);
@@ -3413,7 +3413,7 @@ int card_capital_offense(int player, int card, event_t event)
       } while (current_char != '\0');
       if (0 < result)
       {
-        pump_until_eot_2022(player, card, instance->targets[0].player, instance->targets[0].card,
+        pump_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
                             -result, -result);
       }
     }

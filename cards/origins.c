@@ -1,6 +1,9 @@
 // -*- c-basic-offset:2 -*-
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+void renown(int player, int card, event_t event, int n);
+
 /***** Functions *****/
 
 static int is_renowned(int player, int card)
@@ -8,28 +11,25 @@ static int is_renowned(int player, int card)
   return check_special_flags3(player, card, SF3_RENOWNED);
 }
 
-static void renown(int player, int card, event_t event, int n)
+void renown(int player, int card, event_t event, int n)
 {
-  /* 702.111. Renown
-   *
-   * 702.111a Renown is a triggered ability. "Renown N" means "When this creature deals combat damage to a player, if it isn't renowned, put N +1/+1 counters on
-   * it and it becomes renowned."
-   *
-   * 702.111b Renowned is a designation that has no rules meaning other than to act as a marker that the renown ability and other spells and abilities can
-   * identify. Only permanents can be or become renowned. Once a permanent becomes renowned, it stays renowned until it leaves the battlefield. Renowned is
-   * neither an ability nor part of the permanent's copiable values.
-   *
-   * 702.111c If a creature has multiple instances of renown, each triggers separately. The first such ability to resolve will cause the creature to become
-   * renowned, and subsequent abilities will have no effect. (See rule 603.4) */
-
-  if ((event == EVENT_DEAL_DAMAGE || trigger_condition == TRIGGER_DEAL_DAMAGE)
-	  && !is_renowned(player, card)
-	  && has_combat_damage_been_inflicted_to_a_player(player, card, event))
-	{
-	  set_special_flags3(player, card, SF3_RENOWNED);
-	  add_1_1_counters(player, card, n);
-	  dispatch_xtrigger2(player, XTRIGGER_BECAME_RENOWNED, "became renowned", 0, player, card);
-	}
+  int result;
+  if ((event == EVENT_DEAL_DAMAGE) || (trigger_condition == 0xd7))
+  {
+    result = check_special_flags3(player, card, 0x10);
+    if (result == 0)
+    {
+      result = has_combat_damage_been_inflicted_to_a_player(player, card, event);
+      if (result != 0)
+      {
+        set_special_flags3(player, card, 0x10);
+        add_counters_from_source(player, card, player, card, COUNTER_P1_P1, n);
+        dispatch_xtrigger2(player, XTRIGGER_BECAME_RENOWNED, "became renowned", 0, player, card);
+        return;
+      }
+    }
+  }
+  return;
 }
 
 void
@@ -2427,7 +2427,7 @@ int card_infinite_obliteration(int player, int card, event_t event)
 				ai_modifier += 100;	// So it casts it at all
 			}
 
-		  lobotomy_effect(player, 1-player, cards_data[iid].id, 0);
+		  lobotomy_effect(player, 1-player, cards_data[iid].id, -1, 0);
 		}
 	  kill_card(player, card, KILL_DESTROY);
 	}
@@ -5328,7 +5328,7 @@ static int pyromancers_goggles_legacy(int player, int card, event_t event)
     {
       return 0;
     }
-    result = check_special_flags_2022(affected_card_controller, affected_card, 0x40000);
+    result = check_special_flags(affected_card_controller, affected_card, 0x40000);
     if (result != 0)
     {
       return 0;
@@ -5437,7 +5437,7 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_020d9664:
-    uVar2 = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
       goto joined_r0x020d968d;
   }
@@ -5472,7 +5472,7 @@ static int shadows_of_the_past_effect(int player, int card, event_t event)
       }
       count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
     }
-    uVar2 = resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+    uVar2 = resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (uVar2 == 0)
     {
       return 0;
@@ -5542,25 +5542,6 @@ int card_days_undoing(int player, int card, event_t event)
 /* Recovered October 2022 attacker/keyword helpers. */
 
 /* ManalinkEh 2022: 0x20d9ef0; original cards/origins.c:11. */
-void renown_2022(int player, int card, event_t event, int n)
-{
-  int result;
-  if ((event == EVENT_DEAL_DAMAGE) || (trigger_condition == 0xd7))
-  {
-    result = check_special_flags3_2022(player, card, 0x10);
-    if (result == 0)
-    {
-      result = has_combat_damage_been_inflicted_to_a_player(player, card, event);
-      if (result != 0)
-      {
-        set_special_flags3_2022(player, card, 0x10);
-        add_counters_from_source(player, card, player, card, COUNTER_P1_P1, n);
-        dispatch_xtrigger2(player, XTRIGGER_BECAME_RENOWNED, "became renowned", 0, player, card);
-        return;
-      }
-    }
-  }
-  return;
-}
+
 
 #endif

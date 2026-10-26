@@ -2835,7 +2835,7 @@ int card_archangel_of_thune(int player, int card, event_t event)
   test_definition_t this_test;
 
   lifelink(player, card, event);
-  result = trigger_gain_life_2022(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
+  result = trigger_gain_life(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (result != 0)
   {
     instance = in_play(player, card);

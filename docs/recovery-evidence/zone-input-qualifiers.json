@@ -1,0 +1,528 @@
+{
+  "format": 1,
+  "functions": {
+    "get_average_value_from_zone": {
+      "parameter": "s_location",
+      "local_end_pointer": "piVar1",
+      "native_definition": "int get_average_value_from_zone_2022(int targ_player, int *s_location, int zone_count,\n                                     test_definition_2022_t *this_test, int my_test, int mode)\n{\n  int *piVar1;\n  int result;\n  int iStack_1c;\n  int iStack_18;\n\n  if (0 < zone_count)\n  {\n    iStack_18 = 0;\n    iStack_1c = 0;\n    piVar1 = s_location + zone_count;\n  LAB_02650d40:\n    do\n    {\n      result = new_make_test_2022(targ_player, *s_location, my_test, this_test);\n      if (result != 0)\n      {\n        iStack_18 = iStack_18 + 1;\n        if (((mode & 0xfffffffbU) == 2) || (mode == 4))\n        {\n          result = get_cmc_by_internal_id(*s_location);\n          iStack_1c = iStack_1c + result;\n        }\n        if ((mode & 0xfffffffdU) == 1)\n        {\n          result = *s_location;\n          s_location = s_location + 1;\n          result = get_base_value(-1, result);\n          iStack_1c = iStack_1c + result;\n          if (s_location == piVar1)\n            break;\n          goto LAB_02650d40;\n        }\n      }\n      s_location = s_location + 1;\n    } while (s_location != piVar1);\n    if (iStack_18 != 0)\n    {\n      return iStack_1c / iStack_18;\n    }\n  }\n  return 0;\n}",
+      "native_definition_sha256": "b7d4b73c57c885d933f6360dc411f41d0870ee981aa5ff9cb5e4ee7c3e5731eb",
+      "qualified_definition_sha256": "c41bd099bd51f6cad01913b0a788a84b9c7e4fc72ce6460c49501c8c54b05e89",
+      "accepted_recovery_record": {
+        "name": "get_average_value_from_zone_2022",
+        "address": "2650cf0",
+        "source": "functions/tutors.c",
+        "line": "28",
+        "static": false,
+        "prototype": "int get_average_value_from_zone_2022(int targ_player, int *s_location, int zone_count,\n                                     test_definition_2022_t *this_test, int my_test, int mode);",
+        "raw_sha256": "6edf8304cf97cfd8503bbf66cebc12dd0ac893f8c04e08ddf3745c3cdb976e59",
+        "recovered_literals": [],
+        "test_consumer_evidence": {
+          "machine_bytes": 234,
+          "machine_sha256": "9f6ecc033e5251174c323315b54720840e3d3a9bae793868b7966e88c793c1fe",
+          "changes": [],
+          "canonical_calls": [
+            {
+              "address": "2650d54",
+              "bytes": "e8f7e90600",
+              "target": "26bf750",
+              "name": "new_make_test_2022"
+            }
+          ]
+        },
+        "reconstruction": "Native graveyard/zone selection and counterspell consumers use the 216-byte test and 84-byte target domains. Separate compiler parts repair recursive name bindings in Whirlpool Rider/Drake/Warrior, escape and amaug_leg. The previously accepted to-array wrapper is migrated once and its legacy interface receives an explicitly uncounted compatibility body.",
+        "reconstruction_body_sha256": "49e5c8eac74b5b43555529959046d5d7cec0e3fd37eea04b5dde620410e9791f"
+      },
+      "native_body_sha256": "49e5c8eac74b5b43555529959046d5d7cec0e3fd37eea04b5dde620410e9791f",
+      "reason": "Zone counter and average-value scanner read IDs and advance local pointers. Selection reads indexed IDs and forwards the array only to the read-only display and average-value APIs; its writable AI selection array is separate."
+    },
+    "select_card_from_zone": {
+      "parameter": "s_location",
+      "local_end_pointer": null,
+      "native_definition": "int select_card_from_zone_2022(int player, int targ_player, int *s_location, int zone_count,\n                               int must_select, int ai_selection_mode, int test_type,\n                               test_definition_2022_t *this_test)\n{\n  int iVar1;\n  int iVar2;\n  int iVar3;\n  char cVar4;\n  const char *argument6;\n  int iVar5;\n  bool bVar6;\n  int iStack_34;\n  int iStack_2c;\n  int *piStack_28;\n  unsigned int uStack_24;\n  unsigned int uStack_20;\n  int iStack_1c;\n  int iStack_18;\n  char cStack_11;\n\n  if (player != 1)\n  {\n    while (true)\n    {\n      argument6 = hack_override_show_deck_done_button_label;\n      if (hack_override_show_deck_done_button_label == NULL)\n      {\n        argument6 = (const char *)ENGINE_DONE_LABEL;\n      }\n      call_sub_437E20_unless_ai_is_speculating();\n      hack_show_deck_force_expansion = 0;\n      iVar2 = show_deck_exe(player, s_location, zone_count, this_test->message, 0, (int)argument6);\n      if (must_select == 0)\n        break;\n      if (iVar2 != -1)\n      {\n        iVar5 = new_make_test_2022(targ_player, s_location[iVar2], test_type, this_test);\n        if (iVar5 != 0)\n        {\n          return iVar2;\n        }\n      }\n    }\n    if (iVar2 == -1)\n    {\n      return -1;\n    }\n    iVar5 = new_make_test_2022(targ_player, s_location[iVar2], test_type, this_test);\n    if (iVar5 != 0)\n    {\n      return iVar2;\n    }\n    return -1;\n  }\n  iStack_18 = get_average_value_from_zone_2022(targ_player, s_location, zone_count, this_test,\n                                               test_type, ai_selection_mode);\n  int ai_pick[zone_count];\n  piStack_28 = ai_pick;\n  if (zone_count < 1)\n  {\n    iVar5 = -1;\n  }\n  else\n  {\n    iStack_1c = 0;\n    iVar5 = 0;\n    uStack_20 = ai_selection_mode - 1;\n    uStack_24 = ai_selection_mode - 3;\n    do\n    {\n      while (true)\n      {\n        iVar1 = new_make_test_2022(targ_player, s_location[iVar5], test_type, this_test);\n        if (iVar1 != 0)\n          break;\n      LAB_02650f20:\n        iVar5 = iVar5 + 1;\n        if (zone_count == iVar5)\n          goto LAB_02650ff5;\n      }\n      if (ai_selection_mode == 5)\n      {\n      LAB_0265112d:\n        bVar6 = iVar5 == -1;\n        goto LAB_02650ffa;\n      }\n      if (ai_selection_mode == 7)\n      {\n        iVar1 = internal_rand(100);\n        if (iVar1 < 0x32)\n        {\n          cStack_11 = '\\0';\n          iVar1 = -1;\n          goto LAB_02650fa8;\n        }\n        goto LAB_0265112d;\n      }\n      if (ai_selection_mode == 6)\n      {\n        iVar1 = s_location[iVar5];\n        iVar1 = good_to_put_in_grave(-1, iVar1);\n        if (iVar1 != 0)\n          goto LAB_0265112d;\n        cStack_11 = '\\x01';\n        iVar1 = -1;\n      }\n      else\n      {\n        cStack_11 = '\\0';\n        cVar4 = (ai_selection_mode & 0xfffffffbU) == 2 || ai_selection_mode == 4;\n        if ((ai_selection_mode & 0xfffffffdU) == 1)\n        {\n          if (this_test->has_mana_to_pay_cmc != '\\0')\n          {\n            iVar1 = -1;\n            if (this_test->has_mana_to_pay_cmc != '\\x01')\n              goto LAB_02650fa8;\n            iStack_2c = cVar4;\n            iStack_34 = -1;\n            iVar1 = get_cmc_by_internal_id(s_location[iVar5]);\n            iVar3 = has_mana(1, 0, iVar1);\n            iVar1 = iStack_34;\n            cVar4 = (char)iStack_2c;\n            if (iVar3 == 0)\n              goto LAB_026510e3;\n          }\n          iStack_2c = cVar4;\n          iVar1 = get_base_value(-1, s_location[iVar5]);\n          cVar4 = (char)iStack_2c;\n        }\n        else\n        {\n          iVar1 = -1;\n        }\n      LAB_026510e3:\n        if (cVar4 == '\\0')\n          goto LAB_02650fa8;\n      }\n      if (this_test->has_mana_to_pay_cmc == '\\0')\n      {\n      LAB_026510b0:\n        iVar1 = get_cmc_by_internal_id(s_location[iVar5]);\n      }\n      else if (this_test->has_mana_to_pay_cmc == '\\x01')\n      {\n        iStack_2c = iVar1;\n        iVar1 = get_cmc_by_internal_id(s_location[iVar5]);\n        iVar3 = has_mana(1, 0, iVar1);\n        iVar1 = iStack_2c;\n        if (iVar3 != 0)\n          goto LAB_026510b0;\n      }\n    LAB_02650fa8:\n      if ((cStack_11 != '\\0' || uStack_20 < 2) && (iStack_18 <= iVar1))\n      {\n        piStack_28[iStack_1c] = iVar5;\n        iStack_1c = iStack_1c + 1;\n      }\n      if ((1 < uStack_24) || (iStack_18 + 1 < iVar1))\n        goto LAB_02650f20;\n      piStack_28[iStack_1c] = iVar5;\n      iVar5 = iVar5 + 1;\n      iStack_1c = iStack_1c + 1;\n    } while (zone_count != iVar5);\n  LAB_02650ff5:\n    bVar6 = true;\n    iVar5 = -1;\n  LAB_02650ffa:\n    if ((0 < iStack_1c) && (bVar6))\n    {\n      iVar2 = internal_rand(iStack_1c);\n      iVar5 = piStack_28[iVar2];\n    }\n  }\n  return iVar5;\n}",
+      "native_definition_sha256": "308235ca47c3888ca83caa92bd629e1255784806b16397287d0b62e125f58a62",
+      "qualified_definition_sha256": "6998df1b71830bb5f7cb56dd1964e8b8d6fc0811859cf2a651404c348b0acd6e",
+      "accepted_recovery_record": {
+        "name": "select_card_from_zone_2022",
+        "address": "2650de0",
+        "source": "functions/tutors.c",
+        "line": "62",
+        "static": false,
+        "prototype": "int select_card_from_zone_2022(int player, int targ_player, int *s_location, int zone_count,\n                               int must_select, int ai_selection_mode, int test_type,\n                               test_definition_2022_t *this_test);",
+        "raw_sha256": "f939f99c76644b43037e0b2cac4e7732557c6872e605aaba84a712dbce44833e",
+        "recovered_literals": [],
+        "test_consumer_evidence": {
+          "machine_bytes": 864,
+          "machine_sha256": "cbc1b1c98682353753df4eec0a67a0f5b8099357a7154ba467bd2bed50b02af1",
+          "changes": [
+            {
+              "original": "str_Done",
+              "replacement": "(const char *)ENGINE_DONE_LABEL",
+              "occurrences": 1,
+              "kind": "live Done label",
+              "machine_sites": [
+                {
+                  "address": "2650e4d",
+                  "bytes": "bfb0757300",
+                  "instruction": "mov edi, 0x7375b0"
+                }
+              ]
+            },
+            {
+              "original": "EXPANSION_0",
+              "replacement": "0",
+              "occurrences": 1,
+              "kind": "native zero expansion enumerator",
+              "machine_sites": [
+                {
+                  "address": "2650e05",
+                  "bytes": "c7056441770200000000",
+                  "instruction": "mov dword ptr [0x2774164], 0"
+                }
+              ]
+            },
+            {
+              "original": "  iVar2 = zone_count * -4;\n  piStack_28 = &iStack_34 + -zone_count;",
+              "replacement": "  int ai_pick[zone_count];\n  piStack_28 = ai_pick;",
+              "occurrences": 1,
+              "kind": "native VLA allocation",
+              "machine_sites": [
+                {
+                  "address": "2650ee6",
+                  "bytes": "8b4514",
+                  "instruction": "mov eax, dword ptr [ebp + 0x14]"
+                },
+                {
+                  "address": "2650ee9",
+                  "bytes": "c1e002",
+                  "instruction": "shl eax, 2"
+                },
+                {
+                  "address": "2650eec",
+                  "bytes": "e8dfb20a00",
+                  "instruction": "call 0x26fc1d0"
+                },
+                {
+                  "address": "2650ef1",
+                  "bytes": "29c4",
+                  "instruction": "sub esp, eax"
+                },
+                {
+                  "address": "2650ef3",
+                  "bytes": "8d442418",
+                  "instruction": "lea eax, [esp + 0x18]"
+                },
+                {
+                  "address": "2650ef7",
+                  "bytes": "8945dc",
+                  "instruction": "mov dword ptr [ebp - 0x24], eax"
+                }
+              ]
+            },
+            {
+              "original": "*(test_definition_t **)(&stack0xffffffc0 + iVar2) = this_test;\n        *(int *)(&stack0xffffffbc + iVar2) = test_type;\n        *(int *)(&stack0xffffffb8 + iVar2) = s_location[iVar5];\n        *(int *)(&stack0xffffffb4 + iVar2) = targ_player;\n        (&uStackY_50)[-zone_count] = 0x2650f47;\n        iVar1 = new_make_test(*(int *)(&stack0xffffffb4 + iVar2),*(int *)(&stack0xffffffb8 + iVar2),\n                              *(int *)(&stack0xffffffbc + iVar2),\n                              *(test_definition_t **)(&stack0xffffffc0 + iVar2));",
+              "replacement": "iVar1 = new_make_test(targ_player,s_location[iVar5],test_type,this_test);",
+              "occurrences": 1,
+              "kind": "VLA outgoing arguments",
+              "machine_sites": [
+                {
+                  "address": "2650f2a",
+                  "bytes": "8974240c",
+                  "instruction": "mov dword ptr [esp + 0xc], esi"
+                },
+                {
+                  "address": "2650f2e",
+                  "bytes": "8b4520",
+                  "instruction": "mov eax, dword ptr [ebp + 0x20]"
+                },
+                {
+                  "address": "2650f31",
+                  "bytes": "89442408",
+                  "instruction": "mov dword ptr [esp + 8], eax"
+                },
+                {
+                  "address": "2650f35",
+                  "bytes": "8b04bb",
+                  "instruction": "mov eax, dword ptr [ebx + edi*4]"
+                },
+                {
+                  "address": "2650f38",
+                  "bytes": "89442404",
+                  "instruction": "mov dword ptr [esp + 4], eax"
+                },
+                {
+                  "address": "2650f3c",
+                  "bytes": "8b450c",
+                  "instruction": "mov eax, dword ptr [ebp + 0xc]"
+                },
+                {
+                  "address": "2650f3f",
+                  "bytes": "890424",
+                  "instruction": "mov dword ptr [esp], eax"
+                },
+                {
+                  "address": "2650f42",
+                  "bytes": "e809e80600",
+                  "instruction": "call 0x26bf750"
+                }
+              ]
+            },
+            {
+              "original": "*(undefined4 *)(&stack0xffffffb4 + iVar2) = 100;\n        (&uStackY_50)[-zone_count] = 0x265102c;\n        iVar1 = internal_rand(*(int *)(&stack0xffffffb4 + iVar2));",
+              "replacement": "iVar1 = internal_rand(100);",
+              "occurrences": 1,
+              "kind": "VLA outgoing arguments",
+              "machine_sites": [
+                {
+                  "address": "2651020",
+                  "bytes": "c7042464000000",
+                  "instruction": "mov dword ptr [esp], 0x64"
+                },
+                {
+                  "address": "2651027",
+                  "bytes": "e824d0dffd",
+                  "instruction": "call 0x44e050"
+                }
+              ]
+            },
+            {
+              "original": "*(undefined4 *)(&stack0xffffffb4 + iVar2) = 0xffffffff;\n        *(int *)(&stack0xffffffb8 + iVar2) = iVar1;\n        (&uStackY_50)[-zone_count] = 0x265105b;\n        iVar1 = good_to_put_in_grave\n                          (*(int *)(&stack0xffffffb4 + iVar2),*(int *)(&stack0xffffffb8 + iVar2));",
+              "replacement": "iVar1 = good_to_put_in_grave(-1,iVar1);",
+              "occurrences": 1,
+              "kind": "VLA outgoing arguments",
+              "machine_sites": [
+                {
+                  "address": "2651048",
+                  "bytes": "8b04bb",
+                  "instruction": "mov eax, dword ptr [ebx + edi*4]"
+                },
+                {
+                  "address": "265104b",
+                  "bytes": "c70424ffffffff",
+                  "instruction": "mov dword ptr [esp], 0xffffffff"
+                },
+                {
+                  "address": "2651052",
+                  "bytes": "89442404",
+                  "instruction": "mov dword ptr [esp + 4], eax"
+                },
+                {
+                  "address": "2651056",
+                  "bytes": "e8b5860600",
+                  "instruction": "call 0x26b9710"
+                }
+              ]
+            },
+            {
+              "original": "*(int *)(&stack0xffffffb4 + iVar2) = s_location[iVar5];\n            (&uStackY_50)[-zone_count] = 0x2651109;\n            iVar1 = get_cmc_by_internal_id(*(int *)(&stack0xffffffb4 + iVar2));\n            *(undefined4 *)(&stack0xffffffb8 + iVar2) = 0;\n            *(int *)(&stack0xffffffbc + iVar2) = iVar1;\n            *(undefined4 *)(&stack0xffffffb4 + iVar2) = 1;\n            (&uStackY_50)[-zone_count] = 0x2651121;\n            iVar3 = has_mana(*(int *)(&stack0xffffffb4 + iVar2),*(int *)(&stack0xffffffb8 + iVar2),\n                             *(int *)(&stack0xffffffbc + iVar2));",
+              "replacement": "iVar1 = get_cmc_by_internal_id(s_location[iVar5]);\n            iVar3 = has_mana(1,0,iVar1);",
+              "occurrences": 1,
+              "kind": "VLA outgoing arguments",
+              "machine_sites": [
+                {
+                  "address": "26510fe",
+                  "bytes": "8955d0",
+                  "instruction": "mov dword ptr [ebp - 0x30], edx"
+                },
+                {
+                  "address": "2651101",
+                  "bytes": "890424",
+                  "instruction": "mov dword ptr [esp], eax"
+                },
+                {
+                  "address": "2651104",
+                  "bytes": "e8a7db0200",
+                  "instruction": "call 0x267ecb0"
+                },
+                {
+                  "address": "2651109",
+                  "bytes": "c744240400000000",
+                  "instruction": "mov dword ptr [esp + 4], 0"
+                },
+                {
+                  "address": "2651111",
+                  "bytes": "89442408",
+                  "instruction": "mov dword ptr [esp + 8], eax"
+                },
+                {
+                  "address": "2651115",
+                  "bytes": "c7042401000000",
+                  "instruction": "mov dword ptr [esp], 1"
+                },
+                {
+                  "address": "265111c",
+                  "bytes": "e8efc3e4fd",
+                  "instruction": "call 0x49d510"
+                }
+              ]
+            },
+            {
+              "original": "*(int *)(&stack0xffffffb8 + iVar2) = s_location[iVar5];\n          *(undefined4 *)(&stack0xffffffb4 + iVar2) = 0xffffffff;\n          (&uStackY_50)[-zone_count] = 0x26510de;\n          iVar1 = get_base_value(*(int *)(&stack0xffffffb4 + iVar2),\n                                 *(int *)(&stack0xffffffb8 + iVar2));",
+              "replacement": "iVar1 = get_base_value(-1,s_location[iVar5]);",
+              "occurrences": 1,
+              "kind": "VLA outgoing arguments",
+              "machine_sites": [
+                {
+                  "address": "26510cb",
+                  "bytes": "884dd8",
+                  "instruction": "mov byte ptr [ebp - 0x28], cl"
+                },
+                {
+                  "address": "26510ce",
+                  "bytes": "89442404",
+                  "instruction": "mov dword ptr [esp + 4], eax"
+                },
+                {
+                  "address": "26510d2",
+                  "bytes": "c70424ffffffff",
+                  "instruction": "mov dword ptr [esp], 0xffffffff"
+                },
+                {
+                  "address": "26510d9",
+                  "bytes": "e8c27c0300",
+                  "instruction": "call 0x2688da0"
+                }
+              ]
+            },
+            {
+              "original": "*(int *)(&stack0xffffffb4 + iVar2) = s_location[iVar5];\n        (&uStackY_50)[-zone_count] = 0x26510bb;\n        iVar1 = get_cmc_by_internal_id(*(int *)(&stack0xffffffb4 + iVar2));",
+              "replacement": "iVar1 = get_cmc_by_internal_id(s_location[iVar5]);",
+              "occurrences": 1,
+              "kind": "VLA outgoing arguments",
+              "machine_sites": [
+                {
+                  "address": "26510b0",
+                  "bytes": "8b04bb",
+                  "instruction": "mov eax, dword ptr [ebx + edi*4]"
+                },
+                {
+                  "address": "26510b3",
+                  "bytes": "890424",
+                  "instruction": "mov dword ptr [esp], eax"
+                },
+                {
+                  "address": "26510b6",
+                  "bytes": "e8f5db0200",
+                  "instruction": "call 0x267ecb0"
+                }
+              ]
+            },
+            {
+              "original": "*(int *)(&stack0xffffffb4 + iVar2) = s_location[iVar5];\n        (&uStackY_50)[-zone_count] = 0x265108a;\n        iVar1 = get_cmc_by_internal_id(*(int *)(&stack0xffffffb4 + iVar2));\n        *(undefined4 *)(&stack0xffffffb8 + iVar2) = 0;\n        *(int *)(&stack0xffffffbc + iVar2) = iVar1;\n        *(undefined4 *)(&stack0xffffffb4 + iVar2) = 1;\n        (&uStackY_50)[-zone_count] = 0x26510a2;\n        iVar3 = has_mana(*(int *)(&stack0xffffffb4 + iVar2),*(int *)(&stack0xffffffb8 + iVar2),\n                         *(int *)(&stack0xffffffbc + iVar2));",
+              "replacement": "iVar1 = get_cmc_by_internal_id(s_location[iVar5]);\n        iVar3 = has_mana(1,0,iVar1);",
+              "occurrences": 1,
+              "kind": "VLA outgoing arguments",
+              "machine_sites": [
+                {
+                  "address": "265107f",
+                  "bytes": "8955d8",
+                  "instruction": "mov dword ptr [ebp - 0x28], edx"
+                },
+                {
+                  "address": "2651082",
+                  "bytes": "890424",
+                  "instruction": "mov dword ptr [esp], eax"
+                },
+                {
+                  "address": "2651085",
+                  "bytes": "e826dc0200",
+                  "instruction": "call 0x267ecb0"
+                },
+                {
+                  "address": "265108a",
+                  "bytes": "c744240400000000",
+                  "instruction": "mov dword ptr [esp + 4], 0"
+                },
+                {
+                  "address": "2651092",
+                  "bytes": "89442408",
+                  "instruction": "mov dword ptr [esp + 8], eax"
+                },
+                {
+                  "address": "2651096",
+                  "bytes": "c7042401000000",
+                  "instruction": "mov dword ptr [esp], 1"
+                },
+                {
+                  "address": "265109d",
+                  "bytes": "e86ec4e4fd",
+                  "instruction": "call 0x49d510"
+                }
+              ]
+            },
+            {
+              "original": "*(int *)(&stack0xffffffb4 + iVar2) = iStack_1c;\n      (&uStackY_50)[-zone_count] = 0x265100d;\n      iVar2 = internal_rand(*(int *)(&stack0xffffffb4 + iVar2));",
+              "replacement": "iVar2 = internal_rand(iStack_1c);",
+              "occurrences": 1,
+              "kind": "VLA outgoing arguments",
+              "machine_sites": [
+                {
+                  "address": "2651005",
+                  "bytes": "891424",
+                  "instruction": "mov dword ptr [esp], edx"
+                },
+                {
+                  "address": "2651008",
+                  "bytes": "e843d0dffd",
+                  "instruction": "call 0x44e050"
+                }
+              ]
+            },
+            {
+              "original": "iStack_2c = CONCAT31(iStack_2c._1_3_,cVar4);",
+              "replacement": "iStack_2c = cVar4;",
+              "occurrences": 2,
+              "kind": "low-byte boolean spill",
+              "machine_sites": []
+            },
+            {
+              "original": "  undefined4 uStackY_50;\n",
+              "replacement": "",
+              "occurrences": 1,
+              "kind": "compiler call-frame bookkeeping",
+              "machine_sites": []
+            },
+            {
+              "original": "  undefined1 *puStack_30;\n",
+              "replacement": "",
+              "occurrences": 1,
+              "kind": "compiler call-frame bookkeeping",
+              "machine_sites": []
+            },
+            {
+              "original": "  puStack_30 = &stack0xffffffb4;\n",
+              "replacement": "",
+              "occurrences": 1,
+              "kind": "compiler call-frame bookkeeping",
+              "machine_sites": []
+            },
+            {
+              "original": "  uStackY_50 = 0x2650ef1;\n",
+              "replacement": "",
+              "occurrences": 1,
+              "kind": "compiler call-frame bookkeeping",
+              "machine_sites": []
+            },
+            {
+              "original": "  uStackY_50 = 0x2650ee3;\n",
+              "replacement": "",
+              "occurrences": 1,
+              "kind": "compiler call-frame bookkeeping",
+              "machine_sites": []
+            },
+            {
+              "original": "    uStackY_50 = 0x2650ead;\n",
+              "replacement": "",
+              "occurrences": 1,
+              "kind": "compiler call-frame bookkeeping",
+              "machine_sites": []
+            },
+            {
+              "original": "        uStackY_50 = 0x2650e85;\n",
+              "replacement": "",
+              "occurrences": 1,
+              "kind": "compiler call-frame bookkeeping",
+              "machine_sites": []
+            },
+            {
+              "original": "      uStackY_50 = 0x2650e35;\n",
+              "replacement": "",
+              "occurrences": 1,
+              "kind": "compiler call-frame bookkeeping",
+              "machine_sites": []
+            },
+            {
+              "original": "      uStackY_50 = 0x2650e05;\n",
+              "replacement": "",
+              "occurrences": 1,
+              "kind": "compiler call-frame bookkeeping",
+              "machine_sites": []
+            }
+          ],
+          "canonical_calls": [
+            {
+              "address": "2650e80",
+              "bytes": "e8cbe80600",
+              "target": "26bf750",
+              "name": "new_make_test_2022"
+            },
+            {
+              "address": "2650ea8",
+              "bytes": "e8a3e80600",
+              "target": "26bf750",
+              "name": "new_make_test_2022"
+            },
+            {
+              "address": "2650ede",
+              "bytes": "e80dfeffff",
+              "target": "2650cf0",
+              "name": "get_average_value_from_zone_2022"
+            },
+            {
+              "address": "2650f42",
+              "bytes": "e809e80600",
+              "target": "26bf750",
+              "name": "new_make_test_2022"
+            }
+          ]
+        },
+        "reconstruction": "Native graveyard/zone selection and counterspell consumers use the 216-byte test and 84-byte target domains. Separate compiler parts repair recursive name bindings in Whirlpool Rider/Drake/Warrior, escape and amaug_leg. The previously accepted to-array wrapper is migrated once and its legacy interface receives an explicitly uncounted compatibility body.",
+        "reconstruction_body_sha256": "285ec70028fb1b672b6ec23ab61626a93f9c3a8ec0de2c67e0545ad69910f886"
+      },
+      "native_body_sha256": "285ec70028fb1b672b6ec23ab61626a93f9c3a8ec0de2c67e0545ad69910f886",
+      "reason": "Zone counter and average-value scanner read IDs and advance local pointers. Selection reads indexed IDs and forwards the array only to the read-only display and average-value APIs; its writable AI selection array is separate."
+    },
+    "count_zone_by_type": {
+      "parameter": "zone",
+      "local_end_pointer": "piVar1",
+      "native_definition": "static int count_zone_by_type_2022(int type, int *zone)\n{\n  int *piVar1;\n  int iVar2;\n  int iVar3;\n\n  piVar1 = zone + 500;\n  iVar3 = 0;\n  do\n  {\n    if (*zone == -1)\n    {\n      return iVar3;\n    }\n    iVar2 = is_what(-1, *zone, type);\n    iVar3 = (iVar3 + 1) - (unsigned int)(iVar2 == 0);\n    zone = zone + 1;\n  } while (zone != piVar1);\n  return iVar3;\n}",
+      "native_definition_sha256": "4d0986f98e0adcd2dc8878a0528661c9012e2ae490f2f60685dd9da4e7cb1268",
+      "qualified_definition_sha256": "152fcbe684f06ce04b6085b608b340053dd3ae98ad7f23042a5b15775a06f1e4",
+      "accepted_recovery_record": {
+        "name": "count_zone_by_type_2022",
+        "original_name": "count_zone_by_type",
+        "address": "26e5c70",
+        "source": "functions/count_graveyard.c",
+        "line": "119",
+        "static": true,
+        "prototype": "static int  count_zone_by_type_2022(int type,int *zone);",
+        "raw_sha256": "354dd2fe2a4a68e0d3238af32bf65c355d51c4d620c001f2a90d9480e21aa1c0",
+        "recovered_literals": [],
+        "reconstruction": "Recover the concrete two-register clone; removed parameter has no ABI storage.",
+        "specialization": {
+          "parameters": [
+            {
+              "name": "type",
+              "constant": null,
+              "entry_location": [
+                80
+              ]
+            },
+            {
+              "name": "zone",
+              "constant": null,
+              "entry_location": [
+                82
+              ]
+            },
+            {
+              "name": "player",
+              "constant": null,
+              "entry_location": [
+                250,
+                70,
+                228,
+                10,
+                0,
+                159
+              ]
+            }
+          ],
+          "symbol": "_count_zone_by_type.isra.0",
+          "line": "119"
+        }
+      },
+      "native_body_sha256": "c9eb8e8cb54a0ff32a2696d7e274904aed46b41ab7c00f17bf10dc7dd9311eea",
+      "reason": "Zone counter and average-value scanner read IDs and advance local pointers. Selection reads indexed IDs and forwards the array only to the read-only display and average-value APIs; its writable AI selection array is separate."
+    }
+  }
+}

@@ -815,7 +815,7 @@ At the beginning of combat on your turn, if you control an artifact, Toolcraft E
 If you control three or more artifacts, it also gains first strike until end of turn.
 1/1
 */
-	if( beginning_of_combat(player, card, event, player, card) ){
+	if( beginning_of_combat(player, card, event, player) ){
 		int amount = count_subtype(player, TYPE_ARTIFACT, -1);
 		if( amount ){
 		alternate_legacy_text(1, player, pump_ability_until_eot(player, card, player, card, 2, 1, 0, 0));
@@ -2577,7 +2577,7 @@ with that name and exile them. That player shuffles his or her library, then dra
 				csvid = card_from_list(player, 3, TYPE_LAND | TYPE_ARTIFACT, DOESNT_MATCH, 0, 0, 0, 0, 0, 0, -1, 0);
 			}
 			if( csvid > -1 ){
-				amount = lobotomy_effect(player, instance->targets[0].player, csvid, LOBOTOMY_MUST_FIND_ALL_COPIES);
+				amount = lobotomy_effect(player, instance->targets[0].player, csvid, -1, LOBOTOMY_MUST_FIND_ALL_COPIES);
 			}
 			draw_cards(instance->targets[0].player, amount);
 		}

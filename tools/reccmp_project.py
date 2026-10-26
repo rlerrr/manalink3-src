@@ -115,30 +115,87 @@ def setup(args):
     current = read_functions(rebuilt_debug, all_functions=True)
     manifest = json.loads((ROOT / "docs/recovery-evidence/recovered-functions.json").read_text())
     accepted = {int(row["address"], 16): row for row in manifest["accepted_functions"]}
+    from canonicalize_helpers import names as canonical_helper_names,verify as verify_canonical_helpers
+    canonical_helpers=verify_canonical_helpers(ROOT)
+    canonical_names=canonical_helper_names(ROOT)
+    from canonicalize_helpers import load as load_canonical,verify_native_equivalences
+    canonical_data=load_canonical(ROOT)
+    equivalent_helpers=verify_native_equivalences(canonical_data,ROOT) if canonical_data else []
+    equivalent_addresses={int(e['duplicate_address'],16) for e in equivalent_helpers}
     stubs = {int(row["native_address"], 16): row for row in manifest["source_stubs"]}
     current_names = defaultdict(set)
     for row in current:
         current_names[row["name"]].add(row["address"])
+    # GCC may keep a public COFF entry as a JMP to an identical retained
+    # body, omitting a separate DWARF range. Record that evidence explicitly;
+    # do not call the five-byte thunk a full-body assembly match.
+    debug_image = Image(rebuilt_debug.read_bytes())
+    coff_functions = defaultdict(set)
+    for name, offset, section, kind, storage in debug_image.functions():
+        if section > 0 and kind == 32:
+            coff_functions[name.lstrip('_')].add(debug_image.pe.OPTIONAL_HEADER.ImageBase +
+                debug_image.pe.sections[section-1].VirtualAddress + offset)
+    from capstone import Cs, CS_ARCH_X86, CS_MODE_32
+    from capstone.x86_const import X86_OP_IMM
+    decoder = Cs(CS_ARCH_X86, CS_MODE_32)
+    decoder.detail = True
+    folded_recovered_helpers = []
+    def compiler_fold(row):
+        choices = coff_functions[row['match_name']]
+        if row['address'] not in accepted or len(choices) != 1:
+            return None
+        address = next(iter(choices))
+        same_address = [r for r in current if r['address'] == address and
+                        r['name'] == row['name'] and r['source'] == row['source']]
+        if len(same_address) == 1:
+            target = address
+            representation, branch_bytes = 'coff_alias', ''
+        else:
+            code = rebuilt_image.pe.get_data(address-rebuilt_image.pe.OPTIONAL_HEADER.ImageBase, 5)
+            first = next(decoder.disasm(code, address, count=1), None)
+            if first is None or first.mnemonic != 'jmp' or first.operands[0].type != X86_OP_IMM:
+                return None
+            target = first.operands[0].imm
+            representation, branch_bytes = 'thunk', first.bytes.hex()
+        ranges = [r for r in current if r['address'] == target and
+                  r['name'] == row['name'] and r['source'] == row['source']]
+        if len(ranges) != 1:
+            return None
+        length = ranges[0]['size']
+        return dict(native_address=hex(row['address']), name=row['match_name'], source=row['source'],
+                    retained_name=row['name'], address=hex(address), representation=representation, branch_bytes=branch_bytes,
+                    target=hex(target), target_bytes=length,
+                    target_sha256=hashlib.sha256(rebuilt_image.pe.get_data(
+                        target-rebuilt_image.pe.OPTIONAL_HEADER.ImageBase,length)).hexdigest())
 
     # Use explicit recovery mappings first; retained 2020 helpers keep their names.
     for row in native:
         mapped = accepted.get(row["address"]) or stubs.get(row["address"])
-        row["match_name"] = mapped["name"] if mapped else row["name"]
+        logical_name=mapped["name"] if mapped else row["name"]
+        row["match_name"] = canonical_names.get(logical_name,logical_name)
         row["mapping"] = "recovery ledger" if mapped else "same native name"
     native_names = defaultdict(set)
     for row in native:
+        if row['address'] in equivalent_addresses:continue
         native_names[row["match_name"]].add(row["address"])
 
     included, excluded = [], []
     for row in native:
         name = row["match_name"]
         reason = None
-        if len(native_names[name]) != 1:
+        if row['address'] in equivalent_addresses:
+            reason='verified equivalent native helper shares a canonical implementation'
+        elif len(native_names[name]) != 1:
             reason = "ambiguous original name"
         elif len(current_names[name]) > 1:
             reason = "ambiguous rebuilt name"
         elif not current_names[name]:
-            reason = "no rebuilt function with this name"
+            folded = compiler_fold(row)
+            if folded is not None:
+                folded_recovered_helpers.append(folded)
+                reason = "verified compiler-folded helper without standalone DWARF range"
+            else:
+                reason = "no rebuilt function with this name"
         if reason:
             excluded.append(dict(row, reason=reason))
         else:
@@ -163,9 +220,10 @@ def setup(args):
     for model, filename in ((ProjectFile, "reccmp-project.yml"), (UserFile, "reccmp-user.yml"),
                             (BuildFile, "reccmp-build.yml")):
         model.from_file(ROOT / filename)
-    summary = dict(target=TARGET, original_functions=len(native), csv_functions=len(included),
+    summary = dict(target=TARGET, canonical_helpers=canonical_helpers,native_equivalent_helpers=equivalent_helpers, original_functions=len(native), csv_functions=len(included),
                    ledger_mappings=sum(r["mapping"] == "recovery ledger" for r in included),
                    stubs=sum(r["address"] in stubs for r in included),
+                   folded_recovered_helpers=folded_recovered_helpers,
                    excluded_reasons=dict(Counter(r["reason"] for r in excluded)),
                    inputs={str(p): digest(p) for p in (original, original_debug, rebuilt, rebuilt_debug)},
                    metadata_sha256=digest(metadata), reccmp_root=str(args.reccmp_root.resolve()),
@@ -200,12 +258,20 @@ def main():
     summary_path = ROOT / ".recovery/reccmp/setup.json"
     if not summary_path.is_file():
         parser.error("Run tools/reccmp_project.py setup first")
-    summary = json.loads(summary_path.read_text())
+    summary_bytes = summary_path.read_bytes()
+    summary = json.loads(summary_bytes)
+    comparison_setup_sha256 = hashlib.sha256(summary_bytes).hexdigest()
     for filename, expected in summary["inputs"].items():
         if digest(Path(filename)) != expected:
             parser.error(f"Input changed since setup: {filename}; rerun setup")
     if digest(ROOT / "config/reccmp/functions.csv") != summary["metadata_sha256"]:
         parser.error("Function metadata changed since setup; rerun setup")
+    comparator_sources = {str(fork / name): digest(fork / name) for name in (
+        'reccmp/compare/functions.py', 'reccmp/compare/asm/parse.py',
+        'reccmp/compare/asm/fixes.py', 'reccmp/compare/report.py',
+        'reccmp/dwarf/analysis.py')}
+    ledger_path = ROOT / 'docs/recovery-evidence/recovered-functions.json'
+    comparison_ledger_sha256 = digest(ledger_path)
     from reccmp.tools.asmcmp import main as compare_main
     # Upstream prints Unicode status markers even with --no-color. Windows
     # redirected stdout otherwise defaults to cp1252 and fails on exact matches.
@@ -213,7 +279,32 @@ def main():
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(encoding="utf-8")
     sys.argv = ["reccmp-reccmp", "--target", TARGET, "--no-color", *remaining]
-    return compare_main()
+    exit_code = compare_main()
+    report_path = None
+    for index, option in enumerate(remaining):
+        if option == '--json' and index + 1 < len(remaining):
+            report_path = Path(remaining[index + 1])
+        elif option.startswith('--json='):
+            report_path = Path(option.partition('=')[2])
+    if exit_code == 0 and report_path is not None:
+        # Bind scores to the precise pair used by this invocation. JSON's
+        # timestamp/name fields alone cannot detect a stale rebuild/report.
+        for filename, expected in summary['inputs'].items():
+            if digest(Path(filename)) != expected:
+                raise ValueError(f'Input changed during comparison: {filename}')
+        if digest(ROOT / 'config/reccmp/functions.csv') != summary['metadata_sha256']:
+            raise ValueError('Function metadata changed during comparison')
+        if digest(summary_path) != comparison_setup_sha256 or digest(ledger_path) != comparison_ledger_sha256:
+            raise ValueError('Setup or recovery ledger changed during comparison')
+        if any(digest(Path(name)) != expected for name, expected in comparator_sources.items()):
+            raise ValueError('Comparator implementation changed during comparison')
+        write_json(report_path.with_suffix('.inputs.json'), dict(
+            setup_sha256=comparison_setup_sha256, report_sha256=digest(report_path),
+            inputs=summary['inputs'], metadata_sha256=summary['metadata_sha256'],
+            recovery_ledger_sha256=comparison_ledger_sha256,
+            comparator_source_sha256=comparator_sources,
+            command=sys.argv, exit_code=exit_code))
+    return exit_code
 
 
 if __name__ == "__main__":

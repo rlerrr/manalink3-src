@@ -20,7 +20,8 @@ SITES={'240400f':'e85cc22700','240401c':'89442430','2404071':'e88a9a2900'}
 def sha(data):return hashlib.sha256(data).hexdigest()
 
 
-def audit_component(component,manifest,sources,machine_bytes):
+def audit_component(component,manifest,sources,machine_bytes,root=None):
+    if root is None:root=Path(__file__).resolve().parents[2]
     def require(ok,message):
         if not ok:raise ValueError(message)
     entry=next(f for f in manifest['accepted_functions'] if f['address']==ADDRESS)
@@ -34,7 +35,8 @@ def audit_component(component,manifest,sources,machine_bytes):
     body=function_body(sources[entry['source']],entry['name'])
     require(body.count('(char *)prompt')==1 and 'const char *prompt;' in body,'Norritt prompt qualifier bridge missing')
     for support in component['source_interfaces']:
-        require(sha(function_body(sources[support['source']].replace('\r\n','\n'),support['name']).encode())==support['body_sha256'],
+        from unify_scalar_helpers import retained_source_body
+        require(sha(retained_source_body(root,support['source'],support['name'],source_view=sources).encode())==support['body_sha256'],
                 'Norritt supporting source interface changed')
     # The native helper return in EAX is placed unchanged in outgoing argument 12.
     for address,data in SITES.items():require(machine_bytes(int(address,16),len(bytes.fromhex(data))).hex()==data,'Norritt prompt instruction mismatch')

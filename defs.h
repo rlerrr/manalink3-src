@@ -756,19 +756,22 @@ typedef enum
 /* Modes for new_global_tutor(), reveal_top_cards_of_library_and_choose() */
 typedef enum
 {
-  TUTOR_HAND    = 0,
-  TUTOR_DECK    = 1,
-  TUTOR_GRAVE   = 2,
-  TUTOR_PLAY    = 3,	// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()
-  TUTOR_PLAY_TAPPED		= 4,	// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()
-  TUTOR_RFG				= 5,
-  TUTOR_GET_ID			= 6,	// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()
-  TUTOR_PLAY_ATTACKING  = 7,	// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()
-  TUTOR_GET_POSITION    = 8,	// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()
-  TUTOR_BOTTOM_OF_DECK  = 9,
-  TUTOR_TPLAYER_HAND	= 10,
-  TUTOR_BOTTOM_OF_DECK_RANDOM  = 11,	// Only valid for the destination_rest parameter of reveal_top_cards_of_library_and_choose()
-  TUTOR_HAND_AND_MARK   = 12, // Add a "STATE_TARGETTED" to each card tutored, to be removed lately. See Dwarven Recruiter.
+  TUTOR_HAND    = 1,
+  TUTOR_DECK    = 2,
+  TUTOR_GRAVE   = 3,
+  TUTOR_PLAY    = 4,	// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()
+  TUTOR_PLAY_TAPPED		= 5,	// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()
+  TUTOR_RFG				= 6,
+  TUTOR_GET_ID			= 7,	// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()
+  TUTOR_PLAY_ATTACKING  = 8,	// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()
+  TUTOR_GET_POSITION    = 9,	// Not valid for destination_rest parameter of reveal_top_cards_of_library_and_choose()
+  TUTOR_BOTTOM_OF_DECK  = 10,
+  TUTOR_TPLAYER_HAND	= 11,
+  TUTOR_BOTTOM_OF_DECK_RANDOM  = 12,	// Only valid for the destination_rest parameter of reveal_top_cards_of_library_and_choose()
+  TUTOR_HAND_AND_MARK   = 13, // Add a "STATE_TARGETTED" to each card tutored, to be removed lately. See Dwarven Recruiter.
+  TUTOR_0 = 0,
+  TUTOR_EXILE = 6,
+  TUTOR_OPPOSITION_AGENT = 14,
 } tutor_t;
 
 typedef enum
@@ -778,6 +781,7 @@ typedef enum
   TUTOR_FROM_RFG	= 3,
   TUTOR_FROM_HAND	= 4,
   TUTOR_FROM_GRAVE_NOTARGET	= 5,	// just like TUTOR_FROM_GRAVE, but not affected by graveyard_has_shroud
+  TUTOR_FROM_DECK_AUTO = 6,
 } tutor_from_t;
 
 /* Card States */
@@ -1925,6 +1929,8 @@ typedef struct
 	unsigned int keyword;
 	unsigned short int cmc_flag;
 	unsigned short int keyword_flag;
+	unsigned int sp_keyword;
+	unsigned short int sp_keyword_flag;
 	int power;
 	int toughness;
 	unsigned short int power_flag;
@@ -1950,89 +1956,46 @@ typedef struct
 	int storage; //If > -1, when used in "new_global_tutor", will store the result of the tutor on (player, card) targeting part, beginning with "get_card_instance(player, storage)->targets[0].card". Will store internal_card_id or csv_id depening on the type of tutor
 } test_definition_t;
 
-/* October 2022 test ABI; the original 208-byte definition remains available. */
+/* Recovery spelling aliases the canonical October 2022 test record. */
 #ifndef SHANDALAR
 typedef int (*test_selection_predicate_2022_t)(int,int,int,int);
-typedef struct
-{
-  char message[100];
-  uint32_t type;
-  uint32_t subtype;
-  uint16_t type_flag;
-  uint16_t subtype_flag;
-  uint32_t color;
-  int32_t id;
-  int32_t id2;
-  uint16_t color_flag;
-  uint16_t id_flag;
-  int32_t cmc;
-  uint32_t keyword;
-  uint16_t cmc_flag;
-  uint16_t keyword_flag;
-  uint32_t sp_keyword;
-  uint16_t sp_keyword_flag;
-  int32_t power;
-  int32_t toughness;
-  uint16_t power_flag;
-  uint16_t toughness_flag;
-  uint32_t state;
-  uint32_t zone;
-  uint16_t state_flag;
-  uint16_t not_me;
-  uint16_t ai_selection_mode;
-  uint16_t qty;
-  uint32_t sub2;
-  uint32_t sub3;
-  uint32_t sub4;
-  uint32_t sub5;
-  uint16_t no_shuffle;
-  uint16_t create_minideck;
-  test_selection_predicate_2022_t special_selection_function;
-  int32_t value_for_special_selection_function;
-  int16_t painters_servant_hack[2];
-  uint8_t has_mana_to_pay_cmc;
-  uint8_t can_legally_play;
-  uint8_t owner;
-  int32_t storage;
-} test_definition_2022_t;
+typedef test_definition_t test_definition_2022_t;
 #endif
 
 typedef enum
 {
-	ACT_KILL_BURY			= 1,	// mirrors kill_t
-	ACT_KILL_DESTROY		= 2,	// mirrors kill_t
-	ACT_KILL_SACRIFICE		= 3,	// mirrors kill_t
-	ACT_KILL_REMOVE			= 4,	// mirrors kill_t
-	ACT_BOUNCE				= 5,
-	ACT_TAP					= 6,
-	ACT_UNTAP				= 7,
-	ACT_RFG_UNTIL_EOT		= 16,
-	ACT_KILL_STATE_BASED_ACTION	= 17,	// mirrors kill_t
-	ACT_PUT_ON_TOP			= 40,
-	ACT_PUT_ON_BOTTOM		= 41,
-	ACT_DISABLE_NONMANA_ACTIVATED_ABILITIES	= 42,
-	ACT_ENABLE_NONMANA_ACTIVATED_ABILITIES	= 43,
-	ACT_HUMILIATE			= 44,
-	ACT_DE_HUMILIATE		= 45, // This one remove the effect of ACT_HUMILIATE
-	ACT_MAKE_UNTARGETTABLE	= 46,
-	ACT_REMOVE_UNTARGETTABLE= 47,
-	ACT_RESET_ADDED_SUBTYPE	= 48,
-	ACT_DISABLE_ALL_ACTIVATED_ABILITIES	= 49,
-	ACT_ENABLE_ALL_ACTIVATED_ABILITIES	= 50,
-	ACT_GET_COUNT			= 51,
-	ACT_GAIN_CONTROL		= 52,
-	ACT_DOES_NOT_UNTAP		= 53,
-	ACT_PHASE_OUT			= 54,
-	ACT_OF_TREASON			= 55,
-	ACT_DETAIN				= 56,
-
-	ACT_PARAMETERIZED_ACTIONS_MASK = 0xFF000000,
-
-	ACT_ADD_COUNTERS_BASE	= 0x01000000,
-#define ACT_ADD_COUNTERS(counter_type, num)		(ACT_ADD_COUNTERS_BASE | (((counter_type) & 0xFF) << 16) | ((num) & 0xFFFF))
-	ACT_REMOVE_COUNTERS_BASE= 0x02000000,
-#define ACT_REMOVE_COUNTERS(counter_type, num)	(ACT_REMOVE_COUNTERS_BASE | (((counter_type) & 0xFF) << 16) | ((num) & 0xFFFF))
+  ACT_KILL_BURY = 1,
+  ACT_KILL_DESTROY = 2,
+  ACT_KILL_SACRIFICE = 3,
+  ACT_KILL_EXILE = 4,
+  ACT_BOUNCE = 5,
+  ACT_TAP = 6,
+  ACT_UNTAP = 7,
+  ACT_RFG_UNTIL_EOT = 16,
+  ACT_KILL_STATE_BASED_ACTION = 17,
+  ACT_PUT_ON_TOP = 40,
+  ACT_PUT_ON_BOTTOM = 41,
+  ACT_DISABLE_NONMANA_ACTIVATED_ABILITIES = 42,
+  ACT_ENABLE_NONMANA_ACTIVATED_ABILITIES = 43,
+  ACT_HUMILIATE = 44,
+  ACT_DE_HUMILIATE = 45,
+  ACT_MAKE_UNTARGETTABLE = 46,
+  ACT_REMOVE_UNTARGETTABLE = 47,
+  ACT_DISABLE_ALL_ACTIVATED_ABILITIES = 49,
+  ACT_ENABLE_ALL_ACTIVATED_ABILITIES = 50,
+  ACT_GET_COUNT = 51,
+  ACT_GAIN_CONTROL = 52,
+  ACT_DOES_NOT_UNTAP = 53,
+  ACT_PHASE_OUT = 54,
+  ACT_OF_TREASON = 55,
+  ACT_DETAIN = 56,
+  ACT_PARAMETERIZED_ACTIONS_MASK = 4278190080,
+  ACT_ADD_COUNTERS_BASE = 16777216,
+  ACT_REMOVE_COUNTERS_BASE = 33554432,
 } actions_t;
+#define ACT_KILL_REMOVE ACT_KILL_EXILE
+#define ACT_ADD_COUNTERS(counter_type, num) (ACT_ADD_COUNTERS_BASE | (((counter_type) & 0xFF) << 16) | ((num) & 0xFFFF))
+#define ACT_REMOVE_COUNTERS(counter_type, num) (ACT_REMOVE_COUNTERS_BASE | (((counter_type) & 0xFF) << 16) | ((num) & 0xFFFF))
 
 // Flags shared by Manipulate All, Global Tutor, New Global Tutor, Damage All, New Damage all
 typedef enum
@@ -2312,44 +2275,43 @@ typedef enum
 /* flags for "generic_spell" */
 typedef enum
 {
-	GS_CAN_TARGET					= 1<<0,
-	GS_COUNTERSPELL					= 1<<1,
-	GS_X_SPELL						= 1<<2,
-	GS_GRAVE_RECYCLER				= 1<<3,
-	GS_REGENERATION					= 1<<4,
-	GS_OPTIONAL_TARGET				= 1<<5,
-	GS_CAN_ONLY_TARGET_OPPONENT		= 1<<6,
-	GS_LITERAL_PROMPT				= 1<<7,	// Don't load_text for prompt in GS_CAN_TARGET or GS_GRAVE_RECYCLER
-	GS_DAMAGE_PREVENTION			= 1<<8,
-	GS_AURA							= 1<<9,
-	GS_SAC_CREATURE_AS_COST			= 1<<10,
-	GS_GRAVE_RECYCLER_OPP_GRAVE		= 1<<11,
-	GS_GRAVE_RECYCLER_BOTH_GRAVES 	= 1<<12,
-	GS_ONE_OR_MULTIPLE_TARGETS	 	= 1<<13, //For cards like "Fire // Ice"
-	GS_SAC_PERMANENT_AS_COST		= 1<<14,
+	GS_CAN_TARGET					= 1,
+	GS_COUNTERSPELL					= 2,
+	GS_X_SPELL						= 4,
+	GS_GRAVE_RECYCLER				= 8,
+	GS_REGENERATION					= 16,
+	GS_OPTIONAL_TARGET				= 32,
+	GS_CAN_ONLY_TARGET_OPPONENT		= 64,
+	GS_LITERAL_PROMPT				= 128,	// Don't load_text for prompt in GS_CAN_TARGET or GS_GRAVE_RECYCLER
+	GS_DAMAGE_PREVENTION			= 256,
+	GS_AURA							= 512,
+	GS_SAC_CREATURE_AS_COST			= 1024,
+	GS_GRAVE_RECYCLER_OPP_GRAVE		= 2048,
+	GS_GRAVE_RECYCLER_BOTH_GRAVES 	= 4096,
+	GS_ONE_OR_MULTIPLE_TARGETS	 	= 16384, //For cards like "Fire // Ice"
+	GS_SAC_PERMANENT_AS_COST		= 32768,
+  GS_GRAVE_RECYCLER_FROM_GRAVEYARDS = 8192,
 } generic_spell_flags_t;
 
-/* October 2022 generic-spell flags; original values remain above. */
+/* Recovery spelling aliases native canonical generic-spell flags. */
 #ifndef SHANDALAR
-typedef enum
-{
-  GS2022_CAN_TARGET = 1,
-  GS2022_COUNTERSPELL = 2,
-  GS2022_X_SPELL = 4,
-  GS2022_GRAVE_RECYCLER = 8,
-  GS2022_REGENERATION = 16,
-  GS2022_OPTIONAL_TARGET = 32,
-  GS2022_CAN_ONLY_TARGET_OPPONENT = 64,
-  GS2022_LITERAL_PROMPT = 128,
-  GS2022_DAMAGE_PREVENTION = 256,
-  GS2022_AURA = 512,
-  GS2022_SAC_CREATURE_AS_COST = 1024,
-  GS2022_GRAVE_RECYCLER_OPP_GRAVE = 2048,
-  GS2022_GRAVE_RECYCLER_BOTH_GRAVES = 4096,
-  GS2022_GRAVE_RECYCLER_FROM_GRAVEYARDS = 8192,
-  GS2022_ONE_OR_MULTIPLE_TARGETS = 16384,
-  GS2022_SAC_PERMANENT_AS_COST = 32768,
-} generic_spell_flags_2022_t;
+typedef generic_spell_flags_t generic_spell_flags_2022_t;
+#define GS2022_CAN_TARGET GS_CAN_TARGET
+#define GS2022_COUNTERSPELL GS_COUNTERSPELL
+#define GS2022_X_SPELL GS_X_SPELL
+#define GS2022_GRAVE_RECYCLER GS_GRAVE_RECYCLER
+#define GS2022_REGENERATION GS_REGENERATION
+#define GS2022_OPTIONAL_TARGET GS_OPTIONAL_TARGET
+#define GS2022_CAN_ONLY_TARGET_OPPONENT GS_CAN_ONLY_TARGET_OPPONENT
+#define GS2022_LITERAL_PROMPT GS_LITERAL_PROMPT
+#define GS2022_DAMAGE_PREVENTION GS_DAMAGE_PREVENTION
+#define GS2022_AURA GS_AURA
+#define GS2022_SAC_CREATURE_AS_COST GS_SAC_CREATURE_AS_COST
+#define GS2022_GRAVE_RECYCLER_OPP_GRAVE GS_GRAVE_RECYCLER_OPP_GRAVE
+#define GS2022_GRAVE_RECYCLER_BOTH_GRAVES GS_GRAVE_RECYCLER_BOTH_GRAVES
+#define GS2022_GRAVE_RECYCLER_FROM_GRAVEYARDS GS_GRAVE_RECYCLER_FROM_GRAVEYARDS
+#define GS2022_ONE_OR_MULTIPLE_TARGETS GS_ONE_OR_MULTIPLE_TARGETS
+#define GS2022_SAC_PERMANENT_AS_COST GS_SAC_PERMANENT_AS_COST
 #endif
 
 /* Special flags  - Generic flags */
@@ -2465,20 +2427,24 @@ Then, the counters will be added in PHASE_AFTER_DAMAGE if the creature isn't alr
 // Parameters for token_generation_t::action
 typedef enum
 {
-	TOKEN_ACTION_TAPPED		= 1<<0,	// Token is put into play tapped
-	TOKEN_ACTION_ATTACKING_UNTAPPED	= 1<<1,	// Token is put into play attacking but not tapped
-	TOKEN_ACTION_ATTACKING	= TOKEN_ACTION_TAPPED|TOKEN_ACTION_ATTACKING_UNTAPPED,	// Token is put into play tapped and attacking
-	TOKEN_ACTION_EQUIP		= 1<<2,	// Equip source player/card to the (first) generated token.
-	TOKEN_ACTION_HASTE		= 1<<3,	// Token gets haste until end of turn.  s_key_plus can set it permanently, but only on token-only cards.
-	TOKEN_ACTION_DONT_COPY_TOKEN_SOURCE	= 1<<4,	// If this token is copied, don't set the copy's source
-	TOKEN_ACTION_CONVERT_INTO_ARTIFACT	= 1<<5,	// Used by Feldon of the Third Way
+	TOKEN_ACTION_TAPPED		= 1,	// Token is put into play tapped
+	TOKEN_ACTION_ATTACKING_UNTAPPED	= 2,	// Token is put into play attacking but not tapped
+	TOKEN_ACTION_ATTACKING	= 3,	// Token is put into play tapped and attacking
+	TOKEN_ACTION_EQUIP		= 4,	// Equip source player/card to the (first) generated token.
+	TOKEN_ACTION_HASTE		= 16,	// Token gets haste until end of turn.  s_key_plus can set it permanently, but only on token-only cards.
+	TOKEN_ACTION_DONT_COPY_TOKEN_SOURCE	= 32,	// If this token is copied, don't set the copy's source
+	TOKEN_ACTION_CONVERT_INTO_ARTIFACT	= 64,	// Used by Feldon of the Third Way
 
 	// The following all use action_argument, so are incompatible with each other (except for TOKEN_ACTION_PUMP_POWER, which can combine with TOKEN_ACTION_PUMP_TOUGHNESS)
-	TOKEN_ACTION_BLOCKING	= 1<<16,	// Token is put into play blocking action_argument.
-	TOKEN_ACTION_PUMP_POWER	= 1<<17,	// Token gets +X/+0 until end of turn.  X is action_argument.  (Not actually used by anything.)
-	TOKEN_ACTION_PUMP_TOUGHNESS	= 1<<18,	// Token gets +0/+X until end of turn.  X is action_argument.  (Not actually used by anything.)
-	TOKEN_ACTION_ADD_SUBTYPE= 1<<19,	// Add subtype in action_argument to token.
-	TOKEN_ACTION_ADD_COUNTERS = 1<<20, // 2022: counter type in high 16 bits, quantity in low 16 bits; added after put_into_play.
+	TOKEN_ACTION_BLOCKING	= 65536,	// Token is put into play blocking action_argument.
+	TOKEN_ACTION_PUMP_POWER	= 131072,	// Token gets +X/+0 until end of turn.  X is action_argument.  (Not actually used by anything.)
+	TOKEN_ACTION_PUMP_TOUGHNESS	= 262144,	// Token gets +0/+X until end of turn.  X is action_argument.  (Not actually used by anything.)
+	TOKEN_ACTION_ADD_SUBTYPE= 524288,	// Add subtype in action_argument to token.
+	TOKEN_ACTION_ADD_COUNTERS = 1048576, // 2022: counter type in high 16 bits, quantity in low 16 bits; added after put_into_play.
+	TOKEN_ACTION_EQUIP_ANY = 8,
+	TOKEN_ACTION_RECORD_SOURCE_ID = 128,
+	TOKEN_ACTION_ISNT_LEGENDARY = 256,
+	TOKEN_ACTION_SKIP_ATTACK_CHECK = 2097152,
 } token_action_t;
 
 /* Parameters for "generate_token" and such */
@@ -2506,6 +2472,7 @@ typedef struct struct_token_generation_t	// struct name only for forward declara
 	int (*special_code_for_legacy)(int, int, event_t);	// Usable with nontokens
 	void (*special_code_on_generation)(struct struct_token_generation_t*, int, int);	// If set, this is called for each token before it's put in play.  It gets passed the token_generation_t structure, the idx of the card_added, and which number token this is (starting from 0).
 	int special_flags2;
+	int special_flags3;
 } token_generation_t;
 
 /* Flags for "check_battlefield_for_special_card */
@@ -2599,12 +2566,14 @@ typedef enum
 } ednt_flags_t;
 
 typedef enum {
-  STORM_CREATURE	= (1<<0),
-  STORM_BLACK = COLOR_TEST_BLACK,
-  STORM_BLUE = COLOR_TEST_BLUE,
-  STORM_GREEN = COLOR_TEST_GREEN,
-  STORM_RED = COLOR_TEST_RED,
-  STORM_WHITE = COLOR_TEST_WHITE,
+  STORM_CREATURE	= 64,
+  STORM_BLACK = 2,
+  STORM_BLUE = 4,
+  STORM_GREEN = 8,
+  STORM_RED = 16,
+  STORM_WHITE = 32,
+  STORM_ENCHANTMENT = 128,
+  STORM_INSTANT_SORCERY = 256,
 } storm_mode_t;
 
 typedef enum{ // results from EVENT_GRAVEYARD_ABILITY or EVENT_CAN_ACTIVATE_FROM_HAND
@@ -3109,34 +3078,12 @@ typedef struct
   int32_t allow_cancel;	// 0: no cancel.  1: cancel button.  2: done button.  3: both done and cancel buttons.  If done is chosen, select_target returns 0 and sets target.card to -2.
   int32_t player;
   int32_t card;
+  int32_t flags;
 } target_definition_t;
 
-/* October 2022 targeting layout; the original target_definition_t remains 80 bytes. */
+/* Recovery spelling aliases the canonical October 2022 target record. */
 #ifndef SHANDALAR
-typedef struct
-{
-  int32_t who_chooses;
-  int32_t allowed_controller;
-  int32_t preferred_controller;
-  int32_t zone;
-  int32_t required_type;
-  int32_t illegal_type;
-  int32_t required_abilities;
-  int32_t illegal_abilities;
-  int32_t required_color;
-  int32_t illegal_color;
-  int32_t extra;
-  int32_t required_subtype;
-  int32_t power_requirement;
-  int32_t toughness_requirement;
-  int32_t special;
-  int32_t required_state;
-  int32_t illegal_state;
-  int32_t allow_cancel;
-  int32_t player;
-  int32_t card;
-  int32_t flags;
-} target_definition_2022_t;
+typedef target_definition_t target_definition_2022_t;
 #endif
 
 typedef enum
@@ -3299,30 +3246,19 @@ typedef struct pump_ability_until_eot_arguments_t
 	int source_c;
 	int pow_mod;
 	int tou_mod;
-	int key_mod;
-	int skey_mod;
+	keyword_t key_mod;
+	sp_keyword_t skey_mod;
 	int paue_flags;
 	int can_block_additional_creatures;
 	int eot_removal_method;
+	subtype_t subtype;
+	color_test_t color;
+	int disabling_mode;
 } pump_ability_t;
 
-/* October 2022 pump record; legacy 36-byte record remains above. */
+/* Recovery spelling aliases the canonical October 2022 pump record. */
 #ifndef SHANDALAR
-typedef struct pump_ability_arguments_2022_t
-{
-  int source_p;
-  int source_c;
-  int pow_mod;
-  int tou_mod;
-  keyword_t key_mod;
-  sp_keyword_t skey_mod;
-  int paue_flags;
-  int can_block_additional_creatures;
-  int eot_removal_method;
-  subtype_t subtype;
-  color_test_t color;
-  int disabling_mode;
-} pump_ability_2022_t;
+typedef pump_ability_t pump_ability_2022_t;
 #endif
 
 typedef enum {
@@ -3349,6 +3285,8 @@ typedef enum {
 	// These two valid only for seek_grave_for_id_to_reanimate.  Can't be combined with any of the modes above.
 	REANIMATEXTRA_RETURN_TO_HAND2 = -1,	// Doesn't have the problems REANIMATE_RETURN_TO_HAND does, though only valid in seek_grave_for_id_to_reanimate
 	REANIMATEXTRA_LEAVE_IN_GRAVEYARD = -2,
+	REANIMATE_ATTACH_AURA_TO_REANIMATOR = 65536,
+	REANIMATEXTRA_EXILE_FROM_GRAVEYARD = -3,
 } reanimate_mode_t;
 
 typedef enum
@@ -3370,12 +3308,14 @@ typedef enum {
 	PREVENT_INFINITE = (1<<3),			// no limit to damage prevented
 } prevent_t;
 
-typedef enum {
-	IPF_TARGET = 1,
-	IPF_ATTACH_AURA,
-	IPF_ATTACH_EQUIPMENT,	// or fortification
-	IPF_DAMAGE,
-	IPF_BLOCK,
+typedef enum
+{
+  IPF_DAMAGE = 1,
+  IPF_ATTACH_AURA = 2,
+  IPF_ATTACH_EQUIPMENT = 3,
+  IPF_BLOCK = 4,
+  IPF_TARGET = 5,
+  IPF_QUERY = 6,
 } is_protected_from_mode_t;
 
 typedef enum
@@ -3471,30 +3411,29 @@ typedef enum {
 
 typedef enum
 {
-	SAC_NO_CANCEL			= 1<<0,	// Don't show a cancel button.  Needs to stay at 1.
-	SAC_DONE				= 1<<1,	// Show a done button.  Needs to stay at 2.
-	SAC_JUST_MARK			= 1<<2,	// Don't actually sacrifice the chosen permanent or permanents, just set STATE_CANNOT_TARGET.  Will also be available in marked_for_sacrificed[] if called via mark_sacrifice().
-	SAC_ALL_OR_NONE			= 1<<3,	// Unless all targets are chosen, don't sacrifice any of them.
-	SAC_AS_COST				= 1<<4,	// Disallow sacrifice of creatures if there's an Angel of Jubilation in play.
-	SAC_CAUSED				= 1<<5,	// Disallow all sacrifices if player != t_player and t_player controls Tajuru Preserver or Sigarda, Host of Herons.
-	SAC_RETURN_CHOICE		= 1<<6,	// Returns the sacrificed {player,card} in {BYTE2,BYTE3} of the return value.  If sacrificing more than one, then only returns the last.
-	SAC_SET_TARGETS			= 1<<7,	// Sets a bunch of values in {player,card}'s targets[0] - targets[4], for backwards compatibility with the old sacrifice() interface.  Avoid.
+  SAC_NO_CANCEL = 1,
+  SAC_DONE = 2,
+  SAC_JUST_MARK = 4,
+  SAC_ALL_OR_NONE = 8,
+  SAC_AS_COST = 16,
+  SAC_CAUSED = 32,
+  SAC_RETURN_CHOICE = 64,
+  SAC_OPTIONAL = 128,
+  SAC_SET_TARGETS = 256,
 } sacrifice_t;
 
-/* October 2022 sacrifice flags; retain the original flag domain above. */
+/* Recovery spelling aliases the canonical native sacrifice flags. */
 #ifndef SHANDALAR
-typedef enum
-{
-  SAC2022_NO_CANCEL = 1,
-  SAC2022_DONE = 2,
-  SAC2022_JUST_MARK = 4,
-  SAC2022_ALL_OR_NONE = 8,
-  SAC2022_AS_COST = 16,
-  SAC2022_CAUSED = 32,
-  SAC2022_RETURN_CHOICE = 64,
-  SAC2022_OPTIONAL = 128,
-  SAC2022_SET_TARGETS = 256,
-} sacrifice_2022_t;
+typedef sacrifice_t sacrifice_2022_t;
+#define SAC2022_NO_CANCEL SAC_NO_CANCEL
+#define SAC2022_DONE SAC_DONE
+#define SAC2022_JUST_MARK SAC_JUST_MARK
+#define SAC2022_ALL_OR_NONE SAC_ALL_OR_NONE
+#define SAC2022_AS_COST SAC_AS_COST
+#define SAC2022_CAUSED SAC_CAUSED
+#define SAC2022_RETURN_CHOICE SAC_RETURN_CHOICE
+#define SAC2022_OPTIONAL SAC_OPTIONAL
+#define SAC2022_SET_TARGETS SAC_SET_TARGETS
 #endif
 
 typedef enum
@@ -4001,16 +3940,14 @@ typedef enum
 
 
 #ifndef SHANDALAR
-/* October 2022 protection event modes; original modes retained above. */
-typedef enum
-{
-  IPF2022_DAMAGE = 1,
-  IPF2022_ATTACH_AURA = 2,
-  IPF2022_ATTACH_EQUIPMENT = 3,
-  IPF2022_BLOCK = 4,
-  IPF2022_TARGET = 5,
-  IPF2022_QUERY = 6
-} is_protected_from_mode_2022_t;
+/* Recovery spelling aliases canonical native protection modes. */
+typedef is_protected_from_mode_t is_protected_from_mode_2022_t;
+#define IPF2022_DAMAGE IPF_DAMAGE
+#define IPF2022_ATTACH_AURA IPF_ATTACH_AURA
+#define IPF2022_ATTACH_EQUIPMENT IPF_ATTACH_EQUIPMENT
+#define IPF2022_BLOCK IPF_BLOCK
+#define IPF2022_TARGET IPF_TARGET
+#define IPF2022_QUERY IPF_QUERY
 #endif
 
 
@@ -4037,93 +3974,61 @@ typedef enum {
 
 
 #ifndef SHANDALAR
-/* October 2022 token creation ABI; legacy layout/actions retained above. */
-typedef enum
-{
-  TOKEN2022_ACTION_TAPPED = 1,
-  TOKEN2022_ACTION_ATTACKING_UNTAPPED = 2,
-  TOKEN2022_ACTION_ATTACKING = 3,
-  TOKEN2022_ACTION_EQUIP = 4,
-  TOKEN2022_ACTION_EQUIP_ANY = 8,
-  TOKEN2022_ACTION_HASTE = 16,
-  TOKEN2022_ACTION_DONT_COPY_TOKEN_SOURCE = 32,
-  TOKEN2022_ACTION_CONVERT_INTO_ARTIFACT = 64,
-  TOKEN2022_ACTION_RECORD_SOURCE_ID = 128,
-  TOKEN2022_ACTION_ISNT_LEGENDARY = 256,
-  TOKEN2022_ACTION_BLOCKING = 65536,
-  TOKEN2022_ACTION_PUMP_POWER = 131072,
-  TOKEN2022_ACTION_PUMP_TOUGHNESS = 262144,
-  TOKEN2022_ACTION_ADD_SUBTYPE = 524288,
-  TOKEN2022_ACTION_ADD_COUNTERS = 1048576,
-  TOKEN2022_ACTION_SKIP_ATTACK_CHECK = 2097152
-} token_action_2022_t;
+/* Recovery spellings alias the canonical October 2022 token record/actions. */
+typedef token_action_t token_action_2022_t;
+#define TOKEN2022_ACTION_TAPPED TOKEN_ACTION_TAPPED
+#define TOKEN2022_ACTION_ATTACKING_UNTAPPED TOKEN_ACTION_ATTACKING_UNTAPPED
+#define TOKEN2022_ACTION_ATTACKING TOKEN_ACTION_ATTACKING
+#define TOKEN2022_ACTION_EQUIP TOKEN_ACTION_EQUIP
+#define TOKEN2022_ACTION_EQUIP_ANY TOKEN_ACTION_EQUIP_ANY
+#define TOKEN2022_ACTION_HASTE TOKEN_ACTION_HASTE
+#define TOKEN2022_ACTION_DONT_COPY_TOKEN_SOURCE TOKEN_ACTION_DONT_COPY_TOKEN_SOURCE
+#define TOKEN2022_ACTION_CONVERT_INTO_ARTIFACT TOKEN_ACTION_CONVERT_INTO_ARTIFACT
+#define TOKEN2022_ACTION_RECORD_SOURCE_ID TOKEN_ACTION_RECORD_SOURCE_ID
+#define TOKEN2022_ACTION_ISNT_LEGENDARY TOKEN_ACTION_ISNT_LEGENDARY
+#define TOKEN2022_ACTION_BLOCKING TOKEN_ACTION_BLOCKING
+#define TOKEN2022_ACTION_PUMP_POWER TOKEN_ACTION_PUMP_POWER
+#define TOKEN2022_ACTION_PUMP_TOUGHNESS TOKEN_ACTION_PUMP_TOUGHNESS
+#define TOKEN2022_ACTION_ADD_SUBTYPE TOKEN_ACTION_ADD_SUBTYPE
+#define TOKEN2022_ACTION_ADD_COUNTERS TOKEN_ACTION_ADD_COUNTERS
+#define TOKEN2022_ACTION_SKIP_ATTACK_CHECK TOKEN_ACTION_SKIP_ATTACK_CHECK
 
-typedef struct struct_token_generation_2022_t
-{
-  int id;
-  int s_player;
-  int s_card;
-  int eff_player;
-  int eff_card;
-  int t_player;
-  int pow;
-  int tou;
-  unsigned int key_plus;
-  unsigned int s_key_plus;
-  unsigned char color_forced;
-  unsigned char no_sleight;
-  unsigned char legacy;
-  unsigned char qty;
-  unsigned int special_infos;
-  token_action_2022_t action;
-  int action_argument;
-  unsigned int keep_track_of_tokens_generated;
-  int (*special_code_for_legacy)(int, int, event_t);
-  void (*special_code_on_generation)(struct struct_token_generation_2022_t *, int, int);
-  int special_flags2;
-  int special_flags3;
-} token_generation_2022_t;
+typedef token_generation_t token_generation_2022_t;
 #endif
 
 
 #ifndef SHANDALAR
-/* October 2022 action values have unsigned 32-bit storage. */
-typedef uint32_t actions_2022_t;
+/* Recovery spelling aliases the canonical native unsigned action enum. */
+typedef actions_t actions_2022_t;
 #endif
 
 
 #ifndef SHANDALAR
-/* October 2022 tutor domains; retain legacy destination values above. */
-typedef uint32_t tutor_destination_2022_t;
-enum
-{
-  TUTOR2022_0 = 0,
-  TUTOR2022_HAND = 1,
-  TUTOR2022_DECK = 2,
-  TUTOR2022_GRAVE = 3,
-  TUTOR2022_PLAY = 4,
-  TUTOR2022_PLAY_TAPPED = 5,
-  TUTOR2022_RFG = 6,
-  TUTOR2022_EXILE = 6,
-  TUTOR2022_GET_ID = 7,
-  TUTOR2022_PLAY_ATTACKING = 8,
-  TUTOR2022_GET_POSITION = 9,
-  TUTOR2022_BOTTOM_OF_DECK = 10,
-  TUTOR2022_TPLAYER_HAND = 11,
-  TUTOR2022_BOTTOM_OF_DECK_RANDOM = 12,
-  TUTOR2022_HAND_AND_MARK = 13,
-  TUTOR2022_OPPOSITION_AGENT = 14
-};
-typedef uint32_t tutor_from_2022_t;
-enum
-{
-  TUTOR_FROM2022_DECK = 1,
-  TUTOR_FROM2022_GRAVE = 2,
-  TUTOR_FROM2022_RFG = 3,
-  TUTOR_FROM2022_HAND = 4,
-  TUTOR_FROM2022_GRAVE_NOTARGET = 5,
-  TUTOR_FROM2022_DECK_AUTO = 6
-};
+/* Recovery spellings alias native canonical tutor domains. */
+typedef tutor_t tutor_destination_2022_t;
+#define TUTOR2022_0 TUTOR_0
+#define TUTOR2022_HAND TUTOR_HAND
+#define TUTOR2022_DECK TUTOR_DECK
+#define TUTOR2022_GRAVE TUTOR_GRAVE
+#define TUTOR2022_PLAY TUTOR_PLAY
+#define TUTOR2022_PLAY_TAPPED TUTOR_PLAY_TAPPED
+#define TUTOR2022_RFG TUTOR_RFG
+#define TUTOR2022_EXILE TUTOR_EXILE
+#define TUTOR2022_GET_ID TUTOR_GET_ID
+#define TUTOR2022_PLAY_ATTACKING TUTOR_PLAY_ATTACKING
+#define TUTOR2022_GET_POSITION TUTOR_GET_POSITION
+#define TUTOR2022_BOTTOM_OF_DECK TUTOR_BOTTOM_OF_DECK
+#define TUTOR2022_TPLAYER_HAND TUTOR_TPLAYER_HAND
+#define TUTOR2022_BOTTOM_OF_DECK_RANDOM TUTOR_BOTTOM_OF_DECK_RANDOM
+#define TUTOR2022_HAND_AND_MARK TUTOR_HAND_AND_MARK
+#define TUTOR2022_OPPOSITION_AGENT TUTOR_OPPOSITION_AGENT
+typedef tutor_from_t tutor_from_2022_t;
+#define TUTOR_FROM2022_DECK TUTOR_FROM_DECK
+#define TUTOR_FROM2022_GRAVE TUTOR_FROM_GRAVE
+#define TUTOR_FROM2022_RFG TUTOR_FROM_RFG
+#define TUTOR_FROM2022_HAND TUTOR_FROM_HAND
+#define TUTOR_FROM2022_GRAVE_NOTARGET TUTOR_FROM_GRAVE_NOTARGET
+#define TUTOR_FROM2022_DECK_AUTO TUTOR_FROM_DECK_AUTO
 #endif
 
 
@@ -4154,45 +4059,42 @@ enum
 #endif
 
 #ifndef SHANDALAR
-/* October 2022 signed reanimation action domain. */
-typedef enum
-{
-  REANIMATE2022_DEFAULT = 0,
-  REANIMATE2022_TAP = 1,
-  REANIMATE2022_NO_CONTROL_LEGACY = 2,
-  REANIMATE2022_UNEARTH = 4,
-  REANIMATE2022_ADD_BLACK_ZOMBIE = 8,
-  REANIMATE2022_HASTE_AND_EXILE_AT_EOT = 16,
-  REANIMATE2022_PLUS1_PLUS1_COUNTER = 32,
-  REANIMATE2022_MINUS1_MINUS1_COUNTER = 64,
-  REANIMATE2022_HASTE_UNTIL_EOT = 128,
-  REANIMATE2022_ATTACH_AS_AURA = 256,
-  REANIMATE2022_RETURN_TO_HAND = 512,
-  REANIMATE2022_ALL_UNDER_CASTERS_CONTROL = 1024,
-  REANIMATE2022_UNDER_OWNER_CONTROL = 2048,
-  REANIMATE2022_SPECIAL_R_ALL = 4096,
-  REANIMATE2022_HASTE_AND_EXILE_AT_YOUR_UPKEEP = 8192,
-  REANIMATE2022_SPECIAL_LIVING_DEAD = 16384,
-  REANIMATE2022_RETURN_TO_PLAY_TRANSFORMED = 32768,
-  REANIMATE2022_ATTACH_AURA_TO_REANIMATOR = 65536,
-  REANIMATEXTRA2022_RETURN_TO_HAND2 = -1,
-  REANIMATEXTRA2022_LEAVE_IN_GRAVEYARD = -2,
-  REANIMATEXTRA2022_EXILE_FROM_GRAVEYARD = -3
-} reanimate_mode_2022_t;
+/* Recovery spellings alias the canonical signed reanimation domain. */
+typedef reanimate_mode_t reanimate_mode_2022_t;
+#define REANIMATE2022_DEFAULT REANIMATE_DEFAULT
+#define REANIMATE2022_TAP REANIMATE_TAP
+#define REANIMATE2022_NO_CONTROL_LEGACY REANIMATE_NO_CONTROL_LEGACY
+#define REANIMATE2022_UNEARTH REANIMATE_UNEARTH
+#define REANIMATE2022_ADD_BLACK_ZOMBIE REANIMATE_ADD_BLACK_ZOMBIE
+#define REANIMATE2022_HASTE_AND_EXILE_AT_EOT REANIMATE_HASTE_AND_EXILE_AT_EOT
+#define REANIMATE2022_PLUS1_PLUS1_COUNTER REANIMATE_PLUS1_PLUS1_COUNTER
+#define REANIMATE2022_MINUS1_MINUS1_COUNTER REANIMATE_MINUS1_MINUS1_COUNTER
+#define REANIMATE2022_HASTE_UNTIL_EOT REANIMATE_HASTE_UNTIL_EOT
+#define REANIMATE2022_ATTACH_AS_AURA REANIMATE_ATTACH_AS_AURA
+#define REANIMATE2022_RETURN_TO_HAND REANIMATE_RETURN_TO_HAND
+#define REANIMATE2022_ALL_UNDER_CASTERS_CONTROL REANIMATE_ALL_UNDER_CASTERS_CONTROL
+#define REANIMATE2022_UNDER_OWNER_CONTROL REANIMATE_UNDER_OWNER_CONTROL
+#define REANIMATE2022_SPECIAL_R_ALL REANIMATE_SPECIAL_R_ALL
+#define REANIMATE2022_HASTE_AND_EXILE_AT_YOUR_UPKEEP REANIMATE_HASTE_AND_EXILE_AT_YOUR_UPKEEP
+#define REANIMATE2022_SPECIAL_LIVING_DEAD REANIMATE_SPECIAL_LIVING_DEAD
+#define REANIMATE2022_RETURN_TO_PLAY_TRANSFORMED REANIMATE_RETURN_TO_PLAY_TRANSFORMED
+#define REANIMATE2022_ATTACH_AURA_TO_REANIMATOR REANIMATE_ATTACH_AURA_TO_REANIMATOR
+#define REANIMATEXTRA2022_RETURN_TO_HAND2 REANIMATEXTRA_RETURN_TO_HAND2
+#define REANIMATEXTRA2022_LEAVE_IN_GRAVEYARD REANIMATEXTRA_LEAVE_IN_GRAVEYARD
+#define REANIMATEXTRA2022_EXILE_FROM_GRAVEYARD REANIMATEXTRA_EXILE_FROM_GRAVEYARD
 #endif
 
-/* October 2022 storm mode domain; retain the legacy storm_mode_t. */
+/* Recovery spelling aliases the canonical native storm modes. */
 #ifndef SHANDALAR
-typedef enum {
-  STORM2022_BLACK = 0x2,
-  STORM2022_BLUE = 0x4,
-  STORM2022_GREEN = 0x8,
-  STORM2022_RED = 0x10,
-  STORM2022_WHITE = 0x20,
-  STORM2022_CREATURE = 0x40,
-  STORM2022_ENCHANTMENT = 0x80,
-  STORM2022_INSTANT_SORCERY = 0x100,
-} storm_mode_2022_t;
+typedef storm_mode_t storm_mode_2022_t;
+#define STORM2022_BLACK STORM_BLACK
+#define STORM2022_BLUE STORM_BLUE
+#define STORM2022_GREEN STORM_GREEN
+#define STORM2022_RED STORM_RED
+#define STORM2022_WHITE STORM_WHITE
+#define STORM2022_CREATURE STORM_CREATURE
+#define STORM2022_ENCHANTMENT STORM_ENCHANTMENT
+#define STORM2022_INSTANT_SORCERY STORM_INSTANT_SORCERY
 #endif
 
 #endif

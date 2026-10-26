@@ -457,7 +457,7 @@ int card_conspiracy_natural_unity(int player, int card, event_t event){
  * Creatures you control with the chosen name have:
  * "At the beginning of combat on your turn, you may pay |G. If you do, put a +1/+1 counter on this creature." */
 
-	if( beginning_of_combat(player, card, event, player, -1) ){
+	if( beginning_of_combat(player, card, event, player) ){
 		int i;
 		for(i=0; i<active_cards_count[player] && has_mana(player, COLOR_GREEN, 1); i++){
 			if( in_play(player, i) && is_what(player, i, TYPE_CREATURE) && ! is_humiliated(player, i) ){

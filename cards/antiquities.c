@@ -1,5 +1,11 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+const char *damage_from_artifact_source(int who_chooses, int player, int card);
+static int kill_legacy_if_source_is_not_in_play_or_untapped(int player, int card, event_t event);
+int pump_until_source_is_in_play_and_tapped(int player, int card, int t_player, int t_card,
+                                                 int pow, int tou, int key, int s_key, int mode);
+
 // functions
 static int is_artifact_creature(int player, int card){
 	return is_what(player, card, TYPE_CREATURE) && is_what(player, card, TYPE_ARTIFACT);
@@ -9,42 +15,54 @@ enum{
 	PUSIIPAT_TAPPED = 1,
 };
 
-static int kill_legacy_if_source_is_not_in_play_or_untapped(int player, int card, event_t event){
-	card_instance_t *instance = get_card_instance(player, card);
-	if( instance->targets[1].player > -1 ){
-		int killme = 0;
-		if( leaves_play(instance->targets[1].player, instance->targets[1].card, event) ){
-			killme = 1;
-		}
-		if( instance->targets[3].player > 0 && (instance->targets[3].player & PUSIIPAT_TAPPED) &&
-			! is_tapped(instance->targets[1].player, instance->targets[1].card)
-		  ){
-			killme = 1;
-		}
-		if( killme ){
-			kill_card(instance->targets[2].player, instance->targets[2].card, KILL_EXILE);
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
-	return 0;
+static int kill_legacy_if_source_is_not_in_play_or_untapped(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  card_instance_t *instance;
+  int result;
+
+  instance = get_card_instance(player, card);
+  result = instance->targets[1].player;
+  if (-1 < result)
+  {
+    other_leaves_play_2022(player, card, result, instance->targets[1].card, event, 0, 0);
+    uVar1 = instance->targets[3].player;
+    if ((((0 < (int)uVar1) && ((uVar1 & 1) != 0)) &&
+         (result = is_tapped(instance->targets[1].player, instance->targets[1].card),
+          result == 0)) ||
+        (event == EVENT_LEAVES_PLAY_ABILITY))
+    {
+      kill_card(instance->targets[2].player, instance->targets[2].card, KILL_EXILE);
+      kill_card(player, card, KILL_EXILE);
+      return 0;
+    }
+  }
+  return 0;
 }
 
-static int pump_until_source_is_in_play_and_tapped(int player, int card, int t_player, int t_card, int pow, int tou, int key, int s_key, int mode){
-	pump_ability_t pump;
-	default_pump_ability_definition(player, card, &pump, pow, tou, key, s_key);
-	int legacy = pump_ability(player, card, t_player, t_card, &pump);
-	card_instance_t* parent = get_card_instance(player, card);
-	parent->targets[1].player = t_player;
-	parent->targets[1].card = t_card;
-	int l2 = create_targetted_legacy_effect(player, card, &kill_legacy_if_source_is_not_in_play_or_untapped, t_player, t_card);
-	card_instance_t* leg = get_card_instance(player, l2);
-	leg->targets[1].player = player;
-	leg->targets[1].card = card;
-	leg->targets[2].player = player;
-	leg->targets[2].card = legacy;
-	leg->targets[3].player = mode;
-	add_status(player, l2, STATUS_INVISIBLE_FX);
-	return legacy;
+int pump_until_source_is_in_play_and_tapped(int player, int card, int t_player, int t_card,
+                                                 int pow, int tou, int key, int s_key, int mode)
+{
+  int result;
+  card_instance_t *instance;
+  int card_00;
+  pump_ability_2022_t pump;
+
+  default_pump_ability_definition(player, card, &pump, pow, tou, key, s_key);
+  result = pump_ability(player, card, t_player, t_card, &pump);
+  instance = get_card_instance(player, card);
+  instance->targets[1].player = t_player;
+  instance->targets[1].card = t_card;
+  card_00 = create_targetted_legacy_effect(
+      player, card, kill_legacy_if_source_is_not_in_play_or_untapped, t_player, t_card);
+  instance = get_card_instance(player, card_00);
+  instance->targets[1].card = card;
+  instance->targets[1].player = player;
+  instance->targets[2].player = player;
+  instance->targets[2].card = result;
+  instance->targets[3].player = mode;
+  add_status(player, card_00, 0x10000);
+  return result;
 }
 
 // cards
@@ -640,30 +658,43 @@ Artifact
   return 0;
 }
 
-static const char* damage_from_artifact_source(int who_chooses, int player, int card){
-	card_instance_t* dmg = get_card_instance(player, card);
-	if( dmg->internal_card_id != damage_card ){
-		return "must be a damage card";
-	}
-	if( dmg->damage_target_player != who_chooses || dmg->damage_target_card != -1 ){
-		return "must be damage dealt to you";
-	}
+const char *damage_from_artifact_source(int who_chooses, int player, int card)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  unsigned int uVar3;
+  int result;
 
-	int good = dmg->targets[3].player & TYPE_ARTIFACT;
-	if( in_play(dmg->damage_source_player, dmg->damage_source_card) ){
-		good = is_what(dmg->damage_source_player, dmg->damage_source_card, TYPE_ARTIFACT);
-	}
-	if( ! good ){
-		return "must be damage from artifact source";
-	}
-
-	if( is_what(dmg->damage_source_player, dmg->damage_source_card, TYPE_CREATURE) &&
-		check_special_flags(dmg->damage_source_player, dmg->damage_source_card, SF_ATTACKING_PWALKER) )
-	{
-		return "must be damage dealt to you";
-	}
-
-	return NULL;
+  pcVar1 = get_card_instance(player, card);
+  if (pcVar1->internal_card_id != damage_card)
+  {
+    return "must be a damage card";
+  }
+  if ((pcVar1->damage_target_player == who_chooses) && (pcVar1->damage_target_card == -1))
+  {
+    uVar3 = pcVar1->targets[3].player;
+    pcVar2 = in_play((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
+    if (pcVar2 == NULL)
+    {
+      uVar3 = uVar3 & 0x40;
+    }
+    else
+    {
+      uVar3 = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 0x40);
+    }
+    if (uVar3 == 0)
+    {
+      return "must be damage from artifact source";
+    }
+    result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
+    if ((result == 0) || (result = check_special_flags((int)pcVar1->damage_source_player,
+                                                            pcVar1->damage_source_card, 0x40),
+                          result == 0))
+    {
+      return NULL;
+    }
+  }
+  return "must be damage dealt to you";
 }
 
 int card_circle_of_protection_artifacts(int player, int card, event_t event){
@@ -3114,103 +3145,20 @@ int triskelion_like_creature(int player, int card, event_t event, int amount_of_
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x22444f0; original cards/antiquities.c:687. */
-char *damage_from_artifact_source_2022(int who_chooses, int player, int card)
-{
-  card_instance_t *pcVar1;
-  card_instance_t *pcVar2;
-  unsigned int uVar3;
-  int result;
 
-  pcVar1 = get_card_instance(player, card);
-  if (pcVar1->internal_card_id != damage_card)
-  {
-    return "must be a damage card";
-  }
-  if ((pcVar1->damage_target_player == who_chooses) && (pcVar1->damage_target_card == -1))
-  {
-    uVar3 = pcVar1->targets[3].player;
-    pcVar2 = in_play((int)pcVar1->damage_source_player, pcVar1->damage_source_card);
-    if (pcVar2 == NULL)
-    {
-      uVar3 = uVar3 & 0x40;
-    }
-    else
-    {
-      uVar3 = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 0x40);
-    }
-    if (uVar3 == 0)
-    {
-      return "must be damage from artifact source";
-    }
-    result = is_what((int)pcVar1->damage_source_player, pcVar1->damage_source_card, 2);
-    if ((result == 0) || (result = check_special_flags_2022((int)pcVar1->damage_source_player,
-                                                            pcVar1->damage_source_card, 0x40),
-                          result == 0))
-    {
-      return NULL;
-    }
-  }
-  return "must be damage dealt to you";
-}
 
 #endif
 
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2244410; original cards/antiquities.c:12. */
-static int kill_legacy_if_source_is_not_in_play_or_untapped_2022(int player, int card, event_t event)
-{
-  unsigned int uVar1;
-  card_instance_t *instance;
-  int result;
 
-  instance = get_card_instance(player, card);
-  result = instance->targets[1].player;
-  if (-1 < result)
-  {
-    other_leaves_play_2022(player, card, result, instance->targets[1].card, event, 0, 0);
-    uVar1 = instance->targets[3].player;
-    if ((((0 < (int)uVar1) && ((uVar1 & 1) != 0)) &&
-         (result = is_tapped(instance->targets[1].player, instance->targets[1].card),
-          result == 0)) ||
-        (event == EVENT_LEAVES_PLAY_ABILITY))
-    {
-      kill_card(instance->targets[2].player, instance->targets[2].card, KILL_EXILE);
-      kill_card(player, card, KILL_EXILE);
-      return 0;
-    }
-  }
-  return 0;
-}
 
 #endif
 
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2245110; original cards/antiquities.c:33. */
-int pump_until_source_is_in_play_and_tapped_2022(int player, int card, int t_player, int t_card,
-                                                 int pow, int tou, int key, int s_key, int mode)
-{
-  int result;
-  card_instance_t *instance;
-  int card_00;
-  pump_ability_2022_t pump;
 
-  default_pump_ability_definition_2022(player, card, &pump, pow, tou, key, s_key);
-  result = pump_ability_2022(player, card, t_player, t_card, &pump);
-  instance = get_card_instance(player, card);
-  instance->targets[1].player = t_player;
-  instance->targets[1].card = t_card;
-  card_00 = create_targetted_legacy_effect(
-      player, card, kill_legacy_if_source_is_not_in_play_or_untapped_2022, t_player, t_card);
-  instance = get_card_instance(player, card_00);
-  instance->targets[1].card = card;
-  instance->targets[1].player = player;
-  instance->targets[2].player = player;
-  instance->targets[2].card = result;
-  instance->targets[3].player = mode;
-  add_status(player, card_00, 0x10000);
-  return result;
-}
 
 #endif

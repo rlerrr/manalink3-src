@@ -1336,7 +1336,7 @@ int card_extirpate(int player, int card, event_t event){
 			int selected = validate_target_from_grave_source(player, card, instance->targets[0].player, 1);
 			if( selected > -1 ){
 				int csvid = cards_data[get_grave(instance->targets[0].player)[selected]].id;
-				lobotomy_effect(player, instance->targets[0].player, csvid, 1);
+				lobotomy_effect(player, instance->targets[0].player, csvid, -1, 1);
 			}
 
 		}
@@ -3729,7 +3729,7 @@ int card_ghost_tactician(int player, int card, event_t event)
   else if (event == EVENT_RESOLVE_ACTIVATION)
   {
     instance = get_card_instance(player, card);
-    pump_subtype_until_eot_2022(instance->parent_controller, instance->parent_card, player, -1, 1, 0, 0,
+    pump_subtype_until_eot(instance->parent_controller, instance->parent_card, player, -1, 1, 0, 0,
                            0);
   }
   result = generic_activated_ability(player, card, event, 0x21, 0, 0, 0, 0, 0, 1, 0, NULL, NULL);
@@ -3856,12 +3856,12 @@ int card_timecrafting(int player, int card, event_t event)
 
   if (event == EVENT_CAN_CAST)
   {
-    default_target_definition_2022(player, card, &td, 199);
+    default_target_definition(player, card, &td, 199);
     td.preferred_controller = 2;
     td.special = 0x8000;
-    td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters_2022;
+    td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters;
     get_card_instance(player, card);
-    iVar2 = generic_spell_2022(player, card, EVENT_CAN_CAST, 5, &td, NULL, 1, NULL);
+    iVar2 = generic_spell(player, card, EVENT_CAN_CAST, 5, &td, NULL, 1, NULL);
     return iVar2;
   }
   if (event == EVENT_CAST_SPELL)
@@ -3874,16 +3874,16 @@ int card_timecrafting(int player, int card, event_t event)
     {
       return 0;
     }
-    default_target_definition_2022(player, card, &td, 199);
+    default_target_definition(player, card, &td, 199);
     td.preferred_controller = 2;
     td.special = 0x8000;
-    td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters_2022;
+    td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters;
     instance = get_card_instance(player, card);
-    iVar2 = check_special_flags2_2022(player, card, -0x80000000);
+    iVar2 = check_special_flags2(player, card, -0x80000000);
     if ((iVar2 == 0) && (spell_fizzled != 1))
     {
-      iVar2 = can_target_2022(&td);
-      iVar3 = can_target_2022(&td);
+      iVar2 = can_target(&td);
+      iVar3 = can_target(&td);
       iVar2 = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\014",
                           "Remove X Time Counters", iVar3, 10, "Add X Time Counters", iVar2, 5, 0,
                           0, 0, 0);
@@ -3903,30 +3903,30 @@ int card_timecrafting(int player, int card, event_t event)
           goto LAB_023bea99;
         prompt = "Select target permanent or Suspend legacy card to add counters.";
       }
-      iVar2 = generic_spell_2022(player, card, EVENT_CAST_SPELL, 0x85, &td, prompt, 1, NULL);
+      iVar2 = generic_spell(player, card, EVENT_CAST_SPELL, 0x85, &td, prompt, 1, NULL);
       return iVar2;
     }
   }
   else if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
   {
-    default_target_definition_2022(player, card, &td, 199);
+    default_target_definition(player, card, &td, 199);
     td.preferred_controller = 2;
     td.special = 0x8000;
-    td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters_2022;
+    td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters;
     instance = get_card_instance(player, card);
     if (event == EVENT_RESOLVE_SPELL)
     {
       iVar2 = instance->targets[5].player;
       if (iVar2 == 1)
       {
-        iVar2 = valid_target_2022(&td);
+        iVar2 = valid_target(&td);
         if (iVar2 != 0)
         {
           remove_counters_from_source(player, card, instance->targets[0].player,
                                       instance->targets[0].card, COUNTER_TIME, instance->info_slot);
         }
       }
-      else if ((iVar2 == 2) && (iVar2 = valid_target_2022(&td), iVar2 != 0))
+      else if ((iVar2 == 2) && (iVar2 = valid_target(&td), iVar2 != 0))
       {
         add_counters_from_source(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_TIME, instance->info_slot);
@@ -3940,14 +3940,14 @@ int card_timecrafting(int player, int card, event_t event)
     {
       return 0;
     }
-    default_target_definition_2022(player, card, &td, 199);
+    default_target_definition(player, card, &td, 199);
     td.preferred_controller = 2;
     td.special = 0x8000;
-    td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters_2022;
+    td.extra = (int32_t)target_must_be_permanent_or_suspend_and_have_time_counters;
     get_card_instance(player, card);
   }
 LAB_023bea99:
-  iVar2 = generic_spell_2022(player, card, event, 5, &td, NULL, 1, NULL);
+  iVar2 = generic_spell(player, card, event, 5, &td, NULL, 1, NULL);
   return iVar2;
 }
 

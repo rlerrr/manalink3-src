@@ -78,8 +78,12 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     assert component['types']['before_etb']==dict(result='void',parameters=['int']*4)
     defs=read(root/'defs.h') if not component.get('planning') else None
     if defs is not None:
-        for name,number in REANIMATION_ENUM_VALUES.items():
-            assert re.search(r'\b'+REANIMATION_DOMAIN_NAMES[name]+r'\s*=\s*'+str(number)+r'\b',defs),name
+        if (root/'docs/recovery-evidence/canonical-reanimation.json').exists():
+            from canonicalize_reanimation import verify as verify_reanimation
+            assert verify_reanimation(root)['values']==REANIMATION_ENUM_VALUES
+        else:
+            for name,number in REANIMATION_ENUM_VALUES.items():
+                assert re.search(r'\b'+REANIMATION_DOMAIN_NAMES[name]+r'\s*=\s*'+str(number)+r'\b',defs),name
         assert 'typedef void (*ReanimationBeforeEtb_2022)(int, int, int, int);' in read(root/'manalink.h')
     params=component['parameters']['269ba70']
     assert [p['name'] for p in params[:5]]==['player','card','targ_player','this_test','action']
@@ -94,7 +98,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     for a,data in PROLOGUE.items():assert machine_bytes(int(a,16),len(bytes.fromhex(data))).hex()==data
     assert machine_bytes(0x2677460,3).hex()=='31c0c3'
     for name,digest in component['retained_bodies'].items():
-        assert sha(function_body(sources[SOURCE].replace('\r\n','\n'),name).encode())==digest,name
+        from unify_scalar_helpers import retained_source_body
+        assert sha(retained_source_body(root,SOURCE,name).encode())==digest,name
     decoder=Cs(CS_ARCH_X86,CS_MODE_32);decoder.detail=True
     for a,entry in entries.items():
         detail=component['functions'][a];body=function_body(sources[SOURCE].replace('\r\n','\n'),entry['name'])

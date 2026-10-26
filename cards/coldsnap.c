@@ -3817,7 +3817,7 @@ int card_gristle_grinner(int player, int card, event_t event)
     instance = in_play(player, card);
     if (instance != NULL)
     {
-      pump_until_eot_merge_previous_2022(player, card, player, card, 2, 2);
+      pump_until_eot_merge_previous(player, card, player, card, 2, 2);
       return 0;
     }
   }
@@ -3924,7 +3924,7 @@ int card_zombie_musher(int player, int card, event_t event)
   {
     iVar1 = is_humiliated_for_ability(player, card, AL_STATIC);
     if ((((iVar1 == 0) && (attacking_card_controller == player)) && (attacking_card == card)) &&
-        (iVar1 = control_a_snow_land_2022(1 - current_turn, 0), iVar1 != 0))
+        (iVar1 = control_a_snow_land(1 - current_turn, 0), iVar1 != 0))
     {
       event_result = 1;
     }
@@ -3933,8 +3933,8 @@ int card_zombie_musher(int player, int card, event_t event)
   {
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar1 = get_cost_mod_for_activated_abilities_2022(player, card, 0, 0, 0, 0, 0, 0);
-      iVar2 = can_use_activated_abilities_2022(player, card);
+      iVar1 = get_cost_mod_for_activated_abilities(player, card, 0, 0, 0, 0, 0, 0);
+      iVar2 = can_use_activated_abilities(player, card);
       if ((iVar2 != 0) && (iVar1 = has_snow_mana(player, 1, iVar1), iVar1 != 0))
       {
         iVar1 = can_regenerate(player, card);
@@ -3943,7 +3943,7 @@ int card_zombie_musher(int player, int card, event_t event)
     }
     else if (event == EVENT_ACTIVATE)
     {
-      iVar1 = get_cost_mod_for_activated_abilities_2022(player, card, 0, 0, 0, 0, 0, 0);
+      iVar1 = get_cost_mod_for_activated_abilities(player, card, 0, 0, 0, 0, 0, 0);
       charge_snow_mana(player, card, 1, iVar1);
     }
     else if (event == EVENT_RESOLVE_ACTIVATION)

@@ -1537,7 +1537,7 @@ int card_snow_mercy(int player, int card, event_t event)
       {
         pcVar2 = get_card_instance(player, card);
         pcVar2->state = pcVar2->state | 0x10;
-        result = generic_activated_ability_2022(player, card, EVENT_ACTIVATE, 0, 0, 0, 0, 0, 0, 0,
+        result = generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 0, 0, 0, 0, 0, 0,
                                                 0, NULL, NULL);
         pcVar2 = get_card_instance(player, card);
         pcVar2->state = pcVar2->state & 0xffffffef;
@@ -1595,14 +1595,14 @@ int card_snow_mercy(int player, int card, event_t event)
   uVar5 = 1;
 LAB_02410ba4:
   result =
-      generic_activated_ability_2022(player, card, event, uVar5, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
+      generic_activated_ability(player, card, event, uVar5, 0, 0, 0, 0, 0, 0, 0, NULL, NULL);
   if (event != EVENT_RESOLVE_ACTIVATION)
   {
     return result;
   }
-  default_test_definition_2022(&test, 2);
+  default_test_definition(&test, 2);
   test.special_selection_function = has_globe_counter;
-  new_manipulate_all_2022(player, card, 2, &test, ACT_TAP);
+  new_manipulate_all(player, card, 2, &test, ACT_TAP);
   return result;
 }
 

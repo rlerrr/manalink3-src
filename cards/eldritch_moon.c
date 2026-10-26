@@ -2915,7 +2915,7 @@ int card_graf_rats(int player, int card, event_t event){
  * At the beginning of combat on your turn, if you both own and control ~ and a creature named Midnight Scavengers,
  * exile them, then meld them into Chittering Host.*/
 
-	if( beginning_of_combat(player, card, event, player, card) ){
+	if( beginning_of_combat(player, card, event, player) ){
 		int done = 0;
 		int marked[2] = {-1, -1};
 		int i;
@@ -6620,9 +6620,9 @@ int card_mirrorwing_dragon(int player, int card, event_t event)
                 pcVar4->targets[0].card = iStack_14;
                 pcVar4->targets[0].player = iVar3;
                 pcVar4->number_of_targets = '\x01';
-                set_special_flags2_2022(trigger_cause_controller, iVar5, -0x80000000);
+                set_special_flags2(trigger_cause_controller, iVar5, -0x80000000);
                 convert_to_token(trigger_cause_controller, iVar5);
-                set_special_flags_2022(trigger_cause_controller, iVar5, 0x200c0000);
+                set_special_flags(trigger_cause_controller, iVar5, 0x200c0000);
                 iVar7 = put_card_on_stack(trigger_cause_controller, iVar5, 0);
                 if (iVar7 == 0)
                 {

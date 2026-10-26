@@ -1,0 +1,95 @@
+{
+  "source": "functions/count_graveyard.c",
+  "retained_name": "count_zone_by_type",
+  "recovered_name": "count_zone_by_type_2022",
+  "predecessor_definition": "static int count_zone_by_type(int player, int type, const int* zone){\n\tint count = 0;\n\tint i;\n\n\tfor(i = 0; i < 500 && zone[i] != -1; i++){\n\t\tif( is_what(-1, zone[i], type) ){\n\t\t\tcount++;\n\t\t}\n\t}\n\n\treturn count;\n}",
+  "predecessor_definition_sha256": "9ed3e0b38327807f58650747f903113756875009988fac4982d4e5dc4bceb3c6",
+  "source_replacement": "/* Native zone counting has two physical arguments; the unused player predecessor is retired. */\nstatic int count_zone_by_type_2022(int type, const int *zone);",
+  "callers": {
+    "count_graveyard_by_type": {
+      "old_call": "count_zone_by_type(i, type, get_grave(i))",
+      "native_call": "count_zone_by_type_2022(type, get_grave(i))",
+      "predecessor_definition": "int count_graveyard_by_type(int player, int type){\n\tint i;\n\tint result = 0;\n\tfor(i=0; i<2; i++){\n\t\tif( i == player || player == 2 ){\n\t\t\tresult += count_zone_by_type(i, type, get_grave(i));\n\t\t}\n\t}\n\treturn result;\n}",
+      "predecessor_sha256": "53e50463702496302046023fb8f819f8038455f2293e677088c69a37953dfb9d",
+      "native_source_sha256": "cf02990eb0db4e0b751a6d5459156fa34f2bdc46d99435e17b7a60769b90ed63",
+      "native_range": {
+        "start": "0x26e6090",
+        "end": "0x26e60de",
+        "sha256": "143aa00201248bdf8576f13b8ada34dfb3902dfd9fee491616cd7a98debbd17d",
+        "worker_edges": [
+          {
+            "address": "0x26e60b9",
+            "bytes": "e8b2fbffff"
+          },
+          {
+            "address": "0x26e60d2",
+            "bytes": "e899fbffff"
+          }
+        ]
+      }
+    },
+    "count_deck_by_type": {
+      "old_call": "count_zone_by_type(player, type, deck_ptr[player])",
+      "native_call": "count_zone_by_type_2022(type, deck_ptr[player])",
+      "predecessor_definition": "int count_deck_by_type(int player, int type){\n\treturn count_zone_by_type(player, type, deck_ptr[player]);\n}",
+      "predecessor_sha256": "ede830ab26c3019c1c2a921896ab22b2b33d0173a039cac62946a47298b79d5e",
+      "native_source_sha256": "d0d7da87b678f4d0f61cf56afbdd6fa09bfb6073c233bc531ebcea18d67d0556",
+      "native_range": {
+        "start": "0x26e62c0",
+        "end": "0x26e62d6",
+        "sha256": "4978a44f773c35a9fc86cedc8cc5bc1ebe0fd1742d3aa76a09c4b7a6bea47e9c",
+        "worker_edges": [
+          {
+            "address": "0x26e62d1",
+            "bytes": "e99af9ffff"
+          }
+        ]
+      }
+    }
+  },
+  "accepted_recovery_record": {
+    "name": "count_zone_by_type_2022",
+    "original_name": "count_zone_by_type",
+    "address": "26e5c70",
+    "source": "functions/count_graveyard.c",
+    "line": "119",
+    "static": true,
+    "prototype": "static int  count_zone_by_type_2022(int type,int *zone);",
+    "raw_sha256": "354dd2fe2a4a68e0d3238af32bf65c355d51c4d620c001f2a90d9480e21aa1c0",
+    "recovered_literals": [],
+    "reconstruction": "Recover the concrete two-register clone; removed parameter has no ABI storage.",
+    "specialization": {
+      "parameters": [
+        {
+          "name": "type",
+          "constant": null,
+          "entry_location": [
+            80
+          ]
+        },
+        {
+          "name": "zone",
+          "constant": null,
+          "entry_location": [
+            82
+          ]
+        },
+        {
+          "name": "player",
+          "constant": null,
+          "entry_location": [
+            250,
+            70,
+            228,
+            10,
+            0,
+            159
+          ]
+        }
+      ],
+      "symbol": "_count_zone_by_type.isra.0",
+      "line": "119"
+    }
+  },
+  "native_runtime_sha256": "52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5"
+}

@@ -1,333 +1,32 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+int has_phyrexian_mana(int player, int cless, int black, int blue, int green, int red,
+                            int white, int clred_artifact);
+int has_phyrexian_mana_for_activated_ability(int player, int card, int cless, int black,
+                                                  int blue, int green, int red, int white);
+int charge_phyrexian_mana(int player, int card, event_t event, int cless, int black, int blue,
+                               int green, int red, int white, int clred_artifact);
+int charge_phyrexian_mana_for_activated_ability(int player, int card, int cless, int black,
+                                                     int blue, int green, int red, int white);
+int phyrexian_casting_costs(int player, int card, event_t event, int cless, int black,
+                                 int blue, int green, int red, int white, int clred_artifact);
+static int charge_phyrexian_mana_impl(int player, int cless, int black, int blue, int green,
+                                           int red, int white, int clred_artifact);
+
 // ---- GLOBAL FUNCTIONS ----
 
-int has_phyrexian_mana(int player, int cless, int black, int blue, int green, int red, int white, int clred_artifact){
-
-	int manacost[5] = { black, blue, green, red, white };
-
-	if( has_mana_multi(player, cless, black, blue, green, red, white) ){
-		return 1;
-	}
-	else if( has_mana(player, clred_artifact ? COLOR_ARTIFACT : COLOR_COLORLESS, cless) && can_pay_life(player, 1) ){
-		int life_to_pay = 50;
-		int i;
-		for(i=0; i<5; i++){
-			if( manacost[i] < 1 ){
-				life_to_pay-=10;
-			}
-			else{
-				int z;
-				for(z=4; z>-1; z--){
-					if( manacost[i] < z+1 ){
-						life_to_pay-=2;
-					}
-					else{
-						if( has_mana(player, i+1, z+1) ){
-							life_to_pay-=2;
-						}
-					}
-				}
-			}
-		}
 
 
-		if( !IS_AI(player) ){
-			if( life[player] >= life_to_pay ){
-				return 1;
-			}
-		}
-		else{
-			if( (life[player] - life_to_pay) > 6 ){
-				return 1;
-			}
-		}
-	}
 
-	return 0;
-}
 
-static int has_phyrexian_mana_for_activated_ability(int player, int card, int cless, int black, int blue, int green, int red, int white)
-{
-  if (cless < 0)
-	cless = 0;
-  cless = get_cost_mod_for_activated_abilities(player, card, cless, black, blue, green, red, white);
-  int rval = has_phyrexian_mana(player, cless, black, blue, green, red, white, 0);
-  return rval;
-}
 
-static int charge_phyrexian_mana_impl(int player, int card, int cless, int black, int blue, int green, int red, int white, int clred_artifact){
 
-	int manacost[5] = { black, blue, green, red, white };
-	int manacost_modified[5] = { black, blue, green, red, white };
-	int cpl = can_pay_life(player, 1);
-	int life_to_pay = 10;
 
-	if( ! has_mana(player, clred_artifact ? COLOR_ARTIFACT : COLOR_COLORLESS, cless) ){
-		spell_fizzled = 1;
-		return 0;
-	}
 
-	char buffer[500];
-	if( cpl ){
-		int pos = scnprintf(buffer, 500, " ");
-		if (clred_artifact ? has_mana_multi_a(player, cless, black, blue, green, red, white)
-			: has_mana_multi(player, cless, black, blue, green, red, white)){
-			pos += scnprintf(buffer + pos, 500-pos, "Pay ", buffer );
-			if( cless > 0 ){
-				pos += scnprintf(buffer + pos, 500-pos, "%d", cless );
-			}
-			else if( cless == -1 ){
-					pos += scnprintf(buffer + pos, 500-pos, "X" );
-			}
-			int q;
-			for(q=0; q<5; q++){
-				if( manacost[q] > 0 ){
-					int w;
-					for(w=0;w<manacost[q]; w++){
-						if( q == 0 ){
-							pos += scnprintf(buffer + pos, 500-pos, "B" );
-						}
-						if( q == 1 ){
-							pos += scnprintf(buffer + pos, 500-pos, "U" );
-						}
-						if( q == 2 ){
-							pos += scnprintf(buffer + pos, 500-pos, "G" );
-						}
-						if( q == 3 ){
-							pos += scnprintf(buffer + pos, 500-pos, "R" );
-						}
-						if( q == 4 ){
-							pos += scnprintf(buffer + pos, 500-pos, "W" );
-						}
-					}
-				}
-			}
-			pos += scnprintf(buffer + pos, 500-pos, "\n ");
-		}
 
-		int i;
-		for(i=0; i<5; i++){
-			if( manacost[i] > 0 ){
-				int k;
-				for(k=5;k>0;k--){
-					if( manacost[i] < k ){
-						life_to_pay-=2;
-					}
-					else{
-						if( k==2 ){
-							pos += scnprintf(buffer + pos, 500-pos, "Pay ");
-							if( cless > 0 ){
-								pos += scnprintf(buffer + pos, 500-pos, "%d", cless );
-							}
-							else if( cless == -1 ){
-									pos += scnprintf(buffer + pos, 500-pos, "X");
-							}
-							if( i == 0 ){
-								pos += scnprintf(buffer + pos, 500-pos, "B and ");
-								manacost_modified[i]--;
-							}
-							if( i == 1 ){
-								pos += scnprintf(buffer + pos, 500-pos, "U and ");
-								manacost_modified[i]--;
-							}
-							if( i == 2 ){
-								pos += scnprintf(buffer + pos, 500-pos, "G and ");
-								manacost_modified[i]--;
-							}
-							if( i == 3 ){
-								pos += scnprintf(buffer + pos, 500-pos, "R and ");
-								manacost_modified[i]--;
-							}
-							if( i == 4 ){
-								pos += scnprintf(buffer + pos, 500-pos, "W and ");
-								manacost_modified[i]--;
-							}
-							pos += scnprintf(buffer + pos, 500-pos, "%d life\n", life_to_pay-2);
-						}
-						else if( k== 1 ){
-								pos += scnprintf(buffer + pos, 500-pos, "Pay ");
-								if( cless > 0 ){
-									pos += scnprintf(buffer + pos, 500-pos, "%d and %d life\n", cless, life_to_pay);
-								}
-								else if( cless == -1 ){
-										pos += scnprintf(buffer + pos, 500-pos, "X and %d life\n", life_to_pay);
-								}
-								else{
-									pos += scnprintf(buffer + pos, 500-pos, "%d life\n", life_to_pay);
-								}
-						}
-					}
-				}
-			}
-		}
-		pos += scnprintf(buffer + pos, 500-pos, " Do nothing");
-	}
 
-	int choice = 0;
-	if( cpl ){
-		if (clred_artifact ? has_mana_multi_a(player, cless, black, blue, green, red, white)
-			: has_mana_multi(player, cless, black, blue, green, red, white)){
-			choice = do_dialog(player, player, card, -1, -1, buffer, 0);
-		}
-		else{
-			if( life_to_pay == 4){
-				if (clred_artifact ? has_mana_multi_a(player, cless, manacost_modified[0], manacost_modified[1], manacost_modified[2], manacost_modified[3], manacost_modified[4])
-					: has_mana_multi(player, cless, manacost_modified[0], manacost_modified[1], manacost_modified[2], manacost_modified[3], manacost_modified[4])){
-					int ai_choice = 0;
-					if( life[player]-=4 > 6 ){
-						ai_choice = 1;
-					}
-					choice = do_dialog(player, player, card, -1, -1, buffer, ai_choice);
-					choice++;
-				}
-				else{
-					choice = 2;
-				}
-			}
-			else{
-				choice = 1;
-			}
-		}
-	}
 
-	int result = 0;
-	if( choice == 0 ){
-		charge_mana_multi_a(player, clred_artifact ? 0 : cless, black, blue, green, red, white, clred_artifact ? cless : 0);
-		if( spell_fizzled != 1 ){
-			result = 1;
-		}
-	}
-
-	else if( choice == 1 ){
-			if( life_to_pay > 2 ){
-				charge_mana_multi_a(player, clred_artifact ? 0 : cless,
-									manacost_modified[0], manacost_modified[1], manacost_modified[2], manacost_modified[3], manacost_modified[4],
-									clred_artifact ? cless : 0);
-			}
-			else{
-				charge_mana(player, clred_artifact ? COLOR_ARTIFACT : COLOR_COLORLESS, cless);
-			}
-			if( spell_fizzled != 1 ){
-				lose_life(player, 2);
-				result = 1;
-			}
-	 }
-
-	else if( choice == 2 && life_to_pay == 4 ){
-			charge_mana(player, clred_artifact ? COLOR_ARTIFACT : COLOR_COLORLESS, cless);
-			if( spell_fizzled != 1 ){
-				lose_life(player, 4);
-				result = 1;
-			}
-	}
-
-	else{
-		 spell_fizzled = 1;
-		 return 0;
-	}
-
-	 return result;
-}
-
-int charge_phyrexian_mana(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white, int clred_artifact)
-{
-  cless = get_updated_casting_cost(player, card, -1, event, cless);
-  return charge_phyrexian_mana_impl(player, card, cless, black, blue, green, red, white, clred_artifact);
-}
-
-static int charge_phyrexian_mana_for_activated_ability(int player, int card, int cless, int black, int blue, int green, int red, int white)
-{
-  int x = cless < 0 ? cless : 0;
-  if (x)
-	cless = 0;
-  cless = get_cost_mod_for_activated_abilities(player, card, cless, black, blue, green, red, white);
-  if (x && !cless)
-	{
-	  cless = x;
-	  x = 0;
-	}
-  return (charge_phyrexian_mana_impl(player, card, cless, black, blue, green, red, white, 0)
-		  && (x == 0 || charge_mana_multi(player, MANACOST_X(x))));
-}
-
-static int phyrexian_casting_costs(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white, int clred_artifact ){
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	int manacost[5] = { black, blue, green, red, white };
-
-	if( event == EVENT_MODIFY_COST && affect_me(player, card) ){
-		int c1 = get_updated_casting_cost(player, card, -1, event, -1);
-		int can_cast = 0;
-
-		if (clred_artifact ? has_mana_multi_a(player, c1, black, blue, green, red, white) : has_mana_multi(player, c1, black, blue, green, red, white) ){
-			can_cast = 1;
-		 }
-		 else if( has_mana(player, clred_artifact ? COLOR_ARTIFACT : COLOR_COLORLESS, c1) && can_pay_life(player, 1) ){
-				int life_to_pay = 50;
-				int i;
-				for(i=0; i<5; i++){
-					if( manacost[i] < 1 ){
-						life_to_pay-=10;
-					}
-					else{
-						int z;
-						for(z=4; z>-1; z--){
-							if( manacost[i] < z+1 ){
-								life_to_pay-=2;
-							}
-							else{
-								if( has_mana(player, i+1, z+1) ){
-									life_to_pay-=2;
-								}
-							}
-						}
-					}
-				}
-				if( player != AI ){
-					if( life[player] >= life_to_pay ){
-						can_cast = 1;
-					}
-				}
-				else{
-					if( (life[player] - life_to_pay) > 6 ){
-						can_cast = 1;
-					}
-				}
-
-		}
-
-		if( can_cast ){
-			null_casting_cost(player, card);
-			instance->info_slot = 1;
-		}
-		else{
-			instance->info_slot = 0;
-			if( clred_artifact){
-				infinite_casting_cost();
-			}
-		}
-	}
-
-	if( event == EVENT_CAN_CAST ){
-		return 1;
-	}
-
-	if(event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( instance->info_slot == 1){
-			int result = played_for_free(player, card) | is_token(player, card);
-			if( ! result ){
-				result = charge_phyrexian_mana(player, card, event, cless, black, blue, green, red, white, clred_artifact);
-			}
-			if( result == 0 ){
-				spell_fizzled = 1;
-			}
-		}
-	}
-
-	return 0;
-}
 
 
 static int generic_splicer(int player, int card, event_t event, int pow, int tou, int keyword, int golems ){
@@ -1830,7 +1529,7 @@ int card_surgical_extraction(int player, int card, event_t event){
 			int selected = validate_target_from_grave_source(player, card, 1-player, 0);
 			if( selected != -1 ){
 				int id = cards_data[get_grave(1-player)[selected]].id;
-				lobotomy_effect(player, 1-player, id, 0);
+				lobotomy_effect(player, 1-player, id, -1, 0);
 			}
 		}
 		else{
@@ -1838,7 +1537,7 @@ int card_surgical_extraction(int player, int card, event_t event){
 			if( selected != -1 ){
 				const int *grave = get_grave(instance->targets[0].player);
 				int id = cards_data[grave[selected]].id;
-				lobotomy_effect(player, instance->targets[0].player, id, 0);
+				lobotomy_effect(player, instance->targets[0].player, id, -1, 0);
 			}
 		}
 		kill_card(player, card, KILL_DESTROY);
@@ -4906,7 +4605,7 @@ int card_bludgeon_brawl(int player, int card, event_t event)
       (iVar2 = is_equipment(affected_card_controller, affected_card), iVar2 == 0))
   {
 
-    add_a_subtype_2022(affected_card_controller, affected_card, SUBTYPE_EQUIPMENT);
+    add_a_subtype(affected_card_controller, affected_card, SUBTYPE_EQUIPMENT);
     if (0 < active_cards_count[player])
     {
       iVar2 = 0;
@@ -4952,7 +4651,7 @@ int charge_mana_called_from_pay_phyrexian_mana;
 static const char *const phyrexian_color_words_2022[6] = {"colorless", "black", "blue", "green", "red", "white"};
 
 /* ManalinkEh 2022: 0x226caa0; original cards/new_phyrexia.c:60. */
-static int charge_phyrexian_mana_impl_2022(int player, int cless, int black, int blue, int green,
+static int charge_phyrexian_mana_impl(int player, int cless, int black, int blue, int green,
                                            int red, int white, int clred_artifact)
 {
   int iVar1;
@@ -5060,7 +4759,7 @@ static int charge_phyrexian_mana_impl_2022(int player, int cless, int black, int
 
 
 /* ManalinkEh 2022: 0x226d7a0; original cards/new_phyrexia.c:5. */
-int has_phyrexian_mana_2022(int player, int cless, int black, int blue, int green, int red,
+int has_phyrexian_mana(int player, int cless, int black, int blue, int green, int red,
                             int white, int clred_artifact)
 {
   int iVar1;
@@ -5127,32 +4826,32 @@ int has_phyrexian_mana_2022(int player, int cless, int black, int blue, int gree
 
 
 /* ManalinkEh 2022: 0x226d900; original cards/new_phyrexia.c:50. */
-int has_phyrexian_mana_for_activated_ability_2022(int player, int card, int cless, int black,
+int has_phyrexian_mana_for_activated_ability(int player, int card, int cless, int black,
                                                   int blue, int green, int red, int white)
 {
   int result;
 
-  result = get_cost_mod_for_activated_abilities_2022(
+  result = get_cost_mod_for_activated_abilities(
       player, card, (int)(cless ^ 0xffffffffU) >> 0x1f & cless, black, blue, green, red, white);
-  result = has_phyrexian_mana_2022(player, result, black, blue, green, red, white, 0);
+  result = has_phyrexian_mana(player, result, black, blue, green, red, white, 0);
   return result;
 }
 
 
 /* ManalinkEh 2022: 0x226d990; original cards/new_phyrexia.c:135. */
-int charge_phyrexian_mana_2022(int player, int card, event_t event, int cless, int black, int blue,
+int charge_phyrexian_mana(int player, int card, event_t event, int cless, int black, int blue,
                                int green, int red, int white, int clred_artifact)
 {
   int result;
   result = get_updated_casting_cost(player, card, -1, event, cless);
-  result = charge_phyrexian_mana_impl_2022(player, result, black, blue, green, red, white,
+  result = charge_phyrexian_mana_impl(player, result, black, blue, green, red, white,
                                            clred_artifact);
   return result;
 }
 
 
 /* ManalinkEh 2022: 0x226da10; original cards/new_phyrexia.c:141. */
-int charge_phyrexian_mana_for_activated_ability_2022(int player, int card, int cless, int black,
+int charge_phyrexian_mana_for_activated_ability(int player, int card, int cless, int black,
                                                      int blue, int green, int red, int white)
 {
   int iVar1;
@@ -5164,7 +4863,7 @@ int charge_phyrexian_mana_for_activated_ability_2022(int player, int card, int c
   {
     iVar2 = cless;
   }
-  iVar1 = get_cost_mod_for_activated_abilities_2022(
+  iVar1 = get_cost_mod_for_activated_abilities(
       player, card, (int)(cless ^ 0xffffffffU) >> 0x1f & cless, black, blue, green, red, white);
   colorless = iVar2;
   if ((cless < 0) && (iVar1 == 0))
@@ -5172,7 +4871,7 @@ int charge_phyrexian_mana_for_activated_ability_2022(int player, int card, int c
     colorless = 0;
     iVar1 = iVar2;
   }
-  iVar1 = charge_phyrexian_mana_impl_2022(player, iVar1, black, blue, green, red, white, 0);
+  iVar1 = charge_phyrexian_mana_impl(player, iVar1, black, blue, green, red, white, 0);
   iVar2 = 0;
   if ((iVar1 != 0) && (iVar2 = 1, colorless != 0))
   {
@@ -5184,7 +4883,7 @@ int charge_phyrexian_mana_for_activated_ability_2022(int player, int card, int c
 
 
 /* ManalinkEh 2022: 0x226db00; original cards/new_phyrexia.c:156. */
-int phyrexian_casting_costs_2022(int player, int card, event_t event, int cless, int black,
+int phyrexian_casting_costs(int player, int card, event_t event, int cless, int black,
                                  int blue, int green, int red, int white, int clred_artifact)
 {
   card_instance_t *instance;
@@ -5228,7 +4927,7 @@ int phyrexian_casting_costs_2022(int player, int card, event_t event, int cless,
     {
       return 0;
     }
-    iVar2 = charge_phyrexian_mana_2022(player, card, EVENT_CAST_SPELL, cless, black, blue, green,
+    iVar2 = charge_phyrexian_mana(player, card, EVENT_CAST_SPELL, cless, black, blue, green,
                                        red, white, clred_artifact);
     if (iVar2 != 0)
     {

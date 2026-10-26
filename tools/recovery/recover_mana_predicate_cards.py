@@ -53,7 +53,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     assert component['runtime_sha256']=='52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5'
     for retained in component['retained_bodies']:
         assert (retained['source'],retained['name']) in LEGACY
-        assert sha(function_body(read(root/retained['source']),retained['name']).encode())==retained['body_sha256']
+        from unify_scalar_helpers import retained_source_body
+        assert sha(retained_source_body(root,retained['source'],retained['name']).encode())==retained['body_sha256']
     worker=next(f for f in manifest['accepted_functions'] if f['address']=='2670e00');assert worker==component['retained_worker_record'] and worker['static'] and worker['source']=='functions/produce_mana.c'
     spec=component['worker_specialization'];assert spec['mca']['constant']==1 and spec['mca']['location']==[]
     assert [spec[n]['location'] for n in ['player','card','available','num_mana','prompt']]==[[80],[82],[81],[145,0],[145,4]]

@@ -111,7 +111,8 @@ def audit_component(component,manifest,sources,machine_bytes,root):
     runtime=Image((root/'.recovery/2022-ManalinkEh.dll').read_bytes());assert component['runtime_sha256']==sha(runtime.data)=='52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5'
     assert component['native_storage']==native_storage(Image(Path('G:/Manalink/ManalinkEh_10_22_Hotfix.dbg').read_bytes()))
     assert component['hybrid_cost_frames']==predicate_cost_frames(runtime)
-    for old in component['retained_bodies']:assert sha(function_body(read(root/old['source']),old['name']).encode())==old['body_sha256']
+    from unify_scalar_helpers import retained_source_body
+    for old in component['retained_bodies']:assert sha(retained_source_body(root,old['source'],old['name']).encode())==old['body_sha256']
     for layout in component['unit_layouts'].values():assert layout['test_definition_t']['bytes']==216 and layout['target_definition_t']['bytes']==84
     params=component['parameters'][PREDICATE];assert [p['name'] for p in params]==['player','cless','black','blue','green','red','white','card']
     for p,reg in zip(params[:3],[0,2,1]):assert f'DW_OP_reg{reg}' in str(p['location'])

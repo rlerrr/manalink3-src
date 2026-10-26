@@ -3160,14 +3160,7 @@ Each player chooses a creature type. Each player returns all creature cards of a
 	return generic_spell(player, card, event, 0, NULL, NULL, 0, NULL);
 }
 
-static const char* target_is_attached_to_creature(int who_chooses, int player, int card, int targeting_player, int targeting_card)
-{
-  card_instance_t* instance = get_card_instance(player, card);
-  if (instance->damage_target_card >= 0 && is_what(instance->damage_target_player, instance->damage_target_card, TYPE_CREATURE))
-	return NULL;
-  else
-	return "attached to a creature";
-}
+
 int card_piety_charm(int player, int card, event_t event)
 {
   /* Piety Charm	|W
@@ -5426,7 +5419,7 @@ int card_chain_of_vapor(int player, int card, event_t event)
                 if (result != 0)
                 {
                   result = get_id(player, card);
-                  copy_spell_2022(instance->targets[0].player, result);
+                  copy_spell(instance->targets[0].player, result);
                 }
               }
             }
@@ -5555,7 +5548,7 @@ static int effect_target_gains_trample_and_regenerate_for_g(int player, int card
       regenerate_target(player_00, iVar1);
     }
   }
-  iVar1 = granted_generic_activated_ability_2022(player, card, player_00, iVar1, event,
+  iVar1 = granted_generic_activated_ability(player, card, player_00, iVar1, event,
                                                  GAA_REGENERATION, 0, 0, 0, 1, 0, 0, 0, NULL, NULL);
   return iVar1;
 }
@@ -5589,12 +5582,12 @@ int card_run_wild(int player, int card, event_t event)
     {
       if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
       {
-        default_target_definition_2022(player, card, &td, 2);
+        default_target_definition(player, card, &td, 2);
         td.preferred_controller = player;
         instance = get_card_instance(player, card);
         if (event == EVENT_RESOLVE_SPELL)
         {
-          result = valid_target_2022(&td);
+          result = valid_target(&td);
           if (result != 0)
           {
             create_targetted_legacy_activate(
@@ -5611,11 +5604,11 @@ int card_run_wild(int player, int card, event_t event)
       }
     }
   }
-  default_target_definition_2022(player, card, &td, 2);
+  default_target_definition(player, card, &td, 2);
   td.preferred_controller = player;
   get_card_instance(player, card);
 LAB_025f4219:
-  result = generic_spell_2022(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
+  result = generic_spell(player, card, event, 1, &td, "TARGET_CREATURE", 1, NULL);
   return result;
 }
 

@@ -463,7 +463,7 @@ int bonus_round_legacy(int player, int card, event_t event)
       result = new_specific_spell_played(player, card, event, 2, 2, &test);
       if (result != 0)
       {
-        copy_spell_from_stack_2022(trigger_cause_controller, trigger_cause_controller, trigger_cause);
+        copy_spell_from_stack(trigger_cause_controller, trigger_cause_controller, trigger_cause);
       }
     }
   }
@@ -517,7 +517,7 @@ int card_spellseeker(int player, int card, event_t event)
   int result;
   test_definition_t this_test;
   result = duh_mode(player);
-  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event != EVENT_ETB)
   {
     return 0;
@@ -541,7 +541,7 @@ static void partner_with(int player, int card, event_t event, int id)
   test_definition_t this_test;
 
   result = duh_mode(player);
-  etb_ability_2022(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+  etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event != EVENT_ETB)
   {
     return;
@@ -618,7 +618,7 @@ int card_archfiend_of_despair(int player, int card, event_t event)
   if (result != 0)
   {
     result = get_trap_condition(1 - player, 2);
-    lose_life_2022(1 - player, result);
+    lose_life(1 - player, result);
   }
   instance = in_play(player, card);
   if ((((event == EVENT_STATIC_EFFECTS) && (instance != NULL)) && (card == affected_card)) &&
@@ -945,14 +945,14 @@ LAB_02026ae9:
         iVar10 = 1;
         iVar9 = -1;
       }
-      pump_until_eot_merge_previous_2022(iVar2, iVar7, iVar2, iVar7, iVar9, iVar10);
+      pump_until_eot_merge_previous(iVar2, iVar7, iVar2, iVar7, iVar9, iVar10);
       return 0;
     }
     iVar7 = instance->parent_card;
     iVar2 = instance->parent_controller;
     iVar9 = 2;
   }
-  pump_ability_until_eot_2022(iVar2, iVar7, iVar2, iVar7, 0, 0, 0, iVar9);
+  pump_ability_until_eot(iVar2, iVar7, iVar2, iVar7, 0, 0, 0, iVar9);
   return 0;
 }
 
@@ -981,12 +981,12 @@ int card_krav_the_unredeemed(int player, int card, event_t event)
     td.zone = 0x1000;
     if (event == EVENT_CAN_ACTIVATE)
     {
-      iVar1 = can_use_activated_abilities_2022(player, card);
+      iVar1 = can_use_activated_abilities(player, card);
       if (iVar1 == 0)
       {
         return 0;
       }
-      iVar1 = has_mana_for_activated_ability_2022(player, card, 0, 1, 0, 0, 0, 0);
+      iVar1 = has_mana_for_activated_ability(player, card, 0, 1, 0, 0, 0, 0);
       if (iVar1 == 0)
       {
         return 0;
@@ -1000,7 +1000,7 @@ int card_krav_the_unredeemed(int player, int card, event_t event)
     }
     if (event == EVENT_ACTIVATE)
     {
-      iVar1 = charge_mana_for_activated_ability_2022(player, card, 0, 1, 0, 0, 0, 0);
+      iVar1 = charge_mana_for_activated_ability(player, card, 0, 1, 0, 0, 0, 0);
       if (iVar1 == 0)
       {
         return 0;
@@ -1085,7 +1085,7 @@ int card_archon_of_valors_reach(int player, int card, event_t event)
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   pcVar1 = get_card_instance(player, card);
-  vigilance_2022(player, card, event);
+  vigilance(player, card, event);
   if (event == EVENT_ETB)
   {
     result = is_humiliated_for_ability(player, card, AL_TRIG);
@@ -1472,7 +1472,7 @@ int card_generous_patron(int player, int card, event_t event)
 {
   int result;
 
-  etb_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
   {
     if ((event == EVENT_COUNTERS) && (attacking_card_controller == player))
@@ -1489,7 +1489,7 @@ int card_generous_patron(int player, int card, event_t event)
     }
     return 0;
   }
-  support_2022(player, card, 2);
+  support(player, card, 2);
   return 0;
 }
 
@@ -1513,7 +1513,7 @@ int get_random_permanent_2022(int player, test_definition_2022_t *this_test)
   if (this_test == NULL)
   {
     this_test = &default_test;
-    default_test_definition_2022(this_test, 0x47);
+    default_test_definition(this_test, 0x47);
   }
   iVar4 = active_cards_count[player];
   if (iVar4 == hand_count[player] || iVar4 - hand_count[player] < 0)
@@ -1549,7 +1549,7 @@ int get_random_permanent_2022(int player, test_definition_2022_t *this_test)
     {
       instance = in_play(player, card);
       if ((instance != NULL) &&
-          (iVar2 = new_make_test_in_play_2022(player, card, -1, this_test), iVar2 != 0))
+          (iVar2 = new_make_test_in_play(player, card, -1, this_test), iVar2 != 0))
       {
         prm[iVar4] = card;
         iVar4 = iVar4 + 1;
@@ -1612,7 +1612,7 @@ int card_last_one_standing(int player, int card, event_t event)
     goto LAB_02027990;
   }
 
-  default_test_definition_2022(&this_test, 2);
+  default_test_definition(&this_test, 2);
   iVar2 = check_battlefield_for_subtype(player, 2, -1);
   iVar1 = 1 - player;
   iVar3 = check_battlefield_for_subtype(iVar1, 2, -1);
@@ -1639,7 +1639,7 @@ int card_last_one_standing(int player, int card, event_t event)
       dialog_impl(player, card, EVENT_RESOLVE_SPELL, "\001\006", iVar1, iVar2, "\001\011", buffer,
                   "\001\014", "\001\003", 0, 0, 0, 0);
       state_untargettable(iVar1, iVar2, 1);
-      new_manipulate_all_2022(player, card, 2, &this_test, ACT_KILL_DESTROY);
+      new_manipulate_all(player, card, 2, &this_test, ACT_KILL_DESTROY);
       state_untargettable(iVar1, iVar2, 0);
     }
   }
@@ -1690,7 +1690,7 @@ int card_okaun_eye_of_chaos(int player, int card, event_t event)
   {
     result = get_toughness(player, card);
     power = get_power(player, card);
-    pump_until_eot_merge_previous_2022(player, card, player, card, power, result);
+    pump_until_eot_merge_previous(player, card, player, card, power, result);
   }
   return 0;
 }
@@ -1742,7 +1742,7 @@ int card_thrilling_encore(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    seek_grave_to_reanimate_this_turn_2022(player, 2, -0x7ffffffe, REANIMATE2022_DEFAULT);
+    seek_grave_to_reanimate_this_turn(player, 2, -0x7ffffffe, REANIMATE2022_DEFAULT);
     kill_card(player, card, KILL_DESTROY);
   }
   result = basic_spell(player, card, event);

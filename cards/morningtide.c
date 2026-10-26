@@ -1,5 +1,10 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+void test_enters_the_battlefield_with_counters(int player, int card, event_t event,
+                                                    int t_player, test_definition_2022_t *test,
+                                                    counter_t type, int number);
+
 // Functions
 static void cmc_mod_for_prowl(int player, int card, event_t event, int sub1, int sub2, int colorless, int black, int blue, int green, int red, int white)
 {
@@ -149,14 +154,22 @@ static int tribal_spell_played(int player, int card, event_t event, int t_player
 	return 0;
 }
 
-static void test_enters_the_battlefield_with_counters(int player, int card, event_t event, int t_player, test_definition_t *test,
-	counter_t type, int number)
+void test_enters_the_battlefield_with_counters(int player, int card, event_t event,
+                                                    int t_player, test_definition_2022_t *test,
+                                                    counter_t type, int number)
 {
-	if( affected_card_controller == t_player ){
-		if( new_make_test_in_play(affected_card_controller, affected_card, -1, test) ){
-			enters_the_battlefield_with_counters(affected_card_controller, affected_card, event, type, number);
-		}
-	}
+  int result;
+  if (affected_card_controller == t_player)
+  {
+    result = new_make_test_in_play(affected_card_controller, affected_card, -1, test);
+    if (result != 0)
+    {
+      enters_the_battlefield_with_counters(affected_card_controller, affected_card, event, type,
+                                           number);
+      return;
+    }
+  }
+  return;
 }
 
 // Cards
@@ -3817,7 +3830,7 @@ static int thornbite_staff_effect(int player, int card, event_t event)
       return 0;
     }
   LAB_0227dd25:
-    result = resolve_gfp_ability_2022(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
     if (result == 0)
       goto LAB_0227dd45;
   }
@@ -3853,7 +3866,7 @@ static int thornbite_staff_effect(int player, int card, event_t event)
       count_for_gfp_ability(player, card, 0x77, 2, 2, NULL);
     }
     result =
-        resolve_gfp_ability_2022(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
+        resolve_gfp_ability(player, card, EVENT_GRAVEYARD_FROM_PLAY, RESOLVE_TRIGGER_MANDATORY);
     if (result == 0)
     {
       return 0;
@@ -3884,22 +3897,6 @@ LAB_0227dd45:
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x227ed50; original cards/morningtide.c:148. */
-void test_enters_the_battlefield_with_counters_2022(int player, int card, event_t event,
-                                                    int t_player, test_definition_2022_t *test,
-                                                    counter_t type, int number)
-{
-  int result;
-  if (affected_card_controller == t_player)
-  {
-    result = new_make_test_in_play_2022(affected_card_controller, affected_card, -1, test);
-    if (result != 0)
-    {
-      enters_the_battlefield_with_counters(affected_card_controller, affected_card, event, type,
-                                           number);
-      return;
-    }
-  }
-  return;
-}
+
 
 #endif

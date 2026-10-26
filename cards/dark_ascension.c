@@ -1,5 +1,9 @@
 #include "manalink.h"
 
+/* Canonical recovered helper declarations. */
+static int can_use_stolen_ability_with_havengul_lich(int player, int card);
+static int can_cast_creature_in_grave_with_havengul_lich(int player, int card);
+
 // Functions
 static int fateful_hour(int player){
 	if( life[player] < 6 ){
@@ -3615,27 +3619,7 @@ Sacrifice a creature: Falkenrath Aristocrat gains indestructible until end of tu
 }
 
 extern int havengul_lich_hack;
-static int can_cast_creature_in_grave_with_havengul_lich(int player, int card, int t_player){
-	int i;
-	for(i=0; i<2; i++){
-		if( i == t_player || t_player == 2 ){
-			int cg = count_graveyard(i);
-			const int *grave = get_grave(i);
-			while( cg > -1 ){
-					if( is_what(-1, grave[cg], TYPE_CREATURE) ){
-						havengul_lich_hack++;
-						int result = has_mana_to_cast_id(player, EVENT_CAN_CAST, cards_data[grave[cg]].id);
-						havengul_lich_hack--;
-						if( result ){
-							return 1;
-						}
-					}
-					cg--;
-			}
-		}
-	}
-	return 0;
-}
+
 
 static int can_cast_creature_in_grave(int player, int card, int t_player){
 	int i;
@@ -3657,23 +3641,7 @@ static int can_cast_creature_in_grave(int player, int card, int t_player){
 	return 0;
 }
 
-static int can_use_stolen_ability_with_havengul_lich(int player, int card){
-	card_instance_t *instance = get_card_instance(player, card);
-		if( player != AI ){
-			int i=2;
-			while( i<10 ){
-					if( instance->targets[i].card != -1 ){
-						card_data_t card_d = cards_data[ instance->targets[i].card ];
-						CardFunction ptFunction = card_d.code_pointer;
-						if( ptFunction(player, card, EVENT_CAN_ACTIVATE ) ){
-							return 1;
-						}
-					}
-					i++;
-			}
-		}
-	return 0;
-}
+
 
 static int can_cast_this(int iid, int unused, int player, int card)
 {
@@ -3698,7 +3666,7 @@ When you cast that card this turn, ~ gains all activated abilities of that card 
 	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card) ){
 		int result = 0;
 		if( has_mana_for_activated_ability(player, card, MANACOST_X(1)) && ! graveyard_has_shroud(2) ){
-			result |= can_cast_creature_in_grave_with_havengul_lich(player, card, 2);
+			result |= can_cast_creature_in_grave_with_havengul_lich(player, card);
 		}
 		result |= (player == AI ? 0 : can_use_stolen_ability_with_havengul_lich(player, card));
 		return result;
@@ -3706,7 +3674,7 @@ When you cast that card this turn, ~ gains all activated abilities of that card 
 
 	if(event == EVENT_ACTIVATE ){
 		int choice = 0;
-		if( can_cast_creature_in_grave_with_havengul_lich(player, card, 2) ){
+		if( can_cast_creature_in_grave_with_havengul_lich(player, card) ){
 			if( can_use_stolen_ability_with_havengul_lich(player, card) ){
 				choice = do_dialog(player, player, card, -1, -1, " Cast a creature from grave\n Use a stolen ability\n Cancel", 0);
 			}
@@ -4751,11 +4719,11 @@ int card_increasing_vengeance(int player, int card, event_t event)
       if (result != 0)
       {
         instance = get_card_instance(player, card);
-        copy_spell_from_stack_2022(player, instance->targets[0].player, instance->targets[0].card);
+        copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
         result = get_flashback(player, card);
         if (result != 0)
         {
-          copy_spell_from_stack_2022(player, instance->targets[0].player, instance->targets[0].card);
+          copy_spell_from_stack(player, instance->targets[0].player, instance->targets[0].card);
           kill_card(player, card, KILL_EXILE);
         }
       }
@@ -4819,7 +4787,7 @@ LAB_0210a673:
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x210a700; original cards/dark_ascension.c:3873. */
-static int can_cast_this_havengul_2022(int iid, int unused, int player, int card)
+static int can_cast_this_havengul(int iid, int unused, int player, int card)
 {
   return has_mana_to_cast_iid(player, EVENT_CAN_CAST, iid);
 }
@@ -4829,9 +4797,9 @@ static int can_cast_this_havengul_2022(int iid, int unused, int player, int card
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x210b160; original cards/dark_ascension.c:3829. */
-static int can_cast_creature_havengul_2022(int player, int card)
+static int can_cast_creature_in_grave_with_havengul_lich(int player, int card)
 {
-  if (generic_activated_ability_with_target_in_grave_2022(player, card, EVENT_CAN_ACTIVATE,
+  if (generic_activated_ability_with_target_in_grave(player, card, EVENT_CAN_ACTIVATE,
                                                           GAA_NONE, 1, 0, 0, 0, 0, 0, 0, NULL, NULL,
                                                           TYPE_CREATURE, NULL, 0x1000))
   {
@@ -4966,7 +4934,7 @@ static int spell_has_flashback_legacy_for_hl(int player, int card, event_t event
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x210b650; original cards/dark_ascension.c:3854. */
-static int can_use_stolen_havengul_2022(int player, int card)
+static int can_use_stolen_ability_with_havengul_lich(int player, int card)
 {
   int legacy = find_attached_havengul_legacy_2022(player, card, player, card);
   card_instance_t *leg = get_card_instance(player, legacy < 0 ? card : legacy);
@@ -5021,29 +4989,29 @@ int card_havengul_lich_2022(int player, int card, event_t event)
     }
     get_card_instance(player, card);
     test_definition_2022_t test;
-    new_default_test_definition_2022(&test, 2, "Select target creature card.");
+    new_default_test_definition(&test, 2, "Select target creature card.");
     return 0;
   }
   card_instance_t *instance = get_card_instance(player, card);
   test_definition_2022_t test;
-  new_default_test_definition_2022(&test, 2, "Select target creature card.");
+  new_default_test_definition(&test, 2, "Select target creature card.");
   test.ai_selection_mode = 0x101;
   if (event == EVENT_CAN_ACTIVATE)
   {
-    if (!can_use_activated_abilities_2022(player, card))
+    if (!can_use_activated_abilities(player, card))
       return 0;
     if (player != 1)
     {
-      if (generic_activated_ability_with_target_in_grave_2022(player, card, EVENT_CAN_ACTIVATE,
+      if (generic_activated_ability_with_target_in_grave(player, card, EVENT_CAN_ACTIVATE,
                                                               GAA_NONE, 1, 0, 0, 0, 0, 0, 0, NULL,
                                                               NULL, TYPE_NONE, &test, 0x1000))
         return 1;
-      return can_use_stolen_havengul_2022(player, card) != 0;
+      return can_use_stolen_ability_with_havengul_lich(player, card) != 0;
     }
-    if (!has_mana_for_activated_ability_2022(1, card, 1, 0, 0, 0, 0, 0))
+    if (!has_mana_for_activated_ability(1, card, 1, 0, 0, 0, 0, 0))
       return 0;
     if (!graveyard_has_shroud(2))
-      return can_cast_creature_havengul_2022(1, card);
+      return can_cast_creature_in_grave_with_havengul_lich(1, card);
     return 0;
   }
   if (event == EVENT_RESOLVE_ACTIVATION)
@@ -5084,11 +5052,11 @@ int card_havengul_lich_2022(int player, int card, event_t event)
   int use_grave = 0;
   if (player == 0)
   {
-    if (generic_activated_ability_with_target_in_grave_2022(0, card, EVENT_CAN_ACTIVATE, GAA_NONE,
+    if (generic_activated_ability_with_target_in_grave(0, card, EVENT_CAN_ACTIVATE, GAA_NONE,
                                                             1, 0, 0, 0, 0, 0, 0, NULL, NULL,
                                                             TYPE_NONE, &test, 0x1000))
     {
-      if (!can_use_stolen_havengul_2022(0, card))
+      if (!can_use_stolen_ability_with_havengul_lich(0, card))
         use_grave = 1;
       else
       {
@@ -5104,9 +5072,9 @@ int card_havengul_lich_2022(int player, int card, event_t event)
       }
     }
   }
-  else if (player == 1 && can_cast_creature_havengul_2022(1, card))
+  else if (player == 1 && can_cast_creature_in_grave_with_havengul_lich(1, card))
   {
-    if (!can_use_stolen_havengul_2022(1, card))
+    if (!can_use_stolen_ability_with_havengul_lich(1, card))
       use_grave = 1;
     else
     {
@@ -5121,11 +5089,11 @@ int card_havengul_lich_2022(int player, int card, event_t event)
       }
     }
     if (use_grave)
-      test.special_selection_function = can_cast_this_havengul_2022;
+      test.special_selection_function = can_cast_this_havengul;
   }
   if (use_grave)
   {
-    generic_activated_ability_with_target_in_grave_2022(player, card, EVENT_ACTIVATE, GAA_NONE, 1,
+    generic_activated_ability_with_target_in_grave(player, card, EVENT_ACTIVATE, GAA_NONE, 1,
                                                         0, 0, 0, 0, 0, 0, NULL, NULL, TYPE_NONE,
                                                         &test, 0x1000);
     if (spell_fizzled != 1)
@@ -5146,9 +5114,9 @@ int card_havengul_lich_2022(int player, int card, event_t event)
       act_array[aa_count++] = leg->targets[i].player;
   }
   test_definition_2022_t this_test;
-  new_default_test_definition_2022(&this_test, 2, "Select an ability to activate.");
+  new_default_test_definition(&this_test, 2, "Select an ability to activate.");
   int selected =
-      select_card_from_zone_2022(player, player, act_array, aa_count, 0, 1, -1, &this_test);
+      select_card_from_zone(player, player, act_array, aa_count, 0, 1, -1, &this_test);
   if (selected == -1)
   {
     spell_fizzled = 1;

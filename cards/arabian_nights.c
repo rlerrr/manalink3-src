@@ -2077,7 +2077,9 @@ int ring_of_ma_ruf_legacy(int player, int card, event_t event){
 			event_result = RESOLVE_TRIGGER_MANDATORY;
 		}
 		else if (event == EVENT_RESOLVE_TRIGGER){
-				generic_wish_effect(player, card, TYPE_ANY, CARD_ID_BLACK_LOTUS);
+				test_definition_t wish_test;
+		default_test_definition(&wish_test, TYPE_ANY);
+		generic_wish_effect(player, card, &wish_test, CARD_ID_BLACK_LOTUS);
 				suppress_draw = 1;
 				get_card_instance(player, card)->targets[1].player = 66;
 				add_state(player, card, STATUS_INVISIBLE_FX);
@@ -2439,8 +2441,8 @@ static int oubliette_legacy(int player, int card, event_t event)
     {
       player_00 = (int)instance->damage_target_player;
       result = instance->damage_target_card;
-      remove_special_flags3_2022(player_00, result, SF3_CANNOT_PHASE_IN);
-      phase_in_2022(player_00, result);
+      remove_special_flags3(player_00, result, SF3_CANNOT_PHASE_IN);
+      phase_in(player_00, result);
       if (instance->targets[2].card == 0x1bf)
       {
         tap_card(player_00, result);
@@ -2459,7 +2461,7 @@ int phase_out_target_until_source_leaves_play(int s_player, int s_card, int t_pl
   card_instance_t *instance;
   int result;
 
-  set_special_flags3_2022(t_player, t_card, SF3_CANNOT_PHASE_IN);
+  set_special_flags3(t_player, t_card, SF3_CANNOT_PHASE_IN);
   card = create_targetted_legacy_effect(s_player, s_card, oubliette_legacy, t_player, t_card);
   instance = get_card_instance(s_player, card);
   instance->targets[1].player = s_player;
@@ -2467,7 +2469,7 @@ int phase_out_target_until_source_leaves_play(int s_player, int s_card, int t_pl
   instance->number_of_targets = '\x02';
   result = get_id(s_player, s_card);
   instance->targets[2].card = result;
-  phase_out_2022(t_player, t_card);
+  phase_out(t_player, t_card);
   return card;
 }
 
