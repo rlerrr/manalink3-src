@@ -604,7 +604,7 @@ int card_construct(int player, int card, event_t event)
   result = get_special_infos(player, card);
   if (result == 0x42)
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if ((((result == 0) && (event - EVENT_POWER < 2)) && (card == affected_card)) &&
         (player == affected_card_controller))
     {
@@ -651,7 +651,7 @@ int card_nightmare_token(int player, int card, event_t event)
   result = get_special_infos(player, card);
   if (result == 0x42)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);

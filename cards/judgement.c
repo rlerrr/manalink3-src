@@ -1,7 +1,8 @@
 #include "manalink.h"
+static int soulcatchers_aerie_effect(int,int,event_t);
 
 /* Canonical recovered helper declarations. */
-void generic_wish_effect(int player, int card, test_definition_2022_t *test, int ai_card);
+void generic_wish_effect(int player, int card, test_definition_t *test, int ai_card);
 
 // Functions
 
@@ -109,7 +110,7 @@ int card_arcane_teachings(int player, int card, event_t event){
 	 * Enchantment - Aura
 	 * Enchant creature
 	 * Enchanted creature gets +2/+2 and has "|T: This creature deals 1 damage to any target." */
-	if(	(event == EVENT_POWER || event == EVENT_TOUGHNESS) && ! is_humiliated(player, card) ){
+	if(	(event == EVENT_POWER || event == EVENT_TOUGHNESS) && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t* instance = in_play(player, card);
 		if (instance && affect_me(instance->damage_target_player, instance->damage_target_card))
 			event_result += 2;
@@ -933,7 +934,7 @@ Creature - Dragon 2/2
 Flying
 Threshold - As long as seven or more cards are in your graveyard, ~ gets +3/+3 and has "|R: ~ gets +1/+0 until end of turn." */
 
-	if( has_threshold(player) && ! is_humiliated(player, card) ){
+	if( has_threshold(player) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) ){
 			event_result += 3;
 		}
@@ -942,58 +943,84 @@ Threshold - As long as seven or more cards are in your graveyard, ~ gets +3/+3 a
 	return 0;
 }
 
-int card_forcemage_advocate(int player, int card, event_t event){
-/*
-Forcemage Advocate |1|G
-Creature — Centaur Shaman 2/1
-{T}: Return target card from an opponent's graveyard to his or her hand. Put a +1/+1 counter on target creature.
-*/
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
+int card_forcemage_advocate(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
+  test_definition_t this_test;
+  test_definition_t test;
 
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.preferred_controller = player;
-
-	test_definition_t this_test;
-	default_test_definition(&this_test, TYPE_ANY);
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_ACTIVATE ){
-		if( can_target(&td) ){
-			return generic_activated_ability_with_target_in_grave(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL,
-																	TYPE_ANY, &this_test, GS_GRAVE_RECYCLER_OPP_GRAVE);
-		}
-	}
-
-	if(event == EVENT_ACTIVATE ){
-		instance->number_of_targets = 0;
-		if( charge_mana_for_activated_ability(player, card, MANACOST0) && pick_target(&td, "TARGET_CREATURE") ){
-			test_definition_t test;
-			new_default_test_definition(&test, TYPE_ANY, "Select target card.");
-			if( select_target_from_grave_source(player, card, 1 - player, 0, AI_MIN_VALUE, &test, 1) == -1){
-				spell_fizzled = 1;
-			}
-			else{
-				add_state(player, card, STATE_TAPPED);
-			}
-		}
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( valid_target(&td) ){
-			add_1_1_counter(instance->targets[0].player, instance->targets[0].card);
-		}
-
-		int selected = validate_target_from_grave_source(player, card, 1 - player, 1);
-		if (selected != -1){
-			from_grave_to_hand(1 - player, selected, TUTOR_HAND);
-		}
-	}
-
-	return 0;
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    default_test_definition(&this_test, 0xff);
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = can_target(&td);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = generic_activated_ability_with_target_in_grave(
+          player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, TYPE_ANY,
+          &this_test, 0x800);
+      return result;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = '\0';
+      result = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = pick_target(&td, "TARGET_CREATURE");
+      if (result == 0)
+      {
+        return 0;
+      }
+      new_default_test_definition(&test, 0xff, "Select target card.");
+      result = select_target_from_grave_source(player, card, 1 - player, SFG_0, 3, &test, 1);
+      if (result == -1)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      add_state(player, card, 0x10);
+      tapped_for_mana_color = -1;
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.preferred_controller = player;
+    default_test_definition(&this_test, 0xff);
+    instance = get_card_instance(player, card);
+  }
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    result = valid_target(&td);
+    if (result != 0)
+    {
+      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                               COUNTER_P1_P1, 1);
+    }
+    result = validate_target_from_grave_source(player, card, 1 - player, 1);
+    if (result != -1)
+    {
+      from_grave_to_hand(1 - player, result, 1);
+      return 0;
+    }
+  }
+  return 0;
 }
 
 int card_genesis(int player, int card, event_t event){
@@ -1117,7 +1144,7 @@ Whenever ~ attacks and isn't blocked, defending player loses 1 life for each car
 
 	fear(player, card, event);
 
-	if( ! is_humiliated(player, card) && is_attacking(player, card) && event == EVENT_DECLARE_BLOCKERS && is_unblocked(player, card) ){
+	if( ! is_humiliated(player, card, AL_TRIG) && is_attacking(player, card) && event == EVENT_DECLARE_BLOCKERS && is_unblocked(player, card) ){
 		lose_life(1-player, count_graveyard(1-player));
 	}
 
@@ -1137,22 +1164,23 @@ Sacrifice ~: Draw a card, then discard a card. */
 	return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME, MANACOST0, 0, NULL, NULL);
 }
 
-int card_hunting_grounds(int player, int card, event_t event){
-/* CARD_ID_HUNTING_GROUNDS	5959
-Hunting Grounds	|G|W
-Enchantment
-Threshold - As long as seven or more cards are in your graveyard, ~ has "Whenever an opponent casts a spell,
-you may put a creature card from your hand onto the battlefield." */
-
-	if( in_play(player, card) && has_threshold(player) && ! is_humiliated(player, card) ){
-		if( new_specific_spell_played(player, card, event, 1-player, RESOLVE_TRIGGER_AI(player), NULL) ){
-			test_definition_t this_test;
-			new_default_test_definition(&this_test, TYPE_CREATURE, "Select a creature card.");
-			new_global_tutor(player, player, TUTOR_FROM_HAND, TUTOR_PLAY, 0, AI_MAX_CMC, &this_test);
-		}
-	}
-
-	return global_enchantment(player, card, event);
+int card_hunting_grounds(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  result = has_threshold(player);
+  if (result != 0)
+  {
+    result = duh_mode(player);
+    sp_ability_trigger(1 - player, event, (result != 0) + 1, TYPE_ANY, NULL, player, card);
+  }
+  if (event == EVENT_SPA)
+  {
+    new_default_test_definition(&this_test, 2, "Select a creature card.");
+    new_global_tutor(player, player, 4, 4, 0, 2, &this_test);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
 }
 
 int card_jeska_warrior_adept(int player, int card, event_t event)
@@ -1381,7 +1409,7 @@ Whenever you tap a land for mana, add one mana to your mana pool of any type tha
 
 	if( ! is_unlocked(player, card, event, 9) ){ return 0; }
 
-	if( in_play(player, card) && ! is_humiliated(player, card) && affected_card_controller == player ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_TRIG) && affected_card_controller == player ){
 		boost_creature_type(player, card, event, -1, 1, 1, 0, BCT_CONTROLLER_ONLY);
 		return card_mana_flare(player, card, event);
 	}
@@ -1426,7 +1454,7 @@ At the beginning of each player's upkeep, that player chooses a permanent for ea
 		instance->number_of_targets = 0;
 	}
 
-	if( current_phase == PHASE_UNTAP && event == EVENT_UNTAP && ! is_humiliated(player, card) ){
+	if( current_phase == PHASE_UNTAP && event == EVENT_UNTAP && ! is_humiliated(player, card, AL_STATIC) ){
 		if( is_what(affected_card_controller, affected_card, TYPE_PERMANENT) ){
 			does_not_untap(affected_card_controller, affected_card, event);
 		}
@@ -1655,7 +1683,7 @@ int card_phantom_nantuko(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *instance = get_card_instance(player, card);
-		add_1_1_counter(instance->parent_controller, instance->parent_card);
+		add_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_P1_P1, 1);
 	}
 
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST0, 0, NULL, NULL);
@@ -1952,86 +1980,154 @@ Creature - Angel 6/6
 Flying
 Threshold - Other creatures you control get +2/+2 as long as seven or more cards are in your graveyard. */
 
-	if( ! is_humiliated(player, card) && (event == EVENT_POWER || event == EVENT_TOUGHNESS) && has_threshold(player) ){
+	if( ! is_humiliated(player, card, AL_STATIC) && (event == EVENT_POWER || event == EVENT_TOUGHNESS) && has_threshold(player) ){
 		boost_creature_type(player, card, event, -1, 2, 2, 0, BCT_CONTROLLER_ONLY);
 	}
 	return 0;
 }
 
-int card_solitary_confinement(int player, int card, event_t event){
-/* CARD_ID_SOLITARY_CONFINEMENT	6004
-Solitary Confinement	|2|W
-Enchantment
-At the beginning of your upkeep, sacrifice ~ unless you discard a card.
-Skip your draw step.
-You have shroud. (You can't be the target of spells or abilities.)
-Prevent all damage that would be dealt to you. */
-
-	if( ! is_humiliated(player, card) ){
-		give_shroud_to_player(player, card, event);
-
-		skip_your_draw_step(player, event);
-
-		// prevent any damage that would be dealt to me
-		if( event == EVENT_PREVENT_DAMAGE ){
-			card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
-			if( damage->internal_card_id == damage_card && ! check_state(player, card, STATE_CANNOT_TARGET) ){
-				if( damage->damage_target_player == player && damage->damage_target_card == -1 && damage->info_slot > 0 &&
-					! damage_is_to_planeswalker(damage) )
-				{
-					prevent_damage(affected_card_controller, affected_card, -1);
-				}
-			}
-		}
-
-		upkeep_trigger_ability(player, card, event, player);
-
-		if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-			int kill = 1;
-			if( hand_count[player] > 0 ){
-				char msg[100] = "Select a card to discard.";
-				test_definition_t this_test;
-				new_default_test_definition(&this_test, TYPE_ANY, msg);
-				int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 0, AI_MIN_VALUE, -1, &this_test);
-				if( selected > -1 ){
-					discard_card(player, selected);
-					kill = 0;
-				}
-			}
-			if( kill == 1 ){
-				kill_card(player, card, KILL_SACRIFICE);
-			}
-		}
-	}
-
-	return global_enchantment(player, card, event);
+int card_solitary_confinement(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  char msg[100];
+  test_definition_t this_test;
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      give_shroud_to_player(player, card, event);
+      skip_your_draw_step(player, event);
+      if (event == EVENT_PREVENT_DAMAGE)
+      {
+        instance = get_card_instance(affected_card_controller, affected_card);
+        if (instance->internal_card_id == damage_card)
+        {
+          result = check_state(player, card, 0x100000);
+          if ((((result == 0) && (instance->damage_target_player == player)) &&
+               (instance->damage_target_card == -1)) &&
+              (0 < instance->info_slot))
+          {
+            result = damage_is_to_planeswalker(instance);
+            if (result == 0)
+            {
+              prevent_damage(affected_card_controller, affected_card, -1);
+            }
+          }
+        }
+      }
+    }
+  }
+  result = is_humiliated(player, card, AL_TRIG);
+  if (result == 0)
+  {
+    upkeep_trigger_ability(player, card, event, player);
+    if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+    {
+      if (0 < hand_count[player])
+      {
+        memset(msg, 0, sizeof(msg));
+        memcpy(msg, "Select a card to discard.", 26);
+        new_default_test_definition(&this_test, 0xff, msg);
+        result = new_select_a_card(player, player, 4, 0, 3, -1, &this_test);
+        if (-1 < result)
+        {
+          discard_card(player, result);
+          ai_modifier = ai_modifier - (life[player] * -3 + (7 - hand_count[player]) * 6);
+          goto LAB_0205ecec;
+        }
+      }
+      kill_card(player, card, KILL_SACRIFICE);
+    }
+  }
+LAB_0205ecec:
+  result = global_enchantment(player, card, event);
+  return result;
 }
 
-int card_soulcatchers_aerie(int player, int card, event_t event){
+int card_soulcatchers_aerie(int player, int card, event_t event)
+{
+  int iVar1;
+  unsigned int uVar2;
+  card_instance_t *instance;
+  int iVar4;
+  test_definition_t this_test;
 
-	/* Soulcatchers' Aerie	|1|W
-	 * Enchantment
-	 * Whenever a Bird is put into your graveyard from the battlefield, put a feather counter on ~.
-	 * Bird creatures get +1/+1 for each feather counter on ~. */
-
-	if( ! is_humiliated(player, card) && (event == EVENT_POWER || event == EVENT_TOUGHNESS) ){
-		int count = count_counters(player, card, COUNTER_FEATHER);
-		boost_creature_type(player, card, event, SUBTYPE_BIRD, count, count, 0, BCT_CONTROLLER_ONLY | BCT_INCLUDE_SELF);
-	}
-
-	if( event == EVENT_GRAVEYARD_FROM_PLAY ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_PERMANENT);
-		this_test.subtype = SUBTYPE_BIRD;
-		count_for_gfp_ability(player, card, event, player, 0, &this_test);
-	}
-
-	int result = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-	if(	result ){
-		add_counters(player, card, COUNTER_FEATHER, result);
-	}
-
-	return global_enchantment(player, card, event);
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if (card == affected_card)
+    {
+      if (player == affected_card_controller)
+      {
+        if (0 < active_cards_count[player])
+        {
+          iVar1 = 0;
+          do
+          {
+            instance = in_play(player, iVar1);
+            if ((((instance != NULL) && (iVar4 = is_what(player, iVar1, 0x80), iVar4 != 0)) &&
+                 (instance = get_card_instance(player, iVar1),
+                  instance->info_slot_fn == soulcatchers_aerie_effect)) &&
+                (((instance->damage_target_player == player &&
+                   (instance->damage_target_card == card)) ||
+                  ((instance->targets[0].player == player &&
+                    (instance->targets[0].card == card))))))
+              goto LAB_0205f0d8;
+            iVar1 = iVar1 + 1;
+          } while (iVar1 < active_cards_count[player]);
+        }
+        iVar1 =
+            create_targetted_legacy_effect(player, card, soulcatchers_aerie_effect, player, card);
+        instance = get_card_instance(player, iVar1);
+        instance->targets[0].player = player;
+        instance->targets[0].card = card;
+        instance->number_of_targets = '\x01';
+        add_status(player, iVar1, 0x10000);
+      }
+    LAB_0205f0d8:
+      is_humiliated(player, card, AL_STATIC);
+    }
+    else
+    {
+      iVar1 = is_humiliated(player, card, AL_STATIC);
+      if (iVar1 == 0)
+        goto LAB_0205ef46;
+    }
+    is_humiliated(player, card, AL_TRIG);
+  }
+  else
+  {
+    iVar1 = is_humiliated(player, card, AL_STATIC);
+    if ((iVar1 == 0) && (event - EVENT_POWER < 2))
+    {
+      iVar1 = count_counters(player, card, COUNTER_FEATHER);
+      boost_creature_type(player, card, event, SUBTYPE_BIRD, iVar1, iVar1, 0,
+                          BCT_INCLUDE_SELF | BCT_CONTROLLER_ONLY);
+      is_humiliated(player, card, AL_TRIG);
+      goto LAB_0205ef68;
+    }
+  LAB_0205ef46:
+    iVar1 = is_humiliated(player, card, AL_TRIG);
+    if ((event == EVENT_GRAVEYARD_FROM_PLAY) && (iVar1 == 0))
+    {
+      default_test_definition(&this_test, 0x47);
+      this_test.subtype = 0x16;
+      count_for_gfp_ability(player, card, 0x77, player, 0, &this_test);
+    }
+  }
+LAB_0205ef68:
+  uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (uVar2 != 0)
+  {
+    for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
+    {
+      add_counters(player, card, player, card, COUNTER_FEATHER, 1);
+    }
+  }
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
 }
 
 int card_spirit_cairn(int player, int card, event_t event)
@@ -2139,52 +2235,77 @@ int card_stitch_together(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 1, &this_test);
 }
 
-int card_sutured_ghoul(int player, int card, event_t event){
-	/* Sutured Ghoul	|4|B|B|B
-	 * Creature - Zombie 100/100
-	 * Trample
-	 * As ~ enters the battlefield, exile any number of creature cards from your graveyard.
-	 * ~'s power is equal to the total power of the exiled cards and its toughness is equal to their total toughness. */
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		card_instance_t *instance = get_card_instance(player, card);
-		add_state(player, card, STATE_OUBLIETTED); //Or it will be killed before ever entering in play.
-		instance->targets[0].card = instance->targets[1].card = 0;
-		const int *grave = get_grave(player);
-		int tc = count_graveyard_by_type(player, TYPE_CREATURE);
-		while( tc ){
-				test_definition_t this_test;
-				new_default_test_definition(&this_test, TYPE_CREATURE, "Select a creature card to exile.");
-				if( player == AI ){
-					this_test.id = CARD_ID_ANGER;
-					this_test.id_flag = DOESNT_MATCH;
-				}
-				int selected = new_select_a_card(player, player, TUTOR_FROM_GRAVE, 0, AI_MAX_CMC, -1, &this_test);
-				if( selected != -1 ){
-					instance->targets[0].card += get_base_power_iid(player, grave[selected]);
-					instance->targets[1].card += get_base_toughness_iid(player, grave[selected]);
-					rfg_card_from_grave(player, selected);
-					tc--;
-				}
-				else{
-					break;
-				}
-		}
-		remove_state(player, card, STATE_OUBLIETTED);
-	}
-
-	if( player >= 0 && card >= 0 && in_play(player, card) && ! is_humiliated(player, card) ){
-		card_instance_t *instance = get_card_instance(player, card);
-		if( event == EVENT_POWER && affect_me(player,card) && instance->targets[0].card > 0 ){
-			event_result += instance->targets[0].card;
-		}
-
-		if( event == EVENT_TOUGHNESS && affect_me(player, card) && instance->targets[1].card > 0 ){
-			event_result += instance->targets[1].card;
-		}
-	}
-
-	return 0;
+int card_sutured_ghoul(int player, int card, event_t event)
+{
+  int *piVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  int grave_id;
+  test_definition_t this_test;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    instance = get_card_instance(player, card);
+    add_state(player, card, 0x800000);
+    instance->targets[1].card = 0;
+    instance->targets[0].card = 0;
+    piVar1 = graveyard_ptr_mutable[player];
+    for (iVar3 = count_graveyard_by_type(player, 2); iVar3 != 0; iVar3 = iVar3 + -1)
+    {
+      new_default_test_definition(&this_test, 2, "Select a creature card to exile.");
+      if (player == 1)
+      {
+        this_test.id = 0x170c;
+        this_test.id_flag = 1;
+      }
+      grave_id = new_select_a_card(player, player, 2, 0, 2, -1, &this_test);
+      if (grave_id == -1)
+        break;
+      iVar4 = get_base_power_iid(player, piVar1[grave_id]);
+      instance->targets[0].card = instance->targets[0].card + iVar4;
+      iVar4 = get_base_toughness_iid(player, piVar1[grave_id]);
+      instance->targets[1].card = instance->targets[1].card + iVar4;
+      rfg_card_from_grave(player, grave_id);
+    }
+    remove_state(player, card, 0x800000);
+  }
+  if (((-1 < player) && (-1 < card)) && (instance = in_play(player, card), instance != NULL))
+  {
+    instance = get_card_instance(player, card);
+    if (event == EVENT_POWER)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      iVar3 = instance->targets[0].card;
+    }
+    else
+    {
+      if (event != EVENT_TOUGHNESS)
+      {
+        return 0;
+      }
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      iVar3 = instance->targets[1].card;
+    }
+    if (0 < iVar3)
+    {
+      set_characteristic_pt(iVar3);
+    }
+  }
+  return 0;
 }
 
 int card_sylvan_safekeeper(int player, int card, event_t event){
@@ -2267,7 +2388,7 @@ Vigilant Sentry	|1|W|W
 Creature - Human Nomad 2/2
 Threshold - As long as seven or more cards are in your graveyard, ~ gets +1/+1 and has "|T: Target attacking or blocking creature gets +3/+3 until end of turn." */
 
-	if( has_threshold(player) && ! is_humiliated(player, card) ){
+	if( has_threshold(player) && ! is_humiliated(player, card, AL_STATIC) ){
 
 		modify_pt_and_abilities(player, card, event, 1, 1, 0);
 
@@ -2373,7 +2494,7 @@ static int soulcatchers_aerie_effect(int player, int card, event_t event)
 
     for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_FEATHER, 1);
+      add_counters(player, card, player, card, COUNTER_FEATHER, 1);
     }
     kill_card(player, card, KILL_EXILE);
   }
@@ -2389,7 +2510,7 @@ joined_r0x02058d8d:
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x20590c0; original cards/judgement.c:4.
  * Built-in chooser UI is stubbed; see functions/choose_a_card.cpp. */
-void generic_wish_effect(int player, int card, test_definition_2022_t *test, int ai_card)
+void generic_wish_effect(int player, int card, test_definition_t *test, int ai_card)
 {
   int result;
   int revealed_card;

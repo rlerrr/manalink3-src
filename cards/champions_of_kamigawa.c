@@ -2,38 +2,65 @@
 
 // Global functions
 
-int bushido(int player, int card, event_t event, int pump){
+int bushido(int player, int card, event_t event, int pump)
+{
+  card_instance_t *instance;
+  unsigned int uVar2;
+  int result;
+  card_ext_t *pcVar4;
 
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if( event == EVENT_RESOLVE_SPELL && pump > 0 ){
-		instance->targets[8].player = pump;
-	}
-
-	if( instance->targets[16].card < 0 ){
-		instance->targets[16].card = 0;
-	}
-
-	if( ! (instance->targets[16].card & SP_KEYWORD_BUSHIDO) ){
-		instance->targets[16].card |= SP_KEYWORD_BUSHIDO;
-	}
-
-	if( instance->targets[8].player > 0 && !is_humiliated(player, card) ){
-		if( event == EVENT_DECLARE_BLOCKERS ){
-			if( (instance->state & STATE_ATTACKING) && ! is_unblocked(player, card) ){
-				pump_until_eot(player, card, player, card, instance->targets[8].player, instance->targets[8].player);
-			}
-			else if( current_turn != player && blocking(player, card, event) ){
-				pump_until_eot(player, card, player, card, instance->targets[8].player, instance->targets[8].player);
-			}
-		}
-		if( affect_me(player, card) && event == EVENT_CHECK_PUMP ){
-			pumpable_power[player]+=instance->targets[8].player;
-			pumpable_toughness[player]+=instance->targets[8].player;
-		}
-	}
-
-	return 0;
+  instance = get_card_instance(player, card);
+  if ((event == EVENT_RESOLVE_SPELL) && (0 < pump))
+  {
+    pcVar4 = instance->ext;
+    instance->targets[8].player = pump;
+    uVar2 = pcVar4->sp_keywords;
+    if ((uVar2 & 0x8000) != 0)
+      goto LAB_0260b910;
+  LAB_0260b895:
+    pcVar4->sp_keywords = uVar2 | 0x8000;
+  }
+  else
+  {
+    pcVar4 = instance->ext;
+    uVar2 = pcVar4->sp_keywords;
+    if ((uVar2 & 0x8000) == 0)
+      goto LAB_0260b895;
+  }
+  if ((((event == EVENT_QUERY_AFF) && (card == affected_card)) &&
+       (player == affected_card_controller)) &&
+      ((attacking_card == 0x8000 &&
+        (result = is_humiliated(player, card, AL_KEY), result == 0))))
+  {
+    event_result = event_result + pump;
+  }
+  if (instance->targets[8].player < 1)
+  {
+    return 0;
+  }
+LAB_0260b910:
+  result = is_humiliated(player, card, AL_TRIG);
+  if (result == 0)
+  {
+    if (event == EVENT_DECLARE_BLOCKERS)
+    {
+      if ((((instance->state & 4) != 0) && (result = is_unblocked(player, card), result == 0)) ||
+          ((current_turn != player &&
+            (result = blocking(player, card, EVENT_DECLARE_BLOCKERS), result != 0))))
+      {
+        result = instance->targets[8].player;
+        pump_until_eot(player, card, player, card, result, result);
+      }
+    }
+    else if (((card == affected_card) && (affected_card_controller == player)) &&
+             (event == EVENT_CHECK_PUMP))
+    {
+      result = instance->targets[8].player;
+      pumpable_power[player] = pumpable_power[player] + result;
+      pumpable_toughness[player] = pumpable_toughness[player] + result;
+    }
+  }
+  return 0;
 }
 
 static int get_zubera_count(void){
@@ -558,7 +585,7 @@ Creature - Ogre Warrior Shaman 3/1
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( instance->info_slot == CHOICE_COUNTER ){
-			add_counter(instance->parent_controller, instance->parent_card, COUNTER_DEVOTION);
+			add_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_DEVOTION, 1);
 		}
 		if( instance->info_slot == CHOICE_WEAKEN && valid_target(&td) ){
 			int amount = count_counters(instance->parent_controller, instance->parent_card, COUNTER_DEVOTION);
@@ -576,7 +603,7 @@ int card_brothers_yamazaki(int player, int card, event_t event){
 	  If there are exactly two permanents named Brothers Yamazaki on the battlefield, the "legend rule" doesn't apply to them.
 	  Each other creature named Brothers Yamazaki gets +2/+2 and has haste.	*/
 
-	if( event == EVENT_STATIC_EFFECTS && ! is_humiliated(player, card) ){
+	if( event == EVENT_STATIC_EFFECTS && ! is_humiliated(player, card, AL_STATIC) ){
 		if( check_battlefield_for_id(ANYBODY, CARD_ID_MIRROR_GALLERY) ){
 			return 0;
 		}
@@ -624,7 +651,7 @@ int card_brothers_yamazaki(int player, int card, event_t event){
 	}
 
 	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS || event == EVENT_ABILITIES) && in_play(player, card) &&
-		! is_humiliated(player, card) )
+		! is_humiliated(player, card, AL_STATIC) )
 	{
 		if( ! affect_me(player, card) && get_card_name(affected_card_controller, affected_card) == get_card_name(player, card) ){
 			switch( event ){
@@ -1006,7 +1033,7 @@ int card_dosan_the_falling_leaf(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( event == EVENT_MODIFY_COST_GLOBAL && in_play(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_MODIFY_COST_GLOBAL && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( affected_card_controller != current_turn ){
 			infinite_casting_cost();
 		}
@@ -2213,37 +2240,42 @@ Artifact
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(3), 0, NULL, NULL);
 }
 
-int card_jugan_rising_star(int player, int card, event_t event){
-/* CARD_ID_JUGAN_THE_RISING_STAR	7258
-Jugan, the Rising Star	|3|G|G|G
-Legendary Creature - Dragon Spirit 5/5
-Flying
-When ~ dies, you may distribute five +1/+1 counters among any number of target creatures. */
-
-	check_legend_rule(player, card, event);
-
-	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.preferred_controller = player;
-
-		card_instance_t *instance= get_card_instance(player, card);
-
-		int count = 0;
-		while( can_target(&td) && count < 5 ){
-				new_pick_target(&td, "TARGET_CREATURE", count, 0);
-				count++;
-		}
-
-		instance->number_of_targets = 0;
-
-		int i;
-		for(i=0; i<5; i++){
-			add_1_1_counter(instance->targets[i].player, instance->targets[i].card);
-		}
-	}
-
-	return 0;
+int card_jugan_rising_star(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  int ret_location;
+  target_t *ptVar3;
+  target_t *ptVar4;
+  target_definition_t td;
+  check_legend_rule(player, card, event);
+  result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (result == 0)
+  {
+    return 0;
+  }
+  default_target_definition(player, card, &td, 2);
+  td.preferred_controller = player;
+  instance = get_card_instance(player, card);
+  ret_location = 0;
+  result = can_target(&td);
+  do
+  {
+    if (result == 0)
+      break;
+    new_pick_target(&td, "TARGET_CREATURE", ret_location, 0);
+    ret_location = ret_location + 1;
+    result = can_target(&td);
+  } while (ret_location < 5);
+  instance->number_of_targets = '\0';
+  ptVar3 = instance->targets;
+  do
+  {
+    ptVar4 = ptVar3 + 1;
+    add_counters(player, card, ptVar3->player, ptVar3->card, COUNTER_P1_P1, 1);
+    ptVar3 = ptVar4;
+  } while (ptVar4 != instance->targets + 5);
+  return 0;
 }
 
 // Jukai Messenger -> vanilla
@@ -2808,7 +2840,7 @@ Bushido 1 (Whenever this creature blocks or becomes blocked, it gets +1/+1 until
 As long as you control a legendary Samurai, ~ gets +1/+2 and has vigilance. (Attacking doesn't cause this creature to tap.) */
 
 	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS || event == EVENT_ABILITIES) && affect_me(player, card) ){
-		if( in_play(player, card) && ! is_humiliated(player, card) ){
+		if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 			test_definition_t test;
 			default_test_definition(&test, TYPE_PERMANENT);
 			test.subtype = SUBTYPE_SAMURAI;
@@ -2874,7 +2906,7 @@ static int rfg_when_die_legacy(int player, int card, event_t event){
 		int p = instance->targets[0].player;
 		int c = instance->targets[0].card;
 
-		if( other_leaves_play(player, card, event, p, c) ){
+		if( other_leaves_play(player, card, event, p, c, 0, 0) ){
 			kill_card(player, card, KILL_EXILE);
 		}
 	}
@@ -2997,7 +3029,7 @@ Artifact
 Arcane spells you cast cost |1 less to cast.
 Spirit creatures you control get +1/+1. */
 
-	if( event == EVENT_MODIFY_COST_GLOBAL && affected_card_controller == player && ! is_humiliated(player, card) ){
+	if( event == EVENT_MODIFY_COST_GLOBAL && affected_card_controller == player && ! is_humiliated(player, card, AL_STATIC) ){
 		if( has_subtype(affected_card_controller, affected_card, SUBTYPE_ARCANE) ){
 			COST_COLORLESS--;
 		}
@@ -3014,7 +3046,7 @@ int card_marrow_gnawer(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( event == EVENT_ABILITIES && in_play(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_ABILITIES && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( is_what(affected_card_controller, affected_card, TYPE_CREATURE) &&
 			has_subtype(affected_card_controller, affected_card, SUBTYPE_RAT) )
 		{
@@ -3452,57 +3484,59 @@ At the beginning of each opponent's upkeep, that player loses 1 life for each ca
 	return 0;
 }
 
-int card_night_dealings(int player, int card, event_t event){
-/* CARD_ID_NIGHT_DEALINGS	7324
-Night Dealings	|2|B|B
-Enchantment
-Whenever a source you control deals damage to another player, put that many theft counters on ~.
-|2|B|B, Remove X theft counters from ~: Search your library for a nonland card with converted mana cost X, reveal it, and put it into your hand.
-Then shuffle your library. */
+int card_night_dealings(int player, int card, event_t event)
+{
+  int32_t iVar1;
+  int iVar2;
+  int argument3;
+  card_instance_t *instance;
+  test_definition_t test;
 
-	check_damage_test(player, -1, event, DDBM_MUST_DAMAGE_OPPONENT, player, card, TYPE_ANY, NULL);
-
-	int result = resolve_damage_trigger(player, card, event, DDBM_MUST_DAMAGE_OPPONENT, player, card);
-	if( result ){
-		add_counters(player, card, COUNTER_THEFT, result);
-	}
-
-	if( event == EVENT_CAN_ACTIVATE ){
-		return generic_activated_ability(player, card, event, 0, MANACOST_XB(2, 2), 0, NULL, NULL);
-	}
-
-	if( event == EVENT_ACTIVATE ){
-		get_card_instance(player, card)->info_slot = 0;
-		generic_activated_ability(player, card, event, 0, MANACOST_XB(2, 2), 0, NULL, NULL);
-		if( spell_fizzled != 1 && count_counters(player, card, COUNTER_THEFT) ){
-			int amount = internal_rand(count_counters(player, card, COUNTER_THEFT));
-			if( player == HUMAN ){
-				int number = choose_a_number(player, "Remove how many counters?", amount);
-				if( number > 0 && number <= amount ){
-					amount = number;
-				}
-				else{
-					spell_fizzled = 1;
-					return 0;
-				}
-			}
-			get_card_instance(player, card)->info_slot = amount;
-			remove_counters(player, card, COUNTER_THEFT, amount);
-		}
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		int amount = get_card_instance(player, card)->info_slot;
-
-		test_definition_t test;
-		default_test_definition(&test, TYPE_LAND);
-		test.type_flag = DOESNT_MATCH;
-		test.cmc = amount;
-		scnprintf(test.message, 100, "Select target nonland card with CMC %d", amount);
-		new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_MAX_VALUE, &test);
-	}
-
-	return global_enchantment(player, card, event);
+  check_damage_test(player, -1, event, DDBM_MUST_DAMAGE_OPPONENT, player, card, 0xff, NULL);
+  iVar2 = resolve_damage_trigger(player, card, event, DDBM_MUST_DAMAGE_OPPONENT, player, card);
+  if (iVar2 != 0)
+  {
+    add_counters(player, card, player, card, COUNTER_THEFT, iVar2);
+  }
+  if (event != EVENT_CAN_ACTIVATE)
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      instance = get_card_instance(player, card);
+      instance->info_slot = 0;
+      generic_activated_ability(player, card, EVENT_ACTIVATE, 0, 2, 2, 0, 0, 0, 0, 0, NULL, NULL);
+      if ((spell_fizzled != 1) && (iVar2 = count_counters(player, card, COUNTER_THEFT), iVar2 != 0))
+      {
+        iVar2 = count_counters(player, card, COUNTER_THEFT);
+        argument3 = internal_rand(iVar2);
+        iVar2 = argument3;
+        if ((player == 0) && ((iVar2 = choose_a_number(0, "Remove how many counters?", argument3),
+                               iVar2 < 1 || (argument3 < iVar2))))
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        instance = get_card_instance(player, card);
+        instance->info_slot = iVar2;
+        remove_counters(player, card, player, card, COUNTER_THEFT, iVar2);
+      }
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      instance = get_card_instance(player, card);
+      iVar1 = instance->info_slot;
+      default_test_definition(&test, 1);
+      test.type_flag = 1;
+      test.cmc = iVar1;
+      scnprintf(test.message, 100, "Select target nonland card with CMC %d", iVar1);
+      new_global_tutor(player, player, 1, 1, 0, 1, &test);
+    }
+    iVar2 = global_enchantment(player, card, event);
+    return iVar2;
+  }
+  iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 0, 2, 2, 0, 0, 0, 0, 0, NULL,
+                                    NULL);
+  return iVar2;
 }
 
 int card_night_of_souls_betrayal(int player, int card, event_t event)
@@ -3646,25 +3680,25 @@ Legendary Land
 }
 
 #pragma message "currently this only adds SUBTYPE_DEMON"
-int card_oni_possession(int player, int card, event_t event ){
-/*
-Oni Possession |2|B
-Enchantment — Aura
-Enchant creature
-At the beginning of your upkeep, sacrifice a creature.
-Enchanted creature gets +3/+3 and has trample.
-Enchanted creature is a Demon Spirit.
-*/
-	if( in_play(player, card) && get_card_instance( player, card )->damage_target_player > -1 && ! is_humiliated(player, card) ){
-
-		upkeep_trigger_ability(player, card, event, player);
-
-		if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-			player_sacrifices_a_permanent(player, card, player, TYPE_CREATURE, SAC_CAUSED | SAC_NO_CANCEL);
-		}
-	}
-
-	return generic_aura(player, card, event, player, 3, 3, KEYWORD_TRAMPLE, 0, SUBTYPE_DEMON, 0, 0);
+int card_oni_possession(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    instance = get_card_instance(player, card);
+    if (-1 < instance->damage_target_player)
+    {
+      upkeep_trigger_ability(player, card, event, player);
+      if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+      {
+        player_sacrifices_a_permanent(player, card, player, 2, SAC_CAUSED | SAC_NO_CANCEL);
+      }
+    }
+  }
+  result = generic_aura(player, card, event, player, 3, 3, 0x80, 0, 0x2c, 0, 0);
+  return result;
 }
 
 int card_orochi_eggwatcher(int player, int card, event_t event){
@@ -3962,7 +3996,7 @@ int card_pious_kitsune(int player, int card, event_t event){
 	upkeep_trigger_ability(player, card, event, player);
 
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-		add_counter(player, card, COUNTER_DEVOTION);
+		add_counters(player, card, player, card, COUNTER_DEVOTION, 1);
 		if( check_battlefield_for_id(ANYBODY, CARD_ID_EIGHT_AND_A_HALF_TAILS) ){
 			gain_life(player, count_counters(player, card, COUNTER_DEVOTION));
 		}
@@ -4222,7 +4256,7 @@ int card_sensei_golden_tail(int player, int card, event_t event){
 		card_instance_t *instance= get_card_instance(player, card);
 		if( event == EVENT_RESOLVE_ACTIVATION ){
 			if( valid_target(&td) ){
-				add_counter(instance->targets[0].player, instance->targets[0].card, COUNTER_TRAINING);	// does nothing, per rulings
+				add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_TRAINING, 1);	// does nothing, per rulings
 				add_a_subtype(instance->targets[0].player, instance->targets[0].card, SUBTYPE_SAMURAI);
 				card_instance_t *target = get_card_instance(instance->targets[0].player, instance->targets[0].card);
 				target->targets[8].player++;
@@ -4343,7 +4377,7 @@ As ~ enters the battlefield, sacrifice any number of permanents. ~ enters the ba
 			++n;
 
 		instance->state &= ~STATE_OUBLIETTED;
-		add_1_1_counters(player, card, n);
+		add_counters(player, card, player, card, COUNTER_P1_P1, n);
 	}
 
 	return 0;
@@ -4813,7 +4847,7 @@ Each other Samurai creature you control gets +1/+1 for each point of bushido it 
 
 	check_legend_rule(player, card, event);
 
-	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && in_play(player, card) && ! is_humiliated(player, card) ){
+	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( ! affect_me(player, card) && is_what(affected_card_controller, affected_card, TYPE_CREATURE) ){
 			if( has_subtype(affected_card_controller, affected_card, SUBTYPE_SAMURAI) &&
 				check_for_special_ability(affected_card_controller, affected_card, SP_KEYWORD_BUSHIDO) )
@@ -5070,7 +5104,7 @@ As long as you control a Demon, ~ has "|B: Regenerate ~." */
 
 	cannot_block(player, card, event);
 
-	if( event == EVENT_ABILITIES && affect_me(player, card) && in_play(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_ABILITIES && affect_me(player, card) && in_play(player, card) && ! is_humiliated(player, card, AL_NM_NL_ACT) ){
 		if( check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_DEMON) ){
 			event_result |= KEYWORD_REGENERATION;
 		}
@@ -5500,7 +5534,7 @@ int card_boseiju_who_shelters_all(int player, int card, event_t event)
   card_instance_t *instance;
 
   check_legend_rule(player, card, event);
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if (result == 0)
   {
     comes_into_play_tapped(player, card, event);

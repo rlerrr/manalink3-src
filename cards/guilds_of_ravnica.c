@@ -439,7 +439,7 @@ LAB_0261e1e5:
 }
 
 /* ManalinkEh 2022: 0x2619110; original cards/guilds_of_ravnica.c:2237. */
-static void haste_and_must_attack_until_eot(token_generation_2022_t *token, int beast, int number)
+static void haste_and_must_attack_until_eot(token_generation_t *token, int beast, int number)
 {
   pump_ability_until_eot(token->s_player, token->s_card, token->t_player, beast, 0, 0, 0, 0x404);
   return;
@@ -474,8 +474,8 @@ int card_maximize_velocity(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x261eea0; original cards/guilds_of_ravnica.c:2658. */
 int card_nightveil_predator(int player, int card, event_t event)
 {
-  deathtouch_2022(player, card, event);
-  hexproof_2022(player, card, event);
+  deathtouch(player, card, event);
+  hexproof(player, card, event);
   return 0;
 }
 
@@ -483,7 +483,7 @@ int card_nightveil_predator(int player, int card, event_t event)
 int card_pitiless_gorgon(int player, int card, event_t event)
 {
   int result;
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   if (event != EVENT_MODIFY_COST)
   {
     if (((event == EVENT_CAST_SPELL) && (card == affected_card)) &&
@@ -945,7 +945,7 @@ int card_arboretum_elemental(int player, int card, event_t event)
   card_instance_t *instance;
   int result;
 
-  hexproof_2022(player, card, event);
+  hexproof(player, card, event);
   instance = get_card_instance(player, card);
   if (event == EVENT_MODIFY_COST)
   {
@@ -983,7 +983,7 @@ int card_impervious_greatwurm(int player, int card, event_t event)
   card_instance_t *instance;
   int result;
 
-  indestructible_2022(player, card, event);
+  indestructible(player, card, event);
   instance = get_card_instance(player, card);
   if (event == EVENT_MODIFY_COST)
   {
@@ -1357,7 +1357,7 @@ int card_disinformation_campaign(int player, int card, event_t event)
   }
   else if (event == EVENT_SURVEIL)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       bounce_permanent(player, card);
@@ -1377,7 +1377,7 @@ int card_emmara_soul_of_the_accord(int player, int card, event_t event)
   if (((event == EVENT_TAP_CARD) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       default_token_definition(player, card, 0x4986, &token);
@@ -1688,10 +1688,10 @@ int card_nullhide_ferox(int player, int card, event_t event)
   int iVar5;
   int iVar6;
 
-  hexproof_2022(player, card, event);
+  hexproof(player, card, event);
   if (event == EVENT_MODIFY_COST_GLOBAL)
   {
-    iVar3 = is_humiliated_for_ability(player, card, AL_STATIC);
+    iVar3 = is_humiliated(player, card, AL_STATIC);
     if (((iVar3 == 0) && (affected_card_controller == player)) &&
         (iVar3 = is_what(player, affected_card, 3), iVar3 == 0))
     {
@@ -1761,7 +1761,7 @@ int card_nullhide_ferox(int player, int card, event_t event)
     }
   }
 LAB_0261f174:
-  iVar3 = is_humiliated_for_ability(player, card, AL_TRIG);
+  iVar3 = is_humiliated(player, card, AL_TRIG);
   if ((iVar3 != 0) && (iVar3 = eot_trigger(player, card, event), iVar3 != 0))
   {
     humiliate(player, card, player, card, 0);
@@ -2017,7 +2017,7 @@ static void mentor(int player, int card, event_t event)
       result = new_pick_target(&td, buffer, 0, 0x80);
       if (result != 0)
       {
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_P1_P1, 1);
       }
     }
@@ -2224,7 +2224,7 @@ int card_knight_of_autumn(int player, int card, event_t event)
     }
     else if (result == 1)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 2);
+      add_counters(player, card, player, card, COUNTER_P1_P1, 2);
     }
   }
   return 0;
@@ -2255,7 +2255,7 @@ int card_venerated_loxodon(int player, int card, event_t event)
       if (-1 < instance->targets[result].card)
       {
         instance = get_card_instance(player, card);
-        add_counters_from_source(player, card, player, instance->targets[result].card,
+        add_counters(player, card, player, instance->targets[result].card,
                                  COUNTER_P1_P1, 1);
         instance = get_card_instance(player, card);
         instance->targets[result].card = -1;
@@ -2757,7 +2757,7 @@ int card_fireminds_research(int player, int card, event_t event)
     }
     return 0;
   }
-  add_counters_from_source(player, card, player, card, COUNTER_CHARGE, 1);
+  add_counters(player, card, player, card, COUNTER_CHARGE, 1);
 LAB_0261cbb4:
   iVar2 = global_enchantment(player, card, event);
   return iVar2;
@@ -2858,7 +2858,7 @@ int card_runaway_steam_kin(int player, int card, event_t event)
   }
   if (event == EVENT_SPA)
   {
-    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    add_counters(player, card, player, card, COUNTER_P1_P1, 1);
   }
   else
   {
@@ -3067,7 +3067,7 @@ int hybrid_split_card(int player, int card, event_t event, int card_id_first_hal
   int result;
 
   modify_cost_for_hybrid_spells(player, card, event, 0);
-  result = generic_split_card_2022(player, card, event, card_id_first_half, can_play_first_half,
+  result = generic_split_card(player, card, event, card_id_first_half, can_play_first_half,
                                    priority_first_half, id_second_half, can_play_second_half,
                                    priority_second_half);
   return result;
@@ -3199,7 +3199,7 @@ int card_find_finality(int player, int card, event_t event)
             result = valid_target(&td);
             if (result != 0)
             {
-              add_counters_from_source(player, card, instance->targets[0].player,
+              add_counters(player, card, instance->targets[0].player,
                                        instance->targets[0].card, COUNTER_P1_P1, 2);
             }
 
@@ -3760,7 +3760,7 @@ int card_unmoored_ego(int player, int card, event_t event)
                 else
                 {
                   iVar4 =
-                      has_subtype_by_id_2022(1, (unsigned int)cards_data[iVar1].id, SUBTYPE_BASIC);
+                      has_subtype_by_id(1, (unsigned int)cards_data[iVar1].id, SUBTYPE_BASIC);
                   if (iVar4 == 0)
                   {
 
@@ -3833,7 +3833,7 @@ int card_flower_flourish(int player, int card, event_t event)
   card_instance_t *instance;
   unsigned int uVar2;
   int result;
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
 
   msg = get_hacked_land_text(player, card, "Select a basic %s or %s card.", 0x5001, 0x5007);
   new_default_test_definition(&this_test, 1, msg);
@@ -3926,7 +3926,7 @@ int card_portcullis_vine(int player, int card, event_t event);
 int card_portcullis_vine(int player, int card, event_t event)
 {
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
   if (event == EVENT_ACTIVATE)
   {
     new_default_test_definition(&test, 2, "Select a creature with defender to sacrifice.");
@@ -3959,7 +3959,7 @@ int card_portcullis_vine(int player, int card, event_t event)
 int card_legion_warboss(int player, int card, event_t event)
 {
   int result;
-  token_generation_2022_t token;
+  token_generation_t token;
   mentor(player, card, event);
   result = beginning_of_combat(player, card, event, player);
   if (result == 0)
@@ -3967,10 +3967,10 @@ int card_legion_warboss(int player, int card, event_t event)
     return 0;
   }
   default_token_definition(player, card, 0x493a, &token);
-  result = engine_any_legal_attacker_2022(player);
+  result = engine_any_legal_attacker(player);
   if (result == 0)
   {
-    token.action = TOKEN2022_ACTION_ATTACKING;
+    token.action = TOKEN_ACTION_ATTACKING;
   }
   token.special_code_on_generation = haste_and_must_attack_until_eot;
   generate_token(&token);
@@ -3989,7 +3989,7 @@ int card_thousand_year_storm(int player, int card, event_t event)
   sp_ability_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
   if (event == EVENT_SPA)
   {
-    for (iVar1 = 0; iVar2 = get_storminstantsorcery_count_2022(player), iVar1 < iVar2;
+    for (iVar1 = 0; iVar2 = get_storminstantsorcery_count(player), iVar1 < iVar2;
          iVar1 = iVar1 + 1)
     {
       copy_spell_from_stack(player, trigger_cause_controller, trigger_cause);
@@ -4010,7 +4010,7 @@ int card_pelt_collector(int player, int card, event_t event)
                  "native split power slots");
   if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card))
   {
-    test_definition_2022_t test;
+    test_definition_t test;
     default_test_definition(&test, 2);
     test.power = get_power(player, card);
     test.power_flag = 2;
@@ -4018,7 +4018,7 @@ int card_pelt_collector(int player, int card, event_t event)
     etb_ability_global(player, event, 2, TYPE_NONE, &test, player, card);
   }
   if (event == EVENT_ETB)
-    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    add_counters(player, card, player, card, COUNTER_P1_P1, 1);
   else if (event == EVENT_GRAVEYARD_FROM_PLAY)
   {
     if (is_this_dying(affected_card_controller, affected_card) &&
@@ -4071,7 +4071,7 @@ int card_pelt_collector(int player, int card, event_t event)
     }
     for (unsigned i = 0; i < amount; ++i)
       if (array[i] > get_power(player, card))
-        add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+        add_counters(player, card, player, card, COUNTER_P1_P1, 1);
     instance->targets[11].card = 0;
     for (int i = 0; i != 9; ++i)
     {
@@ -4079,7 +4079,7 @@ int card_pelt_collector(int player, int card, event_t event)
       instance->targets[i].card = -1;
     }
   }
-  if (event == EVENT_ABILITIES && !is_humiliated_for_ability(player, card, AL_STATIC) &&
+  if (event == EVENT_ABILITIES && !is_humiliated(player, card, AL_STATIC) &&
       count_counters(player, card, COUNTER_P1_P1) > 2)
     event_result |= 0x80;
   return 0;

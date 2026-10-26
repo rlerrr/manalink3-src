@@ -10,13 +10,22 @@ from pathlib import Path
 def main():
     root = Path(__file__).resolve().parents[2]
     from canonicalize_records import verify as verify_records
-    canonical_records=verify_records(root)
     from canonicalize_reanimation import verify as verify_reanimation
-    canonical_reanimation=verify_reanimation(root)
     from canonicalize_spell_tutor import verify as verify_spell_tutor
-    canonical_spell_tutor=verify_spell_tutor(root)
     from canonicalize_storm import verify as verify_storm
-    canonical_storm=verify_storm(root)
+    from canonicalize_helpers import load,historical_sources,source_names,rename
+    def original_record_evidence():
+        return (verify_records(root),verify_reanimation(root),
+                verify_spell_tutor(root),verify_storm(root))
+    canonical_helpers={}
+    if load(root):
+        # Earlier record proofs describe their original alias declarations.
+        # Replay those sources only for the Python proof readers. Compilers
+        # below always read the real files with the aliases removed.
+        with historical_sources(root) as canonical_helpers:
+            canonical_records,canonical_reanimation,canonical_spell_tutor,canonical_storm=original_record_evidence()
+    else:
+        canonical_records,canonical_reanimation,canonical_spell_tutor,canonical_storm=original_record_evidence()
     analysis = root / ".recovery"
     analysis.mkdir(exist_ok=True)
     manifest = json.loads((root / "docs/recovery-evidence/recovered-functions.json").read_text())
@@ -118,8 +127,10 @@ _Static_assert(sizeof(target_t) == 8 && offsetof(target_t, player) == 0 && offse
     target_selection = interfaces.get('target_selection_2022')
     if target_selection:
         targets_source = (root / 'functions/targets.c').read_text()
-        storage = re.search(r'typedef union\s*\{[^}]+\}\s*target_selection_storage_2022_t;', targets_source)
-        assert storage and re.sub(r'\s+', '', storage[0]) == re.sub(r'\s+', '', target_selection['shared_storage_declaration'])
+        storage_name = source_names(root).get('target_selection_storage_2022_t', 'target_selection_storage_2022_t')
+        storage = re.search(r'typedef union\s*\{[^}]+\}\s*' + re.escape(storage_name) + ';', targets_source)
+        expected_storage = rename(target_selection['shared_storage_declaration'], source_names(root))
+        assert storage and re.sub(r'\s+', '', storage[0]) == re.sub(r'\s+', '', expected_storage)
         cache_declarations = []
         for name in target_selection['native_globals']:
             declaration = re.search(r'(?m)^int\s+' + re.escape(name) + r'(?:\[\d+\])?\s*(?:=\s*0)?;', targets_source)
@@ -486,14 +497,16 @@ _Static_assert(sizeof(player_bits[0])==4 && EVENT_MODIFY_MANA_PROD==0xa6 && EVEN
                 assertions.append(f'_Static_assert(offsetof({typename}, {member}) == {offset}, "shared stack view offset");')
         for typename in canonical_records.get('runtime_bytes',{}):
             modern=typename.removesuffix('_t')+'_2022_t'
+            if source_names(root).get(modern,modern)==typename:
+                continue  # The alias is retired; an identity assertion would be tautological.
             assertions.append(f'_Static_assert(__builtin_types_compatible_p({typename}, {modern}), "canonical record typedef identity");')
         with layout.open("a") as stream:
             stream.write("\n" + "\n".join(assertions) + "\n")
     # Layout assertions retain ledger identities; compile them against the actual
     # canonical declarations, without recreating compatibility aliases in C.
-    from canonicalize_helpers import names,rename,verify as verify_helpers
-    canonical_helpers=verify_helpers(root)
-    if canonical_helpers:layout.write_text(rename(layout.read_text(),names(root)))
+    from canonicalize_helpers import source_names,rename,verify as verify_helpers
+    if not canonical_helpers:canonical_helpers=verify_helpers(root)
+    if canonical_helpers:layout.write_text(rename(layout.read_text(),source_names(root)))
     abi = subprocess.run(command + [str(layout)], capture_output=True, text=True)
     cpp_results={}
     cpp_sources=sorted(p.relative_to(root).as_posix() for p in (root/'functions').glob('*.cpp'))

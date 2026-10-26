@@ -30,19 +30,22 @@ int card_balan_wandering_knight(int player, int card, event_t event)
 
 int card_curse_of_vitality(int player, int card, event_t event)
 {
-  /* Curse of Vitality	|2|W
-   * Enchantment - Aura Curse
-   * Enchant player
-   * Whenever enchanted player is attacked, you gain 2 life. Each opponent attacking that player does the same. */
-
-  card_instance_t* instance;
-  int cursed;
-  if ((instance = in_play(player, card)) && !is_humiliated(player, card)
-	  && (cursed = instance->targets[4].player) >= 0
-	  && declare_attackers_trigger(player, card, event, DAT_ATTACKS_PLAYER|RESOLVE_TRIGGER_AI(player), 1-cursed, -1))
-	gain_life(player, 2);
-
-  return curse(player, card, event);
+  card_instance_t *instance;
+  int result;
+  instance = get_card_instance(player, card);
+  if (-1 < instance->targets[0].player)
+  {
+    instance = get_card_instance(player, card);
+    store_attackers(player, card, event, DAT_ATTACKS_PLAYER, 1 - instance->targets[0].player, -1,
+                    NULL);
+    dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+    if (event == EVENT_DAT_ABILITY)
+    {
+      gain_life(player, 2);
+    }
+  }
+  result = curse(player, card, event);
+  return result;
 }
 
 int card_fortunate_few(int player, int card, event_t event)
@@ -817,7 +820,7 @@ static int teferis_protection_legacy(int player, int card, event_t event)
 
   instance = in_play(player, card);
   if ((instance != NULL) &&
-      (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+      (result = is_humiliated(player, card, AL_STATIC), result == 0))
   {
     *(unsigned int *)(&player_bits + player * 4) =
         *(unsigned int *)(&player_bits + player * 4) | 0x4200000;
@@ -882,7 +885,7 @@ int card_kindred_discovery(int player, int card, event_t event)
   {
     if (event != EVENT_DECLARE_ATTACKERS)
       goto LAB_0228dcd3;
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
 
@@ -1092,7 +1095,7 @@ int card_licia_sanguine_tribune(int player, int card, event_t event)
     }
     goto LAB_0228fdf1;
   }
-  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 3);
+  add_counters(player, card, player, card, COUNTER_P1_P1, 3);
 LAB_0228fdf6:
   result = generic_activated_ability(player, card, event, 0x12000, 0, 0, 0, 0, 0, 0, 5, NULL, NULL);
   return result;
@@ -1231,7 +1234,7 @@ int card_ramos_dragon_engine(int player, int card, event_t event)
   if (event == EVENT_SPA)
   {
     result = count_colors(trigger_cause_controller, trigger_cause);
-    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, result);
+    add_counters(player, card, player, card, COUNTER_P1_P1, result);
   }
   else
   {
@@ -1376,8 +1379,8 @@ int card_arahbo_roar_of_the_world(int player, int card, event_t event)
 
   union
   {
-    target_definition_2022_t target;
-    test_definition_2022_t test;
+    target_definition_t target;
+    test_definition_t test;
     uint8_t bytes[216];
   } recovered_stack_td;
 
@@ -1385,7 +1388,7 @@ int card_arahbo_roar_of_the_world(int player, int card, event_t event)
   pcVar1 = get_card_instance(player, card);
   if (event == EVENT_CHANGE_TYPE)
   {
-    iVar2 = engine_any_legal_attacker_2022(player);
+    iVar2 = engine_any_legal_attacker(player);
     if (iVar2 == 0)
     {
       event_flags = event_flags | 0x1000000;
@@ -1394,7 +1397,7 @@ int card_arahbo_roar_of_the_world(int player, int card, event_t event)
   else if (event == EVENT_BEGIN_COMBAT)
   {
     if ((current_turn == player) &&
-        (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar2 == 0))
+        (iVar2 = is_humiliated(player, card, AL_TRIG), iVar2 == 0))
     {
       default_target_definition(player, card, &recovered_stack_td.target, 2);
       recovered_stack_td.target.required_subtype = 0x1f;
@@ -1413,7 +1416,7 @@ int card_arahbo_roar_of_the_world(int player, int card, event_t event)
     }
   }
   else if ((event == EVENT_DECLARE_ATTACKERS) &&
-           (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar2 == 0))
+           (iVar2 = is_humiliated(player, card, AL_TRIG), iVar2 == 0))
   {
     default_test_definition(&recovered_stack_td.test, 2);
     iVar2 = duh_mode(player);
@@ -1474,7 +1477,7 @@ int card_kess_dissident_mage(int player, int card, event_t event)
   int iVar3;
   int *piVar4;
   int iStack_108c;
-  test_definition_2022_t test;
+  test_definition_t test;
   int iids[500];
   int positions[500];
   check_legend_rule(player, card, event);
@@ -1483,7 +1486,7 @@ int card_kess_dissident_mage(int player, int card, event_t event)
     if ((((current_turn == player) &&
           (instance = get_card_instance(player, card), instance->info_slot != 0x42)) &&
          (instance = in_play(player, card), instance != NULL)) &&
-        (iVar1 = is_humiliated_for_ability(player, card, AL_STATIC), iVar1 == 0))
+        (iVar1 = is_humiliated(player, card, AL_STATIC), iVar1 == 0))
     {
       piVar4 = graveyard_ptr_mutable[player];
       iVar1 = *piVar4;
@@ -1569,7 +1572,7 @@ int card_path_of_ancestry(int player, int card, event_t event)
   unsigned int uVar5;
 
   pcVar1 = get_card_instance(player, card);
-  iVar2 = is_humiliated_for_ability(player, card, AL_TRIG);
+  iVar2 = is_humiliated(player, card, AL_TRIG);
   if (iVar2 == 0)
   {
     comes_into_play_tapped(player, card, event);
@@ -1643,7 +1646,7 @@ int card_izzet_chemister(int player, int card, event_t event)
     return 0;
   char buffer[50];
   scnprintf(buffer, 50, "Select a card to exile");
-  test_definition_2022_t test;
+  test_definition_t test;
   new_default_test_definition(&test, 0x38, buffer);
   card_instance_t *instance = get_card_instance(player, card);
   if (event == EVENT_CAN_ACTIVATE)
@@ -1741,7 +1744,7 @@ int card_izzet_chemister(int player, int card, event_t event)
           if (check_rfg(packed >> 31, (uint16_t)cards_data[iid].id))
             ic[count++] = iid;
         }
-        test_definition_2022_t this_test;
+        test_definition_t this_test;
         while (count > 0)
         {
           new_default_test_definition(&this_test, 0xff, "Select a card to play for free");

@@ -547,7 +547,7 @@ Descendant of Kiyomaro	|1|W|W
 Creature - Human Soldier 2/3
 As long as you have more cards in hand than each opponent, ~ gets +1/+2 and has "Whenever this creature deals combat damage, you gain 3 life." */
 
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( hand_count[player] > hand_count[1-player] ){
 			switch( event ){
 					case EVENT_POWER:
@@ -578,12 +578,12 @@ At the beginning of your upkeep, put a +1/+1 counter on ~ for each card in your 
 	upkeep_trigger_ability(player, card, event, player);
 
 	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-		add_1_1_counters(player, card, hand_count[player]);
+		add_counters(player, card, player, card, COUNTER_P1_P1, hand_count[player]);
 		int amount = hand_count[1-player];
 		if( amount > count_1_1_counters(player, card) ){
 			amount = count_1_1_counters(player, card);
 		}
-		remove_1_1_counters(player, card, amount);
+		remove_counters(player, card, player, card, COUNTER_P1_P1, amount);
 	}
 	return 0;
 }
@@ -758,35 +758,21 @@ Whenever an opponent casts his or her first spell each turn, counter that spell.
 	return 0;
 }
 
-int card_erayos_essence(int player, int card, event_t event){
-/* CARD_ID_ERAYOS_ESSENCE	7635
-Erayo's Essence	|1|U
-Legendary Enchantment
-Whenever an opponent casts his or her first spell each turn, counter that spell. */
-
-	check_legend_rule(player, card, event);
-
-	if( event == EVENT_CAST_SPELL && affected_card_controller != player ){
-		if( ! is_what(affected_card_controller, affected_card_controller, TYPE_LAND) &&
-			! is_token(affected_card_controller, affected_card_controller) )
-		{
-			get_card_instance(player, card)->targets[2].player++;
-		}
-	}
-
-	if( get_card_instance(player, card)->targets[2].player == 1 && ! is_humiliated(player, card) &&
-		specific_spell_played(player, card, event, 1-player, RESOLVE_TRIGGER_MANDATORY, TYPE_ANY, 0, 0, 0, 0, 0, 0, 0, -1, 0) )
-	{
-		if( ! check_state(trigger_cause_controller, trigger_cause, STATE_CANNOT_TARGET) ){
-			real_counter_a_spell(player, card, trigger_cause_controller, trigger_cause);
-		}
-	}
-
-	if( event == EVENT_CLEANUP ){
-		get_card_instance(player, card)->targets[2].player = 0;
-	}
-
-	return 0;
+int card_erayos_essence(int player, int card, event_t event)
+{
+  int result;
+  check_legend_rule(player, card, event);
+  result = new_specific_spell_played(player, card, event, 1 - player, 2, NULL);
+  if (result != 0)
+  {
+    result = get_specific_storm_count(1 - player);
+    if (result == 0)
+    {
+      real_counter_a_spell(player, card, trigger_cause_controller, trigger_cause);
+      return 0;
+    }
+  }
+  return 0;
 }
 
 int card_eternal_dominion(int player, int card, event_t event){
@@ -1447,23 +1433,25 @@ int card_jiwari_the_earth_aflame(int player, int card, event_t event){
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_CAN_TARGET, MANACOST_XR(-1, 1), 0, &td, "TARGET_CREATURE");
 }
 
-int card_kagemaro_first_to_suffer(int player, int card, event_t event){
-	/* Kagemaro, First to Suffer	|3|B|B
-	 * Legendary Creature - Demon Spirit 100/100
-	 * ~'s power and toughness are each equal to the number of cards in your hand.
-	 * |B, Sacrifice Kagemaro: All creatures get -X/-X until end of turn, where X is the number of cards in your hand. */
-
-	check_legend_rule(player, card, event);
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		APNAP(p, { pump_subtype_until_eot(player, card, p, -1, -hand_count[player], -hand_count[player], 0, 0); };);
-	}
-
-	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && !is_humiliated(player, card) && player != -1){
-		event_result += hand_count[player];
-	}
-
-	return generic_activated_ability(player, card, event, GAA_SACRIFICE_ME, MANACOST_B(1), 0, NULL, NULL);
+int card_kagemaro_first_to_suffer(int player, int card, event_t event)
+{
+  int result;
+  check_legend_rule(player, card, event);
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    pump_subtype_until_eot(player, card, current_turn, -1, -hand_count[player], -hand_count[player],
+                           0, 0);
+    pump_subtype_until_eot(player, card, current_turn ^ 1, -1, -hand_count[player],
+                           -hand_count[player], 0, 0);
+  }
+  else if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
+            (affected_card_controller == player)) &&
+           (player != -1))
+  {
+    set_characteristic_pt(hand_count[player]);
+  }
+  result = generic_activated_ability(player, card, event, 8, 0, 1, 0, 0, 0, 0, 0, NULL, NULL);
+  return result;
 }
 
 static void store_iid_on_kaho(int player, int card, int iid){
@@ -1710,7 +1698,7 @@ int card_kami_of_the_crescent_moon(int player, int card, event_t event)
 
 	check_legend_rule(player, card, event);
 
-	if (event == EVENT_DRAW_PHASE && ! is_humiliated(player, card) ){
+	if (event == EVENT_DRAW_PHASE && ! is_humiliated(player, card, AL_TRIG) ){
 		++event_result;
 	}
 
@@ -1737,7 +1725,7 @@ Legendary Snakes you control have shroud. (They can't be the targets of spells o
 Whenever ~ deals combat damage to a creature, tap that creature and it doesn't untap during its controller's next untap step. */
 
 	if( event == EVENT_ABILITIES && affected_card_controller == player &&
-		! is_humiliated(player, card) &&
+		! is_humiliated(player, card, AL_STATIC) &&
 		has_subtype(affected_card_controller, affected_card, SUBTYPE_SNAKE) &&
 		is_legendary(affected_card_controller, affected_card) )
 	{
@@ -1848,30 +1836,39 @@ Whenever you cast a Spirit or Arcane spell, you may return ~ to its owner's hand
 	return card_man_o_war(player, card, event);
 }
 
-int card_kiyomaro_first_to_stand(int player, int card, event_t event){
-	/* Kiyomaro, First to Stand	|3|W|W
-	 * Legendary Creature - Spirit 100/100
-	 * ~'s power and toughness are each equal to the number of cards in your hand.
-	 * As long as you have four or more cards in hand, Kiyomaro has vigilance.
-	 * Whenever Kiyomaro deals damage, if you have seven or more cards in hand, you gain 7 life. */
-
-	check_legend_rule(player, card, event);
-
-	if( in_play(player, card) && ! is_humiliated(player, card) && hand_count[player] >= 4 ){
-		vigilance(player, card, event);
-		if( hand_count[player] >= 7 ){
-			int result = damage_dealt_by_me_arbitrary(player, card, event, 0, player, card);
-			if( result ){
-				gain_life(player, 7 * result);
-			}
-		}
-	}
-
-	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && !is_humiliated(player, card) && player != -1){
-		event_result += hand_count[player];
-	}
-
-	return 0;
+int card_kiyomaro_first_to_stand(int player, int card, event_t event)
+{
+  enum
+  {
+    DDBM_MAY_DAMAGE_PLANESWALKER = 64
+  };
+  card_instance_t *instance;
+  int result;
+  check_legend_rule(player, card, event);
+  instance = in_play(player, card);
+  if ((instance != NULL) && (3 < hand_count[player]))
+  {
+    result = is_humiliated(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      vigilance(player, card, event);
+    }
+    if (6 < hand_count[player])
+    {
+      result = damage_dealt_by_me(player, card, event, DDBM_MAY_DAMAGE_PLANESWALKER);
+      if (result != 0)
+      {
+        gain_life(player, 7);
+      }
+    }
+  }
+  if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
+       (affected_card_controller == player)) &&
+      (player != -1))
+  {
+    set_characteristic_pt(hand_count[player]);
+  }
+  return 0;
 }
 
 int card_kuon_essence(int player, int card, event_t event){
@@ -1948,7 +1945,7 @@ int card_manriki_gusari(int player, int card, event_t event){
 	 * Equipped creature gets +1/+2 and has "|T: Destroy target Equipment."
 	 * Equip |1 */
 
-	if( is_equipping(player, card) && ! is_humiliated(player, card) ){
+	if( is_equipping(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t *instance = get_card_instance(player, card);
 
 		int p = instance->damage_target_player;
@@ -2030,18 +2027,16 @@ int card_manriki_gusari(int player, int card, event_t event){
 	return 0;
 }
 
-int card_masumaro_first_to_live(int player, int card, event_t event){
-	/* Masumaro, First to Live	|3|G|G|G
-	 * Legendary Creature - Spirit 100/100
-	 * ~'s power and toughness are each equal to twice the number of cards in your hand. */
-
-	check_legend_rule(player, card, event);
-
-	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && !is_humiliated(player, card) && player != -1){
-		event_result += 2 * hand_count[player];
-	}
-
-	return 0;
+int card_masumaro_first_to_live(int player, int card, event_t event)
+{
+  check_legend_rule(player, card, event);
+  if ((((event - EVENT_POWER < 2) && (card == affected_card)) &&
+       (affected_card_controller == player)) &&
+      (player != -1))
+  {
+    set_characteristic_pt(hand_count[player] * 2);
+  }
+  return 0;
 }
 
 
@@ -2610,7 +2605,7 @@ int card_raving_oni_slave(int player, int card, event_t event){
 		}
 	}
 
-	if( leaves_play(player, card, event) && ! check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_DEMON) ){
+	if( leaves_play(player, card, event, 1, 1) && ! check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_DEMON) ){
 		lose_life(player, 3);
 	}
 
@@ -2619,7 +2614,7 @@ int card_raving_oni_slave(int player, int card, event_t event){
 
 int card_razorjaw_oni(int player, int card, event_t event){
 
-	if( event == EVENT_BLOCK_LEGALITY && ! is_humiliated(player, card) ){
+	if( event == EVENT_BLOCK_LEGALITY && ! is_humiliated(player, card, AL_STATIC) ){
 		if( get_color(affected_card_controller, affected_card) & get_sleighted_color_test(player, card, COLOR_TEST_BLACK) ){
 			event_result = 1;
 		}
@@ -2682,7 +2677,7 @@ ARCANE(card_rending_vines){
 
 int card_reverence(int player, int card, event_t event)
 {
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( event == EVENT_ATTACK_LEGALITY && affected_card_controller != player &&
 			get_power(affected_card_controller, affected_card) <= 2 )
 		{
@@ -2697,7 +2692,7 @@ int card_rune_tails_essence(int player, int card, event_t event){
 
 	check_legend_rule(player, card, event);
 
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( event == EVENT_PREVENT_DAMAGE ){
 			card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
 			if( damage->internal_card_id == damage_card ){
@@ -2719,7 +2714,7 @@ int card_rune_tail_kitsune_ascendant(int player, int card, event_t event){
 
 	double_faced_card(player, card, event);
 
-	if (life[player] > 29 && in_play(player, card) && ! is_humiliated(player, card) ){
+	if (life[player] > 29 && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t* instance = get_card_instance(player, card);
 		if (instance->targets[13].player == instance->targets[13].card){	// Don't transform back when we get back here during EVENT_CHANGE_TYPE
 			true_transform(player, card);
@@ -2995,14 +2990,14 @@ int card_sekki_seasons_guide(int player, int card, event_t event){
 		}
 	}
 
-	if( event == EVENT_PREVENT_DAMAGE && ! is_humiliated(player, card) ){
+	if( event == EVENT_PREVENT_DAMAGE && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
 		if( damage->internal_card_id == damage_card ){
 			if( damage->damage_target_card == card && damage->damage_target_player == player &&
 				damage->info_slot > 0 && count_1_1_counters(player, card) > 0 ){
 				int amount = MIN(damage->info_slot, count_1_1_counters(player, card));
 				prevent_damage(affected_card_controller, affected_card, amount);
-				remove_1_1_counters(player, card, amount);
+				remove_counters(player, card, player, card, COUNTER_P1_P1, amount);
 				generate_tokens_by_id(player, card, CARD_ID_SPIRIT, amount);
 			}
 		}
@@ -3143,50 +3138,71 @@ Whenever you cast a Spirit or Arcane spell, you may gain control of target creat
 	return 0;
 }
 
-int card_soramaro_first_to_dream(int player, int card, event_t event){
-	/* Soramaro, First to Dream	|4|U|U
-	 * Legendary Creature - Spirit 100/100
-	 * Flying
-	 * ~'s power and toughness are each equal to the number of cards in your hand.
-	 * |4, Return a land you control to its owner's hand: Draw a card. */
+int card_soramaro_first_to_dream(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
 
-	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && !is_humiliated(player, card) && player != -1){
-		event_result += hand_count[player];
-	}
-
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_LAND );
-	td.preferred_controller = player;
-	td.allowed_controller = player;
-	td.illegal_abilities = 0;
-
-	card_instance_t *instance= get_card_instance(player, card);
-
-	if( event == EVENT_CAN_ACTIVATE ){
-		return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_X(4), 0, &td, NULL);
-	}
-
-	if( event == EVENT_ACTIVATE ){
-		if( current_turn == 1-player && current_phase >= PHASE_AFTER_BLOCKING ){
-			ai_modifier += (count_subtype(player, TYPE_LAND, -1) * 8);
-		}
-		generic_activated_ability(player, card, event, GAA_CAN_TARGET | GAA_LITERAL_PROMPT, MANACOST_X(4), 0,
-									&td, "Select a land you control.");
-		if( spell_fizzled != 1 ){
-			bounce_permanent(instance->targets[0].player, instance->targets[0].card);
-			instance->number_of_targets = 0;
-		}
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		draw_cards(player, 1);
-	}
-
-	return 0;
+  if (event - EVENT_POWER < 2)
+  {
+    if (((card == affected_card) && (affected_card_controller == player)) && (player != -1))
+    {
+      set_characteristic_pt(hand_count[player]);
+    }
+  }
+  else
+  {
+    if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+    {
+      default_target_definition(player, card, &td, 1);
+      td.preferred_controller = player;
+      td.allowed_controller = player;
+      td.illegal_abilities = 0;
+      instance = get_card_instance(player, card);
+      if (event == EVENT_CAN_ACTIVATE)
+      {
+        result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 4, 0, 0, 0, 0, 0, 0,
+                                           &td, NULL);
+        return result;
+      }
+      if (event == EVENT_ACTIVATE)
+      {
+        if ((1 - player == current_turn) && (0x17 < current_phase))
+        {
+          result = count_subtype(player, 1, -1);
+          ai_modifier = ai_modifier + result * 8;
+        }
+        generic_activated_ability(player, card, EVENT_ACTIVATE, 6, 4, 0, 0, 0, 0, 0, 0, &td,
+                                  "Select a land you control.");
+        if (spell_fizzled == 1)
+        {
+          return 0;
+        }
+        bounce_permanent(instance->targets[0].player, instance->targets[0].card);
+        instance->number_of_targets = '\0';
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+      {
+        return 0;
+      }
+      default_target_definition(player, card, &td, 1);
+      td.preferred_controller = player;
+      td.allowed_controller = player;
+      td.illegal_abilities = 0;
+      get_card_instance(player, card);
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      draw_cards(player, 1);
+      return 0;
+    }
+  }
+  return 0;
 }
 
 ARCANE_WITH_SPLICE(card_spiritual_visit, MANACOST_W(1)){
@@ -3355,7 +3371,7 @@ At the beginning of your upkeep, return a |Sblue creature you control to its own
 		instance->number_of_targets = 0;
 	}
 
-	if( current_turn == player && event == EVENT_MAX_HAND_SIZE && ! is_humiliated(player, card) ){
+	if( current_turn == player && event == EVENT_MAX_HAND_SIZE && ! is_humiliated(player, card, AL_STATIC) ){
 		event_result+=2;
 	}
 
@@ -3675,7 +3691,7 @@ int card_freed_from_the_real(int player, int card, event_t event)
   pcVar2 = in_play(player, card);
   if (((pcVar2 == NULL) ||
        (pcVar2 = get_card_instance(player, card), pcVar2->damage_target_player < '\0')) ||
-      (result = is_humiliated_for_ability(player, card, AL_NM_NL_ACT), result != 0))
+      (result = is_humiliated(player, card, AL_NM_NL_ACT), result != 0))
   {
   LAB_020b3073:
     if (event == EVENT_CAN_CAST)

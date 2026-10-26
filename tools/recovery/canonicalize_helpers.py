@@ -86,13 +86,16 @@ def project(source,text,entries,mapping):
             body=qualify_definition(body,e)
         if e.get('alias_source_replacement'):
             old_text=e['alias_source_replacement'];assert original.count(old_text)==1
+            if e.get('retained_definition_sha256'):
+                assert sha(old_text.encode())==e['retained_definition_sha256']
             lo=original.index(old_text);hi=lo+len(old_text)
         else:
             bounds=span(original,old);assert bounds,old
             lo,hi=bounds
             assert sha(original[lo:hi].encode())==e['retained_definition_sha256']
         if source in KEEP_NATIVE_ORDER or e.get('keep_native_order'):
-            edits.extend([(b[0],b[1],body),(lo,hi,'')])
+            edits.append((b[0],b[1],body))
+            if not e.get('defer_retained_removal'):edits.append((lo,hi,''))
         else:
             edits.extend([(b[0],b[1],''),(lo,hi,body)])
         if not e.get('no_forward_declaration'):declarations.append(e['source_prototype'])
@@ -108,13 +111,17 @@ def project(source,text,entries,mapping):
         text=text[:include.end()]+block+text[include.end():]
     return rename(text,mapping)
 
-def apply_source_edits(source,text,edits):
+def apply_source_edits(source,text,edits,mapping=None):
     """Replay reviewed interface/domain edits after canonical body placement."""
     for edit in edits:
         if edit['source']!=source:continue
         old=edit['before'];new=edit['after']
         assert sha(old.encode())==edit['before_sha256'],source
         assert sha(new.encode())==edit['after_sha256'],source
+        # Edits retain their original recovery identities and hashes. Later
+        # canonicalization renames both sides for replay in the current C view.
+        if mapping:
+            old=rename(old,mapping);new=rename(new,mapping)
         assert text.count(old)==1,(source,edit['reason'])
         text=text.replace(old,new,1)
     return text
@@ -150,7 +157,18 @@ def project_file(source,before,entries,mapping,sharing,annotations=(),retirement
         b=span(before,e['name']);assert b and sha(before[b[0]:b[1]].encode())==e['definition_sha256']
         b=span(after,e['name']);assert b
         after=after[:b[0]]+after[b[1]:]
-    return apply_source_edits(source,after,source_edits)
+    after=apply_source_edits(source,after,source_edits,mapping)
+    # A newly retired predecessor may have earlier, independently proved caller
+    # edits. Replay those edits before removing its pinned current definition;
+    # this keeps their evidence intact instead of silently dropping history.
+    for e in entries:
+        if e['source']!=source or not e.get('defer_retained_removal'):continue
+        old=e['post_edit_retained_definition']
+        assert sha(old.encode())==e['post_edit_retained_definition_sha256']
+        old=rename(old,mapping)
+        assert after.count(old)==1,(source,e['canonical_name'],'post-edit predecessor')
+        after=after.replace(old,'',1)
+    return after
 
 def verify_native_equivalences(proof,root=ROOT):
     entries=proof.get('native_equivalences',[])
@@ -177,20 +195,66 @@ def verify_native_equivalences(proof,root=ROOT):
     return result
 
 def recipe_sha():
-    return sha(('\n'.join(inspect.getsource(f) for f in [rename,declarations,qualify_head,qualify_definition,project,apply_source_edits,project_file])+'\n'+repr(sorted(KEEP_NATIVE_ORDER))).encode())
+    return sha(('\n'.join(inspect.getsource(f) for f in [rename,declarations,qualify_head,qualify_definition,project,apply_source_edits,project_file,function_entries,names])+'\n'+repr(sorted(KEEP_NATIVE_ORDER))).encode())
 
 def load(root=ROOT):
     path=root/EVIDENCE
     return json.loads(path.read_text()) if path.exists() else None
 
+def function_entries(proof):
+    """Concrete accepted recoveries plus independently recorded source helpers.
+
+    Inline fragments have native owners/ranges, never invented entry addresses.
+    Keeping them separate preserves the accepted-function ledger's count.
+    """
+    return proof['functions']+proof.get('auxiliary_functions',[])
+
 def names(root=ROOT):
     proof=load(root)
-    return {e['recovery_name']:e['canonical_name'] for e in proof['functions']} if proof else {}
+    return {e['recovery_name']:e['canonical_name'] for e in function_entries(proof)} if proof else {}
+
+def source_names(root=ROOT):
+    """Names for compiling historical assertions against real current C declarations.
+
+    This includes retired typedef, macro, field, data and import spellings
+    without recreating aliases or changing accepted function identities.
+    """
+    proof=load(root)
+    return {**names(root),**(proof.get('source_spelling_names',{}) if proof else {})}
+
+
+def verify_auxiliary_functions(proof,root=ROOT):
+    entries=proof.get('auxiliary_functions',[])
+    if not entries:return []
+    from inspect_release import Image
+    image=Image((root/'.recovery/2022-ManalinkEh.dll').read_bytes())
+    assert sha(image.data)=='52793f60124a3b83d8b2728d145e918101a395b4e8d1c0af69cddcfc87ef10e5'
+    result=[]
+    for e in entries:
+        ref=e['evidence_reference'];record=json.loads((root/ref['path']).read_text())
+        for key in ref['json_path']:record=record[key]
+        assert sha(json.dumps(record,sort_keys=True).encode())==ref['record_sha256'],e['recovery_name']
+        if e['kind']=='native_inline_fragment':
+            assert 'native_address' not in e and e['optional_physical_symbol'] and e['static']
+            assert record['fragment']['source']==e['source']
+            assert record['fragment']['address']==e['native_owner_address']
+            ranges=[(int(r['start'],16),int(r['end'],16),r['sha256']) for r in record['ranges']]
+        else:
+            assert e['kind']=='retained_public_native_helper' and not e['optional_physical_symbol']
+            assert record['source']==e['source']
+            at=int(e['native_address'],16)
+            ranges=[(at,at+record['machine_bytes'],record['machine_sha256'])]
+        for lo,hi,digest in ranges:
+            assert sha(image.pe.get_data(lo-0x2000000,hi-lo))==digest,e['recovery_name']
+        result.append(dict(recovery_name=e['recovery_name'],canonical_name=e['canonical_name'],kind=e['kind'],native_ranges=len(ranges)))
+    return result
 
 def verify_interface_evidence(proof,root=ROOT):
     """Bind explicit caller edits to pinned release bytes and raw exports."""
     domain=proof.get('native_domain_evidence')
     if not domain:return {}
+    for receipt in proof.get('interface_supporting_inputs',[]):
+        assert sha((root/receipt['path']).read_bytes())==receipt['sha256'],receipt['path']
     assert sha((root/domain['path']).read_bytes())==domain['sha256']
     from verify_helper_domains import verify_source
     domains=verify_source(root)
@@ -203,12 +267,36 @@ def verify_interface_evidence(proof,root=ROOT):
             lo=int(edit['native_address'],16);hi=int(edit['native_end'],16)
             assert sha(image.pe.get_data(lo-0x2000000,hi-lo))==edit['native_bytes_sha256']
             ranges.add((lo,hi))
-        for row in edit.get('native_caller_ranges',[]):
+        for row in edit.get('native_caller_ranges',[])+edit.get('native_support_ranges',[]):
             lo=int(row['address'],16);hi=int(row['end'],16)
             assert sha(image.pe.get_data(lo-0x2000000,hi-lo))==row['bytes_sha256']
-            assert sha((root/row['raw_export']).read_bytes())==row['raw_export_sha256']
+            assert sha((root/row['raw_export']).read_bytes())==row['raw_export_sha256'],row['raw_export']
             ranges.add((lo,hi))
-    return dict(native_domains=domains,caller_ranges=len(ranges),
+        for row in edit.get('native_inline_ranges',[]):
+            lo=int(row['start'],16);hi=int(row['end'],16)
+            assert sha(image.pe.get_data(lo-0x2000000,hi-lo))==row['bytes_sha256']
+            ranges.add((lo,hi))
+        if 'native_jump_binding' in edit:
+            row=edit['native_jump_binding'];at=int(row['address'],16)
+            data=image.pe.get_data(at-0x2000000,5)
+            assert data.hex()==row['bytes_hex'] and data[0]==0xe9
+            assert at+5+int.from_bytes(data[1:],'little',signed=True)==int(row['target'],16)
+    from verify_call_argument_edits import verify as verify_argument_edits
+    from verify_constant_argument_edits import verify as verify_constant_edits
+    from verify_inline_counter_edits import verify as verify_inline_counters
+    from verify_counter_trigger_domains import verify as verify_counter_domains
+    from verify_counter_argument_blocks import verify as verify_counter_blocks
+    from verify_global_array_domains import verify as verify_global_arrays
+    from verify_source_spelling_edits import verify as verify_spelling_edits
+    from verify_engine_boundaries import verify as verify_engine_boundaries
+    return dict(native_domains=domains,caller_ranges=len(ranges),argument_edits=verify_argument_edits(proof,image,root),
+                constant_argument_edits=verify_constant_edits(proof,image,root),
+                inline_counter_arguments=verify_inline_counters(proof,image,root),
+                counter_trigger_domains=verify_counter_domains(proof,root),
+                counter_argument_blocks=verify_counter_blocks(proof,image,root),
+                absolute_global_arrays=verify_global_arrays(proof,root),
+                source_identifier_spellings=verify_spelling_edits(proof,root),
+                executable_fallbacks=verify_engine_boundaries(proof,root),
                 scope='Reviewed interface edits only; retained custom callers explicitly distinguished from native caller ranges.')
 
 def verify(root=ROOT):
@@ -229,10 +317,11 @@ def verify(root=ROOT):
         for row in proof['files']:
             source=row['source'];before=archive.read(source).decode('latin1').replace('\r\n','\n')
             assert sha(before.encode())==row['predecessor_sha256'],source
-            after=project_file(source,before,proof['functions'],mapping,sharing,proof.get('source_annotations',[]),proof.get('source_retirements',[]),proof.get('source_edits',[]))
+            after=project_file(source,before,function_entries(proof),mapping,sharing,proof.get('source_annotations',[]),proof.get('source_retirements',[]),proof.get('source_edits',[]))
             assert sha(after.encode())==row['canonical_sha256'],source
             assert read(root/source)==after,('Canonical source projection changed',source)
     return dict(canonical_functions=len(mapping),aliases_removed=proof['current_aliases_removed'],
+                accepted_function_names=len(proof['functions']),auxiliary_functions=verify_auxiliary_functions(proof,root),
                 additional_direct_replacements=proof['additional_direct_replacements'],
                 native_worker_names=sum(bool(e.get('rename_only')) for e in proof['functions']),
                 equivalent_native_helpers=verify_native_equivalences(proof,root),
@@ -251,7 +340,7 @@ def historical_sources(root=ROOT):
     proof=load(root)
     if not proof:
         yield;return
-    verify(root)
+    verification=verify(root)
     with zipfile.ZipFile(root/BEFORE) as archive:
         data={(root/r['source']).resolve():archive.read(r['source']) for r in proof['files']}
     old_bytes=Path.read_bytes;old_text=Path.read_text
@@ -262,27 +351,70 @@ def historical_sources(root=ROOT):
         errors=kwargs.get('errors') or (args[1] if len(args)>1 else 'strict')
         return data[path.resolve()].decode(encoding,errors).replace('\r\n','\n')
     Path.read_bytes=read_bytes;Path.read_text=read_text;_historical_active=True
-    try:yield
+    try:yield verification
     finally:Path.read_bytes=old_bytes;Path.read_text=old_text;_historical_active=False
 
 def verify_symbols(image,root=ROOT):
     """Check physical canonical COFF entries, with no invented alias symbols."""
     proof=load(root)
     if not proof:return {}
-    result={};symbols=image.symbols
-    for e in proof['functions']:
+    result={};symbols=image.symbols;missing=[]
+    for e in function_entries(proof):
         old='_'+e['canonical_name'];qualified='_'+e['recovery_name']
         assert not [s for s in symbols if s[0]==qualified or s[0].startswith(qualified+'.')],qualified
         found=[s for s in symbols if s[0]==old]
         if not found and e.get('allow_compiler_clone'):
             assert e['static']
             found=[s for s in symbols if re.fullmatch(re.escape(old)+r'\.(?:constprop|isra|part)\.\d+',s[0])]
+        if not found and e.get('optional_physical_symbol'):continue
+        if not found:
+            assert e['static'],('Missing public canonical symbol',old)
+            missing.append(e);continue
         assert len(found)==1,(old,found)
         name,offset,section,kind,storage=found[0]
         assert section>0 and kind==32 and storage==(3 if e['static'] else 2),(old,found)
         assert image.pe.sections[section-1].Characteristics&0x20000000
         result[e['canonical_name']]=dict(coff_name=name,address=hex(image.pe.OPTIONAL_HEADER.ImageBase+image.pe.sections[section-1].VirtualAddress+offset),recovery_name=e['recovery_name'])
-    return dict(physical_canonical_symbols=len(result),removed_qualified_symbols=len(result),symbols=result)
+    from verify_inline_helpers import verify as verify_inlined
+    from inspect_release import Image
+    inlined=verify_inlined(image,missing,Image((root/'ManalinkEh.dll').read_bytes())) if missing else {}
+    return dict(physical_canonical_symbols=len(result),removed_qualified_symbols=len(result)+len(inlined),
+                symbols=result,inlined_canonical_functions=inlined,
+                inline_scope='Concrete caller-owned DWARF ranges; no callable helper entry or body score invented.')
+
+def ledger_type_view(info,spellings):
+    """Expose retired typedef names to historical layout readers only.
+
+    The original DIE remains visible. A named shallow view of that same DIE
+    supplies the old spelling, with identical offset, references and children.
+    Real compiler inputs and physical DWARF never acquire duplicate typedefs.
+    """
+    import copy
+    aliases={}
+    for old,new in spellings.items():
+        if old.endswith('_t') or old in {'ReanimationBeforeEtb_2022','counter_copy_entry_2022'}:
+            aliases.setdefault(new,[]).append(old)
+    if not aliases:return info
+    view=copy.copy(info)
+    def units():
+        for cu in info.iter_CUs():
+            logical=copy.copy(cu)
+            def dies(cu=cu):
+                for die in cu.iter_DIEs():
+                    yield die
+                    if die.tag!='DW_TAG_typedef':continue
+                    attr=die.attributes.get('DW_AT_name')
+                    if not attr:continue
+                    name=attr.value.decode() if isinstance(attr.value,bytes) else attr.value
+                    for old in aliases.get(name,[]):
+                        alias=copy.copy(die);alias.attributes=dict(die.attributes)
+                        alias.attributes['DW_AT_name']=attr._replace(value=old.encode())
+                        yield alias
+            logical.iter_DIEs=dies
+            yield logical
+    view.iter_CUs=units
+    return view
+
 
 def ledger_debug_view(image,root=ROOT):
     """Explicit logical-name view for existing per-family native range proofs.
@@ -312,7 +444,7 @@ def ledger_debug_view(image,root=ROOT):
             source=str(value(cu.get_top_DIE(),'DW_AT_name')).replace('\\','/')
             # Public declarations in callers' CUs refer to the same definition.
             # Private names are only translated in their owning source unit.
-            owned={e['canonical_name']:e['recovery_name'] for e in proof['functions']
+            owned={e['canonical_name']:e['recovery_name'] for e in function_entries(proof)
                    if not e['static'] or source==e['source'] or source.endswith('/'+e['source'])}
             if not owned:continue
             for die in cu.iter_DIEs():
@@ -320,10 +452,11 @@ def ledger_debug_view(image,root=ROOT):
                 attr=die.attributes.get('DW_AT_name')
                 if attr and value(die,'DW_AT_name') in owned:
                     die.attributes['DW_AT_name']=attr._replace(value=owned[value(die,'DW_AT_name')].encode())
+        info=ledger_type_view(info,proof.get('source_spelling_names',{}))
         dwarf_cache.append(info)
         return info
     view.dwarf=dwarf
-    return view,dict(**physical,recovery_checks='Explicit ledger-name view over independently verified physical names; addresses, types, ranges and bytes are unchanged')
+    return view,dict(**physical,recovery_checks='Explicit ledger-name/type-spelling views over verified physical names; addresses, storage layouts, references, ranges and bytes are unchanged')
 
 def apply(root=ROOT):
     assert not (root/EVIDENCE).exists(),'Canonical helpers already applied'

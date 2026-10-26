@@ -1726,7 +1726,7 @@ int card_vances_blasting_cannons(int player, int card, event_t event)
 int card_carnage_tyrant(int player, int card, event_t event)
 {
   cannot_be_countered(player, card, event);
-  hexproof_2022(player, card, event);
+  hexproof(player, card, event);
   return 0;
 }
 
@@ -2299,7 +2299,7 @@ int card_ixalans_binding(int player, int card, event_t event)
   }
   if (event == EVENT_MODIFY_COST_GLOBAL)
   {
-    iVar1 = is_humiliated_for_ability(player, card, AL_STATIC);
+    iVar1 = is_humiliated(player, card, AL_STATIC);
 
     if ((iVar1 == 0) && (instance = get_card_instance(player, card), 1 < instance->info_slot))
     {
@@ -2408,7 +2408,7 @@ int card_herald_of_secret_streams(int player, int card, event_t event)
     instance = in_play(player, card);
     if (instance != NULL)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         instance = in_play(affected_card_controller, affected_card);
@@ -2655,7 +2655,7 @@ int card_ripjaw_raptor(int player, int card, event_t event)
 {
   int result;
 
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if (result == 0)
   {
     result = damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card);
@@ -2676,7 +2676,7 @@ int card_verdant_suns_avatar(int player, int card, event_t event)
   test_definition_t test;
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if ((((result == 0) && (trigger_condition == 0xdb)) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
@@ -2730,7 +2730,7 @@ int card_admiral_beckett_brass(int player, int card, event_t event)
     {
       return 0;
     }
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if ((result == 0) && (pcVar3 = in_play(player, card), pcVar3 != NULL))
     {
       default_target_definition(player, card, &td, 0x47);
@@ -2777,7 +2777,7 @@ int card_tishana_voice_of_thunder(int player, int card, event_t event)
       instance = in_play(player, card);
       if (instance != NULL)
       {
-        result = is_humiliated_for_ability(player, card, AL_STATIC);
+        result = is_humiliated(player, card, AL_STATIC);
         if (result == 0)
         {
           event_result = event_result + 99;
@@ -3150,7 +3150,7 @@ int card_wildgrowth_walker(int player, int card, event_t event)
 {
   if ((event == EVENT_EXPLORE) && (affected_card_controller == player))
   {
-    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    add_counters(player, card, player, card, COUNTER_P1_P1, 1);
     gain_life(player, 3);
   }
   return 0;
@@ -3175,7 +3175,7 @@ int explore(int player, int card, event_t event)
     result = is_what(-1, *piVar1, 1);
     if (result == 0)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+      add_counters(player, card, player, card, COUNTER_P1_P1, 1);
       result = dialog_impl(player, card, EVENT_CAST_SPELL, "\001\002", "\001\003", "\001\014",
                            "\001\012", *piVar1, "Put card on top of library", 1, 5,
                            "Put card in graveyard", 1, 5, 0, 0, 0, 0);
@@ -3610,7 +3610,7 @@ LAB_02214aec:
     generate_tokens_by_id(player, card, 0x4998, uVar4 & 0xff);
   }
   if ((((current_turn == player) && (iVar2 = upkeep_trigger(player, card, event), iVar2 != 0)) &&
-       (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar2 == 0)) &&
+       (iVar2 = is_humiliated(player, card, AL_TRIG), iVar2 == 0)) &&
       (iVar2 = count_subtype(player, -1, 0x3006), 9 < iVar2))
   {
     lose_the_game(1 - player);
@@ -3956,7 +3956,7 @@ int card_deeproot_champion(int player, int card, event_t event)
   {
     return 0;
   }
-  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  add_counters(player, card, player, card, COUNTER_P1_P1, 1);
   return 0;
 }
 
@@ -4017,7 +4017,7 @@ int card_huatli_warrior_poet(int player, int card, event_t event)
         else
         {
 
-          remove_counters_from_source(player, card, player, card, COUNTER_LOYALTY, argument3);
+          remove_counters(player, card, player, card, COUNTER_LOYALTY, argument3);
           pcStack_b4->eot_toughness = argument3;
           ret_location = 0;
           pcStack_b4->number_of_targets = '\0';
@@ -4152,11 +4152,11 @@ int card_primal_amulet(int player, int card, event_t event)
     sp_ability_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
     if (event == EVENT_SPA)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_CHARGE, 1);
+      add_counters(player, card, player, card, COUNTER_CHARGE, 1);
       result = count_counters(player, card, COUNTER_CHARGE);
       if (3 < result)
       {
-        remove_all_counters_from_source(player, card, player, card, COUNTER_CHARGE);
+        remove_all_counters(player, card, player, card, COUNTER_CHARGE);
         transform(player, card);
       }
     }
@@ -4164,7 +4164,7 @@ int card_primal_amulet(int player, int card, event_t event)
   }
   if (affected_card_controller == player)
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       result = is_what(affected_card_controller, affected_card, 0x38);
@@ -4194,11 +4194,11 @@ int card_treasure_map(int player, int card, event_t event)
     if (event == EVENT_RESOLVE_ACTIVATION)
     {
       scry(player, 1);
-      add_counters_from_source(player, card, player, card, COUNTER_LANDMARK, 1);
+      add_counters(player, card, player, card, COUNTER_LANDMARK, 1);
       result = count_counters(player, card, COUNTER_LANDMARK);
       if (2 < result)
       {
-        remove_all_counters_from_source(player, card, player, card, COUNTER_LANDMARK);
+        remove_all_counters(player, card, player, card, COUNTER_LANDMARK);
         generate_tokens_by_id(player, card, 0x4998, 3);
         instance = get_card_instance(player, card);
         result = instance->parent_card;
@@ -4242,10 +4242,10 @@ int card_kitesail_freebooter(int player, int card, event_t event)
         exile_card_and_remember_it_on_exiledby(player, card, instance->targets[0].player, result);
       }
     }
-    leaves_play_2022(player, card, EVENT_ETB, 1, 0);
+    leaves_play(player, card, EVENT_ETB, 1, 0);
     return 0;
   }
-  leaves_play_2022(player, card, event, 1, 0);
+  leaves_play(player, card, event, 1, 0);
   if (event != EVENT_LEAVES_PLAY_ABILITY)
   {
     return 0;
@@ -4267,7 +4267,7 @@ static int test_dinosaur_or_land(int iid, int value, int player, int card)
   {
     return 1;
   }
-  result = has_subtype_by_id_2022(player, (unsigned int)cards_data[iid].id, SUBTYPE_DINOSAUR);
+  result = has_subtype_by_id(player, (unsigned int)cards_data[iid].id, SUBTYPE_DINOSAUR);
   return (unsigned int)(result != 0);
 }
 
@@ -4331,7 +4331,7 @@ int card_arcane_adaptation(int player, int card, event_t event)
         iVar1 = is_what(affected_card_controller, affected_card, 2);
         if (iVar1 != 0)
         {
-          iVar1 = is_humiliated_for_ability(player, card, AL_STATIC);
+          iVar1 = is_humiliated(player, card, AL_STATIC);
           if (iVar1 == 0)
           {
 
@@ -4519,7 +4519,7 @@ int card_dowsing_dagger(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  token_generation_2022_t token;
+  token_generation_t token;
   double_faced_card(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
@@ -4585,7 +4585,7 @@ int card_search_for_azcanta(int player, int card, event_t event)
 int card_rampaging_ferocidon(int player, int card, event_t event)
 {
   card_instance_t *instance;
-  test_definition_2022_t test;
+  test_definition_t test;
   menace(player, card, event);
   instance = in_play(player, card);
   if ((event == EVENT_STATIC_EFFECTS) && (instance != NULL))
@@ -4681,7 +4681,7 @@ int card_sunbirds_invocation(int player, int card, event_t event)
     int selected_iid = -1;
     if (eligible != 0)
     {
-      test_definition_2022_t this_test;
+      test_definition_t this_test;
       new_default_test_definition(&this_test, TYPE_LAND, "Select a spell to cast.");
       this_test.type_flag = 1;
       this_test.id = 0x388;
@@ -4731,7 +4731,7 @@ int card_gishath_suns_avatar(int player, int card, event_t event)
       amount = count;
     if (amount != 0)
     {
-      int gc_flag = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM2022_DECK);
+      int gc_flag = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM_DECK);
       show_deck(0, deck_ptr[player], amount, "Cards revealed by Gishath, Sun's Avatar", 0,
                      ENGINE_DONE_LABEL);
       show_deck(1, deck_ptr[player], amount, "Cards revealed by Gishath, Sun's Avatar", 0,
@@ -4746,7 +4746,7 @@ int card_gishath_suns_avatar(int player, int card, event_t event)
         }
         char msg[100];
         scnprintf(msg, 100, "Select a Dinosaur creature card.");
-        test_definition_2022_t test;
+        test_definition_t test;
         new_default_test_definition(&test, TYPE_CREATURE, msg);
         test.subtype = 0xf0;
         int remaining = amount;

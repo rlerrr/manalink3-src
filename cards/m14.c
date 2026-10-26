@@ -345,7 +345,7 @@ int card_path_of_bravery(int player, int card, event_t event)
 	get_card_instance(player, card)->targets[9].player = get_starting_life_total(player);
 
   if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affected_card_controller == player
-	  && life[player] >= get_card_instance(player, card)->targets[9].player && ! is_humiliated(player, card) )
+	  && life[player] >= get_card_instance(player, card)->targets[9].player && ! is_humiliated(player, card, AL_STATIC) )
 	++event_result;
 
   // Whenever one or more creatures you control attack, you gain life equal to the number of attacking creatures.
@@ -366,7 +366,7 @@ int card_sentinel_sliver(int player, int card, event_t event)
 	  && is_what(affected_card_controller, affected_card, TYPE_CREATURE)
 	  && has_subtype(affected_card_controller, affected_card, SUBTYPE_SLIVER)
 	  && in_play(player, card) && in_play(affected_card_controller, affected_card)
-	  && ! is_humiliated(player, card))
+	  && ! is_humiliated(player, card, AL_STATIC))
 	vigilance(affected_card_controller, affected_card, event);
 
   return slivercycling(player, card, event);
@@ -419,7 +419,7 @@ int card_stonehorn_chanter(int player, int card, event_t event){
 static int colossal_whale_legacy(int player, int card, event_t event){
 	if( get_card_instance(player, card)->targets[0].player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
-		if( other_leaves_play(player, card, instance->targets[0].player, instance->targets[0].card, event) ){
+		if( other_leaves_play(player, card, instance->targets[0].player, instance->targets[0].card, event, 1, 0) ){
 			int owner = instance->targets[1].player;
 			int iid = instance->targets[1].card;
 			if( check_rfg(owner, cards_data[iid].id) ){
@@ -752,7 +752,7 @@ int card_warden_of_evos_isle(int player, int card, event_t event){
 	 * Flying
 	 * Creature spells with flying you cast cost |1 less to cast. */
 
-	if(event == EVENT_MODIFY_COST_GLOBAL && affected_card_controller == player && ! is_humiliated(player, card) ){
+	if(event == EVENT_MODIFY_COST_GLOBAL && affected_card_controller == player && ! is_humiliated(player, card, AL_STATIC) ){
 		if( is_what(affected_card_controller, affected_card, TYPE_CREATURE) ){
 			card_instance_t *instance = get_card_instance( affected_card_controller, affected_card );
 			if( cards_data[instance->internal_card_id].static_ability & KEYWORD_FLYING ){
@@ -1556,7 +1556,7 @@ int card_awaken_the_ancient(int player, int card, event_t event){
 	 * Enchant |H2Mountain
 	 * Enchanted |H2Mountain is a 7/7 |Sred Giant creature with haste. It's still a land. */
 
-	if( in_play(player, card) && ! is_humiliated(player, card) && get_card_instance(player, card)->damage_target_player > -1 ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
 		int p = instance->damage_target_player;
 		int c = instance->damage_target_card;
@@ -1635,7 +1635,7 @@ int card_burning_earth(int player, int card, event_t event){
 	 * Enchantment
 	 * Whenever a player taps a nonbasic land for mana, ~ deals 1 damage to that player. */
 
-	if( event == EVENT_TAP_CARD && tapped_for_mana_color >= 0 && ! is_humiliated(player, card) &&
+	if( event == EVENT_TAP_CARD && tapped_for_mana_color >= 0 && ! is_humiliated(player, card, AL_TRIG) &&
 		is_what(affected_card_controller, affected_card, TYPE_LAND) && ! is_basic_land(affected_card_controller, affected_card) )
 	{
 		damage_player(affected_card_controller, 1, player, card);
@@ -1774,7 +1774,7 @@ int card_cyclops_tyrant(int player, int card, event_t event){
 	 * ~ can't block creatures with power 2 or less. */
 
 	intimidate(player, card, event);
-	if( event == EVENT_BLOCK_LEGALITY && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_BLOCK_LEGALITY && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( attacking_card_controller != -1 && get_power(attacking_card_controller, attacking_card) < 3 ){
 			event_result = 1;
 		}
@@ -1842,7 +1842,7 @@ int card_marauding_maulhorn(int player, int card, event_t event){
 	 * Creature - Beast 5/3
 	 * ~ attacks each combat if able unless you control a creature named Advocate of the Beast. */
 
-	if( event == EVENT_MUST_ATTACK && current_turn == player && ! is_humiliated(player, card) &&
+	if( event == EVENT_MUST_ATTACK && current_turn == player && ! is_humiliated(player, card, AL_STATIC) &&
 		!check_battlefield_for_id(player, CARD_ID_ADVOCATE_OF_THE_BEAST) )
 	{
 		attack_if_able(player, card, event);
@@ -2022,28 +2022,36 @@ int card_young_pyromancer(int player, int card, event_t event){
 }
 
 // green
-int card_advocate_of_the_beast(int player, int card, event_t event){
-	/* Advocate of the Beast	|2|G
-	 * Creature - Elf Shaman 2/3
-	 * At the beginning of your end step, put a +1/+1 counter on target Beast creature you control. */
-
-	if( current_turn == player && eot_trigger(player, card, event) ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.allowed_controller = player;
-		td.preferred_controller = player;
-		td.required_subtype = SUBTYPE_BEAST;
-        td.allow_cancel = 0;
-
-		card_instance_t *instance = get_card_instance(player, card);
-
-		if( can_target(&td) && new_pick_target(&td, "Select target Beast creature.", 0, GS_LITERAL_PROMPT) ){
-			add_1_1_counter(instance->targets[0].player, instance->targets[0].card);
-		}
-		instance->number_of_targets = 0;
-	}
-
-	return 0;
+int card_advocate_of_the_beast(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  target_definition_t td;
+  if (current_turn == player)
+  {
+    result = eot_trigger(player, card, event);
+    if (result != 0)
+    {
+      default_target_definition(player, card, &td, 2);
+      td.allowed_controller = player;
+      td.preferred_controller = player;
+      td.required_subtype = 0x13;
+      td.allow_cancel = 0;
+      instance = get_card_instance(player, card);
+      result = can_target(&td);
+      if (result != 0)
+      {
+        result = new_pick_target(&td, "Select target Beast creature.", 0, 0x80);
+        if (result != 0)
+        {
+          add_counters(player, card, instance->targets[0].player,
+                                   instance->targets[0].card, COUNTER_P1_P1, 1);
+        }
+      }
+      instance->number_of_targets = '\0';
+    }
+  }
+  return 0;
 }
 
 int card_elvish_mystic(int player, int card, event_t event){
@@ -2212,7 +2220,7 @@ int card_hunt_the_weak(int player, int card, event_t event){
 
 	if(event == EVENT_RESOLVE_SPELL ){
 		if( validate_target(player, card, &td, 0) ){
-			add_1_1_counter(instance->targets[0].player, instance->targets[0].card);
+			add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, 1);
 			if( validate_target(player, card, &td1, 1) ){
 				fight(instance->targets[0].player, instance->targets[0].card, instance->targets[1].player, instance->targets[1].card);
 			}
@@ -2261,7 +2269,7 @@ int card_kalonian_hydra(int player, int card, event_t event){
 		int count = active_cards_count[player]-1;
 		while( count > -1 ){
 				if( in_play(player, count) && is_what(player, count, TYPE_CREATURE) ){
-					add_1_1_counters(player, count, count_1_1_counters(player, count));
+					add_counters(player, card, player, count, COUNTER_P1_P1, count_1_1_counters(player, count));
 				}
 				count--;
 		}
@@ -2310,7 +2318,7 @@ int card_oath_of_the_ancient_wood(int player, int card, event_t event){
 		card_instance_t *instance = get_card_instance(player, card);
 
 		if( can_target(&td) && new_pick_target(&td, "TARGET_CREATURE", 0, 0) ){
-			add_1_1_counter(instance->targets[0].player, instance->targets[0].card);
+			add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, 1);
 		}
 		instance->number_of_targets = 0;
 	}
@@ -2354,7 +2362,7 @@ int card_primeval_bounty(int player, int card, event_t event){
 					card_instance_t *instance = get_card_instance(player, card);
 
 					if( can_target(&td) && new_pick_target(&td, "Select target creature you control.", 0, GS_LITERAL_PROMPT) ){
-						add_1_1_counters(instance->targets[0].player, instance->targets[0].card, 3);
+						add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, 3);
 					}
 					instance->number_of_targets = 0;
 				}
@@ -2375,36 +2383,71 @@ int card_primeval_bounty(int player, int card, event_t event){
 
 // rumbling baloth --> vanilla
 
-static int savage_summonings_effect(int player, int card, event_t event){
-
-	if( event == EVENT_CAST_SPELL && ! affect_me(player, card) && affected_card_controller == player ){
-		if( is_what(affected_card_controller, affected_card, TYPE_CREATURE) ){
-			state_untargettable(affected_card_controller, affected_card, 1);
-		}
-	}
-
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me( player, card ) &&
-		reason_for_trigger_controller == affected_card_controller )
-	{
-		if( is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) &&
-			check_state(trigger_cause_controller, trigger_cause, STATE_CANNOT_TARGET) )
-		{
-			if(event == EVENT_TRIGGER){
-				event_result |= RESOLVE_TRIGGER_MANDATORY;
-			}
-			else if(event == EVENT_RESOLVE_TRIGGER){
-					state_untargettable(trigger_cause_controller, trigger_cause, 0);
-					add_1_1_counter(trigger_cause_controller, trigger_cause);
-					kill_card(player, card, KILL_EXILE);
-			}
-		}
-	}
-
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
+static int savage_summonings_effect(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  if (event == EVENT_CAST_SPELL)
+  {
+    if (card != affected_card)
+    {
+      if ((player == affected_card_controller) &&
+          (iVar1 = is_what(player, affected_card, 2), iVar1 != 0))
+      {
+        state_untargettable(affected_card_controller, affected_card, 1);
+      }
+    LAB_0206a856:
+      if (trigger_condition != 0xdb)
+      {
+        return 0;
+      }
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      goto LAB_0206a822;
+    }
+    if (player != affected_card_controller)
+      goto LAB_0206a856;
+    if (trigger_condition != 0xdb)
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    if ((trigger_condition != 0xdb) || (card != affected_card))
+      goto LAB_0206a809;
+  LAB_0206a822:
+    if (affected_card_controller != player)
+      goto LAB_0206a809;
+  }
+  iVar1 = affected_card_controller;
+  if (((reason_for_trigger_controller == affected_card_controller) &&
+       (iVar2 = is_what(trigger_cause_controller, trigger_cause, 2), iVar2 != 0)) &&
+      (iVar2 = check_state(trigger_cause_controller, trigger_cause, 0x100000), iVar2 != 0))
+  {
+    if (event == EVENT_TRIGGER)
+    {
+      event_result = event_result | 2;
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_TRIGGER)
+    {
+      state_untargettable(trigger_cause_controller, trigger_cause, 0);
+      add_counters(iVar1, card, trigger_cause_controller, trigger_cause, COUNTER_P1_P1,
+                               1);
+      kill_card(iVar1, card, KILL_EXILE);
+      return 0;
+    }
+  }
+LAB_0206a809:
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
 }
 
 int card_savage_summoning(int player, int card, event_t event){
@@ -2461,7 +2504,7 @@ int card_vastwood_hydra(int player, int card, event_t event, int intitial_counte
 		int amount = count_1_1_counters(player, card);
 		while( amount > 0 && can_target(&td) ){
 				if( select_target(player, card, &td, "Select target creature", &(instance->targets[0])) ){
-					add_1_1_counter(instance->targets[0].player, instance->targets[0].card);
+					add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, 1);
 					instance->number_of_targets = 0;
 					amount--;
 				}
@@ -2497,7 +2540,7 @@ int card_witchstalker(int player, int card, event_t event){
 														get_sleighted_color_test(player, card, COLOR_TEST_BLACK),
 														0, 0, 0, -1, 0)
 	  ){
-		add_1_1_counter(player, card);
+		add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 	}
 
 	return 0;
@@ -2509,7 +2552,7 @@ int card_woodborn_behemoth(int player, int card, event_t event){
 	 * As long as you control eight or more lands, ~ gets +4/+4 and has trample. */
 
 	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS || event == EVENT_ABILITIES) && affect_me(player, card)
-		&& count_permanents_by_type(player, TYPE_LAND) >= 8 && !is_humiliated(player, card)){
+		&& count_permanents_by_type(player, TYPE_LAND) >= 8 && !is_humiliated(player, card, AL_STATIC)){
 		if (event == EVENT_ABILITIES){
 			event_result |= KEYWORD_TRAMPLE;
 		}

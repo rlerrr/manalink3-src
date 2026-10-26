@@ -652,12 +652,18 @@ typedef enum
   XTRIGGER_PLAYER_VOTING	= 0x01001A00,	// Sent just before each player votes.  reason_for_trigger_controller is set only to the player voting.  Increment num_votes (initially 1) to give extra votes.
   XTRIGGER_STRIGGER			= 0x01001B00,	// Move pending stack triggers from the battlefield to the stack.
 #else
-  XTRIGGER_MILLED			= 0x01000400,	// Triggers after each card is milled.  trigger_cause_controller is the player being milled.  num_milled will contain the number of cards that were milled; they're accessible through cards_milled[].
-  XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY = 0x01000500,	// Triggers after each card is put into a graveyard from anything except mill()/special_mill().  trigger_cause_controller is the player being milled; trigger_cause is the iid of the card, gy_from_anywhere_pos is the tentative position of the card in the graveyard, and gy_from_anywhere_source is the canonical graveyard_source[][] value of the card so it can be reliably found if it's still there.
-  XTRIGGER_COUNTER_ENERGY	= 0x01000600,	// trigger_cause_controller just got trigger_cause energy counters.  Sent only if ENABLE_XTRIGGER_COUNTERS is set.
-  XTRIGGER_SCRY				= 0x01000700,	// Triggers whenever a player scries.  trigger_cause_controller is the player scrying; trigger_cause is the number of cards scryed.
-  XTRIGGER_BECAME_RENOWNED	= 0x01000800,	// {trigger_cause_controller,trigger_cause} just became renowned.
-  XTRIGGER_1_1_COUNTERS		= 0x01000900,	// One or more +1/+1 counters were placed on trigger_cause_controller/trigger_cause.  The number of counters is stored in counters_added. Dispatched only if ENABLE_XTRIGGER_1_1_COUNTERS is set.
+  XTRIGGER_0 = 0x0,
+  XTRIGGER_REPLACE_COUNTERS = 0x1000400,
+  XTRIGGER_REPLACE_MILL_CARDS = 0x1000500,
+  XTRIGGER_REPLACE_GAIN_LIFE = 0x1000600,
+  XTRIGGER_MILLED = 0x1000700,
+  XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY = 0x1000800,
+  XTRIGGER_COUNTER_ENERGY = 0x1000900,
+  XTRIGGER_SCRY = 0x1000a00,
+  XTRIGGER_BECAME_RENOWNED = 0x1000b00,
+  XTRIGGER_1_1_COUNTERS = 0x1000c00,
+  XTRIGGER_M1_M1_COUNTERS = 0x1000d00,
+  XTRIGGER_REPLACE_ETB = 0x1000e00,
 #endif
 } xtrigger_t;
 
@@ -680,9 +686,13 @@ typedef enum
   ENABLE_XTRIGGER_REPLACE_ETB	= (1<<6),
   ENABLE_XTRIGGER_REPLACE_ETB_COPY	= (1<<7),
 #else
-  ENABLE_XTRIGGER_MILLED		= (1<<2),
-  ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY	= (1<<3),
-  ENABLE_XTRIGGER_1_1_COUNTERS	= (1<<4),
+  ENABLE_XTRIGGER_0 = 0x0,
+  ENABLE_XTRIGGER_COUNTERS = 0x4,
+  ENABLE_XTRIGGER_MILLED = 0x8,
+  ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY = 0x10,
+  ENABLE_XTRIGGER_1_1_COUNTERS = 0x20,
+  ENABLE_XTRIGGER_M1_M1_COUNTERS = 0x40,
+  ENABLE_XTRIGGER_REPLACE_ETB = 0x80,
 #endif
 } enable_xtrigger_flags_t;
 
@@ -1509,7 +1519,7 @@ typedef struct card_instance_struct
   uint8_t	upkeep_blue;		/* 0x126 */
   uint8_t	upkeep_green;		/* 0x127 */
     };
-    uint32_t token_special_keywords_2022; /* Native token keyword mirror at 0x124. */
+    uint32_t token_special_keywords; /* Native token keyword mirror at 0x124. */
   };
   uint8_t	upkeep_red;			/* 0x128 */
   uint8_t	upkeep_white;		/* 0x129 */
@@ -1811,11 +1821,19 @@ typedef enum
 
 typedef enum
 {
-  CPF_0					= 0,
+  CPF_0 = 0,
+#ifdef SHANDALAR
   CPF_IS_DFC			= 0x1,
   CPF_IS_TRANSFORMED_DFC= 0x2,	// Back of a dfc/meld, or bottom of a flip
   CPF_IS_MELD			= 0x4,	// If also CPF_IS_TRANSFORMED_DFC, then it's the melded form, otherwise it's meldable.
   CPF_IS_FLIP			= 0x8,
+#else
+  CPF_EVER_BANNED_OR_RESTRICTED = 0x1,
+  CPF_BANNED_VINTAGE = 0x2,
+  CPF_RESTRICTED_VINTAGE = 0x4,
+  CPF_BANNED_LEGACY = 0x8,
+  CPF_BANNED_COMMANDER = 0x10,
+#endif
 } CardPtrFlags;
 STATIC_ASSERT(sizeof(CardPtrFlags) == 4, CardPtrFlags_wrong_size);
 #ifdef OP_BITWISE
@@ -1856,7 +1874,7 @@ typedef struct
 	uint8_t req_white;
 	uint8_t unused0x31;
 	uint16_t unused0x32;
-	CardPtrFlags flags;	// set only in Shandalar
+	CardPtrFlags flags;	// Manalink restrictions; Shandalar DFC state.
 	uint32_t unused0x38;
 	uint32_t unused0x3c;	// Only remaining access by Magic.exe is to set it to -1 during draw_fullcard_special_effect_card()
 	const char* artist;		// Always "None"
@@ -1956,10 +1974,8 @@ typedef struct
 	int storage; //If > -1, when used in "new_global_tutor", will store the result of the tutor on (player, card) targeting part, beginning with "get_card_instance(player, storage)->targets[0].card". Will store internal_card_id or csv_id depening on the type of tutor
 } test_definition_t;
 
-/* Recovery spelling aliases the canonical October 2022 test record. */
 #ifndef SHANDALAR
-typedef int (*test_selection_predicate_2022_t)(int,int,int,int);
-typedef test_definition_t test_definition_2022_t;
+typedef int (*test_selection_predicate_t)(int,int,int,int);
 #endif
 
 typedef enum
@@ -2293,26 +2309,6 @@ typedef enum
   GS_GRAVE_RECYCLER_FROM_GRAVEYARDS = 8192,
 } generic_spell_flags_t;
 
-/* Recovery spelling aliases native canonical generic-spell flags. */
-#ifndef SHANDALAR
-typedef generic_spell_flags_t generic_spell_flags_2022_t;
-#define GS2022_CAN_TARGET GS_CAN_TARGET
-#define GS2022_COUNTERSPELL GS_COUNTERSPELL
-#define GS2022_X_SPELL GS_X_SPELL
-#define GS2022_GRAVE_RECYCLER GS_GRAVE_RECYCLER
-#define GS2022_REGENERATION GS_REGENERATION
-#define GS2022_OPTIONAL_TARGET GS_OPTIONAL_TARGET
-#define GS2022_CAN_ONLY_TARGET_OPPONENT GS_CAN_ONLY_TARGET_OPPONENT
-#define GS2022_LITERAL_PROMPT GS_LITERAL_PROMPT
-#define GS2022_DAMAGE_PREVENTION GS_DAMAGE_PREVENTION
-#define GS2022_AURA GS_AURA
-#define GS2022_SAC_CREATURE_AS_COST GS_SAC_CREATURE_AS_COST
-#define GS2022_GRAVE_RECYCLER_OPP_GRAVE GS_GRAVE_RECYCLER_OPP_GRAVE
-#define GS2022_GRAVE_RECYCLER_BOTH_GRAVES GS_GRAVE_RECYCLER_BOTH_GRAVES
-#define GS2022_GRAVE_RECYCLER_FROM_GRAVEYARDS GS_GRAVE_RECYCLER_FROM_GRAVEYARDS
-#define GS2022_ONE_OR_MULTIPLE_TARGETS GS_ONE_OR_MULTIPLE_TARGETS
-#define GS2022_SAC_PERMANENT_AS_COST GS_SAC_PERMANENT_AS_COST
-#endif
 
 /* Special flags  - Generic flags */
 typedef enum
@@ -3081,10 +3077,6 @@ typedef struct
   int32_t flags;
 } target_definition_t;
 
-/* Recovery spelling aliases the canonical October 2022 target record. */
-#ifndef SHANDALAR
-typedef target_definition_t target_definition_2022_t;
-#endif
 
 typedef enum
 {
@@ -3256,10 +3248,6 @@ typedef struct pump_ability_until_eot_arguments_t
 	int disabling_mode;
 } pump_ability_t;
 
-/* Recovery spelling aliases the canonical October 2022 pump record. */
-#ifndef SHANDALAR
-typedef pump_ability_t pump_ability_2022_t;
-#endif
 
 typedef enum {
 	// seek_grave_for_id_to_reanimate compares >= 0
@@ -3422,19 +3410,6 @@ typedef enum
   SAC_SET_TARGETS = 256,
 } sacrifice_t;
 
-/* Recovery spelling aliases the canonical native sacrifice flags. */
-#ifndef SHANDALAR
-typedef sacrifice_t sacrifice_2022_t;
-#define SAC2022_NO_CANCEL SAC_NO_CANCEL
-#define SAC2022_DONE SAC_DONE
-#define SAC2022_JUST_MARK SAC_JUST_MARK
-#define SAC2022_ALL_OR_NONE SAC_ALL_OR_NONE
-#define SAC2022_AS_COST SAC_AS_COST
-#define SAC2022_CAUSED SAC_CAUSED
-#define SAC2022_RETURN_CHOICE SAC_RETURN_CHOICE
-#define SAC2022_OPTIONAL SAC_OPTIONAL
-#define SAC2022_SET_TARGETS SAC_SET_TARGETS
-#endif
 
 typedef enum
 {
@@ -3939,16 +3914,6 @@ typedef enum
 #endif
 
 
-#ifndef SHANDALAR
-/* Recovery spelling aliases canonical native protection modes. */
-typedef is_protected_from_mode_t is_protected_from_mode_2022_t;
-#define IPF2022_DAMAGE IPF_DAMAGE
-#define IPF2022_ATTACH_AURA IPF_ATTACH_AURA
-#define IPF2022_ATTACH_EQUIPMENT IPF_ATTACH_EQUIPMENT
-#define IPF2022_BLOCK IPF_BLOCK
-#define IPF2022_TARGET IPF_TARGET
-#define IPF2022_QUERY IPF_QUERY
-#endif
 
 
 #ifndef SHANDALAR
@@ -3960,7 +3925,7 @@ typedef enum
   OGM_PLANECHASE = 2,
   OGM_RANDOM_SINGLETON = 4,
   OGM_SPAT = 8
-} other_game_mode_2022_t;
+} other_game_mode_t;
 #endif
 
 
@@ -3973,77 +3938,21 @@ typedef enum {
 } singleplayer_mode_t;
 
 
-#ifndef SHANDALAR
-/* Recovery spellings alias the canonical October 2022 token record/actions. */
-typedef token_action_t token_action_2022_t;
-#define TOKEN2022_ACTION_TAPPED TOKEN_ACTION_TAPPED
-#define TOKEN2022_ACTION_ATTACKING_UNTAPPED TOKEN_ACTION_ATTACKING_UNTAPPED
-#define TOKEN2022_ACTION_ATTACKING TOKEN_ACTION_ATTACKING
-#define TOKEN2022_ACTION_EQUIP TOKEN_ACTION_EQUIP
-#define TOKEN2022_ACTION_EQUIP_ANY TOKEN_ACTION_EQUIP_ANY
-#define TOKEN2022_ACTION_HASTE TOKEN_ACTION_HASTE
-#define TOKEN2022_ACTION_DONT_COPY_TOKEN_SOURCE TOKEN_ACTION_DONT_COPY_TOKEN_SOURCE
-#define TOKEN2022_ACTION_CONVERT_INTO_ARTIFACT TOKEN_ACTION_CONVERT_INTO_ARTIFACT
-#define TOKEN2022_ACTION_RECORD_SOURCE_ID TOKEN_ACTION_RECORD_SOURCE_ID
-#define TOKEN2022_ACTION_ISNT_LEGENDARY TOKEN_ACTION_ISNT_LEGENDARY
-#define TOKEN2022_ACTION_BLOCKING TOKEN_ACTION_BLOCKING
-#define TOKEN2022_ACTION_PUMP_POWER TOKEN_ACTION_PUMP_POWER
-#define TOKEN2022_ACTION_PUMP_TOUGHNESS TOKEN_ACTION_PUMP_TOUGHNESS
-#define TOKEN2022_ACTION_ADD_SUBTYPE TOKEN_ACTION_ADD_SUBTYPE
-#define TOKEN2022_ACTION_ADD_COUNTERS TOKEN_ACTION_ADD_COUNTERS
-#define TOKEN2022_ACTION_SKIP_ATTACK_CHECK TOKEN_ACTION_SKIP_ATTACK_CHECK
-
-typedef token_generation_t token_generation_2022_t;
-#endif
 
 
-#ifndef SHANDALAR
-/* Recovery spelling aliases the canonical native unsigned action enum. */
-typedef actions_t actions_2022_t;
-#endif
 
 
-#ifndef SHANDALAR
-/* Recovery spellings alias native canonical tutor domains. */
-typedef tutor_t tutor_destination_2022_t;
-#define TUTOR2022_0 TUTOR_0
-#define TUTOR2022_HAND TUTOR_HAND
-#define TUTOR2022_DECK TUTOR_DECK
-#define TUTOR2022_GRAVE TUTOR_GRAVE
-#define TUTOR2022_PLAY TUTOR_PLAY
-#define TUTOR2022_PLAY_TAPPED TUTOR_PLAY_TAPPED
-#define TUTOR2022_RFG TUTOR_RFG
-#define TUTOR2022_EXILE TUTOR_EXILE
-#define TUTOR2022_GET_ID TUTOR_GET_ID
-#define TUTOR2022_PLAY_ATTACKING TUTOR_PLAY_ATTACKING
-#define TUTOR2022_GET_POSITION TUTOR_GET_POSITION
-#define TUTOR2022_BOTTOM_OF_DECK TUTOR_BOTTOM_OF_DECK
-#define TUTOR2022_TPLAYER_HAND TUTOR_TPLAYER_HAND
-#define TUTOR2022_BOTTOM_OF_DECK_RANDOM TUTOR_BOTTOM_OF_DECK_RANDOM
-#define TUTOR2022_HAND_AND_MARK TUTOR_HAND_AND_MARK
-#define TUTOR2022_OPPOSITION_AGENT TUTOR_OPPOSITION_AGENT
-typedef tutor_from_t tutor_from_2022_t;
-#define TUTOR_FROM2022_DECK TUTOR_FROM_DECK
-#define TUTOR_FROM2022_GRAVE TUTOR_FROM_GRAVE
-#define TUTOR_FROM2022_RFG TUTOR_FROM_RFG
-#define TUTOR_FROM2022_HAND TUTOR_FROM_HAND
-#define TUTOR_FROM2022_GRAVE_NOTARGET TUTOR_FROM_GRAVE_NOTARGET
-#define TUTOR_FROM2022_DECK_AUTO TUTOR_FROM_DECK_AUTO
-#endif
 
 
-#ifndef SHANDALAR
-/* October 2022 life replacement trigger; retain the original event domain. */
-enum { XTRIGGER2022_REPLACE_GAIN_LIFE = 0x01000600 };
-#endif
+
 
 
 /* October 2022 Approach cast-history bits and phase-in restriction. */
 #ifndef SHANDALAR
 enum
 {
-  PB2022_CAST_APPROACH_OF_THE_SECOND_SUN1 = 0x400000,
-  PB2022_CAST_APPROACH_OF_THE_SECOND_SUN2 = 0x800000,
+  PB_CAST_APPROACH_OF_THE_SECOND_SUN1 = 0x400000,
+  PB_CAST_APPROACH_OF_THE_SECOND_SUN2 = 0x800000,
   SF3_CANNOT_PHASE_IN = 0x800000
 };
 #endif
@@ -4058,43 +3967,6 @@ enum
 };
 #endif
 
-#ifndef SHANDALAR
-/* Recovery spellings alias the canonical signed reanimation domain. */
-typedef reanimate_mode_t reanimate_mode_2022_t;
-#define REANIMATE2022_DEFAULT REANIMATE_DEFAULT
-#define REANIMATE2022_TAP REANIMATE_TAP
-#define REANIMATE2022_NO_CONTROL_LEGACY REANIMATE_NO_CONTROL_LEGACY
-#define REANIMATE2022_UNEARTH REANIMATE_UNEARTH
-#define REANIMATE2022_ADD_BLACK_ZOMBIE REANIMATE_ADD_BLACK_ZOMBIE
-#define REANIMATE2022_HASTE_AND_EXILE_AT_EOT REANIMATE_HASTE_AND_EXILE_AT_EOT
-#define REANIMATE2022_PLUS1_PLUS1_COUNTER REANIMATE_PLUS1_PLUS1_COUNTER
-#define REANIMATE2022_MINUS1_MINUS1_COUNTER REANIMATE_MINUS1_MINUS1_COUNTER
-#define REANIMATE2022_HASTE_UNTIL_EOT REANIMATE_HASTE_UNTIL_EOT
-#define REANIMATE2022_ATTACH_AS_AURA REANIMATE_ATTACH_AS_AURA
-#define REANIMATE2022_RETURN_TO_HAND REANIMATE_RETURN_TO_HAND
-#define REANIMATE2022_ALL_UNDER_CASTERS_CONTROL REANIMATE_ALL_UNDER_CASTERS_CONTROL
-#define REANIMATE2022_UNDER_OWNER_CONTROL REANIMATE_UNDER_OWNER_CONTROL
-#define REANIMATE2022_SPECIAL_R_ALL REANIMATE_SPECIAL_R_ALL
-#define REANIMATE2022_HASTE_AND_EXILE_AT_YOUR_UPKEEP REANIMATE_HASTE_AND_EXILE_AT_YOUR_UPKEEP
-#define REANIMATE2022_SPECIAL_LIVING_DEAD REANIMATE_SPECIAL_LIVING_DEAD
-#define REANIMATE2022_RETURN_TO_PLAY_TRANSFORMED REANIMATE_RETURN_TO_PLAY_TRANSFORMED
-#define REANIMATE2022_ATTACH_AURA_TO_REANIMATOR REANIMATE_ATTACH_AURA_TO_REANIMATOR
-#define REANIMATEXTRA2022_RETURN_TO_HAND2 REANIMATEXTRA_RETURN_TO_HAND2
-#define REANIMATEXTRA2022_LEAVE_IN_GRAVEYARD REANIMATEXTRA_LEAVE_IN_GRAVEYARD
-#define REANIMATEXTRA2022_EXILE_FROM_GRAVEYARD REANIMATEXTRA_EXILE_FROM_GRAVEYARD
-#endif
 
-/* Recovery spelling aliases the canonical native storm modes. */
-#ifndef SHANDALAR
-typedef storm_mode_t storm_mode_2022_t;
-#define STORM2022_BLACK STORM_BLACK
-#define STORM2022_BLUE STORM_BLUE
-#define STORM2022_GREEN STORM_GREEN
-#define STORM2022_RED STORM_RED
-#define STORM2022_WHITE STORM_WHITE
-#define STORM2022_CREATURE STORM_CREATURE
-#define STORM2022_ENCHANTMENT STORM_ENCHANTMENT
-#define STORM2022_INSTANT_SORCERY STORM_INSTANT_SORCERY
-#endif
 
 #endif

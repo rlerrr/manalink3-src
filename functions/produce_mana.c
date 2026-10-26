@@ -526,7 +526,7 @@ int mana_doublers(int player, type_t type)
   {
     instance = in_play(player, card);
     if (((instance != NULL) &&
-         (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)) &&
+         (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
         ((type & TYPE_PERMANENT) != TYPE_NONE))
     {
       result = get_id(player, card);
@@ -562,7 +562,7 @@ void produce_mana_tapped2(int player, int card, color_t color1, int amount1, col
                                int amount2);
 void produce_mana_tapped_multi(int player, int card, int colorless, int black, int blue,
                                     int green, int red, int white);
-int produce_mana_tapped_all_different_colors_2022(int player, int card, color_test_t available,
+int produce_mana_tapped_all_different_colors(int player, int card, color_test_t available,
                                                   int num_mana, const char *prompt);
 int produce_mana_tapped_all_one_color_impl(int player, int card, color_test_t available,
                                            int num_mana, int mca);
@@ -578,7 +578,7 @@ void produce_mana_tapped_multi_impl(int player, int card, int colorless, int bla
                                     int green, int red, int white, int mca);
 int produce_mana_tapped_any_combination_of_colors_impl(int player, int card, color_test_t available,
                                                        int num_mana, const char *prompt, int mca);
-static int produce_mana_tapped_all_different_colors_2022_impl(int player, int card,
+static int produce_mana_tapped_all_different_colors_impl(int player, int card,
                                                               color_test_t available, int num_mana,
                                                               const char *prompt);
 
@@ -637,12 +637,12 @@ void produce_mana_tapped_multi(int player, int card, int colorless, int black, i
 }
 
 /* ManalinkEh 2022: 0x2671510; original functions/produce_mana.c:784. */
-int produce_mana_tapped_all_different_colors_2022(int player, int card, color_test_t available,
+int produce_mana_tapped_all_different_colors(int player, int card, color_test_t available,
                                                   int num_mana, const char *prompt)
 {
   int result;
   result =
-      produce_mana_tapped_all_different_colors_2022_impl(player, card, available, num_mana, prompt);
+      produce_mana_tapped_all_different_colors_impl(player, card, available, num_mana, prompt);
   return result;
 }
 
@@ -749,12 +749,12 @@ int produce_mana_tapped_all_one_color_with_default_impl(int player, int card,
     {
       if (iVar1 == 0)
       {
-        load_text_2022(NULL, "FELLWAR_STONE");
+        load_text(NULL, "FELLWAR_STONE");
         iVar1 = 0x708;
       }
       else
       {
-        load_text_2022(NULL, "FELLWAR_STONE");
+        load_text(NULL, "FELLWAR_STONE");
         if (iVar1 - 1U < 6)
         {
           iVar1 = iVar1 * 300;
@@ -1369,7 +1369,7 @@ LAB_0266ea02:
 }
 
 /* ManalinkEh 2022: 0x2670e00; original functions/produce_mana.c:698. */
-static int produce_mana_tapped_all_different_colors_2022_impl(int player, int card,
+static int produce_mana_tapped_all_different_colors_impl(int player, int card,
                                                               color_test_t available, int num_mana,
                                                               const char *prompt)
 {
@@ -1815,7 +1815,7 @@ int artifact_mana_all_one_color(int player, int card, event_t event, int amount,
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26712f0; original functions/produce_mana.c:1327. */
-int artifact_mana_all_different_colors_2022(int player, int card, event_t event, int amount,
+int artifact_mana_all_different_colors(int player, int card, event_t event, int amount,
                                             int sac)
 {
   int result;
@@ -1840,13 +1840,13 @@ int artifact_mana_all_different_colors_2022(int player, int card, event_t event,
     {
       ai_modifier = ai_modifier + -0xc;
       instance = get_card_instance(player, card);
-      produce_mana_tapped_all_different_colors_2022_impl(
+      produce_mana_tapped_all_different_colors_impl(
           player, card, (unsigned int)instance->mana_color, amount, NULL);
       return 0;
     }
     ai_modifier = ai_modifier + -0x24;
     instance = get_card_instance(player, card);
-    produce_mana_tapped_all_different_colors_2022_impl(
+    produce_mana_tapped_all_different_colors_impl(
         player, card, (unsigned int)instance->mana_color, amount, NULL);
     if (spell_fizzled != 1)
     {
@@ -1929,7 +1929,7 @@ int mana_producing_creature_all_one_color(int player, int card, event_t event,
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x266d3f0; original functions/produce_mana.c:130. */
-int mana_producer_fixed_2022(int player, int card, event_t event, int base_color)
+int mana_producer_fixed(int player, int card, event_t event, int base_color)
 {
   if (event == EVENT_ACTIVATE)
   {
@@ -1954,7 +1954,7 @@ int mana_producer_fixed_2022(int player, int card, event_t event, int base_color
       return 0;
     }
   }
-  return mana_producer_fixed(player, card, event, base_color);
+  return engine_mana_producer_fixed(player, card, event, base_color);
 }
 
 #endif
@@ -2280,7 +2280,7 @@ static void choose_combination_of_colors_of_mana_to_produce_into_arr(int *cols, 
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x266ab80; original functions/produce_mana.c:21. */
-static void declare_mana_available_any_combination_of_colors_impl_2022(int player, color_test_t available,
+static void declare_mana_available_any_combination_of_colors_impl(int player, color_test_t available,
                                                                 int amount)
 {
   unsigned int num_bits = num_bits_set(available & (COLOR_TEST_ANY | COLOR_TEST_ARTIFACT));
@@ -2298,7 +2298,7 @@ void declare_mana_available_any_combination_of_colors(int player, color_test_t a
                                                            int amount)
 {
   if (amount > 0)
-    declare_mana_available_any_combination_of_colors_impl_2022(player, available, amount);
+    declare_mana_available_any_combination_of_colors_impl(player, available, amount);
 }
 
 #endif
@@ -2384,7 +2384,7 @@ int produce_mana_any_combination_of_colors(int player, color_test_t available, i
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x266b160; original functions/produce_mana.c:972. */
-static int produce_mana_all_one_color_impl_2022(int player, color_test_t available, int num_mana)
+static int produce_mana_all_one_color_impl(int player, color_test_t available, int num_mana)
 {
   int choice = choose_mana_all_one_color(player, available, num_mana, "What kind of mana?",
                                               COLOR_TEST_COLORLESS);
@@ -2408,7 +2408,7 @@ int produce_mana_all_one_color(int player, color_test_t available, int num_mana)
   chosen_colors = 0;
   if (num_mana <= 0)
     return 1;
-  return produce_mana_all_one_color_impl_2022(player, available, num_mana);
+  return produce_mana_all_one_color_impl(player, available, num_mana);
 }
 
 #endif
@@ -2419,7 +2419,7 @@ int produce_mana_all_one_color(int player, color_test_t available, int num_mana)
 static int wga_backend(int player, int card, event_t event, int subtype,
                      produce_mana_t what_to_produce, int colors, int amount)
 {
-  target_definition_2022_t td;
+  target_definition_t td;
   default_target_definition(player, card, &td, TYPE_LAND);
   td.preferred_controller = player;
   if (subtype > 0)
@@ -2440,7 +2440,7 @@ static int wga_backend(int player, int card, event_t event, int subtype,
       char buffer[100];
       scnprintf(buffer, 100, "Select target %s.",
                 subtype > 0 ? get_hacked_land_text(player, card, "%s", subtype) : "land");
-      if (new_pick_target(&td, buffer, 0, 1 | GS2022_LITERAL_PROMPT))
+      if (new_pick_target(&td, buffer, 0, 1 | GS_LITERAL_PROMPT))
       {
         if (player == AI && instance->targets[0].player == player)
         {
@@ -2476,7 +2476,7 @@ static int wga_backend(int player, int card, event_t event, int subtype,
       if (what_to_produce == PM_ALL_ONE)
       {
         chosen_colors = 0;
-        produce_mana_all_one_color_impl_2022(instance->damage_target_player, colors, amount);
+        produce_mana_all_one_color_impl(instance->damage_target_player, colors, amount);
       }
       else
         produce_mana_any_combination_of_colors(instance->damage_target_player, colors, amount,
@@ -2495,7 +2495,7 @@ static int wga_backend(int player, int card, event_t event, int subtype,
       if (what_to_produce == PM_ALL_ONE)
         declare_mana_available_maybe_hex(instance->damage_target_player, colors, amount);
       else
-        declare_mana_available_any_combination_of_colors_impl_2022(instance->damage_target_player,
+        declare_mana_available_any_combination_of_colors_impl(instance->damage_target_player,
                                                                    colors, amount);
     }
     break;
@@ -3113,7 +3113,7 @@ int tap_a_permanent_you_control_for_mana(int player, int card, event_t event, ty
   if (event == EVENT_ACTIVATE)
   {
 
-    target_definition_2022_t td;
+    target_definition_t td;
     default_target_definition(player, card, &td, type);
     td.allowed_controller = player;
     td.preferred_controller = player;
@@ -3175,7 +3175,7 @@ int permanents_you_control_can_tap_for_mana_all_one_color(int player, int card, 
   {
     return 0;
   }
-  if (event == EVENT_CAN_ACTIVATE && !is_humiliated_for_ability(player, card, AL_STATIC))
+  if (event == EVENT_CAN_ACTIVATE && !is_humiliated(player, card, AL_STATIC))
   {
     return check_for_untapped_nonsick_subtype(player, type, subtype);
   }
@@ -3183,7 +3183,7 @@ int permanents_you_control_can_tap_for_mana_all_one_color(int player, int card, 
   if (event == EVENT_ACTIVATE)
   {
 
-    target_definition_2022_t td;
+    target_definition_t td;
     default_target_definition(player, card, &td, type);
     td.allowed_controller = player;
     td.preferred_controller = player;
@@ -3218,7 +3218,7 @@ int permanents_you_control_can_tap_for_mana_all_one_color(int player, int card, 
   {
     int count = count_untapped_nonsick_subtype(player, type, subtype) * num_mana;
     if (count > 0)
-      declare_mana_available_any_combination_of_colors_impl_2022(player, available, count);
+      declare_mana_available_any_combination_of_colors_impl(player, available, count);
   }
 
   return 0;
@@ -3240,7 +3240,7 @@ int permanents_you_control_can_tap_for_mana(int player, int card, event_t event,
   if (event == EVENT_ACTIVATE)
   {
 
-    target_definition_2022_t td;
+    target_definition_t td;
     default_target_definition(player, card, &td, type);
     td.allowed_controller = player;
     td.preferred_controller = player;
@@ -3290,7 +3290,7 @@ int permanents_you_control_can_tap_for_mana(int player, int card, event_t event,
 int sac_land_tapped(int player, int card, event_t event, int base_color, int color1,
                          int color2)
 {
-  if (!is_humiliated_for_ability(player, card, AL_TRIG))
+  if (!is_humiliated(player, card, AL_TRIG))
     comes_into_play_tapped(player, card, event);
   return sac_land(player, card, event, base_color, color1, color2);
 }
@@ -3593,7 +3593,7 @@ int mana_producer(int player, int card, event_t event)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x266f1a0; original functions/produce_mana.c:1165. */
-int enchanted_land_has_T_add_n_mana_of_any_one_color_2022(int player, int card, event_t event,
+int enchanted_land_has_T_add_n_mana_of_any_one_color(int player, int card, event_t event,
                                                           int amt)
 {
   if (in_play(player, card) && get_card_instance(player, card)->damage_target_player >= 0)
@@ -3651,7 +3651,7 @@ int enchanted_land_has_T_add_n_mana_of_any_one_color_2022(int player, int card, 
         event == EVENT_SET_COLOR || event == EVENT_GET_SELECTED_CARD ||
         event == EVENT_STATIC_EFFECTS))
     return 0;
-  target_definition_2022_t td;
+  target_definition_t td;
   default_target_definition(player, card, &td, TYPE_LAND);
   td.preferred_controller = player;
   td.allowed_controller = player;
@@ -3662,7 +3662,7 @@ int enchanted_land_has_T_add_n_mana_of_any_one_color_2022(int player, int card, 
   {
     instance->number_of_targets = 0;
     ai_modifier += 100;
-    new_pick_target(&td, "Select target land you control.", 0, 1 | GS2022_LITERAL_PROMPT);
+    new_pick_target(&td, "Select target land you control.", 0, 1 | GS_LITERAL_PROMPT);
   }
   if (event == EVENT_RESOLVE_SPELL)
     return targeted_aura(player, card, event, &td, NULL);
@@ -3676,7 +3676,7 @@ int enchanted_land_has_T_add_n_mana_of_any_one_color_2022(int player, int card, 
 /* ManalinkEh 2022: 0x266f100; original functions/produce_mana.c:154. */
 int mana_producer_tapped(int player, int card, event_t event)
 {
-  if (!is_humiliated_for_ability(player, card, AL_TRIG))
+  if (!is_humiliated(player, card, AL_TRIG))
     comes_into_play_tapped(player, card, event);
   return mana_producer(player, card, event);
 }
@@ -3707,14 +3707,14 @@ int sac_land(int player, int card, event_t event, int base_color, int color1, in
     {
       color_test_t colors = color_to_color_test(base_color) | mana_colors_added[player];
       if (num_bits_set(colors) == 1)
-        mana_producer_fixed_2022(player, card, event, base_color);
+        mana_producer_fixed(player, card, event, base_color);
       else
         produce_mana_tapped_all_one_color_with_default_impl(player, card, colors, 1,
                                                             COLOR_TEST_COLORLESS, 0, 1);
     }
     return 0;
   }
-  return mana_producer_fixed_2022(player, card, event, base_color);
+  return mana_producer_fixed(player, card, event, base_color);
 }
 
 #endif

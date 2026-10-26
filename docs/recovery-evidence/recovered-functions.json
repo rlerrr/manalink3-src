@@ -179401,10 +179401,31 @@
     "cpp_source_units_checked": 2,
     "cpp_source_failed": [],
     "canonical_helpers": {
-      "canonical_functions": 587,
+      "canonical_functions": 738,
       "aliases_removed": 425,
-      "additional_direct_replacements": 153,
-      "native_worker_names": 9,
+      "accepted_function_names": 735,
+      "auxiliary_functions": [
+        {
+          "recovery_name": "exile_at_end_of_combat_2022",
+          "canonical_name": "innistrad_exile_at_end_of_combat_legacy",
+          "kind": "retained_public_native_helper",
+          "native_ranges": 1
+        },
+        {
+          "recovery_name": "reset_storm_count_2022",
+          "canonical_name": "reset_storm_count",
+          "kind": "native_inline_fragment",
+          "native_ranges": 14
+        },
+        {
+          "recovery_name": "keep_storm_count_2022",
+          "canonical_name": "keep_storm_count",
+          "kind": "native_inline_fragment",
+          "native_ranges": 21
+        }
+      ],
+      "additional_direct_replacements": 215,
+      "native_worker_names": 95,
       "equivalent_native_helpers": [
         {
           "canonical_address": "0x25b2290",
@@ -179413,7 +179434,161 @@
           "fingerprint_sha256": "a23dbe46df8162c5da78eb885822d6857c76ee2f0faca2596d33181b4f5966d5"
         }
       ],
-      "changed_files": 123,
+      "native_interfaces": {
+        "native_domains": {
+          "sacrifice_t": {
+            "bytes": 4,
+            "members": {
+              "SAC_NO_CANCEL": 1,
+              "SAC_DONE": 2,
+              "SAC_JUST_MARK": 4,
+              "SAC_ALL_OR_NONE": 8,
+              "SAC_AS_COST": 16,
+              "SAC_CAUSED": 32,
+              "SAC_RETURN_CHOICE": 64,
+              "SAC_OPTIONAL": 128,
+              "SAC_SET_TARGETS": 256
+            },
+            "recovery_type": "sacrifice_2022_t"
+          },
+          "is_protected_from_mode_t": {
+            "bytes": 4,
+            "members": {
+              "IPF_DAMAGE": 1,
+              "IPF_ATTACH_AURA": 2,
+              "IPF_ATTACH_EQUIPMENT": 3,
+              "IPF_BLOCK": 4,
+              "IPF_TARGET": 5,
+              "IPF_QUERY": 6
+            },
+            "recovery_type": "is_protected_from_mode_2022_t"
+          },
+          "actions_t": {
+            "bytes": 4,
+            "members": {
+              "ACT_KILL_BURY": 1,
+              "ACT_KILL_DESTROY": 2,
+              "ACT_KILL_SACRIFICE": 3,
+              "ACT_KILL_EXILE": 4,
+              "ACT_BOUNCE": 5,
+              "ACT_TAP": 6,
+              "ACT_UNTAP": 7,
+              "ACT_RFG_UNTIL_EOT": 16,
+              "ACT_KILL_STATE_BASED_ACTION": 17,
+              "ACT_PUT_ON_TOP": 40,
+              "ACT_PUT_ON_BOTTOM": 41,
+              "ACT_DISABLE_NONMANA_ACTIVATED_ABILITIES": 42,
+              "ACT_ENABLE_NONMANA_ACTIVATED_ABILITIES": 43,
+              "ACT_HUMILIATE": 44,
+              "ACT_DE_HUMILIATE": 45,
+              "ACT_MAKE_UNTARGETTABLE": 46,
+              "ACT_REMOVE_UNTARGETTABLE": 47,
+              "ACT_DISABLE_ALL_ACTIVATED_ABILITIES": 49,
+              "ACT_ENABLE_ALL_ACTIVATED_ABILITIES": 50,
+              "ACT_GET_COUNT": 51,
+              "ACT_GAIN_CONTROL": 52,
+              "ACT_DOES_NOT_UNTAP": 53,
+              "ACT_PHASE_OUT": 54,
+              "ACT_OF_TREASON": 55,
+              "ACT_DETAIN": 56,
+              "ACT_PARAMETERIZED_ACTIONS_MASK": 4278190080,
+              "ACT_ADD_COUNTERS_BASE": 16777216,
+              "ACT_REMOVE_COUNTERS_BASE": 33554432
+            },
+            "recovery_type": "actions_2022_t"
+          }
+        },
+        "caller_ranges": 891,
+        "argument_edits": {
+          "callers": 1241,
+          "calls": 1299,
+          "scope": "Exact constant-mode edit replay and native site-byte anchors; full caller equivalence is not claimed for these narrow edits."
+        },
+        "constant_argument_edits": {
+          "caller_edits": 67,
+          "calls": 67,
+          "scope": "Exact constant argument insertion, unchanged existing arguments; no whole-caller equivalence claim."
+        },
+        "inline_counter_arguments": {
+          "callers": 391,
+          "calls": 432,
+          "scope": "Added source pair and exact inline expansion only. Native CFG/DWARF witnesses cover every direct counter-family call; other caller behavior is not claimed equivalent."
+        },
+        "counter_trigger_domains": {
+          "types": {
+            "xtrigger_t": {
+              "bytes": 4,
+              "values": {
+                "XTRIGGER_0": 0,
+                "XTRIGGER_ATTACKING": 16777472,
+                "XTRIGGER_REPLACE_MILL": 16777728,
+                "XTRIGGER_REPLACE_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY": 16777984,
+                "XTRIGGER_REPLACE_COUNTERS": 16778240,
+                "XTRIGGER_REPLACE_MILL_CARDS": 16778496,
+                "XTRIGGER_REPLACE_GAIN_LIFE": 16778752,
+                "XTRIGGER_MILLED": 16779008,
+                "XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY": 16779264,
+                "XTRIGGER_COUNTER_ENERGY": 16779520,
+                "XTRIGGER_SCRY": 16779776,
+                "XTRIGGER_BECAME_RENOWNED": 16780032,
+                "XTRIGGER_1_1_COUNTERS": 16780288,
+                "XTRIGGER_M1_M1_COUNTERS": 16780544,
+                "XTRIGGER_REPLACE_ETB": 16780800
+              }
+            },
+            "enable_xtrigger_flags_t": {
+              "bytes": 4,
+              "values": {
+                "ENABLE_XTRIGGER_0": 0,
+                "ENABLE_XTRIGGER_REPLACE_MILL": 1,
+                "ENABLE_XTRIGGER_REPLACE_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY": 2,
+                "ENABLE_XTRIGGER_COUNTERS": 4,
+                "ENABLE_XTRIGGER_MILLED": 8,
+                "ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY": 16,
+                "ENABLE_XTRIGGER_1_1_COUNTERS": 32,
+                "ENABLE_XTRIGGER_M1_M1_COUNTERS": 64,
+                "ENABLE_XTRIGGER_REPLACE_ETB": 128
+              }
+            }
+          },
+          "native_enum_instances": 8,
+          "scope": "Exact current shared definitions and native DWARF enum values across four owning CUs; no whole-function equivalence claim."
+        },
+        "counter_argument_blocks": {
+          "callers": 7,
+          "calls": 7,
+          "inline_contracts": 7,
+          "scope": "Exact source-pair insertion and native inline contracts only; native outgoing blocks, stable incoming frame and complete direct counter-call coverage. No other caller behavior is claimed equivalent."
+        },
+        "absolute_global_arrays": {
+          "raw_mana_available_hex": {
+            "address": "0x4ef21c",
+            "dimensions": [
+              2,
+              51
+            ],
+            "element_type": "int",
+            "element_bytes": 4,
+            "native_type_instances": 3
+          }
+        },
+        "source_identifier_spellings": {
+          "identifiers": 40,
+          "identifier_edits": 112,
+          "packet_calls": 2,
+          "scope": "Identifier-only edits preserve literals, types and algorithms. Packet call repair independently checks two physical arguments at each native caller and both stack-argument reads in Magic.exe."
+        },
+        "executable_fallbacks": {
+          "mana_producer_fixed": {
+            "import_name": "engine_mana_producer_fixed",
+            "target": "0x47b6c0",
+            "arguments": 4,
+            "tail_jump": "0x266d41d"
+          }
+        },
+        "scope": "Reviewed interface edits only; retained custom callers explicitly distinguished from native caller ranges."
+      },
+      "changed_files": 159,
       "projection": "exact replay from hash-checked predecessor archive",
       "recovery_names": "Historical ledger identities only; actual C definitions use canonical names"
     },
@@ -182336,10 +182511,31 @@
       "compatibility_names": "Same-address GCC aliases and explicitly typed const-return tail adapters"
     },
     "canonical_helpers": {
-      "canonical_functions": 587,
+      "canonical_functions": 738,
       "aliases_removed": 425,
-      "additional_direct_replacements": 153,
-      "native_worker_names": 9,
+      "accepted_function_names": 735,
+      "auxiliary_functions": [
+        {
+          "recovery_name": "exile_at_end_of_combat_2022",
+          "canonical_name": "innistrad_exile_at_end_of_combat_legacy",
+          "kind": "retained_public_native_helper",
+          "native_ranges": 1
+        },
+        {
+          "recovery_name": "reset_storm_count_2022",
+          "canonical_name": "reset_storm_count",
+          "kind": "native_inline_fragment",
+          "native_ranges": 14
+        },
+        {
+          "recovery_name": "keep_storm_count_2022",
+          "canonical_name": "keep_storm_count",
+          "kind": "native_inline_fragment",
+          "native_ranges": 21
+        }
+      ],
+      "additional_direct_replacements": 215,
+      "native_worker_names": 95,
       "equivalent_native_helpers": [
         {
           "canonical_address": "0x25b2290",
@@ -182348,7 +182544,224 @@
           "fingerprint_sha256": "a23dbe46df8162c5da78eb885822d6857c76ee2f0faca2596d33181b4f5966d5"
         }
       ],
-      "changed_files": 123,
+      "native_interfaces": {
+        "native_domains": {
+          "sacrifice_t": {
+            "bytes": 4,
+            "members": {
+              "SAC_NO_CANCEL": 1,
+              "SAC_DONE": 2,
+              "SAC_JUST_MARK": 4,
+              "SAC_ALL_OR_NONE": 8,
+              "SAC_AS_COST": 16,
+              "SAC_CAUSED": 32,
+              "SAC_RETURN_CHOICE": 64,
+              "SAC_OPTIONAL": 128,
+              "SAC_SET_TARGETS": 256
+            },
+            "recovery_type": "sacrifice_2022_t"
+          },
+          "is_protected_from_mode_t": {
+            "bytes": 4,
+            "members": {
+              "IPF_DAMAGE": 1,
+              "IPF_ATTACH_AURA": 2,
+              "IPF_ATTACH_EQUIPMENT": 3,
+              "IPF_BLOCK": 4,
+              "IPF_TARGET": 5,
+              "IPF_QUERY": 6
+            },
+            "recovery_type": "is_protected_from_mode_2022_t"
+          },
+          "actions_t": {
+            "bytes": 4,
+            "members": {
+              "ACT_KILL_BURY": 1,
+              "ACT_KILL_DESTROY": 2,
+              "ACT_KILL_SACRIFICE": 3,
+              "ACT_KILL_EXILE": 4,
+              "ACT_BOUNCE": 5,
+              "ACT_TAP": 6,
+              "ACT_UNTAP": 7,
+              "ACT_RFG_UNTIL_EOT": 16,
+              "ACT_KILL_STATE_BASED_ACTION": 17,
+              "ACT_PUT_ON_TOP": 40,
+              "ACT_PUT_ON_BOTTOM": 41,
+              "ACT_DISABLE_NONMANA_ACTIVATED_ABILITIES": 42,
+              "ACT_ENABLE_NONMANA_ACTIVATED_ABILITIES": 43,
+              "ACT_HUMILIATE": 44,
+              "ACT_DE_HUMILIATE": 45,
+              "ACT_MAKE_UNTARGETTABLE": 46,
+              "ACT_REMOVE_UNTARGETTABLE": 47,
+              "ACT_DISABLE_ALL_ACTIVATED_ABILITIES": 49,
+              "ACT_ENABLE_ALL_ACTIVATED_ABILITIES": 50,
+              "ACT_GET_COUNT": 51,
+              "ACT_GAIN_CONTROL": 52,
+              "ACT_DOES_NOT_UNTAP": 53,
+              "ACT_PHASE_OUT": 54,
+              "ACT_OF_TREASON": 55,
+              "ACT_DETAIN": 56,
+              "ACT_PARAMETERIZED_ACTIONS_MASK": 4278190080,
+              "ACT_ADD_COUNTERS_BASE": 16777216,
+              "ACT_REMOVE_COUNTERS_BASE": 33554432
+            },
+            "recovery_type": "actions_2022_t"
+          }
+        },
+        "caller_ranges": 891,
+        "argument_edits": {
+          "callers": 1241,
+          "calls": 1299,
+          "scope": "Exact constant-mode edit replay and native site-byte anchors; full caller equivalence is not claimed for these narrow edits."
+        },
+        "constant_argument_edits": {
+          "caller_edits": 67,
+          "calls": 67,
+          "scope": "Exact constant argument insertion, unchanged existing arguments; no whole-caller equivalence claim."
+        },
+        "inline_counter_arguments": {
+          "callers": 391,
+          "calls": 432,
+          "scope": "Added source pair and exact inline expansion only. Native CFG/DWARF witnesses cover every direct counter-family call; other caller behavior is not claimed equivalent."
+        },
+        "counter_trigger_domains": {
+          "types": {
+            "xtrigger_t": {
+              "bytes": 4,
+              "values": {
+                "XTRIGGER_0": 0,
+                "XTRIGGER_ATTACKING": 16777472,
+                "XTRIGGER_REPLACE_MILL": 16777728,
+                "XTRIGGER_REPLACE_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY": 16777984,
+                "XTRIGGER_REPLACE_COUNTERS": 16778240,
+                "XTRIGGER_REPLACE_MILL_CARDS": 16778496,
+                "XTRIGGER_REPLACE_GAIN_LIFE": 16778752,
+                "XTRIGGER_MILLED": 16779008,
+                "XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY": 16779264,
+                "XTRIGGER_COUNTER_ENERGY": 16779520,
+                "XTRIGGER_SCRY": 16779776,
+                "XTRIGGER_BECAME_RENOWNED": 16780032,
+                "XTRIGGER_1_1_COUNTERS": 16780288,
+                "XTRIGGER_M1_M1_COUNTERS": 16780544,
+                "XTRIGGER_REPLACE_ETB": 16780800
+              }
+            },
+            "enable_xtrigger_flags_t": {
+              "bytes": 4,
+              "values": {
+                "ENABLE_XTRIGGER_0": 0,
+                "ENABLE_XTRIGGER_REPLACE_MILL": 1,
+                "ENABLE_XTRIGGER_REPLACE_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY": 2,
+                "ENABLE_XTRIGGER_COUNTERS": 4,
+                "ENABLE_XTRIGGER_MILLED": 8,
+                "ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY": 16,
+                "ENABLE_XTRIGGER_1_1_COUNTERS": 32,
+                "ENABLE_XTRIGGER_M1_M1_COUNTERS": 64,
+                "ENABLE_XTRIGGER_REPLACE_ETB": 128
+              }
+            }
+          },
+          "native_enum_instances": 8,
+          "scope": "Exact current shared definitions and native DWARF enum values across four owning CUs; no whole-function equivalence claim."
+        },
+        "counter_argument_blocks": {
+          "callers": 7,
+          "calls": 7,
+          "inline_contracts": 7,
+          "scope": "Exact source-pair insertion and native inline contracts only; native outgoing blocks, stable incoming frame and complete direct counter-call coverage. No other caller behavior is claimed equivalent."
+        },
+        "absolute_global_arrays": {
+          "raw_mana_available_hex": {
+            "address": "0x4ef21c",
+            "dimensions": [
+              2,
+              51
+            ],
+            "element_type": "int",
+            "element_bytes": 4,
+            "native_type_instances": 3
+          }
+        },
+        "source_identifier_spellings": {
+          "identifiers": 40,
+          "identifier_edits": 112,
+          "packet_calls": 2,
+          "scope": "Identifier-only edits preserve literals, types and algorithms. Packet call repair independently checks two physical arguments at each native caller and both stack-argument reads in Magic.exe."
+        },
+        "executable_fallbacks": {
+          "mana_producer_fixed": {
+            "import_name": "engine_mana_producer_fixed",
+            "target": "0x47b6c0",
+            "arguments": 4,
+            "tail_jump": "0x266d41d"
+          }
+        },
+        "scope": "Reviewed interface edits only; retained custom callers explicitly distinguished from native caller ranges.",
+        "native_debug_domains": {
+          "sacrifice_t": {
+            "bytes": 4,
+            "members": {
+              "SAC_NO_CANCEL": 1,
+              "SAC_DONE": 2,
+              "SAC_JUST_MARK": 4,
+              "SAC_ALL_OR_NONE": 8,
+              "SAC_AS_COST": 16,
+              "SAC_CAUSED": 32,
+              "SAC_RETURN_CHOICE": 64,
+              "SAC_OPTIONAL": 128,
+              "SAC_SET_TARGETS": 256
+            },
+            "recovery_type": "sacrifice_2022_t"
+          },
+          "is_protected_from_mode_t": {
+            "bytes": 4,
+            "members": {
+              "IPF_DAMAGE": 1,
+              "IPF_ATTACH_AURA": 2,
+              "IPF_ATTACH_EQUIPMENT": 3,
+              "IPF_BLOCK": 4,
+              "IPF_TARGET": 5,
+              "IPF_QUERY": 6
+            },
+            "recovery_type": "is_protected_from_mode_2022_t"
+          },
+          "actions_t": {
+            "bytes": 4,
+            "members": {
+              "ACT_KILL_BURY": 1,
+              "ACT_KILL_DESTROY": 2,
+              "ACT_KILL_SACRIFICE": 3,
+              "ACT_KILL_EXILE": 4,
+              "ACT_BOUNCE": 5,
+              "ACT_TAP": 6,
+              "ACT_UNTAP": 7,
+              "ACT_RFG_UNTIL_EOT": 16,
+              "ACT_KILL_STATE_BASED_ACTION": 17,
+              "ACT_PUT_ON_TOP": 40,
+              "ACT_PUT_ON_BOTTOM": 41,
+              "ACT_DISABLE_NONMANA_ACTIVATED_ABILITIES": 42,
+              "ACT_ENABLE_NONMANA_ACTIVATED_ABILITIES": 43,
+              "ACT_HUMILIATE": 44,
+              "ACT_DE_HUMILIATE": 45,
+              "ACT_MAKE_UNTARGETTABLE": 46,
+              "ACT_REMOVE_UNTARGETTABLE": 47,
+              "ACT_DISABLE_ALL_ACTIVATED_ABILITIES": 49,
+              "ACT_ENABLE_ALL_ACTIVATED_ABILITIES": 50,
+              "ACT_GET_COUNT": 51,
+              "ACT_GAIN_CONTROL": 52,
+              "ACT_DOES_NOT_UNTAP": 53,
+              "ACT_PHASE_OUT": 54,
+              "ACT_OF_TREASON": 55,
+              "ACT_DETAIN": 56,
+              "ACT_PARAMETERIZED_ACTIONS_MASK": 4278190080,
+              "ACT_ADD_COUNTERS_BASE": 16777216,
+              "ACT_REMOVE_COUNTERS_BASE": 33554432
+            },
+            "recovery_type": "actions_2022_t"
+          }
+        }
+      },
+      "changed_files": 159,
       "projection": "exact replay from hash-checked predecessor archive",
       "recovery_names": "Historical ledger identities only; actual C definitions use canonical names"
     },

@@ -594,7 +594,7 @@ Creature - Angel 3/4
 Flying
 If a source an opponent controls would deal damage to you, prevent 1 of that damage. */
 
-	if( event == EVENT_PREVENT_DAMAGE && ! is_humiliated(player, card) ){
+	if( event == EVENT_PREVENT_DAMAGE && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
 		if( damage->internal_card_id == damage_card ){
 			if( damage->damage_source_player != player && damage->damage_target_card == -1 && damage->damage_target_player == player &&
@@ -1002,7 +1002,7 @@ As long as the top card of your library is |Sblack, ~ and other Vampire creature
 
 	reveal_top_card(player, card, event);
 
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		int iid = deck_ptr[player][0];
 		if( iid > -1 ){
 			if( get_color_by_internal_id(player, iid) & get_sleighted_color_test(player, card, COLOR_TEST_BLACK) ){

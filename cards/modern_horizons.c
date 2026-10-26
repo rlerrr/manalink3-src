@@ -1156,7 +1156,7 @@ int card_plague_engineer(int player, int card, event_t event)
   card_instance_t *instance;
   subtype_t subtype;
 
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   instance = get_card_instance(player, card);
   if (event == EVENT_RESOLVE_SPELL)
   {
@@ -1369,7 +1369,7 @@ int card_first_slivers_chosen(int player, int card, event_t event)
             iVar3 = has_subtype(player, iVar1, SUBTYPE_SLIVER);
             if (iVar3 != 0)
             {
-              iVar3 = is_humiliated_for_ability(player, iVar1, AL_TRIG);
+              iVar3 = is_humiliated(player, iVar1, AL_TRIG);
               iStack_14 = iStack_14 + (unsigned int)(iVar3 == 0);
             }
           }
@@ -1423,7 +1423,7 @@ int card_ice_fang_coatl(int player, int card, event_t event)
           break;
         }
       } while (iStack_18 < 3);
-      deathtouch_2022(player, card, EVENT_ABILITIES);
+      deathtouch(player, card, EVENT_ABILITIES);
     }
   }
 LAB_0233a3fb:
@@ -1546,7 +1546,7 @@ int card_sisay_weatherlight_captain(int player, int card, event_t event)
   if (event - EVENT_POWER < 2)
   {
     if (((card == affected_card) && (player == affected_card_controller)) &&
-        (iVar2 = is_humiliated_for_ability(player, card, AL_STATIC), iVar1 = current_turn,
+        (iVar2 = is_humiliated(player, card, AL_STATIC), iVar1 = current_turn,
          iVar2 == 0))
     {
 
@@ -2090,7 +2090,7 @@ int card_sword_of_truth_and_justice(int player, int card, event_t event)
         result = can_target(&td);
         if ((result != 0) && (result = pick_target(&td, "ASHNODS_BATTLEGEAR"), result != 0))
         {
-          add_counters_from_source(player, card, instance->targets[0].player,
+          add_counters(player, card, instance->targets[0].player,
                                    instance->targets[0].card, COUNTER_P1_P1, 1);
         }
         proliferate(player, card);
@@ -2128,7 +2128,7 @@ int tempered_sliver_legacy(int player, int card, event_t event)
         }
         else if (event == EVENT_RESOLVE_TRIGGER)
         {
-          add_counters_from_source(player_00, result, player_00, result, COUNTER_P1_P1, 1);
+          add_counters(player_00, result, player_00, result, COUNTER_P1_P1, 1);
           kill_card(player, card, KILL_EXILE);
         }
       }
@@ -2168,10 +2168,10 @@ int card_tempered_sliver(int player, int card, event_t event)
           iVar3 = has_subtype(iVar1, card_00, SUBTYPE_SLIVER);
           if (iVar3 != 0)
           {
-            iVar3 = is_humiliated_for_ability(iVar1, card, AL_STATIC);
+            iVar3 = is_humiliated(iVar1, card, AL_STATIC);
             if (iVar3 == 0)
             {
-              iVar3 = is_humiliated_for_ability(iVar1, card_00, AL_TRIG);
+              iVar3 = is_humiliated(iVar1, card_00, AL_TRIG);
               if (iVar3 == 0)
               {
                 create_targetted_legacy_effect(iVar1, card_00, tempered_sliver_legacy, iVar1,
@@ -2279,7 +2279,7 @@ int card_yawgmoth_thran_physician(int player, int card, event_t event)
       iVar2 = instance->targets[0].card;
       if (iVar2 != -1)
       {
-        add_counters_from_source(player, card, instance->targets[0].player, iVar2, COUNTER_M1_M1,
+        add_counters(player, card, instance->targets[0].player, iVar2, COUNTER_M1_M1,
                                  1);
       }
       draw_a_card(player);
@@ -3011,7 +3011,7 @@ int card_aria_of_flame(int player, int card, event_t event)
     sp_ability_trigger(player, event, 2, TYPE_SPELL, NULL, player, card);
     if (event == EVENT_SPA)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_VERSE, 1);
+      add_counters(player, card, player, card, COUNTER_VERSE, 1);
       default_target_definition(player, card, &td, 0x100);
       td.zone = 0x1200;
       td.allow_cancel = 0;
@@ -3126,7 +3126,7 @@ static int bladeback_sliver_shared_ability(int player, int card, event_t event)
   {
 
     iVar2 = pcVar1->targets[1].card;
-    leaves_play_2022(iVar4, iVar2, event, 0, 0);
+    leaves_play(iVar4, iVar2, event, 0, 0);
     if (event == EVENT_LEAVES_PLAY_ABILITY)
     {
       add_status(player, card, 0x10000);
@@ -3147,7 +3147,7 @@ static int bladeback_sliver_shared_ability(int player, int card, event_t event)
         }
       }
     }
-    iVar4 = is_humiliated_for_ability(iVar4, iVar2, AL_NM_NL_ACT);
+    iVar4 = is_humiliated(iVar4, iVar2, AL_NM_NL_ACT);
     if ((iVar4 != 0) || (0 < hand_count[player]))
     {
       return 0;
@@ -3217,12 +3217,12 @@ static int enduring_sliver_shared_ability(int player, int card, event_t event)
   }
 
   iVar1 = pcVar2->targets[1].card;
-  leaves_play_2022(iVar4, iVar1, event, 0, 0);
+  leaves_play(iVar4, iVar1, event, 0, 0);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
     add_status(player, card, 0x10000);
     in_play(iVar4, iVar1);
-    iVar4 = is_humiliated_for_ability(iVar4, iVar1, AL_NM_NL_ACT);
+    iVar4 = is_humiliated(iVar4, iVar1, AL_NM_NL_ACT);
     if (iVar4 != 0)
     {
       return 0;
@@ -3249,7 +3249,7 @@ static int enduring_sliver_shared_ability(int player, int card, event_t event)
       if (event == EVENT_CLEANUP)
       {
         kill_card(player, card, KILL_EXILE);
-        iVar4 = is_humiliated_for_ability(iVar4, iVar1, AL_NM_NL_ACT);
+        iVar4 = is_humiliated(iVar4, iVar1, AL_NM_NL_ACT);
         if (iVar4 != 0)
         {
           return 0;
@@ -3257,7 +3257,7 @@ static int enduring_sliver_shared_ability(int player, int card, event_t event)
         goto LAB_02334ece;
       }
     }
-    iVar4 = is_humiliated_for_ability(iVar4, iVar1, AL_NM_NL_ACT);
+    iVar4 = is_humiliated(iVar4, iVar1, AL_NM_NL_ACT);
     if (iVar4 != 0)
     {
       return 0;
@@ -3270,7 +3270,7 @@ static int enduring_sliver_shared_ability(int player, int card, event_t event)
   }
   iVar4 = pcVar2->targets[0].card;
   iVar1 = pcVar2->targets[0].player;
-  add_counters_from_source(iVar1, iVar4, iVar1, iVar4, COUNTER_P1_P1, 1);
+  add_counters(iVar1, iVar4, iVar1, iVar4, COUNTER_P1_P1, 1);
 LAB_02334ece:
   iVar4 =
       shared_sliver_activated_ability(player, card, event, 0x11, 2, 0, 0, 0, 0, 0, 0, NULL, NULL);
@@ -3311,12 +3311,12 @@ static int hollowhead_sliver_shared_ability(int player, int card, event_t event)
   }
 
   card_00 = instance->targets[1].card;
-  leaves_play_2022(result, card_00, event, 0, 0);
+  leaves_play(result, card_00, event, 0, 0);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
     add_status(player, card, 0x10000);
     in_play(result, card_00);
-    result = is_humiliated_for_ability(result, card_00, AL_NM_NL_ACT);
+    result = is_humiliated(result, card_00, AL_NM_NL_ACT);
     if (result != 0)
     {
       return 0;
@@ -3343,7 +3343,7 @@ static int hollowhead_sliver_shared_ability(int player, int card, event_t event)
       if (event == EVENT_CLEANUP)
       {
         kill_card(player, card, KILL_EXILE);
-        result = is_humiliated_for_ability(result, card_00, AL_NM_NL_ACT);
+        result = is_humiliated(result, card_00, AL_NM_NL_ACT);
         if (result != 0)
         {
           return 0;
@@ -3351,7 +3351,7 @@ static int hollowhead_sliver_shared_ability(int player, int card, event_t event)
         goto LAB_023350cc;
       }
     }
-    result = is_humiliated_for_ability(result, card_00, AL_NM_NL_ACT);
+    result = is_humiliated(result, card_00, AL_NM_NL_ACT);
     if (result != 0)
     {
       return 0;
@@ -3404,12 +3404,12 @@ static int scuttling_sliver_shared_ability(int player, int card, event_t event)
   }
 
   card_00 = pcVar1->targets[1].card;
-  leaves_play_2022(result, card_00, event, 0, 0);
+  leaves_play(result, card_00, event, 0, 0);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
     add_status(player, card, 0x10000);
     in_play(result, card_00);
-    result = is_humiliated_for_ability(result, card_00, AL_NM_NL_ACT);
+    result = is_humiliated(result, card_00, AL_NM_NL_ACT);
     if (result != 0)
     {
       return 0;
@@ -3436,7 +3436,7 @@ static int scuttling_sliver_shared_ability(int player, int card, event_t event)
       if (event == EVENT_CLEANUP)
       {
         kill_card(player, card, KILL_EXILE);
-        result = is_humiliated_for_ability(result, card_00, AL_NM_NL_ACT);
+        result = is_humiliated(result, card_00, AL_NM_NL_ACT);
         if (result != 0)
         {
           return 0;
@@ -3444,7 +3444,7 @@ static int scuttling_sliver_shared_ability(int player, int card, event_t event)
         goto LAB_0233580e;
       }
     }
-    result = is_humiliated_for_ability(result, card_00, AL_NM_NL_ACT);
+    result = is_humiliated(result, card_00, AL_NM_NL_ACT);
     if (result != 0)
     {
       return 0;
@@ -3490,8 +3490,8 @@ int card_soulherder(int player, int card, event_t event)
   /* DWARF locals share this frame offset; keep every typed view. */
   union
   {
-    target_definition_2022_t target;
-    test_definition_2022_t test;
+    target_definition_t target;
+    test_definition_t test;
     uint8_t bytes[216];
   } recovered_stack_td;
 
@@ -3533,7 +3533,7 @@ int card_soulherder(int player, int card, event_t event)
 LAB_0233cafe:
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
-    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    add_counters(player, card, player, card, COUNTER_P1_P1, 1);
     return 0;
   }
   return 0;
@@ -3563,7 +3563,7 @@ int card_the_first_sliver(int player, int card, event_t event)
           result = check_special_flags(affected_card_controller, affected_card, 0x40000);
           if (result == 0)
           {
-            result = is_humiliated_for_ability(player, card, AL_TRIG);
+            result = is_humiliated(player, card, AL_TRIG);
             if (result == 0)
             {
               do_cascade(affected_card_controller, affected_card, -1);
@@ -3608,7 +3608,7 @@ int card_morophon_the_boundless(int player, int card, event_t event)
       result = has_subtype(affected_card_controller, affected_card, instance->info_slot);
       if (result != 0)
       {
-        result = is_humiliated_for_ability(player, card, AL_STATIC);
+        result = is_humiliated(player, card, AL_STATIC);
         if (result == 0)
         {
           COST_RED = COST_RED + -1;
@@ -3623,7 +3623,7 @@ int card_morophon_the_boundless(int player, int card, event_t event)
   else if (((event - EVENT_POWER < 2) && (affected_card_controller == player)) &&
            (affected_card != card))
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
 
@@ -3669,7 +3669,7 @@ int card_spiteful_sliver(int player, int card, event_t event)
           iVar3 = has_subtype(player, iVar1, SUBTYPE_SLIVER);
           if (iVar3 != 0)
           {
-            iVar3 = is_humiliated_for_ability(player, iVar1, AL_TRIG);
+            iVar3 = is_humiliated(player, iVar1, AL_TRIG);
             if (iVar3 == 0)
             {
 
@@ -3747,7 +3747,7 @@ int card_ayula_queen_among_bears(int player, int card, event_t event)
     {
       instance->number_of_targets = '\0';
       new_pick_target(&tdb, "Select target bear", 0, 0x80);
-      add_counters_from_source(player, card, instance->targets[0].player, instance->targets[0].card,
+      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
                                COUNTER_P1_P1, 2);
     }
     else if (result == 2)
@@ -4135,7 +4135,7 @@ int card_planebound_accomplice(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
 
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
@@ -4165,9 +4165,9 @@ int card_winds_of_abandon(int player, int card, event_t event)
   int iVar3;
   unsigned int uVar4;
   int iVar5;
-  target_definition_2022_t td;
-  test_definition_2022_t test;
-  test_definition_2022_t this_test;
+  target_definition_t td;
+  test_definition_t test;
+  test_definition_t this_test;
   if (event == EVENT_CAN_CAST)
   {
     default_target_definition(player, card, &td, 2);
@@ -4358,7 +4358,7 @@ int charge_mana_hybrid_to_hogaak_convoke(int player, int card, int number, int f
   int mana[6] = {0, 0, 0, 0, 0, 0};
   int mana2[10];
   char buffer[500];
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
   int pos = scnprintf(buffer, 500, " Cancel\n");
   int options = 1;
   if (number >= 0)
@@ -4407,7 +4407,7 @@ int charge_mana_hybrid_to_hogaak_convoke(int player, int card, int number, int f
         ++mana[color];
     }
   }
-  target_definition_2022_t td;
+  target_definition_t td;
   default_target_definition(player, card, &td, TYPE_CREATURE);
   td.allowed_controller = player;
   td.preferred_controller = player;
@@ -4533,7 +4533,7 @@ int cast_hogaak(int player, int card, event_t event, int from_grave)
   int iVar10;
   target_t *ptVar11;
   unsigned int uStack_f4;
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
 
   instance = get_card_instance(player, card);
   iVar7 = get_id(player, card);
@@ -4686,7 +4686,7 @@ int card_force_of_vigor(int player, int card, event_t event)
   card_instance_t *pcVar8;
   int iVar9;
   int iVar10;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   if (event == EVENT_MODIFY_COST)
   {

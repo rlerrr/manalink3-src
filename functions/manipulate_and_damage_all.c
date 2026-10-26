@@ -2,16 +2,16 @@
 
 /* Canonical recovered helper declarations. */
 int new_damage_all(int player, int card, int targ_player, int dmg, int mode,
-                        test_definition_2022_t *this_test);
-static actions_2022_t cook_action(int player, int card, actions_2022_t raw_action,
+                        test_definition_t *this_test);
+static actions_t cook_action(int player, int card, actions_t raw_action,
                                   counter_t *counter_type, int *counter_num);
-int action_on_card(int player, int card, int t_player, int t_card, actions_2022_t raw_action);
-int new_manipulate_all(int player, int card, int t_player, test_definition_2022_t *this_test,
-                            actions_2022_t raw_action);
+int action_on_card(int player, int card, int t_player, int t_card, actions_t raw_action);
+int new_manipulate_all(int player, int card, int t_player, test_definition_t *this_test,
+                            actions_t raw_action);
 int manipulate_all(int player, int card, int t_player, int type, int flag1, int subtype,
                         int flag2, int color, int flag3, int id, int flag4, int cc, int flag5,
-                        actions_2022_t action);
-static int action_on_card_impl(int player, int card, int p, int c, actions_2022_t action,
+                        actions_t action);
+static int action_on_card_impl(int player, int card, int p, int c, actions_t action,
                                     counter_t counter_type, int counter_num);
 
 
@@ -63,7 +63,7 @@ int manipulate_auras_enchanting_target(int player, int card, int t_player, int t
 }
 
 int new_damage_all(int player, int card, int targ_player, int dmg, int mode,
-                        test_definition_2022_t *this_test)
+                        test_definition_t *this_test)
 {
   int player_00;
   int iVar1;
@@ -188,7 +188,7 @@ void damage_all(int p, int c, int controller, int amount_damage, int all, int pl
 /* Recovered October 2022 action and copy helpers. */
 
 /* ManalinkEh 2022: 0x2666bc0; original functions/manipulate_and_damage_all.c:3. */
-static int action_on_card_impl(int player, int card, int p, int c, actions_2022_t action,
+static int action_on_card_impl(int player, int card, int p, int c, actions_t action,
                                     counter_t counter_type, int counter_num)
 {
   int result;
@@ -201,14 +201,14 @@ static int action_on_card_impl(int player, int card, int p, int c, actions_2022_
       {
         result = counter_num;
       }
-      remove_counters_from_source(player, card, p, c, counter_type, result);
+      remove_counters(player, card, p, c, counter_type, result);
       return result;
     }
     if (action != ACT_PARAMETERIZED_ACTIONS_MASK)
     {
       if (action == ACT_ADD_COUNTERS_BASE)
       {
-        add_counters_predoubled_from_source(player, card, p, c, counter_type, counter_num);
+        add_counters_predoubled(player, card, p, c, counter_type, counter_num);
         return counter_num;
       }
       return 0;
@@ -314,12 +314,12 @@ static int action_on_card_impl(int player, int card, int p, int c, actions_2022_
 
 
 /* ManalinkEh 2022: 0x2666f10; original functions/manipulate_and_damage_all.c:127. */
-static actions_2022_t cook_action(int player, int card, actions_2022_t raw_action,
+static actions_t cook_action(int player, int card, actions_t raw_action,
                                   counter_t *counter_type, int *counter_num)
 {
   short sVar1;
   int result;
-  actions_2022_t aVar3;
+  actions_t aVar3;
   aVar3 = raw_action & ACT_PARAMETERIZED_ACTIONS_MASK;
   sVar1 = (short)raw_action;
   if (aVar3 == ACT_ADD_COUNTERS_BASE)
@@ -361,9 +361,9 @@ static actions_2022_t cook_action(int player, int card, actions_2022_t raw_actio
 
 
 /* ManalinkEh 2022: 0x2666fe0; original functions/manipulate_and_damage_all.c:160. */
-int action_on_card(int player, int card, int t_player, int t_card, actions_2022_t raw_action)
+int action_on_card(int player, int card, int t_player, int t_card, actions_t raw_action)
 {
-  actions_2022_t action;
+  actions_t action;
   int result;
   counter_t counter_type;
   int counter_num;
@@ -382,12 +382,12 @@ int action_on_card(int player, int card, int t_player, int t_card, actions_2022_
 
 
 /* ManalinkEh 2022: 0x26670c0; original functions/manipulate_and_damage_all.c:178. */
-int new_manipulate_all(int player, int card, int t_player, test_definition_2022_t *this_test,
-                            actions_2022_t raw_action)
+int new_manipulate_all(int player, int card, int t_player, test_definition_t *this_test,
+                            actions_t raw_action)
 {
   unsigned int uVar1;
   int iVar2;
-  actions_2022_t action;
+  actions_t action;
   card_instance_t *instance;
   int iVar4;
   int iVar5;
@@ -588,10 +588,10 @@ LAB_02667172:
 /* ManalinkEh 2022: 0x26675a0; original functions/manipulate_and_damage_all.c:245. */
 int manipulate_all(int player, int card, int t_player, int type, int flag1, int subtype,
                         int flag2, int color, int flag3, int id, int flag4, int cc, int flag5,
-                        actions_2022_t action)
+                        actions_t action)
 {
   int result;
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
   new_default_test_definition(&this_test, type, "");
   this_test.type_flag = (unsigned short)flag1;
   this_test.subtype = subtype;

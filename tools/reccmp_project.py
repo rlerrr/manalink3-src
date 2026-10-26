@@ -29,6 +29,25 @@ def write_json(path, data):
     path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 
 
+def naming_state():
+    """Bind generated names to the source mapping, independently of the build.
+
+    The recovery ledger keeps historical identities after C functions are
+    renamed. A matching DLL/debug pair alone cannot detect an outdated CSV.
+    Ignore verification summaries that do not affect these name mappings.
+    """
+    manifest = json.loads((ROOT / "docs/recovery-evidence/recovered-functions.json").read_text())
+    mappings = {
+        key: sorted((row.get("address", row.get("native_address")), row["name"])
+                    for row in manifest[key])
+        for key in ("accepted_functions", "source_stubs")
+    }
+    canonical = ROOT / "docs/recovery-evidence/helper-canonicalization.json"
+    return dict(canonicalization_sha256=digest(canonical) if canonical.exists() else None,
+                recovery_mappings_sha256=hashlib.sha256(
+                    json.dumps(mappings, sort_keys=True).encode()).hexdigest())
+
+
 def read_functions(path, all_functions=False):
     """Read functions one CU at a time, avoiding retained DIE graphs.
 
@@ -76,6 +95,7 @@ def setup(args):
 
     local = ROOT / ".recovery" / "reccmp"
     local.mkdir(parents=True, exist_ok=True)
+    names_before = naming_state()
     original = args.original.resolve()
     if not original.is_file():
         archive = args.library / "Manalink-3_0-Oct-2022_Hotfix.zip"
@@ -202,6 +222,10 @@ def setup(args):
             included.append(row)
 
     # These are absolute VAs, not RVAs or veneer jump-table entries.
+    obsolete_names = set(canonical_names) - set(canonical_names.values())
+    assert not any(row["match_name"] in obsolete_names for row in included)
+    if naming_state() != names_before:
+        raise ValueError("Source name mappings changed during setup; rerun setup")
     metadata = ROOT / "config" / "reccmp" / "functions.csv"
     metadata.parent.mkdir(parents=True, exist_ok=True)
     with metadata.open("w", newline="", encoding="utf-8") as stream:
@@ -226,6 +250,7 @@ def setup(args):
                    folded_recovered_helpers=folded_recovered_helpers,
                    excluded_reasons=dict(Counter(r["reason"] for r in excluded)),
                    inputs={str(p): digest(p) for p in (original, original_debug, rebuilt, rebuilt_debug)},
+                   naming_inputs=names_before,
                    metadata_sha256=digest(metadata), reccmp_root=str(args.reccmp_root.resolve()),
                    scope="File-scope card/helper functions with contiguous DWARF bounds and unique names; no globals or GUI recovery.")
     write_json(local / "setup.json", summary)
@@ -266,6 +291,8 @@ def main():
             parser.error(f"Input changed since setup: {filename}; rerun setup")
     if digest(ROOT / "config/reccmp/functions.csv") != summary["metadata_sha256"]:
         parser.error("Function metadata changed since setup; rerun setup")
+    if summary.get("naming_inputs") != naming_state():
+        parser.error("Source name mappings changed since setup; rerun setup")
     comparator_sources = {str(fork / name): digest(fork / name) for name in (
         'reccmp/compare/functions.py', 'reccmp/compare/asm/parse.py',
         'reccmp/compare/asm/fixes.py', 'reccmp/compare/report.py',
@@ -296,6 +323,8 @@ def main():
             raise ValueError('Function metadata changed during comparison')
         if digest(summary_path) != comparison_setup_sha256 or digest(ledger_path) != comparison_ledger_sha256:
             raise ValueError('Setup or recovery ledger changed during comparison')
+        if naming_state() != summary['naming_inputs']:
+            raise ValueError('Source name mappings changed during comparison')
         if any(digest(Path(name)) != expected for name, expected in comparator_sources.items()):
             raise ValueError('Comparator implementation changed during comparison')
         write_json(report_path.with_suffix('.inputs.json'), dict(

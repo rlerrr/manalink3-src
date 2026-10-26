@@ -161,7 +161,7 @@ extern int pay_mana_xbugrwaU[8];
 #define TENTATIVE_color_clicked_in_mana_summary_pane	EXE_DWORD(0x60a52c)
 #define global_all_purpose_buffer				((char*)(0x60a690))
 #define WILDGUESS_phase_to_run_to				EXE_DWORD(0x4ef1ac)
-#define raw_mana_may_be_spent_as_color			EXE_2D_ARR(int, 2, 11, 0x60a4b4)
+
 #define WILDGUESS_whose_phase_to_run_to			EXE_DWORD(0x4ef1b0)
 
 
@@ -187,7 +187,7 @@ extern int pay_mana_xbugrwaU[8];
 #undef TENTATIVE_color_clicked_in_mana_summary_pane
 #undef global_all_purpose_buffer
 #undef WILDGUESS_phase_to_run_to
-#undef raw_mana_may_be_spent_as_color
+
 #undef WILDGUESS_whose_phase_to_run_to
 
 
@@ -357,7 +357,7 @@ void hook_helper_for_startduel(void)
 
 
 /* ManalinkEh 2022: 0x26a9b30; original functions/engine.c:1401. */
-void count_mana_2022(void)
+void count_mana(void)
 {
   for (int color = 0; color < 8; ++color)
   {
@@ -368,10 +368,10 @@ void count_mana_2022(void)
     mana_quantity_override[1][color] = -1;
     mana_quantity_override[0][color] = -1;
   }
-  engine_raw_mana_available_hex_2022[0][0] = -1;
-  engine_mana_may_be_spent_as_color_2022[1][0] = -1;
-  engine_mana_may_be_spent_as_color_2022[0][0] = -1;
-  engine_raw_mana_available_hex_2022[1][0] = -1;
+  raw_mana_available_hex[0][0] = -1;
+  raw_mana_may_be_spent_as_color[1][0] = -1;
+  raw_mana_may_be_spent_as_color[0][0] = -1;
+  raw_mana_available_hex[1][0] = -1;
   mana_colors_added[1] = 0;
   mana_colors_added[0] = 0;
   multi_mana_transmutation[1][1] = 0;
@@ -419,12 +419,12 @@ void count_mana_2022(void)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26af860; original functions/engine.c:1523. */
-STATIC_ASSERT(offsetof(card_data_t, cc) + 1 == 0x2c, spell_cost_x_byte_2022);
-STATIC_ASSERT(offsetof(card_data_t, type) == 0x28, spell_cost_type_byte_2022);
+STATIC_ASSERT(offsetof(card_data_t, cc) + 1 == 0x2c, spell_cost_x_byte);
+STATIC_ASSERT(offsetof(card_data_t, type) == 0x28, spell_cost_type_byte);
 /* Native 2022 behavior: snapshot copies seven words but rollback reads eight signed bytes.
  * The rollback call receives the sign-extended first byte cast to a pointer (0x26afb5b).
  * The summary byte address advances by player, independently of the 32-byte mana row. */
-int charge_spell_cost_2022(card_data_t *cd, int player, int card)
+int charge_spell_cost(card_data_t *cd, int player, int card)
 {
   uint8_t uVar1;
   int8_t sVar2;
@@ -734,7 +734,7 @@ int fx_activation_906(int player, int card, event_t event)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26afd30; original functions/engine.c:3508. */
-int put_card_on_stack_2022(int player, int card, int second_call)
+int put_card_on_stack(int player, int card, int second_call)
 {
   card_instance_t *instance = get_card_instance(player, card);
   int iid = instance->internal_card_id;
@@ -771,7 +771,7 @@ int put_card_on_stack_2022(int player, int card, int second_call)
       put_card_or_activation_onto_stack(player, card, EVENT_RESOLVE_SPELL, player, 0);
     EXE_FN(void, 0x430150, void)();
     if (!EXE_DWORD(0x78676c))
-      charge_spell_cost_2022(&cards_data[iid], player, card);
+      charge_spell_cost(&cards_data[iid], player, card);
     max_x_value = -1;
     if (!(instance->token_status & 8))
     {
@@ -857,7 +857,7 @@ int put_card_on_stack_2022(int player, int card, int second_call)
     if (player == 1 && ai_is_speculating != 1 && !EXE_DWORD(0x628c7c) &&
         !(cards_data[iid].type & 1))
     {
-      load_text_2022(NULL, "PROMPT_CAST1");
+      load_text(NULL, "PROMPT_CAST1");
       sprintf(str, text_lines[0], opponent_name);
       if (cards_data[iid].cc[1] == 0xff)
         sprintf(str, EXE_STR(0x715dd8), opponent_name, x_value);
@@ -902,12 +902,12 @@ failed:;
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26ae510; original functions/engine.c:3479. */
-int put_card_on_stack2_2022(int player, int card)
+int put_card_on_stack2(int player, int card)
 {
   int changed = EXE_DWORD(0x62bce8) == 0xd3;
   if (changed)
     EXE_DWORD(0x628534) = 1;
-  if (!put_card_on_stack_2022(player, card, 0) || !put_card_on_stack_2022(player, card, 1))
+  if (!put_card_on_stack(player, card, 0) || !put_card_on_stack(player, card, 1))
   {
     if (changed)
       EXE_DWORD(0x628534) = 0;
@@ -924,7 +924,7 @@ int put_card_on_stack2_2022(int player, int card)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26aa220; original functions/engine.c:1955. */
-int minimum_blockers_2022(int player, int card)
+int minimum_blockers(int player, int card)
 {
   if (check_for_special_ability(player, card, 0x80000))
     return 3;
@@ -967,7 +967,7 @@ static int is_legal_block_impl2(int blocking_player, int blocking_card, int bloc
   if (is_what(blocking_player, blocking_card, TYPE_ARTIFACT) && (abils & KEYWORD_PROT_ARTIFACTS))
     return 0;
   if (has_protection_from_impl(blocked_player, blocked_card, blocking_player, blocking_card,
-                               IPF2022_BLOCK, abils))
+                               IPF_BLOCK, abils))
     return 0;
   uint32_t walks = abils & landwalks;
   if (walks & KEYWORD_BASIC_LANDWALK)
@@ -984,10 +984,10 @@ static int is_legal_block_impl2(int blocking_player, int blocking_card, int bloc
       return 0;
   }
   card_instance_t *blocked = get_card_instance(blocked_player, blocked_card);
-  uint32_t blocked_sp = is_humiliated_for_ability(blocked_player, blocked_card, AL_KEY)
+  uint32_t blocked_sp = is_humiliated(blocked_player, blocked_card, AL_KEY)
                             ? 0
                             : blocked->ext->sp_keywords;
-  uint32_t blocking_sp = is_humiliated_for_ability(blocking_player, blocking_card, AL_KEY)
+  uint32_t blocking_sp = is_humiliated(blocking_player, blocking_card, AL_KEY)
                              ? 0
                              : blocking->ext->sp_keywords;
   if (blocking_sp & 0x20)
@@ -1028,7 +1028,7 @@ static int is_legal_block_impl2(int blocking_player, int blocking_card, int bloc
   }
   if (dispatch_event_with_attacker(blocking_player, blocking_card, EVENT_BLOCK_LEGALITY,
                                    blocked_player, blocked_card) < 1)
-    return minimum_blockers_2022(blocked_player, blocked_card);
+    return minimum_blockers(blocked_player, blocked_card);
   return 0;
 }
 
@@ -1053,7 +1053,7 @@ static void enforce_minimum_blockers(void)
     if (inst && (inst->state & 4) && num_blocking[c] > 0)
     {
       int count = num_blocking[c];
-      if (count < minimum_blockers_2022(atk, c) ||
+      if (count < minimum_blockers(atk, c) ||
           (check_for_special_ability(atk, c, 0x200000) && count > 1))
       {
         for (int b = 0; b < active_cards_count[def]; ++b)
@@ -1150,7 +1150,7 @@ void human_assign_blockers(int player)
     who_chooses = player;
   }
   EXE_FN(void, 0x472260, void)();
-  target_definition_2022_t td_choose_blocker;
+  target_definition_t td_choose_blocker;
   base_target_definition(def, 0, &td_choose_blocker, 0x2000002);
   td_choose_blocker.zone = 0x2200;
   td_choose_blocker.special = 0x400;
@@ -1159,7 +1159,7 @@ void human_assign_blockers(int player)
   td_choose_blocker.who_chooses = who_chooses;
   td_choose_blocker.allowed_controller = def;
   td_choose_blocker.preferred_controller = def;
-  target_definition_2022_t td_block_which_attacker;
+  target_definition_t td_block_which_attacker;
   base_target_definition(player, 0, &td_block_which_attacker, TYPE_CREATURE);
   td_block_which_attacker.allowed_controller = player;
   td_block_which_attacker.preferred_controller = player;
@@ -1186,7 +1186,7 @@ void human_assign_blockers(int player)
     }
     if (!any)
       break;
-    load_text_2022(NULL, "PROMPT_CHOOSEBLOCKERS");
+    load_text(NULL, "PROMPT_CHOOSEBLOCKERS");
     if (!select_target(def, -1000, &td_choose_blocker, text_lines[0], &blocker))
       break;
     forbid_attack = 0;
@@ -1205,7 +1205,7 @@ void human_assign_blockers(int player)
       if (!EXE_FN(int, 0x4350e0, int, int, int, int)(blocker.player, blocker.card, blocked.player,
                                                      blocked.card))
       {
-        load_text_2022(NULL, "PROMPT_CHOOSEBLOCKERS");
+        load_text(NULL, "PROMPT_CHOOSEBLOCKERS");
         set_centerwindow_txt(text_lines[2]);
         EXE_STDCALL_FN(void, 0x4d5d32, int)(2000);
         set_centerwindow_txt("");
@@ -1270,19 +1270,19 @@ void setup_ai_combat_data(int player)
           inst->state |= 0x14;
       }
       inst->regen_status |= 0xe000000;
-      check_abilities_power_2022 = get_abilities(p, c, EVENT_POWER, -1);
-      check_abilities_toughness_2022 = get_abilities(p, c, EVENT_TOUGHNESS, -1);
-      check_abilities_keywords_2022 = get_abilities(p, c, EVENT_ABILITIES, -1);
+      check_abilities_power = get_abilities(p, c, EVENT_POWER, -1);
+      check_abilities_toughness = get_abilities(p, c, EVENT_TOUGHNESS, -1);
+      check_abilities_keywords = get_abilities(p, c, EVENT_ABILITIES, -1);
       int old_activating_player = EXE_DWORD(0x7a3610);
       EXE_DWORD(0x7a3610) = p;
       dispatch_event(p, c, EVENT_CHECK_ABILITIES);
       EXE_DWORD(0x7a3610) = old_activating_player;
-      data[p][c].potential_power += check_abilities_power_2022;
-      data[p][c].potential_toughness += check_abilities_toughness_2022;
-      data[p][c].abils |= check_abilities_keywords_2022;
-      int indestructible_2022 = check_for_special_ability(p, c, 0x800);
+      data[p][c].potential_power += check_abilities_power;
+      data[p][c].potential_toughness += check_abilities_toughness;
+      data[p][c].abils |= check_abilities_keywords;
+      int indestructible = check_for_special_ability(p, c, 0x800);
       uint32_t abils = data[p][c].abils;
-      if (indestructible_2022)
+      if (indestructible)
       {
         abils |= 0x200;
         data[p][c].abils = abils;
@@ -1348,7 +1348,7 @@ static void ai_assign_one_blocker(int player, int blockernum)
   if (EXE_DWORD(0x607d54) != blockernum)
   {
     card_instance_t *inst =
-        get_card_instance(ai_combat_defending_player_2022, blocker_cards[blockernum]);
+        get_card_instance(ai_combat_defending_player, blocker_cards[blockernum]);
     if (!(inst->state & 0x8000) || inst->blocking == 255)
     {
       assignment[blockernum] = -1;
@@ -1359,9 +1359,9 @@ static void ai_assign_one_blocker(int player, int blockernum)
     {
       int count = num_blocks[a], card = attack_cards[a];
       if (count < EXE_DWORD(0x607860) ||
-          count < minimum_blockers_2022(1 - ai_combat_defending_player_2022, card))
+          count < minimum_blockers(1 - ai_combat_defending_player, card))
       {
-        if ((!check_for_special_ability(1 - ai_combat_defending_player_2022, card, 0x200000) ||
+        if ((!check_for_special_ability(1 - ai_combat_defending_player, card, 0x200000) ||
              num_blocks[a] < 1) &&
             ((uint32_t)EXE_DWORD_PTR(0x607864)[a] & bit) &&
             (!(inst->state & 0x8000) || inst->blocking == (uint32_t)attack_cards[a]))
@@ -1376,7 +1376,7 @@ static void ai_assign_one_blocker(int player, int blockernum)
     return;
   }
   ai_defensive_modifier = 0;
-  int life_if_unblocked = life[ai_combat_defending_player_2022];
+  int life_if_unblocked = life[ai_combat_defending_player];
   int cop_times = EXE_DWORD(0x60a42c);
   int outflanked[blockernum + 1];
   memset(outflanked, 0, (blockernum + 1) * sizeof(int));
@@ -1389,7 +1389,7 @@ static void ai_assign_one_blocker(int player, int blockernum)
     int attacker = attack_cards[a];
     ai_defensive_modifier += EXE_DWORD_PTR(0x607cd0)[a];
     int attacker_flanking =
-        check_for_special_ability(1 - ai_combat_defending_player_2022, attacker, 0x2000);
+        check_for_special_ability(1 - ai_combat_defending_player, attacker, 0x2000);
     int num_destroyed = 0, any_blockers_have_banding = 0, any_destroyed = 0;
     int total_pow = 0, total_tgh = 0, num_blocking = 0;
     uint32_t attacker_bit = 1u << (a & 31);
@@ -1399,13 +1399,13 @@ static void ai_assign_one_blocker(int player, int blockernum)
         continue;
       ++num_blocking;
       if (num_blocking == 2 &&
-          check_for_special_ability(1 - ai_combat_defending_player_2022, attacker, 0x40))
-        rampage = dispatch_event_with_attacker(1 - ai_combat_defending_player_2022, attacker,
+          check_for_special_ability(1 - ai_combat_defending_player, attacker, 0x40))
+        rampage = dispatch_event_with_attacker(1 - ai_combat_defending_player, attacker,
                                                (event_t)0x5e00, -1, 0x40);
       ai_defensive_modifier += EXE_DWORD_PTR(0x607c70)[b];
       int original_tgh = EXE_DWORD_PTR(0x6077e0)[b];
       int tgh = original_tgh, flanked = 0;
-      if (attacker_flanking && !check_for_special_ability(ai_combat_defending_player_2022,
+      if (attacker_flanking && !check_for_special_ability(ai_combat_defending_player,
                                                                blocker_cards[b], 0x2000))
       {
         if (original_tgh < 2)
@@ -1446,36 +1446,36 @@ static void ai_assign_one_blocker(int player, int blockernum)
     }
     uint32_t attack_abils = EXE_DWORD_PTR(0x6075d8)[a];
     int new_life = life_if_unblocked, evaluate_damage = 0;
-    if (num_blocking < minimum_blockers_2022(1 - ai_combat_defending_player_2022, attacker))
+    if (num_blocking < minimum_blockers(1 - ai_combat_defending_player, attacker))
     {
       if (!EXE_DWORD(0x60a424) || EXE_DWORD(0x60a424) <= EXE_DWORD_PTR(0x607820)[a])
       {
-        if (player_bits[1 - ai_combat_defending_player_2022] & 0x80000)
+        if (player_bits[1 - ai_combat_defending_player] & 0x80000)
         {
           int commander_damage =
-              check_special_flags2(1 - ai_combat_defending_player_2022, attacker, 0x1000000);
+              check_special_flags2(1 - ai_combat_defending_player, attacker, 0x1000000);
           if (!commander_damage)
           {
-            int commander = get_commander_id(1 - ai_combat_defending_player_2022, 1);
-            if (commander == get_id(1 - ai_combat_defending_player_2022, attacker))
+            int commander = get_commander_id(1 - ai_combat_defending_player, 1);
+            if (commander == get_id(1 - ai_combat_defending_player, attacker))
               commander_damage = 1;
             else
             {
-              commander = get_commander_id(1 - ai_combat_defending_player_2022, 2);
-              if (commander == get_id(1 - ai_combat_defending_player_2022, attacker))
+              commander = get_commander_id(1 - ai_combat_defending_player, 2);
+              if (commander == get_id(1 - ai_combat_defending_player, attacker))
                 commander_damage = 1;
             }
           }
           if (commander_damage)
           {
-            int edh = locate_edh_card_2022(1 - ai_combat_defending_player_2022);
-            if (count_counters(1 - ai_combat_defending_player_2022, edh, (counter_t)0x1c) +
+            int edh = locate_edh_card(1 - ai_combat_defending_player);
+            if (count_counters(1 - ai_combat_defending_player, edh, (counter_t)0x1c) +
                     attack_power >=
                 21)
               new_life -= 9999;
           }
         }
-        new_life -= mod_pow_unblocked(attack_power, 1 - ai_combat_defending_player_2022, attacker);
+        new_life -= mod_pow_unblocked(attack_power, 1 - ai_combat_defending_player, attacker);
         evaluate_damage = 1;
       }
     }
@@ -1487,7 +1487,7 @@ static void ai_assign_one_blocker(int player, int blockernum)
     if (evaluate_damage)
     {
       if (EXE_DWORD(0x60a428) && new_life < life_if_unblocked &&
-          (EXE_DWORD(0x60a428) & get_color(1 - ai_combat_defending_player_2022, attacker)))
+          (EXE_DWORD(0x60a428) & get_color(1 - ai_combat_defending_player, attacker)))
         cop_benefit[num_cop_benefit++] = life_if_unblocked - new_life;
       life_if_unblocked = new_life;
     }
@@ -1496,7 +1496,7 @@ static void ai_assign_one_blocker(int player, int blockernum)
          (EXE_DWORD(0x60a424) && EXE_DWORD_PTR(0x607820)[a] < EXE_DWORD(0x60a424))))
     {
       int64_t convert_64 = (int64_t)EXE_DWORD_PTR(0x60823c)[a] *
-                           EXE_DWORD_PTR(0x628c14)[3 - ai_combat_defending_player_2022];
+                           EXE_DWORD_PTR(0x628c14)[3 - ai_combat_defending_player];
       rating += (int)(convert_64 / 8);
     }
     int best_opinion = -1;
@@ -1518,9 +1518,9 @@ static void ai_assign_one_blocker(int player, int blockernum)
             if (EXE_DWORD_PTR(0x6077e0)[n] <= effective_attack_power)
             {
               int value = EXE_DWORD_PTR(0x60834c)[n];
-              remaining = is_protected_from(ai_combat_defending_player_2022, blocker_cards[n],
-                                                 1 - ai_combat_defending_player_2022, attacker,
-                                                 IPF2022_DAMAGE);
+              remaining = is_protected_from(ai_combat_defending_player, blocker_cards[n],
+                                                 1 - ai_combat_defending_player, attacker,
+                                                 IPF_DAMAGE);
               if (!remaining)
               {
                 if (value < attack_rating)
@@ -1544,8 +1544,8 @@ static void ai_assign_one_blocker(int player, int blockernum)
               EXE_DWORD_PTR(0x6082c0)[n] < attack_toughness)
           {
             if (outflanked[n] || !is_protected_from(
-                                     ai_combat_defending_player_2022, blocker_cards[n],
-                                     1 - ai_combat_defending_player_2022, attacker, IPF2022_DAMAGE))
+                                     ai_combat_defending_player, blocker_cards[n],
+                                     1 - ai_combat_defending_player, attacker, IPF_DAMAGE))
               attack_rating += EXE_DWORD_PTR(0x60834c)[n];
           }
           remaining -= EXE_DWORD_PTR(0x6077e0)[n];
@@ -1581,8 +1581,8 @@ static void ai_assign_one_blocker(int player, int blockernum)
     penalty = life_if_unblocked * -96 + 999;
   else
   {
-    int64_t rating_64 = (int64_t)(life[ai_combat_defending_player_2022] - life_if_unblocked) *
-                        EXE_DWORD_PTR(0x628c14)[ai_combat_defending_player_2022];
+    int64_t rating_64 = (int64_t)(life[ai_combat_defending_player] - life_if_unblocked) *
+                        EXE_DWORD_PTR(0x628c14)[ai_combat_defending_player];
     penalty = (int)((rating_64 * 6) / life_if_unblocked);
   }
   if (EXE_DWORD(0x60827c) < rating - penalty)
@@ -1597,7 +1597,7 @@ static void ai_assign_one_blocker(int player, int blockernum)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26abd60; original functions/engine.c:2408. */
-void ai_assign_blockers_2022(int player)
+void ai_assign_blockers(int player)
 {
   EXE_FN(void, 0x4af6f0, int)(player);
   EXE_DWORD(0x60827c) = -9999;
@@ -1735,11 +1735,11 @@ int ai_choose_attackers(int player)
       for (int i = 0; i < num_fast_attackers; ++i)
         attacker_power[i] = data[player][attack_indices[i]].potential_power;
       int num_potential_blockers = 0;
-      for (int c = 0; c < active_cards_count[ai_combat_defending_player_2022]; ++c)
+      for (int c = 0; c < active_cards_count[ai_combat_defending_player]; ++c)
       {
-        card_instance_t *inst = in_play(ai_combat_defending_player_2022, c);
+        card_instance_t *inst = in_play(ai_combat_defending_player, c);
         if (inst && !(inst->state & 0x10) &&
-            is_what(ai_combat_defending_player_2022, c, TYPE_CREATURE))
+            is_what(ai_combat_defending_player, c, TYPE_CREATURE))
           ++num_potential_blockers;
       }
       for (int i = 0; i < num_potential_blockers; ++i)
@@ -1842,19 +1842,19 @@ int ai_choose_attackers(int player)
   int blocker_power[16], blocker_toughness[16];
   uint8_t card_to_blocker_pt_idx[150], card_to_attacker_pt_idx[150];
   int highest_blocker_toughness = 0, num_blocker_pt = 0;
-  for (int c = 0; c < active_cards_count[ai_combat_defending_player_2022]; ++c)
+  for (int c = 0; c < active_cards_count[ai_combat_defending_player]; ++c)
   {
-    card_instance_t *inst = in_play(ai_combat_defending_player_2022, c);
-    if (!inst || !is_what(ai_combat_defending_player_2022, c, TYPE_CREATURE))
+    card_instance_t *inst = in_play(ai_combat_defending_player, c);
+    if (!inst || !is_what(ai_combat_defending_player, c, TYPE_CREATURE))
       continue;
-    int p = ai_combat_defending_player_2022;
-    int pow = data[ai_combat_defending_player_2022][c].potential_power;
-    int tgh = data[ai_combat_defending_player_2022][c].potential_toughness;
+    int p = ai_combat_defending_player;
+    int pow = data[ai_combat_defending_player][c].potential_power;
+    int tgh = data[ai_combat_defending_player][c].potential_toughness;
     blocker_power[num_blocker_pt] = pow;
     blocker_toughness[num_blocker_pt] = tgh;
     uint32_t ea = cards_data[inst->internal_card_id].extra_ability;
     CardFunction fn = cards_data[inst->internal_card_id].code_pointer;
-    inst = get_card_instance(ai_combat_defending_player_2022, c);
+    inst = get_card_instance(ai_combat_defending_player, c);
     if (ea & 0x18)
     {
       int8_t old_activating_player = EXE_DWORD(0x7a3610);
@@ -1995,7 +1995,7 @@ int ai_choose_attackers(int player)
       }
     }
     EXE_DWORD(0x607d50) = 1;
-    ai_assign_blockers_2022(player);
+    ai_assign_blockers(player);
     EXE_FN(void, 0x498e30, void)();
     ai_is_speculating = 1;
     dispatch_event_raw(EVENT_SHOULD_AI_PLAY);
@@ -2003,14 +2003,14 @@ int ai_choose_attackers(int player)
     CardPower cardpow[8];
     for (int i = 0; i < 8; ++i)
       cardpow[i].pow = -1;
-    for (int c = 0; c < active_cards_count[ai_combat_defending_player_2022]; ++c)
+    for (int c = 0; c < active_cards_count[ai_combat_defending_player]; ++c)
     {
-      card_instance_t *inst = in_play(ai_combat_defending_player_2022, c);
-      if (!inst || !is_what(ai_combat_defending_player_2022, c, TYPE_CREATURE) ||
+      card_instance_t *inst = in_play(ai_combat_defending_player, c);
+      if (!inst || !is_what(ai_combat_defending_player, c, TYPE_CREATURE) ||
           !(inst->state & 0x400))
         continue;
       int pow_unblocked = mod_pow_unblocked(blocker_power[card_to_blocker_pt_idx[c]],
-                                            ai_combat_defending_player_2022, c);
+                                            ai_combat_defending_player, c);
       if (pow_unblocked < 0)
         pow_unblocked = 0;
       int pos = 0;
@@ -2028,10 +2028,10 @@ int ai_choose_attackers(int player)
     {
       int oppcard = cardpow[i].card;
       keyword_t abils =
-          get_abilities(ai_combat_defending_player_2022, oppcard, EVENT_ABILITIES, -1);
+          get_abilities(ai_combat_defending_player, oppcard, EVENT_ABILITIES, -1);
       int opp_tgh = blocker_toughness[card_to_blocker_pt_idx[oppcard]];
       int opp_pow = mod_pow_unblocked(blocker_power[card_to_blocker_pt_idx[oppcard]],
-                                      ai_combat_defending_player_2022, oppcard);
+                                      ai_combat_defending_player, oppcard);
       int my_chump = 0, have_chump = 0, free_block = 0;
       int64_t chump_assessment = 32767;
       for (int c = 0; c < active_cards_count[player]; ++c)
@@ -2043,7 +2043,7 @@ int ai_choose_attackers(int player)
         int vigilant = check_for_special_ability(player, c, 8);
         if (state & (8 | (vigilant ? 0 : 4)))
           continue;
-        if (!is_legal_block_impl(player, c, ai_combat_defending_player_2022, oppcard, abils,
+        if (!is_legal_block_impl(player, c, ai_combat_defending_player, oppcard, abils,
                                       0))
           continue;
         int idx = card_to_attacker_pt_idx[c];
@@ -2177,7 +2177,7 @@ int charge_mana(int player, color_t color, int amount)
   int old_affected_card_controller = affected_card_controller;
   int old_affected_card = affected_card;
 
-  int life_to_pay_for_krrik_2022 = 0;
+  int life_to_pay_for_krrik = 0;
 
   if (color == COLOR_ANY)
     color = COLOR_COLORLESS;
@@ -2324,7 +2324,7 @@ int charge_mana(int player, color_t color, int amount)
           spell_fizzled = 1;
           return 0;
         }
-        life_to_pay_for_krrik_2022 = chosen * 2;
+        life_to_pay_for_krrik = chosen * 2;
         pay_mana_xbugrwaU[COLOR_BLACK] -= chosen;
       }
     }
@@ -2436,7 +2436,7 @@ int charge_mana(int player, color_t color, int amount)
 
               if ((inst->state & (STATE_OUBLIETTED | STATE_IN_PLAY)) != STATE_IN_PLAY)
               {
-                put_card_on_stack2_2022(player, card);
+                put_card_on_stack2(player, card);
                 payment_TENTATIVE_reassess_all_cards();
               }
               else if (dispatch_event_to_single_card(player, card, EVENT_CAN_ACTIVATE, 1 - player,
@@ -2572,7 +2572,7 @@ int charge_mana(int player, color_t color, int amount)
                   col_to_apply_to = payment_single_color_test_bit_to_color_t(colors);
                 else
                 {
-                  load_text_2022(0, "PROMPT_GRABMANA_DUALUSE");
+                  load_text(0, "PROMPT_GRABMANA_DUALUSE");
                   col_to_apply_to = choose_a_color_exe(
                       player, text_lines[0], 1,
                       payment_TENTATIVE_color_clicked_in_mana_summary_pane, colors);
@@ -2619,7 +2619,7 @@ int charge_mana(int player, color_t color, int amount)
   pay_mana_xbugrwaU[7] = 0;
 
   if ((card_flags[player] & 2) != 0)
-    lose_life(player, life_to_pay_for_krrik_2022);
+    lose_life(player, life_to_pay_for_krrik);
 
   max_x_value = -1;
   unknown62BCEC = -1;
@@ -2635,7 +2635,7 @@ int charge_mana(int player, color_t color, int amount)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26a8540; original functions/engine.c:3320. */
-static void put_card_or_activation_onto_stack_impl_2022(int player, int card, event_t event, int a4,
+static void put_card_or_activation_onto_stack_impl(int player, int card, event_t event, int a4,
                                                  int a5)
 {
 
@@ -2710,7 +2710,7 @@ void put_card_or_activation_onto_stack(int player, int card, event_t event, int 
 {
   if (stack_size >= 32)
     return;
-  put_card_or_activation_onto_stack_impl_2022(player, card, event, a4, a5);
+  put_card_or_activation_onto_stack_impl(player, card, event, a4, a5);
 }
 
 #endif
@@ -2828,16 +2828,14 @@ int put_card_on_stack3(int player, int card)
 {
   enum
   {
-    STATE_BEING_CAST_2022 = 0x80000000u,
-    ENABLE_XTRIGGER_REPLACE_ETB_2022 = 0x80,
-    XTRIGGER_REPLACE_ETB_2022 = 0x01000e00,
-    WAV_SNOW_2022 = 84
+    STATE_BEING_CAST = 0x80000000u,
+    WAV_SNOW = 84
   };
 
   card_instance_t *instance = get_card_instance(player, card);
 
   int iid = instance->internal_card_id;
-  instance->state |= STATE_BEING_CAST_2022;
+  instance->state |= STATE_BEING_CAST;
   if (iid == -1)
   {
     obliterate_top_card_of_stack();
@@ -2907,12 +2905,12 @@ int put_card_on_stack3(int player, int card)
     if (type & TYPE_SORCERY)
       play_sound_effect(WAV_SORCERY);
     if (has_subtype(player, card, SUBTYPE_SNOW))
-      play_sound_effect((wav_t)WAV_SNOW_2022);
+      play_sound_effect((wav_t)WAV_SNOW);
   }
 
-  instance->state &= ~STATE_BEING_CAST_2022;
-  if (enable_xtrigger_flags & ENABLE_XTRIGGER_REPLACE_ETB_2022)
-    dispatch_xtrigger2(player, (xtrigger_t)XTRIGGER_REPLACE_ETB_2022, "enters the battlefield", 0,
+  instance->state &= ~STATE_BEING_CAST;
+  if (enable_xtrigger_flags & ENABLE_XTRIGGER_REPLACE_ETB)
+    dispatch_xtrigger2(player, (xtrigger_t)XTRIGGER_REPLACE_ETB, "enters the battlefield", 0,
                        player, card);
 
   EXE_FN(void, 0x436740, void)();
@@ -2939,14 +2937,14 @@ int put_card_on_stack3(int player, int card)
   {
     if (ai_is_speculating != 1)
     {
-      load_text_2022(0, "PROMPT_FIZZLE");
+      load_text(0, "PROMPT_FIZZLE");
       EXE_FN(int, 0x471D70, const char *)(EXE_STR(0x60A690));
       EXE_STDCALL_FN(void, 0x4D5D32, int)(2000);
       EXE_FN(int, 0x471D70, const char *)("");
     }
     EXE_DWORD(0x7A372C) = 1;
     cancel = 0;
-    instance->state &= ~STATE_BEING_CAST_2022;
+    instance->state &= ~STATE_BEING_CAST;
     return 0;
   }
   else
@@ -2981,7 +2979,7 @@ int is_a_tappable_mana_source(int player, int card)
 void force_activation_for_mana(int player, int card, color_test_t colors)
 {
   if (stack_size < 32)
-    put_card_or_activation_onto_stack_impl_2022(player, card, EVENT_RESOLVE_ACTIVATION, player, 0);
+    put_card_or_activation_onto_stack_impl(player, card, EVENT_RESOLVE_ACTIVATION, player, 0);
   needed_mana_colors = colors;
   tapped_for_mana_color = -1;
   int was_tapped = is_tapped(player, card);
@@ -3511,7 +3509,7 @@ int autotap_mana_source(int player, int card)
   }
 
   if (stack_size < 32)
-    put_card_or_activation_onto_stack_impl_2022(player, card, EVENT_RESOLVE_ACTIVATION, player, 0);
+    put_card_or_activation_onto_stack_impl(player, card, EVENT_RESOLVE_ACTIVATION, player, 0);
   needed_mana_colors = payment_calculate_needed_mana_colors(old_pay_mana);
   tapped_for_mana_color = -1;
   int was_tapped = inst->state & STATE_TAPPED;
@@ -3592,7 +3590,7 @@ void recalculate_all_cards_in_play(void)
         continue;
       if ((instance->state & (STATE_OUBLIETTED | STATE_IN_PLAY)) != STATE_IN_PLAY)
       {
-        reset_subtypes_from_instance_2022(instance, instance->internal_card_id);
+        reset_subtypes_from_instance(instance, instance->internal_card_id);
         continue;
       }
       instance->regen_status |= KEYWORD_RECALC_CHANGE_TYPE;
@@ -3606,7 +3604,7 @@ void recalculate_all_cards_in_play(void)
 
   count_colors_of_lands_in_play();
 
-  count_mana_2022();
+  count_mana();
 
   player_bits[0] &= ~PB_HAND_REVEALED;
   player_bits[1] &= ~PB_HAND_REVEALED;
@@ -3789,10 +3787,7 @@ int is_anyone_dead(void)
 /* ManalinkEh 2022: 0x26b08d0; original functions/engine.c:256. */
 int untap_phase(int player)
 {
-  enum
-  {
-    STATE_SUMMONSICK_NOATTACK_2022 = 0x10000
-  };
+
 
   memset(your_spells_cant_be_countered_by_color, 0, sizeof(your_spells_cant_be_countered_by_color));
 
@@ -3819,7 +3814,7 @@ int untap_phase(int player)
       if ((instance = in_play(p, c)))
       {
         if (p == player)
-          instance->state &= ~STATE_SUMMONSICK_NOATTACK_2022;
+          instance->state &= ~STATE_SICKNESS_UNUSED;
         if (instance->internal_card_id == LEGACY_EFFECT_CUSTOM &&
             instance->info_slot == (int)target_player_skips_untap &&
             instance->targets[0].player == player && !skip)
@@ -3863,7 +3858,7 @@ int untap_phase(int player)
     }
 
   count_colors_of_lands_in_play();
-  count_mana_2022();
+  count_mana();
 
   for (c = 0; c < active_cards_count[player]; ++c)
     if (untapped[c])

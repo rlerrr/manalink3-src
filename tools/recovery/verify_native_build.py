@@ -48,6 +48,19 @@ def main(canonical_helpers=None):
         debug,physical_helpers=ledger_debug_view(debug,root)
     from verify_helper_domains import verify_compiled as verify_helper_domains
     helper_domains=verify_helper_domains(debug,root,source=canonical_helpers.get('native_interfaces',{}).get('native_domains',{}) if canonical_helpers else {})
+    from verify_counter_trigger_domains import verify_compiled as verify_counter_domains
+    from canonicalize_helpers import load as helper_proof
+    counter_trigger_domains=verify_counter_domains(debug,helper_proof(root) or {},root)
+    from verify_global_array_domains import verify_compiled as verify_global_arrays
+    absolute_global_arrays=verify_global_arrays(debug,helper_proof(root) or {},root)
+    from verify_source_spelling_edits import verify_compiled as verify_spelling_symbols
+    source_spelling_symbols=verify_spelling_symbols(debug,helper_proof(root) or {},root)
+    from verify_engine_boundaries import verify_compiled as verify_engine_boundaries
+    executable_fallbacks=verify_engine_boundaries(debug,helper_proof(root) or {},root)
+    from canonicalize_helpers import source_names
+    source_spellings=source_names(root)
+    def source_symbol(name):
+        return '_'+source_spellings.get(name,name)
     from unify_scalar_helpers import verify_build as verify_helper_unification
     helper_unification=verify_helper_unification(debug,root)
     from restore_record_storage import verify_build as verify_record_storage
@@ -81,7 +94,7 @@ def main(canonical_helpers=None):
         assert len(records)==1 and records[0][2]>0 and records[0][4]==3
     flash_globals=[g for g in manifest['source_globals'] if g['name'] in {'vivien_current_event_2022','flash_current_event_2022'}]
     for global_ in flash_globals:
-        records=[s for s in debug.symbols if s[0]=='_'+global_['name']]
+        records=[s for s in debug.symbols if s[0]==source_symbol(global_['name'])]
         assert len(records)==1 and records[0][2]>0 and records[0][4]==3
         assert debug.pe.sections[records[0][2]-1].Name.rstrip(b'\0')==b'.bss'
     snow_callbacks=[f for f in manifest['accepted_functions'] if f.get('snow_consumer_evidence') and f['static']]
@@ -117,7 +130,7 @@ def main(canonical_helpers=None):
         assert debug.pe.sections[records[0][2]-1].Characteristics & 0x20000000
     subtype_result=[g for g in manifest['source_globals'] if g['name']=='targeted_subtype_spell_result_2022']
     for global_ in subtype_result:
-        records=[s for s in debug.symbols if s[0]=='_'+global_['name']]
+        records=[s for s in debug.symbols if s[0]==source_symbol(global_['name'])]
         assert len(records)==1 and records[0][2]>0 and records[0][4]==3
         assert debug.pe.sections[records[0][2]-1].Name.rstrip(b'\0')==b'.bss'
     combat_ai_private=[f for f in manifest['accepted_functions'] if f.get('combat_ai_consumer_evidence') and f['static']]
@@ -1011,6 +1024,10 @@ def main(canonical_helpers=None):
     if canonical_helpers:
         report['canonical_helpers']=dict(source=canonical_helpers,physical_symbols=physical_helpers)
         report['canonical_helper_domains']=helper_domains
+        report['counter_trigger_domains']=counter_trigger_domains
+        report['absolute_global_arrays']=absolute_global_arrays
+        report['source_spelling_symbols']=source_spelling_symbols
+        report['executable_fallbacks']=executable_fallbacks
         report['name_view']='Per-family recovery checks resolve immutable ledger names through the explicit canonical-name map; physical COFF names checked separately, with no emitted compatibility aliases.'
     save_json(cache/'build-gcc93/verification.json',report);print(json.dumps({k:v for k,v in report.items() if k not in {'excluded_c_source_units','repairs'}},indent=2))
 
@@ -1018,6 +1035,5 @@ def main(canonical_helpers=None):
 if __name__=='__main__':
     from canonicalize_helpers import load,verify,historical_sources
     if load():
-        canonical=verify()
-        with historical_sources():main(canonical)
+        with historical_sources() as canonical:main(canonical)
     else:main()

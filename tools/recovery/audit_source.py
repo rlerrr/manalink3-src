@@ -2546,9 +2546,10 @@ def main(canonical_helpers=None):
 if __name__ == "__main__":
     from canonicalize_helpers import load,verify,historical_sources
     if load():
-        canonical=verify()
-        if canonical.get('native_interfaces'):
-            from verify_helper_domains import verify_native
-            canonical['native_interfaces']['native_debug_domains']=verify_native()
-        with historical_sources():main(canonical)
+        from verify_helper_domains import verify_native
+        native_debug_domains=verify_native()
+        with historical_sources() as canonical:
+            if canonical.get('native_interfaces'):
+                canonical['native_interfaces']['native_debug_domains']=native_debug_domains
+            main(canonical)
     else:main()

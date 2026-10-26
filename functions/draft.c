@@ -29,8 +29,8 @@ static void pick_card(int *picks, int *pack, int selected)
 
 #ifndef SHANDALAR
 #include <errno.h>
-#define draft_get_path_base_2022 EXE_FN(void, 0x466020, char *)
-#define DRAFT_IS_BASIC_2022(id) ((id) == CARD_ID_SWAMP || (id) == CARD_ID_ISLAND || (id) == CARD_ID_MOUNTAIN || (id) == CARD_ID_FOREST || (id) == CARD_ID_PLAINS)
+#define draft_get_path_base EXE_FN(void, 0x466020, char *)
+#define DRAFT_IS_BASIC(id) ((id) == CARD_ID_SWAMP || (id) == CARD_ID_ISLAND || (id) == CARD_ID_MOUNTAIN || (id) == CARD_ID_FOREST || (id) == CARD_ID_PLAINS)
 
 #endif
 
@@ -40,7 +40,7 @@ static void pick_card(int *picks, int *pack, int selected)
 static void write_deck_file(char *deckname, int *iids, int num_packs, EXPANSION_t *exps, int *is_booster)
 {
   char path[500];
-  draft_get_path_base_2022(path);
+  draft_get_path_base(path);
   int l = strlen(path);
   snprintf(path + l, 500 - l, "\\PlayDeck\\%s.dck", deckname);
   FILE *f = fopen(path, "w");
@@ -66,7 +66,7 @@ static void write_deck_file(char *deckname, int *iids, int num_packs, EXPANSION_
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26623d0; original functions/draft.c:271. */
-int card_draft_2022(int player, int card, event_t event)
+int card_draft(int player, int card, event_t event)
 {
   if (ai_is_speculating == 1 || trigger_condition != TRIGGER_UPKEEP || card != affected_card ||
       player != affected_card_controller || reason_for_trigger_controller != player)
@@ -113,7 +113,7 @@ int card_draft_2022(int player, int card, event_t event)
       for (int plr = 0; plr <= num_opponents; ++plr)
       {
         int csvids[max_in_pack];
-        int num = make_pack_2022(exps[packnum], is_booster[packnum], csvids);
+        int num = make_pack(exps[packnum], is_booster[packnum], csvids);
         if (num <= 0)
         {
           const char **names = load_text_nocopy_from_file("Menus.txt", "EXPANSIONNAMES", NULL);
@@ -151,7 +151,7 @@ int card_draft_2022(int player, int card, event_t event)
           {
             if (picks[0][0] >= 0)
             {
-              selected = show_deck_force_expansion_2022(HUMAN, packs[0], 500, "Draft a card", 0,
+              selected = show_deck_force_expansion(HUMAN, packs[0], 500, "Draft a card", 0,
                                                         "View prev", exps[packnum]);
               if (selected >= 0)
                 break;
@@ -160,7 +160,7 @@ int card_draft_2022(int player, int card, event_t event)
             }
             else
             {
-              selected = show_deck_force_expansion_2022(HUMAN, packs[0], 500, "Draft a card", 1, "",
+              selected = show_deck_force_expansion(HUMAN, packs[0], 500, "Draft a card", 1, "",
                                                         exps[packnum]);
               if (selected >= 0)
                 break;
@@ -194,7 +194,7 @@ int card_draft_2022(int player, int card, event_t event)
             int candidate = i, reject = 0, restrict_color = 1;
             if (cd->type & (TYPE_LAND | TYPE_ARTIFACT))
               if (num_card_colors == 0 || num_card_colors == 5 || !(color & ~colors[oppnum]))
-                restrict_color = DRAFT_IS_BASIC_2022(cd->id);
+                restrict_color = DRAFT_IS_BASIC(cd->id);
             if (restrict_color)
             {
               if (num_drafted_colors >= 2)
@@ -215,7 +215,7 @@ int card_draft_2022(int player, int card, event_t event)
             best_card = best_card_backup;
           card_data_t *cd = &cards_data[pack[best_card]];
           color_test_t color = cd->color & COLOR_TEST_ANY_COLORED;
-          if (num_bits_set(color | colors[oppnum]) < 3 && !DRAFT_IS_BASIC_2022(cd->id))
+          if (num_bits_set(color | colors[oppnum]) < 3 && !DRAFT_IS_BASIC(cd->id))
             colors[oppnum] |= color;
           pick_card(picks[oppnum], pack, best_card);
         }
@@ -249,7 +249,7 @@ int card_draft_2022(int player, int card, event_t event)
         {
           card_data_t *cd = &cards_data[iids[i]];
           int score = cards_ptr[cd->id]->ai_base_value;
-          if (DRAFT_IS_BASIC_2022(cd->id))
+          if (DRAFT_IS_BASIC(cd->id))
             score -= 100;
           color_test_t color = cd->color & COLOR_TEST_ANY_COLORED;
           if ((cd->type & (TYPE_LAND | TYPE_ARTIFACT)) && (cd->extra_ability & EA_MANA_SOURCE))

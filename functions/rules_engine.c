@@ -3,6 +3,8 @@
 
 #include "manalink.h"
 
+static void increase_trap_condition_impl(int player, int trap, int val, int add);
+
 /* Canonical recovered helper declarations. */
 int get_stormcolor_count(int player, color_t clr);
 void increment_storm_count(int player, int mode);
@@ -11,7 +13,7 @@ int get_storm_count(void);
 int get_stormcreature_count(int k);
 
 /* October 2022 independent game-mode flags. */
-other_game_mode_2022_t other_game_mode;
+other_game_mode_t other_game_mode;
 
 extern int mulligans_complete[2];
 
@@ -1312,89 +1314,113 @@ static int get_rules_engine_card(int player){
 
 
 
-static void reset_storm_count(int player, int card){
-	if (player != HUMAN){	// Human rules engine clears both
-		return;
-	}
+static void reset_storm_count(int player, int card)
+{
+  target_definition_t td;
 
-	target_definition_t td;
-	base_target_definition(player, card, &td, TYPE_CREATURE);
-	td.required_subtype = SUBTYPE_WEREWOLF;
+  if (player != HUMAN)
+    return;
 
-	if( can_target(&td) ){
-		// This reset the storm count for both players and set the "moon phases" for werewolves
-		int human_count = get_specific_storm_count(HUMAN);
-		int ai_count = get_specific_storm_count(AI);
-
-		int i;
-		for(i=0; i<2; i++){
-			int count = 0;
-			while(count < active_cards_count[i]){
-					if( in_play(i, count) ){
-						card_instance_t *instance= get_card_instance(i, count);
-						if( has_subtype(i, count, SUBTYPE_WEREWOLF) && instance->targets[9].card != 66 ){
-							instance->targets[8].player = human_count;
-							instance->targets[8].card = ai_count;
-							instance->targets[9].card = 66;
-						}
-						if( get_id(i, count) == CARD_ID_RULES_ENGINE ){
-							set_trap_condition(i, TRAP_STORM_BLACK, 0);
-							set_trap_condition(i, TRAP_STORM_BLUE, 0);
-							set_trap_condition(i, TRAP_STORM_GREEN, 0);
-							set_trap_condition(i, TRAP_STORM_RED, 0);
-							set_trap_condition(i, TRAP_STORM_WHITE, 0);
-							remove_all_counters(i, count, COUNTER_VORTEX);
-							remove_all_counters(i, count, COUNTER_CHARGE);
-						}
-					}
-					count++;
-			}
-		}
-	}
-	else{
-		int p, crd;
-		for (p = 0; p <= 1; ++p){
-			if ((crd = get_rules_engine_card(p)) >= 0){
-				set_trap_condition(p, TRAP_STORM_BLACK, 0);
-				set_trap_condition(p, TRAP_STORM_BLUE, 0);
-				set_trap_condition(p, TRAP_STORM_GREEN, 0);
-				set_trap_condition(p, TRAP_STORM_RED, 0);
-				set_trap_condition(p, TRAP_STORM_WHITE, 0);
-				remove_all_counters(p, crd, COUNTER_VORTEX);
-				remove_all_counters(p, crd, COUNTER_CHARGE);
-			}
-		}
-	}
+  base_target_definition(HUMAN, card, &td, TYPE_CREATURE);
+  td.required_subtype = SUBTYPE_WEREWOLF;
+  if (!can_target(&td))
+  {
+    for (int p = 0; p < 2; ++p)
+    {
+      int rec = rules_engine_card[p];
+      if (rec >= 0)
+      {
+        increase_trap_condition_impl(p, 0x403, 0, 0);
+        increase_trap_condition_impl(p, 0x404, 0, 0);
+        increase_trap_condition_impl(p, 0x405, 0, 0);
+        increase_trap_condition_impl(p, 0x406, 0, 0);
+        increase_trap_condition_impl(p, 0x407, 0, 0);
+        remove_all_counters(HUMAN, card, p, rec, COUNTER_VORTEX);
+        remove_all_counters(HUMAN, card, p, rec, COUNTER_BLOOD);
+        remove_all_counters(HUMAN, card, p, rec, COUNTER_CHARGE);
+        remove_all_counters(HUMAN, card, p, rec, COUNTER_DEVOTION);
+      }
+    }
+  }
+  else
+  {
+    int human_count = rules_engine_card[HUMAN] == -1
+                          ? 0
+                          : count_counters(HUMAN, rules_engine_card[HUMAN], COUNTER_VORTEX);
+    int ai_count =
+        rules_engine_card[AI] == -1 ? 0 : count_counters(AI, rules_engine_card[AI], COUNTER_VORTEX);
+    for (int p = 0; p < 2; ++p)
+    {
+      for (int c = 0; c < active_cards_count[p]; ++c)
+      {
+        if (in_play(p, c))
+        {
+          card_instance_t *instance = get_card_instance(p, c);
+          if (has_subtype(p, c, SUBTYPE_WEREWOLF) && instance->targets[9].card != 0x42)
+          {
+            instance->targets[9].card = 0x42;
+            instance->targets[8].player = human_count;
+            instance->targets[8].card = ai_count;
+          }
+          if (get_id(p, c) == CARD_ID_RULES_ENGINE)
+          {
+            increase_trap_condition_impl(p, 0x403, 0, 0);
+            increase_trap_condition_impl(p, 0x404, 0, 0);
+            increase_trap_condition_impl(p, 0x405, 0, 0);
+            increase_trap_condition_impl(p, 0x406, 0, 0);
+            increase_trap_condition_impl(p, 0x407, 0, 0);
+            remove_all_counters(HUMAN, card, p, c, COUNTER_VORTEX);
+            remove_all_counters(HUMAN, card, p, c, COUNTER_BLOOD);
+            remove_all_counters(HUMAN, card, p, c, COUNTER_CHARGE);
+            remove_all_counters(HUMAN, card, p, c, COUNTER_DEVOTION);
+          }
+        }
+      }
+    }
+  }
 }
 
-static void keep_storm_count(int player, int card, event_t event ){
+static void keep_storm_count(int player, int card, event_t event)
+{
+  enum
+  {
+    TRAP_NONCREATURES_PLAYED = 0x408
+  };
+  int not_cast;
+  if (player != HUMAN)
+    return;
 
-	// keep track of storm count
-	if( player == HUMAN && trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) &&
-		player == reason_for_trigger_controller && event == EVENT_END_TRIGGER
-	  ){
-		card_instance_t *played = get_card_instance(trigger_cause_controller, trigger_cause);
-		if( ! ( cards_data[ played->internal_card_id].type & TYPE_LAND )
-			//&& ! ( cards_data[ played->internal_card_id].cc[2] == 15 )
-		  ){
-			int mode = 0;
-			if( cards_data[ played->internal_card_id].type & TYPE_CREATURE ){
-				mode = STORM_CREATURE;
-			}
-			if( get_id(trigger_cause_controller, trigger_cause) == CARD_ID_PEER_THROUGH_DEPTHS ){
-				increase_trap_condition(trigger_cause_controller, TRAP_PEER_THROUGH_DEPTHS, 1);
-			}
-			if( get_id(trigger_cause_controller, trigger_cause) == CARD_ID_REACH_THROUGH_MISTS ){
-				increase_trap_condition(trigger_cause_controller, TRAP_REACH_THROUGH_MISTS, 1);
-			}
-			mode |= get_color(trigger_cause_controller, trigger_cause) & COLOR_TEST_ANY_COLORED;
-			increment_storm_count(trigger_cause_controller, mode);
-		}
-	}
-
-	if(event == EVENT_CLEANUP){
-		reset_storm_count(player, card);
-	}
+  if (trigger_condition == TRIGGER_SPELL_CAST && card == affected_card &&
+      affected_card_controller == HUMAN && reason_for_trigger_controller == HUMAN &&
+      (not_cast = check_special_flags(trigger_cause_controller, trigger_cause, SF_NOT_CAST),
+       event == EVENT_END_TRIGGER && !not_cast))
+  {
+    card_instance_t *played = get_card_instance(trigger_cause_controller, trigger_cause);
+    uint8_t types = cards_data[played->internal_card_id].type;
+    if (!(types & TYPE_LAND))
+    {
+      int mode;
+      if (types & TYPE_CREATURE)
+        mode = STORM_CREATURE;
+      else
+      {
+        increase_trap_condition_impl(trigger_cause_controller, TRAP_NONCREATURES_PLAYED, 1, 1);
+        mode = 0;
+      }
+      if (types & TYPE_ENCHANTMENT)
+        mode |= STORM_ENCHANTMENT;
+      if ((types & TYPE_SPELL) && !(types & TYPE_CREATURE))
+        mode |= STORM_INSTANT_SORCERY;
+      if (get_id(trigger_cause_controller, trigger_cause) == CARD_ID_PEER_THROUGH_DEPTHS)
+        increase_trap_condition_impl(trigger_cause_controller, TRAP_PEER_THROUGH_DEPTHS, 1, 1);
+      if (get_id(trigger_cause_controller, trigger_cause) == CARD_ID_REACH_THROUGH_MISTS)
+        increase_trap_condition_impl(trigger_cause_controller, TRAP_REACH_THROUGH_MISTS, 1, 1);
+      unsigned int colors = get_color(trigger_cause_controller, trigger_cause);
+      increment_storm_count(trigger_cause_controller, mode | (colors & COLOR_TEST_ANY_COLORED));
+    }
+  }
+  else if (event == EVENT_CAN_SKIP_TURN)
+    reset_storm_count(player, card);
 }
 
 
@@ -1530,796 +1556,1131 @@ static int get_graveyard_counts(int player){
 	return result;
 }
 
-static void static_graveyard_abilities(int player, int card, event_t event){
+static void static_graveyard_abilities(int player, int card, event_t event)
+{
+  uint16_t uVar1;
+  uint16_t uVar2;
+  uint16_t uVar3;
+  uint16_t uVar4;
+  uint16_t uVar5;
+  int *piVar6;
+  xtrigger_t xVar7;
+  bool bVar8;
+  bool bVar9;
+  card_instance_t *instance;
+  int iVar11;
+  unsigned int uVar12;
+  int iVar13;
+  int iVar14;
+  unsigned int uVar15;
+  int iVar16;
+  enable_xtrigger_flags_t eVar17;
+  xtrigger_t xVar18;
+  const char *pcVar19;
+  int iVar20;
+  unsigned int uStack_f0;
+  char buffer[100];
+  if ((((unsigned int)player_bits[player] >> 24 & 0xff) & 2) != 0)
+  {
+    return;
+  }
+  if (trigger_condition == 0xdb)
+  {
+    if (card == affected_card)
+    {
+      if (player != affected_card_controller)
+      {
+      LAB_026c3940:
+        if (event != EVENT_ABILITIES)
+          goto LAB_026c394d;
+        goto LAB_026c3c99;
+      }
+      if ((reason_for_trigger_controller == player) && (trigger_cause_controller == player))
+      {
+        uVar12 = get_graveyard_counts(player);
+        uStack_f0 = uVar12 & 1;
+        if (uStack_f0 != 0)
+        {
+          iVar11 = is_what(player, trigger_cause, 1);
+          uStack_f0 = (unsigned int)(iVar11 != 0);
+        }
+        if ((((uVar12 & 8) != 0) &&
+             (iVar11 = get_power(trigger_cause_controller, trigger_cause), iVar11 == 1)) &&
+            (iVar11 = get_toughness(trigger_cause_controller, trigger_cause), iVar11 == 1))
+        {
+          uStack_f0 = uStack_f0 | 2;
+        }
+        if ((((uVar12 & 0x10) != 0) &&
+             (iVar11 = is_what(trigger_cause_controller, trigger_cause, 2), iVar11 != 0)) &&
+            (iVar11 = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_HUMAN),
+             iVar11 != 0))
+        {
+          uStack_f0 = uStack_f0 | 4;
+        }
+        if ((((uVar12 & 0x40) != 0) &&
+             (iVar11 = is_what(trigger_cause_controller, trigger_cause, 0x47), iVar11 != 0)) &&
+            (iVar11 = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_DEMON),
+             iVar11 != 0))
+        {
+          uStack_f0 = uStack_f0 | 8;
+        }
+        if (((((uVar12 & 0x80) != 0) &&
+              (iVar11 = is_what(trigger_cause_controller, trigger_cause, 2), iVar11 != 0)) &&
+             (iVar11 = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_SNAKE),
+              iVar11 != 0)) &&
+            (iVar11 = is_token(trigger_cause_controller, trigger_cause), iVar11 == 0))
+        {
+          uStack_f0 = uStack_f0 | 0x10;
+        }
+        if ((((uVar12 & 0x100) != 0) &&
+             (iVar11 = is_what(trigger_cause_controller, trigger_cause, 1), iVar11 != 0)) &&
+            (iVar11 = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_SWAMP),
+             iVar11 != 0))
+        {
+          uStack_f0 = uStack_f0 | 0x20;
+        }
+        if ((((uVar12 & 0x1000) != 0) &&
+             (iVar11 = is_what(trigger_cause_controller, trigger_cause, 1), iVar11 != 0)) &&
+            (iVar11 = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_FOREST),
+             iVar11 != 0))
+        {
+          uStack_f0 = uStack_f0 | 0x40;
+        }
+        if ((((uVar12 & 0x10000) != 0) &&
+             (iVar11 = is_what(trigger_cause_controller, trigger_cause, 0x47), iVar11 != 0)) &&
+            (iVar11 = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_DRAGON),
+             iVar11 != 0))
+        {
+          uStack_f0 = uStack_f0 | 0x80;
+        }
+        if ((((uVar12 & 0x20000) != 0) &&
+             (iVar11 = is_what(trigger_cause_controller, trigger_cause, 2), iVar11 != 0)) &&
+            (iVar11 = get_cmc(trigger_cause_controller, trigger_cause), 5 < iVar11))
+        {
+          uStack_f0 = uStack_f0 | 0x100;
+        }
+        if ((((uVar12 & 0x200000) != 0) &&
+             (iVar11 = is_what(trigger_cause_controller, trigger_cause, 1), iVar11 != 0)) &&
+            (iVar11 = has_mana_multi(player, 4, 0, 0, 0, 2, 0), iVar11 != 0))
+        {
+          uStack_f0 = uStack_f0 | 0x200;
+        }
+        if (((((uVar12 & 0x1000000) != 0) &&
+              (iVar11 = is_what(trigger_cause_controller, trigger_cause, 2), iVar11 != 0)) &&
+             (iVar11 = check_special_flags3(trigger_cause_controller, trigger_cause, 1),
+              iVar11 != 0)) &&
+            (iVar11 = get_owner(trigger_cause_controller, trigger_cause), iVar11 == player))
+        {
+          uStack_f0 = uStack_f0 | 0x400;
+        }
+        if (((uVar12 & 0x2000000) == 0) ||
+            (iVar11 = is_what(trigger_cause_controller, trigger_cause, 0x40), iVar11 == 0))
+        {
+          if (((uVar12 & 0x10000000) != 0) &&
+              (iVar11 = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_GATE),
+               iVar11 != 0))
+            goto LAB_026c47a3;
+          if (uStack_f0 == 0)
+            goto LAB_026c3824;
+        }
+        else
+        {
+          uStack_f0 = uStack_f0 | 0x800;
+          if (((uVar12 & 0x10000000) != 0) &&
+              (iVar11 = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_GATE),
+               iVar11 != 0))
+          {
+          LAB_026c47a3:
+            uStack_f0 = uStack_f0 | 0x1000;
+          }
+        }
+        iVar13 = trigger_cause;
+        iVar11 = trigger_cause_controller;
+        if (event == EVENT_TRIGGER)
+        {
+          event_result = event_result | 2;
+        }
+        else
+        {
+          if (event != EVENT_RESOLVE_TRIGGER)
+            goto LAB_026c3824;
+          piVar6 = graveyard_ptr_mutable[player];
+          iVar14 = count_graveyard(player);
+          iVar14 = iVar14 + -1;
+          if (-1 < iVar14)
+          {
+            do
+            {
+              iVar20 = piVar6[iVar14];
+              uVar4 = cards_data[iVar20].id;
+              if (uVar4 == 0x2e94)
+              {
+                if ((uStack_f0 & 4) != 0)
+                {
+                  add_counters(iVar11, iVar13, iVar11, iVar13, COUNTER_P1_P1, 1);
+                }
+              }
+              else if ((unsigned short)uVar4 < 0x2e95)
+              {
+                if (uVar4 == 0x234c)
+                {
+                  if (((uStack_f0 & 2) != 0) &&
+                      ((iVar20 = duh_mode(player),
+                        iVar20 != 0 ||
+                            (iVar20 = do_dialog(player, player, card, -1, -1,
+                                                " Return Sword of the Meek\tto play\n Pass", 0),
+                             iVar20 == 0))))
+                  {
+                    iVar20 = reanimate_permanent(player, card, player, iVar14, REANIMATE_DEFAULT);
+                    equip_target_creature(player, iVar20, iVar11, iVar13);
+                  }
+                }
+                else if ((unsigned short)uVar4 < 0x234d)
+                {
+                  if (uVar4 == 0x1bff)
+                  {
+                    if ((uStack_f0 & 8) != 0)
+                      goto LAB_026c5cd4;
+                  }
+                  else if (uVar4 == 0x1d8d)
+                  {
+                    if ((uStack_f0 & 0x10) != 0)
+                    {
+                      iVar20 = duh_mode(player);
+                      if (iVar20 == 0)
+                      {
+                        pcVar19 = " Return Sosuke\'s Summons to hand\n Do not return";
+                        goto LAB_026c5c9f;
+                      }
+                      goto LAB_026c5cc7;
+                    }
+                  }
+                  else if ((uVar4 == 0x1952) && ((uStack_f0 & 0x80) != 0))
+                  {
+                    iVar20 = duh_mode(player);
+                    if (iVar20 == 0)
+                    {
+                      pcVar19 = " Return Bladewing\'s Thrall to play\n Do not return";
+                      goto LAB_026c4a9b;
+                    }
+                    goto LAB_026c4ac3;
+                  }
+                }
+                else if (uVar4 == 0x24c4)
+                {
+                  if ((uStack_f0 & 0x40) != 0)
+                  {
+                    iVar20 = duh_mode(player);
+                    if (iVar20 == 0)
+                    {
+                      pcVar19 = " Return Reach of Branches to hand\n Do not return";
+                    LAB_026c5c9f:
+                      iVar20 = do_dialog(player, player, card, -1, -1, pcVar19, 0);
+                      if (iVar20 != 0)
+                        goto LAB_026c483a;
+                    }
+                  LAB_026c5cc7:
+                    iVar20 = piVar6[iVar14];
+                  LAB_026c5cd4:
+                    add_card_to_hand(player, iVar20);
+                    remove_card_from_grave(player, iVar14);
+                  }
+                }
+                else
+                {
+                  if (((uVar4 == 0x290f) && ((uStack_f0 & 1) != 0)) &&
+                      ((iVar20 = duh_mode(player),
+                        iVar20 != 0 ||
+                            (iVar20 = do_dialog(player, player, card, -1, -1,
+                                                " Return Bloodghast to play\n Do not return", 0),
+                             iVar20 == 0))))
+                  {
+                  LAB_026c48f1:
+                    reanimate_permanent(player, card, player, iVar14, REANIMATE_DEFAULT);
+                  }
+                }
+              }
+              else if (uVar4 == 0x3e33)
+              {
+                if ((uStack_f0 & 0x400) != 0)
+                {
+                  create_legacy_effect(player, card, prized_amalgam_legacy);
+                }
+              }
+              else if ((unsigned short)uVar4 < 0x3e34)
+              {
+                if (uVar4 == 0x315a)
+                {
+                  if ((uStack_f0 & 0x20) != 0)
+                  {
+                    iVar20 = duh_mode(player);
+                    if (iVar20 == 0)
+                    {
+                      pcVar19 = " Return Veilborn Ghoul to hand\n Do not return";
+                      goto LAB_026c5c9f;
+                    }
+                    goto LAB_026c5cc7;
+                  }
+                }
+                else if ((((uVar4 == 0x3b9b) && ((uStack_f0 & 0x200) != 0)) &&
+                          (iVar20 = do_dialog(player, player, card, -1, -1,
+                                              " Return Akoum Firebird to bf\n Decline", 0),
+                           iVar20 == 0)) &&
+                         (iVar20 = charge_mana_multi_while_resolving_csvid(
+                              0x3b9b, EVENT_RESOLVE_TRIGGER, player, 4, 0, 0, 0, 2, 0),
+                          iVar20 != 0))
+                  goto LAB_026c48f1;
+              }
+              else if (uVar4 == 0x4054)
+              {
+                if ((uStack_f0 & 0x800) != 0)
+                {
+                  iVar20 = duh_mode(player);
+                  if (iVar20 == 0)
+                  {
+                    pcVar19 = " Return Ovalchase Daredevil to play\n Do not return";
+                  LAB_026c4a9b:
+                    iVar20 = do_dialog(player, player, card, -1, -1, pcVar19, 0);
+                    if (iVar20 != 0)
+                      goto LAB_026c483a;
+                  }
+                LAB_026c4ac3:
+                  iVar20 = add_card_to_hand(player, piVar6[iVar14]);
+                  remove_card_from_grave(player, iVar14);
+                  put_into_play(player, iVar20);
+                }
+              }
+              else
+              {
+                if (((uVar4 == 0x4caf) && ((uStack_f0 & 0x1000) != 0)) &&
+                    ((iVar20 = duh_mode(player),
+                      iVar20 != 0 ||
+                          (iVar20 = do_dialog(
+                               player, player, card, -1, -1,
+                               " Put Gate Colossus on top of your library\n Leave in grave", 0),
+                           iVar20 == 0))))
+                {
+                  from_graveyard_to_deck(player, iVar14, 1);
+                }
+              }
+            LAB_026c483a:
+              if ((cards_data[piVar6[iVar14]].cc[2] == '\x12') && ((uStack_f0 & 0x100) != 0))
+              {
+                scnprintf(buffer, 100, " Return %s to bf\n Decline",
+                          cards_ptr[cards_data[piVar6[iVar14]].id]->name);
+                iVar20 = duh_mode(player);
+                if ((iVar20 != 0) ||
+                    (iVar20 = do_dialog(player, player, card, -1, -1, buffer, 0), iVar20 == 0))
+                {
+                  iVar20 = add_card_to_hand(player, piVar6[iVar14]);
+                  remove_card_from_grave(player, iVar14);
+                  put_into_play_aura_attached_to_target(player, iVar20, trigger_cause_controller,
+                                                        trigger_cause);
+                }
+              }
+              iVar14 = iVar14 + -1;
+            } while (iVar14 != -1);
+          }
+        }
+        if (trigger_condition == 0xd3)
+          goto LAB_026c382f;
+      }
+      else if (event == EVENT_ABILITIES)
+        goto LAB_026c41bf;
+    LAB_026c394d:
+      if (trigger_condition == 0xd7)
+      {
+      LAB_026c395d:
+        if (card == affected_card)
+          goto LAB_026c3969;
+      }
+    }
+    else
+    {
+    LAB_026c383d:
+      if (event == EVENT_ABILITIES)
+      {
+      LAB_026c3c8d:
+        if (affected_card_controller == player)
+        {
+        LAB_026c41bf:
+          instance = in_play(player, affected_card);
+          if ((instance != NULL) &&
+              (iVar11 = is_what(affected_card_controller, affected_card, 2), iVar11 != 0))
+          {
+            uVar12 = get_graveyard_counts(player);
+            if (((uVar12 & 4) != 0) &&
+                (iVar11 = check_battlefield_for_subtype(player, 1, 0x5002), iVar11 != 0))
+            {
+              event_result = event_result | 0x20;
+            }
+            if (((uVar12 & 0x2000) != 0) &&
+                (iVar11 = check_battlefield_for_subtype(player, 1, 0x5001), iVar11 != 0))
+            {
+              event_result = event_result | 0x80;
+            }
+            if (((uVar12 & 0x4000) != 0) &&
+                (iVar11 = check_battlefield_for_subtype(player, 1, 0x5009), iVar11 != 0))
+            {
+              event_result = event_result | 1;
+            }
+            if (((uVar12 & 0x8000) != 0) &&
+                (iVar11 = check_battlefield_for_subtype(player, 1, 0x5007), iVar11 != 0))
+            {
+              event_result = event_result | 0x100;
+            }
+            if (((uVar12 & 0x100000) != 0) &&
+                (iVar11 = check_battlefield_for_subtype(player, 1, 0x5006), iVar11 != 0))
+            {
+              haste(affected_card_controller, affected_card, EVENT_ABILITIES);
+            }
+          }
+        }
+      LAB_026c3c99:
+        if (trigger_condition == 0xd7)
+          goto LAB_026c395d;
+        goto LAB_026c3857;
+      }
+    }
+  LAB_026c384a:
+    if ((((event == EVENT_GRAVEYARD_FROM_PLAY) &&
+          (iVar11 = check_for_death_trigger_removal(affected_card_controller, affected_card),
+           iVar11 == 0)) &&
+         (instance = get_card_instance(affected_card_controller, affected_card),
+          (unsigned char)(instance->kill_code - 1) < 3)) &&
+        (iVar11 = check_special_flags2(affected_card_controller, affected_card, 0x10000000),
+         iVar11 == 0))
+    {
+      uVar12 = get_graveyard_counts(player);
+      if ((uVar12 & 0x40200) != 0)
+      {
+        if (affected_card_controller != player)
+          goto LAB_026c3857;
+        instance = in_play(player, affected_card);
+        if ((instance != NULL) &&
+            (iVar11 = is_what(affected_card_controller, affected_card, 2), iVar11 != 0))
+        {
+          instance = get_card_instance(player, card);
+          if (instance->targets[1].player < 0)
+          {
+            instance = get_card_instance(player, card);
+            instance->targets[1].player = 0;
+          }
+          instance = get_card_instance(player, card);
+          instance->targets[1].player = instance->targets[1].player | 1;
+        }
+      }
+      if ((((uVar12 & 0x8000000) != 0) && (affected_card_controller == player)) &&
+          ((instance = in_play(player, affected_card),
+            instance != NULL &&
+                ((iVar11 = is_what(affected_card_controller, affected_card, 2),
+                  iVar11 != 0 && (iVar11 = has_subtype(affected_card_controller, affected_card,
+                                                       SUBTYPE_DRAGON),
+                                  iVar11 != 0))))))
+      {
+        instance = get_card_instance(player, card);
+        if (instance->targets[1].player < 0)
+        {
+          instance = get_card_instance(player, card);
+          instance->targets[1].player = 0;
+        }
+        instance = get_card_instance(player, card);
+        instance->targets[1].player = instance->targets[1].player | 1;
+      }
+    }
+  }
+  else
+  {
+  LAB_026c3824:
+    if (trigger_condition != 0xd3)
+      goto LAB_026c3c80;
+  LAB_026c382f:
+    iVar11 = affected_card;
+    if (card != affected_card)
+      goto LAB_026c383d;
+    if (player != affected_card_controller)
+      goto LAB_026c3940;
+    if (reason_for_trigger_controller == player)
+    {
+      uVar12 = get_graveyard_counts(player);
+      iVar13 = is_what(trigger_cause_controller, trigger_cause, 1);
+      if (iVar13 != 0)
+      {
+      LAB_026c3c80:
+        if (event != EVENT_ABILITIES)
+          goto LAB_026c394d;
+        goto LAB_026c3c8d;
+      }
+      uVar15 = uVar12 & 0x4000000;
+      if ((trigger_cause_controller != player) ||
+          (iVar13 = is_what(player, trigger_cause, 2), iVar13 == 0))
+      {
+        if ((uVar15 != 0) &&
+            (iVar13 = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_BOLAS),
+             iVar13 != 0))
+        {
+          iVar13 = is_what(trigger_cause_controller, trigger_cause, 0x100);
+          uStack_f0 = 0;
+          if (iVar13 != 0)
+          {
+          LAB_026c446b:
+            uStack_f0 = uStack_f0 | 0x10;
+            goto LAB_026c4472;
+          }
+        }
+        goto LAB_026c3c80;
+      }
+      uStack_f0 = uVar12 & 2;
+      if (uStack_f0 != 0)
+      {
+        if (rules_engine_card[player] == -1)
+        {
+          uStack_f0 = 0;
+        }
+        else
+        {
+          iVar13 = count_counters(player, rules_engine_card[player], COUNTER_BLOOD);
+          uStack_f0 = (unsigned int)(iVar13 == 1);
+        }
+      }
+      if (((uVar12 & 0x400) != 0) && (iVar13 = has_mana(player, 3, 2), iVar13 != 0))
+      {
+        uStack_f0 = uStack_f0 | 2;
+      }
+      if (((uVar12 & 0x1000000) != 0) &&
+          (iVar13 = check_special_flags(trigger_cause_controller, trigger_cause, 0x10000000),
+           iVar13 != 0))
+      {
+        uStack_f0 = uStack_f0 | 8;
+      }
+      if ((((uVar12 & 0x800000) == 0) ||
+           (iVar13 = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_ELDRAZI),
+            iVar13 == 0)) ||
+          (iVar13 = get_cmc(trigger_cause_controller, trigger_cause), iVar13 < 7))
+      {
+        if ((uVar15 != 0) &&
+            (iVar13 = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_BOLAS),
+             iVar13 != 0))
+          goto LAB_026c5e22;
+      LAB_026c5884:
+        if (uStack_f0 == 0)
+          goto LAB_026c3c80;
+      }
+      else
+      {
+        uStack_f0 = uStack_f0 | 4;
+        if ((uVar15 != 0) &&
+            (iVar13 = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_BOLAS),
+             iVar13 != 0))
+        {
+        LAB_026c5e22:
+          iVar13 = is_what(trigger_cause_controller, trigger_cause, 0x100);
+          if (iVar13 != 0)
+            goto LAB_026c446b;
+          goto LAB_026c5884;
+        }
+      }
+    LAB_026c4472:
+      if (event == EVENT_TRIGGER)
+      {
+        event_result = event_result | 2;
+      }
+      else
+      {
+        if (event != EVENT_RESOLVE_TRIGGER)
+          goto LAB_026c3c80;
+        piVar6 = graveyard_ptr_mutable[player];
+        iVar13 = count_graveyard(player);
+        iVar13 = iVar13 + -1;
+        if (-1 < iVar13)
+        {
+          do
+          {
+            iVar14 = piVar6[iVar13];
+            uVar3 = cards_data[iVar14].id;
+            if (uVar3 == 0x3d0c)
+            {
+              if ((uStack_f0 & 4) != 0)
+              {
+                iVar14 = add_card_to_hand(player, iVar14);
+                add_state(player, iVar14, 0x20);
+                default_test_definition((test_definition_t *)buffer, 2);
+                iVar20 = check_battlefield_for_special_card(player, iVar11, player, 4,
+                                                            (test_definition_t *)buffer);
+                iVar16 = check_battlefield_for_special_card(player, iVar11, 1 - player, 4,
+                                                            (test_definition_t *)buffer);
+                iVar20 =
+                    do_dialog(player, player, iVar11, -1, -1, " Exile Kozilek\'s Return\n Decline",
+                              (unsigned int)(iVar16 < iVar20));
+                if (iVar20 == 0)
+                {
+                  remove_card_from_grave(player, iVar13);
+                  new_damage_all(player, iVar14, 2, 5, 1, NULL);
+                  rfg_card_in_hand(player, iVar14);
+                }
+                else
+                {
+                  obliterate_card(player, iVar14);
+                  hand_count[player] = hand_count[player] + -1;
+                }
+              }
+            }
+            else if ((unsigned short)uVar3 < 0x3d0d)
+            {
+              if (uVar3 == 0x23f8)
+              {
+                if (((((uStack_f0 & 2) != 0) && (iVar14 = has_mana(player, 3, 2), iVar14 != 0)) &&
+                     ((iVar14 = duh_mode(player),
+                       iVar14 != 0 || (iVar14 = do_dialog(
+                                           player, player, iVar11, -1, -1,
+                                           " Return Masked Admirers to hand\n Do not return", 0),
+                                       iVar14 == 0)))) &&
+                    (charge_mana(player, COLOR_GREEN, 2), spell_fizzled != 1))
+                {
+                  add_card_to_hand(player, piVar6[iVar13]);
+                  remove_card_from_grave(player, iVar13);
+                }
+              }
+              else
+              {
+                if (((uVar3 == 0x2b43) && ((uStack_f0 & 1) != 0)) &&
+                    ((iVar14 = duh_mode(player),
+                      iVar14 != 0 ||
+                          (iVar14 = do_dialog(player, player, iVar11, -1, -1,
+                                              " Return Vengevine to play\n Do not return", 0),
+                           iVar14 == 0))))
+                {
+                  reanimate_permanent(player, iVar11, player, iVar13, REANIMATE_DEFAULT);
+                }
+              }
+            }
+            else if (uVar3 == 0x3e33)
+            {
+              if ((uStack_f0 & 8) != 0)
+              {
+                create_legacy_effect(player, iVar11, prized_amalgam_legacy);
+              }
+            }
+            else if ((uVar3 == 0x412d) && ((uStack_f0 & 0x10) != 0))
+            {
+              add_counters(player, iVar11, trigger_cause_controller, trigger_cause,
+                                       COUNTER_LOYALTY, 1);
+              rfg_card_from_grave(player, iVar13);
+            }
+            iVar13 = iVar13 + -1;
+          } while (iVar13 != -1);
+        }
+      }
+      goto LAB_026c3c99;
+    }
+    if (event == EVENT_ABILITIES)
+      goto LAB_026c41bf;
+    if (trigger_condition != 0xd7)
+      goto LAB_026c384a;
+  LAB_026c3969:
+    if ((player != affected_card_controller) || (reason_for_trigger_controller != player))
+      goto LAB_026c384a;
+    uVar12 = get_graveyard_counts(player);
+    if (rules_engine_card[player] < 0)
+    {
+      uStack_f0 = 0;
+    LAB_026c46cf:
+      iVar11 = 1 - player;
+      iVar13 = rules_engine_card[iVar11];
+    LAB_026c3a2b:
+      if ((-1 < iVar13) && (instance = get_card_instance(iVar11, iVar13),
+                            (instance->targets[0x10].card & 0x2000) != 0))
+      {
+      LAB_026c45c0:
+        iVar11 = has_mana(player, 0, 3);
+        if ((iVar11 != 0) && ((uVar12 & 0x80000) != 0))
+        {
+          uStack_f0 = uStack_f0 | 4;
+          goto LAB_026c3a56;
+        }
+      }
+      if (uStack_f0 == 0)
+        goto LAB_026c384a;
+    }
+    else
+    {
+      instance = get_card_instance(player, rules_engine_card[player]);
+      uStack_f0 =
+          (int)(unsigned int)*(unsigned char *)((int)&instance->targets[0x10].card + 1) >> 3 & 1;
+      if (uStack_f0 != 0)
+      {
+        uStack_f0 = uVar12 >> 5 & 1;
+      }
+      iVar11 = 1 - player;
+      if (rules_engine_card[player] < 0)
+        goto LAB_026c46cf;
+      instance = get_card_instance(player, rules_engine_card[player]);
+      if (((instance->targets[0x10].card & 0x200) == 0) &&
+          ((rules_engine_card[player] < 0 ||
+            (instance = get_card_instance(player, rules_engine_card[player]),
+             (instance->targets[0x10].card & 0x400) == 0))))
+      {
+        iVar13 = rules_engine_card[iVar11];
+        goto LAB_026c3a2b;
+      }
+      iVar13 = rules_engine_card[iVar11];
+      if ((uVar12 & 0x800) == 0)
+        goto LAB_026c3a2b;
+      uStack_f0 = uStack_f0 | 2;
+      if ((-1 < iVar13) && (instance = get_card_instance(iVar11, iVar13),
+                            (instance->targets[0x10].card & 0x2000) != 0))
+        goto LAB_026c45c0;
+    }
+  LAB_026c3a56:
+    if (event == EVENT_TRIGGER)
+    {
+      event_result = event_result | 2;
+    }
+    else
+    {
+      if (event != EVENT_RESOLVE_TRIGGER)
+        goto LAB_026c384a;
+      piVar6 = graveyard_ptr_mutable[player];
+      iVar11 = count_graveyard(player);
+      iVar11 = iVar11 + -1;
+      if (-1 < iVar11)
+      {
+        do
+        {
+          iVar13 = piVar6[iVar11];
+          uVar1 = cards_data[iVar13].id;
+          if (uVar1 == 0x2e0d)
+          {
+            if ((uStack_f0 & 1) == 0)
+              goto LAB_026c3ac0;
+          LAB_026c3b8e:
+            add_card_to_hand(player, iVar13);
+            remove_card_from_grave(player, iVar11);
+          }
+          else if (uVar1 == 0x338e)
+          {
+            if ((((uStack_f0 & 4) != 0) && (iVar13 = has_mana(player, 0, 3), iVar13 != 0)) &&
+                (((iVar13 = duh_mode(player),
+                   iVar13 != 0 || (iVar13 = do_dialog(player, player, card, -1, -1,
+                                                      " Return Pyrewild Shaman\n Pass", 0),
+                                   iVar13 == 0)) &&
+                  (iVar13 = charge_mana_while_resolving_csvid(0x338e, EVENT_RESOLVE_TRIGGER, player,
+                                                              COLOR_COLORLESS, 3),
+                   iVar13 != 0))))
+            {
+            LAB_026c3b87:
+              iVar13 = piVar6[iVar11];
+              goto LAB_026c3b8e;
+            }
+          }
+          else
+          {
+            if (((uVar1 == 0x246a) && ((uStack_f0 & 2) != 0)) &&
+                ((iVar13 = duh_mode(player),
+                  iVar13 != 0 || (iVar13 = do_dialog(player, player, card, -1, -1,
+                                                     " Return Auntie\'s Snitch\n Pass", 0),
+                                  iVar13 == 0))))
+              goto LAB_026c3b87;
+          }
+        LAB_026c3ac0:
+          iVar11 = iVar11 + -1;
+        } while (iVar11 != -1);
+      }
+      increase_trap_condition_impl(player, 0x603, 0, 0);
+    }
+  }
+LAB_026c3857:
+  instance = get_card_instance(player, card);
+  if ((instance->targets[1].player < 1) || (trigger_condition != 0xd5))
+  {
+  LAB_026c387c:
+    xVar18 = trigger_condition;
+    eVar17 = enable_xtrigger_flags | ENABLE_XTRIGGER_MILLED;
+    if (trigger_condition != 0xe5)
+    {
+      if (trigger_condition == XTRIGGER_MILLED)
+        goto LAB_026c3bb8;
+      goto LAB_026c38a4;
+    }
+    if (xtrigger_impl_value_dont_use_directly == XTRIGGER_MILLED)
+    {
+    LAB_026c3bb8:
+      if (((card == affected_card) && (player == affected_card_controller)) &&
+          ((reason_for_trigger_controller == player &&
+            (enable_xtrigger_flags = eVar17, uVar12 = get_graveyard_counts(player),
+             (uVar12 & 0x400000) != 0))))
+      {
+        if (1 < event - EVENT_TRIGGER)
+        {
+          return;
+        }
+        if (0 < num_cards_milled)
+        {
+          iVar11 = 0;
+          uStack_f0 = 0;
+          do
+          {
+            iVar13 = is_what(-1, cards_milled[iVar11].internal_card_id, 1);
+            if (iVar13 != 0)
+            {
+              if (event == EVENT_TRIGGER)
+                goto LAB_026c46e2;
+              uStack_f0 = uStack_f0 + 1;
+            }
+            iVar11 = iVar11 + 1;
+          } while (iVar11 < num_cards_milled);
+          eVar17 = enable_xtrigger_flags;
+          xVar18 = trigger_condition;
+          if (uStack_f0 != 0)
+          {
+            parse_grave_for_centaur_vinecrasher(player, card);
+            eVar17 = enable_xtrigger_flags;
+            xVar18 = trigger_condition;
+          }
+        }
+      }
+      enable_xtrigger_flags = eVar17 | ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY;
+      xVar7 = xtrigger_impl_value_dont_use_directly;
+      if (xVar18 == 0xe5)
+        goto joined_r0x026c3be5;
+      goto LAB_026c38ad;
+    }
+    enable_xtrigger_flags =
+        enable_xtrigger_flags |
+        (ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY | ENABLE_XTRIGGER_MILLED);
+    xVar7 = xtrigger_impl_value_dont_use_directly;
+  }
+  else
+  {
+    if ((card == affected_card) &&
+        ((player == affected_card_controller && (reason_for_trigger_controller == player))))
+    {
+      instance = get_card_instance(player, card);
+      if (event == EVENT_TRIGGER)
+      {
+        event_result = event_result | 2;
+      }
+      else
+      {
+        if (event == EVENT_RESOLVE_TRIGGER)
+        {
+          uVar12 = instance->targets[1].player;
+          piVar6 = graveyard_ptr_mutable[player];
+          iVar11 = count_graveyard(player);
+          uVar12 = uVar12 & 1;
+          iVar11 = iVar11 + -1;
+          if (-1 < iVar11)
+          {
+            do
+            {
+              uVar5 = cards_data[piVar6[iVar11]].id;
+              if (uVar5 == 0x20d1)
+              {
+                iVar13 = has_mana_multi(player, 1, 2, 0, 0, 0, 0);
+                if ((iVar13 != 0) && (uVar12 != 0))
+                {
+                  iVar13 = do_dialog(player, player, card, -1, -1,
+                                     " Return Krovikan Rot to your hand\n Do not return", 0);
+                  if (iVar13 != 0)
+                    goto LAB_026c5470;
+                  iVar20 = 0;
+                  iVar14 = 0;
+                  iVar13 = 2;
+                LAB_026c5453:
+                  charge_mana_multi(player, 1, iVar13, 0, iVar14, 0, iVar20);
+                  if (spell_fizzled == 1)
+                    goto LAB_026c5470;
+                LAB_026c536f:
+                  add_card_to_hand(player, piVar6[iVar11]);
+                  remove_card_from_grave(player, iVar11);
+                }
+              }
+              else if ((unsigned short)uVar5 < 0x20d2)
+              {
+                if (uVar5 == 0x20ba)
+                {
+                  iVar13 = has_mana_multi(player, 2, 1, 0, 0, 0, 0);
+                  if ((iVar13 != 0) && (uVar12 != 0))
+                  {
+                    iVar13 = do_dialog(player, player, card, -1, -1,
+                                       " Return Grim Harvest to your hand\n Do not return", 0);
+                    if (iVar13 == 0)
+                    {
+                      iVar14 = 0;
+                      iVar13 = 1;
+                    LAB_026c55c9:
+                      charge_mana_multi(player, 2, iVar13, iVar14, 0, 0, 0);
+                    joined_r0x026c55e0:
+                      if (spell_fizzled != 1)
+                        goto LAB_026c536f;
+                    }
+                    goto LAB_026c5470;
+                  }
+                }
+                else if ((unsigned short)uVar5 < 0x20bb)
+                {
+                  if (uVar5 == 0x209f)
+                  {
+                    iVar13 = has_mana_multi(player, 2, 0, 2, 0, 0, 0);
+                    if ((iVar13 != 0) && (uVar12 != 0))
+                    {
+                      iVar13 = do_dialog(player, player, card, -1, -1,
+                                         " Return Controvert to your hand\n Do not return", 0);
+                      if (iVar13 == 0)
+                      {
+                        iVar14 = 2;
+                        iVar13 = 0;
+                        goto LAB_026c55c9;
+                      }
+                      goto LAB_026c5470;
+                    }
+                  }
+                  else if (((uVar5 == 0x20b4) &&
+                            (iVar13 = can_pay_life(player, (life[player] + 1) / 2), iVar13 != 0)) &&
+                           (uVar12 != 0))
+                  {
+                    iVar13 = do_dialog(player, player, card, -1, -1,
+                                       " Return Garza\'s Assassin to your hand\n Do not return", 0);
+                    if (iVar13 == 0)
+                    {
+                      lose_life(player, (life[player] + 1) / 2);
+                      goto LAB_026c536f;
+                    }
+                    goto LAB_026c5470;
+                  }
+                }
+                else if (((uVar5 == 0x20c2) &&
+                          (iVar13 = has_mana_multi(player, 0, 0, 0, 0, 2, 0), iVar13 != 0)) &&
+                         (uVar12 != 0))
+                {
+                  iVar13 = do_dialog(player, player, card, -1, -1,
+                                     " Return Icefall to your hand\n Do not return", 0);
+                  if (iVar13 == 0)
+                  {
+                    charge_mana_multi(player, 0, 0, 0, 0, 2, 0);
+                    goto joined_r0x026c55e0;
+                  }
+                  goto LAB_026c5470;
+                }
+              }
+              else if (uVar5 == 0x21a8)
+              {
+                if (((uVar12 != 0) && (iVar13 = has_mana(player, 1, 1), iVar13 != 0)) &&
+                    (iVar13 = do_dialog(player, player, card, -1, -1,
+                                        " Return Nether Traitor to play\n Do not return", 0),
+                     iVar13 == 0))
+                {
+                  charge_mana(player, COLOR_BLACK, 1);
+                joined_r0x026c550b:
+                  if (spell_fizzled != 1)
+                  {
+                    reanimate_permanent(player, -1, player, iVar11, REANIMATE_DEFAULT);
+                  }
+                }
+              }
+              else if ((unsigned short)uVar5 < 0x21a9)
+              {
+                if (uVar5 == 0x20ea)
+                {
+                  iVar13 = has_mana_multi(player, 1, 0, 0, 1, 0, 0);
+                  if ((iVar13 != 0) && (uVar12 != 0))
+                  {
+                    iVar13 = do_dialog(player, player, card, -1, -1,
+                                       " Return Resize to your hand\n Do not return", 0);
+                    if (iVar13 == 0)
+                    {
+                      iVar20 = 0;
+                      iVar14 = 1;
+                      goto LAB_026c5443;
+                    }
+                    goto LAB_026c5470;
+                  }
+                }
+                else if (((uVar5 == 0x2102) &&
+                          (iVar13 = has_mana_multi(player, 1, 0, 0, 0, 0, 1), iVar13 != 0)) &&
+                         (uVar12 != 0))
+                {
+                  iVar13 = do_dialog(player, player, card, -1, -1,
+                                     " Return Sun\'s Bounty to your hand\n Do not return", 0);
+                  if (iVar13 == 0)
+                  {
+                    iVar20 = 1;
+                    iVar14 = 0;
+                  LAB_026c5443:
+                    iVar13 = 0;
+                    goto LAB_026c5453;
+                  }
+                LAB_026c5470:
+                  rfg_card_from_grave(player, iVar11);
+                }
+              }
+              else
+              {
+                if (((uVar5 == 0x4387) && (uVar12 != 0)) &&
+                    ((iVar13 = has_mana_multi(player, 1, 1, 0, 0, 0, 0),
+                      iVar13 != 0 && (iVar13 = do_dialog(
+                                          player, player, card, -1, -1,
+                                          " Return Boneyard Scourge to play\n Do not return", 0),
+                                      iVar13 == 0))))
+                {
+                  charge_mana_multi(player, 1, 1, 0, 0, 0, 0);
+                  goto joined_r0x026c550b;
+                }
+              }
+              iVar11 = iVar11 + -1;
+            } while (iVar11 != -1);
+          }
+        }
+        else if (event != EVENT_END_TRIGGER)
+          goto LAB_026c387c;
+        instance = get_card_instance(player, card);
+        instance->targets[1].player = 0;
+      }
+      goto LAB_026c387c;
+    }
+    eVar17 = enable_xtrigger_flags | ENABLE_XTRIGGER_MILLED;
+  LAB_026c38a4:
+    enable_xtrigger_flags = eVar17 | ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY;
+    xVar18 = trigger_condition;
+  LAB_026c38ad:
+    xVar7 = xVar18;
+  }
+joined_r0x026c3be5:
+  if ((xVar7 == XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY) &&
+      (uVar12 = get_graveyard_counts(player), (uVar12 & 0x400000) != 0))
+  {
+    default_test_definition((test_definition_t *)buffer, 1);
+    iVar11 = when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(
+        player, card, event, player, RESOLVE_TRIGGER_MANDATORY, (test_definition_t *)buffer);
+    if (iVar11 != 0)
+    {
+      parse_grave_for_centaur_vinecrasher(player, card);
+    }
+  }
+  iVar11 = beginning_of_combat(player, card, event, player);
 
-	// Avoid searching the entire graveyard unless we'll be doing something with this event or trigger.
-	/*
-	switch (event){
-		case EVENT_ABILITIES:
-		case EVENT_GRAVEYARD_FROM_PLAY:
-			break;
-		case EVENT_CLEANUP:
-			get_card_instance(player, card)->targets[1].player = 0;
-			return;
-		default:	// not a handled event.
-			switch (trigger_condition){
-				case TRIGGER_COMES_INTO_PLAY:
-				case TRIGGER_DEAL_DAMAGE:
-				case TRIGGER_SPELL_CAST:
-				case TRIGGER_GRAVEYARD_FROM_PLAY:
-					break;
-				default:	// not a handled event or trigger
-					return;
-			}
-	}
-
-	// look for cards in graveyard that have static abilities
-	card_instance_t *instance = get_card_instance(player, card);
-	int i=0;
-	const int *graveyard = get_grave(player);
-	if( graveyard[0] == -1 ){
-		return;
-	}
-
-
-
-	int counts[GC_last] = {0};
-
-	int graveyard_count = count_graveyard(player);
-	for (i = 0; i < graveyard_count; ++i){
-		card_data_t* card_d = &cards_data[ graveyard[i] ];
-		if( card_d->cc[2] == 18 ){
-			counts[GC_DRAGON_ENCHANTMENTS]++;
-		}
-		if( card_d->cc[2] == 20 ){
-			counts[GC_RECOVER]++;
-		}
-		unsigned int k;
-		for(k=0; k<(sizeof(ids)/sizeof(ids[0])); k++){
-			if( card_d->id == ids[k] ){
-				counts[k]++;
-				break;
-			}
-		}
-	}
-	*/
-
-	enum{
-		GT_CIP_BLOODGHAST 				= 1<<0,
-		GT_CIP_SWORD_OF_THE_MEEK		= 1<<1,
-		GT_CIP_DEARLY_DEPARTED			= 1<<2,
-		GT_CIP_BLOOD_SPEAKER			= 1<<3,
-		GT_CIP_SOSUKES_SUMMONS			= 1<<4,
-		GT_CIP_VEILBORN_GHOUL			= 1<<5,
-		GT_CIP_REACH_OF_BRANCHES		= 1<<6,
-		GT_CIP_BLADEWINGS_THRALL		= 1<<7,
-		GT_CIP_DRAGON_ENCHANTMENTS		= 1<<8,
-		GT_CIP_AKOUM_FIREBIRD			= 1<<9,
-		GT_CIP_PRIZED_AMALGAM			= 1<<10,
-		GT_CIP_OVALCHASE_DAREDEVIL		= 1<<11,
-	};
-
-	// Cards that will do something when they're in a graveyard and something else enters the battlefiedl.
-	// Example: Bloodghast, Sword of the Meek
-	if(	trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me( player, card ) &&
-		reason_for_trigger_controller == player && trigger_cause_controller == player )
-	{
-		int grave_counts = get_graveyard_counts(player);
-		int trig_mode = 0;
-		if( (grave_counts & GC_BLOODGHAST) && is_what(trigger_cause_controller, trigger_cause, TYPE_LAND) ){
-			trig_mode |= GT_CIP_BLOODGHAST;
-		}
-		if( (grave_counts & GC_SWORD_OF_THE_MEEK) &&
-			get_power(trigger_cause_controller, trigger_cause) == 1 && get_toughness(trigger_cause_controller, trigger_cause) == 1)
-		{
-			trig_mode |= GT_CIP_SWORD_OF_THE_MEEK;
-		}
-		if( (grave_counts & GC_DEARLY_DEPARTED) &&
-			is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) && 
-			has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_HUMAN) )
-		{
-			trig_mode |= GT_CIP_DEARLY_DEPARTED;
-		}
-		if( (grave_counts & GC_BLOOD_SPEAKER) &&
-			is_what(trigger_cause_controller, trigger_cause, TYPE_PERMANENT) && 
-			has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_DEMON))
-		{
-			trig_mode |= GT_CIP_BLOOD_SPEAKER;
-		}
-		if( (grave_counts & GC_SOSUKES_SUMMONS) &&
-			is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) && has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_SNAKE) &&
-			! is_token(trigger_cause_controller, trigger_cause))
-		{
-			trig_mode |= GT_CIP_SOSUKES_SUMMONS;
-		}
-		if( (grave_counts & GC_VEILBORN_GHOUL) &&
-			is_what(trigger_cause_controller, trigger_cause, TYPE_LAND) && 
-			has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_SWAMP))
-		{
-			trig_mode |= GT_CIP_VEILBORN_GHOUL;
-		}
-		if( (grave_counts & GC_REACH_OF_BRANCHES) &&
-			is_what(trigger_cause_controller, trigger_cause, TYPE_LAND) && 
-			has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_FOREST))
-		{
-			trig_mode |= GT_CIP_REACH_OF_BRANCHES;
-		}
-		if( (grave_counts & GC_BLADEWINGS_THRALL) &&
-			is_what(trigger_cause_controller, trigger_cause, TYPE_PERMANENT) && 
-			has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_DRAGON))
-		{
-			trig_mode |= GT_CIP_BLADEWINGS_THRALL;
-		}
-		if( (grave_counts & GC_DRAGON_ENCHANTMENTS) &&
-			is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) && get_cmc(trigger_cause_controller, trigger_cause) > 5)
-		{
-			trig_mode |= GT_CIP_DRAGON_ENCHANTMENTS;
-		}
-		if( (grave_counts & GC_AKOUM_FIREBIRD) &&
-			is_what(trigger_cause_controller, trigger_cause, TYPE_LAND) && has_mana_multi(player, MANACOST_XR(4,2)))
-		{
-			trig_mode |= GT_CIP_AKOUM_FIREBIRD;
-		}
-		if( (grave_counts & GC_PRIZED_AMALGAM) &&
-			is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) &&
-			check_special_flags3(trigger_cause_controller, trigger_cause, SF3_REANIMATED) &&
-			get_owner(trigger_cause_controller, trigger_cause) == player )
-		{
-			trig_mode |= GT_CIP_PRIZED_AMALGAM;
-		}
-		if( (grave_counts & GC_OVALCHASE_DAREDEVIL) && is_what(trigger_cause_controller, trigger_cause, TYPE_ARTIFACT) )
-		{
-			trig_mode |= GT_CIP_OVALCHASE_DAREDEVIL;
-		}
-		if( trig_mode ){
-			int otp = trigger_cause_controller;
-			int otc = trigger_cause;
-			if(event == EVENT_TRIGGER){
-				event_result |= RESOLVE_TRIGGER_MANDATORY;
-			}
-			else if(event == EVENT_RESOLVE_TRIGGER){
-					const int *graveyard = get_grave(player);
-					int count;
-					for ( count = count_graveyard(player)-1; count >= 0; --count){
-							int csvid = cards_data[graveyard[count]].id;
-							switch( csvid ){
-									case CARD_ID_BLOODGHAST:
-									{
-										if( trig_mode & GT_CIP_BLOODGHAST ){
-											int choice = 0;
-											if( duh_mode(player) == 0  ){
-												choice = do_dialog(player, player, card, -1, -1, " Return Bloodghast to play\n Do not return", 0);
-											}
-											if( choice == 0 ){
-												reanimate_permanent(player, card, player, count, REANIMATE_DEFAULT);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_SWORD_OF_THE_MEEK:
-									{
-										if( trig_mode & GT_CIP_SWORD_OF_THE_MEEK ){
-											if( duh_mode(player) || do_dialog(player, player, card, -1, -1, " Return Sword of the Meek	to play\n Pass", 0) == 0 ){
-												int sword = reanimate_permanent(player, card, player, count, REANIMATE_DEFAULT);
-												equip_target_creature(player, sword, otp, otc);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_DEARLY_DEPARTED:
-									{
-										if( trig_mode & GT_CIP_DEARLY_DEPARTED ){
-											add_1_1_counter(otp, otc);
-										}
-										break;
-									}
-
-									case CARD_ID_BLOOD_SPEAKER:
-									{
-										if( trig_mode & GT_CIP_BLOOD_SPEAKER ){
-											add_card_to_hand(player, graveyard[count] );
-											remove_card_from_grave(player, count);
-										}
-										break;
-									}
-
-									case CARD_ID_SOSUKES_SUMMONS:
-									{
-										if( trig_mode & GT_CIP_SOSUKES_SUMMONS ){
-											int choice = 0;
-											if( duh_mode(player) == 0  ){
-												choice = do_dialog(player, player, card, -1, -1, " Return Sosuke's Summons to hand\n Do not return", 0);
-											}
-											if( choice == 0 ){
-												add_card_to_hand(player, graveyard[count] );
-												remove_card_from_grave(player, count);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_VEILBORN_GHOUL:
-									{
-										if( trig_mode & GT_CIP_VEILBORN_GHOUL ){
-											int choice = 0;
-											if( duh_mode(player) == 0  ){
-												choice = do_dialog(player, player, card, -1, -1, " Return Veilborn Ghoul to hand\n Do not return", 0);
-											}
-											if( choice == 0 ){
-												add_card_to_hand(player, graveyard[count] );
-												remove_card_from_grave(player, count);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_REACH_OF_BRANCHES:
-									{
-										if( trig_mode & GT_CIP_REACH_OF_BRANCHES ){
-											int choice = 0;
-											if( duh_mode(player) == 0  ){
-												choice = do_dialog(player, player, card, -1, -1, " Return Reach of Branches to hand\n Do not return", 0);
-											}
-											if( choice == 0 ){
-												add_card_to_hand(player, graveyard[count] );
-												remove_card_from_grave(player, count);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_BLADEWINGS_THRALL :
-									{
-										if( trig_mode & GT_CIP_BLADEWINGS_THRALL ){
-											int choice = 0;
-											if( duh_mode(player) == 0  ){
-												choice = do_dialog(player, player, card, -1, -1, " Return Bladewing's Thrall to play\n Do not return", 0);
-											}
-											if( choice == 0 ){
-												int card_added = add_card_to_hand(player, graveyard[count] );
-												remove_card_from_grave(player, count);
-												put_into_play(player, card_added);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_AKOUM_FIREBIRD:
-									{
-										if( trig_mode & GT_CIP_AKOUM_FIREBIRD ){
-											if( do_dialog(player, player, card, -1, -1, " Return Akoum Firebird to bf\n Decline", 0) == 0 &&
-												charge_mana_multi_while_resolving_csvid(CARD_ID_AKOUM_FIREBIRD, event, player, MANACOST_XR(4,2))
-											  ){
-												reanimate_permanent(player, card, player, count, REANIMATE_DEFAULT);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_PRIZED_AMALGAM:
-									{
-										if( trig_mode & GT_CIP_PRIZED_AMALGAM ){
-											create_legacy_effect(player, card, &prized_amalgam_legacy);
-										}
-										break;
-									}
-
-									case CARD_ID_OVALCHASE_DAREDEVIL :
-									{
-										if( trig_mode & GT_CIP_OVALCHASE_DAREDEVIL){
-											int choice = 0;
-											if( duh_mode(player) == 0  ){
-												choice = do_dialog(player, player, card, -1, -1, " Return Ovalchase Daredevil to play\n Do not return", 0);
-											}
-											if( choice == 0 ){
-												int card_added = add_card_to_hand(player, graveyard[count] );
-												remove_card_from_grave(player, count);
-												put_into_play(player, card_added);
-											}
-										}
-										break;
-									}
-
-									default:
-										break;
-							}
-
-							if( cards_data[graveyard[count]].cc[2] == 18 && (trig_mode & GT_CIP_DRAGON_ENCHANTMENTS) ){
-								char buffer[100];
-								card_ptr_t* c = cards_ptr[ cards_data[graveyard[count]].id ];
-								scnprintf(buffer, 100, " Return %s to bf\n Decline", c->name);
-								int choice = 0;
-								if( duh_mode(player) == 0  ){
-									choice = do_dialog(player, player, card, -1, -1, buffer, 0);
-								}
-								if( choice == 0 ){
-									int card_added = add_card_to_hand(player, graveyard[count] );
-									remove_card_from_grave(player, count);
-									put_into_play_aura_attached_to_target(player, card_added, trigger_cause_controller, trigger_cause);
-								}
-							}
-					}
-			}
-		}
-	}
-
-	enum{
-		GT_SC_VENGEVINE 		= 1<<0,
-		GT_SC_MASKED_ADMIRERS 	= 1<<1,
-		GT_SC_KOZILEKS_RETURN 	= 1<<2,
-		GT_SC_PRIZED_AMALGAM 	= 1<<3,
-	};
-
-	// Cards that will do something when they're in a graveyard and someone plays a specific spell.
-	// Example: Vengevine, Masked Admirers
-	if(trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && player == reason_for_trigger_controller ){
-		int trig = 0;
-		int grave_counts = get_graveyard_counts(player);
-		if( ! is_what(trigger_cause_controller, trigger_cause, TYPE_LAND) ){
-			if( player == trigger_cause_controller && is_what(trigger_cause_controller, trigger_cause, TYPE_CREATURE) ){
-				if( (grave_counts & GC_VENGEVINE) && get_stormcreature_count(player) == 1 ){
-					trig |= GT_SC_VENGEVINE;
-				}
-				if( (grave_counts & GC_MASKED_ADMIRERS) && has_mana(player, COLOR_GREEN, 2) ){
-					trig |= GT_SC_MASKED_ADMIRERS;
-				}
-				if( (grave_counts & GC_PRIZED_AMALGAM) && check_special_flags(trigger_cause_controller, trigger_cause, SF_PLAYED_FROM_GRAVE) ){
-					trig |= GT_SC_PRIZED_AMALGAM;
-				}
-			}
-			if( player == trigger_cause_controller && has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_ELDRAZI) &&
-				get_cmc(trigger_cause_controller, trigger_cause) >= 7 )
-			{
-				if( grave_counts & GC_KOZILEKS_RETURN ){
-					trig |= GT_SC_KOZILEKS_RETURN;
-				}
-			}
-		}
-		if( trig ){
-			if(event == EVENT_TRIGGER){
-				event_result |= RESOLVE_TRIGGER_MANDATORY;
-			}
-			else if(event == EVENT_RESOLVE_TRIGGER){
-					const int *graveyard = get_grave(player);
-					int count;
-					for ( count = count_graveyard(player)-1; count >= 0; --count){
-							int csvid = cards_data[graveyard[count]].id;
-							switch( csvid ){
-									case CARD_ID_VENGEVINE:
-									{
-										if( trig & GT_SC_VENGEVINE ){
-											int choice = 0;
-											if( duh_mode(player) == 0  ){
-												choice = do_dialog(player, player, card, -1, -1, " Return Vengevine to play\n Do not return", 0);
-											}
-											if( choice == 0 ){
-												reanimate_permanent(player, card, player, count, REANIMATE_DEFAULT);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_MASKED_ADMIRERS:
-									{
-										if( trig & GT_SC_MASKED_ADMIRERS && has_mana(player, COLOR_GREEN, 2) )
-										{
-											int choice = 0;
-											if( duh_mode(player) == 0  ){
-												choice = do_dialog(player, player, card, -1, -1,  " Return Masked Admirers to hand\n Do not return", 0);
-											}
-											if( choice == 0 ){
-												charge_mana(player, COLOR_GREEN, 2);
-												if( spell_fizzled != 1 ){
-													add_card_to_hand(player, graveyard[count] );
-													remove_card_from_grave(player, count);
-												}
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_KOZILEKS_RETURN:
-									{
-										if( trig & GC_KOZILEKS_RETURN ){
-											int card_added = add_card_to_hand(player, graveyard[count] );
-											add_state(player, card_added, STATE_INVISIBLE);
-
-											int ai_choice = 0;
-											test_definition_t this_test;
-											default_test_definition(&this_test, TYPE_CREATURE);
-											this_test.toughness = 6;
-											this_test.toughness_flag = F5_TOUGHNESS_LESSER_THAN_VALUE;
-											this_test.keyword = KEYWORD_PROT_RED;
-											if( check_battlefield_for_special_card(player, card, player, CBFSC_GET_COUNT, &this_test) >
-												check_battlefield_for_special_card(player, card, 1-player, CBFSC_GET_COUNT, &this_test) )
-											{
-												ai_choice = 1;
-											}
-											int	choice = do_dialog(player, player, card, -1, -1,  " Exile Kozilek's Return\n Decline", ai_choice);
-											if( choice == 0 ){
-												remove_card_from_grave(player, count);
-												APNAP(p,{ new_damage_all(player, card_added, p, 5, NDA_ALL_CREATURES, NULL); };);
-												rfg_card_in_hand(player, card_added);
-											}
-											else{
-												obliterate_card(player, card_added);
-												hand_count[player]--;
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_PRIZED_AMALGAM:
-									{
-										if( trig & GT_SC_PRIZED_AMALGAM ){
-											create_legacy_effect(player, card, &prized_amalgam_legacy);
-										}
-										break;
-									}
-
-									default:
-										break;
-							}
-					}
-			}
-		}
-	}
-
-	// Cards that will give an ability to creatures in play when they're in a graveyard.
-	// Example: Wonder, Anger
-	if( event == EVENT_ABILITIES && affected_card_controller == player ){
-		if( in_play(affected_card_controller, affected_card) && is_what(affected_card_controller, affected_card, TYPE_CREATURE)  ){
-			int grave_counts = get_graveyard_counts(player);
-			if( (grave_counts & GC_WONDER) && check_battlefield_for_subtype(player, TYPE_LAND, SUBTYPE_ISLAND) ){
-				event_result |= KEYWORD_FLYING;
-			}
-			if( (grave_counts & GC_BRAWN) && check_battlefield_for_subtype(player, TYPE_LAND, SUBTYPE_FOREST) ){
-				event_result |= KEYWORD_TRAMPLE;
-			}
-			if( (grave_counts & GC_FILTH) && check_battlefield_for_subtype(player, TYPE_LAND, SUBTYPE_SWAMP) ){
-				event_result |= KEYWORD_SWAMPWALK;
-			}
-			if( (grave_counts & GC_VALOR) && check_battlefield_for_subtype(player, TYPE_LAND, SUBTYPE_PLAINS) ){
-				event_result |= KEYWORD_FIRST_STRIKE;
-			}
-			if( (grave_counts & GC_ANGER) && check_battlefield_for_subtype(player, TYPE_LAND, SUBTYPE_MOUNTAIN) ){
-				haste(affected_card_controller, affected_card, event);
-			}
-		}
-	}
-
-	enum{
-		GT_DT_CHANDRAS_PHOENIX	= 1<<0,
-		GT_DT_AUNTIES_SNITCH	= 1<<1,
-		GT_DT_PYREWILD_SHAMAN	= 1<<2,
-	};
-
-	// Cards that will do something when they're in a graveyard and damage is dealt.
-	// Example: Chandra's Phoenix, Pyrewild Shaman
-	if( trigger_condition == TRIGGER_DEAL_DAMAGE && affect_me(player, card) && reason_for_trigger_controller == player ){
-		int mode = 0;
-		int grave_counts = get_graveyard_counts(player);
-		if( get_trap_condition(player, TRAP_CHANDRAS_PHOENIX) && (grave_counts & GC_CHANDRAS_PHOENIX) ){
-			mode |= GT_DT_CHANDRAS_PHOENIX;
-		}
-		if( (get_trap_condition(player, TRAP_PROWL_ROGUE) || get_trap_condition(player, TRAP_PROWL_GOBLIN)) && 
-			(grave_counts & GC_AUNTIES_SNITCH) )
-		{
-			mode |= GT_DT_AUNTIES_SNITCH;
-		}
-		if( get_trap_condition(1-player, TRAP_DAMAGED_BY_CREATURE) && has_mana(player, COLOR_COLORLESS, 3) &&
-			(grave_counts & GC_PYREWILD_SHAMAN) )
-		{
-			mode |= GT_DT_PYREWILD_SHAMAN;
-		}
-		if( mode ){
-			if(event == EVENT_TRIGGER){
-				event_result |= RESOLVE_TRIGGER_MANDATORY;
-			}
-			else if(event == EVENT_RESOLVE_TRIGGER){
-					const int *graveyard = get_grave(player);
-					int count;
-					for ( count = count_graveyard(player)-1; count >= 0; --count){
-							int csvid = cards_data[graveyard[count]].id;
-							switch( csvid ){
-									case CARD_ID_CHANDRAS_PHOENIX:
-									{
-										if( mode & GT_DT_CHANDRAS_PHOENIX ){
-											add_card_to_hand(player, graveyard[count] );
-											remove_card_from_grave(player, count);
-										}
-										break;
-									}
-
-									case CARD_ID_AUNTIES_SNITCH:
-									{
-										if( mode & GT_DT_AUNTIES_SNITCH ){
-											int choice = 0;
-											if( ! duh_mode(player) ){
-												choice = do_dialog(player, player, card, -1, -1, " Return Auntie's Snitch\n Pass", 0);
-											}
-											if( choice == 0 ){
-												add_card_to_hand(player, graveyard[count] );
-												remove_card_from_grave(player, count);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_PYREWILD_SHAMAN:
-									{
-										if( (mode & GT_DT_PYREWILD_SHAMAN) && has_mana(player, COLOR_COLORLESS, 3) ){
-											int choice = 0;
-											if( ! duh_mode(player) ){
-												choice = do_dialog(player, player, card, -1, -1, " Return Pyrewild Shaman\n Pass", 0);
-											}
-											if( choice == 0 && charge_mana_while_resolving_csvid(CARD_ID_PYREWILD_SHAMAN, EVENT_RESOLVE_TRIGGER, player, COLOR_COLORLESS, 3) ){
-												add_card_to_hand(player, graveyard[count]);
-												remove_card_from_grave(player, count);
-											}
-										}
-										break;
-									}
-
-									default:
-										break;
-
-							}
-					}
-					set_trap_condition(player, TRAP_CHANDRAS_PHOENIX, 0);
-			}
-		}
-	}
-
-	// Nether Traitor + Recover
-	enum
-	{
-		GTA_CREATURE_YOU_CONTROL_DIED = 1<<0,
-	};
-
-	if( event == EVENT_GRAVEYARD_FROM_PLAY){
-		card_instance_t *affected = get_card_instance(affected_card_controller, affected_card);
-		if( affected->kill_code > 0 && affected->kill_code < KILL_EXILE &&
-			! check_special_flags2(affected_card_controller, affected_card, SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE)
-		  ){
-			int grave_counts = get_graveyard_counts(player);
-			if( grave_counts & (GC_NETHER_TRAITOR | GC_RECOVER) ){
-				if( affected_card_controller == player ){
-					if( in_play(affected_card_controller, affected_card) &&
-						is_what(affected_card_controller, affected_card, TYPE_CREATURE) )
-					{
-						if( get_card_instance(player, card)->targets[1].player < 0 ){
-							get_card_instance(player, card)->targets[1].player = 0;
-						}
-						get_card_instance(player, card)->targets[1].player |= GTA_CREATURE_YOU_CONTROL_DIED;
-					}
-				}
-			}
-		}
-	}
-
-	if( get_card_instance(player, card)->targets[1].player > 0 && trigger_condition == TRIGGER_GRAVEYARD_FROM_PLAY && 
-		affect_me(player, card) && player == reason_for_trigger_controller)
-	{
-		int mode = get_card_instance(player, card)->targets[1].player;
-		if(event == EVENT_TRIGGER){
-			event_result |= RESOLVE_TRIGGER_MANDATORY;
-		}
-		else if(event == EVENT_RESOLVE_TRIGGER){
-					const int *graveyard = get_grave(player);
-					int count;
-					for ( count = count_graveyard(player)-1; count >= 0; --count){
-							int csvid = cards_data[graveyard[count]].id;
-							switch( csvid ){
-									case CARD_ID_NETHER_TRAITOR:
-									{
-										if( (mode & GTA_CREATURE_YOU_CONTROL_DIED) && has_mana(player, COLOR_BLACK, 1) ){
-											int choice = do_dialog(player, player, card, -1, -1, " Return Nether Traitor to play\n Do not return", 0);
-											if( choice == 0 ){
-												charge_mana(player, COLOR_BLACK, 1);
-												if( spell_fizzled != 1 ){
-													reanimate_permanent(player, -1, player, count, REANIMATE_DEFAULT);
-												}
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_CONTROVERT:
-									{
-										if( has_mana_multi(player, MANACOST_XU(2, 2)) && (mode & GTA_CREATURE_YOU_CONTROL_DIED)  ){
-											int kill = 1;
-											int choice = do_dialog(player, player, card, -1, -1, " Return Controvert to your hand\n Do not return", 0);
-											if( choice == 0 ){
-												charge_mana_multi(player, MANACOST_XU(2, 2));
-												if( spell_fizzled != 1 ){
-													add_card_to_hand(player, graveyard[count]);
-													remove_card_from_grave(player, count);
-													kill = 0;
-												}
-											}
-											if( kill == 1){
-												rfg_card_from_grave(player, count);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_GARZAS_ASSASSIN:
-									{
-										if( can_pay_life(player, ((life[player]+1)/2)) && (mode & GTA_CREATURE_YOU_CONTROL_DIED) ){
-											int kill = 1;
-											int choice = do_dialog(player, player, card, -1, -1, " Return Garza's Assassin to your hand\n Do not return", 0);
-											if( choice == 0 ){
-												lose_life(player, ((life[player]+1)/2));
-												add_card_to_hand(player, graveyard[count]);
-												remove_card_from_grave(player, count);
-												kill = 0;
-											}
-											if( kill == 1){
-												rfg_card_from_grave(player, count);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_GRIM_HARVEST:
-									{
-										if( has_mana_multi(player, MANACOST_XB(2, 1)) && (mode & GTA_CREATURE_YOU_CONTROL_DIED) ){
-											int kill = 1;
-											int choice = do_dialog(player, player, card, -1, -1, " Return Grim Harvest to your hand\n Do not return", 0);
-											if( choice == 0 ){
-												charge_mana_multi(player, MANACOST_XB(2, 1));
-												if( spell_fizzled != 1 ){
-													add_card_to_hand(player, graveyard[count]);
-													remove_card_from_grave(player, count);
-													kill = 0;
-												}
-											}
-											if( kill == 1){
-												rfg_card_from_grave(player, count);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_ICEFALL:
-									{
-										if( has_mana_multi(player, MANACOST_R(2)) && (mode & GTA_CREATURE_YOU_CONTROL_DIED) ){
-											int kill = 1;
-											int choice = do_dialog(player, player, card, -1, -1, " Return Icefall to your hand\n Do not return", 0);
-											if( choice == 0 ){
-												charge_mana_multi(player, MANACOST_R(2));
-												if( spell_fizzled != 1 ){
-													add_card_to_hand(player, graveyard[count]);
-													remove_card_from_grave(player, count);
-													kill = 0;
-												}
-											}
-											if( kill == 1){
-												rfg_card_from_grave(player, count);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_KROVIKAN_ROT :
-									{
-										if( has_mana_multi(player, MANACOST_XB(1, 2)) && (mode & GTA_CREATURE_YOU_CONTROL_DIED) ){
-											int kill = 1;
-											int choice = do_dialog(player, player, card, -1, -1, " Return Krovikan Rot to your hand\n Do not return", 0);
-											if( choice == 0 ){
-												charge_mana_multi(player, MANACOST_XB(1, 2));
-												if( spell_fizzled != 1 ){
-													add_card_to_hand(player, graveyard[count]);
-													remove_card_from_grave(player, count);
-													kill = 0;
-												}
-											}
-											if( kill == 1){
-												rfg_card_from_grave(player, count);
-											}
-										}
-										break;
-									}
-
-									case CARD_ID_RESIZE:
-									{
-										if( has_mana_multi(player, MANACOST_XG(1, 1)) && (mode & GTA_CREATURE_YOU_CONTROL_DIED) ){
-											int kill = 1;
-											int choice = do_dialog(player, player, card, -1, -1, " Return Resize to your hand\n Do not return", 0);
-											if( choice == 0 ){
-												charge_mana_multi(player, MANACOST_XG(1, 1));
-												if( spell_fizzled != 1 ){
-													add_card_to_hand(player, graveyard[count]);
-													remove_card_from_grave(player, count);
-													kill = 0;
-												}
-											}
-											if( kill == 1){
-												rfg_card_from_grave(player, count);
-											}
-										}
-										break;
-									}
-
-
-									case CARD_ID_SUNS_BOUNTY:
-									{
-										if( has_mana_multi(player, MANACOST_XW(1, 1)) && (mode & GTA_CREATURE_YOU_CONTROL_DIED) ){
-											int kill = 1;
-											int choice = do_dialog(player, player, card, -1, -1, " Return Sun's Bounty to your hand\n Do not return", 0);
-											if( choice == 0 ){
-												charge_mana_multi(player, MANACOST_XW(1, 1));
-												if( spell_fizzled != 1 ){
-													add_card_to_hand(player, graveyard[count]);
-													remove_card_from_grave(player, count);
-													kill = 0;
-												}
-											}
-											if( kill == 1){
-												rfg_card_from_grave(player, count);
-											}
-										}
-										break;
-									}
-
-									default:
-										break;
-
-							}
-					}
-					get_card_instance(player, card)->targets[1].player = 0;
-		}
-		else if(event == EVENT_END_TRIGGER){
-				get_card_instance(player, card)->targets[1].player = 0;
-		}
-	}
-
-	// Centaur Vinecrasher
-	enable_xtrigger_flags |= ENABLE_XTRIGGER_MILLED;
-	if (xtrigger_condition() == XTRIGGER_MILLED && affect_me(player, card) && reason_for_trigger_controller == player)
-	{
-		int grave_counts = get_graveyard_counts(player);
-		if( grave_counts & GC_CENTAUR_VINECRASHER ){
-			if (event != EVENT_TRIGGER && event != EVENT_RESOLVE_TRIGGER){
-				return;
-			}
-
-			int k, num_lands = 0;
-			for (k = 0; k < num_cards_milled; ++k){
-				if (is_what(-1, cards_milled[k].internal_card_id, TYPE_LAND))
-				{
-					if (event == EVENT_TRIGGER)
-					{
-						event_result |= RESOLVE_TRIGGER_MANDATORY;
-						return;
-					}
-					if (event == EVENT_RESOLVE_TRIGGER){
-						++num_lands;
-					}
-				}
-			}
-			if (num_lands){
-				parse_grave_for_centaur_vinecrasher(player, card);
-			}
-		}
-	}
-
-	// Centaur Vinecrasher
-	enable_xtrigger_flags |= ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY;
-	if (xtrigger_condition() == XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY){
-		int grave_counts = get_graveyard_counts(player);
-		if( grave_counts & GC_CENTAUR_VINECRASHER ){
-			test_definition_t test;
-			default_test_definition(&test, TYPE_LAND);
-			if (when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test)){
-				parse_grave_for_centaur_vinecrasher(player, card);
-			}
-		}
-	}
+  if ((((iVar11 != 0) && (rules_engine_card[player] != -1)) &&
+       (iVar11 = count_counters(player, rules_engine_card[player], COUNTER_CHARGE), 2 < iVar11)) &&
+      (uVar12 = get_graveyard_counts(player), (uVar12 & 0x20000000) != 0))
+  {
+    piVar6 = graveyard_ptr_mutable[player];
+    iVar11 = count_graveyard(player);
+    iVar11 = iVar11 + -1;
+    if (-1 < iVar11)
+    {
+      do
+      {
+        if (cards_data[piVar6[iVar11]].id == 0x4b50)
+        {
+          reanimate_permanent(player, card, player, iVar11, REANIMATE_DEFAULT);
+        }
+        iVar11 = iVar11 + -1;
+      } while (iVar11 != -1);
+    }
+  }
+  if (trigger_condition != 0xe0)
+  {
+    return;
+  }
+  if (card != affected_card)
+  {
+    return;
+  }
+  if (player != affected_card_controller)
+  {
+    return;
+  }
+  if (reason_for_trigger_controller != player)
+  {
+    return;
+  }
+  uVar12 = get_graveyard_counts(player);
+  if ((uVar12 & 0x40000000) == 0)
+  {
+  LAB_026c4560:
+    if (-1 < (int)uVar12)
+    {
+      return;
+    }
+    if (trigger_cause_controller == player)
+    {
+      return;
+    }
+  LAB_026c3eb8:
+    iVar11 = has_mana(player, 4, 1);
+    if (iVar11 == 0)
+    {
+      return;
+    }
+    bVar8 = false;
+  }
+  else
+  {
+    if (trigger_cause_controller != player)
+    {
+      if (-1 < (int)uVar12)
+      {
+        return;
+      }
+      goto LAB_026c3eb8;
+    }
+    if (rules_engine_card[player] < 0)
+    {
+    LAB_026c4723:
+      bVar9 = false;
+      bVar8 = true;
+      goto LAB_026c3edf;
+    }
+    instance = get_card_instance(player, rules_engine_card[player]);
+    if (*(short *)((int)&instance->targets[5].player + 2) != 0)
+      goto LAB_026c4560;
+    if (((-1 < (int)uVar12) || (trigger_cause_controller == player)) ||
+        (iVar11 = has_mana(player, 4, 1), iVar11 == 0))
+      goto LAB_026c4723;
+    bVar8 = true;
+  }
+  bVar9 = true;
+LAB_026c3edf:
+  if (event == EVENT_TRIGGER)
+  {
+  LAB_026c46e2:
+    event_result = event_result | 2;
+  }
+  else if (event == EVENT_RESOLVE_TRIGGER)
+  {
+    piVar6 = graveyard_ptr_mutable[player];
+    iVar11 = count_graveyard(player);
+    iVar11 = iVar11 + -1;
+    if (-1 < iVar11)
+    {
+      do
+      {
+        uVar2 = cards_data[piVar6[iVar11]].id;
+        if (uVar2 == 0x298d)
+        {
+          if ((bVar9) && (iVar13 = has_mana(player, 4, 1), iVar13 != 0))
+          {
+            iVar13 = add_card_to_hand(player, piVar6[iVar11]);
+            add_state(player, iVar13, 0x20);
+            hand_count[player] = hand_count[player] + -1;
+            iVar14 =
+                do_dialog(player, player, iVar13, -1, -1, " Get back Punishing Fire\n Pass", 0);
+            if ((iVar14 == 0) && (charge_mana(player, COLOR_RED, 1), spell_fizzled != 1))
+            {
+              from_grave_to_hand(player, iVar11, -1);
+            }
+            obliterate_card(player, iVar13);
+          }
+        }
+        else if ((uVar2 == 0x5051) && (bVar8))
+        {
+          from_grave_to_hand(player, iVar11, -1);
+        }
+        iVar11 = iVar11 + -1;
+      } while (iVar11 != -1);
+    }
+  }
+  return;
 }
 
 static void keep_turn_count(int player, int card, event_t event)
@@ -2474,7 +2835,7 @@ static int initial_upkeep_triggers(int player, int card, event_t event ){
 									instance2->number_of_targets = 1;
 									rfg_card_in_hand(instance2->targets[0].player, instance2->targets[0].card);
 									put_into_play(i, count);
-									add_counter(i, count, COUNTER_LUCK);
+									add_counters(i, count, i, count, COUNTER_LUCK, 1);
 								}
 
 								state_untargettable(i, count, 0);
@@ -2811,163 +3172,209 @@ static void vengeful_pharaoh_effect(int player, int card, event_t event ){
 	return;
 }
 
-int check_card_for_rules_engine(int card){
-	// card --> internal card id of the card to examine
-	if( card < 0 ){
-		return 0;
-	}
-	int result = 0;
-	// Leylines & 'get_turn_count'
-		if( cards_data[card].id == CARD_ID_SERUM_POWDER ||
-			cards_data[card].id == CARD_ID_LEYLINE_OF_THE_VOID ||
-			cards_data[card].id == CARD_ID_LEYLINE_OF_SANCTITY ||
-			cards_data[card].id == CARD_ID_LEYLINE_OF_PUNISHMENT ||
-			cards_data[card].id == CARD_ID_LEYLINE_OF_VITALITY ||
-			cards_data[card].id == CARD_ID_LEYLINE_OF_SINGULARITY ||
-			cards_data[card].id == CARD_ID_LEYLINE_OF_LIGHTNING ||
-			cards_data[card].id == CARD_ID_LEYLINE_OF_THE_MEEK ||
-			cards_data[card].id == CARD_ID_LEYLINE_OF_LIFEFORCE ||
-			cards_data[card].id == CARD_ID_CHANCELLOR_OF_THE_ANNEX ||
-			cards_data[card].id == CARD_ID_CHANCELLOR_OF_THE_DROSS ||
-			cards_data[card].id == CARD_ID_CHANCELLOR_OF_THE_FORGE ||
-			cards_data[card].id == CARD_ID_CHANCELLOR_OF_THE_SPIRES ||
-			cards_data[card].id == CARD_ID_CHANCELLOR_OF_THE_TANGLE ||
-			cards_data[card].id == CARD_ID_GEMSTONE_CAVERNS ||
-			cards_data[card].id == CARD_ID_SERRA_AVENGER ||
-			cards_data[card].id == CARD_ID_PROVIDENCE
-		  ){
-			result |= REF_LEYLINES;
-		}
-	// Traps
-		if( cards_data[card].cc[2] == 13 || cards_data[card].id == CARD_ID_MAELSTROM_NEXUS ||
-			(cards_data[card].id != CARD_ID_MINDBREAK_TRAP && cards_data[card].id != CARD_ID_RUNEFLARE_TRAP && has_subtype_by_id(cards_data[card].id, SUBTYPE_TRAP)) ||
-			cards_data[card].id == CARD_ID_SEARING_BLAZE ||
-			cards_data[card].id == CARD_ID_BLOODCHIEF_ASCENSION ||
-			cards_data[card].id == CARD_ID_PYREWILD_SHAMAN ||
-			cards_data[card].id == CARD_ID_CHANDRAS_PHOENIX ||
-			cards_data[card].id == CARD_ID_ARCHENEMY ||
-			cards_data[card].id == CARD_ID_BLOODSOAKED_CHAMPION ||
-			cards_data[card].id == CARD_ID_HOWL_OF_THE_HORDE ||
-			cards_data[card].id == CARD_ID_ORAN_RIEF_THE_VASTWOOD ||
-			cards_data[card].id == CARD_ID_NOVIJEN_HEART_OF_PROGRESS ||
-			cards_data[card].id == CARD_ID_HIXUS_PRISON_WARDEN ||
-			cards_data[card].id == CARD_ID_TYMNA_THE_WEAVER ||
-			cards_data[card].id == CARD_ID_FAIRGROUNDS_TRUMPETER
-		  ){
-			result |= REF_TRAP_CONDITIONS;
-		}
-	// Storm count
-		if( cards_data[card].cc[2] == 12 ||
-			cards_data[card].id == CARD_ID_LURE_OF_PREY ||
-			cards_data[card].id == CARD_ID_MOGG_CONSCRIPTS ||
-			cards_data[card].id == CARD_ID_MINDS_DESIRE ||
-			cards_data[card].id == CARD_ID_WING_SHARDS ||
-			cards_data[card].id == CARD_ID_MINDBREAK_TRAP ||
-			cards_data[card].id == CARD_ID_SIFT_THROUGH_SANDS ||
-			cards_data[card].id == CARD_ID_RASHMI_ETERNITIES_CRAFTER ||
-			cards_data[card].id == CARD_ID_VIAL_SMASHER_THE_FIERCE ||
-			cards_data[card].id == CARD_ID_AETHERFLUX_RESERVOIR
-		  ){
-			result |= REF_STORM_COUNT;
-		}
-	// Dredge
-		if( cards_data[card].cc[2] == 6 ){
-			result |= REF_DREDGE;
-		}
-	// Graveyard upkeep trigger
-		if( cards_data[card].cc[2] == 5 ||
-			cards_data[card].id == CARD_ID_DEATH_SPARK ||
-			cards_data[card].id == CARD_ID_ETERNAL_DRAGON ||
-			cards_data[card].id == CARD_ID_NIM_DEVOURER ||
-			cards_data[card].id == CARD_ID_NECROSAVANT ||
-			cards_data[card].id == CARD_ID_UNDEAD_GLADIATOR
-		  ){
-			result |= REF_UPKEEP_ABILITY_IN_GRAVE;
-		}
-	// Static / Triggered abilities in graveyard
-		if( cards_data[card].cc[2] == 2 || cards_data[card].cc[2] == 20 || cards_data[card].cc[2] == 18 ||
-			cards_data[card].id == CARD_ID_VENGEVINE ||
-			cards_data[card].id == CARD_ID_ULAMOG_THE_INFINITE_GYRE ||
-			cards_data[card].id == CARD_ID_KOZILEK_BUTCHER_OF_TRUTH ||
-			cards_data[card].id == CARD_ID_EMRAKUL_THE_AEONS_TORN ||
-			cards_data[card].id == CARD_ID_DARKSTEEL_COLOSSUS ||
-			cards_data[card].id == CARD_ID_BLIGHTSTEEL_COLOSSUS ||
-			cards_data[card].id == CARD_ID_PROGENITUS ||
-			cards_data[card].id == CARD_ID_AUNTIES_SNITCH ||
-			cards_data[card].id == CARD_ID_PYREWILD_SHAMAN
-		  ){
-			result |= REF_CONT_AND_TRIG_ABILITY_IN_GRAVE;
-		}
+int check_card_for_rules_engine(int card)
+{
+  uint16_t uVar1;
+  uint16_t uVar2;
+  unsigned int uVar3;
+  int result;
+  unsigned char bVar5;
+  bool bVar6;
+  unsigned int uStack_14;
 
-		if( cards_data[card].id == CARD_ID_BRIDGE_FROM_BELOW ){
-			result |= REF_BRIDGE_FROM_BELOW;
-		}
-	/*
-	if( !(original_result & (1<<8)) ){
-		if( cards_data[card].id == CARD_ID_ELSPETH_KNIGHT_ERRANT ){
-			result+=256;
-		}
-	}
-	*/
-		if( cards_data[card].id == CARD_ID_KROVIKAN_HORROR ){
-			result |= REF_KROVIKAN_HORROR;
-		}
-	// Discard trigger / Madness
-		if( cards_data[card].cc[2] == 11 ||
-			cards_data[card].id == CARD_ID_OBSTINATE_BALOTH ||
-			cards_data[card].id == CARD_ID_WILT_LEAF_LIEGE ||
-			cards_data[card].id == CARD_ID_METROGNOME ||
-			cards_data[card].id == CARD_ID_LOXODON_SMITER ||
-			cards_data[card].id == CARD_ID_QUAGNOTH ||
-			cards_data[card].id == CARD_ID_DODECAPOD ||
-			cards_data[card].id == CARD_ID_ICHOR_SLICK
-		  ){
-			result |= REF_DISCARD_TRIGGER_MADNESS;
-		}
-	// Cards with activated abilities in graveyard / hand (Cycling, Flashback, Retrace, Unearth and so on)
-		if( (cards_data[card].cc[2] == 9 && !(cards_data[card].type & TYPE_ENCHANTMENT)) || //Direct comparison with TYPE_ENCHANTMENT ok here, as part of an inline call to is_planeswalker().
-			cards_data[card].cc[2] == 10 || // Retrace
-			cards_data[card].cc[2] == 4 || // Cycling
-			cards_data[card].cc[2] == 17 || // Scavenge
-			cards_data[card].cc[2] == 21 || // generic activated ability from graveyard, without 9's overloading
-			cards_data[card].cc[2] == 23 || // generic activated ability from graveyard and an activation from hand
-			cards_data[card].id == CARD_ID_VISCERA_DRAGGER ||
-			cards_data[card].id == CARD_ID_HAAKON_STROMGALD_SCOURGE ||
-			cards_data[card].id == CARD_ID_SILENT_BLADE_ONI ||
-			cards_data[card].id == CARD_ID_MARSHALING_CRY ||
-			cards_data[card].id == CARD_ID_UNDEAD_GLADIATOR ||
-			cards_data[card].id == CARD_ID_DRAGON_WINGS ||
-			cards_data[card].id == CARD_ID_VINEWEFT ||
-			cards_data[card].id == CARD_ID_GRYFFS_BOON
-		  ){
-			result |= REF_ACTIVATED_ABILITIES_HAND_GRAVE;
-		}
-	// Deadbox
-		if( cards_data[card].cc[2] == 14 ){
-			result |= REF_DEADBOX;
-		}
-
-		if( cards_data[card].id == CARD_ID_VENGEFUL_PHARAOH ){
-			result |= REF_VENGEFUL_PHARAOH;
-		}
-	// Miracle
-		if( cards_data[card].cc[2] == 15 ){
-			result |= REF_MIRACLES;
-		}
-	// Forecast
-		if( cards_data[card].cc[2] == 16 ){
-			result |= REF_FORECAST;
-			result |= REF_ACTIVATED_ABILITIES_HAND_GRAVE;
-		}
-	// Conspire
-		if( cards_data[card].cc[2] == 19 ){
-			result |= REF_CONSPIRE;
-		}
-	// Beginning of combat effects
-		if( cards_data[card].cc[2] == 22 ){
-			result |= REF_BEGINNING_OF_COMBAT_EFFECTS;
-		}
-	return result;
+  if (card < 0)
+  {
+    return 0;
+  }
+  uVar3 = (uint16_t)cards_data[card].id | ((uint32_t)(uint16_t)cards_data[card].reserved2 << 16);
+  uStack_14 = (unsigned int)((((((((((short)uVar3 == 0x1b29 || (short)uVar3 == 0x2d39) ||
+                                    (short)uVar3 == 0x2170) ||
+                                   (short)uVar3 == 0x21d7) ||
+                                  (short)uVar3 == 0x3f2c) ||
+                                 (short)uVar3 == 0x4d27) ||
+                                (unsigned short)((short)uVar3 + 0xe06fU) < 5) ||
+                               (unsigned short)((short)uVar3 + 0xb074U) < 2) ||
+                              (unsigned short)((short)uVar3 + 0xd47dU) < 4) ||
+                             (unsigned short)((short)uVar3 + 0xd2c5U) < 4);
+  bVar5 = cards_data[card].cc[2];
+  if (bVar5 == 0xd)
+  {
+    bVar6 = (short)uVar3 == 0x5051;
+    uStack_14 = uStack_14 | 2;
+  LAB_026c84c9:
+    if (((((short)uVar3 == 0x1cd2 ||
+           ((short)uVar3 == 0x2971 ||
+            (((short)uVar3 == 0x1998 ||
+              ((short)uVar3 == 0xc87 || ((short)uVar3 == 0x9e3 || (short)uVar3 == 0x2844))) ||
+             (short)uVar3 == 0x19ca))) ||
+          (short)uVar3 == 0x4067) ||
+         (short)uVar3 == 0x40fe) ||
+        ((short)uVar3 == 0x56d1))
+      goto LAB_026c8528;
+  }
+  else
+  {
+    if (((short)uVar3 == 0x2971) || ((short)uVar3 == 0x299b))
+    {
+    LAB_026c83f8:
+      bVar6 = (short)uVar3 == 0x5051;
+      if ((((short)uVar3 == 0x54db ||
+            ((((short)uVar3 == 0x3ff4 ||
+               (((short)uVar3 == 0x3b2f ||
+                 ((short)uVar3 == 0x2033 ||
+                  (((short)uVar3 == 0x37d2 ||
+                    ((short)uVar3 == 0x3799 ||
+                     (((short)uVar3 == 0x2e0d ||
+                       ((short)uVar3 == 0x338e ||
+                        ((short)uVar3 == 0x290e || (short)uVar3 == 0x2a4a))) ||
+                      (short)uVar3 == 0x3951))) ||
+                   (short)uVar3 == 0x2985))) ||
+                (short)uVar3 == 0x40fd)) ||
+              (short)uVar3 == 0x42fe) ||
+             bVar6)) ||
+           (short)uVar3 == 0x5901) ||
+          (short)uVar3 == 0x56c2)
+        goto LAB_026c84a7;
+      bVar6 = false;
+    }
+    else
+    {
+      result = has_subtype_by_id(-1, uVar3 & 0xffff, SUBTYPE_TRAP);
+      if (result == 0)
+      {
+        uVar2 = cards_data[card].id;
+        bVar5 = cards_data[card].cc[2];
+        uVar3 = (uVar3 & 0xffff0000U) | (uint16_t)uVar2;
+        goto LAB_026c83f8;
+      }
+      uVar1 = cards_data[card].id;
+      bVar5 = cards_data[card].cc[2];
+      bVar6 = uVar1 == 0x5051;
+      uVar3 = (uVar3 & 0xffff0000U) | (uint16_t)uVar1;
+    LAB_026c84a7:
+      uStack_14 = uStack_14 | 2;
+    }
+    if (bVar5 != 0xc)
+      goto LAB_026c84c9;
+  LAB_026c8528:
+    uStack_14 = uStack_14 | 4;
+  }
+  if (bVar5 == 6)
+  {
+    uStack_14 = uStack_14 | 0x10;
+    if (((((short)uVar3 == 0x8de || (short)uVar3 == 0x197a) || (short)uVar3 == 0x1a58) ||
+         (short)uVar3 == 0xabe) ||
+        ((short)uVar3 == 0x18a2))
+      goto LAB_026c8570;
+  LAB_026c8790:
+    if (((((short)uVar3 == 0x338e ||
+           ((short)uVar3 == 0x246a ||
+            (((short)uVar3 == 0x2c9b ||
+              ((short)uVar3 == 0x1ad7 ||
+               (((short)uVar3 == 0x2ade || ((short)uVar3 == 0x2b43 || (short)uVar3 == 0x2b3e)) ||
+                (short)uVar3 == 0x2aa8))) ||
+             (short)uVar3 == 0x27cb))) ||
+          (short)uVar3 == 0x4a18) ||
+         (short)uVar3 == 0x4b50) ||
+        ((short)uVar3 == 0x4705))
+      goto LAB_026c858c;
+  }
+  else
+  {
+    if ((bVar5 == 5) ||
+        (((((short)uVar3 == 0x8de || (short)uVar3 == 0x197a) || (short)uVar3 == 0x1a58) ||
+          (short)uVar3 == 0xabe || ((short)uVar3 == 0x18a2))))
+    {
+    LAB_026c8570:
+      uStack_14 = uStack_14 | 0x20;
+    }
+    if (((bVar5 & 0xef) != 2) && (bVar5 != 0x14))
+      goto LAB_026c8790;
+  LAB_026c858c:
+    uStack_14 = uStack_14 | 0x40;
+  }
+  if (((short)uVar3 == 0x298d) || (bVar6))
+  {
+    uStack_14 = uStack_14 | 0x140;
+    if ((short)uVar3 == 0x22c4)
+      goto LAB_026c8726;
+  LAB_026c85b3:
+    if ((short)uVar3 == 0x903)
+    {
+      uStack_14 = uStack_14 | 0x200;
+    }
+  }
+  else
+  {
+    if ((short)uVar3 != 0x22c4)
+      goto LAB_026c85b3;
+  LAB_026c8726:
+    uStack_14 = uStack_14 | 0x80;
+  }
+  if (((((((((short)uVar3 == 0x2b93 || bVar5 == 0xb) || (short)uVar3 == 0x25f8) ||
+           (short)uVar3 == 0xef2) ||
+          (short)uVar3 == 0x31e0) ||
+         (short)uVar3 == 0x2324) ||
+        (short)uVar3 == 0x14ef) ||
+       (short)uVar3 == 0x22f2) ||
+      ((short)uVar3 == 0x4bf6))
+  {
+    uStack_14 = uStack_14 | 0x400;
+  }
+  if ((((bVar5 == 9) && ((cards_data[card].type & 4) == 0)) ||
+       (((((((((((((((bVar5 == 4 || bVar5 == 10) || bVar5 == 0x1b) || (short)uVar3 == 0x2771) ||
+                   (short)uVar3 == 0x20bd) ||
+                  (short)uVar3 == 0x30f6) ||
+                 (short)uVar3 == 0x230c) ||
+                (short)uVar3 == 0x18a2) ||
+               (short)uVar3 == 0x1977) ||
+              (short)uVar3 == 0x3774) ||
+             (short)uVar3 == 0x3de0) ||
+            (short)uVar3 == 0x308a) ||
+           (short)uVar3 == 0x4ea3) ||
+          (short)uVar3 == 0x520b) ||
+         (short)uVar3 == 0x59df) ||
+        (bVar5 & 0xfb) == 0x11)) ||
+      ((unsigned char)(bVar5 - 0x17) < 3))
+  {
+    uStack_14 = uStack_14 | 0x1000;
+  }
+  if (bVar5 == 0xe)
+  {
+    uStack_14 = uStack_14 | 0x2000;
+    if ((short)uVar3 != 0x2e58)
+    {
+      return uStack_14;
+    }
+  }
+  else if ((short)uVar3 != 0x2e58)
+    goto LAB_026c86e1;
+  uStack_14 = uStack_14 | 0x4000;
+LAB_026c86e1:
+  if (bVar5 == 0xf)
+  {
+    return uStack_14 | 0x8000;
+  }
+  if (bVar5 == 0x10)
+  {
+    uStack_14 = uStack_14 | 0x11000;
+  }
+  else
+  {
+    if (bVar5 == 0x13)
+    {
+      return uStack_14 | 0x80000;
+    }
+    if (bVar5 == 0x16)
+    {
+      return uStack_14 | 0x400000;
+    }
+    if (bVar5 == 0x1c)
+    {
+      uStack_14 = uStack_14 | 0x200000;
+    }
+  }
+  return uStack_14;
 }
 
 static void shape_deadbox(void){
@@ -3618,7 +4025,7 @@ STATIC_ASSERT(COUNTER_BLOOD == 19, storm_native_COUNTER_BLOOD);
 STATIC_ASSERT(COUNTER_DEVOTION == 32, storm_native_COUNTER_DEVOTION);
 STATIC_ASSERT(COUNTER_VORTEX == 38, storm_native_COUNTER_VORTEX);
 STATIC_ASSERT(COUNTER_CHARGE == 123, storm_native_COUNTER_CHARGE);
-STATIC_ASSERT(sizeof(storm_mode_2022_t) == 4, storm_native_mode_bytes);
+STATIC_ASSERT(sizeof(storm_mode_t) == 4, storm_native_mode_bytes);
 STATIC_ASSERT(STORM_CREATURE == 64, storm_canonical_creature_mode);
 #endif
 
@@ -3633,19 +4040,19 @@ void increment_storm_count(int player, int mode)
   if (card != -1)
   {
     hack_silent_counters = hack_silent_counters + 1;
-    add_counters_from_source(player, card, player, card, COUNTER_VORTEX, 1);
+    add_counters(player, card, player, card, COUNTER_VORTEX, 1);
     increase_trap_condition_impl(player, 0x301, 1, 1);
-    if ((mode & STORM2022_CREATURE) != 0)
+    if ((mode & STORM_CREATURE) != 0)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_BLOOD, 1);
+      add_counters(player, card, player, card, COUNTER_BLOOD, 1);
     }
-    if ((mode & STORM2022_ENCHANTMENT) != 0)
+    if ((mode & STORM_ENCHANTMENT) != 0)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_DEVOTION, 1);
+      add_counters(player, card, player, card, COUNTER_DEVOTION, 1);
     }
-    if ((mode & STORM2022_INSTANT_SORCERY) != 0)
+    if ((mode & STORM_INSTANT_SORCERY) != 0)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_CHARGE, 1);
+      add_counters(player, card, player, card, COUNTER_CHARGE, 1);
     }
     hack_silent_counters = hack_silent_counters + -1;
     if ((mode & 2U) != 0)
@@ -3738,7 +4145,7 @@ int get_stormcreature_count(int k)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c8280; original functions/rules_engine.c:1757. */
-int get_storminstantsorcery_count_2022(int k)
+int get_storminstantsorcery_count(int k)
 {
   int result;
 
@@ -3755,7 +4162,7 @@ int get_storminstantsorcery_count_2022(int k)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26c82c0; original functions/rules_engine.c:1765. */
-int get_stormenchantment_count_2022(int k)
+int get_stormenchantment_count(int k)
 {
   int result;
 
@@ -3788,124 +4195,14 @@ int get_stormcolor_count(int player, color_t clr)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022 inline reset_storm_count: owner 0x26c9140; DIE 0x68be08e. */
-static void reset_storm_count_2022(int player, int card)
-{
-  enum
-  {
-    RULES_ENGINE_CSV_ID_2022 = 0x615a
-  };
-  target_definition_2022_t td;
 
-  if (player != HUMAN)
-    return;
-
-  base_target_definition(HUMAN, card, &td, TYPE_CREATURE);
-  td.required_subtype = SUBTYPE_WEREWOLF;
-  if (!can_target(&td))
-  {
-    for (int p = 0; p < 2; ++p)
-    {
-      int rec = rules_engine_card[p];
-      if (rec >= 0)
-      {
-        increase_trap_condition_impl(p, 0x403, 0, 0);
-        increase_trap_condition_impl(p, 0x404, 0, 0);
-        increase_trap_condition_impl(p, 0x405, 0, 0);
-        increase_trap_condition_impl(p, 0x406, 0, 0);
-        increase_trap_condition_impl(p, 0x407, 0, 0);
-        remove_all_counters_from_source(HUMAN, card, p, rec, COUNTER_VORTEX);
-        remove_all_counters_from_source(HUMAN, card, p, rec, COUNTER_BLOOD);
-        remove_all_counters_from_source(HUMAN, card, p, rec, COUNTER_CHARGE);
-        remove_all_counters_from_source(HUMAN, card, p, rec, COUNTER_DEVOTION);
-      }
-    }
-  }
-  else
-  {
-    int human_count = rules_engine_card[HUMAN] == -1
-                          ? 0
-                          : count_counters(HUMAN, rules_engine_card[HUMAN], COUNTER_VORTEX);
-    int ai_count =
-        rules_engine_card[AI] == -1 ? 0 : count_counters(AI, rules_engine_card[AI], COUNTER_VORTEX);
-    for (int p = 0; p < 2; ++p)
-    {
-      for (int c = 0; c < active_cards_count[p]; ++c)
-      {
-        if (in_play(p, c))
-        {
-          card_instance_t *instance = get_card_instance(p, c);
-          if (has_subtype(p, c, SUBTYPE_WEREWOLF) && instance->targets[9].card != 0x42)
-          {
-            instance->targets[9].card = 0x42;
-            instance->targets[8].player = human_count;
-            instance->targets[8].card = ai_count;
-          }
-          if (get_id(p, c) == RULES_ENGINE_CSV_ID_2022)
-          {
-            increase_trap_condition_impl(p, 0x403, 0, 0);
-            increase_trap_condition_impl(p, 0x404, 0, 0);
-            increase_trap_condition_impl(p, 0x405, 0, 0);
-            increase_trap_condition_impl(p, 0x406, 0, 0);
-            increase_trap_condition_impl(p, 0x407, 0, 0);
-            remove_all_counters_from_source(HUMAN, card, p, c, COUNTER_VORTEX);
-            remove_all_counters_from_source(HUMAN, card, p, c, COUNTER_BLOOD);
-            remove_all_counters_from_source(HUMAN, card, p, c, COUNTER_CHARGE);
-            remove_all_counters_from_source(HUMAN, card, p, c, COUNTER_DEVOTION);
-          }
-        }
-      }
-    }
-  }
-}
 /* End ManalinkEh 2022 inline reset_storm_count. */
 #endif
 
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022 inline keep_storm_count: owner 0x26c9140; DIE 0x68be050. */
-static void keep_storm_count_2022(int player, int card, event_t event)
-{
-  enum
-  {
-    TRAP_NONCREATURES_PLAYED_2022 = 0x408
-  };
-  int not_cast;
-  if (player != HUMAN)
-    return;
 
-  if (trigger_condition == TRIGGER_SPELL_CAST && card == affected_card &&
-      affected_card_controller == HUMAN && reason_for_trigger_controller == HUMAN &&
-      (not_cast = check_special_flags(trigger_cause_controller, trigger_cause, SF_NOT_CAST),
-       event == EVENT_END_TRIGGER && !not_cast))
-  {
-    card_instance_t *played = get_card_instance(trigger_cause_controller, trigger_cause);
-    uint8_t types = cards_data[played->internal_card_id].type;
-    if (!(types & TYPE_LAND))
-    {
-      int mode;
-      if (types & TYPE_CREATURE)
-        mode = STORM2022_CREATURE;
-      else
-      {
-        increase_trap_condition_impl(trigger_cause_controller, TRAP_NONCREATURES_PLAYED_2022, 1, 1);
-        mode = 0;
-      }
-      if (types & TYPE_ENCHANTMENT)
-        mode |= STORM2022_ENCHANTMENT;
-      if ((types & TYPE_SPELL) && !(types & TYPE_CREATURE))
-        mode |= STORM2022_INSTANT_SORCERY;
-      if (get_id(trigger_cause_controller, trigger_cause) == CARD_ID_PEER_THROUGH_DEPTHS)
-        increase_trap_condition_impl(trigger_cause_controller, TRAP_PEER_THROUGH_DEPTHS, 1, 1);
-      if (get_id(trigger_cause_controller, trigger_cause) == CARD_ID_REACH_THROUGH_MISTS)
-        increase_trap_condition_impl(trigger_cause_controller, TRAP_REACH_THROUGH_MISTS, 1, 1);
-      unsigned int colors = get_color(trigger_cause_controller, trigger_cause);
-      increment_storm_count(trigger_cause_controller,
-                                 mode | (colors & COLOR_TEST_ANY_COLORED));
-    }
-  }
-  else if (event == EVENT_CAN_SKIP_TURN)
-    reset_storm_count_2022(player, card);
-}
 /* End ManalinkEh 2022 inline keep_storm_count. */
 #endif
 

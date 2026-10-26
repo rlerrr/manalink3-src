@@ -1,19 +1,19 @@
 #include "manalink.h"
 
 /* Canonical recovered helper declarations. */
-int new_get_test_score(test_definition_2022_t *this_test);
-void new_default_test_definition(test_definition_2022_t *this_test, int type, const char *msg);
-void default_test_definition(test_definition_2022_t *this_test, int type);
+int new_get_test_score(test_definition_t *this_test);
+void new_default_test_definition(test_definition_t *this_test, int type, const char *msg);
+void default_test_definition(test_definition_t *this_test, int type);
 int new_make_test_in_play(int player, int to_examine, int test_type,
-                               test_definition_2022_t *this_test);
-int new_make_test(int player, int to_examine, int test_type, test_definition_2022_t *this_test);
+                               test_definition_t *this_test);
+int new_make_test(int player, int to_examine, int test_type, test_definition_t *this_test);
 int make_test_in_play(int player, int to_examine, int test_type, int type, int flag1,
                            int subtype, int flag2, int color, int flag3, int id, int flag4, int cc,
                            int flag5);
 int make_test(int player, int to_examine, int test_type, int type, int flag1, int subtype,
                    int flag2, int color, int flag3, int id, int flag4, int cc, int flag5);
 int check_battlefield_for_special_card(int player, int card, int t_player, int mode,
-                                            test_definition_2022_t *this_test);
+                                            test_definition_t *this_test);
 int get_test_score(int type, int flag1, int subtype, int flag2, int color, int flag3, int id,
                         int flag4, int cc, int flag5);
 
@@ -115,7 +115,7 @@ LAB_026be62e:
   return uVar1;
 }
 
-int new_get_test_score(test_definition_2022_t *this_test)
+int new_get_test_score(test_definition_t *this_test)
 {
   unsigned short uVar1;
   uint16_t uVar2;
@@ -321,43 +321,9 @@ joined_r0x026be942:
   return uVar11;
 }
 
-static int check_multisubtype_by_csvid(int csvid, int sub1, int sub2, int sub3, int sub4, int sub5){
-	if( sub1 > 0 && has_subtype_by_id(csvid, sub1) ){
-		return 1;
-	}
-	if( sub2 > 0 && has_subtype_by_id(csvid, sub2) ){
-		return 1;
-	}
-	if( sub3 > 0 && has_subtype_by_id(csvid, sub3) ){
-		return 1;
-	}
-	if( sub4 > 0 && has_subtype_by_id(csvid, sub4) ){
-		return 1;
-	}
-	if( sub5 > 0 && has_subtype_by_id(csvid, sub5) ){
-		return 1;
-	}
-	return 0;
-}
 
-static int check_multisubtype_all_by_csvid(int csvid, int sub1, int sub2, int sub3, int sub4, int sub5){
-	if( sub1 > 0 && !has_subtype_by_id(csvid, sub1) ){
-		return 0;
-	}
-	if( sub2 > 0 && !has_subtype_by_id(csvid, sub2) ){
-		return 0;
-	}
-	if( sub3 > 0 && !has_subtype_by_id(csvid, sub3) ){
-		return 0;
-	}
-	if( sub4 > 0 && !has_subtype_by_id(csvid, sub4) ){
-		return 0;
-	}
-	if( sub5 > 0 && !has_subtype_by_id(csvid, sub5) ){
-		return 0;
-	}
-	return 1;
-}
+
+
 
 static int check_multisubtype(int player, int card, int sub1, int sub2, int sub3, int sub4, int sub5){
 	if( sub1 > 0 && has_subtype(player, card, sub1) ){
@@ -397,7 +363,7 @@ static int check_multisubtype_all(int player, int card, int sub1, int sub2, int 
 	return 1;
 }
 
-void new_default_test_definition(test_definition_2022_t *this_test, int type, const char *msg)
+void new_default_test_definition(test_definition_t *this_test, int type, const char *msg)
 {
   if (ai_is_speculating == 1)
   {
@@ -438,7 +404,7 @@ void new_default_test_definition(test_definition_2022_t *this_test, int type, co
   this_test->sub5 = 0;
   this_test->no_shuffle = 0;
   this_test->create_minideck = 0;
-  this_test->special_selection_function = (test_selection_predicate_2022_t)0x0;
+  this_test->special_selection_function = (test_selection_predicate_t)0x0;
   this_test->value_for_special_selection_function = -1;
   this_test->painters_servant_hack[0] = -1;
   this_test->painters_servant_hack[1] = -1;
@@ -449,14 +415,14 @@ void new_default_test_definition(test_definition_2022_t *this_test, int type, co
   return;
 }
 
-void default_test_definition(test_definition_2022_t *this_test, int type)
+void default_test_definition(test_definition_t *this_test, int type)
 {
   new_default_test_definition(this_test, type, "Select a card.");
   return;
 }
 
 int new_make_test_in_play(int player, int to_examine, int test_type,
-                               test_definition_2022_t *this_test)
+                               test_definition_t *this_test)
 {
   uint16_t uVar1;
   uint16_t uVar2;
@@ -474,7 +440,7 @@ int new_make_test_in_play(int player, int to_examine, int test_type,
   uint16_t uVar14;
   short sVar15;
   subtype_t sVar16;
-  test_selection_predicate_2022_t p_Var17;
+  test_selection_predicate_t p_Var17;
   subtype_t subtype;
   subtype_t sVar18;
   subtype_t sVar19;
@@ -959,7 +925,7 @@ LAB_026bed5b:
     }
   }
   p_Var17 = this_test->special_selection_function;
-  if (p_Var17 != (test_selection_predicate_2022_t)0x0)
+  if (p_Var17 != (test_selection_predicate_t)0x0)
   {
     iVar21 = this_test->value_for_special_selection_function;
     instance = get_card_instance(player, to_examine);
@@ -991,7 +957,7 @@ int make_test_in_play(int player, int to_examine, int test_type, int type, int f
                            int flag5)
 {
   int result;
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
   new_default_test_definition(&this_test, type, "Select a card.");
   this_test.type_flag = (unsigned short)flag1;
   this_test.subtype = subtype;
@@ -1007,7 +973,7 @@ int make_test_in_play(int player, int to_examine, int test_type, int type, int f
   return result;
 }
 
-int new_make_test(int player, int to_examine, int test_type, test_definition_2022_t *this_test)
+int new_make_test(int player, int to_examine, int test_type, test_definition_t *this_test)
 {
   uint16_t uVar1;
   uint16_t uVar2;
@@ -1125,18 +1091,18 @@ int new_make_test(int player, int to_examine, int test_type, test_definition_202
       sVar17 = this_test->sub4;
       subtype = this_test->sub2;
       if ((((((int)sVar13 < 1) ||
-             (result = has_subtype_by_id_2022(-1, uVar18, sVar13), result == 0)) &&
+             (result = has_subtype_by_id(-1, uVar18, sVar13), result == 0)) &&
             (((int)subtype < 1 ||
-              (result = has_subtype_by_id_2022(-1, uVar18, subtype), result == 0)))) &&
+              (result = has_subtype_by_id(-1, uVar18, subtype), result == 0)))) &&
            (((int)sVar16 < 1 ||
-             (result = has_subtype_by_id_2022(-1, uVar18, sVar16), result == 0)))) &&
-          (((int)sVar17 < 1 || (result = has_subtype_by_id_2022(-1, uVar18, sVar17), result == 0))))
+             (result = has_subtype_by_id(-1, uVar18, sVar16), result == 0)))) &&
+          (((int)sVar17 < 1 || (result = has_subtype_by_id(-1, uVar18, sVar17), result == 0))))
       {
         if ((int)sVar15 < 1)
         {
           return 0;
         }
-        result = has_subtype_by_id_2022(-1, uVar18, sVar15);
+        result = has_subtype_by_id(-1, uVar18, sVar15);
         if (result == 0)
         {
           return 0;
@@ -1151,23 +1117,23 @@ int new_make_test(int player, int to_examine, int test_type, test_definition_202
       sVar16 = this_test->sub4;
       sVar17 = this_test->sub2;
       if ((0 < (int)this_test->subtype) &&
-          (result = has_subtype_by_id_2022(-1, uVar18, this_test->subtype), result == 0))
+          (result = has_subtype_by_id(-1, uVar18, this_test->subtype), result == 0))
       {
         return 0;
       }
-      if ((0 < (int)sVar17) && (result = has_subtype_by_id_2022(-1, uVar18, sVar17), result == 0))
+      if ((0 < (int)sVar17) && (result = has_subtype_by_id(-1, uVar18, sVar17), result == 0))
       {
         return 0;
       }
-      if ((0 < (int)sVar15) && (result = has_subtype_by_id_2022(-1, uVar18, sVar15), result == 0))
+      if ((0 < (int)sVar15) && (result = has_subtype_by_id(-1, uVar18, sVar15), result == 0))
       {
         return 0;
       }
-      if ((0 < (int)sVar16) && (result = has_subtype_by_id_2022(-1, uVar18, sVar16), result == 0))
+      if ((0 < (int)sVar16) && (result = has_subtype_by_id(-1, uVar18, sVar16), result == 0))
       {
         return 0;
       }
-      if ((0 < (int)sVar13) && (result = has_subtype_by_id_2022(-1, uVar18, sVar13), result == 0))
+      if ((0 < (int)sVar13) && (result = has_subtype_by_id(-1, uVar18, sVar13), result == 0))
       {
         return 0;
       }
@@ -1175,7 +1141,7 @@ int new_make_test(int player, int to_examine, int test_type, test_definition_202
     }
     if (uVar21 == 0)
     {
-      result = has_subtype_by_id_2022(player, uVar18, this_test->subtype);
+      result = has_subtype_by_id(player, uVar18, this_test->subtype);
       if (result == 0)
       {
         return 0;
@@ -1183,7 +1149,7 @@ int new_make_test(int player, int to_examine, int test_type, test_definition_202
       uVar21 = this_test->subtype_flag;
     }
     if ((uVar21 == 1) &&
-        (result = has_subtype_by_id_2022(player, uVar18, this_test->subtype), result != 0))
+        (result = has_subtype_by_id(player, uVar18, this_test->subtype), result != 0))
     {
       return 0;
     }
@@ -1417,7 +1383,7 @@ LAB_026bf8ac:
       return 0;
     }
   }
-  if ((this_test->special_selection_function != (test_selection_predicate_2022_t)0x0) &&
+  if ((this_test->special_selection_function != (test_selection_predicate_t)0x0) &&
       (result = (*this_test->special_selection_function)(
            to_examine, this_test->value_for_special_selection_function, player, -1),
        result == 0))
@@ -1444,7 +1410,7 @@ int make_test(int player, int to_examine, int test_type, int type, int flag1, in
                    int flag2, int color, int flag3, int id, int flag4, int cc, int flag5)
 {
   int result;
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
   new_default_test_definition(&this_test, type, "Select a card.");
   this_test.type_flag = (unsigned short)flag1;
   this_test.subtype = subtype;
@@ -1630,7 +1596,7 @@ int my_base_value(int player, int card ){
 
 extern int hack_illusionary_mask_event;	// must set to event when setting test_definition_t::has_mana_to_pay_cmc to 2
 int check_battlefield_for_special_card(int player, int card, int t_player, int mode,
-                                            test_definition_2022_t *this_test)
+                                            test_definition_t *this_test)
 {
   card_instance_t *pcVar1;
   int result;
@@ -1641,7 +1607,7 @@ int check_battlefield_for_special_card(int player, int card, int t_player, int m
   card_instance_t *pcStack_7c;
   unsigned int uStack_70;
   unsigned int uStack_6c;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   pcStack_7c = NULL;
   if ((mode & 8U) != 0)

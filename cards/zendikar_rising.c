@@ -1139,7 +1139,7 @@ int card_archon_of_emeria(int player, int card, event_t event)
     permanents_enters_battlefield_tapped(player, card, event, 1 - player, 0, &test);
   }
   if ((((event == EVENT_MODIFY_COST_GLOBAL) &&
-        (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)) &&
+        (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
        (result = is_what(affected_card_controller, affected_card, 1), result == 0)) &&
       (result = get_specific_storm_count(affected_card_controller), 0 < result))
   {
@@ -1312,7 +1312,7 @@ int card_brushfire_elemental(int player, int card, event_t event)
 {
   int result;
 
-  result = is_humiliated_for_ability(player, card, AL_STATIC);
+  result = is_humiliated(player, card, AL_STATIC);
   if ((((event == EVENT_BLOCK_LEGALITY) && (result == 0)) &&
        (attacking_card_controller == player)) &&
       (attacking_card == card))
@@ -1674,7 +1674,7 @@ int card_leyline_tyrant(int player, int card, event_t event)
 
   if (event == EVENT_MANA_POOL_DRAINING)
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       mana_doesnt_drain_from_pool[player][4] = mana_doesnt_drain_from_pool[player][4] | 0x80;
@@ -1855,7 +1855,7 @@ int card_nighthawk_scavenger(int player, int card, event_t event)
 {
   int result;
 
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   lifelink(player, card, event);
   if (((event == EVENT_POWER) && (card == affected_card)) && (player == affected_card_controller))
   {
@@ -2229,7 +2229,7 @@ int card_skyclave_relic(int player, int card, event_t event)
   int result;
   token_generation_t token;
 
-  indestructible_2022(player, card, event);
+  indestructible(player, card, event);
   kicker(player, card, event, 3, 0, 0, 0, 0, 0);
   if (((trigger_condition == 0xdb) && (card == affected_card)) &&
       (player == affected_card_controller))
@@ -2622,7 +2622,7 @@ int card_crawling_barrens(int player, int card, event_t event)
   uint32_t uVar14;
   uint32_t uVar15;
 
-  iVar2 = is_humiliated_for_ability(player, card, AL_TRIG);
+  iVar2 = is_humiliated(player, card, AL_TRIG);
   if (iVar2 == 0)
   {
     comes_into_play_tapped(player, card, event);
@@ -2669,7 +2669,7 @@ int card_crawling_barrens(int player, int card, event_t event)
       {
 
         instance = get_card_instance(player, card);
-        add_counters_from_source(player, card, instance->parent_controller, instance->parent_card,
+        add_counters(player, card, instance->parent_controller, instance->parent_card,
                                  COUNTER_P1_P1, 2);
         iVar2 = dialog_impl(player, card, EVENT_RESOLVE_ACTIVATION, "\001\002", "\001\026",
                             "Animate", 1, 1, 0, 0, 0, 0, uVar6, uVar7, uVar8, uVar9, uVar10, uVar11,
@@ -2713,7 +2713,7 @@ int card_felidar_retreat(int player, int card, event_t event)
           instance = in_play(player, iStack_14);
           if ((instance != NULL) && (result = is_what(player, iStack_14, 2), result != 0))
           {
-            add_counters_from_source(player, card, player, iStack_14, COUNTER_P1_P1, 1);
+            add_counters(player, card, player, iStack_14, COUNTER_P1_P1, 1);
             pump_ability_until_eot_no_repeat(player, card, player, iStack_14, 0, 8);
           }
           iStack_14 = iStack_14 + -1;
@@ -2744,7 +2744,7 @@ int card_nissa_of_shadowed_boughs(int player, int card, event_t event)
   {
     if ((trigger_cause_controller != player) || (trigger_cause != card))
     {
-      add_counters_from_source(player, card, player, card, COUNTER_LOYALTY, 1);
+      add_counters(player, card, player, card, COUNTER_LOYALTY, 1);
     }
     check_legend_rule(player, card, EVENT_ETB);
   }
@@ -2853,7 +2853,7 @@ int card_nissa_of_shadowed_boughs(int player, int card, event_t event)
         iVar4 = reanimate_permanent(player, card, player, iVar4, REANIMATE_DEFAULT);
       LAB_0230ca8c:
         hack_silent_counters = 1;
-        add_counters_from_source(player, card, player, iVar4, COUNTER_P1_P1, 2);
+        add_counters(player, card, player, iVar4, COUNTER_P1_P1, 2);
         hack_silent_counters = 0;
       }
     }
@@ -2894,7 +2894,7 @@ int card_phylath_world_sculptor(int player, int card, event_t event)
         {
 
           instance = get_card_instance(player, card);
-          add_counters_from_source(player, card, instance->targets[0].player,
+          add_counters(player, card, instance->targets[0].player,
                                    instance->targets[0].card, COUNTER_P1_P1, 4);
         }
       }
@@ -2912,7 +2912,7 @@ int card_prowling_felidar(int player, int card, event_t event)
   {
     return 0;
   }
-  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  add_counters(player, card, player, card, COUNTER_P1_P1, 1);
   return 0;
 }
 
@@ -2964,7 +2964,7 @@ int card_scale_the_heights(int player, int card, event_t event)
         instance = get_card_instance(player, card);
         if ((instance->number_of_targets != '\0') && (result = valid_target(&td), result != 0))
         {
-          add_counters_from_source(player, card, instance->targets[0].player,
+          add_counters(player, card, instance->targets[0].player,
                                    instance->targets[0].card, COUNTER_P1_P1, 1);
         }
         gain_life(player, 2);
@@ -3001,7 +3001,7 @@ static int three_counters_for_mv_less_than_three(int player, int card)
     return 0;
   }
   hack_silent_counters = hack_silent_counters + 1;
-  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 3);
+  add_counters(player, card, player, card, COUNTER_P1_P1, 3);
   hack_silent_counters = hack_silent_counters + -1;
   return 0;
 }
@@ -3031,7 +3031,7 @@ int card_vastwood_fortification(int player, int card, event_t event)
       {
 
         instance = get_card_instance(player, card);
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_P1_P1, 1);
       }
       kill_card(player, card, KILL_DESTROY);
@@ -3238,7 +3238,7 @@ int card_jace_mirror_mage(int player, int card, event_t event)
 
         instance = get_card_instance(player, card);
         result = get_cmc(player, result);
-        remove_counters_from_source(player, card, instance->parent_controller,
+        remove_counters(player, card, instance->parent_controller,
                                     instance->parent_card, COUNTER_LOYALTY, result);
       }
     }
@@ -3273,7 +3273,7 @@ int card_luminarch_aspirant(int player, int card, event_t event)
       result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
       if (result != 0)
       {
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_P1_P1, 1);
       }
     }
@@ -3326,7 +3326,7 @@ int card_obuun_mul_daya_ancestor(int player, int card, event_t event)
     result = can_target(&td);
     if ((result != 0) && (result = new_pick_target(&td, "TARGET_CREATURE", 0, 0), result != 0))
     {
-      add_counters_from_source(player, card, pcVar2->targets[0].player, pcVar2->targets[0].card,
+      add_counters(player, card, pcVar2->targets[0].player, pcVar2->targets[0].card,
                                COUNTER_P1_P1, 1);
     }
     pcVar2->number_of_targets = '\0';
@@ -3495,7 +3495,7 @@ int card_myriad_construct(int player, int card, event_t event)
     instance = in_play(player, card);
     if (instance != NULL)
     {
-      iVar4 = is_humiliated_for_ability(player, card, AL_TRIG);
+      iVar4 = is_humiliated(player, card, AL_TRIG);
       if (iVar4 == 0)
       {
 
@@ -3703,7 +3703,7 @@ int card_zagras_thief_of_heartbeats(int player, int card, event_t event)
   int result;
 
   check_legend_rule(player, card, event);
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   haste(player, card, event);
   if (event == EVENT_MODIFY_COST)
   {
@@ -3716,7 +3716,7 @@ int card_zagras_thief_of_heartbeats(int player, int card, event_t event)
     result = is_what(player, affected_card, 2);
     if (result != 0)
     {
-      deathtouch_2022(affected_card_controller, affected_card, EVENT_ABILITIES);
+      deathtouch(affected_card_controller, affected_card, EVENT_ABILITIES);
     }
   }
   instance = combat_damage_being_dealt(event);
@@ -4137,7 +4137,7 @@ int card_skyclave_apparition(int player, int card, event_t event)
 
   iVar1 = duh_mode(player);
   etb_ability(player, card, event, (iVar1 != 0) + RESOLVE_TRIGGER_OPTIONAL);
-  leaves_play_2022(player, card, event, 1, 1);
+  leaves_play(player, card, event, 1, 1);
   if (event == EVENT_ETB)
   {
     default_target_definition(player, card, &recovered_stack_td.target, 0x47);
@@ -4555,7 +4555,7 @@ int mdfc_back_boltland(int player, int card, event_t event)
 int card_turntimber_symbiosis(int player, int card, event_t event)
 {
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
 
   if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
        event == EVENT_PLAY_FIRST_HALF) ||
@@ -4593,8 +4593,8 @@ int card_turntimber_symbiosis(int player, int card, event_t event)
     }
   }
   default_test_definition(&test, 2);
-  reveal_top_cards_of_library_and_choose_fn_2022(player, card, player, 7, 0, TUTOR2022_PLAY, 1,
-                                                 TUTOR2022_BOTTOM_OF_DECK_RANDOM, 0, &test,
+  reveal_top_cards_of_library_and_choose_fn(player, card, player, 7, 0, TUTOR_PLAY, 1,
+                                                 TUTOR_BOTTOM_OF_DECK_RANDOM, 0, &test,
                                                  three_counters_for_mv_less_than_three);
   kill_card(player, card, KILL_DESTROY);
 LAB_0230f458:
@@ -4633,7 +4633,7 @@ int card_skyclave_shade(int player, int card, event_t event)
   else if (event == EVENT_PAY_FLASHBACK_COSTS)
   {
     cd = get_card_data(player, card);
-    iVar2 = charge_spell_cost_2022(cd, player, card);
+    iVar2 = charge_spell_cost(cd, player, card);
     return (unsigned int)(iVar2 != 0);
   }
   return 0;
@@ -4700,7 +4700,7 @@ int card_valakut_awakening(int player, int card, event_t event)
   int iVar1;
   int iVar3;
   char msg[100];
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
   if (((event == EVENT_MODIFY_COST || event == EVENT_CHANGE_TYPE) ||
        event == EVENT_PLAY_FIRST_HALF) ||
       (event == EVENT_CAN_CAST))
@@ -4777,10 +4777,10 @@ int card_inscription_of_abundance(int player, int card, event_t event)
   inst_info_t iVar10;
   unsigned int uStack_17c;
   unsigned int uStack_16c;
-  target_definition_2022_t td_creature;
-  target_definition_2022_t td_control;
-  target_definition_2022_t td_dont_control;
-  target_definition_2022_t td_player;
+  target_definition_t td_creature;
+  target_definition_t td_control;
+  target_definition_t td_dont_control;
+  target_definition_t td_player;
   kicker(player, card, event, 2, 0, 0, 1, 0, 0);
   if (event == EVENT_CAN_CAST)
   {
@@ -4915,7 +4915,7 @@ int card_inscription_of_abundance(int player, int card, event_t event)
                                                   instance->targets[1].card),
            iVar4 != 0))
       {
-        add_counters_from_source(player, card, instance->targets[1].player,
+        add_counters(player, card, instance->targets[1].player,
                                  instance->targets[1].card, COUNTER_P1_P1, 2);
       }
       if (((uVar8 & 4) != 0) &&

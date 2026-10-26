@@ -624,7 +624,7 @@ int card_archfiend_of_despair(int player, int card, event_t event)
   if ((((event == EVENT_STATIC_EFFECTS) && (instance != NULL)) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       *(unsigned int *)(&player_bits + (1 - player) * 4) =
@@ -644,7 +644,7 @@ int card_arena_rector(int player, int card, event_t event)
   result = this_dies_trigger(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (result != 0)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       result = exile_from_owners_graveyard(player, card);
@@ -737,7 +737,7 @@ int card_stolen_strategy(int player, int card, event_t event)
   upkeep_trigger_ability_mode(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
 
@@ -1061,7 +1061,7 @@ int card_krav_the_unredeemed(int player, int card, event_t event)
       gain_life(pcVar4->targets[0].player, pcVar4->info_slot);
       if ((iVar1 != -1) && (iVar3 != -1))
       {
-        add_counters_from_source(iVar1, iVar3, iVar1, iVar3, COUNTER_P1_P1, pcVar4->info_slot);
+        add_counters(iVar1, iVar3, iVar1, iVar3, COUNTER_P1_P1, pcVar4->info_slot);
         return 0;
       }
     }
@@ -1088,7 +1088,7 @@ int card_archon_of_valors_reach(int player, int card, event_t event)
   vigilance(player, card, event);
   if (event == EVENT_ETB)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
 
@@ -1250,7 +1250,7 @@ int card_arcane_artisan(int player, int card, event_t event)
   target_definition_t td;
   test_definition_t this_test;
 
-  leaves_play_2022(player, card, event, 1, 0);
+  leaves_play(player, card, event, 1, 0);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
 
@@ -1339,9 +1339,9 @@ int card_toothy_imaginary_friend(int player, int card, event_t event)
   result = card_drawn_trigger(player, card, event, player, RESOLVE_TRIGGER_MANDATORY);
   if (result != 0)
   {
-    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    add_counters(player, card, player, card, COUNTER_P1_P1, 1);
   }
-  leaves_play_2022(player, card, event, 1, 1);
+  leaves_play(player, card, event, 1, 1);
   if (event != EVENT_LEAVES_PLAY_ABILITY)
   {
     return 0;
@@ -1427,7 +1427,7 @@ int card_bramble_sovereign(int player, int card, event_t event)
     result = has_mana_multi(player, 1, 0, 0, 1, 0, 0);
     if (result != 0)
     {
-      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      result = is_humiliated(player, card, AL_TRIG);
       if (result == 0)
       {
         default_test_definition(&recovered_stack_test.test, 2);
@@ -1480,7 +1480,7 @@ int card_generous_patron(int player, int card, event_t event)
       result = is_what(affected_card_controller, affected_card, 2);
       if ((result != 0) && (affected_card_controller != player))
       {
-        result = is_humiliated_for_ability(player, card, AL_TRIG);
+        result = is_humiliated(player, card, AL_TRIG);
         if (result == 0)
         {
           draw_a_card(player);
@@ -1500,14 +1500,14 @@ int card_generous_patron(int player, int card, event_t event)
 /* Recovered October 2022 action and copy helpers. */
 
 /* ManalinkEh 2022: 0x20277e0; original cards/battlebond.c:610. */
-int get_random_permanent_2022(int player, test_definition_2022_t *this_test)
+int get_random_permanent(int player, test_definition_t *this_test)
 {
   card_instance_t *instance;
   int iVar2;
   long lVar3;
   int iVar4;
   int card;
-  test_definition_2022_t default_test;
+  test_definition_t default_test;
   int prm[151];
 
   if (this_test == NULL)
@@ -1532,7 +1532,7 @@ int get_random_permanent_2022(int player, test_definition_2022_t *this_test)
     {
       if (current_turn == 1)
       {
-        receive_network_packet_2022();
+        receive_network_packet(1, 24);
         return dblword_628C10;
       }
       prm[0] = -1;
@@ -1567,7 +1567,7 @@ int get_random_permanent_2022(int player, test_definition_2022_t *this_test)
     LAB_020278c2:
       byte_628C0C = '\x18';
       dblword_628C10 = lVar3;
-      send_network_packet_2022();
+      send_network_packet(0, 24);
       return lVar3;
     }
   }
@@ -1587,7 +1587,7 @@ int card_last_one_standing(int player, int card, event_t event)
   int iVar3;
   const char *pcVar4;
   char buffer[100];
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
 
   if (event == EVENT_CAN_CAST)
     goto LAB_02027990;
@@ -1620,7 +1620,7 @@ int card_last_one_standing(int player, int card, event_t event)
   {
     if (iVar3 != 0)
       goto LAB_02027a43;
-    get_random_permanent_2022(-1, &this_test);
+    get_random_permanent(-1, &this_test);
   }
   else
   {
@@ -1630,7 +1630,7 @@ int card_last_one_standing(int player, int card, event_t event)
       iVar1 = internal_rand(1);
     }
   LAB_02027a43:
-    iVar2 = get_random_permanent_2022(iVar1, &this_test);
+    iVar2 = get_random_permanent(iVar1, &this_test);
     if (iVar1 != -1)
     {
       iVar3 = get_id(iVar1, iVar2);
@@ -1667,7 +1667,7 @@ int card_okaun_eye_of_chaos(int player, int card, event_t event)
   partner_with(player, card, event, 0x48e0);
   if (event == EVENT_CHANGE_TYPE)
   {
-    result = engine_any_legal_attacker_2022(player);
+    result = engine_any_legal_attacker(player);
     if ((result == 0) && (current_turn == player))
     {
       event_flags = event_flags | EA_FORCE_ATTACK;
@@ -1704,7 +1704,7 @@ int card_zndrsplt_eye_of_wisdom(int player, int card, event_t event)
   partner_with(player, card, event, 0x48ba);
   if (event == EVENT_CHANGE_TYPE)
   {
-    result = engine_any_legal_attacker_2022(player);
+    result = engine_any_legal_attacker(player);
     if ((result == 0) && (current_turn == player))
     {
       event_flags = event_flags | EA_FORCE_ATTACK;
@@ -1742,7 +1742,7 @@ int card_thrilling_encore(int player, int card, event_t event)
   int result;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    seek_grave_to_reanimate_this_turn(player, 2, -0x7ffffffe, REANIMATE2022_DEFAULT);
+    seek_grave_to_reanimate_this_turn(player, 2, -0x7ffffffe, REANIMATE_DEFAULT);
     kill_card(player, card, KILL_DESTROY);
   }
   result = basic_spell(player, card, event);

@@ -288,7 +288,7 @@ int card_witch_of_the_moors(int player, int card, event_t event)
 {
   int result;
   test_definition_t test;
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   result = eot_trigger(player, card, event);
   if ((result != 0) && (current_turn == player))
   {
@@ -564,7 +564,7 @@ int card_stone_haven_pilgrim(int player, int card, event_t event)
             (current_phase < 0x16)) &&
            (result = check_battlefield_for_subtype(player, 0x44, -1), result != 0))
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     return (unsigned int)(result == 0);
   }
   return 0;
@@ -1033,7 +1033,7 @@ int card_emiel_the_blessed(int player, int card, event_t event)
       if (result != 0)
       {
         result = has_subtype(trigger_cause_controller, trigger_cause, SUBTYPE_UNICORN);
-        add_counters_from_source(player, card, trigger_cause_controller, trigger_cause,
+        add_counters(player, card, trigger_cause_controller, trigger_cause,
                                  COUNTER_P1_P1, (result != 0) + 1);
       }
     }
@@ -1085,7 +1085,7 @@ int card_trusty_retriever(int player, int card, event_t event)
                     "Add a +1/+1 counter", 1, 5, "Retrieve a card", uVar2, 5, 0, 0, 0, 0);
     if (result == 1)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+      add_counters(player, card, player, card, COUNTER_P1_P1, 1);
     }
     else if (result == 2)
     {
@@ -1141,7 +1141,7 @@ int card_muxus_goblin_grandee(int player, int card, event_t event)
         if (iVar2 != 0)
         {
           iVar2 =
-              has_subtype_by_id_2022(player, (unsigned int)cards_data[iVar3].id, SUBTYPE_GOBLIN);
+              has_subtype_by_id(player, (unsigned int)cards_data[iVar3].id, SUBTYPE_GOBLIN);
           if (iVar2 != 0)
           {
             iVar2 = get_cmc_by_internal_id(iVar3);
@@ -1201,7 +1201,7 @@ int card_bruvac_the_grandiloquent(int player, int card, event_t event)
       (((reason_for_trigger_controller == player && (1 - player == trigger_cause_controller)) &&
         (0 < replace_milled))))
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       if (event == EVENT_TRIGGER)
@@ -1255,7 +1255,7 @@ int card_neyith_of_the_dire_hunt(int player, int card, event_t event);
 int card_towering_titan(int player, int card, event_t event)
 {
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
   result = get_toughness_sum(player);
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, result);
   if (event != EVENT_ACTIVATE)
@@ -1283,7 +1283,7 @@ int card_neyith_of_the_dire_hunt(int player, int card, event_t event)
   card_instance_t *instance;
   int iVar2;
   int iVar3;
-  target_definition_2022_t td;
+  target_definition_t td;
   check_legend_rule(player, card, event);
   if (event == EVENT_FIGHT)
   {
@@ -1312,7 +1312,7 @@ int card_neyith_of_the_dire_hunt(int player, int card, event_t event)
   }
   else if (event == EVENT_CHANGE_TYPE)
   {
-    iVar3 = engine_any_legal_attacker_2022(player);
+    iVar3 = engine_any_legal_attacker(player);
     if (iVar3 == 0)
     {
       event_flags = event_flags | EA_FORCE_ATTACK;
@@ -1320,7 +1320,7 @@ int card_neyith_of_the_dire_hunt(int player, int card, event_t event)
     }
   }
   else if (((event == EVENT_BEGIN_COMBAT) &&
-            (iVar3 = is_humiliated_for_ability(player, card, AL_TRIG), iVar3 == 0)) &&
+            (iVar3 = is_humiliated(player, card, AL_TRIG), iVar3 == 0)) &&
            (current_turn == player))
   {
     default_target_definition(player, card, &td, 2);
@@ -1331,7 +1331,7 @@ int card_neyith_of_the_dire_hunt(int player, int card, event_t event)
       iVar2 = has_mana_hybrid(player, 1, 4, 3, iVar3);
       if (iVar2 != 0)
       {
-        iVar2 = engine_any_legal_attacker_2022(player);
+        iVar2 = engine_any_legal_attacker(player);
         iVar2 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\026", "\001\003",
                             "Double a creature's power", 1, (iVar2 + 1) * 0xf, "Pass", 1, 1, 0, 0,
                             0, 0);
@@ -1360,7 +1360,7 @@ int card_zurzoth_chaos_rider(int player, int card, event_t event)
   int result;
   int who_draws;
   unsigned int player_00;
-  test_definition_2022_t test;
+  test_definition_t test;
   check_legend_rule(player, card, event);
   who_draws = 1 - player;
   result = card_drawn_trigger(player, card, event, who_draws, RESOLVE_TRIGGER_MANDATORY);
@@ -1400,7 +1400,7 @@ int card_ormos_archive_keeper(int player, int card, event_t event)
   check_legend_rule(player, card, event);
   if (trigger_condition == TRIGGER_REPLACE_CARD_DRAW && affect_me(player, card) &&
       reason_for_trigger_controller == player && suppress_draw == 0 &&
-      !is_humiliated_for_ability(player, card, AL_STATIC) && deck_ptr[player][0] == -1)
+      !is_humiliated(player, card, AL_STATIC) && deck_ptr[player][0] == -1)
   {
     if (event == EVENT_TRIGGER)
     {
@@ -1409,7 +1409,7 @@ int card_ormos_archive_keeper(int player, int card, event_t event)
     }
     if (event == EVENT_RESOLVE_TRIGGER)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 5);
+      add_counters(player, card, player, card, COUNTER_P1_P1, 5);
       suppress_draw = 1;
       return 0;
     }
@@ -1438,7 +1438,7 @@ int card_ormos_archive_keeper(int player, int card, event_t event)
   }
   if (event == EVENT_ACTIVATE)
   {
-    test_definition_2022_t test;
+    test_definition_t test;
     new_default_test_definition(&test, 0xff, "Select a card to discard.");
     test.value_for_special_selection_function = (int32_t)(intptr_t)searched;
     test.special_selection_function = test_not_in_array;

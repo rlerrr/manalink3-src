@@ -1562,7 +1562,7 @@ int card_knight_of_the_widget(int player, int card, event_t event)
        (affected_card_controller == player)) &&
       (player != -1))
   {
-    iVar1 = is_humiliated_for_ability(player, card, AL_STATIC);
+    iVar1 = is_humiliated(player, card, AL_STATIC);
     if (iVar1 == 0)
     {
 
@@ -2176,7 +2176,7 @@ int card_stamp_of_approval(int player, int card, event_t event)
     result = is_what(player, affected_card, 2);
     if (result != 0)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
 
@@ -2232,7 +2232,7 @@ int card_border_guardian(int player, int card, event_t event)
     }
     if (bVar1 == BORDER_SILVER)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+      add_counters(player, card, player, card, COUNTER_P1_P1, 1);
     }
     else if (bVar1 == BORDER_BLACK)
     {
@@ -2382,12 +2382,12 @@ int card_inhumaniac(int player, int card, event_t event)
       {
         return 0;
       }
-      remove_all_counters_from_source(player, card, player, card, COUNTER_P1_P1);
+      remove_all_counters(player, card, player, card, COUNTER_P1_P1);
       return 0;
     }
     result = 2;
   }
-  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, result);
+  add_counters(player, card, player, card, COUNTER_P1_P1, result);
   return 0;
 }
 
@@ -2444,7 +2444,7 @@ int card_squirrel_powered_scheme(int player, int card, event_t event)
 
   if (event == EVENT_STATIC_EFFECTS)
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       add_to_die_rolls[player] = add_to_die_rolls[player] + 2;
@@ -2611,7 +2611,7 @@ int card_earl_of_squirrel(int player, int card, event_t event)
         result = is_what(affected_card_controller, affected_card, 2);
         if (result != 0)
         {
-          result = is_humiliated_for_ability(player, card, AL_STATIC);
+          result = is_humiliated(player, card, AL_STATIC);
           if (result == 0)
           {
             add_a_subtype(affected_card_controller, affected_card, SUBTYPE_SQUIRREL);
@@ -2626,7 +2626,7 @@ int card_earl_of_squirrel(int player, int card, event_t event)
     result = has_subtype(player, affected_card, SUBTYPE_SQUIRREL);
     if (result != 0)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         event_result = event_result + 1;
@@ -2664,7 +2664,7 @@ int card_garbage_elemental_c(int player, int card, event_t event)
 int card_spike_tournament_grinder(int player, int card, event_t event)
 {
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
 
   phyrexian_casting_costs(player, card, event, 2, 2, 0, 0, 0, 0, 0);
   if (event == EVENT_CAN_ACTIVATE)
@@ -2721,10 +2721,10 @@ int card_very_cryptic_command_b(int player, int card, event_t event)
   CommandChoices *pCVar8;
   int iStack_278;
   CommandChoices choices[2];
-  target_definition_2022_t td_permanent;
-  target_definition_2022_t td_player;
-  test_definition_2022_t test_instant_sorcery;
-  test_definition_2022_t test;
+  target_definition_t td_permanent;
+  target_definition_t td_player;
+  test_definition_t test_instant_sorcery;
+  test_definition_t test;
 
   if (event != EVENT_CAN_CAST)
   {
@@ -2941,15 +2941,15 @@ int card_very_cryptic_command_e(int player, int card, event_t event)
   int iVar3;
   int iVar4;
   card_instance_t *instance;
-  target_definition_2022_t *td;
+  target_definition_t *td;
   CommandChoices *pCVar6;
   CommandChoices *pCVar7;
   int iStack_200;
   CommandChoices choices[2];
-  target_definition_2022_t td_spell;
-  target_definition_2022_t td_creature;
-  target_definition_2022_t td_player;
-  test_definition_2022_t test;
+  target_definition_t td_spell;
+  target_definition_t td_creature;
+  target_definition_t td_player;
+  test_definition_t test;
 
   if (event == EVENT_CAN_CAST)
   {
@@ -3155,7 +3155,7 @@ int card_sly_spy_a(int player, int card, event_t event)
   int iStack_110;
   int times_damaged[2];
   ec_definition_t ec;
-  test_definition_2022_t test;
+  test_definition_t test;
   iVar1 = damage_dealt_by_me(player, card, event,
                              DDBM_TRACE_DAMAGED_PLAYERS | DDBM_MUST_DAMAGE_PLAYER |
                                  DDBM_MUST_BE_COMBAT_DAMAGE);
@@ -3387,7 +3387,7 @@ int card_capital_offense(int player, int card, event_t event)
   card_instance_t *instance;
   const char *pcVar3;
   char current_char;
-  target_definition_2022_t td;
+  target_definition_t td;
   char rules[3000];
   if (event != EVENT_RESOLVE_SPELL)
   {
@@ -3451,12 +3451,12 @@ int card_old_fashioned_vampire(int player, int card, event_t event)
     }
     if (bVar1)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         if (event == EVENT_ABILITIES)
         {
-          deathtouch_2022(player, card, EVENT_ABILITIES);
+          deathtouch(player, card, EVENT_ABILITIES);
         }
         else
         {

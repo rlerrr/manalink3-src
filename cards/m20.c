@@ -610,7 +610,7 @@ static char *is_legendary_by_iid(int who_chooses, int player, int card)
 int card_tomebound_lich(int player, int card, event_t event)
 {
   int result;
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   lifelink(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if ((event != EVENT_ETB) &&
@@ -1041,7 +1041,7 @@ int card_field_of_the_dead(int player, int card, event_t event)
   if (((((trigger_condition == 0xdb) && (card == affected_card)) &&
         (player == affected_card_controller)) &&
        ((trigger_cause_controller == player && (reason_for_trigger_controller == player)))) &&
-      (iVar1 = is_humiliated_for_ability(player, card, AL_TRIG), iVar1 == 0))
+      (iVar1 = is_humiliated(player, card, AL_TRIG), iVar1 == 0))
   {
 
     iVar1 = is_what(trigger_cause_controller, trigger_cause, 1);
@@ -1480,7 +1480,7 @@ int card_knight_of_the_ebon_legion(int player, int card, event_t event)
       ((result = get_trap_condition(player, 2),
         3 < result || (result = get_trap_condition(1 - player, 2), 3 < result))))
   {
-    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    add_counters(player, card, player, card, COUNTER_P1_P1, 1);
   }
   if (event != EVENT_ACTIVATE)
   {
@@ -1677,7 +1677,7 @@ int card_omnath_locus_of_the_roil(int player, int card, event_t event)
       if ((result != 0) &&
           (result = new_pick_target(&td, "Select target Elemental.", 0, 0x80), result != 0))
       {
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_P1_P1, 1);
       }
       instance->number_of_targets = '\0';
@@ -1780,7 +1780,7 @@ int card_sorin_imperious_bloodlord(int player, int card, event_t event)
             has_subtype(instance->targets[0].player, instance->targets[0].card, SUBTYPE_VAMPIRE);
         if (result != 0)
         {
-          add_counters_from_source(instance->parent_controller, instance->parent_card,
+          add_counters(instance->parent_controller, instance->parent_card,
                                    instance->targets[0].player, instance->targets[0].card,
                                    COUNTER_P1_P1, 1);
         }
@@ -1833,7 +1833,7 @@ int card_voracious_hydra(int player, int card, event_t event)
       if (result == 1)
       {
         result = count_counters(player, card, COUNTER_P1_P1);
-        add_counters_from_source(player, card, player, card, COUNTER_P1_P1, result);
+        add_counters(player, card, player, card, COUNTER_P1_P1, result);
       }
       else
       {
@@ -2016,7 +2016,7 @@ int card_leyline_of_abundance(int player, int card, event_t event)
   card_instance_t *instance;
   test_definition_t this_test;
 
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if ((((event - EVENT_COUNT_MANA & 0xfffffffd) == 0 && result == 0) &&
        (affected_card_controller == player)) &&
       (result = is_what(player, affected_card, 2), result != 0))
@@ -2085,7 +2085,7 @@ int card_risen_reef(int player, int card, event_t event)
 
   if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
-      (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar2 == 0))
+      (iVar2 = is_humiliated(player, card, AL_TRIG), iVar2 == 0))
   {
     default_test_definition(&test, 0x47);
     test.subtype = 0x3a;
@@ -2322,7 +2322,7 @@ int card_chandra_awakened_inferno(int player, int card, event_t event)
       goto LAB_02395fdf;
     if ((0 < iVar5) && (iVar1 = count_counters(player, card, COUNTER_LOYALTY), iVar5 <= iVar1))
     {
-      remove_counters_from_source(player, card, player, card, COUNTER_LOYALTY, iVar5);
+      remove_counters(player, card, player, card, COUNTER_LOYALTY, iVar5);
       pcStack_18c->targets[1].player = iVar5;
       goto LAB_02395fdf;
     }
@@ -2345,7 +2345,7 @@ int card_leyline_of_combustion(int player, int card, event_t event)
   instance = in_play(player, card);
   if (instance != NULL)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       ptVar3 = any_becomes_target(player, card, event, player, -1, TYPE_PERMANENT, -1, TYPE_ANY,
@@ -2366,7 +2366,7 @@ int card_leyline_of_combustion(int player, int card, event_t event)
 int card_yarok_the_desecrated(int player, int card, event_t event)
 {
   check_legend_rule(player, card, event);
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   lifelink(player, card, event);
   if (event == EVENT_STATIC_EFFECTS)
   {
@@ -2410,21 +2410,21 @@ int card_kaalia_zenith_seeker(int player, int card, event_t event)
       bVar6 = false;
       do
       {
-        iVar3 = has_subtype_by_id_2022(
+        iVar3 = has_subtype_by_id(
             player, (unsigned int)cards_data[*(int *)((int)deck_ptr[player] + iVar5)].id,
             SUBTYPE_ANGEL);
         if (iVar3 != 0)
         {
           bVar6 = true;
         }
-        iVar3 = has_subtype_by_id_2022(
+        iVar3 = has_subtype_by_id(
             player, (unsigned int)cards_data[*(int *)((int)deck_ptr[player] + iVar5)].id,
             SUBTYPE_DEMON);
         if (iVar3 != 0)
         {
           bVar2 = true;
         }
-        iVar3 = has_subtype_by_id_2022(
+        iVar3 = has_subtype_by_id(
             player, (unsigned int)cards_data[*(int *)((int)deck_ptr[player] + iVar5)].id,
             SUBTYPE_DRAGON);
         if (iVar3 != 0)
@@ -2687,9 +2687,9 @@ int card_mu_yanling_sky_dancer(int player, int card, event_t event)
   int iVar2;
   card_instance_t *pcVar3;
   int iVar4;
-  target_definition_2022_t *ptStack_b4;
-  token_generation_2022_t token;
-  target_definition_2022_t td;
+  target_definition_t *ptStack_b4;
+  token_generation_t token;
+  target_definition_t td;
 
   check_legend_rule(player, card, event);
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -2794,13 +2794,13 @@ int card_vivien_arkbow_ranger(int player, int card, event_t event)
   int iVar3;
   int amt;
   unsigned int uVar4;
-  target_definition_2022_t *ptStack_1f0;
-  target_definition_2022_t *ptStack_1ec;
-  target_definition_2022_t *ptStack_1e8;
-  target_definition_2022_t td;
-  target_definition_2022_t td_control;
-  target_definition_2022_t td_cp;
-  test_definition_2022_t test;
+  target_definition_t *ptStack_1f0;
+  target_definition_t *ptStack_1ec;
+  target_definition_t *ptStack_1e8;
+  target_definition_t td;
+  target_definition_t td_control;
+  target_definition_t td_cp;
+  test_definition_t test;
 
   check_legend_rule(player, card, event);
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -2890,7 +2890,7 @@ int card_vivien_arkbow_ranger(int player, int card, event_t event)
         iVar2 = valid_target(ptStack_1ec);
         if (iVar2 != 0)
         {
-          add_counters_from_source(player, card, instance->targets[0].player,
+          add_counters(player, card, instance->targets[0].player,
                                    instance->targets[0].card, COUNTER_P1_P1, 2);
           pump_ability_until_eot_no_repeat(instance->parent_controller, instance->parent_card,
                                                 instance->targets[0].player,
@@ -2905,7 +2905,7 @@ int card_vivien_arkbow_ranger(int player, int card, event_t event)
           iVar3 = validate_target(player, card, ptStack_1ec, iVar2);
           if (iVar3 != 0)
           {
-            add_counters_from_source(player, card, instance->targets[iVar2].player,
+            add_counters(player, card, instance->targets[iVar2].player,
                                      instance->targets[iVar2].card, COUNTER_P1_P1, 1);
             pump_ability_until_eot_no_repeat(
                 instance->parent_controller, instance->parent_card, instance->targets[iVar2].player,
@@ -2953,8 +2953,8 @@ int card_chandra_acolyte_of_flame(int player, int card, event_t event)
   unsigned int uVar6;
   unsigned int uVar7;
   uint32_t uVar8;
-  token_generation_2022_t token;
-  test_definition_2022_t test;
+  token_generation_t token;
+  test_definition_t test;
 
   check_legend_rule(player, card, event);
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -3037,7 +3037,7 @@ int card_chandra_acolyte_of_flame(int player, int card, event_t event)
             uVar7 = get_sleighted_color_test(pcVar2->parent_controller, pcVar2->parent_card, 0x10);
             if ((uVar6 & uVar7) != 0)
             {
-              add_counters_from_source(player, card, player, iVar3, COUNTER_LOYALTY, 1);
+              add_counters(player, card, player, iVar3, COUNTER_LOYALTY, 1);
             }
           }
           iVar3 = iVar3 + -1;
@@ -3083,7 +3083,7 @@ int card_cavalier_of_gales(int player, int card, event_t event)
   int card_00;
   int owner;
   int position;
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {

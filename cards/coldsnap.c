@@ -1,5 +1,7 @@
 #include "manalink.h"
 
+static char *can_have_counters_placed_on_it_shim(int who_chooses, int player, int card, int targeting_player, int targeting_card);
+
 //-------- GLOBAL FUNCTIONS
 
 static int coldsnap_crusaders(int player, int card, event_t event, int mana_color){
@@ -252,29 +254,48 @@ Flying, vigilance
 									&td, "TARGET_CREATURE");
 }
 
-int card_allosaurus_rider(int player, int card, event_t event){
-/* CARD_ID_ALLOSAURUS_RIDER	8330
-Allosaurus Rider	|5|G|G
-Creature - Elf Warrior 101/101
-You may exile two |Sgreen cards from your hand rather than pay ~'s mana cost.
-~'s power and toughness are each equal to 1 plus the number of lands you control. */
-
-	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && !is_humiliated(player, card) && player != -1){
-		event_result += landsofcolor_controlled[player][COLOR_ANY];
-	}
-
-	if( event != EVENT_MODIFY_COST && ! IS_GS_EVENT(player, card, event) ){
-		return 0;
-	}
-
-	test_definition_t this_test;
-	new_default_test_definition(&this_test, TYPE_ANY, "Select a green card to exile");
-	this_test.color = COLOR_TEST_GREEN;
-	this_test.zone = TARGET_ZONE_HAND;
-	this_test.id = CARD_ID_RULES_ENGINE;
-	this_test.id_flag = 1;
-
-	return coldsnap_pitchspell(player, card, event, &this_test);
+int card_allosaurus_rider(int player, int card, event_t event)
+{
+  int result;
+  test_definition_t this_test;
+  if (event - EVENT_POWER < 2)
+  {
+    if (((card == affected_card) && (affected_card_controller == player)) && (player != -1))
+    {
+      set_characteristic_pt(landsofcolor_controlled[player][7] + 1);
+    }
+  }
+  else
+  {
+    if ((event == EVENT_CAN_CAST) || (event == EVENT_MODIFY_COST))
+      goto LAB_02161405;
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+      goto LAB_02161405;
+    }
+    if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      goto LAB_02161405;
+  }
+  if (event != EVENT_CHANGE_TARGET)
+  {
+    return 0;
+  }
+LAB_02161405:
+  new_default_test_definition(&this_test, 0xff, "Select a green card to exile");
+  this_test.color = 8;
+  this_test.zone = 0x100;
+  this_test.id = 0x615a;
+  this_test.id_flag = 1;
+  result = coldsnap_pitchspell(player, card, event, &this_test);
+  return result;
 }
 
 int card_arctic_nishoba(int player, int card, event_t event)
@@ -628,7 +649,7 @@ int card_cover_of_winter(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t* instance = get_card_instance(player, card);
-		add_counter(instance->parent_controller, instance->parent_card, COUNTER_AGE);
+		add_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_AGE, 1);
 	}
 
 	return global_enchantment(player, card, event);
@@ -685,7 +706,7 @@ int card_dark_depths(int player, int card, event_t event){
 	}
 
 	if (event == EVENT_RESOLVE_ACTIVATION ){
-		remove_counter(instance->parent_controller, instance->parent_card, COUNTER_ICE);
+		remove_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_ICE, 1);
 	}
 
 	return generic_activated_ability(player, card, event, 0, MANACOST_X(3), 0, NULL, NULL);
@@ -912,7 +933,7 @@ int card_earthen_goo(int player, int card, event_t event)
 	cumulative_upkeep_hybrid(player, card, event, 1, COLOR_RED, COLOR_GREEN, 0);
 
 	if ( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && in_play(player, card) &&
-		! is_humiliated(player, card) )
+		! is_humiliated(player, card, AL_STATIC) )
 		event_result += count_counters(player, card, COUNTER_AGE);
 
 	return 0;
@@ -961,16 +982,16 @@ Snow Creature - Spider 1/3
 Reach (This creature can block creatures with flying.)
 Whenever ~ blocks a creature with flying, put a +1/+1 counter on ~ at end of combat. */
 
-	if( current_turn != player && event == EVENT_DECLARE_BLOCKERS && blocking(player, card, event) && ! is_humiliated(player, card) ){
+	if( current_turn != player && event == EVENT_DECLARE_BLOCKERS && blocking(player, card, event) && ! is_humiliated(player, card, AL_TRIG) ){
 		if( check_for_ability(1-player, get_card_instance( player, card )->blocking, KEYWORD_FLYING) ){
 			get_card_instance( player, card )->info_slot = 66;
 		}
 	}
 
-	if( get_card_instance( player, card )->info_slot == 66 && ! is_humiliated(player, card)  &&
+	if( get_card_instance( player, card )->info_slot == 66 && ! is_humiliated(player, card, AL_TRIG)  &&
 		end_of_combat_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) )
 	{
-	 add_counter(player, card, COUNTER_P1_P1);
+	 add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 	 get_card_instance( player, card )->info_slot = 0;
 	}
 
@@ -1012,7 +1033,7 @@ Whenever ~ Zol deals combat damage to a player, you may draw a card. */
 		draw_cards(player, 1);
 	}
 	if( sengir_vampire_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		add_1_1_counters(player, card, get_card_instance(player, card)->targets[11].card);
+		add_counters(player, card, player, card, COUNTER_P1_P1, get_card_instance(player, card)->targets[11].card);
 	}
 
 	return 0;
@@ -1088,7 +1109,7 @@ int card_glacial_plating(int player, int card, event_t event)
 
 	card_instance_t* instance;
 	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && (instance = in_play(player, card)) &&
-		affect_me(instance->damage_target_player, instance->damage_target_card) && ! is_humiliated(player, card) )
+		affect_me(instance->damage_target_player, instance->damage_target_card) && ! is_humiliated(player, card, AL_STATIC) )
 		event_result += 3 * count_counters(player, card, COUNTER_AGE);
 
 	return vanilla_aura(player, card, event, player);
@@ -1118,90 +1139,124 @@ Snow Creature - Zombie 2/2
 	return generic_activated_ability(player, card, event, GAA_SACRIFICE_CREATURE, MANACOST_X(1), 0, NULL, NULL);
 }
 
-int card_haakon_stromgald_scourge(int player, int card, event_t event){
-	/* Haakon, Stromgald Scourge	|1|B|B
-	 * Legendary Creature - Zombie Knight 3/3
-	 * You may cast ~ from your graveyard, but not from anywhere else.
-	 * As long as Haakon is on the battlefield, you may play Knight cards from your graveyard.
-	 * When Haakon dies, you lose 2 life. */
-
-
-
-	check_legend_rule(player, card, event);
-
-	if( event == EVENT_MODIFY_COST && in_hand(player, card) ){
-		infinite_casting_cost();
-	}
-
-	if( this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		lose_life(player, 2);
-	}
-
-	if( event == EVENT_GRAVEYARD_ABILITY ){
-		card_instance_t *instance = get_card_instance( player, card );
-		int cless = get_updated_casting_cost(player, -1, instance->internal_card_id, event, 1);
-		if( has_mana_multi(player, MANACOST_XB(cless, 2)) ){
-			return GA_PLAYABLE_FROM_GRAVE;
-		}
-	}
-
-	if( event == EVENT_PAY_FLASHBACK_COSTS ){
-		card_instance_t *instance = get_card_instance( player, card );
-		int cless = get_updated_casting_cost(player, -1, instance->internal_card_id, event, 1);
-		charge_mana_multi(player, MANACOST_XB(cless, 2));
-		if( spell_fizzled != 1 ){
-			return GAPAID_REMOVE;
-		}
-	}
-
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
-
-	if (event == EVENT_CAN_ACTIVATE){
-		int i, sorc = can_sorcery_be_played(player, event);
-		const int* grave = get_grave(player);
-		for (i = 0; grave[i] != -1; ++i){
-			if (has_subtype(-1, grave[i], SUBTYPE_KNIGHT) &&
-				/* Instants, interrupts, cards with flash can be played at any time.  Otherwise, only when a sorcery is legal.  Check card_data_t::type directly
-				 * instead of using is_what(), which strips TYPE_INSTANT from permanent types. */
-				(sorc || cards_data[grave[i]].type & (TYPE_INSTANT | TYPE_INTERRUPT)) &&
-				has_mana_to_cast_id(player, event, cards_data[grave[i]].id)
-			   ){
-				return 1;
-			}
-		}
-	}
-
-	if( event == EVENT_ACTIVATE ){
-		test_definition_t this_test;
-		new_default_test_definition(&this_test, 0, "Select a Knight card.");
-		this_test.subtype = SUBTYPE_KNIGHT;
-
-		int selected = new_select_a_card(player, player, TUTOR_FROM_GRAVE, 0, 1, -1, &this_test);
-		if( selected == -1 ){
-			spell_fizzled = 1;
-			return 0;
-		}
-		const int *grave = get_grave(player);
-		if( !(cards_data[grave[selected]].type & (TYPE_INSTANT | TYPE_INTERRUPT)) &&
-			!can_sorcery_be_played(player, event)
-			){
-			spell_fizzled = 1;
-			return 0;
-		}
-		if( !has_mana_to_cast_id(player, event, cards_data[grave[selected]].id) ){
-			spell_fizzled = 1;
-			return 0;
-		}
-		charge_mana_from_id(player, -1, event, cards_data[grave[selected]].id);
-		if( spell_fizzled != 1 ){
-			play_card_in_grave_for_free(player, player, selected);
-			cant_be_responded_to = 1;	// The animated knight will be respondable to, but the extra activation effect from Haakon won't be
-		}
-	}
-
-	return 0;
+int card_haakon_stromgald_scourge(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int *piVar4;
+  test_definition_t this_test;
+  check_legend_rule(player, card, event);
+  if (event == EVENT_MODIFY_COST)
+  {
+    instance = in_hand(player, card);
+    if (instance != NULL)
+    {
+      infinite_casting_cost();
+    }
+    iVar1 = this_dies_trigger(player, card, EVENT_MODIFY_COST, RESOLVE_TRIGGER_MANDATORY);
+    if (iVar1 != 0)
+      goto LAB_02164961;
+  LAB_02164865:
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar3 = can_sorcery_be_played(player, EVENT_CAN_ACTIVATE);
+      piVar4 = graveyard_ptr_mutable[player];
+      iVar1 = *piVar4;
+      while (true)
+      {
+        if (iVar1 == -1)
+        {
+          return 0;
+        }
+        iVar1 = has_subtype_by_id(player, (unsigned int)cards_data[iVar1].id, SUBTYPE_KNIGHT);
+        if ((iVar1 != 0) && (((iVar3 != 0 || ((cards_data[*piVar4].type & 0x30) != 0)) &&
+                              (iVar1 = has_mana_to_cast_id(player, EVENT_CAN_ACTIVATE,
+                                                           (unsigned int)cards_data[*piVar4].id),
+                               iVar1 != 0))))
+          break;
+        iVar1 = piVar4[1];
+        piVar4 = piVar4 + 1;
+      }
+      return 1;
+    }
+    if (event == EVENT_ACTIVATE)
+      goto LAB_02164880;
+  }
+  else
+  {
+    iVar1 = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+    if (iVar1 != 0)
+    {
+    LAB_02164961:
+      lose_life(player, 2);
+    }
+    if (event != EVENT_GRAVEYARD_ABILITY)
+    {
+      if (event == EVENT_PAY_FLASHBACK_COSTS)
+      {
+        instance = get_card_instance(player, card);
+        iVar1 = get_updated_casting_cost(player, -1, instance->internal_card_id,
+                                         EVENT_PAY_FLASHBACK_COSTS, 1);
+        charge_mana_multi(player, iVar1, 2, 0, 0, 0, 0);
+        if (spell_fizzled != 1)
+        {
+          return 1;
+        }
+        return 0;
+      }
+      goto LAB_02164865;
+    }
+    instance = get_card_instance(player, card);
+    iVar1 = get_updated_casting_cost(player, -1, instance->internal_card_id,
+                                     EVENT_GRAVEYARD_ABILITY, 1);
+    iVar1 = has_mana_multi(player, iVar1, 2, 0, 0, 0, 0);
+    if (iVar1 != 0)
+    {
+      return 2;
+    }
+  }
+  if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    return 0;
+  }
+LAB_02164880:
+  if (event != EVENT_ACTIVATE)
+  {
+    return 0;
+  }
+  new_default_test_definition(&this_test, 0, "Select a Knight card.");
+  this_test.subtype = 0x67;
+  iVar1 = new_select_a_card(player, player, 2, 0, 1, -1, &this_test);
+  if (iVar1 != -1)
+  {
+    piVar4 = graveyard_ptr_mutable[player] + iVar1;
+    iVar3 = *piVar4;
+    if ((cards_data[iVar3].type & 0x30) == 0)
+    {
+      iVar3 = can_sorcery_be_played(player, EVENT_ACTIVATE);
+      if (iVar3 == 0)
+      {
+        spell_fizzled = 1;
+        return 0;
+      }
+      iVar3 = *piVar4;
+    }
+    iVar3 = has_mana_to_cast_id(player, EVENT_ACTIVATE, (unsigned int)cards_data[iVar3].id);
+    if (iVar3 != 0)
+    {
+      charge_mana_from_id(player, -1, EVENT_ACTIVATE, (unsigned int)cards_data[*piVar4].id);
+      if (spell_fizzled != 1)
+      {
+        play_card_in_grave_for_free(player, player, iVar1);
+        cant_be_responded_to = 1;
+        return 0;
+      }
+      return 0;
+    }
+  }
+  spell_fizzled = 1;
+  return 0;
 }
 
 int card_heidar_rimewind_master(int player, int card, event_t event){
@@ -1265,31 +1320,48 @@ static int gain_control_of_lands(int player, int card, int number_of_age_counter
 }
 int card_herald_of_leshrac(int player, int card, event_t event)
 {
-  /* Herald of Leshrac	|6|B
-   * Creature - Avatar 2/4
-   * Flying
-   * Cumulative upkeep-Gain control of a land you don't control.
-   * ~ gets +1/+1 for each land you control but don't own.
-   * When ~ leaves the battlefield, each player gains control of each land he or she owns that you control. */
-
-	cumulative_upkeep_general(player, card, event, opponent_controls_lands, gain_control_of_lands);
-
-	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card))
-	{
-	  int c;
-	  for (c = 0; c < active_cards_count[player]; ++c)
-		if (in_play(player, c) && is_what(player, c, TYPE_LAND) && is_stolen(player, c))
-		  ++event_result;
-	}
-
-	if (leaves_play(player, card, event))
-	{
-		int card_added = add_card_to_hand(1-player, get_card_instance(player, card)->internal_card_id);
-		get_back_your_permanents(1-player, card_added, TYPE_LAND);
-		obliterate_card(1-player, card_added);
-	}
-
-	return 0;
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
+  cumulative_upkeep_general(player, card, event, opponent_controls_lands, gain_control_of_lands);
+  if (event - EVENT_POWER < 2)
+  {
+    if (((card == affected_card) && (player == affected_card_controller)) &&
+        (0 < active_cards_count[player]))
+    {
+      iVar2 = 0;
+      do
+      {
+        instance = in_play(player, iVar2);
+        if (instance != NULL)
+        {
+          iVar3 = is_what(player, iVar2, 1);
+          if (iVar3 != 0)
+          {
+            iVar3 = is_stolen(player, iVar2);
+            if (iVar3 != 0)
+            {
+              event_result = event_result + 1;
+            }
+          }
+        }
+        iVar2 = iVar2 + 1;
+      } while (iVar2 < active_cards_count[player]);
+    }
+    leaves_play(player, card, event, 1, 1);
+    return 0;
+  }
+  leaves_play(player, card, event, 1, 1);
+  if (event != EVENT_LEAVES_PLAY_ABILITY)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  iVar3 = 1 - player;
+  iVar2 = add_card_to_hand(iVar3, instance->internal_card_id);
+  get_back_your_permanents(iVar3, iVar2, TYPE_LAND);
+  obliterate_card(iVar3, iVar2);
+  return 0;
 }
 
 int card_hibernations_end(int player, int card, event_t event)
@@ -1612,27 +1684,21 @@ int card_jotun_owl_keeper(int player, int card, event_t event)
 
 int card_juniper_order_ranger(int player, int card, event_t event)
 {
-/* CARD_ID_JUNIPER_ORDER_RANGER	8392
-Juniper Order Ranger	|3|G|W
-Creature - Human Knight 2/4
-Whenever another creature enters the battlefield under your control, put a +1/+1 counter on that creature and a +1/+1 counter on ~. */
-
-	if (trigger_condition == TRIGGER_COMES_INTO_PLAY)
-	{
-		test_definition_t test;
-		new_default_test_definition(&test, TYPE_CREATURE, "");
-		test.not_me = 1;
-
-		etb_ability_global(player, event, RESOLVE_TRIGGER_MANDATORY, 0, &test, player, card);
-	}
-
-	if( event == EVENT_ETB_ABILITY )
-	{
-		add_1_1_counter(trigger_cause_controller, trigger_cause);
-		add_1_1_counter(player, card);
-	}
-
-	return 0;
+  test_definition_t test;
+  if (trigger_condition == 0xdb)
+  {
+    new_default_test_definition(&test, 2, "");
+    test.not_me = 1;
+    etb_ability_global(player, event, 2, TYPE_NONE, &test, player, card);
+  }
+  if (event == EVENT_ETB)
+  {
+    add_counters(player, card, trigger_cause_controller, trigger_cause, COUNTER_P1_P1,
+                             1);
+    add_counters(player, card, player, card, COUNTER_P1_P1, 1);
+    return 0;
+  }
+  return 0;
 }
 
 static int flip_coins(int player, int card, int number_of_age_counters)
@@ -1660,7 +1726,7 @@ int card_karplusan_wolverine(int player, int card, event_t event){
 	/* Karplusan Wolverine	|R	0x200a4f3
 	 * Snow Creature - Wolverine Beast 1/1
 	 * Whenever ~ becomes blocked, you may have it deal 1 damage to any target. */
-	if( event == EVENT_DECLARE_BLOCKERS && ! is_humiliated(player, card) && is_attacking(player, card) ){
+	if( event == EVENT_DECLARE_BLOCKERS && ! is_humiliated(player, card, AL_TRIG) && is_attacking(player, card) ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
 		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
@@ -1816,7 +1882,7 @@ Each creature that's a Barbarian, a Warrior, or a Berserker gets +2/+2 and has h
 	check_legend_rule(player, card, event);
 
 	if( (event == EVENT_ABILITIES || event == EVENT_POWER || event == EVENT_TOUGHNESS) && in_play(player, card) &&
-		! is_humiliated(player, card) )
+		! is_humiliated(player, card, AL_STATIC) )
 	{
 		if( is_what(affected_card_controller, affected_card, TYPE_CREATURE) ){
 			if( has_subtype(affected_card_controller, affected_card, SUBTYPE_BARBARIAN) ||
@@ -2164,7 +2230,7 @@ int card_ohran_viper(int player, int card, event_t event){
 		draw_a_card(player);
 	}
 
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_TRIG) ){
 		if (event == EVENT_CHANGE_TYPE && affect_me(player, card) ){
 			card_instance_t* instance = get_card_instance(player, card);
 			instance->destroys_if_blocked |= DIFB_DESTROYS_UNPROTECTED;
@@ -2313,7 +2379,7 @@ int card_rime_transfusion(int player, int card, event_t event){
 		int t_player = instance->damage_target_player;
 		int t_card = instance->damage_target_card;
 
-		if( is_humiliated(player, card) ){
+		if( is_humiliated(player, card, AL_STATIC) ){
 			return 0;
 		}
 
@@ -2371,102 +2437,124 @@ int card_rimebound_dead(int player, int card, event_t event){
 	return 0;
 }
 
-int card_rimefeather_owl(int player, int card, event_t event){
-/* Rimefeather Owl	|5|U|U
- * Snow Creature - Bird 100/100
- * Flying
- * ~'s power and toughness are each equal to the number of snow permanents on the battlefield.
- * |1|I: Put an ice counter on target permanent.
- * Permanents with ice counters on them are snow. */
+int card_rimefeather_owl(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td1;
 
-// Snow supertype added by a hack in has_subtype(), rather than add_a_subtype(), so that it works on ice counters added by other cards.
-
-	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card) ){
-		event_result += count_subtype(ANYBODY, TYPE_PERMANENT, SUBTYPE_SNOW);
-	}
-
-	if (!IS_ACTIVATING(event)){
-		return 0;
-	}
-
-	target_definition_t td1;
-	default_target_definition(player, card, &td1, TYPE_PERMANENT);
-	td1.allow_cancel = 0;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card)  ){
-		int c1 = get_cost_mod_for_activated_abilities(player, card, 1, 0, 0, 0, 0, 0);
-		if( has_snow_mana(player, 1, c1) ){
-			return can_target(&td1);
-		}
-	}
-
-	if( event == EVENT_ACTIVATE ){
-		instance->number_of_targets = 0;
-		int c1 = get_cost_mod_for_activated_abilities(player, card, 1, 0, 0, 0, 0, 0);
-		if( charge_snow_mana(player, card, 1, c1) ){
-			if( pick_target(&td1, "TARGET_PERMANENT") ){
-				instance->number_of_targets = 1;
-			}
-		}
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION){
-		if( valid_target(&td1) ){
-			add_counter(instance->targets[0].player, instance->targets[0].card, COUNTER_ICE);
-		}
-	}
-
-	return 0;
+  if (event - EVENT_POWER < 2)
+  {
+    if (((card == affected_card) && (player == affected_card_controller)) &&
+        (result = is_humiliated(player, card, AL_STATIC), result == 0))
+    {
+      result = count_subtype(2, 0x47, 0x2003);
+      set_characteristic_pt(result);
+    }
+  }
+  else if (event == EVENT_CHANGE_TYPE)
+  {
+    instance = in_play(player, card);
+    if (((instance != NULL) &&
+         (result = is_what(affected_card_controller, affected_card, 0x47), result != 0)) &&
+        (result = count_counters(affected_card_controller, affected_card, COUNTER_ICE),
+         result != 0))
+    {
+      add_a_subtype(affected_card_controller, affected_card, SUBTYPE_SNOW);
+    }
+  }
+  else if ((event - EVENT_RESOLVE_ACTIVATION < 2) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td1, 0x47);
+    td1.allow_cancel = 0;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = can_use_activated_abilities(player, card);
+      if (result != 0)
+      {
+        result = get_cost_mod_for_activated_abilities(player, card, 1, 0, 0, 0, 0, 0);
+        result = has_snow_mana(player, 1, result);
+        if (result != 0)
+        {
+          result = can_target(&td1);
+          return result;
+        }
+      }
+    }
+    else if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = '\0';
+      result = get_cost_mod_for_activated_abilities(player, card, 1, 0, 0, 0, 0, 0);
+      result = charge_snow_mana(player, card, 1, result);
+      if ((result != 0) && (result = pick_target(&td1, "TARGET_PERMANENT"), result != 0))
+      {
+        instance->number_of_targets = '\x01';
+      }
+    }
+    else if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td1), result != 0))
+    {
+      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                               COUNTER_ICE, 1);
+      return 0;
+    }
+  }
+  return 0;
 }
 
-int card_rimescale_dragon(int player, int card, event_t event){
-/* Rimescale Dragon	|5|R|R
- * Snow Creature - Dragon 5/5
- * Flying
- * |2|I: Tap target creature and put an ice counter on it.
- * Creatures with ice counters on them don't untap during their controllers' untap steps. */
+int card_rimescale_dragon(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td1;
 
-	if( current_phase == PHASE_UNTAP && event == EVENT_UNTAP && count_counters(affected_card_controller, affected_card, COUNTER_ICE) &&
-		is_what(affected_card_controller, affected_card, TYPE_CREATURE) )
-	{
-		does_not_untap(affected_card_controller, affected_card, event);
-	}
-
-	if (!IS_ACTIVATING(event)){
-		return 0;
-	}
-
-	target_definition_t td1;
-	default_target_definition(player, card, &td1, TYPE_CREATURE);
-	td1.allow_cancel = 0;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_ACTIVATE && can_use_activated_abilities(player, card)  ){
-		int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST_X(2));
-		if( has_snow_mana(player, 1, c1) ){
-			return can_target(&td1);
-		}
-	}
-
-	if( event == EVENT_ACTIVATE ){
-		instance->number_of_targets = 0;
-		int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST_X(2));
-		if( charge_snow_mana(player, card, 1, c1) ){
-			pick_target(&td1, "TARGET_CREATURE");
-		}
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION){
-		if( valid_target(&td1) ){
-			tap_card(instance->targets[0].player, instance->targets[0].card);
-			add_counter(instance->targets[0].player, instance->targets[0].card, COUNTER_ICE);
-		}
-	}
-
-	return 0;
+  if ((current_phase == 1) && (event == EVENT_UNTAP))
+  {
+    result = count_counters(affected_card_controller, affected_card, COUNTER_ICE);
+    if ((result != 0) &&
+        (result = is_what(affected_card_controller, affected_card, 2), result != 0))
+    {
+      does_not_untap(affected_card_controller, affected_card, EVENT_UNTAP);
+    }
+  }
+  else if ((event - EVENT_RESOLVE_ACTIVATION < 2) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td1, 2);
+    td1.allow_cancel = 0;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = can_use_activated_abilities(player, card);
+      if (result != 0)
+      {
+        result = get_cost_mod_for_activated_abilities(player, card, 2, 0, 0, 0, 0, 0);
+        result = has_snow_mana(player, 1, result);
+        if (result != 0)
+        {
+          result = can_target(&td1);
+          return result;
+        }
+      }
+    }
+    else if (event == EVENT_ACTIVATE)
+    {
+      instance->number_of_targets = '\0';
+      result = get_cost_mod_for_activated_abilities(player, card, 2, 0, 0, 0, 0, 0);
+      result = charge_snow_mana(player, card, 1, result);
+      if (result != 0)
+      {
+        pick_target(&td1, "TARGET_CREATURE");
+      }
+    }
+    else if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td1), result != 0))
+    {
+      tap_card(instance->targets[0].player, instance->targets[0].card);
+      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                               COUNTER_ICE, 1);
+      return 0;
+    }
+  }
+  return 0;
 }
 
 int card_rimewind_taskmage(int player, int card, event_t event)
@@ -2559,64 +2647,71 @@ int card_rune_snag(int player, int card, event_t event){
 	return 0;
 }
 
-int card_scrying_sheets(int player, int card, event_t event){
-/* CARD_ID_SCRYING_SHEETS	8439
-Scrying Sheets	""
-Snow Land
-|T: Add |C to your mana pool.
-|1|I, |T: Look at the top card of your library. If that card is snow, you may reveal it and put it into your hand.
-(|I can be paid with one mana from a snow permanent.) */
+int card_scrying_sheets(int player, int card, event_t event)
+{
+  int *deck;
+  int result;
+  card_instance_t *instance;
+  test_definition_t this_test;
 
-	if( ! IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE ){
-		return mana_producer(player, card, event);
-	}
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if(event == EVENT_ACTIVATE ){
-		int choice = instance->info_slot = 0;
-		if(  can_use_activated_abilities(player, card) ){
-			int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST_X(1));
-			if( has_snow_mana(player, 2, c1) ){
-				choice = do_dialog(player, player, card, -1, -1, " Generate 1\n Snow Scry\n Cancel", 1);
-			}
-		}
-		if( choice == 0 ){
-			return mana_producer(player, card, event);
-		}
-		else if( choice == 1 ){
-				tap_card(player, card);
-				int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST_X(1));
-				if( ! charge_snow_mana(player, card, 1, c1) ){
-					spell_fizzled = 1;
-					untap_card_no_event(player, card);
-				}
-				else{
-					instance->info_slot = 1;
-				}
-		}
-		else{
-			spell_fizzled = 1;
-		}
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( instance->info_slot == 1){
-			int *deck = deck_ptr[player];
-			show_deck( player, deck, 1, "This is the first card of your library", 0, 0x7375B0 );
-			if( has_subtype_by_id(cards_data[deck[0]].id, SUBTYPE_SNOW) ){
-				if( deck[0] != -1 ){
-						test_definition_t this_test;
-						new_default_test_definition(&this_test, TYPE_LAND, "Select a snow land card to reveal.");
-						this_test.create_minideck = 1;
-						this_test.no_shuffle = 1;
-						new_global_tutor(player, player, TUTOR_FROM_DECK, TUTOR_HAND, 0, AI_FIRST_FOUND, &this_test);
-				}
-			}
-		}
-	}
-
-	return 0;
+  if (event != EVENT_CAN_ACTIVATE)
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      instance = get_card_instance(player, card);
+      instance->info_slot = 0;
+      result = can_use_activated_abilities(player, card);
+      if (result != 0)
+      {
+        result = get_cost_mod_for_activated_abilities(player, card, 1, 0, 0, 0, 0, 0);
+        result = has_snow_mana(player, 1, result);
+        if ((result != 0) && (result = do_dialog(player, player, card, -1, -1,
+                                                 " Generate 1\n Snow Scry\n Cancel", 1),
+                              result != 0))
+        {
+          if (result != 1)
+          {
+            spell_fizzled = 1;
+            return 0;
+          }
+          tap_card(player, card);
+          result = get_cost_mod_for_activated_abilities(player, card, 1, 0, 0, 0, 0, 0);
+          result = charge_snow_mana(player, card, 1, result);
+          if (result != 0)
+          {
+            instance->info_slot = 1;
+            return 0;
+          }
+          spell_fizzled = 1;
+          untap_card_no_event(player, card);
+          return 0;
+        }
+      }
+      result = mana_producer(player, card, EVENT_ACTIVATE);
+      return result;
+    }
+    if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+    {
+      instance = get_card_instance(player, card);
+      if ((event == EVENT_RESOLVE_ACTIVATION) && (instance->info_slot == 1))
+      {
+        deck = deck_ptr[player];
+        show_deck(player, deck, 1, "This is the first card of your library", 0, ENGINE_DONE_LABEL);
+        result = has_subtype_by_id(player, (unsigned int)cards_data[*deck].id, SUBTYPE_SNOW);
+        if ((result != 0) && (*deck != -1))
+        {
+          new_default_test_definition(&this_test, 1, "Select a snow land card to reveal.");
+          this_test.no_shuffle = 1;
+          this_test.create_minideck = 1;
+          new_global_tutor(player, player, 1, 1, 0, 5, &this_test);
+          return 0;
+        }
+      }
+      return 0;
+    }
+  }
+  result = mana_producer(player, card, event);
+  return result;
 }
 
 static int sek_kuar_deathkeeper_effect(int player, int card, event_t event){
@@ -2755,7 +2850,7 @@ At the beginning of your upkeep, put a +1/+1 counter on enchanted creature if it
 	{
 	  // When ~ enters the battlefield, put six +1/+1 counters on enchanted creature.
 	  if (comes_into_play(player, card, event) && in_play(instance->damage_target_player, instance->damage_target_card))
-		add_1_1_counters(instance->damage_target_player, instance->damage_target_card, 6);
+		add_counters(player, card, instance->damage_target_player, instance->damage_target_card, COUNTER_P1_P1, 6);
 
 	  /* At the beginning of your upkeep, put a +1/+1 counter on enchanted creature if it attacked or blocked since your last upkeep. Otherwise, remove a +1/+1
 	   * counter from it. */
@@ -2765,11 +2860,11 @@ At the beginning of your upkeep, put a +1/+1 counter on enchanted creature if it
 		{
 		  if (instance->targets[1].player == 66)
 			{
-			  add_1_1_counter(instance->damage_target_player, instance->damage_target_card);
+			  add_counters(player, card, instance->damage_target_player, instance->damage_target_card, COUNTER_P1_P1, 1);
 			  instance->targets[1].player = 0;
 			}
 		  else
-			remove_1_1_counter(instance->damage_target_player, instance->damage_target_card);
+			remove_counters(player, card, instance->damage_target_player, instance->damage_target_card, COUNTER_P1_P1, 1);
 		}
 
 	  card_instance_t* aff;
@@ -2793,25 +2888,40 @@ static int can_put_p1_p1_counter_on_opp(int player, int card, int number_of_age_
 }
 static int put_p1_p1_counter_on_opp(int player, int card, int number_of_age_counters)
 {
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
   target_definition_t td;
-  base_target_definition(player, card, &td, TYPE_CREATURE);
-  td.allowed_controller = td.preferred_controller = 1-player;
-  td.extra = get_internal_card_id_from_csv_id(CARD_ID_MELIRAS_KEEPERS);
-  td.special = TARGET_SPECIAL_EXTRA_NOT_IID;
+
+  base_target_definition(player, card, &td, 2);
+  td.extra = (int32_t)can_have_counters_placed_on_it_shim;
+  td.allowed_controller = 1 - player;
+  td.special = 0x8000;
   td.allow_cancel = 0;
-
-  int i;
-  card_instance_t* instance = get_card_instance(player, card);
-  instance->number_of_targets = 0;
-  for (i = 0; i < number_of_age_counters; ++i)
-	if (can_target(&td) && pick_next_target_noload(&td, "Select a creature an opponent controls."))
-	  {
-		add_1_1_counter(instance->targets[0].player, instance->targets[0].card);
-		instance->number_of_targets = 0;
-	  }
-	else	// Perhaps the only creature has a trigger like Phyrexian Devourer's, and checks it continuously instead of only during EVENT_STATIC_EFFECTS.
-	  return 0;
-
+  td.preferred_controller = td.allowed_controller;
+  instance = get_card_instance(player, card);
+  instance->number_of_targets = '\0';
+  if (0 < number_of_age_counters)
+  {
+    iVar3 = 0;
+    do
+    {
+      iVar2 = can_target(&td);
+      if (iVar2 == 0)
+      {
+        return 0;
+      }
+      iVar2 = pick_next_target_noload(&td, "Select a creature an opponent controls.");
+      if (iVar2 == 0)
+      {
+        return 0;
+      }
+      iVar3 = iVar3 + 1;
+      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
+                               COUNTER_P1_P1, 1);
+      instance->number_of_targets = '\0';
+    } while (number_of_age_counters != iVar3);
+  }
   return 1;
 }
 int card_sheltering_ancient(int player, int card, event_t event)
@@ -3480,37 +3590,50 @@ int card_wilderness_elemental(int player, int card, event_t event){
 	return 0;
 }
 
-int card_woolly_razorback(int player, int card, event_t event){
+int card_woolly_razorback(int player, int card, event_t event)
+{
+  char cVar1;
+  card_instance_t *instance;
+  int result;
 
-	/* Woolly Razorback	|2|W|W
-	 * Creature - Boar Beast 7/7
-	 * ~ enters the battlefield with three ice counters on it.
-	 * As long as ~ has an ice counter on it, prevent all combat damage it would deal and it has defender.
-	 * Whenever ~ blocks, remove an ice counter from it. */
-
-	enters_the_battlefield_with_counters(player, card, event, COUNTER_ICE, 3);
-
-	if( in_play(player, card) && is_humiliated(player, card) ){
-		return 0;
-	}
-
-	if( event == EVENT_ABILITIES && affect_me(player, card) && count_counters(player, card, COUNTER_ICE) > 0 ){
-		event_result |= KEYWORD_DEFENDER;
-	}
-
-	card_instance_t* damage = combat_damage_being_prevented(event);
-	if (damage && damage->damage_source_player == player && damage->damage_source_card == card &&
-		count_counters(player, card, COUNTER_ICE) > 0 )
-	{
-		int amount = damage->info_slot;
-		prevent_damage(affected_card_controller, affected_card, amount);
-	}
-
-	if( event == EVENT_DECLARE_BLOCKERS && count_counters(player, card, COUNTER_ICE) > 0 && blocking(player, card, event) ){
-		remove_counter(player, card, COUNTER_ICE);
-	}
-
-	return 0;
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_ICE, 3);
+  if (event == EVENT_ABILITIES)
+  {
+    if ((((card == affected_card) && (player == affected_card_controller)) &&
+         (result = count_counters(player, card, COUNTER_ICE), 0 < result)) &&
+        (result = is_humiliated(player, card, AL_STATIC), result == 0))
+    {
+      event_result = event_result | 0x800000;
+    }
+    instance = combat_damage_being_prevented(EVENT_ABILITIES);
+    if (instance == NULL)
+    {
+      return 0;
+    }
+    cVar1 = instance->damage_source_player;
+  }
+  else
+  {
+    instance = combat_damage_being_prevented(event);
+    if (instance == NULL)
+      goto LAB_0216b531;
+    cVar1 = instance->damage_source_player;
+  }
+  if (((cVar1 == player) && (instance->damage_source_card == card)) &&
+      ((result = count_counters(player, card, COUNTER_ICE),
+        0 < result && (result = is_humiliated(player, card, AL_STATIC), result == 0))))
+  {
+    prevent_damage(affected_card_controller, affected_card, instance->info_slot);
+  }
+LAB_0216b531:
+  if (((event == EVENT_DECLARE_BLOCKERS) &&
+       (result = count_counters(player, card, COUNTER_ICE), 0 < result)) &&
+      ((result = blocking(player, card, EVENT_DECLARE_BLOCKERS),
+        result != 0 && (result = is_humiliated(player, card, AL_TRIG), result == 0))))
+  {
+    remove_counters(player, card, player, card, COUNTER_ICE, 1);
+  }
+  return 0;
 }
 
 int card_zur_the_enchanter(int player, int card, event_t event){
@@ -3890,7 +4013,7 @@ int card_drelnoch(int player, int card, event_t event)
   instance = in_play(player, card);
   if (instance != NULL)
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if ((event == EVENT_DECLARE_BLOCKERS) && (result == 0))
     {
       result = is_attacking(player, card);
@@ -3922,7 +4045,7 @@ int card_zombie_musher(int player, int card, event_t event)
   int iVar2;
   if (event == EVENT_BLOCK_LEGALITY)
   {
-    iVar1 = is_humiliated_for_ability(player, card, AL_STATIC);
+    iVar1 = is_humiliated(player, card, AL_STATIC);
     if ((((iVar1 == 0) && (attacking_card_controller == player)) && (attacking_card == card)) &&
         (iVar1 = control_a_snow_land(1 - current_turn, 0), iVar1 != 0))
     {

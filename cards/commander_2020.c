@@ -173,7 +173,7 @@ int card_nesting_grounds(int player, int card, event_t event)
         result = validate_target(player, card, ptStack_c4, 1);
         if (result != 0)
         {
-          move_counters_from_source(player, card, instance->targets[1].player,
+          move_counters(player, card, instance->targets[1].player,
                                     instance->targets[1].card, instance->targets[0].player,
                                     instance->targets[0].card, instance->targets[2].card, 1);
           return 0;

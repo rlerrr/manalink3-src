@@ -1,7 +1,7 @@
 #include "manalink.h"
 
 /* Canonical recovered helper declarations. */
-int new_special_count_grave(int player, test_definition_2022_t *this_test);
+int new_special_count_grave(int player, test_definition_t *this_test);
 
 int count_graveyard_by_color(int player, int selected_color){
 	if( get_global_color_hack(player) & selected_color ){
@@ -103,31 +103,78 @@ int any_in_graveyard_by_type(int player, int type)
 
 int count_graveyard_by_subtype(int player, subtype_t subtype)
 {
-  int p, i, count = 0;
-  for (p = 0; p <= 1; ++p)
-	if (p == player || player == ANYBODY)
-	  for (i = 0; i < 500 && get_grave(p)[i] != -1; ++i)
-		if (has_subtype(-1, get_grave(p)[i], subtype))
-			++count;
-  return count;
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+
+  iVar2 = 0;
+  iVar4 = 0;
+  do
+  {
+    if ((player == iVar4) || (player == 2))
+    {
+      iVar3 = 0;
+      do
+      {
+        if (*(int *)((int)graveyard_ptr_mutable[iVar4] + iVar3) == -1)
+          break;
+        iVar1 = has_subtype_by_id(
+            player,
+            (unsigned int)cards_data[*(int *)((int)graveyard_ptr_mutable[iVar4] + iVar3)].id,
+            subtype);
+        iVar2 = (iVar2 + 1) - (unsigned int)(iVar1 == 0);
+        iVar3 = iVar3 + 4;
+      } while (iVar3 != 2000);
+    }
+    iVar4 = iVar4 + 1;
+    if (iVar4 == 2)
+    {
+      return iVar2;
+    }
+  } while (true);
 }
 
 int any_in_graveyard_by_subtype(int player, subtype_t subtype)
 {
-  int p, i;
-  for (p = 0; p <= 1; ++p)
-	if (p == player || player == ANYBODY)
-	  for (i = 0; i < 500 && get_grave(p)[i] != -1; ++i)
-		if (has_subtype(-1, get_grave(p)[i], subtype))
-		  return 1;
-  return 0;
+  int iVar1;
+  int iVar2;
+  int iVar3;
+
+  iVar2 = 0;
+  do
+  {
+    if ((player == iVar2) || (player == 2))
+    {
+      iVar3 = 0;
+      do
+      {
+        if (*(int *)((int)graveyard_ptr_mutable[iVar2] + iVar3) == -1)
+          break;
+        iVar1 = has_subtype_by_id(
+            player,
+            (unsigned int)cards_data[*(int *)((int)graveyard_ptr_mutable[iVar2] + iVar3)].id,
+            subtype);
+        if (iVar1 != 0)
+        {
+          return 1;
+        }
+        iVar3 = iVar3 + 4;
+      } while (iVar3 != 2000);
+    }
+    iVar2 = iVar2 + 1;
+    if (iVar2 == 2)
+    {
+      return 0;
+    }
+  } while (true);
 }
 
 int count_deck_by_type(int player, int type){
 	return count_zone_by_type(type, deck_ptr[player]);
 }
 
-int new_special_count_grave(int player, test_definition_2022_t *this_test)
+int new_special_count_grave(int player, test_definition_t *this_test)
 {
   int test_type;
   int iVar1;

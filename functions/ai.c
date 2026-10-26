@@ -193,80 +193,7 @@ void copy_to_display_supplement(void)
 
 
 void human_assign_blockers(int player);
-void ai_assign_blockers(int player)
-{
-  // 0x4b18e0
 
-  EXE_FN(void, 0x4AF6F0, int)(player);	//TENTATIVE_ai_speculate_on_combat(player);
-
-  EXE_DWORD(0x60827C) = -9999;
-
-  int i;
-  for (i = 0; i < 16; ++i)
-	EXE_DWORD_PTR(0x6076D8)[i] = 0;
-
-  EXE_FN(int, 0x4B1A50, int, int)(player, 0);
-
-  if (!(ai_is_speculating == 1 || current_turn == HUMAN))
-	return;
-
-  // Begin additions
-  if (event_flags & EF_ATTACKER_CHOOSES_BLOCKERS)
-	{
-	  if (!(ai_is_speculating == 1 || current_turn == AI))	// if speculating or AI is attacking, nothing blocks
-		human_assign_blockers(player);
-	  return;
-	}
-  // End additions
-
-  for (i = 0; i < EXE_DWORD(0x607D54); ++i)
-	{
-      forbid_attack = 0;
-	  if (event_flags & EA_PAID_BLOCK)
-		{
-		  EXE_FN(void, 0x435C80, void)();	//push_affected_card_stack()
-		  trigger_cause_controller = EXE_DWORD(0x607C2C);	//TENTATIVE_ai_speculation_opponent
-		  trigger_cause = EXE_DWORD_PTR(0x608304)[i];		//WILDGUESS_ai_combat_block_card[i]
-		  dispatch_trigger(1 - current_turn, TRIGGER_PAY_TO_BLOCK, EXE_STR(0x790248)/*PROMPT_TURNSEQUENCE[0]*/, 1);
-		  EXE_FN(void, 0x435CD0, void)();	//pop_affected_card_stack()
-		  if (forbid_attack)
-			{
-			  forbid_attack = 0;
-			  continue;
-			}
-		}
-
-	  uint8_t blk = BYTE0(EXE_DWORD_PTR(0x60775C)[i]);
-
-	  card_instance_t* instance = get_card_instance(EXE_DWORD(0x607C2C),	// TENTATIVE_ai_speculation_opponent
-													EXE_DWORD_PTR(0x608304)[i]);	// WILDGUESS_ai_combat_block_card[i]
-	  // Begin additions
-	  if (instance->blocking != 255)	// Already during one of the two triggers dispatched from here
-		continue;
-	  // End additions
-	  instance->blocking = blk;
-
-	  if (blk != 255)	// Originally !(blk & 0x80) - this failed when blocking ids 128-149
-		instance->state |= STATE_BLOCKING;
-
-	  if (ai_is_speculating != 1)
-		{
-		  /* All this does is SendMessageA(hwnd_MainClass, 0x464u, 0xFFu, 0).  It's always called through a wrapper that checks ai_is_speculating != 1
-		   * (except from C where it's already been checked).  wndproc_MainClass responds by calling TENTATIVE_redisplay_all(0, 0xff) at 0x437ec0. */
-		  EXE_FN(void, 0x437E20, void)();
-
-		  if (blk != 255)
-			play_sound_effect(WAV_BLOCK2);
-		}
-
-	  /* This immediately followed the EA_PAID_BLOCK/TRIGGER_PAY_TO_BLOCK.  Putting it down here matches the order when a human blocks; in particular,
-	   * instance->blocking is correct during TRIGGER_BLOCKER_CHOSEN, which is necessary for Tromokratis. */
-	  if ((event_flags & EA_SELECT_BLOCK) && blk != 255)
-		dispatch_trigger2(current_turn, TRIGGER_BLOCKER_CHOSEN, EXE_STR(0x790074), 0,//PROMPT_BLOCKERSELECTION[0]
-						  EXE_DWORD(0x607C2C),	//TENTATIVE_ai_speculation_opponent
-						  EXE_DWORD_PTR(0x608304)[i]);		//WILDGUESS_ai_combat_block_card[i]
-	}
-}
 
 extern int raw_mana_available[2][8];
 void dispatch_event_raw(event_t event);
@@ -363,7 +290,7 @@ int can_autotap(int player, int card, autotap_t autotap_flags)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26b1240; original functions/ai.c:340. */
-static int remember_ai_value_impl_2022(int value)
+static int remember_ai_value_impl(int value)
 {
   if (ai_is_speculating == 1)
   {
@@ -389,7 +316,7 @@ int remember_ai_value(int player, int value)
 {
   EXE_DWORD(0x7a2fe4) = 0;
   if (player == AI && !(trace_mode & 2))
-    return remember_ai_value_impl_2022(value);
+    return remember_ai_value_impl(value);
   return value;
 }
 
@@ -403,7 +330,7 @@ int recorded_rand(int player, int upperbound)
   int value = internal_rand(upperbound);
   EXE_DWORD(0x7a2fe4) = 0;
   if (player == AI && !(trace_mode & 2))
-    return remember_ai_value_impl_2022(value);
+    return remember_ai_value_impl(value);
   return value;
 }
 
@@ -880,7 +807,7 @@ static int check_destroys_if_blocked_oneside(int lethal_player, int lethal_card,
 
     if (result != 1 && (lethal & DIFB_DESTROYS_UNPROTECTED) &&
         !is_protected_from(other_player, other_card, lethal_player, lethal_card,
-                                IPF2022_DAMAGE))
+                                IPF_DAMAGE))
       result = 1;
 
     if (lethal & (DIFB_ASK_CARD | DIFB_ASK_ALL_CARDS))

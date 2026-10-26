@@ -5,19 +5,19 @@
 
 /* Canonical recovered helper declarations. */
 card_data_t *get_card_data(int player, int card);
-int counterspell_resolve_unless_pay_x(int player, int card, target_definition_2022_t *td,
+int counterspell_resolve_unless_pay_x(int player, int card, target_definition_t *td,
                                            int target_num, int x);
 int seek_grave_for_id_to_reanimate(int player, int card, int t_player, int id,
-                                        reanimate_mode_2022_t mode);
+                                        reanimate_mode_t mode);
 int new_select_target_from_grave(int player, int card, int t_player, select_grave_t mode,
-                                      int ai_mode, test_definition_2022_t *this_test,
+                                      int ai_mode, test_definition_t *this_test,
                                       int ret_location);
 int select_target_from_grave_source(int player, int card, int t_player, select_grave_t mode,
-                                         int ai_mode, test_definition_2022_t *this_test,
+                                         int ai_mode, test_definition_t *this_test,
                                          int ret_location);
 int select_target_from_either_grave(int player, int card, select_grave_t mode,
                                          int ai_mode_own_graveyard, int ai_mode_opponent_graveyard,
-                                         test_definition_2022_t *test, int ret_location_graveyard,
+                                         test_definition_t *test, int ret_location_graveyard,
                                          int ret_location_card);
 
 /* October 2022 extension storage; fixed banks and original template. */
@@ -1038,119 +1038,162 @@ int reshuffle_hand_into_deck(int player, int avoid_shuffle){
 	return amount;
 }
 
-void reshuffle_all_into_deck(int player, int mode){
-	// 0 --> normal mode
-	// 1 --> "Restart the game" mode (Karn Liberated)
-	// 2 --> put everything back to deck but don't reshuffle.
-	int edh_general_iid = -1;
-	int commander_found = 0;
-	int count = active_cards_count[player]-1;
-	int planes[active_cards_count[player]];
-	int pc = 0;
-	while( count > -1 ){
-			if( in_play(player, count) ){
-				if( is_what(player, count, TYPE_PERMANENT) ){
-					if( check_special_flags2(player, count, SF2_COMMANDER) ){
-						kill_card(player, count, KILL_EXILE);
-						commander_found = 1;
-					}
-					else{
-						put_on_top_of_deck(player, count);
-					}
-				}
-				else{
-					if( (mode & 1) ){
-						if( get_id(player, count) == CARD_ID_ELDER_DRAGON_HIGHLANDER ){
-							remove_counters(player, count, COUNTER_VORTEX, count_counters(player, count, COUNTER_VORTEX));
-							if( get_card_instance(player, count)->targets[3].player != 0 ){
-								get_card_instance(player, count)->targets[3].player = 0;
-								if( ! commander_found ){
-									edh_general_iid = get_card_instance(player, count)->info_slot;
-								}
-							}
-						}
-						if( is_plane_card(get_id(player, count)) ){
-							remove_counters(player, count, COUNTER_VORTEX, count_counters(player, count, COUNTER_VORTEX));
-							planes[pc] = count;
-							pc++;
-						}
-						if( get_id(player, count) == CARD_ID_MOUNT_KERALIA ){
-							remove_counters(player, count, COUNTER_PRESSURE, count_counters(player, count, COUNTER_PRESSURE));
-						}
-						if( get_id(player, count) == CARD_ID_NAAR_ISLE ){
-							remove_counters(player, count, COUNTER_FLAME, count_counters(player, count, COUNTER_FLAME));
-						}
-						if( get_id(player, count) == CARD_ID_ARETOPOLIS ){
-							remove_counters(player, count, COUNTER_SCROLL, count_counters(player, count, COUNTER_SCROLL));
-						}
-						if( get_id(player, count) == CARD_ID_KILNSPIRE_DISTRICT ){
-							remove_counters(player, count, COUNTER_CHARGE, count_counters(player, count, COUNTER_CHARGE));
-						}
-						int kill_effect = 1;
-						if( cards_data[get_original_internal_card_id(player, count)].cc[2] != 0 ){
-							kill_effect = 0;
-						}
-						if( get_id(player, count) == CARD_ID_RULES_ENGINE ){
-							kill_effect = 0;
-						}
-						card_instance_t *instance = get_card_instance( player, count);
-						if( instance->damage_target_player > -1 ){
-							if( cards_data[get_original_internal_card_id(instance->damage_target_player, instance->damage_target_card)].cc[2] != 0 ){
-								kill_effect = 0;
-							}
-							if( get_id(instance->damage_target_player, instance->damage_target_card) == CARD_ID_RULES_ENGINE ){
-								kill_effect = 0;
-							}
-						}
-						if( kill_effect ){
-							kill_card(player, count, KILL_EXILE);
-						}
-					}
-				}
-			}
-			else if( in_hand(player, count) ){
-					 put_on_top_of_deck(player, count);
-			}
-			count--;
-	 }
+void reshuffle_all_into_deck(int player, int mode)
+{
+  // 0 --> normal mode
+  // 1 --> "Restart the game" mode (Karn Liberated)
+  // 2 --> put everything back to deck but don't reshuffle.
+  int edh_general_iid = -1;
+  int commander_found = 0;
+  int count = active_cards_count[player] - 1;
+  int planes[active_cards_count[player]];
+  int pc = 0;
+  while (count > -1)
+  {
+    if (in_play(player, count))
+    {
+      if (is_what(player, count, TYPE_PERMANENT))
+      {
+        if (check_special_flags2(player, count, SF2_COMMANDER))
+        {
+          if (player >= 0)
+            kill_card(player, count, KILL_EXILE);
+          commander_found = 1;
+        }
+        else
+        {
+          put_on_top_of_deck(player, count);
+        }
+      }
+      else
+      {
+        if ((mode & 1))
+        {
+          if (get_id(player, count) == CARD_ID_ELDER_DRAGON_HIGHLANDER)
+          {
+            remove_counters(player, count, player, count, COUNTER_VORTEX,
+                                        count_counters(player, count, COUNTER_VORTEX));
+            if (get_card_instance(player, count)->targets[3].player != 0)
+            {
+              get_card_instance(player, count)->targets[3].player = 0;
+              if (!commander_found)
+              {
+                edh_general_iid = get_card_instance(player, count)->info_slot;
+              }
+            }
+          }
+          if (is_plane_card(get_id(player, count)))
+          {
+            remove_counters(player, count, player, count, COUNTER_VORTEX,
+                                        count_counters(player, count, COUNTER_VORTEX));
+            planes[pc] = count;
+            pc++;
+          }
+          if (get_id(player, count) == CARD_ID_MOUNT_KERALIA)
+          {
+            remove_counters(player, count, player, count, COUNTER_PRESSURE,
+                                        count_counters(player, count, COUNTER_PRESSURE));
+          }
+          if (get_id(player, count) == CARD_ID_NAAR_ISLE)
+          {
+            remove_counters(player, count, player, count, COUNTER_FLAME,
+                                        count_counters(player, count, COUNTER_FLAME));
+          }
+          if (get_id(player, count) == CARD_ID_ARETOPOLIS)
+          {
+            remove_counters(player, count, player, count, COUNTER_SCROLL,
+                                        count_counters(player, count, COUNTER_SCROLL));
+          }
+          if (get_id(player, count) == CARD_ID_KILNSPIRE_DISTRICT)
+          {
+            remove_counters(player, count, player, count, COUNTER_CHARGE,
+                                        count_counters(player, count, COUNTER_CHARGE));
+          }
+          int kill_effect = 1;
+          if (cards_data[get_original_internal_card_id(player, count)].cc[2] != 0)
+          {
+            kill_effect = 0;
+          }
+          if (get_id(player, count) == CARD_ID_RULES_ENGINE)
+          {
+            kill_effect = 0;
+          }
+          card_instance_t *instance = get_card_instance(player, count);
+          if (instance->damage_target_player > -1)
+          {
+            if (cards_data[get_original_internal_card_id(instance->damage_target_player,
+                                                         instance->damage_target_card)]
+                    .cc[2] != 0)
+            {
+              kill_effect = 0;
+            }
+            if (get_id(instance->damage_target_player, instance->damage_target_card) ==
+                CARD_ID_RULES_ENGINE)
+            {
+              kill_effect = 0;
+            }
+          }
+          if (kill_effect)
+          {
+            if (player >= 0)
+              kill_card(player, count, KILL_EXILE);
+          }
+        }
+      }
+    }
+    else if (in_hand(player, count))
+    {
+      put_on_top_of_deck(player, count);
+    }
+    count--;
+  }
 
-	const int *grave = get_grave(player);
-	int *deck = deck_ptr[player];
+  const int *grave = get_grave(player);
+  int *deck = deck_ptr[player];
 
-	count = count_graveyard(player)-1;
-	while( count > -1 ){
-			int put_into_deck = 1;
-			if( ! commander_found && edh_general_iid != -1 && grave[count] == edh_general_iid ){
-				if( ! check_rfg(player, cards_data[edh_general_iid].id) ){
-					rfg_card_from_grave(player, count);
-					put_into_deck = 0;
-					commander_found = 1;
-				}
-			}
-			if( put_into_deck ){
-				deck[ count_deck(player) ] = grave[count];
-				remove_card_from_grave(player, count);
-			}
-			count--;
-	}
-	if( ! commander_found && edh_general_iid != -1 ){
-		count = 0;
-		while( deck_ptr[player][count] != -1 ){
-				if( deck_ptr[player][count] == edh_general_iid ){
-					rfg_card_in_deck(player, count);
-					break;
-				}
-				count++;
-		}
-	}
-	if( ! (mode & 2) ){
-		shuffle(player);
-	}
-	count = 0;
-	while( count < pc ){
-			call_card_function(player, planes[count], EVENT_PLANESWALK_IN);
-			count++;
-	}
+  count = count_graveyard(player) - 1;
+  while (count > -1)
+  {
+    int put_into_deck = 1;
+    if (!commander_found && edh_general_iid != -1 && grave[count] == edh_general_iid)
+    {
+      if (!check_rfg(player, cards_data[edh_general_iid].id))
+      {
+        rfg_card_from_grave(player, count);
+        put_into_deck = 0;
+        commander_found = 1;
+      }
+    }
+    if (put_into_deck)
+    {
+      deck[count_deck(player)] = grave[count];
+      remove_card_from_grave(player, count);
+    }
+    count--;
+  }
+  if (!commander_found && edh_general_iid != -1)
+  {
+    count = 0;
+    while (deck_ptr[player][count] != -1)
+    {
+      if (deck_ptr[player][count] == edh_general_iid)
+      {
+        rfg_card_in_deck(player, count);
+        break;
+      }
+      count++;
+    }
+  }
+  if (!(mode & 2))
+  {
+    shuffle(player);
+  }
+  count = 0;
+  while (count < pc)
+  {
+    call_card_function(player, planes[count], EVENT_PLANESWALK_IN);
+    count++;
+  }
 }
 
 /***************
@@ -1352,7 +1395,7 @@ void real_counter_a_spell(int player, int card, int to_counter_player, int to_co
 }
 
 // Returns 0 if didn't validate, 1 if validated but didn't pay (so spell was countered), 2 if validated and paid (so spell wasn't countered).
-int counterspell_resolve_unless_pay_x(int player, int card, target_definition_2022_t *td,
+int counterspell_resolve_unless_pay_x(int player, int card, target_definition_t *td,
                                            int target_num, int x)
 {
   int card_00;
@@ -1647,26 +1690,56 @@ static int rfg_card_from_deck_impl(int player, int* deck, int pos){
 // Exile the card at position grave_id in player's graveyard.
 int rfg_card_from_grave(int player, int grave_id)
 {
-	if (grave_id < 0 || grave_id >= 500){
-		return -1;
-	}
+  int card;
+  card_instance_t *instance;
+  int iVar2;
+  int iVar3;
 
-	obliterate_card_from_deck_impl(graveyard_source[player], grave_id);
-	int iid = rfg_card_from_deck_impl(player, graveyard_ptr_mutable[player], grave_id);
-
-	// Rakshasa Vizier effect.
-	int c;
-	for(c=0; c<active_cards_count[player]; c++){
-		if( in_play(player, c) && get_id(player, c) == CARD_ID_RAKSHASA_VIZIER && ! is_humiliated(player, c) ){
-			add_1_1_counter(player, c);
-		}
-	}
-
-	if( is_what(-1, iid, TYPE_CREATURE) ){
-		ereboss_titan_effect(1-player);
-	}
-
-	return iid;
+  if ((unsigned int)grave_id < 500)
+  {
+    dispatch_event_with_initial_event_result(
+        player, graveyard_ptr_mutable[player][grave_id], EVENT_REMOVED_FROM_GRAVEYARD,
+        (cards_data[graveyard_ptr_mutable[player][grave_id]].type & 0x38) << 8 |
+            (cards_data[graveyard_ptr_mutable[player][grave_id]].type & 2) << 0x10 | 1);
+    if (graveyard_source[player][grave_id] != -1)
+    {
+      obliterate_card_from_deck_impl(graveyard_source[player], grave_id);
+    }
+    card = rfg_card_from_deck_impl(player, graveyard_ptr_mutable[player], grave_id);
+    if (0 < active_cards_count[player])
+    {
+      iVar3 = 0;
+      do
+      {
+        instance = in_play(player, iVar3);
+        if (instance != NULL)
+        {
+          instance = get_card_instance(player, iVar3);
+          if ((cards_data[instance->original_internal_card_id].id != 0x1e33) &&
+              (cards_data[instance->internal_card_id].id == 0x380a))
+          {
+            iVar2 = is_humiliated(player, iVar3, AL_TRIG);
+            if (iVar2 == 0)
+            {
+              add_counters(player, iVar3, player, iVar3, COUNTER_P1_P1, 1);
+            }
+          }
+        }
+        iVar3 = iVar3 + 1;
+      } while (iVar3 < active_cards_count[player]);
+    }
+    iVar3 = is_what(-1, card, 2);
+    if (iVar3 != 0)
+    {
+      ereboss_titan_effect(1 - player);
+      return card;
+    }
+  }
+  else
+  {
+    card = -1;
+  }
+  return card;
 }
 
 // Exile an arbitrary player/card.  Works for cards on the stack, in play, or oublietted, not just in hand, despite the name.
@@ -1709,16 +1782,53 @@ static int rfg_whole_deck_impl(int player, int* deck){
 // Exile player's entire graveyard.
 int rfg_whole_graveyard(int player)
 {
-	memset(graveyard_source, -1, sizeof(graveyard_source));
-	int result = rfg_whole_deck_impl(player, graveyard_ptr_mutable[player]);
-	// Rakshasa Vizier effect.
-	int c;
-	for(c=0; c<active_cards_count[player]; c++){
-		if( in_play(player, c) && get_id(player, c) == CARD_ID_RAKSHASA_VIZIER && ! is_humiliated(player, c) ){
-			add_1_1_counters(player, c, result);
-		}
-	}
-	return result;
+  int *deck;
+  int iVar1;
+  int iVar2;
+  unsigned int uVar3;
+  card_instance_t *instance;
+  int iVar5;
+  int (*paiVar6)[500];
+  unsigned char bVar7;
+
+  bVar7 = 0;
+  iVar1 = count_graveyard_by_type(player, 2);
+  iVar2 = count_graveyard_by_type(player, 0x38);
+  uVar3 = count_graveyard(player);
+  dispatch_event_with_initial_event_result(player, graveyard_source[player][0],
+                                           EVENT_REMOVED_FROM_GRAVEYARD,
+                                           iVar2 << 8 | iVar1 << 0x10 | uVar3);
+  deck = graveyard_ptr_mutable[player];
+  paiVar6 = graveyard_source;
+  for (iVar1 = 1000; iVar1 != 0; iVar1 = iVar1 + -1)
+  {
+    (*paiVar6)[0] = -1;
+    paiVar6 = (int (*)[500])((int)paiVar6 + ((unsigned int)bVar7 * -2 + 1) * 4);
+  }
+  iVar1 = rfg_whole_deck_impl(player, deck);
+  if (0 < active_cards_count[player])
+  {
+    iVar2 = 0;
+    do
+    {
+      instance = in_play(player, iVar2);
+      if (instance != NULL)
+      {
+        instance = get_card_instance(player, iVar2);
+        if ((cards_data[instance->original_internal_card_id].id != 0x1e33) &&
+            (cards_data[instance->internal_card_id].id == 0x380a))
+        {
+          iVar5 = is_humiliated(player, iVar2, AL_TRIG);
+          if (iVar5 == 0)
+          {
+            add_counters(player, iVar2, player, iVar2, COUNTER_P1_P1, iVar1);
+          }
+        }
+      }
+      iVar2 = iVar2 + 1;
+    } while (iVar2 < active_cards_count[player]);
+  }
+  return iVar1;
 }
 
 // Exile player's entire library.
@@ -2348,7 +2458,7 @@ int good_to_put_in_grave(int player, int card){
 }
 
 int seek_grave_for_id_to_reanimate(int player, int card, int t_player, int id,
-                                        reanimate_mode_2022_t mode)
+                                        reanimate_mode_t mode)
 {
   int *piVar1;
   int iVar2;
@@ -2368,22 +2478,22 @@ int seek_grave_for_id_to_reanimate(int player, int card, int t_player, int id,
     {
       if ((unsigned int)cards_data[piVar1[iVar2]].id == id)
       {
-        if (REANIMATEXTRA2022_RETURN_TO_HAND2 < mode)
+        if (REANIMATEXTRA_RETURN_TO_HAND2 < mode)
         {
           iVar2 = reanimate_permanent(player, card, t_player, iVar2, mode);
           return iVar2;
         }
-        if (mode == REANIMATEXTRA2022_RETURN_TO_HAND2)
+        if (mode == REANIMATEXTRA_RETURN_TO_HAND2)
         {
           iVar3 = add_card_to_hand(t_player, piVar1[iVar2]);
           remove_card_from_grave(t_player, iVar2);
           return iVar3;
         }
-        if (mode == REANIMATEXTRA2022_LEAVE_IN_GRAVEYARD)
+        if (mode == REANIMATEXTRA_LEAVE_IN_GRAVEYARD)
         {
           return iVar2;
         }
-        if (mode == REANIMATEXTRA2022_EXILE_FROM_GRAVEYARD)
+        if (mode == REANIMATEXTRA_EXILE_FROM_GRAVEYARD)
         {
           rfg_card_from_grave(t_player, iVar2);
           return -1;
@@ -2401,7 +2511,7 @@ int seek_grave_for_id_to_reanimate(int player, int card, int t_player, int id,
  * If anything else removes a lower card in the graveyard before the selected card is acted upon, this will fail.
  * Prefer select_target_from_grave_source()/select_target_from_either_grave() and validate_target_from_grave_source() in new code. */
 int new_select_target_from_grave(int player, int card, int t_player, select_grave_t mode,
-                                      int ai_mode, test_definition_2022_t *this_test,
+                                      int ai_mode, test_definition_t *this_test,
                                       int ret_location)
 {
   int *piVar1;
@@ -2425,7 +2535,7 @@ int new_select_target_from_grave(int player, int card, int t_player, select_grav
  * can be found even if it moves within the graveyard by the time it's validated.
  * Returns the internal_card_id, or -1 and sets cancel if not chosen. */
 int select_target_from_grave_source(int player, int card, int t_player, select_grave_t mode,
-                                         int ai_mode, test_definition_2022_t *this_test,
+                                         int ai_mode, test_definition_t *this_test,
                                          int ret_location)
 {
   int result;
@@ -2453,7 +2563,7 @@ extern const char* hack_override_show_deck_done_button_label;
  * Otherwise identical to select_target_from_grave_source(). */
 int select_target_from_either_grave(int player, int card, select_grave_t mode,
                                          int ai_mode_own_graveyard, int ai_mode_opponent_graveyard,
-                                         test_definition_2022_t *test, int ret_location_graveyard,
+                                         test_definition_t *test, int ret_location_graveyard,
                                          int ret_location_card)
 {
   int iVar1;
@@ -2464,7 +2574,7 @@ int select_target_from_either_grave(int player, int card, select_grave_t mode,
   bool bVar6;
   select_grave_t sStack_70;
   target_t tgt_gy;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   iVar1 = new_special_count_grave(0, test);
   iVar2 = new_special_count_grave(1, test);
@@ -2482,7 +2592,7 @@ int select_target_from_either_grave(int player, int card, select_grave_t mode,
       base_target_definition(player, card, &td, 0);
       td.zone = 0x1000;
       td.allow_cancel = (mode ^ SFG_CANNOT_CANCEL) & SFG_CANNOT_CANCEL;
-      load_text_2022(NULL, "TARGET_GRAVEYARD");
+      load_text(NULL, "TARGET_GRAVEYARD");
       iVar3 = select_target(player, card + -1000, &td, text_lines[0], &tgt_gy);
       if (iVar3 == 0)
       {
@@ -2739,7 +2849,7 @@ void whenever_a_card_is_put_into_a_graveyard_from_anywhere_exile_that_card(int p
 	// From library
 	enable_xtrigger_flags |= ENABLE_XTRIGGER_MILLED;
 	if (xtrigger_condition() == XTRIGGER_MILLED && affect_me(player, card) && reason_for_trigger_controller == player
-	  && !is_humiliated(player, card) && (trigger_cause_controller == t_player || t_player == ANYBODY)
+	  && !is_humiliated(player, card, AL_TRIG) && (trigger_cause_controller == t_player || t_player == ANYBODY)
 	  ){
 		if (event == EVENT_TRIGGER)
 			event_result |= RESOLVE_TRIGGER_MANDATORY;
@@ -2779,32 +2889,53 @@ void whenever_a_card_is_put_into_a_graveyard_from_anywhere_exile_that_card(int p
 	}
 }
 
-int count_types_in_grave(int player){
-	int i;
-	int result = 0;
-	int pump = 0;
-	for(i=0; i<2; i++ ){
-		if( i == player || player == ANYBODY ){
-			int count = 0;
-			const int *grave = get_grave(i);
-			while( grave[count] != -1 ){
-					/* Whitelist allowable types.  get_type() deliberately reports interrupts as TYPE_INSTANT|TYPE_INTERRUPT, for example.
-					 * It may be made to do the same with other cases in the future.
-					 * It does deal correctly with flash permanents, instant-speed sorceries, enchantments vs. planewalkers, etc., though.
-					 */
-					result |= get_type(-1, grave[count]) & (TYPE_LAND | TYPE_CREATURE | TYPE_ENCHANTMENT | TYPE_SORCERY | TYPE_INSTANT | TYPE_ARTIFACT | TARGET_TYPE_PLANESWALKER);
-					if( has_subtype(-1, grave[count], SUBTYPE_TRIBAL) ){
-						result |= TARGET_TYPE_TOKEN;	// this bit known to be free, as we didn't whitelist it above
-					}
-					count++;
-			}
-			pump = num_bits_set(result);
-			if( pump >= 8 ){
-				break;
-			}
-		}
-	}
-	return pump;
+int count_types_in_grave(int player)
+{
+  int *piVar1;
+  unsigned int uVar2;
+  type_t tVar3;
+  int result;
+  type_t v;
+  int *piVar5;
+  int iStack_14;
+
+  iStack_14 = 0;
+  uVar2 = 0;
+  v = TYPE_NONE;
+  do
+  {
+    if ((player == iStack_14) || (player == 2))
+    {
+      piVar5 = graveyard_ptr_mutable[iStack_14];
+      result = *piVar5;
+      while (result != -1)
+      {
+        tVar3 = get_type(-1, result);
+        v = tVar3 & (TARGET_TYPE_PLANESWALKER | TYPE_ARTIFACT | TYPE_INSTANT | TYPE_SORCERY |
+                     TYPE_ENCHANTMENT | TYPE_CREATURE | TYPE_LAND) |
+            v;
+        result =
+            has_subtype_by_id(player, (unsigned int)cards_data[*piVar5].id, SUBTYPE_TRIBAL);
+        if (result != 0)
+        {
+          v = v | TARGET_TYPE_TOKEN;
+        }
+        piVar1 = piVar5 + 1;
+        piVar5 = piVar5 + 1;
+        result = *piVar1;
+      }
+      uVar2 = num_bits_set(v);
+      if (7 < (int)uVar2)
+      {
+        return uVar2;
+      }
+    }
+    iStack_14 = iStack_14 + 1;
+    if (iStack_14 == 2)
+    {
+      return uVar2;
+    }
+  } while (true);
 }
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
@@ -3096,7 +3227,7 @@ int pre_counterspell(int player, int card, int to_counter_player, int to_counter
        iVar6 == 0))
   {
     iVar6 = get_owner(to_counter_player, to_counter_card);
-    card_00 = locate_edh_card_2022(iVar6);
+    card_00 = locate_edh_card(iVar6);
     if (-1 < card_00)
     {
       pcVar3 = get_card_instance(iVar6, card_00);

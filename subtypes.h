@@ -311,8 +311,8 @@ typedef enum
 	SUBTYPE_MAX_USED_SUPERTYPE			= 0x2007,
 #ifdef SHANDALAR
 	SUBTYPE_HISTORIC					= 0x2FFD,	// Doesn't appear on cards; equivalent to "SUBTYPE_LEGEND or SUBTYPE_SAGA or TYPE_ARTIFACT"
-	SUBTYPE_IMPOSSIBLE					= 0x2FFE,	// has_subtype(anything, SUBTYPE_IMPOSSIBLE) always returns false.
 #endif
+	SUBTYPE_IMPOSSIBLE					= 0x2FFE,	// has_subtype(anything, SUBTYPE_IMPOSSIBLE) always returns false.
 	SUBTYPE_MAX_SUPERTYPE				= 0x2FFF,
 
 	SUBTYPE_MIN_ARTIFACT_SUBTYPE		= 0x3000,

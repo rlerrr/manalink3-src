@@ -170,7 +170,7 @@ _choose_a_card = 0x4a9750;
 _choose_a_color_exe = 0x4721c0;
 _choose_a_number = 0x472120;
 _cop2 = 0x4bdc80;
-_count_mana = 0x472400;
+/* count_mana is implemented by the recovered DLL C source. */
 _damage_creature_or_player = 0x4C8B90;
 _damage_player = 0x4A68A0;
 /*_deathtouch = 0x4CA9E0;*/
@@ -190,9 +190,10 @@ _get_usertime_of_current_thread_in_ms = 0x472c90;
 _has_mana = 0x49D510;
 _is_tapped = 0x4E81FE;
 _islandhome = 0x4C8D30;
-_load_text = 0x401F2C;
+/* load_text is implemented by the recovered DLL C source. */
 _obliterate_top_card_of_stack = 0x436930;
-_mana_producer_fixed = 0x47B6C0;
+/* mana_producer_fixed is implemented by the recovered DLL C source. */
+_engine_mana_producer_fixed = 0x47B6C0;
 _not_dying = 0x471d30;
 _pay_mana_maximally_satisfied = 0x42f130;
 _produce_mana = 0x49D490;
@@ -218,8 +219,8 @@ _asp = 0x4c4520;
 _trace_mode = 0x790640;
 _unknown62BCEC = 0x62BCEC;
 _zombie_regen = 0x4C7E30;
-_put_card_on_stack = 0x4338F0;
-_put_card_on_stack2 = 0x433850;
+/* put_card_on_stack is implemented by the recovered DLL C source. */
+/* put_card_on_stack2 is implemented by the recovered DLL C source. */
 _internal_rand = 0x44E050;
 _oubliette_effect = 0x4597F0;
 _create_a_card_type = 0x4A6500;
@@ -546,15 +547,14 @@ SECTIONS
 }
 
 /* Typed October 2022 views of existing native mana lists. */
-_engine_raw_mana_available_hex_2022 = 0x4EF21C;
-_engine_mana_may_be_spent_as_color_2022 = 0x60A4B4;
+_raw_mana_may_be_spent_as_color = 0x60A4B4;
 
 /* Native dynamic card-type pool index used by the 2022 token resolver. */
-_engine_dynamic_iid_start_2022 = 0x7A5380;
+_engine_dynamic_iid_start = 0x7A5380;
 
 /* October 2022 network packet interfaces. */
-_receive_network_packet_2022 = 0x4A70C0;
-_send_network_packet_2022 = 0x4A6BC0;
+_receive_network_packet = 0x4A70C0;
+_send_network_packet = 0x4A6BC0;
 
 /* October 2022 life-gain draw counter (inferred name). */
-_life_gain_draw_count_2022 = 0x4EF538;
+_life_gain_draw_count = 0x4EF538;

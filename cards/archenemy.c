@@ -1152,12 +1152,17 @@ static int scheme_your_fate_is_thrice_sealed(int player, int card, event_t event
 
 static int effect_your_inescapable_doom(int player, int card, event_t event)
 {
-  if (player == current_turn && eot_trigger(player, card, event))
-	{
-	  add_counter(player, card, COUNTER_DOOM);
-	  damage_player(1-player, count_counters(player, card, COUNTER_DOOM), player, card);
-	}
-
+  int result;
+  if (current_turn == player)
+  {
+    result = eot_trigger(player, card, event);
+    if (result != 0)
+    {
+      add_counters(player, card, player, card, COUNTER_DOOM, 1);
+      result = count_counters(player, card, COUNTER_DOOM);
+      damage_player(1 - player, result, player, card);
+    }
+  }
   return 0;
 }
 static int scheme_your_inescapable_doom(int player, int card, event_t event)

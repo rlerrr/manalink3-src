@@ -825,7 +825,7 @@ int card_captured_by_the_consulate(int player, int card, event_t event)
            trigger_condition != 0xd3)) ||
          ((card != affected_card || (player != affected_card_controller)))) ||
         ((reason_for_trigger_controller != player ||
-          ((iVar3 = is_humiliated_for_ability(player, card, AL_TRIG),
+          ((iVar3 = is_humiliated(player, card, AL_TRIG),
             iVar3 != 0 || (trigger_cause_controller == player)))))) ||
        (iVar3 = is_what(trigger_cause_controller, trigger_cause, 1), iVar3 != 0)) ||
       ((iVar3 = is_token(trigger_cause_controller, trigger_cause),
@@ -1056,7 +1056,7 @@ int card_mizzium_meddler(int player, int card, event_t event)
   card_instance_t *pcVar1;
   int result;
   card_instance_t *pcVar3;
-  target_definition_2022_t td_spell;
+  target_definition_t td_spell;
 
   counterspell_target_definition(player, card, &td_spell, 0xff);
   td_spell.special = td_spell.special | 0x8000;

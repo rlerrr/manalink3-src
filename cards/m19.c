@@ -1761,7 +1761,7 @@ int card_vine_mare(int player, int card, event_t event)
 {
   unsigned int uVar1;
   unsigned int uVar2;
-  hexproof_2022(player, card, event);
+  hexproof(player, card, event);
   if (((event == EVENT_BLOCK_LEGALITY) && (attacking_card_controller == player)) &&
       (attacking_card == card))
   {
@@ -2023,7 +2023,7 @@ int card_ajani_adversary_of_tyrants_emblem(int player, int card, event_t event)
   card_instance_t *instance;
   token_generation_t token;
 
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if ((result == 0) && (current_turn == player))
   {
     result = eot_trigger(player, card, event);
@@ -2175,7 +2175,7 @@ int card_elvish_rejuvenator(int player, int card, event_t event)
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       new_default_test_definition(&test, 1, "Select a land card.");
@@ -2198,7 +2198,7 @@ int card_goreclaw_terror_of_qal_sisma(int player, int card, event_t event)
   {
     if (affected_card_controller == player)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         instance = get_card_instance(affected_card_controller, affected_card);
@@ -2239,7 +2239,7 @@ int card_lathliss_dragon_queen(int player, int card, event_t event)
   check_legend_rule(player, card, event);
   if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
        (player == affected_card_controller)) &&
-      (result = is_humiliated_for_ability(player, card, AL_TRIG), result == 0))
+      (result = is_humiliated(player, card, AL_TRIG), result == 0))
   {
     default_test_definition(&recovered_stack_test.test, 2);
     recovered_stack_test.test.subtype = 0x30;
@@ -2429,7 +2429,7 @@ int card_runic_armasaur(int player, int card, event_t event)
         instance = in_play(player, card);
         if (instance != NULL)
         {
-          result = is_humiliated_for_ability(player, card, AL_TRIG);
+          result = is_humiliated(player, card, AL_TRIG);
           if (result == 0)
           {
             draw_some_cards_if_you_want(player, card, player, 1);
@@ -2449,7 +2449,7 @@ int card_tezzeret_artifice_master_emblem(int player, int card, event_t event)
 
   if (current_turn == player)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       result = eot_trigger(player, card, event);
@@ -2858,7 +2858,7 @@ int card_poison_tip_archer(int player, int card, event_t event)
   unsigned int uVar3;
   int iVar4;
 
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   if (event == EVENT_STATIC_EFFECTS)
   {
     if ((card == affected_card) && (player == affected_card_controller))
@@ -2930,7 +2930,7 @@ int card_dragons_hoard(int player, int card, event_t event)
     iVar1 = new_specific_cip(player, card, event, player, 2, &test);
     if (iVar1 != 0)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_GOLD, 1);
+      add_counters(player, card, player, card, COUNTER_GOLD, 1);
     }
   }
   if (event != EVENT_CAN_ACTIVATE)
@@ -3204,7 +3204,7 @@ int card_shield_mare(int player, int card, event_t event)
     if (instance == NULL)
       goto LAB_0220b632;
   }
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if ((result == 0) &&
       (ptVar5 = becomes_target_of_spell_or_effect(player, card, event, player, card, 1 - player),
        ptVar5 != NULL))
@@ -3249,7 +3249,7 @@ int isareth_legacy(int player, int card, event_t event)
       set_special_flags(result, card_00, 0x4000);
     }
   }
-  leaves_play_2022(result, card_00, event, 1, 0);
+  leaves_play(result, card_00, event, 1, 0);
   if (event != EVENT_LEAVES_PLAY_ABILITY)
   {
     return 0;
@@ -3331,7 +3331,7 @@ int card_isareth_the_awakener(int player, int card, event_t event)
       result = reanimate_permanent(player, card, player, result, REANIMATE_DEFAULT);
       card_00 = create_targetted_legacy_effect(player, card, isareth_legacy, player, result);
       add_status(player, card_00, 0x10000);
-      add_counters_from_source(player, card, player, result, COUNTER_CORPSE, 1);
+      add_counters(player, card, player, result, COUNTER_CORPSE, 1);
       convert_to_token(player, result);
       set_special_flags(player, result, 0x4000);
       set_special_flags2(player, result, 0x10000000);
@@ -3382,7 +3382,7 @@ static int liliana_mill_legacy(int player, int card, event_t event)
           {
             if (cards_milled[iVar5].source != -1)
             {
-              iVar4 = has_subtype_by_id_2022(
+              iVar4 = has_subtype_by_id(
                   player, (unsigned int)cards_data[cards_milled[iVar5].internal_card_id].id,
                   SUBTYPE_ZOMBIE);
               if (iVar4 != 0)
@@ -3421,7 +3421,7 @@ int card_hungering_hydra(int player, int card, event_t event)
   enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, x_value);
 
   if ((((event == EVENT_DECLARE_BLOCKERS) && (pcVar2 = in_play(player, card), pcVar2 != NULL)) &&
-       (iVar1 = is_humiliated_for_ability(player, card, AL_STATIC), iVar1 == 0)) &&
+       (iVar1 = is_humiliated(player, card, AL_STATIC), iVar1 == 0)) &&
       (iVar1 = 1 - player, 0 < active_cards_count[iVar1]))
   {
     iStack_3c = 0;
@@ -3454,7 +3454,7 @@ int card_hungering_hydra(int player, int card, event_t event)
       } while (iVar3 < active_cards_count[iVar1]);
     }
   }
-  iVar1 = is_humiliated_for_ability(player, card, AL_TRIG);
+  iVar1 = is_humiliated(player, card, AL_TRIG);
   if (iVar1 == 0)
   {
 
@@ -3505,7 +3505,7 @@ int card_hungering_hydra(int player, int card, event_t event)
             iVar3 = *piVar5;
             piVar5 = piVar5 + 1;
             pcVar2->number_of_targets = '\0';
-            add_counters_from_source(player, card, player, card, COUNTER_P1_P1, iVar3);
+            add_counters(player, card, player, card, COUNTER_P1_P1, iVar3);
           } while (piVar5 != dam + iVar1);
         }
       }
@@ -3602,7 +3602,7 @@ int card_lilianas_contract(int player, int card, event_t event)
   int iVar4;
   int iStack_fc;
   int hell[4];
-  test_definition_2022_t test;
+  test_definition_t test;
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   upkeep_trigger_ability(player, card, event, player);
@@ -3746,8 +3746,8 @@ int card_ajani_adversary_of_tyrants(int player, int card, event_t event)
   unsigned int uVar4;
   target_t *ptVar5;
   target_t *ptVar6;
-  target_definition_2022_t td1;
-  test_definition_2022_t test_resurrect;
+  target_definition_t td1;
+  test_definition_t test_resurrect;
 
   check_legend_rule(player, card, event);
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -3842,7 +3842,7 @@ int card_ajani_adversary_of_tyrants(int player, int card, event_t event)
         do
         {
           state_untargettable(instance->targets[iVar2].player, instance->targets[iVar2].card, 0);
-          add_counters_from_source(player, card, instance->targets[iVar2].player,
+          add_counters(player, card, instance->targets[iVar2].player,
                                    instance->targets[iVar2].card, COUNTER_P1_P1, 1);
           iVar2 = iVar2 + 1;
         } while (iVar2 < (int)(unsigned int)instance->number_of_targets);
@@ -3881,10 +3881,10 @@ LAB_02206b40:
 int card_vivien_reid(int player, int card, event_t event)
 {
   int result;
-  target_definition_2022_t *ptStack_144;
+  target_definition_t *ptStack_144;
   card_instance_t *instance;
-  target_definition_2022_t td;
-  test_definition_2022_t test;
+  target_definition_t td;
+  test_definition_t test;
 
   check_legend_rule(player, card, event);
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
@@ -3933,8 +3933,8 @@ int card_vivien_reid(int player, int card, event_t event)
     if (result == 1)
     {
       new_default_test_definition(&test, 3, "Select a creature or land card.");
-      reveal_top_cards_of_library_and_choose(player, card, player, 4, 0, TUTOR2022_HAND, 1,
-                                                  TUTOR2022_BOTTOM_OF_DECK_RANDOM, 0, &test);
+      reveal_top_cards_of_library_and_choose(player, card, player, 4, 0, TUTOR_HAND, 1,
+                                                  TUTOR_BOTTOM_OF_DECK_RANDOM, 0, &test);
     }
     else if (result == 2)
     {
@@ -3966,7 +3966,7 @@ int card_arcades_the_strategist(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  test_definition_2022_t test;
+  test_definition_t test;
   check_legend_rule(player, card, event);
   vigilance(player, card, event);
   if ((((trigger_condition == 0xdb) && (card == affected_card)) &&
@@ -3984,7 +3984,7 @@ int card_arcades_the_strategist(int player, int card, event_t event)
       result = check_for_ability(player, affected_card, KEYWORD_DEFENDER);
       if (result != 0)
       {
-        result = is_humiliated_for_ability(player, card, AL_STATIC);
+        result = is_humiliated(player, card, AL_STATIC);
         if (result == 0)
         {
           instance = get_card_instance(affected_card_controller, affected_card);
@@ -4011,7 +4011,7 @@ int card_chromium_the_mutable(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
 
   check_legend_rule(player, card, event);
   cannot_be_countered(player, card, event);
@@ -4046,7 +4046,7 @@ int card_aethershield_artificer(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  target_definition_2022_t td;
+  target_definition_t td;
   default_target_definition(player, card, &td, 2);
   td.special = 8;
   td.allowed_controller = player;
@@ -4054,7 +4054,7 @@ int card_aethershield_artificer(int player, int card, event_t event)
   td.allow_cancel = 0;
   if (event == EVENT_CHANGE_TYPE)
   {
-    result = engine_any_legal_attacker_2022(player);
+    result = engine_any_legal_attacker(player);
     if ((result == 0) && (current_turn == player))
     {
       event_flags = event_flags | EA_FORCE_ATTACK;
@@ -4062,7 +4062,7 @@ int card_aethershield_artificer(int player, int card, event_t event)
   }
   else if ((event == EVENT_BEGIN_COMBAT) && (current_turn == player))
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       result = can_target(&td);
@@ -4096,7 +4096,7 @@ static int liliana_reanimation_legacy(int player, int card, event_t event)
   int *piVar6;
   if (!in_play(player, card))
     return 0;
-  if (is_humiliated_for_ability(player, card, AL_STATIC))
+  if (is_humiliated(player, card, AL_STATIC))
     return 0;
   if (event == EVENT_CAN_ACTIVATE)
   {
@@ -4107,7 +4107,7 @@ static int liliana_reanimation_legacy(int player, int card, event_t event)
       do
       {
 
-        iVar5 = has_subtype_by_id_2022(player, (unsigned int)cards_data[iVar5].id, SUBTYPE_ZOMBIE);
+        iVar5 = has_subtype_by_id(player, (unsigned int)cards_data[iVar5].id, SUBTYPE_ZOMBIE);
         if (iVar5 == 0)
         {
         LAB_02206450:
@@ -4157,10 +4157,10 @@ static int liliana_reanimation_legacy(int player, int card, event_t event)
     int i = 0;
     int *grave = graveyard_ptr_mutable[player];
     int iid = *grave;
-    test_definition_2022_t this_test;
+    test_definition_t this_test;
     while (iid != -1)
     {
-      if (!has_subtype_by_id_2022(player, cards_data[iid].id, SUBTYPE_ZOMBIE))
+      if (!has_subtype_by_id(player, cards_data[iid].id, SUBTYPE_ZOMBIE))
       {
         grave = graveyard_ptr_mutable[player];
         goto next_card;
@@ -4225,9 +4225,9 @@ int card_liliana_untouched_by_death(int player, int card, event_t event)
   int iVar2;
   int iVar3;
   card_instance_t *pcVar4;
-  target_definition_2022_t *ptStack_6c;
+  target_definition_t *ptStack_6c;
   card_instance_t *pcStack_68;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   check_legend_rule(player, card, event);
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))

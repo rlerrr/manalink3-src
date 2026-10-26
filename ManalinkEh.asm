@@ -367,7 +367,7 @@ extern _card_sneak_attack
 extern _card_reveillark
 extern _card_sleight_of_hand
 extern _card_fact_or_fiction
-extern _card_gifts_ungiven
+extern _card_daru_lancer
 extern _card_lord_of_extinction
 extern _card_serra_avatar
 extern _card_wall_of_kelp
@@ -608,7 +608,7 @@ extern _card_journey_to_nowhere
 extern _card_kabira_evangel
 extern _card_kor_aeronaut
 extern _card_kor_cartographer
-extern _card_kor_hookmaster
+extern _card_erratic_visionary
 extern _card_kor_outfitter
 extern _card_kor_sanctifiers
 extern _card_kor_skyfisher
@@ -1177,9 +1177,9 @@ extern _card_ooze
 extern _card_mystifying_maze
 extern _card_natures_spiral
 extern _card_necrotic_plague
-extern _card_nightwing_shade
+extern _card_bake_into_a_pie
 extern _card_overwhelming_stampede
-extern _card_phantom_beast
+extern _card_wall_of_runes
 extern _card_phylactery_lich
 extern _card_preordain
 extern _card_primal_cocoon
@@ -1713,11 +1713,11 @@ extern _card_rashida_scalebane
 extern _card_sealed_fate
 extern _card_skulking_ghost
 extern _card_zirilan_of_the_claw
-extern _card_charcoal_diamond
-extern _card_fire_diamond
-extern _card_marble_diamond
-extern _card_moss_diamond
-extern _card_sky_diamond
+extern _card_necra_disciple
+extern _card_raka_disciple
+extern _card_treetop_rangers
+extern _card_fell_specter
+extern _card_mystic_archaeologist
 extern _card_aku_djinn
 extern _card_anvil_of_bagardan
 extern _card_army_ants
@@ -1782,7 +1782,7 @@ extern _card_circling_vultures
 extern _card_debt_of_loyalty
 extern _card_dingus_staff
 extern _card_downdraft
-extern _card_dwarven_berserk
+extern _card_dwarven_berserker
 extern _card_ertais_familiar
 extern _card_fallow_wurm
 extern _card_firestorm
@@ -1970,7 +1970,7 @@ extern _card_cartographer
 extern _card_cataclysm
 extern _card_convalescence
 extern _card_culling_the_weak
-extern _card_elvish_berserk
+extern _card_elvish_berserker
 extern _card_equilibrium
 extern _card_erratic_portal
 extern _card_keeper_of_the_beasts
@@ -2365,7 +2365,7 @@ extern _card_mutavault_animated
 extern _card_cackling_counterpart
 extern _card_clone
 extern _card_sliver_queen
-extern _card_fire_elemental
+extern _card_sphinx_of_the_guildpact
 extern _card_pithing_needle
 extern _card_bloodline_keeper
 extern _card_lord_of_lineage
@@ -2529,7 +2529,7 @@ extern _card_profane_command
 extern _card_lifelink
 extern _card_levitation
 extern _card_child_of_night
-extern _card_craw_wurm
+extern _card_harbinger_of_spring
 extern _card_abuna_acolyte
 extern _card_accorder_shield
 extern _card_acid_web_spider
@@ -2541,7 +2541,7 @@ extern _card_auriok_edgewright
 extern _card_auriok_replica
 extern _card_auriok_sunchaser
 extern _card_barbed_battlegear
-extern _card_barrage_ogre
+extern _card_aerial_assault
 extern _card_bellowing_tanglewurm
 extern _card_fearsome_temper
 extern _card_blade_tribe_berserkers
@@ -2646,7 +2646,7 @@ extern _card_revoke_existence
 extern _card_riddlesmith
 extern _card_rust_tick
 extern _card_rusted_relic
-extern _card_saberclaw_golem
+extern _card_knight_of_malice
 extern _card_salvage_scout
 extern _card_scrapdiver_serpent
 extern _card_screeching_silcaw
@@ -2693,7 +2693,7 @@ extern _card_random_singleton_deck
 extern _card_accorder_paladin
 extern _card_banishment_decree
 extern _card_bladed_sentinel
-extern _card_blisterstick_shaman
+extern _card_windstorm_drake
 extern _card_bonehoard
 extern _card_brass_squire
 extern _card_burn_the_impure
@@ -3033,7 +3033,7 @@ extern _card_chaos_warp
 extern _card_smother
 extern _card_marshals_anthem
 extern _card_terastodon
-extern _card_drana_kalastrian_highborn
+extern _card_drana_kalastria_bloodchief
 extern _card_emerge_unschated
 extern _card_gigantomancer
 extern _card_nirkana_revenant
@@ -3042,7 +3042,7 @@ extern _card_pestilence_demon
 extern _card_admonition_angel
 extern _card_anowon_the_ruin_sage
 extern _card_archon_of_redemption
-extern _card_grey_ogre
+extern _card_knight_of_grace
 extern _card_kazuul_tyrant_of_the_cliffs
 extern _card_sejiri_steppe
 extern _card_smoldering_spires
@@ -3784,7 +3784,7 @@ extern _card_conflux
 extern _card_beseech_the_queen
 extern _card_elvish_piper
 extern _card_insurrection
-extern _card_demand_supply
+extern _card_supply_demand
 extern _card_demonic_collusion
 extern _card_edge_of_autumn
 extern _card_infernal_tutor
@@ -3828,7 +3828,7 @@ extern _card_stasis_cocoon
 extern _card_steelshapers_gift
 extern _card_summoners_egg
 extern _card_suncrusher
-extern _card_sylvok_explorer
+extern _card_crypsis
 extern _card_synod_centurion
 extern _card_tel_jilad_justice
 extern _card_tornado_elemental
@@ -3970,7 +3970,7 @@ extern _card_stolen_goods
 extern _card_blood_artist
 extern _card_drafnas_restoration
 extern _card_corpse_traders
-extern _card_dark_imposter
+extern _card_dark_impostor
 extern _card_driver_of_the_dead
 extern _card_dread_slaver
 extern _card_essence_harvest
@@ -4782,7 +4782,7 @@ extern _card_odds_ends
 extern _card_enemy_of_the_guildpact
 extern _card_error_trial
 extern _card_evolution_vat
-extern _card_fall_rise
+extern _card_rise_fall
 extern _card_flame_kin_war_scout
 extern _card_flaring_flame_kin
 extern _card_freewind_equenaut
@@ -5196,7 +5196,7 @@ extern _card_inaction_injunction
 extern _card_jace_architect_of_thought
 extern _card_mizzium_skin
 extern _card_psychic_spiral
-extern _card_runewing
+extern _card_ronom_hulk
 extern _card_search_the_city
 extern _card_soulsworn_spirit
 extern _card_sphinx_of_the_chimes
@@ -5227,7 +5227,7 @@ extern _card_ultimate_price
 extern _card_zanikev_locust
 extern _card_necromaster_dragon
 extern _card_batterhorn
-extern _card_bellows_lizard
+extern _card_kitsune_riftwalker
 extern _card_chaos_imps
 extern _card_dynacharge
 extern _card_electrickery
@@ -5353,7 +5353,7 @@ extern _card_selesnya_keyrune
 extern _card_street_sweeper
 extern _card_tablet_of_the_guilds
 extern _card_volatile_rig
-extern _card_azorius_guildgate
+extern _can_autotap
 extern _card_grove_of_the_guardian
 extern _card_rogues_passage
 extern _card_transguild_promenade
@@ -5840,7 +5840,7 @@ extern _card_mosstodon
 extern _card_naya_battlemage
 extern _card_naya_panorama
 extern _card_necrogenesis
-extern _card_obelisk_of_bant
+extern _plain_mana_producer
 extern _card_onyx_goblet
 extern _card_ooze_garden
 extern _card_predator_dragon
@@ -6252,7 +6252,7 @@ extern _card_twilights_call
 extern _card_urborg_emissary
 extern _card_urzas_filter
 extern _card_urzas_rage
-extern _card_utopia_tree
+extern _plain_mana_producer_tapped
 extern _card_verdeloth_the_ancient
 extern _card_verduran_emissary
 extern _card_nessian_wilds_ravager
@@ -6367,7 +6367,7 @@ extern _card_bash_to_bits
 extern _card_battle_strain
 extern _card_bearscape
 extern _card_beast_attack
-extern _card_beloved_chaplain
+extern _card_giver_of_runes
 extern _card_bomb_squad
 extern _card_braids_cabal_minion
 extern _card_cabal_patriarch
@@ -6576,7 +6576,7 @@ extern _card_book_burning
 extern _card_breaking_point
 extern _card_cephalid_constable
 extern _card_cephalid_inkshrouder
-extern _card_commander_eesha
+extern _card_haktos_the_unscarred
 extern _card_crush_of_wurms
 extern _card_death_wish
 extern _card_dwarven_bloodboiler
@@ -7053,7 +7053,7 @@ extern _card_wrecking_ogre
 extern _card_alpha_autority
 extern _card_burst_of_strength
 extern _card_crowned_ceratok
-extern _card_disciple_of_the_old_ways
+extern _card_mistmeadow_skulk
 extern _card_experiment_one
 extern _card_forced_adaption
 extern _card_giant_adephage
@@ -7322,7 +7322,7 @@ extern _card_bogardan_phoenix
 extern _card_brass_talon_chimera
 extern _card_coral_atoll
 extern _card_dormant_volcano
-extern _card_dragons_mask
+extern _card_ageless_entity
 extern _card_dream_tides
 extern _card_emerald_charm
 extern _card_eye_of_singularity
@@ -7740,7 +7740,7 @@ extern _card_emmara_tandris
 extern _card_gaze_of_granite
 extern _card_gleam_of_battle
 extern _card_gruul_war_chant
-extern _card_haunter_of_nightveil
+extern _card_inspiring_unicorn
 extern _card_jelenn_sphinx
 extern _card_korozda_gorgon
 extern _card_pilfered_plans
@@ -7848,7 +7848,7 @@ extern _card_drop_of_honey
 extern _card_tranquillity
 extern _card_rubblebelt_raiders
 extern _card_simic_fluxmage
-extern _card_bloodstone_cameo
+extern _card_illusory_ambusher
 extern _card_nantuko_shade
 extern _card_phantom_nomad
 extern _card_zuberi_golden_feather
@@ -7919,7 +7919,7 @@ extern _card_master_of_diversion
 extern _card_path_of_bravery
 extern _card_pay_no_heed
 extern _card_sentinel_sliver
-extern _card_seraph_of_the_sword
+extern _card_pyroclastic_elemental
 extern _card_soulmender
 extern _card_colossal_whale
 extern _card_dismiss_into_dream
@@ -9233,7 +9233,7 @@ extern _card_flash_counter
 extern _card_flash_flood
 extern _card_gaseous_form
 extern _card_ghosts_of_the_damned
-extern _card_giant_strenght
+extern _card_giant_strength
 extern _card_giant_turtle
 extern _card_great_defender
 extern _card_greater_realm_of_protection
@@ -9498,7 +9498,7 @@ extern _card_goblin_rabblemaster
 extern _card_heat_ray
 extern _card_inferno_fist
 extern _card_kird_chieftain
-extern _card_mights_tyranny
+extern _card_might_makes_right
 extern _card_miners_bane
 extern _card_paragon_of_fierce_defiance
 extern _card_siege_dragon
@@ -9872,7 +9872,7 @@ extern _card_goblinslide
 extern _card_leaping_master
 extern _card_monastery_swiftspear
 extern _card_swift_kick
-extern _card_tormenting_voice
+extern _card_satyr
 extern _card_archers_parapet
 extern _card_become_immense
 extern _card_dragonscale_boon
@@ -9885,7 +9885,7 @@ extern _card_pine_walker
 extern _card_roar_of_challenge
 extern _card_savage_punch
 extern _card_smoke_teller
-extern _card_sultay_flayer
+extern _card_sultai_flayer
 extern _card_trail_of_mystery
 extern _card_tuskguard_captain
 extern _card_windstorm
@@ -10040,7 +10040,7 @@ extern _card_wardscale_dragon
 extern _card_lotus_eye_mystics
 extern _card_aven_surveyor
 extern _card_cloudform
-extern _card_enchanted_awareness
+extern _card_battlefield_promotion
 extern _card_fascination
 extern _card_jeskai_infiltrator
 extern _card_jeskai_runemark
@@ -11018,7 +11018,7 @@ extern _card_needles_spires
 extern _card_ruins_of_oran_rief
 extern _card_sea_gate_wreckage
 extern _card_wandering_fumarole
-extern _card_wastes
+extern _card_aegis_of_the_heavens
 extern _card_always_watching
 extern _card_angel_of_deliverance
 extern _card_angelic_purge
@@ -11437,7 +11437,7 @@ extern _card_voracious_reader
 extern _card_fortunes_favor
 extern _card_identity_thief
 extern _card_imprisoned_by_the_moon
-extern _card_minds_dilatation
+extern _card_minds_dilation
 extern _card_unsubstantiate
 extern _card_borrowed_malevolence
 extern _card_collective_brutality
@@ -11717,7 +11717,7 @@ extern _card_sky_stiff
 extern _card_skysovereign_consul_flagship
 extern _card_smugglers_copter
 extern _card_torch_gauntlet
-extern _card_weldafast_monitor
+extern _card_weldfast_monitor
 extern _card_whirlemaker
 extern _card_woodweavers_puzzleknot
 extern _card_aether_hub
@@ -11811,7 +11811,7 @@ extern _card_prismatic_geoscope
 extern _card_ash_barrens
 extern _card_unnatural_endurance
 extern _card_sparkcaster
-extern _card_flourishing_defenses
+extern _card_zap
 extern _card_ray_of_command
 extern _card_aetherworks_marvel
 extern _card_cleanfall
@@ -12191,7 +12191,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_reveillark     ; 200171d
   jmp near _card_sleight_of_hand     ; 2001722
   jmp near _card_fact_or_fiction     ; 2001727
-  jmp near _card_gifts_ungiven     ; 200172c
+  jmp near _card_daru_lancer     ; 200172c
   jmp near _card_lord_of_extinction     ; 2001731
   jmp near _card_serra_avatar     ; 2001736
   jmp near _card_wall_of_kelp     ; 200173b
@@ -12431,7 +12431,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_kabira_evangel     ; 2001bcd
   jmp near _card_kor_aeronaut     ; 2001bd2
   jmp near _card_kor_cartographer     ; 2001bd7
-  jmp near _card_kor_hookmaster     ; 2001bdc
+  jmp near _card_erratic_visionary     ; 2001bdc
   jmp near _card_kor_outfitter     ; 2001be1
   jmp near _card_kor_sanctifiers     ; 2001be6
   jmp near _card_kor_skyfisher     ; 2001beb
@@ -13000,9 +13000,9 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_mystifying_maze     ; 20026ea
   jmp near _card_natures_spiral     ; 20026ef
   jmp near _card_necrotic_plague     ; 20026f4
-  jmp near _card_nightwing_shade     ; 20026f9
+  jmp near _card_bake_into_a_pie     ; 20026f9
   jmp near _card_overwhelming_stampede     ; 20026fe
-  jmp near _card_phantom_beast     ; 2002703
+  jmp near _card_wall_of_runes     ; 2002703
   jmp near _card_phylactery_lich     ; 2002708
   jmp near _card_preordain     ; 200270d
   jmp near _card_primal_cocoon     ; 2002712
@@ -13536,11 +13536,11 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_sealed_fate     ; 2003162
   jmp near _card_skulking_ghost     ; 2003167
   jmp near _card_zirilan_of_the_claw     ; 200316c
-  jmp near _card_charcoal_diamond     ; 2003171
-  jmp near _card_fire_diamond     ; 2003176
-  jmp near _card_marble_diamond     ; 200317b
-  jmp near _card_moss_diamond     ; 2003180
-  jmp near _card_sky_diamond     ; 2003185
+  jmp near _card_necra_disciple     ; 2003171
+  jmp near _card_raka_disciple     ; 2003176
+  jmp near _card_treetop_rangers     ; 200317b
+  jmp near _card_fell_specter     ; 2003180
+  jmp near _card_mystic_archaeologist     ; 2003185
   jmp near _card_aku_djinn     ; 200318a
   jmp near _card_anvil_of_bagardan     ; 200318f
   jmp near _card_army_ants     ; 2003194
@@ -13605,7 +13605,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_debt_of_loyalty     ; 20032bb
   jmp near _card_dingus_staff     ; 20032c0
   jmp near _card_downdraft     ; 20032c5
-  jmp near _card_dwarven_berserk     ; 20032ca
+  jmp near _card_dwarven_berserker     ; 20032ca
   jmp near _card_ertais_familiar     ; 20032cf
   jmp near _card_fallow_wurm     ; 20032d4
   jmp near _card_firestorm     ; 20032d9
@@ -13793,7 +13793,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_cataclysm     ; 2003667
   jmp near _card_convalescence     ; 200366c
   jmp near _card_culling_the_weak     ; 2003671
-  jmp near _card_elvish_berserk     ; 2003676
+  jmp near _card_elvish_berserker     ; 2003676
   jmp near _card_equilibrium     ; 200367b
   jmp near _card_erratic_portal     ; 2003680
   jmp near _card_keeper_of_the_beasts     ; 2003685
@@ -14188,7 +14188,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_cackling_counterpart     ; 2003e1e
   jmp near _card_clone     ; 2003e23
   jmp near _card_sliver_queen     ; 2003e28
-  jmp near _card_fire_elemental     ; 2003e2d
+  jmp near _card_sphinx_of_the_guildpact     ; 2003e2d
   jmp near _card_pithing_needle     ; 2003e32
   jmp near _card_bloodline_keeper     ; 2003e37
   jmp near _card_lord_of_lineage     ; 2003e3c
@@ -14352,7 +14352,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_lifelink     ; 2004152
   jmp near _card_levitation     ; 2004157
   jmp near _card_child_of_night     ; 200415c
-  jmp near _card_craw_wurm     ; 2004161
+  jmp near _card_harbinger_of_spring     ; 2004161
   jmp near _card_abuna_acolyte     ; 2004166
   jmp near _card_accorder_shield     ; 200416b
   jmp near _card_acid_web_spider     ; 2004170
@@ -14364,7 +14364,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_auriok_replica     ; 200418e
   jmp near _card_auriok_sunchaser     ; 2004193
   jmp near _card_barbed_battlegear     ; 2004198
-  jmp near _card_barrage_ogre     ; 200419d
+  jmp near _card_aerial_assault     ; 200419d
   jmp near _card_bellowing_tanglewurm     ; 20041a2
   jmp near _card_fearsome_temper     ; 20041a7
   jmp near _card_blade_tribe_berserkers     ; 20041ac
@@ -14468,7 +14468,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_riddlesmith     ; 2004396
   jmp near _card_rust_tick     ; 200439b
   jmp near _card_rusted_relic     ; 20043a0
-  jmp near _card_saberclaw_golem     ; 20043a5
+  jmp near _card_knight_of_malice     ; 20043a5
   jmp near _card_salvage_scout     ; 20043aa
   jmp near _card_scrapdiver_serpent     ; 20043af
   jmp near _card_screeching_silcaw     ; 20043b4
@@ -14515,7 +14515,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_accorder_paladin     ; 2004481
   jmp near _card_banishment_decree     ; 2004486
   jmp near _card_bladed_sentinel     ; 200448b
-  jmp near _card_blisterstick_shaman     ; 2004490
+  jmp near _card_windstorm_drake     ; 2004490
   jmp near _card_bonehoard     ; 2004495
   jmp near _card_brass_squire     ; 200449a
   jmp near _card_burn_the_impure     ; 200449f
@@ -14855,7 +14855,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_smother     ; 2004b25
   jmp near _card_marshals_anthem     ; 2004b2a
   jmp near _card_terastodon     ; 2004b2f
-  jmp near _card_drana_kalastrian_highborn     ; 2004b34
+  jmp near _card_drana_kalastria_bloodchief     ; 2004b34
   jmp near _card_emerge_unschated     ; 2004b39
   jmp near _card_gigantomancer     ; 2004b3e
   jmp near _card_nirkana_revenant     ; 2004b43
@@ -14864,7 +14864,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_admonition_angel     ; 2004b52
   jmp near _card_anowon_the_ruin_sage     ; 2004b57
   jmp near _card_archon_of_redemption     ; 2004b5c
-  jmp near _card_grey_ogre     ; 2004b61
+  jmp near _card_knight_of_grace     ; 2004b61
   jmp near _card_kazuul_tyrant_of_the_cliffs     ; 2004b66
   jmp near _card_sejiri_steppe     ; 2004b6b
   jmp near _card_smoldering_spires     ; 2004b70
@@ -15606,7 +15606,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_beseech_the_queen     ; 20059d0
   jmp near _card_elvish_piper     ; 20059d5
   jmp near _card_insurrection     ; 20059da
-  jmp near _card_demand_supply     ; 20059df
+  jmp near _card_supply_demand     ; 20059df
   jmp near _card_demonic_collusion     ; 20059e4
   jmp near _card_edge_of_autumn     ; 20059e9
   jmp near _card_infernal_tutor     ; 20059ee
@@ -15650,7 +15650,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_steelshapers_gift     ; 2005aac
   jmp near _card_summoners_egg     ; 2005ab1
   jmp near _card_suncrusher     ; 2005ab6
-  jmp near _card_sylvok_explorer     ; 2005abb
+  jmp near _card_crypsis     ; 2005abb
   jmp near _card_synod_centurion     ; 2005ac0
   jmp near _card_tel_jilad_justice     ; 2005ac5
   jmp near _card_tornado_elemental     ; 2005aca
@@ -15792,7 +15792,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_blood_artist     ; 2005d72
   jmp near _card_drafnas_restoration     ; 2005d77
   jmp near _card_corpse_traders     ; 2005d7c
-  jmp near _card_dark_imposter     ; 2005d81
+  jmp near _card_dark_impostor     ; 2005d81
   jmp near _card_driver_of_the_dead     ; 2005d86
   jmp near _card_dread_slaver     ; 2005d8b
   jmp near _card_essence_harvest     ; 2005d90
@@ -16604,7 +16604,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_enemy_of_the_guildpact     ; 2006d4e
   jmp near _card_error_trial     ; 2006d53
   jmp near _card_evolution_vat     ; 2006d58
-  jmp near _card_fall_rise     ; 2006d5d
+  jmp near _card_rise_fall     ; 2006d5d
   jmp near _card_flame_kin_war_scout     ; 2006d62
   jmp near _card_flaring_flame_kin     ; 2006d67
   jmp near _card_freewind_equenaut     ; 2006d6c
@@ -17018,7 +17018,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_jace_architect_of_thought     ; 2007564
   jmp near _card_mizzium_skin     ; 2007569
   jmp near _card_psychic_spiral     ; 200756e
-  jmp near _card_runewing     ; 2007573
+  jmp near _card_ronom_hulk     ; 2007573
   jmp near _card_search_the_city     ; 2007578
   jmp near _card_soulsworn_spirit     ; 200757d
   jmp near _card_sphinx_of_the_chimes     ; 2007582
@@ -17049,7 +17049,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_zanikev_locust     ; 20075ff
   jmp near _card_necromaster_dragon     ; 2007604
   jmp near _card_batterhorn     ; 2007609
-  jmp near _card_bellows_lizard     ; 200760e
+  jmp near _card_kitsune_riftwalker     ; 200760e
   jmp near _card_chaos_imps     ; 2007613
   jmp near _card_dynacharge     ; 2007618
   jmp near _card_electrickery     ; 200761d
@@ -17175,7 +17175,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_street_sweeper     ; 2007875
   jmp near _card_tablet_of_the_guilds     ; 200787a
   jmp near _card_volatile_rig     ; 200787f
-  jmp near _card_azorius_guildgate     ; 2007884
+  jmp near _can_autotap     ; 2007884
   jmp near _card_grove_of_the_guardian     ; 2007889
   jmp near _card_rogues_passage     ; 200788e
   jmp near _card_transguild_promenade     ; 2007893
@@ -17662,7 +17662,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_naya_battlemage     ; 20081f8
   jmp near _card_naya_panorama     ; 20081fd
   jmp near _card_necrogenesis     ; 2008202
-  jmp near _card_obelisk_of_bant     ; 2008207
+  jmp near _plain_mana_producer     ; 2008207
   jmp near _card_onyx_goblet     ; 200820c
   jmp near _card_ooze_garden     ; 2008211
   jmp near _card_predator_dragon     ; 2008216
@@ -18074,7 +18074,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_urborg_emissary     ; 2008a04
   jmp near _card_urzas_filter     ; 2008a09
   jmp near _card_urzas_rage     ; 2008a0e
-  jmp near _card_utopia_tree     ; 2008a13
+  jmp near _plain_mana_producer_tapped     ; 2008a13
   jmp near _card_verdeloth_the_ancient     ; 2008a18
   jmp near _card_verduran_emissary     ; 2008a1d
   jmp near _card_nessian_wilds_ravager     ; 2008a22
@@ -18189,7 +18189,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_battle_strain     ; 2008c43
   jmp near _card_bearscape     ; 2008c48
   jmp near _card_beast_attack     ; 2008c4d
-  jmp near _card_beloved_chaplain     ; 2008c52
+  jmp near _card_giver_of_runes     ; 2008c52
   jmp near _card_bomb_squad     ; 2008c57
   jmp near _card_braids_cabal_minion     ; 2008c5c
   jmp near _card_cabal_patriarch     ; 2008c61
@@ -18398,7 +18398,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_breaking_point     ; 2009058
   jmp near _card_cephalid_constable     ; 200905d
   jmp near _card_cephalid_inkshrouder     ; 2009062
-  jmp near _card_commander_eesha     ; 2009067
+  jmp near _card_haktos_the_unscarred     ; 2009067
   jmp near _card_crush_of_wurms     ; 200906c
   jmp near _card_death_wish     ; 2009071
   jmp near _card_dwarven_bloodboiler     ; 2009076
@@ -18875,7 +18875,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_alpha_autority     ; 20099a9
   jmp near _card_burst_of_strength     ; 20099ae
   jmp near _card_crowned_ceratok     ; 20099b3
-  jmp near _card_disciple_of_the_old_ways     ; 20099b8
+  jmp near _card_mistmeadow_skulk     ; 20099b8
   jmp near _card_experiment_one     ; 20099bd
   jmp near _card_forced_adaption     ; 20099c2
   jmp near _card_giant_adephage     ; 20099c7
@@ -19144,7 +19144,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_brass_talon_chimera     ; 2009eea
   jmp near _card_coral_atoll     ; 2009eef
   jmp near _card_dormant_volcano     ; 2009ef4
-  jmp near _card_dragons_mask     ; 2009ef9
+  jmp near _card_ageless_entity     ; 2009ef9
   jmp near _card_dream_tides     ; 2009efe
   jmp near _card_emerald_charm     ; 2009f03
   jmp near _card_eye_of_singularity     ; 2009f08
@@ -19562,7 +19562,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_gaze_of_granite     ; 200a714
   jmp near _card_gleam_of_battle     ; 200a719
   jmp near _card_gruul_war_chant     ; 200a71e
-  jmp near _card_haunter_of_nightveil     ; 200a723
+  jmp near _card_inspiring_unicorn     ; 200a723
   jmp near _card_jelenn_sphinx     ; 200a728
   jmp near _card_korozda_gorgon     ; 200a72d
   jmp near _card_pilfered_plans     ; 200a732
@@ -19670,7 +19670,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_tranquillity     ; 200a930
   jmp near _card_rubblebelt_raiders     ; 200a935
   jmp near _card_simic_fluxmage     ; 200a93a
-  jmp near _card_bloodstone_cameo     ; 200a93f
+  jmp near _card_illusory_ambusher     ; 200a93f
   jmp near _card_nantuko_shade     ; 200a944
   jmp near _card_phantom_nomad     ; 200a949
   jmp near _card_zuberi_golden_feather     ; 200a94e
@@ -19741,7 +19741,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_path_of_bravery     ; 200aa93
   jmp near _card_pay_no_heed     ; 200aa98
   jmp near _card_sentinel_sliver     ; 200aa9d
-  jmp near _card_seraph_of_the_sword     ; 200aaa2
+  jmp near _card_pyroclastic_elemental     ; 200aaa2
   jmp near _card_soulmender     ; 200aaa7
   jmp near _card_colossal_whale     ; 200aaac
   jmp near _card_dismiss_into_dream     ; 200aab1
@@ -21055,7 +21055,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_flash_flood     ; 200c43d
   jmp near _card_gaseous_form     ; 200c442
   jmp near _card_ghosts_of_the_damned     ; 200c447
-  jmp near _card_giant_strenght     ; 200c44c
+  jmp near _card_giant_strength     ; 200c44c
   jmp near _card_giant_turtle     ; 200c451
   jmp near _card_great_defender     ; 200c456
   jmp near _card_greater_realm_of_protection     ; 200c45b
@@ -21320,7 +21320,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_heat_ray     ; 200c96a
   jmp near _card_inferno_fist     ; 200c96f
   jmp near _card_kird_chieftain     ; 200c974
-  jmp near _card_mights_tyranny     ; 200c979
+  jmp near _card_might_makes_right     ; 200c979
   jmp near _card_miners_bane     ; 200c97e
   jmp near _card_paragon_of_fierce_defiance     ; 200c983
   jmp near _card_siege_dragon     ; 200c988
@@ -21694,7 +21694,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_leaping_master     ; 200d0b8
   jmp near _card_monastery_swiftspear     ; 200d0bd
   jmp near _card_swift_kick     ; 200d0c2
-  jmp near _card_tormenting_voice     ; 200d0c7
+  jmp near _card_satyr     ; 200d0c7
   jmp near _card_archers_parapet     ; 200d0cc
   jmp near _card_become_immense     ; 200d0d1
   jmp near _card_dragonscale_boon     ; 200d0d6
@@ -21707,7 +21707,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_roar_of_challenge     ; 200d0f9
   jmp near _card_savage_punch     ; 200d0fe
   jmp near _card_smoke_teller     ; 200d103
-  jmp near _card_sultay_flayer     ; 200d108
+  jmp near _card_sultai_flayer     ; 200d108
   jmp near _card_trail_of_mystery     ; 200d10d
   jmp near _card_tuskguard_captain     ; 200d112
   jmp near _card_windstorm     ; 200d117
@@ -21862,7 +21862,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_lotus_eye_mystics     ; 200d400
   jmp near _card_aven_surveyor     ; 200d405
   jmp near _card_cloudform     ; 200d40a
-  jmp near _card_enchanted_awareness     ; 200d40f
+  jmp near _card_battlefield_promotion     ; 200d40f
   jmp near _card_fascination     ; 200d414
   jmp near _card_jeskai_infiltrator     ; 200d419
   jmp near _card_jeskai_runemark     ; 200d41e
@@ -22840,7 +22840,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_ruins_of_oran_rief     ; 200e71a
   jmp near _card_sea_gate_wreckage     ; 200e71f
   jmp near _card_wandering_fumarole     ; 200e724
-  jmp near _card_wastes     ; 200e729
+  jmp near _card_aegis_of_the_heavens     ; 200e729
   jmp near _card_always_watching     ; 200e72e
   jmp near _card_angel_of_deliverance     ; 200e733
   jmp near _card_angelic_purge     ; 200e738
@@ -23260,7 +23260,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_fortunes_favor     ; 200ef4e
   jmp near _card_identity_thief     ; 200ef53
   jmp near _card_imprisoned_by_the_moon     ; 200ef58
-  jmp near _card_minds_dilatation     ; 200ef5d
+  jmp near _card_minds_dilation     ; 200ef5d
   jmp near _card_unsubstantiate     ; 200ef62
   jmp near _card_borrowed_malevolence     ; 200ef67
   jmp near _card_collective_brutality     ; 200ef6c
@@ -23540,7 +23540,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_skysovereign_consul_flagship     ; 200f4c6
   jmp near _card_smugglers_copter     ; 200f4cb
   jmp near _card_torch_gauntlet     ; 200f4d0
-  jmp near _card_weldafast_monitor     ; 200f4d5
+  jmp near _card_weldfast_monitor     ; 200f4d5
   jmp near _card_whirlemaker     ; 200f4da
   jmp near _card_woodweavers_puzzleknot     ; 200f4df
   jmp near _card_aether_hub     ; 200f4e4
@@ -23634,7 +23634,7 @@ _CodeSectionEx:                  ; CodePointer
   jmp near _card_ash_barrens     ; 200f69c
   jmp near _card_unnatural_endurance     ; 200f6a1
   jmp near _card_sparkcaster     ; 200f6a6
-  jmp near _card_flourishing_defenses     ; 200f6ab
+  jmp near _card_zap     ; 200f6ab
   jmp near _card_ray_of_command     ; 200f6b0
   jmp near _card_aetherworks_marvel     ; 200f6b5
   jmp near _card_cleanfall     ; 200f6ba

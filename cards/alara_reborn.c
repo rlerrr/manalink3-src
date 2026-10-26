@@ -195,29 +195,41 @@ static int arb_new_hybrid(int player, int card, event_t event, int exc_clr ){
 
 static int alara_reborn_blades(int player, int card, event_t event, int color, int keyword, int sp_keyword)
 {
-  // As long as you control another multicolored permanent, ~ gets +1/+1 and has [keyword/sp_keyword].
-	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS || event == EVENT_ABILITIES) && affect_me(player, card) &&
-		! is_humiliated(player, card) )
-	{
-	  test_definition_t this_test;
-	  default_test_definition(&this_test, TYPE_PERMANENT);
-	  this_test.not_me = 1;
-	  this_test.color_flag = F3_MULTICOLORED;
-
-	  if (check_battlefield_for_special_card(player, card, player, 0, &this_test) && !is_humiliated(player, card))
-		{
-		  if (event == EVENT_ABILITIES)
-			{
-			  event_result |= keyword;
-			  if (sp_keyword)
-				special_abilities(player, card, event, sp_keyword, player, card);
-			}
-		  else
-			++event_result;
-		}
-	}
-
-	return color > 0 ? arb_new_hybrid(player, card, event, color) : 0;
+  int result;
+  test_definition_t this_test;
+  if (((event - EVENT_POWER < 3) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = is_humiliated(player, card, AL_STATIC);
+    if (result == 0)
+    {
+      default_test_definition(&this_test, 0x47);
+      this_test.not_me = 1;
+      this_test.color_flag = 2;
+      result = check_battlefield_for_special_card(player, card, player, 0, &this_test);
+      if (result != 0)
+      {
+        if (event == EVENT_ABILITIES)
+        {
+          event_result = event_result | keyword;
+          if (sp_keyword != 0)
+          {
+            special_abilities(player, card, EVENT_ABILITIES, sp_keyword, player, card);
+          }
+        }
+        else
+        {
+          event_result = event_result + 1;
+        }
+      }
+    }
+  }
+  result = 0;
+  if (0 < color)
+  {
+    result = arb_new_hybrid(player, card, event, color);
+  }
+  return result;
 }
 
 // Cards
@@ -430,20 +442,17 @@ Cascade (When you cast this spell, exile cards from the top of your library unti
 	return 0;
 }
 
-int card_blitz_hellion(int player, int card, event_t event){
-/* CARD_ID_BLITZ_HELLION	10245
-Blitz Hellion	|3|R|G
-Creature - Hellion 7/7
-Trample, haste
-At the beginning of the end step, ~'s owner shuffles it into his or her library. */
-
-	haste(player, card, event);
-
-	if( ! is_humiliated(player, card) && eot_trigger(player, card, event) ){
-		shuffle_into_library(player, card);
-	}
-
-	return 0;
+int card_blitz_hellion(int player, int card, event_t event)
+{
+  int result;
+  haste(player, card, event);
+  result = eot_trigger(player, card, event);
+  if (result == 0)
+  {
+    return 0;
+  }
+  shuffle_into_library(player, card);
+  return 0;
 }
 
 int card_bloodbraid_elf(int player, int card, event_t event){
@@ -606,7 +615,7 @@ int card_deathbringer_thoctar(int player, int card, event_t event){
 	if( resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_AI(player)) ){
 		card_instance_t *instance = get_card_instance( player, card);
 		int amount = instance->targets[11].card;
-		add_1_1_counters(player, card, amount);
+		add_counters(player, card, player, card, COUNTER_P1_P1, amount);
 		instance->targets[11].card = 0;
 	}
 
@@ -1140,18 +1149,29 @@ Whenever another artifact enters the battlefield under your control, ~ gets +1/+
 Cycling |WU (|WU, Discard this card: Draw a card.)
 */
 
-int card_glory_of_warfare(int player, int card, event_t event){
-
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
-		if( current_turn == player ){
-			boost_creature_type(player, card, event, -1, 2, 0, 0, BCT_CONTROLLER_ONLY | BCT_INCLUDE_SELF);
-		}
-		else{
-			boost_creature_type(player, card, event, -1, 0, 2, 0, BCT_CONTROLLER_ONLY | BCT_INCLUDE_SELF);
-		}
-	}
-
-	return global_enchantment(player, card, event);
+int card_glory_of_warfare(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  int toughness;
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    if (current_turn == player)
+    {
+      toughness = 0;
+      result = 2;
+    }
+    else
+    {
+      toughness = 2;
+      result = 0;
+    }
+    boost_creature_type(player, card, event, ~SUBTYPE_INVALID, result, toughness, 0,
+                        BCT_INCLUDE_SELF | BCT_CONTROLLER_ONLY);
+  }
+  result = global_enchantment(player, card, event);
+  return result;
 }
 
 /*
@@ -1236,7 +1256,7 @@ Creature — Demon Illusion 4/3
 Flying
 When you cast a spell, sacrifice Illusory Demon.
 */
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && ! is_humiliated(player, card, AL_TRIG) ){
 		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
 			kill_card(player, card, KILL_SACRIFICE);
 		}
@@ -1285,7 +1305,7 @@ Flying
 
 	if(event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *instance = get_card_instance( player, card);
-		add_1_1_counter(instance->parent_controller, instance->parent_card);
+		add_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_P1_P1, 1);
 	}
 
 	return 0;
@@ -1375,7 +1395,7 @@ int card_kathari_remnant(int player, int card, event_t event){
 
 int card_knight_of_new_alara(int player, int card, event_t event){
 
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affected_card_controller == player && affected_card != card  ){
 			int my_c = count_colors(affected_card_controller, affected_card);
 			if( my_c > 1 ){
@@ -1503,35 +1523,37 @@ Creature - Zombie Wizard 2/2
 	return 0;
 }
 
-int card_lightning_reaver(int player, int card, event_t event){
-
-	haste(player, card, event);
-	fear(player, card, event);
-
-	// Whenever ~ deals combat damage to a player, put a charge counter on it.
-	if( damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_OPPONENT+DDBM_MUST_BE_COMBAT_DAMAGE) ){
-		add_counter(player, card, COUNTER_CHARGE);
-	}
-
-	// At the beginning of your end step, ~ deals damage equal to the number of charge counters on it to each opponent.
-	if( current_turn == player && count_counters(player, card, COUNTER_CHARGE) > 0 && ! is_humiliated(player, card) &&
-		eot_trigger(player, card, event) )
-	{
-		damage_player(1-player, count_counters(player, card, COUNTER_CHARGE), player, card);
-	}
-
-	return 0;
+int card_lightning_reaver(int player, int card, event_t event)
+{
+  int result;
+  haste(player, card, event);
+  fear(player, card, event);
+  result =
+      damage_dealt_by_me(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE);
+  if (result != 0)
+  {
+    add_counters(player, card, player, card, COUNTER_CHARGE, 1);
+  }
+  if (((current_turn == player) &&
+       (result = count_counters(player, card, COUNTER_CHARGE), 0 < result)) &&
+      (result = eot_trigger(player, card, event), result != 0))
+  {
+    result = count_counters(player, card, COUNTER_CHARGE);
+    damage_player(1 - player, result, player, card);
+  }
+  return 0;
 }
 
-int card_lord_of_extinction(int player, int card, event_t event){
-	/* Lord of Extinction	|3|B|G
-	 * Creature - Elemental 100/100
-	 * ~'s power and toughness are each equal to the number of cards in all graveyards. */
-
-	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && !is_humiliated(player, card)){
-		event_result += count_graveyard(ANYBODY);
-	}
-	return 0;
+int card_lord_of_extinction(int player, int card, event_t event)
+{
+  int newval;
+  if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    newval = count_graveyard(2);
+    set_characteristic_pt(newval);
+  }
+  return 0;
 }
 
 int card_lorescale_coatl(int player, int card, event_t event)
@@ -1541,7 +1563,7 @@ int card_lorescale_coatl(int player, int card, event_t event)
    * Whenever you draw a card, you may put a +1/+1 counter on ~. */
 
   if (card_drawn_trigger(player, card, event, player, RESOLVE_TRIGGER_AI(player)))
-	add_1_1_counter(player, card);
+	add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 
   return 0;
 }
@@ -1563,7 +1585,7 @@ The first spell you cast each turn has cascade.
 (When you cast your first spell, exile cards from the top of your library until you exile a nonland card that costs less.
 You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)
 */
-	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && ! is_humiliated(player, card, AL_TRIG) ){
 		if( get_specific_storm_count(player) < 2 ){
 			if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, NULL) ){
 				do_cascade(player, card, get_cmc(trigger_cause_controller, trigger_cause));
@@ -1934,7 +1956,7 @@ int card_necromancers_covenant(int player, int card, event_t event){
 		}
 	}
 
-	if (event == EVENT_ABILITIES && affected_card_controller == player && in_play(player, card) && !is_humiliated(player, card) &&
+	if (event == EVENT_ABILITIES && affected_card_controller == player && in_play(player, card) && !is_humiliated(player, card, AL_STATIC) &&
 		has_subtype(affected_card_controller, affected_card, SUBTYPE_ZOMBIE) )
 	{
 		lifelink(affected_card_controller, affected_card, event);
@@ -2113,7 +2135,7 @@ int card_retaliator_griffin(int player, int card, event_t event){
 	if( resolve_damage_trigger(player, card, event, DDBM_MUST_DAMAGE_TRIGGERING_PLAYER | DDBM_REPORT_DAMAGE_DEALT | DDBM_TRIGGER_OPTIONAL,
 								player, card) )
 	{
-		add_1_1_counters(player, card, get_card_instance(player, card)->targets[16].player);
+		add_counters(player, card, player, card, COUNTER_P1_P1, get_card_instance(player, card)->targets[16].player);
 		get_card_instance(player, card)->targets[16].player = 0;
 	}
 
@@ -2128,7 +2150,7 @@ int card_sages_of_the_anima(int player, int card, event_t event){
 	 * bottom of your library in any order. */
 
 	if( trigger_condition == TRIGGER_REPLACE_CARD_DRAW && affect_me(player, card) && reason_for_trigger_controller == player &&
-		!suppress_draw && ! is_humiliated(player, card) )
+		!suppress_draw && ! is_humiliated(player, card, AL_TRIG) )
 	{
 		if( event == EVENT_TRIGGER){
 			event_result |= 2u;
@@ -2203,22 +2225,23 @@ Whenever equipped creature blocks a creature, that creature doesn't untap during
 Equip |2
 */
 
-int card_sigil_captain(int player, int card, event_t event){
-
-	if( trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_CREATURE);
-		this_test.power = 1;
-		this_test.toughness = 1;
-
-		etb_ability_global(player, event, RESOLVE_TRIGGER_MANDATORY, 0, &this_test, player, card);
-	}
-
-	if( event == EVENT_ETB_ABILITY ){
-		add_1_1_counters(trigger_cause_controller, trigger_cause, 2);
-	}
-
-	return 0;
+int card_sigil_captain(int player, int card, event_t event)
+{
+  test_definition_t this_test;
+  if (((trigger_condition == 0xdb) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    default_test_definition(&this_test, 2);
+    this_test.power = 1;
+    this_test.toughness = 1;
+    etb_ability_global(player, event, 2, TYPE_NONE, &this_test, player, card);
+  }
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  add_counters(player, card, trigger_cause_controller, trigger_cause, COUNTER_P1_P1, 2);
+  return 0;
 }
 
 /*
@@ -2427,7 +2450,7 @@ Creature spells you control with power 5 or greater can't be countered.
 */
 	cannot_be_countered(player, card, event);
 
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
 		this_test.power = 4;
@@ -2600,7 +2623,7 @@ int card_thraximundar(int player, int card, event_t event){
 	}
 
 	if (whenever_a_player_sacrifices_a_permanent(player, card, event, ANYBODY, TYPE_CREATURE, RESOLVE_TRIGGER_AI(player))){
-		add_1_1_counter(player, card);
+		add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 	}
 
 	return 0;
@@ -2811,7 +2834,7 @@ int card_uril_the_miststalker(int player, int card, event_t event ){
 	check_legend_rule(player, card, event);
 
 	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && in_play(player, card) &&
-		! is_humiliated(player, card) )
+		! is_humiliated(player, card, AL_STATIC) )
 	{
 		event_result += count_auras_enchanting_me(player, card) * 2;
 	}
@@ -3170,7 +3193,7 @@ int card_vedalken_ghoul(int player, int card, event_t event)
       result = is_unblocked(player, card);
       if (result == 0)
       {
-        result = is_humiliated_for_ability(player, card, AL_TRIG);
+        result = is_humiliated(player, card, AL_TRIG);
         if (result == 0)
         {
           lose_life(1 - current_turn, 4);
@@ -3226,7 +3249,7 @@ void do_multicascade(int player, int card, int override, int amount)
           instance = in_play(player, iVar9);
           if ((instance != NULL) && (iVar4 = get_id(player, iVar9), iVar4 == 0x563f))
           {
-            iVar4 = is_humiliated_for_ability(player, iVar9, AL_STATIC);
+            iVar4 = is_humiliated(player, iVar9, AL_STATIC);
             iStack_bd4 = iStack_bd4 + (unsigned int)(iVar4 == 0);
           }
           iVar9 = iVar9 + 1;

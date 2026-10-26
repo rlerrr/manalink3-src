@@ -398,66 +398,83 @@ static int store_counters_legacy(int player, int card, event_t event)
   return 0;
 }
 
-static void return_auras_and_counters_to_play(int player, int card){
-  /* Targets:
-   * [0].player: original owner of the main exiled card
-   * [0].card: "original_internal_card_id" of the main exiled card
-   * [1-17] : will store the exiled auras that originally enchanted the main exiled card.
-			  For each pair, "player" contains the original owner of the exiled aura and "card" its "original_internal_card_id".
-   * [18].player: copy of "mode" parameter of "exile_permanent_and_auras_attached", will be checked for EPAAC_RETURN_TO_PLAY_TAPPED
-   * [18].card: contains a "card" value, used to match with "store_counters_legacy"
-   */
-	card_instance_t *instance = get_card_instance(player, card);
-	int t_player = instance->targets[0].player;
-	int card_added = -1;
-	int mode = instance->targets[18].player;
-	if( check_rfg(t_player, cards_data[instance->targets[0].card].id) ){
-		card_added = add_card_to_hand(t_player, instance->targets[0].card);
-		remove_card_from_rfg(t_player, cards_data[instance->targets[0].card].id);
-		if (mode <= 0){
-			put_into_play(t_player, card_added);
-			return;
-		}
-		if (mode & EPAAC_RETURN_TO_PLAY_TAPPED){
-			add_state(t_player, card_added, STATE_TAPPED);
-		}
-		put_into_play(t_player, card_added);
-	}
+static void return_auras_and_counters_to_play(int player, int card)
+{
+  int player_00;
+  unsigned int uVar1;
+  card_instance_t *pcVar2;
+  int result;
+  card_instance_t *pcVar4;
+  target_t *ptVar5;
+  target_t *ptVar6;
+  int32_t iStack_18;
+  int8_t iStack_14;
 
-	if( card_added > -1 ){
-		if (mode & (EPAAC_STORE_COUNTERS_RETURN_EOT | EPAAC_STORE_COUNTERS_RETURN_IF_SOURCE_LEAVES_PLAY | EPAAC_TAWNOSS_COFFIN)){
-			/* Search for a "store_counters_legacy" that matches. If it's found, add the counters stored on the legacy
-			 * to the original card before putting it into play. */
-			card_instance_t* leg;
-			int count;
-			for (count = 0; count < active_cards_count[player]; ++count ){
-				if ((leg = in_play(player, count)) && leg->internal_card_id == LEGACY_EFFECT_CUSTOM && leg->info_slot == (int)store_counters_legacy &&
-					leg->targets[17].card == instance->targets[18].card
-				   ){
-					copy_counters(t_player, card_added, player, count, 1);
-					kill_card(player, count, KILL_EXILE);
-					break;
-				}
-			}
-		}
-	}
-
-
-	// Then, retur to play all the exiled auras attached to the original exiled card.
-	if (mode & (EPAAC_STORE_AURAS_RETURN_EOT | EPAAC_STORE_AURAS_RETURN_IF_SOURCE_LEAVES_PLAY | EPAAC_TAWNOSS_COFFIN)){
-		int i;
-		for(i=1; i<18; i++){
-			if( instance->targets[i].player != -1 && check_rfg(instance->targets[i].player, cards_data[instance->targets[i].card].id) ){
-				int aura = add_card_to_hand(instance->targets[i].player, instance->targets[i].card);
-				remove_card_from_rfg(instance->targets[i].player, cards_data[instance->targets[i].card].id);
-				card_instance_t *au = get_card_instance(instance->targets[i].player, aura);
-				au->damage_target_player = t_player;
-				au->damage_target_card = card_added;
-				set_special_flags(instance->targets[i].player, aura, SF_TARGETS_ALREADY_SET);
-				put_into_play(instance->targets[i].player, aura);
-			}
-		}
-	}
+  pcVar2 = get_card_instance(player, card);
+  player_00 = pcVar2->targets[0].player;
+  uVar1 = pcVar2->targets[0x12].player;
+  result = check_rfg(player_00, (unsigned int)cards_data[pcVar2->targets[0].card].id);
+  iStack_18 = -1;
+  if (result != 0)
+  {
+    iStack_18 = add_card_to_hand(player_00, pcVar2->targets[0].card);
+    remove_card_from_rfg(player_00, (unsigned int)cards_data[pcVar2->targets[0].card].id);
+    if ((int)uVar1 < 1)
+    {
+      put_into_play(player_00, iStack_18);
+      return;
+    }
+    if ((uVar1 & 0x10) != 0)
+    {
+      add_state(player_00, iStack_18, 0x10);
+    }
+    put_into_play(player_00, iStack_18);
+    if (((-1 < iStack_18) && ((uVar1 & 0x2a) != 0)) && (0 < active_cards_count[player]))
+    {
+      result = 0;
+      do
+      {
+        pcVar4 = in_play(player, result);
+        if (((pcVar4 != NULL) && (pcVar4->internal_card_id == LEGACY_EFFECT_CUSTOM)) &&
+            (((CardFunction)pcVar4->info_slot == store_counters_legacy &&
+              (pcVar4->targets[0x11].card == pcVar2->targets[0x12].card))))
+        {
+          copy_counters(player, card, player_00, iStack_18, player, result, 1);
+          kill_card(player, result, KILL_EXILE);
+          break;
+        }
+        result = result + 1;
+      } while (result < active_cards_count[player]);
+    }
+  }
+  if ((uVar1 & 0x25) != 0)
+  {
+    ptVar5 = pcVar2->targets + 1;
+    do
+    {
+      while ((ptVar5->player != -1 &&
+              (result = check_rfg(ptVar5->player, (unsigned int)cards_data[ptVar5->card].id),
+               result != 0)))
+      {
+        ptVar6 = ptVar5 + 1;
+        result = add_card_to_hand(ptVar5->player, ptVar5->card);
+        remove_card_from_rfg(ptVar5->player, (unsigned int)cards_data[ptVar5->card].id);
+        pcVar4 = get_card_instance(ptVar5->player, result);
+        iStack_14 = (int8_t)player_00;
+        pcVar4->damage_target_player = iStack_14;
+        pcVar4->damage_target_card = iStack_18;
+        set_special_flags(ptVar5->player, result, 0x20000000);
+        put_into_play(ptVar5->player, result);
+        ptVar5 = ptVar6;
+        if (ptVar6 == pcVar2->targets + 0x12)
+        {
+          return;
+        }
+      }
+      ptVar5 = ptVar5 + 1;
+    } while (ptVar5 != pcVar2->targets + 0x12);
+  }
+  return;
 }
 
 static int return_auras_counters_on_eot(int player, int card, event_t event){
@@ -496,7 +513,7 @@ static int tawnoss_coffin_legacy(int player, int card, event_t event){
 	}
 	if( instance->damage_target_player > -1 ){
 		player_bits[player] |= PB_SEND_EVENT_UNTAP_CARD_TO_ALL;
-		if( leaves_play(instance->damage_target_player, instance->damage_target_card, event) ||
+		if( leaves_play(instance->damage_target_player, instance->damage_target_card, event, 0, 0) ||
 			(event == EVENT_UNTAP_CARD && affect_me(instance->damage_target_player, instance->damage_target_card))
 		  ){
 			return_auras_and_counters_to_play(player, card);
@@ -518,61 +535,129 @@ static void store_permanent_on_legacy(card_instance_t* leg, int to_copy_player, 
 	}
 }
 
-int exile_permanent_and_auras_attached(int player, int card, int t_player, int t_card, unsigned int mode){
-	int rvalue = -1;
-	if (is_token(t_player, t_card) || ! is_what(-1, get_original_internal_card_id(t_player, t_card), TYPE_PERMANENT) ){
-		manipulate_auras_enchanting_target(player, card, t_player, t_card, NULL, KILL_EXILE);
-	} 
-	else {
-		int legacy_auras = -1;
-		card_instance_t* leg = NULL;
+int exile_permanent_and_auras_attached(int player, int card, int t_player, int t_card,
+                                       unsigned int mode)
+{
+  unsigned int uVar1;
+  int iVar2;
+  int iVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  int iVar6;
+  CardFunction func_ptr;
+  card_instance_t *pcStack_18;
+  int iStack_14;
 
-		if (mode & EPAAC_STORE_AURAS_RETURN_EOT){
-			legacy_auras = set_legacy_image(player, get_id(t_player, t_card), create_legacy_effect(player, card, &return_auras_counters_on_eot));
-		}
-		else if (mode & EPAAC_STORE_AURAS_RETURN_IF_SOURCE_LEAVES_PLAY){
-			legacy_auras = create_targetted_legacy_effect(player, card, &return_auras_counters_if_source_leaves_play, player, card);
-			get_card_instance(player, legacy_auras)->eot_toughness = EVENT_SET_LEGACY_EFFECT_NAME;
-		} 
-		else if (mode & EPAAC_TAWNOSS_COFFIN){
-			legacy_auras = create_targetted_legacy_effect(player, card, &tawnoss_coffin_legacy, player, card);
-			get_card_instance(player, legacy_auras)->eot_toughness = EVENT_SET_LEGACY_EFFECT_NAME;
-		}
-		if (legacy_auras != -1){
-			leg = get_card_instance(player, legacy_auras);
-			leg->targets[18].player = mode;
-			leg->targets[18].card = legacy_auras;
-		}
-
-		int p, count;
-		card_instance_t* aura;
-		for(p=0; p<2; p++){
-			for (count = active_cards_count[p]-1; count >= 0; --count){
-				if( (aura = in_play(p, count)) && is_what(p, count, TYPE_ENCHANTMENT) && has_subtype(p, count, SUBTYPE_AURA) &&
-					aura->damage_target_player == t_player && aura->damage_target_card == t_card
-				  ){
-					if( legacy_auras != -1 && !is_token(p, count) ){
-						store_permanent_on_legacy(leg, p, count, 1, 18);
-					}
-					kill_card(p, count, KILL_EXILE);
-				}
-			}
-		}
-		if (mode & (EPAAC_STORE_COUNTERS_RETURN_EOT | EPAAC_STORE_COUNTERS_RETURN_IF_SOURCE_LEAVES_PLAY | EPAAC_TAWNOSS_COFFIN)){
-			int legacy_counters = create_legacy_effect(player, card, &store_counters_legacy);
-			card_instance_t *sc = get_card_instance(player, legacy_counters);
-			sc->targets[17].card = legacy_auras;
-			sc->token_status |= STATUS_INVISIBLE_FX;
-			copy_counters(player, legacy_counters, t_player, t_card, 1);
-		}
-		if (leg){
-			leg->targets[0].player = get_owner(t_player, t_card);
-			leg->targets[0].card = get_card_instance(t_player, t_card)->original_internal_card_id;
-			rvalue = legacy_auras;
-		}
-	}
-	kill_card(t_player, t_card, KILL_EXILE);
-	return rvalue;
+  iVar2 = is_token(t_player, t_card);
+  if (iVar2 == 0)
+  {
+    iVar2 = get_original_internal_card_id(t_player, t_card);
+    iVar2 = is_what(-1, iVar2, 0x47);
+    if (iVar2 != 0)
+    {
+      iVar2 = 0;
+      if ((mode & 1) == 0)
+      {
+        if ((mode & 4) != 0)
+        {
+          func_ptr = return_auras_counters_if_source_leaves_play;
+        LAB_026d728e:
+          iStack_14 = create_targetted_legacy_effect(player, card, func_ptr, player, card);
+          pcVar4 = get_card_instance(player, iStack_14);
+          pcVar4->eot_toughness = 0x100;
+          goto LAB_026d72b9;
+        }
+        if ((mode & 0x20) != 0)
+        {
+          func_ptr = tawnoss_coffin_legacy;
+          goto LAB_026d728e;
+        }
+        iStack_14 = -1;
+        pcStack_18 = NULL;
+      }
+      else
+      {
+        iVar6 = create_legacy_effect(player, card, return_auras_counters_on_eot);
+        iVar3 = get_id(t_player, t_card);
+        iStack_14 = set_legacy_image(player, iVar3, iVar6);
+      LAB_026d72b9:
+        pcStack_18 = NULL;
+        if (iStack_14 != -1)
+        {
+          pcStack_18 = get_card_instance(player, iStack_14);
+          pcStack_18->targets[0x12].player = mode;
+          pcStack_18->targets[0x12].card = iStack_14;
+        }
+      }
+      do
+      {
+        iVar6 = active_cards_count[iVar2] + -1;
+        if (-1 < active_cards_count[iVar2] + -1)
+        {
+          do
+          {
+            while ((((pcVar4 = in_play(iVar2, iVar6),
+                      pcVar4 == NULL || (iVar3 = is_what(iVar2, iVar6, 4), iVar3 == 0)) ||
+                     (iVar3 = has_subtype(iVar2, iVar6, SUBTYPE_AURA), iVar3 == 0)) ||
+                    ((pcVar4->damage_target_player != t_player ||
+                      (pcVar4->damage_target_card != t_card)))))
+            {
+              iVar6 = iVar6 + -1;
+              if (iVar6 == -1)
+                goto LAB_026d7200;
+            }
+            if ((iStack_14 != -1) && (iVar3 = is_token(iVar2, iVar6), iVar3 == 0))
+            {
+              iVar3 = 1;
+              do
+              {
+                if (pcStack_18->targets[iVar3].player == -1)
+                {
+                  iVar5 = get_owner(iVar2, iVar6);
+                  pcStack_18->targets[iVar3].player = iVar5;
+                  iVar5 = get_original_internal_card_id(iVar2, iVar6);
+                  pcStack_18->targets[iVar3].card = iVar5;
+                  break;
+                }
+                iVar3 = iVar3 + 1;
+              } while (iVar3 != 0x12);
+            }
+            iVar3 = iVar6 + -1;
+            kill_card(iVar2, iVar6, KILL_EXILE);
+            iVar6 = iVar3;
+          } while (iVar3 != -1);
+        }
+      LAB_026d7200:
+        iVar2 = iVar2 + 1;
+      } while (iVar2 != 2);
+      if ((mode & 0x2a) != 0)
+      {
+        iVar2 = create_legacy_effect(player, card, (CardFunction)&store_counters_legacy);
+        pcVar4 = get_card_instance(player, iVar2);
+        uVar1 = pcVar4->token_status;
+        pcVar4->targets[0x11].card = iStack_14;
+        pcVar4->token_status = uVar1 | 0x10000;
+        copy_counters(player, card, player, iVar2, t_player, t_card, 1);
+      }
+      if (pcStack_18 == NULL)
+      {
+        iStack_14 = -1;
+      }
+      else
+      {
+        iVar2 = get_owner(t_player, t_card);
+        pcStack_18->targets[0].player = iVar2;
+        pcVar4 = get_card_instance(t_player, t_card);
+        pcStack_18->targets[0].card = pcVar4->original_internal_card_id;
+      }
+      goto LAB_026d724c;
+    }
+  }
+  manipulate_auras_enchanting_target(player, card, t_player, t_card, NULL, ACT_KILL_REMOVE);
+  iStack_14 = -1;
+LAB_026d724c:
+  kill_card(t_player, t_card, KILL_EXILE);
+  return iStack_14;
 }
 
 void get_back_cards_stored_in_exiledby(int player, int exby_player, int exby_card, get_back_cards_stored_in_exiledby_mode flags){

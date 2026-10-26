@@ -23,6 +23,7 @@ CATEGORIES={
  'mapping_first':'No unambiguous reccmp pair; fix pairing or compiler-part/inline coverage first.',
  'deferred_chooser':'User-deferred chooser UI.',
  'cpp_review':'C++/library helper, outside the initial C source triage.',
+ 'reconstructed_source':'Complete native body already reconstructed during consolidation; retain its provenance and track callees separately.',
 }
 
 
@@ -44,6 +45,41 @@ def strings(body):
 def source_key(path):return path.replace('\\','/').removeprefix('./')
 
 
+def reconstructed_sources(proof,native):
+    """Recognize explicitly tagged full bodies, never narrow caller witnesses.
+
+    This inventory is deliberately conservative. Untagged source edits and
+    partial interface/inline edits remain in the review queue. The canonical
+    projection audit separately verifies every native/export hash and replays
+    all later edits against the physical source.
+    """
+    from canonicalize_helpers import span,rename
+    mapping={e['recovery_name']:e['canonical_name'] for e in proof.get('functions',[])+proof.get('auxiliary_functions',[])}
+    result={}
+    tags={'keyword_writer','native_counter_caller','caller_preparation',
+          'inlined_owner_recovery','native_source_reconstruction',
+          'native_helper_identity','native_frontend_reconstruction'}
+    narrow={'native_call_argument_witnesses','native_constant_argument_witnesses',
+            'native_counter_argument_block_witness','native_inline_counter_argument_witness'}
+    for index,edit in enumerate(proof.get('source_edits',[])):
+        if edit.get('interface_only') or narrow.intersection(edit) or not tags.intersection(edit):continue
+        after=rename(edit['after'],mapping)
+        match=re.match(r'\s*(?:[A-Za-z_]\w*[\s*]+)+?([A-Za-z_]\w*)\s*\(',after)
+        if not match:continue
+        name=match[1];body=span(after,name)
+        if not body or after[:body[0]].strip() or after[body[1]:].strip():continue
+        ranges=edit.get('native_caller_ranges',[])
+        if not ranges:continue
+        for row in ranges:
+            at=int(row['address'],16)
+            if at not in native:continue
+            assert source_key(native[at]['source'])==source_key(edit['source'])
+            assert int(native[at]['high_pc'],16)==int(row['end'],16)
+            result[at]=dict(source=edit['source'],source_function=name,source_edit=index,
+                            source_edit_sha256=edit['after_sha256'],native_range=row)
+    return result
+
+
 def main():
     p=argparse.ArgumentParser(__doc__)
     p.add_argument('--report',type=Path,default=ROOT/'.recovery/reccmp/triage-current.json')
@@ -60,6 +96,9 @@ def main():
         if not args.bounds.exists() or json.loads(args.bounds.read_text()).get('sha256')!=debug_hash:
             save_json(args.bounds,dict(sha256=debug_hash,functions=read_functions(ROOT/'ManalinkEh.dbg',all_functions=True)))
     setup=json.loads((cache/'setup.json').read_text())
+    sys.path.insert(0,str(ROOT/'tools'))
+    from reccmp_project import naming_state
+    assert setup.get('naming_inputs')==naming_state(),'Source name mappings changed; rerun setup and comparison'
     for name,digest in setup['inputs'].items():assert sha(Path(name).read_bytes())==digest,name
     assert sha((ROOT/'config/reccmp/functions.csv').read_bytes())==setup['metadata_sha256']
     receipt=args.report.with_suffix('.inputs.json');receipt_data=json.loads(receipt.read_text())
@@ -90,15 +129,21 @@ def main():
     # its checked public COFF entry still identifies a valid call target.
     # Register identity only: do not fabricate a body score or hide collisions.
     from canonicalize_helpers import load as load_canonical,verify_symbols,verify_native_equivalences
-    canonical_data=load_canonical(ROOT);canonical_entry_bindings={}
+    canonical_data=load_canonical(ROOT);canonical_entry_bindings={};canonical_inlined={}
     native_equivalences=verify_native_equivalences(canonical_data,ROOT) if canonical_data else []
     covered_native_helpers={int(e['duplicate_address'],16) for e in native_equivalences}
+    reconstructed=reconstructed_sources(canonical_data or {},native)
+    reviewed_bodies=set(accepted)|set(reconstructed)|covered_native_helpers
     for e in native_equivalences:
         originals[int(e['duplicate_address'],16)]={int(e['canonical_address'],16)}
     if canonical_data:
         canonical_debug=Image((ROOT/'ManalinkEh.dbg').read_bytes())
-        physical=verify_symbols(canonical_debug,ROOT)['symbols']
+        checked_physical=verify_symbols(canonical_debug,ROOT)
+        physical=checked_physical['symbols']
+        canonical_inlined=checked_physical['inlined_canonical_functions']
         for e in canonical_data['functions']:
+            if e['canonical_name'] in canonical_inlined:
+                continue  # Caller-owned inline ranges have no callable helper entry.
             ident=int(e['native_address'],16);symbol=physical[e['canonical_name']]
             address=int(symbol['address'],16);current[address].add(ident)
             canonical_entry_bindings[e['canonical_name']]=dict(native_address=hex(ident),**symbol)
@@ -169,7 +214,15 @@ def main():
         if body is not None:out['source_body_sha256']=sha(body.encode())
         if score is not None:
             out.update(rebuilt_address=score['recomp'],reccmp_score=score['matching'],effective_match=bool(score.get('effective')))
-        if r['source']=='functions/choose_a_card.cpp':category='deferred_chooser'
+        if a in reconstructed:
+            category='reconstructed_source';out['source_reconstruction']=reconstructed[a]
+            recovered=body_for(r['source'],reconstructed[a]['source_function'])
+            assert recovered is not None,(r['source'],reconstructed[a]['source_function'])
+            out['reconstructed_body_sha256']=sha(recovered.encode())
+            original=original_code.fingerprint(a,out['native_bytes'],strings(recovered))
+            out['dependencies']=[hex(x) for x in sorted(set(original.dependencies))]
+            out['unreviewed_dependencies']=[hex(x) for x in sorted(set(original.dependencies)-reviewed_bodies)]
+        elif r['source']=='functions/choose_a_card.cpp':category='deferred_chooser'
         elif r['source'].endswith('.cpp'):category='cpp_review'
         elif score is None or score.get('stub'):category='mapping_first'
         else:
@@ -185,7 +238,7 @@ def main():
                 out.update(rebuilt_bytes=size,original_fingerprint=old.sha256,rebuilt_fingerprint=new.sha256,
                            instruction_counts=[len(old.instructions),len(new.instructions)],review_reasons=issues,
                            binding_repairs=bindings,dependencies=[hex(x) for x in sorted(set(old.dependencies+new.dependencies))])
-                out['unreviewed_dependencies']=[hex(x) for x in sorted(set(old.dependencies+new.dependencies)-set(accepted))]
+                out['unreviewed_dependencies']=[hex(x) for x in sorted(set(old.dependencies+new.dependencies)-reviewed_bodies)]
                 if old.instructions==new.instructions and not issues:category='callee_binding_only' if bindings else 'same_local_code'
                 elif score['matching']>=.9 or score.get('effective'):
                     category='reference_review' if issues and score['matching']==1 else 'small_diff_review'
@@ -244,8 +297,10 @@ def main():
     binding_groups.sort(key=lambda g:(-g['caller_count'],g['native_target']))
     from unify_scalar_helpers import verify_source
     unification=verify_source(ROOT)
-    result=dict(status='triage complete; no source or recovery-ledger mutation',pending_helper_ranges=len(rows),
-                helper_unification=unification,canonical_entry_bindings=canonical_entry_bindings,native_equivalent_helpers=native_equivalences,verified_compiler_folds=setup.get('folded_recovered_helpers',[]),
+    pending_count=len(rows)-counts['reconstructed_source']
+    result=dict(status='triage complete; no source or recovery-ledger mutation',pending_helper_ranges=pending_count,
+                unledgered_helper_ranges=len(rows),reconstructed_consolidation_helpers=counts['reconstructed_source'],
+                helper_unification=unification,canonical_entry_bindings=canonical_entry_bindings,canonical_inlined_helpers=canonical_inlined,native_equivalent_helpers=native_equivalences,verified_compiler_folds=setup.get('folded_recovered_helpers',[]),
                 category_counts=dict(counts),category_definitions=CATEGORIES,reccmp_score_histogram=dict(hist),
                 local_match_dependency_screen=dict(with_pending_callees=sum(bool(r.get('unreviewed_dependencies')) for r in rows if r['category']=='same_local_code'),
                                                    without_pending_callees=sum(not r.get('unreviewed_dependencies') for r in rows if r['category']=='same_local_code')),
@@ -269,29 +324,33 @@ def main():
               'tools/recovery/retire_reanimation_worker.py','docs/recovery-evidence/zone-input-qualifiers.json',
               'tools/recovery/qualify_zone_inputs.py','docs/recovery-evidence/retired-zone-counter.json','tools/recovery/retire_zone_counter.py',
               'docs/recovery-evidence/canonical-storm.json','tools/recovery/canonicalize_storm.py',
-              'docs/recovery-evidence/helper-canonicalization.json','tools/recovery/canonicalize_helpers.py',
+              'docs/recovery-evidence/helper-canonicalization.json','tools/recovery/canonicalize_helpers.py','tools/recovery/verify_inline_helpers.py',
               'docs/recovery-evidence/attachment-predicate-equivalence.json','tools/recovery/verify_helper_equivalences.py']:
         if (ROOT/p).exists():result['inputs'][str(ROOT/p)]=sha((ROOT/p).read_bytes())
     args.output.parent.mkdir(parents=True,exist_ok=True);args.summary.parent.mkdir(parents=True,exist_ok=True)
     save_json(args.output,result)
-    lines=['# Helper recovery triage','',f'Current pending helper frame: **{len(rows):,} native ranges**. The classifier does not edit C source or recovery records.','',
+    lines=['# Helper recovery triage','',f'Current review frame: **{pending_count:,} native helper ranges**, plus **{counts["reconstructed_source"]:,} explicitly tagged bodies already reconstructed during consolidation**. The classifier does not edit C source or recovery records. Narrow argument/interface edits do not close whole-body review.','',
            '| Review queue | Ranges |','| --- | ---: |']
     lines += [f'| `{k}` | {counts[k]:,} |' for k in CATEGORIES]
     if unification and 'canonical_functions' in unification:
-        lines += ['',f"**{unification['canonical_functions']} recovered helpers now use their original C names**, with {unification['aliases_removed']} compatibility aliases/adapters removed. Historical recovery names remain metadata identities. Current source and physical symbols are checked independently."]
+        accepted_names=unification.get('accepted_function_names',unification['canonical_functions'])
+        auxiliary=unification['canonical_functions']-accepted_names
+        lines += ['',f"**{accepted_names} accepted canonical function names plus {auxiliary} auxiliary helper identities** are checked against physical source and compiler output. Initial consolidation removed {unification['aliases_removed']} compatibility aliases/adapters. Historical recovery names remain metadata identities."]
+        if canonical_inlined:
+            lines += ['',f"{len(canonical_inlined)} private canonical helpers have verified concrete DWARF inline instances instead of callable COFF entries. Their caller-owned ranges do not receive standalone helper scores or fabricated callee addresses."]
     elif unification:
         lines += ['',f"**{unification['shared_implementations']} helper pairs already share one recovered implementation**: {unification.get('alias_pairs',unification['shared_implementations'])} same-address aliases and {unification.get('const_return_adapters',0)} typed const-return tail adapters. Old retained bodies are archived as history. These are separate from the remaining duplicate candidates below.",
                   f"The setup records {len(result['verified_compiler_folds'])} compiler-shared recovered helpers without separate qualified DWARF ranges. Verified JMP targets or same-address COFF aliases count as valid callee bindings; these entries are excluded from full-body reccmp scores."]
     lines += ['',f'**{len(dedupe):,} duplicate implementation candidates** were found among retained/recovered pairs. These require ABI and caller review before canonicalizing names.','',
-              f"Of the {counts['same_local_code']} local matches, {result['local_match_dependency_screen']['without_pending_callees']} have no pending callees in the recorded dependency list; {result['local_match_dependency_screen']['with_pending_callees']} still depend on functions without recovery records. Keep this distinction when tracking completion.",'',
+              f"Of the {counts['same_local_code']} local matches, {result['local_match_dependency_screen']['without_pending_callees']} have no pending callees in the recorded dependency list; {result['local_match_dependency_screen']['with_pending_callees']} still depend on functions without an accepted recovery or explicitly tagged full reconstruction. Keep this distinction when tracking completion.",'',
               'Reccmp scores are used to order review. A 100% score alone is insufficient because unknown addresses can be replaced with matching placeholders. The strict comparison keeps numeric constants and structure/stack offsets, checks complete DWARF ranges, and only translates known function identities and exact source-string bytes. Unresolved data and indirect-call dependencies remain review work. Local equality is not transitive semantic or gameplay proof.','',
-              'The report compares the current recovery build to October 2022. Existing `_2022` bindings and modern headers can create differences from retained source; it is not an isolated 2020 build. A small assembly delta can still have a large gameplay effect; scores never authorize ignoring changed constants or flags.','',
+              'The report compares the current recovery build to October 2022. Recovered bodies, canonical caller contracts and modern headers can create differences from retained source; it is not an isolated 2020 build. A small assembly delta can still have a large gameplay effect; scores never authorize ignoring changed constants or flags.','',
               '## Next workflow','',
               '1. Keep `same_local_code` bodies; review their recorded dependency closure rather than decompiling them again.',
               '2. Review `callee_binding_only` and `small_diff_review` against the existing C source and captured instruction deltas. Make targeted edits where the evidence supports them.',
               '3. Resolve unknown references and ambiguous mappings before interpreting their scores.',
               '4. Reserve full Ghidra decompilation for substantial changes, missing source, and complex workers.',
-              '5. Canonicalize one recovered family at a time: retain the 2022 body under its intended canonical name, update callers/prototypes/callbacks/registration bindings, keep explicit ABI adapters where necessary, and migrate the provenance ledger with predecessor hashes. Compiler sharing is a candidate signal, not permission to delete an arbitrary body. Compatible canonical core APIs can resolve many retained-caller bindings together; adding another suffixed copy for every such caller would preserve the duplication problem.','',
+              '5. Retain native bodies under their intended canonical names, unify callers/prototypes/callbacks/registration bindings with the native contracts, and record predecessor hashes. Compiler sharing is a candidate signal, not permission to delete an arbitrary body. Shared native APIs can resolve many retained-caller bindings together.','',
               '## Shared binding priorities','',
               '| Recovered API | Distinct pending callers | Call/reference sites |','| --- | ---: | ---: |']
     lines += [f"| `{g['canonical_name']}` | {g['caller_count']} | {g['sites']} |" for g in binding_groups[:12]]

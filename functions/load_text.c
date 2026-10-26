@@ -345,7 +345,7 @@ const char **load_text_nocopy_from_file(const char *filename, const char *header
 
 /* ManalinkEh 2022: 0x26765b0; original functions/load_text.c:257. */
 /* Preserve the released 250-row cap; the native declaration has only 249 rows. */
-int load_text_2022(const char *ignored, const char *header)
+int load_text(const char *ignored, const char *header)
 {
   const char **ppcVar1;
   const char **ppcVar2;

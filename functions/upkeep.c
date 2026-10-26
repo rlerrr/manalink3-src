@@ -5,7 +5,7 @@ int count_upkeeps(int player){
 	APNAP(p,{
 				int c;
 				for(c = 0; c < active_cards_count[p]; c++){
-					if( in_play(p, c) && ! is_humiliated(p, c) ){
+					if( in_play(p, c) && ! is_humiliated(p, c, AL_STATIC) ){
 						int csvid = get_id(p, c);
 						switch( csvid ){
 								case CARD_ID_EON_HUB:
@@ -84,7 +84,7 @@ void fading(int player, int card, event_t event, int fading_counters){
 			kill_card(player, card, KILL_SACRIFICE);
 		}
 		else{
-			remove_counter(player, card, COUNTER_FADE);
+			remove_counters(player, card, player, card, COUNTER_FADE, 1);
 		}
 	}
 
@@ -187,7 +187,7 @@ int cumulative_upkeep_arbitrary(int triggering_player, int triggering_card, int 
 		  smc = triggering_card;
 		}
 
-	  add_counter(player, card, COUNTER_AGE);
+	  add_counters(player, card, player, card, COUNTER_AGE, 1);
 	  int amount = count_counters(player, card, COUNTER_AGE);
 	  if (!(DIALOG(triggering_player, triggering_card, EVENT_ACTIVATE,
 				   DLG_FULLCARD(player, card), DLG_SMALLCARD(smp, smc), DLG_WHO_CHOOSES(player),
@@ -219,7 +219,7 @@ int cumulative_upkeep_hybrid(int player, int card, event_t event, int amt_colore
 
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
 	{
-	  add_counter(player, card, COUNTER_AGE);
+	  add_counters(player, card, player, card, COUNTER_AGE, 1);
 	  int amount = count_counters(player, card, COUNTER_AGE);
 	  if (!(DIALOG(player, card, EVENT_ACTIVATE,
 				   DLG_RANDOM, DLG_NO_STORAGE, DLG_AUTOCHOOSE_IF_1, DLG_NO_CANCEL,
@@ -244,7 +244,7 @@ int cumulative_upkeep_general(int player, int card, event_t event, int (*can_pay
 
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
 	{
-	  add_counter(player, card, COUNTER_AGE);
+	  add_counters(player, card, player, card, COUNTER_AGE, 1);
 	  int amount = count_counters(player, card, COUNTER_AGE);
 	  if (!(DIALOG(player, card, EVENT_ACTIVATE,
 				   DLG_RANDOM, DLG_NO_STORAGE, DLG_AUTOCHOOSE_IF_1, DLG_NO_CANCEL,

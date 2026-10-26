@@ -1,5 +1,7 @@
 #include "manalink.h"
 
+int can_pay_life_impl(int player, int amount, int flags);
+
 /* Canonical recovered helper declarations. */
 int is_what(int player, int card, int test_type);
 int is_token(int player, int card);
@@ -146,55 +148,55 @@ int create_legacy_name_with_rfg_check(int player, int card, int owner, int iid);
 int create_subtype_name_legacy(int player, int card, int subtype);
 int create_card_name_legacy(int player, int card, int id);
 int create_hardcoded_subtype_name_legacy(int player, int card, int subtype);
-void default_pump_ability_definition(int player, int card, pump_ability_2022_t *pump, int pow,
+void default_pump_ability_definition(int player, int card, pump_ability_t *pump, int pow,
                                           int tou, int key, int skey);
-int pump_ability(int player, int card, int t_player, int t_card, pump_ability_2022_t *pump);
-void pump_ability_by_test(int player, int card, int t_player, pump_ability_2022_t *pump,
-                               test_definition_2022_t *this_test);
+int pump_ability(int player, int card, int t_player, int t_card, pump_ability_t *pump);
+void pump_ability_by_test(int player, int card, int t_player, pump_ability_t *pump,
+                               test_definition_t *this_test);
 static int pump_ability_until_eot_with_precomputed_sleight_hack_suppress(
-    int player, int card, int t_player, int t_card, pump_ability_2022_t *pump);
+    int player, int card, int t_player, int t_card, pump_ability_t *pump);
 int legacy_effect_pump_ability_until_eot(int player, int card, event_t event);
 static void sp_ability_trigger_impl(int controller_of_trigger, event_t event, int trigger_mode,
-                                         type_t type, test_definition_2022_t *test,
+                                         type_t type, test_definition_t *test,
                                          int triggering_player, int triggering_card,
                                          int allow_copies);
 void sp_ability_trigger(int controller_of_trigger, event_t event, int trigger_mode,
-                             type_t type, test_definition_2022_t *test, int triggering_player,
+                             type_t type, test_definition_t *test, int triggering_player,
                              int triggering_card);
 int can_counter_triggered_ability(int player, int card, event_t event,
-                                       target_definition_2022_t *td);
+                                       target_definition_t *td);
 int test_leaves_play(int triggering_player, int triggering_card, event_t event, int controller,
-                          test_definition_2022_t *test, int can_be_suppressed,
+                          test_definition_t *test, int can_be_suppressed,
                           int can_be_duplicated);
 int test_leaves_play_mode(int triggering_player, int triggering_card, event_t event,
-                               int controller, resolve_trigger_t mode, test_definition_2022_t *test,
+                               int controller, resolve_trigger_t mode, test_definition_t *test,
                                int can_be_suppressed, int can_be_duplicated);
 void etb_ability_global(int controller_of_trigger, event_t event, int trigger_mode,
-                             type_t type, test_definition_2022_t *test, int triggering_player,
+                             type_t type, test_definition_t *test, int triggering_player,
                              int triggering_card);
 static int new_specific_cip_impl(int controller_of_trigger, event_t event, int trigger_mode,
-                                      type_t type, test_definition_2022_t *test,
+                                      type_t type, test_definition_t *test,
                                       int triggering_player, int triggering_card);
 int new_specific_cip_global(int player, event_t event, int trigger_mode, type_t type,
-                                 test_definition_2022_t *this_test, int triggering_player,
+                                 test_definition_t *this_test, int triggering_player,
                                  int triggering_card);
 int new_specific_cip(int player, int card, event_t event, int t_player, int trigger_mode,
-                          test_definition_2022_t *this_test);
-int new_card_from_list(int player, int mode, test_definition_2022_t *test);
-void haste_and_sacrifice_token_at_end_of_next_turn(token_generation_2022_t *token, int beast,
+                          test_definition_t *this_test);
+int new_card_from_list(int player, int mode, test_definition_t *test);
+void haste_and_sacrifice_token_at_end_of_next_turn(token_generation_t *token, int beast,
                                                         int number);
-void haste_and_remove_token_at_end_of_next_turn(token_generation_2022_t *token, int beast,
+void haste_and_remove_token_at_end_of_next_turn(token_generation_t *token, int beast,
                                                      int number);
-int reveal_cards_from_your_hand(int player, int card, test_definition_2022_t *this_test);
+int reveal_cards_from_your_hand(int player, int card, test_definition_t *this_test);
 void mana_into_string(int cless, int black, int blue, int green, int red, int white,
-                           test_definition_2022_t *this_test);
+                           test_definition_t *this_test);
 int ai_name_a_random_csvid(int player, int card, int t_player, type_t type,
-                                test_definition_2022_t *test);
-int name_a_card(int player, int ai_player, test_definition_2022_t *test, int mode);
-int select_permanent_to_disable(int player, int card, target_definition_2022_t *td,
-                                     const char *prompt, test_definition_2022_t *test);
-int counterspell_validate(int player, int card, target_definition_2022_t *td, int target_num);
-int counterspell(int player, int card, event_t event, target_definition_2022_t *td,
+                                test_definition_t *test);
+int name_a_card(int player, int ai_player, test_definition_t *test, int mode);
+int select_permanent_to_disable(int player, int card, target_definition_t *td,
+                                     const char *prompt, test_definition_t *test);
+int counterspell_validate(int player, int card, target_definition_t *td, int target_num);
+int counterspell(int player, int card, event_t event, target_definition_t *td,
                       int target_num);
 void untap_lands(int player, int card, int num_lands);
 int charge_mana_multi(int player, int colorless, int black, int blue, int green, int red,
@@ -230,24 +232,24 @@ int pump_ability_until_eot_no_repeat(int player, int card, int t_player, int t_c
                                           int ability, int sp_ability);
 int generic_activated_ability(int player, int card, event_t event, int mode, int cless,
                                    int black, int blue, int green, int red, int white,
-                                   uint32_t variable_costs, target_definition_2022_t *td,
+                                   uint32_t variable_costs, target_definition_t *td,
                                    const char *prompt);
 int granted_generic_activated_ability(int granting_player, int granting_card,
                                            int granted_to_player, int granted_to_card,
                                            event_t event, int mode, int cless, int black, int blue,
                                            int green, int red, int white, uint32_t variable_costs,
-                                           target_definition_2022_t *td, const char *prompt);
+                                           target_definition_t *td, const char *prompt);
 int attachment_granting_activated_ability(int player, int card, event_t event, int mode,
                                                int cless, int black, int blue, int green, int red,
                                                int white, uint32_t variable_costs,
-                                               target_definition_2022_t *td, const char *prompt);
+                                               target_definition_t *td, const char *prompt);
 int pump_until_eot(int player, int card, int t_player, int t_card, int power, int toughness);
 int upkeep_trigger_mode_impl(int player, int card, event_t event,
                                   resolve_trigger_t trigger_mode, int no_check);
 void count_for_gfp_ability_and_store_values(int player, int card, int event, int t_player,
-                                                 int type, test_definition_2022_t *this_test,
+                                                 int type, test_definition_t *this_test,
                                                  int mode, int storage_location);
-int reveal_card_until_you_reveal_test(int player, int t_player, test_definition_2022_t *test,
+int reveal_card_until_you_reveal_test(int player, int t_player, test_definition_t *test,
                                            int flags);
 void cloning_and_verify_legend(int player, int card, int t_player, int t_card);
 void ai_mod_for_untap_effects(int player, int card, int target_pos, int total_mana_spent);
@@ -257,38 +259,38 @@ int pump_subtype_until_eot(int player, int card, int t_player, int subtype, int 
                                 int toughness, int ability, int sp_ability);
 void pump_creatures_until_eot(int player, int card, int t_player,
                                    int alternate_legacy_text_number, int power, int toughness,
-                                   int ability, int sp_ability, test_definition_2022_t *this_test);
+                                   int ability, int sp_ability, test_definition_t *this_test);
 void count_for_gfp_ability(int player, int card, int event, int t_player, int type,
-                                test_definition_2022_t *this_test);
+                                test_definition_t *this_test);
 int trigger_gain_life(int player, int card, event_t event, int who_gains,
                            resolve_trigger_t trigger_mode);
 int lose_life(int player, int amount);
 int cast_counter_activated_ability(int player, int card, int target_pos);
-int validate_counter_activated_ability(int player, int card, target_definition_2022_t *td,
+int validate_counter_activated_ability(int player, int card, target_definition_t *td,
                                             int target_pos);
-int resolve_counter_activated_ability(int player, int card, target_definition_2022_t *td,
+int resolve_counter_activated_ability(int player, int card, target_definition_t *td,
                                            int target_pos);
 int can_counter_activated_ability(int player, int card, event_t event,
-                                       target_definition_2022_t *td);
+                                       target_definition_t *td);
 int can_block_additional_until_eot(int player, int card, int t_player, int t_card,
                                         int num_additional);
 void pump_color_until_eot(int player, int card, int t_player, int clr, int power,
                                int toughness, int ability, int sp_ability);
 void pump_creatures_until_eot_no_repeat(int player, int card, int t_player,
                                              int alternate_legacy_text_number, int ability,
-                                             int sp_ability, test_definition_2022_t *this_test);
-int vanilla_pump(int player, int card, event_t event, target_definition_2022_t *td, int power,
+                                             int sp_ability, test_definition_t *this_test);
+int vanilla_pump(int player, int card, event_t event, target_definition_t *td, int power,
                       int toughness, int keyword, int sp_keyword);
 int vanilla_instant_pump(int player, int card, event_t event, int allowed_controller,
                               int preferred_controller, int power, int toughness, int keyword,
                               int sp_keyword);
 int cannot_attack(int player, int card, event_t event);
 void pump_creatures_until_eot_merge_pt(int player, int card, int t_player, int power,
-                                            int toughness, test_definition_2022_t *this_test);
+                                            int toughness, test_definition_t *this_test);
 void pump_creatures_until_eot_merge_pt_alternate_legacy_text(int player, int card,
                                                                   int t_player, int power,
                                                                   int toughness,
-                                                                  test_definition_2022_t *this_test,
+                                                                  test_definition_t *this_test,
                                                                   int alt_text_number);
 void remove_summoning_sickness(int player, int card);
 void twiddle(int player, int card, int tgtnum);
@@ -298,29 +300,29 @@ void ai_modifier_for_targeted_card_drawing(int player, int card, int target_pos,
 void ai_modifier_for_act_of_treason(int player, int card);
 static int effect_pump_until_eot(int player, int card, event_t event);
 static int reanimate_permanent_impl(int player, int card, int target_graveyard, int selected,
-                                  reanimate_mode_2022_t action, counter_t counter_type,
-                                  CardFunction effect_fn, ReanimationBeforeEtb_2022 before_etb);
-int new_reanimate_all(int player, int card, int targ_player, test_definition_2022_t *this_test,
-                           reanimate_mode_2022_t action);
+                                  reanimate_mode_t action, counter_t counter_type,
+                                  CardFunction effect_fn, ReanimationBeforeEtb before_etb);
+int new_reanimate_all(int player, int card, int targ_player, test_definition_t *this_test,
+                           reanimate_mode_t action);
 int reanimate_permanent(int player, int card, int target_graveyard, int selected,
-                             reanimate_mode_2022_t action);
+                             reanimate_mode_t action);
 int reanimate_permanent_with_effect(int player, int card, int target_graveyard, int selected,
-                                         reanimate_mode_2022_t action, CardFunction effect_fn);
+                                         reanimate_mode_t action, CardFunction effect_fn);
 int reanimate_permanent_with_counter_and_effect(int player, int card, int target_graveyard,
-                                                     int selected, reanimate_mode_2022_t action,
+                                                     int selected, reanimate_mode_t action,
                                                      counter_t counter_type, CardFunction effect_fn);
 int reanimate_permanent_with_function(int player, int card, int target_graveyard, int selected,
-                                           reanimate_mode_2022_t action,
-                                           ReanimationBeforeEtb_2022 before_etb);
+                                           reanimate_mode_t action,
+                                           ReanimationBeforeEtb before_etb);
 void reanimate_all(int player, int card, int targ_player, int type, int flag1, int subtype,
                         int flag2, int color, int flag3, int id, int flag4, int cc, int flag5,
-                        reanimate_mode_2022_t action);
+                        reanimate_mode_t action);
 const char *get_sleighted_color_text2(int player, int card, const char *fmt,
                                            int orig_color_t_1, int orig_color_t_2);
 const char *get_sleighted_color_text(int player, int card, const char *fmt, int orig_color_t);
 const char *get_card_name_by_id(int csvid);
-int generic_spell(int player, int card, event_t event, int flags, target_definition_2022_t *td,
-                       const char *prompt, int max_targets, test_definition_2022_t *this_test);
+int generic_spell(int player, int card, event_t event, int flags, target_definition_t *td,
+                       const char *prompt, int max_targets, test_definition_t *this_test);
 int specific_cip(int player, int card, event_t event, int t_player, int trigger_mode, int type,
                       int flag1, int subtype, int flag2, int color, int flag3, int id, int flag4,
                       int cc, int flag5);
@@ -333,13 +335,13 @@ int haste_and_remove_at_beginning_of_next_end_step(int player, int card, int t_p
 static int haste_and_exile_your_upkeep(int player, int card, event_t event);
 int effect_unearth(int player, int card, event_t event);
 void ereboss_titan_effect(int player);
-int aot_like_spell(int player, int card, event_t event, target_definition_2022_t *td,
+int aot_like_spell(int player, int card, event_t event, target_definition_t *td,
                         const char *msg, int additional_flags);
 void global_type_change(int player, int card, event_t event, int t_player, int added_type,
-                             test_definition_2022_t *this_test, int pow, int tou, int key,
+                             test_definition_t *this_test, int pow, int tou, int key,
                              int subtype, int clr);
 void type_uncounterable(int player, int card, event_t event, int t_player, int type,
-                             test_definition_2022_t *this_test);
+                             test_definition_t *this_test);
 int type_change_legacy(int player, int card, event_t event);
 int turn_into_artifact(int player, int card, int t_player, int t_card, int mode);
 int turn_into_creature(int player, int card, int t_player, int t_card, int mode, int pow,
@@ -350,7 +352,7 @@ static int global_type_animation_legacy(int player, int card, event_t event);
 int real_land_animation2(int player, int card, int t_player, int t_card, int mode, int pow,
                               int tou, int key, int s_key, int clr);
 int land_animation2(int player, int card, int t_player, int t_card, int mode, int pow, int tou,
-                         int key, int s_key, int clr, test_definition_2022_t *this_test);
+                         int key, int s_key, int clr, test_definition_t *this_test);
 int card_generic_animated_land(int player, int card, event_t event);
 int manland_shared(int player, int card, event_t event, int colorless, int black, int blue,
                         int green, int red, int white);
@@ -365,7 +367,7 @@ int shapeshift_target(int src_player, int src_card, int t_player, int t_card,
 int real_shapeshift_target(int src_player, int src_card, int t_player, int t_card,
                                 int turn_into_player, int turn_into_card, int mode);
 static int shapeshift_target_effect(int player, int card, event_t event);
-void shapeshift_all(int src_player, int src_card, int t_player, test_definition_2022_t *test,
+void shapeshift_all(int src_player, int src_card, int t_player, test_definition_t *test,
                          int turn_into_player, int turn_into_card, int mode);
 void untap_only_1_permanent_per_upkeep(int player, int card, event_t event, int t_player,
                                             int type);
@@ -382,7 +384,7 @@ void cannot_lose_the_game(int player, int card, event_t event, int who_cant_lose
 void cannot_lose_the_game_for_having_less_than_0_life(int player, int card, event_t event,
                                                            int who_cant_lose);
 void store_attackers(int player, int card, event_t event, declare_attackers_trigger_t mode,
-                          int attacker_player, int attacker_card, test_definition_2022_t *test);
+                          int attacker_player, int attacker_card, test_definition_t *test);
 int resolve_declare_attackers_trigger(int player, int card, event_t event,
                                            declare_attackers_trigger_t mode);
 int declare_attackers_trigger(int player, int card, event_t event,
@@ -390,12 +392,12 @@ int declare_attackers_trigger(int player, int card, event_t event,
                                    int attacker_card);
 int declare_attackers_trigger_test(int player, int card, event_t event,
                                         declare_attackers_trigger_t mode, int attacker_player,
-                                        int attacker_card, test_definition_2022_t *test);
+                                        int attacker_card, test_definition_t *test);
 const char *get_hacked_land_text(int player, int card, const char *fmt, ...);
 int effect_this_dies(int player, int card, event_t event);
 int vanilla_creature_pumper(int player, int card, event_t event, int req_cless, int req_black,
                                  int req_blue, int req_green, int req_red, int req_white, int flags,
-                                 int pow, int tou, int key, int s_key, target_definition_2022_t *td);
+                                 int pow, int tou, int key, int s_key, target_definition_t *td);
 int generic_shade_amt_can_pump(int player, int card, int pump, int life_to_pay, int cless,
                                     int black, int blue, int green, int red, int white, int limit);
 int when_attacks_pump_self(int player, int card, event_t event, int power, int toughness);
@@ -404,15 +406,15 @@ static int fx_permanents_destroyed_this_way_accumulate(int player, int card, eve
 card_instance_t *legacy_permanents_destroyed_this_way_accumulate(
     int src_player, int src_card, card_instance_t *previous_effect, int tgt_player, int tgt_card);
 void if_a_card_would_be_put_into_graveyard_from_play_exile_it_instead(
-    int player, int card, int event, int t_player, test_definition_2022_t *test);
+    int player, int card, int event, int t_player, test_definition_t *test);
 int if_a_card_would_be_put_into_graveyard_from_library_do_something_instead(
     int player, int card, int event, int t_player, resolve_trigger_t trigger_mode,
-    test_definition_2022_t *test);
+    test_definition_t *test);
 int if_a_card_would_be_put_into_graveyard_from_anywhere_but_library_do_something_instead(
     int player, int card, int event, int t_player, resolve_trigger_t trigger_mode,
-    test_definition_2022_t *test);
+    test_definition_t *test);
 void if_a_card_would_be_put_into_graveyard_from_anywhere_exile_it_instead(
-    int player, int card, int event, int t_player, test_definition_2022_t *test);
+    int player, int card, int event, int t_player, test_definition_t *test);
 int color_to_color_test(int color);
 void damage_creature_and_all_the_others_with_the_same_name(int player, int card, int t_player,
                                                                 int t_card, int dmg);
@@ -430,23 +432,23 @@ int equipment_granting_activated_ability(int player, int card, event_t event,
                                               const char *dialog_option, int equip_cost, int mode,
                                               int cless, int black, int blue, int green, int red,
                                               int white, uint32_t variable_costs,
-                                              target_definition_2022_t *td, const char *prompt);
+                                              target_definition_t *td, const char *prompt);
 int generic_activated_ability_with_sacrifice_as_cost(
     int player, int card, event_t event, generic_activated_ability_flags_t flags, int cless,
-    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_2022_t *td,
-    const char *prompt, type_t type, test_definition_2022_t *test,
+    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_t *td,
+    const char *prompt, type_t type, test_definition_t *test,
     sacrifice_and_report_value_flags_t sac_flags);
 int generic_activated_ability_with_target_in_grave(
     int player, int card, event_t event, generic_activated_ability_flags_t flags, int cless,
-    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_2022_t *td,
-    const char *prompt, type_t type, test_definition_2022_t *test, int gs_flags_for_grave_recycler);
+    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_t *td,
+    const char *prompt, type_t type, test_definition_t *test, int gs_flags_for_grave_recycler);
 int generic_activated_ability_with_tapsubtype_as_cost(
     int player, int card, event_t event, generic_activated_ability_flags_t flags, int cless,
-    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_2022_t *td,
-    const char *prompt, target_definition_2022_t *td_subtype, int req_tap);
+    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_t *td,
+    const char *prompt, target_definition_t *td_subtype, int req_tap);
 static void count_for_gfp_ability_and_store_values_impl(int player, int card, int event,
                                                              int t_player, int type,
-                                                             test_definition_2022_t *this_test,
+                                                             test_definition_t *this_test,
                                                              CardPairFunction extra_check, int mode,
                                                              int storage_location);
 void count_for_gfp_ability_and_store_values_extra(int player, int card, int event,
@@ -454,17 +456,17 @@ void count_for_gfp_ability_and_store_values_extra(int player, int card, int even
                                                        CardPairFunction extra_check, int mode,
                                                        int storage_location);
 int enters_the_battlefield_as_copy_of_any(int player, int card, event_t event,
-                                               target_definition_2022_t *td, const char *prompt);
+                                               target_definition_t *td, const char *prompt);
 static const char *has_mana_to_cast_target(int who_chooses, int player, int card,
                                          int targeting_player, int targeting_card);
 int can_play_cards_as_though_they_had_flash(int player, int card, event_t event,
-                                                 target_definition_2022_t *td, const char *prompt,
+                                                 target_definition_t *td, const char *prompt,
                                                  int literal);
 static int discard_card_by_int_id(int player, int int_crd_id, int effect,
-                                     test_definition_2022_t *this_test, int source_of_effect);
-int new_effect_coercion(ec_definition_t *this_definition, test_definition_2022_t *this_test);
+                                     test_definition_t *this_test, int source_of_effect);
+int new_effect_coercion(ec_definition_t *this_definition, test_definition_t *this_test);
 int exile_top_x_card_you_may_play_them(int player, int card, int howmany,
-                                            test_definition_2022_t *test, int t_player,
+                                            test_definition_t *test, int t_player,
                                             mpcfe_mode_t flags);
 char *type_text(char *buf, int maxlen, type_t type, type_text_t flags);
 static void cannot_lose_the_game_impl(int player, int card, event_t event, int who_cant_lose,
@@ -478,6 +480,10 @@ void replace_all_instances_of_one_color_word_with_another(int player, int card, 
                                                                int t_card);
 void replace_all_instances_of_one_basic_land_type_word_with_another(int player, int card,
                                                                          int t_player, int t_card);
+int other_leaves_play(int triggering_player, int triggering_card, int t_player, int t_card,
+                           event_t event, int can_be_suppressed, int can_be_duplicated);
+int leaves_play(int player, int card, event_t event, int can_be_suppressed,
+                     int can_be_duplicated);
 
 /* DLL-owned storage shared by C and C++; card_coded is an EXE symbol. */
 char *set_legacy_effect_name_addr = NULL;
@@ -524,7 +530,7 @@ int get_attack_power(int player, int card){
 							}
 							// else fall through
 						case CARD_ID_DORAN_THE_SIEGE_TOWER:
-							if(!is_humiliated(i, count)){
+							if(!is_humiliated(i, count, AL_STATIC)){
 								return get_toughness(player, card);
 							}
 							break;
@@ -883,41 +889,92 @@ void blink_effect_controller(int player, int card, void (*before_etb)(int player
 	}
 }
 
-static int remove_until_eot_legacy(int player, int card, event_t event){
-	card_instance_t *instance = get_card_instance(player, card);
-	if (instance->targets[1].card && eot_trigger(player, card, event)){
-		if( check_rfg(instance->targets[0].player, cards_data[instance->targets[0].card].id) ){
-			int new_card = instance->targets[0].card;
-			int card_added = add_card_to_hand(instance->targets[0].player, new_card);
-			int good = 1;
-			if( is_aura(instance->targets[0].player, card_added) ){
-				good = call_card_function(instance->targets[0].player, card_added, EVENT_CAN_CAST);
-				if( good ){
-					set_special_flags3(instance->targets[0].player, card_added, SF3_IN_PLAY_DIRECTLY);
-				}
-			}
-			if( good ){
-				remove_card_from_rfg(instance->targets[0].player, cards_data[instance->targets[0].card].id);
-				if( instance->targets[1].player & 1 ){
-					add_1_1_counter(instance->targets[0].player, card_added);
-				}
-				put_into_play(instance->targets[0].player, card_added);
-				if( instance->display_pic_csv_id == CARD_ID_VANISH_INTO_MEMORY ){
-					multidiscard(player, get_toughness(instance->targets[0].player, card_added), 0);
-				}
-			}
-			else{
-				obliterate_card(instance->targets[0].player, card_added);
-			}
-		}
-		kill_card(player, card, KILL_EXILE);
-	}
+static int remove_until_eot_legacy(int player, int card, event_t event)
+{
+  short sVar1;
+  uint16_t uVar2;
+  unsigned int uVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  int iVar6;
+  card_instance_t *pcVar7;
 
-	// EVENT_CLEANUP is sent to all cards immediately before any TRIGGER_EOTs are
-	if (event == EVENT_CLEANUP){
-		instance->targets[1].card = 1;
-	}
-	return 0;
+  pcVar4 = get_card_instance(player, card);
+  if (pcVar4->targets[1].card == 0)
+    goto LAB_0269ed87;
+  iVar5 = eot_trigger(player, card, event);
+  if (iVar5 == 0)
+    goto LAB_0269ed87;
+  iVar5 =
+      check_rfg(pcVar4->targets[0].player, (unsigned int)cards_data[pcVar4->targets[0].card].id);
+  if (iVar5 != 0)
+  {
+    iVar5 = add_card_to_hand(pcVar4->targets[0].player, pcVar4->targets[0].card);
+    iVar6 = has_subtype(pcVar4->targets[0].player, iVar5, SUBTYPE_AURA);
+    if (iVar6 != 0)
+    {
+      iVar6 = call_card_function(pcVar4->targets[0].player, iVar5, EVENT_CAN_CAST);
+      if (iVar6 == 0)
+      {
+        obliterate_card(pcVar4->targets[0].player, iVar5);
+        goto LAB_0269ede4;
+      }
+      set_special_flags3(pcVar4->targets[0].player, iVar5, 0x40);
+    }
+    remove_card_from_rfg(pcVar4->targets[0].player,
+                         (unsigned int)cards_data[pcVar4->targets[0].card].id);
+    uVar3 = pcVar4->targets[1].player;
+    if ((uVar3 & 1) == 0)
+    {
+      iVar6 = pcVar4->targets[0].player;
+      if ((uVar3 & 2) != 0)
+      {
+        iVar6 = is_what(iVar6, iVar5, 2);
+        if (iVar6 != 0)
+          goto LAB_0269ef0c;
+        goto LAB_0269ef36;
+      }
+    }
+    else
+    {
+    LAB_0269ef0c:
+      add_counters(player, card, pcVar4->targets[0].player, iVar5, COUNTER_P1_P1, 1);
+    LAB_0269ef36:
+      iVar6 = pcVar4->targets[0].player;
+      if ((pcVar4->targets[1].player & 2) != 0)
+      {
+        iVar6 = is_what(iVar6, iVar5, 0x100);
+        if (iVar6 != 0)
+        {
+          add_counters(player, card, pcVar4->targets[0].player, iVar5, COUNTER_LOYALTY,
+                                   1);
+        }
+        iVar6 = pcVar4->targets[0].player;
+      }
+    }
+    put_into_play(iVar6, iVar5);
+    sVar1 = pcVar4->display_pic_csv_id;
+    if (sVar1 == 0x2112)
+    {
+      iVar6 = get_abilities(pcVar4->targets[0].player, iVar5, EVENT_TOUGHNESS, -1);
+      new_multidiscard(player, iVar6, 0, player);
+      uVar2 = pcVar4->display_pic_csv_id;
+      sVar1 = uVar2;
+    }
+    if (sVar1 == 0x474b)
+    {
+      pcVar7 = get_card_instance(pcVar4->targets[0].player, iVar5);
+      pcVar7->state = pcVar7->state | 0x10;
+    }
+  }
+LAB_0269ede4:
+  kill_card(player, card, KILL_EXILE);
+LAB_0269ed87:
+  if (event == EVENT_CLEANUP)
+  {
+    pcVar4->targets[1].card = 1;
+  }
+  return 0;
 }
 
 int remove_until_eot(int player, int card, int t_player, int t_card){
@@ -995,7 +1052,7 @@ void true_return_from_oblivion(int player, int card){
 }
 
 void return_from_oblivion(int player, int card, event_t event){
-	if (leaves_play(player, card, event)){
+	if (leaves_play(player, card, event, 1, 0)){
 		true_return_from_oblivion(player, card);
 	}
 }
@@ -1005,7 +1062,7 @@ int check_for_cip_effects_removal(int player, int card){
 		int i, k;
 		for(i=0; i<2; i++){
 			for(k=0; k<active_cards_count[i]; k++){
-				if( in_play(i, k) && ! is_humiliated(i, k) ){
+				if( in_play(i, k) && ! is_humiliated(i, k, AL_STATIC) ){
 					if( get_id(i, k) == CARD_ID_TORPOR_ORB
 						|| get_id(i, k) == CARD_ID_HUSHWING_GRYFF
 						|| get_id(i, k) == CARD_ID_TOCATLI_HONOR_GUARD
@@ -1023,7 +1080,7 @@ int comes_into_play_mode(int player, int card, event_t event, resolve_trigger_t 
 {
   if (trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) && player == reason_for_trigger_controller
 	  && player == trigger_cause_controller && card == trigger_cause
-	  && !is_humiliated(player, card) && ! check_for_cip_effects_removal(player, card))
+	  && !is_humiliated(player, card, AL_TRIG) && ! check_for_cip_effects_removal(player, card))
 	{
 	  if (event == EVENT_TRIGGER)
 		{
@@ -1052,37 +1109,10 @@ void comes_into_play_tapped(int player, int card, event_t event)
 	get_card_instance(player, card)->state |= STATE_TAPPED;	// avoid sending event
 }
 
-int leaves_play(int player, int card, event_t event){
-	if( trigger_condition == TRIGGER_LEAVE_PLAY ){
-		if( affect_me( player, card) && trigger_cause == card && trigger_cause_controller == player
-			&& reason_for_trigger_controller == player )
-		{
-			if(event == EVENT_TRIGGER){
-				event_result |= 2;
-			}
-			else if(event == EVENT_RESOLVE_TRIGGER){
-				return 1;
-			}
-		}
-	}
-	return 0;
-}
+
 
 // As leaves_play(), but allows a card ({triggering_player,triggering_card}) to watch for a different card ({t_player,t_card}) leaving play, not itself.
-int other_leaves_play(int triggering_player, int triggering_card, int t_player, int t_card, event_t event)
-{
-  if (trigger_condition == TRIGGER_LEAVE_PLAY
-	  && affect_me(triggering_player, triggering_card)
-	  && trigger_cause == t_card && trigger_cause_controller == t_player
-	  && reason_for_trigger_controller == triggering_player)
-	{
-	  if(event == EVENT_TRIGGER)
-		event_result |= RESOLVE_TRIGGER_MANDATORY;
-	  else if (event == EVENT_RESOLVE_TRIGGER)
-		return 1;
-	}
-  return 0;
-}
+
 
 
 
@@ -1592,7 +1622,7 @@ static int effect_does_not_untap(int player, int card, event_t event ){
 	}
 
 	if ( flags && (flags & EDNT_REMAIN_TAPPED_UNTIL_SOURCE_LEAVES_PLAY) && instance->targets[2].player > -1 ){
-		if( leaves_play(instance->targets[1].player, instance->targets[1].card, event) ){
+		if( leaves_play(instance->targets[1].player, instance->targets[1].card, event, 0, 0) ){
 			remove_special_flags2(t_player, t_card, SF2_COULD_NOT_UNTAP);
 			kill_card(player, card, KILL_EXILE);
 		}
@@ -1654,37 +1684,46 @@ int does_not_untap_until_im_tapped(int player, int card, int t_player, int t_car
 	return legacy;
 }
 
-static int ability_doesnt_untap_while_has_a_counter_and_remove_a_counter_at_upkeep(int player, int card, event_t event)
+static int ability_doesnt_untap_while_has_a_counter_and_remove_a_counter_at_upkeep(int player, int card,
+                                                                            event_t event)
 {
-  /* This [permanent] doesn't untap during your untap step if it has a [type] counter on it.
-   * At the beginning of your upkeep, remove a [type] counter from this [permanent]. */
+  counter_t type;
+  card_instance_t *instance;
+  int result;
 
-  /* These abilities don't go away if the [permanent] has no [type] counters on it (and something unrelated might put more on it, making it stop tapping again);
-   * but they do go away permanently if the [permanent] loses all abilities, even if it only loses abilities until end of turn. */
-
-  /* Local data:
-   * targets[1].card: counter type */
-
-  card_instance_t* instance = get_card_instance(player, card);
-  int counter_type = instance->targets[1].card;
-
-  if (event == EVENT_UNTAP && count_counters(instance->damage_target_player, instance->damage_target_card, counter_type))
-	does_not_untap(instance->damage_target_player, instance->damage_target_card, event);
-
-  if (trigger_condition == TRIGGER_UPKEEP && affect_me(player, card)
-	  && count_counters(instance->damage_target_player, instance->damage_target_card, counter_type))	// avoid annoying popup if no counters
-	upkeep_trigger_ability(player, card, event, instance->damage_target_player);
-
-  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
-	remove_counter(instance->damage_target_player, instance->damage_target_card, counter_type);
-
-#if 0
-  /* As written, this fires if the card is currently humiliated when the abilities are gained.  That's correct for continuous humiliation effects like Humility,
-   * but not one-shot ones like Humble. */
-  if (event == EVENT_STATIC_EFFECTS && is_humiliated(instance->damage_target_player, instance->damage_target_card))
-	kill_card(player, card, KILL_EXILE);
-#endif
-
+  instance = get_card_instance(player, card);
+  type = instance->targets[1].card;
+  if (event == EVENT_UNTAP)
+  {
+    result =
+        count_counters((int)instance->damage_target_player, instance->damage_target_card, type);
+    if (result != 0)
+    {
+      does_not_untap((int)instance->damage_target_player, instance->damage_target_card,
+                     EVENT_UNTAP);
+    }
+    if (trigger_condition != 0xc9)
+    {
+      return 0;
+    }
+  }
+  else if (trigger_condition != 0xc9)
+    goto LAB_02695358;
+  if (((card == affected_card) && (player == affected_card_controller)) &&
+      (result =
+           count_counters((int)instance->damage_target_player, instance->damage_target_card, type),
+       result != 0))
+  {
+    upkeep_trigger_ability_mode(player, card, event, (int)instance->damage_target_player,
+                                RESOLVE_TRIGGER_MANDATORY);
+  }
+LAB_02695358:
+  if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    return 0;
+  }
+  remove_counters(player, card, (int)instance->damage_target_player,
+                              instance->damage_target_card, type, 1);
   return 0;
 }
 void gains_doesnt_untap_while_has_a_counter_and_remove_a_counter_at_upkeep(int src_player, int src_card, int t_player, int t_card, counter_t counter_type)
@@ -1754,7 +1793,7 @@ int select_card_from_graveyard(int player, int card, int whose_grave, int type )
 
 int eot_trigger(int player, int card, event_t event){
 	if(trigger_condition == TRIGGER_EOT &&  affect_me(player, card ) && reason_for_trigger_controller == player &&
-		(is_what(player, card, TYPE_EFFECT) || ! is_humiliated(player, card)) ){
+		(is_what(player, card, TYPE_EFFECT) || ! is_humiliated(player, card, AL_TRIG)) ){
 		if(event == EVENT_TRIGGER){
 			event_result |= 2;
 		}
@@ -1767,7 +1806,7 @@ int eot_trigger(int player, int card, event_t event){
 
 int eot_trigger_mode(int player, int card, event_t event, int t_player, resolve_trigger_t trig_mode){
 	if( (current_turn == t_player || t_player == ANYBODY) && trigger_condition == TRIGGER_EOT &&  affect_me(player, card ) && reason_for_trigger_controller == player &&
-		(is_what(player, card, TYPE_EFFECT) || ! is_humiliated(player, card))
+		(is_what(player, card, TYPE_EFFECT) || ! is_humiliated(player, card, AL_TRIG))
 	  ){
 		if(event == EVENT_TRIGGER){
 			event_result |= (trig_mode == RESOLVE_TRIGGER_DUH ? (duh_mode(player) ? RESOLVE_TRIGGER_MANDATORY : RESOLVE_TRIGGER_OPTIONAL) : trig_mode);
@@ -1931,20 +1970,7 @@ int choose_a_land(int player, int ai_choice){
 
 
 
-void menace(int player, int card, event_t event)
-{
-	if( event == EVENT_ABILITIES && affect_me(player, card) && ! is_humiliated(player, card) ){
-		card_instance_t *instance = get_card_instance( player, card );
-		if( instance->targets[16].card < 0 ){
-			instance->targets[16].card = 0;
-		}
-		instance->targets[16].card |= SP_KEYWORD_MENACE;
-	}
 
-	if( event == EVENT_DECLARE_BLOCKERS && ! is_humiliated(player, card) ){
-		minimum_blockers(player, card, event, 2);
-	}
-}
 
 int fx_menace(int player, int card, event_t event)
 {
@@ -1963,37 +1989,7 @@ int fx_menace(int player, int card, event_t event)
 	return 0;
 }
 
-void minimum_blockers(int player, int card, int event, int min){
-	if( event == EVENT_DECLARE_BLOCKERS ){
-		// If there are fewer than 3 creatures blocking me, then no one is
-		// blocking me
-		int block_count = 0;
-		int count = 0;
-		while(count < active_cards_count[1-player]){
-			if(in_play(1-player, count) ){
-				card_instance_t *instance = get_card_instance( 1-player, count);
-				if( instance->blocking == card ){
-					block_count++;
-				}
-			}
-			count++;
-		}
 
-		if( block_count < min ){
-			count = 0;
-			while(count < active_cards_count[1-player]){
-				if(in_play(1-player, count) ){
-					card_instance_t *instance = get_card_instance( 1-player, count);
-					if( instance->blocking == card ){
-						instance->blocking = 255;
-						instance->state &= ~(STATE_BLOCKED|STATE_BLOCKING);
-					}
-				}
-				count++;
-			}
-		}
-	}
-}
 
 
 
@@ -2432,7 +2428,7 @@ int get_cost_for_propaganda_like_effect(int player, int card){
 void tax_attack(int player, int card, event_t event){
 
 	if( trigger_condition == TRIGGER_PAY_TO_ATTACK && current_phase == PHASE_DECLARE_ATTACKERS && current_turn == 1-player &&
-		forbid_attack == 0 && ! is_humiliated(player, card)
+		forbid_attack == 0 && ! is_humiliated(player, card, AL_STATIC)
 	  ){
 		if( affect_me( trigger_cause_controller, trigger_cause ) && reason_for_trigger_controller == affected_card_controller ){
 			int result = get_cost_for_propaganda_like_effect(player, card);
@@ -2516,19 +2512,7 @@ int skip_your_draw_step(int player, event_t event){
 
 
 
-void rampage(int player, int card, event_t event, int number)
-{
-  // 0x415cb0
-  if (event == EVENT_DECLARE_BLOCKERS && current_turn == player && !is_humiliated(player, card))
-	{
-	  int blockers = count_my_blockers(player, card);
-	  if (blockers > 1)
-		{
-		  number *= (blockers - 1);
-		  pump_until_eot(player, card, player, card, number, number);
-		}
-	}
-}
+
 
 // Just like get_type(), but the iid is already known (and possibly may not be easily determinable from just player/card, for instance if it's left play)
 
@@ -2625,7 +2609,7 @@ int generic_creature_with_activated_tapsubtype_ability(int player, int card, eve
 int specific_spell_played(int player, int card, event_t event, int t_player, int trigger_mode, int type, int flag1, int subtype, int flag2, int color, int flag3, int id, int flag4, int cc, int flag5){
 
 	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && player == reason_for_trigger_controller &&
-		!is_humiliated(player, card) && (t_player == ANYBODY || trigger_cause_controller == t_player) &&
+		!is_humiliated(player, card, AL_TRIG) && (t_player == ANYBODY || trigger_cause_controller == t_player) &&
 		!is_what(trigger_cause_controller, trigger_cause, TYPE_LAND) && ! is_token(trigger_cause_controller, trigger_cause) &&
 		make_test_in_play(trigger_cause_controller, trigger_cause, -1, type, flag1, subtype, flag2, color, flag3, id, flag4, cc, flag5)
 	  ){
@@ -2648,7 +2632,7 @@ int specific_spell_played(int player, int card, event_t event, int t_player, int
 int new_specific_spell_played(int player, int card, event_t event, int t_player, int trigger_mode, test_definition_t* this_test/*optional*/){
 
 	if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && player == reason_for_trigger_controller &&
-		!is_humiliated(player, card) && (t_player == ANYBODY || trigger_cause_controller == t_player) &&
+		!is_humiliated(player, card, AL_TRIG) && (t_player == ANYBODY || trigger_cause_controller == t_player) &&
 		!is_what(trigger_cause_controller, trigger_cause, TYPE_LAND) && ! is_token(trigger_cause_controller, trigger_cause) &&
 		(!this_test || new_make_test_in_play(trigger_cause_controller, trigger_cause, -1, this_test))
 	  ){
@@ -2837,58 +2821,219 @@ int remove_at_eot(int player, int card, event_t event){
 
 int total_playable_lands(int player)
 {
-	int total = 1;
-	CYCLE_ALL_CARDS(p, c,{
-							if( in_play(p, c) && (is_what(p, c, TYPE_EFFECT) || ! is_humiliated(p, c)) ){
-								int csvid = get_id(p, c);
-								switch( csvid ){
-										case CARD_ID_RITES_OF_FLOURISHING:
-										case CARD_ID_GHIRAPUR_ORRERY:
-											total++;
-											break;
-										case CARD_ID_EXPLORATION:
-										case CARD_ID_ORACLE_OF_MUL_DAYA:
-										case CARD_ID_MINA_AND_DENN_WILDBORN:
-										case CARD_ID_THE_GITROG_MONSTER:
-											total += (p == player ? 1 : 0);
-											break;
-										case CARD_ID_AZUSA_LOST_BUT_SEEKING:
-											total += (p == player ? 2 : 0);
-											break;
-										case 903:
-										{
-											card_instance_t *inst = get_card_instance(p, c);
-											if( inst->internal_card_id == LEGACY_EFFECT_CUSTOM &&
-												inst->info_slot == (int)check_playable_lands_legacy )
-											{
-												switch (inst->display_pic_csv_id)
-												{
-													case CARD_ID_EXPLORE:
-													case CARD_ID_KIORA_THE_CRASHING_WAVE:
-													case CARD_ID_THIS_WORLD_BELONGS_TO_ME:
-													case CARD_ID_URBAN_EVOLUTION:
-														total += (p == player ? 1 : 0);
-														break;
-													case CARD_ID_JOURNEY_OF_DISCOVERY:
-														total += (p == player ? 2 : 0);
-														break;
-													case CARD_ID_SUMMER_BLOOM:
-														total += (p == player ? 3 : 0);
-														break;
-												}
-											}
-											break;
-										}
-								}
-							}
-						}
-	);
+  uint16_t uVar1;
+  uint16_t uVar2;
+  card_instance_t *instance;
+  int iVar4;
+  int iVar5;
+  int iVar6;
+  int iVar7;
+  bool bVar8;
 
-	if (total == 1){
-		player_bits[player] &= ~PB_COUNT_TOTAL_PLAYABLE_LANDS;
-	}
-
-	return total;
+  iVar6 = current_turn;
+  iVar5 = active_cards_count[current_turn] + -1;
+  if (iVar5 < 0)
+  {
+    iVar7 = 1;
+    iVar6 = 1 - current_turn;
+    iVar5 = active_cards_count[iVar6] + -1;
+    if (iVar5 < 0)
+      goto LAB_02684c4c;
+  LAB_02684965:
+    do
+    {
+      while ((instance = in_play(iVar6, iVar5),
+              instance == NULL ||
+                  ((iVar4 = is_what(iVar6, iVar5, 0x80),
+                    iVar4 == 0 &&
+                        (iVar4 = is_humiliated(iVar6, iVar5, AL_STATIC), iVar4 != 0)))))
+      {
+      joined_r0x02684acf:
+        iVar5 = iVar5 + -1;
+        if (iVar5 < 0)
+          goto LAB_02684a0f;
+      }
+      iVar4 = get_id(iVar6, iVar5);
+      if (iVar4 == 0x1bf9)
+      {
+      LAB_02684ba0:
+        iVar7 = iVar7 + (unsigned int)(iVar6 == player) * 2;
+        goto joined_r0x02684acf;
+      }
+      if (iVar4 < 0x1bfa)
+      {
+        if (iVar4 == 0x387)
+        {
+          instance = get_card_instance(iVar6, iVar5);
+          if ((instance->internal_card_id == LEGACY_EFFECT_CUSTOM) &&
+              (instance->info_slot_fn == check_playable_lands_legacy))
+          {
+            uVar1 = instance->display_pic_csv_id;
+            if (uVar1 == 0x1a24)
+              goto LAB_02684ba0;
+            if ((unsigned short)uVar1 < 0x1a25)
+            {
+              if (uVar1 == 0xae2)
+              {
+                iVar7 = iVar7 + (unsigned int)(iVar6 == player) * 3;
+              }
+            }
+            else
+            {
+              if (uVar1 == 0x35ad)
+                goto LAB_02684a48;
+              if ((unsigned short)uVar1 < 0x35ae)
+              {
+                if ((uVar1 == 0x2a08) || (uVar1 == 0x3323))
+                  goto LAB_02684a48;
+              }
+              else if ((uVar1 == 0x437d) || (uVar1 == 0x55cb))
+                goto LAB_02684a48;
+            }
+          }
+        }
+        else if (0x386 < iVar4)
+        {
+          if (iVar4 == 0x937)
+            goto LAB_02684b73;
+          if (iVar4 == 0xeb3)
+            goto LAB_02684a48;
+        }
+        goto joined_r0x02684acf;
+      }
+      if (iVar4 != 0x4008)
+      {
+        if (iVar4 < 0x4009)
+        {
+          if (iVar4 != 0x2982)
+          {
+            if (iVar4 < 0x2983)
+            {
+              if (iVar4 == 0x232c)
+                goto LAB_02684b73;
+            }
+            else if ((iVar4 == 0x3d19) || (iVar4 == 0x3e70))
+              goto LAB_02684a48;
+            goto joined_r0x02684acf;
+          }
+        }
+        else if ((iVar4 != 0x5202) && ((iVar4 != 0x562d && (iVar4 != 0x479c))))
+          goto joined_r0x02684acf;
+      LAB_02684a48:
+        iVar7 = iVar7 + (unsigned int)(iVar6 == player);
+        goto joined_r0x02684acf;
+      }
+    LAB_02684b73:
+      iVar7 = iVar7 + 1;
+      iVar5 = iVar5 + -1;
+    } while (-1 < iVar5);
+  }
+  else
+  {
+    bVar8 = current_turn == player;
+    iVar7 = 1;
+    do
+    {
+      while ((instance = in_play(iVar6, iVar5),
+              instance == NULL ||
+                  ((iVar4 = is_what(iVar6, iVar5, 0x80),
+                    iVar4 == 0 &&
+                        (iVar4 = is_humiliated(iVar6, iVar5, AL_STATIC), iVar4 != 0)))))
+      {
+      joined_r0x02684b06:
+        iVar5 = iVar5 + -1;
+        if (iVar5 == -1)
+          goto LAB_0268494a;
+      }
+      iVar4 = get_id(iVar6, iVar5);
+      if (iVar4 == 0x1bf9)
+      {
+      LAB_02684bb8:
+        iVar7 = iVar7 + (unsigned int)bVar8 * 2;
+        goto joined_r0x02684b06;
+      }
+      if (iVar4 < 0x1bfa)
+      {
+        if (iVar4 == 0x387)
+        {
+          instance = get_card_instance(iVar6, iVar5);
+          if ((instance->internal_card_id == LEGACY_EFFECT_CUSTOM) &&
+              (instance->info_slot_fn == check_playable_lands_legacy))
+          {
+            uVar2 = instance->display_pic_csv_id;
+            if (uVar2 == 0x1a24)
+              goto LAB_02684bb8;
+            if ((unsigned short)uVar2 < 0x1a25)
+            {
+              if (uVar2 == 0xae2)
+              {
+                iVar7 = iVar7 + (unsigned int)bVar8 * 3;
+              }
+            }
+            else
+            {
+              if (uVar2 == 0x35ad)
+                goto LAB_02684a88;
+              if ((unsigned short)uVar2 < 0x35ae)
+              {
+                if ((uVar2 == 0x2a08) || (uVar2 == 0x3323))
+                  goto LAB_02684a88;
+              }
+              else if ((uVar2 == 0x437d) || (uVar2 == 0x55cb))
+                goto LAB_02684a88;
+            }
+          }
+        }
+        else if (0x386 < iVar4)
+        {
+          if (iVar4 == 0x937)
+            goto LAB_02684b8b;
+          if (iVar4 == 0xeb3)
+            goto LAB_02684a88;
+        }
+        goto joined_r0x02684b06;
+      }
+      if (iVar4 != 0x4008)
+      {
+        if (iVar4 < 0x4009)
+        {
+          if (iVar4 != 0x2982)
+          {
+            if (iVar4 < 0x2983)
+            {
+              if (iVar4 == 0x232c)
+                goto LAB_02684b8b;
+            }
+            else if ((iVar4 == 0x3d19) || (iVar4 == 0x3e70))
+              goto LAB_02684a88;
+            goto joined_r0x02684b06;
+          }
+        }
+        else if ((iVar4 != 0x5202) && ((iVar4 != 0x562d && (iVar4 != 0x479c))))
+          goto joined_r0x02684b06;
+      LAB_02684a88:
+        iVar7 = iVar7 + (unsigned int)(iVar6 == player);
+        goto joined_r0x02684b06;
+      }
+    LAB_02684b8b:
+      iVar5 = iVar5 + -1;
+      iVar7 = iVar7 + 1;
+    } while (iVar5 != -1);
+  LAB_0268494a:
+    iVar6 = 1 - current_turn;
+    iVar5 = active_cards_count[iVar6] + -1;
+    if (-1 < iVar5)
+      goto LAB_02684965;
+  }
+LAB_02684a0f:
+  if (iVar7 != 1)
+  {
+    return iVar7;
+  }
+LAB_02684c4c:
+  *(unsigned int *)(&player_bits + player * 4) =
+      *(unsigned int *)(&player_bits + player * 4) & 0xfffffff7;
+  return 1;
 }
 
 void check_playable_lands(int player)
@@ -2993,15 +3138,24 @@ int effect_cannot_attack_until_eot(int player, int card, event_t event)
 
 
 
-void enters_the_battlefield_with_counters(int player, int card, event_t event, counter_t type, int number)
+void enters_the_battlefield_with_counters(int player, int card, event_t event, counter_t type,
+                                          int number)
 {
-	if( (event == EVENT_CAST_SPELL || event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE) && affect_me(player, card) &&
-		! check_special_flags2(player, card, SF2_FACE_DOWN_DUE_TO_MANIFEST)
-	  ){
-		++hack_silent_counters;
-		add_counters(player, card, type, number);
-		--hack_silent_counters;
-	}
+  card_instance_t *instance;
+  if (((0 < number) &&
+       (((event == EVENT_CAST_SPELL || (event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE)) &&
+         (card == affected_card)))) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    if ((instance->ext->special_flags2 & SF2_FACE_DOWN_DUE_TO_MANIFEST) == 0)
+    {
+      hack_silent_counters = hack_silent_counters + 1;
+      add_counters(player, card, player, card, type, number);
+      hack_silent_counters = hack_silent_counters + -1;
+    }
+  }
+  return;
 }
 
 int count_nonbasic_lands(int player){
@@ -3200,7 +3354,7 @@ int check_battlefield_for_id(int player, int id){
 		if( player == i || player == 2 ){
 			int count = 0;
 			while( count < active_cards_count[i] ){
-					if( in_play(i, count) && get_id(i, count) == id && ! is_humiliated(i, count) ){
+					if( in_play(i, count) && get_id(i, count) == id && ! is_humiliated(i, count, AL_STATIC) ){
 						// this should be right 99% of the cases, since an "humiliated" card lose all abilities
 						return 1;
 					}
@@ -3313,19 +3467,18 @@ void remove_untargettable_from_all(void){
 	 }
 }
 
-void nice_creature_to_sacrifice(int player, int card){
+void nice_creature_to_sacrifice(int player, int card)
+{
+  unsigned int uVar1;
+  card_instance_t *instance;
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( instance->targets[16].card < 0 ){
-		instance->targets[16].card = 0;
-	}
-
-	if( !is_humiliated(player, card) ){
-		if( ! (instance->targets[16].card & SP_KEYWORD_CANNON_FODDER) ){
-			instance->targets[16].card |= SP_KEYWORD_CANNON_FODDER;
-		}
-	}
+  instance = get_card_instance(player, card);
+  uVar1 = instance->ext->sp_keywords2;
+  if ((uVar1 & 8) == 0)
+  {
+    instance->ext->sp_keywords2 = uVar1 | 8;
+  }
+  return;
 }
 
 
@@ -3785,18 +3938,29 @@ void remove_cost_mod_for_activated_abilities(int player, int card, int mode, tes
 	}
 }
 
-void phantom_effect(int player, int card, event_t event, int requires_counter){
+void phantom_effect(int player, int card, event_t event, int requires_counter)
+{
+  int result;
+  card_instance_t *instance;
 
-	if( event == EVENT_PREVENT_DAMAGE && ! is_humiliated(player, card) ){
-		card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
-		if( damage->internal_card_id == damage_card &&
-			damage->damage_target_card == card && damage->damage_target_player == player && damage->info_slot > 0 &&
-			(!requires_counter || count_1_1_counters(player, card) > 0)
-          ){
-			prevent_damage(affected_card_controller, affected_card, -1);
-			remove_1_1_counter(player, card);
-		}
-	}
+  if (((((event == EVENT_PREVENT_DAMAGE) &&
+         (result = is_humiliated(player, card, AL_TRIG), result == 0)) &&
+        (instance = get_card_instance(affected_card_controller, affected_card),
+         instance->internal_card_id == damage_card)) &&
+       ((instance->damage_target_card == card && (instance->damage_target_player == player)))) &&
+      (0 < instance->info_slot))
+  {
+    if ((requires_counter != 0) &&
+        (result = count_counters(player, card, COUNTER_P1_P1), result < 1))
+    {
+      return;
+    }
+    instance = get_card_instance(affected_card_controller, affected_card);
+    instance->info_slot = 0;
+    remove_counters(player, card, player, card, COUNTER_P1_P1, 1);
+    return;
+  }
+  return;
 }
 
 int pick_target_by_type(int player, int card, int t_type, int must_select){
@@ -4015,48 +4179,104 @@ int check_playable_permanents(int player, int p_type, int mode){
 
 
 // If p_pump >= 100, adds p_pump-100 +1/+1 counters, doesn't add power, and ignores t_pump.
-int generic_shade(int player, int card, event_t event, int life_to_pay, int cless, int black, int blue, int green, int red, int white, int p_pump, int t_pump, int k_pump, int sp_key_pump)
+int generic_shade(int player, int card, event_t event, int life_to_pay, int cless, int black,
+                  int blue, int green, int red, int white, int p_pump, int t_pump, int k_pump,
+                  int sp_key_pump)
 {
-  if (event == EVENT_CAN_ACTIVATE
-	  && can_use_activated_abilities(player, card)
-	  && has_mana_for_activated_ability(player, card, cless, black, blue, green, red, white)
-	  && can_pay_life(player, life_to_pay))
-	return 1;
-
-  if (event == EVENT_ACTIVATE && charge_mana_for_activated_ability(player, card, cless, black, blue, green, red, white))
-	lose_life(player, life_to_pay);
-
-  if (event == EVENT_RESOLVE_ACTIVATION)
-	{
-	  card_instance_t* instance = get_card_instance(player, card);
-	  int p = instance->parent_controller, c = instance->parent_card;
-	  if (in_play(p, c))
-		{
-		  if (p_pump < 100)
-			pump_ability_until_eot(p, c, p, c, p_pump, t_pump, k_pump, sp_key_pump);
-		  else
-			{
-			  int value = p_pump-100;
-			  add_1_1_counters(p, c, value);
-
-			  if (k_pump || sp_key_pump)
-				  pump_ability_until_eot(p, c, p, c, 0, 0, k_pump, sp_key_pump);
-			}
-		}
-	}
-
-  if (event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST)
-	{
-	  int pump;
-	  if (p_pump >= 100)
-		pump = p_pump - 100;
-	  else
-		pump = event == EVENT_POW_BOOST ? p_pump : t_pump;
-
-	  return generic_shade_amt_can_pump(player, card, pump, life_to_pay, cless, black, blue, green, red, white, -1);
-	}
-
-  return 0;
+  int card_00;
+  int result;
+  card_instance_t *instance;
+  int iStack_18;
+  iStack_18 = p_pump;
+  if (event == EVENT_CAN_ACTIVATE)
+  {
+    result = can_use_activated_abilities(player, card);
+    if (((result != 0) && (result = has_mana_for_activated_ability(player, card, cless, black, blue,
+                                                                   green, red, white),
+                           result != 0)) &&
+        (result = can_pay_life_impl(player, life_to_pay, 0), result != 0))
+    {
+      return 1;
+    }
+  }
+  else
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      result =
+          charge_mana_for_activated_ability(player, card, cless, black, blue, green, red, white);
+      if (result == 0)
+      {
+        return 0;
+      }
+      lose_life(player, life_to_pay);
+      if (0 < p_pump)
+      {
+        return 0;
+      }
+      if (0 < t_pump)
+      {
+        return 0;
+      }
+      if ((k_pump == 0) ||
+          ((result = check_for_ability(player, card, k_pump),
+            result == 0 && (instance = has_activation_on_stack(player, card), instance == NULL))))
+      {
+        if (sp_key_pump == 0)
+        {
+          return 0;
+        }
+        result = check_for_special_ability(player, card, sp_key_pump);
+        if ((result == 0) && (instance = has_activation_on_stack(player, card), instance == NULL))
+        {
+          return 0;
+        }
+      }
+      ai_modifier = ai_modifier + -0x37;
+      return 0;
+    }
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      instance = get_card_instance(player, card);
+      result = instance->parent_controller;
+      card_00 = instance->parent_card;
+      instance = in_play(result, card_00);
+      if (instance == NULL)
+      {
+        return 0;
+      }
+      if (99 < p_pump)
+      {
+        add_counters(player, card, result, card_00, COUNTER_P1_P1, p_pump + -100);
+        if (k_pump == 0 && sp_key_pump == 0)
+        {
+          return 0;
+        }
+        t_pump = 0;
+        p_pump = 0;
+      }
+      pump_ability_until_eot(result, card_00, result, card_00, p_pump, t_pump, k_pump, sp_key_pump);
+      return 0;
+    }
+  }
+  if (1 < event - EVENT_POW_BOOST)
+  {
+    return 0;
+  }
+  if (p_pump < 100)
+  {
+    if (event != EVENT_POW_BOOST)
+    {
+      iStack_18 = t_pump;
+    }
+  }
+  else
+  {
+    iStack_18 = p_pump + -100;
+  }
+  result = generic_shade_amt_can_pump(player, card, iStack_18, life_to_pay, cless, black, blue,
+                                      green, red, white, -1);
+  return result;
 }
 
 /* Just like generic_shade(), but can't pump abilities or add counters, and sends its effect through pump_until_eot_merge_previous() so they combine into a
@@ -4087,75 +4307,100 @@ int generic_shade_merge_pt(int player, int card, event_t event, int life_to_pay,
 }
 
 // If p_pump >= 100, adds p_pump-100 +1/+1 counters, doesn't add power, and ignores t_pump.
-int generic_husk(int player, int card, event_t event, int type, int p_pump, int t_pump, int k_pump, int sp_key_pump)
+int generic_husk(int player, int card, event_t event, int type, int p_pump, int t_pump, int k_pump,
+                 int sp_key_pump)
 {
-  /* Creature
-   * Sacrifice a [card type]: ~ gets +[p_pump]/+[t_pump] and gains [k_pump] and [sp_key_pump] until end of turn. */
-
-  if (event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST)
-	{
-	  int pump = event == EVENT_POW_BOOST ? p_pump : t_pump;
-	  if (p_pump >= 100)
-		pump = p_pump - 100;
-
-	  if (pump <= 0)
-		return 0;
-
-	  test_definition_t test;
-	  new_default_test_definition(&test, type, "");
-	  test.not_me = 1;
-
-	  int num_can_sac = max_can_sacrifice_as_cost(player, card, &test);
-	  if (num_can_sac <= 0)
-		return 0;
-
-	  return generic_shade_amt_can_pump(player, card, pump, 0, MANACOST0, num_can_sac);
-	}
-
-  if (!IS_ACTIVATING(event))
-	return 0;
-
-  if (event == EVENT_CAN_ACTIVATE)
-	return CAN_ACTIVATE0(player, card) && can_sacrifice_type_as_cost(player, 1, type);
-
-  if (event == EVENT_ACTIVATE
-	  && charge_mana_for_activated_ability(player, card, MANACOST0))
-	{
-	  int sac = controller_sacrifices_a_permanent(player, card, type, SAC_AS_COST | SAC_RETURN_CHOICE);
-	  if (!sac)
-		cancel = 1;
-	  else if (player == AI && BYTE3(sac) == card && BYTE2(sac) == player)
-		ai_modifier -= 96;
-	}
-
-  if (event == EVENT_RESOLVE_ACTIVATION)
-	{
-	  card_instance_t *instance = get_card_instance(player, card);
-	  int p = instance->parent_controller, c = instance->parent_card;
-
-	  if (in_play(p, c))
-		{
-		  if (p_pump < 100)
-			{
-			  if (!k_pump && !sp_key_pump	// can't merge if adding any keywords
-				  && (p_pump > 0			// the legal combinations for merging
-					  || (p_pump == 0 && t_pump > 0)
-					  || (p_pump < 0 && t_pump == 0)))
-				pump_until_eot_merge_previous(p, c, p, c, p_pump, t_pump);
-			  else
-				pump_ability_until_eot(p, c, p, c, p_pump, t_pump, k_pump, sp_key_pump);
-			}
-		  else
-			{
-			  add_1_1_counters(p, c, p_pump - 100);
-
-			  if (k_pump || sp_key_pump)
-				pump_ability_until_eot(p, c, p, c, 0, 0, k_pump, sp_key_pump);
-			}
-		}
-	}
-
-	return 0;
+  int card_00;
+  card_instance_t *instance;
+  int result;
+  unsigned int uVar3;
+  test_definition_t test;
+  if (event - EVENT_POW_BOOST < 2)
+  {
+    if (event == EVENT_POW_BOOST)
+    {
+      t_pump = p_pump;
+    }
+    if (99 < p_pump)
+    {
+      t_pump = p_pump + -100;
+    }
+    if (0 < t_pump)
+    {
+      new_default_test_definition(&test, type, "");
+      test.not_me = 1;
+      result = max_can_sacrifice_as_cost(player, card, &test);
+      if (0 < result)
+      {
+        result = generic_shade_amt_can_pump(player, card, t_pump, 0, 0, 0, 0, 0, 0, 0, result);
+        return result;
+      }
+    }
+  }
+  else if ((event - EVENT_RESOLVE_ACTIVATION < 2) || (event == EVENT_ACTIVATE))
+  {
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = can_use_activated_abilities(player, card);
+      if ((result != 0) &&
+          (result = has_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0), result != 0))
+      {
+        result = can_sacrifice_type_as_cost(player, 1, type);
+        return (unsigned int)(result != 0);
+      }
+    }
+    else if (event == EVENT_ACTIVATE)
+    {
+      result = charge_mana_for_activated_ability(player, card, 0, 0, 0, 0, 0, 0);
+      if (result != 0)
+      {
+        uVar3 =
+            controller_sacrifices_a_permanent(player, card, type, SAC_RETURN_CHOICE | SAC_AS_COST);
+        if (uVar3 == 0)
+        {
+          spell_fizzled = 1;
+        }
+        else if (((player == 1) && (card == uVar3 >> 0x18)) && ((char)(uVar3 >> 0x10) == '\x01'))
+        {
+          ai_modifier = ai_modifier + -0x60;
+        }
+      }
+    }
+    else if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      instance = get_card_instance(player, card);
+      result = instance->parent_controller;
+      card_00 = instance->parent_card;
+      instance = in_play(result, card_00);
+      if (instance != NULL)
+      {
+        if (p_pump < 100)
+        {
+          if ((k_pump == 0 && sp_key_pump == 0) &&
+              (((0 < p_pump || ((p_pump == 0 && (0 < t_pump)))) ||
+                ((p_pump < 0 && (t_pump == 0))))))
+          {
+            pump_until_eot_merge_previous_alt(result, card_00, result, card_00, p_pump, t_pump, 0);
+            return 0;
+          }
+        }
+        else
+        {
+          add_counters(player, card, result, card_00, COUNTER_P1_P1, p_pump + -100);
+          if (k_pump == 0 && sp_key_pump == 0)
+          {
+            return 0;
+          }
+          t_pump = 0;
+          p_pump = 0;
+        }
+        pump_ability_until_eot(result, card_00, result, card_00, p_pump, t_pump, k_pump,
+                               sp_key_pump);
+        return 0;
+      }
+    }
+  }
+  return 0;
 }
 
 // Like generic_shade, but includes T in activation cost.  Only supports modifications to power or toughness, due to the limited card pool.
@@ -4335,709 +4580,1057 @@ int dont_account_for_trinisphere = 0;
 int havengul_lich_hack = 0;
 // exactly one of card and iid must be >= 0.  Player must always be valid.
 // this could return even negative values, used by Buyback and similar costs modifier.
-int true_get_updated_casting_cost(int player, int card, int iid, event_t event, int orig_cless){
-	// Seriously?
-	/* Plus, this can't account for things like Edgewalker ("Cleric spells you cast cost |W|B less to cast.") or Jade Leech ("Green spells you cast cost G more
-	 * to cast.") */
-	ASSERT(player == 0 || player == 1 || !"get_updated_casting_cost() needs a real player");
-	ASSERT((card < 0) != (iid < 0) && "get_updated_casting_cost() needs exactly one of card and iid to be valid");
-	if (iid < 0){
-		iid = get_card_instance(player, card)->internal_card_id;
-	}
-	if( cards_data[iid].type & TYPE_LAND ){
-		return 0;
-	}
-	int csvid = cards_data[iid].id;
-	int cless = orig_cless;
-
-	card_ptr_t* c = cards_ptr[ csvid ];
-	if( cless == -1 ){
-		cless = c->req_colorless;
-	}
-	if( cless > 15 || cless == -1 ){
-		cless = 0;
-	}
-
-	int trinisphere_flag = 0;
-	int clr = get_color_by_internal_id(player, iid);
-	int i;
-	int checked_pl = 0;
-	for(i=0; i<2; i++){
-		card_instance_t* instance;
-		int count = 0;
-		while(count < active_cards_count[i] ){
-			if( (instance = in_play(i, count)) && (is_what(i, count, TYPE_EFFECT) || ! is_humiliated(i, count)) ){
-				int this_csvid = get_id(i, count);
-				switch( this_csvid ){
-						case CARD_ID_SPECIAL_EFFECT:
-						{
-							int flags = instance->targets[0].card;
-							if( (flags & SE_CSVID_CANT_BE_PLAYED) || (flags & SE_TYPE_CANT_BE_PLAYED) ){
-								if( player == instance->targets[0].player || instance->targets[0].player == ANYBODY ){
-									if( flags & SE_CSVID_CANT_BE_PLAYED ){
-										if( cards_data[iid].id == instance->targets[1].player ){
-											return 99;
-										}
-									}
-									if( (flags & SE_TYPE_CANT_BE_PLAYED) && instance->targets[1].player > -1 ){
-										if( is_what(-1, iid, instance->targets[1].player) ){
-											return 99;
-										}
-									}
-								}
-							}
-							break;
-						}
-
-						case CARD_ID_ANGELIC_ARBITER:
-						{
-							if( instance->targets[1].card > 0 && (instance->targets[1].card & 1) && i != player ){
-								return 99;
-							}
-							break;
-						}
-
-						case CARD_ID_ANIMAR_SOUL_OF_ELEMENTS:
-						{
-							if( i == player && is_what(-1, iid, TYPE_CREATURE) ){
-								cless-=count_1_1_counters(i, count);
-							}
-							break;
-						}
-
-						case CARD_ID_ARCANE_LABORATORY:
-						case CARD_ID_RULE_OF_LAW:
-						{
-							if( instance->targets[1].player > 0 && (instance->targets[1].player & (1+player)) ){
-								return 99;
-							}
-							break;
-						}
-
-						case CARD_ID_ARCANE_MELEE:
-						{
-							if( ! is_what(-1, iid, TYPE_CREATURE) && is_what(-1, iid, TYPE_SPELL) ){
-								cless-=2;
-							}
-							break;
-						}
-
-						case CARD_ID_AURA_OF_SILENCE:
-						{
-							if( i != player && is_what(-1, iid, TYPE_ARTIFACT | TYPE_ENCHANTMENT) ){
-								cless+=2;
-							}
-							break;
-						}
-
-						case CARD_ID_BALLYRUSH_BANNERET:
-						{
-							if( i == player && (has_subtype_by_id(csvid, SUBTYPE_SOLDIER) || has_subtype_by_id(csvid, SUBTYPE_KITHKIN)) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_BASANDRA_BATTLE_SERAPH:
-						{
-							if( current_phase > PHASE_MAIN1 && current_phase < PHASE_MAIN2 ){
-								return 99;
-							}
-							break;
-						}
-
-						case CARD_ID_BOSK_BANNERET:
-						{
-							if( i == player && (has_subtype_by_id(csvid, SUBTYPE_TREEFOLK) || has_subtype_by_id(csvid, SUBTYPE_SHAMAN)) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_BRAND_OF_ILL_OMEN:
-						{
-							if( player == instance->damage_target_player && is_what(-1, iid, TYPE_CREATURE)){
-								return 99;
-							}
-							break;
-						}
-
-						case CARD_ID_BRIGHTHEARTH_BANNERET:
-						{
-							if( i == player && (has_subtype_by_id(csvid, SUBTYPE_ELEMENTAL) || has_subtype_by_id(csvid, SUBTYPE_WARRIOR)) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_CENTAUR_OMENREADER:
-						{
-							if( is_tapped(i, count) && i == player && is_what(-1, iid, TYPE_CREATURE) ){
-								cless-=2;
-							}
-							break;
-						}
-
-						case CARD_ID_CLOUD_KEY:
-						{
-							if( instance->targets[1].card > 0 && is_what(-1, iid, instance->targets[1].card) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_COUNCIL_OF_THE_ABSOLUTE:
-						{
-							if( get_card_instance(i, count)->targets[1].card == csvid){
-								if( i == player ){
-									cless-=2;
-								}
-								else{
-									return 99;
-								}
-							}
-							break;
-						}
-
-						case CARD_ID_CURSE_OF_EXHAUSTION:
-						{
-							if( player == instance->targets[0].player && instance->targets[1].player == 66 ){
-								return 49;
-							}
-							break;
-						}
-
-						case CARD_ID_DEFENSE_GRID:
-						{
-							if( current_turn != player ){
-								cless+=3;
-							}
-							break;
-						}
-
-						case CARD_ID_DRAGONSPEAKER_SHAMAN:
-						{
-							if( i == player && has_subtype_by_id(csvid, SUBTYPE_DRAGON) ){
-								cless-=2;
-							}
-							break;
-						}
-
-						case CARD_ID_ELDER_DRAGON_HIGHLANDER:
-						{
-							if( instance->targets[5].card == iid){
-								cless += count_counters(i, count, COUNTER_VORTEX);
-							}
-							break;
-						}
-
-						case CARD_ID_EMERALD_MEDALLION:
-						{
-							if( i == player && (clr & COLOR_TEST_GREEN) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_ETHERIUM_SCULPTOR:
-						{
-							if( is_what(-1, iid, TYPE_ARTIFACT) && i == player ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_ETHERSWORN_CANONIST:
-						{
-							if( ! is_what(-1, iid, TYPE_ARTIFACT) ){
-								if( instance->targets[1].player > 0 && (instance->targets[1].player & (1+player)) ){
-									return 99;
-								}
-							}
-							break;
-						}
-
-						case CARD_ID_EXCLUSION_RITUAL:
-						{
-							if( instance->targets[1].card == csvid ){
-								return 99;
-							}
-							break;
-						}
-
-						case CARD_ID_EYE_OF_UGIN:
-						{
-							if( i == player && has_subtype_by_id(csvid, SUBTYPE_ELDRAZI) && !(clr & COLOR_TEST_ANY_COLORED) ){
-								cless-=2;
-							}
-							break;
-						}
-
-						case CARD_ID_FROGTOSSER_BANNERET:
-						{
-							if( i == player && (has_subtype_by_id(csvid, SUBTYPE_GOBLIN) || has_subtype_by_id(csvid, SUBTYPE_ROGUE)) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_GADDOCK_TEEG:
-						{
-							if( ! is_what(-1, iid, TYPE_CREATURE) ){
-								if( get_cmc_by_id(csvid) > 3 ){
-									return 99;
-								}
-							}
-							break;
-						}
-
-						case CARD_ID_GLOOM:
-						{
-							if( (clr & COLOR_TEST_WHITE)  ){
-								cless+=3;
-							}
-							break;
-						}
-
-						case CARD_ID_GOBLIN_ELECTROMANCER:
-						{
-							if( i == player && ! is_what(-1, iid, TYPE_CREATURE) && is_what(-1, iid, TYPE_SPELL) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_GOBLIN_WARCHIEF:
-						{
-							if( i == player && has_subtype_by_id(csvid, SUBTYPE_GOBLIN) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_GRAND_ABOLISHER:
-						{
-							if( i != player && current_turn == i ){
-								return 99;
-							}
-							break;
-						}
-
-						case CARD_ID_GRAND_ARBITER_AUGUSTIN_IV:
-						{
-							if( i == player ){
-								cless--;
-							}
-							else{
-								cless++;
-							}
-							break;
-						}
-
-						case CARD_ID_GRID_MONITOR:
-						case CARD_ID_STEEL_GOLEM:
-						{
-							if( i == player && is_what(-1, iid, TYPE_CREATURE) ){
-								return 49;
-							}
-							break;
-						}
-
-						case CARD_ID_HEARTLESS_SUMMONING:
-						{
-							if( i == player && is_what(-1, iid, TYPE_CREATURE) ){
-								cless-=2;
-							}
-							break;
-						}
-
-						case CARD_ID_HELM_OF_AWAKENING:
-							cless--;
-							break;
-
-						case CARD_ID_HERALD_OF_WAR:
-						{
-							if( i == player && (has_subtype_by_id(csvid, SUBTYPE_ANGEL) || has_subtype_by_id(csvid, SUBTYPE_HUMAN)) ){
-								cless-=count_1_1_counters(i, count);
-							}
-							break;
-						}
-
-						case CARD_ID_HERO_OF_IROAS:
-						{
-							if( i == player && has_subtype(-1, iid, SUBTYPE_AURA) && ! is_humiliated(i, count) ){
-								--cless;
-							}
-							break;
-						}
-
-						case CARD_ID_IN_THE_EYE_OF_CHAOS:
-						{
-							if( is_what(-1, iid, TYPE_INSTANT) && ! is_what(-1, iid, TYPE_CREATURE) ){
-								cless+=get_cmc_by_id(csvid);
-							}
-							break;
-						}
-
-						case CARD_ID_IONA_SHIELD_OF_EMERIA:
-						{
-							if( i == 1-player && ! is_what(-1, iid, TYPE_LAND) ){
-								if( clr & instance->targets[10].card ){
-									return 49;
-								}
-							}
-							break;
-						}
-
-						/* Semi-general case.  Checks against player need to be handled both here and specially in the
-						 * card function; and the card function shouldn't do anything with affected_card_controller
-						 * except check it with affect_me() or pass it on to functions that explicitly understand the
-						 * (-1,iid) convention.  Usually this means checking EVENT_MODIFY_COST_GLOBAL first and
-						 * explicitly returning at the end.
-						 * Simply checking affected_card_controller == player in the card function WILL FAIL.
-						 * Calling most functions that look at affected_card_controller WILL CRASH. */
-
-						// Spells your opponents cast cost more/cost less/can't be played
-						case CARD_ID_ALHAMMARRET_HIGH_ARBITER:
-						case CARD_ID_DRAGONLORD_DROMOKA:
-						case CARD_ID_VOID_WINNOWER:
-						case CARD_ID_BRISELA_VOICE_OF_NIGHTMARES:
-							if (player == i){
-								break;
-							}
-							checked_pl = 1;
-							// intentionally fall through
-
-						// Spells you cast cost more/cost less/can't be played.  See above for usage.
-						case CARD_ID_ARCHENEMY:
-						case CARD_ID_CONDUIT_OF_RUIN:
-						case CARD_ID_DRAGONLORDS_SERVANT:
-						case CARD_ID_FOUNDRY_INSPECTOR:
-						case CARD_ID_GEIST_FUELED_SCARECROW:
-						case CARD_ID_HERALD_OF_KOZILEK:
-						case CARD_ID_HERALD_OF_THE_PANTHEON:
-						case CARD_ID_JACES_SANCTUM:
-						case CARD_ID_KRALLENHORDE_HOWLER:
-						case CARD_ID_MIZZIX_OF_THE_IZMAGNUS:
-						case CARD_ID_PLANAR_GATE:
-						case CARD_ID_SEAL_OF_THE_GUILDPACT:
-						case CARD_ID_VORACIOUS_READER:
-							if (player != i && !checked_pl){
-								break;
-							}
-							checked_pl = 1;
-							// intentionally fall through
-
-						// Spells anybody casts cost more/cost less/can't be played.  See above for usage.
-						case CARD_ID_FEROZS_BAN:
-						case CARD_ID_IRINI_SENGIR:
-						{
-							int old_cost_colorless = COST_COLORLESS;
-							int old_affected_card_controller = affected_card_controller;
-							int old_affected_card = affected_card;
-							int old_event_result = event_result;
-
-							event_result = player;
-							if (card >= 0){
-								affected_card_controller = player;
-								affected_card = card;
-							} else {
-								affected_card_controller = -1;
-								affected_card = iid;
-							}
-
-							call_card_function(i, count, EVENT_MODIFY_COST_GLOBAL);
-
-							affected_card_controller = old_affected_card_controller;
-							affected_card = old_affected_card;
-							event_result = old_event_result;
-
-							cless += COST_COLORLESS - old_cost_colorless;
-							COST_COLORLESS = old_cost_colorless;
-							break;
-						}
-
-						case CARD_ID_JET_MEDALLION:
-						{
-							if( i == player && (clr & COLOR_TEST_BLACK) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_LOCKET_OF_YESTERDAYS:
-						{
-							if( i == player ){
-								cless-=count_graveyard_by_id(player, csvid);
-							}
-							break;
-						}
-
-						case CARD_ID_LODESTONE_GOLEM:
-						{
-							if( ! is_what(-1, iid, TYPE_ARTIFACT) ){
-								cless++;
-							}
-							break;
-						}
-
-						case CARD_ID_MANA_MATRIX:
-						{
-							if( i == player && ( is_what(-1, iid, TYPE_INSTANT) || is_what(-1, iid, TYPE_ENCHANTMENT) ) ){
-								cless-=2;
-							}
-							break;
-						}
-
-						case CARD_ID_MEDDLING_MAGE:
-						case CARD_ID_NEVERMORE:
-						{
-							if( instance->targets[1].card == csvid ){
-								return 49;
-							}
-							break;
-						}
-
-						case CARD_ID_MYCOSYNTH_GOLEM:
-						{
-							if( is_what(-1, iid, TYPE_ARTIFACT) && is_what(-1, iid, TYPE_CREATURE) ){
-								cless-=count_subtype(player, TYPE_ARTIFACT, -1);
-							}
-							break;
-						}
-
-						case CARD_ID_NIGHTSCAPE_FAMILIAR:
-						{
-							if( i == player && (clr & get_sleighted_color_test(i, count, COLOR_TEST_BLUE | COLOR_TEST_RED)) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_OMNISCIENCE:
-						{
-							if( i == player){
-								cless-=c->req_colorless;
-							}
-							break;
-						}
-
-						case CARD_ID_PEARL_MEDALLION:
-						{
-							if( i == player && (clr & COLOR_TEST_WHITE) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_RAKDOS_LORD_OF_RIOTS:
-						{
-							if( i == player && is_what(-1, iid, TYPE_CREATURE) ){
-								cless-=get_trap_condition(1-player, TRAP_LIFE_LOST);
-							}
-							break;
-						}
-
-						case CARD_ID_ROOFTOP_STORM:
-						{
-							if( i == player && has_subtype_by_id(csvid, SUBTYPE_ZOMBIE) ){
-								cless-=c->req_colorless;
-							}
-							break;
-						}
-
-						case CARD_ID_RUBY_MEDALLION:
-						{
-							if( i == player && (clr & COLOR_TEST_RED) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_SAPPHIRE_MEDALLION:
-						{
-							if( i == player && (clr & COLOR_TEST_BLUE) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_SPHERE_OF_RESISTANCE:
-						{
-							cless++;
-							break;
-						}
-
-						case CARD_ID_STINKDRINKER_DAREDEVIL:
-						{
-							if( i == player && has_subtype_by_id(csvid, SUBTYPE_GIANT) ){
-								cless-=2;
-							}
-							break;
-						}
-
-						case CARD_ID_STONE_CALENDAR:
-						{
-							if( i == player ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_STONYBROOK_BANNERET:
-						{
-							if( i == player && (has_subtype_by_id(csvid, SUBTYPE_MERFOLK) || has_subtype_by_id(csvid, SUBTYPE_WIZARD)) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_STORMSCAPE_FAMILIAR:
-						{
-							if( i == player && (clr & get_sleighted_color_test(i, count, COLOR_TEST_WHITE | COLOR_TEST_BLACK)) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_SUNSCAPE_FAMILIAR:
-						{
-							if( i == player && (clr & get_sleighted_color_test(i, count, COLOR_TEST_GREEN | COLOR_TEST_BLUE)) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_TEFERI_MAGE_OF_ZHALFIR:
-						{
-							if( i != player && ! can_sorcery_be_played(player, event) ){
-								return 49;
-							}
-							break;
-						}
-
-						case CARD_ID_THALIA_GUARDIAN_OF_THRABEN:
-						{
-							if( i != player && ! is_what(-1, iid, TYPE_CREATURE) ){
-								cless++;
-							}
-							break;
-						}
-
-						case CARD_ID_THORNSCAPE_FAMILIAR:
-						{
-							if( i == player && (clr & get_sleighted_color_test(i, count, COLOR_TEST_RED | COLOR_TEST_WHITE)) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_THUNDERSCAPE_FAMILIAR:
-						{
-							if( i == player && (clr & get_sleighted_color_test(i, count, COLOR_TEST_BLACK | COLOR_TEST_GREEN)) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_TRINISPHERE:
-							trinisphere_flag = 1;
-							break;
-
-						case CARD_ID_THORN_OF_AMETHYST:
-						case CARD_ID_VRYN_WINGMARE:
-						{
-							if( ! is_what(-1, iid, TYPE_CREATURE) ){
-								cless++;
-							}
-							break;
-						}
-
-						case CARD_ID_UNDEAD_WARCHIEF:
-						{
-							if( i == player && has_subtype_by_id(csvid, SUBTYPE_ZOMBIE) ){
-								cless--;
-							}
-							break;
-						}
-
-						case CARD_ID_VOIDSTONE_GARGOYLE:
-						{
-							if( instance->targets[1].card == csvid ){
-								return 99;
-							}
-							break;
-						}
-
-						case CARD_ID_WARD_OF_BONES:
-						{
-							if( i != player ){
-								if( instance->targets[1].card == 66 && is_what(-1, iid, TYPE_CREATURE) ){
-									return 49;
-								}
-								else if( instance->targets[2].card == 66 && is_what(-1, iid, TYPE_ARTIFACT) ){
-										return 49;
-								}
-								else if( instance->targets[3].card == 66 && is_what(-1, iid, TYPE_ENCHANTMENT) ){
-										return 49;
-								}
-							}
-							break;
-						}
-
-						case CARD_ID_OBSCURING_AETHER:
-						case CARD_ID_DREAM_CHISEL:
-						{
-							if( i == player && cards_data[iid].id == CARD_ID_FACE_DOWN_CREATURE ){
-								--cless;
-							}
-							break;
-						}
-
-						case CARD_ID_CONSPIRACY_HYMN_OF_THE_WILDS:
-						{
-							if( i == player ){
-								if( is_what(-1, iid, TYPE_SPELL) ){
-									infinite_casting_cost();
-								}
-								if( is_what(-1, iid, TYPE_CREATURE) && get_stormcreature_count(i) == 0 ){
-									COST_COLORLESS--;
-								}
-							}
-							break;
-						}
-
-						case CARD_ID_SANCTUM_PRELATE:
-						{
-							int value = instance->info_slot;
-							if( ! is_what(-1, iid, TYPE_CREATURE) && get_cmc_by_internal_id(iid) == value ){
-								infinite_casting_cost();
-							}
-							break;
-						}
-
-						default:
-							break;
-				}
-			}
-			count++;
-		}
-	}
-
-	if( trinisphere_flag == 1 && cless < 3 && dont_account_for_trinisphere <= 0 ){
-		if( orig_cless == -1 ){
-			int total_cmc = c->req_black + c->req_blue + c->req_green + c->req_red + c->req_white;
-			if( total_cmc < 3 ){
-				cless = 3-total_cmc;
-			}
-		}
-		else{
-			cless = 3-orig_cless;
-		}
-	}
-	cless+=havengul_lich_hack;
-
-	return cless;
+int true_get_updated_casting_cost(int player, int card, int iid, event_t event, int orig_cless)
+{
+  card_ptr_t *pcVar1;
+  bool bVar2;
+  bool bVar3;
+  char cVar4;
+  int iVar5;
+  bool bVar6;
+  unsigned int uVar7;
+  card_instance_t *instance;
+  int iVar9;
+  unsigned int uVar10;
+  int iVar11;
+  int iVar12;
+  unsigned int uVar13;
+  int card_00;
+  int player_00;
+  unsigned int uStack_14;
+
+  if (1 < (unsigned int)player)
+  {
+    backtrace_and_abort("functions/functions.c:10186\nplayer == 0 || player == 1 || "
+                        "!\"get_updated_casting_cost() needs a real player\"");
+  }
+  if ((char)-((char)((unsigned char)((unsigned int)card >> 0x18) ^ 0xff) >> 7) !=
+      (char)-(char)(iid >> 0x1f))
+  {
+    backtrace_and_abort(
+        "functions/functions.c:10187\n(card < 0) != (iid < 0) && \"get_updated_casting_cost() "
+        "needs exactly one of card and iid to be valid\"");
+  }
+  if (iid < 0)
+  {
+    instance = get_card_instance(player, card);
+    iid = instance->internal_card_id;
+  }
+  if ((cards_data[iid].type & 1) != 0)
+  {
+    return 0;
+  }
+  uVar13 = (unsigned int)cards_data[iid].id;
+  pcVar1 = cards_ptr[uVar13];
+  uStack_14 = orig_cless;
+  if (orig_cless == -1)
+  {
+    uStack_14 = (unsigned int)pcVar1->req_colorless;
+    if (uStack_14 < 0x10)
+      goto LAB_026898ba;
+  }
+  else if (orig_cless < 0x10)
+    goto LAB_026898ba;
+  uStack_14 = 0;
+LAB_026898ba:
+  player_00 = 0;
+  uVar7 = get_color_by_internal_id(player, iid);
+  bVar3 = false;
+  bVar2 = false;
+  while (active_cards_count[player_00] < 1)
+  {
+  LAB_026899ce:
+    player_00 = player_00 + 1;
+    if (player_00 == 2)
+    {
+      if (((bVar2) && ((int)uStack_14 < 3)) && (dont_account_for_trinisphere < 1))
+      {
+        if (orig_cless == -1)
+        {
+          uVar13 = (unsigned int)pcVar1->req_black + (unsigned int)pcVar1->req_blue +
+                   (unsigned int)pcVar1->req_green + (unsigned int)pcVar1->req_red +
+                   (unsigned int)pcVar1->req_white;
+          if (uVar13 < 3)
+          {
+            uStack_14 = 3 - uVar13;
+          }
+        }
+        else
+        {
+          uStack_14 = 3 - orig_cless;
+        }
+      }
+      return uStack_14 + havengul_lich_hack;
+    }
+  }
+  card_00 = 0;
+LAB_02689900:
+  instance = in_play(player_00, card_00);
+  bVar6 = bVar3;
+  if ((instance != NULL) &&
+      ((iVar9 = is_what(player_00, card_00, 0x80),
+        iVar9 != 0 || (iVar9 = is_humiliated(player_00, card_00, AL_STATIC), iVar9 == 0))))
+  {
+    uVar10 = get_id(player_00, card_00);
+    iVar5 = affected_card;
+    iVar12 = affected_card_controller;
+    iVar9 = event_result;
+    cVar4 = COST_COLORLESS;
+    if (uVar10 == 0x2470)
+    {
+      if ((player == player_00) &&
+          ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_TREEFOLK),
+            iVar9 != 0 ||
+                (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_SHAMAN), iVar9 != 0))))
+      {
+        uStack_14 = uStack_14 - 1;
+      }
+      goto LAB_026899c0;
+    }
+    if ((int)uVar10 < 0x2471)
+    {
+      if (uVar10 == 0x14bf)
+      {
+        if (player == player_00)
+        {
+          uVar10 = get_sleighted_color_test(player, card_00, 0x22);
+          uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);
+        }
+      }
+      else if ((int)uVar10 < 0x14c0)
+      {
+        if (uVar10 == 0xb78)
+        {
+          if ((player != player_00) && (iVar9 = is_what(-1, iid, 0x44), iVar9 != 0))
+          {
+            uStack_14 = uStack_14 + 2;
+          }
+        }
+        else if ((int)uVar10 < 0xb79)
+        {
+          if (uVar10 == 0x3f4)
+          {
+            if (current_turn != player)
+            {
+              card_00 = card_00 + 1;
+              uStack_14 = uStack_14 + 3;
+              COST_COLORLESS = cVar4;
+              event_result = iVar9;
+              affected_card_controller = iVar12;
+              affected_card = iVar5;
+              if (active_cards_count[player_00] <= card_00)
+                goto LAB_026899ce;
+              goto LAB_02689900;
+            }
+          }
+          else
+          {
+            if (0x3f4 < (int)uVar10)
+            {
+              if (uVar10 == 0x883)
+              {
+              LAB_02689f50:
+                iVar9 = 2;
+              LAB_02689f58:
+                iVar9 = is_what(-1, iid, iVar9);
+                if (iVar9 != 0)
+                {
+                  return 99;
+                }
+                card_00 = card_00 + 1;
+                if (active_cards_count[player_00] <= card_00)
+                  goto LAB_026899ce;
+              }
+              else
+              {
+                if ((int)uVar10 < 0x884)
+                {
+                  if (uVar10 == 0x66a)
+                    goto LAB_0268a538;
+                  if ((uVar10 == 0x756) && (instance->damage_target_player == player))
+                    goto LAB_02689f50;
+                  goto LAB_026899c0;
+                }
+                if (uVar10 == 0x89b)
+                {
+                LAB_0268a538:
+                  iVar11 = (int)COST_COLORLESS;
+                  event_result = player;
+                  if (card < 0)
+                  {
+                    affected_card = iid;
+                    affected_card_controller = -1;
+                  }
+                  else
+                  {
+                    affected_card_controller = player;
+                    affected_card = card;
+                  }
+                  call_card_function(player_00, card_00, EVENT_MODIFY_COST_GLOBAL);
+                  uStack_14 = uStack_14 + (COST_COLORLESS - iVar11);
+                  card_00 = card_00 + 1;
+                  COST_COLORLESS = cVar4;
+                  event_result = iVar9;
+                  affected_card_controller = iVar12;
+                  affected_card = iVar5;
+                  if (active_cards_count[player_00] <= card_00)
+                    goto LAB_026899ce;
+                }
+                else
+                {
+                  if (uVar10 != 0xa9f)
+                    goto LAB_026899c0;
+                  card_00 = card_00 + 1;
+                  uStack_14 = uStack_14 - 1;
+                  COST_COLORLESS = cVar4;
+                  event_result = iVar9;
+                  affected_card_controller = iVar12;
+                  affected_card = iVar5;
+                  if (active_cards_count[player_00] <= card_00)
+                    goto LAB_026899ce;
+                }
+              }
+              goto LAB_02689900;
+            }
+            if (uVar10 == 0x2a9)
+            {
+              iVar9 = is_what(-1, iid, 0x10);
+              if ((iVar9 != 0) && (iVar9 = is_what(-1, iid, 2), iVar9 == 0))
+              {
+                iVar9 = get_cmc_by_id(uVar13);
+                uStack_14 = uStack_14 + iVar9;
+              }
+            }
+            else if ((int)uVar10 < 0x2aa)
+            {
+              if (uVar10 == 100)
+              {
+                if ((uVar7 & 0x20) != 0)
+                {
+                  card_00 = card_00 + 1;
+                  uStack_14 = uStack_14 + 3;
+                  COST_COLORLESS = cVar4;
+                  event_result = iVar9;
+                  affected_card_controller = iVar12;
+                  affected_card = iVar5;
+                  if (active_cards_count[player_00] <= card_00)
+                    goto LAB_026899ce;
+                  goto LAB_02689900;
+                }
+              }
+              else if (uVar10 == 0x16b)
+              {
+                uStack_14 = uStack_14 - (player == player_00);
+                card_00 = card_00 + 1;
+                COST_COLORLESS = cVar4;
+                event_result = iVar9;
+                affected_card_controller = iVar12;
+                affected_card = iVar5;
+                if (active_cards_count[player_00] <= card_00)
+                  goto LAB_026899ce;
+                goto LAB_02689900;
+              }
+            }
+            else if (uVar10 == 0x2d1)
+            {
+              if ((player == player_00) &&
+                  ((iVar9 = is_what(-1, iid, 0x10),
+                    iVar9 != 0 || (iVar9 = is_what(-1, iid, 4), iVar9 != 0))))
+              {
+                uStack_14 = uStack_14 - 2;
+              }
+            }
+            else if (uVar10 == 0x2e8)
+              goto LAB_0268a518;
+          }
+        }
+        else if (uVar10 == 0xcb8)
+        {
+          if (player == player_00)
+          {
+            uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 0x10) == 0);
+          }
+        }
+        else if ((int)uVar10 < 0xcb9)
+        {
+          if (uVar10 == 0xc6c)
+          {
+            if (player == player_00)
+            {
+              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 2) == 0);
+            }
+          }
+          else if ((int)uVar10 < 0xc6d)
+          {
+            if (uVar10 == 0xbe3)
+            {
+            LAB_0268b118:
+              if (player == player_00)
+              {
+                iVar9 = 2;
+              LAB_0268a404:
+                uVar10 = is_what(-1, iid, iVar9);
+              joined_r0x0268a471:
+                if (uVar10 != 0)
+                {
+                  return 0x31;
+                }
+              }
+            }
+            else if ((uVar10 == 0xc3c) && (player == player_00))
+            {
+              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 8) == 0);
+            }
+          }
+          else if ((uVar10 == 0xc99) && (player == player_00))
+          {
+            uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 0x20) == 0);
+          }
+        }
+        else if (uVar10 == 0xe70)
+        {
+        LAB_02689dce:
+          uVar10 = instance->targets[1].player;
+          if (0 < (int)uVar10)
+          {
+            if ((player + 1U & uVar10) != 0)
+            {
+              return 99;
+            }
+            card_00 = card_00 + 1;
+            if (active_cards_count[player_00] <= card_00)
+              goto LAB_026899ce;
+            goto LAB_02689900;
+          }
+        }
+        else if ((int)uVar10 < 0xe71)
+        {
+          if (uVar10 != 0xcbd)
+          {
+            if (uVar10 != 0xdee)
+              goto LAB_026899c0;
+            card_00 = card_00 + 1;
+            uStack_14 = uStack_14 + 1;
+            COST_COLORLESS = cVar4;
+            event_result = iVar9;
+            affected_card_controller = iVar12;
+            affected_card = iVar5;
+            if (active_cards_count[player_00] <= card_00)
+              goto LAB_026899ce;
+            goto LAB_02689900;
+          }
+          if (player == player_00)
+          {
+            uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar7 & 4) == 0);
+          }
+        }
+        else
+        {
+          if (uVar10 == 0x148b)
+          {
+          LAB_0268ab50:
+            if (instance->targets[1].card == uVar13)
+            {
+              return 0x31;
+            }
+            card_00 = card_00 + 1;
+            COST_COLORLESS = cVar4;
+            event_result = iVar9;
+            affected_card_controller = iVar12;
+            affected_card = iVar5;
+            if (active_cards_count[player_00] <= card_00)
+              goto LAB_026899ce;
+            goto LAB_02689900;
+          }
+          if ((uVar10 == 0x1495) && (player == player_00))
+          {
+            uVar10 = get_sleighted_color_test(player, card_00, 0x14);
+            uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);
+          }
+        }
+      }
+      else if (uVar10 == 0x2018)
+      {
+        if (player != player_00)
+        {
+          card_00 = card_00 + 1;
+          uStack_14 = uStack_14 + 1;
+          COST_COLORLESS = cVar4;
+          event_result = iVar9;
+          affected_card_controller = iVar12;
+          affected_card = iVar5;
+          if (active_cards_count[player_00] <= card_00)
+            goto LAB_026899ce;
+          goto LAB_02689900;
+        }
+        uStack_14 = uStack_14 - 1;
+      }
+      else if ((int)uVar10 < 0x2019)
+      {
+        if (uVar10 == 0x1989)
+        {
+          if (player == player_00)
+          {
+            iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_GOBLIN);
+            uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);
+          }
+        }
+        else if ((int)uVar10 < 0x198a)
+        {
+          if (uVar10 == 0x14cb)
+          {
+            if (player == player_00)
+            {
+              uVar10 = get_sleighted_color_test(player_00, card_00, 10);
+              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);
+            }
+          }
+          else if ((int)uVar10 < 0x14cc)
+          {
+            if (uVar10 == 0x14c4)
+            {
+              if (player == player_00)
+              {
+                uVar10 = get_sleighted_color_test(player, card_00, 0xc);
+                uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);
+              }
+            }
+            else if ((uVar10 == 0x14c9) && (player == player_00))
+            {
+              uVar10 = get_sleighted_color_test(player, card_00, 0x30);
+              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);
+            }
+          }
+          else if (uVar10 == 0x17ec)
+          {
+          LAB_0268a939:
+            if ((player == player_00) && (cards_data[iid].id == 0x33c4))
+            {
+              uStack_14 = uStack_14 - 1;
+            }
+          }
+          else if (((uVar10 == 0x1974) && (player == player_00)) &&
+                   (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_DRAGON), iVar9 != 0))
+          {
+            uStack_14 = uStack_14 - 2;
+          }
+        }
+        else
+        {
+          if (uVar10 == 0x1b47)
+          {
+            card_00 = card_00 + 1;
+            bVar2 = true;
+            COST_COLORLESS = cVar4;
+            event_result = iVar9;
+            affected_card_controller = iVar12;
+            affected_card = iVar5;
+            if (active_cards_count[player_00] <= card_00)
+              goto LAB_026899ce;
+            goto LAB_02689900;
+          }
+          if ((int)uVar10 < 0x1b48)
+          {
+            if (uVar10 == 0x1a19)
+              goto LAB_0268b118;
+            if (uVar10 == 0x1a73)
+              goto LAB_02689dce;
+            if ((uVar10 == 0x19c6) && (player == player_00))
+            {
+              iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ZOMBIE);
+              uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);
+            }
+          }
+          else if (((uVar10 == 0x1bb3) && (iVar9 = is_what(-1, iid, 0x40), iVar9 != 0)) &&
+                   (iVar9 = is_what(-1, iid, 2), iVar9 != 0))
+          {
+            iVar9 = count_subtype(player, 0x40, -1);
+            uStack_14 = uStack_14 - iVar9;
+          }
+        }
+      }
+      else if (uVar10 == 0x22c8)
+      {
+        iVar9 = instance->targets[1].card;
+        if (0 < iVar9)
+        {
+          iVar9 = is_what(-1, iid, iVar9);
+          uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);
+          card_00 = card_00 + 1;
+          if (active_cards_count[player_00] <= card_00)
+            goto LAB_026899ce;
+          goto LAB_02689900;
+        }
+      }
+      else if ((int)uVar10 < 0x22c9)
+      {
+        if (uVar10 == 0x22ac)
+        {
+        LAB_0268a17f:
+          if (instance->targets[1].card == uVar13)
+          {
+            return 99;
+          }
+          card_00 = card_00 + 1;
+          COST_COLORLESS = cVar4;
+          event_result = iVar9;
+          affected_card_controller = iVar12;
+          affected_card = iVar5;
+          if (active_cards_count[player_00] <= card_00)
+            goto LAB_026899ce;
+          goto LAB_02689900;
+        }
+        if ((int)uVar10 < 0x22ad)
+        {
+          if (uVar10 == 0x2195)
+          {
+            if (player == player_00)
+            {
+              iVar9 = count_graveyard_by_id(player, uVar13);
+              uStack_14 = uStack_14 - iVar9;
+            }
+          }
+          else if ((uVar10 == 0x21f5) && (player != player_00))
+          {
+            iVar9 = can_sorcery_be_played(player, event);
+            if (iVar9 == 0)
+            {
+              return 0x31;
+            }
+            card_00 = card_00 + 1;
+            if (active_cards_count[player_00] <= card_00)
+              goto LAB_026899ce;
+            goto LAB_02689900;
+          }
+        }
+        else if ((((uVar10 == 0x22c5) &&
+                   (iVar9 = is_tapped(player_00, card_00), player == player_00)) &&
+                  (iVar9 != 0)) &&
+                 (iVar9 = is_what(-1, iid, 2), iVar9 != 0))
+        {
+          uStack_14 = uStack_14 - 2;
+        }
+      }
+      else if (uVar10 == 0x2438)
+      {
+        if ((player == player_00) &&
+            (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_GIANT), iVar9 != 0))
+        {
+          uStack_14 = uStack_14 - 2;
+        }
+      }
+      else if ((int)uVar10 < 0x2439)
+      {
+        if (((uVar10 == 0x23ba) && (iVar9 = is_what(-1, iid, 2), iVar9 == 0)) &&
+            (iVar9 = get_cmc_by_id(uVar13), 3 < iVar9))
+        {
+          return 99;
+        }
+      }
+      else
+      {
+        if (uVar10 == 0x2444)
+        {
+        LAB_0268a7e3:
+          iVar9 = is_what(-1, iid, 2);
+          uStack_14 = uStack_14 + (iVar9 == 0);
+          card_00 = card_00 + 1;
+          if (active_cards_count[player_00] <= card_00)
+            goto LAB_026899ce;
+          goto LAB_02689900;
+        }
+        if (((uVar10 == 0x246b) && (player == player_00)) &&
+            ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_SOLDIER),
+              iVar9 != 0 ||
+                  (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_KITHKIN), iVar9 != 0))))
+        {
+          uStack_14 = uStack_14 - 1;
+        }
+      }
+    }
+    else
+    {
+      if (uVar10 == 0x306c)
+      {
+        if ((player == player_00) &&
+            ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ANGEL),
+              iVar9 != 0 ||
+                  (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_HUMAN), iVar9 != 0))))
+        {
+          iVar9 = count_counters(player_00, card_00, COUNTER_P1_P1);
+          uStack_14 = uStack_14 - iVar9;
+        }
+        goto LAB_026899c0;
+      }
+      if (0x306c < (int)uVar10)
+      {
+        if (uVar10 == 0x3f84)
+        {
+          if (player == player_00)
+          {
+            iVar9 = is_what(-1, iid, 0x38);
+            if (iVar9 != 0)
+            {
+              COST_WHITE = 'd';
+              COST_RED = 'd';
+              COST_GREEN = 'd';
+              COST_BLUE = 'd';
+              COST_BLACK = 'd';
+              COST_COLORLESS = 'd';
+            }
+            iVar9 = is_what(-1, iid, 2);
+            if ((iVar9 != 0) && (iVar9 = get_stormcreature_count(player_00), iVar9 == 0))
+            {
+              COST_COLORLESS = COST_COLORLESS + -1;
+            }
+          }
+          goto LAB_026899c0;
+        }
+        if (0x3f84 < (int)uVar10)
+        {
+          if (uVar10 == 0x4258)
+          {
+            if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))
+            {
+              uVar10 = get_sleighted_color_test(player, card_00, 0x20);
+              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);
+            }
+          }
+          else if ((int)uVar10 < 0x4259)
+          {
+            if (uVar10 == 0x41d6)
+            {
+              if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))
+              {
+                uVar10 = get_sleighted_color_test(player_00, card_00, 2);
+                uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);
+              }
+            }
+            else if ((int)uVar10 < 0x41d7)
+            {
+              if (uVar10 == 0x3ffd)
+                goto LAB_0268a518;
+              if (uVar10 == 0x407a)
+              {
+                iVar9 = instance->info_slot;
+                iVar12 = is_what(-1, iid, 2);
+                if ((iVar12 == 0) && (iVar12 = get_cmc_by_internal_id(iid), iVar12 == iVar9))
+                {
+                  COST_WHITE = 'd';
+                  COST_RED = 'd';
+                  COST_GREEN = 'd';
+                  COST_BLUE = 'd';
+                  COST_BLACK = 'd';
+                  COST_COLORLESS = 'd';
+                }
+              }
+            }
+            else if (uVar10 == 0x4229)
+            {
+              if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))
+              {
+                uVar10 = get_sleighted_color_test(player, card_00, 0x10);
+                uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);
+              }
+            }
+            else if (((uVar10 == 0x423a) && (player == player_00)) &&
+                     (iVar9 = is_what(-1, iid, 2), iVar9 != 0))
+            {
+              uVar10 = get_sleighted_color_test(player, card_00, 4);
+              uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);
+            }
+          }
+          else if (uVar10 == 0x591b)
+          {
+            if ((player == player_00) && (iVar9 = is_what(-1, iid, 0x38), iVar9 != 0))
+            {
+              iVar9 = get_cmc_by_id(uVar13);
+              uStack_14 = uStack_14 - (4 < iVar9);
+            }
+          }
+          else if ((int)uVar10 < 0x591c)
+          {
+            if (uVar10 == 0x426f)
+            {
+              if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))
+              {
+                uVar10 = get_sleighted_color_test(player, card_00, 8);
+                uStack_14 = (uStack_14 - 1) + (unsigned int)((uVar10 & uVar7) == 0);
+              }
+            }
+            else if ((uVar10 == 0x5673) && (player == player_00))
+            {
+              iVar9 = count_creatures_with_p1_p1_counter(player);
+              uStack_14 = uStack_14 - iVar9;
+            }
+          }
+          else
+          {
+            if (((uVar10 == 0x6160) && (uVar10 = instance->targets[0].card, (uVar10 & 6) != 0)) &&
+                ((iVar9 = instance->targets[0].player, iVar9 == 2 || (iVar9 == player))))
+            {
+              if (((uVar10 & 2) != 0) &&
+                  ((unsigned int)cards_data[iid].id == instance->targets[1].player))
+              {
+                return 99;
+              }
+              if (((uVar10 & 4) != 0) && (iVar9 = instance->targets[1].player, -1 < iVar9))
+                goto LAB_02689f58;
+            }
+          }
+          goto LAB_026899c0;
+        }
+        if (uVar10 == 0x35a4)
+        {
+          if ((player == player_00) && (iVar9 = has_subtype(-1, iid, SUBTYPE_AURA), iVar9 != 0))
+          {
+            iVar9 = is_humiliated(player, card_00, AL_STATIC);
+            uStack_14 = uStack_14 - (iVar9 == 0);
+          }
+          goto LAB_026899c0;
+        }
+        if ((int)uVar10 < 0x35a5)
+        {
+          if (uVar10 == 0x31ff)
+          {
+            if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))
+            {
+              iVar9 = get_trap_condition(1 - player, 2);
+              uStack_14 = uStack_14 - iVar9;
+            }
+          }
+          else if ((int)uVar10 < 0x3200)
+          {
+            if (uVar10 == 0x3136)
+            {
+              if (player == player_00)
+              {
+                uStack_14 = uStack_14 - pcVar1->req_colorless;
+              }
+            }
+            else if (((uVar10 == 0x31b9) && (player == player_00)) &&
+                     (iVar9 = is_what(-1, iid, 2), iVar9 == 0))
+            {
+              iVar9 = is_what(-1, iid, 0x38);
+              uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);
+            }
+          }
+          else if ((uVar10 == 0x3351) && (instance = get_card_instance(player_00, card_00),
+                                          instance->targets[1].card == uVar13))
+          {
+            if (player != player_00)
+            {
+              return 99;
+            }
+            uStack_14 = uStack_14 - 2;
+          }
+          goto LAB_026899c0;
+        }
+        if (uVar10 == 0x3ae4)
+        {
+        LAB_0268aa1d:
+          if (player != player_00)
+          {
+            bVar3 = true;
+            goto LAB_0268a538;
+          }
+          goto LAB_026899c0;
+        }
+        if (0x3ae4 < (int)uVar10)
+        {
+          if (uVar10 != 0x3c7c)
+          {
+            if ((int)uVar10 < 0x3c7d)
+            {
+              if (uVar10 == 0x3b91)
+                goto LAB_0268a7e3;
+              if ((int)uVar10 < 0x3b92)
+              {
+                if ((uVar10 == 0x3b2d) || (uVar10 == 0x3b36))
+                  goto LAB_0268a518;
+              }
+              else if ((uVar10 == 0x3bc3) || (uVar10 == 0x3bf4))
+                goto LAB_0268a518;
+              goto LAB_026899c0;
+            }
+            if (uVar10 != 0x3eae)
+            {
+              if ((int)uVar10 < 0x3eaf)
+              {
+                if (((uVar10 & 0xfffffeff) == 0x3cb4) || (uVar10 == 0x3caa))
+                  goto LAB_0268a518;
+              }
+              else if ((uVar10 == 0x3ec5) || (uVar10 == 0x3eed))
+              {
+              LAB_0268a518:
+                if ((player == player_00) || (bVar6 = false, bVar3))
+                {
+                  bVar3 = true;
+                  goto LAB_0268a538;
+                }
+              }
+              goto LAB_026899c0;
+            }
+          }
+          goto LAB_0268aa1d;
+        }
+        if (uVar10 == 0x3953)
+        {
+          if (instance->targets[5].card == iid)
+          {
+            if (instance->targets[2].player == iid)
+            {
+              iVar9 = count_counters(player_00, card_00, COUNTER_VORTEX);
+              iVar12 = count_cards_by_id(player, 0x4aa5);
+              uVar10 = count_counters(player_00, card_00, COUNTER_VORTEX);
+              if ((uVar10 & 1) != 0)
+              {
+                uVar10 = uVar10 - 1;
+              }
+              uStack_14 = (iVar9 + uStack_14) - (uVar10 >> 1) * iVar12;
+            }
+            else if (instance->targets[2].card == iid)
+            {
+              iVar9 = count_counters(player_00, card_00, COUNTER_VELOCITY);
+              iVar12 = count_cards_by_id(player, 0x4aa5);
+              uVar10 = count_counters(player_00, card_00, COUNTER_VELOCITY);
+              if ((uVar10 & 1) != 0)
+              {
+                uVar10 = uVar10 - 1;
+              }
+              uStack_14 = (iVar9 + uStack_14) - (uVar10 >> 1) * iVar12;
+            }
+          }
+          goto LAB_026899c0;
+        }
+        if (0x3953 < (int)uVar10)
+        {
+          if (uVar10 == 0x3a78)
+            goto LAB_0268a939;
+          if ((int)uVar10 < 0x3a79)
+          {
+            if (uVar10 == 0x3a2f)
+              goto LAB_0268aa1d;
+            if (uVar10 == 0x3a34)
+              goto LAB_0268a518;
+          }
+          goto LAB_026899c0;
+        }
+        if (uVar10 == 0x3951)
+          goto LAB_0268a518;
+        card_00 = card_00 + 1;
+        COST_COLORLESS = cVar4;
+        event_result = iVar9;
+        affected_card_controller = iVar12;
+        affected_card = iVar5;
+        if (active_cards_count[player_00] <= card_00)
+          goto LAB_026899ce;
+        goto LAB_02689900;
+      }
+      if (uVar10 == 0x2b51)
+      {
+        uVar10 = instance->targets[1].card;
+        if (((0 < (int)uVar10) && ((uVar10 & 1) != 0)) && (player != player_00))
+        {
+          return 99;
+        }
+      }
+      else if ((int)uVar10 < 0x2b52)
+      {
+        if (uVar10 == 0x26ea)
+        {
+          iVar9 = is_what(-1, iid, 0x40);
+          if (player == player_00)
+          {
+            uStack_14 = (uStack_14 - 1) + (unsigned int)(iVar9 == 0);
+            card_00 = card_00 + 1;
+            if (active_cards_count[player_00] <= card_00)
+              goto LAB_026899ce;
+            goto LAB_02689900;
+          }
+        }
+        else if ((int)uVar10 < 0x26eb)
+        {
+          if (uVar10 == 0x24e1)
+          {
+            if ((player == player_00) &&
+                ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_MERFOLK),
+                  iVar9 != 0 || (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_WIZARD),
+                                 iVar9 != 0))))
+            {
+              uStack_14 = uStack_14 - 1;
+            }
+          }
+          else if ((int)uVar10 < 0x24e2)
+          {
+            if (uVar10 == 0x2472)
+            {
+              if ((player == player_00) &&
+                  ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ELEMENTAL),
+                    iVar9 != 0 || (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_WARRIOR),
+                                   iVar9 != 0))))
+              {
+                uStack_14 = uStack_14 - 1;
+              }
+            }
+            else if (((uVar10 == 0x2490) && (player == player_00)) &&
+                     ((iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_GOBLIN),
+                       iVar9 != 0 || (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ROGUE),
+                                      iVar9 != 0))))
+            {
+              uStack_14 = uStack_14 - 1;
+            }
+          }
+          else if ((uVar10 == 0x26ae) && (player != player_00))
+          {
+            if ((instance->targets[1].card == 0x42) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))
+            {
+              return 0x31;
+            }
+            if ((instance->targets[2].card == 0x42) && (iVar9 = is_what(-1, iid, 0x40), iVar9 != 0))
+            {
+              return 0x31;
+            }
+            if (instance->targets[3].card == 0x42)
+            {
+              iVar9 = 4;
+              goto LAB_0268a404;
+            }
+          }
+        }
+        else if (uVar10 == 0x2a09)
+        {
+          if (((player == player_00) &&
+               (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ELDRAZI), iVar9 != 0)) &&
+              ((uVar7 & 0x3e) == 0))
+          {
+            uStack_14 = uStack_14 - 2;
+          }
+        }
+        else if ((int)uVar10 < 0x2a0a)
+        {
+          if (uVar10 == 0x26eb)
+          {
+            iVar9 = is_what(-1, iid, 0x40);
+            if (iVar9 == 0)
+              goto LAB_02689dce;
+            card_00 = card_00 + 1;
+            if (active_cards_count[player_00] <= card_00)
+              goto LAB_026899ce;
+            goto LAB_02689900;
+          }
+          if (((uVar10 == 0x294b) && (1 - player == player_00)) &&
+              (iVar9 = is_what(-1, iid, 1), iVar9 == 0))
+          {
+            uVar10 = instance->targets[10].card & uVar7;
+            goto joined_r0x0268a471;
+          }
+        }
+        else if (uVar10 == 0x2a2c)
+        {
+          iVar9 = is_what(-1, iid, 0x40);
+          uStack_14 = uStack_14 + (iVar9 == 0);
+          card_00 = card_00 + 1;
+          if (active_cards_count[player_00] <= card_00)
+            goto LAB_026899ce;
+          goto LAB_02689900;
+        }
+      }
+      else if (uVar10 == 0x2ecf)
+      {
+        if ((player == player_00) && (iVar9 = is_what(-1, iid, 2), iVar9 != 0))
+        {
+          uStack_14 = uStack_14 - 2;
+        }
+      }
+      else if ((int)uVar10 < 0x2ed0)
+      {
+        if (uVar10 == 0x2de8)
+        {
+          if (current_phase - 0x15U < 9)
+          {
+            return 99;
+          }
+          card_00 = card_00 + 1;
+          COST_COLORLESS = cVar4;
+          event_result = iVar9;
+          affected_card_controller = iVar12;
+          affected_card = iVar5;
+          if (active_cards_count[player_00] <= card_00)
+            goto LAB_026899ce;
+          goto LAB_02689900;
+        }
+        if ((int)uVar10 < 0x2de9)
+        {
+          if (uVar10 == 0x2d4e)
+            goto LAB_0268a17f;
+          if (((uVar10 == 0x2de7) && (player == player_00)) &&
+              (iVar9 = is_what(-1, iid, 2), iVar9 != 0))
+          {
+            iVar9 = count_counters(player, card_00, COUNTER_P1_P1);
+            uStack_14 = uStack_14 - iVar9;
+          }
+        }
+        else if ((uVar10 == 0x2e26) && (player != player_00))
+        {
+          if (current_turn == player_00)
+          {
+            return 99;
+          }
+          card_00 = card_00 + 1;
+          COST_COLORLESS = cVar4;
+          event_result = iVar9;
+          affected_card_controller = iVar12;
+          affected_card = iVar5;
+          if (active_cards_count[player_00] <= card_00)
+            goto LAB_026899ce;
+          goto LAB_02689900;
+        }
+      }
+      else if (uVar10 == 0x2f7e)
+      {
+        if ((instance->targets[0].player == player) && (instance->targets[1].player == 0x42))
+        {
+          return 0x31;
+        }
+      }
+      else if ((int)uVar10 < 0x2f7f)
+      {
+        if (uVar10 == 0x2f02)
+          goto LAB_0268ab50;
+        if (((uVar10 == 0x2f19) && (player == player_00)) &&
+            (iVar9 = has_subtype_by_id(player, uVar13, SUBTYPE_ZOMBIE), iVar9 != 0))
+        {
+          uStack_14 = uStack_14 - pcVar1->req_colorless;
+        }
+      }
+      else
+      {
+        if (uVar10 == 0x2ff3)
+        {
+          if (player == player_00)
+            goto LAB_026899c0;
+          iVar9 = is_what(-1, iid, 2);
+          uStack_14 = uStack_14 + (iVar9 == 0);
+          card_00 = card_00 + 1;
+          if (active_cards_count[player_00] <= card_00)
+            goto LAB_026899ce;
+          goto LAB_02689900;
+        }
+        if (((uVar10 == 0x3014) && (iVar9 = is_what(-1, iid, 2), iVar9 == 0)) &&
+            (iVar9 = is_what(-1, iid, 0x38), iVar9 != 0))
+        {
+          uStack_14 = uStack_14 - 2;
+        }
+      }
+    }
+  }
+LAB_026899c0:
+  bVar3 = bVar6;
+  card_00 = card_00 + 1;
+  if (active_cards_count[player_00] <= card_00)
+    goto LAB_026899ce;
+  goto LAB_02689900;
 }
 
 // This is a frontend and prevent the return of negative values when charging mana
@@ -5600,47 +6193,94 @@ void shuffle_for_exe(int whose_computer_shuffles, int whose_library)
 	EXE_FN(void, 0x479c60, int)(whose_library);	// send_deck_order_over_network()
 }
 
-void shuffle(int player){
-	int erebos_titan_flag = count_graveyard_by_type(player, TYPE_CREATURE) ? 1 : 0;
+void shuffle(int player)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int card;
+  char *pcVar4;
+  char *pcVar5;
+  unsigned char bVar6;
+  int iStack_150;
+  char msg[100];
+  test_definition_t this_test;
 
-	shuffle_for_exe(player, player);
-
-	int i;
-	for(i=0; i<2; i++){
-		int count = active_cards_count[i]-1;
-		while( count > -1 ){
-				if( in_play(i, count) ){
-					if( is_what(i, count, TYPE_PERMANENT) ){
-						if( get_id(i, count) == CARD_ID_PSYCHOGENIC_PROBE ){
-							damage_player(player, 2, i, count);
-						}
-						if( get_id(i, count) == CARD_ID_WIDESPREAD_PANIC ){
-							if( hand_count[player] > 0 ){
-								char msg[100] = "Select a card to put on top.";
-								test_definition_t this_test;
-								new_default_test_definition(&this_test, TYPE_ANY, msg);
-								int selected = new_select_a_card(player, player, TUTOR_FROM_HAND, 1, AI_MIN_VALUE, -1, &this_test);
-								put_on_top_of_deck(player, selected);
-							}
-						}
-						if( i != player && get_id(i, count) == CARD_ID_COSIS_TRICKSTER ){
-							int choice = 0;
-							if( ! duh_mode(i) ){
-								choice = do_dialog(i, i, count, -1, -1, " Add +1/+1 counter\n Pass", 0);
-							}
-							if( choice == 0 ){
-								add_1_1_counter(i, count);
-							}
-						}
-					}
-				}
-				count--;
-		}
-	}
-
-	if( erebos_titan_flag ){
-		ereboss_titan_effect(1-player);
-	}
+  bVar6 = 0;
+  iVar1 = count_graveyard_by_type(player, 2);
+  shuffle_for_exe(player, player);
+  iStack_150 = 0;
+  do
+  {
+    card = active_cards_count[iStack_150] + -1;
+    if (-1 < active_cards_count[iStack_150] + -1)
+    {
+      do
+      {
+        while ((instance = in_play(iStack_150, card),
+                instance == NULL || (iVar3 = is_what(iStack_150, card, 0x47), iVar3 == 0)))
+        {
+        LAB_0269a9a0:
+          card = card + -1;
+          if (card == -1)
+            goto LAB_0269aab8;
+        }
+        iVar3 = get_id(iStack_150, card);
+        if (iVar3 == 0x1a6b)
+        {
+          damage_player(player, 2, iStack_150, card);
+        }
+        iVar3 = get_id(iStack_150, card);
+        if ((iVar3 == 0x3555) && (0 < hand_count[player]))
+        {
+          pcVar4 = "Select a card to put on top.";
+          pcVar5 = msg;
+          for (iVar3 = 7; iVar3 != 0; iVar3 = iVar3 + -1)
+          {
+            *(uint32_t *)pcVar5 = *(uint32_t *)pcVar4;
+            pcVar4 = pcVar4 + (unsigned int)bVar6 * -8 + 4;
+            pcVar5 = pcVar5 + (unsigned int)bVar6 * -8 + 4;
+          }
+          msg[0x1d] = '\0';
+          *pcVar5 = *pcVar4;
+          pcVar4 = msg + 0x20;
+          for (iVar3 = 0x11; iVar3 != 0; iVar3 = iVar3 + -1)
+          {
+            pcVar4[0] = '\0';
+            pcVar4[1] = '\0';
+            pcVar4[2] = '\0';
+            pcVar4[3] = '\0';
+            pcVar4 = pcVar4 + (unsigned int)bVar6 * -8 + 4;
+          }
+          msg[0x1e] = '\0';
+          msg[0x1f] = '\0';
+          new_default_test_definition(&this_test, 0xff, msg);
+          iVar3 = new_select_a_card(player, player, 4, 1, 3, -1, &this_test);
+          put_on_top_of_deck(player, iVar3);
+        }
+        if (((player == iStack_150) || (iVar3 = get_id(iStack_150, card), iVar3 != 0x291c)) ||
+            ((iVar3 = duh_mode(iStack_150),
+              iVar3 == 0 && (iVar3 = do_dialog(iStack_150, iStack_150, card, -1, -1,
+                                               " Add +1/+1 counter\n Pass", 0),
+                             iVar3 != 0))))
+          goto LAB_0269a9a0;
+        iVar3 = card + -1;
+        add_counters(iStack_150, card, iStack_150, card, COUNTER_P1_P1, 1);
+        card = iVar3;
+      } while (iVar3 != -1);
+    }
+  LAB_0269aab8:
+    iStack_150 = iStack_150 + 1;
+    if (iStack_150 == 2)
+    {
+      if (iVar1 != 0)
+      {
+        ereboss_titan_effect(1 - player);
+        return;
+      }
+      return;
+    }
+  } while (true);
 }
 
 
@@ -5945,7 +6585,7 @@ static int check_for_extra_turn_suppression(int player){
 	for(i=0; i<2; i++){
 		int c;
 		for(c=0; c<active_cards_count[i]; c++){
-			if( in_play(i, c) && ! is_humiliated(i, c) && get_card_instance(i, c)->kill_code == 0){
+			if( in_play(i, c) && ! is_humiliated(i, c, AL_STATIC) && get_card_instance(i, c)->kill_code == 0){
 				int id = get_id(i, c);
 				if( id == CARD_ID_UGINS_NEXUS ){
 					return 1;
@@ -6028,31 +6668,19 @@ enum
 		CPL_PAY_LIFE_FOR_SPELLS_OR_ACTIVATED_ABILITY = 1<<0,
 	};
 
-int can_pay_life_impl(int player, int amount, int flags){
+int can_pay_life_impl(int player, int amount, int flags)
+{
+  int result;
+  result = life_total_can_change(player);
 
-	int i;
-	for(i=0; i<2; i++){
-		int count = 0;
-		while( count < active_cards_count[i] ){
-				if( in_play(i, count) ){
-					int id = get_id(i, count);
-					if( i == player && id == CARD_ID_PLATINUM_EMPERION && ! is_humiliated(i, count) ){
-						return 0;
-					}
-					if( (flags & CPL_PAY_LIFE_FOR_SPELLS_OR_ACTIVATED_ABILITY) && id == CARD_ID_ANGEL_OF_JUBILATION &&
-						! is_humiliated(i, count)
-					  ){
-						return 0;
-					}
-				}
-				count++;
-		}
-	}
-	if( life[player] >= amount ){
-		return 1;
-	}
-
-	return 0;
+  if ((result != 0) &&
+      (((flags & 1U) == 0 ||
+        ((result = check_battlefield_for_id(2, 0x3010),
+          result == 0 && (result = check_battlefield_for_id(2, 0x5626), result == 0))))))
+  {
+    return (unsigned int)(amount <= life[player]);
+  }
+  return 0;
 }
 
 int can_pay_life_as_cost_for_spells_or_activated_abilities(int player, int amount){
@@ -6177,7 +6805,7 @@ void check_damage_test(int source_of_damage_player, int source_of_damage_card, e
 				return;
 			}
 
-			if (is_humiliated(triggering_player, triggering_card)){
+			if (is_humiliated(triggering_player, triggering_card, AL_TRIG)){
 				return;
 			}
 
@@ -6483,7 +7111,7 @@ int sengir_vampire_trigger(int player, int card, event_t event, int trig_mode){
 
 	card_instance_t *instance = get_card_instance( player, card );
 
-	if( is_humiliated(player, card) ){
+	if( is_humiliated(player, card, AL_TRIG) ){
 		return 0;
 	}
 
@@ -6656,7 +7284,7 @@ int bounce_permanent_at_upkeep(int player, int card, event_t event, target_defin
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( current_turn == player && !is_humiliated(player, card) && trigger_condition == TRIGGER_UPKEEP && affect_me(player, card)
+	if( current_turn == player && !is_humiliated(player, card, AL_TRIG) && trigger_condition == TRIGGER_UPKEEP && affect_me(player, card)
 	     && reason_for_trigger_controller == player ){
 		if(event == EVENT_TRIGGER && can_target(td) ){
 			event_result |= 2;
@@ -6996,46 +7624,14 @@ int reveal_card_optional_iid(int source_player, int source_card, int revealed_ii
 	return 0;
 }
 
-int enchant_player(int player, int card, event_t event, target_definition_t *td){
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_SHOULD_AI_PLAY ){
-		return should_ai_play(player, card);
-	}
-
-	if( event == EVENT_CAN_CAST ){
-		return can_target(td);
-	}
-
-	if( event == EVENT_CAST_SPELL && affect_me(player, card) ){
-		if( ! check_special_flags(player, card, SF_TARGETS_ALREADY_SET) ){
-			load_text(0, "TARGET_PLAYER");
-			int result = select_target(td->player, td->card, td, text_lines[0], NULL);
-			if( ! result ){
-				spell_fizzled = 1;
-			}
-		}
-	}
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		if( ! valid_target(td) ){
-			kill_card(player, card, KILL_SACRIFICE);
-		}
-		else{
-			instance->targets[4] = instance->targets[0];
-		}
-	}
-
-	return 0;
-}
 
 int evincars(int player, int card, event_t event, color_test_t color)
 {
   if ((event == EVENT_POWER || event == EVENT_TOUGHNESS)
 	  && !affect_me(player, card)
 	  && in_play(player, card) && in_play(affected_card_controller, affected_card)
-	  && !is_humiliated(player, card))
+	  && !is_humiliated(player, card, AL_STATIC))
 	{
 	  if (get_color(affected_card_controller, affected_card) & get_sleighted_color_test(player, card, color))
 		++event_result;
@@ -7606,7 +8202,7 @@ void fight(int p1, int c1, int p2, int c2){
 void upkeep_trigger_ability_mode(int player, int card, event_t event, int whose_upkeep, resolve_trigger_t trigger_mode){
 	if( trigger_condition == TRIGGER_UPKEEP && affect_me(player, card) && reason_for_trigger_controller == player &&
 		(whose_upkeep == current_turn || whose_upkeep == 2) &&
-		!is_humiliated(player, card)
+		!is_humiliated(player, card, AL_TRIG)
 	  ){
 		int count = count_upkeeps(current_turn);
 		if(event == EVENT_TRIGGER && count > 0){
@@ -7806,7 +8402,7 @@ int when_a_card_is_put_into_graveyard_from_anywhere_but_library_do_something(int
   enable_xtrigger_flags |= ENABLE_XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY;
 
   if (xtrigger_condition() == XTRIGGER_CARD_TO_GY_FROM_ANYWHERE_BUT_LIBRARY && affect_me(player, card) && reason_for_trigger_controller == player
-	  && (trigger_cause_controller == t_player || t_player == ANYBODY) && !is_humiliated(player, card)
+	  && (trigger_cause_controller == t_player || t_player == ANYBODY) && !is_humiliated(player, card, AL_STATIC)
 	  && (!test || new_make_test(trigger_cause_controller, trigger_cause, -1, test)))
 	{
 	  if (event == EVENT_TRIGGER)
@@ -7949,7 +8545,7 @@ int card_drawn_trigger(int player, int card, event_t event, int who_draws, resol
 {
   if (trigger_condition == TRIGGER_CARD_DRAWN && affect_me(player, card) && reason_for_trigger_controller == player
 	  && (trigger_cause_controller == who_draws || who_draws == ANYBODY)
-	  && in_play(player, card) && !is_humiliated(player, card))
+	  && in_play(player, card) && !is_humiliated(player, card, AL_TRIG))
 	{
 	  if (event == EVENT_TRIGGER)
 		{
@@ -7989,7 +8585,7 @@ void permanents_enters_battlefield_tapped(int player, int card, event_t event, i
 	/* If this changes the events it looks at, please grep for its uses - at least one card filters by the same events
 	 * so it doesn't construct a test_definition_t every single time its function is called. */
 	if( (event == EVENT_CAST_SPELL || event == EVENT_ENTERING_THE_BATTLEFIELD_AS_CLONE) && ! affect_me(player, card) ){
-		if( is_what(player, card, TYPE_EFFECT) || (in_play(player, card) && ! is_humiliated(player, card)) ){
+		if( is_what(player, card, TYPE_EFFECT) || (in_play(player, card) && ! is_humiliated(player, card, AL_TRIG)) ){
 			if( affected_card_controller == t_player || t_player == ANYBODY ){
 				if( (type && is_what(affected_card_controller, affected_card, type)) ||
 					(test != NULL && new_make_test_in_play(affected_card_controller, affected_card, -1, test))
@@ -8623,7 +9219,7 @@ void discard_card_impl(int player, int card, int player_who_controls_effect, int
 			switch( csvid ){
 					case CARD_ID_DODECAPOD: //Replacement: it goes directly from hand to play
 					{
-						add_1_1_counters(player, card, 2);
+						add_counters(player, card, player, card, COUNTER_P1_P1, 2);
 						put_into_play(player, card);
 					}
 					return;
@@ -8901,7 +9497,7 @@ whenever_a_player_sacrifices_a_permanent(int player, int card, event_t event, in
 	  && ((aff = in_play(affected_card_controller, affected_card)))
 	  && is_what(affected_card_controller, affected_card, typ)
 	  && aff->kill_code == KILL_SACRIFICE && !check_special_flags(affected_card_controller, affected_card, SF_KILL_STATE_BASED_ACTION)
-	  && (inst = in_play(player, card)) && !is_humiliated(player, card))
+	  && (inst = in_play(player, card)) && !is_humiliated(player, card, AL_TRIG))
 	{
 	  if (inst->targets[11].player < 0)
 		inst->targets[11].player = 0;
@@ -10031,7 +10627,7 @@ int check_for_death_trigger_removal(int player, int card)
         {
           instance = in_play(iVar1, card_00);
           if (((instance != NULL) &&
-               (iVar3 = is_humiliated_for_ability(iVar1, card_00, AL_STATIC), iVar3 == 0)) &&
+               (iVar3 = is_humiliated(iVar1, card_00, AL_STATIC), iVar3 == 0)) &&
               (iVar3 = get_id(iVar1, card_00), iVar3 == 0x5097))
           {
             return 1;
@@ -12418,7 +13014,7 @@ int grafdiggers_cages(int player, type_t type, tutor_from_t from)
       {
         if ((((player == 2 || player == player_00) &&
               (instance = in_play(player_00, card), instance != NULL)) &&
-             (result = is_humiliated_for_ability(player_00, card, AL_STATIC), result == 0)) &&
+             (result = is_humiliated(player_00, card, AL_STATIC), result == 0)) &&
             (((type & (TYPE_SPELL | TYPE_CREATURE)) != TYPE_NONE &&
               ((((from & TUTOR_FROM_RFG) != 0 &&
                  (result = get_id(player_00, card), result == 0x2f9e)) ||
@@ -12654,7 +13250,7 @@ static int count_harmonic_prodigy(int player, int card)
   do
   {
     while (((instance = in_play(player, card_00), card != card_00 && (instance != NULL)) &&
-            (result = is_humiliated_for_ability(player, card_00, AL_TRIG), result == 0)))
+            (result = is_humiliated(player, card_00, AL_TRIG), result == 0)))
     {
       result = get_id(player, card_00);
       card_00 = card_00 + 1;
@@ -12676,7 +13272,7 @@ int pump_until_eot_merge_previous_alt(int player, int card, int t_player, int t_
 #ifndef SHANDALAR
 static int effect_pump_until_eot(int player, int card, event_t event);
 static int pump_ability_until_eot_with_precomputed_sleight_hack_suppress(
-    int player, int card, int t_player, int t_card, pump_ability_2022_t *pump);
+    int player, int card, int t_player, int t_card, pump_ability_t *pump);
 
 /* ManalinkEh 2022: 0x267ac00; original functions/functions.c:1247. */
 int pump_until_eot_merge_previous_alt(int player, int card, int t_player, int t_card, int power,
@@ -12829,12 +13425,12 @@ void enters_the_battlefield_with_counters_fn(int player, int card, event_t event
     instance = get_card_instance(player, card);
     if ((get_special_flags2_by_instance(instance) & SF2_FACE_DOWN_DUE_TO_MANIFEST) == 0)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         hack_silent_counters = hack_silent_counters + 1;
         result = (*fn)(player, card);
-        add_counters_from_source(player, card, player, card, type, result);
+        add_counters(player, card, player, card, type, result);
         hack_silent_counters = hack_silent_counters + -1;
         return;
       }
@@ -12970,7 +13566,7 @@ int pump_ability_until_eot_no_repeat_alt(int player, int card, int t_player, int
   int card_00;
   unsigned int uVar2;
   target_t tVar3;
-  pump_ability_2022_t pump;
+  pump_ability_t pump;
 
   get_sleighted_hacked_suppressed_ability(player, card, t_player, &ability, &sp_ability);
   instance = get_card_instance(t_player, t_card);
@@ -13011,7 +13607,7 @@ int pump_ability_until_eot_no_repeat_alt(int player, int card, int t_player, int
 #endif
 
 /* ManalinkEh 2022: 0x26a2080; original functions/functions.c:743. */
-int leaves_play_2022(int player, int card, event_t event, int can_be_suppressed,
+int leaves_play(int player, int card, event_t event, int can_be_suppressed,
                      int can_be_duplicated)
 {
   int iVar1;
@@ -13019,7 +13615,7 @@ int leaves_play_2022(int player, int card, event_t event, int can_be_suppressed,
   int iVar3;
   if (trigger_condition == 0xd4)
   {
-    iVar1 = is_humiliated_for_ability(player, card, AL_TRIG);
+    iVar1 = is_humiliated(player, card, AL_TRIG);
     if ((((iVar1 == 0) || (can_be_suppressed == 0)) && (card == affected_card)) &&
         (((player == affected_card_controller && (trigger_cause_controller == player)) &&
           ((trigger_cause == card && (reason_for_trigger_controller == player))))))
@@ -13154,7 +13750,7 @@ static int end_the_turn_legacy(int player, int card, event_t event)
       }
     }
   }
-  leaves_play_2022(player, card, event, 0, 0);
+  leaves_play(player, card, event, 0, 0);
   result = eot_trigger(player, card, event);
   if ((event == EVENT_LEAVES_PLAY_ABILITY) || (result != 0))
   {
@@ -13198,7 +13794,7 @@ int other_leaves_play_mode(int triggering_player, int triggering_card, int t_pla
        ((trigger_cause == t_card && (trigger_cause_controller == t_player)))) &&
       (reason_for_trigger_controller == triggering_player))
   {
-    iVar1 = is_humiliated_for_ability(triggering_player, triggering_card, AL_TRIG);
+    iVar1 = is_humiliated(triggering_player, triggering_card, AL_TRIG);
     if (((iVar1 == 0) || (can_be_suppressed == 0)) &&
         ((iVar1 = is_this_dying(t_player, t_card),
           iVar1 == 0 || ((iVar1 = check_for_death_trigger_removal(t_player, t_card),
@@ -13281,7 +13877,7 @@ int attached_leaves_play_mode(int triggering_player, int triggering_card, event_
   if (((triggering_card == affected_card) && (triggering_player == affected_card_controller)) &&
       (reason_for_trigger_controller == triggering_player))
   {
-    result = is_humiliated_for_ability(triggering_player, triggering_card, AL_TRIG);
+    result = is_humiliated(triggering_player, triggering_card, AL_TRIG);
     if ((result == 0) || (can_be_suppressed == 0))
     {
 
@@ -13400,13 +13996,13 @@ int beginning_of_combat(int player, int card, event_t event, int aff_player)
   {
     if ((((aff_player == 2) || (current_turn == aff_player)) &&
          (result = EXE_FN(int, 0x434be0, int)(current_turn), result == 0)) &&
-        (result = is_humiliated_for_ability(player, card, AL_TRIG), result == 0))
+        (result = is_humiliated(player, card, AL_TRIG), result == 0))
     {
       event_flags = event_flags | 0x1000000;
     }
   }
   else if ((event == EVENT_BEGIN_COMBAT) &&
-           (result = is_humiliated_for_ability(player, card, AL_TRIG), result == 0))
+           (result = is_humiliated(player, card, AL_TRIG), result == 0))
   {
     return (unsigned int)(current_turn == aff_player || aff_player == 2);
   }
@@ -13415,7 +14011,7 @@ int beginning_of_combat(int player, int card, event_t event, int aff_player)
 
 
 /* ManalinkEh 2022: 0x26a3630; original functions/functions.c:856. */
-int other_leaves_play_2022(int triggering_player, int triggering_card, int t_player, int t_card,
+int other_leaves_play(int triggering_player, int triggering_card, int t_player, int t_card,
                            event_t event, int can_be_suppressed, int can_be_duplicated)
 {
   int result;
@@ -13559,7 +14155,7 @@ static int this_dies_trigger_impl(int player, int card, event_t event,
         (((pcVar2 = get_card_instance(iStack_20, iStack_1c),
            (get_special_flags2_by_instance(pcVar2) & SF2_WILL_BE_EXILED_IF_PUTTED_IN_GRAVE) != 0 ||
                (result = check_for_death_trigger_removal(iStack_20, iStack_1c), result != 0)) ||
-          (result = is_humiliated_for_ability(player, card, AL_TRIG), result != 0))))
+          (result = is_humiliated(player, card, AL_TRIG), result != 0))))
     {
       return 0;
     }
@@ -14155,12 +14751,12 @@ void remove_special_flags3(int player, int card, int value)
 /* Recovered October 2022 typed consumers and compiler parts. */
 
 /* ManalinkEh 2022: 0x2692a40; original functions/functions.c:14935. */
-int counterspell_validate(int player, int card, target_definition_2022_t *td, int target_num)
+int counterspell_validate(int player, int card, target_definition_t *td, int target_num)
 {
   int32_t iVar1;
   int iVar2;
   card_instance_t *instance;
-  target_definition_2022_t td_default;
+  target_definition_t td_default;
 
   if (td == NULL)
   {
@@ -14191,14 +14787,14 @@ int counterspell_validate(int player, int card, target_definition_2022_t *td, in
 
 
 /* ManalinkEh 2022: 0x2692b30; original functions/functions.c:14863. */
-int counterspell(int player, int card, event_t event, target_definition_2022_t *td,
+int counterspell(int player, int card, event_t event, target_definition_t *td,
                       int target_num)
 {
   int32_t iVar1;
   int32_t iVar2;
   card_instance_t *instance;
   int iVar4;
-  target_definition_2022_t td_default;
+  target_definition_t td_default;
 
   instance = get_card_instance(player, card);
   if (event == EVENT_CAN_CAST)
@@ -14316,25 +14912,25 @@ typedef union
   int32_t number;
   uint32_t bits;
   uint8_t low;
-} generic_spell_word_2022_t;
+} generic_spell_word_t;
 
 typedef union
 {
-  test_definition_2022_t test;
-  target_definition_2022_t target;
+  test_definition_t test;
+  target_definition_t target;
   char error[200];
-} generic_spell_scratch_2022_t;
+} generic_spell_scratch_t;
 
-_Static_assert(sizeof(generic_spell_word_2022_t) == 4, "generic spell reused words");
-_Static_assert(sizeof(generic_spell_scratch_2022_t) == 216, "generic spell shared scratch");
+_Static_assert(sizeof(generic_spell_word_t) == 4, "generic spell reused words");
+_Static_assert(sizeof(generic_spell_scratch_t) == 216, "generic spell shared scratch");
 
 /* ManalinkEh 2022: 0x26a0250; original functions/functions.c:15783. */
-int generic_spell(int player, int card, event_t event, int flags, target_definition_2022_t *td,
-                       const char *prompt, int max_targets, test_definition_2022_t *this_test)
+int generic_spell(int player, int card, event_t event, int flags, target_definition_t *td,
+                       const char *prompt, int max_targets, test_definition_t *this_test)
 {
   enum
   {
-    SF2_REDIRECT_2022 = 0x40000000
+    SF2_REDIRECT = 0x40000000
   };
 
   target_t *selected_target;
@@ -14364,11 +14960,11 @@ int generic_spell(int player, int card, event_t event, int flags, target_definit
   int32_t cleanup_end;
   unsigned int uStack_104;
   unsigned int uStack_100;
-  generic_spell_word_2022_t pcStack_fc;
-  generic_spell_word_2022_t pcStack_f8;
-  generic_spell_word_2022_t pcStack_f4;
+  generic_spell_word_t pcStack_fc;
+  generic_spell_word_t pcStack_f8;
+  generic_spell_word_t pcStack_f4;
   int targeted_player[2];
-  generic_spell_scratch_2022_t scratch;
+  generic_spell_scratch_t scratch;
 
   pcVar5 = get_card_instance(player, card);
   pcStack_f4.number = (flags & 0x200);
@@ -14433,7 +15029,7 @@ int generic_spell(int player, int card, event_t event, int flags, target_definit
                         iVar12 = would_validate_arbitrary_target(td, iVar7, iVar6);
                         if (iVar12 != 0)
                         {
-                          iVar12 = is_humiliated_for_ability(iVar7, iVar6, AL_STATIC);
+                          iVar12 = is_humiliated(iVar7, iVar6, AL_STATIC);
                           if (iVar12 == 0)
                           {
                             iVar12 = get_id(iVar7, iVar6);
@@ -14658,7 +15254,7 @@ int generic_spell(int player, int card, event_t event, int flags, target_definit
     {
       pcVar9 = get_card_instance(player, card);
       uVar17 = ((char)pcStack_f8.low);
-      if ((pcVar9->ext->special_flags2 & SF2_REDIRECT_2022) == 0)
+      if ((pcVar9->ext->special_flags2 & SF2_REDIRECT) == 0)
       {
         pcVar9 = get_card_instance(pcVar5->targets[0].player, pcVar5->targets[0].card);
         pcVar9->state = pcVar9->state | 0x100000;
@@ -14705,7 +15301,7 @@ int generic_spell(int player, int card, event_t event, int flags, target_definit
         goto LAB_026a042b;
     LAB_026a0e40:
       uStack_104 = new_sacrifice(player, card, player,
-                                      SAC2022_RETURN_CHOICE | SAC2022_AS_COST | SAC2022_JUST_MARK,
+                                      SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK,
                                       this_test);
       if (uStack_104 == 0)
         goto LAB_026a10c8;
@@ -14717,7 +15313,7 @@ int generic_spell(int player, int card, event_t event, int flags, target_definit
       pcStack_f8.low = bVar14;
       new_default_test_definition(&scratch.test, 2, "Select a creature to sacrifice.");
       uStack_104 = new_sacrifice(player, card, player,
-                                      SAC2022_RETURN_CHOICE | SAC2022_AS_COST | SAC2022_JUST_MARK,
+                                      SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK,
                                       &scratch.test);
       if (uStack_104 == 0)
       {
@@ -14809,7 +15405,7 @@ int generic_spell(int player, int card, event_t event, int flags, target_definit
           else
           {
             saved_target = selected_target;
-            iVar6 = is_humiliated_for_ability(iVar6, iVar7, AL_STATIC);
+            iVar6 = is_humiliated(iVar6, iVar7, AL_STATIC);
             iVar7 = saved_target->card;
             if (iVar6 != 0)
             {
@@ -14855,7 +15451,7 @@ int generic_spell(int player, int card, event_t event, int flags, target_definit
       if (event == EVENT_CHANGE_TARGET)
       {
         pcVar9 = get_card_instance(player, card);
-        if (((pcVar9->ext->special_flags2 & SF2_REDIRECT_2022) == 0) &&
+        if (((pcVar9->ext->special_flags2 & SF2_REDIRECT) == 0) &&
             (iVar6 = pcVar5->targets[0].card, iVar6 != -1))
         {
           pcVar9 = get_card_instance(pcVar5->targets[0].player, iVar6);
@@ -15023,7 +15619,7 @@ LAB_026a0618:
   if (((pcVar5->targets[0].card != -1) && ((flags & 1U) != 0)) && (max_targets == 1))
   {
     pcVar9 = get_card_instance(player, card);
-    if ((pcVar9->ext->special_flags2 & SF2_REDIRECT_2022) == 0)
+    if ((pcVar9->ext->special_flags2 & SF2_REDIRECT) == 0)
     {
       pcVar9 = get_card_instance(pcVar5->targets[0].player, pcVar5->targets[0].card);
       pcVar9->state = pcVar9->state | 0x100000;
@@ -15054,7 +15650,7 @@ LAB_026a0618:
   if (max_targets == 1)
   {
     pcVar9 = get_card_instance(player, card);
-    if ((pcVar9->ext->special_flags2 & SF2_REDIRECT_2022) != 0)
+    if ((pcVar9->ext->special_flags2 & SF2_REDIRECT) != 0)
     {
       return iVar7;
     }
@@ -15077,7 +15673,7 @@ LAB_026a0618:
 
 
 /* ManalinkEh 2022: 0x267a730; original functions/functions.c:1293. */
-void default_pump_ability_definition(int player, int card, pump_ability_2022_t *pump, int pow,
+void default_pump_ability_definition(int player, int card, pump_ability_t *pump, int pow,
                                           int tou, int key, int skey)
 {
   pump->source_p = player;
@@ -15102,7 +15698,7 @@ void default_pump_ability_definition(int player, int card, pump_ability_2022_t *
 /* Recovered October 2022 pump effects and cleanup helpers. */
 static int effect_pump_until_eot(int player, int card, event_t event);
 static int pump_ability_until_eot_with_precomputed_sleight_hack_suppress(
-    int player, int card, int t_player, int t_card, pump_ability_2022_t *pump);
+    int player, int card, int t_player, int t_card, pump_ability_t *pump);
 
 /* ManalinkEh 2022: 0x26775c0; original functions/functions.c:1219. */
 static int effect_pump_until_eot(int player, int card, event_t event)
@@ -15274,7 +15870,7 @@ int pump_until_eot_merge_previous(int player, int card, int t_player, int t_card
 
 /* ManalinkEh 2022: 0x267ad70; original functions/functions.c:1533. */
 static int pump_ability_until_eot_with_precomputed_sleight_hack_suppress(
-    int player, int card, int t_player, int t_card, pump_ability_2022_t *pump)
+    int player, int card, int t_player, int t_card, pump_ability_t *pump)
 {
   keyword_t kVar1;
   subtype_t sVar2;
@@ -15318,7 +15914,7 @@ static int pump_ability_until_eot_with_precomputed_sleight_hack_suppress(
 
 
 /* ManalinkEh 2022: 0x267ae90; original functions/functions.c:1563. */
-int pump_ability(int player, int card, int t_player, int t_card, pump_ability_2022_t *pump)
+int pump_ability(int player, int card, int t_player, int t_card, pump_ability_t *pump)
 {
   int result;
   if ((pump->key_mod != KEYWORD_0) || (pump->skey_mod != SP_KEYWORD_0))
@@ -15337,7 +15933,7 @@ int pump_ability_until_eot(int player, int card, int t_player, int t_card, int p
                                 int toughness, int ability, int sp_ability)
 {
   int result;
-  pump_ability_2022_t pump;
+  pump_ability_t pump;
   pump.skey_mod = sp_ability;
   pump.paue_flags = ((sp_ability ^ 0xffffffffU) >> 0x1f) << 9;
   pump.pow_mod = power;
@@ -15390,8 +15986,8 @@ int pump_ability_until_eot_no_repeat(int player, int card, int t_player, int t_c
 
 
 /* ManalinkEh 2022: 0x26825d0; original functions/functions.c:1612. */
-void pump_ability_by_test(int player, int card, int t_player, pump_ability_2022_t *pump,
-                               test_definition_2022_t *this_test)
+void pump_ability_by_test(int player, int card, int t_player, pump_ability_t *pump,
+                               test_definition_t *this_test)
 {
   card_instance_t *instance;
   int iVar2;
@@ -15468,7 +16064,7 @@ LAB_02682611:
 void pump_creatures_until_eot_merge_pt_alternate_legacy_text(int player, int card,
                                                                   int t_player, int power,
                                                                   int toughness,
-                                                                  test_definition_2022_t *this_test,
+                                                                  test_definition_t *this_test,
                                                                   int alt_text_number)
 {
   card_instance_t *instance;
@@ -15527,7 +16123,7 @@ void pump_creatures_until_eot_merge_pt_alternate_legacy_text(int player, int car
 
 /* ManalinkEh 2022: 0x2682890; original functions/functions.c:1761. */
 void pump_creatures_until_eot_merge_pt(int player, int card, int t_player, int power,
-                                            int toughness, test_definition_2022_t *this_test)
+                                            int toughness, test_definition_t *this_test)
 {
   pump_creatures_until_eot_merge_pt_alternate_legacy_text(player, card, t_player, power,
                                                                toughness, this_test, 0);
@@ -15538,7 +16134,7 @@ void pump_creatures_until_eot_merge_pt(int player, int card, int t_player, int p
 /* ManalinkEh 2022: 0x2685dd0; original functions/functions.c:1648. */
 void pump_creatures_until_eot(int player, int card, int t_player,
                                    int alternate_legacy_text_number, int power, int toughness,
-                                   int ability, int sp_ability, test_definition_2022_t *this_test)
+                                   int ability, int sp_ability, test_definition_t *this_test)
 {
   unsigned char bVar1;
   card_instance_t *instance;
@@ -15548,7 +16144,7 @@ void pump_creatures_until_eot(int player, int card, int t_player,
   int iStack_50;
   int shs_ability;
   int shs_sp_ability;
-  pump_ability_2022_t pump;
+  pump_ability_t pump;
 
   iStack_50 = 0;
   if (this_test != NULL)
@@ -15642,7 +16238,7 @@ void pump_creatures_until_eot(int player, int card, int t_player,
 int pump_subtype_until_eot(int player, int card, int t_player, int subtype, int power,
                                 int toughness, int ability, int sp_ability)
 {
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
   new_default_test_definition(&this_test, 2, "");
   if (0 < subtype)
   {
@@ -15658,7 +16254,7 @@ int pump_subtype_until_eot(int player, int card, int t_player, int subtype, int 
 void pump_color_until_eot(int player, int card, int t_player, int clr, int power,
                                int toughness, int ability, int sp_ability)
 {
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
   default_test_definition(&this_test, 2);
   if (0 < clr)
   {
@@ -15673,7 +16269,7 @@ void pump_color_until_eot(int player, int card, int t_player, int clr, int power
 /* ManalinkEh 2022: 0x2686520; original functions/functions.c:1689. */
 void pump_creatures_until_eot_no_repeat(int player, int card, int t_player,
                                              int alternate_legacy_text_number, int ability,
-                                             int sp_ability, test_definition_2022_t *this_test)
+                                             int sp_ability, test_definition_t *this_test)
 {
   card_instance_t *instance;
   int result;
@@ -15684,7 +16280,7 @@ void pump_creatures_until_eot_no_repeat(int player, int card, int t_player,
   int iStack_50;
   int shs_ability;
   int shs_sp_ability;
-  pump_ability_2022_t pump;
+  pump_ability_t pump;
 
   iStack_50 = 0;
   if (this_test != NULL)
@@ -15770,7 +16366,7 @@ void pump_creatures_until_eot_no_repeat(int player, int card, int t_player,
 
 
 /* ManalinkEh 2022: 0x26a1550; original functions/functions.c:11588. */
-int vanilla_pump(int player, int card, event_t event, target_definition_2022_t *td, int power,
+int vanilla_pump(int player, int card, event_t event, target_definition_t *td, int power,
                       int toughness, int keyword, int sp_keyword)
 {
   bool bVar1;
@@ -15778,11 +16374,11 @@ int vanilla_pump(int player, int card, event_t event, target_definition_2022_t *
   card_instance_t *instance;
   int result;
   const char *prompt;
-  target_definition_2022_t *ptVar5;
-  target_definition_2022_t *ptVar6;
-  target_definition_2022_t *ptVar7;
-  target_definition_2022_t td_prompt;
-  target_definition_2022_t td_regen;
+  target_definition_t *ptVar5;
+  target_definition_t *ptVar6;
+  target_definition_t *ptVar7;
+  target_definition_t td_prompt;
+  target_definition_t td_regen;
   puVar2 = ((uint32_t)keyword & 0x1f000000U);
   ptVar5 = td;
   ptVar6 = &td_prompt;
@@ -15913,7 +16509,7 @@ int vanilla_instant_pump(int player, int card, event_t event, int allowed_contro
 {
   int result;
   card_instance_t *instance;
-  target_definition_2022_t td;
+  target_definition_t td;
   if (event != EVENT_CHECK_PUMP)
   {
     if (event != EVENT_CAN_CAST)
@@ -16064,7 +16660,7 @@ int legacy_effect_pump_ability_until_eot(int player, int card, event_t event)
       if ((uVar4 & 0x20) == 0)
         goto joined_r0x026a27de;
     LAB_026a27a4:
-      leaves_play_2022(pcVar3->targets[0].player, pcVar3->targets[0].card, event, 0, 0);
+      leaves_play(pcVar3->targets[0].player, pcVar3->targets[0].card, event, 0, 0);
       if (event != EVENT_LEAVES_PLAY_ABILITY)
       {
         uVar4 = pcVar3->targets[3].player;
@@ -16084,7 +16680,7 @@ int legacy_effect_pump_ability_until_eot(int player, int card, event_t event)
       }
       if ((pcVar3->targets[3].player & 8) == 0)
         goto LAB_026a2435;
-      leaves_play_2022((int)pcVar3->damage_source_player, pcVar3->damage_source_card,
+      leaves_play((int)pcVar3->damage_source_player, pcVar3->damage_source_card,
                        EVENT_LEAVES_PLAY_ABILITY, 0, 0);
     }
     else
@@ -16094,7 +16690,7 @@ int legacy_effect_pump_ability_until_eot(int player, int card, event_t event)
       if ((uVar4 & 0x20) != 0)
         goto LAB_026a27a4;
     joined_r0x026a27de:
-      if (((uVar4 & 8) == 0) || (leaves_play_2022((int)pcVar3->damage_source_player,
+      if (((uVar4 & 8) == 0) || (leaves_play((int)pcVar3->damage_source_player,
                                                   pcVar3->damage_source_card, event, 0, 0),
                                  event != EVENT_LEAVES_PLAY_ABILITY))
         goto LAB_026a2435;
@@ -16191,7 +16787,7 @@ LAB_026a2435:
   }
   if ((uVar4 & 0x180) != 0)
   {
-    leaves_play_2022(pcVar3->targets[6].player, pcVar3->targets[6].card, event, 0, 0);
+    leaves_play(pcVar3->targets[6].player, pcVar3->targets[6].card, event, 0, 0);
     uVar4 = pcVar3->targets[3].player;
     if (event == EVENT_LEAVES_PLAY_ABILITY)
     {
@@ -16275,17 +16871,17 @@ int cannot_attack(int player, int card, event_t event)
 /* Recovered October 2022 activated-ability core. */
 typedef union
 {
-  target_definition_2022_t target;
-  test_definition_2022_t test;
+  target_definition_t target;
+  test_definition_t test;
   target_t selected;
-} activated_storage_2022_t;
+} activated_storage_t;
 
 /* ManalinkEh 2022: 0x269c8c0; original functions/functions.c:13396. */
 int granted_generic_activated_ability(int granting_player, int granting_card,
                                            int granted_to_player, int granted_to_card,
                                            event_t event, int mode, int cless, int black, int blue,
                                            int green, int red, int white, uint32_t variable_costs,
-                                           target_definition_2022_t *td, const char *prompt)
+                                           target_definition_t *td, const char *prompt)
 {
   uint8_t uVar1;
   char cVar2;
@@ -16296,12 +16892,12 @@ int granted_generic_activated_ability(int granting_player, int granting_card,
   card_instance_t *pcVar7;
   int iVar8;
   unsigned int uVar9;
-  target_definition_2022_t *td_00;
+  target_definition_t *td_00;
   card_instance_t *pcVar10;
   unsigned int uVar11;
   unsigned int uVar12;
   unsigned int uStack_f0;
-  activated_storage_2022_t storage;
+  activated_storage_t storage;
   if (event == EVENT_CLEANUP)
   {
     pcVar3 = get_card_instance(granting_player, granting_card);
@@ -16593,7 +17189,7 @@ int granted_generic_activated_ability(int granting_player, int granting_card,
         }
       }
       if ((((granting_player == granted_to_player) && (granting_card == granted_to_card)) ||
-           (iVar4 = is_humiliated_for_ability(granting_player, granting_card, AL_STATIC),
+           (iVar4 = is_humiliated(granting_player, granting_card, AL_STATIC),
             iVar4 == 0)) &&
           (((unknown62BCEC != 0 && (needed_mana_colors == 0)) || ((mode & 0x200000U) != 0))))
       {
@@ -16734,17 +17330,17 @@ int granted_generic_activated_ability(int granting_player, int granting_card,
         }
         if ((mode & 0x40U) != 0)
         {
-          remove_counters_from_source(granted_to_player, granted_to_card, granted_to_player,
+          remove_counters(granted_to_player, granted_to_card, granted_to_player,
                                       granted_to_card, COUNTER_P1_P1, 1);
         }
         if ((mode & 0x80U) != 0)
         {
-          remove_counters_from_source(granted_to_player, granted_to_card, granted_to_player,
+          remove_counters(granted_to_player, granted_to_card, granted_to_player,
                                       granted_to_card, COUNTER_M1_M1, 1);
         }
         if (cVar2 == '\x01')
         {
-          remove_counters_from_source(granted_to_player, granted_to_card, granted_to_player,
+          remove_counters(granted_to_player, granted_to_card, granted_to_player,
                                       granted_to_card, variable_costs >> 0x10 & COUNTER_invalid,
                                       variable_costs >> 8 & 0xff);
         }
@@ -16799,7 +17395,7 @@ int granted_generic_activated_ability(int granting_player, int granting_card,
     {
       if ((mode & 2U) == 0)
       {
-        load_text_2022(NULL, prompt);
+        load_text(NULL, prompt);
         prompt = text_lines[0];
       }
       pcVar7 = get_card_instance(td->player, td->card);
@@ -16861,7 +17457,7 @@ int granted_generic_activated_ability(int granting_player, int granting_card,
   {
     new_default_test_definition(&storage.test, 2, "Select a creature to sacrifice.");
     uVar11 = new_sacrifice(granted_to_player, granted_to_card, granted_to_player,
-                                SAC2022_RETURN_CHOICE | SAC2022_AS_COST | SAC2022_JUST_MARK,
+                                SAC_RETURN_CHOICE | SAC_AS_COST | SAC_JUST_MARK,
                                 &storage.test);
     if (uVar11 != 0)
       goto LAB_0269ca10;
@@ -16899,7 +17495,7 @@ LAB_0269d394:
 /* ManalinkEh 2022: 0x269db00; original functions/functions.c:13271. */
 int generic_activated_ability(int player, int card, event_t event, int mode, int cless,
                                    int black, int blue, int green, int red, int white,
-                                   uint32_t variable_costs, target_definition_2022_t *td,
+                                   uint32_t variable_costs, target_definition_t *td,
                                    const char *prompt)
 {
   int result;
@@ -16914,7 +17510,7 @@ int generic_activated_ability(int player, int card, event_t event, int mode, int
 int attachment_granting_activated_ability(int player, int card, event_t event, int mode,
                                                int cless, int black, int blue, int green, int red,
                                                int white, uint32_t variable_costs,
-                                               target_definition_2022_t *td, const char *prompt)
+                                               target_definition_t *td, const char *prompt)
 {
   int32_t iVar1;
   card_instance_t *pcVar2;
@@ -16990,7 +17586,7 @@ int equipment_granting_activated_ability(int player, int card, event_t event,
                                               const char *dialog_option, int equip_cost, int mode,
                                               int cless, int black, int blue, int green, int red,
                                               int white, uint32_t variable_costs,
-                                              target_definition_2022_t *td, const char *prompt)
+                                              target_definition_t *td, const char *prompt)
 {
   card_instance_t *pcVar1;
   card_instance_t *pcVar2;
@@ -17201,11 +17797,11 @@ int charge_mana_for_activated_ability_while_resolving(int player, int card, even
 /* ManalinkEh 2022: 0x269e2b0; original functions/functions.c:11835. */
 int vanilla_creature_pumper(int player, int card, event_t event, int req_cless, int req_black,
                                  int req_blue, int req_green, int req_red, int req_white, int flags,
-                                 int pow, int tou, int key, int s_key, target_definition_2022_t *td)
+                                 int pow, int tou, int key, int s_key, target_definition_t *td)
 {
   int result;
   card_instance_t *instance;
-  target_definition_2022_t td_default;
+  target_definition_t td_default;
   if (event == EVENT_ACTIVATE)
   {
     if (td != NULL)
@@ -17666,14 +18262,14 @@ LAB_0268b91e:
 typedef union
 {
   char text[100];
-  target_definition_2022_t target;
-} activation_grave_storage_2022_t;
+  target_definition_t target;
+} activation_grave_storage_t;
 
 /* ManalinkEh 2022: 0x26a4540; original functions/functions.c:18743. */
 int generic_activated_ability_with_sacrifice_as_cost(
     int player, int card, event_t event, generic_activated_ability_flags_t flags, int cless,
-    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_2022_t *td,
-    const char *prompt, type_t type, test_definition_2022_t *test,
+    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_t *td,
+    const char *prompt, type_t type, test_definition_t *test,
     sacrifice_and_report_value_flags_t sac_flags)
 {
   unsigned short uVar1;
@@ -17686,8 +18282,8 @@ int generic_activated_ability_with_sacrifice_as_cost(
   unsigned int card_00;
   uint32_t p_Stack_264;
   char marked_for_sacrifice[151];
-  test_definition_2022_t test2;
-  test_definition_2022_t test2_1;
+  test_definition_t test2;
+  test_definition_t test2_1;
   if (event == EVENT_CLEANUP)
   {
     instance = get_card_instance(player, card);
@@ -17772,7 +18368,7 @@ int generic_activated_ability_with_sacrifice_as_cost(
     {
       uVar6 = new_sacrifice(
           player, card, player,
-          SAC2022_RETURN_CHOICE | SAC2022_AS_COST | SAC2022_ALL_OR_NONE | SAC2022_JUST_MARK, test);
+          SAC_RETURN_CHOICE | SAC_AS_COST | SAC_ALL_OR_NONE | SAC_JUST_MARK, test);
       if (uVar6 != 0)
       {
         card_00 = uVar6 >> 0x18;
@@ -17818,15 +18414,15 @@ int generic_activated_ability_with_sacrifice_as_cost(
       goto LAB_026a49d5;
     }
     iVar2 = mark_sacrifice(player, card, player,
-                                SAC2022_RETURN_CHOICE | SAC2022_AS_COST | SAC2022_ALL_OR_NONE |
-                                    SAC2022_JUST_MARK,
+                                SAC_RETURN_CHOICE | SAC_AS_COST | SAC_ALL_OR_NONE |
+                                    SAC_JUST_MARK,
                                 test, marked_for_sacrifice);
   }
   else
   {
     test->qty = 99;
     iVar2 = mark_sacrifice(player, card, player,
-                                SAC2022_AS_COST | SAC2022_JUST_MARK | SAC2022_DONE, test,
+                                SAC_AS_COST | SAC_JUST_MARK | SAC_DONE, test,
                                 marked_for_sacrifice);
     test->qty = uVar1;
   }
@@ -17906,8 +18502,8 @@ LAB_026a49d5:
 /* ManalinkEh 2022: 0x26a4c00; original functions/functions.c:18868. */
 int generic_activated_ability_with_target_in_grave(
     int player, int card, event_t event, generic_activated_ability_flags_t flags, int cless,
-    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_2022_t *td,
-    const char *prompt, type_t type, test_definition_2022_t *test, int gs_flags_for_grave_recycler)
+    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_t *td,
+    const char *prompt, type_t type, test_definition_t *test, int gs_flags_for_grave_recycler)
 {
   unsigned int uVar1;
   unsigned int uVar2;
@@ -17918,9 +18514,9 @@ int generic_activated_ability_with_target_in_grave(
   int iVar7;
   bool bVar8;
   int iStack_228;
-  activation_grave_storage_2022_t scratch;
-  test_definition_2022_t test2;
-  test_definition_2022_t test2_1;
+  activation_grave_storage_t scratch;
+  test_definition_t test2;
+  test_definition_t test2_1;
 
   iStack_228 = player;
   if ((gs_flags_for_grave_recycler & 0x3808U) == 0)
@@ -18067,7 +18663,7 @@ int generic_activated_ability_with_target_in_grave(
   {
     instance = get_card_instance(player, card);
     uVar2 = (uint32_t)(uint16_t)test->ai_selection_mode | ((uint32_t)(uint16_t)test->qty << 16);
-    select_multiple_cards_from_either_graveyard_2022(player, card, SFG_0, uVar2 & 0xff,
+    select_multiple_cards_from_either_graveyard(player, card, SFG_0, uVar2 & 0xff,
                                                      uVar2 >> 8 & 0xff, test,
                                                      (unsigned int)test->qty, instance->targets);
     goto LAB_026a4d5b;
@@ -18116,8 +18712,8 @@ LAB_026a4d5b:
 /* ManalinkEh 2022: 0x26a66a0; original functions/functions.c:19344. */
 int generic_activated_ability_with_tapsubtype_as_cost(
     int player, int card, event_t event, generic_activated_ability_flags_t flags, int cless,
-    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_2022_t *td,
-    const char *prompt, target_definition_2022_t *td_subtype, int req_tap)
+    int black, int blue, int green, int red, int white, int gvc_costs, target_definition_t *td,
+    const char *prompt, target_definition_t *td_subtype, int req_tap)
 {
   if (event == EVENT_CAN_ACTIVATE)
   {
@@ -18191,7 +18787,7 @@ int generic_activated_ability_with_tapsubtype_as_cost(
 
 /* ManalinkEh 2022: 0x268d340; original functions/functions.c:12407. */
 void store_attackers(int player, int card, event_t event, declare_attackers_trigger_t mode,
-                          int attacker_player, int attacker_card, test_definition_2022_t *test)
+                          int attacker_player, int attacker_card, test_definition_t *test)
 {
   int iVar1;
   int32_t iVar2;
@@ -18202,7 +18798,7 @@ void store_attackers(int player, int card, event_t event, declare_attackers_trig
   int32_t *storage;
   if (event == EVENT_DECLARE_ATTACKERS)
   {
-    iVar1 = is_humiliated_for_ability(player, card, AL_TRIG);
+    iVar1 = is_humiliated(player, card, AL_TRIG);
     if ((iVar1 == 0) && (((current_turn == attacker_player || (attacker_player == 2)) &&
                           (number_of_attackers_declared != 0))))
     {
@@ -18337,7 +18933,7 @@ int resolve_declare_attackers_trigger(int player, int card, event_t event,
   if ((((xVar2 != XTRIGGER_ATTACKING) || (card != affected_card)) ||
        (player != affected_card_controller)) ||
       ((reason_for_trigger_controller != player ||
-        (iVar3 = is_humiliated_for_ability(player, card, AL_TRIG), iVar3 != 0))))
+        (iVar3 = is_humiliated(player, card, AL_TRIG), iVar3 != 0))))
   {
     return 0;
   }
@@ -18420,7 +19016,7 @@ int declare_attackers_trigger(int player, int card, event_t event,
 /* ManalinkEh 2022: 0x268d940; original functions/functions.c:12541. */
 int declare_attackers_trigger_test(int player, int card, event_t event,
                                         declare_attackers_trigger_t mode, int attacker_player,
-                                        int attacker_card, test_definition_2022_t *test)
+                                        int attacker_card, test_definition_t *test)
 {
   int result;
   store_attackers(player, card, event, mode, attacker_player, attacker_card, test);
@@ -18452,7 +19048,7 @@ int when_attacks_pump_self(int player, int card, event_t event, int power, int t
     {
       return 0;
     }
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
   }
   else
   {
@@ -18472,7 +19068,7 @@ int when_attacks_pump_self(int player, int card, event_t event, int power, int t
     {
       return 0;
     }
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     power = toughness;
   }
   if (result != 0)
@@ -18499,7 +19095,7 @@ void etb_ability(int player, int card, event_t event, resolve_trigger_t trigger_
     if (((((card == affected_card) && (player == affected_card_controller)) &&
           (reason_for_trigger_controller == player)) &&
          ((trigger_cause_controller == player && (trigger_cause == card)))) &&
-        ((iVar2 = is_humiliated_for_ability(player, card, AL_TRIG),
+        ((iVar2 = is_humiliated(player, card, AL_TRIG),
           iVar2 == 0 && (iVar2 = check_for_cip_effects_removal(player, card), iVar2 == 0))))
     {
       if (event == EVENT_TRIGGER)
@@ -18556,7 +19152,7 @@ void etb_ability(int player, int card, event_t event, resolve_trigger_t trigger_
 
 /* ManalinkEh 2022: 0x26a5a60; original functions/functions.c:19100. */
 void etb_ability_global(int controller_of_trigger, event_t event, int trigger_mode,
-                             type_t type, test_definition_2022_t *test, int triggering_player,
+                             type_t type, test_definition_t *test, int triggering_player,
                              int triggering_card)
 {
   unsigned char bVar1;
@@ -18579,7 +19175,7 @@ void etb_ability_global(int controller_of_trigger, event_t event, int trigger_mo
   {
     return;
   }
-  iVar2 = is_humiliated_for_ability(triggering_player, triggering_card, AL_TRIG);
+  iVar2 = is_humiliated(triggering_player, triggering_card, AL_TRIG);
   if (iVar2 != 0)
   {
     return;
@@ -18683,7 +19279,7 @@ LAB_026a5c41:
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 int deflect_away_from_me(int player, int card, event_t event, int mode, int cless, int black,
                          int blue, int green, int red, int white, uint32_t variable_costs,
-                         target_definition_2022_t *td, int must_be_creature);
+                         target_definition_t *td, int must_be_creature);
 static char *has_only_1_target_and_could_legally_change_target_and_targets_me(int who_chooses,
                                                                               int player, int card,
                                                                               int targeting_player,
@@ -18721,7 +19317,7 @@ static char *has_only_1_target_and_could_legally_change_target_and_targets_me(in
 /* ManalinkEh 2022: 0x269e400; original functions/functions.c:15373. */
 int deflect_away_from_me(int player, int card, event_t event, int mode, int cless, int black,
                          int blue, int green, int red, int white, uint32_t variable_costs,
-                         target_definition_2022_t *td, int must_be_creature)
+                         target_definition_t *td, int must_be_creature)
 {
   int32_t iVar1;
   int iVar2;
@@ -18730,7 +19326,7 @@ int deflect_away_from_me(int player, int card, event_t event, int mode, int cles
   int iVar5;
   int iVar6;
   card_instance_t *pcVar7;
-  target_definition_2022_t td_default;
+  target_definition_t td_default;
 
   if (td == NULL)
   {
@@ -18798,7 +19394,7 @@ int deflect_away_from_me(int player, int card, event_t event, int mode, int cles
 
 /* ManalinkEh 2022: 0x2684f40; original functions/functions.c:19902. */
 static void sp_ability_trigger_impl(int controller_of_trigger, event_t event, int trigger_mode,
-                                         type_t type, test_definition_2022_t *test,
+                                         type_t type, test_definition_t *test,
                                          int triggering_player, int triggering_card,
                                          int allow_copies)
 {
@@ -18826,7 +19422,7 @@ static void sp_ability_trigger_impl(int controller_of_trigger, event_t event, in
   {
     return;
   }
-  iVar1 = is_humiliated_for_ability(triggering_player, triggering_card, AL_TRIG);
+  iVar1 = is_humiliated(triggering_player, triggering_card, AL_TRIG);
   if (iVar1 != 0)
   {
     return;
@@ -18916,7 +19512,7 @@ LAB_0268517e:
 
 /* ManalinkEh 2022: 0x26a8120; original functions/functions.c:19963. */
 void sp_ability_trigger(int controller_of_trigger, event_t event, int trigger_mode,
-                             type_t type, test_definition_2022_t *test, int triggering_player,
+                             type_t type, test_definition_t *test, int triggering_player,
                              int triggering_card)
 {
   sp_ability_trigger_impl(controller_of_trigger, event, trigger_mode, type, test,
@@ -18939,7 +19535,7 @@ void disable_legend_rule(int player, int card, event_t event, int t_player)
     instance = in_play(player, card);
     if (instance != NULL)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         if ((t_player & 0xfffffffdU) == 0)
@@ -18966,7 +19562,7 @@ void disable_legend_rule(int player, int card, event_t event, int t_player)
 /* ManalinkEh 2022: 0x2694580; original functions/functions.c:9944. */
 static void count_for_gfp_ability_and_store_values_impl(int player, int card, int event,
                                                              int t_player, int type,
-                                                             test_definition_2022_t *this_test,
+                                                             test_definition_t *this_test,
                                                              CardPairFunction extra_check, int mode,
                                                              int storage_location)
 {
@@ -19264,7 +19860,7 @@ void count_for_gfp_ability_and_store_values_extra(int player, int card, int even
 
 /* ManalinkEh 2022: 0x2694ce0; original functions/functions.c:10066. */
 void count_for_gfp_ability_and_store_values(int player, int card, int event, int t_player,
-                                                 int type, test_definition_2022_t *this_test,
+                                                 int type, test_definition_t *this_test,
                                                  int mode, int storage_location)
 {
   count_for_gfp_ability_and_store_values_impl(player, card, event, t_player, type, this_test,
@@ -19275,7 +19871,7 @@ void count_for_gfp_ability_and_store_values(int player, int card, int event, int
 
 /* ManalinkEh 2022: 0x2694d30; original functions/functions.c:10070. */
 void count_for_gfp_ability(int player, int card, int event, int t_player, int type,
-                                test_definition_2022_t *this_test)
+                                test_definition_t *this_test)
 {
   count_for_gfp_ability_and_store_values_impl(player, card, event, t_player, type, this_test,
                                                    (CardPairFunction)0x0, 0, 0);
@@ -19331,7 +19927,7 @@ int resolve_gfp_ability(int player, int card, event_t event, resolve_trigger_t t
 /* Recovered October 2022 action and copy helpers. */
 
 /* ManalinkEh 2022: 0x2686bb0; original functions/functions.c:5847. */
-void shapeshift_all(int src_player, int src_card, int t_player, test_definition_2022_t *test,
+void shapeshift_all(int src_player, int src_card, int t_player, test_definition_t *test,
                          int turn_into_player, int turn_into_card, int mode)
 {
   int iVar1;
@@ -19476,7 +20072,7 @@ void shapeshift_all(int src_player, int src_card, int t_player, test_definition_
 
 /* ManalinkEh 2022: 0x267f4a0; original functions/functions.c:5667. */
 int enters_the_battlefield_as_copy_of_any(int player, int card, event_t event,
-                                               target_definition_2022_t *td, const char *prompt)
+                                               target_definition_t *td, const char *prompt)
 {
   unsigned int uVar1;
   card_instance_t *instance;
@@ -19522,7 +20118,7 @@ LAB_0267f4bc:
 
 /* ManalinkEh 2022: 0x2684210; original functions/functions.c:6906. */
 static int new_specific_cip_impl(int controller_of_trigger, event_t event, int trigger_mode,
-                                      type_t type, test_definition_2022_t *test,
+                                      type_t type, test_definition_t *test,
                                       int triggering_player, int triggering_card)
 {
   int iVar1;
@@ -19587,7 +20183,7 @@ int specific_cip(int player, int card, event_t event, int t_player, int trigger_
                       int cc, int flag5)
 {
   int iStack_e4;
-  test_definition_2022_t test;
+  test_definition_t test;
   iStack_e4 = 0;
   if (trigger_condition == 0xdb)
   {
@@ -19619,7 +20215,7 @@ int specific_cip(int player, int card, event_t event, int t_player, int trigger_
 
 /* ManalinkEh 2022: 0x2684500; original functions/functions.c:6966. */
 int new_specific_cip_global(int player, event_t event, int trigger_mode, type_t type,
-                                 test_definition_2022_t *this_test, int triggering_player,
+                                 test_definition_t *this_test, int triggering_player,
                                  int triggering_card)
 {
   int result;
@@ -19635,7 +20231,7 @@ int new_specific_cip_global(int player, event_t event, int trigger_mode, type_t 
 
 /* ManalinkEh 2022: 0x2684560; original functions/functions.c:6962. */
 int new_specific_cip(int player, int card, event_t event, int t_player, int trigger_mode,
-                          test_definition_2022_t *this_test)
+                          test_definition_t *this_test)
 {
   int result;
   if (trigger_condition != 0xdb)
@@ -19653,13 +20249,13 @@ int new_specific_cip(int player, int card, event_t event, int t_player, int trig
 #ifndef SHANDALAR
 /* Recovered October 2022 life-gain and loss-prevention helpers. */
 
-#define life_gain_context_push_2022 EXE_FN(void, 0x435C80, void)
-#define life_gain_context_pop_2022 EXE_FN(void, 0x435CD0, void)
+#define life_gain_context_push EXE_FN(void, 0x435C80, void)
+#define life_gain_context_pop EXE_FN(void, 0x435CD0, void)
 int life_to_lose_on_gain_life;
 int suspend_cannot_lose_the_game;
 
 /* ManalinkEh 2022: 0x2685c90; original functions/functions.c:14700. */
-static int can_lose_the_game_impl_2022(int player)
+static int can_lose_the_game_impl(int player)
 {
   card_instance_t *instance;
   int result;
@@ -19696,7 +20292,7 @@ static int can_lose_the_game_impl_2022(int player)
               if (player != player_00)
                 goto LAB_02685cdd;
             LAB_02685ce8:
-              result = is_humiliated_for_ability(player_00, card, AL_STATIC);
+              result = is_humiliated(player_00, card, AL_STATIC);
               if (result == 0)
               {
                 return 0;
@@ -19735,7 +20331,7 @@ int can_lose_the_game(int player)
 
   if (suspend_cannot_lose_the_game == 0)
   {
-    result = can_lose_the_game_impl_2022(player);
+    result = can_lose_the_game_impl(player);
     return result;
   }
   return 1;
@@ -19743,7 +20339,7 @@ int can_lose_the_game(int player)
 
 
 /* ManalinkEh 2022: 0x268f0b0; original functions/functions.c:11369. */
-int player_can_gain_life_as_cost_2022(int player)
+int player_can_gain_life_as_cost(int player)
 {
   int result;
   if (((uint32_t)player_bits[player] & PB_CANT_GAIN_LIFE) != 0)
@@ -19756,7 +20352,7 @@ int player_can_gain_life_as_cost_2022(int player)
 
 
 /* ManalinkEh 2022: 0x268f730; original functions/functions.c:11288. */
-static void gain_life_impl_2022(int player, int amount, int from_lifelink)
+static void gain_life_impl(int player, int amount, int from_lifelink)
 {
   int iVar1;
   int iVar2;
@@ -19781,17 +20377,17 @@ static void gain_life_impl_2022(int player, int amount, int from_lifelink)
   }
   if (((uint32_t)event_flags & EA_LICH) != 0)
   {
-    life_gain_context_push_2022();
+    life_gain_context_push();
     iVar1 = life_to_lose_on_gain_life;
     iVar2 = life_gained;
     life_to_lose_on_gain_life = 0;
     life_gained = amount;
-    dispatch_xtrigger2(current_turn, XTRIGGER2022_REPLACE_GAIN_LIFE, "gaining life", 0, player,
+    dispatch_xtrigger2(current_turn, XTRIGGER_REPLACE_GAIN_LIFE, "gaining life", 0, player,
                        from_lifelink);
     amount = life_gained;
     life_gained = iVar2;
     life_to_lose_on_gain_life = iVar1;
-    life_gain_context_pop_2022();
+    life_gain_context_pop();
     if (amount < 1)
     {
       if (amount < 0)
@@ -19810,7 +20406,7 @@ static void gain_life_impl_2022(int player, int amount, int from_lifelink)
     dispatch_trigger2(current_turn, TRIGGER_GAIN_LIFE, "gained life", 0, player, -1);
   }
   life_gained = iVar2;
-  if (life_gain_draw_count_2022[player] != 0)
+  if (life_gain_draw_count[player] != 0)
   {
     draw_cards(player, amount);
   }
@@ -19826,15 +20422,15 @@ LAB_0268f7f5:
 /* ManalinkEh 2022: 0x268f900; original functions/functions.c:11331. */
 void gain_life(int player, int amount)
 {
-  gain_life_impl_2022(player, amount, 0);
+  gain_life_impl(player, amount, 0);
   return;
 }
 
 
 /* ManalinkEh 2022: 0x268f9f0; original functions/functions.c:11335. */
-void gain_life_from_lifelink_2022(int player, int amount)
+void gain_life_from_lifelink(int player, int amount)
 {
-  gain_life_impl_2022(player, amount, 1);
+  gain_life_impl(player, amount, 1);
   return;
 }
 
@@ -19850,7 +20446,7 @@ void lose_the_game(int player)
     if (player != 2)
     {
       if ((suspend_cannot_lose_the_game == 0) &&
-          (result = can_lose_the_game_impl_2022(player), result == 0))
+          (result = can_lose_the_game_impl(player), result == 0))
       {
         return;
       }
@@ -19892,7 +20488,7 @@ int trigger_gain_life(int player, int card, event_t event, int who_gains,
        ((who_gains == 2 || (trigger_cause_controller == who_gains)))) &&
       ((card == affected_card &&
         ((player == affected_card_controller &&
-          (iVar1 = is_humiliated_for_ability(player, card, AL_TRIG), iVar1 == 0))))))
+          (iVar1 = is_humiliated(player, card, AL_TRIG), iVar1 == 0))))))
   {
     if (event == EVENT_TRIGGER)
     {
@@ -19911,8 +20507,8 @@ int trigger_gain_life(int player, int card, event_t event, int who_gains,
   return 0;
 }
 
-#undef life_gain_context_push_2022
-#undef life_gain_context_pop_2022
+#undef life_gain_context_push
+#undef life_gain_context_pop
 #endif
 
 
@@ -19940,7 +20536,7 @@ static void cannot_lose_the_game_impl(int player, int card, event_t event, int w
     instance->targets[5].player = 0;
     instance->targets[5].card = 0;
     instance->targets[6].player = who_cant_lose;
-    leaves_play_2022(player, card, event, 0, 0);
+    leaves_play(player, card, event, 0, 0);
     if (event != EVENT_LEAVES_PLAY_ABILITY)
       goto LAB_026a3128;
   LAB_026a31f0:
@@ -19950,7 +20546,7 @@ static void cannot_lose_the_game_impl(int player, int card, event_t event, int w
   else
   {
     iVar2 = instance->targets[6].player;
-    leaves_play_2022(player, card, event, 0, 0);
+    leaves_play(player, card, event, 0, 0);
     if (event == EVENT_LEAVES_PLAY_ABILITY)
       goto LAB_026a31f0;
     if (who_cant_lose == iVar2)
@@ -20114,7 +20710,7 @@ int lose_life(int player, int amount)
           ((instance = in_play(iVar3, iVar5),
             instance != NULL && ((uVar7 = (unsigned int)cards_data[instance->internal_card_id].id,
                                   uVar7 == 0x2d75 || (uVar7 == 0x304d)))) &&
-           (iVar6 = is_humiliated_for_ability(iVar3, iVar5, AL_TRIG), iVar6 == 0)))
+           (iVar6 = is_humiliated(iVar3, iVar5, AL_TRIG), iVar6 == 0)))
       {
         bVar2 = true;
         marked[iVar3][iVar5] = uVar7;
@@ -20144,7 +20740,7 @@ int lose_life(int player, int amount)
                                    (uVar7 == 0x1aff)) ||
                                   ((uVar7 == 0x4148 || (uVar7 == 0x4814)))) ||
                                  (uVar7 == 0x4fce)))) &&
-          (iVar5 = is_humiliated_for_ability(player, iVar3, AL_TRIG), iVar5 == 0)))
+          (iVar5 = is_humiliated(player, iVar3, AL_TRIG), iVar5 == 0)))
       {
         bVar1 = true;
         marked[player][iVar3] = uVar7;
@@ -20189,7 +20785,7 @@ int lose_life(int player, int amount)
     {
       if (iVar6 == 0x1705)
       {
-        gain_life_impl_2022(player, amount * 2, 0);
+        gain_life_impl(player, amount * 2, 0);
       }
       else if (iVar6 == 0x1aff)
       {
@@ -20202,7 +20798,7 @@ int lose_life(int player, int amount)
     }
     else if (iVar6 == 0x4814)
     {
-      lichs_mastery_lifeloss_trigger_2022(player, iVar5, amount);
+      lichs_mastery_lifeloss_trigger(player, iVar5, amount);
     }
     else if (iVar6 == 0x4fce)
     {
@@ -20223,7 +20819,7 @@ LAB_0268f526:
       }
       else if (marked[iVar3][iVar5] == 0x304d)
       {
-        gain_life_impl_2022(iVar3, amount, 0);
+        gain_life_impl(iVar3, amount, 0);
       }
       iVar5 = iVar5 + 1;
     } while (iVar5 < active_cards_count[iVar3]);
@@ -20634,7 +21230,7 @@ void replace_all_instances_of_one_basic_land_type_word_with_another(int player, 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x268ecf0; original functions/functions.c:13906.
  * Built-in chooser UI is stubbed; see functions/choose_a_card.cpp. */
-int new_card_from_list(int player, int mode, test_definition_2022_t *test)
+int new_card_from_list(int player, int mode, test_definition_t *test)
 {
   uint16_t uVar1;
   int result;
@@ -20701,9 +21297,9 @@ int haste_and_sacrifice_eot(int player, int card, event_t event);
 static int generic_haste_and_kill_at_eot_legacy(int player, int card, event_t event);
 int haste_and_remove_at_beginning_of_next_end_step(int player, int card, int t_player,
                                                         int t_card, int kill_mode);
-void haste_and_sacrifice_token_at_end_of_next_turn(token_generation_2022_t *token, int beast,
+void haste_and_sacrifice_token_at_end_of_next_turn(token_generation_t *token, int beast,
                                                         int number);
-void haste_and_remove_token_at_end_of_next_turn(token_generation_2022_t *token, int beast,
+void haste_and_remove_token_at_end_of_next_turn(token_generation_t *token, int beast,
                                                      int number);
 
 /* ManalinkEh 2022: 0x2678910; original functions/functions.c:18504. */
@@ -20863,7 +21459,7 @@ int haste_and_remove_at_beginning_of_next_end_step(int player, int card, int t_p
 
 
 /* ManalinkEh 2022: 0x26a01a0; original functions/functions.c:18598. */
-void haste_and_sacrifice_token_at_end_of_next_turn(token_generation_2022_t *token, int beast,
+void haste_and_sacrifice_token_at_end_of_next_turn(token_generation_t *token, int beast,
                                                         int number)
 {
   haste_and_remove_at_beginning_of_next_end_step(token->s_player, token->s_card,
@@ -20873,7 +21469,7 @@ void haste_and_sacrifice_token_at_end_of_next_turn(token_generation_2022_t *toke
 
 
 /* ManalinkEh 2022: 0x26a01e0; original functions/functions.c:18603. */
-void haste_and_remove_token_at_end_of_next_turn(token_generation_2022_t *token, int beast,
+void haste_and_remove_token_at_end_of_next_turn(token_generation_t *token, int beast,
                                                      int number)
 {
   haste_and_remove_at_beginning_of_next_end_step(token->s_player, token->s_card,
@@ -20887,25 +21483,25 @@ void haste_and_remove_token_at_end_of_next_turn(token_generation_2022_t *token, 
 #ifndef SHANDALAR
 /* Recovered October 2022 reanimation family. */
 static int new_reanimate_all_impl(int player, int card, int targ_player,
-                                test_definition_2022_t *this_test, reanimate_mode_2022_t action);
-int new_reanimate_all(int player, int card, int targ_player, test_definition_2022_t *this_test,
-                           reanimate_mode_2022_t action);
+                                test_definition_t *this_test, reanimate_mode_t action);
+int new_reanimate_all(int player, int card, int targ_player, test_definition_t *this_test,
+                           reanimate_mode_t action);
 static int reanimate_permanent_impl(int player, int card, int target_graveyard, int selected,
-                                  reanimate_mode_2022_t action, counter_t counter_type,
-                                  CardFunction effect_fn, ReanimationBeforeEtb_2022 before_etb);
+                                  reanimate_mode_t action, counter_t counter_type,
+                                  CardFunction effect_fn, ReanimationBeforeEtb before_etb);
 int reanimate_permanent(int player, int card, int target_graveyard, int selected,
-                             reanimate_mode_2022_t action);
+                             reanimate_mode_t action);
 int reanimate_permanent_with_effect(int player, int card, int target_graveyard, int selected,
-                                         reanimate_mode_2022_t action, CardFunction effect_fn);
+                                         reanimate_mode_t action, CardFunction effect_fn);
 int reanimate_permanent_with_counter_and_effect(int player, int card, int target_graveyard,
-                                                     int selected, reanimate_mode_2022_t action,
+                                                     int selected, reanimate_mode_t action,
                                                      counter_t counter_type, CardFunction effect_fn);
 int reanimate_permanent_with_function(int player, int card, int target_graveyard, int selected,
-                                           reanimate_mode_2022_t action,
-                                           ReanimationBeforeEtb_2022 before_etb);
+                                           reanimate_mode_t action,
+                                           ReanimationBeforeEtb before_etb);
 void reanimate_all(int player, int card, int targ_player, int type, int flag1, int subtype,
                         int flag2, int color, int flag3, int id, int flag4, int cc, int flag5,
-                        reanimate_mode_2022_t action);
+                        reanimate_mode_t action);
 static int haste_and_exile_your_upkeep(int player, int card, event_t event);
 int effect_unearth(int player, int card, event_t event);
 void ereboss_titan_effect(int player);
@@ -20914,10 +21510,10 @@ int upkeep_trigger_mode_impl(int player, int card, event_t event,
 
 /* ManalinkEh 2022: 0x269ba70; original functions/functions.c:5286. */
 static int new_reanimate_all_impl(int player, int card, int targ_player,
-                                test_definition_2022_t *this_test, reanimate_mode_2022_t action)
+                                test_definition_t *this_test, reanimate_mode_t action)
 {
   int iVar1;
-  reanimate_mode_2022_t rVar2;
+  reanimate_mode_t rVar2;
   int iVar3;
   card_instance_t *instance;
   int iVar5;
@@ -20939,7 +21535,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
   unsigned int uStack_2040;
   int trc[2];
   int ac[2];
-  test_definition_2022_t this_test2;
+  test_definition_t this_test2;
   int to_reanimate[1000];
   int auras[1000];
 
@@ -20948,8 +21544,8 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
   {
     iStack_2054 = get_id(player, card);
   }
-  iVar1 = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM2022_GRAVE);
-  rVar2 = action & REANIMATE2022_SPECIAL_LIVING_DEAD;
+  iVar1 = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM_GRAVE);
+  rVar2 = action & REANIMATE_SPECIAL_LIVING_DEAD;
   trc[0] = 0;
   trc[1] = 0;
   ac[0] = 0;
@@ -20995,7 +21591,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
             if ((iVar5 == 0) ||
                 ((iVar5 = is_what(-1, piVar10[iVar3], 2), iVar1 == 0 && (iVar5 != 0))))
             {
-              iVar5 = has_subtype_by_id_2022(player, (unsigned int)cards_data[piVar10[iVar3]].id,
+              iVar5 = has_subtype_by_id(player, (unsigned int)cards_data[piVar10[iVar3]].id,
                                              SUBTYPE_AURA);
               if (iVar5 == 0)
               {
@@ -21005,7 +21601,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
                   to_reanimate[(iVar11) * 500 + (iVar5)] = piVar10[iVar3];
                   trc[iVar11] = iVar5 + 1;
                 joined_r0x0269c7ff:
-                  if (rVar2 == REANIMATE2022_DEFAULT)
+                  if (rVar2 == REANIMATE_DEFAULT)
                   {
                     remove_card_from_grave(iVar11, iVar3);
                   }
@@ -21043,7 +21639,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
     }
     iVar11 = iVar11 + 1;
   } while (iVar11 != 2);
-  if (rVar2 != REANIMATE2022_DEFAULT)
+  if (rVar2 != REANIMATE_DEFAULT)
   {
     default_test_definition(&this_test2, 2);
     new_manipulate_all(player, card, 2, &this_test2, ACT_KILL_SACRIFICE);
@@ -21096,7 +21692,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
       iStack_2050 = iStack_2050 + 500;
     } while (iStack_2050 != 1000);
   }
-  if ((action & REANIMATE2022_ALL_UNDER_CASTERS_CONTROL) == REANIMATE2022_DEFAULT)
+  if ((action & REANIMATE_ALL_UNDER_CASTERS_CONTROL) == REANIMATE_DEFAULT)
   {
     iVar1 = 0;
     iStack_204c = 0;
@@ -21109,7 +21705,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
         do
         {
           iVar3 = *piVar10;
-          if (rVar2 == REANIMATE2022_DEFAULT)
+          if (rVar2 == REANIMATE_DEFAULT)
           {
           LAB_0269be48:
             iVar3 = add_card_to_hand_invisible(iVar1, iVar3);
@@ -21134,7 +21730,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
         do
         {
           iVar3 = *piVar10;
-          if (rVar2 == REANIMATE2022_DEFAULT)
+          if (rVar2 == REANIMATE_DEFAULT)
           {
           LAB_0269bef0:
             iVar3 = add_card_to_hand_invisible(iVar1, iVar3);
@@ -21169,8 +21765,8 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
           iVar11 = *piVar10;
           piVar10 = piVar10 + 1;
           reanimate_permanent_impl(player_00, -1, player_00, iVar11,
-                                        action | REANIMATE2022_SPECIAL_R_ALL, COUNTER_invalid,
-                                        (CardFunction)0x0, (ReanimationBeforeEtb_2022)0x0);
+                                        action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,
+                                        (CardFunction)0x0, (ReanimationBeforeEtb)0x0);
           uVar9 = current_turn;
         } while (piVar10 != (auras + (player_00) * 500) + iVar1);
       }
@@ -21189,8 +21785,8 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
           iVar11 = *piVar10;
           piVar10 = piVar10 + 1;
           reanimate_permanent_impl(uVar9, -1, uVar9, iVar11,
-                                        action | REANIMATE2022_SPECIAL_R_ALL, COUNTER_invalid,
-                                        (CardFunction)0x0, (ReanimationBeforeEtb_2022)0x0);
+                                        action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,
+                                        (CardFunction)0x0, (ReanimationBeforeEtb)0x0);
         } while ((to_reanimate + (uVar9) * 500) + iVar1 != piVar10);
       }
       uStack_2040 = uStack_2040 + 1;
@@ -21206,7 +21802,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
       do
       {
         iVar1 = *piVar10;
-        if (rVar2 == REANIMATE2022_DEFAULT)
+        if (rVar2 == REANIMATE_DEFAULT)
         {
         LAB_0269bbc8:
           iVar1 = add_card_to_hand(player, iVar1);
@@ -21231,7 +21827,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
       do
       {
         iVar1 = *piVar10;
-        if (rVar2 == REANIMATE2022_DEFAULT)
+        if (rVar2 == REANIMATE_DEFAULT)
         {
         LAB_0269c118:
           iVar1 = add_card_to_hand(player, iVar1);
@@ -21257,7 +21853,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
       do
       {
         iVar3 = *piVar10;
-        if (rVar2 == REANIMATE2022_DEFAULT)
+        if (rVar2 == REANIMATE_DEFAULT)
         {
         LAB_0269c368:
           iVar3 = add_card_to_hand_invisible(player, iVar3);
@@ -21285,7 +21881,7 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
       do
       {
         iVar3 = *piVar10;
-        if (rVar2 == REANIMATE2022_DEFAULT)
+        if (rVar2 == REANIMATE_DEFAULT)
         {
         LAB_0269c468:
           iVar3 = add_card_to_hand_invisible(player, iVar3);
@@ -21321,8 +21917,8 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
         instance = get_card_instance(player, iVar11);
         instance->state = instance->state & 0xffffffdf;
         reanimate_permanent_impl(player, card, player, iVar11,
-                                      action | REANIMATE2022_SPECIAL_R_ALL, COUNTER_invalid,
-                                      (CardFunction)0x0, (ReanimationBeforeEtb_2022)0x0);
+                                      action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,
+                                      (CardFunction)0x0, (ReanimationBeforeEtb)0x0);
       } while (piVar10 != (auras + (player) * 500) + iVar1);
     }
     iVar1 = trc[player];
@@ -21336,8 +21932,8 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
         piVar10 = (int *)((int)(to_reanimate + (0) * 500) + iVar11);
         iVar11 = iVar11 + 4;
         reanimate_permanent_impl(player, card, player, *piVar10,
-                                      action | REANIMATE2022_SPECIAL_R_ALL, COUNTER_invalid,
-                                      (CardFunction)0x0, (ReanimationBeforeEtb_2022)0x0);
+                                      action | REANIMATE_SPECIAL_R_ALL, COUNTER_invalid,
+                                      (CardFunction)0x0, (ReanimationBeforeEtb)0x0);
       } while ((iVar1 + player * 500) * 4 != iVar11);
     }
   }
@@ -21350,8 +21946,8 @@ static int new_reanimate_all_impl(int player, int card, int targ_player,
 
 
 /* ManalinkEh 2022: 0x269c810; original functions/functions.c:5532. */
-int new_reanimate_all(int player, int card, int targ_player, test_definition_2022_t *this_test,
-                           reanimate_mode_2022_t action)
+int new_reanimate_all(int player, int card, int targ_player, test_definition_t *this_test,
+                           reanimate_mode_t action)
 {
   int result;
   result = new_reanimate_all_impl(player, card, targ_player, this_test, action);
@@ -21361,46 +21957,46 @@ int new_reanimate_all(int player, int card, int targ_player, test_definition_202
 
 /* ManalinkEh 2022: 0x2695730; original functions/functions.c:5108. */
 static int reanimate_permanent_impl(int player, int card, int target_graveyard, int selected,
-                                  reanimate_mode_2022_t action, counter_t counter_type,
-                                  CardFunction effect_fn, ReanimationBeforeEtb_2022 before_etb)
+                                  reanimate_mode_t action, counter_t counter_type,
+                                  CardFunction effect_fn, ReanimationBeforeEtb before_etb)
 {
   int *piVar1;
   int player_00;
-  reanimate_mode_2022_t rVar2;
+  reanimate_mode_t rVar2;
   int t_card;
   int result;
   card_instance_t *instance;
-  reanimate_mode_2022_t rStack_24;
+  reanimate_mode_t rStack_24;
   int iStack_1c;
 
   if (selected == -1)
   {
     return -1;
   }
-  rVar2 = (action ^ REANIMATEXTRA2022_RETURN_TO_HAND2) >> 0x1f & action;
+  rVar2 = (action ^ REANIMATEXTRA_RETURN_TO_HAND2) >> 0x1f & action;
   piVar1 = graveyard_ptr_mutable[target_graveyard];
   player_00 = player;
-  if ((rVar2 & REANIMATE2022_UNDER_OWNER_CONTROL) != REANIMATE2022_DEFAULT)
+  if ((rVar2 & REANIMATE_UNDER_OWNER_CONTROL) != REANIMATE_DEFAULT)
   {
     player_00 = target_graveyard;
   }
   t_card = selected;
-  if ((rVar2 & REANIMATE2022_SPECIAL_R_ALL) == REANIMATE2022_DEFAULT)
+  if ((rVar2 & REANIMATE_SPECIAL_R_ALL) == REANIMATE_DEFAULT)
   {
     t_card = add_card_to_hand(player_00, piVar1[selected]);
     remove_card_from_grave(target_graveyard, selected);
   }
-  if ((((rVar2 & REANIMATE2022_RETURN_TO_HAND) == REANIMATE2022_DEFAULT) &&
+  if ((((rVar2 & REANIMATE_RETURN_TO_HAND) == REANIMATE_DEFAULT) &&
        (result = is_what(-1, piVar1[selected], 2), result != 0)) &&
-      (result = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM2022_GRAVE), result != 0))
+      (result = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM_GRAVE), result != 0))
   {
     return -1;
   }
-  rStack_24 = rVar2 & REANIMATE2022_RETURN_TO_HAND;
+  rStack_24 = rVar2 & REANIMATE_RETURN_TO_HAND;
   iStack_1c = card;
-  if ((rVar2 & REANIMATE2022_ATTACH_AS_AURA) == REANIMATE2022_DEFAULT)
+  if ((rVar2 & REANIMATE_ATTACH_AS_AURA) == REANIMATE_DEFAULT)
   {
-    if ((((rVar2 & REANIMATE2022_ATTACH_AURA_TO_REANIMATOR) == REANIMATE2022_DEFAULT) ||
+    if ((((rVar2 & REANIMATE_ATTACH_AURA_TO_REANIMATOR) == REANIMATE_DEFAULT) ||
          (player < 0)) ||
         (card < 0))
       goto LAB_026957b7;
@@ -21424,7 +22020,7 @@ static int reanimate_permanent_impl(int player, int card, int target_graveyard, 
     instance->damage_target_player = (int8_t)player_00;
     instance->targets[0].card = t_card;
     instance->damage_target_card = t_card;
-    if ((rVar2 & REANIMATE2022_ATTACH_AURA_TO_REANIMATOR) == REANIMATE2022_DEFAULT)
+    if ((rVar2 & REANIMATE_ATTACH_AURA_TO_REANIMATOR) == REANIMATE_DEFAULT)
       goto LAB_026957c4;
   }
   set_special_flags(player_00, t_card, 0x20000000);
@@ -21438,27 +22034,27 @@ LAB_026957c4:
   if (counter_type != COUNTER_invalid)
   {
     hack_silent_counters = hack_silent_counters + 1;
-    add_counters_from_source(player, card, player_00, t_card, counter_type, 1);
+    add_counters(player, card, player_00, t_card, counter_type, 1);
     hack_silent_counters = hack_silent_counters + -1;
   }
-  if ((rVar2 & REANIMATE2022_TAP) != REANIMATE2022_DEFAULT)
+  if ((rVar2 & REANIMATE_TAP) != REANIMATE_DEFAULT)
   {
     instance = get_card_instance(player_00, t_card);
     instance->state = instance->state | 0x10;
   }
-  if ((rVar2 & REANIMATE2022_PLUS1_PLUS1_COUNTER) != REANIMATE2022_DEFAULT)
+  if ((rVar2 & REANIMATE_PLUS1_PLUS1_COUNTER) != REANIMATE_DEFAULT)
   {
-    add_counters_from_source(player, card, player_00, t_card, COUNTER_P1_P1, 1);
+    add_counters(player, card, player_00, t_card, COUNTER_P1_P1, 1);
   }
-  if ((rVar2 & REANIMATE2022_MINUS1_MINUS1_COUNTER) != REANIMATE2022_DEFAULT)
+  if ((rVar2 & REANIMATE_MINUS1_MINUS1_COUNTER) != REANIMATE_DEFAULT)
   {
-    add_counters_from_source(player, card, player_00, t_card, COUNTER_M1_M1, 1);
+    add_counters(player, card, player_00, t_card, COUNTER_M1_M1, 1);
   }
   if (effect_fn != (CardFunction)0x0)
   {
     create_targetted_legacy_effect(player, iStack_1c, effect_fn, player_00, t_card);
   }
-  if (action == REANIMATE2022_UNEARTH)
+  if (action == REANIMATE_UNEARTH)
   {
     convert_to_token(player_00, t_card);
     set_special_flags(player_00, t_card, 0x4000);
@@ -21466,24 +22062,24 @@ LAB_026957c4:
   }
   else
   {
-    if ((rVar2 & REANIMATE2022_ADD_BLACK_ZOMBIE) != REANIMATE2022_DEFAULT)
+    if ((rVar2 & REANIMATE_ADD_BLACK_ZOMBIE) != REANIMATE_DEFAULT)
     {
       change_color(player, iStack_1c, player_00, t_card, COLOR_TEST_BLACK,
                    CHANGE_COLOR_NO_SOUND | CHANGE_COLOR_ADD);
       add_a_subtype_permanently(player, iStack_1c, player_00, t_card, SUBTYPE_ZOMBIE);
     }
-    if ((rVar2 & REANIMATE2022_HASTE_AND_EXILE_AT_EOT) != REANIMATE2022_DEFAULT)
+    if ((rVar2 & REANIMATE_HASTE_AND_EXILE_AT_EOT) != REANIMATE_DEFAULT)
     {
       create_targetted_legacy_effect(player, iStack_1c, haste_and_remove_eot, player_00,
                                      t_card);
     }
   }
-  if ((rVar2 & REANIMATE2022_HASTE_AND_EXILE_AT_YOUR_UPKEEP) != REANIMATE2022_DEFAULT)
+  if ((rVar2 & REANIMATE_HASTE_AND_EXILE_AT_YOUR_UPKEEP) != REANIMATE_DEFAULT)
   {
     create_targetted_legacy_effect(player, iStack_1c, haste_and_exile_your_upkeep, player_00,
                                    t_card);
   }
-  if ((rVar2 & REANIMATE2022_HASTE_UNTIL_EOT) != REANIMATE2022_DEFAULT)
+  if ((rVar2 & REANIMATE_HASTE_UNTIL_EOT) != REANIMATE_DEFAULT)
   {
     pump_ability_until_eot(player, iStack_1c, player_00, t_card, 0, 0, 0, 4);
   }
@@ -21498,14 +22094,14 @@ LAB_026957c4:
       remove_state(player_00, t_card, 0x1000);
     }
   }
-  if (before_etb != (ReanimationBeforeEtb_2022)0x0)
+  if (before_etb != (ReanimationBeforeEtb)0x0)
   {
     (*before_etb)(player, card, player_00, t_card);
   }
-  if ((((rVar2 & (REANIMATE2022_RETURN_TO_HAND | REANIMATE2022_ATTACH_AS_AURA |
-                  REANIMATE2022_HASTE_AND_EXILE_AT_EOT | REANIMATE2022_ADD_BLACK_ZOMBIE |
-                  REANIMATE2022_UNEARTH | REANIMATE2022_NO_CONTROL_LEGACY)) ==
-            REANIMATE2022_DEFAULT &&
+  if ((((rVar2 & (REANIMATE_RETURN_TO_HAND | REANIMATE_ATTACH_AS_AURA |
+                  REANIMATE_HASTE_AND_EXILE_AT_EOT | REANIMATE_ADD_BLACK_ZOMBIE |
+                  REANIMATE_UNEARTH | REANIMATE_NO_CONTROL_LEGACY)) ==
+            REANIMATE_DEFAULT &&
         effect_fn == (CardFunction)0x0) &&
        (iStack_1c != -1)) &&
       ((target_graveyard != player ||
@@ -21513,10 +22109,10 @@ LAB_026957c4:
   {
     create_targetted_legacy_effect(player, iStack_1c, empty, player_00, t_card);
   }
-  if (rStack_24 == REANIMATE2022_DEFAULT)
+  if (rStack_24 == REANIMATE_DEFAULT)
   {
     set_special_flags3(player_00, t_card, 1);
-    if ((rVar2 & REANIMATE2022_RETURN_TO_PLAY_TRANSFORMED) == REANIMATE2022_DEFAULT)
+    if ((rVar2 & REANIMATE_RETURN_TO_PLAY_TRANSFORMED) == REANIMATE_DEFAULT)
     {
       put_into_play(player_00, t_card);
     }
@@ -21524,7 +22120,7 @@ LAB_026957c4:
     {
       put_into_play_transformed(player_00, t_card);
     }
-    if (action == REANIMATE2022_UNEARTH)
+    if (action == REANIMATE_UNEARTH)
     {
       instance = in_play(player_00, t_card);
       if (instance != NULL)
@@ -21542,14 +22138,14 @@ LAB_026957c4:
 
 /* ManalinkEh 2022: 0x269b760; original functions/functions.c:5249. */
 int reanimate_permanent(int player, int card, int target_graveyard, int selected,
-                             reanimate_mode_2022_t action)
+                             reanimate_mode_t action)
 {
   unsigned int card_00;
   int result;
 
   card_00 = reanimate_permanent_impl(player, card, target_graveyard, selected, action,
                                           COUNTER_invalid, (CardFunction)0x0,
-                                          (ReanimationBeforeEtb_2022)0x0);
+                                          (ReanimationBeforeEtb)0x0);
   if ((card_00 != 0xffffffff) && ((card_00 & 0x800) == 0))
   {
     result = is_what(player, card_00, 2);
@@ -21564,14 +22160,14 @@ int reanimate_permanent(int player, int card, int target_graveyard, int selected
 
 /* ManalinkEh 2022: 0x269b8f0; original functions/functions.c:5258. */
 int reanimate_permanent_with_effect(int player, int card, int target_graveyard, int selected,
-                                         reanimate_mode_2022_t action, CardFunction effect_fn)
+                                         reanimate_mode_t action, CardFunction effect_fn)
 {
   unsigned int card_00;
   int result;
 
   card_00 =
       reanimate_permanent_impl(player, card, target_graveyard, selected, action,
-                                    COUNTER_invalid, effect_fn, (ReanimationBeforeEtb_2022)0x0);
+                                    COUNTER_invalid, effect_fn, (ReanimationBeforeEtb)0x0);
   if ((card_00 != 0xffffffff) && ((card_00 & 0x800) == 0))
   {
     result = is_what(player, card_00, 2);
@@ -21586,14 +22182,14 @@ int reanimate_permanent_with_effect(int player, int card, int target_graveyard, 
 
 /* ManalinkEh 2022: 0x269b970; original functions/functions.c:5267. */
 int reanimate_permanent_with_counter_and_effect(int player, int card, int target_graveyard,
-                                                     int selected, reanimate_mode_2022_t action,
+                                                     int selected, reanimate_mode_t action,
                                                      counter_t counter_type, CardFunction effect_fn)
 {
   unsigned int card_00;
   int result;
 
   card_00 = reanimate_permanent_impl(player, card, target_graveyard, selected, action,
-                                          counter_type, effect_fn, (ReanimationBeforeEtb_2022)0x0);
+                                          counter_type, effect_fn, (ReanimationBeforeEtb)0x0);
   if ((card_00 != 0xffffffff) && ((card_00 & 0x800) == 0))
   {
     result = is_what(player, card_00, 2);
@@ -21608,8 +22204,8 @@ int reanimate_permanent_with_counter_and_effect(int player, int card, int target
 
 /* ManalinkEh 2022: 0x269b9f0; original functions/functions.c:5278. */
 int reanimate_permanent_with_function(int player, int card, int target_graveyard, int selected,
-                                           reanimate_mode_2022_t action,
-                                           ReanimationBeforeEtb_2022 before_etb)
+                                           reanimate_mode_t action,
+                                           ReanimationBeforeEtb before_etb)
 {
   unsigned int card_00;
   int result;
@@ -21631,9 +22227,9 @@ int reanimate_permanent_with_function(int player, int card, int target_graveyard
 /* ManalinkEh 2022: 0x269c830; original functions/functions.c:5536. */
 void reanimate_all(int player, int card, int targ_player, int type, int flag1, int subtype,
                         int flag2, int color, int flag3, int id, int flag4, int cc, int flag5,
-                        reanimate_mode_2022_t action)
+                        reanimate_mode_t action)
 {
-  test_definition_2022_t test;
+  test_definition_t test;
   new_default_test_definition(&test, type, "");
   test.type_flag = (unsigned short)flag1;
   test.subtype = subtype;
@@ -21697,7 +22293,7 @@ int effect_unearth(int player, int card, event_t event)
       set_special_flags(player_00, card_00, 0x4000);
     }
   }
-  leaves_play_2022(player_00, card_00, event, 0, 0);
+  leaves_play(player_00, card_00, event, 0, 0);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
     result = get_original_internal_card_id(player_00, card_00);
@@ -21774,7 +22370,7 @@ int upkeep_trigger_mode_impl(int player, int card, event_t event,
       (reason_for_trigger_controller == player))
   {
     result = is_what(player, card, 0x80);
-    if ((result == 0) && (result = is_humiliated_for_ability(player, card, AL_TRIG), result != 0))
+    if ((result == 0) && (result = is_humiliated(player, card, AL_TRIG), result != 0))
     {
       return 0;
     }
@@ -21818,7 +22414,7 @@ int upkeep_trigger_mode_impl(int player, int card, event_t event,
 
 /* ManalinkEh 2022: 0x26a3790; original functions/functions.c:878. */
 int test_leaves_play_mode(int triggering_player, int triggering_card, event_t event,
-                               int controller, resolve_trigger_t mode, test_definition_2022_t *test,
+                               int controller, resolve_trigger_t mode, test_definition_t *test,
                                int can_be_suppressed, int can_be_duplicated)
 {
   int iVar1;
@@ -21830,7 +22426,7 @@ int test_leaves_play_mode(int triggering_player, int triggering_card, event_t ev
          iVar1 != 0 && (reason_for_trigger_controller == triggering_player)) &&
         ((trigger_cause_controller == controller || (controller == 2))))))
   {
-    iVar1 = is_humiliated_for_ability(triggering_player, triggering_card, AL_TRIG);
+    iVar1 = is_humiliated(triggering_player, triggering_card, AL_TRIG);
     if (((iVar1 == 0) || (can_be_suppressed == 0)) &&
         ((iVar1 = is_this_dying(trigger_cause_controller, trigger_cause),
           iVar1 == 0 ||
@@ -21913,7 +22509,7 @@ int test_leaves_play_mode(int triggering_player, int triggering_card, event_t ev
 
 /* ManalinkEh 2022: 0x26a3a80; original functions/functions.c:939. */
 int test_leaves_play(int triggering_player, int triggering_card, event_t event, int controller,
-                          test_definition_2022_t *test, int can_be_suppressed,
+                          test_definition_t *test, int can_be_suppressed,
                           int can_be_duplicated)
 {
   int result;
@@ -22136,7 +22732,7 @@ card_instance_t *legacy_permanents_destroyed_this_way_accumulate(
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x269ad40; original functions/functions.c:6972. */
-int reveal_card_until_you_reveal_test(int player, int t_player, test_definition_2022_t *test,
+int reveal_card_until_you_reveal_test(int player, int t_player, test_definition_t *test,
                                            int flags)
 {
   int *deck = deck_ptr[player];
@@ -22260,7 +22856,7 @@ int reveal_card_until_you_reveal_test(int player, int t_player, test_definition_
 
 #ifndef SHANDALAR
 /* October 2022 private event context at 0x2775a74. */
-static event_t flash_current_event_2022;
+static event_t flash_current_event;
 #endif
 
 
@@ -22273,7 +22869,7 @@ static const char *has_mana_to_cast_target(int who_chooses, int player, int card
   int result;
   char *pcVar2;
   result = get_id(player, card);
-  event = flash_current_event_2022;
+  event = flash_current_event;
   result = get_internal_card_id_from_csv_id(result);
   result = has_mana_to_cast_iid(who_chooses, event, result);
   pcVar2 = NULL;
@@ -22290,7 +22886,7 @@ static const char *has_mana_to_cast_target(int who_chooses, int player, int card
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2696b60; original functions/functions.c:16763. */
 int can_play_cards_as_though_they_had_flash(int player, int card, event_t event,
-                                                 target_definition_2022_t *td, const char *prompt,
+                                                 target_definition_t *td, const char *prompt,
                                                  int literal)
 {
   card_instance_t *instance;
@@ -22310,14 +22906,14 @@ int can_play_cards_as_though_they_had_flash(int player, int card, event_t event,
       goto LAB_02696bb4;
     if (td->extra != -1)
     {
-      flash_current_event_2022 = EVENT_CAN_ACTIVATE;
+      flash_current_event = EVENT_CAN_ACTIVATE;
       goto LAB_02696c88;
     }
   LAB_02696c68:
     td->special = td->special | 0x8000;
     td->extra = (int32_t)has_mana_to_cast_target;
   }
-  flash_current_event_2022 = event;
+  flash_current_event = event;
   if (event == EVENT_CAN_ACTIVATE)
   {
   LAB_02696c88:
@@ -22325,12 +22921,12 @@ int can_play_cards_as_though_they_had_flash(int player, int card, event_t event,
     return result;
   }
 LAB_02696bb4:
-  flash_current_event_2022 = event;
+  flash_current_event = event;
   if (event == EVENT_ACTIVATE)
   {
     if (literal == 0)
     {
-      load_text_2022(NULL, prompt);
+      load_text(NULL, prompt);
       prompt = text_lines[0];
     }
     instance = get_card_instance(player, card);
@@ -22354,7 +22950,7 @@ LAB_02696bb4:
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2691e10; original functions/functions.c:14372. */
-int reveal_cards_from_your_hand(int player, int card, test_definition_2022_t *this_test)
+int reveal_cards_from_your_hand(int player, int card, test_definition_t *this_test)
 {
   card_instance_t *instance;
   int iVar2;
@@ -22454,7 +23050,7 @@ LAB_02691ea0:
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2699e10; original functions/functions.c:7761. */
 static int discard_card_by_int_id(int player, int int_crd_id, int effect,
-                                     test_definition_2022_t *this_test, int source_of_effect)
+                                     test_definition_t *this_test, int source_of_effect)
 {
   card_instance_t *instance;
   int result;
@@ -22529,7 +23125,7 @@ static int discard_card_by_int_id(int player, int int_crd_id, int effect,
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2699f60; original functions/functions.c:7811. */
-int new_effect_coercion(ec_definition_t *this_definition, test_definition_2022_t *this_test)
+int new_effect_coercion(ec_definition_t *this_definition, test_definition_t *this_test)
 {
   card_instance_t *instance;
   int iVar2;
@@ -22543,8 +23139,8 @@ int new_effect_coercion(ec_definition_t *this_definition, test_definition_2022_t
   int iStack_354;
   int initial_hand[50];
   int ai_hand[50];
-  test_definition_2022_t test_default;
-  test_definition_2022_t this_test2;
+  test_definition_t test_default;
+  test_definition_t this_test2;
 
   if (this_test == NULL)
   {
@@ -22732,7 +23328,7 @@ int new_effect_coercion(ec_definition_t *this_definition, test_definition_2022_t
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x269fe40; original functions/functions.c:18459. */
 int exile_top_x_card_you_may_play_them(int player, int card, int howmany,
-                                            test_definition_2022_t *test, int t_player,
+                                            test_definition_t *test, int t_player,
                                             mpcfe_mode_t flags)
 {
   int *deck;
@@ -22994,7 +23590,7 @@ int real_shapeshift_target(int src_player, int src_card, int t_player, int t_car
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2692630; original functions/functions.c:14669. */
 void mana_into_string(int cless, int black, int blue, int green, int red, int white,
-                           test_definition_2022_t *this_test)
+                           test_definition_t *this_test)
 {
   int iVar1;
   int iVar2;
@@ -23079,11 +23675,11 @@ int card_is_being_cycled = 0;
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2692dd0; original functions/functions.c:14958. */
 int can_counter_activated_ability(int player, int card, event_t event,
-                                       target_definition_2022_t *td)
+                                       target_definition_t *td)
 {
   int iVar1;
   int iVar2;
-  target_definition_2022_t td_default;
+  target_definition_t td_default;
 
   if (td == NULL)
   {
@@ -23110,10 +23706,10 @@ int can_counter_activated_ability(int player, int card, event_t event,
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2693060; original functions/functions.c:15042. */
 int can_counter_triggered_ability(int player, int card, event_t event,
-                                       target_definition_2022_t *td)
+                                       target_definition_t *td)
 {
   int result;
-  target_definition_2022_t td_default;
+  target_definition_t td_default;
   if (td == NULL)
   {
     td = &td_default;
@@ -23157,14 +23753,14 @@ int cast_counter_activated_ability(int player, int card, int target_pos)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2692ef0; original functions/functions.c:14996. */
-int validate_counter_activated_ability(int player, int card, target_definition_2022_t *td,
+int validate_counter_activated_ability(int player, int card, target_definition_t *td,
                                             int target_pos)
 {
   uint16_t uVar1;
   int32_t iVar2;
   card_instance_t *instance;
   int iVar4;
-  target_definition_2022_t td_default;
+  target_definition_t td_default;
 
   instance = get_card_instance(player, card);
   if (td == NULL)
@@ -23209,7 +23805,7 @@ void raw_counter_activated_ability(int tgt_player, int tgt_card)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2692ff0; original functions/functions.c:15030. */
-int resolve_counter_activated_ability(int player, int card, target_definition_2022_t *td,
+int resolve_counter_activated_ability(int player, int card, target_definition_t *td,
                                            int target_pos)
 {
   int result;
@@ -23281,7 +23877,7 @@ int charge_mana_for_double_x(int player, int color)
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2696e30; original functions/functions.c:16852. */
 void if_a_card_would_be_put_into_graveyard_from_play_exile_it_instead(
-    int player, int card, int event, int t_player, test_definition_2022_t *test)
+    int player, int card, int event, int t_player, test_definition_t *test)
 {
   card_instance_t *instance;
   int result;
@@ -23292,7 +23888,7 @@ void if_a_card_would_be_put_into_graveyard_from_play_exile_it_instead(
     instance = in_play(player, card);
     if (instance != NULL)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if ((result == 0) && ((t_player == affected_card_controller || (t_player == 2))))
       {
         instance = in_play(affected_card_controller, affected_card);
@@ -23327,7 +23923,7 @@ void if_a_card_would_be_put_into_graveyard_from_play_exile_it_instead(
 /* ManalinkEh 2022: 0x2696f20; original functions/functions.c:16868. */
 int if_a_card_would_be_put_into_graveyard_from_library_do_something_instead(
     int player, int card, int event, int t_player, resolve_trigger_t trigger_mode,
-    test_definition_2022_t *test)
+    test_definition_t *test)
 {
   xtrigger_t xVar1;
   int result;
@@ -23343,7 +23939,7 @@ int if_a_card_would_be_put_into_graveyard_from_library_do_something_instead(
           (reason_for_trigger_controller == player)) &&
          (replace_milled == 0)) &&
         (((trigger_cause_controller == t_player || (t_player == 2)) &&
-          (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))))
+          (result = is_humiliated(player, card, AL_STATIC), result == 0))))
     {
       if ((test != NULL) &&
           (result = new_make_test(trigger_cause_controller,
@@ -23375,7 +23971,7 @@ int if_a_card_would_be_put_into_graveyard_from_library_do_something_instead(
 /* ManalinkEh 2022: 0x2697040; original functions/functions.c:16892. */
 int if_a_card_would_be_put_into_graveyard_from_anywhere_but_library_do_something_instead(
     int player, int card, int event, int t_player, resolve_trigger_t trigger_mode,
-    test_definition_2022_t *test)
+    test_definition_t *test)
 {
   xtrigger_t xVar1;
   int result;
@@ -23392,7 +23988,7 @@ int if_a_card_would_be_put_into_graveyard_from_anywhere_but_library_do_something
           (reason_for_trigger_controller == player)) &&
          (replace_milled == 0)) &&
         (((trigger_cause_controller == t_player || (t_player == 2)) &&
-          (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))))
+          (result = is_humiliated(player, card, AL_STATIC), result == 0))))
     {
       if ((test != NULL) &&
           (result = new_make_test(trigger_cause_controller, trigger_cause, -1, test),
@@ -23422,7 +24018,7 @@ int if_a_card_would_be_put_into_graveyard_from_anywhere_but_library_do_something
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2697150; original functions/functions.c:16943. */
 void if_a_card_would_be_put_into_graveyard_from_anywhere_exile_it_instead(
-    int player, int card, int event, int t_player, test_definition_2022_t *test)
+    int player, int card, int event, int t_player, test_definition_t *test)
 {
   int result;
   result = if_a_card_would_be_put_into_graveyard_from_library_do_something_instead(
@@ -23451,7 +24047,7 @@ void if_a_card_would_be_put_into_graveyard_from_anywhere_exile_it_instead(
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x268fdf0; original functions/functions.c:12260. */
-static int how_much_life_can_i_pay_for_mana_2022(int player)
+static int how_much_life_can_i_pay_for_mana(int player)
 {
   if (life_total_can_change(player) && !check_battlefield_for_id(2, 0x3010))
     return life[player];
@@ -23468,7 +24064,7 @@ int has_mana_multi_a(int player, int colorless, int black, int blue, int green, 
 {
   if (card_flags[player] & 2)
   {
-    int krrik_offset = how_much_life_can_i_pay_for_mana_2022(player) / 2;
+    int krrik_offset = how_much_life_can_i_pay_for_mana(player) / 2;
     black = black < krrik_offset ? 0 : black - krrik_offset;
   }
   colorless = MAX(0, colorless);
@@ -23505,7 +24101,7 @@ int has_mana_multi(int player, int colorless, int black, int blue, int green, in
 {
   if (card_flags[player] & 2)
   {
-    int krrik_offset = how_much_life_can_i_pay_for_mana_2022(player) / 2;
+    int krrik_offset = how_much_life_can_i_pay_for_mana(player) / 2;
     black = black < krrik_offset ? 0 : black - krrik_offset;
   }
   MANA_ARTIFACT = 0;
@@ -24214,7 +24810,7 @@ int get_color_by_internal_id(int player, int internal_id)
   int hack = 0;
   for (int p = 0; p < 2; ++p)
     for (int c = 0; c < active_cards_count[p]; ++c)
-      if (in_play(p, c) && !is_humiliated_for_ability(p, c, AL_STATIC))
+      if (in_play(p, c) && !is_humiliated(p, c, AL_STATIC))
       {
         if (get_id(p, c) == CARD_ID_PAINTERS_SERVANT)
         {
@@ -24933,7 +25529,7 @@ void damage_creature_and_all_the_others_with_the_same_name(int player, int card,
   int id = get_card_name(t_player, t_card);
   if (id != -1)
   {
-    test_definition_2022_t this_test;
+    test_definition_t this_test;
     default_test_definition(&this_test, TYPE_CREATURE);
     this_test.id = id;
     new_damage_all(player, card, ANYBODY, dmg, 0, &this_test);
@@ -24966,7 +25562,7 @@ int tutor_card_with_the_same_name(int player, int card, int who_tutors, int t_pl
   {
     scnprintf(msg, 100, "Select a card named %s", cards_ptr[id]->name);
   }
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
   new_default_test_definition(&this_test, TYPE_ANY, msg);
   this_test.id = id;
   int result = new_global_tutor(who_tutors, t_player, tutor_from, tutor_to, must_tutor,
@@ -25001,7 +25597,7 @@ int count_permanents_by_name(int player, type_t type, int csvid)
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26a5250; original functions/functions.c:19023. */
 int ai_name_a_random_csvid(int player, int card, int t_player, type_t type,
-                                test_definition_2022_t *test)
+                                test_definition_t *test)
 {
   int csvid = CARD_ID_LIGHTNING_BOLT;
   for (int rounds = 0; rounds < 10; ++rounds)
@@ -25026,7 +25622,7 @@ int ai_name_a_random_csvid(int player, int card, int t_player, type_t type,
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x268edc0; original functions/functions.c:13955. */
-int name_a_card(int player, int ai_player, test_definition_2022_t *test, int mode)
+int name_a_card(int player, int ai_player, test_definition_t *test, int mode)
 {
   if (ai_is_speculating != 1 && (player != AI || (trace_mode & 2)))
     return new_card_from_list(player, mode, test);
@@ -25055,7 +25651,7 @@ int name_a_card(int player, int ai_player, test_definition_2022_t *test, int mod
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2678c50; original functions/functions.c:15710. */
-static void alternate_legacy_text_2022_impl(int textnum, int player, int legacycard)
+static void alternate_legacy_text_impl(int textnum, int player, int legacycard)
 {
   card_instance_t *instance = get_card_instance(player, legacycard);
   if (cards_data[instance->internal_card_id].id != 902 &&
@@ -25078,7 +25674,7 @@ static void alternate_legacy_text_2022_impl(int textnum, int player, int legacyc
 int alternate_legacy_text(int textnum, int player, int legacycard)
 {
   if (legacycard >= 0)
-    alternate_legacy_text_2022_impl(textnum, player, legacycard);
+    alternate_legacy_text_impl(textnum, player, legacycard);
   return legacycard;
 }
 
@@ -25087,13 +25683,13 @@ int alternate_legacy_text(int textnum, int player, int legacycard)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2678d10; original functions/functions.c:16525. */
-static void type_text_2022_impl(char *buf, int maxlen, type_t type, type_text_t flags)
+static void type_text_impl(char *buf, int maxlen, type_t type, type_text_t flags)
 {
 
   const char *types[17] = {0};
   int num_types = 0;
 
-  load_text_2022(0, "TYPE");
+  load_text(0, "TYPE");
 
   if (!(flags & TYPETEXT_NO_ABBREV))
   {
@@ -25166,7 +25762,7 @@ char *type_text(char *buf, int maxlen, type_t type, type_text_t flags)
   if (ai_is_speculating == 1)
     *buf = 0;
   else
-    type_text_2022_impl(buf, maxlen, type, flags);
+    type_text_impl(buf, maxlen, type, flags);
   return buf;
 }
 
@@ -25186,8 +25782,8 @@ static const char *has_activated_ability(int who_chooses, int player, int card)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26a70d0; original functions/functions.c:19544. */
-int select_permanent_to_disable(int player, int card, target_definition_2022_t *td,
-                                     const char *prompt, test_definition_2022_t *test)
+int select_permanent_to_disable(int player, int card, target_definition_t *td,
+                                     const char *prompt, test_definition_t *test)
 {
   td->allow_cancel = 0;
   td->illegal_abilities = 0;
@@ -25212,7 +25808,7 @@ int select_permanent_to_disable(int player, int card, target_definition_2022_t *
   int csvid = 0;
   if (choice == 0)
   {
-    if (new_pick_target(td, prompt, 0, GS2022_LITERAL_PROMPT))
+    if (new_pick_target(td, prompt, 0, GS_LITERAL_PROMPT))
     {
       csvid = get_card_name(instance->targets[0].player, instance->targets[0].card);
     }
@@ -25255,7 +25851,7 @@ void activated_abilities_disabler_enters_bf(int player, int card, int action)
 int activated_abilities_disabler(int player, int card, event_t event, int action)
 {
   if (event == EVENT_ABILITIES && !affect_me(player, card) &&
-      !is_humiliated_for_ability(player, card, AL_STATIC))
+      !is_humiliated(player, card, AL_STATIC))
   {
     int csvid = get_card_instance(player, card)->info_slot;
     if (csvid > 0 && get_id(affected_card_controller, affected_card) ==
@@ -25320,7 +25916,7 @@ void ai_modifier_for_targeted_card_drawing(int player, int card, int target_pos,
   int targeted_player = instance->targets[target_pos].player;
   int damage_from_triggers = 0;
   CYCLE_ALL_CARDS(p, c, {
-    if (in_play(p, c) && !is_humiliated_for_ability(p, c, AL_TRIG))
+    if (in_play(p, c) && !is_humiliated(p, c, AL_TRIG))
     {
       int csvid = get_id(p, c);
       switch (csvid)
@@ -25441,11 +26037,11 @@ void ai_modifier_for_act_of_treason(int player, int card)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26a6500; original functions/functions.c:19277. */
-int aot_like_spell(int player, int card, event_t event, target_definition_2022_t *td,
+int aot_like_spell(int player, int card, event_t event, target_definition_t *td,
                         const char *msg, int additional_flags)
 {
   card_instance_t *instance = get_card_instance(player, card);
-  int flags = GS2022_CAN_TARGET | additional_flags;
+  int flags = GS_CAN_TARGET | additional_flags;
   if ((event == EVENT_CAST_SPELL && affect_me(player, card)) || event == EVENT_CHANGE_TARGET)
   {
     generic_spell(player, card, event, flags, td, msg, 1, NULL);
@@ -25631,7 +26227,7 @@ void twiddle(int player, int card, int tgtnum)
   int p = instance->targets[tgtnum].player;
   int c = instance->targets[tgtnum].card;
 
-  load_text_2022(0, "TWIDDLE");
+  load_text(0, "TWIDDLE");
   switch (DIALOG(player, card, EVENT_ACTIVATE, DLG_RANDOM, DLG_NO_STORAGE, DLG_SMALLCARD(p, c),
                  text_lines[1], 1, p == AI ? 1 : 3, text_lines[2], 1, p == AI ? 3 : 1))
   {
@@ -25673,7 +26269,7 @@ void ai_modifier_twiddle(int player, int card, int tgtnum)
 void untap_only_1_permanent_per_upkeep(int player, int card, event_t event, int t_player,
                                             int type)
 {
-  target_definition_2022_t td;
+  target_definition_t td;
   default_target_definition(player, card, &td, type);
   td.required_state = TARGET_STATE_TAPPED;
   td.illegal_abilities = 0;
@@ -25696,7 +26292,7 @@ void untap_only_1_permanent_per_upkeep(int player, int card, event_t event, int 
     else
     {
       char typetext[100];
-      type_text_2022_impl(typetext, 100, type, TYPETEXT_0);
+      type_text_impl(typetext, 100, type, TYPETEXT_0);
       scnprintf(prompt, 200, "PROCESSING %s: Select %s to untap.",
                 cards_ptr[get_id(player, card)]->full_name, typetext);
     }
@@ -25837,7 +26433,7 @@ void untap_lands(int player, int card, int num_lands)
 {
   int i = 0;
   card_instance_t *instance = get_card_instance(player, card);
-  target_definition_2022_t td;
+  target_definition_t td;
   default_target_definition(player, card, &td, TYPE_LAND);
   td.preferred_controller = player;
   td.illegal_abilities = 0;
@@ -25928,9 +26524,9 @@ static int remove_untargettable_legacy(int player, int card, event_t event)
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2695e20; original functions/functions.c:16384. */
 void type_uncounterable(int player, int card, event_t event, int t_player, int type,
-                             test_definition_2022_t *this_test)
+                             test_definition_t *this_test)
 {
-  if (is_what(player, card, TYPE_PERMANENT) && is_humiliated_for_ability(player, card, AL_STATIC))
+  if (is_what(player, card, TYPE_PERMANENT) && is_humiliated(player, card, AL_STATIC))
   {
     return;
   }
@@ -26004,7 +26600,7 @@ int is_artifact_creature_by_internal_id(int iid, int unused1, int unused2, int u
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2696190; original functions/functions.c:16469. */
 void global_type_change(int player, int card, event_t event, int t_player, int added_type,
-                             test_definition_2022_t *this_test, int pow, int tou, int key,
+                             test_definition_t *this_test, int pow, int tou, int key,
                              int subtype, int clr)
 {
   if (event == EVENT_CHANGE_TYPE && in_play(player, card))
@@ -26234,7 +26830,7 @@ static int global_type_animation_legacy(int player, int card, event_t event)
   if (instance->targets[0].player > -1)
   {
 
-    test_definition_2022_t this_test;
+    test_definition_t this_test;
     default_test_definition(&this_test, instance->targets[4].player);
     this_test.type_flag = instance->targets[4].card;
     this_test.subtype = instance->targets[5].player;
@@ -26289,7 +26885,7 @@ int real_land_animation2(int player, int card, int t_player, int t_card, int mod
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2694f40; original functions/functions.c:14835. */
 int land_animation2(int player, int card, int t_player, int t_card, int mode, int pow, int tou,
-                         int key, int s_key, int clr, test_definition_2022_t *this_test)
+                         int key, int s_key, int clr, test_definition_t *this_test)
 {
   if (t_card != -1)
     return real_land_animation2(player, card, t_player, t_card, mode, pow, tou, key, s_key,
@@ -26600,7 +27196,7 @@ void cloning_and_verify_legend(int player, int card, int t_player, int t_card)
 /* ManalinkEh 2022: 0x267f570; original functions/functions.c:5692. */
 int enters_the_battlefield_as_copy_of_any_creature(int player, int card, event_t event)
 {
-  target_definition_2022_t td;
+  target_definition_t td;
   if (event == EVENT_RESOLVE_SPELL)
   {
     base_target_definition(player, card, &td, TYPE_CREATURE);
@@ -27201,7 +27797,7 @@ int count_cards_by_id(int player, int id)
       int count = 0;
       while (count < active_cards_count[i])
       {
-        if (in_play(i, count) && !is_humiliated_for_ability(i, count, AL_STATIC) &&
+        if (in_play(i, count) && !is_humiliated(i, count, AL_STATIC) &&
             get_id(i, count) == id)
         {
           total++;
@@ -27254,7 +27850,7 @@ int count_subtype(int what_player, int type, int subtype)
 /* ManalinkEh 2022: 0x267a900; original functions/functions.c:1847. */
 int count_shrines(int player, int card)
 {
-  target_definition_2022_t td;
+  target_definition_t td;
   default_target_definition(player, card, &td, TYPE_ENCHANTMENT);
   td.required_subtype = SUBTYPE_SHRINE;
   td.allowed_controller = player;
@@ -27637,7 +28233,7 @@ int is_mana_producer_land(int player, int card)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2679080; original functions/functions.c:17071. */
-static void prevent_all_my_damage_impl_2022(int player, int card, int flags)
+static void prevent_all_my_damage_impl(int player, int card, int flags)
 {
   card_instance_t *damage = get_card_instance(affected_card_controller, affected_card);
   if (damage->internal_card_id == damage_card && damage->info_slot > 0 &&
@@ -27667,7 +28263,7 @@ static int prevent_all_damage_dealt_by_target_legacy(int player, int card, event
   card_instance_t *instance = get_card_instance(player, card);
   if (instance->damage_target_player >= 0 && event == EVENT_PREVENT_DAMAGE)
   {
-    prevent_all_my_damage_impl_2022(instance->damage_target_player, instance->damage_target_card,
+    prevent_all_my_damage_impl(instance->damage_target_player, instance->damage_target_card,
                                     instance->targets[1].player);
     return 0;
   }
@@ -27707,7 +28303,7 @@ void negate_combat_damage_this_turn(int player, int card, int t_player, int t_ca
   int legacy = create_targetted_legacy_effect(player, card, no_combat_damage_this_turn,
                                               t_player, t_card);
   if (legacy >= 0 && alternate_legacy_text_number > 0)
-    alternate_legacy_text_2022_impl(alternate_legacy_text_number, player, legacy);
+    alternate_legacy_text_impl(alternate_legacy_text_number, player, legacy);
 }
 
 #endif
@@ -27936,10 +28532,10 @@ static int effect_prevent_the_next_n_damage(int player, int card, event_t event)
           instance->counter_toughness -= amount;
         if ((instance->targets[2].player & PREVENT_ADD_1_1_COUNTER) &&
             damage->damage_target_card >= 0)
-          add_counters_from_source(player, card, damage->damage_target_player,
+          add_counters(player, card, damage->damage_target_player,
                                    damage->damage_target_card, COUNTER_P1_P1, amount);
         if (instance->targets[2].player & PREVENT_GAIN_LIFE)
-          gain_life_impl_2022(player, amount, 0);
+          gain_life_impl(player, amount, 0);
         if ((instance->targets[2].player & PREVENT_REDIRECT) && instance->targets[1].player >= 0 &&
             (instance->targets[1].card == -1 ||
              in_play(instance->targets[1].player, instance->targets[1].card)))
@@ -28164,7 +28760,7 @@ int damage_cannot_be_prevented_until_eot(int player, int card)
 void prevent_all_my_damage(int player, int card, event_t event, int flags)
 {
   if (event == EVENT_PREVENT_DAMAGE)
-    prevent_all_my_damage_impl_2022(player, card, flags);
+    prevent_all_my_damage_impl(player, card, flags);
 }
 
 #endif

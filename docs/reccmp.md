@@ -51,17 +51,20 @@ or bulk source-comment annotations are required. The CSV's extra provenance
 columns are ignored by reccmp.
 
 The generator reads native file-scope card/helper functions from the original
-DWARF. For an address in the recovery ledger, it uses the explicitly recorded
-source name, including `_2022` compatibility names. Other functions use their
-original names. A pair is emitted only when the name identifies one original
+DWARF. For an address in the recovery ledger, it translates the historical
+recovery name through the current canonical function-name map. The CSV `name`
+column therefore matches the real rebuilt function name; historical recovery
+identities remain in the evidence ledger. Other functions use their original
+names. A pair is emitted only when the name identifies one original
 address and one rebuilt address. The rebuilt inventory includes nested C++
 and runtime functions to catch name collisions across compilation units.
 Missing functions and ambiguous names are listed, with reasons, in
 `.recovery/reccmp/excluded-functions.json`. Functions without contiguous
 low/high DWARF bounds are outside this initial CSV's scope.
 
-Rerun setup after a rebuild or recovery-ledger change. The wrapper rejects
-binary/debug inputs or metadata whose hashes differ from the last setup.
+Rerun setup after a rebuild, recovery-ledger mapping change or canonicalization
+change. The wrapper rejects binary/debug inputs, metadata or source name mappings
+whose hashes differ from the last setup.
 `.recovery/reccmp/setup.json` records the input hashes and coverage statistics.
 Build outputs, local configs, reports, and exclusions remain ignored; the
 project configuration, generated function CSV, and tools belong in Git.
@@ -88,6 +91,20 @@ dialogs remain [out of scope](recovery-scope.md). Nothing here executes or
 deploys either DLL.
 
 ## Initial validation
+
+The 2026-10-26 canonical-name refresh pairs all 18,544 CSV entries under their
+expected names, with unique rebuilt addresses: 18,543 functions and one stub,
+including 4,770 recovery-ledger mappings. No CSV matching name or report name
+contains `2022`. This replaces 129 stale recovery spellings from the previous
+CSV. The HTML and JSON reports and their binary/metadata input receipt are
+refreshed. The full GCC 9.3 build, source/ABI checks, provenance audit and native
+build audit pass. Five private helpers have 23 verified concrete inline instances;
+their caller-owned ranges are not treated as standalone helper entries.
+
+Native verification exposed an accidental recursive fallback in the consolidated
+`mana_producer_fixed`. Its fallback now uses the distinct four-argument
+`engine_mana_producer_fixed` import at `0x47B6C0`, matching the release tail jump.
+The reports and default triage caches have been refreshed after this repair.
 
 The 2026-10-22 run used fork commit
 `e9fbb784cd8f88120c198f7e7285e3bb5262da3f` and successfully generated both

@@ -660,7 +660,7 @@ static booster_t pack_contents[198] = {
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26eb550; original functions/packs.c:650. */
-static void add_to_csvid_choices_2022(int *choice_num, int **choice_csvids, int csvid)
+static void add_to_csvid_choices(int *choice_num, int **choice_csvids, int csvid)
 {
   int result;
   int *piVar2;
@@ -708,7 +708,7 @@ static void add_to_csvid_choices_2022(int *choice_num, int **choice_csvids, int 
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26eb660; original functions/packs.c:3042. */
-static int add_card_to_pack_2022(int *out_csvids, int pos, int *choice_num, int **choice_csvids, int num,
+static int add_card_to_pack(int *out_csvids, int pos, int *choice_num, int **choice_csvids, int num,
                           int rarity, int expansion, int booster, int testing_mode)
 {
   unsigned int *puVar1;
@@ -1938,7 +1938,7 @@ static const count_and_card_t copies_neo_land[16] = {
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26eb8e0; original functions/packs.c:3158. */
-static int make_pack_normal_2022(EXPANSION_t expansion, int booster, int *out_csvids, int testing_mode)
+static int make_pack_normal(EXPANSION_t expansion, int booster, int *out_csvids, int testing_mode)
 {
   const count_and_card_t *pcVar1;
   varying_copies_entry_t *paVar2;
@@ -2234,7 +2234,7 @@ static int make_pack_normal_2022(EXPANSION_t expansion, int booster, int *out_cs
         do
         {
           uVar18 = uVar18 - 1;
-          add_to_csvid_choices_2022(choice_num, (int **)((int)&choices[0].csvids + iVar14), uVar19);
+          add_to_csvid_choices(choice_num, (int **)((int)&choices[0].csvids + iVar14), uVar19);
         } while (uVar18 != 0xffffffff);
         goto LAB_026eba48;
       }
@@ -2268,7 +2268,7 @@ static int make_pack_normal_2022(EXPANSION_t expansion, int booster, int *out_cs
           if (uStack_220 == uVar23)
           {
           code_r0x026ebc5e:
-            add_to_csvid_choices_2022(&pcVar7->num, (int **)&choices[uVar23].csvids, uVar19);
+            add_to_csvid_choices(&pcVar7->num, (int **)&choices[uVar23].csvids, uVar19);
             break;
           }
           goto joined_r0x026ebf77;
@@ -2299,7 +2299,7 @@ static int make_pack_normal_2022(EXPANSION_t expansion, int booster, int *out_cs
             do
             {
               iVar14 = iVar14 + -1;
-              add_to_csvid_choices_2022(&pcVar7->num, (int **)&choices[0x1b].csvids, uVar19);
+              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1b].csvids, uVar19);
             } while (iVar14 != -1);
           }
           goto LAB_026ebb08;
@@ -2325,7 +2325,7 @@ static int make_pack_normal_2022(EXPANSION_t expansion, int booster, int *out_cs
             do
             {
               uVar23 = uVar23 - 1;
-              add_to_csvid_choices_2022(&pcVar7->num, (int **)&choices[0x1c].csvids, uVar19);
+              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1c].csvids, uVar19);
             } while (uVar23 != 0xffffffff);
           }
           goto LAB_026ebb08;
@@ -2343,7 +2343,7 @@ static int make_pack_normal_2022(EXPANSION_t expansion, int booster, int *out_cs
             do
             {
               iVar14 = iVar14 + -1;
-              add_to_csvid_choices_2022(&pcVar7->num, (int **)&choices[0x1d].csvids, uVar19);
+              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1d].csvids, uVar19);
             } while (iVar14 != -1);
           }
           goto LAB_026ebb08;
@@ -2363,7 +2363,7 @@ static int make_pack_normal_2022(EXPANSION_t expansion, int booster, int *out_cs
             }
             do
             {
-              add_to_csvid_choices_2022(&pcVar7->num, (int **)&choices[0x1f].csvids, uVar19);
+              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x1f].csvids, uVar19);
               bVar5 = 0 < iVar14;
               iVar14 = iVar14 + -1;
             } while (bVar5);
@@ -2372,14 +2372,14 @@ static int make_pack_normal_2022(EXPANSION_t expansion, int booster, int *out_cs
         case 0x20:
           if (uVar19 == 0x7e)
           {
-            add_to_csvid_choices_2022(&pcVar7->num, (int **)&choices[0x20].csvids, 0x7e);
+            add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x20].csvids, 0x7e);
           }
           goto LAB_026ebb08;
         case 0x21:
           if (uStack_220 == 5)
           {
             ppcVar22 = &choices[0x21].csvids;
-            add_to_csvid_choices_2022(&pcVar7->num, (int **)ppcVar22, uVar19);
+            add_to_csvid_choices(&pcVar7->num, (int **)ppcVar22, uVar19);
             piVar8 = cards_ptr[uVar19]->types;
             do
             {
@@ -2387,12 +2387,12 @@ static int make_pack_normal_2022(EXPANSION_t expansion, int booster, int *out_cs
                 goto LAB_026ebb08;
               piVar8 = piVar8 + 1;
             } while (cards_ptr[uVar19]->types + 7 != piVar8);
-            add_to_csvid_choices_2022(&pcVar7->num, (int **)ppcVar22, uVar19);
-            add_to_csvid_choices_2022(&pcVar7->num, (int **)ppcVar22, uVar19);
+            add_to_csvid_choices(&pcVar7->num, (int **)ppcVar22, uVar19);
+            add_to_csvid_choices(&pcVar7->num, (int **)ppcVar22, uVar19);
           }
           goto LAB_026ebb08;
         case 0x22:
-          add_to_csvid_choices_2022(&pcVar7->num, (int **)&choices[0x22].csvids, uVar19);
+          add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x22].csvids, uVar19);
           goto LAB_026ebb08;
         case 0x24:
           piVar8 = cards_ptr[uVar19]->types;
@@ -2406,7 +2406,7 @@ static int make_pack_normal_2022(EXPANSION_t expansion, int booster, int *out_cs
           }
           if (uVar19 != 0x4bac)
           {
-            add_to_csvid_choices_2022(&pcVar7->num, (int **)&choices[0x24].csvids, uVar19);
+            add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x24].csvids, uVar19);
           }
           goto LAB_026ebb08;
         case 0x25:
@@ -2440,7 +2440,7 @@ static int make_pack_normal_2022(EXPANSION_t expansion, int booster, int *out_cs
             do
             {
               iVar14 = iVar14 + -1;
-              add_to_csvid_choices_2022(&pcVar7->num, (int **)&choices[0x25].csvids, uVar19);
+              add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x25].csvids, uVar19);
             } while (iVar14 != -1);
           }
           goto LAB_026ebb08;
@@ -2474,7 +2474,7 @@ static int make_pack_normal_2022(EXPANSION_t expansion, int booster, int *out_cs
               goto LAB_026ebb08;
             sVar4 = *piVar8;
           }
-          add_to_csvid_choices_2022(&pcVar7->num, (int **)&choices[0x28].csvids, uVar19);
+          add_to_csvid_choices(&pcVar7->num, (int **)&choices[0x28].csvids, uVar19);
           goto LAB_026ebb08;
         }
       LAB_026ebc75:
@@ -2500,7 +2500,7 @@ LAB_026ec0a8:
           do
           {
             iVar14 = iVar14 + 1;
-            add_to_csvid_choices_2022(&choices[dVar9].num, (int **)&choices[dVar9].csvids,
+            add_to_csvid_choices(&choices[dVar9].num, (int **)&choices[dVar9].csvids,
                                       pcVar25->csvid);
           } while (iVar14 < pcVar25->count);
         }
@@ -2521,11 +2521,11 @@ LAB_026ec0a8:
         (((expansion - EXPANSION_OATH_OF_THE_GATEWATCH & 0xfffffffb) == 0 ||
           (expansion == EXPANSION_AETHER_REVOLT))))))
   {
-    add_to_csvid_choices_2022(&choices[5].num, (int **)&choices[5].csvids, 0xbc);
-    add_to_csvid_choices_2022(&choices[5].num, (int **)&choices[5].csvids, 0x7e);
-    add_to_csvid_choices_2022(&choices[5].num, (int **)&choices[5].csvids, 0xef);
-    add_to_csvid_choices_2022(&choices[5].num, (int **)&choices[5].csvids, 0xa4);
-    add_to_csvid_choices_2022(&choices[5].num, (int **)&choices[5].csvids, 0x5b);
+    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xbc);
+    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0x7e);
+    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xef);
+    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0xa4);
+    add_to_csvid_choices(&choices[5].num, (int **)&choices[5].csvids, 0x5b);
   }
   bVar5 = true;
   iStack_22c = (-(unsigned int)(testing_mode == 0) & 0x1863c) + 100;
@@ -2560,7 +2560,7 @@ LAB_026ec0a8:
               {
                 iVar11 = internal_rand(uVar18 >> 0x10);
                 dVar9 = prStack_20c[((int)(uVar18 & 0xffff) <= iVar11) + 1 + iVar14].rarity;
-                iVar11 = add_card_to_pack_2022(out_csvids, uStack_220, &choices[dVar9].num,
+                iVar11 = add_card_to_pack(out_csvids, uStack_220, &choices[dVar9].num,
                                                (int **)&choices[dVar9].csvids, 1, dVar9, expansion,
                                                booster, testing_mode);
                 uStack_220 = (uStack_220 + 1) - (unsigned int)(iVar11 == 0);
@@ -2573,7 +2573,7 @@ LAB_026ec0a8:
             iVar10 = internal_rand(uVar18 >> 0x10);
             prVar21 = prStack_20c + ((int)(uVar18 & 0xffff) <= iVar10) + 1 + iVar14;
             dVar9 = prVar21->rarity;
-            iVar10 = add_card_to_pack_2022(out_csvids, uStack_220, &choices[dVar9].num,
+            iVar10 = add_card_to_pack(out_csvids, uStack_220, &choices[dVar9].num,
                                            (int **)&choices[dVar9].csvids, prVar21->num, dVar9,
                                            expansion, booster, testing_mode);
             if (iVar10 != 0)
@@ -2585,7 +2585,7 @@ LAB_026ec0a8:
         }
         else
         {
-          iVar10 = add_card_to_pack_2022(out_csvids, uStack_220, &choices[dVar9].num,
+          iVar10 = add_card_to_pack(out_csvids, uStack_220, &choices[dVar9].num,
                                          (int **)&choices[dVar9].csvids, uVar18, dVar9, expansion,
                                          booster, testing_mode);
           if (iVar10 != 0)
@@ -2695,7 +2695,7 @@ LAB_026ec3e0:
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26ec9b0; original functions/packs.c:3292. */
-int make_pack_2022(EXPANSION_t expansion, int booster, int *out_csvids)
+int make_pack(EXPANSION_t expansion, int booster, int *out_csvids)
 {
   int iVar1;
   int iVar2;
@@ -2708,7 +2708,7 @@ int make_pack_2022(EXPANSION_t expansion, int booster, int *out_csvids)
   {
     if (out_csvids != NULL)
     {
-      iVar2 = make_pack_normal_2022(expansion, booster, out_csvids, 0);
+      iVar2 = make_pack_normal(expansion, booster, out_csvids, 0);
       return iVar2;
     }
     iVar2 = pack_size(expansion, booster);
@@ -2717,7 +2717,7 @@ int make_pack_2022(EXPANSION_t expansion, int booster, int *out_csvids)
     {
       fatal("could not malloc %d bytes to test out_csvids", iVar2 * 4);
     }
-    iVar2 = make_pack_normal_2022(expansion, booster, out_csvids_00, 1);
+    iVar2 = make_pack_normal(expansion, booster, out_csvids_00, 1);
     free(out_csvids_00);
     if (iVar2 == 0)
     {
@@ -2780,7 +2780,7 @@ int test_packs(int run_time_test)
             }
             do
             {
-              iVar4 = make_pack_2022(expansion, iVar7, NULL);
+              iVar4 = make_pack(expansion, iVar7, NULL);
               if (iVar4 == 0)
               {
                 iStack_14 = 0;

@@ -667,7 +667,7 @@ int card_coveted_jewel(int player, int card, event_t event)
   }
   else if ((((event == EVENT_PHASE_CHANGED) && (current_phase == 0x18)) &&
             (current_turn != player)) &&
-           (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar1 = current_turn,
+           (iVar2 = is_humiliated(player, card, AL_TRIG), iVar1 = current_turn,
             iVar2 == 0))
   {
 
@@ -903,7 +903,7 @@ static int loyal_unicorn_legacy(int player, int card, event_t event)
   if (((event == EVENT_ABILITIES) && (affected_card_controller == player)) &&
       (result = instance->targets[0].card, result != affected_card))
   {
-    result = is_humiliated_for_ability(instance->targets[0].player, result, AL_STATIC);
+    result = is_humiliated(instance->targets[0].player, result, AL_STATIC);
     if (result == 0)
     {
       special_abilities(affected_card_controller, affected_card, EVENT_ABILITIES, 8,
@@ -1112,7 +1112,7 @@ int card_octopus_umbra(int player, int card, event_t event)
   instance = in_play(player, card);
   if (instance != NULL)
   {
-    iVar2 = is_humiliated_for_ability(player, card, AL_STATIC);
+    iVar2 = is_humiliated(player, card, AL_STATIC);
     if (iVar2 == 0)
     {
       instance = get_card_instance(player, card);
@@ -1147,7 +1147,7 @@ int card_treasure_nabber(int player, int card, event_t event)
       instance = get_card_instance(1 - player, affected_card);
       if ((cards_data[instance->internal_card_id].extra_ability & 0x1000) != 0)
       {
-        result = is_humiliated_for_ability(player, card, AL_TRIG);
+        result = is_humiliated(player, card, AL_TRIG);
         if (result == 0)
         {
           gain_control_until_eoyt(player, card, affected_card_controller, affected_card);
@@ -1253,12 +1253,12 @@ int card_xantcha_sleeper_agent(int player, int card, event_t event)
   }
   pcVar2 = in_play(player, card);
   if (((pcVar2 != NULL) &&
-       (iVar3 = is_humiliated_for_ability(player, card, AL_STATIC), iVar3 == 0)) &&
+       (iVar3 = is_humiliated(player, card, AL_STATIC), iVar3 == 0)) &&
       (iVar3 = get_owner(player, card), iVar3 != player))
   {
     cannot_attack(player, card, event);
   }
-  iVar3 = is_humiliated_for_ability(player, card, AL_STATIC);
+  iVar3 = is_humiliated(player, card, AL_STATIC);
   if (iVar3 == 0)
   {
     attack_if_able(player, card, event);
@@ -1339,7 +1339,7 @@ int card_thantis_the_warweaver(int player, int card, event_t event)
   instance = in_play(player, card);
   if (instance != NULL)
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       all_must_attack_if_able(current_turn, event, -1);
@@ -1351,7 +1351,7 @@ int card_thantis_the_warweaver(int player, int card, event_t event)
   {
     return 0;
   }
-  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  add_counters(player, card, player, card, COUNTER_P1_P1, 1);
   return 0;
 }
 
@@ -1370,7 +1370,7 @@ int card_whiptongue_hydra(int player, int card, event_t event)
   default_test_definition(&this_test, 2);
   this_test.keyword = 0x20;
   num = new_manipulate_all(player, card, 2, &this_test, ACT_KILL_DESTROY);
-  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, num);
+  add_counters(player, card, player, card, COUNTER_P1_P1, num);
   return 0;
 }
 
@@ -1857,7 +1857,7 @@ int card_arixmethes_slumbering_isle(int player, int card, event_t event)
     if (result != 0)
     {
       instance = in_play(player, card);
-      remove_counters_from_source(player, card, player, card, COUNTER_SLUMBER, 1);
+      remove_counters(player, card, player, card, COUNTER_SLUMBER, 1);
       instance->regen_status = instance->regen_status | 0x1000000;
       get_abilities(player, card, EVENT_CHANGE_TYPE, -1);
       result = is_what(player, card, 1);
@@ -1910,7 +1910,7 @@ int card_echo_storm(int player, int card, event_t event)
           iVar3 = check_special_flags(player, card, 0x40000);
           if (iVar3 == 0)
           {
-            iVar3 = locate_edh_card_2022(player);
+            iVar3 = locate_edh_card(player);
             if (-1 < iVar3)
             {
               iVar3 = 0;
@@ -1982,7 +1982,7 @@ int card_empyrial_storm(int player, int card, event_t event)
          (basic_spell(player, card, EVENT_CAST_SPELL), spell_fizzled != 1)) &&
         (iVar1 = check_special_flags(player, card, 0x40000), iVar1 == 0))
     {
-      iVar2 = locate_edh_card_2022(player);
+      iVar2 = locate_edh_card(player);
       iVar1 = 0;
       if (-1 < iVar2)
       {
@@ -2024,7 +2024,7 @@ int card_fury_storm(int player, int card, event_t event)
       twincast(player, card, 0x6c, NULL, NULL);
       result = counterspell_validate(player, card, NULL, 0);
       if (((result != 0) && (result = check_special_flags(player, card, 0x40000), result == 0)) &&
-          (result = locate_edh_card_2022(player), -1 < result))
+          (result = locate_edh_card(player), -1 < result))
       {
 
         instance = get_card_instance(player, card);
@@ -2083,7 +2083,7 @@ int card_genesis_storm(int player, int card, event_t event)
              (basic_spell(player, card, EVENT_CAST_SPELL), spell_fizzled != 1)) &&
             (iVar2 = check_special_flags(player, card, 0x40000), iVar2 == 0))))
       {
-        iVar3 = locate_edh_card_2022(player);
+        iVar3 = locate_edh_card(player);
         iVar2 = 0;
         if (-1 < iVar3)
         {
@@ -2147,7 +2147,7 @@ int card_skull_storm(int player, int card, event_t event)
           iVar2 = check_special_flags(player, card, 0x40000);
           if (iVar2 == 0)
           {
-            iVar2 = locate_edh_card_2022(player);
+            iVar2 = locate_edh_card(player);
             if (-1 < iVar2)
             {
 
@@ -2242,7 +2242,7 @@ int card_varchild_betrayer_of_kjeldor(int player, int card, event_t event)
   }
   if (event != EVENT_ABILITIES)
   {
-    leaves_play_2022(player, card, event, 1, 1);
+    leaves_play(player, card, event, 1, 1);
     if (event != EVENT_LEAVES_PLAY_ABILITY)
     {
       return 0;
@@ -2260,7 +2260,7 @@ int card_varchild_betrayer_of_kjeldor(int player, int card, event_t event)
       cannot_block(affected_card_controller, affected_card, EVENT_ABILITIES);
     }
   }
-  leaves_play_2022(player, card, EVENT_ABILITIES, 1, 1);
+  leaves_play(player, card, EVENT_ABILITIES, 1, 1);
   return 0;
 }
 
@@ -2276,7 +2276,7 @@ int card_brudiclad_telchor_engineer(int player, int card, event_t event)
   test_definition_t test;
 
   check_legend_rule(player, card, event);
-  result = is_humiliated_for_ability(player, card, AL_STATIC);
+  result = is_humiliated(player, card, AL_STATIC);
   if (result == 0)
   {
     instance = in_play(player, card);
@@ -2880,7 +2880,7 @@ int card_varina_lich_queen(int player, int card, event_t event)
   union
   {
     test_definition_t test;
-    token_generation_2022_t token;
+    token_generation_t token;
     uint8_t bytes[216];
   } recovered_stack_test;
 
@@ -2943,7 +2943,7 @@ int card_varina_lich_queen(int player, int card, event_t event)
   instance = get_card_instance(player, card);
   default_token_definition(instance->parent_controller, instance->parent_card, 0x49ac,
                                 &recovered_stack_test.token);
-  recovered_stack_test.token.action = TOKEN2022_ACTION_TAPPED;
+  recovered_stack_test.token.action = TOKEN_ACTION_TAPPED;
   generate_token(&recovered_stack_test.token);
   return 0;
 }
@@ -2971,7 +2971,7 @@ static int amaug_leg_part(int player, int card, event_t event)
   type_t tStack_138;
   int iStack_134;
   int playable[2][8];
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
 
   instance = get_card_instance(player, card);
   if (event == EVENT_CAN_ACTIVATE)
@@ -3206,7 +3206,7 @@ int card_heavenly_blademaster(int player, int card, event_t event)
   card_instance_t *pcVar4;
   card_instance_t *pcVar5;
   int iVar6;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   iVar3 = duh_mode(player);
   etb_ability(player, card, event, (iVar3 != 0) + RESOLVE_TRIGGER_OPTIONAL);
@@ -3218,7 +3218,7 @@ int card_heavenly_blademaster(int player, int card, event_t event)
       pcVar5 = in_play(player, card);
       if (((pcVar5 != NULL) && (affected_card_controller == player)) && (affected_card != card))
       {
-        iVar3 = is_humiliated_for_ability(pcVar4->targets[0].player, pcVar4->targets[0].card,
+        iVar3 = is_humiliated(pcVar4->targets[0].player, pcVar4->targets[0].card,
                                           AL_STATIC);
         if (iVar3 == 0)
         {
@@ -3301,7 +3301,7 @@ static int is_enchanted_or_enchantment_creature(int unused1, int unused2, int pl
 int card_kestia_the_cultivator(int player, int card, event_t event)
 {
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
 
   check_legend_rule(player, card, event);
   if (event == EVENT_DECLARE_ATTACKERS)
@@ -3342,7 +3342,7 @@ int card_entreat_the_dead(int player, int card, event_t event)
 
   unsigned int uStack_154;
   char buf[100];
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
 
   new_default_test_definition(&this_test, 2, "Select a creature card.");
   pcVar1 = get_card_instance(player, card);
@@ -3365,7 +3365,7 @@ int card_entreat_the_dead(int player, int card, event_t event)
         iVar2 = validate_target_from_grave(player, card, player, iVar6);
         if (iVar2 != -1)
         {
-          reanimate_permanent(player, card, player, iVar2, REANIMATE2022_DEFAULT);
+          reanimate_permanent(player, card, player, iVar2, REANIMATE_DEFAULT);
         }
         iVar6 = iVar6 + 1;
       } while (iVar6 < pcVar1->info_slot);
@@ -3502,7 +3502,7 @@ int card_tuvasa_the_sunlit(int player, int card, event_t event)
   if (((trigger_condition == 0xd3) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    result = get_stormenchantment_count_2022(player);
+    result = get_stormenchantment_count(player);
     if (result == 1)
     {
       sp_ability_trigger(player, event, 2, TYPE_ENCHANTMENT, NULL, player, card);
@@ -3513,7 +3513,7 @@ int card_tuvasa_the_sunlit(int player, int card, event_t event)
     if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
         (player == affected_card_controller))
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         result = count_subtype(player, 4, -1);
@@ -3538,7 +3538,7 @@ int card_saheelis_directive(int player, int card, event_t event)
     if (card != affected_card || player != affected_card_controller)
       goto native_improvise;
     improvise(player, card, EVENT_CAST_SPELL);
-    generic_spell(player, card, EVENT_CAST_SPELL, GS2022_X_SPELL, NULL, NULL, 0, NULL);
+    generic_spell(player, card, EVENT_CAST_SPELL, GS_X_SPELL, NULL, NULL, 0, NULL);
     if (spell_fizzled == 1)
       return 0;
     card_instance_t *instance = get_card_instance(player, card);
@@ -3557,7 +3557,7 @@ int card_saheelis_directive(int player, int card, event_t event)
       max = deck_count;
     if (max != 0)
     {
-      int cage = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM2022_DECK);
+      int cage = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM_DECK);
       show_deck(player, deck_ptr[player], max, "Cards revealed by Saheeli's Directive", 0,
                      ENGINE_DONE_LABEL);
       if (cage == 0)
@@ -3570,7 +3570,7 @@ int card_saheelis_directive(int player, int card, event_t event)
         }
         char msg[100];
         scnprintf(msg, sizeof(msg), "Select an artifact card with CMC <= %d.", max);
-        test_definition_2022_t test;
+        test_definition_t test;
         new_default_test_definition(&test, TYPE_ARTIFACT, msg);
         test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
         test.cmc = max + 1;
@@ -3606,7 +3606,7 @@ int card_saheelis_directive(int player, int card, event_t event)
     improvise(player, card, event);
   else if (event != EVENT_CAN_CHANGE_TARGET)
     goto native_improvise;
-  return generic_spell(player, card, event, GS2022_X_SPELL, NULL, NULL, 0, NULL);
+  return generic_spell(player, card, event, GS_X_SPELL, NULL, NULL, 0, NULL);
 
 native_improvise:
   return improvise(player, card, event);
@@ -3648,14 +3648,14 @@ int card_gyrus_waker_of_corpses(int player, int card, event_t event)
       int mp = x_value + 3;
       int cost = get_updated_casting_cost(player, card, -1, event, 0);
       ++hack_silent_counters;
-      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, cost + mp);
+      add_counters(player, card, player, card, COUNTER_P1_P1, cost + mp);
       --hack_silent_counters;
     }
   }
   dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
   if (event == EVENT_DAT_ABILITY)
   {
-    test_definition_2022_t this_test;
+    test_definition_t this_test;
     default_test_definition(&this_test, TYPE_CREATURE);
     int power = get_power(player, card);
     scnprintf(this_test.message, 100, "Select target creatrue card with power less than %d", power);
@@ -3697,12 +3697,12 @@ int card_gyrus_waker_of_corpses(int player, int card, event_t event)
         {
           int csvid = cards_data[playable[0][selected]].id;
           rfg_card_from_grave(player, playable[1][selected]);
-          token_generation_2022_t token;
+          token_generation_t token;
           default_token_definition(player, card, csvid, &token);
           token.no_sleight = 1;
           token.legacy = 1;
           token.special_code_for_legacy = rfg_at_end_of_combat;
-          token.action = TOKEN2022_ACTION_ATTACKING;
+          token.action = TOKEN_ACTION_ATTACKING;
           generate_token(&token);
         }
       }

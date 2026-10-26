@@ -252,7 +252,7 @@ static bitset128 get_icons(int player, int card, int is_damage_card)
 			// if ((typ & (TYPE_INSTANT|TYPE_INTERRUPT)) && (cd->type & TYPE_PERMANENT))
 			// bitset128_set(&rval, ICON_FLASH);	// won't actually show up in Manalink since all icons are suppressed while off battlefield
 
-			if (is_humiliated_by_instance(instance))
+			if (is_humiliated_by_instance(instance, AL_ALL))
 			  bitset128_set(&rval, ICON_LOST_ABILITIES);
 			else if (!can_use_activated_abilities_by_instance(instance))
 			  bitset128_set(&rval, ICON_CANT_ACTIVATE);
@@ -530,7 +530,7 @@ static int card_instances_will_have_same_icons(card_instance_t* inst1, card_inst
   //if ((inst1->untap_status ^ inst2->untap_status) & UNTAP_STATUS_DOESNT_UNTAP)	// no bit assigned
   //return 0;
 
-  if (is_humiliated_by_instance(inst1) != is_humiliated_by_instance(inst2))
+  if (is_humiliated_by_instance(inst1, AL_ALL) != is_humiliated_by_instance(inst2, AL_ALL))
 	return 0;
 
   int spkw1 = get_special_abilities_by_instance(inst1);
@@ -2177,19 +2177,19 @@ void sleepms(int ms)
 #ifndef SHANDALAR
 #include <ctype.h>
 static char *kws_strs[32], *spkws_strs[32];
-#define display_dblbfr_hdc_2022 EXE_TYP(HDC, 0x62047c)
-#define display_critical_section_for_painting_2022 EXE_TYP_PTR(CRITICAL_SECTION, 0x790500)
-#define display_last_hover_hwnd_2022 EXE_TYP(HWND, 0x56bec8)
-#define display_tick_adjustment_2022 EXE_DWORD(0x62c370)
-#define display_draw_numeral_2022 EXE_FN(void, 0x4d34e0, HDC, RECT *, int)
-#define display_get_infoslot_2022 EXE_FN(int, 0x4389a0, int, int)
-#define display_get_counters_2022 EXE_FN(void, 0x438e80, int, int, int *, int *)
-#define display_get_color_2022 EXE_FN(color_test_t, 0x438dc0, int, int)
-#define display_draw_full_activation_2022 EXE_FN(void, 0x4d1950, HDC, RECT *, int, int)
-#define display_draw_full_instance_2022 EXE_FN(int, 0x4d1780, HDC, RECT *, const card_ptr_t *, int, int, int, int)
-#define display_sleight_text_2022 EXE_FN(void, 0x439010, int, int, char *)
-#define display_hack_text_2022 EXE_FN(void, 0x439070, int, int, char *)
-#define display_replace_text_2022 EXE_FN(void, 0x466e90, char *, const char *, int, const char *)
+#define display_dblbfr_hdc EXE_TYP(HDC, 0x62047c)
+#define display_critical_section_for_painting EXE_TYP_PTR(CRITICAL_SECTION, 0x790500)
+#define display_last_hover_hwnd EXE_TYP(HWND, 0x56bec8)
+#define display_tick_adjustment EXE_DWORD(0x62c370)
+#define display_draw_numeral EXE_FN(void, 0x4d34e0, HDC, RECT *, int)
+#define display_get_infoslot EXE_FN(int, 0x4389a0, int, int)
+#define display_get_counters EXE_FN(void, 0x438e80, int, int, int *, int *)
+#define display_get_color EXE_FN(color_test_t, 0x438dc0, int, int)
+#define display_draw_full_activation EXE_FN(void, 0x4d1950, HDC, RECT *, int, int)
+#define display_draw_full_instance EXE_FN(int, 0x4d1780, HDC, RECT *, const card_ptr_t *, int, int, int, int)
+#define display_sleight_text EXE_FN(void, 0x439010, int, int, char *)
+#define display_hack_text EXE_FN(void, 0x439070, int, int, char *)
+#define display_replace_text EXE_FN(void, 0x466e90, char *, const char *, int, const char *)
 DLLIMPORT int DrawSmallCardEx(HDC hdc, const RECT *rect, const card_ptr_t *cp, int version, int mode, int player, int card, int expansion);
 DLLIMPORT int DrawFullCard(HDC hdc, const RECT *rect, const card_ptr_t *cp, int version, int style, int expanded_text, const char *illustrator);
 DLLIMPORT int DrawFullCardEx(HDC hdc, const RECT *rect, const card_ptr_t *cp, int version, int style, int expanded_text, const char *illustrator, int expansion);
@@ -2357,7 +2357,7 @@ void keywords_to_str(char *dest, keyword_t keywords, sp_keyword_t spkeywords)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x265bca0; original functions/windows.c:2792. */
-static void draw_fullcard_special_effect_card_impl_2022(HDC hdc, RECT *rect, int csvid, int player,
+static void draw_fullcard_special_effect_card_impl(HDC hdc, RECT *rect, int csvid, int player,
                                                  int card)
 {
   card_ptr_t cp;
@@ -2452,43 +2452,43 @@ static void draw_fullcard_special_effect_card_impl_2022(HDC hdc, RECT *rect, int
     char *pipe_s = strstr(rules_text, "|S");
     if (pipe_s)
     {
-      display_sleight_text_2022(player, card, pipe_s);
+      display_sleight_text(player, card, pipe_s);
       pipe_s = strstr(first_pipe, "|S");
       if (pipe_s)
       {
-        display_replace_text_2022(pipe_s, "|S1", 1, "");
-        display_replace_text_2022(pipe_s, "|S2", 1, "");
-        display_replace_text_2022(pipe_s, "|S3", 1, "");
-        display_replace_text_2022(pipe_s, "|S4", 1, "");
-        display_replace_text_2022(pipe_s, "|S", 1, "");
+        display_replace_text(pipe_s, "|S1", 1, "");
+        display_replace_text(pipe_s, "|S2", 1, "");
+        display_replace_text(pipe_s, "|S3", 1, "");
+        display_replace_text(pipe_s, "|S4", 1, "");
+        display_replace_text(pipe_s, "|S", 1, "");
       }
     }
     char *pipe_h = strstr(rules_text, "|H");
     if (pipe_h)
     {
-      display_hack_text_2022(player, card, pipe_h);
+      display_hack_text(player, card, pipe_h);
       pipe_h = strstr(pipe_h, "|H");
       if (pipe_h)
       {
-        display_replace_text_2022(pipe_h, "|H1", 1, "");
-        display_replace_text_2022(pipe_h, "|H2", 1, "");
-        display_replace_text_2022(pipe_h, "|H3", 1, "");
-        display_replace_text_2022(pipe_h, "|H4", 1, "");
-        display_replace_text_2022(pipe_h, "|H", 1, "");
+        display_replace_text(pipe_h, "|H1", 1, "");
+        display_replace_text(pipe_h, "|H2", 1, "");
+        display_replace_text(pipe_h, "|H3", 1, "");
+        display_replace_text(pipe_h, "|H4", 1, "");
+        display_replace_text(pipe_h, "|H", 1, "");
       }
     }
     char *pipe_a = strstr(first_pipe, "|a");
     if (pipe_a)
     {
       if (inst.info_slot_fn == undying_legacy)
-        display_replace_text_2022(pipe_a, "|a", 1, "undying");
+        display_replace_text(pipe_a, "|a", 1, "undying");
       else
       {
         char kwstr[1000];
         keyword_t kw = inst.targets[1].player == -1 ? 0 : inst.targets[1].player;
         sp_keyword_t spkw = inst.targets[1].card == -1 ? 0 : inst.targets[1].card;
         keywords_to_str(kwstr, kw, spkw);
-        display_replace_text_2022(pipe_a, "|a", 1, kwstr);
+        display_replace_text(pipe_a, "|a", 1, kwstr);
       }
     }
     char *pipe_e = strstr(first_pipe, "|e");
@@ -2499,29 +2499,29 @@ static void draw_fullcard_special_effect_card_impl_2022(HDC hdc, RECT *rect, int
       if (pipe_e0)
       {
         sprintf(et, "%d", inst.eot_toughness & 255);
-        display_replace_text_2022(pipe_e0, "|N", 1, et);
+        display_replace_text(pipe_e0, "|N", 1, et);
       }
       char *pipe_e1 = strstr(pipe_e, "|e1");
       if (pipe_e1)
       {
         sprintf(et, "%d", (inst.eot_toughness >> 8) & 255);
-        display_replace_text_2022(pipe_e1, "|N", 1, et);
+        display_replace_text(pipe_e1, "|N", 1, et);
       }
       char *pipe_e2 = strstr(pipe_e, "|e2");
       if (pipe_e2)
       {
         unsigned saved_eot = inst.eot_toughness;
         sprintf(et, "%d", (saved_eot >> 16) & 255);
-        display_replace_text_2022(pipe_e2, "|N", 1, et);
+        display_replace_text(pipe_e2, "|N", 1, et);
         char *pipe_e3 = strstr(pipe_e, "|e3");
         sprintf(et, "%d", saved_eot >> 24);
-        display_replace_text_2022(pipe_e3, "|N", 1, et);
+        display_replace_text(pipe_e3, "|N", 1, et);
       }
       pipe_e = strstr(pipe_e, "|e");
       if (pipe_e)
       {
         sprintf(et, "%d", (int)inst.eot_toughness);
-        display_replace_text_2022(pipe_e, "|N", 1, et);
+        display_replace_text(pipe_e, "|N", 1, et);
       }
     }
     char *pipe_N = strstr(first_pipe, "|N");
@@ -2529,7 +2529,7 @@ static void draw_fullcard_special_effect_card_impl_2022(HDC hdc, RECT *rect, int
     {
       char pt[15];
       sprintf(pt, "%d", inst.counter_power);
-      display_replace_text_2022(pipe_N, "|N", 1, pt);
+      display_replace_text(pipe_N, "|N", 1, pt);
     }
     char *pipe_n = strstr(first_pipe, "|n");
     if (pipe_n)
@@ -2558,7 +2558,7 @@ static void draw_fullcard_special_effect_card_impl_2022(HDC hdc, RECT *rect, int
 void draw_fullcard_special_effect_card(HDC hdc, RECT *rect, int csvid, int player, int card)
 {
   if (hdc && rect)
-    draw_fullcard_special_effect_card_impl_2022(hdc, rect, csvid, player, card);
+    draw_fullcard_special_effect_card_impl(hdc, rect, csvid, player, card);
 }
 
 #endif
@@ -2573,26 +2573,26 @@ LRESULT CALLBACK wndproc_ShowListCard_hook(HWND hwnd, UINT msg, WPARAM wparam, L
     int csvid = GetWindowLongA(hwnd, EXE_DWORD(0x4d74b4));
     int show_numeral = GetWindowLongA(hwnd, EXE_DWORD(0x4d74bc));
     int numeral = GetWindowLongA(hwnd, EXE_DWORD(0x4d74b8));
-    EnterCriticalSection(display_critical_section_for_painting_2022);
+    EnterCriticalSection(display_critical_section_for_painting);
     RECT rect;
     GetClientRect(hwnd, &rect);
-    FillRect(display_dblbfr_hdc_2022, &rect, GetStockObject(4));
+    FillRect(display_dblbfr_hdc, &rect, GetStockObject(4));
     if (csvid == 904)
-      DrawCardBack(display_dblbfr_hdc_2022, &rect, 0);
+      DrawCardBack(display_dblbfr_hdc, &rect, 0);
     else
-      DrawSmallCardEx(display_dblbfr_hdc_2022, &rect, cards_ptr[csvid], 0, 0, -1, -1,
+      DrawSmallCardEx(display_dblbfr_hdc, &rect, cards_ptr[csvid], 0, 0, -1, -1,
                       hack_show_deck_force_expansion);
     if (show_numeral)
-      display_draw_numeral_2022(display_dblbfr_hdc_2022, &rect, numeral);
+      display_draw_numeral(display_dblbfr_hdc, &rect, numeral);
     PAINTSTRUCT paint;
     HDC hdc = BeginPaint(hwnd, &paint);
     if (hdc)
     {
       set_palette_and_stretch_mode(hdc);
-      BitBlt(hdc, 0, 0, rect.right, rect.bottom, display_dblbfr_hdc_2022, 0, 0, SRCCOPY);
+      BitBlt(hdc, 0, 0, rect.right, rect.bottom, display_dblbfr_hdc, 0, 0, SRCCOPY);
       EndPaint(hwnd, &paint);
     }
-    LeaveCriticalSection(display_critical_section_for_painting_2022);
+    LeaveCriticalSection(display_critical_section_for_painting);
     return 0;
   }
   if (msg == 0x437)
@@ -2609,14 +2609,14 @@ LRESULT CALLBACK wndproc_ShowListCard_hook(HWND hwnd, UINT msg, WPARAM wparam, L
   }
   if (msg == WM_MOUSEMOVE || msg == WM_RBUTTONDOWN)
   {
-    if ((option_Layout == 2) != (msg == WM_MOUSEMOVE) && display_last_hover_hwnd_2022 != hwnd)
+    if ((option_Layout == 2) != (msg == WM_MOUSEMOVE) && display_last_hover_hwnd != hwnd)
     {
       int expansion = hack_show_deck_force_expansion;
       int forced = (unsigned)(expansion - 1) < 197;
       int csvid = GetWindowLongA(hwnd, EXE_DWORD(0x4d74b4));
       SendMessageA(hwnd_FullCardClass, 0x401, forced ? csvid | 0x40000000 : csvid,
                    forced ? expansion : 0);
-      display_last_hover_hwnd_2022 = hwnd;
+      display_last_hover_hwnd = hwnd;
       if (msg == WM_RBUTTONDOWN)
         SetActiveWindow(GetParent(hwnd));
     }
@@ -2658,23 +2658,23 @@ LRESULT CALLBACK wndproc_FullCardClass_hook(HWND hwnd, UINT msg, WPARAM wparam, 
   }
   int new_infoslot_pt = 0;
   if (csvid == 901)
-    new_infoslot_pt = display_get_infoslot_2022(player, card);
+    new_infoslot_pt = display_get_infoslot(player, card);
   else if (csvid == 903)
   {
     int counter_power, counter_toughness;
-    display_get_counters_2022(player, card, &counter_power, &counter_toughness);
+    display_get_counters(player, card, &counter_power, &counter_toughness);
     new_infoslot_pt = (counter_power & 65535) | ((unsigned)counter_toughness << 16);
   }
   int color_changed = 0;
   if (player != -1 && card != -1)
   {
-    int newcol = single_color_test_bit_to_color(display_get_color_2022(player, card));
+    int newcol = single_color_test_bit_to_color(display_get_color(player, card));
     color_changed = newcol != col;
     col = newcol;
   }
   if (new_infoslot_pt != infoslot_pt || color_changed)
     InvalidateRect(hwnd, NULL, FALSE);
-  EnterCriticalSection(display_critical_section_for_painting_2022);
+  EnterCriticalSection(display_critical_section_for_painting);
   unsigned tick_count = GetTickCount();
   RECT rect;
   PAINTSTRUCT paint;
@@ -2683,53 +2683,53 @@ LRESULT CALLBACK wndproc_FullCardClass_hook(HWND hwnd, UINT msg, WPARAM wparam, 
   if (hdc)
   {
     set_palette_and_stretch_mode(hdc);
-    FillRect(display_dblbfr_hdc_2022, &rect, GetStockObject(4));
+    FillRect(display_dblbfr_hdc, &rect, GetStockObject(4));
     if (csvid == 904 || csvid < 0 || csvid >= available_slots)
-      DrawCardBack(display_dblbfr_hdc_2022, &rect, 0);
+      DrawCardBack(display_dblbfr_hdc, &rect, 0);
     else if ((unsigned)(csvid - 901) < 7)
     {
       if (get_displayed_csvid(player, card) < 0)
-        DrawCardBack(display_dblbfr_hdc_2022, &rect, 0);
+        DrawCardBack(display_dblbfr_hdc, &rect, 0);
       else if (csvid == 906)
-        display_draw_full_activation_2022(display_dblbfr_hdc_2022, &rect, player, card);
-      else if (display_dblbfr_hdc_2022)
-        draw_fullcard_special_effect_card_impl_2022(display_dblbfr_hdc_2022, &rect, csvid, player,
+        display_draw_full_activation(display_dblbfr_hdc, &rect, player, card);
+      else if (display_dblbfr_hdc)
+        draw_fullcard_special_effect_card_impl(display_dblbfr_hdc, &rect, csvid, player,
                                                     card);
     }
     else if (player == -1 || card == -1)
     {
-      int rval = DrawFullCardEx(display_dblbfr_hdc_2022, &rect, cards_ptr[csvid], 0, 0,
+      int rval = DrawFullCardEx(display_dblbfr_hdc, &rect, cards_ptr[csvid], 0, 0,
                                 EXE_DWORD(0x787248), EXE_STR(0x6202a8), hack_force_expansion);
       if (!rval)
-        DrawFullCardEx(display_dblbfr_hdc_2022, &rect, cards_ptr[csvid], 0, 2, EXE_DWORD(0x787248),
+        DrawFullCardEx(display_dblbfr_hdc, &rect, cards_ptr[csvid], 0, 2, EXE_DWORD(0x787248),
                        EXE_STR(0x6202a8), hack_force_expansion);
     }
     else
     {
       int rval;
       if (get_displayed_csvid(player, card) < 0)
-        rval = DrawFullCardEx(display_dblbfr_hdc_2022, &rect, cards_ptr[csvid], 0, 0,
+        rval = DrawFullCardEx(display_dblbfr_hdc, &rect, cards_ptr[csvid], 0, 0,
                               EXE_DWORD(0x787248), EXE_STR(0x6202a8), hack_force_expansion);
       else
-        rval = display_draw_full_instance_2022(display_dblbfr_hdc_2022, &rect, cards_ptr[csvid],
+        rval = display_draw_full_instance(display_dblbfr_hdc, &rect, cards_ptr[csvid],
                                                player, card, 0, EXE_DWORD(0x787248));
       if (!rval)
       {
         if (get_displayed_csvid(player, card) < 0)
-          DrawFullCardEx(display_dblbfr_hdc_2022, &rect, cards_ptr[csvid], 0, 2,
+          DrawFullCardEx(display_dblbfr_hdc, &rect, cards_ptr[csvid], 0, 2,
                          EXE_DWORD(0x787248), EXE_STR(0x6202a8), hack_force_expansion);
         else
-          display_draw_full_instance_2022(display_dblbfr_hdc_2022, &rect, cards_ptr[csvid], player,
+          display_draw_full_instance(display_dblbfr_hdc, &rect, cards_ptr[csvid], player,
                                           card, 2, EXE_DWORD(0x787248));
       }
     }
-    BitBlt(hdc, 0, 0, rect.right, rect.bottom, display_dblbfr_hdc_2022, 0, 0, SRCCOPY);
+    BitBlt(hdc, 0, 0, rect.right, rect.bottom, display_dblbfr_hdc, 0, 0, SRCCOPY);
     EndPaint(hwnd, &paint);
     SetWindowLongA(hwnd, EXE_DWORD(0x4d75c8), new_infoslot_pt);
     SetWindowLongA(hwnd, EXE_DWORD(0x4d75cc), col);
   }
-  display_tick_adjustment_2022 += GetTickCount() - tick_count;
-  LeaveCriticalSection(display_critical_section_for_painting_2022);
+  display_tick_adjustment += GetTickCount() - tick_count;
+  LeaveCriticalSection(display_critical_section_for_painting);
   return 0;
 }
 

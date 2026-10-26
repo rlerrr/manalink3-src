@@ -833,7 +833,7 @@ int effect_may_play_card_from_exile(int player, int card, event_t event)
   int iStack_fc;
   unsigned int uStack_f8;
   int iid;
-  test_definition_2022_t test;
+  test_definition_t test;
 
   instance = get_card_instance(player, card);
   iVar5 = instance->targets[0].player;

@@ -2173,7 +2173,7 @@ int card_beloved_princess(int player, int card, event_t event)
   if (((event == EVENT_BLOCK_LEGALITY) && (attacking_card_controller == player)) &&
       (attacking_card == card))
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       result = get_power(affected_card_controller, affected_card);
@@ -2255,7 +2255,7 @@ int card_brazen_borrower(int player, int card, event_t event)
   if (event == EVENT_BLOCK_LEGALITY)
   {
     if ((((card == affected_card) && (player == affected_card_controller)) &&
-         (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)) &&
+         (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
         (result = check_for_ability(attacking_card_controller, attacking_card, 0x20), result == 0))
     {
       event_result = 1;
@@ -2418,7 +2418,7 @@ int card_deafening_silence(int player, int card, event_t event)
 
   if (event == EVENT_MODIFY_COST_GLOBAL)
   {
-    iVar1 = is_humiliated_for_ability(player, card, AL_STATIC);
+    iVar1 = is_humiliated(player, card, AL_STATIC);
     if (iVar1 == 0)
     {
       iVar1 = is_what(affected_card_controller, affected_card, 3);
@@ -2578,7 +2578,7 @@ int card_foulmire_knight(int player, int card, event_t event)
 {
   int result;
 
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   if (event != EVENT_CAN_CAST)
   {
     if (event == EVENT_CAST_SPELL)
@@ -3359,9 +3359,9 @@ int card_questing_beast(int player, int card, event_t event)
 
   check_legend_rule(player, card, event);
   vigilance(player, card, event);
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   haste(player, card, event);
-  iVar2 = is_humiliated_for_ability(player, card, AL_STATIC);
+  iVar2 = is_humiliated(player, card, AL_STATIC);
   if ((event == EVENT_BLOCK_LEGALITY) && (iVar2 == 0))
   {
     if ((attacking_card_controller == player) && (attacking_card == card))
@@ -3905,7 +3905,7 @@ int card_torbran_thane_of_red_fell(int player, int card, event_t event)
     uVar3 = get_sleighted_color_test(result, card, 0x10);
     if (((int)cVar1 & uVar3) != 0)
     {
-      result = is_humiliated_for_ability(result, card, AL_STATIC);
+      result = is_humiliated(result, card, AL_STATIC);
       if (result == 0)
       {
         instance->info_slot_fn = instance->info_slot_fn + 2;
@@ -4221,7 +4221,7 @@ int card_kenrith_the_returned_king(int player, int card, event_t event)
     pump_creatures_until_eot(player, card, 2, 0, 0, 0, 0x80, 4, NULL);
     break;
   case 2:
-    add_counters_from_source(player, card, iVar2, instance->targets[0].card, COUNTER_P1_P1, 1);
+    add_counters(player, card, iVar2, instance->targets[0].card, COUNTER_P1_P1, 1);
     break;
   case 3:
     gain_life(iVar2, 5);
@@ -4310,7 +4310,7 @@ int card_korvold_fae_cursed_king(int player, int card, event_t event)
       (uVar2 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY), uVar2 != 0))
   {
 
-    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, uVar2 & 0xff);
+    add_counters(player, card, player, card, COUNTER_P1_P1, uVar2 & 0xff);
     draw_cards(player, uVar2 & 0xff);
     return 0;
   }
@@ -4343,7 +4343,7 @@ int card_the_great_henge(int player, int card, event_t event)
     goto LAB_025d5872;
   if (event == EVENT_ETB)
   {
-    add_counters_from_source(player, card, trigger_cause_controller, trigger_cause, COUNTER_P1_P1,
+    add_counters(player, card, trigger_cause_controller, trigger_cause, COUNTER_P1_P1,
                              1);
     draw_a_card(player);
   }
@@ -4370,7 +4370,7 @@ int card_the_magic_mirror(int player, int card, event_t event)
   }
   else if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
-    add_counters_from_source(player, card, player, card, COUNTER_LORE, 1);
+    add_counters(player, card, player, card, COUNTER_LORE, 1);
     result = count_counters(player, card, COUNTER_LORE);
     draw_cards(player, result);
   }
@@ -4397,12 +4397,12 @@ int card_yorvo_lord_of_garenbrig(int player, int card, event_t event)
   }
   if ((event == EVENT_ETB) && (trigger_cause != card))
   {
-    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+    add_counters(player, card, player, card, COUNTER_P1_P1, 1);
     iVar1 = get_power(trigger_cause_controller, trigger_cause);
     iVar2 = get_power(player, card);
     if (iVar2 < iVar1)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+      add_counters(player, card, player, card, COUNTER_P1_P1, 1);
     }
   }
   return 0;
@@ -5099,13 +5099,13 @@ int card_alela_artful_provocateur(int player, int card, event_t event)
   card_instance_t *instance;
 
   check_legend_rule(player, card, event);
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   lifelink(player, card, event);
   if (event == EVENT_POWER)
   {
     if (affected_card_controller == player)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         instance = in_play(player, card);
@@ -5282,11 +5282,11 @@ static int acclaimed_contender_fn(int iid, int unused, int player, int unused3)
 {
   int result;
 
-  result = has_subtype_by_id_2022(player, (unsigned int)cards_data[iid].id, SUBTYPE_KNIGHT);
+  result = has_subtype_by_id(player, (unsigned int)cards_data[iid].id, SUBTYPE_KNIGHT);
   if (((result == 0) &&
-       (result = has_subtype_by_id_2022(player, (unsigned int)cards_data[iid].id, SUBTYPE_AURA),
+       (result = has_subtype_by_id(player, (unsigned int)cards_data[iid].id, SUBTYPE_AURA),
         result == 0)) &&
-      (result = has_subtype_by_id_2022(player, (unsigned int)cards_data[iid].id, SUBTYPE_EQUIPMENT),
+      (result = has_subtype_by_id(player, (unsigned int)cards_data[iid].id, SUBTYPE_EQUIPMENT),
        result == 0))
   {
     result = is_what(-1, iid, 0x40);
@@ -5339,7 +5339,7 @@ static int dotm_selection(int iid, int value, int player, int card)
     iVar2 = 0;
     if (iVar1 != 0)
     {
-      iVar2 = has_subtype_by_id_2022(player, (unsigned int)cards_data[iid].id, SUBTYPE_AURA);
+      iVar2 = has_subtype_by_id(player, (unsigned int)cards_data[iid].id, SUBTYPE_AURA);
       return (unsigned int)(iVar2 == 0);
     }
   }
@@ -5384,7 +5384,7 @@ int card_grumgully_the_generous(int player, int card, event_t event)
           result = check_special_flags2(trigger_cause_controller, trigger_cause, 0x100);
           if (result == 0)
           {
-            result = is_humiliated_for_ability(player, card, AL_STATIC);
+            result = is_humiliated(player, card, AL_STATIC);
             if (result == 0)
             {
               if (event == EVENT_TRIGGER)
@@ -5394,7 +5394,7 @@ int card_grumgully_the_generous(int player, int card, event_t event)
               else if (event == EVENT_RESOLVE_TRIGGER)
               {
                 hack_silent_counters = hack_silent_counters + 1;
-                add_counters_from_source(player, card, trigger_cause_controller, trigger_cause,
+                add_counters(player, card, trigger_cause_controller, trigger_cause,
                                          COUNTER_P1_P1, 1);
                 hack_silent_counters = hack_silent_counters + -1;
               }
@@ -5501,7 +5501,7 @@ int card_syr_konrad_the_grim(int player, int card, event_t event)
   check_legend_rule(player, card, event);
   instance = in_play(player, card);
   if ((instance == NULL) ||
-      (result = is_humiliated_for_ability(player, card, AL_TRIG), result != 0))
+      (result = is_humiliated(player, card, AL_TRIG), result != 0))
   {
   LAB_025d4f71:
     if (event == EVENT_ACTIVATE)
@@ -5597,7 +5597,7 @@ int card_wicked_wolf(int player, int card, event_t event)
   result = instance->parent_controller;
   instance = get_card_instance(player, card);
   t_card = instance->parent_card;
-  add_counters_from_source(player, card, result, t_card, COUNTER_P1_P1, 1);
+  add_counters(player, card, result, t_card, COUNTER_P1_P1, 1);
   pump_ability_until_eot_no_repeat(player, card, result, t_card, 0, 0x800);
   tap_card(result, t_card);
 LAB_025d612a:
@@ -5670,7 +5670,7 @@ int card_syr_carah_the_bold(int player, int card, event_t event)
           }
           else
           {
-            load_text_2022(NULL, "TARGET_CREATURE_OPPONENT_CONTROLS");
+            load_text(NULL, "TARGET_CREATURE_OPPONENT_CONTROLS");
             iVar7 = get_id(player, card);
             scnprintf(prompt, 200, "%s %s (%d): %s", (const char *)0x738f34,
                       cards_ptr[iVar7]->full_name, iVar3, text_lines[0]);
@@ -5851,8 +5851,8 @@ static int nonland_nontoken_permanent(int iid, int value, int player, int card)
 int card_doom_foretold(int player, int card, event_t event)
 {
   int result;
-  token_generation_2022_t token;
-  test_definition_2022_t test;
+  token_generation_t token;
+  test_definition_t test;
 
   upkeep_trigger_ability(player, card, event, 2);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
@@ -5861,7 +5861,7 @@ int card_doom_foretold(int player, int card, event_t event)
                                      "Select a nonland, nontoken permanent to sacrifice.");
     test.special_selection_function = nonland_nontoken_permanent;
     result = new_sacrifice(player, card, current_turn,
-                                SAC2022_RETURN_CHOICE | SAC2022_CAUSED | SAC2022_NO_CANCEL, &test);
+                                SAC_RETURN_CHOICE | SAC_CAUSED | SAC_NO_CANCEL, &test);
     if (result == 0)
     {
       discard(current_turn, 2, player);
@@ -5887,7 +5887,7 @@ int card_doom_foretold(int player, int card, event_t event)
 int card_granted(int player, int card, event_t event)
 {
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
 
   if (event == EVENT_CAN_CAST)
     goto LAB_025d0514;
@@ -5952,7 +5952,7 @@ int card_embercleave(int player, int card, event_t event)
   int iVar1;
   card_instance_t *instance;
   int iVar3;
-  target_definition_2022_t td;
+  target_definition_t td;
   check_legend_rule(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event != EVENT_ETB)
@@ -6024,7 +6024,7 @@ int card_dance_of_the_manse(int player, int card, event_t event)
   int iStack_158;
   int iStack_154;
   char buffer[100];
-  test_definition_2022_t test;
+  test_definition_t test;
 
   if (event == EVENT_CAN_CAST)
   {
@@ -6056,7 +6056,7 @@ int card_dance_of_the_manse(int player, int card, event_t event)
       {
         while ((iVar2 = validate_target_from_grave(player, card, player, iVar4),
                 iVar2 == -1 || (iVar2 = reanimate_permanent(player, card, player, iVar2,
-                                                                 REANIMATE2022_DEFAULT),
+                                                                 REANIMATE_DEFAULT),
                                 iVar3 < 6)))
         {
           iVar4 = iVar4 + 1;
@@ -6194,7 +6194,7 @@ LAB_025cd405:
 /* ManalinkEh 2022: 0x25cf1b0; original cards/throne_of_eldraine.c:2027. */
 int card_fires_of_invention(int player, int card, event_t event)
 {
-  if (!is_humiliated_for_ability(player, card, AL_STATIC))
+  if (!is_humiliated(player, card, AL_STATIC))
   {
     if (event == EVENT_MODIFY_COST_GLOBAL)
     {
@@ -6250,7 +6250,7 @@ int card_fires_of_invention(int player, int card, event_t event)
       char buffer[100];
       scnprintf(buffer, 100,
                 "Select a non-land card with mana value less than or equal to %d to play.", lands);
-      test_definition_2022_t test;
+      test_definition_t test;
       _Static_assert(sizeof(test) == 216, "native Fires of Invention filter");
       new_default_test_definition(&test, 1, buffer);
       test.cmc = lands + 1;

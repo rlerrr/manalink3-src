@@ -1169,7 +1169,7 @@ LAB_020ce97c:
 int card_striped_riverwinder(int player, int card, event_t event)
 {
   int result;
-  hexproof_2022(player, card, event);
+  hexproof(player, card, event);
   result = cycling(player, card, event, 0, 0, 1, 0, 0, 0);
   return result;
 }
@@ -2121,7 +2121,7 @@ static int afflict(int player, int card, event_t event, int amount)
     result = is_unblocked(player, card);
     if (result == 0)
     {
-      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      result = is_humiliated(player, card, AL_TRIG);
       if (result == 0)
       {
         lose_life(1 - current_turn, amount);
@@ -2254,7 +2254,7 @@ int card_cunning_survivor(int player, int card, event_t event)
 {
   int result;
 
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if (result == 0)
   {
     result = discard_trigger(player, card, event, player, 2, 0);
@@ -2274,7 +2274,7 @@ int card_ominous_sphinx(int player, int card, event_t event)
   card_instance_t *instance;
   target_definition_t td;
 
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if (result == 0)
   {
     result = discard_trigger(player, card, event, player, 2, 0);
@@ -2471,14 +2471,14 @@ int card_unesh_criosphinx_sovereign(int player, int card, event_t event)
   if (event == EVENT_MODIFY_COST_GLOBAL)
   {
     if (((affected_card_controller == player) &&
-         (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)) &&
+         (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
         (result = has_subtype(affected_card_controller, affected_card, SUBTYPE_SPHINX),
          result != 0))
     {
       COST_COLORLESS = COST_COLORLESS + -2;
     }
     etb_ability(player, card, EVENT_MODIFY_COST_GLOBAL, RESOLVE_TRIGGER_MANDATORY);
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result != 0)
     {
       return 0;
@@ -2487,7 +2487,7 @@ int card_unesh_criosphinx_sovereign(int player, int card, event_t event)
   else
   {
     etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result != 0)
       goto LAB_020cf85d;
   }
@@ -2613,7 +2613,7 @@ int card_grisly_survivor(int player, int card, event_t event)
 {
   int result;
 
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if (result == 0)
   {
     result = discard_trigger(player, card, event, player, 2, 0);
@@ -2860,7 +2860,7 @@ int card_wildfire_eternal(int player, int card, event_t event)
     result = is_attacking(player, card);
     if (result != 0)
     {
-      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      result = is_humiliated(player, card, AL_TRIG);
       if (result == 0)
       {
         result = is_unblocked(player, card);
@@ -3457,7 +3457,7 @@ int card_dunes_of_the_dead(int player, int card, event_t event)
   result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (result != 0)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       default_token_definition(player, card, 0x49ac, &token);
@@ -3746,7 +3746,7 @@ int card_the_scorpion_god(int player, int card, event_t event)
   }
   if (event == EVENT_RESOLVE_ACTIVATION)
   {
-    add_counters_from_source(player, card, instance->targets[0].player, instance->targets[0].card,
+    add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
                              COUNTER_M1_M1, 1);
   }
   else if (event == EVENT_STATIC_EFFECTS)
@@ -3836,7 +3836,7 @@ int card_grind_dust(int player, int card, event_t event)
                 iVar3 = validate_target(player, card, &td, iVar2);
                 if (iVar3 != 0)
                 {
-                  add_counters_from_source(player, card, instance->targets[iVar2].player,
+                  add_counters(player, card, instance->targets[iVar2].player,
                                            instance->targets[iVar2].card, COUNTER_M1_M1, 1);
                 }
                 iVar2 = iVar2 + 1;
@@ -4381,7 +4381,7 @@ int card_imminent_doom(int player, int card, event_t event)
         damage_target0(player, card, result);
         instance = get_card_instance(player, card);
         instance->number_of_targets = '\0';
-        add_counters_from_source(player, card, player, card, COUNTER_DOOM, 1);
+        add_counters(player, card, player, card, COUNTER_DOOM, 1);
       }
     }
   }
@@ -4593,7 +4593,7 @@ int card_ifnir_deadlands(int player, int card, event_t event)
         result = valid_target(&td);
         if (result != 0)
         {
-          add_counters_from_source(player, card, instance->targets[0].player,
+          add_counters(player, card, instance->targets[0].player,
                                    instance->targets[0].card, COUNTER_M1_M1, 2);
           return 0;
         }
@@ -5071,7 +5071,7 @@ int eternalize(int player, int card, event_t event, card_id_t cid, int x, int b,
                int r, int w)
 {
   int result;
-  token_generation_2022_t token;
+  token_generation_t token;
 
   if (event == EVENT_GRAVEYARD_ABILITY)
   {
@@ -5204,15 +5204,15 @@ int card_god_pharaohs_gift(int player, int card, event_t event)
   int *piVar1;
   card_instance_t *instance;
   int result;
-  token_generation_2022_t token;
-  test_definition_2022_t test;
+  token_generation_t token;
+  test_definition_t test;
 
   new_default_test_definition(&test, 2, "Select a creature card to exile.");
   instance = get_card_instance(player, card);
   instance->number_of_targets = '\0';
   if (event == EVENT_CHANGE_TYPE)
   {
-    result = engine_any_legal_attacker_2022(player);
+    result = engine_any_legal_attacker(player);
     if (result == 0)
     {
       event_flags = event_flags | EA_FORCE_ATTACK;
@@ -5221,7 +5221,7 @@ int card_god_pharaohs_gift(int player, int card, event_t event)
   }
   else if ((event == EVENT_BEGIN_COMBAT) && (current_turn == player))
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       instance = in_play(player, card);
@@ -5239,7 +5239,7 @@ int card_god_pharaohs_gift(int player, int card, event_t event)
             {
               default_token_definition(player, card,
                                             (unsigned int)cards_data[piVar1[result]].id, &token);
-              token.action = TOKEN2022_ACTION_ADD_SUBTYPE | TOKEN2022_ACTION_HASTE;
+              token.action = TOKEN_ACTION_ADD_SUBTYPE | TOKEN_ACTION_HASTE;
               token.pow = 4;
               token.tou = 4;
               token.action_argument = 0xde;
@@ -5275,7 +5275,7 @@ int card_majestic_myriarch(int player, int card, event_t event)
   }
   else if ((event == EVENT_CHANGE_TYPE) && (current_turn == player))
   {
-    iVar1 = engine_any_legal_attacker_2022(player);
+    iVar1 = engine_any_legal_attacker(player);
     if (iVar1 == 0)
     {
       event_flags = event_flags | EA_FORCE_ATTACK;
@@ -5289,7 +5289,7 @@ int card_majestic_myriarch(int player, int card, event_t event)
       instance = in_play(player, card);
       if (instance != NULL)
       {
-        iVar1 = is_humiliated_for_ability(player, card, AL_TRIG);
+        iVar1 = is_humiliated(player, card, AL_TRIG);
         if (iVar1 == 0)
         {
           uStack_14 = 0;
@@ -5341,9 +5341,9 @@ int card_claim_fame(int player, int card, event_t event)
   card_instance_t *instance;
   int result;
 
-  target_definition_2022_t td;
+  target_definition_t td;
   char msg[100];
-  test_definition_2022_t this_test;
+  test_definition_t this_test;
   memcpy(msg, "Select a creature card with CMC 2 or less.", 43);
   memset(msg + 43, 0, 57);
   new_default_test_definition(&this_test, 2, msg);
@@ -5382,7 +5382,7 @@ int card_claim_fame(int player, int card, event_t event)
           result = validate_target_from_grave_source(player, card, player, 0);
           if (result != -1)
           {
-            reanimate_permanent(player, card, player, result, REANIMATE2022_DEFAULT);
+            reanimate_permanent(player, card, player, result, REANIMATE_DEFAULT);
           }
         }
         else
@@ -5415,8 +5415,8 @@ int card_nimble_obstructionist(int player, int card, event_t event)
   int iVar5;
   int iVar6;
   unsigned int uVar7;
-  target_definition_2022_t td1;
-  target_definition_2022_t td2;
+  target_definition_t td1;
+  target_definition_t td2;
   if (2U < (unsigned int)event - (unsigned int)EVENT_CAN_ACTIVATE_FROM_HAND)
   {
     iVar3 = flash(player, card, event);
@@ -5569,7 +5569,7 @@ int card_hazorets_undying_fury(int player, int card, event_t event)
         }
         while (haz_count > 0)
         {
-          test_definition_2022_t this_test;
+          test_definition_t this_test;
           new_default_test_definition(&this_test, TYPE_ANY, "Select a card to play for free");
           int selected =
               select_card_from_zone(player, player, haz, haz_count, 0, 1, -1, &this_test);
@@ -5602,7 +5602,7 @@ int card_abandoned_sarcophagus(int player, int card, event_t event)
   {
     if (card_is_being_cycled != 0)
       return 0;
-    test_definition_2022_t test;
+    test_definition_t test;
     default_test_definition(&test, 0xff);
     test.special_selection_function = has_cycling;
     if_a_card_would_be_put_into_graveyard_from_anywhere_exile_it_instead(player, card, event,
@@ -5612,7 +5612,7 @@ int card_abandoned_sarcophagus(int player, int card, event_t event)
             xtrigger_condition() == 8) &&
            card_is_being_cycled == 0)
   {
-    test_definition_2022_t test;
+    test_definition_t test;
     default_test_definition(&test, 0xff);
     test.special_selection_function = has_cycling;
     if_a_card_would_be_put_into_graveyard_from_anywhere_exile_it_instead(player, card, event,
@@ -5621,7 +5621,7 @@ int card_abandoned_sarcophagus(int player, int card, event_t event)
   if (event != EVENT_CAN_ACTIVATE && event != EVENT_ACTIVATE && event != EVENT_RESOLVE_ACTIVATION &&
       event != EVENT_CLEANUP)
     return 0;
-  if (is_humiliated_for_ability(player, card, AL_STATIC))
+  if (is_humiliated(player, card, AL_STATIC))
     return 0;
   if (event == EVENT_CAN_ACTIVATE)
   {
@@ -5661,7 +5661,7 @@ int card_abandoned_sarcophagus(int player, int card, event_t event)
       playable[1][count++] = i;
     }
   }
-  test_definition_2022_t test;
+  test_definition_t test;
   _Static_assert(sizeof(test) == 216, "native Sarcophagus filter");
   new_default_test_definition(&test, 0xff, "Select a card to play.");
   int selected = select_card_from_zone(player, player, playable[0], count, 0, 1, -1, &test);
@@ -5690,7 +5690,7 @@ int card_endless_sands(int player, int card, event_t event)
   }
   if (event == EVENT_CAST_SPELL)
   {
-    if (affect_me(player, card) && !is_humiliated_for_ability(player, card, AL_TRIG))
+    if (affect_me(player, card) && !is_humiliated(player, card, AL_TRIG))
       ai_modifier += count_subtype(player, 1, -1) * 12;
     return mana_producer(player, card, event);
   }
@@ -5698,7 +5698,7 @@ int card_endless_sands(int player, int card, event_t event)
       event != EVENT_CLEANUP)
     return mana_producer(player, card, event);
   card_instance_t *instance = get_card_instance(player, card);
-  target_definition_2022_t td;
+  target_definition_t td;
   default_target_definition(player, card, &td, 2);
   td.allowed_controller = td.preferred_controller = player;
   if (player == 1)
@@ -5869,7 +5869,7 @@ int card_nicol_bolas_god_pharaoh(int player, int card, event_t event)
   {
     card_instance_t *instance = get_card_instance(player, card);
     int opponent = 1 - player;
-    target_definition_2022_t td1, td3;
+    target_definition_t td1, td3;
     default_target_definition(player, card, &td1, 0);
     td1.zone = 0x1000;
     td1.allowed_controller = opponent;
@@ -5929,7 +5929,7 @@ int card_nicol_bolas_god_pharaoh(int player, int card, event_t event)
       }
       else if (choice == 2)
       {
-        test_definition_2022_t test;
+        test_definition_t test;
         new_default_test_definition(&test, 0xff, "Select a card to exile.");
         new_global_tutor(opponent, opponent, 4, 6, 1, 3, &test);
         new_global_tutor(opponent, opponent, 4, 6, 1, 3, &test);
@@ -5938,7 +5938,7 @@ int card_nicol_bolas_god_pharaoh(int player, int card, event_t event)
         damage_target0(player, card, 7);
       else if (choice == 4)
       {
-        test_definition_2022_t test;
+        test_definition_t test;
         default_test_definition(&test, 1);
         test.type_flag = 1;
         new_manipulate_all(player, card, opponent, &test, ACT_KILL_REMOVE);

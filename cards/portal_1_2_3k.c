@@ -924,7 +924,7 @@ int card_wood_elves(int player, int card, event_t event){
 
 int card_abyssal_nightstalker(int player, int card, event_t event){
 
-	if (event == EVENT_DECLARE_BLOCKERS && is_attacking(player, card) && is_unblocked(player, card) && ! is_humiliated(player,card) ){
+	if (event == EVENT_DECLARE_BLOCKERS && is_attacking(player, card) && is_unblocked(player, card) && ! is_humiliated(player, card, AL_TRIG) ){
 		discard(1-player, 0, player);
 	}
 
@@ -938,7 +938,7 @@ int card_abyssal_nightstalker(int player, int card, event_t event){
 
 int card_alaborn_zealot(int player, int card, event_t event){
 
-	if( event == EVENT_DECLARE_BLOCKERS && blocking(player, card, event) && ! is_humiliated(player,card) ){
+	if( event == EVENT_DECLARE_BLOCKERS && blocking(player, card, event) && ! is_humiliated(player, card, AL_TRIG) ){
 		card_instance_t *instance = get_card_instance( player, card );
 		kill_card(1-player, instance->blocking, KILL_DESTROY);
 		kill_card(player, card, KILL_DESTROY);
@@ -1035,13 +1035,17 @@ int card_dakmor_plague(int player, int card, event_t event){
 	return basic_spell(player, card, event);
 }
 
-int card_dakmor_sorceress(int player, int card, event_t event){
-	// Used externally
-	if( event == EVENT_POWER && player > -1 && affect_me(player, card) && ! is_humiliated(player, card) ){
-		event_result += count_subtype(player, TYPE_LAND, get_hacked_subtype(player, card, SUBTYPE_SWAMP));
-	}
-
-	return 0;
+int card_dakmor_sorceress(int player, int card, event_t event)
+{
+  int result;
+  if ((((event == EVENT_POWER) && (-1 < player)) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = get_hacked_subtype(player, card, 0x5009);
+    result = count_subtype(player, 1, result);
+    set_characteristic_pt(result);
+  }
+  return 0;
 }
 
 // deathcoil wurm --> thorn elemental
@@ -1264,7 +1268,7 @@ When Predatory Nightstalker enters the battlefield, you may have target opponent
 int card_prowling_nightstalker(int player, int card, event_t event){
 
 	if( event == EVENT_BLOCK_LEGALITY ){
-		if( attacking_card_controller == player && attacking_card == card && ! is_humiliated(player, card) &&
+		if( attacking_card_controller == player && attacking_card == card && ! is_humiliated(player, card, AL_STATIC) &&
 			!(get_color(affected_card_controller, affected_card) & get_sleighted_color_test(player, card, COLOR_TEST_BLACK)) )
 		{
 			event_result = 1;
@@ -1383,28 +1387,26 @@ When Sea Drake enters the battlefield, return two target lands you control to th
 	return 0;
 }
 
-int card_swarm_of_rats(int player, int card, event_t event){
-	/* Swarm of Rats	|1|B
-	 * Creature - Rat 100/1
-	 * ~'s power is equal to the number of Rats you control. */
-
-	if( event == EVENT_POWER && player != -1 && affect_me(player, card) && ! is_humiliated(player, card) ){
-		event_result += count_subtype(player, TYPE_PERMANENT, SUBTYPE_RAT);
-	}
-
-	return 0;
+int card_swarm_of_rats(int player, int card, event_t event)
+{
+  int newval;
+  if ((((event == EVENT_POWER) && (player != -1)) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    newval = count_subtype(player, 0x47, 0x9a);
+    set_characteristic_pt(newval);
+  }
+  return 0;
 }
 
 int card_sylvan_yeti(int player, int card, event_t event)
 {
-  /* Sylvan Yeti	|2|G|G
-   * Creature - Yeti 100/4
-   * ~'s power is equal to the number of cards in your hand. */
-
-	if (event == EVENT_POWER && player != -1 && affect_me(player, card) && !is_humiliated(player, card) )
-		event_result += hand_count[player];
-
-	return 0;
+  if ((((event == EVENT_POWER) && (player != -1)) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    set_characteristic_pt(hand_count[player]);
+  }
+  return 0;
 }
 
 int card_temple_acolyte(int player, int card, event_t event){
@@ -1851,7 +1853,7 @@ int card_liu_bei_lord_of_shu(int player, int card, event_t event){
 
 	horsemanship2(player, card, event);
 
-	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( check_battlefield_for_id(player, CARD_ID_GUAN_YU_SAINTED_WARRIOR) ||
 			check_battlefield_for_id(player, CARD_ID_ZHANG_FEI_FIERCE_WARRIOR) )
 		{
@@ -1963,7 +1965,7 @@ int card_meng_huo_barbarian_king(int player, int card, event_t event){
 	check_legend_rule(player, card, event);
 	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS)
 		&& affected_card_controller == player && affected_card != card
-		&& in_play(player, card) && ! is_humiliated(player, card)
+		&& in_play(player, card) && ! is_humiliated(player, card, AL_STATIC)
 		&& (get_color(affected_card_controller, affected_card) & get_sleighted_color_test(player, card, COLOR_TEST_GREEN))){
 		event_result += 1;
 	}
@@ -2131,7 +2133,7 @@ int card_sun_quan_lord_of_wu(int player, int card, event_t event){
 	if (event == EVENT_ABILITIES
 		&& in_play(player, card)
 		&& affected_card_controller == player
-		&& !is_humiliated(player, card)
+		&& !is_humiliated(player, card, AL_STATIC)
 		&& is_what(affected_card_controller, affected_card, TYPE_CREATURE)){
 		horsemanship2(affected_card_controller, affected_card, event);
 	}
@@ -4767,7 +4769,7 @@ int dread_charge_effect(int player, int card, event_t event)
   {
     if (attacking_card_controller == player)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         instance = in_play(player, card);
@@ -5140,7 +5142,7 @@ int card_fleet_footed_monk(int player, int card, event_t event)
     result = get_power(affected_card_controller, affected_card);
     if (1 < result)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         event_result = 1;
@@ -5161,7 +5163,7 @@ int card_sylvan_basilisk(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      result = is_humiliated(player, card, AL_TRIG);
       if ((result == 0) && (current_turn == player))
       {
         instance->destroys_if_blocked = instance->destroys_if_blocked | 0xc;
@@ -5170,7 +5172,7 @@ int card_sylvan_basilisk(int player, int card, event_t event)
   }
   else if (event == EVENT_DECLARE_BLOCKERS)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (((result == 0) && (current_turn == player)) && ((instance->state & 4) != 0))
     {
       for_each_creature_blocking_me(player, card, destroy_creature_when_blocked, player, card);
@@ -5418,7 +5420,7 @@ int card_wu_admiral(int player, int card, event_t event)
 {
   int result;
 
-  result = is_humiliated_for_ability(player, card, AL_STATIC);
+  result = is_humiliated(player, card, AL_STATIC);
   if (((result == 0) && (card == affected_card)) && (player == affected_card_controller))
   {
     result = get_hacked_subtype(player, card, 0x5002);
@@ -5440,7 +5442,7 @@ int card_zhou_yu_chief_commander(int player, int card, event_t event)
   if (((event == EVENT_ATTACK_LEGALITY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       result = get_hacked_subtype(player, card, 0x5002);
@@ -5486,7 +5488,7 @@ int card_taoist_mystic(int player, int card, event_t event)
     result = check_for_special_ability(affected_card_controller, affected_card, 0x40000000);
     if (result != 0)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         event_result = 1;
@@ -5574,7 +5576,7 @@ int card_zuo_ci_the_mocking_sage(int player, int card, event_t event)
   int result;
 
   check_legend_rule(player, card, event);
-  hexproof_2022(player, card, event);
+  hexproof(player, card, event);
   result = card_taoist_mystic(player, card, event);
   return result;
 }
@@ -5660,7 +5662,7 @@ int card_yuan_shao_the_indecicive(int player, int card, event_t event)
   horsemanship2(player, card, event);
   if (event == EVENT_ABILITIES)
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if ((result == 0) && (affected_card_controller == player))
     {
       maxblockers_1(player, affected_card, EVENT_ABILITIES);
@@ -5684,7 +5686,7 @@ int card_stream_of_acid(int player, int card, event_t event)
   card_instance_t *instance;
   const char *prompt;
   int result;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   if (event != EVENT_CAN_CAST)
   {
@@ -5748,8 +5750,8 @@ int card_norwood_warrior(int player, int card, event_t event)
          (current_turn == player)) &&
         (current_phase < 0x18))
     {
-      check_abilities_power_2022 = check_abilities_power_2022 + 1;
-      check_abilities_toughness_2022 = check_abilities_toughness_2022 + 1;
+      check_abilities_power = check_abilities_power + 1;
+      check_abilities_toughness = check_abilities_toughness + 1;
     }
   }
   else if (event == EVENT_DECLARE_BLOCKERS)
@@ -5760,7 +5762,7 @@ int card_norwood_warrior(int player, int card, event_t event)
       result = is_unblocked(player, card);
       if (result == 0)
       {
-        result = is_humiliated_for_ability(player, card, AL_TRIG);
+        result = is_humiliated(player, card, AL_TRIG);
         if (result == 0)
         {
           pump_ability_until_eot(player, card, player, card, 1, 1, 0, 0);
@@ -5783,12 +5785,12 @@ int card_town_sentry(int player, int card, event_t event)
        (player == affected_card_controller)) &&
       ((current_turn != player && (current_phase < 0x18))))
   {
-    check_abilities_toughness_2022 = check_abilities_toughness_2022 + 2;
+    check_abilities_toughness = check_abilities_toughness + 2;
   }
   result = blocking(player, card, event);
   if (result != 0)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       pump_ability_until_eot(player, card, player, card, 0, 2, 0, 0);
@@ -5812,13 +5814,13 @@ int card_zhao_zilong_tiger_general(int player, int card, event_t event)
        (player == affected_card_controller)) &&
       ((current_turn != player && (current_phase < 0x18))))
   {
-    check_abilities_power_2022 = check_abilities_power_2022 + 1;
-    check_abilities_toughness_2022 = check_abilities_toughness_2022 + 1;
+    check_abilities_power = check_abilities_power + 1;
+    check_abilities_toughness = check_abilities_toughness + 1;
   }
   result = blocking(player, card, event);
   if (result != 0)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       pump_ability_until_eot(player, card, player, card, 1, 1, 0, 0);

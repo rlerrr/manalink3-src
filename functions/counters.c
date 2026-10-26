@@ -1,10 +1,24 @@
 #include <limits.h>
 
 #include "manalink.h"
+static void add_or_remove_counters_impl(int player,int card,int t_player,int t_card,counter_t type,int num);
 
 /* Canonical recovered helper declarations. */
 static int get_updated_counters_number_as_cost(int player, int card, counter_t type, int number);
 int get_updated_counters_number(int player, int card, counter_t type, int number);
+static void add_or_remove_counters_impl(int player, int card, int t_player, int t_card,
+                                                    counter_t type, int num);
+void add_counters(int player, int card, int t_player, int t_card, counter_t type,
+                              int num);
+void remove_counters(int player, int card, int t_player, int t_card, counter_t type,
+                                 int num);
+void remove_all_counters(int player, int card, int t_player, int t_card, counter_t type);
+void copy_counters(int player, int card, int t_player, int t_card, int src_player,
+                               int src_card, int raw);
+void add_counters_predoubled(int player, int card, int t_player, int t_card,
+                                         counter_t type, int num);
+void move_counters(int player, int card, int t_player, int t_card, int src_player,
+                               int src_card, counter_t counter_type, int number);
 
 int hack_silent_counters = 0;
 int counters_added = 0;	// backed up and saved
@@ -767,456 +781,40 @@ void get_special_counters_name(char* dest, int csvid, int num)
 
 
 
-static void add_or_remove_counters_impl(int player, int card, counter_t type, int num)
-{
-  if (num == 0)
-	return;
 
-  int orig_num = num;
-
-  int p, t;
-
-  card_instance_t* instance = get_card_instance(player, card);
-  uint8_t* t18 = (void*)(&instance->targets[18].player);
-  uint8_t* position = NULL, *label = NULL;
-
-  switch (type)
-	{
-	  case COUNTER_P1_P1:
-		p = t = +1;
-		position = &instance->counters;
-		break;
-
-	  case COUNTER_M1_M1:
-		p = t = -1;
-		position = &instance->counters_m1m1;
-		break;
-
-	  case COUNTER_P0_P1:	p = +0;	t = +1;	break;
-	  case COUNTER_P0_P2:	p = +0;	t = +2;	break;
-	  case COUNTER_P1_P0:	p = +1;	t = +0;	break;
-	  case COUNTER_P1_P2:	p = +1;	t = +2;	break;
-	  case COUNTER_P2_P0:	p = +2;	t = +0;	break;
-	  case COUNTER_P2_P2:	p = +2;	t = +2;	break;
-	  case COUNTER_M0_M1:	p = -0;	t = -1;	break;
-	  case COUNTER_M0_M2:	p = -0;	t = -2;	break;
-	  case COUNTER_M1_M0:	p = -1;	t = -0;	break;
-	  case COUNTER_M2_M1:	p = -2;	t = -1;	break;
-	  case COUNTER_M2_M2:	p = -2;	t = -2;	break;
-
-	  default:
-		p = t = 0;
-		break;
-	}
-
-  if (num != 0)
-	{
-	  // Unless we're using a dedicated slot, try to find a slot already using this counter type.
-	  // If adding counters, assign a new slot if necessary; if removing, return if no slot previously assigned.
-	  if (!position)
-		{
-#define CHECK_COMMON(pos, lbl)			\
-		  if (lbl == type)				\
-			{							\
-			  if (pos == 0)				\
-				/* Should have been cleared already, but we'll do it now, then keep looking. */	\
-				lbl = COUNTER_invalid;	\
-			  else						\
-				{						\
-				  position = &pos;		\
-				  label = &lbl;			\
-				  goto found;			\
-				}						\
-			}
-
-		  // counters2, counters3, counters4, counters5: slot free if counter storage is 0.  Label stored in bytes 0-3 of targets[18].player.
-#define CHECK_IN_COUNTERS(pos, lbl_byte)		CHECK_COMMON(instance->pos, t18[lbl_byte])
-		  // Bytes 0 and 1 of targets[18].card: slot free if label is COUNTER_invalid.  Label stored in bytes 2 and 3 of targets[18].card.
-		  // (Those correspond to t18[4] and t18[5] for the slots, and t18[6] and t18[7] for the labels, respectively.)
-#define CHECK_IN_TARGETS(pos_byte, lbl_byte)	CHECK_COMMON(t18[pos_byte], t18[lbl_byte])
-
-		  CHECK_COMMON(instance->special_counters, instance->special_counter_type);
-		  CHECK_IN_COUNTERS(counters2, 0);
-		  CHECK_IN_COUNTERS(counters3, 1);
-		  CHECK_IN_COUNTERS(counters4, 2);
-		  CHECK_IN_COUNTERS(counters5, 3);
-		  CHECK_IN_TARGETS(4, 6);
-		  CHECK_IN_TARGETS(5, 7);
-
-#undef CHECK_IN_COUNTERS
-#undef CHECK_IN_TARGETS
-
-		  // No slot has this type assigned.  If removing counters, then we're done.
-		  if (num < 0)
-			return;
-
-		  // Find a free slot to assign to this type.
-
-		  // If nothing in the special_counters slot and we're adding a counter of the preferred type, use that.
-		  if (instance->special_counters == 0)
-			{
-			  unsigned int preferred_type = get_counter_type_by_instance(instance);
-			  if (preferred_type == type)
-				{
-				  position = &instance->special_counters;
-				  label = &instance->special_counter_type;
-				  goto found;
-				}
-			}
-
-		  // counters2, counters3, counters4, counters5: slot free if counter storage is 0.  Label stored in bytes 0-3 of targets[18].player.
-#define TRY_ASSIGN_IN_COUNTERS(pos, lbl_byte)	\
-		  if (instance->pos == 0)			\
-			{								\
-			  position = &instance->pos;	\
-			  label = &t18[lbl_byte];		\
-			  goto found;					\
-			}
-
-		  // Bytes 0 and 1 of targets[18].card: slot free if label is COUNTER_invalid.  Label stored in bytes 2 and 3 of targets[18].card.
-		  // (Those correspond to t18[4] and t18[5] for the slots, and t18[6] and t18[7] for the labels, respectively.)
-#define TRY_ASSIGN_IN_TARGETS(pos_byte, lbl_byte)	\
-		  if (t18[lbl_byte] == COUNTER_invalid)		\
-			{								\
-			  position = &t18[pos_byte];	\
-			  label = &t18[lbl_byte];		\
-			  goto found;					\
-			}
-
-		  TRY_ASSIGN_IN_COUNTERS(counters2, 0);
-		  TRY_ASSIGN_IN_COUNTERS(counters3, 1);
-		  TRY_ASSIGN_IN_COUNTERS(counters4, 2);
-		  TRY_ASSIGN_IN_COUNTERS(counters5, 3);
-
-		  // No other visible slots free, so consider adding in the special counter slot even if doesn't match the preferred type.
-		  if (instance->special_counters == 0)
-			{
-			  position = &instance->special_counters;
-			  label = &instance->special_counter_type;
-			  goto found;
-			}
-
-		  TRY_ASSIGN_IN_TARGETS(4, 6);
-		  TRY_ASSIGN_IN_TARGETS(5, 7);
-
-#undef TRY_ASSIGN_IN_COUNTERS
-#undef TRY_ASSIGN_IN_TARGETS
-
-		  // Otherwise, nowhere to store.  We'll still apply power and toughness later, but otherwise do nothing.
-
-		found:;
-		}
-
-	  // If we found a slot, update the slot and its label
-	  if (position)
-		{
-		  if (label && *label == COUNTER_invalid)	// Slot previously unused
-			*position = 0;
-
-		  // truncate to maximum of 255 and minimum of 0
-		  if (num > 0)
-			{
-			  if (num + *position > 255)
-				num = 255 - *position;
-			}
-		  else if (num < 0)
-			{
-			  if (num + *position < 0)
-				num = 0 - *position;
-			}
-
-		  *position += num;
-
-		  // If it's not a dedicated slot:
-		  if (label)
-			{
-			  if (orig_num > 0)		// If adding counters, make sure that the slot is labelled.
-				*label = type;
-			  else if (*position == 0)	// If removing counters and we just removed the last one, free the label, and maybe move other counters there.
-				{
-				  *label = COUNTER_invalid;	// mark unused
-
-				  /* If it was the label for special_counters, counters2, counters3, counters4, or counters5 (which are displayed), and one of the two
-				   * non-displayed slots (in targets[18].card byte 0 or 1) have counters, move the latter to the former. */
-				  if (label == &instance->special_counter_type || label <= &t18[3])
-					{
-					  // Try to move targets[18].card:0, labeled in targets[18].card:2
-					  if (t18[4] != 0 && t18[6] != COUNTER_invalid)
-						{
-						  *position = t18[4];
-						  *label = t18[6];
-						  t18[4] = 0;
-						  t18[6] = COUNTER_invalid;
-						}
-					  // Try to move targets[18].card:1, labeled in targets[18].card:3
-					  else if (t18[5] != 0 && t18[7] != COUNTER_invalid)
-						{
-						  *position = t18[5];
-						  *label = t18[7];
-						  t18[5] = 0;
-						  t18[7] = COUNTER_invalid;
-						}
-					}
-				}
-			}
-		}
-
-	  // Apply power and toughness and, if we added a counter, play a sound.
-	  if (num)
-		{
-		  if (p)
-			{
-			  instance->counter_power += p * num;
-			  instance->regen_status |= KEYWORD_RECALC_POWER;
-			}
-
-		  if (t)
-			{
-			  instance->counter_toughness += t * num;
-			  instance->regen_status |= KEYWORD_RECALC_TOUGHNESS;
-			}
-
-		  if (num > 0)
-			play_counters_sound(WAV_COUNTER);
-		}
-	}
-
-	if( num && is_what(player, card, TYPE_PERMANENT) ){
-		set_trap_condition(player, TRAP_P1_P1_COUNTER_PLACED, 1);
-	}
-
-  if (type == COUNTER_P1_P1 && num > 0 && (enable_xtrigger_flags & ENABLE_XTRIGGER_1_1_COUNTERS))
-	{
-	  int old_counters_added = counters_added;
-	  counters_added = num;
-	  dispatch_xtrigger2(player, XTRIGGER_1_1_COUNTERS, counters_added > 1 ? "+1/+1 counters" : "+1/+1 counter", 0, player, card);
-	  counters_added = old_counters_added;
-	}
-}
 
 // num must be > 0, or no effect
-void add_counters(int player, int card, counter_t type, int num)
-{
-  card_instance_t* instance = get_card_instance(player, card);
-  if (instance->internal_card_id == activation_card)
-	{
-	  player = instance->parent_controller;
-	  card = instance->parent_card;
-	}
-  num = get_updated_counters_number(player, card, type, num);
-  if (num > 0)
-	add_or_remove_counters_impl(player, card, type, num);
-}
+
 
 /* num must be > 0, or no effect.  Assumes caller has already called get_updated_counters_number().  This still accounts for putting counters on
  * Melira's Keepers, but not onto effect cards.  Do not call for the latter. */
-void add_counters_predoubled(int player, int card, counter_t type, int num)
-{
-  ASSERT(!is_what(player, card, TYPE_EFFECT));
-  if (get_id(player, card) == CARD_ID_MELIRAS_KEEPERS && !is_humiliated(player, card))
-	return;
 
-  add_or_remove_counters_impl(player, card, type, num);
-}
 
 // unaffected by doubling effects; num may be positive or negative
 void add_counters_as_cost(int player, int card, counter_t type, int num)
 {
-  if (num > 0)
-	{
-	  num = get_updated_counters_number_as_cost(player, card, type, num);
-	  if (!num)
-		return;
-	}
-
-  add_or_remove_counters_impl(player, card, type, num);
+  if (0 < num)
+  {
+    num = get_updated_counters_number_as_cost(player, card, type, num);
+  }
+  if (num == 0)
+  {
+    return;
+  }
+  add_or_remove_counters_impl(player, card, player, card, type, num);
+  return;
 }
 
 // num must be > 0, or no effect
-void remove_counters(int player, int card, counter_t type, int num)
-{
-	if (num > 0)
-	{
-		card_instance_t* instance = get_card_instance(player, card);
-		if (instance->internal_card_id == activation_card)
-		{
-			player = instance->parent_controller;
-			card = instance->parent_card;
-		}
-		int counters_removed = MIN(num, count_counters(player, card, type));
-		add_or_remove_counters_impl(player, card, type, -num);
 
-		// Special cases
-		if( type == COUNTER_TIME && is_suspend_legacy(player, card) ){
-
-			if( instance->targets[9].card == CARD_ID_AEON_CHRONICLER ){
-				draw_cards(player, counters_removed);
-			}
-
-			if( instance->targets[9].card == CARD_ID_BENALISH_COMMANDER ){
-				token_generation_t token;
-				default_token_definition(player, card, CARD_ID_SOLDIER, &token);
-				token.qty = counters_removed;
-				generate_token(&token);
-			}
-
-			if( instance->targets[9].card == CARD_ID_DETRITIVORE){
-				target_definition_t td;
-				default_target_definition(player, card, &td, TYPE_LAND);
-				td.required_subtype = SUBTYPE_BASIC;
-				td.special = TARGET_SPECIAL_ILLEGAL_SUBTYPE;
-				td.allow_cancel = 0;
-
-				int i;
-				for(i=0; i<counters_removed; i++){
-					instance->number_of_targets = 0;
-
-					if( can_target(&td) && new_pick_target(&td, "Select target nonbasic land.", 0, GS_LITERAL_PROMPT) ){
-						kill_card(instance->targets[0].player, instance->targets[0].card, KILL_DESTROY);
-					}
-				}
-			}
-
-			if( instance->targets[9].card == CARD_ID_FUNGAL_BEHEMOTH){
-				target_definition_t td;
-				default_target_definition(player, card, &td, TYPE_CREATURE);
-				td.preferred_controller = player;
-
-				int i;
-				for(i=0; i<counters_removed; i++){
-					instance->number_of_targets = 0;
-
-					if( can_target(&td) && pick_target(&td, "TARGET_CREATURE") ){
-						add_1_1_counter(instance->targets[0].player, instance->targets[0].card);
-					}
-				}
-			}
-
-			if( instance->targets[9].card == CARD_ID_ROILING_HORROR ){
-				target_definition_t td;
-				default_target_definition(player, card, &td, TYPE_CREATURE);
-				td.zone = TARGET_ZONE_PLAYERS;
-				td.allow_cancel = 0;
-
-				int i;
-				for(i=0; i<counters_removed; i++){
-					instance->number_of_targets = 0;
-
-					if( can_target(&td) && pick_target(&td, "TARGET_PLAYER") ){
-						lose_life(instance->targets[0].player, 1);
-						gain_life(player, 1);
-					}
-				}
-			}
-		}
-	}
-}
 
 /* For each counter on {src_player, src_card}, add one of that type to {t_player, t_card}.  If raw is set, add the exact amount (even for Melira's Keepers or
  * Melira, Sylvok Outcast, or if Doubling Season etc. are present). */
-void copy_counters(int t_player, int t_card, int src_player, int src_card, int raw)
-{
-  card_instance_t* instance = get_card_instance(src_player, src_card);
-  if (instance->internal_card_id == activation_card)
-	instance = get_card_instance(instance->parent_controller, instance->parent_card);
 
-  card_instance_t* t_instance = get_card_instance(t_player, t_card);
-  if (t_instance->internal_card_id == activation_card)
-	{
-	  t_player = t_instance->parent_controller;
-	  t_card = t_instance->parent_card;
-	}
-
-  uint8_t* t18 = (void*)(&instance->targets[18].player);
-
-  struct
-  {
-	counter_t typ;
-	int num;
-  } counters[9];
-  int num_types = 0;
-
-#define ADD_TYPE(pos, lbl)											\
-  if (pos && (counters[num_types].typ = lbl) != COUNTER_invalid)	\
-	{																\
-	  counters[num_types].num = pos;								\
-	  ++num_types;													\
-	}
-
-  ADD_TYPE(instance->special_counters, instance->special_counter_type);
-  ADD_TYPE(instance->counters2, t18[0]);
-  ADD_TYPE(instance->counters3, t18[1]);
-  ADD_TYPE(instance->counters4, t18[2]);
-  ADD_TYPE(instance->counters5, t18[3]);
-  ADD_TYPE(instance->counters, COUNTER_P1_P1);
-  ADD_TYPE(instance->counters_m1m1, COUNTER_M1_M1);
-  ADD_TYPE(t18[4], t18[6]);
-  ADD_TYPE(t18[5], t18[7]);
-
-#undef ADD_TYPE
-
-  int i;
-  if (raw)
-	for (i = 0; i < num_types; ++i)
-	  add_or_remove_counters_impl(t_player, t_card, counters[i].typ, counters[i].num);
-  else
-	for (i = 0; i < num_types; ++i)
-	  add_counters(t_player, t_card, counters[i].typ, counters[i].num);
-}
 
 /* Moves number of counter_type from {src_player, src_card} to {t_player, t_card}.  Moves all counters of all types if counter_type is -1; moves all of
  * counter_type if number is -1. */
-void move_counters(int t_player, int t_card, int src_player, int src_card, counter_t counter_type, int number)
-{
-  // No effect if moving to same card
-  if (t_card == src_card && t_player == src_player)
-	return;
 
-  // It's legal to attempt to move counters onto Melira's Keepers, and the spell or effect doesn't fizzle, but nothing happens.
-  if (get_id(t_player, t_card) == CARD_ID_MELIRAS_KEEPERS && !is_humiliated(t_player, t_card))
-	return;
-
-  if ((unsigned char)counter_type == COUNTER_invalid)
-	{
-	  // If t_player controls a Melira, Sylvok Outcast, -1/-1 counters don't move.
-	  if (check_battlefield_for_id(t_player, CARD_ID_MELIRA_SYLVOK_OUTCAST))
-		{
-		  // Hack - remove all -1/-1 counters, move everything else, then put them back
-		  card_instance_t* instance = get_card_instance(src_player, src_card);
-		  int counters_m1m1 = instance->counters_m1m1;
-		  instance->counters_m1m1 = 0;
-
-		  ++hack_silent_counters;
-		  copy_counters(t_player, t_card, src_player, src_card, 1);
-		  remove_all_counters(src_player, src_card, -1);
-		  --hack_silent_counters;
-
-		  instance->counters_m1m1 = counters_m1m1;
-		}
-	  else
-		{
-		  ++hack_silent_counters;
-		  copy_counters(t_player, t_card, src_player, src_card, 1);
-		  remove_all_counters(src_player, src_card, -1);
-		  --hack_silent_counters;
-		}
-	}
-  else
-	{
-	  // If t_player controls a Melira, Sylvok Outcast, -1/-1 counters don't move.
-	  if (check_battlefield_for_id(t_player, CARD_ID_MELIRA_SYLVOK_OUTCAST) && counter_type == COUNTER_M1_M1)
-		return;
-
-	  if (number < 0)
-		number = 255;
-
-	  int curr = count_counters(src_player, src_card, counter_type);
-	  number = MIN(number, curr);
-
-	  remove_counters(src_player, src_card, counter_type, number);
-	  add_counters_predoubled(t_player, t_card, counter_type, number);
-	}
-}
 
 static int count_counters_impl(card_instance_t* instance, counter_t type)
 {
@@ -1298,29 +896,7 @@ int count_counters_no_parent(int player, int card, counter_t type)
 }
 
 // use -1 to remove all of all types
-void remove_all_counters(int player, int card, counter_t type)
-{
-  if ((unsigned char)type == COUNTER_invalid)
-	{
-	  card_instance_t* instance = get_card_instance(player, card);
-	  instance->special_counters = 0;
-	  instance->special_counter_type = -1;
-	  instance->counters2 = 0;
-	  instance->counters3 = 0;
-	  instance->counters4 = 0;
-	  instance->counters = 0;
-	  instance->counters5 = 0;
-	  instance->counters_m1m1 = 0;
-	  instance->targets[18].player = -1;
-	  instance->targets[18].card = 0xFFFF0000;
 
-	  instance->counter_power = 0;
-	  instance->counter_toughness = 0;
-	  instance->regen_status |= KEYWORD_RECALC_POWER | KEYWORD_RECALC_TOUGHNESS;
-	}
-  else
-	remove_counters(player, card, type, 255);
-}
 
 // May use ANYBODY for player and/or -1 for counter_type to indicate any player's cards or any kind of counter.  Returns a total count.
 int count_counters_by_counter_and_card_type(int player, counter_t counter_type, type_t type)
@@ -2170,25 +1746,17 @@ int can_have_counters_placed_on_it(int player, int card)
     result = get_id(player, card);
     if ((result == 0x25db) || (result == 0x2cd6))
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       return (unsigned int)(result != 0);
     }
   }
   return 1;
 }
 
-/* October 2022 source-aware counters. Legacy four-argument APIs above remain.
- * Target trigger/mask numbers differ from the old engine; integration is pending. */
+/* Counter operations carry source and recipient pairs and use the shared
+ * native trigger IDs and enable masks. */
 int counters_added_type = -1; /* Target .data 0x02721d68, counters.c:7. */
-enum {
-  COUNTERS_2022_FLAGS_NONE = 0x0,
-  COUNTERS_2022_ENABLE_REPLACEMENT = 0x4,
-  COUNTERS_2022_ENABLE_M1_M1 = 0x40,
-  COUNTERS_2022_ENABLE_P1_P1 = 0x20,
-  COUNTERS_2022_REPLACE = 0x1000400,
-  COUNTERS_2022_M1_M1 = 0x1000d00,
-  COUNTERS_2022_P1_P1 = 0x1000c00,
-};
+
 
 /* ManalinkEh 2022: 0x26d4540; original functions/counters.c:919. */
 static int get_updated_counters_number_as_cost(int player, int card, counter_t type, int number)
@@ -2226,7 +1794,7 @@ static int get_updated_counters_number_as_cost(int player, int card, counter_t t
 }
 
 /* ManalinkEh 2022: 0x26d45f0; original functions/counters.c:933. */
-static int counter_number_2022_impl(int player, int card, counter_t type, int number)
+static int get_updated_counters_number_impl(int player, int card, counter_t type, int number)
 {
   uint16_t uVar1;
   int iVar2;
@@ -2337,14 +1905,14 @@ int get_updated_counters_number(int player, int card, counter_t type, int number
 
   if (0 < number)
   {
-    result = counter_number_2022_impl(player, card, type, number);
+    result = get_updated_counters_number_impl(player, card, type, number);
     return result;
   }
   return number;
 }
 
 /* ManalinkEh 2022: 0x26d0e90; original functions/counters.c:1012. */
-static void add_or_remove_counters_from_source_impl(int player, int card, int t_player, int t_card,
+static void add_or_remove_counters_impl(int player, int card, int t_player, int t_card,
                                                     counter_t type, int num)
 {
   uint16_t uVar1;
@@ -2361,8 +1929,8 @@ static void add_or_remove_counters_from_source_impl(int player, int card, int t_
   uint8_t *position;
   iVar3 = counters_added;
   iVar8 = counters_added_type;
-  if ((0 < num) && (((uint8_t)enable_xtrigger_flags & COUNTERS_2022_ENABLE_REPLACEMENT) !=
-                    COUNTERS_2022_FLAGS_NONE))
+  if ((0 < num) && (((uint8_t)enable_xtrigger_flags & ENABLE_XTRIGGER_COUNTERS) !=
+                    ENABLE_XTRIGGER_0))
   {
     counters_added = num;
     counters_added_type = type;
@@ -2371,7 +1939,7 @@ static void add_or_remove_counters_from_source_impl(int player, int card, int t_
     {
       pcVar7 = "counter";
     }
-    dispatch_xtrigger2(t_player, COUNTERS_2022_REPLACE, pcVar7, 0, t_player, t_card);
+    dispatch_xtrigger2(t_player, XTRIGGER_REPLACE_COUNTERS, pcVar7, 0, t_player, t_card);
   }
   counters_added_type = iVar8;
   counters_added = iVar3;
@@ -2556,8 +2124,8 @@ static void add_or_remove_counters_from_source_impl(int player, int card, int t_
           set_trap_condition(t_player, 0x607, 1);
         }
         iVar8 = counters_added;
-        if (((uint8_t)enable_xtrigger_flags & COUNTERS_2022_ENABLE_P1_P1) ==
-            COUNTERS_2022_FLAGS_NONE)
+        if (((uint8_t)enable_xtrigger_flags & ENABLE_XTRIGGER_1_1_COUNTERS) ==
+            ENABLE_XTRIGGER_0)
         {
           return;
         }
@@ -2567,7 +2135,7 @@ static void add_or_remove_counters_from_source_impl(int player, int card, int t_
           pcVar7 = "+1/+1 counter";
         }
         counters_added = num;
-        dispatch_xtrigger2(t_player, COUNTERS_2022_P1_P1, pcVar7, 0, t_player, t_card);
+        dispatch_xtrigger2(t_player, XTRIGGER_1_1_COUNTERS, pcVar7, 0, t_player, t_card);
         counters_added = iVar8;
         return;
       }
@@ -2711,7 +2279,7 @@ static void add_or_remove_counters_from_source_impl(int player, int card, int t_
 LAB_026d11b8:
   iVar8 = counters_added;
   if (((type == COUNTER_M1_M1) && (bVar2)) &&
-      (((uint8_t)enable_xtrigger_flags & COUNTERS_2022_ENABLE_M1_M1) != COUNTERS_2022_FLAGS_NONE))
+      (((uint8_t)enable_xtrigger_flags & ENABLE_XTRIGGER_M1_M1_COUNTERS) != ENABLE_XTRIGGER_0))
   {
     pcVar7 = "-1/-1 counters";
     if (num < 2)
@@ -2719,14 +2287,14 @@ LAB_026d11b8:
       pcVar7 = "-1/-1 counter";
     }
     counters_added = num;
-    dispatch_xtrigger2(t_player, COUNTERS_2022_M1_M1, pcVar7, 0, t_player, t_card);
+    dispatch_xtrigger2(t_player, XTRIGGER_M1_M1_COUNTERS, pcVar7, 0, t_player, t_card);
   }
   counters_added = iVar8;
   return;
 }
 
 /* ManalinkEh 2022: 0x26d4840; original functions/counters.c:1266. */
-void add_counters_from_source(int player, int card, int t_player, int t_card, counter_t type,
+void add_counters(int player, int card, int t_player, int t_card, counter_t type,
                               int num)
 {
   card_instance_t *instance;
@@ -2743,7 +2311,7 @@ void add_counters_from_source(int player, int card, int t_player, int t_card, co
     num_00 = get_updated_counters_number(t_player, t_card, type, num);
     if (0 < num_00)
     {
-      add_or_remove_counters_from_source_impl(player, card, t_player, t_card, type, num_00);
+      add_or_remove_counters_impl(player, card, t_player, t_card, type, num_00);
       return;
     }
   }
@@ -2753,7 +2321,7 @@ void add_counters_from_source(int player, int card, int t_player, int t_card, co
 /* Recovered October 2022 source-aware counter removal. */
 
 /* ManalinkEh 2022: 0x26ceef0; original functions/counters.c:1630. */
-static void clear_all_counters_2022(int t_player, int t_card)
+static void clear_all_counters(int t_player, int t_card)
 {
   unsigned int uVar1;
   card_instance_t *instance;
@@ -2777,7 +2345,7 @@ static void clear_all_counters_2022(int t_player, int t_card)
 }
 
 /* ManalinkEh 2022: 0x26d48d0; original functions/counters.c:1304. */
-static void remove_counters_from_source_2022_impl(int player, int card, int t_player, int t_card,
+static void remove_counters_impl(int player, int card, int t_player, int t_card,
                                                   counter_t type, int num)
 {
   card_instance_t *instance;
@@ -2795,7 +2363,7 @@ static void remove_counters_from_source_2022_impl(int player, int card, int t_pl
     t_card = instance->parent_card;
   }
   iStack_70 = count_counters(t_player, t_card, type);
-  add_or_remove_counters_from_source_impl(player, card, t_player, t_card, type, -num);
+  add_or_remove_counters_impl(player, card, t_player, t_card, type, -num);
   if ((type == COUNTER_TIME) && (iVar2 = is_suspend_legacy(t_player, t_card), iVar2 != 0))
   {
     if (num < iStack_70)
@@ -2851,7 +2419,7 @@ static void remove_counters_from_source_2022_impl(int player, int card, int t_pl
           iVar4 = can_target(&td);
           if ((iVar4 != 0) && (iVar4 = pick_target(&td, "TARGET_CREATURE"), iVar4 != 0))
           {
-            add_counters_from_source(t_player, t_card, instance->targets[0].player,
+            add_counters(t_player, t_card, instance->targets[0].player,
                                      instance->targets[0].card, COUNTER_P1_P1, 1);
           }
           iVar2 = iVar2 + 1;
@@ -2885,26 +2453,26 @@ static void remove_counters_from_source_2022_impl(int player, int card, int t_pl
 }
 
 /* ManalinkEh 2022: 0x26d4c10; original functions/counters.c:1304. */
-void remove_counters_from_source(int player, int card, int t_player, int t_card, counter_t type,
+void remove_counters(int player, int card, int t_player, int t_card, counter_t type,
                                  int num)
 {
   if (num < 1)
   {
     return;
   }
-  remove_counters_from_source_2022_impl(player, card, t_player, t_card, type, num);
+  remove_counters_impl(player, card, t_player, t_card, type, num);
   return;
 }
 
 /* ManalinkEh 2022: 0x26d4c50; original functions/counters.c:1630. */
-void remove_all_counters_from_source(int player, int card, int t_player, int t_card, counter_t type)
+void remove_all_counters(int player, int card, int t_player, int t_card, counter_t type)
 {
   if ((char)type != -1)
   {
-    remove_counters_from_source_2022_impl(player, card, t_player, t_card, type, 0xff);
+    remove_counters_impl(player, card, t_player, t_card, type, 0xff);
     return;
   }
-  clear_all_counters_2022(t_player, t_card);
+  clear_all_counters(t_player, t_card);
   return;
 }
 
@@ -3162,11 +2730,11 @@ LAB_026d5433:
         {
           if (choices[iVar4] == 1)
           {
-            add_counters_from_source(player, card, t_player, t_card, counter_types[iVar4], 1);
+            add_counters(player, card, t_player, t_card, counter_types[iVar4], 1);
           }
           else if (choices[iVar4] == 2)
           {
-            remove_counters_from_source_2022_impl(player, card, t_player, t_card,
+            remove_counters_impl(player, card, t_player, t_card,
                                                   counter_types[iVar4], 1);
           }
           iVar4 = iVar4 + 1;
@@ -3210,29 +2778,29 @@ LAB_026d5433:
   } while (true);
 }
 
-void copy_counters_from_source(int player, int card, int t_player, int t_card, int src_player,
+void copy_counters(int player, int card, int t_player, int t_card, int src_player,
                                int src_card, int raw);
 
 
 /* ManalinkEh 2022: 0x26d4ca0; original functions/counters.c:1385. */
-void copy_counters_from_source(int player, int card, int t_player, int t_card, int src_player,
+void copy_counters(int player, int card, int t_player, int t_card, int src_player,
                                int src_card, int raw)
 {
   typedef struct
   {
     counter_t typ;
     int num;
-  } counter_copy_entry_2022;
+  } counter_copy_entry;
 
   unsigned char bVar1;
   card_instance_t *pcVar2;
   card_instance_t *pcVar3;
   counter_t cVar4;
   int iVar5;
-  counter_copy_entry_2022 *paVar6;
-  counter_copy_entry_2022 *paVar7;
+  counter_copy_entry *paVar6;
+  counter_copy_entry *paVar7;
   int iVar8;
-  counter_copy_entry_2022 counters[9];
+  counter_copy_entry counters[9];
 
   pcVar2 = get_card_instance(src_player, src_card);
   if (pcVar2->internal_card_id == activation_card)
@@ -3350,7 +2918,7 @@ void copy_counters_from_source(int player, int card, int t_player, int t_card, i
       do
       {
         paVar7 = paVar6 + 1;
-        add_counters_from_source(player, card, t_player, t_card, paVar6->typ, paVar6->num);
+        add_counters(player, card, t_player, t_card, paVar6->typ, paVar6->num);
         paVar6 = paVar7;
       } while (paVar7 != counters + iVar8);
       return;
@@ -3361,7 +2929,7 @@ void copy_counters_from_source(int player, int card, int t_player, int t_card, i
   {
     if (counters[iVar5].num != 0)
     {
-      add_or_remove_counters_from_source_impl(player, card, t_player, t_card, counters[iVar5].typ,
+      add_or_remove_counters_impl(player, card, t_player, t_card, counters[iVar5].typ,
                                               counters[iVar5].num);
     }
     iVar5 = iVar5 + 1;
@@ -3370,7 +2938,7 @@ void copy_counters_from_source(int player, int card, int t_player, int t_card, i
 }
 
 /* ManalinkEh 2022: 0x26d5970; original functions/counters.c:1281. */
-void add_counters_predoubled_from_source(int player, int card, int t_player, int t_card,
+void add_counters_predoubled(int player, int card, int t_player, int t_card,
                                          counter_t type, int num)
 {
   int result;
@@ -3382,7 +2950,7 @@ void add_counters_predoubled_from_source(int player, int card, int t_player, int
   result = can_have_counters_placed_on_it(t_player, t_card);
   if ((result != 0) && (num != 0))
   {
-    add_or_remove_counters_from_source_impl(player, card, t_player, t_card, type, num);
+    add_or_remove_counters_impl(player, card, t_player, t_card, type, num);
     return;
   }
   return;
@@ -3390,7 +2958,7 @@ void add_counters_predoubled_from_source(int player, int card, int t_player, int
 
 
 /* ManalinkEh 2022: 0x26d5a00; original functions/counters.c:1437. */
-void move_counters_from_source(int player, int card, int t_player, int t_card, int src_player,
+void move_counters(int player, int card, int t_player, int t_card, int src_player,
                                int src_card, counter_t counter_type, int number)
 {
   uint8_t uVar1;
@@ -3412,8 +2980,8 @@ void move_counters_from_source(int player, int card, int t_player, int t_card, i
           uVar1 = instance->counters_m1m1;
           instance->counters_m1m1 = '\0';
           hack_silent_counters = hack_silent_counters + 1;
-          copy_counters_from_source(player, card, t_player, t_card, src_player, src_card, 1);
-          clear_all_counters_2022(src_player, src_card);
+          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
+          clear_all_counters(src_player, src_card);
           hack_silent_counters = hack_silent_counters + -1;
           instance->counters_m1m1 = uVar1;
         }
@@ -3421,19 +2989,19 @@ void move_counters_from_source(int player, int card, int t_player, int t_card, i
         if (result == 0)
         {
           hack_silent_counters = hack_silent_counters + 1;
-          copy_counters_from_source(player, card, t_player, t_card, src_player, src_card, 1);
-          clear_all_counters_2022(src_player, src_card);
+          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
+          clear_all_counters(src_player, src_card);
           hack_silent_counters = hack_silent_counters + -1;
         }
         else
         {
           result = count_counters(src_player, src_card, COUNTER_P1_P1);
-          remove_counters_from_source_2022_impl(player, card, src_player, src_card, COUNTER_P1_P1,
+          remove_counters_impl(player, card, src_player, src_card, COUNTER_P1_P1,
                                                 0xff);
           hack_silent_counters = hack_silent_counters + 1;
-          copy_counters_from_source(player, card, t_player, t_card, src_player, src_card, 1);
-          clear_all_counters_2022(src_player, src_card);
-          add_counters_from_source(player, card, src_player, src_card, COUNTER_P1_P1, result);
+          copy_counters(player, card, t_player, t_card, src_player, src_card, 1);
+          clear_all_counters(src_player, src_card);
+          add_counters(player, card, src_player, src_card, COUNTER_P1_P1, result);
           hack_silent_counters = hack_silent_counters + -1;
         }
       }
@@ -3456,10 +3024,10 @@ void move_counters_from_source(int player, int card, int t_player, int t_card, i
             }
             if (0 < number)
             {
-              remove_counters_from_source_2022_impl(player, card, src_player, src_card,
+              remove_counters_impl(player, card, src_player, src_card,
                                                     counter_type, number);
             }
-            add_counters_predoubled_from_source(player, card, t_player, t_card, counter_type,
+            add_counters_predoubled(player, card, t_player, t_card, counter_type,
                                                 number);
             return;
           }
@@ -3579,7 +3147,7 @@ LAB_026d50de:
   {
     pcVar1 = counter_types + result;
     result = result + 1;
-    add_counters_from_source(src_player, src_card, t_player, t_card, *pcVar1, 1);
+    add_counters(src_player, src_card, t_player, t_card, *pcVar1, 1);
   } while (result < (int)uStack_38);
   return;
 }

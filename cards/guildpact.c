@@ -1,4 +1,5 @@
 #include "manalink.h"
+int card_treetop_rangers(int,int,event_t);
 
 /* Canonical recovered helper declarations. */
 static void replicate(int player, int card, int cless, int blue, int red);
@@ -44,7 +45,7 @@ static void haunt(int player, int card, event_t event){
 
 static int magemark(int player, int card, event_t event, int key){
 
-	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player > -1 && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player > -1 && ! is_humiliated(player, card, AL_STATIC) ){
 		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS || event == EVENT_ABILITIES) && affected_card_controller == player ){
 			if( is_enchanted(affected_card_controller, affected_card) ){
 				switch( event ){
@@ -240,7 +241,7 @@ Whenever a creature you control that's enchanted becomes blocked, it gets +1/+1 
 
 	card_instance_t *instance = in_play(player, card);
 
-	if( instance && instance->damage_target_player > -1 && ! is_humiliated(player, card)){
+	if( instance && instance->damage_target_player > -1 && ! is_humiliated(player, card, AL_TRIG)){
 		if( event == EVENT_DECLARE_BLOCKERS && current_turn == player ){
 			int count;
 			for(count = active_cards_count[player]-1; count > -1; count--){
@@ -710,7 +711,7 @@ Dryad Sophisticate	|1|G
 Creature - Dryad 2/1
 Nonbasic landwalk (This creature can't be blocked as long as defending player controls a nonbasic land.) */
 
-	if( event == EVENT_BLOCK_LEGALITY && ! is_humiliated(player, card) && !(player_bits[player] & PB_NONSTANDARD_LANDWALK_DISABLED) ){
+	if( event == EVENT_BLOCK_LEGALITY && ! is_humiliated(player, card, AL_STATIC) && !(player_bits[player] & PB_NONSTANDARD_LANDWALK_DISABLED) ){
 		if( player == attacking_card_controller && card == attacking_card ){
 			int landwalk = 0;
 			int count = active_cards_count[1-player]-1;
@@ -833,7 +834,7 @@ int card_gatherer_of_graces(int player, int card, event_t event){
 	 * ~ gets +1/+1 for each Aura attached to it.
 	 * Sacrifice an Aura: Regenerate ~. */
 
-	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		event_result += count_auras_enchanting_me(player, card);
 	}
 
@@ -1502,7 +1503,7 @@ Enchantment
 If ~ is in your opening hand, you may begin the game with it on the battlefield.
 All nonland permanents are legendary. */
 
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( event == EVENT_ABILITIES && ! is_what(affected_card_controller, affected_card, TYPE_LAND) ){
 			if( ! check_battlefield_for_id(ANYBODY, CARD_ID_MIRROR_GALLERY) ){
 				true_verify_legend_rule(affected_card_controller, affected_card, get_id(affected_card_controller, affected_card));
@@ -1520,7 +1521,7 @@ Enchantment
 If ~ is in your opening hand, you may begin the game with it on the battlefield.
 Creature tokens get +1/+1. */
 
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && is_token(affected_card_controller, affected_card) ){
 			event_result++;
 		}
@@ -2067,7 +2068,7 @@ int card_order_of_the_stars(int player, int card, event_t event){
 		get_card_instance(player, card)->targets[1].player = select_a_protection(player);
 	}
 
-	if( event == EVENT_ABILITIES && in_play(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_ABILITIES && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t *instance = get_card_instance( player, card );
 		if( affect_me(player, card) && instance->targets[1].player > -1 ){
 			event_result |= instance->targets[1].player;
@@ -2825,19 +2826,12 @@ int card_shrieking_grotesque(int player, int card, event_t event){
 	return 0;
 }
 
-int card_silhana_ledgewalker(int player, int card, event_t event){
-
-	hexproof(player, card, event);
-
-	if( event == EVENT_BLOCK_LEGALITY && ! is_humiliated(player, card) ){
-		if( player == attacking_card_controller && card == attacking_card ){
-			if( ! check_for_ability(affected_card_controller, affected_card, KEYWORD_FLYING) ){
-				event_result = 1;
-			}
-		}
-	}
-
-	return 0;
+int card_silhana_ledgewalker(int player, int card, event_t event)
+{
+  int result;
+  hexproof(player, card, event);
+  result = card_treetop_rangers(player, card, event);
+  return result;
 }
 
 int card_skarrg_the_rage_pit(int player, int card, event_t event){
@@ -2917,7 +2911,7 @@ int card_skarrgan_firebird(int player, int card, event_t event){
 
 int card_skarrgan_pit_skulk(int player, int card, event_t event){
 
-	if( event == EVENT_BLOCK_LEGALITY && ! is_humiliated(player, card) ){
+	if( event == EVENT_BLOCK_LEGALITY && ! is_humiliated(player, card, AL_STATIC) ){
 		if( player == attacking_card_controller && card == attacking_card ){
 			if( get_power(affected_card_controller, affected_card) < get_power(player, card) ){
 				event_result = 1;
@@ -3001,20 +2995,19 @@ int card_skeletal_vampire(int player, int card, event_t event){
 	return 0;
 }
 
-int card_smogsteed_rider(int player, int card, event_t event){
-
-	// Whenever ~ attacks, each other attacking creature gains fear until end of turn.
-	if( ! is_humiliated(player, card) && (xtrigger_condition() == XTRIGGER_ATTACKING || event == EVENT_DECLARE_ATTACKERS) ){
-		if(	declare_attackers_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY, player, card) ){
-			test_definition_t this_test;
-			default_test_definition(&this_test, TYPE_CREATURE);
-			this_test.not_me = 1;
-			this_test.state = STATE_ATTACKING;
-			pump_creatures_until_eot(player, card, player, 0, 0,0, 0,SP_KEYWORD_FEAR, &this_test);
-		}
-	}
-
-	return 0;
+int card_smogsteed_rider(int player, int card, event_t event)
+{
+  test_definition_t this_test;
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event != EVENT_DAT_ABILITY)
+  {
+    return 0;
+  }
+  default_test_definition(&this_test, 2);
+  this_test.not_me = 1;
+  this_test.state = 4;
+  pump_creatures_until_eot(player, card, player, 0, 0, 0, 0, 1, &this_test);
+  return 0;
 }
 
 int card_souls_of_the_faultless(int player, int card, event_t event){
@@ -3142,7 +3135,7 @@ int card_sword_of_the_paruns(int player, int card, event_t event){
  * |3: You may tap or untap equipped creature.
  * Equip |3 */
 
-	if( is_equipping(player, card) && ! is_humiliated(player, card) ){
+	if( is_equipping(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t *instance = get_card_instance(player, card);
 		int p = instance->damage_target_player;
 		int c = instance->damage_target_card;
@@ -3600,7 +3593,7 @@ int card_vedalken_plotter(int player, int card, event_t event){
 
 int card_vertigo_spawn(int player, int card, event_t event){
 
-	if( current_turn !=player && event == EVENT_DECLARE_BLOCKERS && blocking(player, card, event) && ! is_humiliated(player, card) ){
+	if( current_turn !=player && event == EVENT_DECLARE_BLOCKERS && blocking(player, card, event) && ! is_humiliated(player, card, AL_TRIG) ){
 		card_instance_t *instance = get_card_instance(player, card);
 		effect_frost_titan(player, card, 1-player, instance->blocking);
 	}
@@ -3641,7 +3634,7 @@ int card_witch_maw_nephilim(int player, int card, event_t event){
 
 	// Whenever you cast a spell, you may put two +1/+1 counters on ~.
 	if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_AI(player), NULL) ){
-		add_1_1_counters(player, card, 2);
+		add_counters(player, card, player, card, COUNTER_P1_P1, 2);
 	}
 
 	// Whenever ~ attacks, it gains trample until end of turn if its power is 10 or greater.

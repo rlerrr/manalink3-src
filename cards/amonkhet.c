@@ -284,12 +284,12 @@ int card_oketra_the_true(int player, int card, event_t event)
   indestructible(player, card, event);
 
   if (event == EVENT_ATTACK_LEGALITY && affect_me(player, card)
-	  && !is_humiliated(player, card)
+	  && !is_humiliated(player, card, AL_STATIC)
 	  && count_permanents_by_type(player, TYPE_CREATURE) <= 3)
 	event_result = 1;
 
   if (event == EVENT_ABILITIES && affect_me(player, card)
-	  && !is_humiliated(player, card)
+	  && !is_humiliated(player, card, AL_STATIC)
 	  && count_permanents_by_type(player, TYPE_CREATURE) <= 3)
 	cannot_block(player, card, event);
 
@@ -322,7 +322,7 @@ int card_protection_of_the_hekma(int player, int card, event_t event)
   card_instance_t* damage = damage_being_prevented(event);
   if (damage && damage->damage_target_player == player && damage->damage_target_card == -1
 	  && damage->damage_source_player == 1-player
-	  && !is_humiliated(player, card))
+	  && !is_humiliated(player, card, AL_STATIC))
 	prevent_damage(affected_card_controller, affected_card, 1);
 
   return 0;
@@ -1927,7 +1927,7 @@ int card_blighted_bat(int player, int card, event_t event)
 /* ManalinkEh 2022: 0x22db850; original cards/amonkhet.c:1636. */
 int card_bone_picker(int player, int card, event_t event)
 {
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   if ((event == EVENT_MODIFY_COST) && (0 < creatures_dead_this_turn))
   {
     COST_COLORLESS = COST_COLORLESS + -3;
@@ -2123,7 +2123,7 @@ int card_trial_of_ambition(int player, int card, event_t event)
 int card_wasteland_scorpion(int player, int card, event_t event)
 {
   int result;
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   result = cycling(player, card, event, 2, 0, 0, 0, 0, 0);
   return result;
 }
@@ -4146,13 +4146,13 @@ int card_kefnet_the_mindful(int player, int card, event_t event)
   target_definition_t td;
 
   check_legend_rule(player, card, event);
-  indestructible_2022(player, card, event);
+  indestructible(player, card, event);
   if (event == EVENT_ATTACK_LEGALITY)
   {
     if (((card == affected_card) && (player == affected_card_controller)) &&
         (hand_count[player] < 7))
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         event_result = 1;
@@ -4186,7 +4186,7 @@ int card_kefnet_the_mindful(int player, int card, event_t event)
     if (((card == affected_card) && (player == affected_card_controller)) &&
         (hand_count[player] < 7))
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         cannot_block(player, card, EVENT_ABILITIES);
@@ -4216,7 +4216,7 @@ static int effect_open_into_wonder(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (-1 < instance->damage_target_card)
     {
-      result = is_humiliated_for_ability((int)instance->damage_target_player,
+      result = is_humiliated((int)instance->damage_target_player,
                                          instance->damage_target_card, AL_TRIG);
       if (result == 0)
       {
@@ -4245,7 +4245,7 @@ int card_river_serpent(int player, int card, event_t event)
   if (((event == EVENT_ATTACK_LEGALITY) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       result = count_graveyard(player);
@@ -4265,12 +4265,12 @@ int card_bontu_the_glorified(int player, int card, event_t event)
   int result;
 
   menace(player, card, event);
-  indestructible_2022(player, card, event);
+  indestructible(player, card, event);
   if (event == EVENT_ATTACK_LEGALITY)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         result = get_dead_count(player, 2);
@@ -4285,7 +4285,7 @@ int card_bontu_the_glorified(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         result = get_dead_count(player, 2);
@@ -4349,7 +4349,7 @@ int card_grim_strider(int player, int card, event_t event)
   instance = in_play(player, card);
   if (instance != NULL)
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if ((((result == 0) && (event - EVENT_POWER < 2)) && (card == affected_card)) &&
         (player == affected_card_controller))
     {
@@ -4673,7 +4673,7 @@ int card_thresher_lizard(int player, int card, event_t event)
   instance = in_play(player, card);
   if (instance != NULL)
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if ((result == 0) && (hand_count[player] < 2))
     {
       if (event == EVENT_POWER)
@@ -4781,7 +4781,7 @@ int card_prowling_serpopard(int player, int card, event_t event)
 {
   int result;
 
-  result = is_humiliated_for_ability(player, card, AL_STATIC);
+  result = is_humiliated(player, card, AL_STATIC);
   if (result != 0)
   {
     return 0;
@@ -4811,7 +4811,7 @@ int card_rhonas_the_indomitable(int player, int card, event_t event)
   if (event == EVENT_ATTACK_LEGALITY)
   {
     if (((card == affected_card) && (player == affected_card_controller)) &&
-        (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+        (result = is_humiliated(player, card, AL_STATIC), result == 0))
     {
       default_test_definition(&recovered_stack_td.test, 2);
       result =
@@ -4834,7 +4834,7 @@ int card_rhonas_the_indomitable(int player, int card, event_t event)
       {
         return 0;
       }
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result != 0)
       {
         return 0;
@@ -4879,7 +4879,7 @@ int card_sandwurm_convergence(int player, int card, event_t event)
 
   if ((event == EVENT_ATTACK_LEGALITY) && (affected_card_controller != player))
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       result = check_for_ability(affected_card_controller, affected_card, 0x20);
@@ -5483,7 +5483,7 @@ int card_baleful_ammit(int player, int card, event_t event)
     result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
     if (result != 0)
     {
-      add_counters_from_source(player, card, instance->targets[0].player, instance->targets[0].card,
+      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
                                COUNTER_M1_M1, 1);
     }
   }
@@ -5502,7 +5502,7 @@ int card_nest_of_scarabs(int player, int card, event_t event)
     result = is_what(affected_card_controller, affected_card, 2);
     if ((result != 0) && (counters_added_type == 1))
     {
-      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      result = is_humiliated(player, card, AL_TRIG);
       if (result == 0)
       {
         default_token_definition(player, card, 0x4952, &token);
@@ -5547,7 +5547,7 @@ int card_plague_belcher(int player, int card, event_t event)
         (iVar4 = new_pick_target(&recovered_stack_td.target, "TARGET_CREATURE_YOU_CONTROL", 0, 0),
          iVar4 != 0))
     {
-      add_counters_from_source(player, card, instance->targets[0].player, instance->targets[0].card,
+      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
                                COUNTER_M1_M1, 2);
     }
     instance->number_of_targets = '\0';
@@ -5628,7 +5628,7 @@ int card_soulstinger(int player, int card, event_t event)
       result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
       if (result != 0)
       {
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_M1_M1, 2);
       }
     }
@@ -5647,7 +5647,7 @@ int card_soulstinger(int player, int card, event_t event)
       if (result != 0)
       {
         result = count_counters(player, card, COUNTER_M1_M1);
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_M1_M1, result);
       }
     }
@@ -5713,7 +5713,7 @@ int card_splendid_agony(int player, int card, event_t event)
           if (iVar3 == 2)
             goto LAB_022dd37f;
         }
-        add_counters_from_source(player, card, instance->targets[iVar3].player,
+        add_counters(player, card, instance->targets[iVar3].player,
                                  instance->targets[iVar3].card, COUNTER_M1_M1, 1);
         iVar3 = iVar3 + 1;
       } while (iVar3 != 2);
@@ -5738,14 +5738,14 @@ int card_consuming_fervor(int player, int card, event_t event)
     {
 
       instance = get_card_instance(player, card);
-      result = is_humiliated_for_ability((int)instance->damage_target_player,
+      result = is_humiliated((int)instance->damage_target_player,
                                          instance->damage_target_card, AL_TRIG);
       if (result == 0)
       {
         upkeep_trigger_ability(player, card, event, player);
         if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
         {
-          add_counters_from_source(player, card, (int)instance->damage_target_player,
+          add_counters(player, card, (int)instance->damage_target_player,
                                    instance->damage_target_card, COUNTER_M1_M1, 1);
         }
       }
@@ -5778,7 +5778,7 @@ int card_manticore_of_the_gauntlet(int player, int card, event_t event)
       result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
       if (result != 0)
       {
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_M1_M1, 1);
       }
     }
@@ -5811,7 +5811,7 @@ int card_soul_scar_mage(int player, int card, event_t event)
 
     damage_to_prevent = instance->info_slot;
     prevent_damage(affected_card_controller, affected_card, damage_to_prevent);
-    add_counters_from_source(player, card, (int)instance->damage_target_player,
+    add_counters(player, card, (int)instance->damage_target_player,
                              instance->damage_target_card, COUNTER_M1_M1, damage_to_prevent);
     return 0;
   }
@@ -5843,7 +5843,7 @@ int card_crocodile_of_the_crossing(int player, int card, event_t event)
     result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
     if (result != 0)
     {
-      add_counters_from_source(player, card, instance->targets[0].player, instance->targets[0].card,
+      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
                                COUNTER_M1_M1, 1);
     }
   }
@@ -5875,7 +5875,7 @@ int card_ornery_kudu(int player, int card, event_t event)
     result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
     if (result != 0)
     {
-      add_counters_from_source(player, card, instance->targets[0].player, instance->targets[0].card,
+      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
                                COUNTER_M1_M1, 1);
     }
   }
@@ -5920,7 +5920,7 @@ int card_stinging_shot(int player, int card, event_t event)
           result = valid_target(&td);
           if (result != 0)
           {
-            add_counters_from_source(player, card, instance->targets[0].player,
+            add_counters(player, card, instance->targets[0].player,
                                      instance->targets[0].card, COUNTER_M1_M1, 3);
           }
           kill_card(player, card, KILL_DESTROY);
@@ -5963,7 +5963,7 @@ int card_merciless_javelineer(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if ((event == EVENT_RESOLVE_ACTIVATION) && (result = valid_target(&td), result != 0))
     {
-      add_counters_from_source(player, card, instance->targets[0].player, instance->targets[0].card,
+      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
                                COUNTER_M1_M1, 1);
       pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
                              0, 0, 0, 0x20);
@@ -6162,7 +6162,7 @@ int card_edifice_of_authority(int player, int card, event_t event)
         create_targetted_legacy_effect(instance->parent_controller, instance->parent_card,
                                        effect_cannot_attack_until_eot, instance->targets[0].player,
                                        instance->targets[0].card);
-        add_counters_from_source(player, card, player, card, COUNTER_BRICK, 1);
+        add_counters(player, card, player, card, COUNTER_BRICK, 1);
         result = instance->info_slot;
       }
       if (result == 2)
@@ -6243,7 +6243,7 @@ int card_luxa_river_shrine(int player, int card, event_t event)
       if (result == 1)
       {
         gain_life(player, 1);
-        add_counters_from_source(player, card, player, card, COUNTER_BRICK, 1);
+        add_counters(player, card, player, card, COUNTER_BRICK, 1);
         result = instance->info_slot;
       }
       if (result == 2)
@@ -6390,7 +6390,7 @@ int card_oracles_vault(int player, int card, event_t event)
       create_may_play_card_from_exile_effect(
           player, card, player, (unsigned int)cards_data[*deck_ptr[player]].id, MPCFE_UNTIL_EOT);
       rfg_top_card_of_deck(player);
-      add_counters_from_source(player, card, player, card, COUNTER_BRICK, 1);
+      add_counters(player, card, player, card, COUNTER_BRICK, 1);
       iVar2 = instance->info_slot;
     }
     if ((iVar2 == 2) && (*deck_ptr[player] != -1))
@@ -6450,7 +6450,7 @@ int card_pyramid_of_the_pantheon(int player, int card, event_t event)
                                         NULL);
       if (iVar3 == 0)
         goto LAB_022e7b52;
-      add_counters_from_source(player, card, player, card, COUNTER_BRICK, 1);
+      add_counters(player, card, player, card, COUNTER_BRICK, 1);
       iVar3 = 1;
     }
     else
@@ -6562,7 +6562,7 @@ int card_grasping_dunes(int player, int card, event_t event)
       }
       if (instance->info_slot == 2)
       {
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_M1_M1, 1);
         return 0;
       }
@@ -6652,7 +6652,7 @@ int card_liliana_death_wielder(int player, int card, event_t event)
       iVar1 = valid_target(ptStack_19c);
       if (iVar1 != 0)
       {
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_M1_M1, 1);
       }
     }
@@ -6858,7 +6858,7 @@ int card_ruthless_sniper(int player, int card, event_t event)
           result = pick_target(&td, "TARGET_CREATURE");
           if (result != 0)
           {
-            add_counters_from_source(player, card, instance->targets[0].player,
+            add_counters(player, card, instance->targets[0].player,
                                      instance->targets[0].card, COUNTER_M1_M1, 1);
           }
         }
@@ -6989,7 +6989,7 @@ int card_harsh_mentor(int player, int card, event_t event)
         instance = in_play(player, card);
         if (instance != NULL)
         {
-          result = is_humiliated_for_ability(player, card, AL_TRIG);
+          result = is_humiliated(player, card, AL_TRIG);
           if (result == 0)
           {
             damage_player(affected_card_controller, 2, player, card);
@@ -7007,14 +7007,14 @@ int card_hazoret_the_fervent(int player, int card, event_t event)
   int result;
 
   check_legend_rule(player, card, event);
-  indestructible_2022(player, card, event);
+  indestructible(player, card, event);
   haste(player, card, event);
   if (event == EVENT_ATTACK_LEGALITY)
   {
     if (((card == affected_card) && (player == affected_card_controller)) &&
         (1 < hand_count[player]))
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         event_result = 1;
@@ -7026,7 +7026,7 @@ int card_hazoret_the_fervent(int player, int card, event_t event)
     if (((card == affected_card) && (player == affected_card_controller)) &&
         (1 < hand_count[player]))
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         cannot_block(player, card, EVENT_ABILITIES);
@@ -7161,7 +7161,7 @@ int card_vizier_of_the_menagerie(int player, int card, event_t event)
              (event == EVENT_RESOLVE_ACTIVATION)) ||
             (event == EVENT_CLEANUP)) &&
            ((player != 1 &&
-             (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))))
+             (result = is_humiliated(player, card, AL_STATIC), result == 0))))
   {
     if (event == EVENT_CAN_ACTIVATE)
     {
@@ -7541,7 +7541,7 @@ int card_bontus_monument(int player, int card, event_t event)
   {
     if (affected_card_controller == player)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         result = is_what(affected_card_controller, affected_card, 2);
@@ -7590,7 +7590,7 @@ int card_hazorets_monument(int player, int card, event_t event)
     return 0;
   }
   if ((affected_card_controller == player) &&
-      (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+      (result = is_humiliated(player, card, AL_STATIC), result == 0))
   {
     result = is_what(affected_card_controller, affected_card, 2);
     if (result != 0)
@@ -7635,7 +7635,7 @@ int card_kefnets_monument(int player, int card, event_t event)
   {
     if (affected_card_controller == player)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         result = is_what(affected_card_controller, affected_card, 2);
@@ -7701,7 +7701,7 @@ int card_rhonass_monument(int player, int card, event_t event)
   {
     if (affected_card_controller == player)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         result = is_what(affected_card_controller, affected_card, 2);
@@ -7766,7 +7766,7 @@ int card_channeler_initiate(int player, int card, event_t event)
     if ((result != 0) &&
         (result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0), result != 0))
     {
-      add_counters_from_source(player, card, instance->targets[0].player, instance->targets[0].card,
+      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
                                COUNTER_M1_M1, 3);
     }
     instance->number_of_targets = '\0';
@@ -7786,7 +7786,7 @@ int card_channeler_initiate(int player, int card, event_t event)
     result = produce_mana_tapped_all_one_color(player, card, COLOR_TEST_ANY_COLORED, 1);
     if (result != 0)
     {
-      remove_counters_from_source(player, card, player, card, COUNTER_M1_M1, 1);
+      remove_counters(player, card, player, card, COUNTER_M1_M1, 1);
     }
   }
   else if (((((event == EVENT_COUNT_MANA) && (card == affected_card)) &&
@@ -7824,7 +7824,7 @@ int card_exemplar_of_strength(int player, int card, event_t event)
       result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
       if (result != 0)
       {
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_M1_M1, 3);
       }
     }
@@ -7836,7 +7836,7 @@ int card_exemplar_of_strength(int player, int card, event_t event)
     result = count_counters(player, card, COUNTER_M1_M1);
     if (0 < result)
     {
-      remove_counters_from_source(player, card, player, card, COUNTER_M1_M1, 1);
+      remove_counters(player, card, player, card, COUNTER_M1_M1, 1);
       if (spell_fizzled != -1)
       {
         gain_life(player, 1);
@@ -7940,7 +7940,7 @@ int card_shed_weakness(int player, int card, event_t event)
             (result = do_dialog(player, player, card, -1, -1, " Remove a counter.\n Decline.", 0),
              result == 0))
         {
-          remove_counters_from_source(player, card, instance->targets[0].player,
+          remove_counters(player, card, instance->targets[0].player,
                                       instance->targets[0].card, COUNTER_M1_M1, 1);
         }
       }
@@ -7981,19 +7981,19 @@ int card_bounty_of_the_luxa(int player, int card, event_t event)
   result = beginning_of_phase(player, card, event, player, -1, 0x14);
   if (result != 0)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       result = count_counters(player, card, COUNTER_FLOOD);
       if (result == 0)
       {
-        add_counters_from_source(player, card, player, card, COUNTER_FLOOD, 1);
+        add_counters(player, card, player, card, COUNTER_FLOOD, 1);
         draw_a_card(player);
       }
       else
       {
         produce_mana_multi(player, 1, 0, 1, 1, 0, 0);
-        remove_all_counters_from_source(player, card, player, card, COUNTER_FLOOD);
+        remove_all_counters(player, card, player, card, COUNTER_FLOOD);
       }
     }
   }
@@ -8024,7 +8024,7 @@ int card_decimator_beetle(int player, int card, event_t event)
       result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
       if (result != 0)
       {
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_M1_M1, 1);
       }
     }
@@ -8053,7 +8053,7 @@ int card_decimator_beetle(int player, int card, event_t event)
       result = new_pick_target(&td_1, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
       if (result != 0)
       {
-        remove_counters_from_source(player, card, instance->targets[0].player,
+        remove_counters(player, card, instance->targets[0].player,
                                     instance->targets[0].card, COUNTER_M1_M1, 1);
       }
     }
@@ -8063,7 +8063,7 @@ int card_decimator_beetle(int player, int card, event_t event)
       result = new_pick_target(&td, "TARGET_CREATURE_OPPONENT_CONTROLS", 1, 0);
       if (result != 0)
       {
-        add_counters_from_source(player, card, instance->targets[1].player,
+        add_counters(player, card, instance->targets[1].player,
                                  instance->targets[1].card, COUNTER_M1_M1, 1);
       }
     }
@@ -8181,7 +8181,7 @@ int card_oketras_monument(int player, int card, event_t event)
   {
     if (affected_card_controller == player)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         result = is_what(affected_card_controller, affected_card, 2);
@@ -8311,7 +8311,7 @@ int card_defiant_greatmaw(int player, int card, event_t event)
       result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
       if (result != 0)
       {
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_M1_M1, 2);
       }
     }
@@ -8327,7 +8327,7 @@ int card_defiant_greatmaw(int player, int card, event_t event)
        (player == affected_card_controller)) &&
       ((reason_for_trigger_controller == player && (trigger_cause == card))))
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       if (event == EVENT_TRIGGER)
@@ -8347,7 +8347,7 @@ int card_defiant_greatmaw(int player, int card, event_t event)
           result = new_pick_target(&td, "Select another target creature you control.", 0, 0x80);
           if (result != 0)
           {
-            remove_counters_from_source(player, card, instance->targets[0].player,
+            remove_counters(player, card, instance->targets[0].player,
                                         instance->targets[0].card, COUNTER_M1_M1, 1);
           }
         }
@@ -8387,7 +8387,7 @@ int card_hapatra_vizier_of_poisons(int player, int card, event_t event)
       result = new_pick_target(&recovered_stack_td.target, "TARGET_CREATURE", 0, 0);
       if (result != 0)
       {
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_M1_M1, 1);
       }
     }
@@ -8397,7 +8397,7 @@ int card_hapatra_vizier_of_poisons(int player, int card, event_t event)
     result = is_what(affected_card_controller, affected_card, 2);
     if ((result != 0) && (counters_added_type == 1))
     {
-      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      result = is_humiliated(player, card, AL_TRIG);
       if (result == 0)
       {
         default_token_definition(player, card, 0x4985, &recovered_stack_td.token);
@@ -8413,7 +8413,7 @@ int card_hapatra_vizier_of_poisons(int player, int card, event_t event)
 }
 
 /* ManalinkEh 2022: 0x22d6fa0; original cards/amonkhet.c:4475. */
-const char *target_is_token_too_2022(int who_chooses, int player, int card, int targeting_player,
+const char *target_is_token_too(int who_chooses, int player, int card, int targeting_player,
                                      int targeting_card)
 {
   int result;
@@ -8464,7 +8464,7 @@ int card_hapatras_mark(int player, int card, event_t event)
           {
             pump_ability_until_eot(player, card, instance->targets[0].player,
                                    instance->targets[0].card, 0, 0, 0, (SP_KEYWORD_HEXPROOF));
-            remove_all_counters_from_source(player, card, instance->targets[0].player,
+            remove_all_counters(player, card, instance->targets[0].player,
                                             instance->targets[0].card, COUNTER_M1_M1);
           }
           kill_card(player, card, KILL_DESTROY);
@@ -8571,7 +8571,7 @@ int card_destined_lead(int player, int card, event_t event)
 int card_cartouche_of_knowledge(int player, int card, event_t event)
 {
   int result;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
@@ -8613,7 +8613,7 @@ int card_cartouche_of_ambition(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_ETB)
@@ -8627,7 +8627,7 @@ int card_cartouche_of_ambition(int player, int card, event_t event)
                               &td, "Select target creature to put a -1/-1 counter.", 0, 0x80),
                           result != 0))
     {
-      add_counters_from_source(player, card, instance->targets[0].player, instance->targets[0].card,
+      add_counters(player, card, instance->targets[0].player, instance->targets[0].card,
                                COUNTER_M1_M1, 1);
     }
     instance->number_of_targets = '\0';
@@ -8667,7 +8667,7 @@ int card_cartouche_of_zeal(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
@@ -8721,7 +8721,7 @@ int card_cartouche_of_strength(int player, int card, event_t event)
   int iVar2;
   card_instance_t *instance;
   int iVar4;
-  target_definition_2022_t td2;
+  target_definition_t td2;
 
   iVar2 = duh_mode(player);
   etb_ability(player, card, event, (iVar2 != 0) + RESOLVE_TRIGGER_OPTIONAL);
@@ -8781,7 +8781,7 @@ int card_desiccated_naga(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  target_definition_2022_t td2;
+  target_definition_t td2;
 
   if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
   {
@@ -8851,19 +8851,19 @@ int card_approach_of_the_second_sun(int player, int card, event_t event)
       {
         return 0;
       }
-      if ((player_bits[player] & PB2022_CAST_APPROACH_OF_THE_SECOND_SUN1) != 0)
+      if ((player_bits[player] & PB_CAST_APPROACH_OF_THE_SECOND_SUN1) != 0)
       {
-        player_bits[player] = player_bits[player] | PB2022_CAST_APPROACH_OF_THE_SECOND_SUN2;
+        player_bits[player] = player_bits[player] | PB_CAST_APPROACH_OF_THE_SECOND_SUN2;
       }
       result = check_special_flags2(player, card, -0x80000000);
-      if ((result == 0) && ((player_bits[player] & PB2022_CAST_APPROACH_OF_THE_SECOND_SUN1) == 0))
+      if ((result == 0) && ((player_bits[player] & PB_CAST_APPROACH_OF_THE_SECOND_SUN1) == 0))
       {
-        player_bits[player] = player_bits[player] | PB2022_CAST_APPROACH_OF_THE_SECOND_SUN1;
+        player_bits[player] = player_bits[player] | PB_CAST_APPROACH_OF_THE_SECOND_SUN1;
       }
     }
     else if (event == EVENT_RESOLVE_SPELL)
     {
-      if (((player_bits[player] & PB2022_CAST_APPROACH_OF_THE_SECOND_SUN2) == 0) ||
+      if (((player_bits[player] & PB_CAST_APPROACH_OF_THE_SECOND_SUN2) == 0) ||
           (result = not_played_from_hand(player, card), result != 0))
       {
         gain_life(player, 7);
@@ -8892,7 +8892,7 @@ static int embalm(int player, int card, event_t event, int cid, int x, int u, in
                      int w)
 {
   int result;
-  token_generation_2022_t token;
+  token_generation_t token;
   if (event == EVENT_GRAVEYARD_ABILITY)
   {
     result = has_mana_multi(player, x, 0, u, g, r, w);
@@ -9022,8 +9022,8 @@ int card_heart_piercer_manticore(int player, int card, event_t event)
   int result;
   unsigned int uVar2;
   unsigned int player_00;
-  target_definition_2022_t td2;
-  test_definition_2022_t test;
+  target_definition_t td2;
+  test_definition_t test;
   result = duh_mode(player);
   etb_ability(player, card, event, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_ETB)
@@ -9033,7 +9033,7 @@ int card_heart_piercer_manticore(int player, int card, event_t event)
     default_target_definition(player, card, &td2, 0x102);
     td2.zone = 0x1200;
     uVar2 = new_sacrifice(
-        player, card, player, SAC2022_RETURN_CHOICE | SAC2022_JUST_MARK | SAC2022_NO_CANCEL, &test);
+        player, card, player, SAC_RETURN_CHOICE | SAC_JUST_MARK | SAC_NO_CANCEL, &test);
     if (uVar2 != 0)
     {
       result = can_target(&td2);
@@ -9076,7 +9076,7 @@ int card_aven_wind_guide(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   vigilance(player, card, event);
-  result = is_humiliated_for_ability(player, card, AL_STATIC);
+  result = is_humiliated(player, card, AL_STATIC);
   if (result == 0)
   {
     instance = in_play(player, card);
@@ -9103,7 +9103,7 @@ int card_temmet_vizier_of_naktamun(int player, int card, event_t event)
 {
   int result;
   target_t tgt;
-  target_definition_2022_t td;
+  target_definition_t td;
   check_legend_rule(player, card, event);
   result = beginning_of_combat(player, card, event, player);
   if (result != 0)
@@ -9113,7 +9113,7 @@ int card_temmet_vizier_of_naktamun(int player, int card, event_t event)
     td.preferred_controller = player;
     td.allow_cancel = 0;
     td.special = 0x8000;
-    td.extra = (int32_t)target_is_token_too_2022;
+    td.extra = (int32_t)target_is_token_too;
     result = can_target(&td);
     if (result != 0)
     {
@@ -9152,8 +9152,8 @@ int card_rhet_crop_spearmaster(int player, int card, event_t event)
     }
     if (current_turn == player)
     {
-      check_abilities_keywords_2022 = check_abilities_keywords_2022 | 0x100;
-      check_abilities_power_2022 = check_abilities_power_2022 + 1;
+      check_abilities_keywords = check_abilities_keywords | 0x100;
+      check_abilities_power = check_abilities_power + 1;
     }
     result = duh_mode(player);
     if (result == 0)
@@ -9193,7 +9193,7 @@ int card_as_foretold(int player, int card, event_t event)
   upkeep_trigger_ability(player, card, event, player);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
-    add_counters_from_source(player, card, player, card, COUNTER_TIME, 1);
+    add_counters(player, card, player, card, COUNTER_TIME, 1);
   }
   else if (event == EVENT_CAN_ACTIVATE)
   {
@@ -9239,7 +9239,7 @@ int card_as_foretold(int player, int card, event_t event)
         }
       }
     }
-    test_definition_2022_t test;
+    test_definition_t test;
     _Static_assert(sizeof(test) == 216, "native As Foretold filter");
     new_default_test_definition(&test, 1, "Select a spell to cast.");
     test.type_flag = 1;
@@ -9276,7 +9276,7 @@ int card_dispossess(int player, int card, event_t event)
            event != EVENT_CAN_CHANGE_TARGET && event != EVENT_CHANGE_TARGET)
     return 0;
   int opponent = 1 - player;
-  target_definition_2022_t td;
+  target_definition_t td;
   default_target_definition(player, card, &td, 0);
   td.zone = 0x1000;
   td.allowed_controller = opponent;

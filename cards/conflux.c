@@ -1,26 +1,25 @@
 #include "manalink.h"
 
 // Functions
-static int basic_landcycling(int player, int card, event_t event, int colorless, int black, int blue, int green, int red, int white)
+static int conflux_basic_landcycling(int player, int card, event_t event, int colorless, int black,
+                                     int blue, int green, int red, int white)
 {
-  if (event == EVENT_CAN_ACTIVATE_FROM_HAND || event == EVENT_ACTIVATE_FROM_HAND)
-	return cycling(player, card, event, colorless, black, blue, green, red, white);
-  else if (event == EVENT_RESOLVE_ACTIVATION_FROM_HAND && spell_fizzled != 1)
-	tutor_basic_lands(player, TUTOR_HAND, 1);
-
+  /* Native clone specializes colorless to 1; the five stored stack words are B/U/G/R/W. */
+  int result;
+  if (event - EVENT_CAN_ACTIVATE_FROM_HAND < 2)
+  {
+    result = cycling(player, card, event, 1, black, blue, green, red, white);
+    return result;
+  }
+  if ((event == EVENT_RESOLVE_ACTIVATION_FROM_HAND) && (spell_fizzled != 1))
+  {
+    tutor_basic_lands(player, TUTOR_HAND, 1);
+    return 0;
+  }
   return 0;
 }
 
-static int reset_subtype_at_eot(int player, int card, event_t event){
 
-	if( event == EVENT_CLEANUP ){
-		card_instance_t *instance = get_card_instance( player, card);
-		reset_subtypes(instance->damage_target_player, instance->damage_target_card, 1);
-		kill_card(player, card, KILL_EXILE);
-	}
-
-	return 0;
-}
 
 
 // Cards
@@ -33,7 +32,7 @@ Target player loses 4 life and you gain 4 life.
 Basic landcycling |1|B (|1|B, Discard this card: Search your library for a basic land card, reveal it, and put it into your hand. Then shuffle your library.)*/
 
 		if( IS_ACTIVATING_FROM_HAND(event) ){
-		return basic_landcycling(player, card, event, MANACOST_XB(1,1) );
+		return conflux_basic_landcycling(player, card, event, MANACOST_XB(1,1) );
 	}
 
 	if( ! IS_GS_EVENT(player, card, event) ){
@@ -179,25 +178,18 @@ Creature - Beast 5/3
 	return generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST_X(1), 0, &td, "TARGET_CREATURE");
 }
 
-int card_blood_tyrant(int player, int card, event_t event){
-/* CARD_ID_BLOOD_TYRANT	10115
-Blood Tyrant	|4|U|B|R
-Creature - Vampire 5/5
-Flying, trample
-At the beginning of your upkeep, each player loses 1 life. Put a +1/+1 counter on ~ for each 1 life lost this way.
-Whenever a player loses the game, put five +1/+1 counters on ~. */
-
-	upkeep_trigger_ability(player, card, event, player);
-
-	if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-		int i;
-		for(i=0; i<2; i++){
-			int result = lose_life(i, 1);
-			add_1_1_counters(player, card, result);
-		}
-	}
-
-	return 0;
+int card_blood_tyrant(int player, int card, event_t event)
+{
+  int result;
+  upkeep_trigger_ability(player, card, event, player);
+  if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+  {
+    result = lose_life(0, 1);
+    add_counters(player, card, player, card, COUNTER_P1_P1, result);
+    result = lose_life(1, 1);
+    add_counters(player, card, player, card, COUNTER_P1_P1, result);
+  }
+  return 0;
 }
 
 int card_bloodhall_ooze(int player, int card, event_t event){
@@ -222,11 +214,11 @@ At the beginning of your upkeep, if you control a |Sgreen permanent, you may put
 		default_test_definition(&this_test, TYPE_PERMANENT);
 		this_test.color = get_sleighted_color_test(player, card, COLOR_TEST_BLACK);
 		if( check_battlefield_for_special_card(player, card, player, 0, &this_test) ){
-			add_1_1_counter(player, card);
+			add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 		}
 		this_test.color = get_sleighted_color_test(player, card, COLOR_TEST_GREEN);
 		if( check_battlefield_for_special_card(player, card, player, 0, &this_test) ){
-			add_1_1_counter(player, card);
+			add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 		}
 	}
 
@@ -286,7 +278,7 @@ Creature - Rhino Beast 5/3
 ~ has haste as long as you control a |Sred permanent.
 ~ has lifelink as long as you control a |Swhite permanent. */
 
-	if (event == EVENT_ABILITIES && affect_me(player, card) && in_play(player, card) && ! is_humiliated(player, card) ){
+	if (event == EVENT_ABILITIES && affect_me(player, card) && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_PERMANENT);
 
@@ -368,7 +360,7 @@ Artifact Creature - Homunculus 1/1
 ~ gets +1/+1 as long as you control another artifact. */
 
 	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && in_play(player, card) &&
-		! is_humiliated(player, card) )
+		! is_humiliated(player, card, AL_STATIC) )
 	{
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_ARTIFACT);
@@ -421,25 +413,23 @@ int card_drag_down(int player, int card, event_t event){
 	 return vanilla_instant_pump(player, card, event, ANYBODY, 1-player, -count_domain(player, card), -count_domain(player, card), 0, 0);
 }
 
-int card_dragonsoul_knight(int player, int card, event_t event){
-/*
-Dragonsoul Knight |2|R
-Creature — Human Knight 2/2
-First strike
-{W}{U}{B}{R}{G}: Until end of turn, Dragonsoul Knight becomes a Dragon, gets +5/+3, and gains flying and trample.
-*/
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t *instance = get_card_instance( player, card);
-		force_a_subtype(instance->parent_controller, instance->parent_card, SUBTYPE_DRAGON);
-		pump_ability_until_eot(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card,
-								5, 3, KEYWORD_FLYING+KEYWORD_TRAMPLE, 0);
-		int legacy = create_targetted_legacy_effect(instance->parent_controller, instance->parent_card, &reset_subtype_at_eot,
-													instance->parent_controller, instance->parent_card);
-		add_status(player, legacy, STATUS_INVISIBLE_FX);
-	}
-
-	return generic_activated_ability(player, card, event, 0, 0, 1, 1, 1, 1, 1, 0, NULL, NULL);
+int card_dragonsoul_knight(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    instance = get_card_instance(player, card);
+    result =
+        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                               instance->parent_controller, instance->parent_card, 5, 3, 0xa0, 0);
+    instance = get_card_instance(instance->parent_controller, result);
+    instance->targets[6].player = 0x30;
+    instance->targets[3].player = instance->targets[3].player | 0x40000;
+    add_status(player, result, 0x10000);
+  }
+  result = generic_activated_ability(player, card, event, 0, 0, 1, 1, 1, 1, 1, 0, NULL, NULL);
+  return result;
 }
 
 int card_dreadwing(int player, int card, event_t event){
@@ -458,7 +448,7 @@ Artifact Creature - Jellyfish 4/3
 Flying
 At the beginning of your upkeep, return an artifact you control to its owner's hand. */
 
-	if( current_turn == player && !is_humiliated(player, card) && trigger_condition == TRIGGER_UPKEEP && affect_me(player, card) ){
+	if( current_turn == player && !is_humiliated(player, card, AL_TRIG) && trigger_condition == TRIGGER_UPKEEP && affect_me(player, card) ){
 		target_definition_t td;
 		default_target_definition(player, card, &td, TYPE_ARTIFACT);
 		td.allowed_controller = player;
@@ -646,7 +636,7 @@ Instant
 Basic landcycling |1|R (|1|R, Discard this card: Search your library for a basic land card, reveal it, and put it into your hand. Then shuffle your library.)*/
 
 	if( IS_ACTIVATING_FROM_HAND(event) ){
-		return basic_landcycling(player, card, event, MANACOST_XR(1,1));
+		return conflux_basic_landcycling(player, card, event, MANACOST_XR(1,1));
 	}
 
 	if( ! IS_GS_EVENT(player, card, event) ){
@@ -702,7 +692,7 @@ Font of Mythos	|4
 Artifact
 At the beginning of each player's draw step, that player draws two additional cards. */
 
-	if (event == EVENT_DRAW_PHASE && in_play(player, card) && ! is_humiliated(player, card) )
+	if (event == EVENT_DRAW_PHASE && in_play(player, card) && ! is_humiliated(player, card, AL_TRIG) )
 		event_result += 2;
 
 	return 0;
@@ -766,7 +756,7 @@ Basic landcycling |1|W (|1|W, Discard this card: Search your library for a basic
 		kill_card(player, card, KILL_DESTROY);
 	}
 
-	return basic_landcycling(player, card, event, MANACOST_XW(1, 1));
+	return conflux_basic_landcycling(player, card, event, MANACOST_XW(1, 1));
 }
 
 
@@ -783,65 +773,110 @@ Devour 1 (As this enters the battlefield, you may sacrifice any number of creatu
 
 // goblin outlander --> vanilla
 
-int card_goblin_razerunners(int player, int card, event_t event){
-	/* Goblin Razerunners	|2|R|R	0x2008306
-	 * Creature - Goblin Warrior 3/4
-	 * |1|R, Sacrifice a land: Put a +1/+1 counter on ~.
-	 * At the beginning of your end step, you may have ~ deal damage equal to the number of +1/+1 counters on it to target player or planeswalker. */
-	if( trigger_condition == TRIGGER_EOT && current_turn == player){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TARGET_TYPE_PLANESWALKER);
-		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
+int card_goblin_razerunners(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int iVar2;
+  resolve_trigger_t trig_mode;
+  int iVar3;
+  int cless;
+  int iStack_ec;
 
-		card_instance_t *instance = get_card_instance(player, card);
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    target_definition_t target;
+    test_definition_t test;
+    uint8_t bytes[216];
+  } recovered_stack_this_test;
 
-		if( eot_trigger_mode(player, card, event, player, count_1_1_counters(player, card) > 0 &&
-			can_target(&td) ? RESOLVE_TRIGGER_AI(player) : 0) )
-		{
-			if( pick_target(&td, "TARGET_PLAYER_OR_PLANESWALKER") ){
-				damage_creature(instance->targets[0].player, instance->targets[0].card, count_1_1_counters(player, card), player, card);
-			}
-		}
-		instance->number_of_targets = 0;
-	}
-
-	if( (event == EVENT_POW_BOOST || event == EVENT_TOU_BOOST) &&
-		generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_CAN_ACTIVATE, 0, MANACOST_XR(1, 1), 0, NULL, NULL, TYPE_LAND,
-														NULL, 0) )
-	{
-		int max_sac = 0;
-		int total_pump = 0;
-		int c;
-		for(c=0; c<active_cards_count[player]; c++){
-			if( in_play(player, c) && is_what(player, c, TYPE_LAND) && ! check_special_flags2(player, c, SF2_CANNOT_BE_SACRIFICED) ){
-				max_sac++;
-			}
-		}
-		for(c = 0; c < max_sac; ++c){
-				if( has_mana_for_activated_ability(player, card, MANACOST_XR(c, c)) ){
-					total_pump = c;
-				}
-				else{
-					break;
-				}
-		}
-		return total_pump;
-	}
-
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
-
-	test_definition_t this_test;
-	new_default_test_definition(&this_test, TYPE_LAND, "Select a land card to sacrifice.");
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		add_1_1_counter(instance->parent_controller, instance->parent_card);
-	}
-
-	return generic_activated_ability_with_sacrifice_as_cost(player, card, event, 0, MANACOST_XR(1, 1), 0, NULL, NULL, 0, &this_test, 0);
+  if ((trigger_condition == 0xcd) && (current_turn == player))
+  {
+    default_target_definition(player, card, &recovered_stack_this_test.target, 0x100);
+    recovered_stack_this_test.test.message[0xc] = '\0';
+    recovered_stack_this_test.test.message[0xd] = '\x12';
+    recovered_stack_this_test.test.message[0xe] = '\0';
+    recovered_stack_this_test.test.message[0xf] = '\0';
+    instance = get_card_instance(player, card);
+    iVar2 = count_counters(player, card, COUNTER_P1_P1);
+    if ((iVar2 < 1) || (iVar2 = can_target(&recovered_stack_this_test.target), iVar2 == 0))
+    {
+      trig_mode = RESOLVE_TRIGGER_0;
+    }
+    else
+    {
+      iVar2 = duh_mode(player);
+      trig_mode = (iVar2 != 0) + RESOLVE_TRIGGER_OPTIONAL;
+    }
+    iVar2 = eot_trigger_mode(player, card, event, player, trig_mode);
+    if ((iVar2 != 0) &&
+        (iVar2 = pick_target(&recovered_stack_this_test.target, "TARGET_PLAYER_OR_PLANESWALKER"),
+         iVar2 != 0))
+    {
+      iVar2 = count_counters(player, card, COUNTER_P1_P1);
+      damage_creature(instance->targets[0].player, instance->targets[0].card, iVar2, player, card);
+    }
+    instance->number_of_targets = '\0';
+  }
+  if (event - EVENT_POW_BOOST < 2)
+  {
+    iVar2 = generic_activated_ability_with_sacrifice_as_cost(player, card, EVENT_CAN_ACTIVATE,
+                                                             GAA_NONE, 1, 0, 0, 0, 1, 0, 0, NULL,
+                                                             NULL, TYPE_LAND, NULL, SARV_0);
+    if (iVar2 != 0)
+    {
+      iVar2 = 0;
+      iStack_ec = 0;
+      if (0 < active_cards_count[player])
+      {
+        do
+        {
+          instance = in_play(player, iVar2);
+          if ((instance != NULL) && (iVar3 = is_what(player, iVar2, 1), iVar3 != 0))
+          {
+            iVar3 = check_special_flags2(player, iVar2, 0x400000);
+            iStack_ec = iStack_ec + (unsigned int)(iVar3 == 0);
+          }
+          iVar2 = iVar2 + 1;
+        } while (iVar2 < active_cards_count[player]);
+        if (0 < iStack_ec)
+        {
+          iVar2 = 0;
+          iVar3 = 0;
+          do
+          {
+            cless = iVar2;
+            iVar2 = has_mana_for_activated_ability(player, card, cless, 0, 0, 0, cless, 0);
+            if (iVar2 == 0)
+            {
+              return iVar3;
+            }
+            iVar2 = cless + 1;
+            iVar3 = cless;
+          } while (iStack_ec != cless + 1);
+          return cless;
+        }
+      }
+    }
+  }
+  else if ((((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE)) ||
+            (event == EVENT_RESOLVE_ACTIVATION)) ||
+           (event == EVENT_CLEANUP))
+  {
+    new_default_test_definition(&recovered_stack_this_test.test, 1,
+                                "Select a land card to sacrifice.");
+    instance = get_card_instance(player, card);
+    if (event == EVENT_RESOLVE_ACTIVATION)
+    {
+      add_counters(player, card, instance->parent_controller, instance->parent_card,
+                               COUNTER_P1_P1, 1);
+    }
+    iVar2 = generic_activated_ability_with_sacrifice_as_cost(
+        player, card, event, GAA_NONE, 1, 0, 0, 0, 1, 0, 0, NULL, NULL, TYPE_NONE,
+        &recovered_stack_this_test.test, SARV_0);
+    return iVar2;
+  }
+  return 0;
 }
 
 static int grixis_slavedriver_death_effect(int player, int card, event_t event){
@@ -887,7 +922,7 @@ int card_hellkite_hatchling(int player, int card, event_t event){
 
 	devour(player, card, event, 1);
 
-	if( get_card_instance(player, card)->targets[1].player == 66 && in_play(player, card) && ! is_humiliated(player, card) ){
+	if( get_card_instance(player, card)->targets[1].player == 66 && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		modify_pt_and_abilities(player, card, event, 0, 0, KEYWORD_FLYING | KEYWORD_TRAMPLE);
 	}
 
@@ -949,7 +984,7 @@ int card_kederekt_parasite(int player, int card, event_t event){
 	 * Whenever an opponent draws a card, if you control a |Sred permanent, you may have ~ deal 1 damage to that player. */
 
 	if( trigger_condition == TRIGGER_CARD_DRAWN && affect_me(player, card) && reason_for_trigger_controller == player &&
-		trigger_cause_controller == 1-player && in_play(player, card) && !is_humiliated(player, card)
+		trigger_cause_controller == 1-player && in_play(player, card) && !is_humiliated(player, card, AL_TRIG)
 	  ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_PERMANENT);
@@ -975,7 +1010,7 @@ int card_knight_of_the_reliquary(int player, int card, event_t event){
  * |T, Sacrifice |Ha Forest or |H2Plains: Search your library for a land card, put it onto the battlefield, then shuffle your library. */
 
 	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) ){
-		if( player == -1 || (player > -1 && in_play(player, card) && ! is_humiliated(player, card)) ){
+		if( player == -1 || (player > -1 && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC)) ){
 			event_result += count_graveyard_by_type(player, TYPE_LAND );
 		}
 	}
@@ -1200,7 +1235,7 @@ int card_matca_rioters(int player, int card, event_t event){
 	  Creature - Human Warrior x/x
 	  Domain - Matca Rioters's power and toughness are each equal to the number of basic land types among lands you control.
 	*/
-	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && !is_humiliated(player, card) && player != -1){
+	if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && !is_humiliated(player, card, AL_STATIC) && player != -1){
 		event_result += count_domain(player, card);
 	}
 	return 0;
@@ -1217,7 +1252,7 @@ Whenever ~ blocks a creature, ~ deals damage to that creature's controller equal
 
 	vigilance(player, card, event);
 
-	if( event == EVENT_DECLARE_BLOCKERS && current_turn != player && !is_humiliated(player, card) ){
+	if( event == EVENT_DECLARE_BLOCKERS && current_turn != player && !is_humiliated(player, card, AL_TRIG) ){
 		if( instance->blocking < 255 ){
 			damage_player(1-player, get_power(player, card), player, card);
 		}
@@ -1372,7 +1407,7 @@ As ~ enters the battlefield, choose an opponent.
 ~ gets -1/-1 for each card in the chosen player's hand. */
 
 	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) ){
-		if( in_play(player, card) && ! is_humiliated(player, card) ){
+		if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 			event_result -= hand_count[1-player];
 		}
 	}
@@ -1534,24 +1569,24 @@ Whenever another creature with power 5 or greater enters the battlefield under y
 	return 0;
 }
 
-int card_paragon_of_the_amesha(int player, int card, event_t event){
-/*
-Paragon of the Amesha |2|W
-Creature — Human Knight 2/2
-First strike
-{W}{U}{B}{R}{G}: Until end of turn, Paragon of the Amesha becomes an Angel, gets +3/+3, and gains flying and lifelink.
-*/
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t* instance = get_card_instance(player, card);
-		force_a_subtype(instance->parent_controller, instance->parent_card, SUBTYPE_ANGEL);
-		pump_ability_until_eot(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card,
-								3, 3, KEYWORD_FLYING, SP_KEYWORD_LIFELINK);
-		int legacy = create_targetted_legacy_effect(instance->parent_controller, instance->parent_card, &reset_subtype_at_eot,
-													instance->parent_controller, instance->parent_card);
-		add_status(player, legacy, STATUS_INVISIBLE_FX);
-	}
-
-	return generic_activated_ability(player, card, event, 0, 0, 1, 1, 1, 1, 1, 0, NULL, NULL);
+int card_paragon_of_the_amesha(int player, int card, event_t event)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_RESOLVE_ACTIVATION)
+  {
+    instance = get_card_instance(player, card);
+    force_a_subtype(instance->parent_controller, instance->parent_card, SUBTYPE_ANGEL);
+    result =
+        pump_ability_until_eot(instance->parent_controller, instance->parent_card,
+                               instance->parent_controller, instance->parent_card, 3, 3, 0x20, 2);
+    instance = get_card_instance(instance->parent_controller, result);
+    instance->targets[6].player = 0x30;
+    instance->targets[3].player = instance->targets[3].player | 0x40000;
+    add_status(player, result, 0x10000);
+  }
+  result = generic_activated_ability(player, card, event, 0, 0, 1, 1, 1, 1, 1, 0, NULL, NULL);
+  return result;
 }
 
 int card_parasitic_strix(int player, int card, event_t event){
@@ -1665,7 +1700,7 @@ Land
 You have no maximum hand size.
 |T: Add |C to your mana pool. */
 
-	if( current_turn == player && event == EVENT_MAX_HAND_SIZE && in_play(player, card) && ! is_humiliated(player, card) ){
+	if( current_turn == player && event == EVENT_MAX_HAND_SIZE && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		event_result+=99;
 	}
 	return mana_producer(player, card, event);
@@ -1696,7 +1731,7 @@ Salvage Slasher	|1|B
 Artifact Creature - Human Rogue 1/1
 ~ gets +1/+0 for each artifact card in your graveyard. */
 
-	if( event == EVENT_POWER && affect_me(player, card) && in_play(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_POWER && affect_me(player, card) && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		event_result += count_graveyard_by_type(player, TYPE_ARTIFACT );
 	}
 	return 0;
@@ -1716,7 +1751,7 @@ int card_scarland_thrinax(int player, int card, event_t event){
 	}
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *instance = get_card_instance(player, card);
-		add_1_1_counter(instance->parent_controller, instance->parent_card);
+		add_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_P1_P1, 1);
 	}
 	return 0;
 }
@@ -2005,7 +2040,7 @@ Target player gains 8 life.
 Basic landcycling |1|G (|1|G, Discard this card: Search your library for a basic land card, reveal it, and put it into your hand. Then shuffle your library.)*/
 
 	if( IS_ACTIVATING_FROM_HAND(event) ){
-		return basic_landcycling(player, card, event, MANACOST_XG(1,1));
+		return conflux_basic_landcycling(player, card, event, MANACOST_XG(1,1));
 	}
 
 	if( ! IS_GS_EVENT(player, card, event) ){
@@ -2182,7 +2217,7 @@ Instant
 Counter target spell.
 Basic landcycling |1|U (|1|U, Discard this card: Search your library for a basic land card, reveal it, and put it into your hand. Then shuffle your library.)*/
 
-  int cyc = basic_landcycling(player, card, event, MANACOST_XU(1,1));
+  int cyc = conflux_basic_landcycling(player, card, event, MANACOST_XU(1,1));
   return cyc ? cyc : card_counterspell(player, card, event);
 }
 

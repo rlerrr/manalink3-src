@@ -391,7 +391,7 @@ int triome(int player, int card, event_t event)
 {
   int result;
 
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if (result == 0)
   {
     comes_into_play_tapped(player, card, event);
@@ -413,7 +413,7 @@ int card_cunning_nightbonder(int player, int card, event_t event)
   if (event == EVENT_MODIFY_COST_GLOBAL)
   {
   LAB_02288a5c:
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result != 0)
       goto LAB_02288a38;
 
@@ -909,7 +909,7 @@ int card_kinnan_bonder_prodigy(int player, int card, event_t event)
   {
     if ((1 < event - EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
     {
-      iVar1 = is_humiliated_for_ability(player, card, AL_TRIG);
+      iVar1 = is_humiliated(player, card, AL_TRIG);
       if (iVar1 != 0)
       {
         return 0;
@@ -1178,7 +1178,7 @@ int card_zirda_the_dawnwaker(int player, int card, event_t event)
     }
     check_legend_rule(player, card, EVENT_QUERY);
   LAB_0228cf82:
-    leaves_play_2022(player, card, event, 0, 0);
+    leaves_play(player, card, event, 0, 0);
     if (event == EVENT_LEAVES_PLAY_ABILITY)
     {
       default_test_definition(&recovered_stack_td.test, 0x47);
@@ -1196,7 +1196,7 @@ int card_zirda_the_dawnwaker(int player, int card, event_t event)
     {
       default_test_definition(&recovered_stack_td.test, 0x47);
       set_cost_mod_for_activated_abilities(player, -1, 2, &recovered_stack_td.test);
-      leaves_play_2022(player, card, EVENT_RESOLVE_SPELL, 0, 0);
+      leaves_play(player, card, EVENT_RESOLVE_SPELL, 0, 0);
       goto LAB_0228cfae;
     }
     if (event != EVENT_CAST_SPELL)
@@ -1206,7 +1206,7 @@ int card_zirda_the_dawnwaker(int player, int card, event_t event)
     {
       set_cost_mod_for_activated_abilities(affected_card_controller, affected_card, 2, NULL);
     }
-    leaves_play_2022(player, card, EVENT_CAST_SPELL, 0, 0);
+    leaves_play(player, card, EVENT_CAST_SPELL, 0, 0);
   }
   if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
   {
@@ -1255,17 +1255,17 @@ int card_kaheera_the_orphanguard(int player, int card, event_t event)
           break;
         if ((((((cards_data[iVar2].type & 2) != 0) &&
                (iVar2 =
-                    has_subtype_by_id_2022(player, (unsigned int)cards_data[iVar2].id, SUBTYPE_CAT),
+                    has_subtype_by_id(player, (unsigned int)cards_data[iVar2].id, SUBTYPE_CAT),
                 iVar2 == 0)) &&
-              (iVar2 = has_subtype_by_id_2022(player, (unsigned int)cards_data[*piVar5].id,
+              (iVar2 = has_subtype_by_id(player, (unsigned int)cards_data[*piVar5].id,
                                               SUBTYPE_ELEMENTAL),
                iVar2 == 0)) &&
-             ((iVar2 = has_subtype_by_id_2022(player, (unsigned int)cards_data[*piVar5].id,
+             ((iVar2 = has_subtype_by_id(player, (unsigned int)cards_data[*piVar5].id,
                                               SUBTYPE_NIGHTMARE),
-               iVar2 == 0 && (iVar2 = has_subtype_by_id_2022(
+               iVar2 == 0 && (iVar2 = has_subtype_by_id(
                                   player, (unsigned int)cards_data[*piVar5].id, SUBTYPE_DINOSAUR),
                               iVar2 == 0)))) &&
-            (iVar2 = has_subtype_by_id_2022(player, (unsigned int)cards_data[*piVar5].id,
+            (iVar2 = has_subtype_by_id(player, (unsigned int)cards_data[*piVar5].id,
                                             SUBTYPE_BEAST),
              iVar2 == 0))
         {
@@ -1302,7 +1302,7 @@ int card_kaheera_the_orphanguard(int player, int card, event_t event)
     check_legend_rule(player, card, event);
     vigilance(player, card, event);
     if ((((event - EVENT_POWER < 3) && (instance = in_play(player, card), instance != NULL)) &&
-         (iVar2 = is_humiliated_for_ability(player, card, AL_STATIC), iVar2 == 0)) &&
+         (iVar2 = is_humiliated(player, card, AL_STATIC), iVar2 == 0)) &&
         ((((affected_card_controller == player && (affected_card != card)) &&
            (iVar2 = is_what(player, affected_card, 2), iVar2 != 0)) &&
           (((iVar2 = has_subtype(affected_card_controller, affected_card, SUBTYPE_CAT),
@@ -1524,7 +1524,7 @@ static int luminous_broodmoth_effect(int player, int card, event_t event)
             iVar4, -1, iVar4, (unsigned int)cards_data[ptVar5->card].id, REANIMATE_DEFAULT);
         if (t_card != -1)
         {
-          add_counters_from_source(player, card, iVar4, t_card, COUNTER_FLYING, 1);
+          add_counters(player, card, iVar4, t_card, COUNTER_FLYING, 1);
         }
         ptVar5 = ptVar5 + 1;
       } while (ptVar5 != pcVar1->targets + iVar2 + 1);
@@ -1609,7 +1609,7 @@ LAB_0228b0f5:
           REANIMATE_DEFAULT);
       if (t_card != -1)
       {
-        add_counters_from_source(player, card, player_00, t_card, COUNTER_FLYING, 1);
+        add_counters(player, card, player_00, t_card, COUNTER_FLYING, 1);
       }
       iVar3 = iVar3 + 1;
     } while (iVar2 != iVar3);
@@ -1705,7 +1705,7 @@ int card_eerie_ultimatum(int player, int card, event_t event)
     return 0;
   if (event == EVENT_RESOLVE_SPELL)
   {
-    test_definition_2022_t test;
+    test_definition_t test;
     /* Native selection storage is not initialized before the predicate reads it. */
     int chosen[2][151];
     new_default_test_definition(&test, 0x47, "Select a permanent card.");
@@ -1724,7 +1724,7 @@ int card_eerie_ultimatum(int player, int card, event_t event)
         if (selected == -1)
           break;
         int iid = graveyard_ptr_mutable[player][selected];
-        if (has_subtype_by_id_2022(player, (unsigned int)cards_data[iid].id, SUBTYPE_AURA))
+        if (has_subtype_by_id(player, (unsigned int)cards_data[iid].id, SUBTYPE_AURA))
         {
           int temporary = add_card_to_hand(player, iid);
           if (temporary < 0)
@@ -1755,7 +1755,7 @@ int card_eerie_ultimatum(int player, int card, event_t event)
         for (int i = 0; i < num_chosen; ++i)
         {
           reanimated[i] = reanimate_permanent(player, card, player, to_reanimate[i],
-                                                   REANIMATE2022_DEFAULT);
+                                                   REANIMATE_DEFAULT);
           state_untargettable(player, reanimated[i], 1);
         }
         for (int i = shroud; i < num_chosen; ++i)
@@ -1780,8 +1780,8 @@ int card_the_ozolith(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  target_definition_2022_t td;
-  test_definition_2022_t test;
+  target_definition_t td;
+  test_definition_t test;
 
   check_legend_rule(player, card, event);
   default_test_definition(&test, 2);
@@ -1789,13 +1789,13 @@ int card_the_ozolith(int player, int card, event_t event)
   test_leaves_play(player, card, event, player, &test, 1, 0);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
-    move_counters_from_source(player, card, player, card, trigger_cause_controller, trigger_cause,
+    move_counters(player, card, player, card, trigger_cause_controller, trigger_cause,
                               ~COUNTER_P1_P1, -1);
     return 0;
   }
   if (event == EVENT_CHANGE_TYPE)
   {
-    result = engine_any_legal_attacker_2022(player);
+    result = engine_any_legal_attacker(player);
     if (result == 0)
     {
       event_flags = event_flags | 0x1000000;
@@ -1804,7 +1804,7 @@ int card_the_ozolith(int player, int card, event_t event)
   }
   else if (event == EVENT_BEGIN_COMBAT)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if ((result == 0) && (current_turn == player))
     {
 
@@ -1814,7 +1814,7 @@ int card_the_ozolith(int player, int card, event_t event)
       new_pick_target(&td, "Select a creature for The Ozolith\'s counters.", 0, 0x81);
       if (spell_fizzled != 1)
       {
-        move_counters_from_source(player, card, instance->targets[0].player,
+        move_counters(player, card, instance->targets[0].player,
                                   instance->targets[0].card, player, card, ~COUNTER_P1_P1, -1);
       }
       instance->number_of_targets = '\0';
@@ -1919,7 +1919,7 @@ int card_umori_the_collector(int player, int card, event_t event)
     goto LAB_0228c537;
   }
   if (((event != EVENT_MODIFY_COST_GLOBAL) || (affected_card_controller != player)) ||
-      (iVar2 = is_humiliated_for_ability(player, card, AL_STATIC), iVar2 != 0))
+      (iVar2 = is_humiliated(player, card, AL_STATIC), iVar2 != 0))
     goto LAB_0228c537;
   instance = get_card_instance(player, card);
   iVar2 = instance->targets[1].card;
@@ -1957,7 +1957,7 @@ int card_vivien_monsters_advocate(int player, int card, event_t event)
   int iVar3;
   int iStack_70;
   int counters[4];
-  token_generation_2022_t token;
+  token_generation_t token;
 
   check_legend_rule(player, card, event);
   if (event == EVENT_RESOLVE_SPELL)
@@ -2021,7 +2021,7 @@ int card_vivien_monsters_advocate(int player, int card, event_t event)
         counters[3] = 0x99;
         default_token_definition(player, card, 0x4907, &token);
         token.action_argument = 1;
-        token.action = TOKEN2022_ACTION_ADD_COUNTERS;
+        token.action = TOKEN_ACTION_ADD_COUNTERS;
         token.action_argument = (((unsigned int)(unsigned short)counters[iVar2] << 16) | 1U);
         generate_token(&token);
       }
@@ -2050,7 +2050,7 @@ int card_genesis_ultimatum(int player, int card, event_t event)
   }
   else if (event == EVENT_RESOLVE_SPELL)
   {
-    test_definition_2022_t test;
+    test_definition_t test;
     new_default_test_definition(&test, 0x47, "Select a permanent card to put into play.");
     int to_look = count_deck(player);
     if (to_look != 0)
@@ -2108,7 +2108,7 @@ int card_lutri_the_spellchaser(int player, int card, event_t event)
   unsigned int uVar6;
   int **ppiVar8;
   int *piStack_68;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   if ((event == EVENT_QUERY) && (attacking_card == 2))
   {
@@ -2228,7 +2228,7 @@ int card_emergent_ultimatum(int player, int card, event_t event)
         if (number > 3)
           number = 3;
         iid_t searched[3] = {-1, -1, -1};
-        test_definition_2022_t test;
+        test_definition_t test;
         new_default_test_definition(&test, TYPE_ANY, "Select a monocolored card.");
         test.value_for_special_selection_function = (int)searched;
         test.color_flag = 3;
@@ -2268,7 +2268,7 @@ int card_emergent_ultimatum(int player, int card, event_t event)
         memcpy(test.message, "Select a card to play for free", 31);
         while (cast_count > 0)
         {
-          test_definition_2022_t this_test2;
+          test_definition_t this_test2;
           new_default_test_definition(&this_test2, TYPE_ANY, "Select a card to play for free");
           int s = select_card_from_zone(player, player, to_cast, cast_count, 0, 2, -1, &test);
           if (s == -1)
@@ -2331,7 +2331,7 @@ int card_lurrus_of_the_dream_den(int player, int card, event_t event)
   card_instance_t *instance = get_card_instance(player, card);
   if (event == EVENT_CAN_ACTIVATE)
   {
-    if (is_humiliated_for_ability(player, card, AL_STATIC) || current_turn != player ||
+    if (is_humiliated(player, card, AL_STATIC) || current_turn != player ||
         instance->info_slot == 0x42)
       return 0;
     const int *grave = get_grave(player);
@@ -2370,7 +2370,7 @@ int card_lurrus_of_the_dream_den(int player, int card, event_t event)
         playable[1][count++] = i;
       }
     }
-    test_definition_2022_t test;
+    test_definition_t test;
     _Static_assert(sizeof(test) == 216, "native Lurrus filter");
     new_default_test_definition(&test, 0xff, "Select a permanent card to play.");
     int selected = select_card_from_zone(player, player, playable[0], count, 0, 1, -1, &test);

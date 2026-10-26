@@ -293,7 +293,7 @@ int card_greven_predator_captain(int player, int card, event_t event)
   }
   if ((card == affected_card) && (player == affected_card_controller))
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       result = get_trap_condition(player, 2);
@@ -326,7 +326,7 @@ int card_marisi_breaker_of_the_coil(int player, int card, event_t event)
     }
     if ((((1 - player == iVar2) && (current_phase - 0x15U < 7)) &&
          (iVar2 = is_what(affected_card_controller, affected_card, 1), iVar2 == 0)) &&
-        (iVar2 = is_humiliated_for_ability(player, card, AL_STATIC), iVar2 == 0))
+        (iVar2 = is_humiliated(player, card, AL_STATIC), iVar2 == 0))
     {
       infinite_casting_cost();
     }
@@ -383,7 +383,7 @@ int card_ohran_frostfang(int player, int card, event_t event)
 
   if (event == EVENT_ABILITIES)
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if ((result == 0) && (affected_card_controller == player))
     {
       result = is_what(player, affected_card, 2);
@@ -395,7 +395,7 @@ int card_ohran_frostfang(int player, int card, event_t event)
           instance = in_play(player, card);
           if (instance != NULL)
           {
-            deathtouch_2022(affected_card_controller, affected_card, EVENT_ABILITIES);
+            deathtouch(affected_card_controller, affected_card, EVENT_ABILITIES);
           }
         }
       }
@@ -750,7 +750,7 @@ int card_grismold_the_dreadsower(int player, int card, event_t event)
 
     for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+      add_counters(player, card, player, card, COUNTER_P1_P1, 1);
     }
   }
   return 0;
@@ -912,7 +912,7 @@ static int volrath_the_shapestealer_impl(int player, int card, event_t event, in
       iVar3 = can_target(&td_copy);
       if ((iVar3 != 0) && (iVar3 = new_pick_target(&td_copy, "TARGET_CREATURE", 0, 1), iVar3 != 0))
       {
-        add_counters_from_source(player, card, pcVar2->targets[0].player, pcVar2->targets[0].card,
+        add_counters(player, card, pcVar2->targets[0].player, pcVar2->targets[0].card,
                                  COUNTER_M1_M1, 1);
       }
     }
@@ -1032,7 +1032,7 @@ int card_doomed_artisan(int player, int card, event_t event)
         (result = has_subtype(affected_card_controller, affected_card, SUBTYPE_SCULPTURE),
          result != 0)) &&
        ((affected_card_controller == player &&
-         (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)))) &&
+         (result = is_humiliated(player, card, AL_STATIC), result == 0)))) &&
       ((1 < event - EVENT_BLOCK_LEGALITY || (event_result = 1, event == EVENT_ABILITIES))))
   {
     cannot_attack(affected_card_controller, affected_card, EVENT_ABILITIES);
@@ -1098,7 +1098,7 @@ int card_ghired_conclave_exile(int player, int card, event_t event)
       recovered_stack_token.token.s_card = player;
       recovered_stack_token.token.special_flags2 = 0;
       recovered_stack_token.token.keep_track_of_tokens_generated = 0x8000;
-      recovered_stack_token.target.extra = (int32_t)(target_is_token_too_2022);
+      recovered_stack_token.target.extra = (int32_t)(target_is_token_too);
       result = can_target(&recovered_stack_token.target);
       if (result == 0)
       {
@@ -1125,14 +1125,14 @@ int card_ghired_conclave_exile(int player, int card, event_t event)
 int card_krrik_son_of_yawgmoth(int player, int card, event_t event)
 {
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
 
   check_legend_rule(player, card, event);
   lifelink(player, card, event);
   phyrexian_casting_costs(player, card, event, 4, 3, 0, 0, 0, 0, 0);
   if (event == EVENT_STATIC_EFFECTS)
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       card_flags[player] = card_flags[player] | 2;
@@ -1155,7 +1155,7 @@ LAB_023b3741:
   {
     return 0;
   }
-  add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+  add_counters(player, card, player, card, COUNTER_P1_P1, 1);
   return 0;
 }
 
@@ -1223,7 +1223,7 @@ static int chainers_legacy(int player, int card, event_t event)
     int i = 0;
     int *grave = graveyard_ptr_mutable[player];
     int iid = *grave;
-    test_definition_2022_t this_test;
+    test_definition_t this_test;
     while (iid != -1)
     {
       if (!is_what(-1, iid, TYPE_CREATURE))
@@ -1284,7 +1284,7 @@ int card_chainer_nightmare_adept(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  test_definition_2022_t test;
+  test_definition_t test;
   check_legend_rule(player, card, event);
   if ((((trigger_condition == TRIGGER_COMES_INTO_PLAY) &&
         (result = not_played_from_hand(trigger_cause_controller, trigger_cause), result != 0)) &&

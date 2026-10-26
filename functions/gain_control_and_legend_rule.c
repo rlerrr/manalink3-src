@@ -1,4 +1,5 @@
 #include "manalink.h"
+static int effect_on_all_control_effects_attached_to_me(int player,int card,int this_legacy_player,int this_legacy_card,int effect);
 #include <windows.h>
 
 int suppress_legend_rule = 0;	// temporarily disables
@@ -201,140 +202,262 @@ int gain_control(int player, int card, int tar_player, int tar_card ){
 	return switch_control(player, card, tar_player, tar_card );
 }
 
-static int generic_control_legacy(int player, int card, event_t event){
+static int generic_control_legacy(int player, int card, event_t event)
+{
+  enum
+  {
+    SUBTYPE_NOBLE = 255
+  };
+  int card_00;
+  int t_card;
+  unsigned int uVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  int player_00;
+  subtype_t sVar5;
+  unsigned int uVar6;
+  bool bVar7;
 
-	/* Targets:
-	 * card_instance_t::damage_target_player/card: permanent this is attached to
-	 * 0: source of effect
-	 * 1.player: sp_abilities
-	 * 1.card: at end of turn, kill player/1.card in addition to player/card.
-	 * 2.player: power modification
-	 * 2.card: toughness modification
-	 * 3.player: abilities
-	 * 3.card: csvid of source of effect (also in card_instance_t::display_pic_csv_id)
-	 * 4.card: &1: enable special handling for certain cards (by csvid) */
-
-	if( player < 0 || card < 0 ){
-		return 0;
-	}
-
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if( instance->damage_target_player > -1 ){
-		int t_player = instance->damage_target_player;
-		int t_card = instance->damage_target_card;
-
-		int s_player = instance->targets[0].player;
-		int s_card = instance->targets[0].card;
-
-		int mode = instance->targets[1].card;
-
-		if( instance->targets[1].player > 0 ){
-			special_abilities(t_player, t_card, event, instance->targets[1].player, player, card);
-		}
-
-		if( instance->targets[2].player > 0 && event == EVENT_POWER && affect_me(t_player, t_card) ){
-			event_result += instance->targets[2].player;
-		}
-
-		if( instance->targets[2].card > 0 && event == EVENT_TOUGHNESS && affect_me(t_player, t_card) ){
-			event_result += instance->targets[2].card;
-		}
-
-		if( instance->targets[3].player > 0 && event == EVENT_ABILITIES && affect_me(t_player, t_card) ){
-			event_result += instance->targets[3].player;
-		}
-
-		if (instance->targets[4].card > 0 && (instance->targets[4].card & 1) && instance->targets[3].card == CARD_ID_FLASH_CONSCRIPTION){
-			spirit_link_effect(t_player, t_card, event, instance->targets[0].player);
-		}
-
-		if( event == EVENT_DECLARE_BLOCKERS && instance->targets[3].card == CARD_ID_LOSE_CALM ){
-			fx_menace(player, card, event);
-		}
-
-		if( mode && (mode & GCUS_UNTIL_EOT) && eot_trigger(player, card, event) ){
-			if( instance->targets[3].card == CARD_ID_SLAVE_OF_BOLAS ){
-				kill_card(instance->targets[0].player, instance->targets[0].card, KILL_SACRIFICE);
-				return 0;
-			}
-			if( instance->targets[3].card == CARD_ID_MAGUS_OF_THE_UNSEEN || instance->targets[3].card == CARD_ID_RAY_OF_COMMAND ){
-				tap_card(t_player, t_card);
-			}
-			re_enable_the_other_most_recent_control_effect_attached_to_me(t_player, t_card, player, card);
-			if( check_state(player, card, STATE_POWER_STRUGGLE) && check_status(player, card, STATUS_CONTROLLED) ){
-				real_switch_control(t_player, t_card);
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-
-		int mode_mask = GCUS_CONTROLLED | GCUS_TAPPED | GCUS_BURY_IF_TAPPED_OR_LEAVE_PLAY | GCUS_CHECK_POWER | GCUS_ENCHANTED |
-						GCUS_SOURCE_IN_PLAY;
-		if( mode && (mode & mode_mask) ){
-			if(	event == EVENT_STATIC_EFFECTS || event == EVENT_CARDCONTROLLED ||
-				(trigger_condition == TRIGGER_LEAVE_PLAY && affect_me(player, card)) )
-			{
-				if( instance->targets[5].player == -1 ){	// hasn't changed control for the first time yet
-					instance->targets[5].player = 1;
-					return 0;
-				}
-
-				int end_effect = 0;
-
-				if (other_leaves_play(player, card, s_player, s_card, event))
-				{
-					if (mode & GCUS_BURY_IF_TAPPED_OR_LEAVE_PLAY){
-						kill_card(t_player, t_card, KILL_BURY);
-						end_effect = 1;
-					}
-					if (mode & GCUS_SOURCE_IN_PLAY){
-						end_effect = 1;
-					}
-				}
-
-				if (event == EVENT_CARDCONTROLLED && affect_me(s_player, s_card) && (mode & GCUS_CONTROLLED))
-				{
-					end_effect = 1;
-				}
-
-				if( event == EVENT_STATIC_EFFECTS && s_player >= 0 && instance->targets[5].player == 1 )
-				{
-					if(! is_tapped(s_player, s_card) ){
-						if (mode & GCUS_BURY_IF_TAPPED_OR_LEAVE_PLAY)
-							kill_card(t_player, t_card, KILL_BURY);
-
-						if (mode & GCUS_TAPPED)
-						{
-							instance->targets[5].player = -1;
-							end_effect = 1;
-						}
-					}
-
-					if( (mode & GCUS_CHECK_POWER) && get_power(t_player, t_card) > get_power(s_player, s_card) ){
-						instance->targets[5].player = -1;
-						end_effect = 1;
-					}
-
-					if( (mode & GCUS_ENCHANTED) && ! is_enchanted(t_player, t_card) ){
-						instance->targets[5].player = -1;
-						end_effect = 1;
-					}
-				}
-
-				if( end_effect ){
-					if( in_play(t_player, t_card) ){
-						re_enable_the_other_most_recent_control_effect_attached_to_me(t_player, t_card, player, card);
-						if( check_state(player, card, STATE_POWER_STRUGGLE) && check_status(player, card, STATUS_CONTROLLED) ){
-							real_switch_control(t_player, t_card);
-						}
-					}
-					kill_card(player, card, KILL_EXILE);
-				}
-			}
-		}
-	}
-
-	return 0;
+  if (player < 0)
+  {
+    return 0;
+  }
+  if (card < 0)
+  {
+    return 0;
+  }
+  instance = get_card_instance(player, card);
+  if (instance->damage_target_player < '\0')
+  {
+    return 0;
+  }
+  player_00 = (int)instance->damage_target_player;
+  iVar4 = instance->targets[0].player;
+  card_00 = instance->damage_target_card;
+  t_card = instance->targets[0].card;
+  iVar3 = instance->targets[1].player;
+  uVar6 = instance->targets[1].card;
+  if (0 < iVar3)
+  {
+    special_abilities(player_00, card_00, event, iVar3, player, card);
+  }
+  iVar3 = instance->targets[2].player;
+  if (iVar3 < 1 || event != EVENT_POWER)
+  {
+    iVar3 = instance->targets[2].card;
+    if ((event == EVENT_TOUGHNESS) && (0 < iVar3))
+    {
+      bVar7 = false;
+      if ((card_00 == affected_card) && (player_00 == affected_card_controller))
+      {
+        event_result = event_result + iVar3;
+      }
+    }
+    else
+    {
+      iVar3 = instance->targets[3].player;
+      bVar7 = event == EVENT_ABILITIES;
+      if ((0 < iVar3 && bVar7) &&
+          ((bVar7 = true, card_00 == affected_card && (player_00 == affected_card_controller))))
+      {
+        event_result = event_result + iVar3;
+      }
+    }
+  }
+  else
+  {
+    if ((card_00 == affected_card) && (player_00 == affected_card_controller))
+    {
+      event_result = event_result + iVar3;
+    }
+    bVar7 = event == EVENT_ABILITIES;
+  }
+  sVar5 = instance->targets[4].player;
+  if (-1 < (int)sVar5)
+  {
+    if ((char)sVar5 != '\0')
+    {
+      attached_is_additional_subtype(player, card, event, sVar5 & SUBTYPE_NOBLE);
+      sVar5 = instance->targets[4].player;
+    }
+    if ((char)(sVar5 >> 0x10) != '\0')
+    {
+      attached_is_forced_subtype(player, card, event, (int)sVar5 >> 0x10 & SUBTYPE_NOBLE);
+    }
+  }
+  uVar1 = instance->targets[4].card;
+  if (((0 < (int)uVar1) && ((uVar1 & 1) != 0)) && (instance->targets[3].card == 0x1ea5))
+  {
+    spirit_link_effect(player_00, card_00, event, instance->targets[0].player);
+  }
+  if (((event == EVENT_DECLARE_BLOCKERS) || (bVar7)) && (instance->targets[3].card == 0x3a6a))
+  {
+    fx_menace(player, card, event);
+  }
+  if (uVar6 == 0)
+  {
+    return 0;
+  }
+  if ((((uVar6 & 0x81) != 0) && (iVar3 = eot_trigger(player, card, event), iVar3 != 0)) &&
+      (((uVar6 & 0x80) == 0 || (player == current_turn))))
+  {
+    iVar3 = instance->targets[3].card;
+    if (iVar3 == 0x286b)
+    {
+      kill_card(instance->targets[0].player, instance->targets[0].card, KILL_SACRIFICE);
+      return 0;
+    }
+    if ((iVar3 == 0x7e9) || (iVar3 == 0x81b))
+    {
+      tap_card(player_00, card_00);
+    }
+    effect_on_all_control_effects_attached_to_me(player_00, card_00, player, card, 1);
+    iVar3 = check_state(player, card, 0x400000);
+    if ((iVar3 != 0) && (iVar3 = check_status(player, card, 0x1000000), iVar3 != 0))
+    {
+      gain_control_impl(player_00, card_00);
+    }
+    kill_card(player, card, KILL_EXILE);
+  }
+  if ((uVar6 & 0x7e) == 0)
+  {
+    return 0;
+  }
+  if ((event != EVENT_CARDCONTROLLED && event != EVENT_STATIC_EFFECTS) &&
+      (event != EVENT_LEAVES_PLAY_ABILITY))
+  {
+    if (trigger_condition != 0xd4)
+    {
+      return 0;
+    }
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    if (instance->targets[5].player != -1)
+    {
+      other_leaves_play(player, card, iVar4, t_card, event, 0, 0);
+      return 0;
+    }
+  LAB_02664118:
+    instance->targets[5].player = 1;
+    return 0;
+  }
+  if (instance->targets[5].player == -1)
+    goto LAB_02664118;
+  other_leaves_play(player, card, iVar4, t_card, event, 0, 0);
+  if (event == EVENT_LEAVES_PLAY_ABILITY)
+  {
+    if ((uVar6 & 8) != 0)
+    {
+      kill_card(player_00, card_00, KILL_BURY);
+      goto LAB_02663fa8;
+    }
+    uVar6 = uVar6 & 0x40;
+  }
+  else
+  {
+    if (event != EVENT_CARDCONTROLLED)
+    {
+      if (iVar4 < 0)
+      {
+        return 0;
+      }
+      if (event != EVENT_STATIC_EFFECTS)
+      {
+        return 0;
+      }
+      if (instance->targets[5].player != 1)
+      {
+        return 0;
+      }
+      iVar3 = is_tapped(iVar4, t_card);
+      if (iVar3 == 0)
+      {
+        if ((uVar6 & 8) != 0)
+        {
+          kill_card(player_00, card_00, KILL_BURY);
+        }
+        if ((uVar6 & 4) == 0)
+          goto LAB_02664210;
+        instance->targets[5].player = -1;
+        bVar7 = true;
+        if ((uVar6 & 0x10) != 0)
+          goto LAB_02664281;
+      joined_r0x026642c0:
+        if (((uVar6 & 0x20) == 0) || (iVar4 = is_enchanted(player_00, card_00), iVar4 != 0))
+          goto LAB_02663fa8;
+      }
+      else
+      {
+      LAB_02664210:
+        if ((uVar6 & 0x10) != 0)
+        {
+          bVar7 = false;
+        LAB_02664281:
+          iVar3 = get_power(player_00, card_00);
+          iVar4 = get_power(iVar4, t_card);
+          if (iVar3 <= iVar4)
+          {
+            if ((uVar6 & 0x20) != 0)
+              goto LAB_02664220;
+            goto LAB_02664250;
+          }
+          instance->targets[5].player = -1;
+          goto joined_r0x026642c0;
+        }
+        bVar7 = false;
+        if ((uVar6 & 0x20) == 0)
+        {
+          return 0;
+        }
+      LAB_02664220:
+        iVar4 = is_enchanted(player_00, card_00);
+        if (iVar4 != 0)
+        {
+        LAB_02664250:
+          if (!bVar7)
+          {
+            return 0;
+          }
+          goto LAB_02663fa8;
+        }
+      }
+      instance->targets[5].player = -1;
+      goto LAB_02663fa8;
+    }
+    if (t_card != affected_card)
+    {
+      return 0;
+    }
+    if (iVar4 != affected_card_controller)
+    {
+      return 0;
+    }
+    uVar6 = uVar6 & 2;
+  }
+  if (uVar6 == 0)
+  {
+    return 0;
+  }
+LAB_02663fa8:
+  instance = in_play(player_00, card_00);
+  if (instance != NULL)
+  {
+    effect_on_all_control_effects_attached_to_me(player_00, card_00, player, card, 1);
+    iVar4 = check_state(player, card, 0x400000);
+    if ((iVar4 != 0) && (iVar4 = check_status(player, card, 0x1000000), iVar4 != 0))
+    {
+      gain_control_impl(player_00, card_00);
+    }
+  }
+  kill_card(player, card, KILL_EXILE);
+  return 0;
 }
 
 static int effect_on_all_control_effects_attached_to_me(int player, int card, int this_legacy_player, int this_legacy_card, int effect){
@@ -621,7 +744,7 @@ int gain_control_until_eoyt(int player, int card, int t_player, int t_card)
 /* Recovered October 2022 global tutoring and control transfer. */
 
 /* ManalinkEh 2022: 0x2663990; original functions/gain_control_and_legend_rule.c:133. */
-int gain_control_impl_2022(int player, int card)
+int gain_control_impl(int player, int card)
 {
   card_instance_t *src = get_card_instance(player, card);
   uint32_t old_timestamp = src->timestamp;

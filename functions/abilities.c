@@ -4,7 +4,7 @@
 #include "manalink.h"
 
 /* Canonical recovered helper declarations. */
-void remove_abilities_by_test(int player, event_t event, test_definition_2022_t *test,
+void remove_abilities_by_test(int player, event_t event, test_definition_t *test,
                                    ability_loss_t mode);
 int can_use_activated_abilities(int player, int card);
 int can_use_activated_abilities_by_instance(card_instance_t *instance);
@@ -12,7 +12,7 @@ int can_produce_mana(int player, int card);
 void disable_all_activated_abilities(int player, int card, int mode);
 void disable_nonmana_activated_abilities(int player, int card, int mode);
 int humiliate_and_set_pt_abilities(int player, int card, int t_player, int t_card, int mode,
-                                        test_definition_2022_t *hc);
+                                        test_definition_t *hc);
 void remove_special_ability(int player, int card, int sa);
 int check_for_special_ability(int player, int card, int keyword);
 int get_special_abilities_by_instance(card_instance_t *instance);
@@ -28,6 +28,7 @@ int humility_legacy(int player, int card, event_t event);
 static void lure_effect(int player, int card, event_t event, int luring_player,
                              int luring_card, int all_must_block, int subtype, int ability,
                              const char *prompt);
+int is_humiliated(int player, int card, ability_loss_t mode);
 
 /***********************
 * Removal of abilities *
@@ -42,23 +43,23 @@ static void lure_effect(int player, int card, event_t event, int luring_player,
 
 
 
-int is_humiliated_by_instance(card_instance_t* instance)
+int is_humiliated_by_instance(card_instance_t *instance, ability_loss_t mode)
 {
-  return !(instance->targets[17].card <= 0 || !(instance->targets[17].card & 0xF00));
+  ability_loss_t aVar1;
+  aVar1 = instance->targets[0x11].card;
+  if (0 < (int)aVar1)
+  {
+    return aVar1 & mode;
+  }
+  return 0;
 }
 
-int is_humiliated(int player, int card)
-{
-  if (player == -1 || card == -1)
-	return 0;
-  else
-	return is_humiliated_by_instance(get_card_instance(player, card));
-}
+
 
 /* ManalinkEh 2022: 0x26dd430; original functions/abilities.c:47. */
-/* Recovered is_humiliated(player, card, mode); the worker at 0x26dd050 reads
- * the newer bitmask. Its writers still need downstream engine integration. */
-int is_humiliated_for_ability(int player, int card, ability_loss_t mode)
+/* Native public is_humiliated(player, card, mode), with its private worker
+ * inlined here. targets[17].card holds the ability-class removal mask. */
+int is_humiliated(int player, int card, ability_loss_t mode)
 {
   if (player == -1 || card == -1)
     return 0;
@@ -94,43 +95,99 @@ static void real_humiliation(int t_player, int t_card, int mode){
 	instance->targets[17].card |= u;
 }
 
-int set_pt_legacy(int player, int card, event_t event){
-	card_instance_t *instance = get_card_instance( player, card );
+int set_pt_legacy(int player, int card, event_t event)
+{
+  char cVar1;
+  unsigned int uVar2;
+  card_instance_t *instance;
+  unsigned int uVar4;
+  int result;
+  unsigned int uVar6;
 
-	if( instance->damage_target_player > -1 && check_status(player, card, STATUS_CONTROLLED) ){
-		if( event == EVENT_POWER && affect_me(instance->damage_target_player, instance->damage_target_card) ){
-			event_result += instance->counter_power;
-		}
-		if( event == EVENT_TOUGHNESS && affect_me(instance->damage_target_player, instance->damage_target_card) ){
-			event_result += instance->counter_toughness;
-		}
-	}
-
-	if( instance->targets[1].player > -1 ){
-		int mode = instance->targets[1].player > -1 ? instance->targets[1].player : 0;
-		int end_effect = 0;
-		if( (mode & SET_PT_END_AT_EOT) && event == EVENT_CLEANUP ){
-			end_effect = 1;
-		}
-		if( (mode & SET_PT_END_IF_SOURCE_LEAVES_PLAY) && instance->targets[2].player > -1 &&
-			leaves_play(instance->targets[2].player, instance->targets[2].card, event) )
-		{
-			end_effect = 1;
-		}
-		if( (mode & SET_PT_END_AT_OWNERS_UPKEEP) && current_turn == instance->damage_target_player && 
-			upkeep_trigger(player, card, event) )
-		{
-			end_effect = 1;
-		}
-		if( end_effect ){
-			reactivate_the_most_recent_pt_setting_effects_attached_to_me(instance->damage_target_player, instance->damage_target_card);
-			if( (mode & SET_PT_RESET_SUBTYPES_AT_END) ){
-				reset_subtypes(instance->damage_target_player, instance->damage_target_card, 3);
-			}
-			kill_card(player, card, KILL_EXILE);
-		}
-	}
-	return 0;
+  instance = get_card_instance(player, card);
+  cVar1 = instance->damage_target_player;
+  if (cVar1 < '\0')
+  {
+  LAB_026dc7d8:
+    uVar2 = instance->targets[1].player;
+    if ((int)uVar2 < 0)
+    {
+      return 0;
+    }
+    uVar6 = event == EVENT_CLEANUP & uVar2;
+    leaves_play(instance->targets[2].player, instance->targets[2].card, event, 0, 0);
+    uVar4 = uVar2 & 4;
+    if (((event == EVENT_LEAVES_PLAY_ABILITY) && ((uVar2 & 2) != 0)) &&
+        (-1 < instance->targets[2].player))
+    {
+      if ((uVar4 == 0) ||
+          ((current_phase != 4 || (instance->damage_target_player != current_turn))))
+        goto LAB_026dc890;
+      uVar6 = 1;
+      goto LAB_026dc868;
+    }
+  LAB_026dc90a:
+    if ((uVar4 != 0) && (current_phase == 4))
+      goto LAB_026dc91f;
+  }
+  else
+  {
+    if (event == EVENT_POWER)
+    {
+      if (((instance->damage_target_card == affected_card) &&
+           (cVar1 == affected_card_controller)) &&
+          (-1 < instance->counter_power))
+      {
+        set_base_pt((int)instance->counter_power);
+      }
+      uVar4 = instance->targets[1].player;
+      if ((int)uVar4 < 0)
+      {
+        return 0;
+      }
+      uVar6 = 0;
+      leaves_play(instance->targets[2].player, instance->targets[2].card, EVENT_POWER, 0, 0);
+      uVar4 = uVar4 & 4;
+      goto LAB_026dc90a;
+    }
+    if (event != EVENT_TOUGHNESS)
+      goto LAB_026dc7d8;
+    if (((instance->damage_target_card == affected_card) && (cVar1 == affected_card_controller)) &&
+        (-1 < instance->counter_toughness))
+    {
+      set_base_pt((int)instance->counter_toughness);
+    }
+    uVar4 = instance->targets[1].player;
+    if ((int)uVar4 < 0)
+    {
+      return 0;
+    }
+    leaves_play(instance->targets[2].player, instance->targets[2].card, EVENT_TOUGHNESS, 0, 0);
+    if ((uVar4 & 4) == 0)
+    {
+      return 0;
+    }
+    if (current_phase != 4)
+    {
+      return 0;
+    }
+    uVar6 = 0;
+  LAB_026dc91f:
+    if (instance->damage_target_player == current_turn)
+    {
+    LAB_026dc868:
+      result = upkeep_trigger(player, card, event);
+      if (result != 0)
+        goto LAB_026dc890;
+    }
+  }
+  if (uVar6 == 0)
+  {
+    return 0;
+  }
+LAB_026dc890:
+  kill_card(player, card, KILL_EXILE);
+  return 0;
 }
 
 static int is_pt_effect(int player, int card){
@@ -269,49 +326,119 @@ static void set_humiliation_legacy(int player, int card, int mode, test_definiti
 
 // Single-bit abilities
 
-#define SP_ABILITY_SUPPRESSABLE(fn_name, bit, suppress_bit)			\
-  void fn_name(int player, int card, event_t event)					\
-{																	\
-  if (event == EVENT_ABILITIES && affect_me(player, card))			\
-	{																\
-	  card_instance_t* instance = get_card_instance(player, card);	\
-																	\
-	  if (instance->targets[16].card == -1)							\
-		instance->targets[16].card = 0;								\
-																	\
-	  if (player_bits[player] & suppress_bit)						\
-		instance->targets[16].card &= ~bit;							\
-	  else															\
-		instance->targets[16].card |= bit;							\
-	}																\
+
+
+void cannot_block(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x20;
+    return;
+  }
+  return;
 }
 
-#define SP_ABILITY(fn_name, bit)									\
-void fn_name(int player, int card, event_t event)					\
-{																	\
-  if (event == EVENT_ABILITIES && affect_me(player, card))			\
-	{																\
-	  card_instance_t* instance = get_card_instance(player, card);	\
-																	\
-	  if (instance->targets[16].card == -1)							\
-		instance->targets[16].card = 0;								\
-																	\
-	  instance->targets[16].card |= bit;							\
-	}																\
+void fear(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 1;
+    return;
+  }
+  return;
 }
 
-SP_ABILITY(cannot_block, SP_KEYWORD_CANNOT_BLOCK);
-SP_ABILITY_SUPPRESSABLE(deathtouch, SP_KEYWORD_DEATHTOUCH, PB_CANT_HAVE_OR_GAIN_DEATHTOUCH);
-SP_ABILITY(fear, SP_KEYWORD_FEAR);
-SP_ABILITY_SUPPRESSABLE(hexproof, SP_KEYWORD_HEXPROOF, PB_CANT_HAVE_OR_GAIN_HEXPROOF);
-SP_ABILITY(horsemanship2, SP_KEYWORD_HORSEMANSHIP);
-SP_ABILITY(indestructible, SP_KEYWORD_INDESTRUCTIBLE);
-SP_ABILITY(intimidate, SP_KEYWORD_INTIMIDATE);
-SP_ABILITY(lifelink, SP_KEYWORD_LIFELINK);
-SP_ABILITY(rfg_when_damage, SP_KEYWORD_RFG_WHEN_DAMAGE);
-SP_ABILITY(shadow, SP_KEYWORD_SHADOW);
-SP_ABILITY(unblockable, SP_KEYWORD_UNBLOCKABLE);
-SP_ABILITY(wither, SP_KEYWORD_WITHER);
+void horsemanship2(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x40000000;
+    return;
+  }
+  return;
+}
+
+void intimidate(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x2000000;
+    return;
+  }
+  return;
+}
+void lifelink(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 2;
+    return;
+  }
+  return;
+}
+void rfg_when_damage(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x100000;
+    return;
+  }
+  return;
+}
+void shadow(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x100;
+    return;
+  }
+  return;
+}
+void unblockable(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x10;
+    return;
+  }
+  return;
+}
+void wither(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x4000;
+    return;
+  }
+  return;
+}
 
 #undef SP_ABILITY
 #undef SP_ABILITY_SUPPRESSABLE
@@ -366,22 +493,32 @@ int can_regenerate(int player, int card){
 	}
 }
 
-int regenerate_target(int player, int card){
-	if( player != -1 && card != -1 && in_play(player, card) ){
-		card_instance_t *instance = get_card_instance( player, card );
-		if( instance->kill_code == KILL_DESTROY && ! (instance->token_status & STATUS_CANNOT_REGENERATE) ){
-			regenerate_target_exe(player, card);
-			if( get_id(player, card) == CARD_ID_SPINY_STARFISH && ! is_humiliated(player, card) ){
-				/*
-				10/1/2009: The second ability doesn’t care where the regeneration shields Spiny Starfish used that turn came from. 
-				If it regenerated due to a regeneration shield from Refresh, for example, the ability will still put a Starfish 
-				token onto the battlefield.
-				*/
-				spiny_starfish_splitting_ability(player, card);
-			}
-		}
-	}
-	return 0;
+int regenerate_target(int player, int card)
+{
+  card_instance_t *instance;
+  int result;
+  if ((player != -1) && (card != -1))
+  {
+    instance = in_play(player, card);
+    if (instance != NULL)
+    {
+      instance = get_card_instance(player, card);
+      if ((instance->kill_code == '\x02') && ((instance->token_status & 0x800000) == 0))
+      {
+        regenerate_target_exe(player, card);
+        result = get_id(player, card);
+        if (result == 0x934)
+        {
+          result = is_humiliated(player, card, AL_STATIC);
+          if (result == 0)
+          {
+            spiny_starfish_splitting_ability(player, card);
+          }
+        }
+      }
+    }
+  }
+  return 0;
 }
 
 int regeneration(int player, int card, event_t event, int cless, int black, int blue, int green, int red, int white){
@@ -595,17 +732,36 @@ int exalted(int player, int card, event_t event, int ability, int sp_ability)
   return -1;
 }
 
-int check_for_flanking_removal(int player, int card){
-	if( ! check_state(player, card, STATE_ATTACKING | STATE_ATTACKED) ){
-		return 0;
-	}
-	int c;
-	for(c=0; c<active_cards_count[1-player]; c++){
-		if( in_play(1-player, c) && get_id(1-player, c) == CARD_ID_BARBED_FOLIAGE && ! is_humiliated(1-player, c) ){
-			return 1;
-		}
-	}
-	return 0;
+int check_for_flanking_removal(int player, int card)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int card_00;
+
+  iVar1 = check_state(player, card, 0x44);
+  if ((iVar1 != 0) && (iVar1 = 1 - player, 0 < active_cards_count[iVar1]))
+  {
+    card_00 = 0;
+    do
+    {
+      instance = in_play(iVar1, card_00);
+      if ((instance != NULL) && (iVar3 = get_id(iVar1, card_00), iVar3 == 0x962))
+      {
+        if ((iVar1 == -1) || (card_00 == -1))
+        {
+          return 1;
+        }
+        iVar3 = is_humiliated(iVar1, card_00, AL_KEY);
+        if (iVar3 == 0)
+        {
+          return 1;
+        }
+      }
+      card_00 = card_00 + 1;
+    } while (card_00 < active_cards_count[iVar1]);
+  }
+  return 0;
 }
 
 
@@ -625,34 +781,41 @@ int flash(int player, int card, event_t event){
 	return 0;
 }
 
-int freeze_when_damage(int player, int card, event_t event){
+int freeze_when_damage(int player, int card, event_t event)
+{
+  target_t *ptVar1;
+  target_t *ptVar2;
+  card_instance_t *instance;
+  int result;
 
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( instance->targets[16].card < 0 ){
-		instance->targets[16].card = 0;
-	}
-
-	instance->targets[16].card |= SP_KEYWORD_FREEZE_WHEN_DAMAGE;
-
-	if( !is_humiliated(player, card) ){
-		damage_effects(player, card, event);
-
-		if( instance->targets[1].player > 2 && trigger_condition == TRIGGER_DEAL_DAMAGE && affect_me(player, card) &&
-			reason_for_trigger_controller == player
-		  ){
-			int i;
-			for(i=2; i<instance->targets[1].player; i++){
-				effect_frost_titan(player, card, instance->targets[i].player, instance->targets[i].card);
-			}
-			instance->targets[1].player = 2;
-		}
-
-		if( event == EVENT_CLEANUP ){
-			instance->targets[1].player = 2;
-		}
-	}
-	return 0;
+  instance = get_card_instance(player, card);
+  instance->ext->sp_keywords = instance->ext->sp_keywords | 0x1000000;
+  if (((player != -1) && (card != -1)) &&
+      (result = is_humiliated(player, card, AL_TRIG), result != 0))
+  {
+    return 0;
+  }
+  damage_effects(player, card, event);
+  if (((2 < instance->targets[1].player) && (trigger_condition == 0xd7)) &&
+      ((card == affected_card &&
+        ((player == affected_card_controller && (reason_for_trigger_controller == player))))))
+  {
+    result = 2;
+    do
+    {
+      ptVar2 = instance->targets + result;
+      ptVar1 = instance->targets + result;
+      result = result + 1;
+      effect_frost_titan(player, card, ptVar1->player, ptVar2->card);
+    } while (result < instance->targets[1].player);
+    instance->targets[1].player = 2;
+  }
+  if (event != EVENT_CLEANUP)
+  {
+    return 0;
+  }
+  instance->targets[1].player = 2;
+  return 0;
 }
 
 void give_haste(int player, int card)	// Avoid!
@@ -664,18 +827,15 @@ void give_haste(int player, int card)	// Avoid!
 
 void haste(int player, int card, event_t event)
 {
-  if (event == EVENT_ABILITIES && affect_me(player, card))
-	{
-	  card_instance_t* instance = get_card_instance(player, card);
-
-	  if (instance->targets[16].card == -1)
-		instance->targets[16].card = 0;
-
-	  instance->targets[16].card |= SP_KEYWORD_HASTE;
-
-	  if (!is_humiliated(player, card))
-		instance->state &= ~STATE_SUMMON_SICK;
-	}
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 4;
+    return;
+  }
+  return;
 }
 
 void persist(int player, int card, event_t event)
@@ -935,7 +1095,7 @@ int protection_from_white(int player, int card, event_t event){
 
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
 
-static void set_misc_protection_2022_impl(int player, int card);
+static void set_misc_protection_impl(int player, int card);
 
 /* ManalinkEh 2022: 0x26de880; original functions/abilities.c:665. */
 void misc_protection(int player, int card, event_t event)
@@ -943,7 +1103,7 @@ void misc_protection(int player, int card, event_t event)
   if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    set_misc_protection_2022_impl(player, card);
+    set_misc_protection_impl(player, card);
     return;
   }
   return;
@@ -1597,7 +1757,7 @@ void protection_from_everything(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      set_misc_protection_2022_impl(player, card);
+      set_misc_protection_impl(player, card);
       return;
     }
   }
@@ -1708,7 +1868,7 @@ void protection_from_colored_spells(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      set_misc_protection_2022_impl(player, card);
+      set_misc_protection_impl(player, card);
       return;
     }
   }
@@ -1772,7 +1932,7 @@ void protection_from_colored_spells(int player, int card, event_t event)
 
 
 /* ManalinkEh 2022: 0x26dd130; original functions/abilities.c:665. */
-static void set_misc_protection_2022_impl(int player, int card)
+static void set_misc_protection_impl(int player, int card)
 {
   card_instance_t *instance;
 
@@ -1839,7 +1999,7 @@ void special_abilities2(int player, int card, event_t event, sp_keyword2_t sp_ke
     return;
   }
   if (((player != -1) && (card != -1)) &&
-      (result = is_humiliated_for_ability(player, card, AL_KEY), result != 0))
+      (result = is_humiliated(player, card, AL_KEY), result != 0))
   {
     return;
   }
@@ -1930,7 +2090,7 @@ void maxblockers_1(int player, int card, event_t event)
 
 
 /* ManalinkEh 2022: 0x26d7530; original functions/abilities.c:1269. */
-static int has_sp_key_by_csvid_2022_impl(int csvid, int sp_key)
+static int has_sp_key_by_csvid_impl(int csvid, int sp_key)
 {
   char cVar1;
   unsigned int uVar2;
@@ -6284,7 +6444,7 @@ int get_special_abilities(int player, int card)
   card_instance_t *instance;
   if (player == -1)
   {
-    result = has_sp_key_by_csvid_2022_impl((unsigned int)cards_data[card].id, 0x6283eb0f);
+    result = has_sp_key_by_csvid_impl((unsigned int)cards_data[card].id, 0x6283eb0f);
     return result;
   }
   instance = get_card_instance(player, card);
@@ -6301,7 +6461,7 @@ int check_for_special_ability(int player, int card, int keyword)
   unsigned int uVar2;
   if (player == -1)
   {
-    result = has_sp_key_by_csvid_2022_impl((unsigned int)cards_data[card].id, keyword);
+    result = has_sp_key_by_csvid_impl((unsigned int)cards_data[card].id, keyword);
     return result;
   }
   instance = get_card_instance(player, card);
@@ -6318,12 +6478,12 @@ static void lure_effect_part(int player, int card, event_t event, int luring_pla
 static void lure_effect(int player, int card, event_t event, int luring_player,
                              int luring_card, int all_must_block, int subtype, int ability,
                              const char *prompt);
-static void deathtouch_part_2022(int player, int card);
-static void hexproof_part_2022(int player, int card);
-static void indestructible_part_2022(int player, int card);
-static int attack_if_able_part_2022(int player, int card);
-static void vigilance_part_2022(int player, int card);
-static void granted_flanking_part_2022(int s_player, int s_card, int t_player, int t_card);
+static void deathtouch_part(int player, int card);
+static void hexproof_part(int player, int card);
+static void indestructible_part(int player, int card);
+static int attack_if_able_part(int player, int card);
+static void vigilance_part(int player, int card);
+static void granted_flanking_part(int s_player, int s_card, int t_player, int t_card);
 
 /* ManalinkEh 2022: 0x26dcca0; original functions/abilities.c:881. */
 static void lure_effect_part(int player, int card, event_t event, int luring_player,
@@ -6337,7 +6497,7 @@ static void lure_effect_part(int player, int card, event_t event, int luring_pla
   unsigned int uVar5;
   int iVar6;
   target_t tgt;
-  target_definition_2022_t td;
+  target_definition_t td;
   char fullprompt[200];
 
   if (current_turn == luring_player)
@@ -6385,7 +6545,7 @@ static void lure_effect_part(int player, int card, event_t event, int luring_pla
           {
             if ((prompt == NULL) || (*prompt == '\0'))
             {
-              load_text_2022(NULL, "PROMPT_CHOOSEBLOCKERS");
+              load_text(NULL, "PROMPT_CHOOSEBLOCKERS");
               prompt = text_lines[0];
             }
             iVar6 = is_what(player, card, 0x80);
@@ -6449,7 +6609,7 @@ static void lure_effect(int player, int card, event_t event, int luring_player,
 
 
 /* ManalinkEh 2022: 0x26dd080; original functions/abilities.c:651. */
-static void deathtouch_part_2022(int player, int card)
+static void deathtouch_part(int player, int card)
 {
   card_ext_t *pcVar1;
   card_instance_t *instance;
@@ -6467,7 +6627,7 @@ static void deathtouch_part_2022(int player, int card)
 
 
 /* ManalinkEh 2022: 0x26dd0c0; original functions/abilities.c:653. */
-static void hexproof_part_2022(int player, int card)
+static void hexproof_part(int player, int card)
 {
   card_ext_t *pcVar1;
   card_instance_t *instance;
@@ -6485,7 +6645,7 @@ static void hexproof_part_2022(int player, int card)
 
 
 /* ManalinkEh 2022: 0x26dd110; original functions/abilities.c:655. */
-static void indestructible_part_2022(int player, int card)
+static void indestructible_part(int player, int card)
 {
   card_instance_t *instance;
 
@@ -6496,7 +6656,7 @@ static void indestructible_part_2022(int player, int card)
 
 
 /* ManalinkEh 2022: 0x26dd150; original functions/abilities.c:803. */
-static int attack_if_able_part_2022(int player, int card)
+static int attack_if_able_part(int player, int card)
 {
   card_instance_t *instance;
   int iVar2;
@@ -6519,7 +6679,7 @@ static int attack_if_able_part_2022(int player, int card)
 
 
 /* ManalinkEh 2022: 0x26dd1a0; original functions/abilities.c:1140. */
-static void vigilance_part_2022(int player, int card)
+static void vigilance_part(int player, int card)
 {
   card_instance_t *instance;
   int result;
@@ -6527,7 +6687,7 @@ static void vigilance_part_2022(int player, int card)
   instance = get_card_instance(player, card);
   instance->ext->sp_keywords = instance->ext->sp_keywords | 8;
   if (((player != -1) && (card != -1)) &&
-      (result = is_humiliated_for_ability(player, card, AL_KEY), result != 0))
+      (result = is_humiliated(player, card, AL_KEY), result != 0))
   {
     return;
   }
@@ -6537,12 +6697,12 @@ static void vigilance_part_2022(int player, int card)
 
 
 /* ManalinkEh 2022: 0x26de480; original functions/abilities.c:651. */
-void deathtouch_2022(int player, int card, event_t event)
+void deathtouch(int player, int card, event_t event)
 {
   if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    deathtouch_part_2022(player, card);
+    deathtouch_part(player, card);
     return;
   }
   return;
@@ -6550,12 +6710,12 @@ void deathtouch_2022(int player, int card, event_t event)
 
 
 /* ManalinkEh 2022: 0x26de500; original functions/abilities.c:653. */
-void hexproof_2022(int player, int card, event_t event)
+void hexproof(int player, int card, event_t event)
 {
   if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    hexproof_part_2022(player, card);
+    hexproof_part(player, card);
     return;
   }
   return;
@@ -6563,12 +6723,12 @@ void hexproof_2022(int player, int card, event_t event)
 
 
 /* ManalinkEh 2022: 0x26de580; original functions/abilities.c:655. */
-void indestructible_2022(int player, int card, event_t event)
+void indestructible(int player, int card, event_t event)
 {
   if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    indestructible_part_2022(player, card);
+    indestructible_part(player, card);
     return;
   }
   return;
@@ -6580,7 +6740,7 @@ int attack_if_able(int player, int card, event_t event)
 {
   if (((event == EVENT_BEGIN_COMBAT) && (current_turn == player)) && (forbid_attack == 0))
   {
-    attack_if_able_part_2022(player, card);
+    attack_if_able_part(player, card);
   }
   return 0;
 }
@@ -6613,7 +6773,7 @@ void vigilance(int player, int card, event_t event)
   if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    vigilance_part_2022(player, card);
+    vigilance_part(player, card);
     return;
   }
   return;
@@ -6621,7 +6781,7 @@ void vigilance(int player, int card, event_t event)
 
 
 /* ManalinkEh 2022: 0x26df8e0; original functions/abilities.c:1054. */
-static void granted_flanking_part_2022(int s_player, int s_card, int t_player, int t_card)
+static void granted_flanking_part(int s_player, int s_card, int t_player, int t_card)
 {
   int result;
   char *pcVar2;
@@ -6704,7 +6864,7 @@ void granted_flanking(int s_player, int s_card, int t_player, int t_card, event_
     result = is_attacking(t_player, t_card);
     if (result != 0)
     {
-      granted_flanking_part_2022(s_player, s_card, t_player, t_card);
+      granted_flanking_part(s_player, s_card, t_player, t_card);
       return;
     }
   }
@@ -6757,7 +6917,7 @@ void special_abilities(int player, int card, event_t event, int sp_abilities,
       goto LAB_026dfb75;
     if (player == affected_card_controller)
     {
-      vigilance_part_2022(player, card);
+      vigilance_part(player, card);
       goto LAB_026dfb75;
     }
   LAB_026dfee0:
@@ -6784,7 +6944,7 @@ void special_abilities(int player, int card, event_t event, int sp_abilities,
     LAB_026dff68:
       if ((card == affected_card) && (player == affected_card_controller))
       {
-        deathtouch_part_2022(player, card);
+        deathtouch_part(player, card);
       }
       goto LAB_026dfbb4;
     }
@@ -6793,7 +6953,7 @@ void special_abilities(int player, int card, event_t event, int sp_abilities,
       goto LAB_026dfbb4;
     if ((player == current_turn) && (forbid_attack == 0))
     {
-      attack_if_able_part_2022(player, card);
+      attack_if_able_part(player, card);
     }
   }
   else
@@ -6851,7 +7011,7 @@ void special_abilities(int player, int card, event_t event, int sp_abilities,
     if (((((sp_abilities & 0x800U) != 0) && (bVar9)) && (card == affected_card)) &&
         (player == affected_card_controller))
     {
-      indestructible_part_2022(player, card);
+      indestructible_part(player, card);
     }
   }
   if ((sp_abilities & 0x1000U) != 0)
@@ -6885,7 +7045,7 @@ void special_abilities(int player, int card, event_t event, int sp_abilities,
   }
   else if ((card == affected_card) && (player == affected_card_controller))
   {
-    hexproof_part_2022(player, card);
+    hexproof_part(player, card);
     goto LAB_026dfc0b;
   }
   if ((sp_abilities & 0x4000000U) != 0)
@@ -7002,7 +7162,7 @@ void ability_must_block_me(int player, int card, event_t event, int ability, cha
 int humiliate(int src_player, int src_card, int t_player, int t_card, int mode)
 {
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
   default_test_definition(&test, 0xff);
   test.toughness = 1;
   test.power = 1;
@@ -7059,7 +7219,7 @@ void disable_nonmana_activated_abilities(int player, int card, int mode)
 
 /* ManalinkEh 2022: 0x26dd890; original functions/abilities.c:302. */
 int humiliate_and_set_pt_abilities(int player, int card, int t_player, int t_card, int mode,
-                                        test_definition_2022_t *hc)
+                                        test_definition_t *hc)
 {
   int card_00;
   card_instance_t *instance;
@@ -7285,7 +7445,7 @@ int can_produce_mana(int player, int card)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x26dda70; original functions/abilities.c:332. */
-void remove_abilities_by_test(int player, event_t event, test_definition_2022_t *test,
+void remove_abilities_by_test(int player, event_t event, test_definition_t *test,
                                    ability_loss_t mode)
 {
   ability_loss_t aVar1;
@@ -7332,7 +7492,7 @@ void protection_from_type(int player, int card, event_t event, type_t type)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      set_misc_protection_2022_impl(player, card);
+      set_misc_protection_impl(player, card);
       return;
     }
   }
@@ -7381,7 +7541,7 @@ void protection_from_colorless(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      set_misc_protection_2022_impl(player, card);
+      set_misc_protection_impl(player, card);
       return;
     }
   }
@@ -7418,7 +7578,7 @@ void protection_from_monocolored(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      set_misc_protection_2022_impl(player, card);
+      set_misc_protection_impl(player, card);
       return;
     }
   }
@@ -7455,7 +7615,7 @@ void cannot_be_target_of_abilities(int player, int card, event_t event)
   {
     if ((card == affected_card) && (player == affected_card_controller))
     {
-      set_misc_protection_2022_impl(player, card);
+      set_misc_protection_impl(player, card);
       return;
     }
   }
@@ -7475,3 +7635,115 @@ void cannot_be_target_of_abilities(int player, int card, event_t event)
 }
 
 #endif
+
+
+void menace(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x10000;
+    return;
+  }
+  return;
+}
+
+
+void rampage(int player, int card, event_t event, int number)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_DECLARE_BLOCKERS)
+  {
+    if (current_turn == player)
+    {
+      if (((card != -1) && (player != -1)) &&
+          (result = is_humiliated(player, card, AL_KEY), result != 0))
+      {
+        return;
+      }
+      result = count_my_blockers(player, card);
+      if (1 < result)
+      {
+        result = (result + -1) * number;
+        pump_until_eot(player, card, player, card, result, result);
+        return;
+      }
+    }
+  }
+  else if (event == EVENT_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      instance = get_card_instance(player, card);
+      instance->ext->sp_keywords = instance->ext->sp_keywords | 0x40;
+      return;
+    }
+  }
+  else if (((event == EVENT_QUERY_AFF) && (card == affected_card)) &&
+           ((player == affected_card_controller && (attacking_card == 0x40))))
+  {
+    if (((player != -1) && (card != -1)) &&
+        (result = is_humiliated(player, card, AL_KEY), result != 0))
+    {
+      return;
+    }
+    event_result = event_result + number;
+    return;
+  }
+  return;
+}
+
+
+void skulk(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    instance = get_card_instance(player, card);
+    instance->ext->sp_keywords = instance->ext->sp_keywords | 0x20000;
+    return;
+  }
+  return;
+}
+
+
+void protection_from_multicolored(int player, int card, event_t event)
+{
+  int result;
+  int p;
+  int c;
+  if (event == EVENT_ABILITIES)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      set_misc_protection_impl(player, card);
+      return;
+    }
+  }
+  else if (((event == EVENT_PROT_MISC) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    if (((unsigned int)event_result >> 24 & 0xff) == '\x06')
+    {
+      event_result = event_result | 1;
+      return;
+    }
+    /* Native non-query protection events require a nonnegative source card.
+     * The original also leaves p/c unwritten when this precondition fails. */
+    if (-1 < attacking_card)
+    {
+      get_protection_source_impl('\x01', &p, &c);
+    }
+    result = count_colors(p, c);
+    if (1 < result)
+    {
+      event_result = event_result | 1;
+      return;
+    }
+  }
+  return;
+}

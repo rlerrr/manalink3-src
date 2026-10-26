@@ -308,7 +308,7 @@ Creature - Dragon 6/5
 Flying
 When you control no artifacts, sacrifice ~. */
 
-	if( event == EVENT_STATIC_EFFECTS && ! is_humiliated(player, card) ){
+	if( event == EVENT_STATIC_EFFECTS && ! is_humiliated(player, card, AL_STATIC) ){
 		if( count_subtype(player, TYPE_ARTIFACT, -1) < 1 ){
 			kill_card(player, card, KILL_SACRIFICE);
 		}
@@ -386,7 +386,7 @@ int card_emperor_crocodile(int player, int card, event_t event){
 	  When you control no other creatures, sacrifice Emperor Crocodile.
 	*/
 
-	if( event == EVENT_STATIC_EFFECTS && ! is_humiliated(player, card) ){
+	if( event == EVENT_STATIC_EFFECTS && ! is_humiliated(player, card, AL_STATIC) ){
 		test_definition_t this_test;
 		default_test_definition(&this_test, TYPE_CREATURE);
 		this_test.not_me = 1;
@@ -454,7 +454,7 @@ Sacrifice an artifact: Put a +1/+1 counter on target creature.
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( valid_target(&td) ){
-			add_1_1_counter(instance->targets[0].player, instance->targets[0].card);
+			add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, 1);
 		}
 	}
 
@@ -589,7 +589,7 @@ Fledgling Osprey	|U
 Creature - Bird 1/1
 ~ has flying as long as it's enchanted. */
 
-	if( event == EVENT_ABILITIES && affect_me(player, card) && is_enchanted(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_ABILITIES && affect_me(player, card) && is_enchanted(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		event_result |= KEYWORD_FLYING;
 	}
 
@@ -790,7 +790,7 @@ When ~ enters the battlefield or dies, put a +1/+1 counter on target creature. *
 		card_instance_t* instance = get_card_instance(player, card);
 
 		if( can_target(&td) && pick_target(&td, "TARGET_CREATURE") ){
-			add_1_1_counter(instance->targets[0].player, instance->targets[0].card);
+			add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, 1);
 		}
 		instance->number_of_targets = 0;
 	}
@@ -820,7 +820,7 @@ At the beginning of each player's end step, if that player didn't cast a spell t
 	}
 
 	if( trigger_condition == TRIGGER_EOT &&  affect_me(player, card ) && reason_for_trigger_controller == player &&
-		! is_humiliated(player, card) )
+		! is_humiliated(player, card, AL_TRIG) )
 	{
 		card_instance_t *instance = get_card_instance(player, card);
 		int trigs = instance->targets[current_turn+1].player < 1 ? 1 : 0;
@@ -1190,7 +1190,7 @@ Metathran Elite	|1|U|U
 Creature - Metathran Soldier 2/3
 ~ can't be blocked as long as it's enchanted. */
 
-	if(event == EVENT_BLOCK_LEGALITY && ! is_humiliated(player, card) ){
+	if(event == EVENT_BLOCK_LEGALITY && ! is_humiliated(player, card, AL_STATIC) ){
 		if( attacking_card_controller == player && attacking_card == card ){
 			if( is_enchanted(player, card) ){
 				event_result = 1;
@@ -1256,7 +1256,7 @@ int card_opalescence(int player, int card, event_t event){
 	 * Each other non-Aura enchantment is a creature with power and toughness each equal to its converted mana cost. It's still an enchantment. */
 
 	if( event == EVENT_CHANGE_TYPE && is_what(affected_card_controller, affected_card, TYPE_ENCHANTMENT) &&
-		! has_subtype(affected_card_controller, affected_card, SUBTYPE_AURA) && ! is_humiliated(player, card) &&
+		! has_subtype(affected_card_controller, affected_card, SUBTYPE_AURA) && ! is_humiliated(player, card, AL_STATIC) &&
 		! affect_me(player, card) )
 	{
 		card_instance_t *instance = get_card_instance( player, card );
@@ -1344,27 +1344,54 @@ int card_pattern_of_rebirth(int player, int card, event_t event){
 	return vanilla_aura(player, card, event, player);
 }
 
-void true_phyrexian_negator(int player, int card, event_t event){
-
-	// An approximation - tells the AI that this will be destroyed if it blocks or is blocked by a creature with at least 1 power.
-	if (event == EVENT_CHANGE_TYPE && affect_me(player, card) && !is_humiliated(player, card)){
-		get_card_instance(player, card)->destroys_if_blocked |= DIFB_ASK_CARD;
-	}
-	if (event == EVENT_CHECK_DESTROY_IF_BLOCKED && affect_me(player, card) && !is_humiliated(player, card)
-		&& get_power(attacking_card_controller, attacking_card) >= 1){
-		event_result |= 2;
-	}
-
-	if( damage_dealt_to_me_arbitrary(player, card, event, 0, player, card) ){
-		int amount = get_card_instance(player, card)->targets[7].card;
-		get_card_instance(player, card)->targets[7].card = 0;
-
-		test_definition_t test;
-		new_default_test_definition(&test, TYPE_PERMANENT, "Select a permanent to sacrifice.");
-		test.qty = amount;
-		new_sacrifice(player, card, player, SAC_CAUSED | SAC_NO_CANCEL, &test);
-	}
-
+void true_phyrexian_negator(int player, int card, event_t event)
+{
+  int32_t iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  test_definition_t test;
+  if (event == EVENT_CHANGE_TYPE)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      iVar2 = is_humiliated(player, card, AL_TRIG);
+      if (iVar2 == 0)
+      {
+        instance = get_card_instance(player, card);
+        instance->destroys_if_blocked = instance->destroys_if_blocked | 1;
+      }
+    }
+  }
+  else if (((event == EVENT_CHECK_DESTROY_IF_BLOCKED) && (card == affected_card)) &&
+           (player == affected_card_controller))
+  {
+    iVar2 = is_humiliated(player, card, AL_TRIG);
+    if (iVar2 == 0)
+    {
+      iVar2 = get_power(attacking_card_controller, attacking_card);
+      if (0 < iVar2)
+      {
+        event_result = event_result | 2;
+      }
+    }
+  }
+  iVar2 = is_humiliated(player, card, AL_TRIG);
+  if (iVar2 == 0)
+  {
+    iVar2 = damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card);
+    if (iVar2 != 0)
+    {
+      instance = get_card_instance(player, card);
+      iVar1 = instance->targets[7].card;
+      instance = get_card_instance(player, card);
+      instance->targets[7].card = 0;
+      new_default_test_definition(&test, 0x47, "Select a permanent to sacrifice.");
+      test.qty = (unsigned short)iVar1;
+      new_sacrifice(player, card, player, SAC_CAUSED | SAC_NO_CANCEL, &test);
+      return;
+    }
+  }
+  return;
 }
 
 int card_phyrexian_negator(int player, int card, event_t event){
@@ -1431,7 +1458,7 @@ int card_powder_keg(int player, int card, event_t event)
 	}
 
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
-	add_counter(player, card, COUNTER_FUSE);
+	add_counters(player, card, player, card, COUNTER_FUSE, 1);
 
   if (event == EVENT_RESOLVE_ACTIVATION)
 	{
@@ -1565,7 +1592,7 @@ Repercussion	|1|R|R
 Enchantment
 Whenever a creature is dealt damage, ~ deals that much damage to that creature's controller. */
 
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_TRIG) ){
 		if( event == EVENT_DEAL_DAMAGE ){
 			card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
 			if( damage->internal_card_id == damage_card && damage->damage_target_card != -1){
@@ -1845,7 +1872,7 @@ Enchantment - Aura
 Enchant creature
 Whenever enchanted creature deals damage to a player, return target creature that player controls to its owner's hand. */
 
-	if( ! is_humiliated(player, card) && get_card_instance(player, card)->damage_target_player > -1 ){
+	if( ! is_humiliated(player, card, AL_TRIG) && get_card_instance(player, card)->damage_target_player > -1 ){
 		if( attached_creature_deals_damage(player, card, event, DDBM_MUST_DAMAGE_PLAYER | DDBM_TRACE_DAMAGED_PLAYERS) ){
 			card_instance_t *instance = get_card_instance(player, card);
 			int times_damaged[2] = { BYTE0(instance->targets[1].player), BYTE1(instance->targets[1].player) };
@@ -2031,7 +2058,7 @@ When you control no enchantments, sacrifice ~. */
 		}
 	}
 
-	if( event == EVENT_STATIC_EFFECTS && ! is_humiliated(player, card) && count_subtype(player, TYPE_ENCHANTMENT, -1) < 1 ){
+	if( event == EVENT_STATIC_EFFECTS && ! is_humiliated(player, card, AL_STATIC) && count_subtype(player, TYPE_ENCHANTMENT, -1) < 1 ){
 		kill_card(player, card, KILL_SACRIFICE);
 	}
 
@@ -2143,7 +2170,7 @@ Thran Golem	|5
 Artifact Creature - Golem 3/3
 As long as ~ is enchanted, it gets +2/+2 and has flying, first strike, and trample. */
 
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_STATIC) ){
 		if( event == EVENT_ABILITIES && affect_me(player, card) ){
 			if( is_enchanted(player, card) ){
 				event_result |= KEYWORD_FIRST_STRIKE;
@@ -2263,7 +2290,7 @@ Creature spells of the chosen type cost |2 less to cast. */
 		get_card_instance(player, card)->info_slot = select_a_subtype(player, card);
 	}
 
-	if( event == EVENT_MODIFY_COST_GLOBAL && ! is_humiliated(player, card) ){
+	if( event == EVENT_MODIFY_COST_GLOBAL && ! is_humiliated(player, card, AL_STATIC) ){
 		int subt = get_card_instance(player, card)->info_slot;
 		if( has_subtype(affected_card_controller, affected_card, subt) ){
 			COST_COLORLESS-=2;
@@ -2313,7 +2340,7 @@ Yavimaya Enchantress	|2|G
 Creature - Human Druid 2/2
 ~ gets +1/+1 for each enchantment on the battlefield. */
 
-	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		event_result +=count_subtype(ANYBODY, TYPE_ENCHANTMENT, -1);
 	}
 
@@ -2733,7 +2760,7 @@ int card_bubbling_beebles(int player, int card, event_t event)
     instance = in_play(player, card);
     if (instance != NULL)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (((result == 0) && (attacking_card_controller == player)) && (attacking_card == card))
       {
         result = count_permanents_by_type(1 - current_turn, TYPE_ENCHANTMENT);
@@ -2768,7 +2795,7 @@ int card_compost(int player, int card, event_t event)
   if (((((xVar1 == XTRIGGER_MILLED) && (card == affected_card)) &&
         (player == affected_card_controller)) &&
        ((reason_for_trigger_controller == player && (trigger_cause_controller == 1 - player)))) &&
-      (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar2 == 0))
+      (iVar2 = is_humiliated(player, card, AL_TRIG), iVar2 == 0))
   {
 
     if (1 < event - EVENT_TRIGGER)
@@ -2867,7 +2894,7 @@ int card_lurking_jackals(int player, int card, event_t event)
     result = is_what(player, card, 4);
     if (result != 0)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         animate_self_remove_type(player, card, 3, 2, TYPE_ENCHANTMENT, KEYWORD_0, SP_KEYWORD_0,
@@ -2911,7 +2938,7 @@ int card_chime_of_night(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   const char *prompt;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (result != 0)
@@ -2973,7 +3000,7 @@ int card_dying_wail(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   instance = in_play(player, card);
   if (instance != NULL)
@@ -2981,7 +3008,7 @@ int card_dying_wail(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (-1 < instance->damage_target_player)
     {
-      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      result = is_humiliated(player, card, AL_TRIG);
       if (result == 0)
       {
         result = attached_creature_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -3036,7 +3063,7 @@ int card_festering_wound(int player, int card, event_t event)
         spell_fizzled = 0;
         return 0;
       }
-      add_counters_from_source(player, card, player, card, COUNTER_INFECTION, 1);
+      add_counters(player, card, player, card, COUNTER_INFECTION, 1);
     }
     instance = get_card_instance(player, card);
     if (instance->damage_target_player == current_turn)
@@ -3078,19 +3105,19 @@ int card_incendiary(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
   int iStack_68;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   result = duh_mode(player);
   upkeep_trigger_ability_mode(player, card, event, player,
                               (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
-    add_counters_from_source(player, card, player, card, COUNTER_FUSE, 1);
+    add_counters(player, card, player, card, COUNTER_FUSE, 1);
   }
   instance = get_card_instance(player, card);
 
   if (((((-1 < instance->damage_target_player) &&
-         (result = is_humiliated_for_ability(player, card, AL_TRIG), result == 0)) &&
+         (result = is_humiliated(player, card, AL_TRIG), result == 0)) &&
         (instance = get_card_instance(player, card), event == EVENT_GRAVEYARD_FROM_PLAY)) &&
        ((instance->damage_target_card == affected_card &&
          (instance->damage_target_player == affected_card_controller)))) &&
@@ -3139,7 +3166,7 @@ int card_mark_of_fury(int player, int card, event_t event)
   instance = in_play(player, card);
   if (instance != NULL)
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       result = eot_trigger(player, card, event);
@@ -3174,7 +3201,7 @@ int card_momentum(int player, int card, event_t event)
                               (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
-    add_counters_from_source(player, card, player, card, COUNTER_GROWTH, 1);
+    add_counters(player, card, player, card, COUNTER_GROWTH, 1);
   }
   result = count_counters(player, card, COUNTER_GROWTH);
   attached_gets_pt(player, card, event, result, result);
@@ -3193,7 +3220,7 @@ int card_private_research(int player, int card, event_t event)
                               (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
-    add_counters_from_source(player, card, player, card, COUNTER_PAGE, 1);
+    add_counters(player, card, player, card, COUNTER_PAGE, 1);
   }
   instance = in_play(player, card);
   if (instance != NULL)
@@ -3201,7 +3228,7 @@ int card_private_research(int player, int card, event_t event)
     instance = get_card_instance(player, card);
     if (-1 < instance->damage_target_player)
     {
-      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      result = is_humiliated(player, card, AL_TRIG);
       if (result == 0)
       {
         result = attached_creature_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -3226,14 +3253,14 @@ int card_archery_training(int player, int card, event_t event)
 {
   int result;
   card_instance_t *instance;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   result = duh_mode(player);
   upkeep_trigger_ability_mode(player, card, event, player,
                               (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
-    add_counters_from_source(player, card, player, card, COUNTER_ARROW, 1);
+    add_counters(player, card, player, card, COUNTER_ARROW, 1);
   }
   instance = in_play(player, card);
   if (instance != NULL)
@@ -3290,7 +3317,7 @@ int card_scrying_glass(int player, int card, event_t event)
   int iVar4;
   unsigned char bVar5;
   unsigned int uStack_68;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   if (event == EVENT_ACTIVATE)
   {
@@ -3376,7 +3403,7 @@ int card_mantis_engine(int player, int card, event_t event)
                                                 0, 0, NULL, NULL),
          iVar5 != 0))
     {
-      check_abilities_keywords_2022 = check_abilities_keywords_2022 | 0x100;
+      check_abilities_keywords = check_abilities_keywords | 0x100;
     }
   }
   else

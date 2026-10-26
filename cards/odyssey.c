@@ -174,7 +174,7 @@ int card_price_of_glory(int player, int card, event_t event)
     result = is_what(affected_card_controller, affected_card, 1);
     if (result != 0)
     {
-      result = is_humiliated_for_ability(player, card, AL_TRIG);
+      result = is_humiliated(player, card, AL_TRIG);
       if (result == 0)
       {
         kill_card(affected_card_controller, affected_card, KILL_DESTROY);
@@ -426,4 +426,112 @@ int card_spellbane_centaur(int player, int card, event_t event)
     }
   }
   return 0;
+}
+
+
+int card_verdant_succession(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  target_t *ptVar4;
+  int (*paiVar5)[2];
+  int iStack_1a0;
+  int added[10][2];
+  char msg[100];
+  test_definition_t this_test;
+  if (event == EVENT_STATIC_EFFECTS)
+  {
+    if ((card == affected_card) && (player == affected_card_controller))
+    {
+      iVar1 = 0;
+      if (0 < active_cards_count[player])
+      {
+        do
+        {
+          instance = in_play(player, iVar1);
+          if ((((instance != NULL) && (iVar3 = is_what(player, iVar1, 0x80), iVar3 != 0)) &&
+               (instance = get_card_instance(player, iVar1),
+                instance->info_slot_fn == verdant_succession_effect)) &&
+              (((instance->damage_target_player == player &&
+                 (instance->damage_target_card == card)) ||
+                ((instance->targets[0].player == player && (instance->targets[0].card == card))))))
+            goto LAB_025144b6;
+          iVar1 = iVar1 + 1;
+        } while (iVar1 < active_cards_count[player]);
+      }
+      iVar1 = create_targetted_legacy_effect(player, card, verdant_succession_effect, player, card);
+      instance = get_card_instance(player, iVar1);
+      instance->targets[0].player = player;
+      instance->targets[0].card = card;
+      instance->number_of_targets = '\x01';
+      add_status(player, iVar1, 0x10000);
+    }
+  LAB_025144b6:
+    iVar1 = is_humiliated(player, card, AL_TRIG);
+    if (iVar1 != 0)
+      goto LAB_02514482;
+  }
+  else
+  {
+    iVar1 = is_humiliated(player, card, AL_TRIG);
+    if (iVar1 != 0)
+      goto LAB_02514482;
+    if (event == EVENT_GRAVEYARD_FROM_PLAY)
+    {
+      default_test_definition(&this_test, 2);
+      this_test.color = get_sleighted_color_test(player, card, 8);
+      count_for_gfp_ability_and_store_values(player, card, 0x77, 2, 0, &this_test, 0x10, 0);
+    }
+  }
+  iVar1 = resolve_gfp_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (iVar1 != 0)
+  {
+    iVar1 = 0;
+    instance = get_card_instance(player, card);
+    ptVar4 = instance->targets;
+    do
+    {
+      if (ptVar4->player != -1)
+      {
+        added[iVar1][0] = ptVar4->player;
+        iVar3 = get_card_name(-1, ptVar4->card);
+        ptVar4->card = -1;
+        added[iVar1][1] = iVar3;
+        ptVar4->player = -1;
+        iVar1 = iVar1 + 1;
+      }
+      ptVar4 = ptVar4 + 1;
+    } while (ptVar4 != instance->targets + 10);
+    if (0 < iVar1)
+    {
+      paiVar5 = added;
+      do
+      {
+        iVar3 = (*paiVar5)[1];
+        iStack_1a0 = card_counts[player][5] + 1;
+        do
+        {
+          if (iVar3 == -1)
+          {
+            scnprintf(msg, 100,
+                      "You won\'t be able to tutor any card as you\'re searching for a card with "
+                      "no name.");
+          }
+          else
+          {
+            scnprintf(msg, 100, "Select a card named %s", cards_ptr[iVar3]->name);
+          }
+          new_default_test_definition(&this_test, 0xff, msg);
+          this_test.id = iVar3;
+          new_global_tutor((*paiVar5)[0], (*paiVar5)[0], 1, 4, 0, 5, &this_test);
+          iStack_1a0 = iStack_1a0 + -1;
+        } while (iStack_1a0 != 0);
+        paiVar5 = paiVar5 + 1;
+      } while (paiVar5 != added + iVar1);
+    }
+  }
+LAB_02514482:
+  iVar1 = global_enchantment(player, card, event);
+  return iVar1;
 }

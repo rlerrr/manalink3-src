@@ -1,55 +1,78 @@
 #include "manalink.h"
+static int wotft_1(int,int,event_t);
+static int wotft_2(int,int,event_t);
 
 // Functions
-void bolster(int player, int card, int num_counters){
-	EXE_FN(void, 0x477070, void)();	// resolve_damage_cards_and_prevent_damage();
-	EXE_FN(void, 0x477a90, void)();	// regenerate_or_graveyard_triggers();
+void bolster(int player, int card, int num_counters)
+{
+  card_instance_t *pcVar1;
+  card_instance_t *pcVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  int iVar6;
+  int iStack_d4;
+  int iStack_d0;
+  int iStack_cc;
+  target_definition_t td;
+  char msg[100];
 
-	/* Choose a creature with the least toughness or tied with the least toughness among creatures you control. Put "num_counters" +1/+1 counters on it.*/
-	card_instance_t *instance = get_card_instance( player, card );
-	int t_player = -1;
-	int t_card = -1;
-	int doubles_count = 1;
-	int min_t = 100;
-	int count = active_cards_count[player]-1;
-	while( count > -1 ){
-			if( in_play(player, count) && is_what(player, count, TYPE_CREATURE) ){
-				int this_t = get_toughness(player, count);
-				if( this_t < min_t ){
-					t_player = player;
-					t_card = count;
-					min_t = this_t;
-					doubles_count = 1;
-				}
-				else if( this_t == min_t ){
-						doubles_count++;
-				}
-			}
-			count--;
-	}
-
-	if( doubles_count > 1 ){
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE);
-		td.allowed_controller = player;
-		td.preferred_controller = player;
-		td.illegal_abilities = 0;
-		td.toughness_requirement = min_t;
-		td.allow_cancel = 0;
-
-		instance->number_of_targets = 0;
-		char msg[100];
-		scnprintf(msg, 100, "Select a creature you control with toughness %d.", min_t);
-		if( new_pick_target(&td, msg, 0, GS_LITERAL_PROMPT) ){
-			t_player = instance->targets[0].player;
-			t_card = instance->targets[0].card;
-		}
-	}
-
-	if( t_player != -1 && t_card != -1 ){
-		add_counters(t_player, t_card, COUNTER_P1_P1, num_counters);
-	}
-
+  EXE_FN(void, 0x477070, void)();
+  EXE_FN(void, 0x477a90, void)();
+  pcVar1 = get_card_instance(player, card);
+  iVar5 = active_cards_count[player] + -1;
+  if (-1 < iVar5)
+  {
+    iStack_cc = 1;
+    iStack_d4 = -1;
+    iStack_d0 = -1;
+    iVar6 = 100;
+    do
+    {
+      while ((pcVar2 = in_play(player, iVar5), iVar4 = iVar6,
+              pcVar2 == NULL || (iVar3 = is_what(player, iVar5, 2), iVar3 == 0)))
+      {
+      LAB_026230d8:
+        iVar5 = iVar5 + -1;
+        iVar6 = iVar4;
+        if (iVar5 == -1)
+          goto LAB_02623138;
+      }
+      iVar4 = get_toughness(player, iVar5);
+      if (iVar4 < iVar6)
+      {
+        iStack_cc = 1;
+        iStack_d4 = iVar5;
+        iStack_d0 = player;
+        goto LAB_026230d8;
+      }
+      iStack_cc = iStack_cc + (unsigned int)(iVar4 == iVar6);
+      iVar5 = iVar5 + -1;
+    } while (iVar5 != -1);
+  LAB_02623138:
+    if (1 < iStack_cc)
+    {
+      default_target_definition(player, card, &td, 2);
+      td.allow_cancel = 0;
+      pcVar1->number_of_targets = '\0';
+      td.allowed_controller = player;
+      td.preferred_controller = player;
+      td.illegal_abilities = 0;
+      td.toughness_requirement = iVar6;
+      scnprintf(msg, 100, "Select a creature you control with toughness %d.", iVar6);
+      iVar5 = new_pick_target(&td, msg, 0, 0x80);
+      if (iVar5 != 0)
+      {
+        iStack_d0 = pcVar1->targets[0].player;
+        iStack_d4 = pcVar1->targets[0].card;
+      }
+    }
+    if ((iStack_d0 != -1) && (iStack_d4 != -1))
+    {
+      add_counters(player, card, iStack_d0, iStack_d4, COUNTER_P1_P1, num_counters);
+    }
+  }
+  return;
 }
 
 static int manifest_legacy(int player, int card, event_t event){
@@ -160,26 +183,34 @@ static int manifest(int player, int card){
 	return card_added;
 }
 
-static int manifesting_aura(int player, int card, event_t event, int key, int s_key){
-
-	if( event == EVENT_RESOLVE_SPELL ){
-		int result = manifest(player, card);
-		if( result > -1 ){
-			add_a_subtype(player, card, SUBTYPE_AURA_CREATURE);
-			attach_aura_to_target(player, card, event, player, result);
-		}
-		else{
-			kill_card(player, card, KILL_SACRIFICE);
-		}
-	}
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( instance->damage_target_player > -1 && in_play(player, card) && ! is_humiliated(player, card) ){
-		return generic_aura(player, card, event, player, 0, 0, key, s_key, 0, 0, 0);
-	}
-
-	return global_enchantment(player, card, event);
+static int manifesting_aura(int player, int card, event_t event, int key, int s_key)
+{
+  int result;
+  card_instance_t *instance;
+  if (event == EVENT_RESOLVE_SPELL)
+  {
+    add_a_subtype_permanently(player, card, player, card, SUBTYPE_AURA);
+    result = manifest(player, card);
+    instance = get_card_instance(player, card);
+    if (result < 0)
+    {
+      kill_card(player, card, KILL_STATE_BASED_ACTION);
+    }
+    else
+    {
+      instance->targets[0].player = player;
+      instance->targets[0].card = result;
+      instance->number_of_targets = '\x01';
+    }
+  }
+  result = has_subtype(player, card, SUBTYPE_AURA);
+  if (result == 0)
+  {
+    result = global_enchantment(player, card, event);
+    return result;
+  }
+  result = generic_aura(player, card, event, player, 0, 0, key, s_key, 0, 0, 0);
+  return result;
 }
 
 
@@ -205,7 +236,7 @@ static int dash_cost_cless(int player, int cless)
 {
   int c;
   for (c = 0; c < active_cards_count[player]; ++c)
-	if (in_play(player, c) && get_id(player, c) == CARD_ID_WARBRINGER && !is_humiliated(player, c)
+	if (in_play(player, c) && get_id(player, c) == CARD_ID_WARBRINGER && !is_humiliated(player, c, AL_STATIC)
 		&& (cless -= 2) <= 0)
 	  return 0;
   return cless;
@@ -273,7 +304,7 @@ static int runemark(int player, int card, event_t event, color_test_t colors, in
 	if (event == EVENT_ABILITIES){
 		card_instance_t* instance = in_play(player, card);
 
-		if( instance && affect_me(instance->damage_target_player, instance->damage_target_card) && ! is_humiliated(player, card) ){
+		if( instance && affect_me(instance->damage_target_player, instance->damage_target_card) && ! is_humiliated(player, card, AL_STATIC) ){
 			test_definition_t this_test;
 			default_test_definition(&this_test, TYPE_PERMANENT);
 			this_test.color = get_sleighted_color_test(player, card, colors);
@@ -294,113 +325,119 @@ static int runemark(int player, int card, event_t event, color_test_t colors, in
 // Cards
 
 // Colorless
-int card_ugin_the_spirit_dragon(int player, int card, event_t event){
-	/* Ugin, the Spirit Dragon	|8	0x200d392
-	 * Legendary Planeswalker - Ugin (7)
-	 * +2: ~ deals 3 damage to any target.
-	 * -X: Exile each permanent with converted mana cost X or less that's one or more colors.
-	 * -10: You gain 7 life, draw seven cards, then put up to seven permanent cards from your hand onto the battlefield. */
-	if (event == EVENT_ACTIVATE || event == EVENT_RESOLVE_ACTIVATION){	// planeswalker() for EVENT_CAN_ACTIVATE; always at least one choice legal
-
-		target_definition_t td;
-		default_target_definition(player, card, &td, TYPE_CREATURE|TARGET_TYPE_PLANESWALKER);
-		td.zone = TARGET_ZONE_CREATURE_OR_PLAYER;
-
-		test_definition_t this_test;
-		default_test_definition(&this_test, TYPE_PERMANENT);
-		this_test.color = COLOR_TEST_ANY_COLORED;
-
-		card_instance_t *instance = get_card_instance(player, card);
-
-		int priorities[3] = {10, 0, 20};
-		if( event == EVENT_ACTIVATE ){
-			int ai_value = 0;
-			int i;
-			for(i=0; i<=count_counters(player, card, COUNTER_LOYALTY); i++){
-				this_test.cmc = i+1;
-				this_test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
-				int actual_value = 	3*check_battlefield_for_special_card(player, card, 1-player, CBFSC_GET_COUNT, &this_test)-
-									2*check_battlefield_for_special_card(player, card, player, CBFSC_GET_COUNT, &this_test);
-				if( actual_value > ai_value ){
-					ai_value = actual_value;
-				}
-			}
-			priorities[1] = ai_value;
-		}
-
-		enum{
-			CHOICE_DAMAGE = 1,
-			CHOICE_SWIPE,
-			CHOICE_ULTIMATUM
-		} choice = DIALOG(player, card, event, DLG_RANDOM, DLG_PLANESWALKER,
-						  "3 damage to creature or player", 1, priorities[0], 2,
-						  "Exile permanents", 1, priorities[1], 0,
-						  "Ultimatum", 1, priorities[2], -10
-						  );
-
-		if (event == EVENT_ACTIVATE){
-			instance->number_of_targets = 0;
-			if( choice == CHOICE_DAMAGE ){
-				pick_target(&td, "TARGET_ANY");
-			}
-			if( choice == CHOICE_SWIPE ){
-				int loyalty_to_remove = 0;
-				int ai_value = 0;
-				int i;
-				for(i=0; i<=count_counters(player, card, COUNTER_LOYALTY); i++){
-					this_test.cmc = i+1;
-					int actual_value = 	3*check_battlefield_for_special_card(player, card, 1-player, CBFSC_GET_COUNT, &this_test)-
-										2*check_battlefield_for_special_card(player, card, player, CBFSC_GET_COUNT, &this_test);
-					if( actual_value > ai_value ){
-						ai_value = actual_value;
-						loyalty_to_remove = i;
-					}
-				}
-				if( player == HUMAN ){
-					loyalty_to_remove = choose_a_number(player, "Remove how much Loyalty?", priorities[1]);
-				}
-				if( loyalty_to_remove > -1 && loyalty_to_remove <= count_counters(player, card, COUNTER_LOYALTY) ){
-					remove_counters(player, card, COUNTER_LOYALTY, loyalty_to_remove);
-					instance->targets[1].player = loyalty_to_remove;
-				}
-				else{
-					spell_fizzled = 1;
-				}
-			}
-		}
-		else {	// event == EVENT_RESOLVE_ACTIVATION
-			switch (choice){
-				case CHOICE_DAMAGE:
-				{
-					if( valid_target(&td) ){
-						damage_target0(player, card, 3);
-					}
-					break;
-				}
-				case CHOICE_SWIPE:
-				{
-					this_test.cmc = instance->targets[1].player+1;
-					this_test.cmc_flag = F5_CMC_LESSER_THAN_VALUE;
-					APNAP(p, {new_manipulate_all(player, card, p, &this_test, KILL_EXILE);};);
-				}
-				break;
-				case CHOICE_ULTIMATUM:
-				{
-					gain_life(player, 7);
-					draw_cards(player, 7);
-					test_definition_t this_test2;
-					new_default_test_definition(&this_test2, TYPE_PERMANENT, "Select a permanent to put into play.");
-					this_test2.zone = TARGET_ZONE_HAND;
-					int amount = check_battlefield_for_special_card(player, card, player, CBFSC_GET_COUNT, &this_test2);
-					this_test2.qty = MIN(7, amount);
-					tutor_multiple_card_from_hand(player, player, player, TUTOR_PLAY, 0, AI_MAX_CMC, &this_test2);
-				}
-				break;
-			}
-		}
-	}
-
-	return planeswalker(player, card, event, 7);
+int card_ugin_the_spirit_dragon(int player, int card, event_t event)
+{
+  int iVar1;
+  card_instance_t *instance;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  int iStack_230;
+  int iStack_228;
+  int iStack_21c;
+  target_definition_t td;
+  test_definition_t this_test;
+  test_definition_t this_test2;
+  check_legend_rule(player, card, event);
+  if ((event == EVENT_ACTIVATE) || (event == EVENT_RESOLVE_ACTIVATION))
+  {
+    default_target_definition(player, card, &td, 0x102);
+    td.zone = 0x1200;
+    default_test_definition(&this_test, 0x47);
+    this_test.color = 0x3e;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_ACTIVATE)
+    {
+      iVar1 = 0;
+      iStack_21c = 0;
+      while (iVar3 = count_counters(player, card, COUNTER_LOYALTY), iVar1 <= iVar3)
+      {
+        iVar1 = iVar1 + 1;
+        this_test.cmc_flag = 3;
+        this_test.cmc = iVar1;
+        iVar3 = check_battlefield_for_special_card(player, card, 1 - player, 4, &this_test);
+        iVar4 = check_battlefield_for_special_card(player, card, player, 4, &this_test);
+        iVar3 = iVar3 * 3 + iVar4 * -2;
+        if (iStack_21c < iVar3)
+        {
+          iStack_21c = iVar3;
+        }
+      }
+      iVar1 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\017",
+                          "3 damage to creature or player", 1, 10, 2, "Exile permanents", 1,
+                          iStack_21c, 0, "Ultimatum", 1, 0x14, 0xfffffff6, 0, 0, 0, 0);
+      instance->number_of_targets = '\0';
+      if (iVar1 == 1)
+      {
+        pick_target(&td, "TARGET_ANY");
+      }
+      else if (iVar1 == 2)
+      {
+        iStack_228 = 0;
+        iStack_230 = 0;
+        iVar1 = 0;
+        while (iVar3 = iVar1, iVar1 = count_counters(player, card, COUNTER_LOYALTY), iVar3 <= iVar1)
+        {
+          iVar1 = iVar3 + 1;
+          this_test.cmc = iVar1;
+          iVar4 = check_battlefield_for_special_card(player, card, 1 - player, 4, &this_test);
+          iVar5 = check_battlefield_for_special_card(player, card, player, 4, &this_test);
+          iVar4 = iVar4 * 3 + iVar5 * -2;
+          if (iStack_228 < iVar4)
+          {
+            iStack_230 = iVar3;
+            iStack_228 = iVar4;
+          }
+        }
+        if (player == 0)
+        {
+          iStack_230 = choose_a_number(0, "Remove how much Loyalty?", iStack_21c);
+        }
+        if ((iStack_230 < 0) ||
+            (iVar1 = count_counters(player, card, COUNTER_LOYALTY), iVar1 < iStack_230))
+        {
+          spell_fizzled = 1;
+        }
+        else
+        {
+          remove_counters(player, card, player, card, COUNTER_LOYALTY, iStack_230);
+          instance->targets[1].player = iStack_230;
+        }
+      }
+    }
+    else
+    {
+      iVar1 = dialog_impl(player, card, event, "\001\002", "\001\017",
+                          "3 damage to creature or player", 1, 10, 2, "Exile permanents", 1, 0, 0,
+                          "Ultimatum", 1, 0x14, 0xfffffff6, 0, 0, 0, 0);
+      if (iVar1 == 2)
+      {
+        this_test.cmc = instance->targets[1].player + 1;
+        this_test.cmc_flag = 3;
+        new_manipulate_all(player, card, 2, &this_test, ACT_KILL_REMOVE);
+      }
+      else if (iVar1 == 3)
+      {
+        gain_life(player, 7);
+        draw_cards(player, 7);
+        new_default_test_definition(&this_test2, 0x47, "Select a permanent to put into play.");
+        this_test2.zone = 0x100;
+        iVar1 = check_battlefield_for_special_card(player, card, player, 4, &this_test2);
+        if (7 < iVar1)
+        {
+          iVar1 = 7;
+        }
+        this_test2.qty = (unsigned short)iVar1;
+        tutor_multiple_card_from_hand(player, player, player, 4, 0, 2, &this_test2);
+      }
+      else if ((iVar1 == 1) && (iVar1 = valid_target(&td), iVar1 != 0))
+      {
+        damage_target0(player, card, 3);
+      }
+    }
+  }
+  iVar1 = planeswalker(player, card, event, 7);
+  return iVar1;
 }
 
 // White
@@ -538,7 +575,7 @@ int card_citadel_siege(int player, int card, event_t event){
 			instance->number_of_targets = 0;
 
 			if( can_target(&td) && new_pick_target(&td, "Select target creature you control.", 0, GS_LITERAL_PROMPT) ){
-				add_1_1_counters(instance->targets[0].player, instance->targets[0].card, 2);
+				add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, 2);
 			}
 		}
 
@@ -560,66 +597,89 @@ int card_citadel_siege(int player, int card, event_t event){
 	return global_enchantment(player, card, event);
 }
 
-int card_daghatar_the_adamant(int player, int card, event_t event){
-	/*
-	  Daghatar the Adamant |3|W
-	  Legendary Creature - Human Warrior
-	  Vigilance
-	  Daghatar the Adamant enters the battlefield with four +1/+1 counters on it.
-	  1(B/G)(B/G): Move a +1/+1 counter from target creature onto a second target creature.
-	  0/0
-	*/
-	check_legend_rule(player, card, event);
+int card_daghatar_the_adamant(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t *ptStack_c0;
+  target_definition_t td;
+  target_definition_t td2;
 
-	vigilance(player, card, event);
-
-	enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 4);
-
-	if( ! IS_GAA_EVENT(event) ){
-		return 0;
-	}
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_CREATURE);
-	td.special = TARGET_SPECIAL_REQUIRES_COUNTER;
-	td.extra = COUNTER_P1_P1;
-
-	target_definition_t td2;
-	default_target_definition(player, card, &td2, TYPE_CREATURE);
-	td2.preferred_controller = player;
-
-	card_instance_t *instance = get_card_instance(player, card);
-
-	if( event == EVENT_CAN_ACTIVATE ){
-		if( generic_activated_ability(player, card, event, GAA_CAN_TARGET, MANACOST0, 0, &td, NULL) ){
-			int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST_XB(1, 2));
-			if( has_mana_hybrid(player, 2, COLOR_BLACK, COLOR_GREEN, c1) ){
-				if( target_available(player, card, &td2) > 1 ){
-					return 1;
-				}
-			}
-		}
-	}
-
-	if( event == EVENT_ACTIVATE ){
-		int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST_XB(1, 2));
-		if( charge_mana_hybrid(player, card, 2, COLOR_BLACK, COLOR_GREEN, c1) ){
-			if( new_pick_target(&td, "Select target creature with a +1/+1 counter.", 0, 1 | GS_LITERAL_PROMPT) ){
-				state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
-				new_pick_target(&td2, "TARGET_CREATURE", 1, 1);
-				state_untargettable(instance->targets[0].player, instance->targets[0].card, 0);
-			}
-		}
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( validate_target(player, card, &td, 0) && validate_target(player, card, &td2, 1) ){
-			move_counters(instance->targets[1].player, instance->targets[1].card, instance->targets[0].player, instance->targets[0].card,
-							COUNTER_P1_P1, 1);
-		}
-	}
-
-	return 0;
+  check_legend_rule(player, card, event);
+  vigilance(player, card, event);
+  enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, 4);
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    default_target_definition(player, card, &td, 2);
+    td.special = 0x40000;
+    td.extra = 0;
+    default_target_definition(player, card, &td2, 2);
+    td2.preferred_controller = player;
+    instance = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      result = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 4, 0, 0, 0, 0, 0, 0, 0,
+                                         &td, NULL);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = get_cost_mod_for_activated_abilities(player, card, 1, 2, 0, 0, 0, 0);
+      result = has_mana_hybrid(player, 2, 1, 3, result);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = target_available(player, card, &td2);
+      if (result < 2)
+      {
+        return 0;
+      }
+      return 1;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      result = get_cost_mod_for_activated_abilities(player, card, 1, 2, 0, 0, 0, 0);
+      result = charge_mana_hybrid(player, card, 2, 1, 3, result);
+      if (result == 0)
+      {
+        return 0;
+      }
+      result = new_pick_target(&td, "Select target creature with a +1/+1 counter.", 0, 0x81);
+      if (result == 0)
+      {
+        return 0;
+      }
+      state_untargettable(instance->targets[0].player, instance->targets[0].card, 1);
+      new_pick_target(&td2, "TARGET_CREATURE", 1, 1);
+      state_untargettable(instance->targets[0].player, instance->targets[0].card, 0);
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    default_target_definition(player, card, &td, 2);
+    td.special = 0x40000;
+    td.extra = 0;
+    default_target_definition(player, card, &td2, 2);
+    td2.preferred_controller = player;
+    instance = get_card_instance(player, card);
+  }
+  ptStack_c0 = &td2;
+  if (((event == EVENT_RESOLVE_ACTIVATION) &&
+       (result = validate_target(player, card, &td, 0), result != 0)) &&
+      (result = validate_target(player, card, ptStack_c0, 1), result != 0))
+  {
+    move_counters(player, card, instance->targets[1].player, instance->targets[1].card,
+                              instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1,
+                              1);
+    return 0;
+  }
+  return 0;
 }
 
 int card_dragon_bell_monk(int player, int card, event_t event){
@@ -782,7 +842,7 @@ int card_mardu_woe_reaper(int player, int card, event_t event){
 	*/
 	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
 
-	if( ! is_humiliated(player, card) && trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
+	if( ! is_humiliated(player, card, AL_TRIG) && trigger_condition == TRIGGER_COMES_INTO_PLAY && affect_me(player, card) ){
 		test_definition_t test;
 		default_test_definition(&test, TYPE_PERMANENT);
 		test.subtype = SUBTYPE_WARRIOR;
@@ -989,7 +1049,7 @@ int card_sandsteppe_outcast(int player, int card, event_t event){
 	if( event == EVENT_ETB_ABILITY ){
 		int choice = do_dialog(player, player, card, -1, -1, " Add a +1/+1 counter\n Generate a Spirit", count_subtype(player, TYPE_CREATURE, -1) > 5 ? 0 : 1);
 		if( choice == 0 ){
-			add_1_1_counter(player, card);
+			add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 		}
 		else{
 			token_generation_t token;
@@ -1031,7 +1091,7 @@ int card_soulfire_grand_master(int player, int card, event_t event){
 
 	lifelink(player, card, event);
 
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_STATIC) ){
 		if( event == EVENT_CAST_SPELL && is_what(affected_card_controller, affected_card, TYPE_SPELL) ){
 			lifelink(affected_card_controller, affected_card, event);
 		}
@@ -1174,7 +1234,7 @@ int card_wardscale_dragon(int player, int card, event_t event){
 	  As long as Wardscale Dragon is attacking, defending player can't cast spells.
 	  4/4
 	*/
-	if( event == EVENT_MODIFY_COST_GLOBAL && is_attacking(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_MODIFY_COST_GLOBAL && is_attacking(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( affected_card_controller == 1-player ){
 			infinite_casting_cost();
 		}
@@ -1203,7 +1263,7 @@ int card_aven_surveyor(int player, int card, event_t event){
 
 		int choice = do_dialog(player, player, card, -1, -1, " Add a +1/+1 counter\n Bounce a creature", can_target(&td) ? 1 : 0);
 		if( choice == 0 ){
-			add_1_1_counter(player, card);
+			add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 		}
 		else{
 			if( pick_target(&td, "TARGET_CREATURE") ){
@@ -2009,7 +2069,7 @@ int card_ancestral_vengeance(int player, int card, event_t event){
 		card_instance_t *instance = get_card_instance( player, card);
 
 		if( can_target(&td) && new_pick_target(&td, "Select target creature you control.", 1, GS_LITERAL_PROMPT) ){
-			add_1_1_counter(instance->targets[1].player, instance->targets[1].card);
+			add_counters(player, card, instance->targets[1].player, instance->targets[1].card, COUNTER_P1_P1, 1);
 		}
 	}
 
@@ -2064,7 +2124,7 @@ int card_battle_brawler(int player, int card, event_t event){
 	  As long as you control a red or white permanent, Battle Brawler gets +1/+0 and has first strike.
 	  2/2
 	*/
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_STATIC) ){
 		if( (event == EVENT_POWER || event == EVENT_ABILITIES) && affect_me(player, card) ){
 			test_definition_t this_test;
 			default_test_definition(&this_test, TYPE_PERMANENT);
@@ -2215,32 +2275,55 @@ int card_diplomacy_of_the_wastes(int player, int card, event_t event){
 	return generic_spell(player, card, event, GS_CAN_ONLY_TARGET_OPPONENT, &td, NULL, 1, NULL);
 }
 
-int card_fearsome_awakening(int player, int card, event_t event){
-	/*
-	  Fearsome Awakening |4|B
-	  Sorcery
-	  Return target creature card from your graveyard to the battlefield. If it's a Dragon, put two +1/+1 counters on it.
-	*/
-	if (!IS_GS_EVENT(player, card, event)){
-		return 0;
-	}
-
-	test_definition_t this_test;
-	new_default_test_definition(&this_test, TYPE_CREATURE, "Select target creature card.");
-	this_test.ai_selection_mode = AI_MAX_CMC;
-
-	if ( event == EVENT_RESOLVE_SPELL ){
-		int selected = validate_target_from_grave_source(player, card, player, 0);
-		if( selected != -1 ){
-			int result = reanimate_permanent(player, card, player, selected, REANIMATE_DEFAULT);
-			if( result != -1 && has_subtype(player, result, SUBTYPE_DRAGON) ){
-				add_1_1_counters(player, result, 2);
-			}
-		}
-		kill_card(player, card, KILL_DESTROY);
-	}
-
-	return generic_spell(player, card, event, GS_GRAVE_RECYCLER, NULL, NULL, 0, &this_test);
+int card_fearsome_awakening(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  test_definition_t this_test;
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        new_default_test_definition(&this_test, 2, "Select target creature card.");
+        this_test.ai_selection_mode = 2;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          iVar1 = validate_target_from_grave_source(player, card, player, 0);
+          if (((iVar1 != -1) &&
+               (iVar1 = reanimate_permanent(player, card, player, iVar1, REANIMATE_DEFAULT),
+                iVar1 != -1)) &&
+              (iVar2 = has_subtype(player, iVar1, SUBTYPE_DRAGON), iVar2 != 0))
+          {
+            add_counters(player, card, player, iVar1, COUNTER_P1_P1, 2);
+          }
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_0262896e;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  new_default_test_definition(&this_test, 2, "Select target creature card.");
+  this_test.ai_selection_mode = 2;
+LAB_0262896e:
+  iVar1 = generic_spell(player, card, event, 8, NULL, NULL, 0, &this_test);
+  return iVar1;
 }
 
 int card_ghastly_conscripts(int player, int card, event_t event){
@@ -2323,7 +2406,7 @@ int card_grave_strenght(int player, int card, event_t event){
 					milled++;
 			}
 			mill(player, milled);
-			add_1_1_counters(instance->targets[0].player, instance->targets[0].card, amount);
+			add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, amount);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -2365,7 +2448,7 @@ int card_hooded_assasin(int player, int card, event_t event){
 
 		int choice = do_dialog(player, player, card, -1, -1, " Add a +1/+1 counter\n Kill a damaged creature", can_target(&td) ? 1 : 0);
 		if( choice == 0 ){
-			add_1_1_counter(player, card);
+			add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 		}
 		else{
 			if( can_target(&td) && new_pick_target(&td, "Select target creature that was dealt damage this turn.", 0, GS_LITERAL_PROMPT) ){
@@ -2608,7 +2691,7 @@ int card_soulflayer(int player, int card, event_t event){
 		}
 	}
 
-	if( event == EVENT_ABILITIES && affect_me(player, card) && ! is_humiliated(player, card) && instance->targets[1].player > 0 ){
+	if( event == EVENT_ABILITIES && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) && instance->targets[1].player > 0 ){
 		event_result |= instance->targets[1].player;
 	}
 
@@ -2851,7 +2934,7 @@ int card_bloodfire_enforcer(int player, int card, event_t event){
 	  Bloodfire Enforcers has first strike and trample as long as an instant card and a sorcery card are in your graveyard.
 	  5/2
 	*/
-	if( event == EVENT_ABILITIES && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_ABILITIES && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( count_graveyard_by_type(player, TYPE_SORCERY) && count_graveyard_by_type(player, TYPE_INSTANT | TYPE_INTERRUPT) ){
 			event_result |= (KEYWORD_TRAMPLE | KEYWORD_FIRST_STRIKE);
 		}
@@ -2929,7 +3012,7 @@ int card_defiant_ogre(int player, int card, event_t event){
 
 		int choice = do_dialog(player, player, card, -1, -1, " Add a +1/+1 counter\n Kill an artifact", can_target(&td) ? 1 : 0);
 		if( choice == 0 ){
-			add_1_1_counter(player, card);
+			add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 		}
 		else{
 			if( can_target(&td) && new_pick_target(&td, "TARGET_ARTIFACT", 0, 0) ){
@@ -2988,7 +3071,7 @@ int card_fierce_invocation(int player, int card, event_t event){
 	if( event == EVENT_RESOLVE_SPELL ){
 		int result = manifest(player, card);
 		if( result > -1 ){
-			add_1_1_counters(player, result, 2);
+			add_counters(player, card, player, result, COUNTER_P1_P1, 2);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -3254,7 +3337,7 @@ int card_outpost_siege(int player, int card, event_t event){
 		choose_khans_or_dragons(player, card, 4*count_subtype(player, TYPE_CREATURE, -1), 20 );
 	}
 
-	if( is_humiliated(player, card) ){
+	if( is_humiliated(player, card, AL_TRIG) ){
 		return 0;
 	}
 
@@ -3328,7 +3411,7 @@ int card_shaman_of_the_great_hunt(int player, int card, event_t event){
 		card_instance_t *instance = get_card_instance(player, card);
 		int i;
 		for(i=0; i<amount; i++){
-			add_1_1_counter(instance->targets[i].player, instance->targets[i].card);
+			add_counters(player, card, instance->targets[i].player, instance->targets[i].card, COUNTER_P1_P1, 1);
 		}
 	}
 
@@ -3480,7 +3563,7 @@ int card_abzan_kin_guard(int player, int card, event_t event){
 	  Abzan Kin-Guard has lifelink as long as you control a white or black permanent.
 	  3/3
 	*/
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_STATIC) ){
 		if( event == EVENT_ABILITIES && affect_me(player, card) ){
 			test_definition_t this_test;
 			default_test_definition(&this_test, TYPE_PERMANENT);
@@ -3507,7 +3590,7 @@ int card_ainok_guide(int player, int card, event_t event){
 	if( event == EVENT_ETB_ABILITY ){
 		int choice = do_dialog(player, player, card, -1, -1, " Add a +1/+1 counter\n Tutor land", count_subtype(player, TYPE_LAND, -1) > 5 ? 0 : 1);
 		if( choice == 0 ){
-			add_1_1_counter(player, card);
+			add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 		}
 		else{
 			test_definition_t this_test;
@@ -3557,7 +3640,7 @@ int card_arashin_war_beast(int player, int card, event_t event){
 	  Whenever Arashin War Beast deals combat damage to one or more blocking creatures, manifest the top card of your library.
 	  6/6
 	*/
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_TRIG) ){
 		card_instance_t* instance = get_card_instance(player, card);
 		if (event == EVENT_DEAL_DAMAGE){
 			card_instance_t* damage = get_card_instance(affected_card_controller, affected_card);
@@ -3606,7 +3689,7 @@ int card_battlefront_krushok(int player, int card, event_t event){
 	  3/4
 	*/
 
-	if( event == EVENT_BLOCK_LEGALITY && attacking_card_controller == player && ! is_humiliated(player, card) ){
+	if( event == EVENT_BLOCK_LEGALITY && attacking_card_controller == player && ! is_humiliated(player, card, AL_STATIC) ){
 		if( attacking_card == card || count_1_1_counters(attacking_card_controller, attacking_card) > 0 ){
 			if( count_my_blockers(attacking_card_controller, attacking_card) > 1 ){
 				event_result = 1;
@@ -3670,7 +3753,7 @@ int card_formless_nurturing(int player, int card, event_t event){
 	if(event == EVENT_RESOLVE_SPELL ){
 		int result = manifest(player, card);
 		if( result > -1 ){
-			add_1_1_counter(player, result);
+			add_counters(player, card, player, result, COUNTER_P1_P1, 1);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -3707,7 +3790,7 @@ int card_frontier_siege(int player, int card, event_t event){
 		instance->targets[2].player = choose_khans_or_dragons_no_storage(player, card, 20, 4*count_subtype(player, TYPE_LAND, -1));
 	}
 
-	if( is_humiliated(player, card) ){
+	if( is_humiliated(player, card, AL_TRIG) ){
 		return 0;
 	}
 
@@ -4024,79 +4107,115 @@ int card_temur_war_shaman(int player, int card, event_t event){
 	return 0;
 }
 
-int card_warden_of_the_first_tree(int player, int card, event_t event){
-	/*
-	  Warden of the First Tree |G
-	  Creature - Human
-	  1(W/B): Warden of the First Tree becomes a Human Warrior with base power and toughness 3/3.
-	  2(W/B)(W/B): If Warden of the First Tree is a Warrior, it becomes a Human Spirit Warrior with trample and lifelink.
-	  3(W/B)(W/B)(W/B): If Warden of the First Tree is a Spirit, put five +1/+1 counters on it.
-	  1/1
-	*/
-	card_instance_t *instance = get_card_instance( player, card);
-	if( event == EVENT_RESOLVE_SPELL ){
-		instance->targets[9].player = 0;
-	}
+int card_warden_of_the_first_tree(int player, int card, event_t event)
+{
+  card_instance_t *pcVar1;
+  int iVar2;
+  int iVar3;
+  int32_t player_00;
+  card_instance_t *pcVar4;
+  int iVar5;
+  int32_t card_00;
+  int iVar6;
+  CardFunction func_ptr;
+  int abilities[3];
 
-	if( event == EVENT_CAN_ACTIVATE ){
-		int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST_XB(1, 1));
-		return has_mana_hybrid(player, 1, COLOR_BLACK, COLOR_WHITE, c1);
-	}
-
-	if(event == EVENT_ACTIVATE ){
-		instance->info_slot = 0;
-		int abilities[3] = {0, 0, 0};
-		int i;
-		for(i=0; i<3; i++){
-			int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST_XB(i+1, i+1));
-			abilities[i] = has_mana_hybrid(player, i+1, COLOR_BLACK, COLOR_WHITE, c1);
-		}
-		int priorities[3] = { 	! has_subtype(player, card, SUBTYPE_WARRIOR) ? 10 : -50,
-								has_subtype(player, card, SUBTYPE_WARRIOR) ? 15 : -50,
-								has_subtype(player, card, SUBTYPE_SPIRIT) ? 20 : -50,
-		};
-		int choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
-						"3/3 Human Warrior", abilities[0], priorities[0],
-						"Give Trample & Lifelink", abilities[1], priorities[1],
-						"Add 5 +1/+1 counters", abilities[2], priorities[2]);
-		if( ! choice ){
-			spell_fizzled = 1;
-			return 0;
-		}
-		int c1 = get_cost_mod_for_activated_abilities(player, card, MANACOST_XB(choice, 1));
-		charge_mana_hybrid(player, card, choice, COLOR_BLACK, COLOR_WHITE, c1);
-		if( spell_fizzled != 1 ){
-			instance->info_slot = choice;
-		}
-	}
-
-	if(event == EVENT_RESOLVE_ACTIVATION ){
-		card_instance_t *parent = get_card_instance( instance->parent_controller, instance->parent_card  );
-		if( instance->info_slot == 1 ){
-			reset_subtypes(instance->parent_controller, instance->parent_card, 3); //11/24/2014: The first and second activated abilities cause Warden of the First Tree to lose any other creature types it has. It retains any card types or supertypes it may have.
-			parent->targets[9].player = instance->info_slot;
-			int legacy = real_set_pt(instance->parent_controller, instance->parent_card, instance->parent_controller, instance->parent_card, 3, 3, 0);
-			add_status(player, legacy, STATUS_INVISIBLE_FX);
-		}
-		if( instance->info_slot == 2 && has_subtype(instance->parent_controller, instance->parent_card, SUBTYPE_WARRIOR) ){
-			reset_subtypes(instance->parent_controller, instance->parent_card, 3); //11/24/2014: The first and second activated abilities cause Warden of the First Tree to lose any other creature types it has. It retains any card types or supertypes it may have.
-			parent->targets[9].player = instance->info_slot;
-		}
-		if( instance->info_slot == 3 && has_subtype(instance->parent_controller, instance->parent_card, SUBTYPE_SPIRIT) ){
-			parent->targets[9].player = instance->info_slot;
-			add_1_1_counters(instance->parent_controller, instance->parent_card, 5);
-		}
-	}
-
-	if( ! is_humiliated(player, card) ){
-		if( instance->targets[9].player > -1 && (instance->targets[9].player & 2) ){
-			lifelink(player, card, event);
-			if(event == EVENT_ABILITIES && affect_me(player, card ) ){
-				event_result |= KEYWORD_TRAMPLE;
-			}
-		}
-	}
-	return 0;
+  if ((event == EVENT_CAN_ACTIVATE) || (event == EVENT_ACTIVATE))
+  {
+    pcVar1 = get_card_instance(player, card);
+    if (event == EVENT_CAN_ACTIVATE)
+    {
+      iVar3 = get_cost_mod_for_activated_abilities(player, card, 1, 1, 0, 0, 0, 0);
+      iVar3 = has_mana_hybrid(player, 1, 1, 5, iVar3);
+      return iVar3;
+    }
+    if (event == EVENT_ACTIVATE)
+    {
+      pcVar1->info_slot = 0;
+      abilities[0] = 0;
+      abilities[1] = 0;
+      abilities[2] = 0;
+      iVar3 = 0;
+      do
+      {
+        iVar6 = iVar3 + 1;
+        iVar2 = get_cost_mod_for_activated_abilities(player, card, iVar6, iVar6, 0, 0, 0, 0);
+        iVar2 = has_mana_hybrid(player, iVar6, 1, 5, iVar2);
+        abilities[iVar3] = iVar2;
+        iVar3 = iVar6;
+      } while (iVar6 != 3);
+      iVar2 = has_subtype(player, card, SUBTYPE_WARRIOR);
+      iVar3 = has_subtype(player, card, SUBTYPE_WARRIOR);
+      iVar5 = (-(unsigned int)(iVar3 == 0) & 0xffffffbf) + 0xf;
+      iVar3 = iVar5;
+      iVar6 = has_subtype(player, card, SUBTYPE_SPIRIT);
+      iVar3 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "3/3 Human Warrior",
+                          abilities[0], (-(unsigned int)(iVar2 == 0) & 0x3c) - 0x32,
+                          "Give Trample & Lifelink", abilities[1], iVar5, "Add 5 +1/+1 counters",
+                          abilities[2], (-(unsigned int)(iVar6 == 0) & 0xffffffba) + 0x14, 0, 0, 0,
+                          0, iVar3);
+      if (iVar3 != 0)
+      {
+        iVar2 = get_cost_mod_for_activated_abilities(player, card, iVar3, 1, 0, 0, 0, 0);
+        charge_mana_hybrid(player, card, iVar3, 1, 5, iVar2);
+        if (spell_fizzled == 1)
+        {
+          return 0;
+        }
+        pcVar1->info_slot = iVar3;
+        return 0;
+      }
+      spell_fizzled = 1;
+      return 0;
+    }
+  }
+  else
+  {
+    if ((event != EVENT_RESOLVE_ACTIVATION) && (event != EVENT_CLEANUP))
+    {
+      return 0;
+    }
+    pcVar1 = get_card_instance(player, card);
+  }
+  if (event != EVENT_RESOLVE_ACTIVATION)
+  {
+    return 0;
+  }
+  iVar3 = pcVar1->info_slot;
+  if (iVar3 == 1)
+  {
+    card_00 = pcVar1->parent_card;
+    player_00 = pcVar1->parent_controller;
+    func_ptr = wotft_1;
+  LAB_0262d4f4:
+    iVar3 =
+        create_targetted_legacy_effect_no_repeat(player_00, card_00, func_ptr, player_00, card_00);
+    pcVar4 = get_card_instance(player, iVar3);
+    pcVar4->token_status = 0x10000;
+  }
+  else
+  {
+    if (iVar3 != 2)
+      goto LAB_0262d37d;
+    iVar3 = has_subtype(pcVar1->parent_controller, pcVar1->parent_card, SUBTYPE_WARRIOR);
+    if (iVar3 != 0)
+    {
+      card_00 = pcVar1->parent_card;
+      player_00 = pcVar1->parent_controller;
+      func_ptr = wotft_2;
+      goto LAB_0262d4f4;
+    }
+  }
+  iVar3 = pcVar1->info_slot;
+LAB_0262d37d:
+  if ((iVar3 == 3) &&
+      (iVar3 = has_subtype(pcVar1->parent_controller, pcVar1->parent_card, SUBTYPE_SPIRIT),
+       iVar3 != 0))
+  {
+    add_counters(player, card, pcVar1->parent_controller, pcVar1->parent_card,
+                             COUNTER_P1_P1, 5);
+  }
+  return 0;
 }
 
 int card_whisperer_of_the_wilds(int player, int card, event_t event){
@@ -4187,7 +4306,7 @@ int card_wildcall(int player, int card, event_t event){
 	if(event == EVENT_RESOLVE_SPELL ){
 		int result = manifest(player, card);
 		if( result > -1 ){
-			add_1_1_counters(player, card, get_card_instance(player, card)->info_slot);
+			add_counters(player, card, player, card, COUNTER_P1_P1, get_card_instance(player, card)->info_slot);
 		}
 		kill_card(player, card, KILL_DESTROY);
 	}
@@ -4649,7 +4768,7 @@ int card_scroll_of_the_masters(int player, int card, event_t event){
 	*/
 
 	if( prowess_mode(player, card, event, RESOLVE_TRIGGER_MANDATORY) ){
-		add_counter(player, card, COUNTER_LORE);
+		add_counters(player, card, player, card, COUNTER_LORE, 1);
 	}
 
 	if (!IS_GAA_EVENT(event)){

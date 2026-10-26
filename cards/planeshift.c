@@ -666,7 +666,7 @@ All Goblins are black and are Zombies in addition to their other creature types.
 */
 	boost_creature_type(player, card, event, SUBTYPE_GOBLIN, 1, 1, 0, BCT_INCLUDE_SELF);
 
-	if( event == EVENT_SET_COLOR && in_play(player, card) && ! is_humiliated(player, card) &&
+	if( event == EVENT_SET_COLOR && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) &&
 		has_subtype(affected_card_controller, affected_card, SUBTYPE_GOBLIN) )
 	{
 		event_result = COLOR_TEST_BLACK;
@@ -707,7 +707,7 @@ If ~ was kicked, it enters the battlefield with flying and with X +1/+1 counters
 		enters_the_battlefield_with_counters(player, card, event, COUNTER_P1_P1, get_card_instance(player, card)->info_slot);
 	}
 
-	if( event == EVENT_ABILITIES && affect_me(player, card) && kicked(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_ABILITIES && affect_me(player, card) && kicked(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		event_result |= KEYWORD_FLYING;
 	}
 
@@ -1637,7 +1637,7 @@ Whenever you cast a |Swhite, |Sblue, |Sblack, or |Sred spell, put a +1/+1 counte
 		default_test_definition(&test, TYPE_ANY);
 		test.color = get_sleighted_color_test(player, card, COLOR_TEST_BLACK | COLOR_TEST_BLUE | COLOR_TEST_RED | COLOR_TEST_WHITE);
 		if( new_specific_spell_played(player, card, event, player, RESOLVE_TRIGGER_MANDATORY, &test) ){
-			add_1_1_counter(player, card);
+			add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 		}
 	}
 
@@ -1851,7 +1851,7 @@ int card_shifting_sky(int player, int card, event_t event){
 		get_card_instance(player, card)->targets[1].card = 1<<choose_a_color_and_show_legacy(player, card, 1-player, -1);
 	}
 
-	if (event == EVENT_SET_COLOR && ! is_humiliated(player, card) ){
+	if (event == EVENT_SET_COLOR && ! is_humiliated(player, card, AL_STATIC) ){
 		int col = get_card_instance(player, card)->targets[1].card;
 		if (col > 0 && is_what(affected_card_controller, affected_card, TYPE_PERMANENT) &&
 			! is_what(affected_card_controller, affected_card, TYPE_LAND) )
@@ -2448,7 +2448,7 @@ As ~ enters the battlefield, choose a color.
 
 	// original code : 0x4e4a34
 
-	if( event == EVENT_ABILITIES && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_ABILITIES && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		event_result |= get_card_instance(player, card)->info_slot;
 	}
 
@@ -2466,7 +2466,7 @@ int card_warped_devotion(int player, int card, event_t event){
 	  Enchantment
 	  Whenever a permanent is returned to a player's hand, that player discards a card.
 	*/
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_TRIG) ){
 		if( trigger_condition == TRIGGER_BOUNCE_PERMANENT ){
 			if( affect_me( player, card) && reason_for_trigger_controller == player ){
 				if( trigger_cause != -1 ){ //Won't trigger for tokens

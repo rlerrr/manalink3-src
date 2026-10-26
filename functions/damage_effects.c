@@ -1,397 +1,549 @@
 #include "manalink.h"
 
-void damage_effects(int player, int card, event_t event){
-
-	/* Nothing left here needs to be here; it can all move into the individual card functions, replacing the call to damage_effects().  Most, maybe all, of the
-	 * trap conditions set by Rules Engine belong in effect_damage().  Some of the other stuff needs attention, e.g. War Elemental shouldn't be adding counters
-	 * to itself until lethal damage is processed, the same way Spiritmonger and Fungusaur don't. */
-
-	if( event == EVENT_DEAL_DAMAGE ){
-
-		card_instance_t *instance = get_card_instance( player, card);
-
-		card_instance_t *damage= get_card_instance( affected_card_controller, affected_card);
-		if (damage->internal_card_id != damage_card){
-			/* Before we waste any more time here.  In particular, return before get_card_instance(damage->damage_source_player, damage->damage_source_card),
-			 * which often fails with an ugly popup. */
-			return;
-		}
-
-		enum {
-			MODE_NONE = 0,
-			MODE_FREEZE_WHEN_DAMAGE = 128,
-		} mode = MODE_NONE;
-
-		enum {
-			GLOBALMODE_NONE = 0,
-			GLOBALMODE_SHRIVELING_ROT = 64,
-		} global_mode = GLOBALMODE_NONE;
-
-		int csvid = get_id(player, card);
-
-		if( check_for_special_ability(player, card, SP_KEYWORD_FREEZE_WHEN_DAMAGE) ||
-			csvid == CARD_ID_KUMANO_MASTER_YAMABUSHI
-		  ){
-			mode |= MODE_FREEZE_WHEN_DAMAGE;
-		}
-
-		// Global modes
-		if( is_what(player, card, TYPE_EFFECT) && instance->targets[2].card == CARD_ID_SHRIVELING_ROT ){
-			global_mode |= GLOBALMODE_SHRIVELING_ROT;
-		}
-
-		if( damage->damage_source_player == player && damage->damage_source_card == card &&
-			damage->info_slot > 0
-		  ){
-			if( damage->damage_target_card != -1 ){
-
-				if( mode & MODE_FREEZE_WHEN_DAMAGE ){
-					if( in_play(damage->damage_target_player, damage->damage_target_card) ){
-						if( instance->targets[1].player < 2  ){
-							instance->targets[1].player = 2;
-						}
-						int pos = instance->targets[1].player;
-						if( pos < 10 ){
-							instance->targets[pos].player = damage->damage_target_player;
-							instance->targets[pos].card = damage->damage_target_card;
-							instance->targets[1].player++;
-						}
-					}
-				}
-			}
-			else{
-				if( csvid == CARD_ID_SZADEK_LORD_OF_SECRETS && damage->token_status & (STATUS_COMBAT_DAMAGE|STATUS_FIRST_STRIKE_DAMAGE) &&
-					damage->damage_target_card == -1
-				  ){
-					add_1_1_counters(player, card, damage->info_slot);
-					mill(damage->damage_target_player, damage->info_slot);
-					damage->info_slot = 0;
-				}
-			}
-		}
-		else{
-			if( csvid == CARD_ID_DRALNU_LICH_LORD ){
-				if( damage->damage_target_player == player && damage->damage_target_card == card ){
-					int good = 0;
-					if( damage->info_slot > 0 ){
-						good = damage->info_slot;
-					}
-					else{
-						card_instance_t *trg = get_card_instance(damage->damage_source_player, damage->damage_source_card);
-						if( trg->targets[16].player > 0 ){
-							good = trg->targets[16].player;
-						}
-					}
-
-					if( good > 0 ){
-						if( instance->targets[9].player < 0 ){
-							instance->targets[9].player = 0;
-						}
-						instance->targets[9].player += good;
-					}
-					damage->info_slot = 0;
-				}
-			}
-			if( csvid == CARD_ID_LIVING_ARTIFACT ){
-				if( damage->damage_target_player == player && damage->damage_target_card == -1 ){
-					add_counters(player, card, COUNTER_VITALITY, damage->info_slot);
-				}
-			}
-			if( csvid == CARD_ID_WAR_ELEMENTAL ){
-				if( damage->damage_target_player == 1-player && damage->damage_target_card == -1 ){
-					add_1_1_counters(player, card, damage->info_slot);
-				}
-			}
-			if( csvid == CARD_ID_NIGHT_DEALINGS ){
-				if( damage->damage_target_player == 1-player && damage->damage_source_player == player ){
-					add_counters(player, card, COUNTER_THEFT, damage->info_slot);
-				}
-			}
-			if( is_what(player, card, TYPE_EFFECT) && instance->targets[2].card == CARD_ID_DRAIN_LIFE ){
-				if( damage->damage_target_player == instance->targets[0].player &&
-					damage->damage_target_card == instance->targets[0].card
-				  ){
-					int max = damage->info_slot;
-					if( damage->damage_target_card == -1 ){
-						if( life[instance->targets[0].player] < max ){
-							max = life[instance->targets[0].player];
-						}
-					}
-					else{
-						if( get_toughness(instance->targets[0].player, instance->targets[0].card) < max ){
-							max = get_toughness(instance->targets[0].player, instance->targets[0].card);
-						}
-					}
-					gain_life(player, max);
-					kill_card(player, card, KILL_EXILE);
-				}
-			}
-			if( is_what(player, card, TYPE_EFFECT) && instance->targets[2].card == CARD_ID_BRIGHTFLAME ){
-				if( get_id(damage->damage_source_player, damage->damage_source_card) == CARD_ID_BRIGHTFLAME ){
-					gain_life(player, damage->info_slot);
-				}
-			}
-			if( is_what(player, card, TYPE_EFFECT) && instance->targets[1].card == CARD_ID_SIMIC_BASILISK ){
-				if( damage->damage_source_player == instance->targets[0].player &&
-					damage->damage_source_card == instance->targets[0].card && damage->info_slot > 0 &&
-					damage->damage_target_card != -1
-				  ){
-					if( instance->targets[1].player < 2 ){
-						 instance->targets[1].player = 2;
-					}
-					int pos = instance->targets[1].player;
-					if( pos < 10 ){
-						instance->targets[pos].player = damage->damage_target_player;
-						instance->targets[pos].card = damage->damage_target_card;
-						instance->targets[1].player++;
-					}
-				}
-			}
-			if( csvid == CARD_ID_SPROUTING_PHYTOHYDRA || csvid == CARD_ID_VOLATILE_RIG ||
-				csvid == CARD_ID_DEEP_SLUMBER_TITAN
-			  ){
-				if( damage->damage_target_player == player && damage->damage_target_card == card && damage->info_slot > 0
-				  ){
-					if( instance->targets[1].player < 0 ){
-						 instance->targets[1].player = 0;
-					}
-					instance->targets[1].player++;
-				}
-			}
-			if( csvid == CARD_ID_CIRCLE_OF_AFFLICTION ){
-				if( damage->damage_target_player == player && damage->damage_target_card == -1 && damage->info_slot > 0 ){
-					if( get_color(damage->damage_source_player, damage->damage_source_card) & instance->info_slot ){
-						if( instance->targets[1].player < 0 ){
-							 instance->targets[1].player = 0;
-						}
-						instance->targets[1].player++;
-					}
-				}
-			}
-			if( csvid == CARD_ID_GREATBOW_DOYEN ){
-				if( damage->damage_source_player == player && damage->damage_target_card != -1 &&
-					in_play(damage->damage_target_player, damage->damage_target_card) &&
-					has_subtype(damage->damage_source_player, damage->damage_source_card, SUBTYPE_ARCHER)
-				  ){
-					if( instance->targets[1].player < 2  ){
-						instance->targets[1].player = 2;
-					}
-					int pos = instance->targets[1].player;
-					if( pos < 10 ){
-						instance->targets[pos].player = damage->damage_target_player;
-						instance->targets[pos].card = damage->info_slot;
-						instance->targets[1].player++;
-					}
-				}
-			}
-			if( csvid == CARD_ID_OONAS_BLACKGUARD ){
-				if( damage->damage_source_player == player && damage->damage_target_card == -1 &&
-					in_play(damage->damage_source_player, damage->damage_source_card) &&
-					count_1_1_counters(damage->damage_source_player, damage->damage_source_card) > 0 &&
-					(damage->token_status & (STATUS_COMBAT_DAMAGE|STATUS_FIRST_STRIKE_DAMAGE))
-				  ){
-					if( instance->targets[1].player < 0  ){
-						instance->targets[1].player = 0;
-					}
-					instance->targets[1].player++;
-				}
-			}
-			if( csvid == CARD_ID_DEUS_OF_CALAMITY ){
-				if( damage->damage_source_player == player && damage->damage_source_card == card && damage->damage_target_card == -1 &&
-					damage->info_slot > 5 ){
-					instance->targets[1].player = 2+damage->damage_target_player;
-				}
-			}
-			if (is_what(player, card, TYPE_EFFECT) && (instance->targets[2].card == CARD_ID_RUNESWORD || instance->targets[2].card == CARD_ID_BONE_SHAMAN)
-				&& damage->damage_source_player == instance->damage_source_player
-				&& damage->damage_source_card == instance->damage_source_card
-				&& damage->damage_target_card >= 0 && in_play(damage->damage_target_player, damage->damage_target_card)){
-				if( instance->targets[2].player < 3  ){
-					instance->targets[2].player = 3;
-				}
-				int pos = instance->targets[2].player;
-				if( pos < 10 ){
-					instance->targets[pos].player = damage->damage_target_player;
-					instance->targets[pos].card = damage->damage_target_card;
-					instance->targets[2].player++;
-				}
-			}
-			if( (global_mode & GLOBALMODE_SHRIVELING_ROT) && damage->damage_target_card != -1 &&
-				in_play(damage->damage_target_player, damage->damage_target_card)
-			  ){
-				kill_card(damage->damage_target_player, damage->damage_target_card, KILL_DESTROY);
-			}
-		}
-	}
+void damage_effects(int player, int card, event_t event)
+{
+  bool bVar1;
+  unsigned char bVar2;
+  card_instance_t *pcVar3;
+  card_instance_t *pcVar4;
+  int iVar5;
+  int iVar6;
+  int32_t iVar7;
+  unsigned int uVar8;
+  card_instance_t *pcVar9;
+  int iVar10;
+  int amount;
+  counter_t type;
+  if (event != EVENT_DEAL_DAMAGE)
+  {
+    return;
+  }
+  pcVar3 = get_card_instance(player, card);
+  pcVar4 = get_card_instance(affected_card_controller, affected_card);
+  if (pcVar4->internal_card_id != damage_card)
+  {
+    return;
+  }
+  iVar5 = get_id(player, card);
+  iVar6 = check_for_special_ability(player, card, 0x1000000);
+  if ((iVar5 == 0x1c7a) || (bVar1 = false, iVar6 != 0))
+  {
+    bVar1 = true;
+  }
+  iVar6 = is_what(player, card, 0x80);
+  bVar2 = 0;
+  if (iVar6 != 0)
+  {
+    bVar2 = (pcVar3->targets[2].card != 0x1b2b) - 1U & 0x40;
+  }
+  iVar6 = (int)pcVar4->damage_source_player;
+  if (((iVar6 == player) && (pcVar4->damage_source_card == card)) && (0 < pcVar4->info_slot))
+  {
+    if (pcVar4->damage_target_card == -1)
+    {
+      if (iVar5 != 0x1f2c)
+      {
+        return;
+      }
+      if ((pcVar4->token_status & 0x140000) == 0)
+      {
+        return;
+      }
+      add_counters(player, card, player, card, COUNTER_P1_P1, pcVar4->info_slot);
+      mill((int)pcVar4->damage_target_player, pcVar4->info_slot);
+      pcVar4->info_slot = 0;
+      return;
+    }
+    if (!bVar1)
+    {
+      return;
+    }
+    pcVar9 = in_play((int)pcVar4->damage_target_player, pcVar4->damage_target_card);
+    if (pcVar9 == NULL)
+    {
+      return;
+    }
+    iVar5 = pcVar3->targets[1].player;
+    if (iVar5 < 2)
+    {
+      pcVar3->targets[1].player = 2;
+      iVar5 = 2;
+    }
+    else if (9 < iVar5)
+    {
+      return;
+    }
+    pcVar3->targets[iVar5].player = (int)pcVar4->damage_target_player;
+    pcVar3->targets[iVar5].card = pcVar4->damage_target_card;
+    pcVar3->targets[1].player = pcVar3->targets[1].player + 1;
+    return;
+  }
+  if (iVar5 == 0x214b)
+  {
+    if ((pcVar4->damage_target_player == player) && (pcVar4->damage_target_card == card))
+    {
+      iVar10 = pcVar4->info_slot;
+      if (iVar10 < 1)
+      {
+        pcVar9 = get_card_instance(iVar6, pcVar4->damage_source_card);
+        iVar10 = pcVar9->targets[0x10].player;
+        if (0 < iVar10)
+          goto LAB_026e1828;
+      }
+      else
+      {
+      LAB_026e1828:
+        if (pcVar3->targets[9].player < 0)
+        {
+          pcVar3->targets[9].player = 0;
+        }
+        pcVar3->targets[9].player = pcVar3->targets[9].player + iVar10;
+      }
+      pcVar4->info_slot = 0;
+    }
+  }
+  else if (iVar5 == 0x92)
+  {
+    if ((pcVar4->damage_target_player == player) && (pcVar4->damage_target_card == -1))
+    {
+      iVar7 = pcVar4->info_slot;
+      type = COUNTER_VITALITY;
+      goto LAB_026e17e9;
+    }
+  }
+  else if (iVar5 == 0x1ab3)
+  {
+    if (((int)pcVar4->damage_target_player == 1 - player) && (pcVar4->damage_target_card == -1))
+    {
+      iVar7 = pcVar4->info_slot;
+      type = COUNTER_P1_P1;
+    LAB_026e17e9:
+      add_counters(player, card, player, card, type, iVar7);
+    }
+  }
+  else if (((iVar5 == 0x1c9c) && ((int)pcVar4->damage_target_player == 1 - player)) &&
+           (iVar6 == player))
+  {
+    iVar7 = pcVar4->info_slot;
+    type = COUNTER_THEFT;
+    goto LAB_026e17e9;
+  }
+  iVar6 = is_what(player, card, 0x80);
+  if ((((iVar6 != 0) && (pcVar3->targets[2].card == 0x44)) &&
+       (iVar6 = (int)pcVar4->damage_target_player, iVar6 == pcVar3->targets[0].player)) &&
+      (iVar10 = pcVar4->damage_target_card, iVar10 == pcVar3->targets[0].card))
+  {
+    amount = pcVar4->info_slot;
+    if (iVar10 == -1)
+    {
+      iVar6 = life[iVar6];
+      if (iVar6 < amount)
+      {
+      LAB_026e1a62:
+        amount = iVar6;
+      }
+    }
+    else
+    {
+      iVar6 = get_toughness(iVar6, iVar10);
+      if (iVar6 < amount)
+      {
+        iVar6 = get_toughness(pcVar3->targets[0].player, pcVar3->targets[0].card);
+        goto LAB_026e1a62;
+      }
+    }
+    gain_life(player, amount);
+    kill_card(player, card, KILL_EXILE);
+  }
+  iVar6 = is_what(player, card, 0x80);
+  if (((iVar6 != 0) && (pcVar3->targets[2].card == 0x1e6a)) &&
+      (iVar6 = get_id((int)pcVar4->damage_source_player, pcVar4->damage_source_card),
+       iVar6 == 0x1e6a))
+  {
+    gain_life(player, pcVar4->info_slot);
+  }
+  iVar6 = is_what(player, card, 0x80);
+  if (((iVar6 != 0) && (pcVar3->targets[1].card == 0x2059)) &&
+      (((int)pcVar4->damage_source_player == pcVar3->targets[0].player &&
+        (((pcVar4->damage_source_card == pcVar3->targets[0].card && (0 < pcVar4->info_slot)) &&
+          (iVar6 = pcVar4->damage_target_card, iVar6 != -1))))))
+  {
+    iVar10 = pcVar3->targets[1].player;
+    if (iVar10 < 2)
+    {
+      pcVar3->targets[1].player = 2;
+      iVar10 = 2;
+    }
+    else if (9 < iVar10)
+      goto LAB_026e15ce;
+    pcVar3->targets[iVar10].player = (int)pcVar4->damage_target_player;
+    pcVar3->targets[iVar10].card = iVar6;
+    pcVar3->targets[1].player = pcVar3->targets[1].player + 1;
+  }
+LAB_026e15ce:
+  if (((iVar5 == 0x2065 || iVar5 == 0x3245) || (iVar5 == 0x2525)) &&
+      (pcVar4->damage_target_player == player))
+  {
+    iVar7 = pcVar4->damage_target_card;
+    if ((iVar7 == card) && (0 < pcVar4->info_slot))
+    {
+      iVar10 = pcVar3->targets[1].player;
+      iVar6 = 1;
+      if (-1 < iVar10)
+      {
+        iVar6 = iVar10 + 1;
+      }
+      pcVar3->targets[1].player = iVar6;
+    }
+    if (iVar5 == 0x2234)
+    {
+    LAB_026e18f7:
+      if (((iVar7 != -1) || (pcVar4->info_slot < 1)) ||
+          (uVar8 = get_color((int)pcVar4->damage_source_player, pcVar4->damage_source_card),
+           (pcVar3->info_slot & uVar8) == 0))
+        goto LAB_026e1628;
+      if (pcVar3->targets[1].player < 0)
+      {
+        pcVar3->targets[1].player = 0;
+      }
+    LAB_026e172a:
+      pcVar3->targets[1].player = pcVar3->targets[1].player + 1;
+    }
+    else
+    {
+    LAB_026e1608:
+      if (iVar5 == 0x2494)
+      {
+        if ((((pcVar4->damage_source_player == player) && (pcVar4->damage_target_card != -1)) &&
+             (pcVar9 = in_play((int)pcVar4->damage_target_player, pcVar4->damage_target_card),
+              pcVar9 != NULL)) &&
+            (iVar5 = has_subtype((int)pcVar4->damage_source_player, pcVar4->damage_source_card,
+                                 SUBTYPE_ARCHER),
+             iVar5 != 0))
+        {
+          iVar5 = pcVar3->targets[1].player;
+          if (iVar5 < 2)
+          {
+            pcVar3->targets[1].player = 2;
+            iVar5 = 2;
+          }
+          else if (9 < iVar5)
+            goto LAB_026e1628;
+          pcVar3->targets[iVar5].player = (int)pcVar4->damage_target_player;
+          pcVar3->targets[iVar5].card = pcVar4->info_slot;
+          pcVar3->targets[1].player = pcVar3->targets[1].player + 1;
+        }
+      }
+      else if (iVar5 == 0x24ba)
+      {
+        if (((pcVar4->damage_source_player == player) && (pcVar4->damage_target_card == -1)) &&
+            ((pcVar9 = in_play(player, pcVar4->damage_source_card),
+              pcVar9 != NULL && ((iVar5 = count_counters((int)pcVar4->damage_source_player,
+                                                         pcVar4->damage_source_card, COUNTER_P1_P1),
+                                  0 < iVar5 && ((pcVar4->token_status & 0x140000) != 0))))))
+        {
+          if (pcVar3->targets[1].player < 0)
+          {
+            pcVar3->targets[1].player = 0;
+          }
+          goto LAB_026e172a;
+        }
+      }
+      else if ((((iVar5 == 0x2528) && (pcVar4->damage_source_player == player)) &&
+                (pcVar4->damage_source_card == card)) &&
+               ((pcVar4->damage_target_card == -1 && (5 < pcVar4->info_slot))))
+      {
+        pcVar3->targets[1].player = pcVar4->damage_target_player + 2;
+      }
+    }
+  }
+  else
+  {
+    if (iVar5 != 0x2234)
+      goto LAB_026e1608;
+    if (pcVar4->damage_target_player == player)
+    {
+      iVar7 = pcVar4->damage_target_card;
+      goto LAB_026e18f7;
+    }
+  }
+LAB_026e1628:
+  iVar5 = is_what(player, card, 0x80);
+  if ((((iVar5 != 0) && ((iVar5 = pcVar3->targets[2].card, iVar5 == 0x164 || (iVar5 == 0x755)))) &&
+       (pcVar4->damage_source_player == pcVar3->damage_source_player)) &&
+      (((pcVar4->damage_source_card == pcVar3->damage_source_card &&
+         (-1 < pcVar4->damage_target_card)) &&
+        (pcVar9 = in_play((int)pcVar4->damage_target_player, pcVar4->damage_target_card),
+         pcVar9 != NULL))))
+  {
+    iVar5 = pcVar3->targets[2].player;
+    if (iVar5 < 3)
+    {
+      pcVar3->targets[2].player = 3;
+      iVar5 = 3;
+    }
+    else if (9 < iVar5)
+      goto LAB_026e165f;
+    pcVar3->targets[iVar5].player = (int)pcVar4->damage_target_player;
+    pcVar3->targets[iVar5].card = pcVar4->damage_target_card;
+    pcVar3->targets[2].player = pcVar3->targets[2].player + 1;
+  }
+LAB_026e165f:
+  if (((bVar2 != 0) && (pcVar4->damage_target_card != -1)) &&
+      (pcVar3 = in_play((int)pcVar4->damage_target_player, pcVar4->damage_target_card),
+       pcVar3 != NULL))
+  {
+    kill_card((int)pcVar4->damage_target_player, pcVar4->damage_target_card, KILL_DESTROY);
+    return;
+  }
+  return;
 }
 
 int damage_creature(int tgt_player, int tgt_card, int32_t amt, int src_player, int src_card)
 {
-  // 0x4a66c0
+  unsigned short uVar1;
+  uint16_t uVar2;
+  uint16_t uVar3;
+  uint16_t uVar4;
+  uint32_t uVar5;
+  bool bVar6;
+  unsigned char bVar7;
+  card_instance_t *pcVar8;
+  card_instance_t *pcVar9;
+  int iVar10;
+  unsigned int uVar11;
+  type_t tVar12;
+  card_instance_t *pcVar13;
+  card_instance_t *pcVar14;
+  int iVar15;
+  unsigned int uVar16;
+  target_t *ptVar17;
+  unsigned int uStack_24;
+  type_t tStack_1c;
+  char cStack_18;
+  uint32_t uStack_14;
 
-  // This is the only place where damage cards are created; damage_creature_or_player() validates then forwards here, and damage_player() just forwards here.
-
-  if (tgt_player == -1 || src_player == -1 || amt <= 0)
-	return -1;
-
-  int whose_bf = tgt_card == -1 ? tgt_player : src_player;
-
-  int dmg_card = add_card_to_hand(whose_bf, damage_card);
-  if (dmg_card == -1)
-	return -1;
-
-  land_can_be_played |= LCBP_PENDING_DAMAGE_CARDS;
-
-  if (tgt_card != -1)
-	{
-	  card_instance_t* tgt_inst = get_card_instance(tgt_player, tgt_card);
-	  if ((tgt_inst->token_status & STATUS_SPECIAL_BLOCKER)
-		  && cards_data[tgt_inst->internal_card_id].code_pointer == (CardFunction)0x401010)	// card_multiblocker()
-		{
-		  tgt_player = tgt_inst->damage_source_player;
-		  tgt_card = tgt_inst->damage_source_card;
-		}
-	}
-
-  card_instance_t* dmg_inst = get_card_instance(whose_bf, dmg_card);
-  dmg_inst->state |= STATE_IN_PLAY;
-  --hand_count[whose_bf];
-  dmg_inst->damage_target_player = tgt_player;
-  dmg_inst->damage_target_card = tgt_card;
-  dmg_inst->info_slot = amt;
-  dmg_inst->damage_source_player = src_player;
-  dmg_inst->damage_source_card = src_card;
-
+  if ((src_player == -1 || amt < 1) || (tgt_player == -1))
+  {
+    return -1;
+  }
+  cStack_18 = (char)tgt_player;
+  if (tgt_card == -1)
+  {
+    uStack_14 = add_card_to_hand(tgt_player, damage_card);
+    if (uStack_14 == 0xffffffff)
+    {
+      return -1;
+    }
+    land_can_be_played = land_can_be_played | 2;
+    iVar10 = tgt_player;
+  }
+  else
+  {
+    uStack_14 = add_card_to_hand(src_player, damage_card);
+    if (uStack_14 == 0xffffffff)
+    {
+      return -1;
+    }
+    land_can_be_played = land_can_be_played | 2;
+    pcVar8 = get_card_instance(tgt_player, tgt_card);
+    iVar10 = src_player;
+    if (((pcVar8->token_status & 0x8000000) != 0) &&
+        (cards_data[pcVar8->internal_card_id].code_pointer == (CardFunction)0x401010))
+    {
+      cStack_18 = pcVar8->damage_source_player;
+      tgt_player = (int)cStack_18;
+      tgt_card = pcVar8->damage_source_card;
+    }
+  }
+  pcVar8 = get_card_instance(iVar10, uStack_14);
+  pcVar8->damage_source_player = (int8_t)src_player;
+  pcVar8->state = pcVar8->state | 2;
+  hand_count[iVar10] = hand_count[iVar10] + -1;
+  pcVar8->damage_target_player = cStack_18;
+  pcVar8->damage_target_card = tgt_card;
+  pcVar8->info_slot = amt;
+  pcVar8->damage_source_card = src_card;
   if (src_card == -1)
-	{
-	  dmg_inst->display_pic_csv_id = CARD_ID_SWAMP;
-	  dmg_inst->display_pic_num = 0;
-	  return dmg_card;
-	}
-
-  card_instance_t* src_inst = get_card_instance(src_player, src_card), *src_src_inst;
-
-  int src_iid, src_typ, attacking;
-  if (src_inst->internal_card_id == -1)
-	{
-	  src_iid = src_inst->backup_internal_card_id;
-	  src_src_inst = src_inst;
-
-	  src_typ = get_type_with_iid(src_player, src_card, src_iid);
-
-	  attacking = src_inst->state & STATE_ATTACKING;
-
-	  int csvid = cards_data[src_iid].id;
-	  dmg_inst->display_pic_csv_id = csvid;
-	  dmg_inst->display_pic_num = get_card_image_number(csvid, src_player, src_card);
-	}
-  else if (src_inst->internal_card_id == activation_card)
-	{
-	  // An activation card.
-
-	  src_iid = src_inst->original_internal_card_id;
-	  src_src_inst = get_card_instance(src_inst->parent_controller, src_inst->parent_card);
-
-	  src_typ = get_type_with_iid(src_inst->parent_controller, src_inst->parent_card, src_iid);
-
-	  attacking = 0;
-
-	  dmg_inst->display_pic_csv_id = src_inst->display_pic_csv_id;
-	  dmg_inst->display_pic_num = src_inst->display_pic_num;
-
-	  dmg_inst->damage_source_player = src_inst->parent_controller;
-	  dmg_inst->damage_source_card = src_inst->parent_card;
-	}
-  else if (cards_data[src_inst->internal_card_id].id == 902
-		   || cards_data[src_inst->internal_card_id].id == 903
-		   || cards_data[src_inst->internal_card_id].id == 907)
-	{
-	  /* An effect card.  Hopefully it's dealing damage the same turn it was created, or its source is still in play, otherwise we may end up looking at the
-	   * wrong card's special_flags2 and sp_keywords.  I can't think of anything that leaves a damage-dealing legacy behind that lasts longer than eot. */
-
-	  src_iid = src_inst->original_internal_card_id;
-	  src_src_inst = get_card_instance(src_inst->damage_source_player, src_inst->damage_source_card);
-
-	  src_typ = get_type_with_iid(src_inst->damage_source_player, src_inst->damage_source_card, src_iid);
-
-	  attacking = 0;
-
-	  dmg_inst->display_pic_csv_id = src_inst->display_pic_csv_id;
-	  dmg_inst->display_pic_num = src_inst->display_pic_num;
-	}
+  {
+    pcVar8->display_pic_csv_id = 0xef;
+    pcVar8->display_pic_num = 0;
+    return uStack_14;
+  }
+  pcVar9 = get_card_instance(src_player, src_card);
+  iVar10 = pcVar9->internal_card_id;
+  if (iVar10 == -1)
+  {
+    uVar1 = pcVar9->backup_internal_card_id;
+    tStack_1c = get_type_with_iid(src_player, src_card, (unsigned int)uVar1);
+    uStack_24 = pcVar9->state;
+    uVar11 =
+        (uint16_t)cards_data[uVar1].id | ((uint32_t)(uint16_t)cards_data[uVar1].reserved2 << 16);
+  LAB_026e1dec:
+    uStack_24 = uStack_24 & 4;
+    pcVar8->display_pic_csv_id = (uint16_t)uVar11;
+    iVar10 = get_card_image_number(uVar11 & 0xffff, src_player, src_card);
+    pcVar8->display_pic_num = (uint16_t)iVar10;
+    iVar10 = get_color(src_player, src_card);
+    bVar7 = (unsigned char)iVar10;
+    bVar6 = true;
+    pcVar14 = pcVar9;
+    if ((tStack_1c & TYPE_ARTIFACT) != TYPE_NONE)
+    {
+      bVar7 = bVar7 | 0x40;
+    }
+  }
   else
-	{
-	  // A normal card.
-
-	  src_iid = src_inst->internal_card_id;
-	  src_src_inst = src_inst;
-
-	  src_typ = get_type_with_iid(src_player, src_card, src_iid);
-
-	  attacking = src_inst->state & STATE_ATTACKING;
-
-	  int csvid = cards_data[src_iid].id;
-	  dmg_inst->display_pic_csv_id = csvid;
-	  dmg_inst->display_pic_num = get_card_image_number(csvid, src_player, src_card);
-	}
-
-  int src_colorbits = get_color(src_player, src_card);
-  if (src_typ & TYPE_ARTIFACT)
-	src_colorbits |= COLOR_TEST_ARTIFACT;
-
-  dmg_inst->initial_color = dmg_inst->color = src_colorbits;
-
-  dmg_inst->eot_toughness = dmg_card;
-
-  if (attacking)
-	{
-	  if (current_phase == PHASE_FIRST_STRIKE_DAMAGE)
-		dmg_inst->token_status |= STATUS_FIRST_STRIKE_DAMAGE;
-
-	  if (current_phase == PHASE_NORMAL_COMBAT_DAMAGE)
-		dmg_inst->token_status |= STATUS_COMBAT_DAMAGE;
-	}
-
-  /* For future use - store card's type, keyword, and sp_keyword abilities.
-   * Only permanents can be humiliated or have sp_keyword abilities, since both share storage with the targets array, and instants and sorceries, in general,
-   * actually use those for targets.  Instants and sorceries that actually *do* have a sp_keyword that affects damage dealing (currently deathtouch, wither,
-   * infect, rfg_when_damage, and lifelink) need to be special-cased here.  Right now the only one that exists is Puncture Blast (wither). */
-  dmg_inst->targets[3].player = src_typ;
-  dmg_inst->targets[3].card = 0;
-
-
-	if ( (!(src_typ & TYPE_PERMANENT) || is_humiliated_by_instance(src_src_inst)) && cards_data[src_iid].id != CARD_ID_PUNCTURE_BLAST
-	  ){
-		// Check for a non-humiliated Soulfire Grand Master
-		int sgm_flag = 0;
-		int i;
-		for(i=0; i<active_cards_count[src_player]; i++){
-			if( in_play(src_player, i) && get_id(src_player, i) == CARD_ID_SOULFIRE_GRAND_MASTER && ! is_humiliated(src_player, i) ){
-				sgm_flag = 1;
-				break;
-			}
-		}
-		if( ! sgm_flag ){
-			dmg_inst->regen_status = 0;
-			dmg_inst->targets[16].card = 0;
-		}
-	}
+  {
+    if (iVar10 == activation_card)
+    {
+      uVar5 = pcVar9->original_internal_card_id;
+      pcVar14 = get_card_instance(pcVar9->parent_controller, pcVar9->parent_card);
+      tStack_1c = get_type_with_iid(pcVar9->parent_controller, pcVar9->parent_card, uVar5);
+      uVar4 = pcVar9->display_pic_csv_id;
+      pcVar8->display_pic_csv_id = uVar4;
+      pcVar8->display_pic_num = pcVar9->display_pic_num;
+      pcVar8->damage_source_player = (int8_t)pcVar9->parent_controller;
+      pcVar8->damage_source_card = pcVar9->parent_card;
+    }
+    else
+    {
+      uVar2 = cards_data[iVar10].id;
+      if ((1 < (unsigned short)(uVar2 - 0x386)) && (uVar2 != 0x38b))
+      {
+        tStack_1c = get_type_with_iid(src_player, src_card, iVar10);
+        uStack_24 = pcVar9->state;
+        uVar11 = (uint16_t)cards_data[iVar10].id |
+                 ((uint32_t)(uint16_t)cards_data[iVar10].reserved2 << 16);
+        goto LAB_026e1dec;
+      }
+      uVar5 = pcVar9->original_internal_card_id;
+      pcVar14 = get_card_instance((int)pcVar9->damage_source_player, pcVar9->damage_source_card);
+      tStack_1c =
+          get_type_with_iid((int)pcVar9->damage_source_player, pcVar9->damage_source_card, uVar5);
+      uVar3 = pcVar9->display_pic_csv_id;
+      pcVar8->display_pic_csv_id = uVar3;
+      pcVar8->display_pic_num = pcVar9->display_pic_num;
+    }
+    iVar10 = get_color(src_player, src_card);
+    bVar7 = (unsigned char)iVar10;
+    if ((tStack_1c & TYPE_ARTIFACT) == TYPE_NONE)
+    {
+      pcVar8->color = bVar7;
+      pcVar8->initial_color = bVar7;
+      pcVar8->eot_toughness = uStack_14;
+      bVar6 = false;
+      goto LAB_026e1e6b;
+    }
+    uStack_24 = 0;
+    bVar6 = false;
+    bVar7 = bVar7 | 0x40;
+  }
+  pcVar8->color = bVar7;
+  pcVar8->initial_color = bVar7;
+  pcVar8->eot_toughness = uStack_14;
+  if (uStack_24 != 0)
+  {
+    uVar11 = pcVar8->token_status;
+    if (current_phase == 0x19)
+    {
+      pcVar8->token_status = uVar11 | 0x100000;
+    }
+    else
+    {
+      if (current_phase == 0x1a)
+      {
+        uVar11 = uVar11 | 0x40000;
+        pcVar8->token_status = uVar11;
+      }
+      if ((uVar11 & 0x140000) == 0)
+        goto LAB_026e1e6b;
+    }
+    iVar10 = check_special_flags(src_player, src_card, 0x40);
+    if (iVar10 != 0)
+    {
+      pcVar8->targets[4].player = 1 - src_player;
+      iVar10 = planeswalker_its_attacking(src_player, src_card);
+      pcVar8->targets[4].card = iVar10;
+    }
+  }
+LAB_026e1e6b:
+  if (pcVar8->damage_target_card < 0)
+  {
+    pcVar8->targets[3].card = 0;
+    pcVar8->targets[3].player = tStack_1c;
+    tVar12 = TYPE_NONE;
+  }
   else
-	{
-	  dmg_inst->regen_status = src_src_inst->regen_status & ~KEYWORD_NONABILITIES;
-	  if (src_src_inst->targets[16].card == -1)
-		dmg_inst->targets[16].card = 0;
-	  else
-		dmg_inst->targets[16].card = src_src_inst->targets[16].card;
-	}
-
-  // Copy of the first 5 targets of the damage source. Needed for Bronze Horse
-  // - Why?  What's wrong with looking at get_card_instance(damage->damage_source_player, damage->damage_source_card)?
-  int k;
-  for (k = MIN(src_inst->number_of_targets, 5); k >= 0; --k)
-    dmg_inst->targets[k+5] = src_inst->targets[k];
-
-  return dmg_card;
+  {
+    pcVar13 = get_card_instance((int)pcVar8->damage_target_player, pcVar8->damage_target_card);
+    pcVar8->targets[3].player = tStack_1c;
+    pcVar8->targets[3].card = 0;
+    if (pcVar13 == NULL)
+    {
+      tVar12 = TYPE_NONE;
+    }
+    else
+    {
+      tVar12 = get_type((int)pcVar8->damage_target_player, pcVar8->damage_target_card);
+    }
+  }
+  pcVar8->targets[5].card = tVar12;
+  pcVar8->regen_status = pcVar14->regen_status & 0x60ffffff;
+  pcVar8->ext->sp_keywords = pcVar14->ext->sp_keywords;
+  if ((((tStack_1c & TYPE_PERMANENT) == TYPE_NONE) &&
+       (iVar10 = is_planeswalker(src_player, src_card), iVar10 == 0)) &&
+      (iVar10 = 0, 0 < active_cards_count[src_player]))
+  {
+    do
+    {
+      pcVar14 = in_play(src_player, iVar10);
+      if ((pcVar14 != NULL) && (iVar15 = is_humiliated(src_player, iVar10, AL_STATIC), iVar15 == 0))
+      {
+        iVar15 = get_id(src_player, iVar10);
+        if ((iVar15 == 0x3927) || (iVar15 = get_id(src_player, iVar10), iVar15 == 0x58f4))
+        {
+        LAB_026e2086:
+          pcVar8->ext->sp_keywords = pcVar8->ext->sp_keywords | 2;
+          break;
+        }
+        iVar15 = get_id(src_player, iVar10);
+        if (iVar15 == 0x47e5)
+        {
+          uVar11 = get_color(src_player, src_card);
+          uVar16 = get_sleighted_color_test(src_player, iVar10, 0x10);
+          if ((uVar11 & uVar16) != 0)
+            goto LAB_026e2086;
+        }
+      }
+      iVar10 = iVar10 + 1;
+    } while (iVar10 < active_cards_count[src_player]);
+  }
+  pcVar8->targets[7].player = 0;
+  if (-1 < tgt_card)
+  {
+    uVar11 = (unsigned int)pcVar9->number_of_targets;
+    if (uVar11 != 9 && 8 < pcVar9->number_of_targets)
+    {
+      uVar11 = 9;
+    }
+    ptVar17 = pcVar9->targets + uVar11;
+    do
+    {
+      if ((ptVar17->player == tgt_player) && (ptVar17->card == tgt_card))
+      {
+        pcVar8->targets[7].player = 1;
+        break;
+      }
+      ptVar17 = ptVar17 + -1;
+    } while ((target_t *)&pcVar9->internal_card_id != ptVar17);
+  }
+  if ((bVar6) && (iVar10 = is_being_cast(src_player, src_card), iVar10 != 0))
+  {
+    pcVar8->targets[7].player = pcVar8->targets[7].player | 2;
+    return uStack_14;
+  }
+  return uStack_14;
 }
 
 // Convenient frontend to damage_creature().  Deals dmg damage to targets[0].player/card.  Promotes to parent if an activation card.  Does not validate.
@@ -427,350 +579,532 @@ static int remove_indestructible_until_eot(int player, int card, event_t event){
 
 int effect_damage(int player, int card, event_t event)
 {
-  // 0x4a0f00
+  uint16_t uVar1;
+  uint16_t uVar2;
+  short sVar3;
+  uint16_t uVar4;
+  int32_t iVar5;
+  card_instance_t *pcVar6;
+  unsigned int uVar7;
+  int iVar8;
+  int iVar9;
+  int iVar10;
+  int iVar11;
+  unsigned int uVar12;
+  int iVar13;
+  int32_t iVar14;
+  card_instance_t *pcStack_ec;
 
-  /* Local data:
-   * damage_source_player/damage_source_card: source of damage
-   * damage_target_player/damage_target_card: object being damaged.  (This about the *only* card or effect where those four names are correct.)
-   * info_slot: amount of damage to be dealt
-   * initial_color: color of damage source at the time it dealt damage.  Querying the source is usually slightly more accurate, occasionally much less.
-   * state & STATE_TAPPED: this damage card has applied its damage, either marking damage on a creature, making a player lose life, removing loyalty counters
-   *                       from a planeswalker, or adding -1/-1 or poison counters from wither or infect; and giving life from lifelink.  I seem to recall
-   *                       some exe cards setting STATE_TAPPED when they prevent damage from a damage card instead of setting info_slot to 0; that convention
-   *                       hasn't been followed in C code.
-   * display_pic_csv_id: csvid of damage source at the time it dealt damage.
-   * regen_status: keywords of damage source at the time it dealt damage.  This effect is special-cased in get_abilities to never recalculate.
-   * targets[3].player: types of damage source (i.e. artifact/creature/enchantment/instant/land/planeswalker/sorcery) at the time it dealt damage.
-   * targets[3].card: &0x10: if a creature is dealt damage by this card, it can't regenerate until end of turn.
-   * targets[4].player/card: Planeswalker to deal damage to instead of player.  Only valid once the attacking_planeswalker effect card resolves.  Ideally,
-   *                         that should instead reattach the damage card to the planeswalker, but just about everything during the damage prevention and
-   *                         resolution steps assume that damage to anything but a player is to a creature, and would likely get confused.  (On the other
-   *                         hand, I'd expect them all to assume that damage to a player is always to that player, too, and nothing's obviously broken.)
-   *                         Failing that, it would seem to make sense to assign this during damage_creature() when the damage card is created, rather than
-   *                         waiting for the attacking_planeswalker effect card to do so.  It would certainly simplify Vraska the Unseen, though probably
-   *                         all the complexity there would just have to move to damage_creature().  Maybe if something else needs to be made to check.
-   * targets[5]-targets[9]: copy of the damage source firts 5 targets. Needed for Bronze Horse.
-   * targets[16].card: special keywords of damage source at the time it dealt damage.  Only set if the damage source was a permanent.
-   */
+  /* DWARF locals share this frame offset; keep every typed view. */
+  union
+  {
+    test_definition_t test;
+    token_generation_t token;
+    uint8_t bytes[216];
+  } recovered_stack_token;
 
-  card_instance_t* instance;
-  int abils;
-
-  if ((land_can_be_played & LCBP_DAMAGE_PREVENTION)
-	  && affect_me(player, card)
-	  && (instance = get_card_instance(player, card))
-	  && instance->damage_target_card != -1
-	  && ((abils = get_abilities(instance->damage_target_player, instance->damage_target_card, EVENT_ABILITIES, -1))
-		  & (KEYWORD_PROT_SORCERIES|KEYWORD_PROT_INTERRUPTS|KEYWORD_PROT_INSTANTS|KEYWORD_SHROUD|KEYWORD_PROT_ARTIFACTS|KEYWORD_PROT_COLORED)))
-	{
-	  int dsp = instance->damage_source_player;
-	  int dsc = instance->damage_source_card;
-
-	  int source_clr = get_color(dsp, dsc) & COLOR_TEST_ANY_COLORED;
-
-	  if ((source_clr & (abils >> 10))
-		  || ((abils & KEYWORD_PROT_ARTIFACTS)
-			  && (instance->targets[3].player & TYPE_ARTIFACT)))
-		{
-		  get_card_instance(player, card)->info_slot = 0;
-		  kill_card(player, card, KILL_BURY);
-		}
-	}
-
-  if (event == EVENT_DEAL_DAMAGE
-	  && affect_me(player, card)
-	  && (instance = get_card_instance(player, card))
-	  && !(instance->state & STATE_TAPPED))
-	{
-	  instance->state |= STATE_TAPPED;
-	  instance->token_status |= STATUS_INVISIBLE_FX;
-
-	  if (instance->info_slot <= 0)
-		return 0;
-
-	  card_instance_t* damaged;
-	  // If dealing combat damage to a planeswalker, targets[4] will hold it.  Otherwise, copy from damage_target_player/card.
-	  if (instance->targets[4].player < 0 || instance->targets[4].card < 0)
-		{
-		  instance->targets[4].player = instance->damage_target_player;
-		  instance->targets[4].card = instance->damage_target_card;
-		  if (instance->targets[4].card == -1)
-			damaged = NULL;
-		  else if (!(damaged = in_play(instance->targets[4].player, instance->targets[4].card)))	// creature being damaged is no longer in play
-			return 0;
-		}
-	  else
-		{
-		  /* Rule 506.4: A permanent is removed from combat... if it's a planeswalker that's being attacked and stops being a planeswalker.... A planeswalker
-		   * that's removed from combat stops being attacked.
-		   *
-		   * Rule 506.4c: If a creature is attacking a planeswalker, removing that planeswalker from combat doesn't remove that creature from combat. It
-		   * continues to be an attacking creature, although it is attacking neither a player nor a planeswalker. It may be blocked. If it is unblocked, it will
-		   * deal no combat damage. */
-		  if (!(damaged = in_play(instance->targets[4].player, instance->targets[4].card))
-			  || !is_planeswalker(instance->targets[4].player, instance->targets[4].card))
-			return 0;
-		}
-
-		if( instance->info_slot > get_trap_condition(player, TRAP_MAX_DAMAGE_DEALT) ||
-			instance->info_slot > get_trap_condition(1-player, TRAP_MAX_DAMAGE_DEALT)
-		  ){
-			set_trap_condition(player, TRAP_MAX_DAMAGE_DEALT, instance->info_slot);
-			set_trap_condition(1-player, TRAP_MAX_DAMAGE_DEALT, instance->info_slot);
-		}
-
-	  if (instance->targets[4].card == -1)
-		{	// Damaging a player.
-		  play_sound_effect(WAV_LIFELOSS);
-
-		  /* There was much code here to store the damage source type, source, target, and amount for use with the original wording and implementations for
-		   * Reverse Damage, Reverse Polarity, and Simulacrum.  All three have now been reimplemented with their modern wording (which is no longer
-		   * retroactive); nothing else looks at the data.  It does get backed up for AI speculation and stored in save games, so we'll be able to use the
-		   * storage space - and at 9664 bytes, there's plenty of it - for globals once the places where it's initialized get removed. */
-
-		  int damaged_player = instance->targets[4].player;
-		  int src_p = instance->damage_source_player;
-		  int src_c = instance->damage_source_card;
-		  int damage_dealt = instance->info_slot;
-
-			// Record various types of damage taken
-			increase_trap_condition(damaged_player, TRAP_DAMAGE_TAKEN, damage_dealt);
-
-		  if (instance->targets[3].player & TYPE_ARTIFACT)
-			increase_trap_condition(damaged_player, TRAP_ARTIFACT_DAMAGE_TAKEN, damage_dealt);
-
-		  if (instance->targets[3].player & TYPE_PERMANENT)
-			{
-				if( damaged_player == 0 ){
-					set_special_flags2(src_p, src_c, SF2_HAS_DAMAGED_PLAYER0);
-				}
-				if( damaged_player == 1 ){
-					set_special_flags2(src_p, src_c, SF2_HAS_DAMAGED_PLAYER1);
-				}
-				if ((instance->targets[3].player & TYPE_CREATURE) && (instance->token_status & (STATUS_COMBAT_DAMAGE|STATUS_FIRST_STRIKE_DAMAGE)))
-				{
-				  increase_trap_condition(damaged_player, TRAP_DAMAGED_BY_CREATURE, 1);
-
-				  if (has_subtype(src_p, src_c, SUBTYPE_ROGUE))
-					increase_trap_condition(src_p, TRAP_PROWL_ROGUE, 1);
-
-				  if (has_subtype(src_p, src_c, SUBTYPE_GOBLIN))
-					increase_trap_condition(src_p, TRAP_PROWL_GOBLIN, 1);
-
-				  if (has_subtype(src_p, src_c, SUBTYPE_FAERIE))
-					increase_trap_condition(src_p, TRAP_PROWL_FAERIE, 1);
-				}
-			}
-
-		  if (damaged_player != src_p
-			  && (instance->initial_color & COLOR_TEST_RED)
-			  && (instance->targets[3].player & (TYPE_SPELL | TARGET_TYPE_PLANESWALKER)))
-			increase_trap_condition(src_p, TRAP_CHANDRAS_PHOENIX, 1);
-
-		  /* Even if this is reduced by EVENT_DAMAGE_REDUCTION below - that's for Ali from Cairo-like effects, and the ruling is that the damage is still dealt
-		   * but the damaged player's life total doesn't change (or doesn't change as much).  Similarly, Platinum Emperion will prevent the life total from
-		   * changing in lose_life() below, but the damage is still dealt and lifelink still applies. */
-		  if (instance->targets[16].card & SP_KEYWORD_LIFELINK)
-			gain_life(instance->damage_source_player, damage_dealt);
-
-		  EXE_DWORD_PTR(0x4EF1EC)[damaged_player] += damage_dealt;	// damage_taken_this_turn[]
-
-		  if (instance->regen_status & KEYWORD_INFECT)
-			poison(damaged_player, damage_dealt);
-		  else
-			{
-			  int new_life = life[damaged_player] - damage_dealt;
-
-			  if (new_life < 7)
-				new_life = dispatch_event_with_initial_event_result(player, card, EVENT_DAMAGE_REDUCTION, new_life);
-
-			  if (new_life < life[damaged_player])
-				lose_life(damaged_player, life[damaged_player] - new_life);
-			  else if (new_life > life[damaged_player])
-				gain_life(damaged_player, new_life - life[damaged_player]);
-			}
-			// Special effects when dealing damage, if they are unique for a card they will be implemented here, to save Flags
-			/*
-			 Chandra, Roaring Flame
-			-7: Chandra, Roaring Flame deals 6 damage to each opponent.
-				Each player dealt damage this way gets an emblem with
-				"At the beginning of your upkeep, this emblem deals 3 damage to you.
-			*/
-			if (instance->display_pic_csv_id == CARD_ID_CHANDRA_ROARING_FLAME &&
-				instance->targets[10].card == CARD_ID_CHANDRA_ROARING_FLAME
-			  ){
-				token_generation_t token;
-				default_token_definition(player, card, CARD_ID_CHANDRA_ROARING_FLAME_EMBLEM, &token);
-				token.t_player = damaged_player;
-				generate_token(&token);
-			}
-			/*
-			 Aurelia's Fury
-			Aurelia's Fury deals X damage divided as you choose among any number of target creatures and/or players.
-			Tap each creature dealt damage this way. Players dealt damage this way can't cast noncreature spells this turn.
-			*/
-			if (instance->display_pic_csv_id == CARD_ID_AURELIAS_FURY &&
-				instance->targets[10].card == CARD_ID_AURELIAS_FURY
-			  ){
-				int card_added = generate_reserved_token_by_id(player, CARD_ID_SPECIAL_EFFECT);//128
-				card_instance_t *legacy = get_card_instance(player, card_added);
-				legacy->targets[2].player = 128;
-				legacy->targets[3].player = damaged_player;
-				legacy->targets[2].card = CARD_ID_AURELIAS_FURY;
-				create_card_name_legacy(player, card_added, CARD_ID_AURELIAS_FURY);
-			}
-
-		}
-	  else
-		{	// Damaging a creature or a planeswalker.
-		  if (instance->targets[16].card & SP_KEYWORD_LIFELINK)
-			gain_life(instance->damage_source_player, instance->info_slot);
-
-		  if (!is_what(instance->targets[4].player, instance->targets[4].card, TYPE_CREATURE))
-			{
-			  if (is_planeswalker(instance->targets[4].player, instance->targets[4].card))
-				remove_counters(instance->targets[4].player, instance->targets[4].card, COUNTER_LOYALTY, instance->info_slot);
-			  // Otherwise, no effect.
-			}
-		  else
-			{
-			  if (instance->targets[3].card & DMG_MUST_ATTACK_IF_DEALT_DAMAGE_THIS_WAY)
-				pump_ability_until_eot(instance->damage_source_player, instance->damage_source_card,
-								instance->targets[4].player, instance->targets[4].card, 0, 0, 0, SP_KEYWORD_MUST_ATTACK);
-
-			  if (instance->targets[3].card & DMG_TAP_IF_DEALT_DAMAGE_THIS_WAY)
-				tap_card(instance->targets[4].player, instance->targets[4].card);
-
-			  //If a creature dealt damage by the targeted creature would die this turn, exile that creature instead.
-			  if (instance->targets[3].card & DMG_EXILE_IF_LETHALLY_DAMAGED_THIS_WAY){
-					set_special_flags(instance->targets[4].player, instance->targets[4].card, SF_LETHAL_DAMAGE_EXILE);
-					exile_if_would_be_put_into_graveyard(instance->damage_source_player, instance->damage_source_card,
-														 instance->targets[4].player, instance->targets[4].card, 1);
-			  }
-			  if (instance->targets[3].card & DMG_CANT_REGENERATE_IF_DEALT_DAMAGE_THIS_WAY )
-				cannot_regenerate_until_eot(instance->damage_source_player, instance->damage_source_card,
-											instance->targets[4].player, instance->targets[4].card);
-
-			  if (instance->targets[16].card & SP_KEYWORD_DEATHTOUCH)
-				{
-					int sf = SF_LETHAL_DAMAGE_DESTROY;
-					// A bletcherous special case, but better than wasting a sp_keyword_t bit in addition to the special_flags_t bit
-					if( instance->display_pic_csv_id == CARD_ID_PHAGE_THE_UNTOUCHABLE ||
-						instance->display_pic_csv_id == CARD_ID_MEPHITIC_OOZE )
-					{
-						if( instance->token_status & (STATUS_COMBAT_DAMAGE|STATUS_FIRST_STRIKE_DAMAGE) ){
-							sf = SF_LETHAL_DAMAGE_BURY;
-						}
-					}
-					set_special_flags(instance->targets[4].player, instance->targets[4].card, sf);
-				}
-
-			  if (instance->targets[16].card & SP_KEYWORD_RFG_WHEN_DAMAGE)
-				set_special_flags(instance->targets[4].player, instance->targets[4].card, SF_EXILE_IF_DAMAGED);
-
-
-				//Special cases. As long as it's an effect carried by only one card, there's no point of wasting flags
-				/*
-				 Pathway Arrows English
-				Equipped creature has "{2}, {T}: This creature deals 1 damage to target creature.
-									If a colorless creature is dealt damage this way, tap it."
-				*/
-			  if( instance->targets[10].card == CARD_ID_PATHWAY_ARROWS &&
-					get_color(instance->targets[4].player, instance->targets[4].card) == 0
-				  ){
-					tap_card(instance->targets[4].player, instance->targets[4].card);
-			  }
-				/* Burn from Within	|X|R
-				 * ~ deals X damage to target creature or player. If a creature is dealt damage this way,
-				 * it loses indestructible until end of turn. If that creature would die this turn, exile it instead. */
-			  if( instance->targets[10].card == CARD_ID_BURN_FROM_WITHIN ){
-					create_targetted_legacy_effect(instance->targets[4].player, instance->targets[4].card, &remove_indestructible_until_eot,
-													player, card);
-			  }
-				/* Illusory Ambushers
-				Whenever Illusory Ambusher is dealt damage, draw that many cards.*/
-			  if( get_id(instance->targets[4].player, instance->targets[4].card) == CARD_ID_ILLUSORY_AMBUSHER ){
-					draw_cards(instance->targets[4].player, instance->info_slot);
-			  }
-
-			  if ((instance->targets[16].card & SP_KEYWORD_WITHER)
-				  || (instance->regen_status & KEYWORD_INFECT))
-				{
-				  ++hack_silent_counters;
-				  add_minus1_minus1_counters(instance->targets[4].player, instance->targets[4].card, instance->info_slot);
-				  --hack_silent_counters;
-				}
-			  else
-				damaged->damage_on_card += instance->info_slot;
-			}
-
-		  if (ai_is_speculating != 1)
-			{
-			  play_sound_effect(WAV_DAMAGE);
-
-			  /* All this does is SendMessageA(hwnd_MainClass, 0x464u, 0xFFu, 0).  It's always called through a wrapper that checks ai_is_speculating != 1
-			   * (except from C where it's already been checked).  wndproc_MainClass responds by calling TENTATIVE_redisplay_all(0, 0xff) at 0x437ec0. */
-			  EXE_FN(void, 0x437e20, void)();
-			}
-		}
-	}
+  iVar11 = affected_card_controller;
+  if ((land_can_be_played & 4U) != 0)
+  {
+    if (card != affected_card)
+    {
+      return 0;
+    }
+    if (player != affected_card_controller)
+    {
+      return 0;
+    }
+    pcVar6 = get_card_instance(player, card);
+    if (pcVar6 != NULL)
+    {
+      iVar9 = pcVar6->targets[4].player;
+      if ((iVar9 < 0) && (pcVar6->targets[4].card < 0))
+      {
+      LAB_026e2736:
+        iVar9 = (int)pcVar6->damage_target_player;
+        iVar14 = pcVar6->damage_target_card;
+      }
+      else
+      {
+        if ((-1 < pcVar6->damage_target_player) && (-1 < pcVar6->damage_target_card))
+        {
+          iVar9 = is_planeswalker((int)pcVar6->damage_target_player, pcVar6->damage_target_card);
+          if (iVar9 == 0)
+            goto LAB_026e2736;
+          iVar9 = pcVar6->targets[4].player;
+        }
+        iVar14 = pcVar6->targets[4].card;
+      }
+      if (((((iVar14 != -1) && (uVar7 = get_abilities(iVar9, iVar14, EVENT_ABILITIES, -1),
+                                (uVar7 & 0x35f800) != 0)) &&
+            ((pcVar6->state & 0x100000) == 0)) &&
+           ((((((unsigned char)pcVar6->initial_color & 0x3e & (int)uVar7 >> 10) != 0 ||
+               ((uVar12 = pcVar6->targets[3].player,
+                 (uVar7 & 0x200000) != 0 && ((uVar12 & 2) != 0)))) ||
+              (((uVar7 & 0x10000) != 0 && ((uVar12 & 0x40) != 0)))) ||
+             ((((uVar7 & 0x100000) != 0 && ((uVar12 & 8) != 0)) ||
+               (((uVar7 & 0x40000) != 0 && ((uVar12 & 0x30) != 0)))))))) ||
+          ((iVar9 =
+                has_protection_from_impl(iVar9, iVar14, iVar11, card, IPF_DAMAGE, KEYWORD_0),
+            iVar9 != 0 && ((pcVar6->state & 0x100000) == 0))))
+      {
+        pcVar6->info_slot = 0;
+        kill_card(iVar11, card, KILL_BURY);
+      }
+    }
+  }
+  if (event != EVENT_DEAL_DAMAGE)
+  {
+    return 0;
+  }
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+  pcVar6 = get_card_instance(player, card);
+  if (pcVar6 == NULL)
+  {
+    return 0;
+  }
+  if ((pcVar6->state & 0x10) != 0)
+  {
+    return 0;
+  }
+  iVar11 = pcVar6->info_slot;
+  pcVar6->state = pcVar6->state | 0x10;
+  pcVar6->token_status = pcVar6->token_status | 0x10000;
+  if (iVar11 < 1)
+  {
+    return 0;
+  }
+  iVar9 = pcVar6->targets[4].player;
+  iVar8 = (int)pcVar6->damage_target_player;
+  if ((iVar9 < 0) || (iVar10 = pcVar6->targets[4].card, iVar10 < 0))
+  {
+  LAB_026e2761:
+    iVar9 = pcVar6->damage_target_card;
+    pcVar6->targets[4].player = iVar8;
+    pcVar6->targets[4].card = iVar9;
+    pcStack_ec = NULL;
+    if (iVar9 != -1)
+    {
+      pcStack_ec = in_play(iVar8, iVar9);
+      if (pcStack_ec == NULL)
+      {
+        return 0;
+      }
+      pcVar6->damage_target_player = (int8_t)pcVar6->targets[4].player;
+      pcVar6->damage_target_card = pcVar6->targets[4].card;
+    }
+  }
+  else
+  {
+    if ((-1 < pcVar6->damage_target_player) && (-1 < pcVar6->damage_target_card))
+    {
+      iVar9 = is_planeswalker(iVar8, pcVar6->damage_target_card);
+      if (iVar9 == 0)
+      {
+        iVar8 = (int)pcVar6->damage_target_player;
+        goto LAB_026e2761;
+      }
+      iVar10 = pcVar6->targets[4].card;
+      iVar9 = pcVar6->targets[4].player;
+    }
+    pcStack_ec = in_play(iVar9, iVar10);
+    if (pcStack_ec == NULL)
+    {
+      return 0;
+    }
+    iVar9 = is_planeswalker(pcVar6->targets[4].player, pcVar6->targets[4].card);
+    if (iVar9 == 0)
+    {
+      return 0;
+    }
+  }
+  iVar9 = get_trap_condition(player, 0x205);
+  if ((iVar9 < iVar11) || (iVar9 = get_trap_condition(1 - player, 0x205), iVar9 < iVar11))
+  {
+    set_trap_condition(player, 0x205, iVar11);
+    set_trap_condition(1 - player, 0x205, iVar11);
+  }
+  uVar7 = pcVar6->ext->sp_keywords;
+  if ((uVar7 & 2) != 0)
+  {
+    gain_life_from_lifelink((int)pcVar6->damage_source_player, iVar11);
+    uVar7 = pcVar6->ext->sp_keywords;
+  }
+  if ((uVar7 & 0x20000000) != 0)
+  {
+    generate_tokens_by_id((int)pcVar6->damage_source_player, -1, 0x4991, iVar11);
+  }
+  iVar9 = pcVar6->targets[4].card;
+  iVar8 = pcVar6->targets[4].player;
+  if (iVar9 != -1)
+  {
+    iVar9 = is_what(iVar8, iVar9, 2);
+    if (iVar9 == 0)
+    {
+      iVar9 = is_planeswalker(pcVar6->targets[4].player, pcVar6->targets[4].card);
+      if (iVar9 != 0)
+      {
+        iVar9 = check_for_special_ability(player, card, 0x40000);
+        iVar14 = 0;
+        if (iVar9 != 0)
+        {
+          iVar9 =
+              count_counters(pcVar6->targets[4].player, pcVar6->targets[4].card, COUNTER_LOYALTY);
+          iVar14 = iVar11 - iVar9;
+        }
+        remove_counters(player, card, pcVar6->targets[4].player,
+                                    pcVar6->targets[4].card, COUNTER_LOYALTY, iVar11);
+        if ((pcVar6->targets[3].card & 0x80) != 0)
+        {
+          set_special_flags(pcVar6->targets[4].player, pcVar6->targets[4].card, 0x200);
+          exile_if_would_be_put_into_graveyard(
+              (int)pcVar6->damage_source_player, pcVar6->damage_source_card,
+              pcVar6->targets[4].player, pcVar6->targets[4].card, 1);
+        }
+        iVar11 = check_for_special_ability(player, card, 0x40000);
+        if (iVar11 != 0)
+        {
+          pcVar6->state = pcVar6->state & 0xffffffef;
+          pcVar6->token_status = pcVar6->token_status & 0xfffeffff;
+          land_can_be_played = land_can_be_played | 2;
+          iVar5 = pcVar6->targets[4].player;
+          pcVar6->damage_target_card = -1;
+          pcVar6->damage_target_player = (int8_t)iVar5;
+          pcVar6->targets[4].card = -1;
+          pcVar6->targets[4].player = -1;
+          pcVar6->targets[5].player = 0;
+          pcVar6->info_slot = iVar14;
+        }
+        call_card_function(pcVar6->targets[4].player, pcVar6->targets[4].card,
+                           EVENT_STATIC_EFFECTS);
+      }
+    }
+    else
+    {
+      uVar7 = pcVar6->targets[3].card;
+      if ((uVar7 & 0x100) != 0)
+      {
+        pump_ability_until_eot((int)pcVar6->damage_source_player, pcVar6->damage_source_card,
+                               pcVar6->targets[4].player, pcVar6->targets[4].card, 0, 0, 0, 0x400);
+        uVar7 = pcVar6->targets[3].card;
+      }
+      if ((uVar7 & 0x40) != 0)
+      {
+        tap_card(pcVar6->targets[4].player, pcVar6->targets[4].card);
+        uVar7 = pcVar6->targets[3].card;
+      }
+      if ((uVar7 & 0x80) != 0)
+      {
+        set_special_flags(pcVar6->targets[4].player, pcVar6->targets[4].card, 0x200);
+        exile_if_would_be_put_into_graveyard((int)pcVar6->damage_source_player,
+                                             pcVar6->damage_source_card, pcVar6->targets[4].player,
+                                             pcVar6->targets[4].card, 1);
+        uVar7 = pcVar6->targets[3].card;
+      }
+      if ((uVar7 & 0x20) != 0)
+      {
+        cannot_regenerate_until_eot((int)pcVar6->damage_source_player, pcVar6->damage_source_card,
+                                    pcVar6->targets[4].player, pcVar6->targets[4].card);
+      }
+      uVar7 = pcVar6->ext->sp_keywords;
+      if ((uVar7 & 0x200) != 0)
+      {
+        uVar1 = pcVar6->display_pic_csv_id;
+        if ((uVar1 == 0x1916) || (iVar9 = 1, uVar1 == 0x1b04))
+        {
+          iVar9 = (-(unsigned int)((pcVar6->token_status & 0x140000) == 0) & 0xfffffff9) + 8;
+        }
+        set_special_flags(pcVar6->targets[4].player, pcVar6->targets[4].card, iVar9);
+        uVar7 = pcVar6->ext->sp_keywords;
+      }
+      if ((uVar7 & 0x100000) != 0)
+      {
+        set_special_flags(pcVar6->targets[4].player, pcVar6->targets[4].card, 0x10);
+      }
+      iVar14 = pcVar6->targets[10].card;
+      if (iVar14 == 0x3c28)
+      {
+        iVar9 = get_color(pcVar6->targets[4].player, pcVar6->targets[4].card);
+        if (iVar9 == 0)
+        {
+          tap_card(pcVar6->targets[4].player, pcVar6->targets[4].card);
+        }
+        iVar14 = pcVar6->targets[10].card;
+      }
+      if (iVar14 == 0x3d8f)
+      {
+        negate_ability_and_special_ability_until_eot(
+            (int)pcVar6->damage_source_player, pcVar6->damage_source_card,
+            pcVar6->targets[4].player, pcVar6->targets[4].card, KEYWORD_0, 0x800);
+        iVar14 = pcVar6->targets[10].card;
+      }
+      if (iVar14 == 0x441d)
+      {
+        pump_ability_until_eot_no_repeat((int)pcVar6->damage_source_player,
+                                         pcVar6->damage_source_card, pcVar6->targets[4].player,
+                                         pcVar6->targets[4].card, 0, 0x20);
+        iVar14 = pcVar6->targets[10].card;
+      }
+      if (iVar14 == 0x50eb)
+      {
+        uVar7 = get_color(pcVar6->targets[4].player, pcVar6->targets[4].card);
+        uVar12 = get_sleighted_color_test((int)pcVar6->damage_source_player,
+                                          pcVar6->damage_source_card, 0x10);
+        if ((uVar7 & uVar12) == 0)
+        {
+          new_default_test_definition(&recovered_stack_token.test, 1,
+                                      "Select a land to sacrifice.");
+          new_sacrifice((int)pcVar6->damage_source_player, pcVar6->damage_source_card,
+                        (int)pcVar6->damage_source_player, SAC_NO_CANCEL,
+                        &recovered_stack_token.test);
+        }
+      }
+      if (((pcVar6->ext->sp_keywords & 0x4000) == 0) && ((pcVar6->regen_status & 0x20000000) == 0))
+      {
+        uVar2 = pcStack_ec->damage_on_card;
+        pcStack_ec->damage_on_card = uVar2 + (short)iVar11;
+      }
+      else
+      {
+        hack_silent_counters = hack_silent_counters + 1;
+        add_counters(player, card, pcVar6->targets[4].player, pcVar6->targets[4].card,
+                                 COUNTER_M1_M1, iVar11);
+        hack_silent_counters = hack_silent_counters + -1;
+      }
+    }
+    if (ai_is_speculating == 1)
+    {
+      return 0;
+    }
+    play_sound_effect(WAV_DAMAGE);
+    EXE_FN(void, 0x437e20, void)();
+    return 0;
+  }
+  iVar10 = (int)pcVar6->damage_source_player;
+  iVar9 = pcVar6->damage_source_card;
+  increase_trap_condition(iVar8, 0, iVar11);
+  uVar7 = pcVar6->targets[3].player;
+  if ((uVar7 & 0x40) != 0)
+  {
+    increase_trap_condition(iVar8, 3, iVar11);
+    uVar7 = pcVar6->targets[3].player;
+  }
+  if ((uVar7 & 0x47) == 0)
+    goto LAB_026e280f;
+  if (iVar8 == 0)
+  {
+    iVar13 = 0x4000000;
+  LAB_026e2de5:
+    set_special_flags2(iVar10, iVar9, iVar13);
+    uVar7 = pcVar6->targets[3].player;
+  }
+  else if (iVar8 == 1)
+  {
+    iVar13 = 0x8000000;
+    goto LAB_026e2de5;
+  }
+  if (((uVar7 & 2) != 0) && ((pcVar6->token_status & 0x140000) != 0))
+  {
+    increase_trap_condition(iVar8, 0x605, 1);
+    iVar13 = has_subtype(iVar10, iVar9, SUBTYPE_ROGUE);
+    if (iVar13 != 0)
+    {
+      increase_trap_condition(iVar10, 0x601, 1);
+    }
+    iVar13 = has_subtype(iVar10, iVar9, SUBTYPE_GOBLIN);
+    if (iVar13 != 0)
+    {
+      increase_trap_condition(iVar10, 0x602, 1);
+    }
+    iVar13 = has_subtype(iVar10, iVar9, SUBTYPE_FAERIE);
+    if (iVar13 != 0)
+    {
+      increase_trap_condition(iVar10, 0x609, 1);
+    }
+    iVar9 = has_subtype(iVar10, iVar9, SUBTYPE_PIRATE);
+    if (iVar9 != 0)
+    {
+      increase_trap_condition(iVar10, 0x40a, 1);
+    }
+  }
+LAB_026e280f:
+  if (((iVar10 != iVar8) && ((pcVar6->initial_color & 0x10U) != 0)) &&
+      ((pcVar6->targets[3].player & 0x138U) != 0))
+  {
+    increase_trap_condition(iVar10, 0x603, 1);
+  }
+  *(int *)(iVar8 * 4 + 0x4ef1ec) = *(int *)(iVar8 * 4 + 0x4ef1ec) + iVar11;
+  if ((pcVar6->regen_status & 0x20000000) == 0)
+  {
+    iVar9 = life[iVar8];
+    iVar11 = iVar9 - iVar11;
+    if (iVar11 < 7)
+    {
+      iVar11 =
+          dispatch_event_with_initial_event_result(player, card, EVENT_DAMAGE_REDUCTION, iVar11);
+      iVar9 = life[iVar8];
+    }
+    if (iVar11 < iVar9)
+    {
+      if ((card_flags[iVar8] & 0x10) == 0)
+      {
+        lose_life(iVar8, iVar9 - iVar11);
+      }
+    }
+    else if (iVar9 < iVar11)
+    {
+      gain_life(iVar8, iVar11 - iVar9);
+    }
+  }
+  else
+  {
+    poison(iVar8, iVar11);
+  }
+  sVar3 = pcVar6->display_pic_csv_id;
+  if (sVar3 == 0x3af9)
+  {
+    if (pcVar6->targets[10].card != 0x3af9)
+    {
+      return 0;
+    }
+    default_token_definition(player, card, 0x3afa, &recovered_stack_token.token);
+    recovered_stack_token.token.t_player = iVar8;
+    generate_token(&recovered_stack_token.token);
+    uVar4 = pcVar6->display_pic_csv_id;
+    sVar3 = uVar4;
+  }
+  if ((sVar3 == 0x3257) && (pcVar6->targets[10].card == 0x3257))
+  {
+    iVar11 = generate_reserved_token_by_id(player, 0x6160);
+    pcVar6 = get_card_instance(player, iVar11);
+    pcVar6->targets[3].player = iVar8;
+    pcVar6->targets[2].player = 0x80;
+    pcVar6->targets[2].card = 0x3257;
+    create_card_name_legacy(player, iVar11, 0x3257);
+  }
   return 0;
 }
 
 void after_damage(void)
 {
-  // 0x477340
+  unsigned short uVar1;
+  uint32_t num;
+  unsigned int uVar2;
+  kill_t kill_mode;
+  card_instance_t *instance;
+  int iVar4;
+  int iVar5;
+  int iVar6;
 
-  int player, card;
-  for (player = 0; player <= 1; ++player)
-	for (card = 0; card < active_cards_count[player]; ++card)
-	  if (in_play(player, card) && is_what(player, card, TYPE_CREATURE))
-		{
-		  int kill_mode = 0;
-		  int flags = check_special_flags(player, card, SF_LETHAL_DAMAGE_DESTROY | SF_LETHAL_DAMAGE_BURY | SF_LETHAL_DAMAGE_EXILE|SF_EXILE_IF_DAMAGED);
-		  if (flags)	// Prevent them from retriggering if this gets regenerated
-			remove_special_flags(player, card, SF_LETHAL_DAMAGE_DESTROY | SF_LETHAL_DAMAGE_BURY | SF_LETHAL_DAMAGE_EXILE|SF_EXILE_IF_DAMAGED);
-
-		  if ((flags & SF_EXILE_IF_DAMAGED) // Pit Spawn/Sword of Kaldra
-				|| ((flags & SF_LETHAL_DAMAGE_EXILE) && (int)get_card_instance(player, card)->damage_on_card >= get_toughness(player, card))
-			  ){
-				kill_mode = KILL_EXILE;
-		  }
-		  else if (flags & SF_LETHAL_DAMAGE_BURY){		// Phage the Untouchable
-					kill_mode = KILL_BURY;
-		  }
-		  else if ((flags & SF_LETHAL_DAMAGE_DESTROY)	// Deathtouch
-						|| (int)get_card_instance(player, card)->damage_on_card >= get_toughness(player, card)
-				   ){
-						kill_mode = KILL_DESTROY;
-		  }
-
-		  if (kill_mode){
-				kill_card(player, card, kill_mode);
-		  }
-		  else{
-				if( check_special_flags3(player, card, SF3_ARCHANGEL_OF_THUNE_COUNTER) ){
-					int amount = get_card_instance(player, card)->eot_toughness;
-					if( amount ){
-						get_card_instance(player, card)->eot_toughness = 0;
-						add_1_1_counters(player, card, amount);
-					}
-				}
-		  }
-		}
-
-  /* The original exe version did this in one pass, calling the code_pointer of instance->original_internal_card_id if the card was no longer in play after the
-   * call to kill_card() (such as from an exile-if-destroyed effect).  That's problematic on a couple levels.  Whatever removed the destroyed card from play
-   * (instead of just flagging it STATE_DYING) could just as easily have removed an earlier or later card instead, and so would call EVENT_AFTER_DAMAGE for the
-   * earlier card but not the later one; and the only cards that handle EVENT_AFTER_DAMAGE are Fungusaur and now Fungus Sliver, neither of which actually want
-   * to do anything for not-in-play cards anyway.
-   *
-   * The exe version also only dispatched EVENT_AFTER_DAMAGE to creature cards.  This was sufficient for Fungusaur, but isn't for Fungus Sliver. */
-
-  for (player = 0; player <= 1; ++player)
-	for (card = 0; card < active_cards_count[player]; ++card)
-	  if (in_play(player, card))
-		dispatch_event_with_attacker_to_one_card(player, card, EVENT_AFTER_DAMAGE, 1-player, -1);
+  iVar6 = 0;
+  do
+  {
+    iVar4 = 0;
+    if (0 < active_cards_count[iVar6])
+    {
+      do
+      {
+        instance = in_play(iVar6, iVar4);
+        if ((instance != NULL) &&
+            ((iVar5 = is_what(iVar6, iVar4, 2),
+              iVar5 != 0 || (iVar5 = is_planeswalker(iVar6, iVar4), iVar5 != 0))))
+        {
+          uVar2 = check_special_flags(iVar6, iVar4, 0x219);
+          if (uVar2 == 0)
+          {
+          LAB_026e3050:
+            if ((uVar2 & 8) == 0)
+            {
+              if ((uVar2 & 1) == 0)
+              {
+                iVar5 = is_what(iVar6, iVar4, 2);
+                if (iVar5 != 0)
+                {
+                  instance = get_card_instance(iVar6, iVar4);
+                  uVar1 = instance->damage_on_card;
+                  iVar5 = get_toughness(iVar6, iVar4);
+                  if (iVar5 <= (int)(unsigned int)uVar1)
+                    goto LAB_026e316d;
+                }
+                iVar5 = check_special_flags3(iVar6, iVar4, 0x80);
+                if ((iVar5 != 0) && (iVar5 = is_what(iVar6, iVar4, 2), iVar5 != 0))
+                {
+                  instance = get_card_instance(iVar6, iVar4);
+                  num = instance->eot_toughness;
+                  if (num != 0)
+                  {
+                    instance = get_card_instance(iVar6, iVar4);
+                    instance->eot_toughness = 0;
+                    add_counters(iVar6, iVar4, iVar6, iVar4, COUNTER_P1_P1, num);
+                  }
+                }
+                goto LAB_026e3071;
+              }
+            LAB_026e316d:
+              kill_mode = KILL_DESTROY;
+            }
+            else
+            {
+              kill_mode = KILL_BURY;
+            }
+          }
+          else
+          {
+            remove_special_flags(iVar6, iVar4, 0x219);
+            if ((uVar2 & 0x10) == 0)
+            {
+              if ((uVar2 & 0x200) != 0)
+              {
+                instance = get_card_instance(iVar6, iVar4);
+                uVar1 = instance->damage_on_card;
+                iVar5 = get_toughness(iVar6, iVar4);
+                if (iVar5 <= (int)(unsigned int)uVar1)
+                  goto LAB_026e30ed;
+              }
+              goto LAB_026e3050;
+            }
+          LAB_026e30ed:
+            kill_mode = KILL_EXILE;
+          }
+          kill_card(iVar6, iVar4, kill_mode);
+        }
+      LAB_026e3071:
+        iVar4 = iVar4 + 1;
+      } while (iVar4 < active_cards_count[iVar6]);
+    }
+    iVar6 = iVar6 + 1;
+    if (iVar6 == 2)
+    {
+      iVar4 = 1;
+      iVar6 = 0;
+      do
+      {
+        iVar5 = 0;
+        if (0 < active_cards_count[iVar6])
+        {
+          do
+          {
+            instance = in_play(iVar6, iVar5);
+            if (instance != NULL)
+            {
+              dispatch_event_with_attacker_to_one_card(iVar6, iVar5, EVENT_AFTER_DAMAGE, iVar4, -1);
+            }
+            iVar5 = iVar5 + 1;
+          } while (iVar5 < active_cards_count[iVar6]);
+        }
+        iVar6 = iVar6 + 1;
+        iVar4 = iVar4 + -1;
+      } while (iVar6 != 2);
+      return;
+    }
+  } while (true);
 }
 
 // Returns a damage card during EVENT_PREVENT_DAMAGE if it's combat damage and doing more than 0.
@@ -933,7 +1267,7 @@ static int if_attached_creature_dies_do_something(int player, int card, event_t 
 	if( instance->targets[0].player > -1 && current_phase != PHASE_NORMAL_COMBAT_DAMAGE &&
 		current_phase != PHASE_FIRST_STRIKE_DAMAGE
 	  ){
-		if( other_leaves_play(player, card, instance->targets[0].player, instance->targets[0].card, event) ){
+		if( other_leaves_play(player, card, instance->targets[0].player, instance->targets[0].card, event, 0, 0) ){
 			kill_card(player, card, KILL_EXILE);
 		}
 	}
@@ -964,7 +1298,7 @@ void if_a_creature_damaged_by_me_dies_do_something(int player, int card, event_t
 
 	card_instance_t *instance = get_card_instance(player, card);
 
-	if( ! in_play(player, card) || is_humiliated(player, card) ){
+	if( ! in_play(player, card) || is_humiliated(player, card, AL_TRIG) ){
 		return;
 	}
 

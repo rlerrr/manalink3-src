@@ -22,6 +22,11 @@ def verify(debug, pe, interfaces):
         symbols[name] = dict(address=debug.pe.OPTIONAL_HEADER.ImageBase + debug.pe.sections[section-1].VirtualAddress + offset, storage=storage)
     assert set(symbols) == wanted
     constants = dict(STATE_BEING_CAST_2022=0x80000000, ENABLE_XTRIGGER_REPLACE_ETB_2022=0x80, XTRIGGER_REPLACE_ETB_2022=0x1000e00, WAV_SNOW_2022=84)
+    # Inspect real compiled enum names after source consolidation. The retained
+    # ledger spellings stay in historical evidence, not in compiler headers.
+    from canonicalize_helpers import source_names
+    spellings = source_names()
+    constants = {spellings.get(name, name): expected for name, expected in constants.items()}
     for cu in debug.dwarf().iter_CUs():
         if value(cu.get_top_DIE(), 'DW_AT_name') != 'functions/engine.c':
             continue

@@ -2,11 +2,11 @@
 
 /* Canonical recovered helper declarations. */
 static int new_can_sacrifice_as_cost_impl(int player, int card, int amount,
-                                               test_definition_2022_t *test);
-int new_can_sacrifice_as_cost(int player, int card, test_definition_2022_t *test);
-int max_can_sacrifice_as_cost(int player, int card, test_definition_2022_t *test);
-int new_can_sacrifice(int player, int card, int t_player, test_definition_2022_t *test);
-int new_get_special_permanent_for_sacrifice(int player, int card, test_definition_2022_t *test);
+                                               test_definition_t *test);
+int new_can_sacrifice_as_cost(int player, int card, test_definition_t *test);
+int max_can_sacrifice_as_cost(int player, int card, test_definition_t *test);
+int new_can_sacrifice(int player, int card, int t_player, test_definition_t *test);
+int new_get_special_permanent_for_sacrifice(int player, int card, test_definition_t *test);
 int can_sacrifice_as_cost(int player, int amount, int type, int flag1, int subtype, int flag2,
                                int color, int flag3, int id, int flag4, int cc, int flag5);
 int can_sacrifice_type_as_cost(int player, int amount, type_t type);
@@ -39,32 +39,23 @@ int altar_extended(int player, int card, event_t event, int act_mode, int type, 
                         int subtype, int flag2, int color, int flag3, int id, int flag4, int cmc,
                         int flag5);
 int sacrifice_and_report_value(int player, int card, int t_player, int flags,
-                                    test_definition_2022_t *test);
+                                    test_definition_t *test);
 static void get_sacrifice_prompt_text(char *prompt, int type, int invert);
-static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_2022_t options,
-                                   test_definition_2022_t *test, char *marked_for_sacrifice);
-int new_sacrifice(int player, int card, int t_player, sacrifice_2022_t options,
-                       test_definition_2022_t *test);
-int mark_sacrifice(int player, int card, int t_player, sacrifice_2022_t options,
-                        test_definition_2022_t *test, char *marked_for_sacrifice);
+static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t options,
+                                   test_definition_t *test, char *marked_for_sacrifice);
+int new_sacrifice(int player, int card, int t_player, sacrifice_t options,
+                       test_definition_t *test);
+int mark_sacrifice(int player, int card, int t_player, sacrifice_t options,
+                        test_definition_t *test, char *marked_for_sacrifice);
 int controller_sacrifices_a_permanent(int player, int card, int req_type,
-                                           sacrifice_2022_t options);
+                                           sacrifice_t options);
 int player_sacrifices_a_permanent(int src_player, int src_card, int t_player, int req_type,
-                                       sacrifice_2022_t options);
+                                       sacrifice_t options);
 int player_sacrifices_a_hacked_land(int src_player, int src_card, int t_player,
-                                         subtype_t land_subtype, sacrifice_2022_t options);
+                                         subtype_t land_subtype, sacrifice_t options);
 
 // Returns nonzero if there's a non-humiliated Angel of Jubilation in play.  (check_battlefield_for_special_card returns true for humiliated ones.)
-static int angel_of_jubilation_on_bf(void)
-{
-  card_instance_t* inst;
-  int p, c;
-  for (p = 0; p <= 1; ++p)
-	for (c = 0; c < active_cards_count[p]; ++c)
-	  if ((inst = in_play(p, c)) && cards_data[inst->internal_card_id].id == CARD_ID_ANGEL_OF_JUBILATION && !is_humiliated(p, c))
-		return 1;
-  return 0;
-}
+
 
 
 
@@ -118,14 +109,8 @@ static int get_special_permanent_for_sacrifice(int player, int type, int flag1, 
 
 
 
-static test_definition_t* sacrifice_test;
-static const char* passes_test_definition(int who_chooses, int player, int card, int targeting_player, int targeting_card)
-{
-  if (new_make_test_in_play(player, card, -1, sacrifice_test) && ! check_special_flags2(player, card, SF2_CANNOT_BE_SACRIFICED) )
-	return NULL;
-  else
-	return "Illegal sacrifice";
-}
+
+
 
 
 
@@ -185,13 +170,13 @@ static type_t types_cannot_sac(void)
         {
           instance = in_play(player, card);
           if (((instance != NULL) && (cards_data[instance->internal_card_id].id == 0x3010)) &&
-              (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+              (result = is_humiliated(player, card, AL_STATIC), result == 0))
           {
             tVar3 = tVar3 | TYPE_CREATURE;
           }
           instance = in_play(player, card);
           if (((instance != NULL) && (cards_data[instance->internal_card_id].id == 0x5626)) &&
-              (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+              (result = is_humiliated(player, card, AL_STATIC), result == 0))
             break;
           card = card + 1;
           if (active_cards_count[player] <= card)
@@ -217,23 +202,23 @@ typedef union
 {
   int32_t rval;
   target_t target;
-  token_generation_2022_t token;
-} sacrifice_selection_storage_2022_t;
+  token_generation_t token;
+} sacrifice_selection_storage_t;
 
 typedef union
 {
   char prompt[200];
-  test_definition_2022_t test;
-} sacrifice_prompt_storage_2022_t;
+  test_definition_t test;
+} sacrifice_prompt_storage_t;
 
-_Static_assert(sizeof(sacrifice_selection_storage_2022_t) == 76, "sacrifice shared target/token storage");
-_Static_assert(sizeof(sacrifice_prompt_storage_2022_t) == 216, "sacrifice shared prompt/test storage");
+_Static_assert(sizeof(sacrifice_selection_storage_t) == 76, "sacrifice shared target/token storage");
+_Static_assert(sizeof(sacrifice_prompt_storage_t) == 216, "sacrifice shared prompt/test storage");
 
-static test_definition_2022_t *sacrifice_test_2022;
+static test_definition_t *sacrifice_test;
 
 /* ManalinkEh 2022: 0x26e37b0; original functions/sacrifices.c:31. */
 static int new_can_sacrifice_as_cost_impl(int player, int card, int amount,
-                                               test_definition_2022_t *test)
+                                               test_definition_t *test)
 {
   type_t test_type;
   card_instance_t *instance;
@@ -270,13 +255,13 @@ static int new_can_sacrifice_as_cost_impl(int player, int card, int amount,
 
 
 /* ManalinkEh 2022: 0x26e38d0; original functions/sacrifices.c:348. */
-static const char *passes_test_definition_and_not_dying_2022(int who_chooses, int player, int card,
+static const char *passes_test_definition_and_not_dying(int who_chooses, int player, int card,
                                                              int targeting_player,
                                                              int targeting_card)
 {
   int result;
   card_instance_t *instance;
-  result = new_make_test_in_play(player, card, -1, sacrifice_test_2022);
+  result = new_make_test_in_play(player, card, -1, sacrifice_test);
   if (((result != 0) &&
        (result = check_special_flags2(player, card, 0x400000), result == 0)) &&
       (instance = get_card_instance(player, card), instance->kill_code == '\0'))
@@ -302,7 +287,7 @@ static const char *can_sacrifice_this(int who_chooses, int player, int card)
 
 
 /* ManalinkEh 2022: 0x26e3990; original functions/sacrifices.c:87. */
-static int can_cause_sacrifice_part_2022(int t_player)
+static int can_cause_sacrifice_part(int t_player)
 {
   card_instance_t *instance;
   int result;
@@ -321,7 +306,7 @@ static int can_cause_sacrifice_part_2022(int t_player)
       result = get_id(t_player, card);
       if (((result == 0x30b1) || (result == 0x4e30)) || (result == 0x2b35))
       {
-        result = is_humiliated_for_ability(t_player, card, AL_STATIC);
+        result = is_humiliated(t_player, card, AL_STATIC);
         if (result == 0)
         {
           return 0;
@@ -374,7 +359,7 @@ int can_sacrifice_this_as_cost(int player, int card)
 
 
 /* ManalinkEh 2022: 0x26e3b50; original functions/sacrifices.c:53. */
-int new_can_sacrifice_as_cost(int player, int card, test_definition_2022_t *test)
+int new_can_sacrifice_as_cost(int player, int card, test_definition_t *test)
 {
   int result;
   result = new_can_sacrifice_as_cost_impl(player, card, (unsigned int)test->qty, test);
@@ -383,7 +368,7 @@ int new_can_sacrifice_as_cost(int player, int card, test_definition_2022_t *test
 
 
 /* ManalinkEh 2022: 0x26e3b70; original functions/sacrifices.c:58. */
-int max_can_sacrifice_as_cost(int player, int card, test_definition_2022_t *test)
+int max_can_sacrifice_as_cost(int player, int card, test_definition_t *test)
 {
   int result;
   result = new_can_sacrifice_as_cost_impl(player, card, -1, test);
@@ -396,7 +381,7 @@ int can_sacrifice_as_cost(int player, int amount, int type, int flag1, int subty
                                int color, int flag3, int id, int flag4, int cc, int flag5)
 {
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
   new_default_test_definition(&test, type, "");
   test.type_flag = (unsigned short)flag1;
   test.subtype = subtype;
@@ -417,7 +402,7 @@ int can_sacrifice_as_cost(int player, int amount, int type, int flag1, int subty
 int can_sacrifice_type_as_cost(int player, int amount, type_t type)
 {
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
   new_default_test_definition(&test, type, "");
   test.qty = (unsigned short)amount;
   result = new_can_sacrifice_as_cost_impl(player, -1, amount & 0xffff, &test);
@@ -432,7 +417,7 @@ int can_cause_sacrifice(int player, int t_player)
 
   if (player != t_player)
   {
-    result = can_cause_sacrifice_part_2022(t_player);
+    result = can_cause_sacrifice_part(t_player);
     return result;
   }
   return 1;
@@ -440,7 +425,7 @@ int can_cause_sacrifice(int player, int t_player)
 
 
 /* ManalinkEh 2022: 0x26e3c90; original functions/sacrifices.c:105. */
-int new_can_sacrifice(int player, int card, int t_player, test_definition_2022_t *test)
+int new_can_sacrifice(int player, int card, int t_player, test_definition_t *test)
 {
   int iVar1;
   card_instance_t *instance;
@@ -450,7 +435,7 @@ int new_can_sacrifice(int player, int card, int t_player, test_definition_2022_t
 
   if (test == NULL)
   {
-    if ((player != t_player) && (iVar1 = can_cause_sacrifice_part_2022(t_player), iVar1 == 0))
+    if ((player != t_player) && (iVar1 = can_cause_sacrifice_part(t_player), iVar1 == 0))
     {
       return 0;
     }
@@ -470,7 +455,7 @@ int new_can_sacrifice(int player, int card, int t_player, test_definition_2022_t
     }
     else
     {
-      iVar1 = can_cause_sacrifice_part_2022(t_player);
+      iVar1 = can_cause_sacrifice_part(t_player);
       if (iVar1 == 0)
       {
         return 0;
@@ -514,7 +499,7 @@ LAB_026e3cda:
 int can_sacrifice(int player, int t_player, int amount, type_t type, subtype_t subtype)
 {
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
   new_default_test_definition(&test, type, "");
   test.subtype = subtype;
   test.qty = (unsigned short)amount;
@@ -587,7 +572,7 @@ int get_best_permanent_for_sacrifice(int player, int type)
 
 
 /* ManalinkEh 2022: 0x26e3f70; original functions/sacrifices.c:171. */
-int new_get_special_permanent_for_sacrifice(int player, int card, test_definition_2022_t *test)
+int new_get_special_permanent_for_sacrifice(int player, int card, test_definition_t *test)
 {
   card_instance_t *instance;
   int iVar2;
@@ -643,8 +628,8 @@ int new_get_special_permanent_for_sacrifice(int player, int card, test_definitio
 
 
 /* ManalinkEh 2022: 0x26e4110; original functions/sacrifices.c:355. */
-static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_2022_t options,
-                                   test_definition_2022_t *test, char *marked_for_sacrifice)
+static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_t options,
+                                   test_definition_t *test, char *marked_for_sacrifice)
 {
   uint8_t uVar1;
   uint16_t uVar2;
@@ -663,15 +648,15 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_2022
   int iStack_22c;
   unsigned int uStack_220;
   int iStack_218;
-  sacrifice_selection_storage_2022_t selection;
-  target_definition_2022_t td;
+  sacrifice_selection_storage_t selection;
+  target_definition_t td;
   char marked[151];
   char default_prompt[200];
 
   base_target_definition(player, card, &td, 0x47);
-  td.allow_cancel = options & (SAC2022_DONE | SAC2022_NO_CANCEL) ^ SAC2022_NO_CANCEL;
+  td.allow_cancel = options & (SAC_DONE | SAC_NO_CANCEL) ^ SAC_NO_CANCEL;
   td.special = 0x8000;
-  td.extra = (int32_t)passes_test_definition_and_not_dying_2022;
+  td.extra = (int32_t)passes_test_definition_and_not_dying;
   if (test->not_me == 1)
   {
     td.special = 0xc000;
@@ -687,20 +672,20 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_2022
   td.who_chooses = t_player;
   td.allowed_controller = t_player;
   td.preferred_controller = t_player;
-  if (((options & SAC2022_AS_COST) != 0) && (tVar9 = types_cannot_sac(), tVar9 != TYPE_NONE))
+  if (((options & SAC_AS_COST) != 0) && (tVar9 = types_cannot_sac(), tVar9 != TYPE_NONE))
   {
     td.illegal_type = td.illegal_type | tVar9;
   }
-  if ((((options & SAC2022_CAUSED) != 0) && (player != t_player)) &&
-      (iVar5 = can_cause_sacrifice_part_2022(t_player), iVar5 == 0))
+  if ((((options & SAC_CAUSED) != 0) && (player != t_player)) &&
+      (iVar5 = can_cause_sacrifice_part(t_player), iVar5 == 0))
   {
     spell_fizzled = 1;
     return 0;
   }
   pcVar6 = get_card_instance(player, card);
   iVar5 = spell_fizzled;
-  sacrifice_test_2022 = test;
-  if ((options & SAC2022_ALL_OR_NONE) == 0)
+  sacrifice_test = test;
+  if ((options & SAC_ALL_OR_NONE) == 0)
   {
     iVar7 = can_target(&td);
     if (iVar7 == 0)
@@ -740,14 +725,14 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_2022
   memset(marked, 0, sizeof(marked));
   if ((int)uStack_220 < 1)
   {
-    if ((spell_fizzled != 1) && ((options & SAC2022_OPTIONAL) != 0))
+    if ((spell_fizzled != 1) && ((options & SAC_OPTIONAL) != 0))
     {
       iStack_23c = -1;
       iStack_22c = -1;
       iStack_218 = 0;
     LAB_026e445c:
       spell_fizzled = iVar5;
-      if ((options & SAC2022_SET_TARGETS) != 0)
+      if ((options & SAC_SET_TARGETS) != 0)
       {
         pcVar6->number_of_targets = '\x01';
         pcVar6->targets[0].player = iStack_23c;
@@ -774,7 +759,7 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_2022
           default_token_definition(player, card, 0x493b, &selection.token);
           selection.token.t_player = iStack_23c;
           selection.token.qty = '\x02';
-          selection.token.action = TOKEN2022_ACTION_HASTE;
+          selection.token.action = TOKEN_ACTION_HASTE;
           generate_token(&selection.token);
         }
       }
@@ -796,7 +781,7 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_2022
           iVar11 = active_cards_count[t_player];
         } while (iVar7 < iVar11);
       LAB_026e44d4:
-        if (((options & SAC2022_JUST_MARK) == 0) && (0 < iVar11))
+        if (((options & SAC_JUST_MARK) == 0) && (0 < iVar11))
         {
           iVar7 = 0;
         LAB_026e44f2:
@@ -821,7 +806,7 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_2022
           } while (iVar7 < active_cards_count[t_player]);
         }
       }
-      if ((options & SAC2022_RETURN_CHOICE) != 0)
+      if ((options & SAC_RETURN_CHOICE) != 0)
       {
         selection.rval = (int32_t)((uint16_t)iStack_218 | ((uint32_t)(uint8_t)iStack_23c << 16) |
                                    ((uint32_t)(uint8_t)iStack_22c << 24));
@@ -898,20 +883,20 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_2022
       else
       {
       LAB_026e4361:
-        sacrifice_test_2022 = test;
+        sacrifice_test = test;
         pcVar6->number_of_targets = '\0';
         select_target(player, card, &td, prompt, &selection.target);
       LAB_026e43ad:
         if (-1 < selection.target.card)
           goto LAB_026e43b5;
       LAB_026e468a:
-        if ((options & (SAC2022_DONE | SAC2022_NO_CANCEL)) != SAC2022_NO_CANCEL)
+        if ((options & (SAC_DONE | SAC_NO_CANCEL)) != SAC_NO_CANCEL)
         {
           pcVar6->number_of_targets = uVar1;
           pcVar6->targets[0].player = iVar3;
           pcVar6->targets[0].card = iVar4;
           if ((selection.target.card == -1) ||
-              ((iStack_218 == 0 && ((options & SAC2022_OPTIONAL) == 0))))
+              ((iStack_218 == 0 && ((options & SAC_OPTIONAL) == 0))))
             goto LAB_026e46d3;
           goto LAB_026e4440;
         }
@@ -923,7 +908,7 @@ static int new_sacrifice_impl(int player, int card, int t_player, sacrifice_2022
     if (spell_fizzled != 1)
     {
     LAB_026e4440:
-      if (((int)uStack_220 <= iStack_218) || ((options & SAC2022_ALL_OR_NONE) == 0))
+      if (((int)uStack_220 <= iStack_218) || ((options & SAC_ALL_OR_NONE) == 0))
         goto LAB_026e445c;
     }
   }
@@ -957,7 +942,7 @@ int pick_creature_for_sacrifice(int player, int card, int cannot_cancel)
 {
   card_instance_t *instance;
   int result;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   default_target_definition(player, card, &td, 2);
   td.allow_cancel = (unsigned int)(cannot_cancel == 0) * 2;
@@ -991,7 +976,7 @@ int pick_permanent_for_sacrifice(int player, int card, int type, int cannot_canc
 {
   card_instance_t *instance;
   int result;
-  target_definition_2022_t td;
+  target_definition_t td;
   char prompt[200];
 
   default_target_definition(player, card, &td, type);
@@ -1033,8 +1018,8 @@ int pick_special_permanent_for_sacrifice(int player, int card, int cannot_cancel
 {
   card_instance_t *instance;
   int result;
-  target_definition_2022_t td;
-  sacrifice_prompt_storage_2022_t storage;
+  target_definition_t td;
+  sacrifice_prompt_storage_t storage;
 
   default_target_definition(player, card, &td, type);
   td.allow_cancel = 1 - cannot_cancel;
@@ -1082,8 +1067,8 @@ int pick_special_permanent_for_sacrifice(int player, int card, int cannot_cancel
 
 
 /* ManalinkEh 2022: 0x26e4e30; original functions/sacrifices.c:536. */
-int new_sacrifice(int player, int card, int t_player, sacrifice_2022_t options,
-                       test_definition_2022_t *test)
+int new_sacrifice(int player, int card, int t_player, sacrifice_t options,
+                       test_definition_t *test)
 {
   int result;
   result = new_sacrifice_impl(player, card, t_player, options, test, NULL);
@@ -1092,8 +1077,8 @@ int new_sacrifice(int player, int card, int t_player, sacrifice_2022_t options,
 
 
 /* ManalinkEh 2022: 0x26e4e60; original functions/sacrifices.c:541. */
-int mark_sacrifice(int player, int card, int t_player, sacrifice_2022_t options,
-                        test_definition_2022_t *test, char *marked_for_sacrifice)
+int mark_sacrifice(int player, int card, int t_player, sacrifice_t options,
+                        test_definition_t *test, char *marked_for_sacrifice)
 {
   int result;
   result = new_sacrifice_impl(player, card, t_player, options, test, marked_for_sacrifice);
@@ -1107,8 +1092,8 @@ int sacrifice(int player, int card, int t_player, int cannot_cancel, int type, i
                    int flag5)
 {
   int result;
-  sacrifice_2022_t options;
-  test_definition_2022_t test;
+  sacrifice_t options;
+  test_definition_t test;
 
   new_default_test_definition(&test, type, "");
   test.type_flag = (unsigned short)flag1;
@@ -1122,15 +1107,15 @@ int sacrifice(int player, int card, int t_player, int cannot_cancel, int type, i
   test.cmc_flag = (unsigned short)flag5;
   if (cannot_cancel == 1)
   {
-    options = SAC2022_SET_TARGETS | SAC2022_NO_CANCEL;
+    options = SAC_SET_TARGETS | SAC_NO_CANCEL;
   }
   else if (cannot_cancel == -1)
   {
-    options = SAC2022_SET_TARGETS | SAC2022_DONE;
+    options = SAC_SET_TARGETS | SAC_DONE;
   }
   else
   {
-    options = cannot_cancel | SAC2022_SET_TARGETS;
+    options = cannot_cancel | SAC_SET_TARGETS;
   }
   result = new_sacrifice_impl(player, card, t_player, options, &test, NULL);
   return result;
@@ -1139,10 +1124,10 @@ int sacrifice(int player, int card, int t_player, int cannot_cancel, int type, i
 
 /* ManalinkEh 2022: 0x26e4f40; original functions/sacrifices.c:565. */
 int controller_sacrifices_a_permanent(int player, int card, int req_type,
-                                           sacrifice_2022_t options)
+                                           sacrifice_t options)
 {
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
   new_default_test_definition(&test, req_type, "");
   result = new_sacrifice_impl(player, card, player, options, &test, NULL);
   return result;
@@ -1151,10 +1136,10 @@ int controller_sacrifices_a_permanent(int player, int card, int req_type,
 
 /* ManalinkEh 2022: 0x26e4f90; original functions/sacrifices.c:572. */
 int player_sacrifices_a_permanent(int src_player, int src_card, int t_player, int req_type,
-                                       sacrifice_2022_t options)
+                                       sacrifice_t options)
 {
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
   new_default_test_definition(&test, req_type, "");
   result = new_sacrifice_impl(src_player, src_card, t_player, options, &test, NULL);
   return result;
@@ -1163,13 +1148,13 @@ int player_sacrifices_a_permanent(int src_player, int src_card, int t_player, in
 
 /* ManalinkEh 2022: 0x26e4fe0; original functions/sacrifices.c:580. */
 int player_sacrifices_a_hacked_land(int src_player, int src_card, int t_player,
-                                         subtype_t land_subtype, sacrifice_2022_t options)
+                                         subtype_t land_subtype, sacrifice_t options)
 {
   int result;
   const char *msg;
-  test_definition_2022_t test;
+  test_definition_t test;
 
-  if ((src_player != t_player) && (result = can_cause_sacrifice_part_2022(t_player), result == 0))
+  if ((src_player != t_player) && (result = can_cause_sacrifice_part(t_player), result == 0))
   {
     return 0;
   }
@@ -1193,7 +1178,7 @@ int impose_sacrifice(int player, int card, int t_player, int amount, int type, i
   {
     return 0;
   }
-  if ((player != t_player) && (iVar1 = can_cause_sacrifice_part_2022(t_player), iVar1 == 0))
+  if ((player != t_player) && (iVar1 = can_cause_sacrifice_part(t_player), iVar1 == 0))
   {
     return 0;
   }
@@ -1233,8 +1218,8 @@ int prevent_damage_sacrificing_a_creature(int player, int card, event_t event, i
 {
   card_instance_t *instance;
   int result;
-  target_definition_2022_t td;
-  target_definition_2022_t td1;
+  target_definition_t td;
+  target_definition_t td1;
 
   default_target_definition(player, card, &td, 0);
   td.extra = damage_card;
@@ -1530,7 +1515,7 @@ int altar_extended(int player, int card, event_t event, int act_mode, int type, 
 
 /* ManalinkEh 2022: 0x26e5b80; original functions/sacrifices.c:830. */
 int sacrifice_and_report_value(int player, int card, int t_player, int flags,
-                                    test_definition_2022_t *test)
+                                    test_definition_t *test)
 {
   unsigned int uVar1;
   card_instance_t *instance;
@@ -1538,7 +1523,7 @@ int sacrifice_and_report_value(int player, int card, int t_player, int flags,
   unsigned int card_00;
 
   uVar1 = new_sacrifice_impl(
-      player, card, t_player, (flags >> 0x1f & 0x21U) + (SAC2022_RETURN_CHOICE | SAC2022_JUST_MARK),
+      player, card, t_player, (flags >> 0x1f & 0x21U) + (SAC_RETURN_CHOICE | SAC_JUST_MARK),
       test, NULL);
   if ((int)uVar1 < 0)
   {

@@ -1601,7 +1601,7 @@ int card_the_cheese_stands_alone(int player, int card, event_t event)
     instance = in_play(player, card);
     if (instance != NULL)
     {
-      iVar1 = is_humiliated_for_ability(player, card, AL_TRIG);
+      iVar1 = is_humiliated(player, card, AL_TRIG);
       if ((iVar1 == 0) && (hand_count[player] < 1))
       {
 
@@ -1652,7 +1652,7 @@ static int rock_paper_scissors(int player, int card, event_t event, int beaten)
       result = is_what(affected_card_controller, affected_card, 2);
       if (result != 0)
       {
-        result = is_humiliated_for_ability(player, card, AL_STATIC);
+        result = is_humiliated(player, card, AL_STATIC);
         if (result == 0)
         {
           cannot_attack(affected_card_controller, affected_card, EVENT_ABILITIES);
@@ -1701,7 +1701,7 @@ int card_wordmail(int player, int card, event_t event)
   {
     instance = in_play(player, card);
     if ((((instance != NULL) &&
-          (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0)) &&
+          (result = is_humiliated(player, card, AL_STATIC), result == 0)) &&
          (instance->damage_target_card == affected_card)) &&
         (instance->damage_target_player == affected_card_controller))
     {
@@ -1772,7 +1772,7 @@ int card_bloodletter(int player, int card, event_t event)
   int letter[26];
   bVar6 = 0;
   if (((event == EVENT_STATIC_EFFECTS) && (instance = in_play(player, card), instance != NULL)) &&
-      (iVar2 = is_humiliated_for_ability(player, card, AL_TRIG), iVar2 == 0))
+      (iVar2 = is_humiliated(player, card, AL_TRIG), iVar2 == 0))
   {
     piVar5 = letter;
     for (iVar2 = 0x1a; iVar2 != 0; iVar2 = iVar2 + -1)
@@ -1843,7 +1843,7 @@ int card_shoe_tree(int player, int card, event_t event)
   if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       result = count_counters(player, card, COUNTER_SHOE);
@@ -2152,12 +2152,12 @@ int card_jumbo_imp(int player, int card, event_t event)
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
   {
     result = roll_d6t(player, player, card, -1, -1);
-    add_counters_from_source(player, card, player, card, COUNTER_P1_P1, result);
+    add_counters(player, card, player, card, COUNTER_P1_P1, result);
   }
   if ((current_turn == player) && (result = eot_trigger(player, card, event), result != 0))
   {
     result = roll_d6t(player, player, card, -1, -1);
-    remove_counters_from_source(player, card, player, card, COUNTER_P1_P1, result);
+    remove_counters(player, card, player, card, COUNTER_P1_P1, result);
   }
   return 0;
 }
@@ -2195,7 +2195,7 @@ int card_poultrygeist(int player, int card, event_t event)
       if (iVar2 != 1)
       {
 
-        add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+        add_counters(player, card, player, card, COUNTER_P1_P1, 1);
         goto LAB_023037d4;
       }
       kill_card(player, card, KILL_SACRIFICE);
@@ -2219,7 +2219,7 @@ int card_temp_of_the_damned(int player, int card, event_t event)
   result = count_counters(player, card, COUNTER_FUNK);
   if (result != 0)
   {
-    remove_counters_from_source(player, card, player, card, COUNTER_FUNK, 1);
+    remove_counters(player, card, player, card, COUNTER_FUNK, 1);
     return 0;
   }
   kill_card(player, card, KILL_SACRIFICE);
@@ -2471,7 +2471,7 @@ int card_hungry_hungry_heifer(int player, int card, event_t event)
   card_instance_t *instance;
   int result;
   counter_t type;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   upkeep_trigger_ability(player, card, event, player);
   if (event != EVENT_UPKEEP_TRIGGER_ABILITY)
@@ -2496,7 +2496,7 @@ int card_hungry_hungry_heifer(int player, int card, event_t event)
         CECT_REMOVE | CECT_CONSIDER_ALL | CECT_HUMAN_CAN_CANCEL, -1, -1);
     if (type != COUNTER_invalid)
     {
-      remove_counters_from_source(player, card, instance->targets[0].player,
+      remove_counters(player, card, instance->targets[0].player,
                                   instance->targets[0].card, type, 1);
       return 0;
     }
@@ -2528,7 +2528,7 @@ int card_the_fallen_apart(int player, int card, event_t event)
   {
     instance = get_card_instance(player, card);
     instance->targets[5].card = 0x45d40202;
-    iVar4 = is_humiliated_for_ability(player, card, AL_TRIG);
+    iVar4 = is_humiliated(player, card, AL_TRIG);
     if (iVar4 != 0)
     {
       return 0;
@@ -2536,7 +2536,7 @@ int card_the_fallen_apart(int player, int card, event_t event)
   }
   else
   {
-    iVar4 = is_humiliated_for_ability(player, card, AL_TRIG);
+    iVar4 = is_humiliated(player, card, AL_TRIG);
     if (iVar4 != 0)
       goto LAB_02305688;
   }
@@ -2604,7 +2604,7 @@ LAB_02305688:
        (player == affected_card_controller)) &&
       ((instance = in_play(player, card),
         instance != NULL &&
-            (iVar4 = is_humiliated_for_ability(player, card, AL_STATIC), iVar4 == 0))))
+            (iVar4 = is_humiliated(player, card, AL_STATIC), iVar4 == 0))))
   {
     iVar1 = instance->targets[5].card;
     if ((short)((unsigned int)iVar1 >> 0x10) == 0x45d4)
@@ -2719,7 +2719,7 @@ int card_symbol_status(int player, int card, event_t event)
 
 #ifndef SHANDALAR
 /* ManalinkEh 2022: 0x2302cb0; original cards/unglued_unhinged.c:227. */
-static int txtfx_name_2022(int player, int card, int marker)
+static int txtfx_name(int player, int card, int marker)
 {
   unsigned int uVar1;
   card_instance_t *instance;
@@ -2843,7 +2843,7 @@ static int fx_spark_fiend(int player, int card, event_t event)
 
   if (event == EVENT_SET_LEGACY_EFFECT_NAME)
   {
-    result = txtfx_name_2022(player, card, 0x45c4);
+    result = txtfx_name(player, card, 0x45c4);
     if (result != 0x7fffffff)
     {
       if (result != 0x2f02)
@@ -2869,7 +2869,7 @@ static int fx_togglodyte(int player, int card, event_t event)
 
   if (event == EVENT_SET_LEGACY_EFFECT_NAME)
   {
-    result = txtfx_name_2022(player, card, 0x45d8);
+    result = txtfx_name(player, card, 0x45d8);
     if (result != 0x7fffffff)
     {
       argument2 = "On";
@@ -2982,7 +2982,7 @@ int card_togglodyte(int player, int card, event_t event)
   if (((event == EVENT_ABILITIES) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    iVar2 = is_humiliated_for_ability(player, card, AL_STATIC);
+    iVar2 = is_humiliated(player, card, AL_STATIC);
     if (iVar2 == 0)
     {
       instance = get_card_instance(player, card);
@@ -2999,7 +2999,7 @@ LAB_023064d4:
   if (((instance != NULL) && (instance->damage_source_player == player)) &&
       (instance->damage_source_card == card))
   {
-    iVar2 = is_humiliated_for_ability(player, card, AL_STATIC);
+    iVar2 = is_humiliated(player, card, AL_STATIC);
     if (iVar2 == 0)
     {
       instance = get_card_instance(player, card);
@@ -3269,7 +3269,7 @@ int card_punctuate(int player, int card, event_t event)
   card_instance_t *instance;
   const char *pcVar3;
   const char *punct;
-  target_definition_2022_t td;
+  target_definition_t td;
   char rules[3000];
   if (event != EVENT_CAN_CAST)
   {
@@ -3333,7 +3333,7 @@ int card_elvish_house_party(int player, int card, event_t event)
   if (((event - EVENT_POWER < 2) && (card == affected_card)) &&
       (player == affected_card_controller))
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       result = localtime_hour();
@@ -3384,12 +3384,12 @@ int card_booster_tutor(int player, int card, event_t event)
       int capacity = pack_size(expansion, 1);
       int csvids[capacity];
       int iids[capacity];
-      int num_csvids = make_pack_2022(expansion, 1, csvids);
+      int num_csvids = make_pack(expansion, 1, csvids);
       for (int i = 0; i < num_csvids; ++i)
         iids[i] = get_internal_card_id_from_csv_id(csvids[i]);
       if (ai_is_speculating != 1 && player == 1)
         show_deck(0, iids, capacity, "Booster contents", 0, ENGINE_DONE_LABEL);
-      test_definition_2022_t test;
+      test_definition_t test;
       _Static_assert(sizeof(test) == 216, "native Booster Tutor filter");
       default_test_definition(&test, 0xff);
       int selected;
@@ -3425,7 +3425,7 @@ int card_mise(int player, int card, event_t event)
     }
     else
     {
-      test_definition_2022_t test;
+      test_definition_t test;
       new_default_test_definition(&test, 1, "");
       test.type_flag = 1;
       csvid = choose_a_card_test_ct("Choose a nonland card name.", &test, (color_test_t)-1,

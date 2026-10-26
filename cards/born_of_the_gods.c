@@ -21,7 +21,7 @@
 int inspired(int player, int card, event_t event)
 {
   // Whenever ~ becomes untapped, {...}
-  return event == EVENT_UNTAP_CARD && affect_me(player, card) && !is_humiliated(player, card);
+  return event == EVENT_UNTAP_CARD && affect_me(player, card) && !is_humiliated(player, card, AL_TRIG);
 }
 
 static void tribute(int player, int card, event_t event, int num_counters)
@@ -46,7 +46,7 @@ static void tribute(int player, int card, event_t event, int num_counters)
 					DLG_WHO_CHOOSES(1-player), DLG_NO_STORAGE, DLG_NO_CANCEL, DLG_RANDOM,
 					buf, 1, 1,
 					"No tribute", 1, 1) == 1)
-					add_1_1_counters(player, card, num_counters);
+					add_counters(player, card, player, card, COUNTER_P1_P1, num_counters);
 		else
 			get_card_instance(player, card)->targets[6].card = 94;
 	}
@@ -276,7 +276,7 @@ int card_brimaz_king_of_oreskos(int player, int card, event_t event)
 	  generate_token(&token);
 	}
 
-  if (blocking(player, card, event) && !is_humiliated(player, card))
+  if (blocking(player, card, event) && !is_humiliated(player, card, AL_TRIG))
 	{
 	  card_instance_t* instance = get_card_instance(player, card);
 
@@ -558,14 +558,14 @@ int card_hero_of_iroas(int player, int card, event_t event)
    * Heroic - Whenever you cast a spell that targets ~, put a +1/+1 counter on ~. */
 
   if (event == EVENT_MODIFY_COST_GLOBAL && affected_card_controller == player
-	  && has_subtype(affected_card_controller, affected_card, SUBTYPE_AURA) && !is_humiliated(player, card))
+	  && has_subtype(affected_card_controller, affected_card, SUBTYPE_AURA) && !is_humiliated(player, card, AL_STATIC))
 	{
 	  --COST_COLORLESS;
 	  return 0;
 	}
 
   if (heroic(player, card, event))
-	add_1_1_counter(player, card);
+	add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 
   return 0;
 }
@@ -736,10 +736,10 @@ int card_sunbond(int player, int card, event_t event)
   if (trigger_condition == TRIGGER_GAIN_LIFE	// not needed; just avoid some processing in most calls to this function
 	  && (instance = in_play(player, card))
 	  && instance->damage_target_player >= 0 && instance->damage_target_card >= 0
-	  && !is_humiliated(instance->damage_target_player, instance->damage_target_card)
+	  && !is_humiliated(instance->damage_target_player, instance->damage_target_card, AL_TRIG)
 	  // Trigger is placed on this card for clarity in the interface, even though it's really the enchanted creature triggering
 	  && (amt = trigger_gain_life(player, card, event, instance->damage_target_player, RESOLVE_TRIGGER_MANDATORY)))
-	add_1_1_counters(instance->damage_target_player, instance->damage_target_card, amt);
+	add_counters(player, card, instance->damage_target_player, instance->damage_target_card, COUNTER_P1_P1, amt);
 
   return vanilla_aura(player, card, event, player);
 }
@@ -792,35 +792,59 @@ int card_aerie_worshippers(int player, int card, event_t event)
 
 int card_arbiter_of_the_ideal(int player, int card, event_t event)
 {
-  /* Arbiter of the Ideal |4|U|U
-   * Creature - Sphinx (4/5)
-   * Flying
-   * Inspired - Whenever ~ becomes untapped, reveal the top card of your library. If it's an artifact, creature, or land card, you may put it onto the
-   * battlefield with a manifestation counter on it. It's an enchantment in addition to its other types. */
+  int result;
+  const char *puVar2;
 
-  if (inspired(player, card, event) && deck_ptr[player][0] != -1)
-	{
-	  if (!is_what(-1, deck_ptr[player][0], TYPE_ARTIFACT | TYPE_CREATURE | TYPE_LAND)
-		  || (is_what(-1, deck_ptr[player][0], TYPE_CREATURE) && check_battlefield_for_id(ANYBODY, CARD_ID_GRAFDIGGERS_CAGE)))
-		reveal_card_iid(player, card, deck_ptr[player][0]);
-	  else if (DIALOG(player, card, EVENT_ACTIVATE,
-					  DLG_SMALLCARD_ID(deck_ptr[player][0]),
-					  DLG_HEADER(player == HUMAN ? "You reveal:" : "Opponent reveals:"),
-					  DLG_NO_STORAGE,
-					  "Put into play", 1, 1))
-		{
-		  // put_into_play_a_card_from_deck() is the proper way to do this, but we need to make it already be an enchantment as it enters the battlefield.
-		  int card_added = add_card_to_hand(player, deck_ptr[player][0]);
-		  remove_card_from_deck(player, 0);
-		  create_targetted_legacy_effect(player, card, &effect_become_enchantment, player, card_added);
-		  set_special_flags2(player, card_added, SF2_ENCHANTED_EVENING);
-		  ++hack_silent_counters;
-		  add_counter(player, card_added, COUNTER_MANIFESTATION);
-		  --hack_silent_counters;
-		  put_into_play(player, card_added);
-		}
-	}
-
+  if (event != EVENT_UNTAP_CARD)
+  {
+    return 0;
+  }
+  if (card != affected_card)
+  {
+    return 0;
+  }
+  if (player != affected_card_controller)
+  {
+    return 0;
+  }
+  result = inspired(player, card, event);
+  if (result != 0)
+  {
+    if (*deck_ptr[player] != -1)
+    {
+      result = is_what(-1, *deck_ptr[player], 0x43);
+      if ((result == 0) ||
+          ((result = is_what(-1, *deck_ptr[player], 2),
+            result != 0 &&
+                (result = grafdiggers_cages(player, TYPE_CREATURE, TUTOR_FROM_DECK), result != 0))))
+      {
+        reveal_card_iid(player, card, *deck_ptr[player]);
+      }
+      else
+      {
+        puVar2 = "You reveal:";
+        if (player != 0)
+        {
+          puVar2 = "Opponent reveals:";
+        }
+        result = dialog_impl(player, card, EVENT_ACTIVATE, "\001\021", *deck_ptr[player],
+                             "\001\011", puVar2, "\001\014", "Put into play", 1, 1, 0, 0, 0, 0);
+        if (result != 0)
+        {
+          result = add_card_to_hand(player, *deck_ptr[player]);
+          remove_card_from_deck(player, 0);
+          create_targetted_legacy_effect(player, card, effect_become_enchantment, player, result);
+          set_special_flags2(player, result, 0x80);
+          hack_silent_counters = hack_silent_counters + 1;
+          add_counters(player, card, player, result, COUNTER_MANIFESTATION, 1);
+          hack_silent_counters = hack_silent_counters + -1;
+          put_into_play(player, result);
+        }
+      }
+      return 0;
+    }
+    return 0;
+  }
   return 0;
 }
 
@@ -3216,7 +3240,7 @@ int card_courser_of_kruphix(int player, int card, event_t event)
 			&& !(land_can_be_played & LCBP_LAND_HAS_BEEN_PLAYED)
 			&& can_sorcery_be_played(player, event)
 			&& is_what(-1, deck_ptr[player][0], TYPE_LAND)
-			&& !is_humiliated(player, card));
+			&& !is_humiliated(player, card, AL_STATIC));
 
   if (event == EVENT_ACTIVATE)
 	{
@@ -3323,7 +3347,7 @@ int card_hero_of_leina_tower(int player, int card, event_t event)
 	  x_value = old_x_value;
 
 	  if (cancel != 1 && counters > 0)
-		add_1_1_counters(player, card, counters);
+		add_counters(player, card, player, card, COUNTER_P1_P1, counters);
 	}
 
   return 0;
@@ -3335,7 +3359,7 @@ static int effect_hunters_prowess(int player, int card, event_t event)
 
   card_instance_t* instance = get_card_instance(player, card);
 
-	if ( !is_humiliated(instance->targets[0].player, instance->targets[0].card) &&
+	if ( !is_humiliated(instance->targets[0].player, instance->targets[0].card, AL_TRIG) &&
 		 damage_dealt_by_me_arbitrary(instance->targets[0].player, instance->targets[0].card, event,
 									DDBM_MUST_DAMAGE_PLAYER | DDBM_MUST_BE_COMBAT_DAMAGE | DDBM_REPORT_DAMAGE_DEALT, player, card)
 
@@ -3576,13 +3600,17 @@ int card_pheres_band_raiders(int player, int card, event_t event)
 
 int card_pheres_band_tromper(int player, int card, event_t event)
 {
-  /* Pheres-Band Tromper |3|G
-   * Creature - Centaur Warrior (3/3)
-   * Inspired - Whenever ~ becomes untapped, put a +1/+1 counter on it. */
+  int result;
 
-  if (inspired(player, card, event))
-	add_1_1_counter(player, card);
-
+  if (((event == EVENT_UNTAP_CARD) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    result = inspired(player, card, event);
+    if (result != 0)
+    {
+      add_counters(player, card, player, card, COUNTER_P1_P1, 1);
+    }
+  }
   return 0;
 }
 
@@ -3644,7 +3672,7 @@ int card_scourge_of_skola_vale(int player, int card, event_t event)
 	{
 	  card_instance_t* instance = get_card_instance(player, card);
 	  if (in_play(instance->parent_controller, instance->parent_card))
-		add_1_1_counters(instance->parent_controller, instance->parent_card, instance->targets[2].card);
+		add_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_P1_P1, instance->targets[2].card);
 	}
 
   int rval = generic_activated_ability(player, card, event, GAA_UNTAPPED|GAA_SACRIFICE_CREATURE|GAA_NOT_ME_AS_TARGET, MANACOST_X(0), 0, NULL, NULL);
@@ -3813,7 +3841,7 @@ int card_epharas_enlightenment(int player, int card, event_t event)
 		if( instance->damage_target_player >= 0 && instance->damage_target_card >= 0 &&
 			in_play(instance->damage_target_player, instance->damage_target_card) )
 		{
-			add_1_1_counter(instance->damage_target_player, instance->damage_target_card);
+			add_counters(player, card, instance->damage_target_player, instance->damage_target_card, COUNTER_P1_P1, 1);
 		}
 	}
 
@@ -4096,7 +4124,7 @@ int card_phenax_god_of_deception(int player, int card, event_t event)
   default_target_definition(player, card, &td_player, 0);	\
   td_player.zone = TARGET_ZONE_PLAYERS
 
-  if (event == EVENT_CAN_ACTIVATE && !is_humiliated(player, card))
+  if (event == EVENT_CAN_ACTIVATE && !is_humiliated(player, card, AL_STATIC))
 	{
 	  DECL_TGT_PLAYER(player, card, td_player);
 
@@ -4163,7 +4191,7 @@ int card_ragemonger(int player, int card, event_t event)
    * Creature - Minotaur Shaman (2/3)
    * Minotaur spells you cast cost |B|R less to cast. This effect reduces only the amount of colored mana you pay. */
 
-  if (event == EVENT_MODIFY_COST_GLOBAL && ! is_humiliated(player, card)
+  if (event == EVENT_MODIFY_COST_GLOBAL && ! is_humiliated(player, card, AL_STATIC)
 	  && affected_card_controller == player
 	  && has_subtype(affected_card_controller, affected_card, SUBTYPE_MINOTAUR))
 	{
@@ -4176,29 +4204,73 @@ int card_ragemonger(int player, int card, event_t event)
 
 int card_reap_what_is_sown(int player, int card, event_t event)
 {
-  /* Reap What Is Sown |1|G|W
-   * Instant
-   * Put a +1/+1 counter on each of up to three target creatures. */
-	if( ! IS_GS_EVENT(player, card, event) ){
-		return 0;
-	}
-
+  target_t *ptVar1;
+  target_t *ptVar2;
+  int iVar3;
+  card_instance_t *instance;
+  int iVar5;
+  target_definition_t *ptStack_68;
   target_definition_t td;
-  default_target_definition(player, card, &td, TYPE_CREATURE);
+  if (event != EVENT_CAN_CAST)
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if (card != affected_card)
+      {
+        return 0;
+      }
+      if (player != affected_card_controller)
+      {
+        return 0;
+      }
+    }
+    else
+    {
+      if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+      {
+        default_target_definition(player, card, &td, 2);
+        td.preferred_controller = player;
+        if (event == EVENT_RESOLVE_SPELL)
+        {
+          instance = get_card_instance(player, card);
+          if (instance->number_of_targets != '\0')
+          {
+            iVar3 = 0;
+            do
+            {
+              while (true)
+              {
+                ptStack_68 = &td;
+                iVar5 = validate_target(player, card, ptStack_68, iVar3);
+                if (iVar5 == 0)
+                  break;
+                ptVar2 = instance->targets + iVar3;
+                ptVar1 = instance->targets + iVar3;
+                iVar3 = iVar3 + 1;
+                add_counters(player, card, ptVar1->player, ptVar2->card, COUNTER_P1_P1,
+                                         1);
+                if ((int)(unsigned int)instance->number_of_targets <= iVar3)
+                  goto LAB_020416bc;
+              }
+              iVar3 = iVar3 + 1;
+            } while (iVar3 < (int)(unsigned int)instance->number_of_targets);
+          }
+        LAB_020416bc:
+          kill_card(player, card, KILL_DESTROY);
+        }
+        goto LAB_020415aa;
+      }
+      if (event != EVENT_CHANGE_TARGET)
+      {
+        return 0;
+      }
+    }
+  }
+  default_target_definition(player, card, &td, 2);
   td.preferred_controller = player;
-
-  if (event == EVENT_RESOLVE_SPELL)
-	{
-	  card_instance_t* instance = get_card_instance(player, card);
-	  int i;
-	  for (i = 0; i < instance->number_of_targets; ++i)
-		if (validate_target(player, card, &td, i))
-		  add_1_1_counter(instance->targets[i].player, instance->targets[i].card);
-
-	  kill_card(player, card, KILL_DESTROY);
-	}
-
-  return generic_spell(player, card, event, GS_OPTIONAL_TARGET, &td, "TARGET_CREATURE", 3, NULL);
+LAB_020415aa:
+  iVar3 = generic_spell(player, card, event, 0x20, &td, "TARGET_CREATURE", 3, NULL);
+  return iVar3;
 }
 
 int card_siren_of_the_silent_song(int player, int card, event_t event)
@@ -4304,7 +4376,7 @@ int card_heroes_podium(int player, int card, event_t event)
 
   if ((event == EVENT_POWER || event == EVENT_TOUGHNESS) && affected_card_controller == player
 	  && is_what(affected_card_controller, affected_card, TYPE_CREATURE)	// Probably redundant
-	  && in_play(player, card) && !is_humiliated(player, card))
+	  && in_play(player, card) && !is_humiliated(player, card, AL_STATIC))
 	{
 	  // I'd have expected is_legendary() to take care of this.  Preferably with reasonable caching.
 	  if (check_battlefield_for_id(ANYBODY, CARD_ID_LEYLINE_OF_SINGULARITY)
@@ -4347,7 +4419,7 @@ int card_pillar_of_war(int player, int card, event_t event)
    * Defender
    * As long as ~ is enchanted, it can attack as though it didn't have defender. */
 
-  if (event == EVENT_ABILITIES && affect_me(player, card) && is_enchanted(player, card) && !is_humiliated(player, card))
+  if (event == EVENT_ABILITIES && affect_me(player, card) && is_enchanted(player, card) && !is_humiliated(player, card, AL_STATIC))
 	add_status(affected_card_controller, affected_card, STATUS_WALL_CAN_ATTACK);
 
   return 0;
@@ -4524,26 +4596,41 @@ int card_altar_of_mogis(int player, int card, event_t event){
 	return 0;
 }
 
-int unquenchable_fury_legacy(int player, int card, event_t event){
-	// This would probably have been updated to "Minotaur creatures gain menace until end of turn" if it were in Oracle.
-	if( event == EVENT_DECLARE_BLOCKERS ){
-		test_definition_t test;
-		default_test_definition(&test, TYPE_CREATURE);
-		test.subtype = SUBTYPE_MINOTAUR;
-		test.state = STATE_ATTACKING;
-
-		int i;
-		for(i=0; i<active_cards_count[player]; i++){
-			if( in_play(player, i) && new_make_test_in_play(player, i, -1, &test) ){
-				minimum_blockers(player, i, event, 2);
-			}
-		}
-	}
-
-	if( event == EVENT_CLEANUP ){
-		kill_card(player, card, KILL_EXILE);
-	}
-	return 0;
+int unquenchable_fury_legacy(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  int card_00;
+  test_definition_t test;
+  if (event == EVENT_DECLARE_BLOCKERS)
+  {
+    default_test_definition(&test, 2);
+    test.subtype = 0x77;
+    test.state = 4;
+    if (0 < active_cards_count[player])
+    {
+      card_00 = 0;
+      do
+      {
+        instance = in_play(player, card_00);
+        if (instance != NULL)
+        {
+          result = new_make_test_in_play(player, card_00, -1, &test);
+          if (result != 0)
+          {
+            menace(player, card_00, EVENT_DECLARE_BLOCKERS);
+          }
+        }
+        card_00 = card_00 + 1;
+      } while (card_00 < active_cards_count[player]);
+    }
+  }
+  else if (event == EVENT_CLEANUP)
+  {
+    kill_card(player, card, KILL_EXILE);
+    return 0;
+  }
+  return 0;
 }
 
 int card_unquenchable_fury(int player, int card, event_t event){
@@ -4659,7 +4746,7 @@ int card_consuming_rage(int player, int card, event_t event){
 }
 
 int card_reckless_minotaur(int player, int card, event_t event){
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_KEY) ){
 		haste(player, card, event);
 		attack_if_able(player, card, event);
 		if( eot_trigger(player, card, event) ){
@@ -4670,7 +4757,7 @@ int card_reckless_minotaur(int player, int card, event_t event){
 }
 
 int card_phoberos_reaver(int player, int card, event_t event){
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_KEY) ){
 		haste(player, card, event);
 		attack_if_able(player, card, event);
 	}
@@ -4678,7 +4765,7 @@ int card_phoberos_reaver(int player, int card, event_t event){
 }
 
 int card_mogis_chosen(int player, int card, event_t event){
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_TRIG) ){
 		haste(player, card, event);
 		comes_into_play_tapped(player, card, event);
 	}

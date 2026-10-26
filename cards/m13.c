@@ -2,7 +2,7 @@
 
 // ------------ General functions
 void uthden_creature(int player, int card, event_t event, int land_color){
-	if( ! is_humiliated(player, card) && (event== EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) &&
+	if( ! is_humiliated(player, card, AL_STATIC) && (event== EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) &&
 		basiclandtypes_controlled[player][get_hacked_color(player, card, land_color)] >= 1
 	  ){
 		event_result++;
@@ -25,7 +25,7 @@ static int m13_ring(int player, int card, event_t event, int clr, int key, int s
 			upkeep_trigger_ability(player, card, event, player);
 
 			if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-				add_1_1_counter(p, c);
+				add_counters(player, card, p, c, COUNTER_P1_P1, 1);
 			}
 		}
 		if( event == EVENT_ABILITIES && affect_me(p, c) ){
@@ -203,7 +203,7 @@ int card_ajani_caller_of_the_pride(int player, int card, event_t event){
 			case CHOICE_COUNTER:
 			{
 				if( instance->number_of_targets == 1 && valid_target(&td)){
-					add_1_1_counter(instance->targets[0].player, instance->targets[0].card);
+					add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1, 1);
 				}
 			}
 			break;
@@ -470,7 +470,7 @@ Artifact Creature - Golem 1/1
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *instance = get_card_instance(player, card);
-		add_1_1_counter(instance->parent_controller, instance->parent_card);
+		add_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_P1_P1, 1);
 	}
 
 	return generic_activated_ability(player, card, event, GAA_UNTAPPED, MANACOST_X(1), 0, NULL, NULL);
@@ -547,7 +547,7 @@ Creature - Lizard 2/1
 ~ gets +1/+1 as long as you control |Ha Swamp.
 |2|B: Regenerate ~. (The next time this creature would be destroyed this turn, it isn't. Instead tap it, remove all damage from it, and remove it from combat.) */
 
-	if( (event== EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card) &&
+	if( (event== EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) &&
 		basiclandtypes_controlled[player][get_hacked_color(player, card, COLOR_BLACK)] >= 1
 	  ){
 		event_result++;
@@ -715,10 +715,10 @@ Enchantment - Aura
 Enchant artifact or creature
 Enchanted permanent doesn't untap during its controller's untap step and its activated abilities can't be activated. */
 
-	if( in_play(player, card) && ! is_humiliated(player, card) && get_card_instance(player, card)->damage_target_player > -1 ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) && get_card_instance(player, card)->damage_target_player > -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
 		does_not_untap(instance->damage_target_player, instance->damage_target_card, event);
-		if( leaves_play(player, card, event) ){
+		if( leaves_play(player, card, event, 0, 0) ){
 			disable_all_activated_abilities(instance->damage_target_player, instance->damage_target_card, 0);
 		}
 	}
@@ -919,76 +919,103 @@ int card_healer_of_the_pride(int player, int card, event_t event)
   return 0;
 }
 
-int card_hellion_crucible(int player, int card, event_t event){
+int card_hellion_crucible(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  int p_Var4;
+  card_instance_t *instance;
+  uint32_t uVar6;
+  token_generation_t token;
 
-	/* Hellion Crucible	""
-	 * Land
-	 * |T: Add |1 to your mana pool.
-	 * |1|R, |T: Put a pressure counter on ~.
-	 * |1|R, |T, Remove two pressure counters from ~ and sacrifice it: Put a 4/4 |Sred Hellion creature token with haste onto the battlefield. */
-
-	if( ! IS_GAA_EVENT(event) || event == EVENT_CAN_ACTIVATE ){
-		return mana_producer(player, card, event);
-	}
-
-	enum{
-		CHOICE_MANA = 1,
-		CHOICE_COUNTER,
-		CHOICE_HELLION
-	};
-
-	card_instance_t *instance = get_card_instance( player, card );
-
-	if( event == EVENT_ACTIVATE ){
-		instance->info_slot = 0;
-		int choice = CHOICE_MANA;
-		if( ! paying_mana() ){
-			int abil_counter = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED, MANACOST_XR(2, 1), 0, NULL, NULL);
-			int abil_hellion = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, GAA_UNTAPPED | GAA_SACRIFICE_ME, MANACOST_XR(2, 1),
-														GVC_COUNTERS(COUNTER_PRESSURE, 2), NULL, NULL);
-			choice = DIALOG(player, card, event, DLG_RANDOM, DLG_NO_STORAGE,
-							"Produce mana", 1, 8,
-							"Add Pressure counter", abil_counter, 10,
-							"Generate an Hellion", abil_hellion, count_subtype(player, TYPE_CREATURE, -1) < 2 ? 15 : 0);
-			if( ! choice ){
-				spell_fizzled = 1;
-				return 0;
-			}
-		}
-		instance->info_slot = choice;
-		if( choice == CHOICE_MANA ){
-			return mana_producer(player, card, event);
-		}
-		if( choice == CHOICE_COUNTER || choice == CHOICE_HELLION ){
-			add_state(player, card, STATE_TAPPED);
-			if( charge_mana_for_activated_ability(player, card, MANACOST_XR(1, 1)) ){
-				tap_card(player, card);
-				if( choice == CHOICE_HELLION ){
-					remove_counters(player, card, COUNTER_PRESSURE, 2);
-					kill_card(player, card, KILL_SACRIFICE);
-				}
-			}
-			else{
-				remove_state(player, card, STATE_TAPPED);
-			}
-		}
-	}
-
-	if( event == EVENT_RESOLVE_ACTIVATION ){
-		if( instance->info_slot == CHOICE_COUNTER ){
-			add_counter(instance->parent_controller, instance->parent_card, COUNTER_PRESSURE);
-		}
-		if( instance->info_slot == CHOICE_HELLION ){
-			token_generation_t token;
-			default_token_definition(player, card, CARD_ID_HELLION, &token);
-			token.color_forced = COLOR_TEST_RED;
-			token.pow = token.tou = 4;
-			token.s_key_plus = SP_KEYWORD_HASTE;
-			generate_token(&token);
-		}
-	}
-
-	return 0;
+  if (event != EVENT_CAN_ACTIVATE)
+  {
+    if (event == EVENT_ACTIVATE)
+    {
+      instance = get_card_instance(player, card);
+      instance->info_slot = 0;
+      iVar1 = paying_mana();
+      if (iVar1 == 0)
+      {
+        iVar1 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 1, 2, 0, 0, 0, 1, 0, 0,
+                                          NULL, NULL);
+        iVar2 = generic_activated_ability(player, card, EVENT_CAN_ACTIVATE, 9, 2, 0, 0, 0, 1, 0,
+                                          0x15a0200, NULL, NULL);
+        iVar3 = count_subtype(player, 2, -1);
+        uVar6 = 0;
+        if (iVar3 < 2)
+        {
+          uVar6 = 0xf;
+        }
+        p_Var4 = dialog_impl(player, card, EVENT_ACTIVATE, "\001\002", "\001\014", "Produce mana",
+                             1, 8, "Add Pressure counter", iVar1, 10, "Generate an Hellion", iVar2,
+                             uVar6, 0, 0, 0, 0);
+        if (p_Var4 == 0)
+        {
+          spell_fizzled = 1;
+          return 0;
+        }
+        instance->info_slot = p_Var4;
+        if (p_Var4 != 1)
+        {
+          if (1U < (unsigned int)p_Var4 - 2U)
+          {
+            return 0;
+          }
+          add_state(player, card, 0x10);
+          iVar1 = charge_mana_for_activated_ability(player, card, 1, 0, 0, 0, 1, 0);
+          if (iVar1 == 0)
+          {
+            remove_state(player, card, 0x10);
+          }
+          else
+          {
+            tap_card(player, card);
+            if (p_Var4 == 3)
+            {
+              remove_counters(player, card, player, card, COUNTER_PRESSURE, 2);
+              kill_card(player, card, KILL_SACRIFICE);
+            }
+          }
+          tapped_for_mana_color = -1;
+          return 0;
+        }
+      }
+      else
+      {
+        instance->info_slot = 1;
+      }
+      event = EVENT_ACTIVATE;
+    }
+    else if ((event == EVENT_RESOLVE_ACTIVATION) || (event == EVENT_CLEANUP))
+    {
+      instance = get_card_instance(player, card);
+      if (event == EVENT_RESOLVE_ACTIVATION)
+      {
+        iVar1 = instance->info_slot;
+        if (iVar1 == 2)
+        {
+          add_counters(player, card, instance->parent_controller, instance->parent_card,
+                                   COUNTER_PRESSURE, 1);
+          iVar1 = instance->info_slot;
+        }
+        if (iVar1 == 3)
+        {
+          default_token_definition(player, card, 0x4945, &token);
+          token.color_forced = '\x10';
+          token.tou = 4;
+          token.pow = 4;
+          token.s_key_plus = 4;
+          generate_token(&token);
+          return 0;
+        }
+      }
+      return 0;
+    }
+  }
+  iVar1 = mana_producer(player, card, event);
+  return iVar1;
 }
 
 int card_hydrosurge(int player, int card, event_t event){
@@ -999,7 +1026,7 @@ int card_hydrosurge(int player, int card, event_t event){
 }
 
 int card_jaces_phantasm(int player, int card, event_t event){
-	if( (event== EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if( (event== EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( count_graveyard(1-player) >  9 ){
 			event_result+=4;
 		}
@@ -1310,7 +1337,7 @@ Whenever ~ and at least three other creatures attack, you choose which creatures
   check_legend_rule(player, card, event);
 
   // Whenever ~ and at least three other creatures attack, you choose which creatures block this combat and how those creatures block.
-  if (event == EVENT_DECLARE_ATTACKERS && is_attacking(player, card) && count_attackers(player) > 3 && ! is_humiliated(player, card) )
+  if (event == EVENT_DECLARE_ATTACKERS && is_attacking(player, card) && count_attackers(player) > 3 && ! is_humiliated(player, card, AL_TRIG) )
 	{
 	  event_flags |= EF_ATTACKER_CHOOSES_BLOCKERS;
 	  create_legacy_effect(player, card, odric_effect);
@@ -1345,7 +1372,7 @@ Enchantment
 You may cast spells from your hand without paying their mana costs. */
 
 	// Used externally
-	if( is_humiliated(player, card) ){
+	if( is_humiliated(player, card, AL_STATIC) ){
 		return 0;
 	}
 
@@ -1624,13 +1651,13 @@ int card_slumbering_dragon(int player, int card, event_t event)
 {
 	// ~ can't attack or block unless it has five or more +1/+1 counters on it.
 	if ((event == EVENT_ATTACK_LEGALITY || event == EVENT_BLOCK_LEGALITY) && affect_me(player, card) && count_1_1_counters(player, card) < 5 &&
-		! is_humiliated(player, card)
+		! is_humiliated(player, card, AL_STATIC)
 	)
 		event_result = 1;
 
   // Whenever a creature attacks you or a planeswalker you control, put a +1/+1 counter on ~.
   if (declare_attackers_trigger(player, card, event, DAT_SEPARATE_TRIGGERS, 1-player, -1))
-	add_1_1_counter(player, card);
+	add_counters(player, card, player, card, COUNTER_P1_P1, 1);
 
   return 0;
 }
@@ -1732,7 +1759,7 @@ int card_sublime_archangel(int player, int card, event_t event)
 		{
 		  int c, amount = 0;
 		  for (c = 0; c < active_cards_count[player]; ++c)
-			if (in_play(player, c) && is_what(player, c, TYPE_CREATURE) && !is_humiliated(player, c))
+			if (in_play(player, c) && is_what(player, c, TYPE_CREATURE) && !is_humiliated(player, c, AL_TRIG))
 			  ++amount;
 
 		  if (amount > 0)
@@ -1835,27 +1862,27 @@ int card_talrand_sky_summoner(int player, int card, event_t event){
 	return 0;
 }
 
-int card_thragtusk(int player, int card, event_t event){
-	/* Thragtusk	|4|G
-	 * Creature - Beast 5/3
-	 * When ~ enters the battlefield, you gain 5 life.
-	 * When ~ leaves the battlefield, put a 3/3 |Sgreen Beast creature token onto the battlefield. */
-
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-
-	if( event == EVENT_ETB_ABILITY ){
-		gain_life(player, 5);
-	}
-
-	if( leaves_play(player, card, event) ){
-		token_generation_t token;
-		default_token_definition(player, card, CARD_ID_BEAST, &token);
-		token.pow = token.tou = 3;
-		token.color_forced = COLOR_TEST_GREEN;
-		generate_token(&token);
-	}
-
-	return 0;
+int card_thragtusk(int player, int card, event_t event)
+{
+  token_generation_t token;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    gain_life(player, 5);
+    leaves_play(player, card, EVENT_ETB, 1, 1);
+    return 0;
+  }
+  leaves_play(player, card, event, 1, 1);
+  if (event != EVENT_LEAVES_PLAY_ABILITY)
+  {
+    return 0;
+  }
+  default_token_definition(player, card, 0x4907, &token);
+  token.tou = 3;
+  token.pow = 3;
+  token.color_forced = '\b';
+  generate_token(&token);
+  return 0;
 }
 
 
@@ -1883,7 +1910,7 @@ int card_thundermaw_hellkite(int player, int card, event_t event){
 }
 
 int card_timberpack_wolf(int player, int card, event_t event){
-	if( (event== EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if( (event== EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		int amount = 0;
 		CYCLE_ALL_CARDS(p, c, 	{
 									if( p == player && in_play(p, c) && has_same_name(player, card, p, c) ){
@@ -2116,7 +2143,7 @@ int card_void_stalker(int player, int card, event_t event){
 
 int card_war_falcon(int player, int card, event_t event){
 
-	if( event == EVENT_ATTACK_LEGALITY && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_ATTACK_LEGALITY && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( ! check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_SOLDIER) &&
 			! check_battlefield_for_subtype(player, TYPE_PERMANENT, SUBTYPE_KNIGHT)
 		  ){
@@ -2275,7 +2302,7 @@ int card_xathrid_gorgon(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		if( valid_target(&td) ){
-			add_counter(instance->targets[0].player, instance->targets[0].card, COUNTER_PETRIFICATION);	// does nothing, per rulings
+			add_counters(player, card, instance->targets[0].player, instance->targets[0].card, COUNTER_PETRIFICATION, 1);	// does nothing, per rulings
 
 			int leg = pump_ability_until_eot(player, card, instance->targets[0].player, instance->targets[0].card,
 											 0, 0, KEYWORD_DEFENDER, SP_KEYWORD_DOES_NOT_END_AT_EOT);
@@ -2324,7 +2351,7 @@ int card_rhox_faithmender(int player, int card, event_t event)
       (((reason_for_trigger_controller == player && (trigger_cause_controller == player)) &&
         (0 < life_gained))))
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       if (event == EVENT_TRIGGER)

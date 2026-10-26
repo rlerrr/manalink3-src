@@ -43,7 +43,7 @@ int card_angelic_field_marshal(int player, int card, event_t event){
 	  Lieutenant - As long as you control your commander, Angelic Field Marshal gets +2/+2 and creatures you control have vigilance.
 	  3/3
 	*/
-	if( in_play(player, card) && ! is_humiliated(player, card) && liutenant(player) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) && liutenant(player) ){
 		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) ){
 			event_result+=2;
 		}
@@ -129,7 +129,7 @@ int card_containment_priest(int player, int card, event_t event){
 	  If a nontoken creature would enter the battlefield and it wasn't cast, exile it instead.
 	  2/2
 	*/
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( trigger_condition == TRIGGER_SPELL_CAST && affect_me(player, card) && reason_for_trigger_controller == player ){
 			if( ! is_token(trigger_cause_controller, trigger_cause) &&
 				check_special_flags(trigger_cause_controller, trigger_cause, SF_NOT_CAST) )
@@ -668,7 +668,7 @@ int card_stormsurge_kraken(int player, int card, event_t event){
 	*/
 	hexproof(player, card, event);
 
-	if( in_play(player, card) && ! is_humiliated(player, card) && liutenant(player) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) && liutenant(player) ){
 		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) ){
 			event_result+=2;
 		}
@@ -781,27 +781,25 @@ int card_teferi_temporal_archmage(int player, int card, event_t event){
 	return planeswalker(player, card, event, 5);
 }
 
-int card_well_of_ideas(int player, int card, event_t event){
-	/*
-	  Well of Ideas |5|U
-	  Enchantment
-	  When Well of Ideas enters the battlefield, draw two cards.
-	  At the beginning of each other player's draw step, that player draws an additional card.
-	  At the beginning of your draw step, draw two additional cards.
-	*/
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
-
-	if( event == EVENT_ETB_ABILITY ){
-		draw_cards(player, 2);
-	}
-
-	if( ! is_humiliated(player, card) ){
-		if( event == EVENT_DRAW_PHASE ){
-			event_result += (current_turn == player ? 2 : 1);
-		}
-	}
-
-	return global_enchantment(player, card, event);
+int card_well_of_ideas(int player, int card, event_t event)
+{
+  int result;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event == EVENT_ETB)
+  {
+    draw_cards(player, 2);
+    is_humiliated(player, card, AL_STATIC);
+  }
+  else
+  {
+    result = is_humiliated(player, card, AL_STATIC);
+    if ((event == EVENT_DRAW_PHASE) && (result == 0))
+    {
+      event_result = event_result + (current_turn == player) + 1;
+    }
+  }
+  result = global_enchantment(player, card, event);
+  return result;
 }
 
 // Black (11)
@@ -813,7 +811,7 @@ int card_demone_of_wailing_agonies(int player, int card, event_t event){
 	  Lieutenant - As long as you control your commander, Demon of Wailing Agonies gets +2/+2 and has "Whenever Demon of Wailing Agonies deals combat damage to a player, that player sacrifices a creature."
 	  4/4
 	*/
-	if( in_play(player, card) && ! is_humiliated(player, card) && liutenant(player) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) && liutenant(player) ){
 		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) ){
 			event_result+=2;
 		}
@@ -861,7 +859,7 @@ int card_flesh_carver(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *instance = get_card_instance(player, card);
-		add_1_1_counters(instance->parent_controller, instance->parent_card, 2);
+		add_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_P1_P1, 2);
 	}
 
 	return generic_activated_ability(player, card, event, GAA_SACRIFICE_CREATURE | GAA_NOT_ME_AS_TARGET, MANACOST_XB(1, 1), 0, NULL, NULL);
@@ -1732,7 +1730,7 @@ int card_tyrants_familiar(int player, int card, event_t event){
 	*/
 	haste(player, card, event);
 
-	if( in_play(player, card) && ! is_humiliated(player, card) && liutenant(player) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) && liutenant(player) ){
 		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) ){
 			event_result+=2;
 		}
@@ -2074,7 +2072,7 @@ int card_siege_behemoth(int player, int card, event_t event){
 	*/
 	hexproof(player, card, event);
 
-	if( event == EVENT_DECLARE_BLOCKERS && is_attacking(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_DECLARE_BLOCKERS && is_attacking(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		int c;
 		for(c=active_cards_count[player]-1; c>-1; c--){
 			if( in_play(player, c) && is_attacking(player, c) && ! is_unblocked(player, c) ){
@@ -2088,53 +2086,90 @@ int card_siege_behemoth(int player, int card, event_t event){
   return 0;
 }
 
-int card_song_of_the_dryads(int player, int card, event_t event){
-	/*
-	  Song of the Dryads |2|G
-	  Enchantment - Aura
-	  Enchant permanent
-	  Enchanted permanent is a colorless Forest land.
-	*/
-	card_instance_t *instance = get_card_instance(player, card);
+int card_song_of_the_dryads(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  target_definition_t td;
 
-	if( instance->damage_target_player > -1 ){
-		int p = instance->damage_target_player;
-		int c = instance->damage_target_card;
-		if( event == EVENT_CHANGE_TYPE && affect_me(p, c) ){
-			int lt = get_hacked_subtype(player, card, SUBTYPE_FOREST);
-			instance->dummy3 = 0; //Hardcoded internal card id for basic Swamp
-			if( lt == SUBTYPE_ISLAND ){
-				instance->dummy3 = 1; //Hardcoded internal card id for basic Island
-			}
-			if( lt == SUBTYPE_FOREST ){
-				instance->dummy3 = 2; //Hardcoded internal card id for basic Forest
-			}
-			if( lt == SUBTYPE_MOUNTAIN ){
-				instance->dummy3 = 3; //Hardcoded internal card id for basic Mountain
-			}
-			if( lt == SUBTYPE_PLAINS ){
-				instance->dummy3 = 4; //Hardcoded internal card id for basic Plains
-			}
-			event_result = instance->dummy3;
-		}
-
-		if( leaves_play(player, card, event) ){
-			humiliate(player, card, p, c, 0);
-		}
-	}
-
-	if( ! IS_AURA_EVENT(player, card, event) ){
-		return 0;
-	}
-
-	target_definition_t td;
-	default_target_definition(player, card, &td, TYPE_PERMANENT);
-
-	if( event == EVENT_RESOLVE_SPELL && valid_target(&td) ){
-		humiliate(player, card, instance->targets[0].player, instance->targets[0].card, 1);
-	}
-
-	return targeted_aura(player, card, event, &td, "TARGET_PERMANENT");
+  instance = get_card_instance(player, card);
+  if ((instance->damage_target_player < '\0') || (event != EVENT_CHANGE_TYPE))
+  {
+    if (event != EVENT_CAN_CAST)
+    {
+      if (event == EVENT_CAST_SPELL)
+      {
+        if ((card != affected_card) || (player != affected_card_controller))
+          goto LAB_021dfe14;
+      }
+      else
+      {
+        if ((event == EVENT_RESOLVE_SPELL) || (event == EVENT_CAN_CHANGE_TARGET))
+          goto LAB_021dfda9;
+        if (event != EVENT_CHANGE_TARGET)
+          goto LAB_021dfe14;
+      }
+    }
+  }
+  else
+  {
+    if ((instance->damage_target_card != affected_card) ||
+        (instance->damage_target_player != affected_card_controller))
+      goto LAB_021dfe14;
+    result = get_hacked_subtype(player, card, 0x5001);
+    if (result == 0x5002)
+    {
+      instance->dummy3 = 1;
+    LAB_021dfeca:
+      event_result = instance->dummy3;
+    }
+    else
+    {
+      if (result == 0x5001)
+      {
+        instance->dummy3 = 2;
+        goto LAB_021dfeca;
+      }
+      instance->dummy3 = 0;
+      if (result == 0x5006)
+      {
+        instance->dummy3 = 3;
+        event_result = 3;
+      }
+      else
+      {
+        if (result != 0x5007)
+          goto LAB_021dfeca;
+        instance->dummy3 = 4;
+        event_result = 4;
+      }
+    }
+  LAB_021dfe14:
+    if ((((event & ~EVENT_SET_LEGACY_EFFECT_NAME) == EVENT_CAN_MOVE_AURA) ||
+         (event - EVENT_POWER < 3)) ||
+        (event == EVENT_RESOLVE_MOVING_AURA))
+    {
+    LAB_021dfda9:
+      default_target_definition(player, card, &td, 0x47);
+      if (((event == EVENT_ABILITIES) && (instance->damage_target_card == affected_card)) &&
+          (instance->damage_target_player == affected_card_controller))
+      {
+        instance =
+            get_card_instance((int)instance->damage_target_player, instance->damage_target_card);
+        instance->targets[0x11].card = instance->targets[0x11].card & 0x6e;
+      }
+      goto LAB_021dfddf;
+    }
+    if (((event != EVENT_CHANGE_TYPE) && (event != EVENT_SET_COLOR)) &&
+        ((event != EVENT_GET_SELECTED_CARD && (event != EVENT_STATIC_EFFECTS))))
+    {
+      return 0;
+    }
+  }
+  default_target_definition(player, card, &td, 0x47);
+LAB_021dfddf:
+  result = targeted_aura(player, card, event, &td, "TARGET_PERMANENT");
+  return result;
 }
 
 // Treefolk --> Rhino
@@ -2178,7 +2213,7 @@ int card_thunderfoot_baloth(int player, int card, event_t event){
 	  Lieutenant - As long as you control your commander, Thunderfoot Baloth gets +2/+2 and other creatures you control get +2/+2 and have trample.
 	  5/5
 	*/
-	if( in_play(player, card) && ! is_humiliated(player, card) && liutenant(player) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) && liutenant(player) ){
 		if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affected_card_controller == player ){
 			event_result+=2;
 		}
@@ -2540,37 +2575,52 @@ int card_myriad_landscape(int player, int card, event_t event){
 }
 
 // Artifacts (6)
-int card_assault_suit(int player, int card, event_t event){
-	/*
-	  Assault Suit |4
-	  Artifact - Equipment
-	  Equipped creature gets +2/+2, has haste, can't attack you or a planeswalker you control, and can't be sacrificed.
-	  At the beginning of each opponent's upkeep, you may have that player gain control of equipped creature until end of turn. If you do, untap it.
-	  Equip 3
-	*/
-	if( is_equipping(player, card) ){
-
-		card_instance_t *instance = get_card_instance(player, card);
-
-		if( event == EVENT_ATTACK_LEGALITY && affect_me(instance->targets[8].player, instance->targets[8].card) ){
-			if( current_turn != player ){
-				return 1;
-			}
-		}
-
-		if( leaves_play(player, card, event) ){
-			remove_special_flags2(instance->targets[8].player, instance->targets[8].card, SF2_CANNOT_BE_SACRIFICED);
-		}
-
-		upkeep_trigger_ability_mode(player, card, event, 1-player, player != AI ? RESOLVE_TRIGGER_OPTIONAL : 0);
-
-		if( event == EVENT_UPKEEP_TRIGGER_ABILITY ){
-			untap_card(instance->targets[8].player, instance->targets[8].card);
-			give_control_of_self(instance->targets[8].player, instance->targets[8].card);
-		}
-	}
-
-	return vanilla_equipment(player, card, event, 3, 2, 2, 0, SP_KEYWORD_HASTE);
+int card_assault_suit(int player, int card, event_t event)
+{
+  card_instance_t *instance;
+  int result;
+  instance = is_equipping(player, card);
+  if (instance != NULL)
+  {
+    instance = get_card_instance(player, card);
+    if (event == EVENT_ATTACK_LEGALITY)
+    {
+      if (((instance->damage_target_card == affected_card) &&
+           (instance->damage_target_player == affected_card_controller)) &&
+          (current_turn != player))
+      {
+        return 1;
+      }
+      leaves_play(player, card, EVENT_ATTACK_LEGALITY, 0, 0);
+    }
+    else
+    {
+      if (event == EVENT_EQUIPMENT_ATTACHED)
+      {
+        set_special_flags2((int)instance->damage_target_player, instance->damage_target_card,
+                           0x400000);
+        leaves_play(player, card, EVENT_EQUIPMENT_ATTACHED, 0, 0);
+        upkeep_trigger_ability_mode(player, card, EVENT_EQUIPMENT_ATTACHED, 1 - player,
+                                    (unsigned int)(player != 1));
+        goto LAB_021e1368;
+      }
+      leaves_play(player, card, event, 0, 0);
+      if ((event == EVENT_LEAVES_PLAY_ABILITY) || (event == EVENT_UNATTACH))
+      {
+        remove_special_flags2((int)instance->damage_target_player, instance->damage_target_card,
+                              0x400000);
+      }
+    }
+    upkeep_trigger_ability_mode(player, card, event, 1 - player, (unsigned int)(player != 1));
+    if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
+    {
+      untap_card((int)instance->damage_target_player, instance->damage_target_card);
+      give_control_of_self((int)instance->damage_target_player, instance->damage_target_card);
+    }
+  }
+LAB_021e1368:
+  result = vanilla_equipment(player, card, event, 3, 2, 2, 0, 4);
+  return result;
 }
 
 int card_commanders_sphere(int player, int card, event_t event){
@@ -2890,7 +2940,7 @@ int card_fools_demise(int player, int card, event_t event){
 
 	immortal_enchantment(player, card, event);
 
-	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player > -1 && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && get_card_instance(player, card)->damage_target_player > -1 && ! is_humiliated(player, card, AL_TRIG) ){
 		card_instance_t *instance = get_card_instance(player, card);
 		if( event == EVENT_GRAVEYARD_FROM_PLAY ){
 			if( affect_me(instance->damage_target_player, instance->damage_target_card) ){

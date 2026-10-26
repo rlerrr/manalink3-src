@@ -930,7 +930,7 @@ int card_zetalpa_primal_dawn(int player, int card, event_t event)
 {
   check_legend_rule(player, card, event);
   vigilance(player, card, event);
-  indestructible_2022(player, card, event);
+  indestructible(player, card, event);
   return 0;
 }
 
@@ -1534,7 +1534,7 @@ int card_skymarcher_aspirant(int player, int card, event_t event)
     result = has_the_citys_blessing(player);
     if (result != 0)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         event_result = event_result | 0x20;
@@ -1555,7 +1555,7 @@ int card_snubhorn_sentry(int player, int card, event_t event)
     result = has_the_citys_blessing(player);
     if (result != 0)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         event_result = event_result + 3;
@@ -1573,7 +1573,7 @@ int card_trapjaw_tyrant(int player, int card, event_t event)
   target_definition_t td;
 
   return_from_oblivion(player, card, event);
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if (result == 0)
   {
     result = damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card);
@@ -1604,7 +1604,7 @@ int card_curious_obsession(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
 
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if ((result == 0) &&
       (instance = get_card_instance(player, card), -1 < instance->damage_target_player))
   {
@@ -1662,7 +1662,7 @@ int card_kitesail_corsair(int player, int card, event_t event)
       result = is_attacking(player, card);
       if (result != 0)
       {
-        result = is_humiliated_for_ability(player, card, AL_STATIC);
+        result = is_humiliated(player, card, AL_STATIC);
         if (result == 0)
         {
           event_result = event_result | 0x20;
@@ -1898,7 +1898,7 @@ int card_silverclad_ferocidons(int player, int card, event_t event)
   int result;
   test_definition_t test;
 
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if (result == 0)
   {
     result = damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card);
@@ -1917,7 +1917,7 @@ int card_polyraptor(int player, int card, event_t event)
 {
   int result;
 
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if (result == 0)
   {
     result = damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card);
@@ -1967,7 +1967,7 @@ int card_wayward_swordtooth(int player, int card, event_t event)
       result = has_the_citys_blessing(player);
       if (result == 0)
       {
-        result = is_humiliated_for_ability(player, card, AL_STATIC);
+        result = is_humiliated(player, card, AL_STATIC);
         if (result == 0)
         {
           event_result = 1;
@@ -1981,7 +1981,7 @@ int card_wayward_swordtooth(int player, int card, event_t event)
     result = has_the_citys_blessing(player);
     if (result == 0)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         cannot_block(player, card, EVENT_ABILITIES);
@@ -2595,7 +2595,7 @@ int card_storm_the_vault(int player, int card, event_t event)
   }
   if (((current_turn == player) && (event == EVENT_PHASE_CHANGED)) && (current_phase == 0x22))
   {
-    result = is_humiliated_for_ability(player, card, AL_TRIG);
+    result = is_humiliated(player, card, AL_TRIG);
     if (result == 0)
     {
       result = count_permanents_by_type(player, TYPE_ARTIFACT);
@@ -2913,7 +2913,7 @@ int card_the_immortal_sun(int player, int card, event_t event)
 
   if (event == EVENT_ABILITIES)
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       result = is_what(affected_card_controller, affected_card, 0x100);
@@ -2928,7 +2928,7 @@ int card_the_immortal_sun(int player, int card, event_t event)
   {
     if (current_turn == player)
     {
-      result = is_humiliated_for_ability(player, card, AL_STATIC);
+      result = is_humiliated(player, card, AL_STATIC);
       if (result == 0)
       {
         event_result = event_result + 1;
@@ -2937,7 +2937,7 @@ int card_the_immortal_sun(int player, int card, event_t event)
   }
   else if ((event == EVENT_MODIFY_COST_GLOBAL) && (affected_card_controller == player))
   {
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       COST_COLORLESS = COST_COLORLESS + -1;
@@ -3450,7 +3450,7 @@ int card_forerunner_of_the_heralds(int player, int card, event_t event)
   {
     if ((trigger_cause_controller != player) || (trigger_cause != card))
     {
-      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+      add_counters(player, card, player, card, COUNTER_P1_P1, 1);
       return 0;
     }
     new_default_test_definition(&test, 0xff, "Select a Merfolk card.");
@@ -3481,7 +3481,7 @@ int card_elenda_the_dusk_rose(int player, int card, event_t event)
 
     for (uVar2 = uVar2 & 0xff; uVar2 != 0; uVar2 = uVar2 - 1)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 1);
+      add_counters(player, card, player, card, COUNTER_P1_P1, 1);
     }
   }
   result = this_dies_trigger(player, card, event, RESOLVE_TRIGGER_MANDATORY);
@@ -3551,7 +3551,7 @@ int card_huatli_radiant_champion(int player, int card, event_t event)
     if (result == 1)
     {
       result = count_subtype(instance->parent_controller, 2, -1);
-      add_counters_from_source(player, card, instance->parent_controller, instance->parent_card,
+      add_counters(player, card, instance->parent_controller, instance->parent_card,
                                COUNTER_LOYALTY, result);
     }
     else if (result == 2)
@@ -3580,13 +3580,13 @@ int card_siegehorn_ceratops(int player, int card, event_t event)
 {
   int result;
 
-  result = is_humiliated_for_ability(player, card, AL_TRIG);
+  result = is_humiliated(player, card, AL_TRIG);
   if (result == 0)
   {
     result = damage_dealt_to_me_arbitrary(player, card, event, DDBM_0, player, card);
     if (result != 0)
     {
-      add_counters_from_source(player, card, player, card, COUNTER_P1_P1, 2);
+      add_counters(player, card, player, card, COUNTER_P1_P1, 2);
       return 0;
     }
   }
@@ -3605,7 +3605,7 @@ int card_tetzimoc_primal_death(int player, int card, event_t event)
   target_definition_t td;
 
   check_legend_rule(player, card, event);
-  deathtouch_2022(player, card, event);
+  deathtouch(player, card, event);
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
   {
@@ -3656,7 +3656,7 @@ int card_tetzimoc_primal_death(int player, int card, event_t event)
         {
           return 0;
         }
-        add_counters_from_source(player, card, instance->targets[0].player,
+        add_counters(player, card, instance->targets[0].player,
                                  instance->targets[0].card, COUNTER_PREY, 1);
         return 0;
       }
@@ -3817,7 +3817,7 @@ int card_nezahal_primal_tide(int player, int card, event_t event)
   if (event == EVENT_MAX_HAND_SIZE)
   {
     if ((current_turn == player) &&
-        (result = is_humiliated_for_ability(player, card, AL_STATIC), result == 0))
+        (result = is_humiliated(player, card, AL_STATIC), result == 0))
     {
       event_result = 1000;
     }
@@ -3908,11 +3908,11 @@ int card_baffling_end(int player, int card, event_t event)
         kill_card(instance->targets[0].player, instance->targets[0].card, KILL_EXILE);
       }
     }
-    leaves_play_2022(player, card, EVENT_ETB, 1, 1);
+    leaves_play(player, card, EVENT_ETB, 1, 1);
   }
   else
   {
-    leaves_play_2022(player, card, event, 1, 1);
+    leaves_play(player, card, event, 1, 1);
     if (event == EVENT_LEAVES_PLAY_ABILITY)
     {
       target_opponent(player, card);
@@ -3931,7 +3931,7 @@ int card_captains_hook(int player, int card, event_t event)
   int result;
   card_instance_t *instance;
 
-  leaves_play_2022(player, card, event, 1, 0);
+  leaves_play(player, card, event, 1, 0);
   if ((event == EVENT_UNATTACH) || (event == EVENT_LEAVES_PLAY_ABILITY))
   {
     instance = is_equipping(player, card);
@@ -3980,7 +3980,7 @@ int card_hadanas_climb(int player, int card, event_t event)
         result = new_pick_target(&td, "TARGET_CREATURE_YOU_CONTROL", 0, 0);
         if (result != 0)
         {
-          add_counters_from_source(player, card, instance->targets[0].player,
+          add_counters(player, card, instance->targets[0].player,
                                    instance->targets[0].card, COUNTER_P1_P1, 1);
           result =
               count_counters(instance->targets[0].player, instance->targets[0].card, COUNTER_P1_P1);
@@ -4012,7 +4012,7 @@ static int journey_to_eternity_legacy(int player, int card, event_t event)
     seek_grave_for_id_to_reanimate(player, card, instance->targets[0].player,
                                    instance->targets[0].card, REANIMATE_DEFAULT);
   }
-  other_leaves_play_2022(player, card, instance->targets[1].player, instance->targets[1].card,
+  other_leaves_play(player, card, instance->targets[1].player, instance->targets[1].card,
                          event, 1, 0);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
@@ -4054,7 +4054,7 @@ static int golden_guardian_legacy(int player, int card, event_t event)
   int position;
 
   instance = get_card_instance(player, card);
-  other_leaves_play_2022(player, card, (int)instance->damage_target_player,
+  other_leaves_play(player, card, (int)instance->damage_target_player,
                          instance->damage_target_card, event, 1, 0);
   if (event == EVENT_LEAVES_PLAY_ABILITY)
   {
@@ -4369,7 +4369,7 @@ int card_blood_sun(int player, int card, event_t event)
   unsigned int uVar1;
   card_instance_t *instance;
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
 
   etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
   if (event == EVENT_ETB)
@@ -4379,7 +4379,7 @@ int card_blood_sun(int player, int card, event_t event)
     if (instance == NULL)
       goto LAB_0219198a;
   LAB_02191969:
-    result = is_humiliated_for_ability(player, card, AL_STATIC);
+    result = is_humiliated(player, card, AL_STATIC);
     if (result == 0)
     {
       default_test_definition(&test, 1);
@@ -4398,7 +4398,7 @@ int card_blood_sun(int player, int card, event_t event)
     instance = in_play(player, card);
     if ((((instance == NULL) ||
           (instance = in_play(affected_card_controller, affected_card), instance == NULL)) ||
-         (result = is_humiliated_for_ability(player, card, AL_STATIC), result != 0)) ||
+         (result = is_humiliated(player, card, AL_STATIC), result != 0)) ||
         (result = is_what(affected_card_controller, affected_card, 1), result == 0))
     {
       return 0;
@@ -4520,7 +4520,7 @@ int card_journey_to_eternity(int player, int card, event_t event)
   int iVar3;
   int iVar4;
   int player_00;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   double_faced_card(player, card, event);
   check_legend_rule(player, card, event);
@@ -4532,7 +4532,7 @@ int card_journey_to_eternity(int player, int card, event_t event)
 
     if ((((pcVar1->damage_target_player < '\0') ||
           (pcVar2 = in_play(player, card), pcVar2 == NULL)) ||
-         (iVar3 = is_humiliated_for_ability(player, card, AL_TRIG), iVar3 != 0)) ||
+         (iVar3 = is_humiliated(player, card, AL_TRIG), iVar3 != 0)) ||
         (event != EVENT_GRAVEYARD_FROM_PLAY))
       goto LAB_02193f0e;
     iVar3 = pcVar1->damage_target_card;
@@ -4560,7 +4560,7 @@ int card_journey_to_eternity(int player, int card, event_t event)
   }
   if (-1 < pcVar1->damage_target_player)
   {
-    iVar3 = is_humiliated_for_ability(player, card, AL_TRIG);
+    iVar3 = is_humiliated(player, card, AL_TRIG);
     if (iVar3 == 0)
     {
       nice_creature_to_sacrifice((int)pcVar1->damage_target_player, pcVar1->damage_target_card);
@@ -4698,11 +4698,11 @@ static int remove_eot_unless_cb(int player, int card, event_t event)
 
 #ifndef SHANDALAR
 /* Recovered October 2022 implementations; see docs/recovery-progress.md. */
-static void remove_token_at_end_of_next_turn_unless_cb(token_generation_2022_t *token, int beast,
+static void remove_token_at_end_of_next_turn_unless_cb(token_generation_t *token, int beast,
                                                        int number);
 
 /* ManalinkEh 2022: 0x218eda0; original cards/rivals_of_ixalan.c:1456. */
-static void remove_token_at_end_of_next_turn_unless_cb(token_generation_2022_t *token, int beast,
+static void remove_token_at_end_of_next_turn_unless_cb(token_generation_t *token, int beast,
                                                        int number)
 {
   int card;
@@ -4726,7 +4726,7 @@ int card_tilonallis_summoner(int player, int card, event_t event)
   declare_attackers_trigger_t mode;
   card_instance_t *instance;
   int result;
-  token_generation_2022_t token;
+  token_generation_t token;
 
   ascend(player, card, event);
   store_attackers(player, card, event, 0, player, card, NULL);
@@ -4759,7 +4759,7 @@ int card_tilonallis_summoner(int player, int card, event_t event)
       token.tou = 1;
       token.pow = 1;
       token.qty = (unsigned char)x_value;
-      token.action = TOKEN2022_ACTION_ATTACKING;
+      token.action = TOKEN_ACTION_ATTACKING;
       token.special_code_on_generation = remove_token_at_end_of_next_turn_unless_cb;
       generate_token(&token);
     }
@@ -4777,7 +4777,7 @@ int card_masterminds_acquisition(int player, int card, event_t event)
 {
   card_instance_t *instance;
   int result;
-  test_definition_2022_t test;
+  test_definition_t test;
 
   if (event == EVENT_CAN_CAST)
   {
@@ -4864,7 +4864,7 @@ int card_metzali_tower_of_triumph(int player, int card, event_t event)
   int iVar4;
   unsigned int uVar5;
   int iVar8;
-  target_definition_2022_t td;
+  target_definition_t td;
 
   if (event != EVENT_CAN_ACTIVATE)
   {

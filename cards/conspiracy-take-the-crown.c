@@ -38,7 +38,7 @@ void you_become_the_monarch(int player){
 	int c;
 	if( get_card_instance(monarch_player, monarch_card)->targets[0].player == 1-player ){
 		for(c=0; c<active_cards_count[1-player]; c++){
-			if( in_play(1-player, c) && ! is_humiliated(1-player, c) ){
+			if( in_play(1-player, c) && ! is_humiliated(1-player, c, AL_TRIG) ){
 				if( get_id(1-player, c) == CARD_ID_KNIGHTS_OF_THE_BLACK_ROSE ){
 					lose_life(player, 2);
 					gain_life(1-player, 2);
@@ -51,7 +51,7 @@ void you_become_the_monarch(int player){
 	/* Whenever you become the monarch, target player sacrifices a creature. */
 	int marked[2][100] = {{-1}};
 	for(c=0; c<active_cards_count[player]; c++){
-		if( in_play(player, c) && ! is_humiliated(player, c) ){
+		if( in_play(player, c) && ! is_humiliated(player, c, AL_TRIG) ){
 			if( get_id(player, c) == CARD_ID_CUSTODI_LICH ){
 				target_definition_t td;
 				default_target_definition(player, c, &td, 0);
@@ -138,7 +138,7 @@ int card_conspiracy_adrianas_valor(int player, int card, event_t event){
  * Whenever a creature you control with the chosen name attacks, you may pay |W.
  * If you do, that creature gains indestructible until end of turn. (Damage and effects that say "destroy" don't destroy it.) */
 
-	if (event == EVENT_DECLARE_ATTACKERS && !is_humiliated(player, card))
+	if (event == EVENT_DECLARE_ATTACKERS && !is_humiliated(player, card, AL_TRIG))
 	{
 		test_definition_t test;
 		default_test_definition(&test, TYPE_CREATURE);
@@ -460,14 +460,14 @@ int card_conspiracy_natural_unity(int player, int card, event_t event){
 	if( beginning_of_combat(player, card, event, player) ){
 		int i;
 		for(i=0; i<active_cards_count[player] && has_mana(player, COLOR_GREEN, 1); i++){
-			if( in_play(player, i) && is_what(player, i, TYPE_CREATURE) && ! is_humiliated(player, i) ){
+			if( in_play(player, i) && is_what(player, i, TYPE_CREATURE) && ! is_humiliated(player, i, AL_TRIG) ){
 				int choice = DIALOG(player, i, EVENT_ACTIVATE, DLG_NO_STORAGE, DLG_NO_CANCEL,
 									"Add +1/+1 counter", 1, 5,
 									"Decline",	1, 1);
 				if( choice == 1 ){
 					charge_mana(player, COLOR_GREEN, 1);
 					if( spell_fizzled != 1 ){
-						add_1_1_counter(player, i);
+						add_counters(player, card, player, i, COUNTER_P1_P1, 1);
 					}
 				}
 			}
@@ -540,30 +540,37 @@ int card_conspiracy_summoners_bond(int player, int card, event_t event){
  * Whenever ~ attacks, return target creature card with converted mana cost X or less from your graveyard to the battlefield,
  * where X is the number of players you attacked with a creature this combat. */
 
-int card_liutenants_of_the_guard(int player, int card, event_t event){
-/* Lieutenants of the Guard	|4|W	0x200f057
- * Creature - Human Soldier 2/2
- * Council's dilemma - When ~ enters the battlefield, starting with you, each player votes for strength or numbers.
- * Put a +1/+1 counter on ~ for each strength vote and create a 1/1 |Swhite Soldier creature token for each numbers vote. */
+int card_liutenants_of_the_guard(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int result;
 
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  int ai_priorities[2];
+  token_generation_t token;
+  char pos1[100];
+  char pos2[100];
 
-	if( event == EVENT_ETB_ABILITY ){
-		char pos1[100] = "Strenght (+1/+1 counters on this)";
-		char pos2[100] = "Number (1/1 soldier tokens)";
-		int ai_priorities[2] = {10, 5};
-		int result = will_of_the_council(player, card, pos1, pos2, ai_priorities);
-		add_1_1_counters(player, card, BYTE0(result));
-
-		token_generation_t token;
-		default_token_definition(player, card, CARD_ID_SOLDIER, &token);
-		token.qty = BYTE1(result);
-		token.pow = token.tou = 1;
-		token.color_forced = get_sleighted_color_test(player, card, COLOR_TEST_WHITE);
-		generate_token(&token);
-	}
-
-	return 0;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  memset(pos1, 0, sizeof(pos1));
+  memcpy(pos1, "Strenght (+1/+1 counters on this)\000", 34);
+  memset(pos2, 0, sizeof(pos2));
+  memcpy(pos2, "Number (1/1 soldier tokens)\000", 28);
+  result = 0;
+  ai_priorities[0] = 10;
+  ai_priorities[1] = 5;
+  uVar1 = will_of_the_council(player, card, pos1, pos2, ai_priorities);
+  add_counters(player, card, player, card, COUNTER_P1_P1, uVar1 & 0xff);
+  default_token_definition(player, card, 0x4986, &token);
+  token.qty = (unsigned char)(uVar1 >> 8);
+  token.tou = 1;
+  token.pow = 1;
+  token.color_forced = ' ';
+  generate_token(&token);
+  return 0;
 }
 
 /* Noble Banneret	|2|W|W	0x0000000
@@ -579,7 +586,7 @@ int card_palace_jailer(int player, int card, event_t event){
  * When ~ enters the battlefield, exile target creature an opponent controls until an opponent becomes the monarch.
  * (That creature returns under its owner's control.) */
 
-	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( get_card_instance(player, card)->info_slot == 66 && who_is_the_monarch() != player ){
 			true_return_from_oblivion(player, card);
 		}
@@ -637,7 +644,7 @@ int card_protector_of_the_crown(int player, int card, event_t event){
  * When ~ enters the battlefield, you become the monarch.
  * All damage that would be dealt to you is dealt to ~ instead. */
 
-	if( event == EVENT_PREVENT_DAMAGE && in_play(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_PREVENT_DAMAGE && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t *damage = get_card_instance(affected_card_controller, affected_card);
 		if( damage->internal_card_id == damage_card && damage->damage_target_player == player &&
 			damage->damage_target_card == -1
@@ -682,7 +689,7 @@ int card_sanctum_prelate(int player, int card, event_t event){
 		get_card_instance(player, card)->info_slot = choose_a_number(player, "Select a number.", internal_rand(6)+1);
 	}
 
-	if( event == EVENT_MODIFY_COST_GLOBAL && in_play(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_MODIFY_COST_GLOBAL && in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( ! is_what(affected_card_controller, affected_card, TYPE_CREATURE) ){
 			if( get_cmc(affected_card_controller, affected_card) == get_card_instance(player, card)->info_slot ){
 				infinite_casting_cost();
@@ -700,7 +707,7 @@ int card_spectral_grasp(int player, int card, event_t event){
  * Enchanted creature can't attack you or a planeswalker you control.
  * Enchanted creature can't block creatures you control. */
 
-	if( in_play(player, card) && ! is_humiliated(player, card) && get_card_instance(player, card)->damage_target_player != -1 ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) && get_card_instance(player, card)->damage_target_player != -1 ){
 		card_instance_t *instance = get_card_instance(player, card);
 
 		int p = instance->damage_target_player;
@@ -715,16 +722,24 @@ int card_spectral_grasp(int player, int card, event_t event){
 	return disabling_aura(player, card, event);
 }
 
-int card_throne_warden(int player, int card, event_t event){
-/* Throne Warden	|1|W	0x200f07a
- * Creature - Human Soldier 2/2
- * At the beginning of your end step, if you're the monarch, put a +1/+1 counter on ~. */
-	if( current_turn == player && trigger_condition == TRIGGER_EOT && affect_me(player, card) ){
-		if( who_is_the_monarch() == player && eot_trigger(player, card, event) ){
-			add_1_1_counter(player, card);
-		}
-	}
-	return 0;
+int card_throne_warden(int player, int card, event_t event)
+{
+  int player_00;
+  int result;
+  if ((((current_turn == player) && (trigger_condition == 0xcd)) && (card == affected_card)) &&
+      (player == affected_card_controller))
+  {
+    player_00 = who_is_the_monarch();
+    if (player_00 == player)
+    {
+      result = eot_trigger(player_00, card, event);
+      if (result != 0)
+      {
+        add_counters(player_00, card, player_00, card, COUNTER_P1_P1, 1);
+      }
+    }
+  }
+  return 0;
 }
 
 /* Wings of the Guard	|1|W	0x0000000
@@ -851,7 +866,7 @@ int card_keeper_of_keys(int player, int card, event_t event){
 		}
 	}
 
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( event == EVENT_BLOCK_LEGALITY && affected_card_controller == 1-player && get_card_instance(player, card)->info_slot == 66 ){
 			event_result = 1;
 		}
@@ -864,29 +879,33 @@ int card_keeper_of_keys(int player, int card, event_t event){
 	return card_palace_sentinels(player, card, event);
 }
 
-int card_messenger_jays(int player, int card, event_t event){
-/* Messenger Jays	|4|U	0x200f08e
- * Creature - Bird 2/1
- * Flying
- * Council's dilemma - When ~ enters the battlefield, starting with you, each player votes for feather or quill.
- * Put a +1/+1 counter on ~ for each feather vote and draw a card for each quill vote.
- * For each card drawn this way, discard a card. */
+int card_messenger_jays(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int result;
 
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  int ai_priorities[2];
+  char pos1[100];
+  char pos2[100];
 
-	if( event == EVENT_ETB_ABILITY ){
-		char pos1[100] = "Feather (+1/+1 counters on this)";
-		char pos2[100] = "Quill (Draw & discard)";
-		int ai_priorities[2] = {10, 5};
-		int result = will_of_the_council(player, card, pos1, pos2, ai_priorities);
-		add_1_1_counters(player, card, BYTE0(result));
-
-		draw_cards(player, BYTE1(result));
-
-		new_multidiscard(player, BYTE1(result), 0, player);
-	}
-
-	return 0;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  memset(pos1, 0, sizeof(pos1));
+  memcpy(pos1, "Feather (+1/+1 counters on this)\000", 33);
+  memset(pos2, 0, sizeof(pos2));
+  memcpy(pos2, "Quill (Draw & discard)", 22);
+  result = 0;
+  ai_priorities[0] = 10;
+  ai_priorities[1] = 5;
+  uVar1 = will_of_the_council(player, card, pos1, pos2, ai_priorities);
+  add_counters(player, card, player, card, COUNTER_P1_P1, uVar1 & 0xff);
+  uVar1 = uVar1 >> 8 & 0xff;
+  draw_cards(player, uVar1);
+  new_multidiscard(player, uVar1, 0, player);
+  return 0;
 }
 
 int card_skittering_crustacean(int player, int card, event_t event){
@@ -895,7 +914,7 @@ int card_skittering_crustacean(int player, int card, event_t event){
  * |6|U: Monstrosity 4. (If this creature isn't monstrous, put four +1/+1 counters on it and it becomes monstrous.)
  * As long as ~ is monstrous, it has hexproof. (It can't be the target of spells or abilities your opponents control.) */
 
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( event == EVENT_ABILITIES && affect_me(player, card) && is_monstrous(player, card) ){
 			hexproof(player, card, event);
 		}
@@ -1018,7 +1037,7 @@ int deadly_designs_effect(int player, int card, event_t event){
 	int c = instance->targets[0].card;
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
-		add_counter(p, c, COUNTER_PLOT);
+		add_counters(player, card, p, c, COUNTER_PLOT, 1);
 	}
 
 	return granted_generic_activated_ability(player, card, p, c, event, 0, MANACOST_X(2), 0, NULL, NULL);
@@ -1031,7 +1050,7 @@ int card_deadly_designs(int player, int card, event_t event){
  * When there are five or more plot counters on ~, sacrifice it. If you do, destroy up to two target creatures. */
 
 	if( event == EVENT_STATIC_EFFECTS && affect_me(player, card) ){
-		if( ! is_humiliated(player, card) && count_counters(player, card, COUNTER_PLOT) >= 5 ){
+		if( ! is_humiliated(player, card, AL_TRIG) && count_counters(player, card, COUNTER_PLOT) >= 5 ){
 			if( ! check_special_flags2(player, card, SF2_CANNOT_BE_SACRIFICED) ){
 				int legacy = create_legacy_effect(player, card, &deadly_designs_legacy);
 				card_instance_t *leg = get_card_instance(player, legacy);
@@ -1079,7 +1098,7 @@ int card_deadly_designs(int player, int card, event_t event){
 
 	if( event == EVENT_RESOLVE_ACTIVATION ){
 		card_instance_t *instance = get_card_instance(player, card);
-		add_counter(instance->parent_controller, instance->parent_card, COUNTER_PLOT);
+		add_counters(player, card, instance->parent_controller, instance->parent_card, COUNTER_PLOT, 1);
 	}
 
 	return generic_activated_ability(player, card, event, 0, MANACOST_X(2), 0, NULL, NULL);
@@ -1100,23 +1119,41 @@ int card_garrulous_sycophant(int player, int card, event_t event){
 	return 0;
 }
 
-int card_marchesas_decreee(int player, int card, event_t event){
-/* Marchesa's Decree	|3|B	0x200f0a7
- * Enchantment
- * When ~ enters the battlefield, you become the monarch.
- * Whenever a creature attacks you or a planeswalker you control, that creature's controller loses 1 life. */
-
-	if( event == EVENT_CAN_CAST || event == EVENT_SHOULD_AI_PLAY || (event == EVENT_CAST_SPELL && affect_me(player, card)) ){
-		return global_enchantment(player, card, event);
-	}
-
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
-		if( declare_attackers_trigger(player, card, event, DAT_SEPARATE_TRIGGERS, 1-player, -1) ){
-			lose_life(1-player, 1);
-		}
-	}
-
-	return card_palace_sentinels(player, card, event);
+int card_marchesas_decreee(int player, int card, event_t event)
+{
+  int result;
+  if ((event != EVENT_CAN_CAST) && (event != EVENT_SHOULD_AI_PLAY))
+  {
+    if (event == EVENT_CAST_SPELL)
+    {
+      if ((card == affected_card) && (player == affected_card_controller))
+        goto LAB_0220fb84;
+      store_attackers(player, card, EVENT_CAST_SPELL, DAT_SEPARATE_TRIGGERS, 1 - player, -1, NULL);
+      dat_ability(player, card, EVENT_CAST_SPELL, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+      etb_ability(player, card, EVENT_CAST_SPELL, RESOLVE_TRIGGER_MANDATORY);
+    }
+    else
+    {
+      store_attackers(player, card, event, DAT_SEPARATE_TRIGGERS, 1 - player, -1, NULL);
+      dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 1);
+      if (event == EVENT_DAT_ABILITY)
+      {
+        lose_life(1 - player, 1);
+        etb_ability(player, card, EVENT_DAT_ABILITY, RESOLVE_TRIGGER_MANDATORY);
+        return 0;
+      }
+      etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+      if (event == EVENT_ETB)
+      {
+        you_become_the_monarch(player);
+        return 0;
+      }
+    }
+    return 0;
+  }
+LAB_0220fb84:
+  result = global_enchantment(player, card, event);
+  return result;
 }
 
 /* Regicide	|B	0x0000000
@@ -1130,7 +1167,7 @@ int card_sinuous_vermin(int player, int card, event_t event){
  * |3|B|B: Monstrosity 3. (If this creature isn't monstrous, put three +1/+1 counters on it and it becomes monstrous.)
  * As long as ~ is monstrous, it has menace. (It can't be blocked except by two or more creatures.) */
 
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( event == EVENT_ABILITIES && affect_me(player, card) && is_monstrous(player, card) ){
 			menace(player, card, event);
 		}
@@ -1172,7 +1209,7 @@ int card_crow_hunter_hireling(int player, int card, event_t event){
 		}
 	}
 
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( event == EVENT_ATTACK_LEGALITY && affect_me(player, card) ){
 			if( who_is_the_monarch() != 1-player ){
 				cannot_attack(player, card, event);
@@ -1216,7 +1253,7 @@ int card_grenzo_havoc_raiser(int player, int card, event_t event){
 
 	if( trigger_condition == TRIGGER_DEAL_DAMAGE && affect_me(player, card) && reason_for_trigger_controller == player ){
 		card_instance_t *instance = get_card_instance(player, card);
-		if( instance->targets[8].player > 0 && ! is_humiliated(player, card) ){
+		if( instance->targets[8].player > 0 && ! is_humiliated(player, card, AL_TRIG) ){
 			if(event == EVENT_TRIGGER){
 				event_result |= RESOLVE_TRIGGER_MANDATORY;
 			}
@@ -1386,7 +1423,7 @@ int card_domesticated_hydra(int player, int card, event_t event){
  * |X|G|G|G: Monstrosity X. (If this creature isn't monstrous, put X +1/+1 counters on it and it becomes monstrous.)
  * As long as ~ is monstrous, it has trample. */
 
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( event == EVENT_ABILITIES && affect_me(player, card) && is_monstrous(player, card) ){
 			event_result |= KEYWORD_TRAMPLE;
 		}
@@ -1415,27 +1452,34 @@ int card_domesticated_hydra(int player, int card, event_t event){
  * Trample
  * Melee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked with a creature this combat.) */
 
-int card_orchard_elemental(int player, int card, event_t event){
-/* Orchard Elemental	|5|G	0x200f0d4
- * Creature - Elemental 2/2
- * Council's dilemma - When ~ enters the battlefield, starting with you, each player votes for sprout or harvest.
- * Put two +1/+1 counters on ~ for each sprout vote.
- * You gain 3 life for each harvest vote. */
+int card_orchard_elemental(int player, int card, event_t event)
+{
+  unsigned int uVar1;
+  int result;
 
-	etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  int ai_priorities[2];
+  char pos1[100];
+  char pos2[100];
 
-	if( event == EVENT_ETB_ABILITY ){
-		char pos1[100] = "Sprout (2 +1/+1 counters on this)";
-		char pos2[100] = "Harvest (3 life)";
-		int ai_priorities[2] = {life[player]*3, life[1-player]*3};
-		int result = will_of_the_council(player, card, pos1, pos2, ai_priorities);
-
-		add_1_1_counters(player, card, 2*BYTE0(result));
-
-		gain_life(player, 3*BYTE1(result));
-	}
-
-	return 0;
+  etb_ability(player, card, event, RESOLVE_TRIGGER_MANDATORY);
+  if (event != EVENT_ETB)
+  {
+    return 0;
+  }
+  memset(pos1, 0, sizeof(pos1));
+  memcpy(pos1, "Sprout (2 +1/+1 counters on this)\000", 34);
+  memset(pos2, 0, sizeof(pos2));
+  memcpy(pos2, "Harvest (3 life)\000", 17);
+  result = 0;
+  ai_priorities[0] = life[player] * 3;
+  pos2[0x11] = '\0';
+  pos2[0x12] = '\0';
+  pos2[0x13] = '\0';
+  ai_priorities[1] = life[1 - player] * 3;
+  uVar1 = will_of_the_council(player, card, pos1, pos2, ai_priorities);
+  add_counters(player, card, player, card, COUNTER_P1_P1, (uVar1 & 0xff) * 2);
+  gain_life(player, (uVar1 >> 8 & 0xff) * 3);
+  return 0;
 }
 
 int card_regal_behemoth(int player, int card, event_t event){
@@ -1452,7 +1496,7 @@ int card_regal_behemoth(int player, int card, event_t event){
 		you_become_the_monarch(player);
 	}
 
-	if( in_play(player, card) && ! is_humiliated(player, card) ){
+	if( in_play(player, card) && ! is_humiliated(player, card, AL_TRIG) ){
 		switch (event){
 			case EVENT_TAP_CARD:
 				if (!is_what(affected_card_controller, affected_card, TYPE_LAND)){
@@ -1962,34 +2006,47 @@ int card_kaya_ghost_assassin(int player, int card, event_t event)
 
 int card_leovold_emissary_of_trest(int player, int card, event_t event)
 {
-/* Leovold, Emissary of Trest	|B|G|U	0x200f0fc
- * Legendary Creature - Elf Advisor 3/3
- * Each opponent can't draw more than one card each turn.
- * Whenever you or a permanent you control becomes the target of a spell or ability an opponent controls, you may draw a card. */
-
-	check_legend_rule(player, card, event);
-
-	if( ! in_play(player, card) || is_humiliated(player, card) ){
-		return 0;
-	}
-
-	if( trigger_condition == TRIGGER_REPLACE_CARD_DRAW && affect_me(player, card) && event == EVENT_TRIGGER &&
-		reason_for_trigger_controller == 1-player && !suppress_draw && in_play(player, card) &&
-		cards_drawn_this_turn[reason_for_trigger_controller] > 0 )
-	{
-		suppress_draw = 1;
-		// Deliberately do this during EVENT_TRIGGER, not EVENT_RESOLVE_TRIGGER, so nothing else can replace the (nonexistent) draw
-	}
-
-	if( any_becomes_target(player, card, event, player, -1, TYPE_PERMANENT, -1, TYPE_ANY, 1-player, RESOLVE_TRIGGER_AI(player)) ){
-		draw_cards(player, 1);
-	}
-
-	if( becomes_target_of_spell_or_effect(player, card, event, player, -1, 1-player) ){
-		draw_cards(player, 1);
-	}
-
-	return 0;
+  card_instance_t *instance;
+  int result;
+  const target_t *ptVar3;
+  check_legend_rule(player, card, event);
+  if (((((trigger_condition == 0xcf) && (card == affected_card)) &&
+        (affected_card_controller == player)) &&
+       ((event == EVENT_TRIGGER && (1 - player == reason_for_trigger_controller)))) &&
+      (suppress_draw == 0))
+  {
+    instance = in_play(player, card);
+    if ((instance != NULL) && (cards_drawn_this_turn[reason_for_trigger_controller] != 0))
+    {
+      result = is_humiliated(player, card, AL_STATIC);
+      if (result == 0)
+      {
+        suppress_draw = 1;
+      }
+    }
+  }
+  instance = in_play(player, card);
+  if (instance != NULL)
+  {
+    result = is_humiliated(player, card, AL_TRIG);
+    if (result == 0)
+    {
+      result = duh_mode(player);
+      ptVar3 = any_becomes_target(player, card, event, player, -1, TYPE_PERMANENT, -1, TYPE_ANY,
+                                  1 - player, (result != 0) + RESOLVE_TRIGGER_OPTIONAL);
+      if (ptVar3 != NULL)
+      {
+        draw_cards(player, 1);
+      }
+      ptVar3 = becomes_target_of_spell_or_effect(player, card, event, player, -1, 1 - player);
+      if (ptVar3 != NULL)
+      {
+        draw_cards(player, 1);
+        return 0;
+      }
+    }
+  }
+  return 0;
 }
 
 int card_queen_marchesa(int player, int card, event_t event){

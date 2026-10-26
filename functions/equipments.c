@@ -87,27 +87,39 @@ static int equipment_legacy(int player, int card, event_t event)
  * Being stdcall saves three bytes at the call site; a normal (cdecl) function would be one byte too long to fit into the third injection. */
 int __stdcall is_displayed_as_attached(int player, int card)
 {
-	card_instance_t* instance = get_displayed_card_instance(player, card);
-	card_data_t* cd = &cards_data[instance->internal_card_id];
-	card_ptr_t* cp = cards_ptr[cd->id];
+  uint16_t uVar1;
+  card_instance_t *instance;
+  int result;
 
-	// Auras
-	if (cd->type & TYPE_ENCHANTMENT // enchantment
-		&& cp->subtype1 != HARDCODED_SUBTYPE_NONE
-		// Everything above here is standard.  New stuff below.
-		&& cp->subtype1 != HARDCODED_SUBTYPE_WORLD){	// World enchantments aren't auras
-		return 1;
-	}
-
-	// Equipment
-	if (get_setting(SETTING_ATTACH_EQUIPMENT)
-		&& has_subtype_by_id(cd->id, SUBTYPE_EQUIPMENT)	// simplifying, rather than rewrite has_subtype() to work with displayed card instances
-		&& instance->targets[8].player >= 0 && instance->targets[8].card >= 0	// first half of is_equipping() for displayed card_instance_t
-		&& (get_displayed_card_instance(instance->targets[8].player, instance->targets[8].card)->state & (STATE_INVISIBLE|STATE_IN_PLAY)) == STATE_IN_PLAY){ // almost equivalent to in_play(), which also checks STATE_OUBLIETTED
-		return 1;
-	}
-
-	return 0;
+  instance = get_displayed_card_instance(player, card);
+  if (((((cards_data[instance->internal_card_id].type & 4) != 0) &&
+        (uVar1 = cards_ptr[cards_data[instance->internal_card_id].id]->subtype1, uVar1 != 0xcd)) &&
+       (uVar1 != 0xd3)) ||
+      (result = has_subtype(player, card, SUBTYPE_AURA), result != 0))
+  {
+    return 1;
+  }
+  result = get_setting(0x10);
+  if (result == 0)
+  {
+    return 0;
+  }
+  result = has_subtype(player, card, SUBTYPE_EQUIPMENT);
+  if (result == 0)
+  {
+    return 0;
+  }
+  if (instance->damage_target_player < '\0')
+  {
+    return 0;
+  }
+  if (instance->damage_target_card < 0)
+  {
+    return 0;
+  }
+  instance = get_displayed_card_instance((int)instance->damage_target_player,
+                                         instance->damage_target_card);
+  return (unsigned int)((instance->state & 0x22) == 2);
 }
 
 void equip_target_creature(int equipment_controller, int equipment_card, int t_player, int t_card){
@@ -191,10 +203,10 @@ int get_updated_equip_cost(int player, int card, int equip_cost){
 				if( is_what(player, count, TYPE_ARTIFACT) ){
 					art_count++;
 				}
-				if( get_id(player, count) == CARD_ID_AURIOK_STEELSHAPER && ! is_humiliated(player, count) ){
+				if( get_id(player, count) == CARD_ID_AURIOK_STEELSHAPER && ! is_humiliated(player, count, AL_STATIC) ){
 					new_cost--;
 				}
-				if( get_id(player, count) == CARD_ID_PURESTEEL_PALADIN && ! is_humiliated(player, count) ){
+				if( get_id(player, count) == CARD_ID_PURESTEEL_PALADIN && ! is_humiliated(player, count, AL_STATIC) ){
 					psp_flag = 1;
 				}
 			}

@@ -1,11 +1,11 @@
 #include "manalink.h"
 
 /* Canonical recovered helper declarations. */
-void default_token_definition(int player, int card, int id, token_generation_2022_t *token);
-void copy_token_definition(int player, int card, token_generation_2022_t *token, int t_player,
+void default_token_definition(int player, int card, int id, token_generation_t *token);
+void copy_token_definition(int player, int card, token_generation_t *token, int t_player,
                                 int t_card);
-void generate_token(token_generation_2022_t *token);
-static void set_token(int player, int card, token_generation_2022_t *token);
+void generate_token(token_generation_t *token);
+static void set_token(int player, int card, token_generation_t *token);
 void generate_tokens_by_id(int player, int card, int csvid, int howmany);
 int generate_reserved_token_by_id(int player, int csvid);
 void copy_token(int player, int card, int tok_player, int tok_card);
@@ -519,19 +519,19 @@ void copy_all_tokens_both_players(int player, int card, int type, test_definitio
 
 
 /* October 2022 token creation component. */
-void generate_token(token_generation_2022_t *token);
-static void set_token(int player, int card, token_generation_2022_t *token);
-void default_token_definition(int player, int card, int id, token_generation_2022_t *token);
-static int resolve_token_iid_2022(iid_t int_id, token_generation_2022_t *token);
+void generate_token(token_generation_t *token);
+static void set_token(int player, int card, token_generation_t *token);
+void default_token_definition(int player, int card, int id, token_generation_t *token);
+static int resolve_token_iid(iid_t int_id, token_generation_t *token);
 static int get_copyable_special_infos(int t_player, int t_card);
-void copy_token_definition(int player, int card, token_generation_2022_t *token, int t_player,
+void copy_token_definition(int player, int card, token_generation_t *token, int t_player,
                                 int t_card);
 int token_characteristic_setting_effects(int player, int card, event_t event, int t_player,
                                               int t_card);
 int generic_token(int player, int card, event_t event);
 
 /* ManalinkEh 2022: 0x26659d0; original functions/token_generation.c:503. */
-void generate_token(token_generation_2022_t *token)
+void generate_token(token_generation_t *token)
 {
   uint16_t uVar1;
   uint16_t uVar2;
@@ -542,7 +542,7 @@ void generate_token(token_generation_2022_t *token)
   uint8_t uVar7;
   int iVar8;
   card_instance_t *pcVar9;
-  token_action_2022_t tVar10;
+  token_action_t tVar10;
   int iVar11;
   card_instance_t *pcVar12;
   int iVar13;
@@ -639,7 +639,7 @@ void generate_token(token_generation_2022_t *token)
     {
       pcVar9 = in_play(iVar8, iVar13);
       if ((pcVar9 != NULL) &&
-          (iVar8 = is_humiliated_for_ability(token->t_player, iVar13, AL_STATIC), iVar8 == 0))
+          (iVar8 = is_humiliated(token->t_player, iVar13, AL_STATIC), iVar8 == 0))
       {
         iVar8 = get_id(token->t_player, iVar13);
         iVar14 = iVar14 + (unsigned int)(iVar8 == 0x59a8);
@@ -743,12 +743,12 @@ void generate_token(token_generation_2022_t *token)
             token->color_forced = ' ';
             token->special_infos = 0;
           }
-          iStack_8c = resolve_token_iid_2022(iStack_8c, token);
+          iStack_8c = resolve_token_iid(iStack_8c, token);
           if (token->eff_card == -1)
           {
             if (((token->keep_track_of_tokens_generated != 0) || (token->legacy == '\x01')) ||
-                ((token->action & (TOKEN2022_ACTION_PUMP_TOUGHNESS | TOKEN2022_ACTION_PUMP_POWER |
-                                   TOKEN2022_ACTION_HASTE | TOKEN2022_ACTION_EQUIP)) != 0))
+                ((token->action & (TOKEN_ACTION_PUMP_TOUGHNESS | TOKEN_ACTION_PUMP_POWER |
+                                   TOKEN_ACTION_HASTE | TOKEN_ACTION_EQUIP)) != 0))
             {
               backtrace_and_abort("functions/token_generation.c:392\ntoken->eff_card != -1 || "
                                   "!(token->keep_track_of_tokens_generated > 0 || token->legacy == "
@@ -782,18 +782,18 @@ void generate_token(token_generation_2022_t *token)
             pcVar12->display_pic_csv_id = uVar1;
           }
           tVar10 = token->action;
-          if ((tVar10 & TOKEN2022_ACTION_TAPPED) != 0)
+          if ((tVar10 & TOKEN_ACTION_TAPPED) != 0)
           {
             pcVar9->state = pcVar9->state | 0x10;
           }
-          if (((tVar10 & TOKEN2022_ACTION_ATTACKING_UNTAPPED) != 0) &&
+          if (((tVar10 & TOKEN_ACTION_ATTACKING_UNTAPPED) != 0) &&
               (pcVar9->state = pcVar9->state | 4,
-               (tVar10 & TOKEN2022_ACTION_SKIP_ATTACK_CHECK) == 0))
+               (tVar10 & TOKEN_ACTION_SKIP_ATTACK_CHECK) == 0))
           {
             choose_who_attack(token->t_player, iVar13);
             tVar10 = token->action;
           }
-          if ((tVar10 & TOKEN2022_ACTION_BLOCKING) != 0)
+          if ((tVar10 & TOKEN_ACTION_BLOCKING) != 0)
           {
             pcVar12 = get_card_instance(1 - token->t_player, token->action_argument);
             uVar7 = pcVar12->blocking;
@@ -805,12 +805,12 @@ void generate_token(token_generation_2022_t *token)
             tVar10 = token->action;
             pcVar9->state = pcVar9->state | 0x8008;
           }
-          if (((tVar10 & TOKEN2022_ACTION_EQUIP) != 0) && (iStack_88 == 0))
+          if (((tVar10 & TOKEN_ACTION_EQUIP) != 0) && (iStack_88 == 0))
           {
             equip_target_creature(token->eff_player, token->eff_card, token->t_player, iVar13);
             tVar10 = token->action;
           }
-          if (((tVar10 & TOKEN2022_ACTION_EQUIP_ANY) != 0) && (iStack_88 == 0))
+          if (((tVar10 & TOKEN_ACTION_EQUIP_ANY) != 0) && (iStack_88 == 0))
           {
             default_target_definition(token->eff_player, token->eff_card, &td, 0xff);
             td.required_subtype = 0x3001;
@@ -830,21 +830,21 @@ void generate_token(token_generation_2022_t *token)
             pcVar12->targets[0].card = iVar4;
             tVar10 = token->action;
           }
-          if ((tVar10 & TOKEN2022_ACTION_DONT_COPY_TOKEN_SOURCE) != 0)
+          if ((tVar10 & TOKEN_ACTION_DONT_COPY_TOKEN_SOURCE) != 0)
           {
             set_special_flags(token->t_player, iVar13, 0x40000000);
             tVar10 = token->action;
           }
-          if ((tVar10 & (TOKEN2022_ACTION_PUMP_TOUGHNESS | TOKEN2022_ACTION_PUMP_POWER |
-                         TOKEN2022_ACTION_HASTE)) != 0)
+          if ((tVar10 & (TOKEN_ACTION_PUMP_TOUGHNESS | TOKEN_ACTION_PUMP_POWER |
+                         TOKEN_ACTION_HASTE)) != 0)
           {
             iStack_9c = 0;
-            if ((tVar10 & TOKEN2022_ACTION_PUMP_TOUGHNESS) != 0)
+            if ((tVar10 & TOKEN_ACTION_PUMP_TOUGHNESS) != 0)
             {
               iStack_9c = token->action_argument;
             }
             iVar14 = 0;
-            if ((tVar10 & TOKEN2022_ACTION_PUMP_POWER) != 0)
+            if ((tVar10 & TOKEN_ACTION_PUMP_POWER) != 0)
             {
               iVar14 = token->action_argument;
             }
@@ -852,13 +852,13 @@ void generate_token(token_generation_2022_t *token)
                                    iVar14, iStack_9c, 0, tVar10 >> 2 & 4);
             tVar10 = token->action;
           }
-          if ((tVar10 & TOKEN2022_ACTION_ADD_SUBTYPE) != 0)
+          if ((tVar10 & TOKEN_ACTION_ADD_SUBTYPE) != 0)
           {
             add_a_subtype_permanently(token->eff_player, token->eff_card, token->t_player, iVar13,
                                       token->action_argument);
             tVar10 = token->action;
           }
-          if ((tVar10 & TOKEN2022_ACTION_RECORD_SOURCE_ID) != 0)
+          if ((tVar10 & TOKEN_ACTION_RECORD_SOURCE_ID) != 0)
           {
             iVar14 = get_id(token->s_player, token->s_card);
             pcVar9->damage_source_card = iVar14;
@@ -875,16 +875,16 @@ void generate_token(token_generation_2022_t *token)
           }
           put_into_play(iVar14, iVar13);
           tVar10 = token->action;
-          if ((tVar10 & TOKEN2022_ACTION_ADD_COUNTERS) != 0)
+          if ((tVar10 & TOKEN_ACTION_ADD_COUNTERS) != 0)
           {
             hack_silent_counters = hack_silent_counters + 1;
-            add_counters_from_source(token->s_player, token->s_card, token->t_player, iVar13,
+            add_counters(token->s_player, token->s_card, token->t_player, iVar13,
                                      (unsigned int)token->action_argument >> 0x10,
                                      token->action_argument & 0xffff);
             hack_silent_counters = hack_silent_counters + -1;
             tVar10 = token->action;
           }
-          if ((((tVar10 & TOKEN2022_ACTION_BLOCKING) == 0) ||
+          if ((((tVar10 & TOKEN_ACTION_BLOCKING) == 0) ||
                (pcVar9 = in_play(token->t_player, iVar13), pcVar9 == NULL)) ||
               (play_sound_effect(WAV_BLOCK2),
                (((unsigned int)event_flags >> 16 & 0xff) & 0x10) == 0))
@@ -959,7 +959,7 @@ void generate_token(token_generation_2022_t *token)
 }
 
 /* ManalinkEh 2022: 0x2664eb0; original functions/token_generation.c:150. */
-static void set_token(int player, int card, token_generation_2022_t *token)
+static void set_token(int player, int card, token_generation_t *token)
 {
   uint32_t uVar1;
   unsigned int uVar2;
@@ -970,7 +970,7 @@ static void set_token(int player, int card, token_generation_2022_t *token)
   instance->damage_source_card = token->s_card;
   uVar1 = token->s_key_plus;
   instance->ext->sp_keywords = uVar1;
-  instance->token_special_keywords_2022 = uVar1;
+  instance->token_special_keywords = uVar1;
   set_special_flags2(player, card, token->special_flags2);
   instance = get_card_instance(player, card);
   uVar2 = token->special_infos;
@@ -981,7 +981,7 @@ static void set_token(int player, int card, token_generation_2022_t *token)
 }
 
 /* ManalinkEh 2022: 0x2665470; original functions/token_generation.c:5. */
-void default_token_definition(int player, int card, int id, token_generation_2022_t *token)
+void default_token_definition(int player, int card, int id, token_generation_t *token)
 {
   int result;
   card_instance_t *instance;
@@ -1040,12 +1040,12 @@ void default_token_definition(int player, int card, int id, token_generation_202
 }
 
 /* ManalinkEh 2022: 0x2664f30; original functions/token_generation.c:295. */
-static int resolve_token_iid_2022(iid_t int_id, token_generation_2022_t *token)
+static int resolve_token_iid(iid_t int_id, token_generation_t *token)
 {
   unsigned char bVar1;
   unsigned int uVar2;
   int iVar3;
-  token_action_2022_t tVar4;
+  token_action_t tVar4;
   unsigned char bVar5;
   char cVar6;
   char cVar7;
@@ -1067,11 +1067,11 @@ static int resolve_token_iid_2022(iid_t int_id, token_generation_2022_t *token)
 
   bVar18 = 0;
   iVar9 = get_internal_card_id_from_csv_id((unsigned int)cards_data[int_id].id);
-  iVar11 = engine_dynamic_iid_start_2022;
+  iVar11 = engine_dynamic_iid_start;
   if ((cards_data[iVar9].cc[2] != '\x03') && (cards_data[iVar9].type != 0x80))
   {
-    iVar9 = engine_dynamic_iid_start_2022 + 0x10;
-    iVar3 = engine_dynamic_iid_start_2022;
+    iVar9 = engine_dynamic_iid_start + 0x10;
+    iVar3 = engine_dynamic_iid_start;
     do
     {
       iVar12 = iVar3;
@@ -1082,7 +1082,7 @@ static int resolve_token_iid_2022(iid_t int_id, token_generation_2022_t *token)
             ((cards_data[iVar12].static_ability & token->key_plus) != 0))))
       {
         bVar1 = 1;
-        if ((token->action & TOKEN2022_ACTION_CONVERT_INTO_ARTIFACT) != 0)
+        if ((token->action & TOKEN_ACTION_CONVERT_INTO_ARTIFACT) != 0)
         {
           bVar1 = cards_data[iVar12].type >> 6 & 1;
         }
@@ -1120,8 +1120,8 @@ static int resolve_token_iid_2022(iid_t int_id, token_generation_2022_t *token)
          ((token->key_plus != 0 && (token->key_plus != cards_data[int_id].static_ability)))) ||
         ((cards_data[int_id].color != uStack_64 ||
           ((((cards_data[int_id].type & 0x40) == 0 &&
-             ((token->action & TOKEN2022_ACTION_CONVERT_INTO_ARTIFACT) != 0)) ||
-            ((token->action & TOKEN2022_ACTION_ISNT_LEGENDARY) != 0))))))
+             ((token->action & TOKEN_ACTION_CONVERT_INTO_ARTIFACT) != 0)) ||
+            ((token->action & TOKEN_ACTION_ISNT_LEGENDARY) != 0))))))
     {
       uStack_58 = 0;
       piVar15 = dynused;
@@ -1164,8 +1164,8 @@ static int resolve_token_iid_2022(iid_t int_id, token_generation_2022_t *token)
         {
           do
           {
-            if (((dynused[iVar9 - iVar11] == 0) && (engine_dynamic_iid_start_2022 <= iVar9)) &&
-                (iVar9 <= engine_dynamic_iid_start_2022 + 0xf))
+            if (((dynused[iVar9 - iVar11] == 0) && (engine_dynamic_iid_start <= iVar9)) &&
+                (iVar9 <= engine_dynamic_iid_start + 0xf))
             {
               cards_data[iVar9].id = 0xffff;
             }
@@ -1190,11 +1190,11 @@ static int resolve_token_iid_2022(iid_t int_id, token_generation_2022_t *token)
           }
           tVar4 = token->action;
           if (((cards_data[int_id].type & 0x40) == 0) &&
-              ((tVar4 & TOKEN2022_ACTION_CONVERT_INTO_ARTIFACT) != 0))
+              ((tVar4 & TOKEN_ACTION_CONVERT_INTO_ARTIFACT) != 0))
           {
             cards_data[iVar11].type = cards_data[iVar11].type | 0x40;
           }
-          if ((tVar4 & TOKEN2022_ACTION_ISNT_LEGENDARY) != 0)
+          if ((tVar4 & TOKEN_ACTION_ISNT_LEGENDARY) != 0)
           {
             cards_data[iVar11].subtype = '\0';
           }
@@ -1302,7 +1302,7 @@ LAB_02665409:
 }
 
 /* ManalinkEh 2022: 0x2665580; original functions/token_generation.c:62. */
-void copy_token_definition(int player, int card, token_generation_2022_t *token, int t_player,
+void copy_token_definition(int player, int card, token_generation_t *token, int t_player,
                                 int t_card)
 {
   special_flags2_t sVar1;
@@ -1363,7 +1363,7 @@ int token_characteristic_setting_effects(int player, int card, event_t event, in
     if (result == 0)
     {
       instance = get_card_instance(player, card);
-      special_abilities(t_player, t_card, event, instance->token_special_keywords_2022, t_player,
+      special_abilities(t_player, t_card, event, instance->token_special_keywords, t_player,
                         t_card);
       if ((((event == EVENT_CHANGE_TYPE) && (t_card == affected_card)) &&
            (t_player == affected_card_controller)) &&
@@ -1394,7 +1394,7 @@ int generic_token(int player, int card, event_t event)
 
 /* October 2022 token ID/copy entry points. */
 static int generate_token_by_id_impl(int player, int card, int csvid, int number, int reserved);
-static void copy_token_part_2022(int player, int card, int tok_player, int tok_card);
+static void copy_token_part(int player, int card, int tok_player, int tok_card);
 void copy_token(int player, int card, int tok_player, int tok_card);
 int generate_token_by_id(int player, int card, int csvid);
 void generate_tokens_by_id(int player, int card, int csvid, int howmany);
@@ -1406,7 +1406,7 @@ static int generate_token_by_id_impl(int player, int card, int csvid, int number
   int iVar1;
   int iid;
   int iVar2;
-  token_generation_2022_t token;
+  token_generation_t token;
 
   default_token_definition(player, card, csvid, &token);
   if (reserved == 0)
@@ -1419,7 +1419,7 @@ static int generate_token_by_id_impl(int player, int card, int csvid, int number
   {
     token.no_sleight = '\x01';
     iVar1 = get_internal_card_id_from_csv_id(csvid);
-    iid = resolve_token_iid_2022(iVar1, &token);
+    iid = resolve_token_iid(iVar1, &token);
     if (number < 1)
     {
       return -1;
@@ -1437,9 +1437,9 @@ static int generate_token_by_id_impl(int player, int card, int csvid, int number
 }
 
 /* ManalinkEh 2022: 0x2666640; original functions/token_generation.c:614. */
-static void copy_token_part_2022(int player, int card, int tok_player, int tok_card)
+static void copy_token_part(int player, int card, int tok_player, int tok_card)
 {
-  token_generation_2022_t token;
+  token_generation_t token;
   copy_token_definition(player, card, &token, tok_player, tok_card);
   generate_token(&token);
   return;
@@ -1450,7 +1450,7 @@ void copy_token(int player, int card, int tok_player, int tok_card)
 {
   if ((-1 < tok_player) && (-1 < tok_card))
   {
-    copy_token_part_2022(player, card, tok_player, tok_card);
+    copy_token_part(player, card, tok_player, tok_card);
     return;
   }
   return;

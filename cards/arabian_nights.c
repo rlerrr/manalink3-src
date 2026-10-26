@@ -18,13 +18,13 @@ When ~ dies, destroy all creatures blocking or blocked by it. They can't be rege
 
   card_instance_t* instance = get_card_instance(player, card);
 
-  if (event == EVENT_CHANGE_TYPE && affect_me(player, card) && !is_humiliated(player, card))
+  if (event == EVENT_CHANGE_TYPE && affect_me(player, card) && !is_humiliated(player, card, AL_TRIG))
 	instance->destroys_if_blocked |= DIFB_DESTROYS_ALL;
 
   if (event == EVENT_RESOLVE_THIS_DIES_TRIGGER	// this is the legacy, not the creature
 	  || (((player == current_turn && (instance->state & STATE_ATTACKING))
 		   || (player == 1-current_turn && (instance->state & STATE_BLOCKING)))
-		  && !is_humiliated(player, card)))
+		  && !is_humiliated(player, card, AL_TRIG)))
 	{
 	  // Checking this directly breaks encapsulation.  Horrid.
 	  if (event == EVENT_GRAVEYARD_FROM_PLAY && affect_me(player, card) && instance->kill_code != KILL_EXILE)
@@ -254,7 +254,7 @@ Artifact Creature - Construct 1/3
 ~ doesn't untap during your untap step.
 At the beginning of your upkeep, you may pay |1. If you do, untap ~. */
 
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_STATIC) ){
 		does_not_untap(player, card, event);
 
 		if( is_tapped(player, card) && has_mana(player, COLOR_COLORLESS, 1) && current_turn == player &&
@@ -327,7 +327,7 @@ Players can't cast spells or play lands with a name originally printed in the Ar
 		}
 	}
 
-	if( event == EVENT_MODIFY_COST_GLOBAL && !is_humiliated(player, card)){
+	if( event == EVENT_MODIFY_COST_GLOBAL && !is_humiliated(player, card, AL_STATIC)){
 		int csvid = get_id(affected_card_controller, affected_card);
 		if (IS_ARABIAN_NIGHTS(csvid)){
 			infinite_casting_cost();
@@ -346,7 +346,7 @@ Whenever ~ becomes tapped, it deals 1 damage to you.
 |T: Add one mana of any color to your mana pool. */
 
 	//0x4A86B0
-	if(event == EVENT_TAP_CARD && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if(event == EVENT_TAP_CARD && affect_me(player, card) && ! is_humiliated(player, card, AL_TRIG) ){
 		damage_player(player, 1, player, card);
 	}
 	return mana_producer(player, card, event);
@@ -366,7 +366,7 @@ int card_cyclone(int player, int card, event_t event)
 
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY)
 	{
-	  add_counter(player, card, COUNTER_WIND);
+	  add_counters(player, card, player, card, COUNTER_WIND, 1);
 	  int counters = count_counters(player, card, COUNTER_WIND);
 	  ASSERT(counters > 0);
 	  if( (IS_AI(player) && ! EXE_FN(int, 0x430C00, int)(counters))// That function's specific to Cyclone, and returns nonzero if the AI thinks it's better to sacrifice
@@ -524,7 +524,7 @@ Creature — Human Nomad 2/2
 Desertwalk
 Prevent all damage that would be dealt to Desert Nomads by Deserts.
 */
-	if( event == EVENT_BLOCK_LEGALITY && ! is_humiliated(player, card) ){
+	if( event == EVENT_BLOCK_LEGALITY && ! is_humiliated(player, card, AL_STATIC) ){
 		if( attacking_card_controller == player && attacking_card == card ){
 			if( count_subtype(1-current_turn, TYPE_LAND, SUBTYPE_DESERT) ){
 				event_result = 1;
@@ -532,7 +532,7 @@ Prevent all damage that would be dealt to Desert Nomads by Deserts.
 		}
 	}
 
-	if( event == EVENT_PREVENT_DAMAGE && ! is_humiliated(player, card) ){
+	if( event == EVENT_PREVENT_DAMAGE && ! is_humiliated(player, card, AL_STATIC) ){
 		card_instance_t *affected = get_card_instance(affected_card_controller, affected_card);
 		if( affected->internal_card_id == damage_card ){
 			if( affected->damage_target_player == player &&  affected->damage_target_card == card &&
@@ -823,24 +823,31 @@ Land
 #undef CAN_MANA
 }
 
-int card_erg_raiders(int player, int card, event_t event){
-/* CARD_ID_ERG_RAIDERS	415
-Erg Raiders	|1|B
-Creature - Human Warrior 2/3
-At the beginning of your end step, if ~ didn't attack this turn, ~ deals 2 damage to you unless it came under your control this turn. */
-
-	if( event == EVENT_RESOLVE_SPELL || (event == EVENT_DECLARE_ATTACKERS && is_attacking(player, card)) ){
-		get_card_instance(player, card)->info_slot = 66;
-	}
-
-	if( ! is_humiliated(player, card) && current_turn == player && eot_trigger(player, card, event) ){
-		if( get_card_instance(player, card)->info_slot != 66 ){
-			damage_player(player, 2, player, card);
-		}
-		get_card_instance(player, card)->info_slot = 0;
-	}
-
-	return 0;
+int card_erg_raiders(int player, int card, event_t event)
+{
+  int iVar1;
+  int iVar2;
+  card_instance_t *instance;
+  if ((event == EVENT_RESOLVE_SPELL) ||
+      ((iVar2 = current_turn,
+        event == EVENT_DECLARE_ATTACKERS &&
+            (iVar1 = is_attacking(player, card), iVar2 = current_turn, iVar1 != 0))))
+  {
+    instance = get_card_instance(player, card);
+    iVar2 = current_turn;
+    instance->info_slot = 0x42;
+  }
+  if ((iVar2 == player) && (iVar2 = eot_trigger(player, card, event), iVar2 != 0))
+  {
+    instance = get_card_instance(player, card);
+    if (instance->info_slot != 0x42)
+    {
+      damage_player(player, 2, player, card);
+    }
+    instance = get_card_instance(player, card);
+    instance->info_slot = 0;
+  }
+  return 0;
 }
 
 
@@ -1076,7 +1083,7 @@ Giant Tortoise	|1|U
 Creature - Turtle 1/1
 ~ gets +0/+3 as long as it's untapped. */
 
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_STATIC) ){
 		if( event == EVENT_TOUGHNESS && affect_me(player, card) ){
 			event_result += is_tapped(player, card) ? 0 : 3;
 		}
@@ -1088,7 +1095,7 @@ int check_for_guardian_beast_protection(int t_player, int t_card){
 	if( is_what(t_player, t_card, TYPE_ARTIFACT) && ! is_what(t_player, t_card, TYPE_CREATURE) ){
 		int i;
 		for(i=0; i<active_cards_count[t_player]; i++ ){
-			if( in_play(t_player, i) && get_id(t_player, i) == CARD_ID_GUARDIAN_BEAST && ! is_humiliated(t_player, i) && ! is_tapped(t_player, i) ){
+			if( in_play(t_player, i) && get_id(t_player, i) == CARD_ID_GUARDIAN_BEAST && ! is_humiliated(t_player, i, AL_STATIC) && ! is_tapped(t_player, i) ){
 				return 1;
 			}
 		}
@@ -1103,7 +1110,7 @@ Creature - Beast 2/4
 As long as ~ is untapped, noncreature artifacts you control can't be enchanted, they have indestructible, and other players can't gain control of them.
 This effect doesn't remove Auras already attached to those artifacts. */
 
-	if( ! is_humiliated(player, card) && in_play(player, card) ){
+	if( ! is_humiliated(player, card, AL_STATIC) && in_play(player, card) ){
 		if( affected_card_controller == player && is_what(affected_card_controller, affected_card, TYPE_ARTIFACT) &&
 			! is_what(affected_card_controller, affected_card, TYPE_CREATURE)
 		  ){
@@ -1115,27 +1122,21 @@ This effect doesn't remove Auras already attached to those artifacts. */
 	return 0;
 }
 
-int card_hasran_ogress(int player, int card, event_t event){
-/* CARD_ID_HASRAN_OGRESS	424
-Hasran Ogress	|B|B
-Creature - Ogre 3/2
-Whenever ~ attacks, it deals 3 damage to you unless you pay |2. */
-
-	if( ! is_humiliated(player, card) ){
-		if( event == EVENT_DECLARE_ATTACKERS && is_attacking(player, card) && ! is_humiliated(player, card) ){
-			int dmg = 3;
-			if( has_mana(player, COLOR_COLORLESS, 2) ){
-				charge_mana(player, COLOR_COLORLESS, 2);
-				if( spell_fizzled != 1 ){
-					dmg = 0;
-				}
-			}
-			if( dmg ){
-				damage_player(player, dmg, player, card);
-			}
-		}
-	}
-	return 0;
+int card_hasran_ogress(int player, int card, event_t event)
+{
+  int result;
+  dat_ability(player, card, event, DAT_RESOLVE_TRIGGER_MANDATORY, 0);
+  if (event != EVENT_DAT_ABILITY)
+  {
+    return 0;
+  }
+  result = has_mana(player, 0, 2);
+  if ((result != 0) && (charge_mana(player, COLOR_COLORLESS, 2), spell_fizzled != 1))
+  {
+    return 0;
+  }
+  damage_player(player, 3, player, card);
+  return 0;
 }
 
 int card_hurr_jackal(int player, int card, event_t event){
@@ -1282,7 +1283,7 @@ When you control no |H1Islands, sacrifice ~. */
 	// At the beginning of your upkeep, you may pay |U|U|U. If you do, untap ~.
 	// Simplification: only ask to pay once, even if there's multiple upkeeps due to Paradox Haze
 	if( trigger_condition == TRIGGER_UPKEEP && (event == EVENT_TRIGGER || event == EVENT_RESOLVE_TRIGGER) && affect_me(player, card) &&
-		! is_humiliated(player, card) && count_upkeeps(player) > 0 && current_turn == player && reason_for_trigger_controller == player )
+		! is_humiliated(player, card, AL_TRIG) && count_upkeeps(player) > 0 && current_turn == player && reason_for_trigger_controller == player )
 	{
 		if (event == EVENT_TRIGGER && has_mana(player, COLOR_BLUE, 3) ){
 			event_result |= ((player == HUMAN && ai_is_speculating != 1) ? RESOLVE_TRIGGER_OPTIONAL
@@ -1578,7 +1579,7 @@ At the beginning of each end step, put a +1/+1 counter on ~ for each creature th
 	}
 
 	if( eot_trigger(player, card, event) ){
-		add_1_1_counters(player, card, creatures_dead_this_turn);
+		add_counters(player, card, player, card, COUNTER_P1_P1, creatures_dead_this_turn);
 	}
 	return 0;
 }
@@ -1623,7 +1624,7 @@ Creature - Ape 1/1
 	// original code : 00453E50
 
 	if( (event == EVENT_POWER || event == EVENT_TOUGHNESS) && affect_me(player, card) && in_play(player, card) &&
-		! is_humiliated(player, card) )
+		! is_humiliated(player, card, AL_STATIC) )
 	{
 		if( check_battlefield_for_subtype(player, TYPE_LAND, SUBTYPE_FOREST) ){
 			switch( event ){
@@ -1780,7 +1781,7 @@ Whenever ~ attacks and isn't blocked, you gain 2 life.
 When you control no |H1Islands, sacrifice ~. */
 
 	// 0x453FD0
-	if( ! is_humiliated(player, card) ){
+	if( ! is_humiliated(player, card, AL_STATIC) ){
 		islandhome(player, card, event);
 
 		if( current_turn == player && is_attacking(player, card) && event == EVENT_DECLARE_BLOCKERS && is_unblocked(player, card) ){
@@ -2230,7 +2231,7 @@ When you control no lands, sacrifice ~. */
 
 	upkeep_trigger_ability(player, card, event, player);
 
-	if( event == EVENT_ABILITIES && affect_me(player, card) && ! is_humiliated(player, card) ){
+	if( event == EVENT_ABILITIES && affect_me(player, card) && ! is_humiliated(player, card, AL_STATIC) ){
 		if( ! check_battlefield_for_subtype(player, TYPE_LAND, -1) ){
 			kill_card(player, card, KILL_SACRIFICE);
 		}
@@ -2346,7 +2347,7 @@ At the beginning of the upkeep of enchanted creature's controller, put a -1/-1 c
 	upkeep_trigger_ability(player, card, event, instance->damage_target_player);
 
   if (event == EVENT_UPKEEP_TRIGGER_ABILITY && instance)
-	add_minus1_minus1_counters(instance->damage_target_player, instance->damage_target_card, 1);
+	add_counters(player, card, instance->damage_target_player, instance->damage_target_card, COUNTER_M1_M1, 1);
 
   // Enchanted creature gets +3/+3.
   int rval = generic_aura(player, card, event, player, 3,3, 0,0, 0,0,0);

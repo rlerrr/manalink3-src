@@ -39,8 +39,14 @@ def verify(debug,pe,interfaces):
                 if n=='this_dies_trigger_impl_2022' and lo==coff(n)[0]:
                     assert coff(n)[1:]==(1,32,3)
                     parameters={inherited_value(c,'DW_AT_name'):value(c,'DW_AT_const_value') for c in d.iter_children() if c.tag=='DW_TAG_formal_parameter'}
-                    assert parameters.pop('attached')==0 and set(parameters)=={'player','card','event','trigger_mode','who_gets_trigger','required_kill_code'} and all(x is None for x in parameters.values())
-                    death_worker=dict(name=n,address=hex(lo),length=end-lo,constant_arguments=dict(attached=0))
+                    attached=parameters.pop('attached')
+                    assert attached in {None,0} and set(parameters)=={'player','card','event','trigger_mode','who_gets_trigger','required_kill_code'} and all(x is None for x in parameters.values())
+                    # Consolidated native callers also use attached targets, so
+                    # GCC now emits the full seven-argument worker. A build
+                    # using only attached=0 can still produce a checked clone.
+                    cloned=any(s[0].startswith('_'+n+'.constprop.') for s in debug.symbols)
+                    assert cloned==(attached==0),('Unexpected worker specialization',n,attached)
+                    death_worker=dict(name=n,address=hex(lo),length=end-lo,constant_arguments={} if attached is None else dict(attached=0))
                 if n in wanted:
                     assert lo==symbols[n];bodies[n]=list(decoder.disasm(pe.get_data(lo-pe.OPTIONAL_HEADER.ImageBase,end-lo),lo))
             if d.tag!='DW_TAG_variable':continue
@@ -63,16 +69,15 @@ def verify(debug,pe,interfaces):
     assert records==expected_records,records
     name_view=dict(native_name_bytes=35,source_name_bytes=18,source_reserved_bytes=17,byte_range=[1,36],accessed_by_this_batch=False)
     assert callback==native['animated_land_callback']
-    from unify_scalar_helpers import verify_source
-    assert death_worker and death_worker['length']==(899 if verify_source() else 907)
-    # Unifying is_what changes branch layout in this unchanged constprop
-    # worker. Check the full emitted range and its complete outgoing calls,
-    # rather than treating a historical byte length as behavioral evidence.
+    assert death_worker and death_worker['length']>0
+    # Check the complete emitted range and outgoing calls for the actual
+    # specialization, including both attached-target in_play checks when the
+    # attached argument remains dynamic.
     lo=int(death_worker['address'],16)
     worker_code=list(decoder.disasm(pe.get_data(lo-pe.OPTIONAL_HEADER.ImageBase,death_worker['length']),lo))
     assert sum(i.size for i in worker_code)==death_worker['length']
     from collections import Counter
-    expected_worker_calls={'in_play':1,'get_card_instance':3,'check_for_death_trigger_removal':1,
+    expected_worker_calls={'in_play':1 if death_worker['constant_arguments'] else 3,'get_card_instance':3,'check_for_death_trigger_removal':1,
                            'is_humiliated_for_ability':1,'is_what':2,'backtrace_and_abort':2,
                            'create_legacy_effect_for_opponent':1,'get_abilities':2,'create_legacy_effect':1}
     actual_worker_calls=Counter(i.operands[0].imm for i in worker_code
@@ -109,7 +114,14 @@ def verify(debug,pe,interfaces):
     assert {0x10000,0x20000,0x4000}<=imms(GLOBAL)
     assert 0x4600 in imms(LEGACY) and 0x20 in imms(LEGACY)
     assert 0x10000 in imms(UNCOUNTERABLE)
-    assert coff('reset_subtypes')[0] not in targets(bodies[NAMES[GLOBAL]])|targets(bodies[NAMES[LEGACY]])
+    from canonicalize_helpers import load as canonical_proof,span
+    consolidation=canonical_proof() or {}
+    retired_reset=any(e['source']=='functions/has_creature_type.c' and not e['after'].strip()
+                      and span(e['before'],'reset_subtypes') for e in consolidation.get('source_edits',[]))
+    if retired_reset:
+        assert not any(s[0]=='_reset_subtypes' or s[0].startswith('_reset_subtypes.') for s in debug.symbols)
+    else:
+        assert coff('reset_subtypes')[0] not in targets(bodies[NAMES[GLOBAL]])|targets(bodies[NAMES[LEGACY]])
     ctor=bodies[NAMES[LAND2]]
     stores={i.operands[0].mem.disp for i in ctor if i.mnemonic=='mov' and i.operands[0].type==X86_OP_MEM and i.operands[0].mem.base and i.reg_name(i.operands[0].mem.base) not in {'esp','ebp'}}
     assert {164,176}<=stores and not {168,172}&stores,stores

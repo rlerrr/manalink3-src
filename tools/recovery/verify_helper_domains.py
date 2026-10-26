@@ -11,11 +11,18 @@ def verify_source(root=ROOT):
     if not path.exists():return {}
     e=json.loads(path.read_text());assert e['native_debug_sha256']==DEBUG_SHA
     text=read(root/'defs.h');code=mask(text)
+    consolidation_path=root/'docs/recovery-evidence/helper-canonicalization.json'
+    consolidation=json.loads(consolidation_path.read_text()) if consolidation_path.exists() else {}
     result={}
     for row in e['domains']:
         canonical=row['canonical_definition'];assert text.count(canonical)==1,row['type']
         assert not re.search(r'\}\s*'+row['recovery_type']+r'\s*;',code)
-        assert 'typedef '+row['type']+' '+row['recovery_type']+';' in text
+        if consolidation.get('source_spelling_names',{}).get(row['recovery_type'])==row['type']:
+            header=next(f for f in consolidation['files'] if f['source']=='defs.h')
+            assert sha(text.encode())==header['canonical_sha256']
+            assert not re.search(r'\b'+re.escape(row['recovery_type'])+r'\b',code)
+        else:
+            assert 'typedef '+row['type']+' '+row['recovery_type']+';' in text
         members=row['native'][0]['members']
         for native in row['native']:assert native['members']==members and native['bytes']==4
         parsed={n:int(v) for n,v in re.findall(r'\b(\w+)\s*=\s*(\d+)\s*,',canonical)}
@@ -55,18 +62,22 @@ def verify_compiled(debug,root=ROOT,source=None):
     if not source:return {}
     from inspect_release import value
     wanted=set(source);found={}
+    evidence=json.loads((root/EVIDENCE).read_text())
+    owners={row['type']:row['native'][0]['source'] for row in evidence['domains']}
     for cu in debug.dwarf().iter_CUs():
-        if value(cu.get_top_DIE(),'DW_AT_name')!='functions/manipulate_and_damage_all.c':continue
+        unit=value(cu.get_top_DIE(),'DW_AT_name')
+        unit_types={name for name in wanted if owners[name]==unit}
+        if not unit_types:continue
         for die in cu.get_top_DIE().iter_children():
             name=value(die,'DW_AT_name')
-            if die.tag!='DW_TAG_typedef' or name not in wanted:continue
+            if die.tag!='DW_TAG_typedef' or name not in unit_types:continue
             target=die.get_DIE_from_attribute('DW_AT_type')
             assert target.tag=='DW_TAG_enumeration_type' and value(target,'DW_AT_byte_size')==4,name
             members={value(c,'DW_AT_name'):value(c,'DW_AT_const_value') for c in target.iter_children() if c.tag=='DW_TAG_enumerator'}
             assert members==source[name]['members'],(name,members)
             if name=='actions_t':assert value(target,'DW_AT_encoding')==7
-            found[name]=dict(bytes=4,encoding=value(target,'DW_AT_encoding'),members=members)
-        break
+            assert name not in found,name
+            found[name]=dict(bytes=4,encoding=value(target,'DW_AT_encoding'),members=members,source=unit)
     assert set(found)==wanted,(found.keys(),wanted)
     return found
 
