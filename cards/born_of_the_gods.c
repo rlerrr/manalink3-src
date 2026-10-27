@@ -1170,7 +1170,7 @@ static int effect_retraction_helix(int player, int card, event_t event)
 {
   if (event == EVENT_CLEANUP)
 	{
-	  kill_card(player, card, event);
+	  kill_card(player, card, KILL_EXILE);
 	  return 0;
 	}
 

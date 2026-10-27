@@ -144,8 +144,10 @@ def setup(args):
     equivalent_addresses={int(e['duplicate_address'],16) for e in equivalent_helpers}
     stubs = {int(row["native_address"], 16): row for row in manifest["source_stubs"]}
     current_names = defaultdict(set)
+    current_ranges = defaultdict(list)
     for row in current:
         current_names[row["name"]].add(row["address"])
+        current_ranges[(row["source"], row["name"])].append(row)
     # GCC may keep a public COFF entry as a JMP to an identical retained
     # body, omitting a separate DWARF range. Record that evidence explicitly;
     # do not call the five-byte thunk a full-body assembly match.
@@ -200,15 +202,66 @@ def setup(args):
         native_names[row["match_name"]].add(row["address"])
 
     included, excluded = [], []
+    resolved_duplicate_names = []
+    resolved_public_entries = []
     for row in native:
         name = row["match_name"]
         reason = None
         if row['address'] in equivalent_addresses:
             reason='verified equivalent native helper shares a canonical implementation'
         elif len(native_names[name]) != 1:
-            reason = "ambiguous original name"
+            # Release DWARF can contain multiple non-contiguous ranges for a
+            # single C function name (for example, a retained body plus a
+            # compiler-generated argument-checking wrapper).  Keep the whole
+            # range set when it is isolated to one source/name and the rebuilt
+            # image has the same number of ranges.  The reccmp fork resolves
+            # these entries by exact emitted size, without joining the bytes
+            # between them, which may belong to other functions.
+            native_group = [candidate for candidate in native
+                            if candidate["match_name"] == name
+                            and candidate["source"] == row["source"]]
+            current_group = current_ranges.get((row["source"], name), [])
+            if (len(native_group) > 1
+                    and len(native_group) == len(current_group)
+                    and len(native_names[name]) == len(native_group)
+                    and len(current_names[name]) == len(current_group)):
+                resolved_duplicate_names.append({
+                    "name": name,
+                    "source": row["source"],
+                    "address": hex(row["address"]),
+                    "size": row["size"],
+                    "resolution": "isolated duplicate range set matched by emitted size/order",
+                    "native_candidates": sorted(hex(address)
+                                                 for address in native_names[name]),
+                })
+            else:
+                reason = "ambiguous original name"
         elif len(current_names[name]) > 1:
-            reason = "ambiguous rebuilt name"
+            # GCC may emit a public entry plus a private .part.0 body under
+            # the same DWARF name.  If the rebuilt image has one unique COFF
+            # entry for the name, retain the native row; the fork matcher will
+            # select that public symbol while leaving the private body as a
+            # separate unmatched range.
+            current_group = current_ranges.get((row["source"], name), [])
+            public_entries = coff_functions.get(name, set())
+            if (len(native_names[name]) == 1 and len(current_group) > 1
+                    and len(public_entries) == 1
+                    and any(candidate["address"] in public_entries
+                            for candidate in current_group)):
+                public_address = next(iter(public_entries))
+                row["mapping"] = f"public COFF entry {hex(public_address)}"
+                resolved_public_entries.append({
+                    "name": name,
+                    "source": row["source"],
+                    "address": hex(row["address"]),
+                    "size": row["size"],
+                    "resolution": "unique rebuilt public COFF entry",
+                    "rebuilt_address": hex(public_address),
+                    "rebuilt_candidates": sorted(
+                        hex(candidate["address"]) for candidate in current_group),
+                })
+            else:
+                reason = "ambiguous rebuilt name"
         elif not current_names[name]:
             folded = compiler_fold(row)
             if folded is not None:
@@ -248,6 +301,8 @@ def setup(args):
                    ledger_mappings=sum(r["mapping"] == "recovery ledger" for r in included),
                    stubs=sum(r["address"] in stubs for r in included),
                    folded_recovered_helpers=folded_recovered_helpers,
+                   resolved_duplicate_names=resolved_duplicate_names,
+                   resolved_public_entries=resolved_public_entries,
                    excluded_reasons=dict(Counter(r["reason"] for r in excluded)),
                    inputs={str(p): digest(p) for p in (original, original_debug, rebuilt, rebuilt_debug)},
                    naming_inputs=names_before,
@@ -296,6 +351,7 @@ def main():
     comparator_sources = {str(fork / name): digest(fork / name) for name in (
         'reccmp/compare/functions.py', 'reccmp/compare/asm/parse.py',
         'reccmp/compare/asm/fixes.py', 'reccmp/compare/report.py',
+        'reccmp/compare/csv.py', 'reccmp/compare/match_msvc.py',
         'reccmp/dwarf/analysis.py')}
     ledger_path = ROOT / 'docs/recovery-evidence/recovered-functions.json'
     comparison_ledger_sha256 = digest(ledger_path)

@@ -1173,7 +1173,7 @@ int m10_lands(int player, int card, event_t event, int sub1, int sub2){
 		}
 	}
 
-	return mana_producer(player, card, event);
+	return plain_mana_producer(player, card, event);
 }
 
 

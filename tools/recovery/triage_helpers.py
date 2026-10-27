@@ -120,7 +120,13 @@ def main():
     scores={int(r['address'],16):r for r in data['data']}
     assert len(scores)==len(data['data'])==setup['csv_functions']
     for a,f in accepted.items():
-        if a in scores:assert scores[a]['name']==canonical.get(f['name'],f['name']),(hex(a),'stale recovery mapping')
+        if a in scores:
+            expected=canonical.get(f['name'],f['name'])
+            actual=scores[a]['name']
+            # The matcher appends a stable numeric suffix when a canonical
+            # name has multiple isolated emitted ranges.  That is still the
+            # expected function identity, not stale recovery metadata.
+            assert actual==expected or re.fullmatch(re.escape(expected)+r'\([1-9][0-9]*\)',actual),(hex(a),'stale recovery mapping')
     originals={a:{a} for a in native};current=collections.defaultdict(set)
     for a,r in scores.items():
         if r.get('recomp') and r['recomp']!='various':current[int(r['recomp'],16)].add(a)
@@ -203,7 +209,7 @@ def main():
     def unique_range(at,source=None,name=None):
         rr=by_at.get(at,[])
         if source is not None:rr=[r for r in rr if source_key(r['source'])==source_key(source)]
-        if name is not None:rr=[r for r in rr if r['name']==name]
+        if name is not None:rr=[r for r in rr if r['name']==name or re.fullmatch(re.escape(r['name'])+r'\([1-9][0-9]*\)',name)]
         sizes={r['size'] for r in rr}
         return next(iter(sizes)) if len(sizes)==1 else None
     rows=[]

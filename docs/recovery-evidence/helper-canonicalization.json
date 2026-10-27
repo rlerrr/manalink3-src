@@ -10888,7 +10888,7 @@
     {
       "source": "cards/born_of_the_gods.c",
       "predecessor_sha256": "bb5af1c2759ab1c18fb6b1590e6153a03abf45c25a72b8483d44db1fc88b3009",
-      "canonical_sha256": "ded122d17383cf289f5d94cf8c2e4053269d912a359a41792c893feefa278cd4",
+      "canonical_sha256": "78a6bf1c60222a61458f1f315f4ec23f5fad08593c59dcdeffc3419780bba4ce",
       "previous_live_sha256": "ded122d17383cf289f5d94cf8c2e4053269d912a359a41792c893feefa278cd4"
     },
     {
@@ -11188,7 +11188,7 @@
     {
       "source": "cards/m11.c",
       "predecessor_sha256": "542ee3d3a3e3242581ee4435eeebc97d2c3d6a3737c6b834e265e6e85150eac8",
-      "canonical_sha256": "11cb29b6d9ce149f1b7786b62dc0c0585d8d4216616aef78c67e2736a5ba6a70",
+      "canonical_sha256": "622642b9ea3c6087133b7e36f43b77936e83d73ed98dca4a1c23b521caf4d163",
       "previous_live_sha256": "11cb29b6d9ce149f1b7786b62dc0c0585d8d4216616aef78c67e2736a5ba6a70"
     },
     {
@@ -11554,7 +11554,7 @@
     {
       "source": "defs.h",
       "predecessor_sha256": "778f317e9dd6e97ddc79ad12ec01a03d37a1df7e27f9b51449825664607d6b6f",
-      "canonical_sha256": "6bb0d603b6048f27442d61e2763fca259c4b0e1594d2105f37a2f471f47d89e5",
+      "canonical_sha256": "158d9ba85cfb21a543d56d2412fde264371ce13473aa3c44a3051bc16f0c1093",
       "previous_live_sha256": "6bb0d603b6048f27442d61e2763fca259c4b0e1594d2105f37a2f471f47d89e5"
     },
     {
@@ -11686,7 +11686,7 @@
     {
       "source": "functions/play_spell_for_free.c",
       "predecessor_sha256": "42e2a6e7b416af8c2b1dc840baedcdc9e19437591f573eefba2a8c3b24003822",
-      "canonical_sha256": "d725f29f70462980f76d36b92e119a0e90efa05c3761e19da5681ca9da224780",
+      "canonical_sha256": "a1f517485083e29eec06eb2a039131e5bca3348a8107f349af3dad2f95ac5326",
       "previous_live_sha256": "d725f29f70462980f76d36b92e119a0e90efa05c3761e19da5681ca9da224780"
     },
     {
@@ -11874,6 +11874,22 @@
     "selection_sha256": "ed084846dd0cbb976feb77f188ff4da565993be60418399fb88232ef8ca11c93"
   },
   "source_edits": [
+    {
+      "source": "cards/m11.c",
+      "before": "\treturn mana_producer(player, card, event);\n}\n\n\nint card_dragonskull_summit",
+      "after": "\treturn plain_mana_producer(player, card, event);\n}\n\n\nint card_dragonskull_summit",
+      "before_sha256": "7edb43088324ffd9a89e565a239de6553b61010de3d68a1ec1bb5c01d52d453a",
+      "after_sha256": "0be4137130b7bdbd794362c72a9802f2ec8897a1d60278c0ac1ec3ca4233af4a",
+      "reason": "Restore the native m10_lands tail call to plain_mana_producer at 0x208a6b0, including its EVENT_QUERY behavior."
+    },
+    {
+      "source": "defs.h",
+      "before": "\tGFPC_EXTRA_SKIP_TOKENS\t\t= 1<<5, //Can be combined with the previous values.\n\tGFPC_STORE_OWNER\t\t\t= 1<<6, //Can be combined with the previous values. If not used, if t_player != ANYBODY, \"owner\" won't be stored and the extra space will be used for \"iids\"\n\tGFPC_TRACK_OWNER\t\t\t= 1<<7, //Can be combined with the previous values, except for GFPC_TRACK_DEAD_CREATURES and GFPC_STORE_OWNER\n\tGFPC_TRACK_CONTROLLER\t\t= 1<<8, //Can be combined with the previous values, except for GFPC_TRACK_DEAD_CREATURES and GFPC_STORE_OWNER\n",
+      "after": "#ifdef SHANDALAR\n\tGFPC_EXTRA_SKIP_TOKENS\t\t= 1<<5,\n\tGFPC_STORE_OWNER\t\t\t= 1<<6,\n\tGFPC_TRACK_OWNER\t\t\t= 1<<7,\n\tGFPC_TRACK_CONTROLLER\t\t= 1<<8,\n#else\n\t/* October 2022 count_for_gfp_ability_and_store_values_impl mode bits. */\n\tGFPC_EXTRA_SKIP_TOKENS\t\t= 1<<6,\n\tGFPC_STORE_OWNER\t\t\t= 1<<7,\n\tGFPC_TRACK_OWNER\t\t\t= 1<<8,\n\tGFPC_TRACK_CONTROLLER\t\t= 1<<9,\n#endif\n",
+      "before_sha256": "5128af5c72c67aa3ee8fca71f82e4fb04311a650e94abf17b05bbdaedc14ae0a",
+      "after_sha256": "0e13880b6dc83ea82fd295b65907bf74ef3313e19fc848be7c4a9909b990c7c8",
+      "reason": "Align October 2022 graveyard trigger mode bits with token filtering and owner/controller storage in the recovered worker at 0x2694580; preserve Shandalar values."
+    },
     {
       "source": "defs.h",
       "before": "typedef enum\n{\n\tSAC_NO_CANCEL\t\t\t= 1<<0,\t// Don't show a cancel button.  Needs to stay at 1.\n\tSAC_DONE\t\t\t\t= 1<<1,\t// Show a done button.  Needs to stay at 2.\n\tSAC_JUST_MARK\t\t\t= 1<<2,\t// Don't actually sacrifice the chosen permanent or permanents, just set STATE_CANNOT_TARGET.  Will also be available in marked_for_sacrificed[] if called via mark_sacrifice().\n\tSAC_ALL_OR_NONE\t\t\t= 1<<3,\t// Unless all targets are chosen, don't sacrifice any of them.\n\tSAC_AS_COST\t\t\t\t= 1<<4,\t// Disallow sacrifice of creatures if there's an Angel of Jubilation in play.\n\tSAC_CAUSED\t\t\t\t= 1<<5,\t// Disallow all sacrifices if player != t_player and t_player controls Tajuru Preserver or Sigarda, Host of Herons.\n\tSAC_RETURN_CHOICE\t\t= 1<<6,\t// Returns the sacrificed {player,card} in {BYTE2,BYTE3} of the return value.  If sacrificing more than one, then only returns the last.\n\tSAC_SET_TARGETS\t\t\t= 1<<7,\t// Sets a bunch of values in {player,card}'s targets[0] - targets[4], for backwards compatibility with the old sacrifice() interface.  Avoid.\n} sacrifice_t;",
@@ -103236,6 +103252,28 @@
       "before_sha256": "67cf705c7efa355e877843a9516ead33ab5b7b6e727ac94d26934b2628037a07",
       "after_sha256": "6f90b22474f5734440c04dea1e372505aa130e5367207f2fba8fcdcfaa88ff99",
       "reason": "Preserve the executable import under a distinct engine name while the canonical mana_producer_fixed symbol remains the DLL implementation."
+    },
+    {
+      "source": "cards/born_of_the_gods.c",
+      "before": "  kill_card(player, card, event);",
+      "after": "  kill_card(player, card, KILL_EXILE);",
+      "before_sha256": "7ced6fb699a6d377136224aaca19859ce1a9dfa97c581b120f13d9bae4cd890a",
+      "after_sha256": "478ce30f9dae73d571b96840f2d798e93f70ba34f939836a26049350e10b32da",
+      "reason": "Match the native cleanup path, which exiles the temporary legacy instead of passing EVENT_CLEANUP as a kill mode.",
+      "native_address": "0x2034a00",
+      "native_end": "0x2034b25",
+      "native_bytes_sha256": "d9651b9375ceb2b19938e51bd728f24741bda61d75107a5ca55389a9057835a9"
+    },
+    {
+      "source": "functions/play_spell_for_free.c",
+      "before": "  inst->state |= STATE_SUMMON_SICK|STATE_INVISIBLE|STATE_IN_PLAY;",
+      "after": "  inst->state |= STATE_SUMMON_SICK|STATE_SICKNESS_UNUSED|STATE_INVISIBLE|STATE_IN_PLAY;",
+      "before_sha256": "770a3c57a093714b6531c6285622a21fa0868f3608aee71947aceecba1114509",
+      "after_sha256": "f49376207b9759da4e85cb4f168bf44dfd1dbb0d78c87b305352bf0689894618",
+      "reason": "Preserve the native temporary sickness bit in the initial in-play state mask.",
+      "native_address": "0x2668290",
+      "native_end": "0x2668481",
+      "native_bytes_sha256": "76e7208a83fba06d67be9a73198e01a3cf719acef163b94947f6dabdc97a971a"
     }
   ],
   "interface_extension": {

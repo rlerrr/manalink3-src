@@ -4,12 +4,12 @@ Current review frame: **2,195 native helper ranges**, plus **49 explicitly tagge
 
 | Review queue | Ranges |
 | --- | ---: |
-| `same_local_code` | 1,071 |
+| `same_local_code` | 1,210 |
 | `callee_binding_only` | 0 |
-| `reference_review` | 145 |
-| `small_diff_review` | 223 |
-| `full_review` | 535 |
-| `mapping_first` | 191 |
+| `reference_review` | 167 |
+| `small_diff_review` | 130 |
+| `full_review` | 545 |
+| `mapping_first` | 113 |
 | `deferred_chooser` | 18 |
 | `cpp_review` | 12 |
 | `reconstructed_source` | 49 |
@@ -20,7 +20,7 @@ Current review frame: **2,195 native helper ranges**, plus **49 explicitly tagge
 
 **0 duplicate implementation candidates** were found among retained/recovered pairs. These require ABI and caller review before canonicalizing names.
 
-Of the 1071 local matches, 202 have no pending callees in the recorded dependency list; 869 still depend on functions without an accepted recovery or explicitly tagged full reconstruction. Keep this distinction when tracking completion.
+Of the 1210 local matches, 226 have no pending callees in the recorded dependency list; 984 still depend on functions without an accepted recovery or explicitly tagged full reconstruction. Keep this distinction when tracking completion.
 
 Reccmp scores are used to order review. A 100% score alone is insufficient because unknown addresses can be replaced with matching placeholders. The strict comparison keeps numeric constants and structure/stack offsets, checks complete DWARF ranges, and only translates known function identities and exact source-string bytes. Unresolved data and indirect-call dependencies remain review work. Local equality is not transitive semantic or gameplay proof.
 

@@ -3441,10 +3441,18 @@ typedef enum {
 	GFPC_STORE_CMC				= 1<<2,	//Only one of this parameters shoudl be used at once
 	GFPC_STORE_COLORS			= 1<<3,	//Only one of this parameters shoudl be used at once
 	GFPC_TRACK_DEAD_CREATURES	= 1<<4,	//Only one of this parameters shoudl be used at once. Will store the "internal_card_id" of the dead creatures from "targets[storage_locatio].player" to a maximum of "targets[9].player"
-	GFPC_EXTRA_SKIP_TOKENS		= 1<<5, //Can be combined with the previous values.
-	GFPC_STORE_OWNER			= 1<<6, //Can be combined with the previous values. If not used, if t_player != ANYBODY, "owner" won't be stored and the extra space will be used for "iids"
-	GFPC_TRACK_OWNER			= 1<<7, //Can be combined with the previous values, except for GFPC_TRACK_DEAD_CREATURES and GFPC_STORE_OWNER
-	GFPC_TRACK_CONTROLLER		= 1<<8, //Can be combined with the previous values, except for GFPC_TRACK_DEAD_CREATURES and GFPC_STORE_OWNER
+#ifdef SHANDALAR
+	GFPC_EXTRA_SKIP_TOKENS		= 1<<5,
+	GFPC_STORE_OWNER			= 1<<6,
+	GFPC_TRACK_OWNER			= 1<<7,
+	GFPC_TRACK_CONTROLLER		= 1<<8,
+#else
+	/* October 2022 count_for_gfp_ability_and_store_values_impl mode bits. */
+	GFPC_EXTRA_SKIP_TOKENS		= 1<<6,
+	GFPC_STORE_OWNER			= 1<<7,
+	GFPC_TRACK_OWNER			= 1<<8,
+	GFPC_TRACK_CONTROLLER		= 1<<9,
+#endif
 } count_for_gfp_ability_and_store_values_flags_t;
 
 typedef enum {
